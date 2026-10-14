@@ -24,51 +24,48 @@ POSEIDON_DOUBLE_HOIST_P9_QP_FOURSTEP="${POSEIDON_DOUBLE_HOIST_P9_QP_FOURSTEP:-1}
 POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_FOURSTEP="${POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_FOURSTEP:-1}"
 POSEIDON_DOUBLE_HOIST_QP_MAC_GROUP_TILED_8="${POSEIDON_DOUBLE_HOIST_QP_MAC_GROUP_TILED_8:-1}"
 POSEIDON_DOUBLE_HOIST_QP_MAC_COMPONENT_FUSED="${POSEIDON_DOUBLE_HOIST_QP_MAC_COMPONENT_FUSED:-1}"
-POSEIDON_BOOTSTRAP_PROFILE="${POSEIDON_BOOTSTRAP_PROFILE:-dynamic32}"
+POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT="${POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT:-1}"
+POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_C0="${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_C0:-1}"
+POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC="${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC:-1}"
+POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE="${POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE:-128}"
+POSEIDON_DOUBLE_HOIST_DIRECT_GIANT_ACCUMULATE="${POSEIDON_DOUBLE_HOIST_DIRECT_GIANT_ACCUMULATE:-1}"
+POSEIDON_DOUBLE_HOIST_BATCHED_GIANT_INTT="${POSEIDON_DOUBLE_HOIST_BATCHED_GIANT_INTT:-1}"
+POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE="${POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE:-8}"
+POSEIDON_EVALMOD_LAZY_RELIN="${POSEIDON_EVALMOD_LAZY_RELIN:-1}"
+POSEIDON_EVALMOD_D2D_FREE_DATAFLOW="${POSEIDON_EVALMOD_D2D_FREE_DATAFLOW:-1}"
+POSEIDON_EVALMOD_ZERO_COPY_MODDROP="${POSEIDON_EVALMOD_ZERO_COPY_MODDROP:-1}"
+POSEIDON_EVALMOD_Q_PREFIX_VIEWS="${POSEIDON_EVALMOD_Q_PREFIX_VIEWS:-1}"
+POSEIDON_BOOTSTRAP_PROFILE="${POSEIDON_BOOTSTRAP_PROFILE:-slim22_da3_c2s5433}"
 
-if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "resnet50" ]]; then
-    # GPU-compatible form of Trident ResNet50's bootstrap parameters:
-    # N=2^16, 2^46 application scale, 2^51 EvalMod scale, K=25,
-    # message ratio 32, degree-59 sine approximation and two double-angle
-    # iterations. The application's literal 46/51-bit primes cannot be stored
-    # in the uint32 GPU residue type, so the verified mixed <=32-bit physical
-    # Q chain is used with dynamic rescaling instead.
-    export POSEIDON_BOOTSTRAP_DEGREE="${POSEIDON_BOOTSTRAP_DEGREE:-65536}"
-    export POSEIDON_BOOTSTRAP_Q_COUNT="${POSEIDON_BOOTSTRAP_Q_COUNT:-34}"
-    export POSEIDON_BOOTSTRAP_P_COUNT="${POSEIDON_BOOTSTRAP_P_COUNT:-12}"
-    export POSEIDON_GPU_LINEAR_TRANSFORM_MODE="${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-double_hoist}"
-    export POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE="${POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE:-4}"
-    export POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB="${POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB:-1024}"
-    export POSEIDON_BOOTSTRAP_LOG_Q="${POSEIDON_BOOTSTRAP_LOG_Q:-32}"
-    export POSEIDON_BOOTSTRAP_LOG_P="${POSEIDON_BOOTSTRAP_LOG_P:-32}"
-    export POSEIDON_BOOTSTRAP_LOG_SCALE="${POSEIDON_BOOTSTRAP_LOG_SCALE:-46}"
-    export POSEIDON_BOOTSTRAP_Q0_LEVEL="${POSEIDON_BOOTSTRAP_Q0_LEVEL:-1}"
-    export POSEIDON_BOOTSTRAP_MIXED_45_Q_CHAIN="${POSEIDON_BOOTSTRAP_MIXED_45_Q_CHAIN:-1}"
-    export POSEIDON_BOOTSTRAP_MESSAGE_RATIO="${POSEIDON_BOOTSTRAP_MESSAGE_RATIO:-32}"
-    export POSEIDON_BOOTSTRAP_C2S_STEP="${POSEIDON_BOOTSTRAP_C2S_STEP:-1}"
-    export POSEIDON_BOOTSTRAP_S2C_STEP="${POSEIDON_BOOTSTRAP_S2C_STEP:-1}"
-    export POSEIDON_BOOTSTRAP_EVALMOD_RESCALE_COUNT="${POSEIDON_BOOTSTRAP_EVALMOD_RESCALE_COUNT:-1}"
-    export POSEIDON_BOOTSTRAP_EVALMOD_LOG_SCALE="${POSEIDON_BOOTSTRAP_EVALMOD_LOG_SCALE:-51}"
-    export POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE="${POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE:-1}"
-    export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE="${POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE:-2}"
-    export POSEIDON_BOOTSTRAP_EVALMOD_K="${POSEIDON_BOOTSTRAP_EVALMOD_K:-25}"
-    export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE="${POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE:-59}"
-    export POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE="${POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE:-0.002}"
-    export POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE="${POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE:-1}"
-    export POSEIDON_BOOTSTRAP_WARMUP="${POSEIDON_BOOTSTRAP_WARMUP:-1}"
-    export POSEIDON_BOOTSTRAP_ITERATIONS="${POSEIDON_BOOTSTRAP_ITERATIONS:-1}"
-    export POSEIDON_BOOTSTRAP_FULL_WARMUP="${POSEIDON_BOOTSTRAP_FULL_WARMUP:-1}"
-    export POSEIDON_BOOTSTRAP_FULL_ITERATIONS="${POSEIDON_BOOTSTRAP_FULL_ITERATIONS:-1}"
-elif [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
-      "${POSEIDON_BOOTSTRAP_PROFILE}" == "dual30" ]]; then
+if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "dual30" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
     # 40-bit normal CKKS scale and 45-bit bootstrap scale over GPU-friendly
     # physical primes. The mixed <=32-bit Q chain and all stage widths are
     # selected by the CPU-compatible min_scale/2 dynamic planner.
-    export POSEIDON_BOOTSTRAP_DEGREE="${POSEIDON_BOOTSTRAP_DEGREE:-16384}"
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+        DEFAULT_BOOTSTRAP_DEGREE=65536
+    else
+        DEFAULT_BOOTSTRAP_DEGREE=16384
+    fi
+    export POSEIDON_BOOTSTRAP_DEGREE="${POSEIDON_BOOTSTRAP_DEGREE:-${DEFAULT_BOOTSTRAP_DEGREE}}"
     export POSEIDON_BOOTSTRAP_Q_COUNT="${POSEIDON_BOOTSTRAP_Q_COUNT:-34}"
     export POSEIDON_BOOTSTRAP_P_COUNT="${POSEIDON_BOOTSTRAP_P_COUNT:-9}"
     export POSEIDON_GPU_LINEAR_TRANSFORM_MODE="${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-double_hoist}"
-    export POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE="${POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE:-4}"
+    DEFAULT_DOUBLE_HOIST_BABY_TILE=4
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+        DEFAULT_DOUBLE_HOIST_BABY_TILE=15
+    fi
+    export POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE="${POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE:-${DEFAULT_DOUBLE_HOIST_BABY_TILE}}"
     export POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB="${POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB:-1024}"
     export POSEIDON_BOOTSTRAP_LOG_Q="${POSEIDON_BOOTSTRAP_LOG_Q:-32}"
     export POSEIDON_BOOTSTRAP_LOG_P="${POSEIDON_BOOTSTRAP_LOG_P:-32}"
@@ -92,9 +89,59 @@ elif [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
     export POSEIDON_BOOTSTRAP_ITERATIONS="${POSEIDON_BOOTSTRAP_ITERATIONS:-1}"
     export POSEIDON_BOOTSTRAP_FULL_WARMUP="${POSEIDON_BOOTSTRAP_FULL_WARMUP:-1}"
     export POSEIDON_BOOTSTRAP_FULL_ITERATIONS="${POSEIDON_BOOTSTRAP_FULL_ITERATIONS:-1}"
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ]]; then
+        # Strict multi-GPU reference baseline: native degree-30 cosine fit,
+        # three double-angle steps, and no cross-rotation hoist/QP reuse.
+        # K=16 is required for the intended 2*K-1 degree-30 interpolation.
+        export POSEIDON_GPU_LINEAR_TRANSFORM_MODE=no_hoist
+        export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE=30
+        export POSEIDON_BOOTSTRAP_EVALMOD_GENERATION_DEGREE=30
+        unset POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE
+        unset POSEIDON_BOOTSTRAP_EVALMOD_FIXED_DEGREE_REFIT
+        export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE=3
+        export POSEIDON_BOOTSTRAP_EVALMOD_K=16
+    elif [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ]]; then
+        export POSEIDON_BOOTSTRAP_SLIM_STC_EVALMOD_PROBE=1
+        export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE=59
+        export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE=2
+    elif [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
+            "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+            "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+        export POSEIDON_BOOTSTRAP_SLIM_STC_EVALMOD_PROBE=1
+        export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE=22
+        if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+            # Independent coefficient-source experiment: generate the native
+            # discrete-cosine approximation at degree 22 directly. The two
+            # existing slim22 profiles keep the degree-59 truncation baseline.
+            export POSEIDON_BOOTSTRAP_EVALMOD_GENERATION_DEGREE=22
+            export POSEIDON_BOOTSTRAP_EVALMOD_FIXED_DEGREE_REFIT=1
+            unset POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE
+        else
+            export POSEIDON_BOOTSTRAP_EVALMOD_GENERATION_DEGREE=59
+            export POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE=22
+        fi
+        export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE=3
+        # A degree-22 polynomial needs only degree-3 baby bases. Keep this
+        # choice local to the named experiment; production and degree-59
+        # profiles retain their existing automatic split.
+        export POSEIDON_EVALMOD_LOG_SPLIT="${POSEIDON_EVALMOD_LOG_SPLIT:-2}"
+        # T32 is not consumed by the degree-22, baby-4 polynomial DAG. Retain
+        # only its virtual q-count transition for dynamic level planning.
+        export POSEIDON_EVALMOD_VIRTUAL_DEGREE_BOUND="${POSEIDON_EVALMOD_VIRTUAL_DEGREE_BOUND:-1}"
+        if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+              "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+            export POSEIDON_BOOTSTRAP_SLIM_C2S_5433=1
+            # Normalized post-ModRaise chain selected for the independent
+            # [5,4,3,3] C2S experiment. It trades about 1.7 ms against the
+            # historical fastest chain for one additional usable output Q
+            # limb: C2S 34->28, EvalMod 28->13, final scale about 2^45.
+            # An explicit environment value still overrides this default.
+            export POSEIDON_BOOTSTRAP_Q_BIT_CHAIN="${POSEIDON_BOOTSTRAP_Q_BIT_CHAIN:-32,32,32,32,32,32,32,32,32,32,32,32,28,30,31,31,32,32,30,31,32,31,32,32,31,31,31,32,22,31,32,32,32,30}"
+        fi
+    fi
 elif [[ "${POSEIDON_BOOTSTRAP_PROFILE}" != "legacy" ]]; then
     echo "Unknown POSEIDON_BOOTSTRAP_PROFILE=${POSEIDON_BOOTSTRAP_PROFILE}" >&2
-    echo "Supported profiles: resnet50, dynamic32, dual30, legacy" >&2
+    echo "Supported profiles: dynamic32, dual30, evalmod30_da3_no_hoist, slim59_da2, slim22_da3, slim22_da3_c2s5433, slim22_direct_da3_c2s5433, legacy" >&2
     exit 2
 fi
 export POSEIDON_KEYSWITCH_FOURSTEP_ALL_NTT
@@ -112,6 +159,17 @@ export POSEIDON_DOUBLE_HOIST_P9_QP_FOURSTEP
 export POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_FOURSTEP
 export POSEIDON_DOUBLE_HOIST_QP_MAC_GROUP_TILED_8
 export POSEIDON_DOUBLE_HOIST_QP_MAC_COMPONENT_FUSED
+export POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT
+export POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_C0
+export POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC
+export POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE
+export POSEIDON_DOUBLE_HOIST_DIRECT_GIANT_ACCUMULATE
+export POSEIDON_DOUBLE_HOIST_BATCHED_GIANT_INTT
+export POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE
+export POSEIDON_EVALMOD_LAZY_RELIN
+export POSEIDON_EVALMOD_D2D_FREE_DATAFLOW
+export POSEIDON_EVALMOD_ZERO_COPY_MODDROP
+export POSEIDON_EVALMOD_Q_PREFIX_VIEWS
 export POSEIDON_NTT_ALGO
 
 if [[ -z "${CMAKE_BIN}" ]]; then
@@ -186,4 +244,111 @@ fi
 
 echo "=== Run GPU high-precision bootstrap correctness + timing comparison ==="
 echo "Bootstrap profile: ${POSEIDON_BOOTSTRAP_PROFILE}"
+if [[ -n "${POSEIDON_EVALMOD_LOG_SPLIT:-}" ]]; then
+    echo "[WARN] Experimental EvalMod split: log_split=${POSEIDON_EVALMOD_LOG_SPLIT}, baby_width=$((1 << POSEIDON_EVALMOD_LOG_SPLIT))"
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+        echo "       baby_width=4 is the named slim22_da3 default; an explicit value can override it for A/B experiments."
+    else
+        echo "       Unset POSEIDON_EVALMOD_LOG_SPLIT to restore the automatic/default split."
+    fi
+fi
+if [[ "${POSEIDON_EVALMOD_FLAT_BSGS_B8:-0}" != "0" ]]; then
+    echo "[WARN] Experimental EvalMod layout: flat_b8 (L0 + L1*T8 + ... + L7*T56)"
+    echo "       Unset POSEIDON_EVALMOD_FLAT_BSGS_B8 to restore recursive Chebyshev BSGS."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_SLIM_STC_FIRST_PROBE:-0}" != "0" ]]; then
+    echo "[WARN] Experimental slim StC-first phase-1 probe: low-level StC only."
+    echo "       The production bootstrap schedule is unchanged; unset POSEIDON_BOOTSTRAP_SLIM_STC_FIRST_PROBE to run it."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_SLIM_STC_MODRAISE_PROBE:-0}" != "0" ]]; then
+    echo "[WARN] Experimental slim StC-first phase-2 probe: low-level StC followed by ModRaise."
+    echo "       The production bootstrap schedule is unchanged; unset POSEIDON_BOOTSTRAP_SLIM_STC_MODRAISE_PROBE to run it."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_SLIM_STC_C2S_PROBE:-0}" != "0" ]]; then
+    echo "[WARN] Experimental slim StC-first phase-3 probe: low-level StC, ModRaise, then C2S."
+    echo "       The production bootstrap schedule is unchanged; unset POSEIDON_BOOTSTRAP_SLIM_STC_C2S_PROBE to run it."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_SLIM_STC_EVALMOD_PROBE:-0}" != "0" ]]; then
+    echo "[WARN] Experimental slim StC-first phase-4 probe: full StC, ModRaise, C2S, EvalMod schedule."
+    echo "       Active message_ratio=${POSEIDON_BOOTSTRAP_MESSAGE_RATIO}; the dynamic32 profile keeps the production default at 32."
+    echo "       The production bootstrap schedule is unchanged; unset POSEIDON_BOOTSTRAP_SLIM_STC_EVALMOD_PROBE to run it."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+    echo "[WARN] Named StC-first profile ${POSEIDON_BOOTSTRAP_PROFILE}: degree=${POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE}, double_angle=${POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE}."
+    echo "       slim22_da3_c2s5433 is the script default; dynamic32 remains available as the production profile."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ]]; then
+    echo "[WARN] Strict no-hoist degree-30 profile enabled: degree=30, K=16, double_angle=3."
+    echo "       CtS/StC use ordinary per-rotation KeySwitch and materialized Q-ciphertext task boundaries; shared hoisted QP state is forbidden."
+    echo "       This is an opt-in multi-GPU reference path and does not change the default optimized Double-Hoist profile."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+        echo "       Direct coefficient experiment: refit the phase-correct base cosine at exact degree=${POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE} without truncation."
+        echo "       This is an independent coefficient-source path, not yet a Remez implementation."
+    else
+        echo "       slim22_da3 is a Chebyshev truncation experiment: generate degree=${POSEIDON_BOOTSTRAP_EVALMOD_GENERATION_DEGREE}, then retain T0..T${POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE}."
+    fi
+    echo "       Its default polynomial split is baby_width=4."
+    echo "       Degree-22 lazy relinearization is enabled when graph-level/scale eligibility checks pass."
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
+        echo "       C2S uses independent [5,4,3,3] fused-layer groups; the two 3-layer matrices use a direct single-giant-group plan."
+        echo "       Normalized Q chain is the profile default: C2S 34->28, EvalMod 28->13, final scale approximately 2^45."
+        echo "       This keeps one more usable output Q limb than the former 34->12 chain; set POSEIDON_BOOTSTRAP_Q_BIT_CHAIN explicitly for A/B experiments."
+    fi
+    if [[ "${POSEIDON_EVALMOD_VIRTUAL_DEGREE_BOUND}" != "0" ]]; then
+        echo "       The unused T32 degree-bound basis is planning-only and is not executed on GPU."
+    else
+        echo "       Diagnostic override: build the legacy T32 setup plan; final liveness pruning still removes it from GPU execution."
+    fi
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" != "slim22_direct_da3_c2s5433" ]]; then
+        echo "       It is not a degree-22 Remez refit; poor approximation accuracy is expected and remains a test failure."
+    fi
+fi
+if [[ "${POSEIDON_BOOTSTRAP_PLAINTEXT_COMPRESSION_PROBE:-0}" != "0" ]]; then
+    echo "[WARN] Experimental WHET plaintext-compression probe: build compact QP device storage and verify it bit-for-bit."
+    echo "       Compressed plaintexts are not consumed by a compute kernel in this probe."
+fi
+if [[ "${POSEIDON_BOOTSTRAP_COMPRESSED_QP_MAC_PROBE:-0}" != "0" ]]; then
+    echo "[WARN] Experimental compact-QP MAC A/B probe: full and compressed plaintext paths both run."
+    echo "       The default bootstrap path is unchanged; Q/P MAC residues and CtS/StC outputs must be bit-exact."
+fi
+if [[ "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "no_hoist" ||
+      "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "no_hoist_bsgs" ]]; then
+    echo "[WARN] Strict no-hoist BSGS linear transforms are enabled."
+    echo "       Every rotation performs an independent KeySwitch and returns an ordinary Q ciphertext; no QP state is shared."
+    echo "       The in-process reference executor is sequential until the multi-GPU frontend lowers the exposed task graph."
+elif [[ "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "loose_coupled" ||
+        "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "loose_coupled_bsgs" ]]; then
+    echo "[WARN] Opt-in loose-coupled BSGS linear transforms are enabled."
+    echo "       Every schedulable boundary is an ordinary Q ciphertext; no lifted-QP state is shared across rotations or giant groups."
+    echo "       The in-process reference executor is still sequential until the multi-GPU frontend lowers the exposed task graph."
+fi
+if [[ "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "double_hoist" ]]; then
+    echo "[WARN] Double-Hoist QP-MAC defaults: direct accumulator initialization=${POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT}, dnum=1 baby tile=${POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE}."
+    echo "       Global baby tile=${POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE}; [5,4,3,3] C2S profiles default to full-baby tile 15, while other profiles retain tile 4."
+    echo "       Set POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT=0 and POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE=0 to restore zero-fill and the global baby-tile setting."
+    echo "       dnum=1 baby KeySwitch+c0 fusion=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_C0}; set it to 0 to restore the separate c0 kernel."
+    echo "[WARN] Fused baby KeySwitch+plaintext MAC=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC}."
+    echo "       Eligible N=65536 inverse-pre-rotated plans bypass materialized baby QP ciphertexts; set it to 0 for the legacy dataflow."
+    echo "       Fused baby block size=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE}; supported A/B values are 64, 128, and 256 threads."
+    echo "       N=65536 giant-source batched INTT=${POSEIDON_DOUBLE_HOIST_BATCHED_GIANT_INTT}; set it to 0 to restore per-group INTT launches."
+fi
+echo "[WARN] EvalMod D2D-free leaf dataflow=${POSEIDON_EVALMOD_D2D_FREE_DATAFLOW}."
+echo "       Dynamic leaves accumulate up to four basis/plaintext products directly at the target Q prefix; constants and eligible scale corrections update c0 in place."
+echo "       Set POSEIDON_EVALMOD_D2D_FREE_DATAFLOW=0 to restore materialized leaf terms and synchronous D2D copies for A/B testing."
+echo "[WARN] EvalMod last-use zero-copy ModDrop=${POSEIDON_EVALMOD_ZERO_COPY_MODDROP}."
+echo "       Eligible BSGS combine temporaries shorten their logical Q-prefix view in place instead of materializing it with synchronous D2D copies."
+echo "       Set POSEIDON_EVALMOD_ZERO_COPY_MODDROP=0 to restore copied Q-prefix materialization for A/B testing."
+echo "[WARN] EvalMod shared-operand Q-prefix views=${POSEIDON_EVALMOD_Q_PREFIX_VIEWS}."
+echo "       Eligible basis/combine multiplies read a shared high-level ciphertext through a lower-Q const view without materializing the prefix."
+echo "       Set POSEIDON_EVALMOD_Q_PREFIX_VIEWS=0 to restore shared-operand ModDrop copies for A/B testing."
 "${TEST_BIN}"

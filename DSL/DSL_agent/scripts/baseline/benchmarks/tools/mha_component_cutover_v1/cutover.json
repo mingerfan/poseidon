@@ -1,0 +1,150 @@
+{
+  "after": {
+    "application_capabilities.py": "f37e6a28dc71c5acc1cf3f9637e7c36cee19b1d05976376b12a8be1d4c87962f",
+    "program_execution.py": "de6b1c4a2e02987dc51f8e55d73ac874e0aeb101e13871df3d49df9c486deec4",
+    "pytorch_approximation.py": "2995e10e2ee76f81a2cde6f47df74a3871c200f2ce3727e570d7039242af782c",
+    "pytorch_mha_math.py": "cd0134232195e3509a24c5daec083cf1241566ccc41e7c6c6b2f8e4e8f8ed7c1",
+    "pytorch_mha_ordered_reference.py": "667dc6c55e84d60c4371f568d9b2a6c28ae856e66084d0e2b10cdceac0db1b78",
+    "pytorch_mha_source.py": "b683290bea8d52cc28b45ad9877d875bee0d87e390602de10bf3956fe357652b",
+    "pytorch_model_capture.py": "205f0aa88dbb33c2a26ed6197b8713e49cc8a0318dc15681b9e31f2ec9eb5abc",
+    "pytorch_model_intake.py": "f6964bf3b0ff15c4788e24c45f9466d661ff8d84ed4406ef19788830b0079423",
+    "pytorch_ordered_capture.py": "ed610c85dd3f13eecb5f2b317951858b8230c9c98d3146cb4472b5b8700c0b54",
+    "pytorch_ordered_contract.py": "fb3c667c9af642a0eaa3824c1252bf5792ce2db5f3ed6cb5b2bc98f0116a9959",
+    "pytorch_ordered_intake.py": "979ca7965a3fee05d89ecfb14041fb8f1764289df479531aec4968dcf7905826",
+    "pytorch_source_contract.py": "45188f571c0eb03378f93758b46af9f92b2e34c61e16474c162dc9c398b4dde8",
+    "pytorch_static_trace.py": "f69506d06322940de949932789f89f76f3879eea3ffe7e2fd2a7356122cfc176",
+    "replicated_cell_emitter.py": "05bd940ff616d2a84f621bf4dc1d5db32fd4c580b2e44434e6be4938fa54a8d5",
+    "unified_graph_lowering.py": "0d3adaebb17cdca684c31adea29f18f872a17b3099cc5ddf153ab0e2c9fac463",
+    "unified_layout_strategies.py": "c3ee3b2e2596585c85b9a6b395fce86604a13f3b7f7a4f89400eb1b4e09a4572",
+    "unified_mixed_layout.py": "e73d246d458e8ba3d643b149d00924b50b842d8bfe12dd8f60ea04ed2166dd91"
+  },
+  "backend_changed": false,
+  "before": {
+    "application_capabilities.py": {
+      "mode": 436,
+      "sha256": "355154d34c5fa8471fc4c06c8a3b99022d01b42192cef163c8459b901a1d05a4",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/application_capabilities.py"
+    },
+    "program_execution.py": {
+      "mode": 436,
+      "sha256": "365c5be16af990df9b4d7738a1d0e4bc781bea7db1970c203b040ab2373453d6",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/program_execution.py"
+    },
+    "pytorch_approximation.py": {
+      "mode": 436,
+      "sha256": "58e2cadf2af213d63d03ae869aebee16f5015a94ccda787e8694a73600f56e6d",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_approximation.py"
+    },
+    "pytorch_mha_math.py": null,
+    "pytorch_mha_ordered_reference.py": null,
+    "pytorch_mha_source.py": null,
+    "pytorch_model_capture.py": {
+      "mode": 436,
+      "sha256": "b7d02e6b7f7c9506d1b7dbab0ac0233df513471837b10c053302373b85669d1d",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_model_capture.py"
+    },
+    "pytorch_model_intake.py": {
+      "mode": 436,
+      "sha256": "f37a907fa517e7668f45b4d62bb8118cf718bc85415603b321dcb9b2ac928950",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_model_intake.py"
+    },
+    "pytorch_ordered_capture.py": {
+      "mode": 420,
+      "sha256": "87ef6b8ca87a7bfba9e183c1bdbb0f3a072266a91f2c12e90613b8ad4295d98d",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_ordered_capture.py"
+    },
+    "pytorch_ordered_contract.py": {
+      "mode": 420,
+      "sha256": "0cc987f0cc18e80a6d9c92ccea7962edfddd9cdd99c942dd6c6855409f58451f",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_ordered_contract.py"
+    },
+    "pytorch_ordered_intake.py": {
+      "mode": 420,
+      "sha256": "75fa1aee18c51d62855b157e3cc4857be4597fb8c84ba7c5b2f0f81bd4274b5e",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_ordered_intake.py"
+    },
+    "pytorch_source_contract.py": {
+      "mode": 436,
+      "sha256": "0ea1577c0a9d2940c9b0086eca810d0077980c4ca66b0cc22da446bd8d544cfb",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_source_contract.py"
+    },
+    "pytorch_static_trace.py": {
+      "mode": 436,
+      "sha256": "bf37763c36337bb9ff7090af5ba51fad59870039c3d812739d65bd674f502080",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/pytorch_static_trace.py"
+    },
+    "test_pytorch_source_contract.py": {
+      "mode": 436,
+      "sha256": "134316152536ee3f789ae5d314a84c4a21169637d9f9569c387647a8da1a8389",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/test_pytorch_source_contract.py"
+    },
+    "unified_graph_lowering.py": {
+      "mode": 436,
+      "sha256": "cabe897b7ce1ed5880ade9d19fcc8020c904648c7470a1e764e3f052f5a4ded3",
+      "snapshot": "scripts/baseline/benchmarks/tools/mha_component_cutover_v1/source-before/unified_graph_lowering.py"
+    }
+  },
+  "binding": "f17ba53276f5f88a1780a3914ecf2bbdb65d42f02f565f6c9b4d61152b3fc7da",
+  "branch": "lhy-agent-dsl",
+  "default_rule_strategy": "unchanged",
+  "format": "poseidon-mha-component-cutover-v1",
+  "parameters_changed": false,
+  "production_applied": true,
+  "provider_candidates_rewritten": false,
+  "source_formats": "V1-V15 policies preserved; V16 explicit",
+  "staged_source": {
+    "program_execution.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/program_execution.py",
+      "sha256": "de6b1c4a2e02987dc51f8e55d73ac874e0aeb101e13871df3d49df9c486deec4"
+    },
+    "pytorch_approximation.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_approximation.py",
+      "sha256": "2995e10e2ee76f81a2cde6f47df74a3871c200f2ce3727e570d7039242af782c"
+    },
+    "pytorch_mha_math.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_mha_math.py",
+      "sha256": "cd0134232195e3509a24c5daec083cf1241566ccc41e7c6c6b2f8e4e8f8ed7c1"
+    },
+    "pytorch_mha_ordered_reference.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_mha_ordered_reference.py",
+      "sha256": "667dc6c55e84d60c4371f568d9b2a6c28ae856e66084d0e2b10cdceac0db1b78"
+    },
+    "pytorch_mha_source.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_mha_source.py",
+      "sha256": "b683290bea8d52cc28b45ad9877d875bee0d87e390602de10bf3956fe357652b"
+    },
+    "pytorch_model_capture.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_model_capture.py",
+      "sha256": "205f0aa88dbb33c2a26ed6197b8713e49cc8a0318dc15681b9e31f2ec9eb5abc"
+    },
+    "pytorch_model_intake.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_model_intake.py",
+      "sha256": "f6964bf3b0ff15c4788e24c45f9466d661ff8d84ed4406ef19788830b0079423"
+    },
+    "pytorch_ordered_capture.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_ordered_capture.py",
+      "sha256": "ed610c85dd3f13eecb5f2b317951858b8230c9c98d3146cb4472b5b8700c0b54"
+    },
+    "pytorch_ordered_contract.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_ordered_contract.py",
+      "sha256": "fb3c667c9af642a0eaa3824c1252bf5792ce2db5f3ed6cb5b2bc98f0116a9959"
+    },
+    "pytorch_ordered_intake.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_ordered_intake.py",
+      "sha256": "979ca7965a3fee05d89ecfb14041fb8f1764289df479531aec4968dcf7905826"
+    },
+    "pytorch_source_contract.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_source_contract.py",
+      "sha256": "45188f571c0eb03378f93758b46af9f92b2e34c61e16474c162dc9c398b4dde8"
+    },
+    "pytorch_static_trace.py": {
+      "path": "scripts/baseline/benchmarks/tools/staged_mha_ordered_graph_v1/overlay/pytorch_static_trace.py",
+      "sha256": "f69506d06322940de949932789f89f76f3879eea3ffe7e2fd2a7356122cfc176"
+    }
+  },
+  "tests": {
+    "test_pytorch_mha_component.py": "460d43780d27881336416aea99569e38f76fe4278bc16daf459baaad8aa660c9",
+    "test_pytorch_source_contract.py": "1448cf8062af6c1bb0d79fba58e81d18e6c60fb85d5ef19b967cb222aa91fc22",
+    "test_unified_mixed_layout.py": "494e68e6f05920a540687cd46266202f794ff95738a1945b3fea02425d5f3939"
+  }
+}

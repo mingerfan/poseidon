@@ -1,0 +1,17 @@
+{
+  "source_binary": "/home/xuming/poseidon-runtime-io-20261010/full-qwen-binary-corrected-20261011/qwen24.v3.plan.bin",
+  "source_bytes": 1469778349,
+  "packed_bundle": "/home/xuming/poseidon-runtime-io-20261010/artifacts/gpu4/qwen24._hecate_qwen25_24layer.packed.bundle",
+  "operator_spec": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/profiles/operator-spec.json",
+  "source": "existing checked binary, no full JSON conversion or Qwen recompilation",
+  "threads": [
+    1,
+    4,
+    8
+  ],
+  "runs_4_and_8": 3,
+  "cache_condition": "shared server, no cache eviction",
+  "whole_file_hashing": false,
+  "blob_payload_hashing": false,
+  "address_space_limit_bytes": 34359738368
+}

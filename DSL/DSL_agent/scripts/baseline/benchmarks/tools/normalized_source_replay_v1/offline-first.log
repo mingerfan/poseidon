@@ -1,0 +1,104 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-v4yyijbk
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_expression__identity_1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xx0ozv8r
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_expression__float32", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-rwpz_3g1
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_expression__unused", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-g_yiflyc
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_expression__identity_0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-nzh5p1t2
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f32_to_f64_c0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xseqeagq
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f64_to_f32_c0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0oemj7lw
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f64_roundtrip_c0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jpssd97c
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f32_to_f64_c1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-svmn5ajh
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f64_to_f32_c1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-vs07n72e
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f64_roundtrip_c1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-nd2lb9z5
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f32_to_f64_c2", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b96owlc5
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f64_to_f32_c2", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1bjdxjq2
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__f64_roundtrip_c2", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-3rnb9lyz
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i32_to_f64_c0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jfvy6kw2
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i64_to_f32_c0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kawu22sv
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i64_to_f64_c0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-k5jagyl_
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i32_to_f64_c1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-twccc91w
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i64_to_f32_c1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cf49a0fz
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i64_to_f64_c1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-g34kydyv
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i32_to_f64_c2", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-zuzl3p6r
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i64_to_f32_c2", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ibnkxhz8
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__i64_to_f64_c2", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-aymdca8e
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__bool_to_f64_c0", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-rlfmvr6n
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__bool_to_f64_c1", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ccuyqs39
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "public_dtype__bool_to_f64_c2", "status": "passed", "new_agent_generation": false, "paid_generations": 0, "http_attempts": 0}

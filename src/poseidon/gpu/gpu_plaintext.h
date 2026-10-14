@@ -93,5 +93,37 @@ public:
         std::size_t p_count = 0);
 };
 
+/**
+ * Exact WHET-style periodic representation of one QP plaintext in NTT order.
+ *
+ * For period < degree and a full coefficient index j, the compact index is
+ * reverse_bits(j, log2(degree)) & (period - 1). An uncompressible plaintext
+ * (period == degree) stays in ordinary NTT order to preserve coalesced reads.
+ * Residues are stored in [Q|P][period] order. No quantization or
+ * floating-point compression is involved.
+ */
+struct GpuCompressedPlaintextQP
+{
+    GpuPlaintextMeta meta;
+    std::size_t period = 0;
+    DeviceVector<GpuWord> residues;
+    bool exact_device_reconstruction = false;
+
+    std::size_t limb_count() const noexcept
+    {
+        return meta.q_count + meta.p_count;
+    }
+
+    std::size_t full_word_count() const noexcept
+    {
+        return limb_count() * meta.degree;
+    }
+
+    std::size_t compact_word_count() const noexcept
+    {
+        return limb_count() * period;
+    }
+};
+
 }  // namespace gpu
 }  // namespace poseidon

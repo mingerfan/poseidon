@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "layer": "offline_proposal_public_projection",
+  "code": "Public_weight_projected_registry",
+  "api_calls": 0,
+  "request_files_written": 0,
+  "source_sha256": "db067755f78258cfab34fbcb00979de569a6689967c4cfc3130fd879f1d5a29b"
+}

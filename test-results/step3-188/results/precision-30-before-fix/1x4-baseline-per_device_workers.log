@@ -1,0 +1,13 @@
+NCCL version 2.20.5+cuda12.4
+FAIL MPI GPU RuntimePlan: world=1 device_counts=4 cross_rank_transfers=0 max_abs_error=0.000166754
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[65197,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------

@@ -1,0 +1,45 @@
+--- /home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/before/pytorch_public_value_ops.py	2026-10-11 06:20:15.883347086 +0000
++++ /home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_value_ops.py	2026-10-11 06:22:00.389068171 +0000
+@@ -6,7 +6,8 @@
+ 
+ POLICY="poseidon-public-value-expressions-v1"
+ CAST_POLICY="poseidon-public-value-expressions-v2"
+-POLICIES=frozenset((POLICY,CAST_POLICY))
++ARITHMETIC_POLICY="poseidon-public-value-expressions-v3"
++POLICIES=frozenset((POLICY,CAST_POLICY,ARITHMETIC_POLICY))
+ 
+ def checked_policy(value):
+     require(type(value)is str and value in POLICIES,"public_expression_policy")
+@@ -53,7 +54,7 @@
+ def evaluate(value,operation,attributes,*,resource_profile="general-tensors-v1",policy=POLICY):
+     limits=resolve(resource_profile);value=checked_array(value,resource_profile=resource_profile)
+     policy=checked_policy(policy)
+-    operations=OPERATIONS|{"dtype_cast"} if policy==CAST_POLICY else OPERATIONS
++    operations=OPERATIONS|{"dtype_cast"} if policy in(CAST_POLICY,ARITHMETIC_POLICY) else OPERATIONS
+     require(type(operation)is str and operation in operations and type(attributes)is dict and all(type(k)is str for k in attributes),"public_expression_operation")
+     if operation=="reshape":
+         require(set(attributes)=={"shape"},"public_expression_attributes")
+@@ -79,7 +80,7 @@
+                 selectors.append(slice(selector["start"],selector["stop"],selector["step"]))
+         result=np.asarray(value[tuple(selectors)])
+     elif operation=="dtype_cast":
+-        require(policy==CAST_POLICY and set(attributes)=={"dtype"} and
++        require(policy in(CAST_POLICY,ARITHMETIC_POLICY) and set(attributes)=={"dtype"} and
+                 type(attributes["dtype"])is str and attributes["dtype"]in("<f4","<f8"),
+                 "public_expression_dtype_cast")
+         # Explicit public casting follows IEEE rounding; the original array stays bound.
+@@ -188,12 +189,12 @@
+         return "slice",dict(selectors=selectors)
+     if kind=="call_method"and target in("float","double"):
+         require(not tail and not kwargs,"public_expression_arguments")
+-        return ("dtype_cast"if policy==CAST_POLICY else"bool_cast"),dict(dtype="<f4"if target=="float"else"<f8")
++        return ("dtype_cast"if policy in(CAST_POLICY,ARITHMETIC_POLICY) else"bool_cast"),dict(dtype="<f4"if target=="float"else"<f8")
+     if kind=="call_method"and target=="to":
+         require((len(tail)==1 and not kwargs)or(not tail and set(kwargs)=={"dtype"}),"public_expression_cast_arguments")
+         dtype=tail[0]if tail else kwargs["dtype"]
+         require(type(dtype)is str and dtype in("torch.float32","torch.float64"),"public_expression_cast_dtype")
+-        return ("dtype_cast"if policy==CAST_POLICY else"bool_cast"),dict(dtype="<f4"if dtype=="torch.float32"else"<f8")
++        return ("dtype_cast"if policy in(CAST_POLICY,ARITHMETIC_POLICY) else"bool_cast"),dict(dtype="<f4"if dtype=="torch.float32"else"<f8")
+     raise ValueError("public_expression_operation_not_registered")
+ 
+ def plan(value,kind,target,args,kwargs,*,resource_profile="general-tensors-v1",policy=POLICY):

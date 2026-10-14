@@ -1,0 +1,76 @@
+{
+  "approximations": {
+    "defaults": {
+      "gelu": {
+        "basis": "power",
+        "coefficients": [
+          0.0,
+          0.5,
+          0.3989422804014327
+        ],
+        "domain": [
+          -4.0,
+          4.0
+        ],
+        "method": "polynomial"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "convert-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [
+      "float32_gelu_projection"
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "8c135fa6a51814adac6245d50b5d61691c3b8c03fcb22de7cc1e9cefefe7e5bc"
+  },
+  "format": "poseidon-trusted-pytorch-v21",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        3
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ],
+  "weights": {
+    "proj.bias": {
+      "bytes": 136,
+      "dtype": "<f4",
+      "file": "state_0000.npy",
+      "sha256": "9f21987e710fb3ea77fc000ea881081d66ae2807f902ada71bda0cb89daaf3a7",
+      "shape": [
+        2
+      ]
+    },
+    "proj.weight": {
+      "bytes": 152,
+      "dtype": "<f4",
+      "file": "state_0001.npy",
+      "sha256": "155adfa99f87f3cdb633e8dbf9f23d539b811ff4d9d5e9044917fe45d865a03e",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    "std": {
+      "bytes": 140,
+      "dtype": "<f4",
+      "file": "state_0002.npy",
+      "sha256": "82c42f6575495aa0503ccb113ac18e0560e5dd774abe5e2ee8615f07c020d4c2",
+      "shape": [
+        3
+      ]
+    }
+  }
+}

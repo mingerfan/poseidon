@@ -1,0 +1,57 @@
+{
+  "api_calls": 0,
+  "binding": "38bf511acbfbf9ff759a77efbcdd7cc4d55fe0b93fcaa5808181051b456f6212",
+  "cases": [
+    {
+      "id": "nested_cat",
+      "inputs_unchanged": true,
+      "parent_case": "mixed_cat_0",
+      "production_cli_used": false,
+      "reference_equivalence": "not_executed_yet",
+      "source_files": {
+        "blocks/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "blocks/ops.py": "0a709cca347dc9391d5e67f48a564457f22cfc5cdbc3d210f38e0b9cb361d8e9",
+        "model.py": "76c558ce99afbc46b00e33d31add90fec073ccead85a3a62a22ae45d97092d6a"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_cli_profile_v1/cases/nested_cat/manifest.json",
+      "source_manifest_sha256": "a0d1373e59a98b5ee945dcd0deacfab5abda517414ec9e61fa30bac6772a7e40",
+      "weights_unchanged": true
+    },
+    {
+      "id": "nested_scalar_stack",
+      "inputs_unchanged": true,
+      "parent_case": "mixed_stack_2",
+      "production_cli_used": false,
+      "reference_equivalence": "not_executed_yet",
+      "source_files": {
+        "blocks/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "blocks/ops.py": "2218deb0d5d935c8f24384d3b363f80f14149b5ad9d3dd6da324d889aaf39aed",
+        "model.py": "f4ebf5d8cf698e92f1dbeaadca72e4818b5d35fbec3930df1f84b96d3a8b0c96"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_cli_profile_v1/cases/nested_scalar_stack/manifest.json",
+      "source_manifest_sha256": "e48f7235b17f62d6be1e9c159b7e8bdf7e7c532fb957afcfb118f2e4ce7d16ad",
+      "weights_unchanged": true
+    },
+    {
+      "id": "nested_linear_residual",
+      "inputs_unchanged": true,
+      "parent_case": "combination_1",
+      "production_cli_used": false,
+      "reference_equivalence": "not_executed_yet",
+      "source_files": {
+        "blocks/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "blocks/ops.py": "b4315873629956fa1624750e37f1f9b00b76b3afa0effcb58a5323ceeadcba9e",
+        "model.py": "fe98011f7b5f7270e5b464da21d42ce084e4cc8cd9a4b15ff7d0f1a6dabd8a4c"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_cli_profile_v1/cases/nested_linear_residual/manifest.json",
+      "source_manifest_sha256": "3a2541862fe55924461f8742a75cffb4194a16fe95d93329baa64f36500d8862",
+      "weights_unchanged": true
+    }
+  ],
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-source-cli-fixtures-v1",
+  "production_modified": false,
+  "source_capture_calls": 0,
+  "status": "draft_manifest_prepared"
+}

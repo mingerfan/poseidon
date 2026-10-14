@@ -1,0 +1,1 @@
+{"constants":{"gain":[0.75,1.25]},"format":"poseidon-operator-graph-v1","id":"rms_pair","inputs":[{"name":"x","shape":[2]}],"nodes":[{"attrs":{"approximation":{"domain":[0.1,4.0],"iterations":2,"method":"newton"},"eps":0.2},"id":"normalize","inputs":["x","gain"],"op":"rms_norm","outputs":["z"]}],"outputs":[{"name":"result","value":"z"}]}

@@ -1,0 +1,27 @@
+test_argument_item_capacity (test_public_flow.Controls) ... ok
+test_boolean_dtype_spellings (test_public_flow.Controls) ... ok
+test_chain_and_original_source_immutable (test_public_flow.Controls) ... ok
+test_derived_payload_and_record_binding (test_public_flow.Controls) ... ok
+test_device_move_is_rejected (test_public_flow.Controls) ... ok
+test_encrypted_graph_is_unchanged (test_public_flow.Controls) ... ok
+test_five_partitions_three_distinct_contexts (test_public_flow.Controls) ... ok
+test_inventory_dependency_and_op_tamper (test_public_flow.Controls) ... ok
+test_keyword_and_method_aliases (test_public_flow.Controls) ... ok
+test_materialized_name_collision (test_public_flow.Controls) ... ok
+test_mutation_and_unregistered_public_compute_rejected (test_public_flow.Controls) ... ok
+test_named_output_and_declaration_order (test_public_flow.Controls) ... ok
+test_original_unused_weights_preserved (test_public_flow.Controls) ... ok
+test_public_dynamic_metadata_rejected (test_public_flow.Controls) ... ok
+test_recursive_argument_capacity (test_public_flow.Controls) ... ok
+test_repeated_folding_deterministic (test_public_flow.Controls) ... ok
+test_type_guard_before_array_attribute_access (test_public_flow.Controls) ... ok
+test_undeclared_attribute_rejected (test_public_flow.Controls) ... ok
+test_unused_public_transform_is_retained_in_proof_and_removed_from_fx (test_public_flow.Controls) ... ok
+test_wrong_profile_rejected (test_public_flow.Controls) ... ok
+test_wrong_source_inventory_even_when_self_rehashed (test_public_flow.Controls) ... ok
+test_wrong_state_authority (test_public_flow.Controls) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.082s
+
+OK

@@ -1,0 +1,8 @@
+{
+  "source_hashes": {
+    "source_ops_draft.py": "24afa3568b962744ad2eaa0653bbfd8d6eca994b202df7aa90dedeac46fdc708",
+    "test_source_ops_draft.py": "58e03859921ddbfbfa1ac3cea1b11b9f979138efc861d1e711eaaef4974b77f5",
+    "audit.py": "e191c99bdc8e287f3b54604354c776c929874925b2206849159a995078514ae6"
+  },
+  "failed_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-source-ops-draft-r1052/units-result.json"
+}

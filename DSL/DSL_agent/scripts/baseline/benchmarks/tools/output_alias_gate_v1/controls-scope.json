@@ -1,0 +1,12 @@
+{
+  "format": "poseidon-output-binding-scope-controls-v1",
+  "status": "passed",
+  "tests": 12,
+  "failed": 0,
+  "skipped": 0,
+  "log_sha256": "0a6ec5353f54859475e54e3c464289bcc1a3fb35096affcde6e7e1a45ec84ced",
+  "test_sha256": "0062fe690ce8cca731b148765c449059f7fe0305404ddd68be1c2268cd1448c9",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "http_attempts": 0
+}

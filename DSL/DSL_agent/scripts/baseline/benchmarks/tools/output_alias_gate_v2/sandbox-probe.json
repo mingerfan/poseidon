@@ -1,0 +1,14 @@
+{
+  "format": "poseidon-output-binding-real-sandbox-probe-v1",
+  "status": "passed",
+  "cases": 6,
+  "sandbox_calls": 1,
+  "source_trace_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "http_attempts": 0,
+  "readonly_explicit_modules": true,
+  "existing_network_isolation": true,
+  "existing_limits": true,
+  "log_sha256": "19646337e9ae3e9116bf206aa69d5f468775ca9538dfef90cd588c25e5d601aa"
+}

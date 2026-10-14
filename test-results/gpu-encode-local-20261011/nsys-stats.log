@@ -1,0 +1,5 @@
+Generating SQLite file build-runtime-gpu-api-release/encode-profile.sqlite from build-runtime-gpu-api-release/encode-profile.nsys-rep
+Processing [build-runtime-gpu-api-release/encode-profile.sqlite] with [/usr/lib/nsight-systems/target-linux-x64/reports/cuda_gpu_kern_sum.py] to [test-results/gpu-encode-local-20261011/profile_cuda_gpu_kern_sum.csv]... PROCESSED
+
+Processing [build-runtime-gpu-api-release/encode-profile.sqlite] with [/usr/lib/nsight-systems/target-linux-x64/reports/cuda_api_sum.py] to [test-results/gpu-encode-local-20261011/profile_cuda_api_sum.csv]... PROCESSED
+

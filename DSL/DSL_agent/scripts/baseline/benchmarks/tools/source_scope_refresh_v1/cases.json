@@ -1,0 +1,254 @@
+[
+  {
+    "group": "einsum",
+    "id": "einsum_matrix",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_matrix/manifest.json",
+    "source_manifest_sha256": "2aebab7419d7dc1eca8b8fe9b335a61b3437fbf96b49d236636b60dceffcdf46"
+  },
+  {
+    "group": "einsum",
+    "id": "einsum_heads",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_heads/manifest.json",
+    "source_manifest_sha256": "238ca08d4ece042c15e9da8ab0ef86be6d8247c12e0cd9098266919285651691"
+  },
+  {
+    "group": "einsum",
+    "id": "einsum_contraction_broadcast",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_contraction_broadcast/manifest.json",
+    "source_manifest_sha256": "884547080776b49256d3254353ba4d8b3f711a38eb7321a793c90a4541b9bcdf"
+  },
+  {
+    "group": "einsum",
+    "id": "einsum_three",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_three/manifest.json",
+    "source_manifest_sha256": "7587a0feee967b2f56e3c5929b462880833448f8fa9830b8c8b5957580e92133"
+  },
+  {
+    "group": "einsum",
+    "id": "einsum_four",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_four/manifest.json",
+    "source_manifest_sha256": "5e3ccdf03a3f73404fd38b40fbafc7ad564a95ec08fd43b50a6f897638ab6735"
+  },
+  {
+    "group": "einsum",
+    "id": "einsum_public_weight",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_public_weight/manifest.json",
+    "source_manifest_sha256": "a5cabbf2d834c02fd87490b822e3812bea796a25544c8bb8a83cac36b13edcf9"
+  },
+  {
+    "group": "einsum",
+    "id": "einsum_view_mutation",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_view_mutation/manifest.json",
+    "source_manifest_sha256": "199447fe65a9e33168e40923e08aa128dd1a5ae3129384fd7713f5c677e1f306"
+  },
+  {
+    "group": "einsum",
+    "id": "einsum_partition_composition",
+    "source_format": "poseidon-trusted-pytorch-v18",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_input_v1/fixtures/einsum_partition_composition/manifest.json",
+    "source_manifest_sha256": "6bc35e20441d0930050b2c7c41daa440e6972b55b10c139e3597fffdf765ad84"
+  },
+  {
+    "group": "static_partition",
+    "id": "chunk_branches",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/chunk_branches/manifest.json",
+    "source_manifest_sha256": "59691bfb2daece617c84eb51fec7822b2369a204752bc6faa09bd5c13ad65fbc"
+  },
+  {
+    "group": "static_partition",
+    "id": "chunk_projection",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/chunk_projection/manifest.json",
+    "source_manifest_sha256": "60a9d8954b0e99b3658eb39202b8e2988cf438aa4aef3a9a23686bab0377ebcb"
+  },
+  {
+    "group": "static_partition",
+    "id": "chunk_public_weight",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/chunk_public_weight/manifest.json",
+    "source_manifest_sha256": "1f3977dad2a65262c3a5d82cdecda44c2a8e298e36a427e8f5cdbc744b486b81"
+  },
+  {
+    "group": "static_partition",
+    "id": "unbind_fusion",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/unbind_fusion/manifest.json",
+    "source_manifest_sha256": "c579d1e2d893a0ae108b85302ad2f955be45e00c8cfa695665c17ad357cdd10d"
+  },
+  {
+    "group": "static_partition",
+    "id": "unbind_mutation",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/unbind_mutation/manifest.json",
+    "source_manifest_sha256": "f14cf60cb523de62d0cb7d9776912335fec009811a9077e6e0706626b62157f6"
+  },
+  {
+    "group": "static_partition",
+    "id": "unbind_sequence",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/unbind_sequence/manifest.json",
+    "source_manifest_sha256": "c4508cf0a30d5e0bea73e445d9f48ae76529c7c7145378b015949bb3f93d2ead"
+  },
+  {
+    "group": "einsum_views",
+    "id": "diagonal_output_write",
+    "source_format": "poseidon-trusted-pytorch-v19",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/fixtures/diagonal_output_write/manifest.json",
+    "source_manifest_sha256": "acf47147089b74391e6ecfafb57a7d55da8dab37d520b7af83800d18467e57e4"
+  },
+  {
+    "group": "einsum_views",
+    "id": "diagonal_source_write",
+    "source_format": "poseidon-trusted-pytorch-v19",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/fixtures/diagonal_source_write/manifest.json",
+    "source_manifest_sha256": "e0f4b53e832afd5f5b8423e62cb8ab4a0df420556fb89f8a594eb15f52f6ecc4"
+  },
+  {
+    "group": "einsum_views",
+    "id": "diagonal_contraction",
+    "source_format": "poseidon-trusted-pytorch-v19",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/fixtures/diagonal_contraction/manifest.json",
+    "source_manifest_sha256": "907d3fd7f21f2dc6b66288a3b1ed82699d87174359844e16146a084bde51d688"
+  },
+  {
+    "group": "einsum_views",
+    "id": "trace_scalar_factor",
+    "source_format": "poseidon-trusted-pytorch-v19",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/fixtures/trace_scalar_factor/manifest.json",
+    "source_manifest_sha256": "bf0a5fffc5318f1433cbd57a71f22c6c12160de09ba7a2a5d2a6f78a22d52649"
+  },
+  {
+    "group": "einsum_views",
+    "id": "scalar_index_write",
+    "source_format": "poseidon-trusted-pytorch-v19",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/fixtures/scalar_index_write/manifest.json",
+    "source_manifest_sha256": "fbc816c00985979de9f88bbd9b93063b79af84de25649515af40f8b11cab4dd9"
+  },
+  {
+    "group": "einsum_views",
+    "id": "three_scalar_factors",
+    "source_format": "poseidon-trusted-pytorch-v19",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/fixtures/three_scalar_factors/manifest.json",
+    "source_manifest_sha256": "ded6ae0371820acb6e6d4907260a6336b5f43fcd63ed1e628f1ef273a661c1ab"
+  },
+  {
+    "group": "scalar_partition",
+    "id": "scalar_function_merge",
+    "source_format": "poseidon-trusted-pytorch-v20",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/fixtures/scalar_function_merge/manifest.json",
+    "source_manifest_sha256": "1a68f1068c50089d93ca032d033068d6699fe715a3bf5d04d8596fdc64d567ff"
+  },
+  {
+    "group": "scalar_partition",
+    "id": "scalar_shared_write",
+    "source_format": "poseidon-trusted-pytorch-v20",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/fixtures/scalar_shared_write/manifest.json",
+    "source_manifest_sha256": "4b53cda4aca564e2587e818b784d01b651b6476b2fdf8bcfe4e7d778c432f4df"
+  },
+  {
+    "group": "scalar_partition",
+    "id": "scalar_source_snapshot",
+    "source_format": "poseidon-trusted-pytorch-v20",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/fixtures/scalar_source_snapshot/manifest.json",
+    "source_manifest_sha256": "d003730e96c69b1036dd36025bd81b71b30edcc73a5c6d5149b0cda2a5de3cc9"
+  },
+  {
+    "group": "scalar_partition",
+    "id": "scalar_repeated_stack",
+    "source_format": "poseidon-trusted-pytorch-v20",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/fixtures/scalar_repeated_stack/manifest.json",
+    "source_manifest_sha256": "ddf8dfa3018c73ee22e53e628d249ac554d63f09697d42f8ee330a8dd3f9df6b"
+  },
+  {
+    "group": "scalar_partition",
+    "id": "scalar_singleton_view",
+    "source_format": "poseidon-trusted-pytorch-v20",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/fixtures/scalar_singleton_view/manifest.json",
+    "source_manifest_sha256": "d1f596de9aef52fcacfd586cc2cddc07e38eae021619a657c8be975f7814f80d"
+  },
+  {
+    "group": "scalar_partition",
+    "id": "scalar_public_weights",
+    "source_format": "poseidon-trusted-pytorch-v20",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/fixtures/scalar_public_weights/manifest.json",
+    "source_manifest_sha256": "3d490d969ec1eb98fe36045ea549b0dbb4d195d98f60f7ab55068b601f53f5e0"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "tensor_square_division",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/tensor_square_division/manifest.json",
+    "source_manifest_sha256": "47bc5247e49c1b148be7e289ae901dfd6bbf6fbc5a2a3316fdcdd6e1ef69e7a4"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "linear_fourth_power_division",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/linear_fourth_power_division/manifest.json",
+    "source_manifest_sha256": "e8b7aba311ba7d9c1cfdcef82f3328abf8cb397a10d67eda2ac4ebe324f67b8e"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "scalar_shared_power_division",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/scalar_shared_power_division/manifest.json",
+    "source_manifest_sha256": "1eb38c91ef43cae6c7df5b60990ff3166a2c0ab9f0d1267454f0090a300a6156"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "snapshot_fourth_power_division",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/snapshot_fourth_power_division/manifest.json",
+    "source_manifest_sha256": "3e0fdff8aa4150e5ded6f97b86645283559d98789fea68c44b556468f6bb942c"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "diagonal_square_division",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/diagonal_square_division/manifest.json",
+    "source_manifest_sha256": "bdffc4177baa0fcfe00850f47976fbdac671f0c5cf7cf5459a95b0d68cbf1e5a"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "public_buffer_division_square",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/public_buffer_division_square/manifest.json",
+    "source_manifest_sha256": "d940782708a0813f72d4ad9003895dafc41fa5b481c13c5c89628a0497638b73"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "method_power_shape_division",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/method_power_shape_division/manifest.json",
+    "source_manifest_sha256": "4e81d987f63ff459e4eeb219602831babb025e07c5ecd24239dc0b92b87a408e"
+  },
+  {
+    "group": "exact_arithmetic",
+    "id": "multi_input_power_division",
+    "source_format": "poseidon-trusted-pytorch-v21",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/arithmetic_source_v1/fixtures/multi_input_power_division/manifest.json",
+    "source_manifest_sha256": "0e62f9818f4cad3d200d5fa1e047c6a65385683bf594f02bd580a77f0e18c35a"
+  },
+  {
+    "group": "mha",
+    "id": "self_post_linear_residual__declared_shallow_v1",
+    "source_format": "poseidon-trusted-pytorch-v16",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/cases/trusted-pytorch-mha-v16/self_post_linear_residual__declared_shallow_v1/manifest.json",
+    "source_manifest_sha256": "24a89b13aeefc6ac3e2c6dc78063d07497938b8f1698388971f6d31bbd0fba6c"
+  },
+  {
+    "group": "mha",
+    "id": "linear_into_separate_cross_none__declared_shallow_v1",
+    "source_format": "poseidon-trusted-pytorch-v16",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/cases/trusted-pytorch-mha-v16/linear_into_separate_cross_none__declared_shallow_v1/manifest.json",
+    "source_manifest_sha256": "f35c7a28cae57c61b7d1ad0220d876f076ced5f795ed25daf33d7e41801d4886"
+  }
+]

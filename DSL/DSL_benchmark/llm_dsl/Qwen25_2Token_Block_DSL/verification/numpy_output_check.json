@@ -1,0 +1,25 @@
+{
+  "prefill": {
+    "file": "prefill.npy",
+    "max_abs_error": 1.5206731207584312e-08,
+    "max_abs_tail": 0.0,
+    "imaginary_components_checked": false,
+    "tail_checked": true,
+    "threshold": 0.001,
+    "compared_components_passed": true,
+    "note": "Real-only output cannot certify imaginary error; prefix-only cannot certify tail."
+  },
+  "decode": {
+    "file": "decode-pair.npy",
+    "max_abs_error": 1.5206731207584312e-08,
+    "max_abs_tail": 0.0,
+    "imaginary_components_checked": false,
+    "tail_checked": true,
+    "threshold": 0.001,
+    "compared_components_passed": true,
+    "note": "Real-only output cannot certify imaginary error; prefix-only cannot certify tail."
+  },
+  "prefill_decode_max_abs_difference": 0.0,
+  "compared_components_passed": true,
+  "source": "caller-supplied decrypted outputs; tool does not attest GPU execution"
+}

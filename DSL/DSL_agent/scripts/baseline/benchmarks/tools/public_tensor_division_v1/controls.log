@@ -1,0 +1,459 @@
+test_activation_claim (test_division.IntegrityTests) ... ERROR
+test_changed_shape (test_division.IntegrityTests) ... ERROR
+test_derived_weight_substitution (test_division.IntegrityTests) ... ERROR
+test_divisor_origin_substitution (test_division.IntegrityTests) ... ERROR
+test_duplicate_source_names (test_division.IntegrityTests) ... ERROR
+test_explicit_policy_required (test_division.IntegrityTests) ... ok
+test_float32_state_rejected (test_division.IntegrityTests) ... ok
+test_implementation_hash (test_division.IntegrityTests) ... ERROR
+test_missing_rewrite (test_division.IntegrityTests) ... ERROR
+test_normalized_hash (test_division.IntegrityTests) ... ERROR
+test_normalized_operand_substitution (test_division.IntegrityTests) ... ERROR
+test_original_state_substitution (test_division.IntegrityTests) ... ERROR
+test_payload_substitution (test_division.IntegrityTests) ... ERROR
+test_reciprocal_coefficient_hash (test_division.IntegrityTests) ... ERROR
+test_source_hash (test_division.IntegrityTests) ... ERROR
+test_unknown_public_state (test_division.IntegrityTests) ... ok
+test_version_substitution (test_division.IntegrityTests) ... ERROR
+test_wrong_signature (test_division.IntegrityTests) ... ok
+test_broadcast_expand_reduction (test_division.NumericalTests) ... ERROR
+test_channels (test_division.NumericalTests) ... ERROR
+test_dense (test_division.NumericalTests) ... ERROR
+test_function_keywords (test_division.NumericalTests) ... ERROR
+test_large_nonrepeated_weights (test_division.NumericalTests) ... ERROR
+test_method_alias (test_division.NumericalTests) ... ERROR
+test_multi_input_cross_branches (test_division.NumericalTests) ... ok
+test_production_v21_still_rejects_tensor_divisor (test_division.NumericalTests) ... ok
+test_residual (test_division.NumericalTests) ... ERROR
+test_scalar_state (test_division.NumericalTests) ... ERROR
+test_snapshot_and_mutation (test_division.NumericalTests) ... ok
+test_transpose_and_shared_write (test_division.NumericalTests) ... ok
+test_two_inputs_public_division_fusion (test_division.NumericalTests) ... ERROR
+test_vector (test_division.NumericalTests) ... ERROR
+test_boolean_inplace_rejected (test_division.PlanTests) ... ok
+test_channel_broadcast (test_division.PlanTests) ... ok
+test_ieee_reciprocal_bits (test_division.PlanTests) ... ok
+test_inplace_expansion_rejected (test_division.PlanTests) ... ok
+test_intermediate_elements_bounded (test_division.PlanTests) ... ok
+test_invalid_broadcast (test_division.PlanTests) ... ok
+test_invalid_divisor (test_division.PlanTests) ... ok
+test_invalid_shape (test_division.PlanTests) ... ok
+test_large_weight_plan_has_no_values (test_division.PlanTests) ... ok
+test_not_approximate (test_division.PlanTests) ... ok
+test_output_expansion (test_division.PlanTests) ... ok
+test_rank32 (test_division.PlanTests) ... ok
+test_scalar (test_division.PlanTests) ... ok
+test_wrong_payload_bytes (test_division.PlanTests) ... ok
+
+======================================================================
+ERROR: test_activation_claim (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 172, in test_activation_claim
+    def test_activation_claim(self):self.rejected(lambda r:r.update(production_activation=True))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_changed_shape (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 161, in test_changed_shape
+    def test_changed_shape(self):self.rejected(lambda r:r["entries"][0]["plan"].update(result_shape=[6]))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_derived_weight_substitution (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 167, in test_derived_weight_substitution
+    self.rejected(lambda r:r["normalized_state"][r["entries"][0]["reciprocal_state_name"]].update(sha256="0"*64))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_divisor_origin_substitution (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 163, in test_divisor_origin_substitution
+    def test_divisor_origin_substitution(self):self.rejected(lambda r:r["entries"][0].update(state_name="other"))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_duplicate_source_names (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 175, in test_duplicate_source_names
+    self.rejected(lambda r:r["source_inventory"][-1].update(name=r["source_inventory"][0]["name"]))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_implementation_hash (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 173, in test_implementation_hash
+    def test_implementation_hash(self):self.rejected(lambda r:r.update(implementation_sha256="0"*64))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_missing_rewrite (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 162, in test_missing_rewrite
+    def test_missing_rewrite(self):self.rejected(lambda r:r["entries"].clear())
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_normalized_hash (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 170, in test_normalized_hash
+    def test_normalized_hash(self):self.rejected(lambda r:r.update(normalized_fx_text="changed"))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_normalized_operand_substitution (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 165, in test_normalized_operand_substitution
+    self.rejected(lambda r:r["normalized_inventory"][-2]["args"]["items"].reverse())
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_original_state_substitution (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 168, in test_original_state_substitution
+    def test_original_state_substitution(self):self.rejected(lambda r:r["public_state"]["std"].update(sha256="0"*64))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_payload_substitution (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 177, in test_payload_substitution
+    r,i,d,p=self.receipt();p["std"]=raw([.5,2.,4.])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_reciprocal_coefficient_hash (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 160, in test_reciprocal_coefficient_hash
+    def test_reciprocal_coefficient_hash(self):self.rejected(lambda r:r["entries"][0]["plan"].update(reciprocal_sha256="0"*64))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_source_hash (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 169, in test_source_hash
+    def test_source_hash(self):self.rejected(lambda r:r.update(source_fx_text="changed"))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_version_substitution (test_division.IntegrityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 171, in test_version_substitution
+    def test_version_substitution(self):self.rejected(lambda r:r.update(format="production"))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 158, in rejected
+    r,i,d,p=self.receipt();change(r);rebind(r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 155, in receipt
+    normalized,record=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_broadcast_expand_reduction (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 125, in test_broadcast_expand_reduction
+    def test_broadcast_expand_reduction(self):self.exercise("expand",[2,1],[.5,2.,3.])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_channels (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 117, in test_channels
+    def test_channels(self):self.exercise("operator",[1,3,2,2],[[[[.5]],[[-2.]],[[3.]]]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_dense (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 118, in test_dense
+    def test_dense(self):self.exercise("operator",[2,2],[[.5,-2.],[3.,.25]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_function_keywords (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 120, in test_function_keywords
+    def test_function_keywords(self):self.exercise("function",[2,3],[.5,2.,3.])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_large_nonrepeated_weights (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 126, in test_large_nonrepeated_weights
+    def test_large_nonrepeated_weights(self):self.exercise("expand",[1,1],[.5+i/24000 for i in range(24000)])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_method_alias (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 121, in test_method_alias
+    def test_method_alias(self):self.exercise("method",[2,3],[.5,2.,3.])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_residual (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 122, in test_residual
+    def test_residual(self):self.exercise("square_residual",[2,3],[.5,2.,3.])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_scalar_state (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 119, in test_scalar_state
+    def test_scalar_state(self):self.exercise("operator",[2,2],-3.)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_two_inputs_public_division_fusion (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 140, in test_two_inputs_public_division_fusion
+    revised,r=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+======================================================================
+ERROR: test_vector (test_division.NumericalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 116, in test_vector
+    def test_vector(self):self.exercise("operator",[2,3],[.5,-2.,3.])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/test_division.py", line 97, in exercise
+    revised,receipt=normalize(graph,inputs,declared)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 112, in normalize
+    check(record,inputs,declared,payloads,resource_profile=resource_profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_division_v1/public_tensor_division.py", line 175, in check
+    require(set(entries)==actual and normalized==[v for n in source for v in entries.get(n["name"],[n])],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Public division complete graph projection
+
+----------------------------------------------------------------------
+Ran 46 tests in 0.427s
+
+FAILED (errors=24)

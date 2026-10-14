@@ -1,0 +1,15 @@
+test_binary_and_parameter_identity_changes_reject (test_staged_application_reuse.StagedContextControls) ... ok
+test_compilation_execution_and_validation_changes_reject (test_staged_application_reuse.StagedContextControls) ... ok
+test_existing_legacy_receipt_is_not_promoted_or_overwritten (test_staged_application_reuse.StagedContextControls) ... ok
+test_generation_only_change_keeps_worker_current (test_staged_application_reuse.StagedContextControls) ... ok
+test_legacy_context_keeps_full_generation_binding (test_staged_application_reuse.StagedContextControls) ... ok
+test_new_stores_use_versioned_sdk_policy (test_staged_application_reuse.StagedContextControls) ... ok
+test_resigned_payload_cannot_hide_sdk_drift (test_staged_application_reuse.StagedContextControls) ... ok
+test_sdk_source_authority_excludes_generation (test_staged_application_reuse.StagedContextControls) ... ok
+test_staged_receipt_roundtrip_and_conflict_check (test_staged_application_reuse.StagedContextControls) ... ok
+test_unknown_policy_and_generation_hash_are_rejected (test_staged_application_reuse.StagedContextControls) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 8.354s
+
+OK

@@ -1,0 +1,7 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix
+    Start 8: DacapoPlaintextStreaming
+1/1 Test #8: DacapoPlaintextStreaming .........   Passed    0.98 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.98 sec

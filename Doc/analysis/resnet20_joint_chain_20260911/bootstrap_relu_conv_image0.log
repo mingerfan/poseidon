@@ -1,0 +1,125 @@
+APPLICATION_INPUT image=0 stem_max_abs=0.0854723 boundary=40 stem_gpu_tested=false
+INPUT_OVERRIDE application_packed_slots=true encrypted_once=true
+BASELINE profile=q50-fixed45 dataset=grid N=65536 Q=50 P=25 global_dnum=2 secret_hamming_weight=192 degree=59 DA=2 arcsine_degree=0 output_fold=false c2s_log_scale=45 linear_mode=double_hoist metadata_only=0
+Q_PRIMES 4255252481 4255645697 4258922497 4260364289 4261675009 4264427521 4265476097 4266393601 4267442177 1040842753 1042415617 1043464193 1045430273 1048707073 1049100289 1051721729 1052508161 1053818881 1054212097 1055260673 1056178177 1056440321 1060765697 1062469633 1062862849 1064697857 1065484289 1068236801 1070727169 1071513601 1073479681 2135162881 4272291841 4272685057 1040056321 2135818241 4273340417 2142502913 4274126849 4276092929 2144468993 2146041857 2146959361 4277403649 4279369729 2147352577 4280025089 4280156161 4281204737 1038745601
+P_PRIMES 4293918721 4291952641 4289462273 4288806913 4286709761 4286054401 4284874753 4284088321 4283301889 4271505409 4271374337 4269015041 4253024257 4252631041 4252106753 4251844609 4247388161 4245553153 4245422081 4243980289 4241883137 4241620993 4241489921 4240310273 4240048129
+CONTRACT preparation_target_log_scale=59 c2s_log_scale=45 periods_per_integer=1
+PLAN C2S stage=1 q_in=50 q_out=49 output_log_scale=60.04780477869699
+PLAN C2S stage=2 q_in=49 q_out=48 output_log_scale=73.05243509455039
+PLAN C2S stage=3 q_in=48 q_out=46 output_log_scale=54.06244669887172
+PLAN EvalMod q_in=46 q_out=31 output_log_scale=53.03094629532367 effective_degree=58
+FOLD_PLAN q_in=46 q_out=31 alpha=0.0001194797467008398 seed=0.1045498883353879 native_log_scale=53.03094629532367 application_log_scale=40 same_DAG=true extra_Q=0 identity_max=2.214970828279261e-15 source_reference_max=1.188014530500991e-16
+RELU_PLAN stage=1 degree=15 q_in=31 q_out=25 input_log_scale=40 output_log_scale=40.1
+RELU_PLAN stage=2 degree=15 q_in=25 q_out=19 input_log_scale=40.1 output_log_scale=44
+RELU_PLAN stage=3 degree=27 q_in=19 q_out=12 input_log_scale=44 output_log_scale=89.87112238710051
+CONTINUATION_PLAN bootstrap_out=31 relu_out=9 relu_Q_consumed=22 output_log_scale=40 no_reencryption=true security_approved=false
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on
+ORACLE original_SIMD_Conv_vs_original_CHW_Conv max_abs=6.354102357122859e-17 rms=6.78218007006825e-18
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on
+ORACLE SIMD_Conv_layout_edge_reference max_abs=1.615732287546523e-16 rms=2.596456725835261e-17
+CONV_PLAN layer=layer1_0.conv1+BN image=0 shape=16x32x32 kernel=3x3 stride=1 active_slots=16384 total_slots=32768 q_in=9 q_out=6 Q_consumed=3 log_scale=40 original_source=true prefix_stem=offline_plaintext
+CONV_ROTATIONS q=7 steps=15360
+CONV_ROTATIONS q=9 steps=1,31,32,33,1024,2048,4096,8192,16384,18432,20480,22528,24576,26624,28672,30720,32735,32736,32737,32767
+CONV_COUNTS add=33 add_plain=1 drop_or_clone=26 multiply_plain=10 multiply_plain_accumulate=72 rescale=3 rotate=49
+CONV_NEGATIVE_CHECKS encryption=REJECTED decryption=REJECTED modraise=REJECTED misalignment=REJECTED
+MEMORY pool_cap_GiB=18 startup_free_GiB=31.0003662109375
+SECRET h=192 positive=96 negative=96 source=OS_random nonzero=true
+CHECK baseline_input_Q6 q=6 log_scale=40 max_abs=1.070803333888723e-06 rms=1.584121780672563e-07 max_imag=8.286869526635689e-07 reference_max_abs=0.08547231963851412
+PHASE baseline_matrices
+PHASE baseline_keys rotations=39 estimated_gpu_GiB=2.8564453125
+PHASE baseline_S2C_double_hoist
+TRACE S2C stage=1 q_in=6 q_out=5 input_log_scale=40 output_log_scale=53.0102950663809
+TRACE S2C stage=2 q_in=5 q_out=4 input_log_scale=53.0102950663809 output_log_scale=66.02152163353519
+TRACE S2C stage=3 q_in=4 q_out=2 input_log_scale=66.02152163353519 output_log_scale=47.04535065372118
+CHECK baseline_S2C_vs_plain_DFT q=2 log_scale=47.04535065372118 max_abs=2.047248435755491e-10 rms=9.880943952865869e-12 max_imag=84.20357521105568 reference_max_abs=118.3827582071476
+PREPARE multiplier=3969 actual_log_scale=58.99991050072101
+CHECK baseline_prepare_preserves_value q=2 log_scale=58.99991050072101 max_abs=1.588821858078255e-14 rms=7.840304286268456e-16 max_imag=84.20357521105568 reference_max_abs=118.3827582070988
+CONTRACT small_signal_gain=0.9999379657513102 output_gain_compensation=false
+PHASE baseline_C2S_double_hoist
+TRACE C2S stage=1 q_in=50 q_out=49 input_log_scale=45 output_log_scale=60.04780477869699
+TRACE C2S stage=2 q_in=49 q_out=48 input_log_scale=60.04780477869699 output_log_scale=73.05243509455039
+TRACE C2S stage=3 q_in=48 q_out=46 input_log_scale=73.05243509455039 output_log_scale=54.06244669887172
+CHECK baseline_C2S_real_vs_plain_DFT q=46 log_scale=54.06244669887172 max_abs=1.26895742800715e-08 rms=3.24625617336117e-09 max_imag=2.281315172799885e-10 reference_max_abs=0.6800020699084504
+CHECK baseline_C2S_imag_vs_plain_DFT q=46 log_scale=54.06244669887172 max_abs=1.39466274446672e-08 rms=3.255236313128637e-09 max_imag=1.01661109763698e-10 reference_max_abs=0.6000000002208322
+DOMAIN max_abs=0.6800020648582799 outside=0
+ORACLE baseline_ideal_sine_vs_input max_abs=1.357921002626987e-05 rms=3.771607463213673e-06
+ORACLE baseline_degree59_vs_sine max_abs=1.183567738691297e-07 rms=5.413486035293391e-08
+ORACLE baseline_degree59_vs_input max_abs=1.352409008582992e-05 rms=3.771878644696318e-06
+PHASE baseline_original_EvalMod_no_fold
+CHECK baseline_final_vs_original_input q=31 log_scale=53.03094629532367 max_abs=1.369156660036154e-05 rms=3.790618131826805e-06 max_imag=1.101509433016005e-05 reference_max_abs=0.08547231963851412
+CHECK baseline_final_vs_decrypted_input q=31 log_scale=53.03094629532367 max_abs=1.37503050812589e-05 rms=3.787372099468831e-06 max_imag=1.101509433016005e-05 reference_max_abs=0.08547229487782422
+CHECK baseline_final_vs_degree59_plain q=31 log_scale=53.03094629532367 max_abs=4.075249420867225e-06 rms=3.625288748850474e-07 max_imag=1.101509433016005e-05 reference_max_abs=0.08545961394052605
+BASELINE_RESULT legacy_tolerance_0_002=PASS strict_target_1e_4=PASS max_abs=1.369156660036154e-05 arithmetic_max=4.075249420867225e-06 q=31 log_scale=53.03094629532367 no_reencryption=true full_network_tested=false output_fold=false
+PHASE same_C2S_folded_EvalMod no_reencryption=true
+CHECK fold_before_scale_reconciliation q=31 log_scale=53.03094629532367 max_abs=4.038758889771424e-09 rms=3.142759940282347e-10 max_imag=3.700245070074283e-09 reference_max_abs=1.021069302676561e-05
+CHECK fold40_vs_same_C2S_native q=31 log_scale=40 max_abs=3.580961393500308e-05 rms=2.633496351675317e-06 max_imag=3.096964274069883e-05 reference_max_abs=0.08545961434816501
+CHECK fold40_vs_bootstrap_polynomial q=31 log_scale=40 max_abs=3.380287455650384e-05 rms=2.630370441068447e-06 max_imag=3.096964274069883e-05 reference_max_abs=0.08545961394052605
+CHECK fold40_vs_original_input q=31 log_scale=40 max_abs=3.143028842945982e-05 rms=4.61588142439649e-06 max_imag=3.096964274069883e-05 reference_max_abs=0.08547231963851412
+FOLD_RESULT integration=PASS differential_max=3.580961393500308e-05 arithmetic_max=3.380287455650384e-05 restore_max=3.143028842945982e-05 q=31 log_scale=40 extra_Q=0
+RELU_DOMAIN max_abs=0.08545928021069966 max_imag=3.096964274069883e-05
+PHASE continuous_bootstrap40_to_original_ReLU no_reencryption=true
+CHECK stage1/T2 q=30 log_scale=50.00035226212768 max_abs=4.492284927988096e-06 rms=3.29873567237783e-07 max_imag=3.666041681329421e-06 reference_max_abs=1
+CHECK stage1/T4 q=28 log_scale=40.00775773852381 max_abs=1.77062221551905e-05 rms=1.313607791695212e-06 max_imag=1.45868204749211e-05 reference_max_abs=1
+CHECK stage1/T3 q=29 log_scale=60.00334924550847 max_abs=9.429086540299061e-05 rms=1.383003118520104e-05 max_imag=9.290892832837725e-05 reference_max_abs=0.2539192808338542
+CHECK stage1/T8 q=27 log_scale=50.02293113169127 max_abs=6.671645075999253e-05 rms=5.162069861576195e-06 max_imag=5.711693274560856e-05 reference_max_abs=1
+CHECK stage1/node15 q=30 log_scale=50.03114910328014 max_abs=0.0001265704041284337 rms=1.858824736639514e-05 max_imag=0.0001247153746200035 reference_max_abs=0.3441987508928055
+CHECK stage1/node14 q=30 log_scale=100.0315013654078 max_abs=7.050404516659926e-05 rms=1.035428972151157e-05 max_imag=6.947073029520766e-05 reference_max_abs=0.191730479909902
+CHECK stage1/node7 q=28 log_scale=40.03855457967626 max_abs=0.0001970766481912115 rms=2.890706626100239e-05 max_imag=0.0001941887167529834 reference_max_abs=0.5309001308585074
+CHECK stage1/node6 q=28 log_scale=80.04631231820009 max_abs=5.939473512494837e-05 rms=8.71846215184074e-06 max_imag=5.85242394951403e-05 reference_max_abs=0.1609106424148549
+CHECK stage1/node3 q=27 log_scale=50.05372797284372 max_abs=0.0002564713829313879 rms=3.741088869038259e-05 max_imag=0.0002527129558711486 reference_max_abs=0.6610094476243834
+CHECK stage1/node5 q=28 log_scale=90.06148571136755 max_abs=4.437593427279495e-05 rms=6.511078034181058e-06 max_imag=4.372555580348239e-05 reference_max_abs=0.1198252478708901
+CHECK stage1/node4 q=28 log_scale=130.0692434498914 max_abs=8.510218977274472e-05 rms=1.248997187726317e-05 max_imag=8.385492292031842e-05 reference_max_abs=0.2302662624666547
+CHECK stage1/node2 q=27 log_scale=100.076659104535 max_abs=0.000129478124419199 rms=1.895209299562866e-05 max_imag=0.000127580479077037 reference_max_abs=0.3431395879963832
+CHECK stage1/node1 q=25 log_scale=40.09999999999995 max_abs=0.0003859515263623272 rms=5.535836024486086e-05 max_imag=0.0003802955543166096 reference_max_abs=0.855199338941029
+CHECK P15_stage1 q=25 log_scale=40.09999999999995 max_abs=0.0003859515263623272 rms=5.535836024486086e-05 max_imag=0.0003802955543166096 reference_max_abs=0.855199338941029
+CHECK relu_stage1_local_arithmetic q=25 log_scale=40.09999999999995 max_abs=8.528160944081241e-09 rms=1.37783147646284e-09 max_imag=0.0003802955543166096 reference_max_abs=0.8551238208194079
+CHECK relu_stage1_vs_continuous_bootstrap_polynomial q=25 log_scale=40.09999999999995 max_abs=0.0004150853850161308 rms=3.176592927361188e-05 max_imag=0.0003802955543166096 reference_max_abs=0.8551257537905329
+CHECK stage2/T2 q=24 log_scale=50.21469170138669 max_abs=0.0004392632651509222 rms=3.985940868702628e-05 max_imag=0.000434780834769132 reference_max_abs=1
+CHECK stage2/T4 q=22 log_scale=40.46215005988126 max_abs=0.001099685406110951 rms=0.0001055335488197652 max_imag=0.001011125634193885 reference_max_abs=1
+CHECK stage2/T3 q=23 log_scale=60.32991723998193 max_abs=0.00115785479566674 rms=0.0001529940830643042 max_imag=0.001140886863170313 reference_max_abs=0.9999999995404439
+CHECK stage2/T8 q=21 log_scale=50.94773599498158 max_abs=0.002171146831282864 rms=0.000224352008501964 max_imag=0.002107512915826376 reference_max_abs=1
+CHECK stage2/node15 q=24 log_scale=52.27037807783863 max_abs=0.001587968671643656 rms=0.0002277678302840575 max_imag=0.001564697597910709 reference_max_abs=3.518653678154964
+CHECK stage2/node14 q=24 log_scale=102.4850697792254 max_abs=0.0003615624203113161 rms=5.186014654029001e-05 max_imag=0.0003562638612893182 reference_max_abs=0.8011574555760687
+CHECK stage2/node7 q=22 log_scale=42.51783643633321 max_abs=0.001949531193612387 rms=0.0002569454749682877 max_imag=0.0019209615195775 reference_max_abs=1.523262099687915
+CHECK stage2/node6 q=22 log_scale=82.97998649621472 max_abs=0.00058385561199962 rms=7.73596642847531e-05 max_imag=0.0005752994251861429 reference_max_abs=0.5280249415371078
+CHECK stage2/node3 q=21 log_scale=53.00342237143352 max_abs=0.00253338899152863 rms=0.0003170650552171589 max_imag=0.002496262965484988 reference_max_abs=0.9616994193272722
+CHECK stage2/node5 q=22 log_scale=93.46557243131524 max_abs=0.0006264201908670211 rms=8.270310378594757e-05 max_imag=0.0006172402350987944 reference_max_abs=0.5315392354963077
+CHECK stage2/node4 q=22 log_scale=133.9277224911966 max_abs=0.001089195514084606 rms=0.000145617977053174 max_imag=0.001073233761302102 reference_max_abs=1.104933373890546
+CHECK stage2/node2 q=21 log_scale=103.9511583664156 max_abs=0.001715616407358244 rms=0.000213038501794881 max_imag=0.001690474645712375 reference_max_abs=0.9370297321214246
+CHECK stage2/node1 q=19 log_scale=43.99999999999934 max_abs=0.004249016738323074 rms=0.0004980811357400466 max_imag=0.004186748056180967 reference_max_abs=0.9164406714443089
+CHECK P15_stage2 q=19 log_scale=43.99999999999934 max_abs=0.004249016738323074 rms=0.0004980811357400466 max_imag=0.004186748056180967 reference_max_abs=0.9164406714443089
+CHECK relu_stage2_local_arithmetic q=19 log_scale=43.99999999999934 max_abs=7.431566679681203e-08 rms=1.171365999802798e-08 max_imag=0.004186748056180967 reference_max_abs=0.9164407420407562
+CHECK relu_stage2_vs_continuous_bootstrap_polynomial q=19 log_scale=43.99999999999934 max_abs=0.004569756385405851 rms=0.0002907274453451734 max_imag=0.004186748056180967 reference_max_abs=0.9164406868032551
+CHECK stage3/T2 q=18 log_scale=58.02648199392646 max_abs=0.004434202118712252 rms=0.0004302305275295046 max_imag=0.004109442106418159 reference_max_abs=1
+CHECK stage3/T4 q=16 log_scale=56.10879992664222 max_abs=0.009785437160888382 rms=0.0007175495130351229 max_imag=0.009785328251136956 reference_max_abs=1
+CHECK stage3/T3 q=16 log_scale=42.0823179327151 max_abs=0.01274733946512367 rms=0.001469674112897899 max_imag=0.01256051147814568 reference_max_abs=0.9999999994128158
+CHECK stage3/T8 q=14 log_scale=52.2809885080196 max_abs=0.02103135388387793 rms=0.001573577680427777 max_imag=0.01908235140004406 reference_max_abs=1
+CHECK stage3/T5 q=15 log_scale=70.13869403465763 max_abs=0.02124652894039307 rms=0.002428210368472325 max_imag=0.0209350762645794 reference_max_abs=0.9999999999523552
+CHECK stage3/T7 q=15 log_scale=68.22101196737339 max_abs=0.02974716374977097 rms=0.003409568881173317 max_imag=0.02931097709269298 reference_max_abs=0.9999999897508796
+CHECK stage3/T16 q=12 log_scale=44.63456270861322 max_abs=0.05454086743790545 rms=0.003408749879092488 max_imag=0.04586148053462385 reference_max_abs=1
+CHECK stage3/node7 q=14 log_scale=52.88298547787787 max_abs=7.014674374134144e-05 rms=7.822877774564453e-06 max_imag=5.539511662481223e-05 reference_max_abs=0.01924346565326346
+CHECK stage3/node6 q=14 log_scale=105.1639739859027 max_abs=0.0008723544062810895 rms=9.472243120070785e-05 max_imag=0.000808122588749454 reference_max_abs=0.177208529937172
+CHECK stage3/node3 q=12 log_scale=45.2365596784715 max_abs=0.0006861301625319154 rms=9.0835489243833e-05 max_imag=0.0006547109166590977 reference_max_abs=0.1581870278940436
+CHECK stage3/node5 q=14 log_scale=97.51754818650167 max_abs=0.004536349115198212 rms=0.0005771633300605677 max_imag=0.004469839554075134 reference_max_abs=0.6304715139551876
+CHECK stage3/node4 q=14 log_scale=149.7985366945265 max_abs=0.01314482343403371 rms=0.001439118433433403 max_imag=0.01295212981153135 reference_max_abs=0.6356612567538564
+CHECK stage3/node2 q=12 log_scale=89.8711223870953 max_abs=0.01768364103857065 rms=0.001890961580719953 max_imag=0.01742425132206803 reference_max_abs=0.6508814834752881
+CHECK stage3/node1 q=12 log_scale=89.87112238708472 max_abs=0.0183495419046523 rms=0.001948586912100061 max_imag=0.01808029950287364 reference_max_abs=0.5000500007108604
+CHECK P27_stage3 q=12 log_scale=89.87112238708472 max_abs=0.0183495419046523 rms=0.001948586912100061 max_imag=0.01808029950287364 reference_max_abs=0.5000500007108604
+CHECK relu_stage3_local_arithmetic q=12 log_scale=89.87112238708472 max_abs=3.204569411030656e-07 rms=4.489115467131555e-08 max_imag=0.01808029950287364 reference_max_abs=0.5000500936148924
+CHECK relu_stage3_vs_continuous_bootstrap_polynomial q=12 log_scale=89.87112238708472 max_abs=0.01973437228105813 rms=0.001141014620932669 max_imag=0.01808029950287364 reference_max_abs=0.5000500277844773
+CHECK chain_final_ReLU_local_arithmetic q=9 log_scale=39.99999999998415 max_abs=5.197609055980266e-09 rms=9.321715935283455e-10 max_imag=2.210708705921838e-05 reference_max_abs=0.08546221971061697
+CHECK chain_final_vs_continuous_plain_polynomial q=9 log_scale=39.99999999998415 max_abs=2.257379373336259e-05 rms=1.731281751892345e-06 max_imag=2.210708705921838e-05 reference_max_abs=0.0854625508253153
+CHECK chain_final_vs_original_application_ReLU q=9 log_scale=39.99999999998415 max_abs=2.324369311856373e-05 rms=3.117062729209663e-06 max_imag=2.210708705921838e-05 reference_max_abs=0.08547515623675256
+CHECK chain_final_vs_ideal_ReLU q=9 log_scale=39.99999999998415 max_abs=0.0001180459580669875 rms=2.371371363195968e-05 max_imag=2.210708705921838e-05 reference_max_abs=0.08547231963851412
+ORACLE bootstrap_approximation_propagation_through_ReLU max_abs=1.366493487085757e-05 rms=2.579754499492093e-06
+CHAIN_RESULT integration=PASS local_stage_max=3.204569411030656e-07 local_final_max=5.197609055980266e-09 chain_arithmetic_max=2.257379373336259e-05 end_to_end_max=2.324369311856373e-05 end_to_end_target_1e_4=PASS q=9 log_scale=39.99999999998415 bootstrap_tested=true relu_tested=true convolution_tested=false full_network_tested=false no_reencryption=true
+PHASE real_application_ConvBN key_setup_after_bootstrap=true global_P=25 direct_keys=true
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on
+CHECK Conv_local_arithmetic_all_slots q=6 log_scale=39.99999999998415 max_abs=1.792481548817196e-06 rms=2.509031810070087e-08 max_imag=1.759113442758456e-05 reference_max_abs=0.09010389094617656
+CHECK Conv_continuous_polynomial_all_slots q=6 log_scale=39.99999999998415 max_abs=1.344593266017513e-05 rms=1.735330884147e-06 max_imag=1.759113442758456e-05 reference_max_abs=0.09010046732983339
+CHECK Conv_original_application_reference_all_slots q=6 log_scale=39.99999999998415 max_abs=1.759113706697543e-05 rms=3.340718262060301e-06 max_imag=1.759113442758456e-05 reference_max_abs=0.09009965873024799
+ORACLE Conv_propagated_input_arithmetic max_abs=1.34502150311943e-05 rms=1.735173640176455e-06
+ORACLE Conv_bootstrap_approximation_propagation max_abs=1.754620929129735e-05 rms=2.865384321491689e-06
+CONV_RESULT integration=PASS local_arithmetic_max=1.792481548817196e-06 propagated_input_max=1.34502150311943e-05 chain_arithmetic_max=1.344593266017513e-05 end_to_end_max=1.759113706697543e-05 end_to_end_target_1e_4=PASS padding_max=5.164828093514817e-09 max_imag=1.759113442758456e-05 q=6 log_scale=39.99999999998415 same_ciphertext_chain=true no_reencryption=true full_network_tested=false production_per_level_P_tested=false timing_benchmark=false security_approved=false

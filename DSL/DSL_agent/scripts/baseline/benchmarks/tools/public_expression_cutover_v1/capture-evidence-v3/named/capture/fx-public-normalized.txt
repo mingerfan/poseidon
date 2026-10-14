@@ -1,0 +1,5 @@
+graph():
+    %x : [#users=2] = placeholder[target=x]
+    %view : [#users=1] = get_attr[target=_poseidon_public_expression_0]
+    %truediv : [#users=1] = call_function[target=operator.truediv](args = (%x, %view), kwargs = {})
+    return {'primary': truediv, 'saved': [x, None]}

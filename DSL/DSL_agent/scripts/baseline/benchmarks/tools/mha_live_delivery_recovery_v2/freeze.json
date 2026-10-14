@@ -1,0 +1,19 @@
+{
+  "files": {
+    "scripts/baseline/application_component.py": "661c86d99e32a4e7f87201070e631c61295530ef4ac672ca7d540006fca6bc99",
+    "scripts/baseline/application_diagnostics.py": "f4cc7e168e1ca8c6c803bf691ddb2a97be2bc0ba986e443803bb9b3d97772fd3",
+    "scripts/baseline/candidate_check_diagnostic.py": "4b68fe754569e89fa510ce87609a06560f23298be6d26547f4f7b979a85ac615",
+    "scripts/baseline/component_contract.py": "fd49c2a3a09a5175af01386e44499062ccb886e7d7a2af68ae0eb5e486df6b5b",
+    "scripts/baseline/decorated_functions.py": "733362d7c23389c174b069be97bc21ff292e3b6fdeea835508b45bef5573a39a",
+    "scripts/baseline/test_application_provenance_transport.py": "93c2a7fb38c401b9c0e8cefd6112f4dee189fb21641669cdf5cf72b8a5a77d39",
+    "scripts/baseline/test_resource_feedback_chain.py": "1851f22cd9bef2ae0b197e678de7a7b72c193d9013ee662295c51888f2f095f3",
+    "scripts/baseline/test_static_work_feedback.py": "dc811d85e37d6e3736ba29f1c2a5496a158ca43e8509173f3af488c29cff4762",
+    "scripts/baseline/unified_graph_contract.py": "d106c89e7ed4237efb07f2d269facedb522f28ff8da039c5d30f30c95254bf5f"
+  },
+  "format": "poseidon-mha-final-offline-freeze-v1",
+  "max_new_bytes": 536870912,
+  "max_seconds": 600,
+  "paid_calls": 0,
+  "source_origin": "r1313 original real-Agent round1; unchanged source and request",
+  "tool_sha256": "a105eb02ebb78cd3bba790df037c4da78a17090c4e07abaf4844c735bbb93943"
+}

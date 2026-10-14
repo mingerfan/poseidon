@@ -1,0 +1,5 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"format": "poseidon-current-application-metric-boundary-audit-v1", "cases": [{"original_correct": 96, "encrypted_correct": 95, "expected_drop": 0.01, "expected_pass": true, "observed_pass": false, "observed_drop": 0.010000000000000009}, {"original_correct": 95, "encrypted_correct": 94, "expected_drop": 0.01, "expected_pass": true, "observed_pass": false, "observed_drop": 0.010000000000000009}, {"original_correct": 100, "encrypted_correct": 99, "expected_drop": 0.01, "expected_pass": true, "observed_pass": false, "observed_drop": 0.010000000000000009}], "incorrect_boundary_cases": 3, "api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "binding": "17851715d2943962e2ae42ce9b5c68e70c622db1677fe6cbf88d23033d7bc083"}

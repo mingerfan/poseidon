@@ -1,0 +1,23 @@
+{
+  "binding": "34d9d38ff4c80964905e43f94ad1e3928ac541f065b36cb5de8f0c875d98f59e",
+  "compilations": 0,
+  "controls_log_sha256": "c8040f1e44afb0bb04a6b31f499a20d569b318fa12702b440531e4377dff88f6",
+  "current_live_audit_blocked": true,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "evidence_scope": "Unit controls and prevention of an audit while the approved campaign is active; no terminal numerical audit yet.",
+  "failed": 0,
+  "format": "poseidon-spatial-live-mixed-outcome-controls-v1",
+  "generations": 0,
+  "http_attempts": 0,
+  "live_guard_log_sha256": "52f0888c4611567648cbf7781a17de4d59bb970b46d8f2349cc868da68a3fccf",
+  "production_binding_unchanged": true,
+  "skipped": 0,
+  "source_hashes": {
+    "acceptance_outcomes.py": "9a54b49ab12694efdbe3a1b585ba277881f2afa4587239d650a1796e37622877",
+    "audit.py": "593dfac53191a0d41741bde8bdc927b4e998a8780b854cd9b4fcf25a09fbe9da",
+    "test_acceptance_outcomes.py": "6610c3dd54979b92ac1b8fcf293bfea226a119c21edc04b8739641c9ebf981ae"
+  },
+  "status": "passed",
+  "unit_tests": 18
+}

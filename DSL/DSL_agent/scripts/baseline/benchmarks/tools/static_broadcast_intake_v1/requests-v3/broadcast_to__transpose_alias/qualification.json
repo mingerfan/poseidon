@@ -1,0 +1,48 @@
+{
+  "context": "broadcast_to__transpose_alias",
+  "declared_weight_files": {},
+  "dtype_policy": "strict-float64-v1",
+  "input_signature": [
+    {
+      "name": "x",
+      "shape": [
+        3,
+        1
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        3
+      ]
+    }
+  ],
+  "model_sha256": "2021e5e0a4fc90f809b970c6c83084bf5178923c67fc38f8c94e69c1447b75b7",
+  "output_names": [
+    "product",
+    "mean"
+  ],
+  "public_payload_sha256": "931a0e5630a6115b8f66a8344b35b8d5debca9b2e080a8728e482934d1fe7c15",
+  "public_request_file": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/broadcast_to__transpose_alias/public-request.json",
+  "public_request_sha256": "daffd775ecb34176563c52e24dddcc419c85112be5bc9d919f73e7b3fee5430c",
+  "qualification": {
+    "compilations": 0,
+    "current_independent_reference": "passed",
+    "current_source_capture": "passed",
+    "encrypted_calls": 0,
+    "not_current_agent_generation": true,
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-broadcast-prepare-1791756367572676154/broadcast_to__transpose_alias/tasks/b6c13d39ec7646678ca3e73298a6b7ac",
+    "source_task_metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-broadcast-prepare-1791756367572676154/broadcast_to__transpose_alias/tasks/b6c13d39ec7646678ca3e73298a6b7ac/task.json",
+    "source_task_metadata_sha256": "f5e8acce47fe4d0693fa1ad820febc9ae0602cd4d4c2cb8566d7d9ad42e052da"
+  },
+  "request_file": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/broadcast_to__transpose_alias/request.json",
+  "request_file_sha256": "29aa253394378c5eb43fe80d69f918a6ba3fae767578a23576afd25019b3c45b",
+  "request_id": "d3e13650654330f21238077f7362279b97111ae652808fdca8309b46ff58a725",
+  "source_files": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/broadcast_to__transpose_alias/source/broadcast_model.py": "d193a63777fee1f6d6084de7356e29a2e27cdb5094f82e32b1be3c729c6ff8ed"
+  },
+  "source_format": "poseidon-trusted-pytorch-v28",
+  "source_manifest": "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/broadcast_to__transpose_alias/source/manifest.json",
+  "source_manifest_sha256": "7271daa4bceeed9fec4ca888cfc901c8a38e3f77169869aae7f253fa6f4833db"
+}

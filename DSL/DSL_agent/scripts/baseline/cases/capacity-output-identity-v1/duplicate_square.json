@@ -1,0 +1,48 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "id": "duplicate_square",
+  "resource_profile": "general-tensors-v1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "a",
+      "op": "square",
+      "inputs": [
+        "x"
+      ],
+      "outputs": [
+        "a_out"
+      ],
+      "attrs": {}
+    },
+    {
+      "id": "b",
+      "op": "square",
+      "inputs": [
+        "x"
+      ],
+      "outputs": [
+        "b_out"
+      ],
+      "attrs": {}
+    }
+  ],
+  "outputs": [
+    {
+      "name": "first",
+      "value": "a_out"
+    },
+    {
+      "name": "second",
+      "value": "b_out"
+    }
+  ]
+}

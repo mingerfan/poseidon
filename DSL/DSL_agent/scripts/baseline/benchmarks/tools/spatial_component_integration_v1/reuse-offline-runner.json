@@ -1,0 +1,7 @@
+{
+  "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/pytorch_input_binding_v1/offline_cpu.py",
+  "source_sha256": "4aa44e2ed234ab22163cdb2f9c741b941c5377f0fb7e95f3631ed79584b5cad6",
+  "scope": "Graph-source request, independent spatial reference, preserved rule origin, two reuse calls per selected package",
+  "executions": 0,
+  "provider_calls": 0
+}

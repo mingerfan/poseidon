@@ -1,0 +1,51 @@
+test_approval_cannot_use_old_format (test_scope.ScopeTests) ... ok
+test_boolean_budget (test_scope.ScopeTests) ... ok
+test_compiled_only (test_scope.ScopeTests) ... ok
+test_duplicate_case (test_scope.ScopeTests) ... ok
+test_duplicate_json (test_scope.ScopeTests) ... ok
+test_exact_ceiling (test_scope.ScopeTests) ... ERROR
+test_extra_calls (test_scope.ScopeTests) ... ok
+test_extra_case (test_scope.ScopeTests) ... ok
+test_failed_not_passed (test_scope.ScopeTests) ... ok
+test_generation_limit (test_scope.ScopeTests) ... ok
+test_http_limit (test_scope.ScopeTests) ... ok
+test_missing_case (test_scope.ScopeTests) ... ok
+test_more_budget (test_scope.ScopeTests) ... ok
+test_no_approval (test_scope.ScopeTests) ... ok
+test_nonfinite_json (test_scope.ScopeTests) ... ok
+test_original (test_scope.ScopeTests) ... ok
+test_reorder (test_scope.ScopeTests) ... ok
+test_reordered_ledger (test_scope.ScopeTests) ... ok
+test_threshold (test_scope.ScopeTests) ... ok
+test_unknown_call (test_scope.ScopeTests) ... ok
+test_wrong_model (test_scope.ScopeTests) ... ok
+test_approval_file_absent_does_not_construct_provider (test_run.RunTests) ... ok
+test_existing_root_rejected (test_run.RunTests) ... ok
+test_hidden_approval_path (test_run.RunTests) ... ok
+test_no_approval_no_execution (test_run.RunTests) ... ok
+test_owned_tree_only_owned_child (test_run.RunTests) ... ok
+test_pid_identity (test_run.RunTests) ... ok
+test_plan_extended_deadline (test_run.RunTests) ... ok
+test_plan_tamper (test_run.RunTests) ... ok
+test_plan_unknown_field (test_run.RunTests) ... ok
+test_public_budget (test_run.RunTests) ... ok
+test_public_cases (test_run.RunTests) ... ok
+test_transport_receipt_normalized_roundtrip_preserves_diagnostics (test_run.RunTests) ... ok
+test_wrong_root_rejected (test_run.RunTests) ... ok
+
+======================================================================
+ERROR: test_exact_ceiling (test_scope.ScopeTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/test_scope.py", line 28, in test_exact_ceiling
+    def test_exact_ceiling(self):self.assertEqual(scope.totals([self.state()for _ in scope.CASES]),dict(generations=60,http_attempts=240,calls_resolved=True))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/scope.py", line 136, in totals
+    require(g<=20 and h<=80,"campaign_call_ceiling")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/scope.py", line 27, in require
+    if not ok:raise ValueError(code)
+ValueError: campaign_call_ceiling
+
+----------------------------------------------------------------------
+Ran 34 tests in 0.315s
+
+FAILED (errors=1)

@@ -1,0 +1,122 @@
+"""Independent routing, immutable public bindings and prior request compatibility."""
+import copy,json,math,unittest
+from pathlib import Path
+import numpy as np
+from benchmark_graph import samples,canonical,digest
+from benchmark_math import evaluate as math_ref
+from benchmark_torch import evaluate as torch_ref
+from component_contract import prepare_task,reconstruct_request
+from unified_graph_contract import validate_request
+from unified_capacity_constants import packing,LEGACY_VERSION,VERSION
+from unified_capacity_diagonal_cases import models
+from unified_graph_lowering import candidate_source
+from test_unified_capacity_linear import interpreted_output
+
+class CapacityDiagonalTests(unittest.TestCase):
+    def test_independent_references_and_multi_chunk_outputs(self):
+        for g in models():
+            r=prepare_task(g,{"chunk_period":256});src,strategy=candidate_source(r)
+            self.assertGreater(r["layout"]["output_ciphertexts"],1)
+            self.assertEqual(r["constant_origins"]["capacity_tensor_packing"]["linear_strategies"],
+                             {"n1":"tiled_diagonal" if g["id"].endswith(("_1","_2")) else "diagonal"})
+            self.assertLess(len(src.splitlines()),450)
+            for probe in samples(g,16):
+                a,b=math_ref(g,probe),torch_ref(g,probe)
+                for name in a:np.testing.assert_allclose(a[name],b[name],atol=1e-12,rtol=1e-12)
+                expected=np.concatenate([a[o["name"]].reshape(-1) for o in g["outputs"]])
+                np.testing.assert_allclose(interpreted_output(src,r,probe),expected,atol=1e-12,rtol=1e-12)
+
+    def test_every_nonzero_weight_has_one_routed_contribution(self):
+        for g in models():
+            if g["id"].endswith(("_1","_2")):continue
+            r=prepare_task(g,{"chunk_period":256});pk=packing(g,r["layout"])
+            weights=np.asarray(g["constants"]["weight"]);batches=math.prod(g["inputs"][0]["shape"])//weights.shape[1]
+            entries=[b for b in pk["bindings"] if b["role"]=="linear_diagonal"]
+            expected={}
+            for batch in range(batches):
+                for output in range(weights.shape[0]):
+                    dst=batch*weights.shape[0]+output
+                    for j in range(weights.shape[1]):expected[(batch*weights.shape[1]+j,dst)]=weights[output,j]
+            actual={}
+            for b in entries:
+                for slot,weight in enumerate(pk["vectors"][b["key"]]):
+                    if weight==0:continue
+                    src=b["input_chunk"]*256+(slot+b["step"])%256
+                    dst=b["output_chunk"]*256+slot
+                    self.assertNotIn((src,dst),actual);actual[(src,dst)]=weight
+            self.assertEqual(actual,expected)
+
+    def test_version_and_request_reconstruction(self):
+        for g in models():
+            r=prepare_task(g,{"chunk_period":256})
+            self.assertEqual(r["constant_origins"]["capacity_tensor_packing"]["version"],VERSION)
+            self.assertEqual(canonical(reconstruct_request(r)),canonical(r))
+        from hecate_python_env import WORK
+        count=0
+        for batch in ["poseidon-capacity-linear-minimal-r392","poseidon-capacity-linear-remainder-r393"]:
+            for folder in (WORK/"results"/batch).iterdir():
+                f=folder/"request.json"
+                if not f.is_file():continue
+                r=json.loads(f.read_text())
+                if "capacity_tensor_packing" in r["constant_origins"]:
+                    self.assertEqual(r["constant_origins"]["capacity_tensor_packing"]["version"],LEGACY_VERSION)
+                self.assertEqual(canonical(reconstruct_request(r)),canonical(r));count+=1
+        self.assertEqual(count,15)
+
+    def test_invalid_strategy_or_version_is_rejected(self):
+        for field,value in [("version","capacity-public-tensors-v99"),("linear_strategies",{"n1":"untrusted"})]:
+            r=prepare_task(models()[0],{"chunk_period":256})
+            r["constant_origins"]["capacity_tensor_packing"][field]=value
+            r["request_id"]=digest({k:v for k,v in r.items() if k!="request_id"})
+            with self.assertRaises(ValueError):validate_request(r)
+
+    def test_zero_weights_and_bias_use_trusted_zero(self):
+        for with_bias in [False,True]:
+            g=copy.deepcopy(models()[0]);g["constants"]["weight"]=[[0.]*4 for _ in range(4)]
+            if not with_bias:
+                g["nodes"][-1]["inputs"].pop();g["constants"].pop("bias")
+            r=prepare_task(g,{"chunk_period":256});src,_=candidate_source(r)
+            self.assertEqual(r["constant_origins"]["capacity_tensor_packing"]["linear_strategies"],{"n1":"diagonal"})
+            self.assertNotIn("zero_ct *",src)
+            for probe in samples(g,4):
+                expected=math_ref(g,probe)["result"].reshape(-1)
+                np.testing.assert_allclose(interpreted_output(src,r,probe),expected,atol=1e-12,rtol=1e-12)
+
+    def test_uniform_public_tensor_shared_with_linear(self):
+        g=copy.deepcopy(models()[0]);g["id"]="capacity_shared_uniform_weights"
+        g["inputs"][0]["shape"]=[4,4];g["constants"]["weight"]=[[0.125]*4 for _ in range(4)]
+        g["nodes"][0]["inputs"][1]="weight"
+        r=prepare_task(g,{"chunk_period":256});src,_=candidate_source(r)
+        self.assertIn(0.125,r["public_constants"].values())
+        for probe in samples(g,16):
+            expected=math_ref(g,probe)["result"].reshape(-1)
+            np.testing.assert_allclose(expected,torch_ref(g,probe)["result"].reshape(-1),atol=1e-12,rtol=1e-12)
+            np.testing.assert_allclose(interpreted_output(src,r,probe),expected,atol=1e-12,rtol=1e-12)
+
+    def test_request_preparation_without_numpy_or_torch(self):
+        import subprocess,sys
+        root=Path(__file__).resolve().parents[2]
+        code="""
+import sys,json
+from pathlib import Path
+root=Path(sys.argv[1]);sys.path.insert(0,str(root/"scripts/baseline"))
+class RejectNumericImports:
+    def find_spec(self,name,*args):
+        if name.split(".")[0] in {"numpy","torch"}:raise AssertionError("Numeric environment import: "+name)
+sys.meta_path.insert(0,RejectNumericImports())
+from component_contract import prepare_task,reconstruct_request
+model=json.loads((root/"scripts/baseline/cases/capacity-batched-linear-v1/capacity_shared_uniform_weights.json").read_text())
+request=prepare_task(model,{"chunk_period":256})
+assert reconstruct_request(request)==request
+"""
+        result=subprocess.run([sys.executable,"-B","-c",code,str(root)],capture_output=True,text=True,timeout=10)
+        self.assertEqual(result.returncode,0,result.stderr)
+
+    def test_sparse_rows_and_cross_batch_tail(self):
+        g=copy.deepcopy(models()[3]);g["constants"]["weight"][1]=[0.]*3
+        g["constants"]["weight"][2]=[0.,-0.125,0.]
+        r=prepare_task(g,{"chunk_period":256});src,_=candidate_source(r)
+        for probe in samples(g,16):
+            np.testing.assert_allclose(interpreted_output(src,r,probe),math_ref(g,probe)["result"].reshape(-1),atol=1e-12,rtol=1e-12)
+
+if __name__=="__main__":unittest.main()

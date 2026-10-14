@@ -1,0 +1,25 @@
+{
+  "backend_changed": false,
+  "binding": "bba7c7d40bce0924fc0b4987d86988f478ecc8af0611f79343ba6560e4f624f4",
+  "blocked_duplicate_execution": true,
+  "changed_files": {
+    "scripts/baseline/benchmarks/tools/normalized_source_live_v1/run.py": "4585a6361b83149b42e2d70e73742786a43bae3bcdc1ff19e31c4f1857ee524b",
+    "scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py": "93446d4e5912db46eb5df8c821043e194f01c409636e2472ae39810a75551d34"
+  },
+  "compilations": 0,
+  "controls_log_sha256": "788f28a9e4a6a1ff9a21e1f99100053666f07f0c5c7779cdc2c1807c29c15dbe",
+  "current_live_batch_unchanged": true,
+  "encrypted_calls": 0,
+  "format": "poseidon-unpaid-supervisor-guard-acceptance-v1",
+  "generations": 0,
+  "http_attempts": 0,
+  "network_changed": false,
+  "parameters_changed": false,
+  "preserved_previous_source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/preserved-run-before-supervisor-guard.py",
+  "production_source_changed": false,
+  "source_capture": 0,
+  "status": "passed",
+  "unit_failed": 0,
+  "unit_skipped": 0,
+  "unit_tests": 20
+}

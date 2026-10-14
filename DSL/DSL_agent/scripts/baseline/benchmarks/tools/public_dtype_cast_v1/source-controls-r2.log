@@ -1,0 +1,14 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/source_controls.py", line 93, in <module>
+    result=isolated_run(row["manifest_path"],output,resource_profile="general-tensors-v1",trusted=True)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_intake.py", line 227, in run
+    return selected(manifest_path,output,resource_profile=resource_profile,trusted=trusted)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_intake.py", line 118, in run
+    require(not output.exists() and output.parent.resolve().is_relative_to(WORK/"results"),
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Fresh capture directory under results required

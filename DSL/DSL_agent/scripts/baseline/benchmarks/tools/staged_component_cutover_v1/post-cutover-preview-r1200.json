@@ -1,0 +1,88 @@
+{
+  "encrypted_executions": 0,
+  "format": "poseidon-joint-post-cutover-preview-v1",
+  "live_batch_launch_rejected": true,
+  "nix_launches": 0,
+  "preview": {
+    "bootstrap": false,
+    "candidate_origin": "rule_baseline",
+    "cases": [
+      "linear",
+      "norm",
+      "split_weight"
+    ],
+    "cuda": false,
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_component_cutover_v1/post_cutover_acceptance.py": "810601981a6c708abf2ae19e256bfcefb8e646ba1961516c1eb563bbde471a4d",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/linear/manifest.json": "486b50de96a16c8b05092f41b77b9c440db6c25e22729f855f71f0394527d33e",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/linear/ordered_models.py": "47c7d3cebf74226bf6877b059cc55649a3e19fb6d05a512954e369cd54f8c859",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/linear/state_0.npy": "28bbed3e54fa4d84388a23ce3ea05d2990635b60ff88c945f540c8f36a6ec6b6",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/linear/state_1.npy": "75ef40aca0ff2c5b9724224cdf6754ecc136a1e90b1e7c362deeccb7016b4a96",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/norm/manifest.json": "99daca4b8e71080588d9b0c0881ea64eea375be819b2e650e9545bcaae098c19",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/norm/ordered_models.py": "47c7d3cebf74226bf6877b059cc55649a3e19fb6d05a512954e369cd54f8c859",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/norm/state_0.npy": "a8b0a88d4b7811038220a8c310b7b3eb256b7d3355fb3ac7ef6ead9c9fb55e14",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/norm/state_1.npy": "75ef40aca0ff2c5b9724224cdf6754ecc136a1e90b1e7c362deeccb7016b4a96",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/split_weight/manifest.json": "ab6d65eced0958ef984ddb6f9953bbe2a58d733e35cdd53195805945e47d4e80",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/split_weight/ordered_models.py": "47c7d3cebf74226bf6877b059cc55649a3e19fb6d05a512954e369cd54f8c859",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/fixtures/split_weight/state_0.npy": "7936749e575fe518e79804b2cb766e46de43f7ef3e499267313d57d2258a96e9"
+    },
+    "format": "poseidon-joint-cutover-offline-scope-v1",
+    "guard": {
+      "applied": false,
+      "binding": "0623167de71327bb1d2ec15a2d0563b74ee1c5bd1d35acf61f072027e2521c1b",
+      "joint_staging_verified": true,
+      "post_cutover_backend_acceptance_required": true,
+      "status": "waiting_for_current_batch",
+      "targets": 25
+    },
+    "joint_target_hashes": {
+      "application-source-catalog-v1.json": "6d7ec81e4cce7f8a6656fd2173df1b31f32b32ffaaa69ca63a6638eb8f65da53",
+      "application_capabilities.py": "928aa32532feec6ca5e318ecf23e9e85c7db3ab55533a755aecef5d16efe0dc3",
+      "application_component.py": "1a2204471b294694666c22a95275ed48a251d84f8b2dd04f27fdf8e60062d3d7",
+      "application_diagnostics.py": "0dddea20f17e1f85760524219f4fd6862d4103953ddbfe1a64b97c64b7c45693",
+      "candidate_bundle.py": "a2c33c0771e25a0fcb3bbae241f711e79345f72cef5ed80b1d01402d4c208afc",
+      "candidate_check_diagnostic.py": "4043cf8c493bb7e1194302e1035b64d0658b164bcc54d2896e22614431ab3662",
+      "component_contract.py": "50b2ed32e17c2d82055540750db0ef9bab322f57568f334f3746c468b6ba480e",
+      "decorated_functions.py": "93ee703a21311ba1c8a675d43ecbc6eba63f381b916ffe539b3e010ed3d86801",
+      "native_array_core.py": "b1918062c25dfe0155b7d840ef5c6eee0949daaf6e88e37b7b7c7d93b4fa7799",
+      "pytorch_alias_capture_bridge.py": "10b6d4aa72d77411c356597b82dae1005fe2f25285dcd195aa73eaddca24b1b2",
+      "pytorch_alias_composition.py": "980937de2f66343163bdae434fc9a318973b48f267af6c54a1fbb8577ee375f8",
+      "pytorch_arithmetic_normalization.py": "856fff7b17efbefb95e06366400d08271e193bea5c97015851756e5c6dd62f1e",
+      "pytorch_model_capture.py": "baa9a6743c57256e85944ac5b9de9eca0585e9742902173e317dbf87bbf040de",
+      "pytorch_model_intake.py": "8f450250e8e07c4e15292ec5b934e8441e038f47ac8262a1ff97d1f6686bc31b",
+      "pytorch_ordered_capture.py": "57fbfe965f3c65530990b8086055732f0923c837a272aa2acd629fd6e32c3340",
+      "pytorch_ordered_contract.py": "7f9e014303310939c26703fc4d8caf6b0ebcf3d2b39cb0bb039303d64cefeadc",
+      "pytorch_ordered_intake.py": "01ba99e91bc6687ef8cae23e1124e270b230aa87519ed8f852037287c4798506",
+      "pytorch_ordered_reference.py": "534758f6d7bb15aa4a81196692f934dffec2e60e671f269abad74a7456c24804",
+      "pytorch_static_trace.py": "fda6318dfc9d543fddab3e1e904cd04bdd79923db48f124b42e5c3292949c2d8",
+      "run_candidate.py": "e5200e7272a7ab13bf12592324f05c88d1e3bcb6ee5ad2e0d6ad10b6dee37612",
+      "sandbox_policy.py": "12af334efac84d2ea2c92c6bc83bae263809aff89687888b4b414896a819600a",
+      "test_binding_feedback.py": "512bfd5fd926d0c0bc08bc8739a5cd36a9c83d4ffa6f868402c95673facd594b",
+      "unified_binding_guidance.py": "aae3c209132afa9a16abbfed8fb2ad8396d1a218ce7d03b418c554ddf5450e26",
+      "unified_graph_contract.py": "0c330d7d0f681b0d03c8c6b4deb05192beed5fbfd97f81d08fdf66d13cb0b17a",
+      "validation_adapter.py": "8baf1a5893c782d0cb96317031123f37dc38c208ae53cda949828162a6df184d"
+    },
+    "new_agent_generation": false,
+    "phases": [
+      "qualification",
+      "new_inputs",
+      "cache"
+    ],
+    "production_cutover_required": true,
+    "scope": {
+      "artifact_bytes": 4294967296,
+      "compile_jobs": 2,
+      "global_bytes": 34359738368,
+      "link_jobs": 1,
+      "native_workers": 1,
+      "phase_seconds": 180,
+      "provider_calls": 0,
+      "reserve_bytes": 4294967296,
+      "wall_seconds": 1800
+    }
+  },
+  "provider_calls": 0,
+  "result_directory_created": false,
+  "status": "planned_only",
+  "tool_sha256": "810601981a6c708abf2ae19e256bfcefb8e646ba1961516c1eb563bbde471a4d"
+}

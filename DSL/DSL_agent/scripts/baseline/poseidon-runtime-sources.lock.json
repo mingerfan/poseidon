@@ -1,0 +1,57 @@
+{
+  "format": "poseidon-runtime-source-lock-v1",
+  "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+  "runtime": {
+    "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+    "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+    "path": "third_party/ckks-runtime-agent"
+  },
+  "dacapo": {
+    "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+    "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+    "path": "third_party/ckks-runtime-agent/third_party/dacapo",
+    "patches": [
+      {
+        "file": "dacapo-plaintext-subtraction.patch",
+        "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+      },
+      {
+        "file": "dacapo-concat-layout.patch",
+        "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+      },
+      {
+        "file": "dacapo-bootstrap-containers.patch",
+        "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+      },
+      {
+        "file": "dacapo-native-function-calls.patch",
+        "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+      },
+      {
+        "file": "dacapo-refined-function-input-types.patch",
+        "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+      },
+      {
+        "file": "dacapo-augmented-operand-order.patch",
+        "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+      },
+      {
+        "file": "dacapo-constant-output-path.patch",
+        "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+      },
+      {
+        "file": "dacapo-minimal-mlir-link.patch",
+        "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+      },
+      {
+        "file": "dacapo-gcc-qualified-casts.patch",
+        "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+      },
+      {
+        "file": "dacapo-unused-mlir-dependencies.patch",
+        "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+      }
+    ]
+  },
+  "integration_method": "reviewed source archives; original independent repositories preserved"
+}

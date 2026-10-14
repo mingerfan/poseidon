@@ -1,0 +1,68 @@
+{
+  "cases": [
+    {
+      "chunk_period": 256,
+      "file": "fx_dot_0.json",
+      "id": "fx_dot_0",
+      "resource_profile": "medium-v1",
+      "sha256": "d6392b9c35be3b404e95c25d0da9dc3f6a8b02588f6bd35b43d1f9a33af65374"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_dot_1.json",
+      "id": "fx_dot_1",
+      "resource_profile": "medium-v1",
+      "sha256": "28e6f4d4f74aa820cb5481df236b2a373780abbbf77c6007a947670dd2248698"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_dot_2.json",
+      "id": "fx_dot_2",
+      "resource_profile": "medium-v1",
+      "sha256": "e9910b33d40404eb090faf1a710f35da45c6b02ac490eabd5423d87e8db65e7c"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_mm_0.json",
+      "id": "fx_mm_0",
+      "resource_profile": "medium-v1",
+      "sha256": "1a2b2efd0e4fff231f220168e59ca8c2717ff8d2169041b97c1ddac1cfdf6cd6"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_mm_1.json",
+      "id": "fx_mm_1",
+      "resource_profile": "medium-v1",
+      "sha256": "0a08ef7cf8eeef45ee3f67f8e6d79625a71e8e236edec43621f0cf243b9d08a3"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_mm_2.json",
+      "id": "fx_mm_2",
+      "resource_profile": "medium-v1",
+      "sha256": "f5cb66a7ca183ab94a988f4fea931371e837c1634e70ae03b8c0f4e7f9dbbf30"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_bmm_0.json",
+      "id": "fx_bmm_0",
+      "resource_profile": "medium-v1",
+      "sha256": "82e7be7f63d85823f67f8e032cf6ca0339ad19cdca1035b74f5620a7e99e7057"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_bmm_1.json",
+      "id": "fx_bmm_1",
+      "resource_profile": "medium-v1",
+      "sha256": "bcf7bc576ee2315b37fdd54d4728c701ce65b0dc444708bb494baea5ca724c0f"
+    },
+    {
+      "chunk_period": 256,
+      "file": "fx_bmm_2.json",
+      "id": "fx_bmm_2",
+      "resource_profile": "medium-v1",
+      "sha256": "b4423b7af8d1976f199a08dc82914ba26622807bc387546fe6892967dbaddb6d"
+    }
+  ],
+  "format": "poseidon-pytorch-acceptance-list-v1"
+}

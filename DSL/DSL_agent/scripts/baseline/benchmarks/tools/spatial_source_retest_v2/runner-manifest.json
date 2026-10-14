@@ -1,0 +1,17 @@
+{
+  "binding": "961cad0c4c9ab2fed4c4bf8bcdcb2e329b4d8547337761ff75d59176ee08885f",
+  "format": "poseidon-spatial-source-retest-v2-runner-v1",
+  "proposal_binding": "811f655238bc91a23033b5b564855afb02457f993ebf59496d72f80f264e866d",
+  "proposal_sha256": "0ea9ae3ff67be7cc8a896c45d64447bd3b2966a5cd0d12c1268530bdd178592a",
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/freeze.py": "496cf64a573e9bfd5425747f65d9e066fdf2047ea5bd7727242b76505bff315f",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/guard_probe.py": "e48135d50efd7badd1461c3064b4fcac99cef0f0c87fa971b67897a68af9ffba",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/package_checks.py": "00519a4b0b4f24b8132c9836c44ea82ad85d8eda7aad394a3a25c2a83b0a5116",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/run.py": "e6fff62beb301048d785f4e36d55b1c52d9a994ef5302770aa543bc153a50325",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/scope.py": "6995dffd084d63a423a36d10d2e3779dcace51a348e9c45d5f325e121e574959",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/test_launcher.py": "1c62dc18e6574489913313a5e01f8f663d97b63546af2f67e135f731f510073f",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/test_package_calls.py": "ab1d80723b40bd38064b5a13760857ea8afe12e7eac46b73588c1a81658d3efa",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/test_run.py": "93446d4e5912db46eb5df8c821043e194f01c409636e2472ae39810a75551d34",
+    "scripts/baseline/benchmarks/tools/spatial_source_retest_v2/test_scope.py": "bc35d96985e7d6940227b8028db93c66f28b68fdf627384bed318ae40cd757b8"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "acceptance_binding": "75fad1285ce2cfab6eda17fd561029b5c9bfaf24f5880feae9e09ac55abd8a35",
+  "compiler_calls": 0,
+  "downloads": 0,
+  "encrypted_executions": 0,
+  "format": "poseidon-fused-matrix-request-acceptance-v1",
+  "installations": 0,
+  "production_applied": false,
+  "provider_calls": 0,
+  "purpose": "Prepare bounded public generation contexts from verified source packages without executing source or candidates",
+  "source_acceptance_sha256": "be42af07a5376fe7f153cd86ce09cc72a94198ec6a046f74e9d1c39085545d40",
+  "source_cases": [
+    "addmm_public_right",
+    "baddbmm_public_right",
+    "addbmm_public_right",
+    "addbmm_cipher",
+    "addbmm_public_bias",
+    "addmm_cipher",
+    "addmm_public_bias",
+    "baddbmm_cipher",
+    "baddbmm_public_bias"
+  ],
+  "source_format": "poseidon-trusted-pytorch-v14",
+  "source_report_sha256": "4fd23e26c47b38758b15f19c25ffa5ae2c4cefa32ced8f7fbe2aad84a121261b",
+  "source_result": "agent-fused-matrix-intake-r1268",
+  "target_hashes": {
+    "application_capabilities.py": "4d6e323bd81f5b067feb62cd8fca0ba38d6e3aa5298f75ad80027a6509db0775",
+    "pytorch_fused_matrix_normalization.py": "1e34fbd1f51bba8fa1dd435cb6d2b664fcda3174f6b7181722538fd686210274",
+    "pytorch_model_intake.py": "11d498d27706f3849135de1c16bf80bf22aedbef42ab2982af882af86e8dfe96",
+    "pytorch_ordered_capture.py": "c808918784ba3511ffbb7f0e9e75687192c371402704229f3e65159020f281bc",
+    "pytorch_ordered_contract.py": "40577252b3d9bbac130382fd3dced3f4d050ea30be10d083b2797fc9d3200fe4",
+    "pytorch_ordered_intake.py": "f2f2b0716ac07a35d5b9bc8ffdef4e28ce9ea2ca3e815cf42b01ba25e1e24f32",
+    "pytorch_static_trace.py": "bf37763c36337bb9ff7090af5ba51fad59870039c3d812739d65bd674f502080"
+  }
+}

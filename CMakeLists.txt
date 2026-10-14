@@ -17,11 +17,15 @@ message(STATUS "CROSS_COMPILE_ARRCH64: ${CROSS_COMPILE_ARRCH64}")
 if(CROSS_COMPILE_ARRCH64)
     SET(CMAKE_C_COMPILER /data/gcc-arm-11.2/bin/aarch64-none-linux-gnu-gcc)
     SET(CMAKE_CXX_COMPILER /data/gcc-arm-11.2/bin/aarch64-none-linux-gnu-g++)
-    include_directories(/data/gmp-arm/gmp-6.3.0-install/include)
-    link_directories(/data/gmp-arm/gmp-6.3.0-install/lib)
+    if(NOT GMP_ROOT)
+        set(GMP_ROOT "/data/gmp-arm/gmp-6.3.0-install" CACHE PATH
+            "GMP installation prefix")
+    endif()
 endif ()
 
 project(Poseidon VERSION 1.0.0 LANGUAGES CXX C)
+
+find_package(GMP REQUIRED MODULE)
 
 # 根据ASAN的值来设置编译器标志  
 option(ASAN "Enable AddressSanitizer" OFF)  
@@ -52,7 +56,7 @@ message(STATUS "POSEIDON_USE_CXX17: ${POSEIDON_USE_CXX17}")
 
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG -fPIC -pthread ")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG -fPIC -pthread ")
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lgmp  -fopenmp")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -220,17 +224,9 @@ if(POSEIDON_BUILD_BENCH)
     add_subdirectory(bench)
 endif()
 
-# [option] POSEIDON_BUILD_MGPU (default: OFF)
-option(POSEIDON_BUILD_MGPU "Build optional multi-GPU static schedule runtime" OFF)
-message(STATUS "POSEIDON_BUILD_MGPU: ${POSEIDON_BUILD_MGPU}")
-
-# [option] POSEIDON_BUILD_MGPU_BENCH (default: OFF)
-option(POSEIDON_BUILD_MGPU_BENCH "Build multi-GPU transfer benchmarks" OFF)
-message(STATUS "POSEIDON_BUILD_MGPU_BENCH: ${POSEIDON_BUILD_MGPU_BENCH}")
-
 add_library(poseidon_shared SHARED ${POSEIDON_SOURCE_FILES})    
 target_include_directories(poseidon_shared PUBLIC ${POSEIDON_INCLUDES_DIR}/src)
-target_link_libraries(poseidon_shared PRIVATE gmp)
+target_link_libraries(poseidon_shared PUBLIC GMP::gmpxx)
 if(POSEIDON_USE_HARDWARE)    
     target_link_libraries(poseidon_shared PUBLIC poseidon_hardware)
 endif()
@@ -279,29 +275,75 @@ if(POSEIDON_USE_INTEL_HEXL)
     )
 endif()
 
-if(POSEIDON_BUILD_MGPU)
-    option(POSEIDON_BUILD_MGPU_TESTS "Build multi-GPU static schedule tests" ON)
-    message(STATUS "POSEIDON_BUILD_MGPU_TESTS: ${POSEIDON_BUILD_MGPU_TESTS}")
+# [option] POSEIDON_BUILD_CKKS_RUNTIME_API (default: OFF)
+option(POSEIDON_BUILD_CKKS_RUNTIME_API
+    "Build the optional CKKS Runtime CPU/GPU Api integration" OFF)
+message(STATUS "POSEIDON_BUILD_CKKS_RUNTIME_API: ${POSEIDON_BUILD_CKKS_RUNTIME_API}")
+option(POSEIDON_BUILD_GPU "Build the standalone Poseidon GPU library" OFF)
+option(POSEIDON_BUILD_RESNET20_S2C_FIRST
+    "Build the self-contained S2C-first ResNet20 application" OFF)
 
-    if(POSEIDON_BUILD_MGPU_TESTS)
+set(POSEIDON_CKKS_RUNTIME_SOURCE_DIR
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/ckks-runtime" CACHE PATH
+    "Path to the CKKS Runtime source tree")
+
+if(POSEIDON_BUILD_CKKS_RUNTIME_API)
+    if(NOT EXISTS "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}/CMakeLists.txt")
+        message(FATAL_ERROR
+            "CKKS Runtime CMakeLists.txt was not found at "
+            "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}.\n"
+            "Initialize the bundled Runtime with:\n"
+            "  git submodule update --init third_party/ckks-runtime\n"
+            "or set POSEIDON_CKKS_RUNTIME_SOURCE_DIR to another checkout.")
+    endif()
+
+    add_subdirectory(
+        "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}"
+        "${CMAKE_CURRENT_BINARY_DIR}/ckks-runtime"
+        EXCLUDE_FROM_ALL)
+
+    option(POSEIDON_BUILD_CKKS_RUNTIME_TESTS
+        "Build CKKS Runtime Api integration tests" ON)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ${POSEIDON_BUILD_CKKS_RUNTIME_TESTS}")
+    option(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS
+        "Build CKKS Runtime GPU Api tests that require a CUDA device" OFF)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: ${POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS}")
+    option(POSEIDON_BUILD_CKKS_RUNTIME_MPI
+        "Enable MPI mode in PoseidonCpuApi" OFF)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_MPI: ${POSEIDON_BUILD_CKKS_RUNTIME_MPI}")
+    option(POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL
+        "Enable the optional MPI/NCCL GPU communication backend" OFF)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL: ${POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL}")
+    if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
         enable_testing()
     endif()
 
-    add_subdirectory(src/poseidon/mgpu)
 endif()
 
-if(POSEIDON_BUILD_MGPU_BENCH)
-    if(NOT POSEIDON_BUILD_MGPU)
-        message(FATAL_ERROR "POSEIDON_BUILD_MGPU_BENCH requires POSEIDON_BUILD_MGPU=ON")
-    endif()
-    if(NOT POSEIDON_BUILD_MGPU_CUDA_COMM)
-        message(FATAL_ERROR "POSEIDON_BUILD_MGPU_BENCH requires POSEIDON_BUILD_MGPU_CUDA_COMM=ON")
-    endif()
-    if(NOT POSEIDON_BUILD_MGPU_GPU_OBJECTS)
-        message(FATAL_ERROR "POSEIDON_BUILD_MGPU_BENCH requires POSEIDON_BUILD_MGPU_GPU_OBJECTS=ON")
+if(POSEIDON_BUILD_CKKS_RUNTIME_API OR POSEIDON_BUILD_GPU OR
+   POSEIDON_BUILD_RESNET20_S2C_FIRST)
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    if(NOT CMAKE_CUDA_ARCHITECTURES)
+        set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
+            "CUDA architectures for the Poseidon GPU library" FORCE)
     endif()
 
-    add_subdirectory(bench/mgpu)
+    add_subdirectory(src/poseidon/gpu)
+endif()
+
+if(POSEIDON_BUILD_CKKS_RUNTIME_API)
+    add_subdirectory(src/poseidon/runtime_api)
+endif()
+
+if(POSEIDON_BUILD_RESNET20_S2C_FIRST)
+    enable_testing()
+    add_subdirectory(bench/resnet20_s2c_first)
 endif()
 
 install(

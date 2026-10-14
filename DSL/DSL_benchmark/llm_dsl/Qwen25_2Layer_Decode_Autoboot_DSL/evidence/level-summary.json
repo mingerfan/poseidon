@@ -1,0 +1,68 @@
+{
+  "audit": "/home/gy/qwen-ckks/experiments/level_audit_1791875866753487300",
+  "source_archive": "level-audit-status-1791875968028816200.json",
+  "plan_sha256": "b43f7b8b307353923d0b42ff993ce8b908d09e0d9eebd180e1fa0c2e8d4fd96f",
+  "comparison": {
+    "differing_fields": [],
+    "values_identical": true,
+    "initialization_identical": true,
+    "execution_identical": true,
+    "outputs_identical": true
+  },
+  "by_level": {
+    "1": {
+      "plain_count": 14,
+      "plain_bytes": 14680064,
+      "cipher_count": 8010,
+      "cipher_bytes": 16798187520
+    },
+    "2": {
+      "plain_count": 51,
+      "plain_bytes": 80216064,
+      "cipher_count": 20022,
+      "cipher_bytes": 63238569984
+    },
+    "3": {
+      "plain_count": 35,
+      "plain_bytes": 73400320,
+      "cipher_count": 55889,
+      "cipher_bytes": 235124293632
+    },
+    "4": {
+      "plain_count": 6319,
+      "plain_bytes": 16564879360,
+      "cipher_count": 8154,
+      "cipher_bytes": 43324538880
+    },
+    "5": {
+      "plain_count": 2,
+      "plain_bytes": 6291456,
+      "cipher_count": 621,
+      "cipher_bytes": 3919577088
+    }
+  },
+  "boot_categories": {
+    "RMSNorm": 80,
+    "Linear / LM head": 30,
+    "RoPE": 6,
+    "Residual": 6,
+    "Attention core": 114,
+    "Softmax": 336,
+    "SiLU": 32
+  },
+  "boot_blocks": {
+    "t0.b0": 40,
+    "t1.b0": 265,
+    "t0.b1": 16,
+    "t1.b1": 271,
+    "final.rms_norm": 11,
+    "final.lm_head": 1
+  },
+  "notes": {
+    "scope": "2 real-width blocks, 2 token decode, last-token logits + both-layer KV; synthetic weights.",
+    "payload": "All retained coefficient arrays; excludes keys, Boot workspace and allocator overhead. Not RSS.",
+    "attribution": "Locations annotate arithmetic only. 5 encoded plaintexts and 8 final-output modswitch values have no stage label; all 604 Boot operations are labelled.",
+    "stage_boundaries": "Levels at cross-stage operand uses; shared packed-input preparation and early modswitch can move across Python function boundaries.",
+    "stage_plain": "Unique plaintext inputs within a stage, may overlap with another stage. Sum global level bins for total memory."
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "approximations": {
+    "defaults": {
+      "rsqrt": {
+        "domain": [
+          0.5,
+          1.0
+        ],
+        "iterations": 1,
+        "method": "newton"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "models.make_model",
+  "factory": {
+    "args": [
+      "cnn_norm_head",
+      1
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "models.py": "22df0312f7ebeaf3fd111950d6d15723d7aab044d743445d19c96b6aab8ae3da"
+  },
+  "format": "poseidon-trusted-pytorch-v7",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        3,
+        3
+      ]
+    }
+  ],
+  "outputs": [
+    "out",
+    "aux"
+  ],
+  "weights": {
+    "features.0.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0000.npy",
+      "sha256": "8668ffff089bca78aa3e2ae69bae56265334df8804df7b68c6831414e2baab3b",
+      "shape": [
+        2
+      ]
+    },
+    "features.0.weight": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "state_0001.npy",
+      "sha256": "d5b1203b42e67152863bf029bef1c88e0e2261a5915f95daf9226885b2eb677f",
+      "shape": [
+        2,
+        2,
+        1,
+        1
+      ]
+    },
+    "features.1.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0002.npy",
+      "sha256": "21d2684424263debc1b5d8844498290f2b6103e17b92768c9663ac65c5830fb4",
+      "shape": [
+        2
+      ]
+    },
+    "features.1.weight": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0003.npy",
+      "sha256": "a1a37225d9f9a309c99c45ec333d4f5b4cd065fd75927b30619c551273a1eaa5",
+      "shape": [
+        2
+      ]
+    },
+    "head.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0004.npy",
+      "sha256": "9887f9067710cb7f9982b343bb3c898cc4fbf1b049d13779952cf332dd829fd4",
+      "shape": [
+        2
+      ]
+    },
+    "head.weight": {
+      "bytes": 256,
+      "dtype": "<f8",
+      "file": "state_0005.npy",
+      "sha256": "3b9212fdc1dec516d05afa36fb3d5d4f0551db2a4156a253a1995dfdae402761",
+      "shape": [
+        2,
+        8
+      ]
+    }
+  }
+}

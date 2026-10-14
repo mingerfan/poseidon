@@ -1,0 +1,88 @@
+{
+  "binding": "d9c12d99a11d86c2beabd71164079e3d76a9c2fc00b2855bafb43298ca452152",
+  "blockers": [
+    {
+      "code": "native_bootstrap_precision",
+      "evidence": "r388 signed second refresh:15 failed slots; fixed-random/boundary not run",
+      "layer": "backend_numerical",
+      "next_action": "Use retained stage traces and current public APIs to define a minimal diagnostic; any new parameter or resource exception requires separate approval."
+    },
+    {
+      "code": "runtime_cpu_native_boot_unavailable",
+      "evidence": "PoseidonCpuApi rejects Native Boot; active OperatorSpec and Agent runner reject all Boot",
+      "layer": "backend_capability",
+      "next_action": "First audit an explicit Agent-owned adapter using the existing public Bootstrapper and Runtime value/key/context APIs. Keep Boot requests blocked pending precision and integration acceptance; request backend changes only if a concrete public-interface limitation is proved."
+    }
+  ],
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "confirmed": {
+    "active_agent_operator_spec_boot_supported": false,
+    "active_agent_runner_rejects_all_boot": true,
+    "current_cpu_runtime_decrypt_reencrypt_not_accepted": true,
+    "current_cpu_runtime_native_boot_implemented": false,
+    "current_library_matches_historical_failed_native_probe": true,
+    "historical_executed_stage_checks": 6,
+    "historical_failed_stage_checks": 1,
+    "historical_failed_values": 15,
+    "historical_failure_layer": "bootstrap_numerical_accuracy",
+    "historical_native_trial_status": "failed",
+    "historical_not_run_groups": 2
+  },
+  "counts_scope": "This is a fresh read-only source/library audit of retained native-test evidence, not a new encrypted test.",
+  "date": "2026-10-12",
+  "format": "poseidon-agent-bootstrap-readonly-audit-v1",
+  "historical_evidence": {
+    "docs/baseline/poseidon-bootstrap-math-audit-r235.json": "34df3b01d0461910eb8335d5794abb2845cf7c00c1d79f4548a40a494b3fca6e",
+    "docs/baseline/poseidon-bootstrap-ratio128-result-r388.json": "334308043327996d64c60d6e6a8a17b45612f918df02cd2ecd18a78e1e0a946a"
+  },
+  "inference": [
+    "Normalized-sine bias is one identified contributor; repeated-refresh tail also includes inherited and added encrypted residuals.",
+    "The current CPU Runtime API rejects Native Boot. Source normalization or DSL guidance alone does not remove that interface rejection; an Agent-owned adapter using existing public Bootstrapper APIs still needs feasibility and precision verification."
+  ],
+  "loaded_library": {
+    "matches_native_trial_r388": true,
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/build-poseidon/bootstrap-cpu-r217/poseidon_build/libposeidon_shared.so",
+    "sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4"
+  },
+  "native_trial_source_hashes": {
+    "src/poseidon/tests/bootstrapping/agent_bootstrap_experiment_ratio128/CMakeLists.txt": "3d798410fbfa14ae5369fa41e8a71355624a7a39994b13dcc9508f06310504f7",
+    "src/poseidon/tests/bootstrapping/agent_bootstrap_experiment_ratio128/approved_parameters.h": "dbce3f5a60b1b83e3955be4dbc42fed2c9cfd1145d850bff3856599cb332f437",
+    "src/poseidon/tests/bootstrapping/agent_bootstrap_experiment_ratio128/test_bootstrap_experiment.cpp": "388eb141d3a2bb7324acb769feb6c6f7b673d0532643e73c9fcffd8ab6d1218d"
+  },
+  "new_compilations": 0,
+  "new_encrypted_calls": 0,
+  "new_native_bootstrap_trials": 0,
+  "paid_calls": 0,
+  "preserved_draft": {
+    "path": "scripts/baseline/benchmarks/tools/normalized_source_live_v1/preserved-bootstrap-audit-before-adapter-scope-clarification.json",
+    "sha256": "74ce9944785cc6d99a3392e7294771142c87d03e26ebd463b390c39e8874d88d"
+  },
+  "scope_clarification": "The missing current Runtime native-Boot implementation is confirmed; the necessity of changing Runtime/Poseidon core is not confirmed.",
+  "source_hashes": {
+    "scripts/baseline/poseidon-operator-spec-v1.json": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+    "scripts/baseline/poseidon_artifact_gate.py": "f692f8e465a76379c5b8c119d0b202c544f618f0282867f244fe005ace3b8391",
+    "src/poseidon/advance/bootstrapper.cpp": "9f26b65ac4839f226cb2f574654df6440efd56675ab4f5c18d5fe0c7e2d17782",
+    "src/poseidon/advance/bootstrapper.h": "fd0b9782d47bf543ffba19b7f2f8aa537d6874ea3051e1b1b41e47d2f2812803",
+    "src/poseidon/runtime_api/poseidon_cpu_api.cpp": "7f790015e9395ac13558ba72b56d3088b1ee2f70d1f94fccdda31b57eedc7645",
+    "src/poseidon/runtime_api/poseidon_cpu_api.h": "6987f26d6338efee0d2a838faf0fc89eabab2dccde7e9d5360bf55892d88e1a4",
+    "src/poseidon/tools/agent_runtime/cpu_runner.cpp": "53ea3382c9cfe5f3339899be812a6670b575f17a5383051e6ec0c39ba66fc9b2"
+  },
+  "status": "blocked",
+  "threshold": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "unchanged": {
+    "backend_libraries": true,
+    "model": true,
+    "network": true,
+    "parameters": true,
+    "reference": true,
+    "threshold": true
+  },
+  "unconfirmed": [
+    "Relative contribution of key noise, carry, polynomial evaluation and normalization has not been isolated.",
+    "CUDA native bootstrap and whole-model refresh numerical acceptance are not established by this CPU audit.",
+    "It has not been proven that CPU native-Boot integration requires modifying a backend library; inspect the existing public value/key/context APIs first."
+  ]
+}

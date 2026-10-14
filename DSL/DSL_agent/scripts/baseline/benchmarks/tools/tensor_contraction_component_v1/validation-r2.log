@@ -1,0 +1,5 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"format": "poseidon-tensor-contraction-prototype-v1", "status": "passed", "contexts": 15, "reference_groups": 60, "rejection_cases": 14, "tamper_cases": 2, "python": "3.10.14 (main, Mar 19 2024, 21:46:16) [GCC 13.2.0]", "torch": "2.0.1", "numpy": "1.25.2", "cuda": null, "torch_tensor_tensordot_available": false, "seconds": 0.009596824005711824, "reference_tolerance": {"atol": 1e-12, "rtol": 1e-12}, "production_active": false, "source_capture_validated": false, "api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "upstream_source": "https://github.com/pytorch/pytorch/blob/v2.0.1/torch/functional.py", "binding": "b51ac426020c53d700f80f276f5d39ab432a87d9fc4a62cce0937d34ad7e6ef8"}

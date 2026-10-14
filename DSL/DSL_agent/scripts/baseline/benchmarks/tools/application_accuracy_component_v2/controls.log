@@ -1,0 +1,18 @@
+test_ckks_pass_does_not_hide_approximation_accuracy_loss (test_metrics.AccuracyTests) ... ok
+test_data_change_and_boolean_identity_change_invalidates_binding (test_metrics.AccuracyTests) ... ok
+test_exact_percentage_point_boundary (test_metrics.AccuracyTests) ... ok
+test_first_index_tie_matches_standard_argmax (test_metrics.AccuracyTests) ... ok
+test_invalid_shapes_labels_and_types (test_metrics.AccuracyTests) ... ok
+test_mae_boundaries (test_metrics.AccuracyTests) ... ok
+test_maximum_error_not_just_average (test_metrics.AccuracyTests) ... ok
+test_near_tie_label_change_separate_from_ckks_threshold (test_metrics.AccuracyTests) ... ok
+test_zero_loss_classifier (test_metrics.AccuracyTests) ... ok
+test_duplicate_and_missing_positions_rejected (test_aggregate.AggregateTests) ... ok
+test_full_10000_dataset_exact_one_percentage_point (test_aggregate.AggregateTests) ... ok
+test_mixed_metric_and_invalid_identity_rejected (test_aggregate.AggregateTests) ... ok
+test_regression_is_weighted_by_values (test_aggregate.AggregateTests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.062s
+
+OK

@@ -1,0 +1,111 @@
+{
+  "attention_diagnosis": {
+    "candidate_vs_model_max_error": 1.0,
+    "fhe_vs_candidate_max_error": 1.0705655334453112e-08,
+    "first_three_generations": "compiler rejection",
+    "last_generation": "candidate_math_mismatch",
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-helper-failure-diagnosis-r1224/report.json"
+  },
+  "branch": "lhy-agent-dsl",
+  "cutover": {
+    "cache_reuses": 3,
+    "candidate_origin": "rule_baseline",
+    "compared_values": 119,
+    "current_backend_failed": 0,
+    "current_backend_passed": 3,
+    "cutover_record": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_component_cutover_v1/sandbox-correction-r1227/record-r1228.json",
+    "encrypted_phases": 6,
+    "existing_replacements": 18,
+    "input_groups": 21,
+    "latest_dependency_tests": {
+      "errors": 0,
+      "failed": 0,
+      "numpy": "1.25.2",
+      "passed": 11,
+      "python": "3.10.12",
+      "skipped": 0
+    },
+    "maximum_absolute_error": 2.190414178926403e-07,
+    "new_agent_calls": 0,
+    "new_agent_generation": false,
+    "new_files": 9,
+    "package_reloads": 3,
+    "real_compilations": 3,
+    "representative_backend_audit": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-joint-post-cutover-audit-r1230/report.json",
+    "representative_backend_audit_sha256": "51c961c8252b7bed53a2f6915ddb07fc70c0233ae7b54444c686eb5404186744",
+    "staged_tests": {
+      "binding_scope": "Original 25-file staged sources",
+      "errors": 0,
+      "failed": 0,
+      "passed": 251,
+      "skipped": 0
+    },
+    "status": "applied_representative_backend_verified",
+    "targets": 27
+  },
+  "format": "poseidon-agent-generalization-progress-v2",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "live_execution_preparation": {
+    "compilations": 0,
+    "encrypted_executions": 0,
+    "errors": 0,
+    "failed": 0,
+    "http_attempts": 0,
+    "passed": 21,
+    "provider_calls": 0,
+    "skipped": 0,
+    "static_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-live-controls-r1235/report.json",
+    "static_evidence_sha256": "2a78a262bfa31f6a2319316d5133d219b2b30aec373a40d8872760dfa3a1f43a",
+    "status": "ready_pending_user_approval",
+    "tool": "scripts/baseline/benchmarks/tools/source_live_acceptance_v1/run.py",
+    "tool_binding": {
+      "scripts/baseline/benchmarks/tools/source_live_acceptance_v1/run.py": "6264eaa5fab1058642c39a1dd0862490d7f14db7d684c1a1c1c3382650770889",
+      "scripts/baseline/benchmarks/tools/source_live_acceptance_v1/scope.py": "154229d944efc80f5657789e9fd68ef6674e087f357f6bf3a637d850d425c455",
+      "scripts/baseline/benchmarks/tools/source_live_acceptance_v1/test_scope.py": "e2cae57193398ba6d8cc419d599bdd72560c24ee24f716cc32c5beff08c8915b"
+    }
+  },
+  "original_paid_scope": {
+    "active": 0,
+    "binding": "0623167de71327bb1d2ec15a2d0563b74ee1c5bd1d35acf61f072027e2521c1b",
+    "failed": 20,
+    "generations": 145,
+    "http_attempts": 145,
+    "new_scope_calls": 0,
+    "not_run": 0,
+    "passed": 56,
+    "planned": 76,
+    "remaining_original_scope": 0,
+    "skipped": 0,
+    "terminal_layer_counts": {
+      "compiler": 2,
+      "numerical_comparison": 12,
+      "provider": 3,
+      "static_check": 3
+    }
+  },
+  "original_success_package_audits": {
+    "claim": "Retained actual original Agent qualification, reload and new-input receipts; no new execution by the audits",
+    "compared_values": 2814,
+    "input_groups": 392,
+    "maximum_absolute_error": 1.0207768190717559e-06,
+    "models": 56
+  },
+  "permissions": {
+    "backend_library_changes": 0,
+    "commits": 0,
+    "downloads": 0,
+    "installations": 0,
+    "new_paid_scope_calls": 0,
+    "parameter_changes": 0,
+    "pushes": 0
+  },
+  "remaining": [
+    "New V12 and explicit-v11 real Agent generation and repair quality evaluation",
+    "Original closed failures remain failed under their original binding",
+    "Additional V12 effect/source combinations and common-v11 composition",
+    "Operator composition, physical layout/capacity and application accuracy",
+    "Real bootstrap/runtime integration, CUDA hardware and larger whole models"
+  ],
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "updated": "2026-10-07T18:35:26.621919+08:00"
+}

@@ -1,0 +1,47 @@
+Checking actual entrypoint: prefill
+NumPy verification only; native save not executed
+{"mode": "prefill", "original_function_max_abs_error": 1.5206731207584312e-08, "max_abs_tail": 0.0, "elapsed_seconds": 10.775340785970911, "operations": {"multiply": 366, "multiply_plain": 46440, "rotate": 46743, "add": 46869, "add_plain": 164}}
+Checking actual entrypoint: decode-pair
+NumPy verification only; native save not executed
+{"mode": "decode-pair", "original_function_max_abs_error": 1.5206731207584312e-08, "max_abs_tail": 0.0, "elapsed_seconds": 10.49493344896473, "operations": {"multiply": 366, "multiply_plain": 46440, "rotate": 46743, "add": 46869, "add_plain": 164}}
+{
+  "status": "passed",
+  "scope": "full real-dimension DSL arithmetic and entrypoint wiring with NumPy",
+  "native_hecate": false,
+  "ckks": false,
+  "gpu": false,
+  "slots": 32768,
+  "positions": [
+    7,
+    8
+  ],
+  "checks": [
+    {
+      "mode": "prefill",
+      "original_function_max_abs_error": 1.5206731207584312e-08,
+      "max_abs_tail": 0.0,
+      "elapsed_seconds": 10.775340785970911,
+      "operations": {
+        "multiply": 366,
+        "multiply_plain": 46440,
+        "rotate": 46743,
+        "add": 46869,
+        "add_plain": 164
+      }
+    },
+    {
+      "mode": "decode-pair",
+      "original_function_max_abs_error": 1.5206731207584312e-08,
+      "max_abs_tail": 0.0,
+      "elapsed_seconds": 10.49493344896473,
+      "operations": {
+        "multiply": 366,
+        "multiply_plain": 46440,
+        "rotate": 46743,
+        "add": 46869,
+        "add_plain": 164
+      }
+    }
+  ],
+  "prefill_decode_max_abs_difference": 0.0
+}

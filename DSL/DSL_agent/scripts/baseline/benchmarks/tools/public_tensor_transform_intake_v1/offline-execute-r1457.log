@@ -1,0 +1,22 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "public_repeat_0", "status": "passed", "generations": 1, "http_attempts": 0}
+{"case": "public_repeat_1", "status": "passed", "generations": 2, "http_attempts": 0}
+{"case": "public_repeat_2", "status": "passed", "generations": 3, "http_attempts": 0}
+{"case": "public_tile_0", "status": "passed", "generations": 4, "http_attempts": 0}
+{"case": "public_tile_1", "status": "passed", "generations": 5, "http_attempts": 0}
+{"case": "public_tile_2", "status": "passed", "generations": 6, "http_attempts": 0}
+{"case": "public_interleave_0", "status": "passed", "generations": 7, "http_attempts": 0}
+{"case": "public_interleave_1", "status": "passed", "generations": 8, "http_attempts": 0}
+{"case": "public_interleave_2", "status": "passed", "generations": 9, "http_attempts": 0}
+{"case": "public_flip_0", "status": "passed", "generations": 10, "http_attempts": 0}
+{"case": "public_flip_1", "status": "passed", "generations": 11, "http_attempts": 0}
+{"case": "public_flip_2", "status": "passed", "generations": 12, "http_attempts": 0}
+{"case": "public_roll_0", "status": "passed", "generations": 13, "http_attempts": 0}
+{"case": "public_roll_1", "status": "passed", "generations": 14, "http_attempts": 0}
+{"case": "public_roll_2", "status": "passed", "generations": 15, "http_attempts": 0}
+{"case": "compat_v30_repeat_0", "status": "passed", "generations": 16, "http_attempts": 0}
+{"case": "compat_v30_tile_1", "status": "passed", "generations": 17, "http_attempts": 0}
+{"case": "compat_v30_roll_1", "status": "passed", "generations": 18, "http_attempts": 0}

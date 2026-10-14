@@ -1,0 +1,19 @@
+{
+  "backend_changes": false,
+  "doc_hashes": {
+    "agent-mha-feedback-live-results-r1331.json": "fd0dbe56726bc68728c5eb1c0e2a37f2cf72f720f5b1f63d7c886c81c50ec186",
+    "agent-mha-feedback-live-results-r1331.md": "457584c6391821ff73cbe06919e5de1526f0ce5860e8735302ceae38c3e0d404",
+    "agent-mha-tensor-axis-live-proposal-r1333.json": "c6735908b974db4b802323f2a65dc4c922ca71f7eb5c4a686000c56dd0fe4825",
+    "agent-mha-tensor-axis-live-proposal-r1333.md": "422a37fa87493dd931c9cbc09aafbce277b4b25fee69aaca5a34526ea3246da5",
+    "agent-tensor-axis-context-budget-r1334.json": "f54fc7094c0fc3170252bc1f0ad58c17acd4f05bb58b8d2c718b74cb16a70653",
+    "agent-tensor-axis-context-budget-r1334.md": "3b1ead51e67fabb16f8cd4fc65914b9f2c060aac7590a82f5bd22b0ed875bd23",
+    "agent-tensor-axis-guidance-r1332.json": "28faf8a488a6b56c15fdae58509b944d7af8b167e724d43015953a012b992f24",
+    "agent-tensor-axis-guidance-r1332.md": "b64943e0c4e40ab0b191359b40da70d25793ad924f92f05bfbd85e7d91f52848"
+  },
+  "frozen_future_binding": "475391a7ef31efef047900e89fe39db9bbc70d63ea63a900e1e88c0f82ae2d1f",
+  "git_status_entries": 971,
+  "no_active_batch": true,
+  "paid_calls_after_r1331": 0,
+  "phase_sources_ast_valid": 12,
+  "source_root": "/home/lhohy/Code/Poseidon"
+}

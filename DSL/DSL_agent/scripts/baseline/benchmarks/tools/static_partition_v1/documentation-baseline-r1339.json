@@ -1,0 +1,18 @@
+{
+  "docs/baseline/application-agent-component-v1.md": {
+    "backup": "scripts/baseline/benchmarks/tools/static_partition_v1/application-agent-component-v1.md.before-r1339",
+    "before_sha256": "fe3d1311b508e9a8407521b549d9f9a8216afafbe59b99e4214670d56b7dd435"
+  },
+  "docs/baseline/mac-migration-handoff.md": {
+    "backup": "scripts/baseline/benchmarks/tools/static_partition_v1/mac-migration-handoff.md.before-r1339",
+    "before_sha256": "5329e33567d36ed0697a3976b7fbe1964a508a3474168549ae53d85054c65272"
+  },
+  "docs/baseline/operator-decomposition-and-python.md": {
+    "backup": "scripts/baseline/benchmarks/tools/static_partition_v1/operator-decomposition-and-python.md.before-r1339",
+    "before_sha256": "e647e85518abbbd790f3d71d47d6d71427ebfe5d1260cd20e4afbc2283110163"
+  },
+  "scripts/README.md": {
+    "backup": "scripts/baseline/benchmarks/tools/static_partition_v1/README.md.before-r1339",
+    "before_sha256": "9a5b7cfc68d37eb3103750fe470b1fe190e60e19a65d7b042a5fce08142445cb"
+  }
+}

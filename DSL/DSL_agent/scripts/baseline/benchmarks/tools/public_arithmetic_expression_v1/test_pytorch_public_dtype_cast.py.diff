@@ -1,0 +1,20 @@
+--- /home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/before/test_pytorch_public_dtype_cast.py	2026-10-11 06:31:53.516852775 +0000
++++ /home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_dtype_cast.py	2026-10-11 06:31:53.520852694 +0000
+@@ -111,7 +111,7 @@
+             with self.subTest(kwargs=kwargs),self.assertRaises(ValueError):
+                 plan(value,"call_method","to",args,kwargs,policy=CAST_POLICY)
+     def test_unknown_policy_and_dtype_operation_reject(self):
+-        for policy in(None,True,"poseidon-public-value-expressions-v3"):
++        for policy in(None,True,"poseidon-public-value-expressions-v4"):
+             with self.assertRaises(ValueError):
+                 plan(payload("<f8"),"call_method","float",("p",),{},policy=policy)
+         with self.assertRaises(ValueError):
+@@ -189,6 +189,6 @@
+             self.assertEqual(package_version(spec),f"poseidon-trusted-pytorch-provenance-v{version}")
+             self.assertEqual(reference_version(spec),f"poseidon-trusted-pytorch-reference-v{version}")
+     def test_future_contract_is_not_implicitly_enabled(self):
+-        with self.assertRaises(ValueError):package_version(dict(format="poseidon-trusted-pytorch-v25"))
+-        self.assertFalse(allows_none_output(dict(format="poseidon-trusted-pytorch-v25")))
++        with self.assertRaises(ValueError):package_version(dict(format="poseidon-trusted-pytorch-v26"))
++        self.assertFalse(allows_none_output(dict(format="poseidon-trusted-pytorch-v26")))
+ if __name__=="__main__":unittest.main()

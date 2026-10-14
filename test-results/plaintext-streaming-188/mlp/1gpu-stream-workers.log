@@ -1,0 +1,2 @@
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=1.83117 runtime_seconds=0.473873 initialization_seconds=2.61e-07 online_execution_seconds=0.473873 boot_seconds=0 python_max_abs=0.524795 max_imaginary=1.67265e-06
+report=/home/xuming/poseidon-plaintext-streaming-models/results/1gpu-stream-workers.json

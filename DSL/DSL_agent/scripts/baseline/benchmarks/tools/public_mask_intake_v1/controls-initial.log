@@ -1,0 +1,10 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+.................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 289 tests in 37.986s
+
+OK
+{"format": "poseidon-public-mask-controls-v1", "tests": 289, "failures": 0, "errors": 0, "skipped": 0, "status": "passed", "seconds": 38.425017566012684, "api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0}

@@ -1,0 +1,94 @@
+{
+  "format": "poseidon-decomposition-binding-v1",
+  "registry_version": "operator-decomposition-v4",
+  "implementation_sha256": "f55e76e2b59f0163e748b0e494be26f55aebb67e86a5317b9e5934f7e411b407",
+  "original_sha256": "fa630bc8f6133af213a1402090854d1cddb9d16545ce2d604e12be32248b7ef2",
+  "lowered_sha256": "72977294457a0405f320fce441ab01f3338901b76b50a57fa47e1b0df5160b3d",
+  "source_map": {
+    "generated_1": "operation",
+    "generated_3": "operation",
+    "generated_5": "operation",
+    "generated_7": "operation",
+    "generated_9": "operation",
+    "generated_11": "operation",
+    "generated_13": "operation",
+    "generated_15": "operation",
+    "generated_17": "operation",
+    "generated_20": "operation",
+    "generated_22": "operation",
+    "generated_24": "operation",
+    "generated_27": "operation",
+    "generated_29": "operation",
+    "generated_31": "operation",
+    "generated_33": "operation",
+    "generated_35": "operation",
+    "generated_37": "operation",
+    "generated_39": "operation",
+    "generated_41": "operation",
+    "generated_43": "operation",
+    "generated_45": "operation",
+    "generated_47": "operation",
+    "generated_49": "operation",
+    "generated_51": "operation",
+    "generated_53": "operation",
+    "generated_55": "operation",
+    "generated_57": "operation",
+    "generated_59": "operation",
+    "generated_61": "operation",
+    "generated_63": "operation",
+    "generated_65": "operation",
+    "generated_67": "operation",
+    "generated_69": "operation",
+    "generated_71": "operation",
+    "generated_73": "operation",
+    "generated_75": "operation",
+    "generated_77": "operation",
+    "generated_79": "operation",
+    "generated_81": "operation",
+    "generated_83": "operation",
+    "generated_85": "operation",
+    "generated_87": "operation",
+    "generated_89": "operation",
+    "generated_91": "operation",
+    "generated_93": "operation",
+    "generated_95": "operation"
+  },
+  "required_capabilities": [
+    "ckks_add_multiply_rotate"
+  ],
+  "approximation_profiles": {
+    "operation": {
+      "kernel": [
+        2,
+        2
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "dilation": [
+        1,
+        1
+      ],
+      "approximation": {
+        "method": "polynomial",
+        "basis": "power",
+        "domain": [
+          -4.0,
+          4.0
+        ],
+        "coefficients": [
+          0.5,
+          0.0,
+          0.25
+        ]
+      }
+    }
+  },
+  "no_dsl_answer": true,
+  "binding_sha256": "3583506372dcd5dc556b0869401e858bc45d217252c6704f84c0b0623fcfce79"
+}

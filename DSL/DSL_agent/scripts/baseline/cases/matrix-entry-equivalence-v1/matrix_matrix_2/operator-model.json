@@ -1,0 +1,41 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v1",
+  "id": "matrix_matrix_2",
+  "inputs": [
+    {
+      "name": "left",
+      "shape": [
+        1,
+        4
+      ]
+    },
+    {
+      "name": "right",
+      "shape": [
+        4,
+        2
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "product",
+      "inputs": [
+        "left",
+        "right"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "result"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "result"
+    }
+  ]
+}

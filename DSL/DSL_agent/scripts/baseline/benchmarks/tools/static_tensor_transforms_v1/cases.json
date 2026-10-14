@@ -1,0 +1,110 @@
+[
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/repeat_0/manifest.json",
+    "name": "repeat_0",
+    "operator": "repeat"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/repeat_1/manifest.json",
+    "name": "repeat_1",
+    "operator": "repeat"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/repeat_2/manifest.json",
+    "name": "repeat_2",
+    "operator": "repeat"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/tile_0/manifest.json",
+    "name": "tile_0",
+    "operator": "tile"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/tile_1/manifest.json",
+    "name": "tile_1",
+    "operator": "tile"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/tile_2/manifest.json",
+    "name": "tile_2",
+    "operator": "tile"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/interleave_0/manifest.json",
+    "name": "interleave_0",
+    "operator": "repeat_interleave"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/interleave_1/manifest.json",
+    "name": "interleave_1",
+    "operator": "repeat_interleave"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/interleave_2/manifest.json",
+    "name": "interleave_2",
+    "operator": "repeat_interleave"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/flip_0/manifest.json",
+    "name": "flip_0",
+    "operator": "flip"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/flip_1/manifest.json",
+    "name": "flip_1",
+    "operator": "flip"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/flip_2/manifest.json",
+    "name": "flip_2",
+    "operator": "flip"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/roll_0/manifest.json",
+    "name": "roll_0",
+    "operator": "roll"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/roll_1/manifest.json",
+    "name": "roll_1",
+    "operator": "roll"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/roll_2/manifest.json",
+    "name": "roll_2",
+    "operator": "roll"
+  },
+  {
+    "kind": "old_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_package_intake_v1/cases/square_helper/manifest.json",
+    "name": "compat_v29_square_helper",
+    "operator": null
+  },
+  {
+    "kind": "old_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_package_intake_v1/cases/nested_keyword_broadcast/manifest.json",
+    "name": "compat_v29_nested_keyword_broadcast",
+    "operator": null
+  },
+  {
+    "kind": "old_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_package_intake_v1/cases/reexport_linear/manifest.json",
+    "name": "compat_v29_reexport_linear",
+    "operator": null
+  }
+]

@@ -1,0 +1,26 @@
+test_body_alias_not_shared (test_provenance_json_transport.TransportTests) ... ok
+test_duplicate_json (test_provenance_json_transport.TransportTests) ... ok
+test_forward_reference (test_provenance_json_transport.TransportTests) ... ok
+test_fresh_decoded_records (test_provenance_json_transport.TransportTests) ... ok
+test_full_large_provenance (test_provenance_json_transport.TransportTests) ... ok
+test_legacy_canonical_identity (test_provenance_json_transport.TransportTests) ... ok
+test_legacy_part_representation (test_provenance_json_transport.TransportTests) ... ok
+test_legacy_task_wire_not_expanded (test_provenance_json_transport.TransportTests) ... ok
+test_logical_capacity (test_provenance_json_transport.TransportTests) ... ok
+test_metadata_binding_preserved (test_provenance_json_transport.TransportTests) ... ok
+test_nested_envelope_rejected (test_provenance_json_transport.TransportTests) ... ok
+test_nonfinite_json (test_provenance_json_transport.TransportTests) ... ok
+test_packet_binding_tamper (test_provenance_json_transport.TransportTests) ... ok
+test_packet_non_v36_contract (test_provenance_json_transport.TransportTests) ... ok
+test_part_contract (test_provenance_json_transport.TransportTests) ... ok
+test_role_fields_closed (test_provenance_json_transport.TransportTests) ... ok
+test_scope_budget_not_arbitrary (test_provenance_json_transport.TransportTests) ... ok
+test_small_limit_no_large_work_expansion (test_provenance_json_transport.TransportTests) ... ok
+test_unknown_purpose_plain (test_provenance_json_transport.TransportTests) ... ok
+test_wire_capacity (test_provenance_json_transport.TransportTests) ... ok
+test_wrong_purpose (test_provenance_json_transport.TransportTests) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 2.714s
+
+OK

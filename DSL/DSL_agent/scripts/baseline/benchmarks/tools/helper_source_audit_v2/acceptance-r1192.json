@@ -1,0 +1,15 @@
+{
+  "compilations": 0,
+  "encrypted_executions": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-helper-math-tests-v1",
+  "passed": 11,
+  "provider_calls": 0,
+  "skipped": 0,
+  "source_hashes": {
+    "helper_math.py": "e16f2461d0f350d96d3af641d0833bdf80aa2581d3b6f34265eb34ed5bc637f2",
+    "test_helper_math.py": "d579d0af610964c6736c8628e20a1bd8970b3026e83c8f9f026a826c44015059"
+  },
+  "tests": 11
+}

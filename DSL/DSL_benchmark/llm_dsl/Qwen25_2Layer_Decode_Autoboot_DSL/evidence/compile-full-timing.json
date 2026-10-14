@@ -1,0 +1,27 @@
+{
+  "seconds": 25.095114359050058,
+  "returncode": 0,
+  "command": [
+    "/home/gy/qwen-ckks/experiments/locked_toolchain_1791806679823388000/build/bin/hecate-opt",
+    "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/traced-full/model_entry.mlirbc",
+    "--dacapo",
+    "--boot-placement=depth-dp",
+    "--waterline=43",
+    "--ckks-config=/home/gy/qwen-ckks/experiments/locked_toolchain_1791806679823388000/compiler-config.json",
+    "--runtime-plan-format=json",
+    "--runtime-plan-bundle-format=files",
+    "--runtime-plan-memory=false",
+    "--runtime-plan-id=2026101202",
+    "--runtime-plan-target-id=poseidon-ckks-cpu",
+    "--runtime-plan-operator-spec-id=cpu-qwen-bootstrap48-compiler-contract",
+    "--runtime-plan-operator-spec-sha256=sha256:2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b",
+    "--runtime-plan-context-id=qwen-bootstrap48",
+    "--runtime-plan-device-count=0",
+    "--runtime-plan-boot-profile=cpu-bootstrap48-level1-to5",
+    "--runtime-plan-boot-implementation=native",
+    "--mlir-timing",
+    "--mlir-disable-threading",
+    "-o",
+    "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/full/compiled.mlir"
+  ]
+}

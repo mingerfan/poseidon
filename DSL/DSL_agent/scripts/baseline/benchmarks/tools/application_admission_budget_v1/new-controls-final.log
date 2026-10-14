@@ -1,0 +1,33 @@
+test_accounting_survives_controller_recreation (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_adapter_environment_exception_is_redacted_before_generation (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_admission_witnesses (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_blocked_generation_is_interrupted_by_artifact_limit (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_cache_reuse_does_not_charge_old_artifacts_or_generate (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_cancel_precedes_resource_check (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_complete_lifecycle_records_local_and_external_artifacts (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_disk_reserve_is_environment_not_candidate (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_input_metadata_exhaustion_before_generation (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_invalid_budget_and_policy_fail_closed (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_invalid_local_limits_do_not_change_task (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_journal_tampering_stops_before_provider (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_legacy_payload_and_request_hash_unchanged (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_local_execution_has_separate_budget_without_changing_package (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_local_execution_success_uses_existing_package_and_observer (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_missing_external_root_is_integrity_failure (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_missing_journal_never_resets_continuation_budget (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_never_adopts_nonempty_history_or_arbitrary_path (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_observer_contract_required_before_generation (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_old_local_execute_signature_remains_valid (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_packaging_is_inside_budget (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_precise_backend_failure_is_not_sent_to_provider (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_repairs_share_one_nonrefundable_budget (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_source_budget_continues_through_admission_and_generation (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_source_snapshot_size_exhaustion_is_terminal (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_symlink_and_directory_replacement_are_integrity_errors (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_unknown_validator_error_is_generic_and_redacted (test_application_admission_budget.AdmissionBudgetTests) ... ok
+test_untrusted_local_source_rejected_with_public_reason (test_application_admission_budget.AdmissionBudgetTests) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.531s
+
+OK

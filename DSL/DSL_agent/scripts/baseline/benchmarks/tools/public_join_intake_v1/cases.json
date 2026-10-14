@@ -1,0 +1,128 @@
+[
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/mixed_cat_0/manifest.json",
+    "name": "mixed_cat_0",
+    "operator": "mixed_cat"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/mixed_cat_1/manifest.json",
+    "name": "mixed_cat_1",
+    "operator": "mixed_cat"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/mixed_cat_2/manifest.json",
+    "name": "mixed_cat_2",
+    "operator": "mixed_cat"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/mixed_stack_0/manifest.json",
+    "name": "mixed_stack_0",
+    "operator": "mixed_stack"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/mixed_stack_1/manifest.json",
+    "name": "mixed_stack_1",
+    "operator": "mixed_stack"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/mixed_stack_2/manifest.json",
+    "name": "mixed_stack_2",
+    "operator": "mixed_stack"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/public_cat_0/manifest.json",
+    "name": "public_cat_0",
+    "operator": "public_cat"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/public_cat_1/manifest.json",
+    "name": "public_cat_1",
+    "operator": "public_cat"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/public_cat_2/manifest.json",
+    "name": "public_cat_2",
+    "operator": "public_cat"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/public_stack_0/manifest.json",
+    "name": "public_stack_0",
+    "operator": "public_stack"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/public_stack_1/manifest.json",
+    "name": "public_stack_1",
+    "operator": "public_stack"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/public_stack_2/manifest.json",
+    "name": "public_stack_2",
+    "operator": "public_stack"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/combination_0/manifest.json",
+    "name": "combination_0",
+    "operator": "combination"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/combination_1/manifest.json",
+    "name": "combination_1",
+    "operator": "combination"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/combination_2/manifest.json",
+    "name": "combination_2",
+    "operator": "combination"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/combination_3/manifest.json",
+    "name": "combination_3",
+    "operator": "combination"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/combination_4/manifest.json",
+    "name": "combination_4",
+    "operator": "combination"
+  },
+  {
+    "kind": "new_public_join_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_join_intake_v1/cases/combination_5/manifest.json",
+    "name": "combination_5",
+    "operator": "combination"
+  },
+  {
+    "kind": "legacy_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_mask_intake_v1/cases/where_0/manifest.json",
+    "name": "compat_v33_where_0",
+    "operator": "where"
+  },
+  {
+    "kind": "legacy_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_mask_intake_v1/cases/masked_fill__1/manifest.json",
+    "name": "compat_v33_masked_fill__1",
+    "operator": "masked_fill_"
+  },
+  {
+    "kind": "legacy_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_mask_intake_v1/cases/public_where_1/manifest.json",
+    "name": "compat_v33_public_where_1",
+    "operator": "public_where"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "api_calls": 0,
+  "binding": "a6ea2f9b1224a3520890987e3a416ee7fed317c2dc78e378f54798f4fb792607",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-contract-scope-controls-v1",
+  "interpreter": "3.10.14 (main, Mar 19 2024, 21:46:16) [GCC 13.2.0]",
+  "log_sha256": "f0ca09d796a3d873ff66d03379a91dc0463ec751226669359a18d3c8e5326d19",
+  "modules": [
+    "test_tensor_gather_source",
+    "test_pytorch_source_contract",
+    "test_pytorch_model_intake",
+    "test_provenance_json_transport",
+    "test_model_source_provenance",
+    "test_application_provenance_transport",
+    "test_logical_view_normalization",
+    "test_source_cli_package_policy"
+  ],
+  "returncode": 1,
+  "seconds": 8.243987286987249,
+  "status": "failed"
+}

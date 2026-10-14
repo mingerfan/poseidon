@@ -1,0 +1,2 @@
+NCCL version 2.20.5+cuda12.4
+PASS MPI GPU RuntimePlan: world=2 device_counts=2x2 cross_rank_transfers=4 max_abs_error=1.35046e-07

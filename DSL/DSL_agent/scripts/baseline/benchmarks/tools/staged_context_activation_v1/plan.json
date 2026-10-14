@@ -1,0 +1,23 @@
+{
+  "binding": "175685819b78546805583e6a2983aced3fff063225eeac4b542b78e1c272502a",
+  "changes": [
+    "Versioned worker identity using compilation/execution/validation scopes",
+    "Stage-selected package reuse from bound task metadata"
+  ],
+  "format": "poseidon-staged-worker-cache-activation-plan-v1",
+  "invariants": [
+    "Existing legacy records remain immutable and strict",
+    "Queued generation binds all four original stages",
+    "No backend/parameter/reference changes",
+    "No paid calls"
+  ],
+  "legacy_policy": "legacy-v1",
+  "protected_manifest": "docs/baseline/agent-v12-live-rebound-proposal-r1304.json",
+  "source_before": {
+    "scripts/baseline/application_component.py": "661c86d99e32a4e7f87201070e631c61295530ef4ac672ca7d540006fca6bc99",
+    "scripts/baseline/application_execution/context.py": "f5ee2dd85168169561e712c4aa49ac31d9b62ebf1d294f1c9063afb01a14c042"
+  },
+  "source_sdk_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-parameter-boundary-acceptance-r1328-v2/identity.json",
+  "status": "prepared_before_local_adaptation",
+  "worker_policy": "staged-sdk-v1"
+}

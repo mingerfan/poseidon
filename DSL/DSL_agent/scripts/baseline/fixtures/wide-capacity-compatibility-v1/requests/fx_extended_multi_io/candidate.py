@@ -1,0 +1,73 @@
+@hc.func("c")
+def cap_period_sum_256(a0):
+    v0 = a0.rotate(1)
+    v1 = a0 + v0
+    v2 = v1.rotate(2)
+    v3 = v1 + v2
+    v4 = v3.rotate(4)
+    v5 = v3 + v4
+    v6 = v5.rotate(8)
+    v7 = v5 + v6
+    v8 = v7.rotate(16)
+    v9 = v7 + v8
+    v10 = v9.rotate(32)
+    v11 = v9 + v10
+    v12 = v11.rotate(64)
+    v13 = v11 + v12
+    v14 = v13.rotate(128)
+    v15 = v13 + v14
+    return v15
+@hc.func("c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c")
+def golden(x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, zero_ct):
+    v0 = cap_period_sum_256(x0)
+    v1 = cap_period_sum_256(x1)
+    v2 = v0 + v1
+    v3 = cap_period_sum_256(x2)
+    v4 = v2 + v3
+    v5 = cap_period_sum_256(x3)
+    v6 = v4 + v5
+    v7 = v6 * p3
+    v8 = cap_period_sum_256(x4)
+    v9 = cap_period_sum_256(x5)
+    v10 = v8 + v9
+    v11 = cap_period_sum_256(x6)
+    v12 = v10 + v11
+    v13 = cap_period_sum_256(x7)
+    v14 = v12 + v13
+    v15 = v14 * p3
+    v16 = v7 + v15
+    v17 = cap_period_sum_256(x8)
+    v18 = cap_period_sum_256(x9)
+    v19 = v17 + v18
+    v20 = cap_period_sum_256(x10)
+    v21 = v19 + v20
+    v22 = cap_period_sum_256(x11)
+    v23 = v21 + v22
+    v24 = v23 * p3
+    v25 = cap_period_sum_256(x12)
+    v26 = cap_period_sum_256(x13)
+    v27 = v25 + v26
+    v28 = cap_period_sum_256(x14)
+    v29 = v27 + v28
+    v30 = cap_period_sum_256(x15)
+    v31 = v29 + v30
+    v32 = v31 * p3
+    v33 = v24 - v32
+    v34 = v16 * v33
+    v35 = x0 + v34
+    v36 = x1 + v34
+    v37 = x2 + v34
+    v38 = x3 + v34
+    v39 = x4 + v34
+    v40 = x5 + v34
+    v41 = x6 + v34
+    v42 = x7 + v34
+    v43 = x8 + v34
+    v44 = x9 + v34
+    v45 = x10 + v34
+    v46 = x11 + v34
+    v47 = x12 + v34
+    v48 = x13 + v34
+    v49 = x14 + v34
+    v50 = x15 + v34
+    return [v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v47, v48, v49, v50]

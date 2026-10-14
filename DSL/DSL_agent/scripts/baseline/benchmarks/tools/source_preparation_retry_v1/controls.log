@@ -1,0 +1,57 @@
+test_add_subtract_multiply_broadcasts_are_selected_and_keep_rows_separate (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_feedback_separates_frames_without_private_data (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_incomplete_or_inconsistent_coordinates_rejected (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_no_broadcast_rule_for_equal_shapes (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_plain_direct_routes_and_mixed_frames (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_real_request_preserves_every_nonguidance_binding (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_reserved_names_feedback_is_fixed_and_public (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_three_bsgs_contexts_match_destination_coordinates (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_three_direct_contexts_match_selected_tensor_coordinates (test_binding_coordinate_guidance.BindingFramesTests) ... ok
+test_only_bounded_integral_constraints_cross_feedback_boundary (test_unified_tensor_axis_guidance.CompilerContextTests) ... ok
+test_v1_v2_scale_advisory_is_public_but_not_exact_repeat_evidence (test_unified_tensor_axis_guidance.CompilerContextTests) ... ok
+test_adapter_compiler_failure_adds_axis_feedback (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_batched_linear_and_broadcast_groups (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_cli_sandbox_and_default_limits_unchanged (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_examples_and_bytes_bounded_without_losing_partition_counts (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_feedback_routes_tensor_rules_for_candidate_failures (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_full_reduction_singleton_output (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_graph_id_does_not_select_axis_rules (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_invalid_abi_and_unbound_chunk_range_rejected (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_large_fiber_marks_sample_as_incomplete (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_last_axis_keeps_head_and_row_groups (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_malformed_source_gets_no_guidance (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_multi_axis_mean_with_and_without_keepdims (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_non_contiguous_axis_preserves_distinct_columns (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_private_data_never_enters_public_context_or_feedback (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_rank_32_and_tail_chunk_coordinates (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_reshape_preserves_indices_and_permute_moves_coordinates (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_transpose_negative_axes (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_version_explicit_and_rehash_cannot_tamper_with_members (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_component_tampering_rejected_after_rehash (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_composite_instructions_match_authority (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_guidance_does_not_supply_recipe_or_relax_validation (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_v1_has_no_new_fields_and_v2_no_implicit_requirements (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_v2_cli_forwarding (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_bare_missing_wrong_decorator_and_parameters (test_unified_generation_guidance.GuidanceTests) ... ok
+test_bounded_malformed_source (test_unified_generation_guidance.GuidanceTests) ... ok
+test_chunk_physical_header_and_compact (test_unified_generation_guidance.GuidanceTests) ... ok
+test_cli_forwarding (test_unified_generation_guidance.GuidanceTests) ... ok
+test_native_and_public_acceptance_unchanged (test_unified_generation_guidance.GuidanceTests) ... ok
+test_opt_in_identity_and_no_answer (test_unified_generation_guidance.GuidanceTests) ... ok
+test_rotation_and_public_helper_messages (test_unified_generation_guidance.GuidanceTests) ... ok
+test_tampered_guidance_rejected_after_rehash (test_unified_generation_guidance.GuidanceTests) ... ok
+test_wrong_entry_has_explicit_name_but_no_source_echo (test_unified_generation_guidance.GuidanceTests) ... ok
+test_all_operator_definitions_present (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_composite_requirements_not_replaced_by_math (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_legacy_request_hashes_match_frozen_baseline (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_math_metadata_contains_no_test_arrays_or_dsl_body (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_native_public_candidate_gate_unchanged (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_optional_v3_only_changes_guidance_and_identity (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_rehashed_math_and_backend_tampering_rejected (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_three_logical_rotation_contexts_match_both_independent_references (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_v3_cli_forwarding (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 52 tests in 14.018s
+
+OK

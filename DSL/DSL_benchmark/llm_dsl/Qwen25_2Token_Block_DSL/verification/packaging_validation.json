@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "python_syntax_files": 17,
+  "checker_rejected_cases": [
+    "prefix_error",
+    "tail_error",
+    "imaginary_error",
+    "invalid_shape",
+    "nonfinite"
+  ],
+  "native_hecate_compile_performed": false,
+  "new_ckks_execution_performed": false,
+  "gpu_execution_performed": false
+}

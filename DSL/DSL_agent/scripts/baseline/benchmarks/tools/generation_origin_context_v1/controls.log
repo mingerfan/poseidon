@@ -1,0 +1,81 @@
+test_changed_model_or_profile_is_rejected (test_generation_model_origin.ModelOriginTests) ... ok
+test_changed_source_map_is_rejected (test_generation_model_origin.ModelOriginTests) ... ok
+test_context_tampering_requires_host_reverification (test_generation_model_origin.ModelOriginTests) ... ok
+test_private_reference_fields_are_not_emitted (test_generation_model_origin.ModelOriginTests) ... ok
+test_reference_status_not_promoted_to_application_accuracy (test_generation_model_origin.ModelOriginTests) ... ok
+test_request_and_provenance_stay_unchanged (test_generation_model_origin.ModelOriginTests) ... ok
+test_source_model_name_does_not_dispatch_mathematical_nodes (test_generation_model_origin.ModelOriginTests) ... ERROR
+test_verified_math_and_source_map_are_public (test_generation_model_origin.ModelOriginTests) ... ok
+test_bootstrap_not_silently_lowered (test_model_decomposition.DecompositionTests) ... ok
+test_core_passthrough_and_provenance (test_model_decomposition.DecompositionTests) ... ok
+test_domain_rejected (test_model_decomposition.DecompositionTests) ... ok
+test_duplicate_value_rejected (test_model_decomposition.DecompositionTests) ... ok
+test_forward_reference_rejected (test_model_decomposition.DecompositionTests) ... ok
+test_matmul_resource_budget (test_model_decomposition.DecompositionTests) ... ok
+test_missing_approximation_rejected (test_model_decomposition.DecompositionTests) ... ok
+test_nonfinite_rejected (test_model_decomposition.DecompositionTests) ... ok
+test_registry_immutable (test_model_decomposition.DecompositionTests) ... ok
+test_functional_linear (test_model_decomposition.PythonTests) ... ok
+test_hash_tampering (test_model_decomposition.PythonTests) ... ok
+test_multifile_helper_loop_matches_structure (test_model_decomposition.PythonTests) ... ok
+test_no_callable_shadow (test_model_decomposition.PythonTests) ... ok
+test_no_dynamic_import (test_model_decomposition.PythonTests) ... ok
+test_no_encrypted_condition (test_model_decomposition.PythonTests) ... ok
+test_no_external_import (test_model_decomposition.PythonTests) ... ok
+test_no_recursion (test_model_decomposition.PythonTests) ... ok
+test_no_silent_softmax (test_model_decomposition.PythonTests) ... ok
+test_no_top_level_execution (test_model_decomposition.PythonTests) ... ok
+test_no_unbounded_loop (test_model_decomposition.PythonTests) ... ok
+test_unlisted_file (test_model_decomposition.PythonTests) ... ok
+test_cipher_matmul (test_model_decomposition.ReferenceTests) ... ok
+test_out_of_domain_not_clipped (test_model_decomposition.ReferenceTests) ... ok
+test_rmsnorm (test_model_decomposition.ReferenceTests) ... ok
+test_rope (test_model_decomposition.ReferenceTests) ... ok
+test_softmax (test_model_decomposition.ReferenceTests) ... ok
+test_backend_changed_between_submit_and_intake_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_bad_source_and_requirement_fields_are_terminal (test_application_model_source.SourceSubmissionTests) ... ok
+test_cancel_before_import_prevents_provider_and_capture (test_application_model_source.SourceSubmissionTests) ... ok
+test_cancel_during_preparation_from_another_process (test_application_model_source.SourceSubmissionTests) ... ok
+test_changed_source_binding_does_not_reuse (test_application_model_source.SourceSubmissionTests) ... ok
+test_changed_task_budget_reuses_identical_source (test_application_model_source.SourceSubmissionTests) ... ok
+test_controller_drift_after_preparation_stops_generation (test_application_model_source.SourceSubmissionTests) ... ok
+test_core_graph_resource_profile_mismatch_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_delivery_binds_source_record_and_rejects_source_tamper (test_application_model_source.SourceSubmissionTests) ... ok
+test_graph_snapshotted_at_submit (test_application_model_source.SourceSubmissionTests) ... ok
+test_invalid_generation_option_rejected_before_capture (test_application_model_source.SourceSubmissionTests) ... ok
+test_model_import_budget_is_not_reset_for_generation (test_application_model_source.SourceSubmissionTests) ... ok
+test_optional_none_budget_keeps_old_default (test_application_model_source.SourceSubmissionTests) ... ok
+test_original_json_request_hash_preserved (test_application_model_source.SourceSubmissionTests) ... ok
+test_recover_interrupted_import_does_not_capture_again (test_application_model_source.SourceSubmissionTests) ... ok
+test_repeat_same_source_reuses_without_provider (test_application_model_source.SourceSubmissionTests) ... ok
+test_resource_profile_is_intake_requirement_not_generation_option (test_application_model_source.SourceSubmissionTests) ... ok
+test_rule_provider_and_fake_backend_use_same_task (test_application_model_source.SourceSubmissionTests) ... ok
+test_slow_intake_timeout_does_not_start_generation (test_application_model_source.SourceSubmissionTests) ... ok
+test_snapshot_extra_file_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_snapshot_payload_tamper_before_worker_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_snapshot_symlink_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_source_metadata_tamper_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_source_receipt_is_not_sent_to_generation_model (test_application_model_source.SourceSubmissionTests) ... ok
+test_status_hides_paths_and_model_data (test_application_model_source.SourceSubmissionTests) ... ok
+test_submit_has_one_queued_id_and_never_generates (test_application_model_source.SourceSubmissionTests) ... ok
+test_trusted_source_requires_explicit_true (test_application_model_source.SourceSubmissionTests) ... ok
+test_worker_environment_error_is_service_failure (test_application_model_source.SourceSubmissionTests) ... ok
+
+======================================================================
+ERROR: test_source_model_name_does_not_dispatch_mathematical_nodes (test_generation_model_origin.ModelOriginTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_generation_model_origin.py", line 45, in test_source_model_name_does_not_dispatch_mathematical_nodes
+    b=build(p,r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/generation_model_origin.py", line 17, in build
+    binding=check_provenance(value,request["model"])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 75, in check_provenance
+    require(canonical(lowered) == canonical(model) and canonical(binding) == canonical(value["decomposition"]),
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Model decomposition provenance mismatch
+
+----------------------------------------------------------------------
+Ran 62 tests in 2.410s
+
+FAILED (errors=1)

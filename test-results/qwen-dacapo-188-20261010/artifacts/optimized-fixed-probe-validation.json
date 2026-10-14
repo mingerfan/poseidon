@@ -1,0 +1,26 @@
+{
+  "plan": "artifacts/rmsnorm.optimized-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+  "plan_bytes": 93540,
+  "plan_sha256": "sha256:ed53eecae947dd239bbd1bc47e4274973361ca4b338a2a434bc5646f86f273a2",
+  "value_count": 184,
+  "execution_steps": 137,
+  "op_counts": {
+    "mul_cc": 10,
+    "relinearize": 10,
+    "mul_cp": 38,
+    "rotate": 15,
+    "add_cc": 28,
+    "rescale": 19,
+    "add_cp": 8,
+    "mod_switch": 5,
+    "boot": 3,
+    "negate": 1
+  },
+  "bundle_blobs": 22,
+  "bundle_bytes": 5257216,
+  "hashes_verified": true,
+  "topology_verified": true,
+  "physical_metadata_verified": true,
+  "encrypted_execution_tested": false,
+  "validation_seconds": 0.025654616998508573
+}

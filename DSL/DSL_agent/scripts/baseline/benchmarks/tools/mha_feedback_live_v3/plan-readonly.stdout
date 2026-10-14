@@ -1,0 +1,48 @@
+{
+  "approved": false,
+  "budget": {
+    "api_concurrency": 1,
+    "batch_wall_seconds": 28800,
+    "case_wall_seconds": 14400,
+    "compile_jobs": 2,
+    "currency_limit": null,
+    "global_result_bytes": 34359738368,
+    "link_jobs": 1,
+    "max_generations": 8,
+    "max_http_attempts": 32,
+    "native_concurrency": 1,
+    "new_batch_bytes": 4294967296,
+    "per_case_bytes": 4294967296,
+    "reserve_bytes": 4294967296
+  },
+  "cases": [
+    "self_post_linear_residual__declared_shallow_v1",
+    "linear_into_separate_cross_none__declared_shallow_v1"
+  ],
+  "format": "poseidon-source-live-tool-plan-v1",
+  "proposal_binding": "509391f78f2bc75e6f5fb749e9c048ce9ea049b9aa0e51f5d7c62521b8fd4d69",
+  "proposal_sha256": "6c627aa4e73d3062de0e4bcab4850d947156142dc82977c32247aef99ced4110",
+  "provider": {
+    "max_tokens": 384000,
+    "model": "deepseek-flash",
+    "name": "deepseek",
+    "reasoning_effort": "high",
+    "stream": true,
+    "timeout_seconds": 1200,
+    "transport_retries": 3
+  },
+  "provider_calls": 0,
+  "tool_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_feedback_live_v3/package_checks.py": "debeb1dc36bb54b79abdc6d57d13d337deea203f0cf650804473e0b492b081f8",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_feedback_live_v3/run.py": "a801daebeb84a9b5b6f5c7678ce5ab4b5d1f1f68e68a173f5ce937ed64f372e7",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_feedback_live_v3/scope.py": "3e636fdc305ce3fcd408be700702aa70abd98434916226067089458c3b8779ef",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_feedback_live_v3/test_run.py": "68d57fd52a3c336b76bb5b3a30ed30f0b5c054d7808aea3625dae637e5ac189f",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_feedback_live_v3/test_scope.py": "244edfbdb53a1f47fde7a7f3608d492f8df69af20c45a625576959b661e5ad93"
+  },
+  "validation": [
+    "source_capture",
+    "numerical_qualification",
+    "new_input_execution",
+    "package_cache_reuse"
+  ]
+}

@@ -1,0 +1,301 @@
+"""Bounded native-dtype forward of an explicitly trusted, hash-bound source package.
+
+No source model is imported in the host. Existing capture/DSL/runtime code is
+unchanged. This adapter measures finite source outputs, not application accuracy.
+"""
+import copy,hashlib,json,os,signal,subprocess,sys
+from pathlib import Path
+FORMAT="poseidon-source-precision-reference-v1"
+DTYPES={"float32","float64"}
+CODES={"source_reference_input_rejected","source_reference_binding_changed",
+       "source_reference_forward_rejected","source_reference_timeout",
+       "source_reference_environment_unavailable","source_reference_state_mutation",
+       "source_reference_random_forward","source_reference_nondeterminism",
+       "source_reference_output_structure","source_reference_output_signature",
+       "source_reference_dtype_unsupported","source_reference_worker_protocol_error"}
+class SourceReferenceError(ValueError):
+    def __init__(self,code):
+        if code not in CODES:raise ValueError("Unknown source reference error")
+        self.code=code;super().__init__(code)
+def require(ok,code="source_reference_input_rejected"):
+    if not ok:raise SourceReferenceError(code)
+def sha(raw):return hashlib.sha256(raw).hexdigest()
+def implementation_paths():
+    from pytorch_ordered_contract import implementation_paths as retained
+    paths=retained()
+    paths[Path(__file__).name]=Path(__file__).resolve()
+    return paths
+def source_identity():
+    return {n:sha(p.read_bytes()) for n,p in sorted(implementation_paths().items())}
+def prepare_source(path):
+    from strict_json_files import strict_file
+    from pytorch_ordered_contract import SOURCE_FORMATS,prepare as ordered
+    from trusted_pytorch_import import prepare as legacy
+    spec=strict_file(path,131072)
+    return ordered(path) if spec.get("format") in SOURCE_FORMATS else legacy(path)
+def checked_samples(spec,model,samples,input_dtypes,tree,profile):
+    from benchmark_graph import validate,canonical
+    from model_output_contract import snapshot
+    from program_execution import normalize_samples
+    from pytorch_source_contract import validate_output_tree
+    from pytorch_ordered_contract import MHA_SOURCE_FORMAT,PARTITION_SOURCE_FORMAT,EINSUM_SOURCE_FORMAT
+    from model_resources import resolve
+    checked=validate(model,resource_profile=profile)
+    require(spec["inputs"]==model["inputs"] and spec["outputs"]==[o["name"] for o in model["outputs"]])
+    input_dtypes=snapshot(input_dtypes,limit=131072)
+    require(type(input_dtypes)is dict and set(input_dtypes)=={x["name"] for x in spec["inputs"]})
+    require(all(type(x)is str and x in DTYPES for x in input_dtypes.values()))
+    tree=snapshot(tree,limit=131072)
+    validate_output_tree(tree,spec["outputs"],allow_scalars=True,
+                         allow_none=spec["format"]in(MHA_SOURCE_FORMAT,PARTITION_SOURCE_FORMAT,EINSUM_SOURCE_FORMAT))
+    values=normalize_samples({"model":model},samples)
+    wire=[{n:a.tolist() for n,a in s.items()} for s in values]
+    require(len(canonical(wire))<=min(4*1024**2,resolve(profile).json_bytes))
+    shapes={o["name"]:list(checked["shapes"][o["value"]]) for o in model["outputs"]}
+    return wire,input_dtypes,tree,shapes
+def check_report(report,request):
+    from benchmark_graph import digest
+    from model_output_contract import decoded_tensor,is_hash,snapshot
+    report=snapshot(report,limit=16*1024**2)
+    fields={"format","status","request_sha256","source_identity","manifest_sha256","runtime","samples",
+        "outputs","output_structure","input_dtypes","output_dtypes","source_state_dtypes",
+        "max_input_conversion_absolute_error","input_mutation_observed","weight_binding",
+        "native_dtype_preserved","model_imported_in_host","checks","sandbox",
+        "graph_semantic_equivalence_certified","application_accuracy_certified",
+        "encrypted_execution","agent_generated","api_calls","binding"}
+    require(type(report)is dict and set(report)==fields,"source_reference_binding_changed")
+    require(report["format"]==FORMAT and report["status"]=="evaluated" and
+        report["request_sha256"]==digest(request) and report["source_identity"]==request["source_identity"] and
+        report["manifest_sha256"]==digest(request["manifest"]) and report["runtime"]==request["runtime"] and
+        type(report["samples"])is int and report["samples"]==len(request["samples"]) and
+        report["native_dtype_preserved"]is True and report["model_imported_in_host"]is False and
+        report["graph_semantic_equivalence_certified"]is False and report["application_accuracy_certified"]is False and
+        report["encrypted_execution"]is False and report["agent_generated"]is False and
+        type(report["api_calls"])is int and report["api_calls"]==0 and
+        report["input_dtypes"]==request["input_dtypes"] and
+        report["output_structure"]==request["output_structure"],"source_reference_binding_changed")
+    names=set(request["output_shapes"])
+    require(type(report["outputs"])is list and len(report["outputs"])==len(request["samples"]) and
+        type(report["output_dtypes"])is dict and set(report["output_dtypes"])==names and
+        all(type(v)is str and v in DTYPES for v in report["output_dtypes"].values()),
+        "source_reference_binding_changed")
+    for sample in report["outputs"]:
+        require(type(sample)is dict and set(sample)==names,"source_reference_binding_changed")
+        for name,value in sample.items():decoded_tensor(value,request["output_shapes"][name])
+    require(type(report["input_mutation_observed"])is dict and
+        set(report["input_mutation_observed"])==set(request["input_dtypes"]) and
+        all(type(v)is bool for v in report["input_mutation_observed"].values()),
+        "source_reference_binding_changed")
+    require(report["checks"]==["registered_state_unchanged","rng_unchanged","input_storage_isolated","repeat_forward_equal"]
+        and type(report["sandbox"])is dict and set(report["sandbox"])=={"network_isolated","network_namespace","address_space_bytes","cpu_seconds","file_bytes","open_files"}
+        and report["sandbox"]["network_namespace"]!=request["host_net_namespace"]
+        and report["sandbox"]==dict(network_isolated=True,network_namespace=report["sandbox"]["network_namespace"],
+             address_space_bytes=4*1024**3,cpu_seconds=150,file_bytes=16*1024**2,open_files=128),
+        "source_reference_binding_changed")
+    require(is_hash(report["binding"]) and digest({k:v for k,v in report.items() if k!="binding"})==report["binding"],
+            "source_reference_binding_changed")
+    return report
+def run(manifest_path,model,samples,output,*,expected_manifest_sha256,input_dtypes,
+        output_structure,resource_profile="general-tensors-v1",trusted=False):
+    """Explicit native input dtypes; 1..16 samples, existing fixed sandbox limits."""
+    require(trusted is True)
+    from benchmark_graph import digest,canonical
+    from model_weight_package import regular_bytes
+    from pytorch_weight_package import read
+    from model_resources import resolve
+    from trusted_pytorch_import import runtime_identity
+    from hecate_python_env import VENV,ROOT,WORK
+    from workspace_paths import require_linux_backend,work_root
+    from platform_config import configuration
+    from process_resource_limits import limits
+    from pytorch_source_contract import STATE_FORMATS
+    from pytorch_ordered_contract import SOURCE_FORMATS
+    require_linux_backend();resolve(resource_profile)
+    path=Path(manifest_path)
+    try:
+        spec,paths=prepare_source(path)
+        require(type(expected_manifest_sha256)is str and digest(spec)==expected_manifest_sha256,
+                "source_reference_binding_changed")
+        wire,dtypes,tree,shapes=checked_samples(spec,model,samples,input_dtypes,
+                                               output_structure,resource_profile)
+        weights={}
+        if spec["format"] in (*STATE_FORMATS,*SOURCE_FORMATS):
+            _,weights=read(path.parent,spec["weights"],resource_profile=resource_profile)
+    except SourceReferenceError:raise
+    except (ValueError,TypeError,KeyError,OSError):raise SourceReferenceError("source_reference_input_rejected") from None
+    output=Path(output)
+    require(output.is_absolute() and output.parent.resolve().is_relative_to(WORK/"results")
+            and not output.exists() and not output.is_symlink())
+    library=os.environ.get("HECATE_PYTHON_LIBRARY_PATH")
+    require(type(library)is str and library and all(Path(v).is_relative_to("/nix/store")
+            for v in library.split(":")),"source_reference_environment_unavailable")
+    sources=source_identity()
+    source_files={name:regular_bytes(p,65536) for name,p in paths.items()}
+    require(not set(paths).intersection(implementation_paths()),"source_reference_input_rejected")
+    output.mkdir(mode=0o700)
+    snapshot=output/"source-snapshot";snapshot.mkdir(mode=0o700)
+    for n,raw in {**source_files,**weights}.items():
+        with (snapshot/n).open("xb") as f:f.write(raw)
+    request=dict(format=FORMAT,manifest=spec,samples=wire,input_dtypes=dtypes,
+        output_structure=tree,output_shapes=shapes,resource_profile=resource_profile,
+        runtime=runtime_identity(),source_identity=sources,host_net_namespace=os.readlink("/proc/self/ns/net"))
+    payload=output/"request.json"
+    with payload.open("x") as f:json.dump(request,f,allow_nan=False)
+    command=["/usr/bin/bwrap","--unshare-all","--die-with-parent","--new-session","--cap-drop","ALL",
+        "--clearenv","--ro-bind","/nix/store","/nix/store","--ro-bind",str(VENV),str(VENV),
+        "--ro-bind","/sys/devices/system/cpu","/sys/devices/system/cpu",
+        "--proc","/proc","--dev","/dev","--tmpfs","/tmp","--dir","/app",
+        "--ro-bind",str(snapshot),"/model","--ro-bind",str(payload),"/request.json",
+        "--bind",str(output),"/out"]
+    for name,p in implementation_paths().items():command+=["--ro-bind",str(p),"/app/"+name]
+    environment=dict(PYTHONPATH="/app:/model",PYTHONDONTWRITEBYTECODE="1",PYTHONNOUSERSITE="1",
+        LD_LIBRARY_PATH=library,HOME="/nonexistent",OMP_NUM_THREADS="1",
+        OPENBLAS_NUM_THREADS="1",MKL_NUM_THREADS="1",LANG="C.UTF-8",
+        POSEIDON_PLATFORM=configuration()["id"],POSEIDON_WORK_ROOT=str(work_root()))
+    for k,v in environment.items():command+=["--setenv",k,v]
+    command+=["--chdir","/out","--",str(VENV/"bin/python"),"-B",
+              "/app/source_precision_reference.py","--worker"]
+    with (output/"forward.log").open("x") as log:
+        process=subprocess.Popen(command,env={"PATH":"/usr/bin:/bin"},stdout=log,stderr=subprocess.STDOUT,
+                                 preexec_fn=limits,start_new_session=True)
+        try:process.wait(timeout=180)
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid,signal.SIGKILL);process.wait()
+            raise SourceReferenceError("source_reference_timeout") from None
+    if process.returncode!=0:
+        failure=output/"native-failure.json"
+        if failure.exists():
+            from strict_json_files import strict_file
+            try:
+                item=strict_file(failure,131072)
+                require(set(item)=={"format","request_sha256","code","binding"} and
+                    item["format"]=="poseidon-source-reference-failure-v1" and item["request_sha256"]==digest(request) and
+                    item["code"] in CODES and item["binding"]==digest({k:v for k,v in item.items() if k!="binding"}),
+                    "source_reference_worker_protocol_error")
+            except SourceReferenceError:raise
+            except (ValueError,TypeError,KeyError,OSError):
+                raise SourceReferenceError("source_reference_worker_protocol_error") from None
+            raise SourceReferenceError(item["code"]) from None
+        raise SourceReferenceError("source_reference_forward_rejected")
+    require(source_identity()==sources,"source_reference_binding_changed")
+    current,now=prepare_source(path)
+    require(current==spec and all(regular_bytes(now[n],65536)==raw for n,raw in source_files.items()),
+            "source_reference_binding_changed")
+    for n,raw in weights.items():
+        require(regular_bytes(path.parent/n,len(raw))==raw,"source_reference_binding_changed")
+    from strict_json_files import strict_file
+    report=strict_file(output/"native-reference.json",16*1024**2)
+    try:return check_report(report,request)
+    except SourceReferenceError:raise
+    except (ValueError,TypeError,KeyError):raise SourceReferenceError("source_reference_binding_changed") from None
+
+def worker():
+    import importlib,random
+    import numpy as np
+    import torch
+    from benchmark_graph import digest
+    from strict_json_files import strict_file
+    from trusted_pytorch_import import runtime_identity,validate_package as legacy_validate
+    from pytorch_ordered_contract import SOURCE_FORMATS,MHA_SOURCE_FORMAT,PARTITION_SOURCE_FORMAT,EINSUM_SOURCE_FORMAT,shim,validate_package
+    from pytorch_source_contract import STATE_FORMATS,factory_parameters,output_tree
+    from pytorch_weight_package import read,load_state
+    request=strict_file(Path("/request.json"),16*1024**2);spec=request["manifest"]
+    require(request["format"]==FORMAT,"source_reference_worker_protocol_error")
+    runtime=dict(python=list(sys.version_info[:3]),numpy=np.__version__,torch=str(torch.__version__),
+                 cuda=torch.version.cuda,hip=getattr(torch.version,"hip",None))
+    require(runtime==request["runtime"],"source_reference_environment_unavailable")
+    require(source_identity()==request["source_identity"],"source_reference_binding_changed")
+    files={n:Path("/model",n).read_text() for n in spec["files"]}
+    if spec["format"] in SOURCE_FORMATS:validate_package(spec,files);parameters=factory_parameters(shim(spec))
+    else:legacy_validate(spec,files);parameters=factory_parameters(spec)
+    torch.set_num_threads(1)
+    module_name,entry=spec["entry"].split(".")
+    module=getattr(importlib.import_module(module_name),entry)(*parameters["args"],**parameters["kwargs"])
+    require(isinstance(module,torch.nn.Module))
+    if spec["format"] in (*STATE_FORMATS,*SOURCE_FORMATS):
+        arrays,_=read("/model",spec["weights"],resource_profile=request["resource_profile"])
+        weight_binding=load_state(module,arrays,spec["weights"])
+    else:weight_binding=None
+    # eval is inference semantics. No .double(), dtype conversion or tracing occurs.
+    module=module.cpu().eval()
+    before={n:v.detach().clone() for n,v in module.state_dict().items()}
+    state_dtypes={n:str(v.dtype).removeprefix("torch.") for n,v in before.items()}
+    require(all(v.device.type=="cpu" and v.layout==torch.strided for v in before.values()))
+    rng=torch.get_rng_state().clone();py_rng=random.getstate();np_rng=np.random.get_state()
+    outputs=[];output_dtypes=None;conversion={n:0. for n in request["input_dtypes"]}
+    mutations={n:False for n in request["input_dtypes"]}
+    def state_check():
+        current=module.state_dict()
+        require(set(current)==set(before) and all(current[n].dtype==v.dtype and
+            torch.equal(current[n],v) for n,v in before.items()),"source_reference_state_mutation")
+        require(torch.equal(torch.get_rng_state(),rng) and random.getstate()==py_rng and
+            all(np.array_equal(a,b) for a,b in zip(np.random.get_state(),np_rng)),
+            "source_reference_random_forward")
+    def forward(sample):
+        args=[];saved=[]
+        for i in spec["inputs"]:
+            n=i["name"];value=np.asarray(sample[n],dtype=np.float64)
+            require(list(value.shape)==i["shape"] and np.isfinite(value).all())
+            target=value.astype(request["input_dtypes"][n])
+            require(np.isfinite(target).all())
+            conversion[n]=max(conversion[n],float(np.max(np.abs(value-target.astype(np.float64)))))
+            tensor=torch.from_numpy(target.copy());args.append(tensor);saved.append(tensor.clone())
+        with torch.no_grad():
+            raw,tree=output_tree(module(*args),lambda v:isinstance(v,torch.Tensor),spec["outputs"],
+                scalar_tensor=lambda v:v.ndim==0,allow_none=spec["format"]in(MHA_SOURCE_FORMAT,PARTITION_SOURCE_FORMAT,EINSUM_SOURCE_FORMAT))
+        require(tree==request["output_structure"],"source_reference_output_structure")
+        for n,value,prior in zip([i["name"] for i in spec["inputs"]],args,saved):
+            mutations[n]=mutations[n] or not torch.equal(value,prior)
+        values={};dtypes={}
+        for name,tensor in zip(spec["outputs"],raw):
+            require(tensor.device.type=="cpu" and tensor.layout==torch.strided and
+                    tensor.dtype in (torch.float32,torch.float64),"source_reference_dtype_unsupported")
+            value=tensor.detach().numpy().copy()
+            if value.ndim==0:value=value.reshape(1)
+            require(list(value.shape)==request["output_shapes"][name] and np.isfinite(value).all(),
+                    "source_reference_output_signature")
+            values[name]=value;dtypes[name]=str(tensor.dtype).removeprefix("torch.")
+        state_check()
+        return values,dtypes
+    for sample in request["samples"]:
+        first,dtypes=forward(sample);second,other=forward(sample)
+        require(dtypes==other and all(np.array_equal(first[n],second[n]) for n in first),
+                "source_reference_nondeterminism")
+        require(output_dtypes is None or output_dtypes==dtypes,"source_reference_forward_rejected")
+        output_dtypes=dtypes;outputs.append({n:v.tolist() for n,v in first.items()})
+    import resource
+    require(resource.getrlimit(resource.RLIMIT_AS)==(4*1024**3,4*1024**3) and
+        resource.getrlimit(resource.RLIMIT_CPU)==(150,155) and
+        resource.getrlimit(resource.RLIMIT_FSIZE)==(16*1024**2,16*1024**2) and
+        resource.getrlimit(resource.RLIMIT_NOFILE)==(128,128),"source_reference_forward_rejected")
+    namespace=os.readlink("/proc/self/ns/net")
+    require(namespace!=request["host_net_namespace"],"source_reference_forward_rejected")
+    report=dict(format=FORMAT,status="evaluated",request_sha256=digest(request),
+        source_identity=request["source_identity"],manifest_sha256=digest(spec),
+        runtime=runtime,samples=len(outputs),outputs=outputs,
+        output_structure=request["output_structure"],input_dtypes=request["input_dtypes"],
+        output_dtypes=output_dtypes,source_state_dtypes=state_dtypes,
+        max_input_conversion_absolute_error=conversion,input_mutation_observed=mutations,weight_binding=weight_binding,
+        native_dtype_preserved=True,model_imported_in_host=False,
+        checks=["registered_state_unchanged","rng_unchanged","input_storage_isolated","repeat_forward_equal"],
+        sandbox=dict(network_isolated=True,network_namespace=namespace,address_space_bytes=4*1024**3,
+                     cpu_seconds=150,file_bytes=16*1024**2,open_files=128),
+        graph_semantic_equivalence_certified=False,application_accuracy_certified=False,
+        encrypted_execution=False,agent_generated=False,api_calls=0)
+    report["binding"]=digest(report)
+    with Path("/out/native-reference.json").open("x") as f:json.dump(report,f,allow_nan=False,indent=2)
+if __name__=="__main__":
+    require(sys.argv[1:]==["--worker"])
+    try:worker()
+    except Exception as error:
+        from benchmark_graph import digest
+        request=json.loads(Path("/request.json").read_bytes())
+        code=(error.code if isinstance(error,SourceReferenceError) else
+              "source_reference_environment_unavailable" if isinstance(error,ImportError) else
+              "source_reference_forward_rejected" if isinstance(error,(RuntimeError,ValueError,OSError)) else
+              "source_reference_worker_protocol_error")
+        record=dict(format="poseidon-source-reference-failure-v1",request_sha256=digest(request),code=code)
+        record["binding"]=digest(record)
+        with Path("/out/native-failure.json").open("x") as f:json.dump(record,f)
+        raise
+

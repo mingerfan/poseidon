@@ -1,0 +1,558 @@
+{
+  "proposal_binding": "c563ee93d44018613d6ee4affc315414efacbace38a77fb5e81a60e2e9f7e592",
+  "authorization_binding": "ee72e7b14c54ed9cca2c056bfe52d9616b1af442bc70d998b9336d83614d6e32",
+  "report_binding": "a54a1cedeb9cb00c162967b116937a5f036de8ea4a7380c55cfabde3e2ac1a5d",
+  "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+  "status": "verified",
+  "completed": true,
+  "planned": 18,
+  "passed": 18,
+  "failed": 0,
+  "blocked": 0,
+  "not_run": 0,
+  "compiler_confirmed": 18,
+  "encrypted_confirmed": 27,
+  "package_reuse_passed": 3,
+  "input_groups": 93,
+  "compared_values": 1094,
+  "maximum_absolute_error": 9.14513568931602e-07,
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "agent_generated": false,
+  "measured_new_bytes": 226648064,
+  "current_bytes": 32451989504,
+  "free_bytes": 42268540928,
+  "format": "poseidon-spatial-source-offline-results-v1",
+  "revision": "r1406",
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "source_formats": {
+    "poseidon-trusted-pytorch-v27": 15,
+    "poseidon-trusted-pytorch-v26": 2,
+    "json_schema_1": 1
+  },
+  "candidate_origin": "frozen_deterministic_rule",
+  "validation_level": "numerical",
+  "skipped": 0,
+  "seconds": 700.5624141099979,
+  "programs_reloaded": 18,
+  "backend": "poseidon_cpu",
+  "backend_identity": {
+    "format": "poseidon-backend-identity-v2",
+    "platform": {
+      "configured_platform": "aarch64-linux",
+      "system": "linux",
+      "machine": "aarch64",
+      "byteorder": "little",
+      "pointer_bits": 64,
+      "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+    },
+    "build_configuration": {
+      "environment_files": {
+        "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+        "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+        "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+        "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+        "src/poseidon/tools/dacapo/poseidon-cpu-shell.nix": "38e03f4ec07fc089a14851595f7d1211fe07618875e9868bf5d205dd39274020",
+        "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+      },
+      "cmake_cache_sha256": {
+        "compiler": "76c058b5d19a3e27fe299a7cbd071888494cb48c19f27df2d4d71c807b86f51d",
+        "executor": "181cd264efe24024ab5b98a745b1052f17f54b6772a68110e942ed44f9c77779",
+        "poseidon": "a96456e4ac0651827a50d58c6c80f12c2772c005cd78d2949919a6e1d2106e32"
+      }
+    },
+    "source_lock_sha256": "5e8d7adebd0cac8e9748bcddf0dc5ea408b7123095ff79199cdf47738de84647",
+    "source_lock": {
+      "format": "poseidon-runtime-source-lock-v1",
+      "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+      "runtime": {
+        "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+        "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+        "path": "third_party/ckks-runtime-agent"
+      },
+      "dacapo": {
+        "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+        "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+        "path": "third_party/ckks-runtime-agent/third_party/dacapo",
+        "patches": [
+          {
+            "file": "dacapo-plaintext-subtraction.patch",
+            "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+          },
+          {
+            "file": "dacapo-concat-layout.patch",
+            "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+          },
+          {
+            "file": "dacapo-bootstrap-containers.patch",
+            "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+          },
+          {
+            "file": "dacapo-native-function-calls.patch",
+            "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+          },
+          {
+            "file": "dacapo-refined-function-input-types.patch",
+            "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+          },
+          {
+            "file": "dacapo-augmented-operand-order.patch",
+            "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+          },
+          {
+            "file": "dacapo-constant-output-path.patch",
+            "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+          },
+          {
+            "file": "dacapo-minimal-mlir-link.patch",
+            "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+          },
+          {
+            "file": "dacapo-gcc-qualified-casts.patch",
+            "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+          },
+          {
+            "file": "dacapo-unused-mlir-dependencies.patch",
+            "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+          }
+        ]
+      },
+      "integration_method": "reviewed source archives; original independent repositories preserved"
+    },
+    "runtime_dacapo_tree_sha256": "f2ef1a237d1cb6d782e1013372e9d395f4e88e7aa449b9301a1fc2956d22a23a",
+    "api_tree_sha256": "c8a3d120aae1800ce48a5d3085044b00c7f92c844a7e1531615df3a4babccbf7",
+    "runner_tree_sha256": "bad66abf5c45cc0e920083d368ce510167940a67b65181349933fbe40845ade2",
+    "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+    "frontend_sha256": "0baecce07032d37aaecba38b64b93cbbc23fb21dac8476de85598dc9ba8d6e73",
+    "executor_sha256": "6cdd255e321025e9286d9968864c5ce0db9333017ca62e6618c6d9830178afd4",
+    "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+    "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+    "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e"
+  },
+  "input_plan": {
+    "qualification_groups_per_case": 4,
+    "reused_packages": 3,
+    "new_groups_per_reused_package": 3,
+    "repeat_groups_per_reused_package": 1,
+    "named_equivalence_groups_per_reused_package": 3
+  },
+  "tolerance": {
+    "absolute": 1e-05,
+    "relative": 0.0001,
+    "expression": "abs(actual-reference) <= 1e-5 + 1e-4*abs(reference)"
+  },
+  "verified_chain": [
+    "hecate_tracing",
+    "earth_ir",
+    "ckks_ir",
+    "runtime_plan",
+    "operator_spec",
+    "plaintext_bundle",
+    "artifact_gate",
+    "poseidon_cpu_execution",
+    "decrypt",
+    "independent_reference",
+    "program_reload"
+  ],
+  "independent_audit_binding": "5732c87524838ff102f2496e5d3a4dce509ab4f52bd47d3fce57aea9beeee5c9",
+  "audited_files": 694,
+  "preserved_audit_tool_failure": {
+    "path": "scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/source-audit-r1405.log",
+    "cause": "audit-only expected variable shadowed by file-hash iteration",
+    "preserved_source": "scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/audit_source_r1405-before-reference-variable.py",
+    "fixed_source": "scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/audit_source_r1405.py",
+    "second_log": "scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/source-audit-r1405-second.log",
+    "additional_provider_calls": 0,
+    "additional_compiler_calls": 0,
+    "additional_encrypted_calls": 0
+  },
+  "rows": [
+    {
+      "case": "resize_1_nearest_0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 20,
+        "maximum_absolute_error": 8.197592982206459e-08,
+        "mean_absolute_error": 2.2709291243745624e-08,
+        "nonzero_reference_max_relative_error": 1.7203225814328655e-07
+      },
+      "immutable_candidate_sha256": "af030f2d0e71105449e64441829e39a858c8d3eed34c2d9152144614614a30af",
+      "request_id": "547c5beae9c1ee0d1eb1bb3695ec8416358e8d27bd85c0e3b11af911e5e88b92"
+    },
+    {
+      "case": "resize_1_nearest_exact_1",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 20,
+        "maximum_absolute_error": 9.360032815486363e-08,
+        "mean_absolute_error": 3.709188677935216e-08,
+        "nonzero_reference_max_relative_error": 2.8241051408528506e-07
+      },
+      "immutable_candidate_sha256": "d1b7e89981bd671c4480c0c10555f65f6593e1af8b41af11926a8f6dfc73d7f4",
+      "request_id": "30123f804d9ee20c67808bd16917f8d241cbb025051077655a2e499270442736"
+    },
+    {
+      "case": "resize_1_linear_0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 20,
+        "maximum_absolute_error": 2.438710084984308e-07,
+        "mean_absolute_error": 5.493860208459629e-08,
+        "nonzero_reference_max_relative_error": 4.661107611450327e-07
+      },
+      "immutable_candidate_sha256": "118cb175aa613cbf9de9d572ca91a6ac2f2d328550fcb964f9f48dac89a6c20b",
+      "request_id": "a12a1039613eb2e539bb92041a50bc85de68a19b44b990d18282f322e5ad086b"
+    },
+    {
+      "case": "resize_2_nearest_1",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 120,
+        "maximum_absolute_error": 2.1170169062223465e-08,
+        "mean_absolute_error": 2.4059048602178693e-09,
+        "nonzero_reference_max_relative_error": 2.6278585461650815e-07
+      },
+      "immutable_candidate_sha256": "fe751fbe17df6a61aab2c3a3a3c6dbe626c1dbf17ea6a7f3d37d98c4c52367f1",
+      "request_id": "5de981eeed9b49331ca283057712a0f1d89e042a6d910847105bbf38a83614c1"
+    },
+    {
+      "case": "resize_2_nearest_exact_0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 96,
+        "maximum_absolute_error": 5.5280537269502834e-08,
+        "mean_absolute_error": 3.989854742320411e-09,
+        "nonzero_reference_max_relative_error": 2.0154627980596138e-07
+      },
+      "immutable_candidate_sha256": "ef1b85ce51f5f9ae976e84375e926f5566b16dd27b7b174a8f09d45c2fbe4ffc",
+      "request_id": "f626d4af971a8a37a5dc0587f7285276e1f71811d74a670405c5515a7f49c4c8"
+    },
+    {
+      "case": "resize_2_bilinear_2",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 96,
+        "maximum_absolute_error": 6.4095782847939375e-09,
+        "mean_absolute_error": 1.8470275754809834e-09,
+        "nonzero_reference_max_relative_error": 5.025276461761346e-07
+      },
+      "immutable_candidate_sha256": "bc70b9931d35e450d8ba70d70872a2e38daa3dad67d87185f4a2219411000a97",
+      "request_id": "e05a516103c8480a86ea9f16b9daac5db4be6919422f65252446c17138505fe8"
+    },
+    {
+      "case": "transpose_1_0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 56,
+        "maximum_absolute_error": 7.946016848843496e-08,
+        "mean_absolute_error": 8.863168774305867e-09,
+        "nonzero_reference_max_relative_error": 7.856405746964384e-06
+      },
+      "immutable_candidate_sha256": "f0978d3633fd9a57ff447b0add683ced82a98ff2f2e04e3de95e10c12b21ab08",
+      "request_id": "d964019d8ce5ca426d919f9bf4283fb4142e9074a1583f7fb788d46c10e5b6eb"
+    },
+    {
+      "case": "transpose_1_1",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 56,
+        "maximum_absolute_error": 2.8367692625486107e-08,
+        "mean_absolute_error": 2.929736275164822e-09,
+        "nonzero_reference_max_relative_error": 2.0326539796684874e-06
+      },
+      "immutable_candidate_sha256": "f0978d3633fd9a57ff447b0add683ced82a98ff2f2e04e3de95e10c12b21ab08",
+      "request_id": "b249c30589f5ea29d79d5d449142b22ff73c07a6bd2068483bfe3afed097cb57"
+    },
+    {
+      "case": "transpose_2_0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 120,
+        "maximum_absolute_error": 1.7750133529670364e-08,
+        "mean_absolute_error": 2.599754273132065e-09,
+        "nonzero_reference_max_relative_error": 4.987994073024527e-07
+      },
+      "immutable_candidate_sha256": "a5ebf586fb4bb9ae2c668126688d849c33655bec782e05f0a89af997ce351ab5",
+      "request_id": "e9b121d4a435b1d552cdca9ce7d12e3b69e66844c1e01939bc384dad712dccbf"
+    },
+    {
+      "case": "transpose_2_1",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 120,
+        "maximum_absolute_error": 4.406947409774098e-08,
+        "mean_absolute_error": 6.730072292389164e-09,
+        "nonzero_reference_max_relative_error": 1.232788493263806e-05
+      },
+      "immutable_candidate_sha256": "a5ebf586fb4bb9ae2c668126688d849c33655bec782e05f0a89af997ce351ab5",
+      "request_id": "81c89b864e0a4de06547d03f6f8ddd27b3ac8f8d52dedfb100f7b7e4f4d070dc"
+    },
+    {
+      "case": "composition_0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 8,
+        "maximum_absolute_error": 1.3320816311113148e-08,
+        "mean_absolute_error": 9.682032505158727e-09,
+        "nonzero_reference_max_relative_error": 5.003161830212302e-07
+      },
+      "immutable_candidate_sha256": "1bf98dd2fda42d9f6f0799cdc58c0b2ed6ad313993abc1158e6bb4e264c26c36",
+      "request_id": "cf8078f449f94d3385c9926f2f4145ef3e7e9964406fcc396efe605789367619"
+    },
+    {
+      "case": "composition_2",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 40,
+        "maximum_absolute_error": 1.377652181222544e-07,
+        "mean_absolute_error": 3.1081064539684607e-08,
+        "nonzero_reference_max_relative_error": 1.071474851510601e-06
+      },
+      "immutable_candidate_sha256": "e48935f62f07596f5f136ce1fa8fc42b1d6298447994048323e5c4e0aa31f00f",
+      "request_id": "12490b9240552f68290f586b28248686b9e6f74306c8b6f5f36ed6d448bf4191"
+    },
+    {
+      "case": "structured_dict",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 40,
+        "maximum_absolute_error": 1.04739843687085e-07,
+        "mean_absolute_error": 1.0024002288019887e-08,
+        "nonzero_reference_max_relative_error": 2.3341542039478972e-06
+      },
+      "immutable_candidate_sha256": "2c1a7dbeb00046e0341b1722407a92443756dd97b3ec409b41b9eba1ccd180b4",
+      "request_id": "3dfc3b0245c042974a07e5a56e76b0ed7e6c36fa24dbf5a8a450e5c207227ff6",
+      "reuse": {
+        "new-inputs": {
+          "groups": 3,
+          "maximum_absolute_error": 2.05429699889903e-07,
+          "values": 30
+        },
+        "repeat": {
+          "groups": 1,
+          "maximum_absolute_error": 2.068486206797948e-08,
+          "values": 10
+        },
+        "named-equivalence": {
+          "groups": 3,
+          "maximum_absolute_error": 3.367506394569286e-08,
+          "values": 30
+        }
+      }
+    },
+    {
+      "case": "nested_keywords",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 20,
+        "maximum_absolute_error": 3.925429366814098e-07,
+        "mean_absolute_error": 1.082225936522947e-07,
+        "nonzero_reference_max_relative_error": 4.3756660853220885e-06
+      },
+      "immutable_candidate_sha256": "caa3bb6a53e39493b83dad7404b4c8e3b4ffd3896d9fff3b1af123b9a5b0828c",
+      "request_id": "a8428d69d49a3df09382839dff3896d8fbc8b631efff79589f76ed65a58d1aa4",
+      "reuse": {
+        "new-inputs": {
+          "groups": 3,
+          "maximum_absolute_error": 3.2738449341415676e-07,
+          "values": 15
+        },
+        "repeat": {
+          "groups": 1,
+          "maximum_absolute_error": 1.0430513249989892e-07,
+          "values": 5
+        },
+        "named-equivalence": {
+          "groups": 3,
+          "maximum_absolute_error": 9.14513568931602e-07,
+          "values": 15
+        }
+      }
+    },
+    {
+      "case": "float32_public_weight",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v27",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 28,
+        "maximum_absolute_error": 1.2710725860731742e-08,
+        "mean_absolute_error": 4.667385166058759e-09,
+        "nonzero_reference_max_relative_error": 1.3054302184151033e-06
+      },
+      "immutable_candidate_sha256": "f8ad4d00a359a56aaf3eb900e18e622f3e0e7cf1558002bbb794801ba746c318",
+      "request_id": "dd56f18b9361ee8c742cd6980b4f82301c270483974a331434020cf2099cd3f6",
+      "reuse": {
+        "new-inputs": {
+          "groups": 3,
+          "maximum_absolute_error": 9.780173189539998e-09,
+          "values": 21
+        },
+        "repeat": {
+          "groups": 1,
+          "maximum_absolute_error": 1.0448889604247613e-08,
+          "values": 7
+        },
+        "named-equivalence": {
+          "groups": 3,
+          "maximum_absolute_error": 1.595949485847653e-08,
+          "values": 21
+        }
+      }
+    },
+    {
+      "case": "compat_v26_keywords0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v26",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 24,
+        "maximum_absolute_error": 7.356669162739138e-09,
+        "mean_absolute_error": 3.139104531326947e-09,
+        "nonzero_reference_max_relative_error": 1.3606738865914466e-07
+      },
+      "immutable_candidate_sha256": "74dc513ae26244d1eadc7477cabd2015caf793029add6231dd837382dff40052",
+      "request_id": "27567c9725c693b21e65347ee0127e841d097d52c8fc7e3f58ba096d9e5cb502"
+    },
+    {
+      "case": "compat_v26_nested0",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "source_contract": "poseidon-trusted-pytorch-v26",
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 48,
+        "maximum_absolute_error": 3.381864233098497e-09,
+        "mean_absolute_error": 9.665508267823147e-10,
+        "nonzero_reference_max_relative_error": 3.835664935669669e-08
+      },
+      "immutable_candidate_sha256": "7ed1566ff5cd5b7bd46ce0a09378828fd8bcf1acb55483467043c509169d43b6",
+      "request_id": "7364307db5fa05176b3c73ebb0f087c769ca7519ae641d7b7efbcd5a9384c14f"
+    },
+    {
+      "case": "compat_v1_linear",
+      "status": "passed",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package_reloaded": true,
+      "qualification": {
+        "input_groups": 4,
+        "compared_values": 8,
+        "maximum_absolute_error": 3.972107029404093e-08,
+        "mean_absolute_error": 2.0467897560638368e-08,
+        "nonzero_reference_max_relative_error": 3.913019843045096e-06
+      },
+      "immutable_candidate_sha256": "89d23b280b292151490e4f7b1382fcb2bddc01d2c39605d25c442f04ce1c29bb",
+      "request_id": "a4c3c73b3c11345dfaee1a8207900cc02aaa2f8fc975d6cd551cfc7fcbdd4f82"
+    }
+  ],
+  "sources": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-offline-proposal-r1405.json": "4d391caf764d849a0f8f693dfdd211e05a1e59954c62137fbbfef27c57dc8028",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-offline-authorization-r1405.json": "dbb3b7b6b22946b08c0b6129907e01b041e95cf831ddccbb9bf89ea1b09e7b31",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-offline-r1405/report.json": "061f3dad73c91bb7413c16169c8e3d8056e0349a2ba34ca341198a2bd34a3f6d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-offline-r1405/independent-audit.json": "57588df064f24509b5077ec863760ce7d1083c469ed1e5667cc583f032095e0c",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/audit_source_r1405.py": "fe12e70d2d164ccc946a3cfb3d2c437475bb8c718fa125f8a65ce003e6034b1c"
+  },
+  "changes": {
+    "backend": false,
+    "parameters": false,
+    "reference": false,
+    "tolerance": false,
+    "network": false,
+    "installed": false,
+    "downloaded": false,
+    "committed": false,
+    "pushed": false
+  },
+  "unverified": [
+    "new real-Agent generation of v27 spatial sources",
+    "unbounded spatial configurations",
+    "CUDA hardware execution",
+    "large-capacity layouts",
+    "bootstrap-dependent whole-model execution"
+  ],
+  "historical_overlap_note": "r1403 JSON and r1404 source contexts overlap; separate bindings cannot be summed as unique models",
+  "next_action": "Freeze a bounded real-Agent test plan for the spatial source feature; no paid calls under the completed r1405 offline quota",
+  "binding": "063b1e38b3f0298bc321583db1b1eb4a8e8a8b0d76c574494cb867bef8d993dc"
+}

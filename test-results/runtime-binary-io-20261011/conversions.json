@@ -1,0 +1,27 @@
+[
+  {
+    "input": "/home/xuming/poseidon-runtime-io-20261010/binary-io-experiment/data/plan-c81.json",
+    "binary_bytes": 6639737,
+    "binary_emit_seconds": 0.049122193,
+    "json_bytes": 21613676,
+    "json_load_seconds": 1.008410603,
+    "peak_rss_bytes": 33054720
+  },
+  {
+    "input": "/home/xuming/poseidon-runtime-io-20261010/binary-io-experiment/data/plan-c324.json",
+    "binary_bytes": 26534390,
+    "binary_emit_seconds": 0.203080917,
+    "json_bytes": 87444495,
+    "json_load_seconds": 4.122587615,
+    "peak_rss_bytes": 119771136
+  },
+  {
+    "input": "/home/xuming/poseidon-runtime-io-20261010/artifacts/gpu4/qwen24._hecate_qwen25_24layer.packed.bundle/manifest.json",
+    "binary_bytes": 37668171,
+    "binary_emit_and_check_seconds": 2.478999199,
+    "blob_payloads_read": 0,
+    "entries_equal": true,
+    "json_bytes": 98562074,
+    "json_load_seconds": 3.434698103
+  }
+]

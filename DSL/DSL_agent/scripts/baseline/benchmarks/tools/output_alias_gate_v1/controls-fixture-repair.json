@@ -1,0 +1,15 @@
+{
+  "format": "poseidon-output-binding-controls-fixture-repair-v1",
+  "original_failures": 1,
+  "original_errors": 2,
+  "original_skipped": 0,
+  "original_tests": 162,
+  "cause": "synthetic two-output fixture mutated the immutable request layout without a valid request binding",
+  "correction": "construct a valid two-output graph request with the existing Builder; keep hash checks unchanged",
+  "product_code_changed": false,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "http_attempts": 0,
+  "old_test_sha256": "015fbfebd8c7e052bed706e59d2e4480db8ee9e0b86955a11d3f6db14ae93d3c",
+  "new_test_sha256": "586f8d2d660d5913c236cdf3c3083d804eb004d01281b9242a71b5f414d5f249"
+}

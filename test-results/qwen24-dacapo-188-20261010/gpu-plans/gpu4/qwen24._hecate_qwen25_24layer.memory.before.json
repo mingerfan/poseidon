@@ -1,0 +1,267 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "_hecate_qwen25_24layer",
+  "memory_planned": false,
+  "places": [
+    {
+      "distinct_allocation_bytes": 42146237251584,
+      "peak": {
+        "ciphertext_bytes": 772653711360,
+        "instruction_ordinal": 13482985,
+        "largest_objects": [
+          {
+            "bytes": 41943040,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          },
+          {
+            "bytes": 41943040,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "1"
+          },
+          {
+            "bytes": 41943040,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019609"
+          },
+          {
+            "bytes": 41943040,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019615"
+          },
+          {
+            "bytes": 41943040,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019633"
+          }
+        ],
+        "operation": "ckks.bootstrapc",
+        "phase": "execution",
+        "plaintext_bytes": 41373583540224
+      },
+      "peak_bytes": 42146237251584,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 42146237251584
+    },
+    {
+      "distinct_allocation_bytes": 52414499520512,
+      "peak": {
+        "ciphertext_bytes": 46319290810368,
+        "instruction_ordinal": 15476336,
+        "largest_objects": [
+          {
+            "bytes": 31457280,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019524"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019665"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019751"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019762"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019772"
+          }
+        ],
+        "operation": "ckks.addcc",
+        "phase": "execution",
+        "plaintext_bytes": 6095208710144
+      },
+      "peak_bytes": 52414499520512,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 52414499520512
+    },
+    {
+      "distinct_allocation_bytes": 49318456197120,
+      "peak": {
+        "ciphertext_bytes": 43470754414592,
+        "instruction_ordinal": 15476391,
+        "largest_objects": [
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019643"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019902"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019944"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1185351"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1185646"
+          }
+        ],
+        "operation": "ckks.addcc",
+        "phase": "execution",
+        "plaintext_bytes": 5847701782528
+      },
+      "peak_bytes": 49318456197120,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 49318456197120
+    },
+    {
+      "distinct_allocation_bytes": 47007969312768,
+      "peak": {
+        "ciphertext_bytes": 41644270288896,
+        "instruction_ordinal": 15476388,
+        "largest_objects": [
+          {
+            "bytes": 31457280,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1019519"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1063391"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1185464"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1453274"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1634070"
+          }
+        ],
+        "operation": "ckks.addcc",
+        "phase": "execution",
+        "plaintext_bytes": 5363699023872
+      },
+      "peak_bytes": 47007969312768,
+      "place": {
+        "index": 2,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 47007969312768
+    },
+    {
+      "distinct_allocation_bytes": 46346763501568,
+      "peak": {
+        "ciphertext_bytes": 41047773151232,
+        "instruction_ordinal": 15476392,
+        "largest_objects": [
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1185157"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1369856"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1369924"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1369935"
+          },
+          {
+            "bytes": 28311552,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1369945"
+          }
+        ],
+        "operation": "ckks.addcc",
+        "phase": "execution",
+        "plaintext_bytes": 5298990350336
+      },
+      "peak_bytes": 46346763501568,
+      "place": {
+        "index": 3,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 46346763501568
+    }
+  ],
+  "poly_degree": 65536,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

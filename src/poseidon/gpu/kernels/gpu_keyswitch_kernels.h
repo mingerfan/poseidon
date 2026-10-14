@@ -66,6 +66,21 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     std::size_t degree);
 
 /**
+ * Materialize only the source digit after multiplication by the punctured-Q
+ * inverse. The compact [decomp_limb_count, degree] buffer is consumed by the
+ * split P=9 ModUp/Four-step phase1 path and is substantially smaller than a
+ * full active-QP ModUp result.
+ */
+void launch_hybrid_preweight_modup_source_p9(
+    GpuWord *weighted_source,
+    const GpuWord *c2_coeff,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
  * Forward NTT only the Q limbs outside the decomposition block and all P
  * limbs. Q limbs inside the block are already copied from the NTT source.
  */

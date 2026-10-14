@@ -1,0 +1,6 @@
+"""Explicit v38: inherited v37 with static tensor-contraction normalization."""
+SOURCE_FORMAT="poseidon-trusted-pytorch-v38"
+PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v38"
+REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v38"
+CAPTURE_FORMAT="poseidon-public-expression-source-capture-v15"
+POLICY="poseidon-pytorch-static-tensor-contraction-v1"

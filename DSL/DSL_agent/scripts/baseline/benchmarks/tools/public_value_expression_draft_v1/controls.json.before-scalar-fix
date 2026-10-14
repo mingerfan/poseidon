@@ -1,0 +1,16 @@
+{
+  "compiler_calls": 0,
+  "contexts": 12,
+  "encrypted_calls": 0,
+  "errors": 1,
+  "failed": 0,
+  "format": "poseidon-public-value-draft-controls-v1",
+  "http_attempts": 0,
+  "production_integrated": false,
+  "provider_calls": 0,
+  "reference": "real CPU float64 Torch compared with independent NumPy public-value normalization",
+  "reference_groups": 48,
+  "seconds": 0.33985328674316406,
+  "skipped": 0,
+  "tests": 38
+}

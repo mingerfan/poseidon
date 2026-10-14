@@ -1,0 +1,29 @@
+{
+  "format": "poseidon-provenance-component-proposal-v1",
+  "production_active": false,
+  "wire_limit": 4194304,
+  "logical_work_limit": 16777216,
+  "source_format": "poseidon-trusted-pytorch-v36",
+  "latest_unchanged": "poseidon-trusted-pytorch-v34",
+  "default_unchanged": "poseidon-trusted-pytorch-v18",
+  "roles": [
+    "application-task",
+    "model-provenance",
+    "capture-reference",
+    "decomposition"
+  ],
+  "unchanged": [
+    "backends",
+    "models",
+    "weights",
+    "reference values",
+    "threshold",
+    "network",
+    "native resource limits"
+  ],
+  "code_pending_activation": true,
+  "tests_pending": true,
+  "provider_calls": 0,
+  "prototype_binding": "f2ac51080de73b9719bf20c43bd260b73523e5b991f63833fcee90602d515450",
+  "binding": "2c20d415c3821eba35a9d510a40d1b1ed0237531891c2d65d8160514ef1b6b32"
+}

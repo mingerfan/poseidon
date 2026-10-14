@@ -1,0 +1,320 @@
+{
+  "backend": "poseidon_cpu",
+  "cases": [
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tensor_output",
+      "id": "cnn_norm_head_0",
+      "input_shape": [
+        1,
+        1,
+        3,
+        3
+      ],
+      "manifest": "cnn_norm_head_0/manifest.json",
+      "partition": "cnn_norm_head",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tuple_output",
+      "id": "cnn_norm_head_1",
+      "input_shape": [
+        1,
+        2,
+        3,
+        3
+      ],
+      "manifest": "cnn_norm_head_1/manifest.json",
+      "partition": "cnn_norm_head",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "dict_output",
+      "id": "cnn_norm_head_2",
+      "input_shape": [
+        1,
+        1,
+        4,
+        4
+      ],
+      "manifest": "cnn_norm_head_2/manifest.json",
+      "partition": "cnn_norm_head",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tensor_output",
+      "id": "residual_layernorm_0",
+      "input_shape": [
+        1,
+        4
+      ],
+      "manifest": "residual_layernorm_0/manifest.json",
+      "partition": "residual_layernorm",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tuple_output",
+      "id": "residual_layernorm_1",
+      "input_shape": [
+        2,
+        3
+      ],
+      "manifest": "residual_layernorm_1/manifest.json",
+      "partition": "residual_layernorm",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "dict_output",
+      "id": "residual_layernorm_2",
+      "input_shape": [
+        1,
+        6
+      ],
+      "manifest": "residual_layernorm_2/manifest.json",
+      "partition": "residual_layernorm",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "tensor_output",
+      "id": "indexed_batched_matmul_0",
+      "input_shape": [
+        1,
+        2,
+        2
+      ],
+      "manifest": "indexed_batched_matmul_0/manifest.json",
+      "partition": "indexed_batched_matmul",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "tuple_output",
+      "id": "indexed_batched_matmul_1",
+      "input_shape": [
+        2,
+        2,
+        3
+      ],
+      "manifest": "indexed_batched_matmul_1/manifest.json",
+      "partition": "indexed_batched_matmul",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "dict_output",
+      "id": "indexed_batched_matmul_2",
+      "input_shape": [
+        1,
+        3,
+        2
+      ],
+      "manifest": "indexed_batched_matmul_2/manifest.json",
+      "partition": "indexed_batched_matmul",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "tensor_output",
+      "id": "public_matrix_fusion_0",
+      "input_shape": [
+        1,
+        2,
+        3
+      ],
+      "manifest": "public_matrix_fusion_0/manifest.json",
+      "partition": "public_matrix_fusion",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "tuple_output",
+      "id": "public_matrix_fusion_1",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "public_matrix_fusion_1/manifest.json",
+      "partition": "public_matrix_fusion",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "dict_output",
+      "id": "public_matrix_fusion_2",
+      "input_shape": [
+        1,
+        3,
+        4
+      ],
+      "manifest": "public_matrix_fusion_2/manifest.json",
+      "partition": "public_matrix_fusion",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tensor_output",
+      "id": "attention_core_0",
+      "input_shape": [
+        1,
+        2,
+        2
+      ],
+      "manifest": "attention_core_0/manifest.json",
+      "partition": "attention_core",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tuple_output",
+      "id": "attention_core_1",
+      "input_shape": [
+        1,
+        3,
+        2
+      ],
+      "manifest": "attention_core_1/manifest.json",
+      "partition": "attention_core",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "dict_output",
+      "id": "attention_core_2",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "attention_core_2/manifest.json",
+      "partition": "attention_core",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tensor_output",
+      "id": "channel_broadcast_mix_0",
+      "input_shape": [
+        1,
+        1,
+        3,
+        3
+      ],
+      "manifest": "channel_broadcast_mix_0/manifest.json",
+      "partition": "channel_broadcast_mix",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tuple_output",
+      "id": "channel_broadcast_mix_1",
+      "input_shape": [
+        1,
+        2,
+        2,
+        3
+      ],
+      "manifest": "channel_broadcast_mix_1/manifest.json",
+      "partition": "channel_broadcast_mix",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "dict_output",
+      "id": "channel_broadcast_mix_2",
+      "input_shape": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "manifest": "channel_broadcast_mix_2/manifest.json",
+      "partition": "channel_broadcast_mix",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "tensor_output",
+      "id": "static_split_stack_0",
+      "input_shape": [
+        2,
+        4
+      ],
+      "manifest": "static_split_stack_0/manifest.json",
+      "partition": "static_split_stack",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "tuple_output",
+      "id": "static_split_stack_1",
+      "input_shape": [
+        1,
+        6
+      ],
+      "manifest": "static_split_stack_1/manifest.json",
+      "partition": "static_split_stack",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "dict_output",
+      "id": "static_split_stack_2",
+      "input_shape": [
+        2,
+        6
+      ],
+      "manifest": "static_split_stack_2/manifest.json",
+      "partition": "static_split_stack",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tensor_output",
+      "id": "norm_depth_branches_0",
+      "input_shape": [
+        1,
+        4
+      ],
+      "manifest": "norm_depth_branches_0/manifest.json",
+      "partition": "norm_depth_branches",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "tuple_output",
+      "id": "norm_depth_branches_1",
+      "input_shape": [
+        2,
+        3
+      ],
+      "manifest": "norm_depth_branches_1/manifest.json",
+      "partition": "norm_depth_branches",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared approximation; original error reported separately",
+      "context": "dict_output",
+      "id": "norm_depth_branches_2",
+      "input_shape": [
+        1,
+        6
+      ],
+      "manifest": "norm_depth_branches_2/manifest.json",
+      "partition": "norm_depth_branches",
+      "source_origin": "trusted_pytorch"
+    }
+  ],
+  "format": "poseidon-pytorch-composition-contexts-v1",
+  "models_source_sha256": "22df0312f7ebeaf3fd111950d6d15723d7aab044d743445d19c96b6aab8ae3da",
+  "old_frozen_benchmark_changed": false,
+  "paid_calls": 0,
+  "partitions": 8,
+  "planned": 24
+}

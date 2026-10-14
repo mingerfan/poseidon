@@ -1,0 +1,23 @@
+test_function_path_selection_is_preserved (test_source_module_calibration.ModuleFreezeTests) ... ok
+test_module_profile_uses_exact_observed_path (test_source_module_calibration.ModuleFreezeTests) ... ok
+test_node_selector_overrides_module_and_default_without_losing_paths (test_source_module_calibration.ModuleFreezeTests) ... ok
+test_overlapping_module_selectors_at_same_priority_are_rejected (test_source_module_calibration.ModuleFreezeTests) ... ok
+test_unmapped_compound_module_remains_unsupported (test_source_module_calibration.ModuleFreezeTests) ... ok
+test_v1_graph_cannot_freeze_unobserved_modules (test_source_module_calibration.ModuleFreezeTests) ... ok
+test_agent_graphmodule_retrace_keeps_nested_scopes_and_computation (test_source_module_calibration.ModuleObservationTests) ... ok
+test_five_activation_types_have_exact_public_class_and_attributes (test_source_module_calibration.ModuleObservationTests) ... ok
+test_function_inside_custom_module_keeps_real_source_path (test_source_module_calibration.ModuleObservationTests) ... ok
+test_module_attribute_drift_changes_graph_identity (test_source_module_calibration.ModuleObservationTests) ... ok
+test_numeric_module_path_and_unknown_target_are_checked (test_source_module_calibration.ModuleObservationTests) ... ok
+test_shared_module_calls_have_distinct_nodes_and_same_source_path (test_source_module_calibration.ModuleObservationTests) ... ok
+test_three_shapes_and_native_dtypes_keep_original_module_values (test_source_module_calibration.ModuleObservationTests) ... ok
+test_v1_graph_fields_and_module_rejection_stay_explicit (test_source_module_calibration.ModuleObservationTests) ... ok
+test_wrong_source_module_schema_is_rejected (test_source_module_calibration.ModuleObservationTests) ... ok
+test_explicit_v2_inspect_requests_original_module_metadata (test_source_module_service.ModuleServiceTests) ... ok
+test_legacy_v1_dispatch_keeps_old_graph_description (test_source_module_service.ModuleServiceTests) ... ok
+test_public_v2_inventory_contains_module_metadata_without_arguments (test_source_module_service.ModuleServiceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.526s
+
+OK

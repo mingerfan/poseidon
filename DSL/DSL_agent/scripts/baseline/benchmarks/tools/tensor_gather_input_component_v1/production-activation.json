@@ -1,0 +1,33 @@
+{
+  "api_calls": 0,
+  "backend_changed": false,
+  "binding": "4f6b84de2c9ffb042a9ab5cd60f4199f7a21dffb96afb9546b6b8abab71d7e9c",
+  "changed_files": {
+    "candidate_bundle.py": "f16e8bee59952d2afa4d26e6f99b8375e19725c23d97ca44ffadaf8860af9e5b",
+    "provenance_json_transport.py": "d3b7a341e8ed192da0b52bf6cbd17b380b192fe2b7925498870cc762cd024f12",
+    "pytorch_logical_view_source.py": "cb537b2057bbfe3e90e2e53b5cf2dc9ef958c5f6552c99dbd6c1eca67b368ac6",
+    "pytorch_model_intake.py": "b2df51037cb686585bb6aa77656494f6ef7ab57586d2350ee59c0d266df0374f",
+    "pytorch_ordered_contract.py": "9f77e0b9245f8d19c2fadd78afe3b4d646c3f665b7e8703cbc92573d2c50e241",
+    "pytorch_ordered_intake.py": "e0a5ba6e1d89601385283a62606c8c2dfa6a89314d60acdf9633cf389b277a8d",
+    "pytorch_public_expression_capture.py": "d5bebda226d037d3507dc972be7aa9eaaa19749bbe76a22ed948197a3507f6e2",
+    "pytorch_source_package_policy.py": "96baa72571bfd7f02c0aae4432ce47544bc0b7860b18c892bd92e96e7624d196",
+    "pytorch_spatial_policy.py": "ac2015918eeb3f901bf410097f1d6a88e70ddb07348198d8e7f4c8abac2a9e21",
+    "pytorch_static_broadcast.py": "1a2370593172e26ce35669a384504cc5b439a95e742e93fea7c1e63b49723476",
+    "pytorch_static_tensor_transforms.py": "552e9c1c6b47f55fcfb77caab5059ece08ddbaeceb5088c8ee4402ac6b5e89b4",
+    "pytorch_static_trace.py": "9125cba75230b42f9d27ba12cbe08dfd9ae3e19d0c033530214fd4a5ea9bfeb7"
+  },
+  "compiler_calls": 0,
+  "default_unchanged": true,
+  "encrypted_calls": 0,
+  "format": "poseidon-gather-source-activation-v1",
+  "latest_alias_unchanged": true,
+  "network_changed": false,
+  "new_files": {
+    "gather_fx_normalization.py": "622bb8cb690d1471c39ead1cafc50cdcfaecb5ae4f3ff37a6e4178b42c05bf0d",
+    "pytorch_tensor_gather_source.py": "36aa0bd699ac8b8ba73d719c9ba1cbc0707decfac26a348d076329f6e45069ce",
+    "tensor_gather_plan.py": "dd7d45f9a6b08c113d75f1e2b196e5ea0c5807dc41b7648ec3fc844873501ea5"
+  },
+  "previous_protocol_inherited": "poseidon-trusted-pytorch-v36",
+  "source_format": "poseidon-trusted-pytorch-v37",
+  "unvalidated_production_activation": true
+}

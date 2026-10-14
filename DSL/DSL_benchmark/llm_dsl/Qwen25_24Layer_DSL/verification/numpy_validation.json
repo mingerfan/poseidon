@@ -1,0 +1,615 @@
+{
+  "status": "passed",
+  "scope": "24 layers, reduced width, all real slot arithmetic and CLI wiring",
+  "config": {
+    "num_layers": 24,
+    "hidden_size": 8,
+    "intermediate_size": 16,
+    "query_heads": 4,
+    "kv_heads": 2,
+    "head_dim": 2,
+    "vocab_size": 19,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "slots": 32,
+  "logit_chunk_size": 5,
+  "synthetic": true,
+  "real_qwen_dimensions_numerically_tested": false,
+  "native_hecate": false,
+  "ckks": false,
+  "gpu": false,
+  "checks": [
+    {
+      "mode": "prefill",
+      "blocks_executed": 24,
+      "unique_block_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "input_ciphertexts": 2,
+      "output_ciphertexts": 100,
+      "max_abs_tail": 0.0,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 1.8694701287014226e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 3.100448764392638e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 2.093918627377178e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "operations": {
+        "multiply": 16547,
+        "rotate": 8304,
+        "add": 12645
+      },
+      "elapsed_seconds": 1.2660000000032596
+    },
+    {
+      "mode": "decode-pair",
+      "blocks_executed": 48,
+      "unique_block_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "input_ciphertexts": 2,
+      "output_ciphertexts": 100,
+      "max_abs_tail": 0.0,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 1.8694701287014226e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 3.100448764392638e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 2.093918627377178e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "operations": {
+        "multiply": 16547,
+        "rotate": 8304,
+        "add": 12645
+      },
+      "elapsed_seconds": 1.2179999999934807
+    },
+    {
+      "mode": "prefill-one",
+      "blocks_executed": 24,
+      "unique_block_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "input_ciphertexts": 1,
+      "output_ciphertexts": 52,
+      "max_abs_tail": 0.0,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 1.6030655289323015e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 2.0811601442183303e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 2.0939186259893994e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "operations": {
+        "multiply": 5963,
+        "rotate": 3360,
+        "add": 4821
+      },
+      "elapsed_seconds": 0.9219999999913853
+    },
+    {
+      "mode": "decode",
+      "blocks_executed": 24,
+      "unique_block_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "input_ciphertexts": 49,
+      "output_ciphertexts": 100,
+      "max_abs_tail": 0.0,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 1.8694701287014226e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 3.100448764392638e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 2.093918627377178e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "operations": {
+        "multiply": 10667,
+        "rotate": 4992,
+        "add": 7893
+      },
+      "elapsed_seconds": 1.0160000000032596
+    }
+  ],
+  "path_differences": {
+    "decode-pair": {
+      "logits": 0.0,
+      "keys": 0.0,
+      "values": 0.0
+    },
+    "external-decode": {
+      "logits": 0.0,
+      "keys": 0.0,
+      "values": 0.0
+    }
+  },
+  "rejected_cases": [
+    "empty-cache",
+    "overlap",
+    "bad-pair"
+  ],
+  "cache_preserved_without_mutation": true,
+  "reference_bounds": {
+    "layers": [
+      {
+        "layer": 0,
+        "pre_norm_variance": [
+          1.0000009772275935,
+          1.000001048380583
+        ],
+        "post_norm_variance": [
+          0.9982409679930108,
+          0.9983038833230067
+        ],
+        "gate_abs_max": 0.10664672808562267,
+        "centered_score_abs_max": 0.00288462610543393
+      },
+      {
+        "layer": 1,
+        "pre_norm_variance": [
+          0.9982470134068254,
+          0.998290536045301
+        ],
+        "post_norm_variance": [
+          0.9997963661312825,
+          1.00053122535411
+        ],
+        "gate_abs_max": 0.17796261080503437,
+        "centered_score_abs_max": 0.0034091355920073227
+      },
+      {
+        "layer": 2,
+        "pre_norm_variance": [
+          0.9997653265048264,
+          1.000514143359099
+        ],
+        "post_norm_variance": [
+          0.9975607755391792,
+          1.0008287760820351
+        ],
+        "gate_abs_max": 0.12506907179502785,
+        "centered_score_abs_max": 0.0033453231387384403
+      },
+      {
+        "layer": 3,
+        "pre_norm_variance": [
+          0.9976242459277319,
+          1.0008502761370464
+        ],
+        "post_norm_variance": [
+          0.9961085099220456,
+          0.9999752625379364
+        ],
+        "gate_abs_max": 0.102288005688483,
+        "centered_score_abs_max": 0.0023276138385264944
+      },
+      {
+        "layer": 4,
+        "pre_norm_variance": [
+          0.9960472789172298,
+          0.9998880527831663
+        ],
+        "post_norm_variance": [
+          0.9953613165795634,
+          0.9999643499935509
+        ],
+        "gate_abs_max": 0.1241592922002986,
+        "centered_score_abs_max": 0.002084340820222844
+      },
+      {
+        "layer": 5,
+        "pre_norm_variance": [
+          0.9953961536757113,
+          0.9999530052991125
+        ],
+        "post_norm_variance": [
+          0.9957036618446884,
+          1.0007653155066727
+        ],
+        "gate_abs_max": 0.14182275898730373,
+        "centered_score_abs_max": 0.0011274478898086046
+      },
+      {
+        "layer": 6,
+        "pre_norm_variance": [
+          0.9956744359120847,
+          1.0007911556678173
+        ],
+        "post_norm_variance": [
+          0.9990734921043373,
+          1.0002976621843365
+        ],
+        "gate_abs_max": 0.13180485938841477,
+        "centered_score_abs_max": 0.002926365218741528
+      },
+      {
+        "layer": 7,
+        "pre_norm_variance": [
+          0.9992196108185206,
+          1.0003082884177272
+        ],
+        "post_norm_variance": [
+          1.000748504675334,
+          1.0011761288935874
+        ],
+        "gate_abs_max": 0.13494822314846072,
+        "centered_score_abs_max": 0.004186010932507503
+      },
+      {
+        "layer": 8,
+        "pre_norm_variance": [
+          1.0006883791824763,
+          1.001247129504927
+        ],
+        "post_norm_variance": [
+          1.0017479664357634,
+          1.0038685338390005
+        ],
+        "gate_abs_max": 0.1502577835425835,
+        "centered_score_abs_max": 0.0009313460638947671
+      },
+      {
+        "layer": 9,
+        "pre_norm_variance": [
+          1.001804310519051,
+          1.0038243987525728
+        ],
+        "post_norm_variance": [
+          1.0047400847296666,
+          1.005353821381414
+        ],
+        "gate_abs_max": 0.10943690050466899,
+        "centered_score_abs_max": 0.0008961722989183727
+      },
+      {
+        "layer": 10,
+        "pre_norm_variance": [
+          1.0047403981666503,
+          1.0054032928909042
+        ],
+        "post_norm_variance": [
+          1.0048066334373327,
+          1.0073049777494287
+        ],
+        "gate_abs_max": 0.12325192708340017,
+        "centered_score_abs_max": 0.0016272339750329772
+      },
+      {
+        "layer": 11,
+        "pre_norm_variance": [
+          1.004826314554834,
+          1.0072200975024346
+        ],
+        "post_norm_variance": [
+          1.0033326888535359,
+          1.0080519415939577
+        ],
+        "gate_abs_max": 0.10513323655725475,
+        "centered_score_abs_max": 0.006012729376275502
+      },
+      {
+        "layer": 12,
+        "pre_norm_variance": [
+          1.0033586984014318,
+          1.0080610023695369
+        ],
+        "post_norm_variance": [
+          1.0016212753620715,
+          1.012283635301799
+        ],
+        "gate_abs_max": 0.12943016253433093,
+        "centered_score_abs_max": 0.001598648111183976
+      },
+      {
+        "layer": 13,
+        "pre_norm_variance": [
+          1.0015510644120817,
+          1.0122869639569456
+        ],
+        "post_norm_variance": [
+          1.0026230518994181,
+          1.0129110292310421
+        ],
+        "gate_abs_max": 0.12781491224971886,
+        "centered_score_abs_max": 0.0035807821931035837
+      },
+      {
+        "layer": 14,
+        "pre_norm_variance": [
+          1.0026235038347595,
+          1.0129197883215786
+        ],
+        "post_norm_variance": [
+          1.0030934239319065,
+          1.012139347709397
+        ],
+        "gate_abs_max": 0.0871886934793836,
+        "centered_score_abs_max": 0.0036063729687484114
+      },
+      {
+        "layer": 15,
+        "pre_norm_variance": [
+          1.0030496697456432,
+          1.0121879788532622
+        ],
+        "post_norm_variance": [
+          0.9996953255146135,
+          1.0109230546574575
+        ],
+        "gate_abs_max": 0.09001381283485063,
+        "centered_score_abs_max": 0.0010476295186695732
+      },
+      {
+        "layer": 16,
+        "pre_norm_variance": [
+          0.9996844619279376,
+          1.0109394223136394
+        ],
+        "post_norm_variance": [
+          1.0000619234319608,
+          1.0113589956231432
+        ],
+        "gate_abs_max": 0.11275909316156471,
+        "centered_score_abs_max": 0.001924664468795476
+      },
+      {
+        "layer": 17,
+        "pre_norm_variance": [
+          1.0000982127016316,
+          1.0113186493380018
+        ],
+        "post_norm_variance": [
+          1.0013464813525734,
+          1.012779258642821
+        ],
+        "gate_abs_max": 0.1320455820773844,
+        "centered_score_abs_max": 0.0026745202939693203
+      },
+      {
+        "layer": 18,
+        "pre_norm_variance": [
+          1.0013413927618302,
+          1.0127899048659113
+        ],
+        "post_norm_variance": [
+          1.0020438673265974,
+          1.011218741822701
+        ],
+        "gate_abs_max": 0.17632870440602008,
+        "centered_score_abs_max": 0.0015984934433849866
+      },
+      {
+        "layer": 19,
+        "pre_norm_variance": [
+          1.0019232221554046,
+          1.011239378517655
+        ],
+        "post_norm_variance": [
+          1.0010794400783272,
+          1.0123456346132722
+        ],
+        "gate_abs_max": 0.124821208227163,
+        "centered_score_abs_max": 0.004338997247978613
+      },
+      {
+        "layer": 20,
+        "pre_norm_variance": [
+          1.0011426287541856,
+          1.012382306766893
+        ],
+        "post_norm_variance": [
+          1.0003120909967445,
+          1.010818749864043
+        ],
+        "gate_abs_max": 0.12453358990104975,
+        "centered_score_abs_max": 0.0005288797842264447
+      },
+      {
+        "layer": 21,
+        "pre_norm_variance": [
+          1.0003745159323745,
+          1.010843757427039
+        ],
+        "post_norm_variance": [
+          0.9998331486923019,
+          1.0112950408921415
+        ],
+        "gate_abs_max": 0.1129252017120757,
+        "centered_score_abs_max": 0.003351921973128908
+      },
+      {
+        "layer": 22,
+        "pre_norm_variance": [
+          0.9997656104203901,
+          1.011253432675914
+        ],
+        "post_norm_variance": [
+          1.00006643845188,
+          1.0083801561247274
+        ],
+        "gate_abs_max": 0.09854062103259383,
+        "centered_score_abs_max": 0.0034504788518204483
+      },
+      {
+        "layer": 23,
+        "pre_norm_variance": [
+          1.0000398739339833,
+          1.0083999818279208
+        ],
+        "post_norm_variance": [
+          0.9994374354343475,
+          1.0118884834412414
+        ],
+        "gate_abs_max": 0.11834743201315254,
+        "centered_score_abs_max": 0.0022480041176216083
+      }
+    ],
+    "final_norm_variance": [
+      0.9994419995190679,
+      0.9994419995190679
+    ]
+  }
+}

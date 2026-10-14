@@ -1,0 +1,79 @@
+{
+  "added_since_original_baseline_bytes": 333033472,
+  "automatic_restart": false,
+  "backend_identity_unchanged": true,
+  "binding": "b28adcc1d0d477d45b760b8759ad7e8ae14f1b5816b6eadf93256b4d69736687",
+  "controls_binding": "a88da13eb527f490cb2daa8dbbb33a73e28cc5f6d8c48740d7ab83099cd07b9d",
+  "exact_never_started_requests": [
+    {
+      "case": "snapshot_fourth_power_division",
+      "model_sha256": "270204503ea636a361547b2d466e6693f5945384e471650d2e14f53ed9bcb6ea",
+      "request_id": "179a4650abb9c1f8e29275b845c5eee6c951312d0c70eeb6256df0fbcf830c08"
+    },
+    {
+      "case": "diagonal_square_division",
+      "model_sha256": "ee7388db879da7a10c5d5f45447d14f3a9dae6d3601c55eb17fbf65e7bd9388e",
+      "request_id": "c51b276100730bb3593e82bd71d8d158d86b94aa133925447c2a9579b8733a71"
+    },
+    {
+      "case": "public_buffer_division_square",
+      "model_sha256": "c369a1a4e047650fbf1d0431f46e05bd987f59aa5576e0b2093307dfd33f6ea4",
+      "request_id": "5a2411b7ff83cd457b6d1537b495fdb27a64f18b94115e53ca0056753c7ab9e8"
+    },
+    {
+      "case": "method_power_shape_division",
+      "model_sha256": "b8b73c6a5f8840c36dff6c14fc5559ce4bcd008187e780db8a285633e522d597",
+      "request_id": "05618fd6daab197e80c22e7972cbe5f80ebb72ffc85aa59c6db86e7945974526"
+    },
+    {
+      "case": "multi_input_power_division",
+      "model_sha256": "49c7135ad071ff0124c95d49ff6b9337826ab682e67c10102767caef01d2e038",
+      "request_id": "6b381c6d308d70d9d60258dd5f25edcda38a338b9bb6f42438dfa84082152743"
+    },
+    {
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "model_sha256": "bc292e1a5226df6701e8ff39492a1b040f65ccaf84605089e18c449e30b12e01",
+      "request_id": "f66488392d7ef0567f7a8e12282b76d7f63d6103cbeba178a8a90e3984a6377b"
+    },
+    {
+      "case": "linear_into_separate_cross_none__declared_shallow_v1",
+      "model_sha256": "5f086b84baed38049aeaf85a15824b1eebe8520bd572070c19374ca8a109cc2f",
+      "request_id": "4b1918ad274c3401fe937f1035207ef4b48fd7448e8dbbf9edd91c81cade26ad"
+    }
+  ],
+  "execution_approval": "/home/lhohy/Code/Poseidon/docs/baseline/agent-source-expansions-execution-approval-r1349.json",
+  "format": "poseidon-original-live-second-continuation-preflight-v1",
+  "free_bytes": 44865679360,
+  "global_result_bytes": 30080962560,
+  "inherited_deadline_wall": 1791686268.7730896,
+  "manifest_sha256": "6a4148909cd4dce8fc50eaa066613543b6b5f671715d9825bdc3a3a0ef465c89",
+  "network_configuration_changes": 0,
+  "new_authorization_created": false,
+  "new_max_generations": 28,
+  "new_max_http_attempts": 112,
+  "observed_wall": 1791625623.0364554,
+  "original_human_authorization": "/home/lhohy/Code/Poseidon/docs/baseline/agent-source-expansions-live-authorization-r1349.json",
+  "original_max_generations": 144,
+  "original_max_http_attempts": 576,
+  "original_proposal_binding": "06411a2e643d76d81e974349268f4bc887b84eacb0771748870e1093a1e792dd",
+  "original_proposal_sha256": "8d9388ac7797a97c31687a618a52b4d032f592f7e190216a4aebb74c504e9415",
+  "prior_evidence_preserved": true,
+  "prior_generations": 34,
+  "prior_http_attempts": 35,
+  "scope_expanded": false,
+  "source_identity_unchanged": true,
+  "unknown_calls": [
+    {
+      "case": "einsum_public_weight",
+      "index": 1,
+      "status": "unknown"
+    },
+    {
+      "case": "scalar_shared_power_division",
+      "index": 0,
+      "status": "unknown"
+    }
+  ],
+  "worst_case_cumulative_generations": 62,
+  "worst_case_cumulative_http_attempts": 147
+}

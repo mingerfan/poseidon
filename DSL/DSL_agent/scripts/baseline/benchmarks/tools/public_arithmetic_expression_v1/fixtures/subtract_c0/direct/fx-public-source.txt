@@ -1,0 +1,7 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %mask : [#users=1] = get_attr[target=mask]
+    %double : [#users=1] = call_method[target=double](args = (%mask,), kwargs = {})
+    %sub : [#users=1] = call_function[target=operator.sub](args = (1.0, %double), kwargs = {})
+    %mul : [#users=1] = call_function[target=operator.mul](args = (%x, %sub), kwargs = {})
+    return mul

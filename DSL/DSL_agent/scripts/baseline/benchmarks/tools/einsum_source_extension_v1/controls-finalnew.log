@@ -1,0 +1,35 @@
+test_batched_diagonal_transpose (test_pytorch_einsum_views.Views) ... ok
+test_boolean_dimension_rejects (test_pytorch_einsum_views.Views) ... ok
+test_diagonal_matrix_composition (test_pytorch_einsum_views.Views) ... ok
+test_diagonal_public_state_mutation_rejects (test_pytorch_einsum_views.Views) ... ok
+test_diagonal_public_weight (test_pytorch_einsum_views.Views) ... ok
+test_diagonal_view_output_mutates_source (test_pytorch_einsum_views.Views) ... ok
+test_ellipsis_trace (test_pytorch_einsum_views.Views) ... ok
+test_implicit_trace (test_pytorch_einsum_views.Views) ... ok
+test_incompatible_repeated_dims_reject (test_pytorch_einsum_views.Views) ... ok
+test_legacy_alias_schema_rejects_new_operation (test_pytorch_einsum_views.Views) ... ok
+test_legacy_v18_still_rejects_diagonals (test_pytorch_einsum_views.Views) ... ok
+test_old_version_dispatch (test_pytorch_einsum_views.Views) ... ok
+test_origin_tamper_rejects (test_pytorch_einsum_views.Views) ... ok
+test_out_parameter_rejects (test_pytorch_einsum_views.Views) ... ok
+test_partial_overlap_reject (test_pytorch_einsum_views.Views) ... ok
+test_rank_budget_rejects (test_pytorch_einsum_views.Views) ... ok
+test_removed_view_effect_rejects (test_pytorch_einsum_views.Views) ... ok
+test_repeated_labels_nonadjacent (test_pytorch_einsum_views.Views) ... ok
+test_repeated_three_axes (test_pytorch_einsum_views.Views) ... ok
+test_scalar_basic_index_write (test_pytorch_einsum_views.Views) ... ok
+test_scalar_identity_alias (test_pytorch_einsum_views.Views) ... ok
+test_scalar_public_weight_factor (test_pytorch_einsum_views.Views) ... ok
+test_scalar_reduction_factor (test_pytorch_einsum_views.Views) ... ok
+test_scalar_view_reshape_write (test_pytorch_einsum_views.Views) ... ok
+test_source_write_updates_diagonal_view (test_pytorch_einsum_views.Views) ... ok
+test_three_scalar_factors (test_pytorch_einsum_views.Views) ... ok
+test_trace_scalar (test_pytorch_einsum_views.Views) ... ok
+test_trace_scalar_times_tensor (test_pytorch_einsum_views.Views) ... ok
+test_transport_recomputes_diagonal_axes (test_pytorch_einsum_views.Views) ... ok
+test_unregistered_diagonal_method_rejects (test_pytorch_einsum_views.Views) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 9.108s
+
+OK

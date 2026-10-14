@@ -1,0 +1,16 @@
+{
+  "compilations": 0,
+  "encrypted_executions": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-cutover-boundary-tests-v1",
+  "passed": 24,
+  "provider_calls": 0,
+  "skipped": 0,
+  "source_hashes": {
+    "guard-before-rotation-r1135.py": "b5a1353fb52ed4e3a301d37ad5dd672e022e0a7305ccab2133fb79e5c55e6cb3",
+    "guard-before-scalar-binding-r1126.py": "b64953f5841abf7b75b7ebeedfeeb2af154101add06c5440eba216c7514355ec",
+    "guarded_apply.py": "7d5e51ed730e979fe8c47eb5f472af1143bcfe0d7ee58ffdc233d00abf460d05"
+  },
+  "tests": 24
+}

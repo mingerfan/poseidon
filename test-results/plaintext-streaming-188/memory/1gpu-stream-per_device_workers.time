@@ -1,0 +1,23 @@
+	Command being timed: "timeout 180 /home/xuming/poseidon-memory-step3-20261008/build/bin/poseidon_gpu_mpi_runtime_e2e /home/xuming/poseidon-plaintext-streaming-models/1gpu-stream._hecate_MLP.runtime-plan.json /home/xuming/poseidon-memory-step3-20261008/memory-v1-review/operator-spec.json /home/xuming/poseidon-plaintext-streaming-models/1gpu-stream._hecate_MLP.bundle /home/xuming/poseidon-plaintext-streaming-models/memory/1gpu-stream-per_device_workers.json --local --warmups 1 --iterations 3 --measure-memory --execution-mode per_device_workers"
+	User time (seconds): 3.82
+	System time (seconds): 2.09
+	Percent of CPU this job got: 110%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.34
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 547580
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 345319
+	Voluntary context switches: 717
+	Involuntary context switches: 21
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 592
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

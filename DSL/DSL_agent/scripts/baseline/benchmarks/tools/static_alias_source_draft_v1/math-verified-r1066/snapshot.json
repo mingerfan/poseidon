@@ -1,0 +1,11 @@
+{
+  "binding": "5afac0f9d234c8bc1c7d070aad2ca2c7be059f69f66d7f335e939335a0ee1c4d",
+  "sources": {
+    "alias_source_plan.py": "f40ddf6d00dbf565c6e055f744dfad37dd913d34dec5932eca8304a6afe03557",
+    "alias_source_reference.py": "7ef26323092525b42d86a7ae25d2bd677b4178ed68df61090fce16b3c5fbac61",
+    "audit.py": "957857a2ff1158bf5f641f8b890ccd545a8b044d592da9598652915dacfe7eb5",
+    "fixtures.py": "33d10c54526d3f78616993576ca77bb1c240a223eb9ca5844a2a5d228e93b5b0",
+    "fx_alias_source_plan.py": "2baf71cafe1b93720c15057af0a7d132bd55692e2e83b733604c2eef53b6bae9",
+    "test_alias_source_plan.py": "7d7966d4d65e45b3e98dcf5b12324207ee73578e0bafc0cd694d422c118e73c4"
+  }
+}

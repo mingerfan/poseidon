@@ -1,0 +1,25 @@
+{
+  "format": "poseidon-whole-model-regression-v1",
+  "cases": [
+    {
+      "id": "mlp",
+      "path": "scripts/baseline/cases/poseidon-whole-models-v1/mlp.json",
+      "copied_from": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-minimal-v2-r238/mlp-program/model.json",
+      "model_file_sha256": "93b1a48551a954f5da6c2f025d3b4b9d96a15a8689beee5a813f44b94d02f8d8"
+    },
+    {
+      "id": "rmsnorm",
+      "path": "scripts/baseline/cases/poseidon-whole-models-v1/rmsnorm.json",
+      "copied_from": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-expression-acceptance-r240/rmsnorm-program/model.json",
+      "model_file_sha256": "6c41affd3cbf52b8227ec6a3ef016b6656d10d9515b96776763ced5661bf8236"
+    },
+    {
+      "id": "attention_decode",
+      "path": "scripts/baseline/cases/poseidon-whole-models-v1/attention_decode.json",
+      "copied_from": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1se46nq2/model.json",
+      "model_file_sha256": "96021875c6ffec052e023259da6a7435e43f21dd521a3d2f253201dc3c518126"
+    }
+  ],
+  "new_benchmark_models": 0,
+  "description": "Exact copies of the existing three small models; no weights or semantics changed"
+}

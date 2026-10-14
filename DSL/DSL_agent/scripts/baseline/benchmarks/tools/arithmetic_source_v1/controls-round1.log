@@ -1,0 +1,685 @@
+test_divisor_boundary (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_divisor_upper_boundary (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_duplicate_keywords (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_fourth_power_two_steps (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_nonfinite_parameters (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_shape_budget (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_square_single_step (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_true_divide_signature (test_pytorch_exact_arithmetic.PlanTests) ... ok
+test_bool_exponent_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_cipher_divisor_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_cipher_reverse_division_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_division_after_partition (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_division_float_constant (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_divisor_budget_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_dynamic_exponent_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_fractional_power_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_function_divide_alias (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_function_division_keywords (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_function_keyword_power (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_function_true_divide_alias (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_divide_alias (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_division_snapshot (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_division_view (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_fourth_power_snapshot (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_power_detached_view (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_power_scalar (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_square_view (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_inplace_true_divide_alias (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_method_divide_alias (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_method_division_keywords (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_method_keyword_power (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_method_true_divide_alias (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_negative_power_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_negative_public_division (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_old_v20_rejects_new_source (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_operator_division (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_operator_fourth_power (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_operator_square (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_out_mutation_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_policy_requires_ordered_contract (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_power_in_multi_input_fanout (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_power_then_linear (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_power_then_static_shape (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_power_three_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_power_with_einsum (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_public_computed_tensor_divisor_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_public_state_write_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_public_tensor_vector_divisor_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_rank32_power_and_division (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_reciprocal_budget_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_rounding_division_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_scalar_buffer_declared_hash_changes (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_scalar_buffer_divisor (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_scalar_buffer_inplace_division (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_scalar_buffer_method_division (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_scalar_fourth_power (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_scalar_inplace_division (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_scalar_power_output (test_pytorch_exact_arithmetic.SourceTests) ... ERROR
+test_tensor_exponent_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_zero_divisor_rejected (test_pytorch_exact_arithmetic.SourceTests) ... ok
+test_duplicate_names (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_implementation_substitution (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_missing_entry (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_missing_expansion (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_reordered_steps (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_scalar_divisor_state_hash (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_scalar_divisor_substitution (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_source_text_substitution (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_substituted_input (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_substituted_power (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_substituted_reciprocal (test_pytorch_exact_arithmetic.TransportTests) ... ok
+test_wrong_metadata (test_pytorch_exact_arithmetic.TransportTests) ... ok
+
+======================================================================
+ERROR: test_division_after_partition (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 82, in test_division_after_partition
+    def test_division_after_partition(self):self.source("a,b=x.chunk(2)\nreturn torch.cat([a/2,b/-2])",[[4]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_division_float_constant (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 60, in test_division_float_constant
+    def test_division_float_constant(self):self.source("return x/.375")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_function_divide_alias (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 62, in test_function_divide_alias
+    def test_function_divide_alias(self):self.source("return torch.divide(x,2)")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_function_division_keywords (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 61, in test_function_division_keywords
+    def test_function_division_keywords(self):self.source("return torch.div(input=x,other=2,rounding_mode=None,out=None)")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_function_keyword_power (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 41, in test_function_keyword_power
+    def test_function_keyword_power(self):self.source("return torch.pow(input=x,exponent=2,out=None)")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_function_true_divide_alias (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 63, in test_function_true_divide_alias
+    def test_function_true_divide_alias(self):self.source("return torch.true_divide(input=x,other=2)")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_divide_alias (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 68, in test_inplace_divide_alias
+    def test_inplace_divide_alias(self):self.source("x.divide_(2)\nreturn x")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_division_snapshot (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 70, in test_inplace_division_snapshot
+    def test_inplace_division_snapshot(self):self.source("a=x.clone()\nx.div_(2)\nreturn a,x",[[2]],["snapshot","updated"])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_division_view (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 67, in test_inplace_division_view
+    def test_inplace_division_view(self):self.source("a=x.transpose(0,1)\na.div_(2)\nreturn x",[[2,2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_fourth_power_snapshot (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 55, in test_inplace_fourth_power_snapshot
+    def test_inplace_fourth_power_snapshot(self):self.source("a=x.clone()\nx.pow_(4)\nreturn a,x",[[2]],["snapshot","updated"])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_power_detached_view (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 57, in test_inplace_power_detached_view
+    def test_inplace_power_detached_view(self):self.source("a=x.detach()\na.pow_(2)\nreturn x")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_power_scalar (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 56, in test_inplace_power_scalar
+    def test_inplace_power_scalar(self):self.source("a,b=x.unbind()\na.pow_(4)\nreturn x,b",[[2]],["base","tail"])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_square_view (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 54, in test_inplace_square_view
+    def test_inplace_square_view(self):self.source("a=x.transpose(0,1)\na.pow_(2)\nreturn x,a",[[2,2]],["base","view"])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_inplace_true_divide_alias (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 69, in test_inplace_true_divide_alias
+    def test_inplace_true_divide_alias(self):self.source("x.true_divide_(2)\nreturn x")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_method_divide_alias (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 65, in test_method_divide_alias
+    def test_method_divide_alias(self):self.source("return x.divide(2)")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_method_division_keywords (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 64, in test_method_division_keywords
+    def test_method_division_keywords(self):self.source("return x.div(other=2,rounding_mode=None)")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_method_keyword_power (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 42, in test_method_keyword_power
+    def test_method_keyword_power(self):self.source("return x.pow(exponent=4.0)",[[2,1]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_method_true_divide_alias (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 66, in test_method_true_divide_alias
+    def test_method_true_divide_alias(self):self.source("return x.true_divide(2)")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_negative_public_division (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 59, in test_negative_public_division
+    def test_negative_public_division(self):self.source("return x/-2",[[2,2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_operator_division (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 58, in test_operator_division
+    def test_operator_division(self):self.source("return x/2")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_operator_fourth_power (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 40, in test_operator_fourth_power
+    def test_operator_fourth_power(self):self.source("return (x*.25) ** 4",[[2,2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_operator_square (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 39, in test_operator_square
+    def test_operator_square(self):self.source("return x ** 2")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_power_in_multi_input_fanout (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 43, in test_power_in_multi_input_fanout
+    def test_power_in_multi_input_fanout(self):self.source("a=x.pow(2)\nreturn a+y,a+x",[[2],[2]],["a","b"])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_power_then_linear (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 50, in test_power_then_linear
+    checked(m,[[1,2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_power_then_static_shape (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 44, in test_power_then_static_shape
+    def test_power_then_static_shape(self):self.source("a=torch.pow(x,2)\nreturn a.reshape(a.numel())",[[2,2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_power_with_einsum (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 51, in test_power_with_einsum
+    def test_power_with_einsum(self):self.source('return torch.einsum("ij->i",x.pow(2))',[[2,2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_rank32_power_and_division (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 83, in test_rank32_power_and_division
+    def test_rank32_power_and_division(self):self.source("return x.pow(2)/2",[[1]*31+[2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_scalar_buffer_declared_hash_changes (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 78, in test_scalar_buffer_declared_hash_changes
+    a=checked(m,[[2]])[0][2]["pytorch_capture"]["ordered_alias_capture"]["capture_adapter"]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_scalar_buffer_divisor (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 72, in test_scalar_buffer_divisor
+    def test_scalar_buffer_divisor(self):self.source("return x/self.gain",buffer=True)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_scalar_buffer_inplace_division (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 74, in test_scalar_buffer_inplace_division
+    def test_scalar_buffer_inplace_division(self):self.source("x.div_(self.gain)\nreturn x",buffer=True)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_scalar_buffer_method_division (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 73, in test_scalar_buffer_method_division
+    def test_scalar_buffer_method_division(self):self.source("return x.div(self.gain)",[[2,2]],buffer=True)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_scalar_fourth_power (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 53, in test_scalar_fourth_power
+    def test_scalar_fourth_power(self):self.source("a,b=x.unbind()\nreturn torch.stack([a.pow(4),b.pow(2)])",[[2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_scalar_inplace_division (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 71, in test_scalar_inplace_division
+    def test_scalar_inplace_division(self):self.source("a,b=x.unbind()\na.div_(2)\nreturn torch.stack([a,b])",[[2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+======================================================================
+ERROR: test_scalar_power_output (test_pytorch_exact_arithmetic.SourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 52, in test_scalar_power_output
+    def test_scalar_power_output(self):self.source("return x.unbind()[0].pow(2)",[[2]])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 38, in source
+    return checked(model(body,buffer=buffer),shapes,outputs)[0]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_exact_arithmetic.py", line 32, in checked
+    checked_lower,_=capture_binding(high,spec,resource_profile=PROFILE,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 410, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 340, in check_capture_metadata
+    require(("public_view_policy"in adapter.get("arithmetic",{}))==
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Explicit public arithmetic source version
+
+----------------------------------------------------------------------
+Ran 72 tests in 10.554s
+
+FAILED (errors=34)

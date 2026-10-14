@@ -1,0 +1,217 @@
+{
+  "backend_identity_unchanged": true,
+  "backend_library_changes": 0,
+  "binding": "dd49af87de58a814546a222265d3c10e5331084c3171d13cc5943caebc6cdd12",
+  "branch": "lhy-agent-dsl",
+  "commits": 0,
+  "compiler_calls": 0,
+  "controls": {
+    "binding": "c5b8eb747f61b83e1f7efd0461f05f173c12952fc1b0719ea7a6fbb4e2528d04",
+    "errors": 0,
+    "failed": 0,
+    "passed": 161,
+    "seconds": 14.173048262004158,
+    "skipped": 0,
+    "tests": 161
+  },
+  "default_source_contract": "poseidon-trusted-pytorch-v18",
+  "downloads": 0,
+  "encrypted_calls": 0,
+  "evidence_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/baseline.json": "a9f75128f996677211956142263d5385b3c262fb45651b29c195c6c8ef88eb36",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/baseline_probe.json": "5bb8b99a004707d1e8dd60cbe2a84540584d0fb4e1c120f790e4827965549e5e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/controls-r2.log": "2cfcd7fff4fe68e29544a45ec99a5185f06330cbcc1f51f5e79ee90c16b1f4ab",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/controls.json": "43acdc88dd79b8b35dff010aa53b799489a432b9fc36925599c771ea6515767b",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/isolated-controls.json": "3c5c7fc5972d87c9dc1945e331b29b1db8fd135331313f3949e86207e0fe7eb6",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/isolated-controls.log": "15dd17faeaf9c35e251f71b6864239fbf4001ab71194f9f022a3671ee4407862",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/source-contexts-r2.json": "492e6676cf3ee5763f95ccff1181ec2dccabd0f92278ea7eb3693cd4d1874658"
+  },
+  "first_observations_preserved": [
+    {
+      "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/controls.log",
+      "reason": "Wrong test module selection; corrected to existing test_pytorch_state_weights"
+    },
+    {
+      "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/source-controls.log",
+      "reason": "Probe used untyped decomposition binding; corrected to existing typed capture binding"
+    },
+    {
+      "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/source-controls-r2.log",
+      "reason": "Source-tree capture output was rejected; probe now uses existing results scope"
+    }
+  ],
+  "format": "poseidon-public-dtype-component-checkpoint-v1",
+  "frozen_offline_proposal": {
+    "approved": false,
+    "binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+    "configurations": 36,
+    "input_groups": 156,
+    "output_values": 1272,
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-dtype-offline-proposal-r1376.json",
+    "started": false,
+    "unique_requests": 12
+  },
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "installations": 0,
+  "latest_source_contract": "poseidon-trusted-pytorch-v21",
+  "modified_root_files": {
+    "application_capabilities.py": {
+      "after": "ac97aa39f9c4862fe9c345189c1fa14d071fc6897d82a2e111652b6353813da1",
+      "before": "decc7e3b6b62d4964db65a4ffd54318200e7882ac747d1dd06a21e8c2296668e"
+    },
+    "candidate_bundle.py": {
+      "after": "43be197c28cc1fe95c1eb515b7002f7cb72165f448b49c1d15e2dbfb4f323bf2",
+      "before": "697969dd670f1a9f26521b64d32077ef7e35de081ad3c7ef312686eb3147361c"
+    },
+    "pytorch_model_intake.py": {
+      "after": "f2b089242b18ae91d656e7dbcad0b13c8868d145b4ea9b7ac33f357c3edbaf48",
+      "before": "d2ef7d63a8a5b35704c30978f113cb3dd0767c7c4af063bed295e0f8230e5c7d"
+    },
+    "pytorch_ordered_contract.py": {
+      "after": "f294aed6303fea0446122128f2c3a177b23d4f18bb92df3be2d8353bc4fbdfad",
+      "before": "3f5299093260d0bb74caca27f9d95a7c8d6fa8d6d0abe1c94c834e6abfc3dd9a"
+    },
+    "pytorch_ordered_intake.py": {
+      "after": "2536c8849061ec482f45e8ac400662bbe5c805e0ca5ca87ab2fc5df3b32fb96f",
+      "before": "93b2318b70e4af9a81dadef04434645f8ae4d3979d912f69731b0b1a687f9bff"
+    },
+    "pytorch_public_expression_capture.py": {
+      "after": "0313b1db5ddd0f1358d2008c1833da409cf454a7708fccf8b6aaa40c2d1d4fcd",
+      "before": "b45d11229475a8593163fb445990c657a3aa6280a457382e3bf3a980fefb1862"
+    },
+    "pytorch_public_expression_flow.py": {
+      "after": "9399b6bfc39e3974890174bc6734b4c9386c935d93f14f471225c1f8de765266",
+      "before": "d2bd5962d250b5bb94ba5b0e23d7bf25cb13450d0bd4c10a4f36e33e86e62738"
+    },
+    "pytorch_public_expression_metadata.py": {
+      "after": "7d8c4c43ee94ccef0641cddc36705505796bd4e044392d64503cee22e99dd40f",
+      "before": "5b0df536f9739b9209a8805b129abd968ea809ac16b1001a37577dc73d856c43"
+    },
+    "pytorch_public_value_ops.py": {
+      "after": "4dc0235a3efa92ef1248b905ca9260e1f5ad39d1d120a1f80c4c4fc987353355",
+      "before": "586cc9da0742d50628e6ad4f0350d81792b5d1223d3a208a284c0fe9a8a79a63"
+    },
+    "pytorch_static_trace.py": {
+      "after": "87e0cad3dd4a7adc430a128ba64cbaa6c12ffb51e36a4e96fc2c4a7ea9e7153d",
+      "before": "0b505d8234fcdc1980c226039686925125328c81a85f26a778d5ddfaa9963607"
+    },
+    "test_program_output_tree_contract.py": {
+      "after": "72c27de4ac186cde8c7999e709ba22dd9c323a2e0aa4873c5094328f81cd63c3",
+      "before": "cf8c7bfa77e67d5747189cc40f80440d90618b38aff8b3819b779e731be58f2e"
+    }
+  },
+  "network_changes": 0,
+  "new_root_tests": {
+    "test_pytorch_public_dtype_cast.py": "113d3e0d951ba59d6e8120026abe197cd0aa57b9c19001b5cd4617a68cfd62d6"
+  },
+  "next_command": "POSEIDON_PLATFORM=aarch64-linux POSEIDON_WORK_ROOT=/home/lhohy/poseidon-work python3 -B scripts/baseline/benchmarks/tools/public_dtype_offline_v1/run.py --plan",
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "parameter_changes": 0,
+  "policy": "poseidon-public-value-expressions-v2",
+  "protected_record_hashes": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-results-r1370.json": "a68382b15dfdafd38c6b63bf5e257459460dcd18ac9cdedab59b4c58addcdb1b",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-results-r1370.md": "ec3187a583b1a4e373bf697527db2e9a991b5064d7134d57cbbb870c4ae5a41c",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-offline-proposal-r1372.json": "bf43002b956471f5a05854f9a1a25c132b715f11d3a7e13a6cef23af85293013",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-offline-proposal-r1372.md": "720e0019f9ad8b815203e59bddd0111c9f6be78dbdac432d9f41c582576e2820",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-repair-r1371.json": "63258765e2db20c9e8f43dfa9f3225abe0a327d8e051ea32f259ccfcb27d7d3e",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-repair-r1371.md": "4983124b9c7c9fd19cca3df09761c5142aae793e0512f4185db66655ee902e12",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-results-r1373.json": "83e9a49e575fde52a8eeb34989cc239e69117aa9c541367c5948861423e08be7",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-results-r1373.md": "7d4238b406fadb8ddb2b5f749f005bca4f93e9d028b7a6db3c0d80a78c87f4f1",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-acceptance-r1366.json": "632f3552b68abddf0c650ff2ff169800623d0f595a275afd1b5c34d6b2305167",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-acceptance-r1366.md": "6286e49ba968c485c73160e75cad5a8b3fec2b1e049d36fcf7d7abf78c31f12b",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-authorization-r1364.json": "4501c470d6804377d240691ac7558fb34d4a7794bdcbc0ef2cbb67d9908a9654",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-proposal-r1364.json": "274fb4619ff46015d552db0f3cb1f9ebc867b216439f2f613b45d5014aa82789",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-value-fx-draft-r1367.json": "d081ebe4dfc4f03e8921e3cd498596771b01db54014ce5a0b6f027ef496fa2bb",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-value-fx-draft-r1367.md": "51703768b3aaa95b581148a66a476201ceeb7acbb96aa99ca1e0d4a3610b0e87"
+  },
+  "protected_records_unchanged": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-results-r1370.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-results-r1370.md": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-offline-proposal-r1372.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-offline-proposal-r1372.md": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-repair-r1371.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-repair-r1371.md": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-results-r1373.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-results-r1373.md": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-acceptance-r1366.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-acceptance-r1366.md": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-authorization-r1364.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-proposal-r1364.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-value-fx-draft-r1367.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-value-fx-draft-r1367.md": true
+  },
+  "provider_calls": 0,
+  "pushes": 0,
+  "recorded_at_utc": "2026-10-11T04:04:28.647390+00:00",
+  "reference_changes": 0,
+  "resource_observation": {
+    "free_bytes": 44243214336,
+    "isolated_source_bytes": 70864896,
+    "prepared_batch_bytes": 52289536,
+    "results_bytes": 30611365888,
+    "source_fixture_bytes": 47230976
+  },
+  "scope": {
+    "configurations": 33,
+    "contexts": [
+      "elementwise",
+      "transpose_add",
+      "residual_named_none"
+    ],
+    "existing_resource_and_original_value_limits_unchanged": true,
+    "original_and_derived_state_bound": true,
+    "public_registered_state_only": true,
+    "roundtrip_contexts": 3,
+    "source_methods": [
+      "float",
+      "double",
+      "to(dtype)"
+    ],
+    "source_types": [
+      "float32",
+      "float64",
+      "int32",
+      "int64",
+      "bool"
+    ],
+    "target_types": [
+      "float32",
+      "float64"
+    ]
+  },
+  "sdk_identity": "8ca41ede84d20c654fdc7885658e343d1d263cfc0885fd1a96ad259c54e38f8a",
+  "source_capture": {
+    "binding": "dc914351ad05455844bcbd1a4a475e0b64addc77291aa7db263b66fa12f5eb4b",
+    "failed": 0,
+    "independent_reference_groups": 528,
+    "independent_reference_values": 4224,
+    "manual_math_groups": 132,
+    "manual_max_absolute_error": 0.0,
+    "not_run": 0,
+    "passed": 33,
+    "seconds": 83.36080609199416,
+    "skipped": 0
+  },
+  "source_contract": "poseidon-trusted-pytorch-v24",
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "stage_identities": {
+    "compilation": "c41a45f11cfe51c16d9ff6ce817ec11ffb62889cb2405362df8675d5c2cdacd8",
+    "execution": "a20d3873602ce4943d605fe391ab53152cd8b53edfae585cfc91bf77bf3a7c96",
+    "generation": "5dd8a970ab4daa4384ad5673544b7d0cbe10f20e5e026d1eaf1bfb295f2fc672",
+    "validation": "2132ceab6e841e59ab3067fb48bd07602452969e065b991e714255f2b5c423be"
+  },
+  "tolerance_changes": 0,
+  "unverified": [
+    "v24 compilation and Poseidon encrypted execution",
+    "v24 real Agent generation",
+    "original model application precision",
+    "larger physical capacity",
+    "bootstrap",
+    "CUDA hardware",
+    "whole-network goals"
+  ]
+}

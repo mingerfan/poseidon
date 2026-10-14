@@ -1,0 +1,12 @@
+{
+  "format": "poseidon-public-join-controls-v1",
+  "tests": 325,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "status": "passed",
+  "seconds": 37.896847781026736,
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

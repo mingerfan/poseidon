@@ -1,0 +1,4 @@
+setting up operands and direct rotation/relinearization keys
+measuring relinearize + tilelang_tensor_encode_demand
+measuring rotate + tilelang_tensor_encode_demand
+report: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/gpu-encode-contention-local-20261011/demand/q32-b1-run2.json

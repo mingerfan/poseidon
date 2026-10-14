@@ -1,0 +1,104 @@
+test_approval_file_absent_does_not_construct_provider (test_run.RunTests) ... ok
+test_existing_root_rejected (test_run.RunTests) ... ok
+test_hidden_approval_path (test_run.RunTests) ... ok
+test_no_approval_no_execution (test_run.RunTests) ... ok
+test_owned_tree_only_owned_child (test_run.RunTests) ... ok
+test_pid_identity (test_run.RunTests) ... ok
+test_plan_extended_deadline (test_run.RunTests) ... ERROR
+test_plan_tamper (test_run.RunTests) ... ERROR
+test_plan_unknown_field (test_run.RunTests) ... ERROR
+test_public_budget (test_run.RunTests) ... ERROR
+test_public_cases (test_run.RunTests) ... ERROR
+test_transport_receipt_normalized_roundtrip_preserves_diagnostics (test_run.RunTests) ... ok
+test_wrong_root_rejected (test_run.RunTests) ... ok
+
+======================================================================
+ERROR: test_plan_extended_deadline (test_run.RunTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 33, in test_plan_extended_deadline
+    p=self.plan();p["deadline_wall"]+=1;p["binding"]=scope.digest({k:v for k,v in p.items() if k!="binding"})
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 10, in plan
+    public=run.public_plan(self.proposal());now=time.time()
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/run.py", line 24, in public_plan
+    proposal_sha256=sha(PROPOSAL),cases=list(CASES),provider=proposal["provider"],budget=proposal["budget"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/scope.py", line 30, in sha
+    def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lhohy/Code/Poseidon/docs/baseline/agent-normalized-source-live-proposal-r1409.json'
+
+======================================================================
+ERROR: test_plan_tamper (test_run.RunTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 30, in test_plan_tamper
+    p=self.plan();p["budget"]=dict(p["budget"],max_generations=13)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 10, in plan
+    public=run.public_plan(self.proposal());now=time.time()
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/run.py", line 24, in public_plan
+    proposal_sha256=sha(PROPOSAL),cases=list(CASES),provider=proposal["provider"],budget=proposal["budget"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/scope.py", line 30, in sha
+    def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lhohy/Code/Poseidon/docs/baseline/agent-normalized-source-live-proposal-r1409.json'
+
+======================================================================
+ERROR: test_plan_unknown_field (test_run.RunTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 27, in test_plan_unknown_field
+    p=self.plan();p["extra"]=1
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 10, in plan
+    public=run.public_plan(self.proposal());now=time.time()
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/run.py", line 24, in public_plan
+    proposal_sha256=sha(PROPOSAL),cases=list(CASES),provider=proposal["provider"],budget=proposal["budget"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/scope.py", line 30, in sha
+    def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lhohy/Code/Poseidon/docs/baseline/agent-normalized-source-live-proposal-r1409.json'
+
+======================================================================
+ERROR: test_public_budget (test_run.RunTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 23, in test_public_budget
+    def test_public_budget(self):self.assertEqual(run.public_plan(self.proposal())["budget"],scope.BUDGET)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/run.py", line 24, in public_plan
+    proposal_sha256=sha(PROPOSAL),cases=list(CASES),provider=proposal["provider"],budget=proposal["budget"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/scope.py", line 30, in sha
+    def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lhohy/Code/Poseidon/docs/baseline/agent-normalized-source-live-proposal-r1409.json'
+
+======================================================================
+ERROR: test_public_cases (test_run.RunTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/test_run.py", line 22, in test_public_cases
+    def test_public_cases(self):self.assertEqual(run.public_plan(self.proposal())["cases"],list(scope.CASES))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/run.py", line 24, in public_plan
+    proposal_sha256=sha(PROPOSAL),cases=list(CASES),provider=proposal["provider"],budget=proposal["budget"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_live_v1/scope.py", line 30, in sha
+    def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lhohy/Code/Poseidon/docs/baseline/agent-normalized-source-live-proposal-r1409.json'
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.200s
+
+FAILED (errors=5)

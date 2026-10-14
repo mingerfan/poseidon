@@ -1,0 +1,6 @@
+{
+  "file": "test_logical_view_normalization.py",
+  "before_sha256": "abf42184327d5356e164e38439026195a58653de027b48ba98a7aad5cb5e0ca5",
+  "after_sha256": "a0bbef6da373dd2227afd0677b97cba3ab030898f6da0d030d0b2ac726d53a94",
+  "reason": "Explicit v36 is registered; v37 remains rejected"
+}

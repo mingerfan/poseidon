@@ -1,0 +1,988 @@
+{
+  "approximation_profiles": {},
+  "binding_sha256": "9e08415dc696ef87df97c8b3b8f5edce63b586365e16d26a2115cc3eb138d0f1",
+  "format": "poseidon-decomposition-binding-v4",
+  "implementation_sha256": "8bf420508c1adbb00ca9567b690e8ef28e56027b753ca58d56b68c6428cc19eb",
+  "implementation_sources": {
+    "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+    "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+    "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+    "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+    "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+    "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+  },
+  "lowered_sha256": "c0f2117da59c7b79851787b7abb702ab2557719b07b9cd0690bc78790785887d",
+  "no_dsl_answer": true,
+  "normalization": {
+    "arithmetic_entries": [],
+    "matrix_entries": [],
+    "matrix_policy": "static-tensor-matmul-v1",
+    "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "scalar_carrier_shape": [
+      1
+    ],
+    "spatial_entries": [
+      {
+        "core_node_ids": [
+          "generated_5",
+          "generated_8",
+          "generated_10",
+          "generated_13"
+        ],
+        "input_shape": [
+          1,
+          2,
+          2,
+          3
+        ],
+        "matrix_elements": 21,
+        "nearest_vectorized_path": true,
+        "operator": "resize",
+        "origin": "node_8",
+        "output_shape": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "runtime_validated": false,
+        "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+      }
+    ],
+    "version": "static-spatial-decomposition-v3"
+  },
+  "original_sha256": "e6c4ea1b1a99d146bc1fa2b2064d137bd0f982164499239356510063f773eacb",
+  "pytorch_capture": {
+    "constant_dtypes": {},
+    "dtype_policy": "strict-float64-v1",
+    "graph_sha256": "e6c4ea1b1a99d146bc1fa2b2064d137bd0f982164499239356510063f773eacb",
+    "index_capture": {
+      "entries": [],
+      "graph_sha256": "6731a101cd109ca060a4151b85a74404baa129bb505488216d8e08c6f40340a0",
+      "version": "poseidon-pytorch-static-index-v1"
+    },
+    "input_dtype": "float64",
+    "ordered_alias_capture": {
+      "binding": "e081accf60be05088105cb4c05dde7e5916f4726c49ace71c8c634f5b4fd3093",
+      "capture_adapter": {
+        "arithmetic": {
+          "binding_sha256": "2f92286832f86d829a81cabcc5d59e228edc879397866d5e25f52468c15f9033",
+          "capture_name_map": {
+            "interpolate": "interpolate",
+            "output": "output",
+            "x": "x"
+          },
+          "captured_graph_sha256": "6731a101cd109ca060a4151b85a74404baa129bb505488216d8e08c6f40340a0",
+          "entries": [],
+          "existing_capture_rules_retained": true,
+          "format": "poseidon-fx-public-arithmetic-v1",
+          "fx_inputs": [
+            "x"
+          ],
+          "normalized_fx_sha256": "baf9c1275ff38401a5403b22a2e958fc08b60bebc2ae0679692104093f323ba9",
+          "normalized_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %interpolate : [#users=1] = call_function[target=torch.nn.functional.interpolate](args = (%x,), kwargs = {size: None, scale_factor: 1.7, mode: nearest-exact, align_corners: None, recompute_scale_factor: False, antialias: False})\n    return interpolate",
+          "public_attributes": {},
+          "public_state_preserved": true,
+          "requires_trusted_capture_worker": true,
+          "resource_profile": "general-tensors-v1",
+          "source_fx_sha256": "baf9c1275ff38401a5403b22a2e958fc08b60bebc2ae0679692104093f323ba9",
+          "source_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %interpolate : [#users=1] = call_function[target=torch.nn.functional.interpolate](args = (%x,), kwargs = {size: None, scale_factor: 1.7, mode: nearest-exact, align_corners: None, recompute_scale_factor: False, antialias: False})\n    return interpolate",
+          "source_graph_preserved": true,
+          "split_aliases": {}
+        },
+        "binding": "b7912a9b9c1347ccd783cc644f920b8cf5d83c489111c6da28ff55a3492e2ca3",
+        "compiler_validated": false,
+        "encrypted_execution_validated": false,
+        "format": "poseidon-trusted-spatial-capture-draft-v1",
+        "graph_sha256": "e6c4ea1b1a99d146bc1fa2b2064d137bd0f982164499239356510063f773eacb",
+        "implementation": {
+          "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_alias_capture_bridge.py": "20de8bdf93f2af7db38e9ec4da12a3681d077d04ab8aab557045758069cbd901",
+          "pytorch_alias_composition.py": "f2a91924eb30aa938053cb2a2b3dcdbf4c88063c72f13d813f124b88be3d6077",
+          "pytorch_arithmetic_normalization.py": "f34f292232f469a65e813d0621509f47019b15ff32b76e23fdc4ee6c370451ca",
+          "pytorch_model_capture.py": "b85222f47b08184693d4ca53a8d4ed163e09b2343f7ef694a3c7621bf3a48a7d",
+          "pytorch_ordered_capture.py": "8f444c51e827ac97f1f84bd0a30ff2b578dbf3d749129f97f44ea124d9db1ade",
+          "pytorch_spatial_source.py": "19e67ed8986ad320b2779d307d79f5f2882f627d582de2e9e85434ab38086e03",
+          "pytorch_static_trace.py": "b68b30d10c43ca96f1d8580b273be9740b6aa37d9a16d4fb0528eecdbc12e0cd"
+        },
+        "independent_reference_required": true,
+        "normalized_fx_sha256": "baf9c1275ff38401a5403b22a2e958fc08b60bebc2ae0679692104093f323ba9",
+        "normalized_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %interpolate : [#users=1] = call_function[target=torch.nn.functional.interpolate](args = (%x,), kwargs = {size: None, scale_factor: 1.7, mode: nearest-exact, align_corners: None, recompute_scale_factor: False, antialias: False})\n    return interpolate",
+        "production_intake_integrated": false,
+        "reference_inputs": "separate clones for every execution",
+        "resource_profile": "general-tensors-v1",
+        "source_fx_sha256": "baf9c1275ff38401a5403b22a2e958fc08b60bebc2ae0679692104093f323ba9",
+        "source_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %interpolate : [#users=1] = call_function[target=torch.nn.functional.interpolate](args = (%x,), kwargs = {size: None, scale_factor: 1.7, mode: nearest-exact, align_corners: None, recompute_scale_factor: False, antialias: False})\n    return interpolate",
+        "source_state_dtypes": {},
+        "spatial_source_policy": "poseidon-pytorch-static-spatial-v1"
+      },
+      "capture_emission_constant_dtypes": {},
+      "capture_emission_state_constant_sources": {},
+      "capture_emissions": {
+        "constants": {},
+        "format": "poseidon-operator-graph-v4",
+        "id": "pytorch_model",
+        "inputs": [
+          {
+            "name": "x",
+            "shape": [
+              1,
+              2,
+              2,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "align_corners": null,
+              "antialias": false,
+              "mode": "nearest-exact",
+              "recompute_scale_factor": false,
+              "scale_factor": [
+                1.7,
+                1.7
+              ],
+              "size": null
+            },
+            "id": "fx_interpolate",
+            "inputs": [
+              "x"
+            ],
+            "op": "resize",
+            "outputs": [
+              "value_interpolate"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "value": "value_interpolate"
+          }
+        ]
+      },
+      "capture_emissions_sha256": "6731a101cd109ca060a4151b85a74404baa129bb505488216d8e08c6f40340a0",
+      "capture_public_constant_views": {},
+      "capture_source_origins": {
+        "fx_interpolate": {
+          "action": null,
+          "fx_kind": "call_function",
+          "fx_node": "interpolate",
+          "operation": "resize"
+        }
+      },
+      "compiler_validated": false,
+      "constant_dtypes": {},
+      "derived_state_constant_sources": {},
+      "encrypted_execution_validated": false,
+      "format": "poseidon-pytorch-ordered-alias-capture-staging-v2",
+      "implementation": {
+        "pytorch_alias_capture_bridge.py": "20de8bdf93f2af7db38e9ec4da12a3681d077d04ab8aab557045758069cbd901",
+        "pytorch_alias_composition.py": "f2a91924eb30aa938053cb2a2b3dcdbf4c88063c72f13d813f124b88be3d6077",
+        "pytorch_model_capture.py": "b85222f47b08184693d4ca53a8d4ed163e09b2343f7ef694a3c7621bf3a48a7d"
+      },
+      "input_storage_assumption": "separate contiguous CPU float64 inputs",
+      "normalization": {
+        "agent_status": "unverified",
+        "binding": "fa549335ad77a25fe27477349fe01303542b551018f6306fa93402ea178826e2",
+        "compiler_status": "unverified",
+        "decomposition": {
+          "approximation_profiles": {},
+          "binding_sha256": "cf2a10a453700b579e93daf323721091d5520c7c68339af5a5e3d4c59d1e5f08",
+          "format": "poseidon-decomposition-binding-v4",
+          "implementation_sha256": "8bf420508c1adbb00ca9567b690e8ef28e56027b753ca58d56b68c6428cc19eb",
+          "implementation_sources": {
+            "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+            "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+            "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+            "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+            "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+            "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+            "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+            "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+          },
+          "lowered_sha256": "c0f2117da59c7b79851787b7abb702ab2557719b07b9cd0690bc78790785887d",
+          "no_dsl_answer": true,
+          "normalization": {
+            "arithmetic_entries": [],
+            "matrix_entries": [],
+            "matrix_policy": "static-tensor-matmul-v1",
+            "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "scalar_carrier_shape": [
+              1
+            ],
+            "spatial_entries": [
+              {
+                "core_node_ids": [
+                  "generated_5",
+                  "generated_8",
+                  "generated_10",
+                  "generated_13"
+                ],
+                "input_shape": [
+                  1,
+                  2,
+                  2,
+                  3
+                ],
+                "matrix_elements": 21,
+                "nearest_vectorized_path": true,
+                "operator": "resize",
+                "origin": "node_8",
+                "output_shape": [
+                  1,
+                  2,
+                  3,
+                  5
+                ],
+                "runtime_validated": false,
+                "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+              }
+            ],
+            "version": "static-spatial-decomposition-v3"
+          },
+          "original_sha256": "e6c4ea1b1a99d146bc1fa2b2064d137bd0f982164499239356510063f773eacb",
+          "registry_version": "operator-decomposition-v4+spatial-v3",
+          "required_capabilities": [
+            "ckks_add_multiply_rotate"
+          ],
+          "resource_profile": {
+            "axis_size": 65536,
+            "constant_elements": 1000000,
+            "constants": 1024,
+            "expanded_nodes": 4096,
+            "input_elements": 4096,
+            "inputs": 4,
+            "json_bytes": 33554432,
+            "name": "general-tensors-v1",
+            "original_nodes": 1024,
+            "output_elements": 4096,
+            "outputs": 4,
+            "rank": 32,
+            "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+            "tensor_elements": 65536,
+            "total_constant_elements": 1000000
+          },
+          "runtime_layout_validated": false,
+          "source_map": {
+            "generated_1": "node_3",
+            "generated_10": "node_8",
+            "generated_13": "node_8",
+            "generated_15": "node_11",
+            "generated_17": "node_13",
+            "generated_3": "node_5",
+            "generated_5": "node_8",
+            "generated_8": "node_8"
+          }
+        },
+        "encrypted_status": "unverified",
+        "events": [
+          {
+            "input_storage": "storage_1",
+            "output_storage": "storage_9",
+            "rule": "registered_value:resize",
+            "shape": [
+              1,
+              2,
+              3,
+              5
+            ],
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          }
+        ],
+        "format": "poseidon-alias-capture-normalization-v5",
+        "implementation": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "benchmark_math.py": "e9bd86a4d7ea1b836efc96119d1f58aa607618a69c1572d865146d8f2bc30e70",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_reference.py": "5562899476baa4a7862c85375e42c6a38eed33e5fe06f04fda6b779d4ca9378a",
+          "pytorch_alias_composition.py": "f2a91924eb30aa938053cb2a2b3dcdbf4c88063c72f13d813f124b88be3d6077",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "input_storage_assumption": "separate contiguous CPU float64 logical inputs",
+        "lowered_graph": {
+          "constants": {
+            "generated_11": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "generated_6": [
+              [
+                1.0,
+                0.0
+              ],
+              [
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0
+              ]
+            ]
+          },
+          "format": "poseidon-model-graph-v2",
+          "id": "static_alias_source",
+          "inputs": [
+            {
+              "name": "x",
+              "shape": [
+                1,
+                2,
+                2,
+                3
+              ]
+            }
+          ],
+          "nodes": [
+            {
+              "attrs": {
+                "shape": [
+                  12
+                ]
+              },
+              "id": "generated_1",
+              "inputs": [
+                "x"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_0"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  2,
+                  2,
+                  3
+                ]
+              },
+              "id": "generated_3",
+              "inputs": [
+                "generated_0"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_2"
+              ]
+            },
+            {
+              "attrs": {
+                "dims": [
+                  0,
+                  1,
+                  3,
+                  2
+                ]
+              },
+              "id": "generated_5",
+              "inputs": [
+                "generated_2"
+              ],
+              "op": "permute",
+              "outputs": [
+                "generated_4"
+              ]
+            },
+            {
+              "attrs": {},
+              "id": "generated_8",
+              "inputs": [
+                "generated_4",
+                "generated_6"
+              ],
+              "op": "linear",
+              "outputs": [
+                "generated_7"
+              ]
+            },
+            {
+              "attrs": {
+                "dims": [
+                  0,
+                  1,
+                  3,
+                  2
+                ]
+              },
+              "id": "generated_10",
+              "inputs": [
+                "generated_7"
+              ],
+              "op": "permute",
+              "outputs": [
+                "generated_9"
+              ]
+            },
+            {
+              "attrs": {},
+              "id": "generated_13",
+              "inputs": [
+                "generated_9",
+                "generated_11"
+              ],
+              "op": "linear",
+              "outputs": [
+                "generated_12"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  30
+                ]
+              },
+              "id": "generated_15",
+              "inputs": [
+                "generated_12"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_14"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  2,
+                  3,
+                  5
+                ]
+              },
+              "id": "generated_17",
+              "inputs": [
+                "generated_14"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_16"
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "name": "output",
+              "value": "generated_16"
+            }
+          ],
+          "resource_profile": "general-tensors-v1"
+        },
+        "lowered_node_origins": {
+          "generated_1": {
+            "phase": "input_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "generated_10": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          },
+          "generated_13": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          },
+          "generated_15": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          },
+          "generated_17": {
+            "phase": "output_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "generated_3": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          },
+          "generated_5": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          },
+          "generated_8": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          }
+        },
+        "mathematical_graph": {
+          "constants": {},
+          "format": "poseidon-operator-graph-v4",
+          "id": "static_alias_source",
+          "inputs": [
+            {
+              "name": "x",
+              "shape": [
+                1,
+                2,
+                2,
+                3
+              ]
+            }
+          ],
+          "nodes": [
+            {
+              "attrs": {
+                "shape": [
+                  12
+                ]
+              },
+              "id": "node_3",
+              "inputs": [
+                "x"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_2"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  2,
+                  2,
+                  3
+                ]
+              },
+              "id": "node_5",
+              "inputs": [
+                "tensor_2"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_4"
+              ]
+            },
+            {
+              "attrs": {
+                "align_corners": null,
+                "antialias": false,
+                "mode": "nearest-exact",
+                "recompute_scale_factor": false,
+                "scale_factor": [
+                  1.7,
+                  1.7
+                ],
+                "size": null
+              },
+              "id": "node_8",
+              "inputs": [
+                "tensor_4"
+              ],
+              "op": "resize",
+              "outputs": [
+                "tensor_7"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  30
+                ]
+              },
+              "id": "node_11",
+              "inputs": [
+                "tensor_7"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_10"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  2,
+                  3,
+                  5
+                ]
+              },
+              "id": "node_13",
+              "inputs": [
+                "tensor_10"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_12"
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "name": "output",
+              "value": "tensor_12"
+            }
+          ]
+        },
+        "mathematical_node_origins": {
+          "node_11": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          },
+          "node_13": {
+            "phase": "output_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "node_3": {
+            "phase": "input_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "node_5": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          },
+          "node_8": {
+            "phase": "source_operation",
+            "source_id": "fx_interpolate",
+            "source_position": 0
+          }
+        },
+        "original_function_accuracy_certified": false,
+        "physical_layout_status": "unverified",
+        "production_intake_integrated": false,
+        "public_constant_sources": {},
+        "registered_value_operators": [
+          "adaptive_avg_pool",
+          "add",
+          "avg_pool1d",
+          "avg_pool2d",
+          "batch_norm",
+          "concat",
+          "conv1d",
+          "conv2d",
+          "conv_transpose1d",
+          "conv_transpose2d",
+          "dot",
+          "exp",
+          "gelu",
+          "global_avg_pool",
+          "group_norm",
+          "instance_norm",
+          "layer_norm",
+          "leaky_relu",
+          "linear",
+          "log",
+          "logsoftmax",
+          "matmul",
+          "max",
+          "max_pool1d",
+          "max_pool2d",
+          "maximum",
+          "mean",
+          "min",
+          "minimum",
+          "multiply",
+          "negate",
+          "padding",
+          "polynomial",
+          "power",
+          "prelu",
+          "public_gather",
+          "reciprocal",
+          "relu",
+          "resize",
+          "rms_norm",
+          "rope",
+          "rotate",
+          "rsqrt",
+          "sigmoid",
+          "silu",
+          "softmax",
+          "sqrt",
+          "square",
+          "stack",
+          "subtract",
+          "sum",
+          "tanh",
+          "variance"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "source_request": {
+          "approximations": {},
+          "resource_profile": "general-tensors-v1",
+          "source": {
+            "constants": {},
+            "format": "poseidon-ordered-tensor-source-v4",
+            "inputs": [
+              {
+                "name": "x",
+                "shape": [
+                  1,
+                  2,
+                  2,
+                  3
+                ]
+              }
+            ],
+            "nodes": [
+              {
+                "attrs": {
+                  "operator": "resize",
+                  "parameters": {
+                    "align_corners": null,
+                    "antialias": false,
+                    "mode": "nearest-exact",
+                    "recompute_scale_factor": false,
+                    "scale_factor": [
+                      1.7,
+                      1.7
+                    ],
+                    "size": null
+                  }
+                },
+                "id": "fx_interpolate",
+                "inputs": [
+                  "x"
+                ],
+                "op": "registered",
+                "output": "value_interpolate"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "output",
+                "value": "value_interpolate"
+              }
+            ]
+          },
+          "spatial_source_policy": "poseidon-pytorch-static-spatial-v1"
+        },
+        "source_request_sha256": "fb03e1eb4c6625f470ceb32b648a8eb49a158485cb5cd25c0f1d45c41518e6e5",
+        "source_value_descriptions": {
+          "value_interpolate": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              2,
+              3,
+              5
+            ]
+          },
+          "x": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              2,
+              2,
+              3
+            ]
+          }
+        }
+      },
+      "paid_calls": 0,
+      "physical_layout_validated": false,
+      "production_intake_integrated": false,
+      "source_capture_policy": {
+        "common_call_rules": "poseidon-fx-common-calls-v1",
+        "indexing_policy": "poseidon-pytorch-static-index-v1",
+        "input_signature_sha256": "0d264578fe0bd3bae4db05ec52f26cd034ae19a481c624b7b78f73ee29e4739b",
+        "max_fx_compute_nodes": 1024,
+        "scalar_outputs": "rank_zero_tree_v1",
+        "shape_sources": "declared_signature_and_registered_meta_rules",
+        "tensor_metadata_record": "registered-signature-shapes-v1",
+        "version": "signature-static-ordered-alias-staging-v1"
+      },
+      "source_graph": {
+        "constants": {},
+        "format": "poseidon-ordered-tensor-source-v4",
+        "inputs": [
+          {
+            "name": "x",
+            "shape": [
+              1,
+              2,
+              2,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "operator": "resize",
+              "parameters": {
+                "align_corners": null,
+                "antialias": false,
+                "mode": "nearest-exact",
+                "recompute_scale_factor": false,
+                "scale_factor": [
+                  1.7,
+                  1.7
+                ],
+                "size": null
+              }
+            },
+            "id": "fx_interpolate",
+            "inputs": [
+              "x"
+            ],
+            "op": "registered",
+            "output": "value_interpolate"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "value": "value_interpolate"
+          }
+        ]
+      },
+      "source_graph_sha256": "23d1773bb13fc2e54ab4d26fe827e5049940ff1d0f940cc555a62f5f9bc06c90",
+      "source_node_origins": {
+        "fx_interpolate": {
+          "action": null,
+          "fx_kind": "call_function",
+          "fx_node": "interpolate",
+          "operation": "resize"
+        }
+      },
+      "state_constant_sources": {}
+    },
+    "output_structure": {
+      "kind": "tensor",
+      "name": "output"
+    },
+    "registered_emission_policy": {
+      "indexing_policy": "poseidon-pytorch-static-index-v1",
+      "input_signature_sha256": "0d264578fe0bd3bae4db05ec52f26cd034ae19a481c624b7b78f73ee29e4739b",
+      "max_fx_compute_nodes": 1024,
+      "scalar_outputs": "rank_zero_tree_v1",
+      "shape_sources": "declared_signature_and_registered_meta_rules",
+      "version": "signature-static-index-v1"
+    },
+    "source_precision_execution_compared": false,
+    "source_state_dtypes": {},
+    "spatial_source_capture": {
+      "entries": [
+        {
+          "attributes": {
+            "align_corners": null,
+            "antialias": false,
+            "mode": "nearest-exact",
+            "recompute_scale_factor": false,
+            "scale_factor": [
+              1.7,
+              1.7
+            ],
+            "size": null
+          },
+          "fixed_semantics": "Torch 2.0.1 CPU Float64 contiguous",
+          "fx_node": "interpolate",
+          "input_shape": [
+            1,
+            2,
+            2,
+            3
+          ],
+          "operator": "resize",
+          "output_shape": [
+            1,
+            2,
+            3,
+            5
+          ],
+          "source": "function:torch.nn.functional.interpolate"
+        }
+      ],
+      "graph_format": "poseidon-operator-graph-v4",
+      "original_function_accuracy_certified": false,
+      "version": "poseidon-pytorch-static-spatial-v1"
+    },
+    "state_constant_sources": {},
+    "torch_version": "2.0.1",
+    "training": false,
+    "trusted_code": true
+  },
+  "registry_version": "operator-decomposition-v4+spatial-v3",
+  "required_capabilities": [
+    "ckks_add_multiply_rotate"
+  ],
+  "resource_profile": {
+    "axis_size": 65536,
+    "constant_elements": 1000000,
+    "constants": 1024,
+    "expanded_nodes": 4096,
+    "input_elements": 4096,
+    "inputs": 4,
+    "json_bytes": 33554432,
+    "name": "general-tensors-v1",
+    "original_nodes": 1024,
+    "output_elements": 4096,
+    "outputs": 4,
+    "rank": 32,
+    "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+    "tensor_elements": 65536,
+    "total_constant_elements": 1000000
+  },
+  "runtime_layout_validated": false,
+  "source_map": {
+    "generated_1": "node_3",
+    "generated_10": "node_8",
+    "generated_13": "node_8",
+    "generated_15": "node_11",
+    "generated_17": "node_13",
+    "generated_3": "node_5",
+    "generated_5": "node_8",
+    "generated_8": "node_8"
+  }
+}

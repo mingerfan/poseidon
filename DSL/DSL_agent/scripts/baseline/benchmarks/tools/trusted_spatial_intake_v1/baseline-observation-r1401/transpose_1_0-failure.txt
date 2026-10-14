@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/observe.py", line 31, in <module>
+    high,lowered,binding,context=prepare_module(module,inputs,outputs,resource_profile="general-tensors-v1",**kwargs)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_capture.py", line 117, in prepare_module
+    high,lowered,binding=capture(normalized,inputs,outputs,approximations=approximations,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_capture.py", line 386, in capture
+    else:raise ValueError("Unsupported PyTorch module: "+type(m).__name__)
+ValueError: Unsupported PyTorch module: ConvTranspose1d

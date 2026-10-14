@@ -1,0 +1,24 @@
+{
+  "binding": "a88da13eb527f490cb2daa8dbbb33a73e28cc5f6d8c48740d7ab83099cd07b9d",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-original-live-continuation-controls-v2",
+  "http_attempts": 0,
+  "manifest_sha256": "6a4148909cd4dce8fc50eaa066613543b6b5f671715d9825bdc3a3a0ef465c89",
+  "network_configuration_changes": 0,
+  "passed": 28,
+  "provider_calls": 0,
+  "retired_evidence_preserved": true,
+  "seconds": 11.891739771999937,
+  "skipped": 0,
+  "status": "passed",
+  "tests": 28,
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/continuation_scope.py": "97c3b23c047e6d4f2ebfe37e8a325d0667068a3e3c3858ed4b600af62601daed",
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/controls.py": "f01f911ac287a2e071eead61de84893e06cba16dea8c73d8275d35af15dc4ad1",
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/run.py": "63764017ff74bab0e9903060179503ab8235580dd29b0b895283e7c0401ba730",
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/test_continuation.py": "841c4cd0df7bc90405bc00df7daa767e5c27751dc4be086754a99f773460119c"
+  }
+}

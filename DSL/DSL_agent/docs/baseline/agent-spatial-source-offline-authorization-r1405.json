@@ -1,0 +1,31 @@
+{
+  "format": "poseidon-spatial-source-offline-authorization-v1",
+  "approved": true,
+  "proposal_binding": "c563ee93d44018613d6ee4affc315414efacbace38a77fb5e81a60e2e9f7e592",
+  "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+  "human_authorization": "Approved the 18 bounded offline cases and 3 package reuse checks in this chat",
+  "human_question_id": "call_1aa06dc993a3407995d7a916eeccb7ad",
+  "approved_scope": {
+    "wall_seconds": 2400,
+    "launcher_total_seconds": 2700,
+    "maximum_compiler_calls": 18,
+    "maximum_encrypted_calls": 27,
+    "initial_task_seconds": 180,
+    "compiler_jobs": 2,
+    "link_jobs": 1,
+    "native_concurrency": 1,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "new_bytes": 536870912,
+    "global_bytes": 34359738368,
+    "reserve_bytes": 4294967296
+  },
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "timestamp_unix": 1791731203.2552626,
+  "preflight": {
+    "global_artifact_bytes": 32225341440,
+    "disk_free_bytes": 42494861312
+  },
+  "binding": "ee72e7b14c54ed9cca2c056bfe52d9616b1af442bc70d998b9336d83614d6e32"
+}

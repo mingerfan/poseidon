@@ -1,0 +1,15 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "files": {
+    "docs/baseline/agent-pytorch-source-manifest-cli-r1344.json": "bb2521e18fb111ea4ae964491dc21ace2e60a3bd0a7310145a53dd351f904a35",
+    "docs/baseline/agent-pytorch-source-manifest-cli-r1344.md": "521b456c895f5fe24436d4fec2e2ccd905e0e778d108644c41c362170a7ebba3",
+    "docs/baseline/mac-migration-handoff.md": "0b9c088839c72931cd8d744129cd80c1136f135d428fcadeb34717a031c4f277"
+  },
+  "format": "poseidon-source-manifest-final-audit-v1",
+  "historical_requests": 2,
+  "pending_proposal_unchanged": true,
+  "protected_files": 654,
+  "provider_calls": 0,
+  "report_binding": "f8b8cc33058e6830365742ee4dcb227315b416fdccb20d351ab3d5930a91cc8d"
+}

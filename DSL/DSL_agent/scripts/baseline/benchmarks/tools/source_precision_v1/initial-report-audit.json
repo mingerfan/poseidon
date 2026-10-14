@@ -1,0 +1,12 @@
+{
+  "initial_tests": {
+    "run": 19,
+    "failed": 6,
+    "errors": 9,
+    "skipped": 0
+  },
+  "root_cause": "Fixture v12/v16 approximation selector omitted required versioned fields",
+  "actual_successful_native_reference_reports": 0,
+  "source_forward_executed_in_initial_report": "Unsupported by evidence; no successful native report, errors occurred in preflight",
+  "old_report_preserved": true
+}

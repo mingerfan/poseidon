@@ -1,0 +1,40 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v2",
+  "id": "vector_right_0",
+  "inputs": [
+    {
+      "name": "left",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "right",
+      "shape": [
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "product",
+      "inputs": [
+        "left",
+        "right"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "result"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "result"
+    }
+  ]
+}

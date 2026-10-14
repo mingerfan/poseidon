@@ -1,0 +1,58 @@
+{
+  "source_commit": "aaece99acc7d0b8d73220a460b347fbde545a970",
+  "case_order": [
+    {
+      "case": "q32-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 45, P0, 590.01 W, 1890 MHz, 8001 MHz"
+    },
+    {
+      "case": "q8-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 58, P0, 65.81 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q8-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 64, P0, 59.65 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q32-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 65, P0, 49.10 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q32-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 65, P0, 72.32 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q8-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 66, P0, 63.60 W, 2580 MHz, 8001 MHz"
+    },
+    {
+      "case": "q8-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 66, P0, 50.24 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q32-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 67, P0, 49.33 W, 2580 MHz, 8001 MHz"
+    },
+    {
+      "case": "q32-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 67, P0, 61.14 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q8-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 69, P0, 60.73 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q8-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 69, P0, 63.27 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "q32-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 69, P0, 57.72 W, 2580 MHz, 8001 MHz"
+    }
+  ],
+  "runs": 3,
+  "parameters": "N65536 Q8/32 30-bit primes scale2^40 sigma0.02 real synthetic slots",
+  "warmup_ms_per_mode": 100,
+  "samples": 30,
+  "server": "188Server SOCKSv5 Host unreachable; local RTX4060 only"
+}

@@ -1,0 +1,142 @@
+{
+  "authorization": "existing current-plan test approval; finite execution scope still to be frozen",
+  "binding": "7291b51bd8b75afbfc4cc441a99104ca2554a0875ea5ac81b415e54683b06ac9",
+  "cases": [
+    {
+      "case": "wide_tail_linear",
+      "graph": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/wide_tail_linear/model.json",
+      "graph_only_success_is_not_complete_source_pipeline": true,
+      "input_elements": 2052,
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            2,
+            1025
+          ]
+        },
+        {
+          "name": "y",
+          "shape": [
+            2,
+            1
+          ]
+        }
+      ],
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/wide_tail_linear/manifest.json",
+      "nodes": 13,
+      "output_elements": 14,
+      "outputs": [
+        "projection",
+        "summary",
+        "same"
+      ],
+      "proposed_source_kind": "trusted_pytorch",
+      "source_format": "poseidon-trusted-pytorch-v36"
+    },
+    {
+      "case": "weights_linear_10k",
+      "graph": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/weights_linear_10k/model.json",
+      "graph_only_success_is_not_complete_source_pipeline": true,
+      "input_elements": 100,
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            100
+          ]
+        }
+      ],
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/weights_linear_10k/manifest.json",
+      "nodes": 1,
+      "output_elements": 100,
+      "outputs": [
+        "output0"
+      ],
+      "proposed_source_kind": "trusted_pytorch",
+      "source_format": "poseidon-trusted-pytorch-v36"
+    },
+    {
+      "case": "rank_permute_32",
+      "graph": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/rank_permute_32/model.json",
+      "graph_only_success_is_not_complete_source_pipeline": true,
+      "input_elements": 64,
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      ],
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/rank_permute_32/manifest.json",
+      "nodes": 91,
+      "output_elements": 136,
+      "outputs": [
+        "features",
+        "summary",
+        "same"
+      ],
+      "proposed_source_kind": "trusted_pytorch",
+      "source_format": "poseidon-trusted-pytorch-v36"
+    }
+  ],
+  "evidence_files": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/rank_permute_32/manifest.json": "c958343859690aafb7ab1c3e39859227eb618610d2e3829017c721c7f99281fb",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/rank_permute_32/model.py": "b1c21c67500ecab33032f66d69cb972cf84d7ce301eea471f76f6b3d249a64a7",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/weights_linear_10k/manifest.json": "87ebdd0c58a69530b0af1cc1419de0747155aa078e0cc21b190257c9798c930a",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/weights_linear_10k/model.py": "1f33a089f647a386604a2d4f03acf8e0b004aa1a04082ec077eb3170dc3b65c9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/wide_tail_linear/manifest.json": "ba4be6210d976eb64bb1409662374d68571f9a28d80b782a7407195e246c081e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/provenance_transport_component_v1/cases/wide_tail_linear/model.py": "f0057fabaf35ef534b8cf71d9263d714829db6bba88ded4b0259e6ce5ea682c7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/rank_permute_32/model.json": "91770f53af76246254a55f3b859ab0518c2dcaf3bf1e6e6316de0a6ab7f666a7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/weights_linear_10k/model.json": "d13b9c55ff8eb64ff150b4e63a6baae267c0725d21962ba6c6e74b9f9b3bd043",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/wide_tail_linear/model.json": "fa7481c7dce0156a968f8fd6c11784da0a0e14f24288075badcff24cfa53ba84"
+  },
+  "execution_blocked_until": "r1548 owner and terminal audit exit",
+  "format": "poseidon-v36-next-source-case-index-v1",
+  "max_planned_cases": 3,
+  "new_api_calls": 0,
+  "new_compiler_calls": 0,
+  "new_encrypted_calls": 0,
+  "source_format_or_model_changed": false,
+  "status": "prepared_not_run",
+  "validation_needed": [
+    "isolated capture",
+    "full provenance and weight binding",
+    "new Agent generation",
+    "Poseidon numerical validation",
+    "source-aware package reload and fresh input reuse"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "format": "poseidon-output-binding-replay-origin-v1",
+  "original_scope_binding": "3ae159c4143ef746fde74bbfc4470ac6f3f9bf00f051b3a986007fb3b1b6bbc1",
+  "closed_original_acceptance_binding": "24892824d38f3a987239e63466e3c9201d6f16d4b9149ca5057abc4134a9c68a",
+  "original_capture_binding": "d616a18b771d8f4f8cd4b3149072509a7df99c58e804274e413aad534c50d96a",
+  "models_weights_sources_references_unchanged": true,
+  "request_difference": "explicit-v14 generation guidance",
+  "new_cases": [
+    "tensor_where_2",
+    "public_where_2",
+    "public_fill_2"
+  ],
+  "compatibility_cases": [
+    "compat_v32_zeros_like_1",
+    "compat_v32_new_full_2",
+    "compat_v32_full_like_0"
+  ],
+  "old_unknown_calls_retried": false
+}

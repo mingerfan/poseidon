@@ -1,0 +1,48 @@
+{
+  "approved": false,
+  "budget": {
+    "api_concurrency": 1,
+    "batch_wall_seconds": 28800,
+    "case_wall_seconds": 14400,
+    "compile_jobs": 2,
+    "currency_limit": null,
+    "global_result_bytes": 34359738368,
+    "link_jobs": 1,
+    "max_generations": 8,
+    "max_http_attempts": 32,
+    "native_concurrency": 1,
+    "new_batch_bytes": 4294967296,
+    "per_case_bytes": 4294967296,
+    "reserve_bytes": 4294967296
+  },
+  "cases": [
+    "self_post_linear_residual__declared_shallow_v1",
+    "linear_into_separate_cross_none__declared_shallow_v1"
+  ],
+  "format": "poseidon-source-live-tool-plan-v1",
+  "proposal_binding": "475391a7ef31efef047900e89fe39db9bbc70d63ea63a900e1e88c0f82ae2d1f",
+  "proposal_sha256": "c6735908b974db4b802323f2a65dc4c922ca71f7eb5c4a686000c56dd0fe4825",
+  "provider": {
+    "max_tokens": 384000,
+    "model": "deepseek-flash",
+    "name": "deepseek",
+    "reasoning_effort": "high",
+    "stream": true,
+    "timeout_seconds": 1200,
+    "transport_retries": 3
+  },
+  "provider_calls": 0,
+  "tool_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_tensor_axis_live_v1/package_checks.py": "1597bb2f8559c9d7a18f974028a5bf0e86131acd22b3f3163273bc986a565923",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_tensor_axis_live_v1/run.py": "966199650b878d6a87fffad2c3e4c67e1a7b95dab7f9aab4f7f51cc6dc20b1c8",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_tensor_axis_live_v1/scope.py": "31ddf2a325f3865cd7e1d61cd7e4604701aa05fd90ce17e31514e64e728c31be",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_tensor_axis_live_v1/test_run.py": "e9333ba0520e5a809f5bc8034ad68d4fbc76aa78eb2688a5734427ab5287a6b9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_tensor_axis_live_v1/test_scope.py": "573ef2b970c5a2ae81996c657927f49e8dfc3922d6dc03271ba1d62b57255279"
+  },
+  "validation": [
+    "source_capture",
+    "numerical_qualification",
+    "new_input_execution",
+    "package_cache_reuse"
+  ]
+}

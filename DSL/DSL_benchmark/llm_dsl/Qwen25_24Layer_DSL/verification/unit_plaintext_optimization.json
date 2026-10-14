@@ -1,0 +1,283 @@
+{
+  "status": "passed",
+  "scope": "Complete 24-layer Qwen + full LM head, two-token prefill",
+  "weights": "synthetic distinct-layer weights; no pretrained checkpoint",
+  "provenance": {
+    "compiler_sha256": "sha256:43a46c84cd07817168252b3bbb91f8d4c1653738a0334dd8ab8efd01e818f56c",
+    "frontend_sha256": "sha256:910b0717f724c9734c4e5089508e84357ec2779f879c3a9c3be1492ab1d73594",
+    "source_bytecode_sha256": "sha256:41e31a6a237901d88aba26631b850010dea89b0ec4bf2894f7f293d8baa56e6c",
+    "source_files": {
+      "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "sha256:95cfee92a3905a8289ab74a0c19f5f1ea11868ec50bd1a4dbcea2c14245db268",
+      "lib/Dialect/Earth/IR/EarthDialect.cpp": "sha256:7cbb898eb18debfd282b7c407ca44cb83158d03808f784cad23b9ce19e158a1c",
+      "include/hecate/Dialect/CKKS/IR/CKKSOps.td": "sha256:9091d4e6553ec076c0ad38537e20fe28fe16447f0d9f1061d080b8ddd1ef5ae9",
+      "tools/optimizer.cpp": "sha256:79a19f67cbc3bb82d86cd3d9bb3a941de98bf2db59e71aa3abb080080335fbd8",
+      "test/runtime-plan/check-unit-plaintext.py": "sha256:8932022c370f1479d5d408cfa4952b61afe8f3e8eab84fd09e8f50b88338240f"
+    },
+    "cpu_test_source_sha256": "sha256:75a8986064d1e8d846597b1aa763376d062df3bd05d2c7bb0f5c5c7e09aa31c4",
+    "scope": "complete 24-layer Qwen + LM head, 2-token prefill, synthetic weights",
+    "changes": [
+      "absorb Upscale into plaintext encoding after a single-use MulCP",
+      "CSE equal encodings before placement and Release planning"
+    ],
+    "gpu_execution_tested": false,
+    "validation": {
+      "compiler_ctest": "7/7 passed",
+      "unit_rewrite_cases": 13,
+      "real_cpu_ckks_scale_absorption": "passed; 40 + 40 + 80 vs 40 + 120, four 30-bit Rescale levels; dense weights and positive/negative prefix masks",
+      "cpu_suite": "Latest complete suite: 7/7 passed; an earlier run failed the existing randomized Boot imaginary-error tolerance",
+      "memory_regression": "16 old/new equal plans and reports; 20,000-operation chain passed",
+      "decoded_graph_selfcheck": "passed: scale absorption, Transfer, Release, and retained masks",
+      "full_gpu_plan_validation": "single-GPU and four-GPU passed: all 245 decoded arithmetic outputs, metadata, Release/reuse, memory recomputation, and all bundle hashes"
+    },
+    "validation_scripts": {
+      "run_parallel.py": "sha256:4832b1362e05e50c97bbd166c10c3d9ae88f31b8d3ddb799a5943834d1317695",
+      "run_validation.py": "sha256:d99e770124a77b0d8b5b75ef3169556e6e1fd36214dc5d99538990504378c004",
+      "validate.py": "sha256:182fbc1ed7010eaccea9ff4cefa4a77c92d22d9a04fe377e4edf3e500d927dbb",
+      "decoded_graph.py": "sha256:11c3488e1a20f4e3b80121e2f5771abcb07f1f489ed43e6921f86cf17e4e42b0",
+      "count_full_units.py": "sha256:1d72056ecbe8b80f86b209bad2e9df2159807f9ab3fd8813ae18858c5fc8abed",
+      "summarize.py": "sha256:1e19b0fe4873a71cc27e4d657c009f7ac4d3032051b6022db81e1d3ad45abfa3"
+    }
+  },
+  "full_unit_encodes_before": 1365346,
+  "full_unit_encodes_after": 10,
+  "full_one_encodes_before": 1365344,
+  "full_one_encodes_after": 8,
+  "boot_count": 10835,
+  "memory_kind": "Sequential RNS object estimates; not measured GPU/process peaks or parallel bounds",
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "eager_plaintext_initialization": true,
+  "fits_32GiB_gpus": false,
+  "decoded_arithmetic_matches_original": true,
+  "full_model_ckks_rounding_or_noise_validated": false,
+  "gpu_execution_tested": false,
+  "large_artifacts_in_tmp": false,
+  "plans": [
+    {
+      "devices": 1,
+      "plan_remote": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-unit-plaintext/gpu-plans/gpu1/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+      "compiler_pass_seconds": {
+        "Parser": 27.7139,
+        "GreedyBootstrapPlacement": 26.73,
+        "AssignPlacement": 81.0879,
+        "MaterializeCommunication": 25.9567,
+        "PlanRuntimeMemory": 59.2792,
+        "EmitRuntimePlan": 425.6792,
+        "Output": 88.4983
+      },
+      "unit_counts": {
+        "full_one_encode_count": 8,
+        "full_minus_one_encode_count": 2
+      },
+      "validation": {
+        "devices": 1,
+        "plan": "artifacts/qwen24-unit-plaintext/gpu-plans/gpu1/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+        "format_version": 2,
+        "plan_sha256": "sha256:b8333781f781321c9bbe4bcfb94518dbf982e928ab6df740f539f2b47f0ca12c",
+        "plan_bytes": 5093741105,
+        "value_count": 6950578,
+        "instruction_counts": {
+          "transfer": 1041199,
+          "release": 6947843,
+          "encode": 1019527,
+          "compute": 4889850,
+          "reuse_input": 2490
+        },
+        "op_counts": {
+          "mul_cc": 8775,
+          "relinearize": 8775,
+          "mul_cp": 1365056,
+          "rescale": 1354221,
+          "rotate": 716207,
+          "add_cc": 1347874,
+          "add_cp": 3858,
+          "boot": 10835,
+          "mod_switch": 74106,
+          "negate": 143
+        },
+        "input_ciphertexts": 2,
+        "output_ciphertexts": 245,
+        "decoded_graph_sha256": "sha256:b7ebb08742f0a9a5013596c63c866cbe060b483a5e34e072808ff0fc09b51418",
+        "matches_complete_decoded_host_graph": true,
+        "full_unit_encode_count": 10,
+        "distinct_full_unit_types": 10,
+        "hashes_verified": true,
+        "topology_verified": true,
+        "physical_metadata_verified": true,
+        "release_reuse_verified": true,
+        "memory_report_independently_verified": true,
+        "bundle_blobs": 784750,
+        "bundle_bytes": 14701969408,
+        "object_memory": [
+          {
+            "place_index": -1,
+            "peak_bytes": 1916796928,
+            "plaintext_peak_bytes": 20971520,
+            "ciphertext_peak_bytes": 1916796928
+          },
+          {
+            "place_index": 0,
+            "peak_bytes": 8882439061504,
+            "plaintext_peak_bytes": 8840618704896,
+            "ciphertext_peak_bytes": 207093760000
+          }
+        ],
+        "aggregate_gpu_peak": {
+          "bytes": 8882439061504,
+          "instruction_ordinal": 3239096,
+          "plaintext_bytes": 8677146755072,
+          "ciphertext_bytes": 205292306432
+        },
+        "runtime_execution_tested": false,
+        "seconds": 437.3141867653467
+      },
+      "instruction_reduction": {
+        "encode": 1365336,
+        "compute": 1334897,
+        "transfer": 1365336,
+        "release": 4065569
+      },
+      "mul_cp_before": 2699953,
+      "mul_cp_after": 1365056,
+      "gpu_peak_TiB": [
+        8.078531265258789
+      ],
+      "aggregate_gpu_peak_TiB": 8.078531265258789,
+      "aggregate_gpu_peak_before_TiB": 18.818339347839355,
+      "compiler_seconds": 976.6741290297359,
+      "compiler_peak_RSS_GiB": 66.439697265625,
+      "ciphertext_only_peak_GiB": [
+        192.87109375
+      ]
+    },
+    {
+      "devices": 4,
+      "plan_remote": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-unit-plaintext/gpu-plans/gpu4/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+      "compiler_pass_seconds": {
+        "Parser": 27.6304,
+        "GreedyBootstrapPlacement": 26.4192,
+        "AssignPlacement": 108.8335,
+        "MaterializeCommunication": 50.0736,
+        "PlanRuntimeMemory": 90.6096,
+        "EmitRuntimePlan": 537.0598,
+        "Output": 133.3928
+      },
+      "unit_counts": {
+        "full_one_encode_count": 8,
+        "full_minus_one_encode_count": 2
+      },
+      "validation": {
+        "devices": 4,
+        "plan": "artifacts/qwen24-unit-plaintext/gpu-plans/gpu4/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+        "format_version": 2,
+        "plan_sha256": "sha256:e7b0f54fb91ca0a606b021ba9dd7b7ac8f47e345aa8fedfdd440933575e15547",
+        "plan_bytes": 8427772779,
+        "value_count": 10669278,
+        "instruction_counts": {
+          "transfer": 4759899,
+          "release": 10666832,
+          "encode": 1019527,
+          "compute": 4889850,
+          "reuse_input": 2201
+        },
+        "op_counts": {
+          "mul_cc": 8775,
+          "mod_switch": 74106,
+          "relinearize": 8775,
+          "mul_cp": 1365056,
+          "rescale": 1354221,
+          "rotate": 716207,
+          "add_cc": 1347874,
+          "add_cp": 3858,
+          "boot": 10835,
+          "negate": 143
+        },
+        "input_ciphertexts": 2,
+        "output_ciphertexts": 245,
+        "decoded_graph_sha256": "sha256:b7ebb08742f0a9a5013596c63c866cbe060b483a5e34e072808ff0fc09b51418",
+        "matches_complete_decoded_host_graph": true,
+        "full_unit_encode_count": 10,
+        "distinct_full_unit_types": 10,
+        "hashes_verified": true,
+        "topology_verified": true,
+        "physical_metadata_verified": true,
+        "release_reuse_verified": true,
+        "memory_report_independently_verified": true,
+        "bundle_blobs": 784750,
+        "bundle_bytes": 14701969408,
+        "object_memory": [
+          {
+            "place_index": -1,
+            "peak_bytes": 1916796928,
+            "plaintext_peak_bytes": 20971520,
+            "ciphertext_peak_bytes": 1916796928
+          },
+          {
+            "place_index": 0,
+            "peak_bytes": 2913863729152,
+            "plaintext_peak_bytes": 2913664499712,
+            "ciphertext_peak_bytes": 9334423552
+          },
+          {
+            "place_index": 1,
+            "peak_bytes": 2774194454528,
+            "plaintext_peak_bytes": 2770826428416,
+            "ciphertext_peak_bytes": 17926455296
+          },
+          {
+            "place_index": 2,
+            "peak_bytes": 2633677930496,
+            "plaintext_peak_bytes": 2628877549568,
+            "ciphertext_peak_bytes": 12211716096
+          },
+          {
+            "place_index": 3,
+            "peak_bytes": 2465529331712,
+            "plaintext_peak_bytes": 2461940056064,
+            "ciphertext_peak_bytes": 10114564096
+          }
+        ],
+        "aggregate_gpu_peak": {
+          "bytes": 10775629398016,
+          "instruction_ordinal": 3282343,
+          "plaintext_bytes": 10775262396416,
+          "ciphertext_bytes": 367001600
+        },
+        "runtime_execution_tested": false,
+        "seconds": 739.6886433139443
+      },
+      "instruction_reduction": {
+        "encode": 1365336,
+        "compute": 1334897,
+        "transfer": 2106884,
+        "release": 4807221
+      },
+      "mul_cp_before": 2699953,
+      "mul_cp_after": 1365056,
+      "gpu_peak_TiB": [
+        2.650143623352051,
+        2.5231151580810547,
+        2.3953161239624023,
+        2.2423858642578125
+      ],
+      "aggregate_gpu_peak_TiB": 9.80037784576416,
+      "aggregate_gpu_peak_before_TiB": 20.559814453125,
+      "compiler_seconds": 1253.115579108242,
+      "compiler_peak_RSS_GiB": 91.43072891235352,
+      "ciphertext_only_peak_GiB": [
+        8.693359375,
+        16.6953125,
+        11.373046875,
+        9.419921875
+      ]
+    }
+  ]
+}

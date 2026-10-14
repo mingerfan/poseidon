@@ -1,0 +1,5 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %transpose : [#users=1] = get_attr[target=_poseidon_public_expression_1]
+    %mul : [#users=1] = call_function[target=operator.mul](args = (%x, %transpose), kwargs = {})
+    return mul

@@ -1,0 +1,188 @@
+{
+  "binding": "2c60ac27edd7cf7d912e63d5fcbb83cf41be5c8442a4470eb4e26aa29c62499b",
+  "boolean_independent_data_audit": {
+    "evidence_files_binding": "77d80dc24309c663e102b9b066ed29c3b2a77a23238121e35c668b39a560d309",
+    "files": 577,
+    "new_execution": false,
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-fused-cutover-control-r1298/boolean-evidence-audit.json",
+    "sha256": "1aafb2a938567f2f574e8abc352d416d9075ba99ba85f6bab99d5f2807a23f4a"
+  },
+  "branch": "lhy-agent-dsl",
+  "candidate_static_repair": {
+    "binding": "9f60673978e36e59fab01d6a35e0fb878ca081c2e02ee7561c38e012f5db677d",
+    "compiler_calls": 0,
+    "encrypted_executions": 0,
+    "models": 12,
+    "provider_calls": 0,
+    "repaired_original_failures": 11,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-fused-candidate-v2-static-20261008T055656-3b8b3a/report.json",
+    "sha256": "e8e221c51d41fdd4a38418dcc36e1be35aaef962bed4fd7a0316f8f44dcab495"
+  },
+  "capacity_scope_controls": {
+    "compiler_calls": 0,
+    "encrypted_executions": 0,
+    "errors": 0,
+    "failed": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-fused-cutover-control-r1298/r1301-scope-control-tests.log",
+    "log_sha256": "8f910a52e4d1f4fc5fe2775b37fc96dcf684fbc41fe0de30fff750962b89a567",
+    "passed": 36,
+    "provider_calls": 0,
+    "run": 36,
+    "skipped": 0
+  },
+  "completed_batch": {
+    "binding": "d6f895960123b4ca35fcb0c7baff53c1bcf6ce10f8f7ef5c77b7769f1c782936",
+    "candidate_origin": "manual_selected_generic_balanced_scalar",
+    "compared_values": 84,
+    "compiler_calls": 1,
+    "failures_before_compilation": {
+      "capacity_output_contract": 7,
+      "derived_constant_preparation": 4
+    },
+    "fixed_driver_hashes": {
+      "scripts/baseline/benchmarks/tools/staged_common_fused_integration_v1/runtime_acceptance.py": "450cb31fb0dbcb1fb3f8c40be5db17abab182ca0b15ea5c202e196852f77d833",
+      "scripts/baseline/benchmarks/tools/staged_common_fused_integration_v1/runtime_scope.py": "aac467b84af24680199371bd2e2c3f54a7bc4e1583026b8bfcb09e0112c9ee60",
+      "scripts/baseline/benchmarks/tools/staged_common_fused_integration_v1/test_runtime_scope.py": "3d1268756e0a6f5d1ef9e8dffba36da2cfa95f15001b6743ba684fa9038f1a93",
+      "scripts/baseline/benchmarks/tools/staged_ordered_common_v1/runtime_driver.py": "154b41e1a6ae019bda1073dea097696cba03a810b18310787485a8b49278fbf8",
+      "scripts/baseline/benchmarks/tools/staged_ordered_common_v1/test_runtime_driver.py": "3ec00adc9667fd31e1846d282aaaee02f3e932a50492303a910d02b2f958738e"
+    },
+    "format": "poseidon-common-fused-closed-batch-audit-v1",
+    "global_size": 28233760768,
+    "http_attempts": 0,
+    "input_groups": 7,
+    "maximum_absolute_error": 1.8726317704831352e-08,
+    "models_failed": 11,
+    "models_qualified": 1,
+    "new_agent_generation": false,
+    "new_input_encrypted_phases": 1,
+    "phases": {
+      "failed": 11,
+      "not_run": 22,
+      "passed": 3,
+      "skipped": 0
+    },
+    "positive_models": 12,
+    "production_applied": false,
+    "proposal_binding": "4a781002ea16c71bdbff063e5fde449f95e75c1f6bcb2dc265ca329802f8c187",
+    "provider_calls": 0,
+    "qualification_encrypted_phases": 1,
+    "report_sha256": "c0ad97f4d81f70fdef71bb6f2fae24e4dbc4b258fdc768bdd0d2aad054a554c8",
+    "run_size": 34144256,
+    "runtime_binding": "8eb97453e1c7346080e0a731c0a77931ac11d22cf1c0beb3bf517bf24df2c3b3",
+    "source_guard": {
+      "activation_supported": false,
+      "active_processes": [],
+      "backend_acceptance": "not_run",
+      "branch": "lhy-agent-dsl",
+      "combined_sources": 706,
+      "compiler_calls": 0,
+      "encrypted_executions": 0,
+      "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+      "new_files": [
+        "pytorch_common_constant_provenance.py",
+        "pytorch_fused_matrix_normalization.py"
+      ],
+      "originals_retained": 8,
+      "plan_binding": "1f2f80e9da4db0731f77954e79428e36de3407c305b0fbb3b9bd68735e5ff433",
+      "production_applied": false,
+      "provider_calls": 0,
+      "request_acceptance": true,
+      "source_acceptance": true,
+      "status": "awaiting_backend_qualification",
+      "targets": 10
+    },
+    "statement": "Native executions are original r1296 only; this file is a read-only persisted audit.",
+    "status": "failed"
+  },
+  "composite_evidence_controls": {
+    "binding": "c5cc4dccf27b48b83f49369aeb0065a3eb4a38568edf9dd52769f4338d02a697",
+    "compiler_calls": 0,
+    "encrypted_executions": 0,
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-fused-cutover-control-r1298/composite-evidence-control-summary.json",
+    "production_applied": false,
+    "provider_calls": 0,
+    "sha256": "47c77e6537a0670136f04be21c687e8db8acae00d3d215c5eadb865e138893d7",
+    "tests": {
+      "errors": 0,
+      "failed": 0,
+      "passed": 164,
+      "run": 164,
+      "skipped": 0
+    }
+  },
+  "current_calls": {
+    "compiler": 1,
+    "downloads": 0,
+    "http": 0,
+    "installations": 0,
+    "new_input_encrypted_phases": 1,
+    "provider": 0,
+    "qualification_encrypted_phases": 1
+  },
+  "current_tool_controls": {
+    "compiler_calls": 0,
+    "counts": {
+      "errors": 0,
+      "failed": 0,
+      "run": 116,
+      "skipped": 0
+    },
+    "encrypted_executions": 0,
+    "format": "poseidon-common-fused-local-tool-tests-v1",
+    "log_sha256": "16905e327bf8ea55868a7f56fe488eb68d49e40b33ed72add3560eae103cdad9",
+    "provider_calls": 0
+  },
+  "failed_initial_combined_control": {
+    "errors": 0,
+    "failed": 1,
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-fused-cutover-control-r1298/root-final-control-tests.log",
+    "production_source_modified": false,
+    "reason": "new developer module runtime_scope name collision",
+    "resolved": "new module renamed capacity_scope; original diagnostic retained",
+    "run": 116,
+    "skipped": 0
+  },
+  "format": "poseidon-common-fused-offline-stage-report-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_real_agent": {
+    "counts_unchanged": true,
+    "failed": 20,
+    "new_real_agent_generation": false,
+    "passed": 56,
+    "total": 76
+  },
+  "next": "independent approval before exact 11-case offline retest; preserve Boolean proof without rerun",
+  "next_proposal": {
+    "approval_received": false,
+    "binding": "92a24d9abbd0e284961d5a2daac70e65adbb0e9125cb321957810a7b6dc60a4b",
+    "models": 11,
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-fused-capacity-offline-proposal-r1301.json",
+    "phases": 33,
+    "plan_cli_matches": true,
+    "run_created": false,
+    "sha256": "1d821ac8207f1eda06a7b868663355836098e1f3c137d9203043628aa7b053b4",
+    "unapproved_entry_rejected_before_launch": true
+  },
+  "safety": {
+    "all_fixed_driver_hashes_preserved": true,
+    "backend_sources": 648,
+    "case_evidence_reuse": "independent index, same captured approval verification, final complete union recheck",
+    "cutover_journal_created": false,
+    "joint_staged_sources": 706,
+    "no_global_process_lock_claim": true,
+    "old_reports_preserved": true,
+    "production_applied": false,
+    "production_sources": 704,
+    "reference_sources": 6,
+    "source_transaction": "capture displaced bytes and exclusive publication; retain rollback conflicts and crash-recovery materials"
+  },
+  "source_checkout": "/home/lhohy/Code/Poseidon",
+  "status": "candidate_static_repair_completed_backend_retest_pending",
+  "unverified": [
+    "11 static-repaired candidates have not been recompiled or executed",
+    "joint source cutover not applied",
+    "new source/contract real Agent generation not approved",
+    "x86 encrypted regressions not run this turn",
+    "bootstrap/CUDA/large-model milestones unchanged"
+  ]
+}

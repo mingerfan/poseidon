@@ -1,0 +1,8 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "bool_multiply", "status": "captured", "receipt_binding": "84c2930d5e3b3630143aafa1b5f7c748b2ceab955d088ea115c7f95d163bf9ee", "seconds": 5.221970167000109}
+{"case": "mask_index_residual", "status": "captured", "receipt_binding": "85f611417a2cc0cd6db2a3c34921b04f98bdce77013c699857214c4653c8357e", "seconds": 5.219925316999252}
+{"case": "method_channel_mask", "status": "captured", "receipt_binding": "09cd1ac1e8330f889cbf1c84f325397fbf7c49677469b68fa3586080b95a6b67", "seconds": 5.251428710000255}
+{"format": "poseidon-public-boolean-source-report-v1", "plan_binding": "79f8ac4346b4ad8f3caeb9d494e5902f277a39cd507a1ff5c1fe052654f1b391", "status": "passed", "source_captures": 3, "source_capture_passed": 3, "previous_captures_data_revalidated": 16, "tests_run": 40, "passed": 40, "failed": 0, "errors": 0, "skipped": 0, "seconds": 66.96691571100018, "prior_elapsed_seconds": 195.18241160899981, "production_activation": false, "provider_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "network_configuration_changes": 0, "binding": "9f0a4b5f9acb78d6bf07bb6ef5fc0cdd52513f13fa508e1d79efb340b5ed1d34"}

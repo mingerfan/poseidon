@@ -1,0 +1,47 @@
+{
+  "binding": "b8f3d820c1511c0ed00fd0b67746b4b845473d27e251c2c3da0b45d304b82c7f",
+  "branch": "lhy-agent-dsl",
+  "compiler_calls": 0,
+  "default": "v18",
+  "docs": {
+    "docs/README.md": {
+      "after": "83e066eb65bfe465d8aa23729145a980daa072a745d1ff0f8c25dbdbd62de09a",
+      "before": "23f303d7c51bdd241e397413d4ff0455e6378a8c1306476cf22171dbb5fc81e1"
+    },
+    "docs/baseline/agent-current-contract.md": {
+      "after": "cf56666ab18304818fa4fd3ab153ab67956638a3488bcf22c916cb9d857a443e",
+      "before": "c9687daf31bcef078592bf808f3f570d06b19b2249f0282e2b327f838508426d"
+    },
+    "docs/baseline/mac-migration-handoff.md": {
+      "after": "ce111796641a82f7c94709a0327726c00b83edda38d0578fbe3fed8e90b68466",
+      "before": "a7c2d4bfc612746fe2f7f1e5109d6d0092ad8e2c404098577562e5ebab51a132"
+    },
+    "docs/baseline/operator-decomposition-and-python.md": {
+      "after": "3c13c9db697889683a6642fec0768ede0a8d71f6e495d69b0c1000b00e598e80",
+      "before": "27d2874630c792594496c51473c0b97285c662134c1f6a021f15d72c3c4ae600"
+    },
+    "docs/baseline/supported-inputs-models-configurations.md": {
+      "after": "feefefbb06043d9e424cdaafa42cda669d923c8c98fd27d62596f5fee5b93bae",
+      "before": "1876ee31d0f4d6c0e98f0a9a86d70eb2795b1058a4b0a194aea04b4dbfce85fb"
+    },
+    "scripts/README.md": {
+      "after": "9593decc16ac2891ee131f46bb57657cdd3722d495cd414fec4fd21e811e4c7d",
+      "before": "07fe24e3316a141612960bc46edc3f0be6d3050ed0059baa7d0ed99030b79112"
+    }
+  },
+  "encrypted_calls": 0,
+  "format": "poseidon-source-package-docs-verification-v1",
+  "future_plan_binding": "0e006471870ec8c2f89c3c90b29bb717d7d853f6b497a8e41179772b34bafb9c",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "latest": "v28",
+  "local_links_checked": 690,
+  "no_active_execution": true,
+  "plan_started": false,
+  "provider_calls": 0,
+  "request_files_verified": 6,
+  "sdk": "05fcafb594be96bfcbed5fafbf21b818b74d261b97c507352e390bd83b79029b",
+  "source_acceptance_binding": "edece7f6f7a43bd274364dad661a0f5df800de53033ee340945e4426ec96ca16",
+  "source_manifests_verified": 3,
+  "status": "passed",
+  "v29": "explicit"
+}

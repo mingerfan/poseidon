@@ -1,0 +1,345 @@
+"""Trusted storage failure routing; fake adapters only, no API/compiler/FHE."""
+import copy
+import json
+import tempfile
+import types
+import unittest
+from pathlib import Path
+from unittest import mock
+
+from application_diagnostics import (
+    MESSAGES, attach, checked, from_result, make, render, repeat_key,
+)
+from application_policy import DEFAULT_BUDGET, structured_failure
+from component_contract import failure
+from application_component import Application
+from benchmark_suite import Builder
+from test_application_component import Backend, Provider
+
+
+def witness(index=4, required=8192, budget=4096, location=None):
+    return make("compiled_storage_budget",
+                location=location or {"kind": "instruction", "index": index},
+                context={"required_lower_bytes": required, "budget_bytes": budget})
+
+
+def blocked_analysis():
+    # This synthetic receipt tests redaction and exception routing only.
+    from application_planning.compiled_resources import ARTIFACT_FORMAT, canonical, sha
+    value = dict(format=ARTIFACT_FORMAT, status="blocked", failure=dict(
+        layer="resource", code="compiled_retained_payload_exceeds_budget",
+        location=dict(phase="execution", ordinal=4, value="PRIVATE_INTERNAL_VALUE"),
+        context=dict(required_lower_bytes=8192, budget_bytes=4096)))
+    value["binding"] = sha(canonical(value))
+    return value
+
+
+class StorageDiagnosticsTests(unittest.TestCase):
+    def test_exact_witness_and_candidate_location(self):
+        for location in ({"kind": "instruction", "index": 4}, {"kind": "candidate"}):
+            d = witness(location=location)
+            self.assertEqual(checked(d), d)
+            self.assertEqual(d["code"], "compiled_retained_payload_exceeds_budget")
+            self.assertEqual(d["layer"], "resource_gate")
+            self.assertEqual(d["owner"], "candidate_or_layout")
+            self.assertEqual(d["retry_policy"], "diagnose")
+            self.assertIsNotNone(repeat_key(d))
+
+    def test_bytes_must_be_exact_bounded_integers_and_a_violation(self):
+        for required, budget in ((4096, 4096), (4095, 4096), (1, 0),
+                                 (8192, True), (True, 1), (8192., 4096),
+                                 (-1, 1), (2**53 + 1, 4096), (8192, -1)):
+            with self.subTest(required=required, budget=budget):
+                with self.assertRaises(ValueError):
+                    witness(required=required, budget=budget)
+
+    def test_missing_extra_or_private_context_is_rejected(self):
+        for context in ({}, {"required_lower_bytes": 8192},
+                        {"required_lower_bytes": 8192, "budget_bytes": 4096, "actual": 1},
+                        {"required_lower_bytes": 8192, "budget_bytes": "PRIVATE"},
+                        {"required_lower_bytes": 8192, "budget_bytes": 4096, "reference": []}):
+            with self.subTest(keys=list(context)):
+                with self.assertRaises(ValueError):
+                    make("compiled_storage_budget", location={"kind": "candidate"}, context=context)
+
+    def test_location_cannot_disclose_internal_value_or_path(self):
+        for location in (None, {"kind": "source", "line": 4, "column": 0},
+                         {"kind": "instruction", "index": True},
+                         {"kind": "instruction", "index": 4, "value": "PRIVATE"},
+                         {"phase": "execution", "ordinal": 4, "value": "PRIVATE"},
+                         {"kind": "candidate", "path": "/private/reference"}):
+            with self.subTest(location=location):
+                with self.assertRaises(ValueError):
+                    make("compiled_storage_budget", location=location,
+                         context={"required_lower_bytes": 8192, "budget_bytes": 4096})
+
+    def test_old_v2_reasons_rebuild_without_new_byte_vocabulary(self):
+        for reason in MESSAGES:
+            if reason not in {"compiled_storage_budget", "native_signature_mismatch", "expanded_work_budget"}:
+                d = make(reason)
+                self.assertEqual(checked(d), d)
+                with self.assertRaises(ValueError):
+                    make(reason, context={"required_lower_bytes": 8192, "budget_bytes": 4096})
+
+    def test_forged_typed_fields_fail_closed(self):
+        d = witness()
+        for key, value in (("owner", "host"), ("layer", "compiler"), ("code", "ready"),
+                           ("reason_code", "compiler_rejected"), ("repeat_key_available", False)):
+            bad = copy.deepcopy(d)
+            bad[key] = value
+            with self.subTest(key=key):
+                with self.assertRaises(ValueError):
+                    checked(bad)
+                self.assertEqual(from_result({"structured_diagnostic": bad})["reason_code"],
+                                 "environment_failure")
+
+    def test_resource_render_uses_fixed_public_schema_and_integer_context(self):
+        prior = dict(status="failed", layer="resource_gate", category="resource",
+                     diagnostic="PRIVATE /private/reference.npy PRIVATE_INTERNAL_VALUE")
+        public = render(witness(), prior)
+        self.assertEqual(set(public), {"status", "layer", "category", "diagnostic"})
+        self.assertEqual(public["category"], "resource")
+        self.assertIn("8192", public["diagnostic"])
+        self.assertNotIn("PRIVATE", json.dumps(public))
+        self.assertNotIn("execution_readiness", public)
+
+    def test_resource_feedback_does_not_inherit_runtime_claims(self):
+        prior = dict(status="failed", layer="resource_gate", category="resource",
+                     diagnostic="PRIVATE",
+                     tool_diagnostic={"trust": "untrusted_tool_output", "text": "PRIVATE"},
+                     numerical_summary={"passed": True, "compared_values": 8})
+        public = render(witness(), prior)
+        self.assertEqual(set(public), {"status", "layer", "category", "diagnostic"})
+        self.assertNotIn("PRIVATE", json.dumps(public))
+
+    def test_terminal_trust_failures_override_storage_hint(self):
+        for category, expected in (("integrity", "integrity_rejected"),
+                                   ("infrastructure", "environment_failure")):
+            result = dict(structured_diagnostic=witness(), public_feedback=dict(
+                status="failed", layer="resource_gate", category=category))
+            self.assertEqual(from_result(result)["reason_code"], expected)
+        self.assertEqual(from_result({"failure": {"layer": "integrity"},
+                                      "structured_diagnostic": witness()})["reason_code"],
+                         "integrity_rejected")
+
+    def test_layer_or_text_without_witness_is_not_a_resource_proof(self):
+        for raw in ({"layer": "resource_gate"},
+                    {"layer": "resource_gate", "code": "compiled_retained_payload_exceeds_budget"},
+                    {"layer": "resource_gate", "diagnostic": "8192 exceeds 4096"}):
+            self.assertEqual(from_result({"failure": raw})["reason_code"], "environment_failure")
+
+    def test_both_feedback_policies_preserve_storage_witness(self):
+        d = witness()
+        for policy in ("legacy-v1", "precise-v2"):
+            self.assertEqual(structured_failure({"failure": d}, policy), d)
+            self.assertEqual(structured_failure({"structured_diagnostic": d}, policy), d)
+        result = attach({"status": "failed", "failure": d})
+        self.assertEqual(result["failure"], d)
+        self.assertEqual(result["public_feedback"]["category"], "resource")
+
+    def test_repeat_key_changes_with_budget_or_instruction(self):
+        d = witness()
+        self.assertNotEqual(repeat_key(d), repeat_key(witness(index=5)))
+        self.assertNotEqual(repeat_key(d), repeat_key(witness(budget=4095)))
+
+    def test_contract_preserves_checked_typed_failures(self):
+        for d in (witness(), make("compiler_scale_capacity",
+                     location={"kind": "instruction", "index": 4},
+                     context={"compiler_accumulated_scale": 735, "compiler_budget": 720})):
+            result = failure(d["layer"], d)
+            self.assertEqual(result, d)
+            result["context"].clear()
+            self.assertTrue(d["context"])
+        with self.assertRaises(ValueError):
+            failure("compiler", witness())
+
+
+class StorageCliTests(unittest.TestCase):
+    def test_precise_cli_preserves_storage_witness_and_repeat_stop(self):
+        from component_control import PreciseFeedbackControl
+        report = {"attempts": []}
+        control = PreciseFeedbackControl(report)
+        def evaluator(raw, index):
+            report["attempts"].append(dict(index=index, failure_layer="resource_gate",
+                diagnostic="PRIVATE_INTERNAL_VALUE", structured_diagnostic=witness()))
+            return render(witness())
+        for index in (0, 1):
+            raw = json.dumps({"schema": 1, "request_id": "synthetic",
+                              "hecate_source": "def golden(x):\n    return x + " + str(index)})
+            self.assertIsNone(control.before_evaluation(raw, index))
+            public = control.evaluate(evaluator, raw, index)
+            self.assertEqual(public["category"], "resource")
+            self.assertEqual(report["attempts"][-1]["structured_diagnostic"], witness())
+            self.assertNotIn("PRIVATE", json.dumps(public))
+            stopped = control.after_evaluation(public, index)
+            self.assertEqual(stopped, None if index == 0 else "validation_failed")
+        self.assertEqual(report["feedback_stop"]["failure"]["stop_reason"], "repeated_failure")
+
+
+class StorageBackendTests(unittest.TestCase):
+    def qualify(self, item, top_layer=None, category="resource"):
+        import component_backend
+        report = dict(status="failed", attempts=[item],
+                      loop={"feedback_history": [dict(status="failed",
+                            layer=item["failure_layer"], category=category,
+                            diagnostic="PRIVATE /private/reference")]})
+        if top_layer is not None:
+            report["failure_layer"] = top_layer
+        session = types.SimpleNamespace(QualificationSession=types.SimpleNamespace(
+            qualify=mock.Mock(return_value=(1, report, Path("/synthetic/evidence")))))
+        env = types.SimpleNamespace(WORK=Path("/synthetic"))
+        with mock.patch.dict("sys.modules", {"qualification_session": session,
+                                            "hecate_python_env": env}):
+            return component_backend.qualify(
+                {"request_id": "synthetic", "compiler_configuration": {"backend": "poseidon_cpu"}},
+                {"hecate_source": "unused"}, validation_level="numerical")
+
+    def item(self, diagnostic=None):
+        return dict(failure_layer="resource_gate", compiled=True, executed=False,
+                    trace={"frontend": "real_Hecate"},
+                    structured_diagnostic=witness() if diagnostic is None else diagnostic,
+                    diagnostic="PRIVATE_INTERNAL_VALUE /private/reference")
+
+    def test_backend_retains_compilation_and_typed_resource_witness(self):
+        result = self.qualify(self.item())
+        self.assertEqual(result["failure"], witness())
+        self.assertEqual(result["structured_diagnostic"], witness())
+        self.assertTrue(result["observed_stages"]["compiled"])
+        self.assertFalse(result["encrypted_execution"])
+        self.assertFalse(result["numerically_validated"])
+        self.assertNotIn("PRIVATE", json.dumps(result["public_feedback"]))
+
+    def test_bad_typed_receipt_is_environment_failure(self):
+        for diagnostic in ({"format": "unexpected"}, ["PRIVATE"],
+                           dict(witness(), context={"budget_bytes": 4096})):
+            result = self.qualify(self.item(diagnostic))
+            self.assertEqual(result["failure"]["reason_code"], "environment_failure")
+            self.assertEqual(result["public_feedback"]["category"], "infrastructure")
+
+    def test_report_integrity_overrides_stale_storage_hint(self):
+        result = self.qualify(self.item(), top_layer="integrity")
+        self.assertEqual(result["failure"]["reason_code"], "integrity_rejected")
+        self.assertEqual(result["public_feedback"]["category"], "integrity")
+        self.assertFalse(result["observed_stages"]["evidence_integrity_not_rejected"])
+
+    def test_report_integrity_overrides_malformed_storage_hint(self):
+        for diagnostic in ({"format": "unexpected"}, ["PRIVATE"],
+                           dict(witness(), owner="host")):
+            result = self.qualify(self.item(diagnostic), top_layer="integrity")
+            self.assertEqual(result["failure"]["reason_code"], "integrity_rejected")
+            self.assertEqual(result["public_feedback"]["category"], "integrity")
+
+    def test_old_v2_compiler_receipt_is_preserved(self):
+        d = make("compiler_scale_capacity", location={"kind": "instruction", "index": 3},
+                 context={"compiler_accumulated_scale": 735, "compiler_budget": 720})
+        item = self.item(d)
+        item["failure_layer"] = "compiler"
+        result = self.qualify(item, category="candidate")
+        self.assertEqual(result["failure"], d)
+
+
+class StorageApplicationTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.backend = Backend()
+        self.app = Application(self.tmp.name, self.backend)
+        b = Builder([(2,)])
+        self.model = b.finish(b.node("square", ["input0"]))
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def scripted_failures(self, diagnostics):
+        original = self.backend.qualify
+        def qualify(*args):
+            result = original(*args)
+            if self.backend.calls <= len(diagnostics):
+                d = diagnostics[self.backend.calls - 1]
+                return dict(status="failed", failure=d, structured_diagnostic=d,
+                            public_feedback=render(d))
+            return result
+        self.backend.qualify = qualify
+
+    def test_resource_failure_can_repair_within_original_budget(self):
+        self.scripted_failures([witness()])
+        result = self.app.run(self.app.submit(self.model), Provider(["x*x", "x*x+zero_ct"]))
+        self.assertEqual(result["status"], "succeeded")
+        self.assertEqual(result["generations"], 2)
+        self.assertEqual(result["http_attempts"], 0)
+        self.assertEqual(self.backend.calls, 2)
+
+    def test_repeated_storage_witness_stops_distinct_candidates(self):
+        self.scripted_failures([witness(), witness(), witness()])
+        result = self.app.run(self.app.submit(self.model),
+                              Provider(["x*x", "x*x+zero_ct", "x*x-zero_ct"]))
+        self.assertEqual(result["status"], "validation_failed")
+        self.assertEqual(result["failure"]["code"], "compiled_retained_payload_exceeds_budget")
+        self.assertEqual(result["failure"]["stop_reason"], "repeated_failure")
+        self.assertEqual(result["generations"], 2)
+
+    def test_generation_cap_is_not_increased_for_storage_repair(self):
+        self.scripted_failures([witness()])
+        result = self.app.run(self.app.submit(self.model, limits=dict(DEFAULT_BUDGET, generations=1)),
+                              Provider(["x*x", "x*x+zero_ct"]))
+        self.assertEqual(result["status"], "budget_exhausted")
+        self.assertEqual(result["generations"], 1)
+        self.assertEqual(self.backend.calls, 1)
+
+    def test_cached_package_execution_reports_current_storage_rejection(self):
+        from application_planning.compiled_resources import CompiledStorageRejected
+        first = self.app.submit(self.model)
+        self.app.run(first, Provider())
+        second = self.app.submit(self.model)
+        provider = Provider()
+        cached = self.app.run(second, provider)
+        self.assertTrue(cached["package"]["reused"])
+        self.assertEqual(cached["generations"], 0)
+        self.assertEqual(provider.calls, 0)
+        self.backend.execute = mock.Mock(side_effect=CompiledStorageRejected(blocked_analysis()))
+        result = self.app.execute(second, [{"input0": [1., 2.]}])
+        self.assertEqual(result["status"], "validation_failed")
+        self.assertEqual(result["failure"], witness())
+        self.assertFalse(result["encrypted_execution"])
+        self.assertEqual((result["agent_calls"], result["compiler_calls"]), (0, 0))
+        self.assertNotIn("PRIVATE_INTERNAL_VALUE", json.dumps(result))
+        self.backend.execute.assert_called_once()
+
+    def test_cached_package_integrity_rejection_is_service_error(self):
+        from application_planning.compiled_resources import CompiledResourceIntegrityRejected
+        task = self.app.submit(self.model)
+        self.app.run(task, Provider())
+        self.backend.execute = mock.Mock(side_effect=CompiledResourceIntegrityRejected())
+        result = self.app.execute(task, [])
+        self.assertEqual(result["status"], "service_error")
+        self.assertEqual(result["failure"]["reason_code"], "integrity_rejected")
+        self.assertEqual(result["failure"]["retry_policy"], "never_automatic")
+        self.assertFalse(result["encrypted_execution"])
+        self.assertEqual((result["agent_calls"], result["compiler_calls"]), (0, 0))
+
+    def test_generic_execution_error_routes_are_unchanged(self):
+        task = self.app.submit(self.model)
+        self.app.run(task, Provider())
+        for error, status, code in ((ValueError("PRIVATE"), "validation_failed",
+                                    "program_input_or_execution_rejected"),
+                                   (OSError("PRIVATE"), "service_error",
+                                    "program_execution_unavailable")):
+            self.backend.execute = mock.Mock(side_effect=error)
+            result = self.app.execute(task, [])
+            self.assertEqual(result["status"], status)
+            self.assertEqual(result["failure"]["code"], code)
+            self.assertNotIn("PRIVATE", json.dumps(result))
+
+    def test_malformed_typed_storage_error_does_not_claim_resource_proof(self):
+        from application_planning.compiled_resources import CompiledStorageRejected
+        task = self.app.submit(self.model)
+        self.app.run(task, Provider())
+        error = CompiledStorageRejected(blocked_analysis())
+        error.structured_diagnostic = lambda: make("compiler_rejected")
+        self.backend.execute = mock.Mock(side_effect=error)
+        result = self.app.execute(task, [])
+        self.assertEqual(result["status"], "service_error")
+        self.assertEqual(result["failure"]["layer"], "environment")
+
+
+if __name__ == "__main__":
+    unittest.main()

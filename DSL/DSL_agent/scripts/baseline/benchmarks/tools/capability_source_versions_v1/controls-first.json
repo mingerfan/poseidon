@@ -1,0 +1,23 @@
+{
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-source-capabilities-controls-v1",
+  "passed": 168,
+  "scope": "Capability declarations and injected Fake Backend/Provider; no model capture or real execution.",
+  "seconds": 11.899991926009534,
+  "skipped": 0,
+  "source_capture_calls": 0,
+  "status": "passed",
+  "test_source_hashes": {
+    "test_application_capabilities": "7ff46b5596616a8866e48122487471c60d4b790be1c94d27848087398eeaf4c9",
+    "test_application_component": "a0ec6cf377e1aeaa6e2acfe3ab48708525d0ba80e189e6c932252099a0ef47b7",
+    "test_application_diagnostics": "0529893ca45810a2f9f16be0b8554f75cbc43f774308ffae643b51c801d6775b",
+    "test_application_source_versions": "56e42b9b276f0ec0c8c907f9465b18904b83e545edceca0f3b1976397ba6ff0c",
+    "test_pytorch_input_binding": "3f6bd13145bbff97c529f21ec8cbd2164398b28bff0d612a55824c697d7d141b",
+    "test_staged_application_reuse": "ad13c2707203902958a081226b5afba1658d53e36c3770f13989f0c29fc11bc5"
+  },
+  "tests": 168
+}

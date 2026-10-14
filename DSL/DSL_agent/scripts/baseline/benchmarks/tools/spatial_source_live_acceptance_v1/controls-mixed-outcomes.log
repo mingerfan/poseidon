@@ -1,0 +1,23 @@
+test_all_passed (test_acceptance_outcomes.OutcomeTests) ... ok
+test_boolean_count_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_complete_cannot_omit_case (test_acceptance_outcomes.OutcomeTests) ... ok
+test_duplicate_case_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_empty_usage_is_unknown (test_acceptance_outcomes.OutcomeTests) ... ok
+test_failed_http_is_terminal_but_usage_unknown (test_acceptance_outcomes.OutcomeTests) ... ok
+test_inflated_pass_count_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_inflight_receipt_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_invalid_usage_is_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_known_failure_is_counted (test_acceptance_outcomes.OutcomeTests) ... ok
+test_mismatched_call_totals_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_partial_usage_is_unknown (test_acceptance_outcomes.OutcomeTests) ... ok
+test_receipt_reordered_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_received_without_usage_is_unknown (test_acceptance_outcomes.OutcomeTests) ... ok
+test_reordered_case_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+test_skip_is_not_passed (test_acceptance_outcomes.OutcomeTests) ... ok
+test_stopped_missing_case_remains_not_run (test_acceptance_outcomes.OutcomeTests) ... ok
+test_unknown_http_outcome_rejected (test_acceptance_outcomes.OutcomeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.001s
+
+OK

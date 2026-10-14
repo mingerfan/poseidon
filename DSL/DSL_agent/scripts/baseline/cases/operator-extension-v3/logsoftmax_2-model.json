@@ -1,0 +1,104 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "logsoftmax_2",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {
+    "input_scale": 0.125,
+    "generated_2": [
+      1.0,
+      1.0,
+      0.5,
+      0.16666666666666666
+    ],
+    "generated_7": [
+      -0.8068528194400547,
+      1.0,
+      -0.125
+    ]
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "input_scale"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_4",
+      "op": "polynomial",
+      "inputs": [
+        "generated_0",
+        "generated_2"
+      ],
+      "attrs": {
+        "basis": "power"
+      },
+      "outputs": [
+        "generated_3"
+      ]
+    },
+    {
+      "id": "generated_6",
+      "op": "sum",
+      "inputs": [
+        "generated_3"
+      ],
+      "attrs": {
+        "axes": [
+          2
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "generated_5"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "polynomial",
+      "inputs": [
+        "generated_5",
+        "generated_7"
+      ],
+      "attrs": {
+        "basis": "power"
+      },
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "id": "generated_11",
+      "op": "subtract",
+      "inputs": [
+        "generated_0",
+        "generated_8"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_10"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_10"
+    }
+  ]
+}

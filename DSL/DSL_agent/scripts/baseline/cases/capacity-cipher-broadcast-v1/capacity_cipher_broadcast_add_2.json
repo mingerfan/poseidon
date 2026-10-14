@@ -1,0 +1,44 @@
+{
+  "constants": {},
+  "format": "poseidon-model-graph-v2",
+  "id": "capacity_cipher_broadcast_add_2",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        1,
+        3
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        1,
+        2,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "combine",
+      "inputs": [
+        "x",
+        "y"
+      ],
+      "op": "add",
+      "outputs": [
+        "z"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "z"
+    }
+  ],
+  "resource_profile": "medium-v1"
+}

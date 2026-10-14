@@ -1,0 +1,27 @@
+test_candidates_compile_and_match_manifest (__main__.CaptureOverlay) ... ok
+test_complete_three_input_signature (__main__.CaptureOverlay) ... ok
+test_duplicate_operand_rejected (__main__.CaptureOverlay) ... ok
+test_explicit_policy_defaults (__main__.CaptureOverlay) ... ok
+test_frozen_math_functions (__main__.CaptureOverlay) ... ok
+test_manifest_self_binding (__main__.CaptureOverlay) ... ok
+test_missing_operand_rejected (__main__.CaptureOverlay) ... ok
+test_module_paths_exact_ancestors (__main__.CaptureOverlay) ... ok
+test_no_model_case_dispatch (__main__.CaptureOverlay) ... ok
+test_non_boolean_options_rejected (__main__.CaptureOverlay) ... ok
+test_original_production_hashes (__main__.CaptureOverlay) ... ok
+test_projection_inventory_rejects_omission (__main__.CaptureOverlay) ... ok
+test_projection_sources_packed_and_separate (__main__.CaptureOverlay) ... ok
+test_unknown_call_option_rejected (__main__.CaptureOverlay) ... ok
+test_normalized_map_checks_exact_non_linearity (__main__.ProvenanceControls) ... ok
+test_normalized_map_double_component_rejected (__main__.ProvenanceControls) ... ok
+test_normalized_map_missing_component_rejected (__main__.ProvenanceControls) ... ok
+test_normalized_map_profile_change_rejected (__main__.ProvenanceControls) ... ok
+test_normalized_origins_required_for_distinct_graph (__main__.ProvenanceControls) ... ok
+test_partial_loaded_binding_rejected_before_math (__main__.ProvenanceControls) ... ok
+test_record_cannot_omit_marked_source_segment (__main__.ProvenanceControls) ... ok
+test_record_rejects_reusing_source_segment (__main__.ProvenanceControls) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.032s
+
+OK

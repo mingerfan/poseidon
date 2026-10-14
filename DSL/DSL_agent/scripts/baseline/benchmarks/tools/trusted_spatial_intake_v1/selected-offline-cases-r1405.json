@@ -1,0 +1,759 @@
+[
+  {
+    "case": "resize_1_nearest_0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/resize_1_nearest_0/source/manifest.json",
+    "historical_source_manifest_sha256": "93c4f843d0bb58814411481501c2048a1b2a80091a9ea2cab12df54685aecd4f",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/request.json",
+    "request_id": "547c5beae9c1ee0d1eb1bb3695ec8416358e8d27bd85c0e3b11af911e5e88b92",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/candidate.py",
+    "source_task": "8d553b21917d403288701fc4138da4f8",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/resize_1_nearest_0/p4/tasks/8d553b21917d403288701fc4138da4f8",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "8d553b21917d403288701fc4138da4f8"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/request.json": "4181755381c1e38a2ecff893db3d689cd6e0a33a14404fdf5529d4302afad409",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/lowering.json": "5a20338ffca0a5e22f8398a9d0afa71b01cb5529e3998b4369263f53fbc6d074",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/static.json": "4af5f6197ed70b21c608be4a1f417a5c48180fd4b5699b5dbf01b8af0c911ca6",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/candidate.py": "af030f2d0e71105449e64441829e39a858c8d3eed34c2d9152144614614a30af",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/model.json": "35836204d96d391c64e8ee37ed5ccb7a55b0f15b584ebff03da7d245a81dcd3b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/provenance.json": "d98ff291f70fdd9c6c3a38c6f813eb549c942e995a42b80e360d28148c198afc",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/source/models.py": "679dc6e83e6efa3d023913870591295d0ee6b09a4acf703c2b63cb604f2ef67c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_0/source/manifest.json": "b4129d6433374d62e9bf4f369b45cf63bbed3fd9d73076cf6cc9fc082776f171"
+    }
+  },
+  {
+    "case": "resize_1_nearest_exact_1",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/resize_1_nearest_exact_1/source/manifest.json",
+    "historical_source_manifest_sha256": "7db725ef527018eeb25d8df98bc7688b64f64b62b0f00e6f9e3a277c01d09d2a",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/request.json",
+    "request_id": "30123f804d9ee20c67808bd16917f8d241cbb025051077655a2e499270442736",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/candidate.py",
+    "source_task": "6336c664b22a479da8af3d7d32e766f9",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/resize_1_nearest_exact_1/p4/tasks/6336c664b22a479da8af3d7d32e766f9",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "6336c664b22a479da8af3d7d32e766f9"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/request.json": "47038546f2b75ffbee89a16baa4aaf03fec9e2da76a3a9bd7a7a3a3cac051d2b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/lowering.json": "5a20338ffca0a5e22f8398a9d0afa71b01cb5529e3998b4369263f53fbc6d074",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/static.json": "251f8bb9a14569ccceb0bd81abb9dac750a355d1adbaff315f73e954b1cf1e02",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/candidate.py": "d1b7e89981bd671c4480c0c10555f65f6593e1af8b41af11926a8f6dfc73d7f4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/model.json": "75478ef0c1de23ff9b61962805b76b5cf2f23892d0b0ef8183e3de62ee0455e1",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/provenance.json": "716bca3bd3f180ce929ce7b2abd1b35db12891c7b1baac04dcb72e5bf02eed48",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/source/models.py": "8f5c7dcc015753e73e04a6040ca7a01a93366c76b181cbc72aab313f23896298",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_nearest_exact_1/source/manifest.json": "15aa9d2bf9b2691893d796da6d6defc4ca5958014badbf633a471eb38e5d2e37"
+    }
+  },
+  {
+    "case": "resize_1_linear_0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/cases/pytorch-spatial-v27/linear_resize/manifest.json",
+    "historical_source_manifest_sha256": "61f8f20e07f111ec1b7481b9d6a6cce828a16beb6892e97572b97f96bf6fa3b6",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/request.json",
+    "request_id": "a12a1039613eb2e539bb92041a50bc85de68a19b44b990d18282f322e5ad086b",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/candidate.py",
+    "source_task": "3819b7c109e94ef1bed13f99036c5d99",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/resize_1_linear_0/p4/tasks/3819b7c109e94ef1bed13f99036c5d99",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "3819b7c109e94ef1bed13f99036c5d99"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/request.json": "331e3d37df41b500a01fcaad282b88cf3bf4ce1fdd71fe8e028651c9f90f6441",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/lowering.json": "03130ef124dbeb978a73d74dec207f8cf5ecdb224e497ff55b7e8dc1fd4bae8e",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/static.json": "4e5e77cef1e08193d7aacf460fd35817a3cc7a78e5b389b51eae513371260e5f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/candidate.py": "118cb175aa613cbf9de9d572ca91a6ac2f2d328550fcb964f9f48dac89a6c20b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/model.json": "cf5859f7ca3bb727264dc6d1d7dfac051751e41d19b0a04b0fc2c6ad8cd8128b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/provenance.json": "1d92592a8f2df3f6ea8afe6ec228103d77d3945562ebf73064a961dcfcc45e18",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/source/model.py": "a79cb1a97242c1100696b9cdf4c7038403aed80e00ea904d5a65e4f2d3adbaea",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_1_linear_0/source/manifest.json": "61f8f20e07f111ec1b7481b9d6a6cce828a16beb6892e97572b97f96bf6fa3b6"
+    }
+  },
+  {
+    "case": "resize_2_nearest_1",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/resize_2_nearest_1/source/manifest.json",
+    "historical_source_manifest_sha256": "e4ffff0dfc24f38f2e17f0c2a1aa1900894b790589ccc5dd5b92a861387b926d",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/request.json",
+    "request_id": "5de981eeed9b49331ca283057712a0f1d89e042a6d910847105bbf38a83614c1",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/candidate.py",
+    "source_task": "d4e9e550c2924de8b682fb3e6b486d8c",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/resize_2_nearest_1/p4/tasks/d4e9e550c2924de8b682fb3e6b486d8c",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "d4e9e550c2924de8b682fb3e6b486d8c"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/request.json": "a28e810de7c4d7c662efd1f5e62a4d598a60138da319d4aa1bf4e105a9a977fd",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/lowering.json": "332543ad58af1c27553dd7beac4e2cc6dd8c6db4fd50cee9f7ee33b6c93d20d5",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/static.json": "bf8692eee44d44fa36f9fe244986d8e99995afde77781c17d5cfc0f4f0ea67ea",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/candidate.py": "fe751fbe17df6a61aab2c3a3a3c6dbe626c1dbf17ea6a7f3d37d98c4c52367f1",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/model.json": "f2f20e60a086186c63f9d3dda1d94676d4441e95c83e681999cf52a1abce124b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/provenance.json": "33057cbacd44e096f043f3fcf8ce49dfbb6b15b7c4f7036301a51fa76d8b36ef",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/source/models.py": "ccea611f2ddedcea08d5233c3c9f032dbe2145fd4a068bf24bf662fc80b7df0f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_1/source/manifest.json": "1062c284250f7d48b607446479249a0b6cf198abfe85d5c353075472aa7c0220"
+    }
+  },
+  {
+    "case": "resize_2_nearest_exact_0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/resize_2_nearest_exact_0/source/manifest.json",
+    "historical_source_manifest_sha256": "e0991b02a8a07f9df6de69e7032e68f7cda7042925aff589af2230b48bdd2af0",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/request.json",
+    "request_id": "f626d4af971a8a37a5dc0587f7285276e1f71811d74a670405c5515a7f49c4c8",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/candidate.py",
+    "source_task": "e07dd57ec363474f926746c4bf396b68",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/resize_2_nearest_exact_0/p4/tasks/e07dd57ec363474f926746c4bf396b68",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "e07dd57ec363474f926746c4bf396b68"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/request.json": "bde281d64b8d480b14e92b7590b86af053f2b86995f61e6ab85d9d1cceda3d6c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/lowering.json": "05e487b6b475968dc20f64a033ba2948c2ec349f2ed060ba7313af2cf0099e17",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/static.json": "f565e868403eb349d65d522c3b0fd0f25fb6ac998a5de067b13acc37196eeb7b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/candidate.py": "ef1b85ce51f5f9ae976e84375e926f5566b16dd27b7b174a8f09d45c2fbe4ffc",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/model.json": "b76958395cf2e0a9e1513e518ab245cb9ae702571023e7653836edbb9049fd02",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/provenance.json": "50e8f017262464be58083cb4441b8c5579f37a2d3d883074468b5c2dc1c43966",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/source/models.py": "930f6982fd9a275d3d1ee9e0099853e1cf0b83be3d6cd0633bc0bdc8b299213b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_nearest_exact_0/source/manifest.json": "119c8c8c29f3af5f918c625f3b0efc3f96e8cc622b0a653115f06de9f953ec70"
+    }
+  },
+  {
+    "case": "resize_2_bilinear_2",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/resize_2_bilinear_2/source/manifest.json",
+    "historical_source_manifest_sha256": "e26f6363fb0105df7a10a8ef5c57c306c216b90a0888bc4bd61c64cf6d94b767",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/request.json",
+    "request_id": "e05a516103c8480a86ea9f16b9daac5db4be6919422f65252446c17138505fe8",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/candidate.py",
+    "source_task": "ab2fdcacfe4343d6a8aa875e2c28704f",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/resize_2_bilinear_2/p4/tasks/ab2fdcacfe4343d6a8aa875e2c28704f",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "ab2fdcacfe4343d6a8aa875e2c28704f"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/request.json": "29bc54f860f3e56fd0594b1abfe96703bb98dd48e901e648ff9c62bd82daf777",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/lowering.json": "7b3ce157ce142facdd077f27bf9cd676db8bda6cf4bd9a6cd0051476c823fe88",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/static.json": "8a64f7f3189b126a2e928e6efd0a4c1c4893e31eacf3fdd5476e2fca67084b9c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/candidate.py": "bc70b9931d35e450d8ba70d70872a2e38daa3dad67d87185f4a2219411000a97",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/model.json": "6c05868fb2845f3a1720ac13bb436d5fb266f177a4212dafb9fd63dafdb513f2",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/provenance.json": "53b173b70144b29489f4078864facc6c772a7b3dd40f7b37213d5aa874b8c528",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/source/models.py": "1b0e7d1398a0bca50864ae53190675f4a7732a40f54b732e698aac1e65f613e9",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/resize_2_bilinear_2/source/manifest.json": "9fbbf915a1fcfcb5feec86d1552f0afe34d8d93c00e10b0ebec9e80b7eadf96a"
+    }
+  },
+  {
+    "case": "transpose_1_0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/cases/pytorch-spatial-v27/grouped_conv_transpose/manifest.json",
+    "historical_source_manifest_sha256": "54d806e1c0ca4795fe53b4b5a299312c1a6fefb09af1617b1876711bb05432c4",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/request.json",
+    "request_id": "d964019d8ce5ca426d919f9bf4283fb4142e9074a1583f7fb788d46c10e5b6eb",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/candidate.py",
+    "source_task": "8d4c0633f0be4334adea2098c1596911",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/transpose_1_0/p4/tasks/8d4c0633f0be4334adea2098c1596911",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "8d4c0633f0be4334adea2098c1596911"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/request.json": "f0f217baff9b3aa6d5ef2a2c92291c30194a50c2f9da7ccfae0eef049dee4648",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/lowering.json": "da18a8d9522ffb07637b685430983e865826b5302417398b3141b2cb8dd601e4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/static.json": "0042975f59e99731821e96fbdfec7e5f9fb2392cc0602532c5487ebc3be90eb8",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/candidate.py": "f0978d3633fd9a57ff447b0add683ced82a98ff2f2e04e3de95e10c12b21ab08",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/model.json": "f73f1312a49dd92a76a270d9286c0d0189eac833ee52ac9e3a98c703527f1874",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/provenance.json": "f155a59e38f574b7b7f3a41db2b062a5ad2777883abf864950aa69b5ef241e6d",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/source/model.py": "d8575caf2e5c0e5cc2ef6b28b1831c3fbec33e92acf825b1d087ae68fb8f96ef",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/source/weight.npy": "bd7b60b38bd8545c172627f87756a04094d31ac4aad6ab544c72e767ba73afad",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/source/manifest.json": "54d806e1c0ca4795fe53b4b5a299312c1a6fefb09af1617b1876711bb05432c4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_0/source/bias.npy": "7ecc8a102644160e1d2364579b3f02c98c16de64b88ffd5776d97f894eed7c29"
+    }
+  },
+  {
+    "case": "transpose_1_1",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/transpose_1_1/source/manifest.json",
+    "historical_source_manifest_sha256": "8abeec26fa92295feb9a3d1fbdea16e5b7c53acd29859612eda18baf1b13ff43",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/request.json",
+    "request_id": "b249c30589f5ea29d79d5d449142b22ff73c07a6bd2068483bfe3afed097cb57",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/candidate.py",
+    "source_task": "fe9cde0276624ab8b88daa1f721f16f3",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/transpose_1_1/p4/tasks/fe9cde0276624ab8b88daa1f721f16f3",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "fe9cde0276624ab8b88daa1f721f16f3"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/request.json": "b26b1ae7be9bd9bf559dba6ca929a3859519eb156221d6b03e9d39c075f1b871",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/lowering.json": "da18a8d9522ffb07637b685430983e865826b5302417398b3141b2cb8dd601e4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/static.json": "0042975f59e99731821e96fbdfec7e5f9fb2392cc0602532c5487ebc3be90eb8",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/candidate.py": "f0978d3633fd9a57ff447b0add683ced82a98ff2f2e04e3de95e10c12b21ab08",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/model.json": "4aa22f0f8bf69fbce381c50610aa92925516ba7c750955cf14ac89f54fd5b6f3",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/provenance.json": "65629c03fd85f049193fe2796a2332280b65dcea724d70757c8857730b9b2c10",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/source/state_0000.npy": "b84b96d0c6ea414da981f32b71733986b2e06c3adfa6a8906556cb27311a0b50",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/source/state_0001.npy": "556e564727d580862d3849743c883e36901fbca9f8bd170fc753814882dbed73",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/source/models.py": "9a1701392e240e9bdf5368dd1b2ba8298255596e4861c90821019e7112acd67a",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_1_1/source/manifest.json": "df69c855a4093e51890f147d86b9d0b250ec3d5f22a98d04c691ba7ce779d7b8"
+    }
+  },
+  {
+    "case": "transpose_2_0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/transpose_2_0/source/manifest.json",
+    "historical_source_manifest_sha256": "6cdb919a610a5212b2fffc213c888bd83c2c0f7262223406ade4cbd4fdfd86a1",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/request.json",
+    "request_id": "e9b121d4a435b1d552cdca9ce7d12e3b69e66844c1e01939bc384dad712dccbf",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/candidate.py",
+    "source_task": "21df0027e50a4b189834e4f4730556d6",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/transpose_2_0/p4/tasks/21df0027e50a4b189834e4f4730556d6",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "21df0027e50a4b189834e4f4730556d6"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/request.json": "f2780b8d2744f844a07ae26ed8c61af622325dba7f60226fea8f72d6fbd1ded1",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/lowering.json": "3f0b0533f38a04755192ad4186838684ee8a1ae2ea3877b59de844dc15d8a506",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/static.json": "3627ac2940591eea0b79899938e36e1229ee51c1a0dad446a3125fc23b211b1c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/candidate.py": "a5ebf586fb4bb9ae2c668126688d849c33655bec782e05f0a89af997ce351ab5",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/model.json": "187876ad0bb342357f7534afc55d5111c0a074cea0b6ef8538c64e8c27e02229",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/provenance.json": "ca68e69f2fa53a464aaa68481673106eec13b537be8d887a174751c9d08a3532",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/source/state_0000.npy": "85e87e4a80deab3b6495e8e8b917ec305b4a7d643df38eb1ffc131ff96f24488",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/source/state_0001.npy": "b7638cddc3c2b27a7a6cdc2f45090fc9198ecd1c0360f3f68977407b6096491f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/source/models.py": "641c4010b11353b45157d3be661202aa32a8e667b4641f75044beaaa589f038c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_0/source/manifest.json": "db5b99d0a3993e32395bfa4c486546904f371b3452d3777d7f2614c34cb78823"
+    }
+  },
+  {
+    "case": "transpose_2_1",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/transpose_2_1/source/manifest.json",
+    "historical_source_manifest_sha256": "bc7a7d3f94079eb58cb15ea860e618128b70c6e96880bb7568838a0fde7c4806",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/request.json",
+    "request_id": "81c89b864e0a4de06547d03f6f8ddd27b3ac8f8d52dedfb100f7b7e4f4d070dc",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/candidate.py",
+    "source_task": "943e0ab393f9405ba3f9fbd56c5b3586",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/transpose_2_1/p4/tasks/943e0ab393f9405ba3f9fbd56c5b3586",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "943e0ab393f9405ba3f9fbd56c5b3586"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/request.json": "3e50d670f7f22dc4f3f121091783f3673f54aa25777b85fc3844b6caa44d33d7",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/lowering.json": "3f0b0533f38a04755192ad4186838684ee8a1ae2ea3877b59de844dc15d8a506",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/static.json": "3627ac2940591eea0b79899938e36e1229ee51c1a0dad446a3125fc23b211b1c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/candidate.py": "a5ebf586fb4bb9ae2c668126688d849c33655bec782e05f0a89af997ce351ab5",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/model.json": "a5e8ace173cc8df22f2f7f213ad6c832a7c09a6f1e016696dca65fcf1bfa3c8b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/provenance.json": "c81ad59121bcbf27cc10638529fa41a9f9ed4d91891a214f9c1238bcc304cabe",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/source/state_0000.npy": "6fa44530b566d1d6dd61bc78a81e4b94ea4f993a1f32f0abc362754b3a777899",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/source/state_0001.npy": "6a63e1fac3d77165f81ee0230401ea7215e5560e226e47365ed6665b0dfb11b8",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/source/models.py": "f7d3cbb7a482e8d75cf0ce05e707d4f6e3eecf8dbc35a16ae8ce1f9494faa1ed",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/transpose_2_1/source/manifest.json": "f099db426fa7376abbaaa551a67651b0ed215095350c6df9fc90d4c72f81fe36"
+    }
+  },
+  {
+    "case": "composition_0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/composition_0/source/manifest.json",
+    "historical_source_manifest_sha256": "5ff05688acd124a5d14ba207315975140b7ab9b006f65de4c4371f44ab928143",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/request.json",
+    "request_id": "cf8078f449f94d3385c9926f2f4145ef3e7e9964406fcc396efe605789367619",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/candidate.py",
+    "source_task": "d8e7654e4abc458899d003bf8b65ab9e",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/composition_0/p4/tasks/d8e7654e4abc458899d003bf8b65ab9e",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "d8e7654e4abc458899d003bf8b65ab9e"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/request.json": "217b4739f3d74bb79e2df67036f6be3d85bed681925697bbd8d8904aedbbc230",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/lowering.json": "e849c780e074bd7dc719cebdb775fa3d5bf4014365dfe27fad88b5c55e286dec",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/static.json": "5a2a911cd54b651ef7ab982d84195f802871dd353693c2e8c87e436abb37691e",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/candidate.py": "1bf98dd2fda42d9f6f0799cdc58c0b2ed6ad313993abc1158e6bb4e264c26c36",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/model.json": "de8f79fcbd3cedc832202c38f5d6467431fb56278de24afdd9554aba38b932b9",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/provenance.json": "b9aad0521c315dfe73586122506b6547098f0f92b34e831c6da9ee1f76c5425d",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/source/state_0000.npy": "9f6b065e794b20a1bb9105ba329100f94454691f3dfe4a6d2b63c2629c0caa89",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/source/state_0001.npy": "efd3c264c7fb79371c54ec388514f93c877f98b9e1b7d63525e1440d1704b29f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/source/models.py": "5a7b5991ba09872106271f937f7448d22db04ab2e6f3f59264ba382d5da6ac12",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_0/source/manifest.json": "4f27d8b7f80c624c11aca6fd4be3ab5326d0a80ae0ec5e337294a508fe393cbc"
+    }
+  },
+  {
+    "case": "composition_2",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/composition_2/source/manifest.json",
+    "historical_source_manifest_sha256": "f5770e6593c852c1f60847d8518d211eda8303e4ae8d93de2e618faa6f24bffb",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/request.json",
+    "request_id": "12490b9240552f68290f586b28248686b9e6f74306c8b6f5f36ed6d448bf4191",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/candidate.py",
+    "source_task": "289be61fb72d4df3a4bf73ef23e93282",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/composition_2/p4/tasks/289be61fb72d4df3a4bf73ef23e93282",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "289be61fb72d4df3a4bf73ef23e93282"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/request.json": "a5371568f5fa2db7e00386196beec7e608feb8b9944a77ea67b7283c569da32e",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/lowering.json": "4ee54560ba8912647ddc888898caee0b9e8d21a141b3cc868a2a1ffb7e7e42d4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/static.json": "ec4dd6c17182559a3721d5962f406ac952ff57d7c01854b2b512746f19058348",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/candidate.py": "e48935f62f07596f5f136ce1fa8fc42b1d6298447994048323e5c4e0aa31f00f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/model.json": "3fa03e4c0535a80e89e2267a34fde31d3b34551c205db3a208b7ffc9d4da1ee7",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/provenance.json": "a28832545902a3c7dcd2d4f4ecbbb350a08a8c587b42f198c4400baa70863c85",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/source/state_0000.npy": "9f6b065e794b20a1bb9105ba329100f94454691f3dfe4a6d2b63c2629c0caa89",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/source/state_0001.npy": "efd3c264c7fb79371c54ec388514f93c877f98b9e1b7d63525e1440d1704b29f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/source/models.py": "0bdf0ddd07a7f7109f54ee6877a1b192b9e4c578a8ac47f761987a411dd8bcf4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/composition_2/source/manifest.json": "7e79f1478234c8c9bcf3c7979095c69bfb740f5f88e2fc311753fa5418261ac7"
+    }
+  },
+  {
+    "case": "structured_dict",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": true,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/cases/pytorch-spatial-v27/masked_resize/manifest.json",
+    "historical_source_manifest_sha256": "a59b0d4cc42505b13fd28c19819f0952e5c51e4ee54641510acbafd7169212d8",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/request.json",
+    "request_id": "3dfc3b0245c042974a07e5a56e76b0ed7e6c36fa24dbf5a8a450e5c207227ff6",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/candidate.py",
+    "source_task": "80f67845dfdc496f96795250141dc874",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/structured_dict/p4/tasks/80f67845dfdc496f96795250141dc874",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "80f67845dfdc496f96795250141dc874"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/request.json": "875935e9b28af686a382f25efa9a70a538716a3f410bcc0492daa27506c28e00",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/lowering.json": "9dd8db797ff53b4c51be7446c454d7f614b6794dcd824e619b80039227e75da2",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/static.json": "e5ffbb5ca5d7e9009663b262b1a2e0af369c9222e7c27cfc6813441f7e17a8ed",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/candidate.py": "2c1a7dbeb00046e0341b1722407a92443756dd97b3ec409b41b9eba1ccd180b4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/model.json": "198aa706b4a9bb5195fe783e39c35d9eab6e1f755c4880b0473d169f3f1c58e1",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/provenance.json": "3383bbe2999bafe26ed1c8bf0cddf4ee111ada11c1028e3052bda01cf012d172",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/source/model.py": "f78432cb875c592bae6e0bf2f451129fdb68742fe544e7f03a84b1b019c58c2f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/source/mask.npy": "de642c82aea2abc6de6a69a582e5d2abf4fa35e3813f7707eab436bfb742891d",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/structured_dict/source/manifest.json": "a59b0d4cc42505b13fd28c19819f0952e5c51e4ee54641510acbafd7169212d8"
+    }
+  },
+  {
+    "case": "nested_keywords",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": true,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-sandbox-stage-1791728344527028739/nested_keywords-source/manifest.json",
+    "historical_source_manifest_sha256": "f2febc8db494c739b6964b4c1caab30361c7dd3562f9ded0e0a77fb6898c1e6f",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/request.json",
+    "request_id": "a8428d69d49a3df09382839dff3896d8fbc8b631efff79589f76ed65a58d1aa4",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/candidate.py",
+    "source_task": "009baa40877a4754960b2fa00e68c368",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/nested_keywords/p4/tasks/009baa40877a4754960b2fa00e68c368",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "009baa40877a4754960b2fa00e68c368"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/request.json": "14515a87133b211e456123ce216a5a265790766b24946f579300ca37571a988c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/lowering.json": "f49da962999a3e7285324edee06b9fc61f7d7f340a8ff735451b7fce91cc041f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/static.json": "ed74429dfe5eb063bbd6e30c1e6a382d16c7931dd16b44467800acbd0d619264",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/candidate.py": "caa3bb6a53e39493b83dad7404b4c8e3b4ffd3896d9fff3b1af123b9a5b0828c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/model.json": "496e7c6e6905cb6084a15b630c4ea3c81826e85a7517998fd55ef2572c21b60c",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/provenance.json": "e82dc504be0ec5422bdee20fc68e55f167802445b0c1fedb4880711ab13b58b4",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/source/models.py": "9e864fa46e2041b4511ec3f9acb19b451e225510e5fc43365b6644ab5077afa3",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/nested_keywords/source/manifest.json": "5826cb7e6ac54df5e0f652f24f7f8ea6ebfbfef37a02682b7130509b5c5c27c9"
+    }
+  },
+  {
+    "case": "float32_public_weight",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": true,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v27",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-sandbox-stage-1791728344527028739/float32_public_weight-source/manifest.json",
+    "historical_source_manifest_sha256": "af0073e033591f45de65296aa280adb9b0e7c63e86ba8ac5ff66925ba65a4789",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/request.json",
+    "request_id": "dd56f18b9361ee8c742cd6980b4f82301c270483974a331434020cf2099cd3f6",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/candidate.py",
+    "source_task": "4dd78dd259bd4e588f04834832c58e32",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/float32_public_weight/p4/tasks/4dd78dd259bd4e588f04834832c58e32",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "4dd78dd259bd4e588f04834832c58e32"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/request.json": "b11fff8ab6b3e10b102d29d04375f91ba9d61041d59cae9e2b8e2cc73685aed8",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/lowering.json": "de40b0dda0c01c7fad9f74b4c3f0728405b9f33fbacad002174d8c3b31d23eef",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/static.json": "5426ee57126ccd1ea5ad87f642cd8415579a09fe01e5b1be22731a0b8de1b1a8",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/candidate.py": "f8ad4d00a359a56aaf3eb900e18e622f3e0e7cf1558002bbb794801ba746c318",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/model.json": "79e39d1f80a94fa8715c4e79291169f70003da04401e06a8ab5814106acdd465",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/provenance.json": "a492376d2fdcdc7e8a732f863e5dc54c4488dbbfdd65c02d64802bf0667e55c3",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/source/state_0000.npy": "85ae429e80a5b95d3018abc9e77cd2106fe24a3bfd0b65ea0c81bf9d1ddf188f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/source/spatial_component_fixtures.py": "43faf46cee309eda7e6688216ad42ee13d38c9dbc4f62905eafb6c7cfdee9219",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/source/fixtures.py": "631d438d34a9dcd5d6ba9567435ff7634509aa5341ef62ec3185651a2d287474",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/source/state_0001.npy": "d58871fee71325b11b2e4f4392fe30f55edc5c9ea9861acaaeaeb3c1f906684f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/source/models.py": "bd3c48695d46f085fd149078fb3ad682769d5746c1add3f3d6fda870c55b58d5",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/float32_public_weight/source/manifest.json": "305592d7729df81a6363c28b4f322ba790853f5fe65c4aa08abc9f493e2125c2"
+    }
+  },
+  {
+    "case": "compat_v26_keywords0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v26",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-sandbox-stage-1791728344527028739/compat_v26_keywords0-source/manifest.json",
+    "historical_source_manifest_sha256": "e50a4ccbc4e1204279d8c4488c4ec841ce6d4af6db3a07f31ba6812cd5cca062",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/request.json",
+    "request_id": "27567c9725c693b21e65347ee0127e841d097d52c8fc7e3f58ba096d9e5cb502",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/candidate.py",
+    "source_task": "8d4f87c3886849efaaa5d342b88b7018",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/compat_v26_keywords0/p4/tasks/8d4f87c3886849efaaa5d342b88b7018",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "8d4f87c3886849efaaa5d342b88b7018"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/request.json": "ea1accd1bb40cc3c592e78ab1b53d3665188c217385b7987d22c9b194b780d26",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/lowering.json": "2e0e15672b86d4570cc996b718d0782cd7bd32a8e1c80d5de2ac03672a733d6f",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/static.json": "79d608c937cc2380a3dbb607db467ab590efad017bd91ace4c6fa2dbaf052875",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/candidate.py": "74dc513ae26244d1eadc7477cabd2015caf793029add6231dd837382dff40052",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/model.json": "8a62147e5a640687d7fdf32db2ab460979a0092110258ed760b81927714b80bd",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/provenance.json": "521adeadbb6029a29ebcbcb936f3ed206de97e911b59b3b39c35af426353383a",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/source/state_0000.npy": "a18cb780febba0e9566f44c934139cd438debf2f9eb2616c32c49b5270511a65",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/source/models.py": "f257bdad2b93abfbc9402ca3514b59936f26b6d3fc317fc1881f95ab80006f8b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_keywords0/source/manifest.json": "9aa0352d117bf4d78fcfc6dc73890b92d8c8fb01e61a6dc57cde938f38d8017c"
+    }
+  },
+  {
+    "case": "compat_v26_nested0",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/source/manifest.json",
+    "source_contract": "poseidon-trusted-pytorch-v26",
+    "historical_source_manifest": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-sandbox-stage-1791728344527028739/compat_v26_nested0-source/manifest.json",
+    "historical_source_manifest_sha256": "f0132c362d4a3ef2130a71477b5fc0ff18c70b949637c4c350e2c3efc5892716",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/request.json",
+    "request_id": "7364307db5fa05176b3c73ebb0f087c769ca7519ae641d7b7efbcd5a9384c14f",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/candidate.py",
+    "source_task": "1aba5fcf3f6d4109bd888a792e5c96da",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/compat_v26_nested0/p4/tasks/1aba5fcf3f6d4109bd888a792e5c96da",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "1aba5fcf3f6d4109bd888a792e5c96da"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/request.json": "181244a4f9648169f6d3c249d751494fcaaeaafb7a9bc0d7bbe41ed0133ae506",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/lowering.json": "f21ddf3207ab1821f0a8126c19ca1eab4e62cf9d9d7fff83458607cfdf792d30",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/static.json": "3ccfb4d16fa532a0627e9f09efa03b19f7135d0fef891d546310e92067458cef",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/candidate.py": "7ed1566ff5cd5b7bd46ce0a09378828fd8bcf1acb55483467043c509169d43b6",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/model.json": "314a040ed63b1f6ba0deadf274233d9f51bfc1e1365e213e9b9af413fa0245ee",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/provenance.json": "b76b0128f803fc2d8685d7550a00ab42abd453936aa2f76a1c76ae9df3feff48",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/source/models.py": "f257bdad2b93abfbc9402ca3514b59936f26b6d3fc317fc1881f95ab80006f8b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v26_nested0/source/manifest.json": "902328b757c6d7c98398f04bd0d337766025cbaef706af79c72233f262cd543d"
+    }
+  },
+  {
+    "case": "compat_v1_linear",
+    "resource_profile": "general-tensors-v1",
+    "repeat_package": false,
+    "original": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/original.json",
+    "source_contract": "poseidon-operator-graph-v1",
+    "preflight_status": "passed",
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v13",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/model.json",
+    "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/provenance.json",
+    "request": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/request.json",
+    "request_id": "a4c3c73b3c11345dfaee1a8207900cc02aaa2f8fc975d6cd551cfc7fcbdd4f82",
+    "candidate": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/candidate.py",
+    "source_task": "dacc0958b4954f05b2b24dd8eef3fcb8",
+    "source_task_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094/compat_v1_linear/p4/tasks/dacc0958b4954f05b2b24dd8eef3fcb8",
+    "layout_attempts": [
+      {
+        "period": 4,
+        "status": "static_passed",
+        "task": "dacc0958b4954f05b2b24dd8eef3fcb8"
+      }
+    ],
+    "files": {
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/original.json": "f1aac7946cf219706cdc470daf52b60de467c412710004040b9340cbea2bc53b",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/request.json": "dc3e36a81f165443c86019d996a9e5ba87608e2623e0472e02c63150769316c2",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/lowering.json": "8c89720c2949c0c367cb3eee5a23042294cb39be76e74eea1ac94fd4c201bdea",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/static.json": "5eee68a3523ce72b548b60718bc9af2eb1b60825ef68532caebac6aad9a82b9d",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/candidate.py": "89d23b280b292151490e4f7b1382fcb2bddc01d2c39605d25c442f04ce1c29bb",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/model.json": "f83e2248f7b1ad07d0bf6594070e89df090ab810a2792823edec182205879ab1",
+      "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/ready-r1405/compat_v1_linear/provenance.json": "802cd7fc53029ccd33cafa5c3c1cd1500321717f2536c095943811e3273be3ae"
+    }
+  }
+]

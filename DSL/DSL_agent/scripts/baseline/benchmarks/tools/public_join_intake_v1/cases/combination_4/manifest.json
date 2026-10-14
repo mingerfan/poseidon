@@ -1,0 +1,110 @@
+{
+  "approximations": {
+    "defaults": {},
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "call": {
+    "args": [
+      {
+        "kind": "tensor",
+        "name": "x"
+      }
+    ],
+    "format": "poseidon-pytorch-call-v1",
+    "kwargs": {
+      "z": {
+        "kind": "tensor",
+        "name": "z"
+      }
+    }
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "f8af998561cbe7e6f5e3ddf3f977a882bdb67f605fe62b7d1ece88525dbadd4b"
+  },
+  "format": "poseidon-trusted-pytorch-v34",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "name": "z",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "output"
+  ],
+  "weights": {
+    "bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0000.npy",
+      "sha256": "6056ba222454877a1656a9b076cf6b42cf7a82a28bb2d0179c44b770f00fe93e",
+      "shape": [
+        2
+      ]
+    },
+    "i": {
+      "bytes": 160,
+      "dtype": "<i8",
+      "file": "state_0001.npy",
+      "sha256": "f3edf7ae421f63f8099add63adb009e90f654d984286522ed3c42f3508b03c4e",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "mask": {
+      "bytes": 132,
+      "dtype": "|b1",
+      "file": "state_0002.npy",
+      "sha256": "6ac393bc2949a72d75154bfebce15cdae4161f49193d16b3d90942a9adeaa83c",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "proj": {
+      "bytes": 192,
+      "dtype": "<f8",
+      "file": "state_0003.npy",
+      "sha256": "107fa03d30a762c3ea08fd6fadbd8a0b30bc0b41f152bed8347fe086ed02ce25",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "scalar": {
+      "bytes": 136,
+      "dtype": "<f8",
+      "file": "state_0004.npy",
+      "sha256": "a3cc97f979c354e0a09cd4b065355baa2966ffaef7c82409d1fc8603b91d5718",
+      "shape": []
+    },
+    "w": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "state_0005.npy",
+      "sha256": "c7bb77551938dbc0bd57da57b9706e84205fe9c9f4ef04916ea7f26c40a908c0",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  }
+}

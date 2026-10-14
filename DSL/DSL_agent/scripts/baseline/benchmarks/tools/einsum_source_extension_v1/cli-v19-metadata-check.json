@@ -1,0 +1,12 @@
+{
+  "cli_sha256": "23cf588df4674d3e7b91536425cc23e863228c80c71121451d05db742c64775c",
+  "compiler_calls": 0,
+  "default_source_format": "poseidon-trusted-pytorch-v18",
+  "encrypted_calls": 0,
+  "explicit_source_format": "poseidon-trusted-pytorch-v19",
+  "format": "poseidon-source-manifest-v19-metadata-check-v1",
+  "paid_calls": 0,
+  "same_as_captured_manifest": true,
+  "source_executed": false,
+  "status": "passed"
+}

@@ -1,0 +1,410 @@
+{
+  "model_numerical": [
+    {
+      "name": "1gpu-prefetch-sequential",
+      "passed": true,
+      "runtime_seconds": 0.531461415,
+      "max_error_vs_eager_ckks": 1.1351921009872257e-06,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.017523619,
+        "communication_post_seconds": 0.11609216200000001,
+        "communication_wait_seconds": 0.000215132,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.149993486,
+        "compute_including_boot_seconds": 0.149993486,
+        "encode_calls": 121,
+        "encode_seconds": 0.23452260400000002,
+        "fence_calls": 5,
+        "fence_seconds": 0.000298209,
+        "initialization_seconds": 4.0700000000000003e-07,
+        "online_execution_seconds": 0.531461415,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.171831014
+      }
+    },
+    {
+      "name": "1gpu-prefetch-workers",
+      "passed": true,
+      "runtime_seconds": 0.49260789600000005,
+      "max_error_vs_eager_ckks": 5.871048500694087e-07,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.0242757,
+        "communication_post_seconds": 0.19223642900000001,
+        "communication_wait_seconds": 0.00041331200000000004,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.161989512,
+        "compute_including_boot_seconds": 0.161989512,
+        "encode_calls": 121,
+        "encode_seconds": 0.328066324,
+        "fence_calls": 5,
+        "fence_seconds": 0.490724714,
+        "initialization_seconds": 5.13e-07,
+        "online_execution_seconds": 0.49260789600000005,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.17900569700000002
+      }
+    },
+    {
+      "name": "1gpu-stream-sequential",
+      "passed": true,
+      "runtime_seconds": 0.55836253,
+      "max_error_vs_eager_ckks": 8.277441807535979e-07,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.017906138000000002,
+        "communication_post_seconds": 0.11982092600000001,
+        "communication_wait_seconds": 0.00021074800000000002,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.158994789,
+        "compute_including_boot_seconds": 0.158994789,
+        "encode_calls": 121,
+        "encode_seconds": 0.234862384,
+        "fence_calls": 5,
+        "fence_seconds": 0.000284165,
+        "initialization_seconds": 3.63e-07,
+        "online_execution_seconds": 0.55836253,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.174999024
+      }
+    },
+    {
+      "name": "1gpu-stream-workers",
+      "passed": true,
+      "runtime_seconds": 0.47387305500000004,
+      "max_error_vs_eager_ckks": 1.548449972688104e-06,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.022950883000000002,
+        "communication_post_seconds": 0.16803452200000002,
+        "communication_wait_seconds": 0.00036294800000000004,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.206790897,
+        "compute_including_boot_seconds": 0.206790897,
+        "encode_calls": 121,
+        "encode_seconds": 0.338861169,
+        "fence_calls": 5,
+        "fence_seconds": 0.47215085,
+        "initialization_seconds": 2.61e-07,
+        "online_execution_seconds": 0.47387305500000004,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.175681785
+      }
+    },
+    {
+      "name": "4gpu-prefetch-sequential",
+      "passed": true,
+      "runtime_seconds": 0.552635395,
+      "max_error_vs_eager_ckks": 9.447494608849638e-07,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.017931704,
+        "communication_post_seconds": 0.180623901,
+        "communication_wait_seconds": 0.000578608,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.119321697,
+        "compute_including_boot_seconds": 0.119321697,
+        "encode_calls": 121,
+        "encode_seconds": 0.22380165100000002,
+        "fence_calls": 5,
+        "fence_seconds": 0.0007790910000000001,
+        "initialization_seconds": 2.97e-07,
+        "online_execution_seconds": 0.552635395,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.375281242
+      }
+    },
+    {
+      "name": "4gpu-prefetch-workers",
+      "passed": true,
+      "runtime_seconds": 0.538392227,
+      "max_error_vs_eager_ckks": 8.002195528433731e-07,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.023401172,
+        "communication_post_seconds": 0.541594462,
+        "communication_wait_seconds": 0.0012678630000000001,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.34131315100000004,
+        "compute_including_boot_seconds": 0.34131315100000004,
+        "encode_calls": 121,
+        "encode_seconds": 0.330225988,
+        "fence_calls": 5,
+        "fence_seconds": 0.534709406,
+        "initialization_seconds": 2.7e-07,
+        "online_execution_seconds": 0.538392227,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.38457436500000003
+      }
+    },
+    {
+      "name": "4gpu-stream-sequential",
+      "passed": true,
+      "runtime_seconds": 0.5747106040000001,
+      "max_error_vs_eager_ckks": 8.148643502181585e-07,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.018185536000000002,
+        "communication_post_seconds": 0.176881914,
+        "communication_wait_seconds": 0.0005797850000000001,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.13995175,
+        "compute_including_boot_seconds": 0.13995175,
+        "encode_calls": 121,
+        "encode_seconds": 0.22579299000000003,
+        "fence_calls": 5,
+        "fence_seconds": 0.00075712,
+        "initialization_seconds": 3.6900000000000004e-07,
+        "online_execution_seconds": 0.5747106040000001,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.38171564500000005
+      }
+    },
+    {
+      "name": "4gpu-stream-workers",
+      "passed": true,
+      "runtime_seconds": 0.5005031400000001,
+      "max_error_vs_eager_ckks": 1.2878322195319925e-06,
+      "metadata_matches_eager": true,
+      "timing": {
+        "boot_calls": 0,
+        "boot_seconds": 0.0,
+        "bundle_read_bytes": 1280000,
+        "bundle_read_calls": 100,
+        "bundle_read_seconds": 0.022015141000000002,
+        "communication_post_seconds": 0.529839152,
+        "communication_wait_seconds": 0.001182543,
+        "compute_calls": 375,
+        "compute_excluding_boot_seconds": 0.414973592,
+        "compute_including_boot_seconds": 0.414973592,
+        "encode_calls": 121,
+        "encode_seconds": 0.32065851500000003,
+        "fence_calls": 5,
+        "fence_seconds": 0.49688644600000004,
+        "initialization_seconds": 2.79e-07,
+        "online_execution_seconds": 0.5005031400000001,
+        "raw_peak_bytes": 25600,
+        "setup_seconds": 0.38595403500000003
+      }
+    }
+  ],
+  "memory": [
+    {
+      "name": "1gpu-prefetch-per_device_workers.json.rank0.checks.json",
+      "baseline_bytes": [
+        284561656
+      ],
+      "peak_increment_bytes": [
+        87588864
+      ],
+      "pinned_peak_bytes": 3538944,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    },
+    {
+      "name": "1gpu-prefetch-sequential.json.rank0.checks.json",
+      "baseline_bytes": [
+        284561656
+      ],
+      "peak_increment_bytes": [
+        76087296
+      ],
+      "pinned_peak_bytes": 1409024,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    },
+    {
+      "name": "1gpu-stream-per_device_workers.json.rank0.checks.json",
+      "baseline_bytes": [
+        284561656
+      ],
+      "peak_increment_bytes": [
+        82280448
+      ],
+      "pinned_peak_bytes": 5013504,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    },
+    {
+      "name": "1gpu-stream-sequential.json.rank0.checks.json",
+      "baseline_bytes": [
+        284561656
+      ],
+      "peak_increment_bytes": [
+        66551808
+      ],
+      "pinned_peak_bytes": 1179648,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    },
+    {
+      "name": "4gpu-prefetch-per_device_workers.json.rank0.checks.json",
+      "baseline_bytes": [
+        237801720,
+        170561784,
+        239735032,
+        204181752
+      ],
+      "peak_increment_bytes": [
+        13172736,
+        12877824,
+        10813440,
+        9437184
+      ],
+      "pinned_peak_bytes": 1409024,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    },
+    {
+      "name": "4gpu-prefetch-sequential.json.rank0.checks.json",
+      "baseline_bytes": [
+        237801720,
+        170561784,
+        239735032,
+        204181752
+      ],
+      "peak_increment_bytes": [
+        12288000,
+        10223616,
+        10780672,
+        9732096
+      ],
+      "pinned_peak_bytes": 1409024,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    },
+    {
+      "name": "4gpu-stream-per_device_workers.json.rank0.checks.json",
+      "baseline_bytes": [
+        237801720,
+        170561784,
+        239735032,
+        204181752
+      ],
+      "peak_increment_bytes": [
+        10616832,
+        12877824,
+        10518528,
+        9338880
+      ],
+      "pinned_peak_bytes": 1179648,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    },
+    {
+      "name": "4gpu-stream-sequential.json.rank0.checks.json",
+      "baseline_bytes": [
+        237801720,
+        170561784,
+        239735032,
+        204181752
+      ],
+      "peak_increment_bytes": [
+        12288000,
+        9338880,
+        8749056,
+        9732096
+      ],
+      "pinned_peak_bytes": 1114112,
+      "pinned_final_bytes": 0,
+      "all_iterations_returned_to_baseline": true
+    }
+  ],
+  "trace": {
+    "stream": {
+      "source": "build-plaintext-models/stream.sqlite",
+      "scope": "all H2D copies in online iterations; overlap with union of kernels on the same GPU; NVTX range includes output check",
+      "iterations": [
+        {
+          "range": "online.iteration.1",
+          "wall_seconds": 0.5111495260000001,
+          "h2d_count": 122,
+          "h2d_bytes": 34177024,
+          "h2d_milliseconds": 3.24204,
+          "same_gpu_kernel_overlap_milliseconds": 0.0,
+          "overlap_fraction": 0.0
+        },
+        {
+          "range": "online.iteration.2",
+          "wall_seconds": 0.539713689,
+          "h2d_count": 122,
+          "h2d_bytes": 34177024,
+          "h2d_milliseconds": 3.2768249999999997,
+          "same_gpu_kernel_overlap_milliseconds": 0.0,
+          "overlap_fraction": 0.0
+        },
+        {
+          "range": "online.iteration.3",
+          "wall_seconds": 0.5146324840000001,
+          "h2d_count": 122,
+          "h2d_bytes": 34177024,
+          "h2d_milliseconds": 3.2275829999999996,
+          "same_gpu_kernel_overlap_milliseconds": 0.0,
+          "overlap_fraction": 0.0
+        }
+      ]
+    },
+    "prefetch": {
+      "source": "build-plaintext-models/prefetch.sqlite",
+      "scope": "all H2D copies in online iterations; overlap with union of kernels on the same GPU; NVTX range includes output check",
+      "iterations": [
+        {
+          "range": "online.iteration.1",
+          "wall_seconds": 0.551748645,
+          "h2d_count": 122,
+          "h2d_bytes": 34177024,
+          "h2d_milliseconds": 3.469299,
+          "same_gpu_kernel_overlap_milliseconds": 0.0,
+          "overlap_fraction": 0.0
+        },
+        {
+          "range": "online.iteration.2",
+          "wall_seconds": 0.5480745370000001,
+          "h2d_count": 122,
+          "h2d_bytes": 34177024,
+          "h2d_milliseconds": 3.46229,
+          "same_gpu_kernel_overlap_milliseconds": 0.0,
+          "overlap_fraction": 0.0
+        },
+        {
+          "range": "online.iteration.3",
+          "wall_seconds": 0.533932504,
+          "h2d_count": 122,
+          "h2d_bytes": 34177024,
+          "h2d_milliseconds": 3.490001,
+          "same_gpu_kernel_overlap_milliseconds": 0.0,
+          "overlap_fraction": 0.0
+        }
+      ]
+    }
+  }
+}

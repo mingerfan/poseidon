@@ -1,0 +1,1 @@
+/home/lhohy/Code/Poseidon/scripts/baseline/run_spatial_goldens.py

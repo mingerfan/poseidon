@@ -1,0 +1,1 @@
+{"constants":{},"format":"poseidon-operator-graph-v1","id":"batched_matmul_0","inputs":[{"name":"x","shape":[2,2,3]},{"name":"rhs","shape":[2,3,2]}],"nodes":[{"attrs":{},"id":"product","inputs":["x","rhs"],"op":"matmul","outputs":["y"]}],"outputs":[{"name":"result","value":"y"}]}

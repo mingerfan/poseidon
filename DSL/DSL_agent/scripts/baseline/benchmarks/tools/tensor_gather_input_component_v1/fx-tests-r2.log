@@ -1,0 +1,93 @@
+test_changed_public_state_rejected (test_fx.GatherFXTests) ... ERROR
+test_different_row_indices_and_method_kwargs (test_fx.GatherFXTests) ... ERROR
+test_missing_explicit_policy_rejected (test_fx.GatherFXTests) ... ok
+test_negative_middle_axis_and_partial_dimension (test_fx.GatherFXTests) ... ERROR
+test_rank32 (test_fx.GatherFXTests) ... ERROR
+test_signature_restrictions (test_fx.GatherFXTests) ... ok
+test_tampered_route_rejected_even_after_hash_rebinding (test_fx.GatherFXTests) ... ERROR
+test_vector_and_repetition (test_fx.GatherFXTests) ... ERROR
+
+======================================================================
+ERROR: test_changed_public_state_rejected (test_fx.GatherFXTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 55, in test_changed_public_state_rejected
+    g=traced(Gather([0,1],0),[3]);_,record=normalize(g,[dict(name="x",shape=[3])],resource_profile="legacy-v1")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/gather_fx_normalization.py", line 164, in normalize
+    require(inventory(result)==expected and inventory(traced)==source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Gather pure FX normalization
+
+======================================================================
+ERROR: test_different_row_indices_and_method_kwargs (test_fx.GatherFXTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 43, in test_different_row_indices_and_method_kwargs
+    def test_different_row_indices_and_method_kwargs(self):self.context([2,4],[[3,0,3],[1,2,0]],1,True,"legacy-v1")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 34, in context
+    result,record=normalize(original,[dict(name="x",shape=shape)],resource_profile=profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/gather_fx_normalization.py", line 164, in normalize
+    require(inventory(result)==expected and inventory(traced)==source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Gather pure FX normalization
+
+======================================================================
+ERROR: test_negative_middle_axis_and_partial_dimension (test_fx.GatherFXTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 44, in test_negative_middle_axis_and_partial_dimension
+    def test_negative_middle_axis_and_partial_dimension(self):self.context([2,3,2],[[[2],[0]],[[1],[2]]],-2,False,"legacy-v1")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 34, in context
+    result,record=normalize(original,[dict(name="x",shape=shape)],resource_profile=profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/gather_fx_normalization.py", line 164, in normalize
+    require(inventory(result)==expected and inventory(traced)==source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Gather pure FX normalization
+
+======================================================================
+ERROR: test_rank32 (test_fx.GatherFXTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 48, in test_rank32
+    self.context([1]*30+[2,3],index,-1,True,"general-tensors-v1")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 34, in context
+    result,record=normalize(original,[dict(name="x",shape=shape)],resource_profile=profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/gather_fx_normalization.py", line 164, in normalize
+    require(inventory(result)==expected and inventory(traced)==source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Gather pure FX normalization
+
+======================================================================
+ERROR: test_tampered_route_rejected_even_after_hash_rebinding (test_fx.GatherFXTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 50, in test_tampered_route_rejected_even_after_hash_rebinding
+    g=traced(Gather([[3,0],[1,2]],1),[2,4]);_,record=normalize(g,[dict(name="x",shape=[2,4])],resource_profile="legacy-v1")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/gather_fx_normalization.py", line 164, in normalize
+    require(inventory(result)==expected and inventory(traced)==source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Gather pure FX normalization
+
+======================================================================
+ERROR: test_vector_and_repetition (test_fx.GatherFXTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 42, in test_vector_and_repetition
+    def test_vector_and_repetition(self):self.context([5],[4,0,4,2],0,False,"legacy-v1")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/test_fx.py", line 34, in context
+    result,record=normalize(original,[dict(name="x",shape=shape)],resource_profile=profile)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_gather_input_component_v1/gather_fx_normalization.py", line 164, in normalize
+    require(inventory(result)==expected and inventory(traced)==source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Gather pure FX normalization
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.022s
+
+FAILED (errors=6)

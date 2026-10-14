@@ -1,0 +1,13 @@
+test_changed_public_state_rejected (test_fx.GatherFXTests) ... ok
+test_different_row_indices_and_method_kwargs (test_fx.GatherFXTests) ... ok
+test_missing_explicit_policy_rejected (test_fx.GatherFXTests) ... ok
+test_negative_middle_axis_and_partial_dimension (test_fx.GatherFXTests) ... ok
+test_rank32 (test_fx.GatherFXTests) ... ok
+test_signature_restrictions (test_fx.GatherFXTests) ... ok
+test_tampered_route_rejected_even_after_hash_rebinding (test_fx.GatherFXTests) ... ok
+test_vector_and_repetition (test_fx.GatherFXTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.032s
+
+OK

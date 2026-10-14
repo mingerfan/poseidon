@@ -1,0 +1,19 @@
+{
+  "api_calls": 0,
+  "binding": "e1c4688fb2c345de0f41a432ed591c0fd7d22587b8bfc503af955f970df29597",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-contract-scope-controls-v1",
+  "interpreter": "3.10.14 (main, Mar 19 2024, 21:46:16) [GCC 13.2.0]",
+  "log_sha256": "87ae240bc70254d97c056407ec7315e4ceeb6813736e5b1b221ef1aaa29e3743",
+  "modules": [
+    "test_gather_capabilities",
+    "test_application_capabilities",
+    "test_application_diagnostics",
+    "test_tensor_gather_source",
+    "test_unified_generation_guidance"
+  ],
+  "returncode": 0,
+  "seconds": 3.597814655979164,
+  "status": "passed"
+}

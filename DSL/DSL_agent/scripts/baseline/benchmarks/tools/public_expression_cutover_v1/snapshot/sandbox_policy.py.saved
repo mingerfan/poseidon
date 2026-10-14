@@ -1,0 +1,13 @@
+"""Shared candidate file allowlist and unchanged process resource limits."""
+from process_resource_limits import limits
+
+MODULES = ("process_resource_limits.py","public_weight_context.py","numerical_results.py", "sandbox_policy.py", "model_resources.py","unified_chunk_layout.py","unified_capacity_layout.py","unified_capacity_constants.py","unified_capacity_tiling.py","unified_capacity_routes.py","unified_capacity_spatial.py","unified_request_storage.py","upstream_helper_coverage.py", "upstream_candidate_helpers.py", "upstream-helpers-v1.json", "unified_public_views.py", "unified_public_storage.py", "unified_public_arithmetic.py", "unified_public_unary.py", "unified_public_exercises.py", "unified_public_interventions.py", "unified_public_coverage.py", "construction_evidence.py", "capability_combinations.py", "unified_public_contract.py", "upstream_helper_probe.py", "unified_graph_exercises.py", "unified_native_coverage.py", "benchmark_graph.py", "unified_graph_contract.py", "unified_logical_semantics.py", "unified_directed_semantics.py","unified_failure_semantics.py","unified_typed_guidance.py", "unified_precise_guidance.py", "unified_gate_guidance.py", "unified_expression_guidance.py", "unified_poseidon_guidance.py", "unified_binding_guidance.py", "unified_tensor_axis_guidance.py", "unified_construction_guidance.py", "candidate_check_diagnostic.py", "hevm_abi.py", "platform_config.py", "platform-profiles.json", "workspace_paths.py", "candidate_trace.py", "candidate_contract.py", "candidate_worker.py", "hecate_contract.py", "public_construction.py", "function_construction.py", "lexical_scope.py", "construction_calls.py",
+           "packed_native_exercises.py", "packed-native-exercises-v1.json",
+           "public_numeric.py", "public_strings.py", "public_polynomial.py", "object_arrays.py", "construction_exercises.py", "construction-exercises-v1.json", "seal_artifact_gate.py", "seal_cpu_golden.py", "python_compiler_smoke.py",
+           "hecate_python_env.py", "continue_dacapo_cpp.py", "spatial_ops.py", "cipher_abi.py", "chunked_input_abi.py", "packed_input_abi.py",
+           "object_unary_exercises.py", "object-unary-exercises-v1.json",
+           "scalar_conversion.py", "scalar_conversion_exercises.py", "scalar-conversion-exercises-v1.json",
+           "object_arithmetic_exercises.py", "object-arithmetic-exercises-v1.json",
+           "decorated_functions.py", "native_function_rules.py", "native_array_core.py", "native_public_loops.py", "native_array_alias.py",
+           "native_function_exercises.py", "native-function-exercises-v1.json", "native_array_exercises.py", "compiler_configuration.py", "native_star_exercises.py")
+

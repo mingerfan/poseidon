@@ -1,0 +1,14 @@
+diff --git a/python/hecate/hecate/expr.py b/python/hecate/hecate/expr.py
+--- a/python/hecate/hecate/expr.py
++++ b/python/hecate/hecate/expr.py
+@@ -194,7 +194,9 @@
+ 
+             setattr(cls, f"__{name}__", binaryMethod)
+             setattr(cls, f"__r{name}__", binaryReverseMethod)
+-            setattr(cls, f"__i{name}__", binaryReverseMethod)
++            # Augmented assignment rebinds to a new Expr, as before, but must
++            # preserve lhs/rhs order. The reverse method made x -= y emit y-x.
++            setattr(cls, f"__i{name}__", binaryMethod)
+ 
+ 
+         def innerFactory(cls, name, opcode):

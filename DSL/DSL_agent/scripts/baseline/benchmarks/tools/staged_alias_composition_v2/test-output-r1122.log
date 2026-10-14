@@ -1,0 +1,23 @@
+test_alias_producing_calls_require_alias_path (test_composition.Composition) ... ok
+test_binding_detects_weights_and_plan_edits (test_composition.Composition) ... ok
+test_cipher_cipher_matmul_reads_updated_storage (test_composition.Composition) ... ok
+test_cipher_weights_rejected (test_composition.Composition) ... ok
+test_duplicate_source_ids_rejected (test_composition.Composition) ... ok
+test_eight_operator_groups_three_alias_contexts (test_composition.Composition) ... ok
+test_fresh_gather_not_view (test_composition.Composition) ... ok
+test_invalid_linear_shape (test_composition.Composition) ... ok
+test_legacy_draft_kept (test_composition.Composition) ... ok
+test_missing_approximation (test_composition.Composition) ... ok
+test_no_callbacks_or_dynamic_registration (test_composition.Composition) ... ok
+test_no_object_hooks (test_composition.Composition) ... ok
+test_overlapping_write_still_rejected (test_composition.Composition) ... ok
+test_parameters_must_be_exact_registered_schema (test_composition.Composition) ... ok
+test_public_first_operand_rejected (test_composition.Composition) ... ok
+test_public_matmul_requires_the_separate_matrix_adapter (test_composition.Composition) ... ok
+test_public_mutation_still_rejected (test_composition.Composition) ... ok
+test_source_forward_reference_rejected (test_composition.Composition) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.200s
+
+OK

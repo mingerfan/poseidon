@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+    "--library-path",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib",
+    "/home/xuming/poseidon-runtime-io-20261010/hecate-opt-streaming",
+    "/home/xuming/poseidon-runtime-io-20261010/artifacts/gpu4/qwen24.restored.mlir",
+    "-p=builtin.module(func.func(emit-runtime-plan{prefix=/home/xuming/poseidon-runtime-io-20261010/artifacts/gpu4/qwen24 plan-id=2514 target-id=poseidon-ckks-gpu capability-version=1 operator-spec-id=poseidon-ckks-gpu-65536-estimated-v1 operator-spec-version=1 operator-spec-sha256=sha256:1f12fb5f6a7228e7373ada0d96d5115d190533a887f801a6928ba4ae14c193ff context-id=poseidon-ckks-gpu-65536-estimated ntt=true device-count=4 boot-profile=poseidon-gpu-host-boot-v1 boot-implementation=decrypt_reencrypt inline-payload-max-bytes=4096 report-io=true}))",
+    "--ckks-config=/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/profiles/compiler-profile.json",
+    "--mlir-timing",
+    "--mlir-print-op-on-diagnostic=false",
+    "-o",
+    "/dev/null"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 931.1691816477105,
+  "max_rss_bytes": 70033076224,
+  "input_ir_bytes": 40864182764,
+  "address_space_limit_bytes": 137438953472,
+  "nice": 10
+}

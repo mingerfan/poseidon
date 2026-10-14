@@ -1,0 +1,48 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+test_all_keyword_only_inputs (test_pytorch_input_binding.InputBindingTests) ... ok
+test_capability_uses_explicit_version_and_no_success_claim (test_pytorch_input_binding.InputBindingTests) ... /home/lhohy/Code/Poseidon/scripts/baseline/model_weight_package.py:91: DeprecationWarning: invalid escape sequence '\.'
+  type(item["file"]) is str and re.fullmatch("[A-Za-z0-9_-]+\.npy",item["file"]) and
+ok
+test_changed_default_projection_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_changed_guard_message_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_changed_public_guard_value_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_container_input_mutation_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_default_plan_is_reproducible (test_pytorch_input_binding.InputBindingTests) ... ok
+test_dictionary_reorders_declared_abi_and_retains_kind_key (test_pytorch_input_binding.InputBindingTests) ... ok
+test_duplicate_dictionary_key_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_duplicate_input_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_dynamic_encrypted_control_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_explicit_public_value_overrides_default (test_pytorch_input_binding.InputBindingTests) ... ok
+test_extra_call_field_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_flat_tensor_output_restored (test_pytorch_input_binding.InputBindingTests) ... ok
+test_guard_used_by_output_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_integer_precision_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_invalid_forward_keyword_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_manifest_call_changes_identity (test_pytorch_input_binding.InputBindingTests) ... ok
+test_missing_input_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_missing_required_keyword_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_missing_specialization_guard_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_nan_literal_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_nested_depth_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_nested_public_defaults (test_pytorch_input_binding.InputBindingTests) ... ok
+test_nested_tuple_list_and_public_dictionary (test_pytorch_input_binding.InputBindingTests) ... ok
+test_non_data_default_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_normalized_abi_tampering_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_old_v25_rejects_structured_call_field (test_pytorch_input_binding.InputBindingTests) ... ok
+test_output_tree_tampering_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_positional_only_keyword_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_positional_only_keywords_and_frozen_none_bool_string_defaults (test_pytorch_input_binding.InputBindingTests) ... ok
+test_tensor_input_mutation_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_unknown_input_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_v26_shim_retains_original_call (test_pytorch_input_binding.InputBindingTests) ... ok
+test_variadic_forward_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_wrong_kind_rejected (test_pytorch_input_binding.InputBindingTests) ... ok
+test_wrong_shape_rejected_by_replay (test_pytorch_input_binding.InputBindingTests) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.080s
+
+OK

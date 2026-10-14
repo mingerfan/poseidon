@@ -1,16 +1,27 @@
-# Build output directories. The trailing slash is intentional: source files
-# such as build_type.cmake and build_package.cmake.in must remain trackable.
 build*/
+.venv/
 .vscode/
-# Only ignore a generated top-level dependency directory. Vendored projects
-# contain required source directories such as rmm/cmake/thirdparty/.
 /thirdparty/
+/third_party/cpm/*
+!/third_party/cpm/cpm/
+!/third_party/cpm/cpm/**
 .clangd
 .claude/
 compile_commands.json
 stubs/
+__pycache__/
+*.py[cod]
 
-# Generated bootstrap benchmark and Nsight Systems results.
+# Raw profiler output is archived locally, not shipped in the source tree.
+# Inventory and restore command: test-results/raw-profile-artifacts.json
+/test-results/**/*.nsys-rep
+/test-results/**/*.sqlite
+/test-results/**/*.sqlite-shm
+/test-results/**/*.sqlite-wal
+/test-results/**/*.ncu-rep
+/test-results/**/*.qdrep
+
+# Agent credentials, caches and local profiler output.
 bootstrap*.log
 nsys*.log
 nsys_reports/
@@ -19,14 +30,8 @@ profiles/
 *.qdrep
 *.qdstrm
 *workspace
-
-# Local credentials and editor backups; only the empty example is trackable.
 .env
 .env.*
 !.env.example
 *.env.local*
-
-# Regenerable Python bytecode and local test caches.
-__pycache__/
-*.py[cod]
 .pytest_cache/

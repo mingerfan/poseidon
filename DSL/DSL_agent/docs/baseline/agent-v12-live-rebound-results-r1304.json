@@ -1,0 +1,400 @@
+{
+  "format": "poseidon-current-agent-live-acceptance-v1",
+  "created_utc": "2026-10-08T08:44:35.244084+00:00",
+  "status": "passed",
+  "planned": 3,
+  "passed": 3,
+  "failed": 0,
+  "not_run": 0,
+  "skipped": 0,
+  "new_agent_generation": true,
+  "source": {
+    "root": "/home/lhohy/Code/Poseidon",
+    "branch": "lhy-agent-dsl",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "source_files": 706,
+    "protected_files": 654,
+    "validation_files": 611,
+    "source_hashes_binding": "39a3cb8fc4373ff56defdfc02c23ee05268e96deef1bc89ef137af04e3bf5782",
+    "backend_identity": {
+      "backend": "poseidon_cpu",
+      "implementation_digest": "e9ef5f6d6b2a9e1b0ef02f15636c1ccedae0c90d6976f3c18fe889c7bc11926f",
+      "tools": {
+        "api_tree_sha256": "c8a3d120aae1800ce48a5d3085044b00c7f92c844a7e1531615df3a4babccbf7",
+        "build_configuration": {
+          "cmake_cache_sha256": {
+            "compiler": "76c058b5d19a3e27fe299a7cbd071888494cb48c19f27df2d4d71c807b86f51d",
+            "executor": "181cd264efe24024ab5b98a745b1052f17f54b6772a68110e942ed44f9c77779",
+            "poseidon": "a96456e4ac0651827a50d58c6c80f12c2772c005cd78d2949919a6e1d2106e32"
+          },
+          "environment_files": {
+            "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+            "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+            "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+            "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+            "src/poseidon/tools/dacapo/poseidon-cpu-shell.nix": "38e03f4ec07fc089a14851595f7d1211fe07618875e9868bf5d205dd39274020",
+            "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+          }
+        },
+        "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+        "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+        "executor_sha256": "6cdd255e321025e9286d9968864c5ce0db9333017ca62e6618c6d9830178afd4",
+        "format": "poseidon-backend-identity-v2",
+        "frontend_sha256": "0baecce07032d37aaecba38b64b93cbbc23fb21dac8476de85598dc9ba8d6e73",
+        "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+        "platform": {
+          "byteorder": "little",
+          "configured_platform": "aarch64-linux",
+          "machine": "aarch64",
+          "pointer_bits": 64,
+          "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+          "system": "linux",
+          "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+        },
+        "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+        "runner_tree_sha256": "bad66abf5c45cc0e920083d368ce510167940a67b65181349933fbe40845ade2",
+        "runtime_dacapo_tree_sha256": "f2ef1a237d1cb6d782e1013372e9d395f4e88e7aa449b9301a1fc2956d22a23a",
+        "source_lock": {
+          "dacapo": {
+            "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+            "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+            "patches": [
+              {
+                "file": "dacapo-plaintext-subtraction.patch",
+                "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+              },
+              {
+                "file": "dacapo-concat-layout.patch",
+                "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+              },
+              {
+                "file": "dacapo-bootstrap-containers.patch",
+                "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+              },
+              {
+                "file": "dacapo-native-function-calls.patch",
+                "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+              },
+              {
+                "file": "dacapo-refined-function-input-types.patch",
+                "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+              },
+              {
+                "file": "dacapo-augmented-operand-order.patch",
+                "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+              },
+              {
+                "file": "dacapo-constant-output-path.patch",
+                "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+              },
+              {
+                "file": "dacapo-minimal-mlir-link.patch",
+                "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+              },
+              {
+                "file": "dacapo-gcc-qualified-casts.patch",
+                "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+              },
+              {
+                "file": "dacapo-unused-mlir-dependencies.patch",
+                "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+              }
+            ],
+            "path": "third_party/ckks-runtime-agent/third_party/dacapo"
+          },
+          "format": "poseidon-runtime-source-lock-v1",
+          "integration_method": "reviewed source archives; original independent repositories preserved",
+          "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+          "runtime": {
+            "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+            "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+            "path": "third_party/ckks-runtime-agent"
+          }
+        },
+        "source_lock_sha256": "5e8d7adebd0cac8e9748bcddf0dc5ea408b7123095ff79199cdf47738de84647"
+      }
+    }
+  },
+  "proposal": {
+    "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_live_rebind_v2/proposal-ready.json",
+    "binding": "fadf85332f2ee938ff16c61adda89461edefd27403c6ad928af5588fd6de84b0",
+    "sha256": "d81042c67d0cfe427c1f8f813297702bee94de5f46236329b3d5f534d711bcc3"
+  },
+  "approval": {
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-v12-live-rebound-approval-r1304.json",
+    "sha256": "4b459db04d9c6c85e4ebd3fd295b07b6ee2e99e5d0d5514094d8cb0b5bc51dd7"
+  },
+  "execution": {
+    "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2",
+    "binding": "a8bbbbff40dd198a08c2907dbf295762a54b8bfa4916005344e1ee5c6e09ecec",
+    "report_sha256": "510f22cc86562c0f21cd0d6836b33486f66e18155c0738d0fa206c0388f70c89",
+    "exit_code": 0,
+    "no_related_active_workers": true,
+    "elapsed_to_terminal_report_seconds": 772.5308558940887
+  },
+  "results": [
+    {
+      "case": "linear",
+      "status": "passed",
+      "source_kind": "current_real_agent",
+      "request_id": "976a4c98ad4f0efdc44ea9be5e4e9831468e71e10fdeb30d91f53a9ffe282670",
+      "task_id": "a6c4611081e541c79f8ae683d0cf8ab6",
+      "first_attempt_passed": true,
+      "repairs": 0,
+      "generations": 1,
+      "http_attempts": 1,
+      "qualification": {
+        "groups": 4,
+        "passed": true,
+        "compared_values": 20,
+        "mae": 2.957111530031435e-09,
+        "max_absolute_error": 6.557569348641934e-09,
+        "max_nonzero_reference_relative_error": 4.0009246005112686e-07,
+        "cosine_similarity": 0.9999999999999998,
+        "atol": 1e-05,
+        "rtol": 0.0001
+      },
+      "new_inputs": {
+        "groups": 3,
+        "passed": true,
+        "compared_values": 15,
+        "mae": 2.3029757381925337e-09,
+        "max_absolute_error": 5.504446759507786e-09,
+        "max_nonzero_reference_relative_error": 3.3514706783420176e-07,
+        "cosine_similarity": 1.0000000000000004,
+        "atol": 1e-05,
+        "rtol": 0.0001
+      },
+      "package": {
+        "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/tasks/a6c4611081e541c79f8ae683d0cf8ab6/program",
+        "binding": "3761c449a536fd4a0d129a7d58c302ce0dfa132cbc130e274fb3544f27dc71d2",
+        "manifest_files": 30,
+        "candidate_sha256": "4519734c0968d0b1d9b8cc0601b8ae567484e6fe908315eaf32f2c5cf0dcde0b",
+        "cache_reused": true,
+        "reload_executed": true
+      },
+      "evidence_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qurlt3e7",
+      "generation_usage": {
+        "completion_tokens": 61308,
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 11113,
+        "prompt_tokens": 11497,
+        "reasoning_tokens": 61115,
+        "total_tokens": 72805
+      }
+    },
+    {
+      "case": "norm",
+      "status": "passed",
+      "source_kind": "current_real_agent",
+      "request_id": "2dc4e43c3f6e72bdb8d4b286a53879e5bf46db05eaa6d5247983260e5b5efc89",
+      "task_id": "4693f68990544a37aa4dc34371111476",
+      "first_attempt_passed": true,
+      "repairs": 0,
+      "generations": 1,
+      "http_attempts": 1,
+      "qualification": {
+        "groups": 4,
+        "passed": true,
+        "compared_values": 32,
+        "mae": 2.5148562351498088e-08,
+        "max_absolute_error": 1.2782430303115433e-07,
+        "max_nonzero_reference_relative_error": 7.983058618821204e-06,
+        "cosine_similarity": 0.9999999999999963,
+        "atol": 1e-05,
+        "rtol": 0.0001
+      },
+      "new_inputs": {
+        "groups": 3,
+        "passed": true,
+        "compared_values": 24,
+        "mae": 1.9734839601703538e-08,
+        "max_absolute_error": 1.180780987751831e-07,
+        "max_nonzero_reference_relative_error": 4.2642678046115385e-05,
+        "cosine_similarity": 0.9999999999999369,
+        "atol": 1e-05,
+        "rtol": 0.0001
+      },
+      "package": {
+        "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/tasks/4693f68990544a37aa4dc34371111476/program",
+        "binding": "ce193eaf1df5b4f965b2efcf17f9e5e985192d542d9ca9908f65afc3821c3d88",
+        "manifest_files": 34,
+        "candidate_sha256": "9ebb11ff3c896dda49e687b59dc85b1f1b81b594898f8167b1257b859819c078",
+        "cache_reused": true,
+        "reload_executed": true
+      },
+      "evidence_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ingknvm0",
+      "generation_usage": {
+        "completion_tokens": 27462,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 12422,
+        "prompt_tokens": 12934,
+        "reasoning_tokens": 27073,
+        "total_tokens": 40396
+      }
+    },
+    {
+      "case": "split_weight",
+      "status": "passed",
+      "source_kind": "current_real_agent",
+      "request_id": "f781a798e419af8db6a86b6c98fd1e3120c02b199c15a12a34fb3fb727a3bb98",
+      "task_id": "c35b7c8e6a3a46268af5ee241fb3589e",
+      "first_attempt_passed": true,
+      "repairs": 0,
+      "generations": 1,
+      "http_attempts": 1,
+      "qualification": {
+        "groups": 4,
+        "passed": true,
+        "compared_values": 16,
+        "mae": 3.180097341493265e-09,
+        "max_absolute_error": 1.1480214168191338e-08,
+        "max_nonzero_reference_relative_error": 9.185577383052468e-07,
+        "cosine_similarity": 0.9999999999999972,
+        "atol": 1e-05,
+        "rtol": 0.0001
+      },
+      "new_inputs": {
+        "groups": 3,
+        "passed": true,
+        "compared_values": 12,
+        "mae": 9.330373997856926e-09,
+        "max_absolute_error": 3.6278250042931504e-08,
+        "max_nonzero_reference_relative_error": 2.5189427474308727e-05,
+        "cosine_similarity": 0.9999999999999915,
+        "atol": 1e-05,
+        "rtol": 0.0001
+      },
+      "package": {
+        "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/tasks/c35b7c8e6a3a46268af5ee241fb3589e/program",
+        "binding": "0fd2de81829929410eee06e74e8482b9b1009d8f6c2e62d0af3bd68c1a781007",
+        "manifest_files": 23,
+        "candidate_sha256": "93eb1465074e5882aee2df9c639638eb955d1c06df0d6c938386963a49ba9ce0",
+        "cache_reused": true,
+        "reload_executed": true
+      },
+      "evidence_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-3uaip79b",
+      "generation_usage": {
+        "completion_tokens": 11200,
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 9862,
+        "prompt_tokens": 10246,
+        "reasoning_tokens": 11075,
+        "total_tokens": 21446
+      }
+    }
+  ],
+  "counts": {
+    "compiled": 3,
+    "encrypted_execution_phases": 6,
+    "cache_reuses": 3,
+    "input_groups": 21,
+    "compared_values": 119,
+    "maximum_absolute_error": 1.2782430303115433e-07,
+    "mae": 1.2898513090760636e-08
+  },
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "calls": {
+    "generations": 3,
+    "http_attempts": 3,
+    "transport_retries": 0,
+    "repairs": 0,
+    "calls_resolved": true,
+    "cost_usd": null,
+    "provider_recorded_usage": {
+      "prompt_tokens": 34677,
+      "completion_tokens": 99970,
+      "reasoning_tokens": 99263,
+      "total_tokens": 134647,
+      "prompt_cache_hit_tokens": 1280,
+      "prompt_cache_miss_tokens": 33397
+    },
+    "billing_amount_verified": false
+  },
+  "static_controls": {
+    "tests": 60,
+    "passed": 60,
+    "failed": 0,
+    "skipped": 0,
+    "source": "prelaunch_bound_controls",
+    "log": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_live_rebind_v2/controls-final.log",
+    "sha256": "b4f5e2af5870cab08d06a7e9db60400d082f6ef475a9fafe2704814c5cfa7a9d",
+    "rerun_during_paid_batch": false
+  },
+  "resource_observation": {
+    "run_bytes": 18526208,
+    "global_results_bytes": 28396077056,
+    "free_bytes": 46697984000,
+    "budget_extended": false
+  },
+  "history": {
+    "original_76_batch": {
+      "passed": 56,
+      "failed": 20,
+      "unchanged": true
+    },
+    "new_results_separately_counted": true
+  },
+  "limitations": [
+    "finite_input_numerical_evidence_only",
+    "approximate_layer_norm_reference_not_original_function_accuracy",
+    "does_not_establish_all_v13_v14_combinations",
+    "no_x86_encrypted_run",
+    "no_bootstrap",
+    "no_cuda_execution",
+    "not_full_plan_completion"
+  ],
+  "local_changes": {
+    "existing_modified_preserved": true,
+    "tracked_modified_current": 64,
+    "untracked_current": 759,
+    "this_batch_changes": "approval receipts and acceptance/handoff documents only",
+    "backend_changes": false,
+    "parameters_changed": false,
+    "reference_changed": false,
+    "threshold_changed": false,
+    "installs": 0,
+    "downloads": 0,
+    "commits": 0,
+    "pushes": 0,
+    "prs": 0
+  },
+  "evidence_sha256": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/plan.json": "061a398f3a74807b6eb8abf96a25035ed069ec4ca6ac616317accdd4c922540c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/report.json": "510f22cc86562c0f21cd0d6836b33486f66e18155c0738d0fa206c0388f70c89",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/case-report.json": "4a2631c390ff6bb41c6f3465865c8c9299e41400d421d4b846f5f7f84a953b2c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/new_inputs.json": "b7558ef7a3f2e6afdc41c2f8c07b4278c98fe999e75eceabc6fbcc6f0bf5c475",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/cache.json": "369c7b9f5202e1aeb130f1825ac4b0a62f5884499323818d215d0dcc0ba18675",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/tasks/a6c4611081e541c79f8ae683d0cf8ab6/program/manifest.json": "3418aeafcbeb3cacf5860ef229e8ac911b194aab167b1b4d876c484a26d1a9a1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/tasks/a6c4611081e541c79f8ae683d0cf8ab6/program/candidate.py": "4519734c0968d0b1d9b8cc0601b8ae567484e6fe908315eaf32f2c5cf0dcde0b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/tasks/a6c4611081e541c79f8ae683d0cf8ab6/generation-provenance.json": "b3fa43d7737052ac9b186f6a24510942aa40b333947ec2e2a942e0c5ad4e1ebb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/tasks/a6c4611081e541c79f8ae683d0cf8ab6/provider-metrics.json": "22d4cac5e39684c72ec5c6ef93d632c35aa39e8b2a6f4294d4b44dec5b7127ec",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/tasks/a6c4611081e541c79f8ae683d0cf8ab6/generation-0.json": "7a29f9625f4735e86a4e3808d3200bf0694baf73ff103ffe1bf367d5acd73836",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/linear/tasks/a6c4611081e541c79f8ae683d0cf8ab6/response-0.json": "1f02704cc040964414effe6bfe45ee85ee509e673ffd46bfe77593401c1ac453",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qurlt3e7/report.json": "f258348eb5d459c77aa8b74536b44e9d0a52d9a267447715979dd3ff37937ed5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/case-report.json": "7a9b0cb6c8299050b640e19fc6501ccf870fc3c67a3d4d8590ad50b028d87cfa",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/new_inputs.json": "91d86752b4e00ee393d3ba1fc79c1b0124f6d62f800c275103241bb4007398e0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/cache.json": "36d671abdd36b3ca1c358a7f484d5fe681e2ad53cf27303a9d5cfaa6b004676a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/tasks/4693f68990544a37aa4dc34371111476/program/manifest.json": "9a09ea3939a42fd22dea4932de79f9eee00ab17c897be563594c3fa1427b0721",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/tasks/4693f68990544a37aa4dc34371111476/program/candidate.py": "9ebb11ff3c896dda49e687b59dc85b1f1b81b594898f8167b1257b859819c078",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/tasks/4693f68990544a37aa4dc34371111476/generation-provenance.json": "36f933989b3b3fc413aac6142b3b1ffadbc70d70ce2d6a242e809ee3e16b2630",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/tasks/4693f68990544a37aa4dc34371111476/provider-metrics.json": "a50c3f1c4d7c1b4e9cbb02b8b62de69376e4ef828719928f395a06894ce4da06",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/tasks/4693f68990544a37aa4dc34371111476/generation-0.json": "88cc27c04a9a519088bc788581405fd64ce73879a574e179dbd656670421e742",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/norm/tasks/4693f68990544a37aa4dc34371111476/response-0.json": "e1f7d853690143b650d32df7573225081b711e937a1a7cae7a802f0b3dbee5e0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ingknvm0/report.json": "84e4f6e4e2da676aed76fc22cba4c0de2872ccc8d254a7cf1156463c75597170",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/case-report.json": "6d64c7d2045bd6827e7777bb76ba3c3231524c2fc9241960ad0e2f37b40217ff",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/new_inputs.json": "101a8b2fbb1026506caf3a53365e4fc07b5f626d53ec1b0289e49fbaea1cf35d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/cache.json": "d77e6c823766e70ffddb5dcddf8f6062efa860f08283c93feb3983ffd46dac68",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/tasks/c35b7c8e6a3a46268af5ee241fb3589e/program/manifest.json": "5acbd1c35a2e0454c59d52928b1800767aa96bac629f7af5528c10cfd22cf616",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/tasks/c35b7c8e6a3a46268af5ee241fb3589e/program/candidate.py": "93eb1465074e5882aee2df9c639638eb955d1c06df0d6c938386963a49ba9ce0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/tasks/c35b7c8e6a3a46268af5ee241fb3589e/generation-provenance.json": "08feebcccf6ca9e1462673414bfff9f95130d93d5174a57a1e2eac2bf4caa6b3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/tasks/c35b7c8e6a3a46268af5ee241fb3589e/provider-metrics.json": "d2e174331a9cf67d0e7200b4c7e902321072ff376c04da1f8e845aa23fd3d8ed",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/tasks/c35b7c8e6a3a46268af5ee241fb3589e/generation-0.json": "44d2ea18299ca03165331ddcd0f1355c8cd98c800ca659c63c0c08be5c5b2979",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-v12-source-live-rebound-v2/split_weight/tasks/c35b7c8e6a3a46268af5ee241fb3589e/response-0.json": "2cf0928476ec464e5ec98a7d61f86776502c3e5e62d1e53f400c3f8b7a570328",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-3uaip79b/report.json": "f91deb653dd68be23af296df2d68661a43c72c82848e4c777d4fed5d4e2d6660"
+  },
+  "binding": "6b4fc3b1abd3a58b38627e3ccd98b2bd77a6f41c2ce84293c715ebbaa0fd7448"
+}

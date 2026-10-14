@@ -1,0 +1,641 @@
+--- before/scripts/baseline/application_component.py
++++ after/scripts/baseline/application_component.py
+@@ -326,7 +326,7 @@
+                             # Backend exceptions belong to the host, not generated syntax.
+                             result=self.backend.qualify(meta["request"],candidate,level)
+                     if policy == PRECISE:
+-                        result=attach(result,candidate=candidate)
++                        result=attach(result,candidate=candidate,request=meta["request"])
+                     last.clear();last.update(result)
+                     control.last_failure=structured_failure(result,policy)
+                     # Preserve full evidence locally; status() never returns it.
+@@ -378,7 +378,13 @@
+                             "provider_failed":"service_error","integrity_failed":"service_error",
+                             "infrastructure_failed":"service_error"}.get(loop["status"],loop["status"])
+                     state["status"]=status if status in TERMINAL else "service_error"
+-                    state["failure"]=control.last_failure or dict(code="provider_or_worker_failure",layer="provider")
++                    terminal_reason={"provider_failed":"provider_failure","provider_exhausted":"provider_failure",
++                        "integrity_failed":"integrity_rejected","infrastructure_failed":"environment_failure"}.get(loop["status"])
++                    if policy == PRECISE and terminal_reason is not None:
++                        from application_diagnostics import make
++                        state["failure"]=make(terminal_reason)
++                    else:
++                        state["failure"]=control.last_failure or dict(code="provider_or_worker_failure",layer="provider")
+             except Stopped as stop:state["status"]=stop.status
+             except PackageBindingRejected as error:
+                 state.update(status="service_error",failure=error.public_failure(),package=None)
+--- before/scripts/baseline/application_diagnostics.py
++++ after/scripts/baseline/application_diagnostics.py
+@@ -20,6 +20,9 @@
+     "entry_missing": ("static_check", "Define exactly one top-level function named golden."),
+     "source_size": ("static_check", "Candidate source exceeds the fixed source byte limit."),
+     "contract_rejected": ("static_check", "Candidate violates the fixed DSL contract."),
++    "rotation_step_not_allowed": ("static_check", "The rotation literal at this location is outside the permitted request rotation set. Use only admitted steps; compose several admitted rotations when required."),
++    "undefined_value": ("static_check", "The name at this source location is not bound. Use function parameters, earlier local assignments or approved public_constants names; model.constants names are not implicit DSL globals."),
++    "native_array_constructor": ("static_check", "Native Expr containers require exactly np.array(data, dtype=object). Numeric dtype arrays are not admitted public weights or ciphertext slots."),
+     "construct_not_executed": ("static_check", "The required construction was not executed."),
+     "construction_unresolved": ("static_check", "Required construction contribution could not be established."),
+     "frontend_rejected": ("dsl_trace", "The real frontend rejected the candidate."),
+@@ -210,7 +213,7 @@
+     public["diagnostic"] = public["diagnostic"].encode()[:7800].decode("utf-8", errors="ignore")
+     return public_feedback(public)
+ 
+-def attach(result, *, candidate=None):
++def attach(result, *, candidate=None, request=None):
+     result = copy.deepcopy(result)
+     if result.get("status") == "passed":
+         return result
+@@ -218,6 +221,22 @@
+     result["structured_diagnostic"] = diagnostic
+     result["failure"] = diagnostic
+     result["public_feedback"] = render(diagnostic, result.get("public_feedback"))
++    if (request is not None and diagnostic["owner"] != "host" and
++            type(request) is dict and request.get("generation_guidance",{}).get("version")=="explicit-v11" and
++            type(candidate) is dict and candidate.get("request_id")==request.get("request_id")):
++        from unified_graph_contract import validate_request
++        from unified_binding_guidance import repair_hint
++        from public_feedback_contract import public_feedback
++        try:
++            validate_request(request)
++            hint=repair_hint(request,candidate.get("hecate_source"),stage=diagnostic["layer"])
++        except (ValueError,TypeError,KeyError,IndexError):
++            hint=""
++        if hint:
++            result["public_feedback"]["diagnostic"]+= "\nBinding and shape guidance:\n"+hint
++            text=result["public_feedback"]["diagnostic"].encode()
++            result["public_feedback"]["diagnostic"]=text[:7800].decode("utf-8",errors="ignore")
++            result["public_feedback"]=public_feedback(result["public_feedback"])
+     return result
+ 
+ 
+@@ -236,7 +255,18 @@
+             source = candidate["hecate_source"]
+             if type(source) is not str:
+                 raise TypeError("Source")
+-            fingerprint = hashlib.sha256(source.encode()).hexdigest()
++            identity=source.encode()
++            if len(identity)<=65536:
++                try:
++                    tree=ast.parse(source)
++                    if sum(1 for _ in ast.walk(tree))<=4096:
++                        identity=ast.dump(tree,include_attributes=False).encode()
++                except (SyntaxError,ValueError,RecursionError):
++                    pass
++            identity=json.dumps(dict(source=identity.decode(),response_schema=candidate.get("schema"),
++                request_id=candidate.get("request_id"),response_fields=sorted(candidate)),
++                sort_keys=True,separators=(",",":"),allow_nan=False).encode()
++            fingerprint = hashlib.sha256(identity).hexdigest()
+         except (ValueError, TypeError, KeyError, AttributeError):
+             fingerprint = hashlib.sha256(str(raw).encode()).hexdigest()
+         if fingerprint in self.seen:
+--- before/scripts/baseline/candidate_check_diagnostic.py
++++ after/scripts/baseline/candidate_check_diagnostic.py
+@@ -0,0 +1,20 @@
++"""Typed static failures raised only at the authoritative Agent check."""
++import ast
++
++MESSAGES = {
++    "undefined_value": "Undefined value",
++    "rotation_step_not_allowed": "Unsupported rotation step",
++    "native_array_constructor": "Native arrays require exactly np.array(data, dtype=object)",
++}
++
++class CandidateCheckError(ValueError):
++    def __init__(self, reason, node):
++        if reason not in MESSAGES or not isinstance(node, ast.AST):
++            raise ValueError("Candidate check diagnostic")
++        line, column = getattr(node,"lineno",None), getattr(node,"col_offset",None)
++        if not (type(line) is int and type(column) is int and
++                1 <= line <= 65536 and 0 <= column <= 65536):
++            raise ValueError("Candidate check location")
++        self.reason=reason
++        self.location=dict(kind="source",line=line,column=column)
++        super().__init__(MESSAGES[reason])
+--- before/scripts/baseline/component_contract.py
++++ after/scripts/baseline/component_contract.py
+@@ -1,5 +1,6 @@
+ """Stable data-only component contracts; no environment, credentials or execution."""
+ import copy
++from candidate_check_diagnostic import CandidateCheckError
+ from benchmark_graph import canonical, digest, require, BOUNDS
+ from unified_graph_contract import prepare, validate_request, validate_candidate, COMPACT
+ from compiler_configuration import configuration, PROFILE_SHA256
+@@ -97,6 +98,9 @@
+         outcome["semantic_validation"] = "accepted"
+     except (ValueError, TypeError, KeyError, IndexError) as error:
+         outcome["failure"] = failure("static_check", error)
++        if isinstance(error,CandidateCheckError):
++            from application_diagnostics import make
++            outcome["failure"] = make(error.reason,location=error.location)
+         return outcome
+     directed = "construction_exercise" in request or "upstream_exercise" in request
+     if directed:
+--- before/scripts/baseline/decorated_functions.py
++++ after/scripts/baseline/decorated_functions.py
+@@ -12,6 +12,7 @@
+ from hecate_contract import IDENTIFIER, rotation_literal
+ from seal_artifact_gate import require
+ import native_array_core as storage
++from candidate_check_diagnostic import CandidateCheckError
+ 
+ CONTRACT = 'decorated-functions-core-v1'
+ ROTATIONS = (-3, -2, -1, 1, 2, 3)
+@@ -140,7 +141,8 @@
+             if literal(n) is not None:
+                 spend(); return 'p'
+             if type(n) is ast.Name:
+-                require(type(n.ctx) is ast.Load and n.id in symbols, 'Undefined value')
++                if type(n.ctx) is not ast.Load or n.id not in symbols:
++                    raise CandidateCheckError('undefined_value', n)
+                 return symbols[n.id]
+             if type(n) in (ast.List, ast.Tuple):
+                 require(type(n.ctx) is ast.Load and len(n.elts) <= 16, 'Flat container limit')
+@@ -222,7 +224,9 @@
+                 require(type(n.func) is ast.Attribute and n.func.attr == 'rotate' and len(n.args) == 1,
+                         'Only declared functions or ciphertext.rotate allowed')
+                 require(expression(n.func.value,depth+1) == 'c', 'Rotation requires ciphertext')
+-                step = rotation_literal(n.args[0]); require(step in allowed_rotations, 'Unsupported rotation step')
++                step = rotation_literal(n.args[0])
++                if step not in allowed_rotations:
++                    raise CandidateCheckError('rotation_step_not_allowed', n.args[0])
+                 rotations.add(step); spend(); return 'c'
+             if arrays and type(n) is ast.Attribute and n.attr == 'T':
+                 value = expression(n.value,depth+1)
+--- before/scripts/baseline/native_array_core.py
++++ after/scripts/baseline/native_array_core.py
+@@ -9,6 +9,7 @@
+ 
+ from hecate_contract import rotation_literal
+ from seal_artifact_gate import require
++from candidate_check_diagnostic import CandidateCheckError
+ 
+ MAX_CELLS = 16
+ MAX_RANK = 4
+@@ -49,10 +50,10 @@
+ 
+ 
+ def check_constructor(node):
+-    require(constructor(node) and len(node.args) == 1 and type(node.args[0]) is not ast.Starred and
++    if not (constructor(node) and len(node.args) == 1 and type(node.args[0]) is not ast.Starred and
+             len(node.keywords) == 1 and node.keywords[0].arg == 'dtype' and
+-            type(node.keywords[0].value) is ast.Name and node.keywords[0].value.id == 'object',
+-            'Native arrays require exactly np.array(data, dtype=object)')
++            type(node.keywords[0].value) is ast.Name and node.keywords[0].value.id == 'object'):
++        raise CandidateCheckError('native_array_constructor', node)
+ 
+ 
+ def array_type(value):
+--- before/scripts/baseline/run_candidate.py
++++ after/scripts/baseline/run_candidate.py
+@@ -406,7 +406,7 @@
+     parser.add_argument("--unified-profile",choices=("native","public-v1"),default="native")
+     parser.add_argument("--public-weights",choices=("descriptors-v1",),
+                         help="Opt-in hash-bound public weight descriptors; full values stay in the trusted worker")
+-    parser.add_argument("--unified-guidance",choices=("explicit-v1","explicit-v2","explicit-v3","explicit-v4","explicit-v5","explicit-v6","explicit-v7","explicit-v8","explicit-v9","explicit-v10"),
++    parser.add_argument("--unified-guidance",choices=("explicit-v1","explicit-v2","explicit-v3","explicit-v4","explicit-v5","explicit-v6","explicit-v7","explicit-v8","explicit-v9","explicit-v10","explicit-v11"),
+                         help="Opt-in public ABI guidance and precise static feedback; omission preserves old request hashes")
+     mode = parser.add_mutually_exclusive_group(required=True)
+     mode.add_argument("--prepare", action="store_true", help="Export public request without inference/execution")
+--- before/scripts/baseline/sandbox_policy.py
++++ after/scripts/baseline/sandbox_policy.py
+@@ -1,7 +1,7 @@
+ """Shared candidate file allowlist and unchanged process resource limits."""
+ from process_resource_limits import limits
+ 
+-MODULES = ("process_resource_limits.py","public_weight_context.py","numerical_results.py", "sandbox_policy.py", "model_resources.py","unified_chunk_layout.py","unified_capacity_layout.py","unified_capacity_constants.py","unified_capacity_tiling.py","unified_capacity_routes.py","unified_capacity_spatial.py","unified_request_storage.py","upstream_helper_coverage.py", "upstream_candidate_helpers.py", "upstream-helpers-v1.json", "unified_public_views.py", "unified_public_storage.py", "unified_public_arithmetic.py", "unified_public_unary.py", "unified_public_exercises.py", "unified_public_interventions.py", "unified_public_coverage.py", "construction_evidence.py", "capability_combinations.py", "unified_public_contract.py", "upstream_helper_probe.py", "unified_graph_exercises.py", "unified_native_coverage.py", "benchmark_graph.py", "unified_graph_contract.py", "unified_logical_semantics.py", "unified_directed_semantics.py","unified_failure_semantics.py","unified_typed_guidance.py", "unified_precise_guidance.py", "unified_gate_guidance.py", "unified_expression_guidance.py", "unified_poseidon_guidance.py", "hevm_abi.py", "platform_config.py", "platform-profiles.json", "workspace_paths.py", "candidate_trace.py", "candidate_contract.py", "candidate_worker.py", "hecate_contract.py", "public_construction.py", "function_construction.py", "lexical_scope.py", "construction_calls.py",
++MODULES = ("process_resource_limits.py","public_weight_context.py","numerical_results.py", "sandbox_policy.py", "model_resources.py","unified_chunk_layout.py","unified_capacity_layout.py","unified_capacity_constants.py","unified_capacity_tiling.py","unified_capacity_routes.py","unified_capacity_spatial.py","unified_request_storage.py","upstream_helper_coverage.py", "upstream_candidate_helpers.py", "upstream-helpers-v1.json", "unified_public_views.py", "unified_public_storage.py", "unified_public_arithmetic.py", "unified_public_unary.py", "unified_public_exercises.py", "unified_public_interventions.py", "unified_public_coverage.py", "construction_evidence.py", "capability_combinations.py", "unified_public_contract.py", "upstream_helper_probe.py", "unified_graph_exercises.py", "unified_native_coverage.py", "benchmark_graph.py", "unified_graph_contract.py", "unified_logical_semantics.py", "unified_directed_semantics.py","unified_failure_semantics.py","unified_typed_guidance.py", "unified_precise_guidance.py", "unified_gate_guidance.py", "unified_expression_guidance.py", "unified_poseidon_guidance.py", "unified_binding_guidance.py", "candidate_check_diagnostic.py", "hevm_abi.py", "platform_config.py", "platform-profiles.json", "workspace_paths.py", "candidate_trace.py", "candidate_contract.py", "candidate_worker.py", "hecate_contract.py", "public_construction.py", "function_construction.py", "lexical_scope.py", "construction_calls.py",
+            "packed_native_exercises.py", "packed-native-exercises-v1.json",
+            "public_numeric.py", "public_strings.py", "public_polynomial.py", "object_arrays.py", "construction_exercises.py", "construction-exercises-v1.json", "seal_artifact_gate.py", "seal_cpu_golden.py", "python_compiler_smoke.py",
+            "hecate_python_env.py", "continue_dacapo_cpp.py", "spatial_ops.py", "cipher_abi.py", "chunked_input_abi.py", "packed_input_abi.py",
+--- before/scripts/baseline/test_binding_feedback.py
++++ after/scripts/baseline/test_binding_feedback.py
+@@ -0,0 +1,150 @@
++"""Public-context and application-control regressions; no real provider or FHE."""
++import copy,json,unittest,tempfile
++from pathlib import Path
++from benchmark_graph import FORMAT,CAPACITY_FORMAT,digest
++from component_contract import prepare_task,validate_program,reconstruct_request
++from application_diagnostics import RepairDecision,attach
++from unified_binding_guidance import specification
++from application_component import Application
++from application_policy import DEFAULT_BUDGET
++
++def model(profile=None,shape=(2,2)):
++    result=dict(format=FORMAT,id="unnamed_graph",
++        inputs=[dict(name="x",shape=list(shape))],constants={},
++        nodes=[dict(id="reduce",op="mean",inputs=["x"],
++                    attrs=dict(axes=[len(shape)-1],keepdims=True),outputs=["m"]),
++               dict(id="center",op="subtract",inputs=["x","m"],attrs={},outputs=["y"])],
++        outputs=[dict(name="out",value="y")])
++    if profile:result.update(format=CAPACITY_FORMAT,resource_profile=profile)
++    return result
++def prepare(version="explicit-v11",shape=(2,2)):
++    return prepare_task(model("general-tensors-v1",shape),
++                        dict(generation_guidance=version,chunk_period=4))
++def candidate(request,source):
++    return dict(schema=1,request_id=request["request_id"],hecate_source=source)
++class BindingFeedback(unittest.TestCase):
++    def test_capacity_reduction_and_row_broadcast(self):
++        r=prepare();ctx=r["generation_guidance"]["poseidon_expression_rules"]
++        self.assertIn("packed_reduction",ctx["selection"])
++        self.assertIn("tensor_broadcast",ctx["selection"])
++        self.assertEqual(ctx["shape_examples"]["reductions"][0]["output_shape"],[2,1])
++        self.assertEqual(ctx["shape_examples"]["broadcasts"][0]["output_shape"],[2,2])
++    def test_rank_is_logical(self):
++        ctx=prepare(shape=(1,)*31+(4,))["generation_guidance"]["poseidon_expression_rules"]
++        self.assertEqual(len(ctx["shape_examples"]["reductions"][0]["input_shape"]),32)
++    def test_known_abi_only(self):
++        r=prepare();r["layout"]["execution_abi"]="unknown"
++        with self.assertRaises(ValueError):specification(r)
++    def test_constant_roles(self):
++        r=prepare();r["public_constants"]={"s":.25,"mask":[.25,0,0,0],"uniform":[1,1,1,1],"v":[1,2,3,4]}
++        roles={x["name"]:x["kind"] for x in specification(r)["constant_role_examples"]["bindings"]}
++        self.assertEqual(roles,dict(s="scalar",mask="single_lane_vector",uniform="uniform_vector",v="coordinate_vector"))
++    def test_logical_gain_bias_have_exact_scalar_bindings(self):
++        r=prepare()
++        r["model"]["constants"]={"logical_gain":[[[1.]]],"logical_bias":[[[0.]]]}
++        r["public_constants"]={"p0":-2.,"p1":-1.,"p3":0.,"p7":1.,"mask":[1.,0.,0.,0.]}
++        rows={x["logical_name"]:x for x in specification(r)["logical_constant_scalar_bindings"]["bindings"]}
++        self.assertEqual(rows["logical_gain"]["bound_scalar_names"],["p7"])
++        self.assertEqual(rows["logical_gain"]["logical_shape"],[1,1,1])
++        self.assertEqual(rows["logical_bias"]["bound_scalar_names"],["p3"])
++        self.assertNotIn("mask",rows["logical_gain"]["bound_scalar_names"])
++    def test_scalar_matching_is_exact_not_tolerant(self):
++        r=prepare();r["model"]["constants"]={"near":1.+2e-16,"matrix":[[1.,1.],[1.,1.]]}
++        r["public_constants"]={"one":1.}
++        rows={x["logical_name"]:x for x in specification(r)["logical_constant_scalar_bindings"]["bindings"]}
++        self.assertEqual(rows["near"]["bound_scalar_names"],[])
++        self.assertEqual(rows["matrix"]["kind"],"uniform_tensor")
++        self.assertEqual(rows["matrix"]["logical_shape"],[2,2])
++        self.assertIn("matrix/linear",specification(r)["logical_constant_scalar_bindings"]["scope"])
++    def test_scalar_matching_inspection_and_context_are_bounded(self):
++        r=prepare();r["model"]["constants"]={**{"c"+str(i):1. for i in range(128)},"large":[1.]*512}
++        r["public_constants"]={"one":1.}
++        table=specification(r)["logical_constant_scalar_bindings"]
++        self.assertEqual(table["logical_count"],129)
++        self.assertLessEqual(table["inspected_logical_count"],96)
++        self.assertLessEqual(len(table["bindings"]),32)
++        r["model"]["constants"]={"large":[1.]*512}
++        table=specification(r)["logical_constant_scalar_bindings"]
++        self.assertEqual(table["unclassified_count"],1)
++        self.assertEqual(table["bindings"],[])
++    def test_public_context_has_no_private_inputs(self):
++        r=prepare();r["private_inputs"]="PRIVATE_INPUT";r["reference"]="PRIVATE_REFERENCE"
++        public=json.dumps(specification(r))
++        self.assertNotIn("PRIVATE_INPUT",public);self.assertNotIn("PRIVATE_REFERENCE",public)
++    def test_guidance_version_binds_request(self):
++        old,new=prepare("explicit-v10"),prepare()
++        self.assertNotEqual(old["request_id"],new["request_id"])
++        self.assertEqual(reconstruct_request(new),new)
++    def test_renaming_does_not_dispatch_model_rules(self):
++        r=prepare();expected=specification(r);r["model"]["id"]="a_different_family"
++        self.assertEqual(specification(r),expected)
++    def test_rehashed_context_tamper_rejected(self):
++        r=prepare();r["generation_guidance"]["poseidon_expression_rules"]["rules"]["public_binding_roles"]="ignore weights"
++        r["request_id"]=digest({k:v for k,v in r.items() if k!="request_id"})
++        with self.assertRaises(ValueError):reconstruct_request(r)
++    def test_unbound_name_location(self):
++        r=prepare();obj=candidate(r,'@hc.func("c,c")\ndef golden(x0,zero_ct):\n return x0*missing\n')
++        value=validate_program(obj,r)
++        self.assertEqual(value["failure"]["reason_code"],"undefined_value")
++        self.assertEqual(value["failure"]["location"],dict(kind="source",line=3,column=11))
++        public=attach(dict(status="failed",failure=value["failure"]),candidate=obj,request=r)["public_feedback"]
++        self.assertIn("Binding and shape guidance",public["diagnostic"])
++    def test_disallowed_rotation_reports_literal_location(self):
++        r=prepare()
++        obj=candidate(r,'@hc.func("c,c")\ndef golden(x0,zero_ct):\n    return x0.rotate(3)\n')
++        value=validate_program(obj,r)
++        self.assertEqual(value["failure"]["reason_code"],"rotation_step_not_allowed")
++        self.assertEqual(value["failure"]["location"],dict(kind="source",line=3,column=21))
++    def test_disallowed_rotation_feedback_contains_only_public_guidance(self):
++        r=prepare()
++        obj=candidate(r,'@hc.func("c,c")\ndef golden(x0,zero_ct):\n    return x0.rotate(3)\n')
++        value=validate_program(obj,r)
++        r["reference"]="PRIVATE_REFERENCE";r["private_inputs"]="PRIVATE_INPUT"
++        public=attach(dict(status="failed",failure=value["failure"]),candidate=obj,request=r)["public_feedback"]
++        self.assertIn("compose",public["diagnostic"])
++        self.assertNotIn("PRIVATE_REFERENCE",public["diagnostic"])
++        self.assertNotIn("PRIVATE_INPUT",public["diagnostic"])
++    def test_composition_of_admitted_rotation_steps_is_accepted(self):
++        r=prepare()
++        obj=candidate(r,'@hc.func("c,c")\ndef golden(x0,zero_ct):\n    return x0.rotate(1).rotate(2)\n')
++        self.assertEqual(validate_program(obj,r)["semantic_validation"],"accepted")
++    def test_object_array_type_is_not_numeric_array(self):
++        r=prepare()
++        source='@hc.func("c,c")\ndef golden(x0,zero_ct):\n a=np.array([x0],dtype=np.float64)\n return a[0]\n'
++        self.assertEqual(validate_program(candidate(r,source),r)["failure"]["reason_code"],"native_array_constructor")
++    def test_comments_do_not_bypass_repeat_check(self):
++        r=prepare();d=RepairDecision()
++        one=candidate(r,'def golden(x):\n return x+x\n')
++        two=candidate(r,'def golden(x):\n # comment\n return x + x\n')
++        self.assertIsNone(d.before_candidate(json.dumps(one)))
++        self.assertEqual(d.before_candidate(json.dumps(two)),"validation_failed")
++    def test_correcting_response_identity_is_allowed(self):
++        r=prepare();d=RepairDecision();obj=candidate(r,'def golden(x):\n return x\n')
++        wrong=copy.deepcopy(obj);wrong["request_id"]="b"*64
++        self.assertIsNone(d.before_candidate(json.dumps(wrong)))
++        self.assertIsNone(d.before_candidate(json.dumps(obj)))
++    def test_changed_operation_is_new_candidate(self):
++        r=prepare();d=RepairDecision()
++        self.assertIsNone(d.before_candidate(json.dumps(candidate(r,'def golden(x):\n return x+x\n'))))
++        self.assertIsNone(d.before_candidate(json.dumps(candidate(r,'def golden(x):\n return x*x\n'))))
++    def test_provider_terminal_not_previous_numerical_failure(self):
++        from test_application_component import Backend,Provider
++        from benchmark_suite import Builder
++        class Interrupted(Provider):
++            def generate(self,q,history):
++                if self.calls:
++                    self.calls+=1
++                    raise RuntimeError("PRIVATE /secret")
++                return super().generate(q,history)
++        b=Builder([(2,)]);g=b.finish(b.node("square",["input0"]))
++        with tempfile.TemporaryDirectory() as root:
++            app=Application(root,Backend(["numerical_comparison"]))
++            task=app.submit(g,limits=dict(DEFAULT_BUDGET,generations=2))
++            result=app.run(task,Interrupted())
++            self.assertEqual(result["status"],"service_error")
++            self.assertEqual(result["failure"]["reason_code"],"provider_failure")
++            self.assertEqual(result["failure"]["layer"],"provider")
++            self.assertNotIn("PRIVATE",str(result))
++            old=json.loads((app._dir(task)/"validation-0.json").read_text())
++            self.assertEqual(old["failure"]["layer"],"numerical_comparison")
++if __name__=="__main__":unittest.main()
+--- before/scripts/baseline/unified_binding_guidance.py
++++ after/scripts/baseline/unified_binding_guidance.py
+@@ -0,0 +1,144 @@
++"""Public binding/shape guidance draft, staged separately from frozen requests."""
++import ast
++import copy
++import json
++import math
++
++VERSION="explicit-v11"
++BINDINGS=(
++    "Only names in public_constants or the explicitly admitted public-weight interface "
++    "are bound DSL globals. Names under model.constants are logical graph references, "
++    "not implicit Python variables. Respect the actual bound scalar/vector contents and "
++    "the exact logical-to-public scalar matches; p-number order has no semantic role. "
++    "A single-lane packing mask or a masked reduction coefficient is not an all-lane "
++    "gain, zero bias or replicated scalar. A logical public tensor still needs its "
++    "declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication.")
++SHAPES=(
++    "A reduction produces exactly the declared reduced shape. Intermediate slot representation "
++    "is your choice, but every later broadcast must use that same representation. A prefix scalar "
++    "and a replicated scalar differ. Broadcast every declared dimension, including row/channel "
++    "axes and across ciphertext chunks; exclude padding. Sum and mean differ by the full "
++    "logical reduction count. Final outputs follow the frozen named C-order bindings.")
++
++def logical_scalar_bindings(request,checked):
++    """Exact public data matches, never constant-index guesses or DSL lowering."""
++    public={name:value for name,value in request["public_constants"].items()
++            if type(value) in (int,float)}
++    examples=[];inspected=unclassified=0
++    for name,value in sorted(request["model"]["constants"].items())[:96]:
++        inspected+=1
++        pending=[value];scalars=[];visits=0;complete=True
++        while pending:
++            item=pending.pop();visits+=1
++            if visits>256:
++                complete=False;break
++            if type(item) in (int,float) and math.isfinite(item):
++                scalars.append(item)
++            elif type(item) is list:
++                if len(item)+len(pending)+visits>256:
++                    complete=False;break
++                pending.extend(item)
++            else:
++                complete=False;break
++        if not complete or not scalars:
++            unclassified+=1;continue
++        if all(v==scalars[0] for v in scalars):
++            names=sorted(n for n,v in public.items() if v==scalars[0])
++            examples.append(dict(logical_name=name,logical_shape=checked["shapes"][name],
++                kind="scalar" if type(value) in (int,float) else "uniform_tensor",
++                bound_scalar_names=names[:8],matching_scalar_count=len(names)))
++    return dict(bindings=examples[:32],matching_logical_count=len(examples),
++        inspected_logical_count=inspected,logical_count=len(request["model"]["constants"]),
++        unclassified_count=unclassified,
++        scope="Exact equality to already supplied public scalars. Uniform tensor matches "
++              "apply to its elementwise scalar value only; preserve graph shape and "
++              "matrix/linear operator semantics. This is not a ciphertext lowering plan.")
++
++def specification(request):
++    from benchmark_graph import validate, require
++    from unified_capacity_layout import ABIS
++    from unified_poseidon_guidance import specification as previous, REDUCTION, BROADCAST
++    require(request.get("compiler_configuration",{}).get("backend")=="poseidon_cpu",
++            "Poseidon binding guidance requires an explicit Poseidon CPU configuration")
++    layout=request["layout"]
++    require(layout["execution_abi"] in ("unified-periodic-inputs-v1",*ABIS),
++            "Binding guidance requires a configured packing ABI")
++    model=request["model"]
++    checked=validate(model)
++    context=copy.deepcopy(previous(request))
++    groups=context["rules"]
++    reductions=[]
++    broadcasts=[]
++    for node in model["nodes"]:
++        op=node["op"]
++        if op in ("mean","sum"):
++            reductions.append(dict(node=node["id"],operator=op,input=node["inputs"][0],
++                input_shape=checked["shapes"][node["inputs"][0]],
++                output=node["outputs"][0],output_shape=checked["shapes"][node["outputs"][0]],
++                axes=list(node["attrs"]["axes"]),keepdims=node["attrs"]["keepdims"]))
++            groups["packed_reduction"]=REDUCTION
++        if op in ("add","subtract","multiply"):
++            shape=checked["shapes"][node["outputs"][0]]
++            expanded=[dict(value=name,kind=checked["kinds"][name],shape=checked["shapes"][name])
++                      for name in node["inputs"] if checked["shapes"][name]!=shape]
++            if expanded:
++                broadcasts.append(dict(node=node["id"],operator=op,expanded_operands=expanded,
++                    output=node["outputs"][0],output_shape=shape))
++                groups["tensor_broadcast"]=BROADCAST
++    constants=[]
++    for name,value in sorted(request["public_constants"].items()):
++        if type(value) in (int,float):
++            require(math.isfinite(value),"Finite public constant")
++            role=dict(name=name,kind="scalar")
++        elif type(value) is list and len(value)==layout["input_slot_period"]:
++            require(all(type(v) in (int,float) and math.isfinite(v) for v in value),
++                    "Public constant vector")
++            nonzero=sum(v!=0 for v in value)
++            kind=("uniform_vector" if all(v==value[0] for v in value)
++                  else "single_lane_vector" if nonzero==1 else "coordinate_vector")
++            role=dict(name=name,kind=kind,elements=len(value),nonzero_elements=nonzero)
++        else:
++            raise ValueError("Public binding kind is not described")
++        constants.append(role)
++    if constants:
++        groups["public_binding_roles"]=BINDINGS
++    if reductions or broadcasts:
++        groups["reduction_broadcast_shapes"]=SHAPES
++    context.update(version=VERSION,selection=sorted(groups),rules={k:groups[k] for k in sorted(groups)},
++        shape_examples=dict(reductions=reductions[:32],reduction_count=len(reductions),
++                            broadcasts=broadcasts[:32],broadcast_count=len(broadcasts),
++                            scope="Public logical shape annotations, not a ciphertext lowering plan"),
++        logical_constant_scalar_bindings=logical_scalar_bindings(request,checked),
++        constant_role_examples=dict(bindings=constants[:64],binding_count=len(constants),
++                                   scope="Roles of already supplied public values, not replacement weights"))
++    require(len(json.dumps(context,sort_keys=True).encode())<=32768,"Binding guidance byte bound")
++    return context
++
++def relevant(request):
++    context=specification(request)
++    return any(key in context["selection"] for key in
++               ("packed_reduction","tensor_broadcast","public_binding_roles"))
++
++def repair_hint(request,source,diagnostic="",stage="static_check"):
++    if request.get("generation_guidance",{}).get("version")!=VERSION:
++        return ""
++    if type(source) is not str or len(source.encode())>65536:
++        return ""
++    try:
++        tree=ast.parse(source)
++    except (SyntaxError,ValueError,RecursionError):
++        return ""
++    if sum(1 for _ in ast.walk(tree))>4096:
++        return ""
++    hints=[]
++    if stage in ("static_check","numerical_comparison","compiler","artifact_gate"):
++        selected=specification(request)
++        for name in ("public_binding_roles","packed_reduction","tensor_broadcast","reduction_broadcast_shapes"):
++            if name in selected["rules"]:
++                hints.append(selected["rules"][name])
++    from unified_poseidon_guidance import repair_hint as previous
++    old=dict(request,generation_guidance=dict(request["generation_guidance"],version="explicit-v10"))
++    hint=previous(old,source,diagnostic,stage)
++    if hint:
++        hints.append(hint)
++    return "\n".join(dict.fromkeys(hints))[:5000]
+--- before/scripts/baseline/unified_graph_contract.py
++++ after/scripts/baseline/unified_graph_contract.py
+@@ -228,7 +228,7 @@
+         body["rules"]+=capacity_rules(p)+public_tensor_rules(body["constant_origins"].get("capacity_tensor_packing",{}).get("version"))
+     if configuration is not None:body["compiler_configuration"]=configuration
+     if generation_guidance is not None:
+-        require(generation_guidance in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE),"Unknown unified generation guidance")
++        require(generation_guidance in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE),"Unknown unified generation guidance")
+         body["generation_guidance"]=explicit_generation_guidance(body,generation_guidance)
+     from public_weight_context import POLICY,binding,request_digest,storage_limit,RULES as WEIGHT_RULES
+     require(public_weight_policy in (None,POLICY),"Public weight policy")
+@@ -336,7 +336,7 @@
+             "Public registry changed")
+     if "generation_guidance" in request:
+         value=request["generation_guidance"]
+-        require(type(value) is dict and value.get("version") in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE),
++        require(type(value) is dict and value.get("version") in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE),
+                 "Changed unified generation guidance")
+         require(canonical(value)==canonical(explicit_generation_guidance(request,value["version"])),
+                 "Changed unified generation guidance")
+@@ -384,11 +384,12 @@
+ GATE_GUIDANCE="explicit-v8"
+ EXPRESSION_GUIDANCE="explicit-v9"
+ POSEIDON_GUIDANCE="explicit-v10"
++BINDING_CONTEXT_GUIDANCE="explicit-v11"
+ 
+ 
+ def explicit_generation_guidance(request,version=EXPLICIT_GUIDANCE):
+     """Expose only the public ABI and contract; never a model implementation."""
+-    require(version in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE),"Unknown unified generation guidance")
++    require(version in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE),"Unknown unified generation guidance")
+     names=[s["dsl_name"] for s in request["layout"]["inputs"]]+["zero_ct"]
+     signature=",".join("c" for _ in names)
+     public="construction_profile" in request
+@@ -406,7 +407,7 @@
+         "output_rule":"Return exactly layout.output_ciphertexts whole ciphertext expressions in the frozen output order; object-array cells are whole expressions, not slots.",
+         "authority":"This guidance clarifies the existing rules; it adds no allowed syntax, helper, resource budget or backend capability.",
+     }
+-    if version in (COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         # Reuse authoritative component instructions, never golden recipes or
+         # model-specific implementations. Legacy and v1 request bytes stay fixed.
+         requirements=[]
+@@ -418,7 +419,7 @@
+                 require(component["required_features"]==[feature],"Composite component mismatch")
+                 requirements.append(dict(feature=feature,instruction=component["instruction"]))
+         result["construction_requirements"]=requirements
+-    if version in (MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_logical_semantics import specification
+         result["logical_model_semantics"]=specification(request["model"])
+         result["encrypted_zero_rule"]=(
+@@ -426,26 +427,29 @@
+             "or multiplication by plaintext zero. The supplied zero_ct is a genuine client-encrypted zero. "
+             "Preserve the mathematical graph semantics without relying on a transparent intermediate; "
+             "do not disable backend checks or decrypt/re-encrypt.")
+-    if version in (DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_directed_semantics import specification
+         result["directed_semantics"]=specification(request)
+-    if version in (TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_failure_semantics import specification
+         result["typed_construction_semantics"]=specification()
+-    if version in (BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_typed_guidance import specification
+         result["typed_request_bindings"]=specification(request)
+-    if version in (PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_precise_guidance import specification
+         result["precise_construction_rules"]=specification(request)
+-    if version in (GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_gate_guidance import specification
+         result["value_and_scale_discipline"]=specification()
+-    if version in (EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if version in (EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_expression_guidance import specification
+         result["expression_construction_rules"]=specification(request)
+-    if version==POSEIDON_GUIDANCE:
+-        from unified_poseidon_guidance import specification
++    if version in (POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
++        if version==BINDING_CONTEXT_GUIDANCE:
++            from unified_binding_guidance import specification
++        else:
++            from unified_poseidon_guidance import specification
+         context=specification(request)
+         result["poseidon_expression_rules"]=context
+         result["encrypted_zero_rule"]=context["encrypted_zero_rule"]
+@@ -495,16 +499,18 @@
+         from unified_failure_semantics import repair_hint
+         hint=repair_hint(diagnostic)
+         if hint:hints.append(hint)
+-    if guidance["version"] in (BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if guidance["version"] in (BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_typed_guidance import repair_hint
+         hint=repair_hint(request,diagnostic)
+         if hint:hints.append(hint)
+-    if guidance["version"] in (PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
++    if guidance["version"] in (PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
+         from unified_precise_guidance import repair_hint
+         hint=repair_hint(request,diagnostic)
+         if hint:hints.append(hint)
+-    if guidance["version"] in (EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE):
+-        if guidance["version"]==POSEIDON_GUIDANCE:
++    if guidance["version"] in (EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE):
++        if guidance["version"]==BINDING_CONTEXT_GUIDANCE:
++            from unified_binding_guidance import repair_hint
++        elif guidance["version"]==POSEIDON_GUIDANCE:
+             from unified_poseidon_guidance import repair_hint
+         else:
+             from unified_expression_guidance import repair_hint
+--- before/scripts/baseline/validation_adapter.py
++++ after/scripts/baseline/validation_adapter.py
+@@ -206,9 +206,13 @@
+             from unified_graph_contract import static_repair_hint
+             hint=static_repair_hint(candidate["hecate_source"],request,item.get("diagnostic",""))
+             if hint:feedback["diagnostic"]+="\nContract clarification:\n"+hint
+-        if (item.get("failure_layer") in ("compiler", "artifact_gate") and
+-                request.get("generation_guidance", {}).get("version") in ("explicit-v9","explicit-v10")):
+-            if request["generation_guidance"]["version"]=="explicit-v10":
++        if ((item.get("failure_layer") in ("compiler", "artifact_gate") or
++                 item.get("failure_layer")=="numerical_comparison" and
++                 request.get("generation_guidance",{}).get("version")=="explicit-v11") and
++                request.get("generation_guidance", {}).get("version") in ("explicit-v9","explicit-v10","explicit-v11")):
++            if request["generation_guidance"]["version"]=="explicit-v11":
++                from unified_binding_guidance import repair_hint
++            elif request["generation_guidance"]["version"]=="explicit-v10":
+                 from unified_poseidon_guidance import repair_hint
+             else:
+                 from unified_expression_guidance import repair_hint

@@ -1,0 +1,73 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"torch": "2.0.1", "cuda": null, "python": [3, 10, 14], "tracer_file": "/home/lhohy/poseidon-work/platforms/aarch64-linux/venvs/hecate-2.0.1-cpu/lib/python3.10/site-packages/torch/fx/_symbolic_trace.py"}
+dictionary
+
+
+
+def forward(self, batch):
+    self, batch_1, batch_2, = fx_pytree.tree_flatten_spec([self, batch], self._in_spec)
+    mul = batch_2 * 2;  batch_2 = None
+    add = batch_1 + mul;  batch_1 = mul = None
+    return pytree.tree_unflatten([add], self._out_spec)
+    
+graph():
+    %batch_1 : [#users=1] = placeholder[target=batch_1]
+    %batch_2 : [#users=1] = placeholder[target=batch_2]
+    %mul : [#users=1] = call_function[target=operator.mul](args = (%batch_2, 2), kwargs = {})
+    %add : [#users=1] = call_function[target=operator.add](args = (%batch_1, %mul), kwargs = {})
+    return [add]
+{"placeholders": [{"name": "batch_1", "target": "batch_1", "args": "()"}, {"name": "batch_2", "target": "batch_2", "args": "()"}], "codegen_type": "_PyTreeCodeGen"}
+mixed
+
+
+
+def forward(self, x_1, other_1, scale_1 = 2.0, bias_1 = None, aux_1 = False):
+    eq = scale_1 == 2.0;  scale_1 = None
+    _assert = torch._assert(eq, 'scale has been specialized to have value 2.0 but got another value');  eq = None
+    _assert_is_none = torch.fx._symbolic_trace._assert_is_none(bias_1, 'bias has been specialized to have value None but got another value');  bias_1 = None
+    eq_1 = aux_1 == False;  aux_1 = None
+    _assert_1 = torch._assert(eq_1, 'aux has been specialized to have value False but got another value');  eq_1 = None
+    mul = other_1 * 2.0;  other_1 = None
+    add = x_1 + mul;  x_1 = mul = None
+    return add
+    
+graph():
+    %x_1 : [#users=1] = placeholder[target=x_1]
+    %other_1 : [#users=1] = placeholder[target=other_1]
+    %scale_1 : [#users=1] = placeholder[target=scale_1](default=2.0)
+    %eq : [#users=1] = call_function[target=operator.eq](args = (%scale_1, 2.0), kwargs = {})
+    %_assert : [#users=0] = call_function[target=torch._assert](args = (%eq, scale has been specialized to have value 2.0 but got another value), kwargs = {})
+    %bias_1 : [#users=1] = placeholder[target=bias_1](default=None)
+    %_assert_is_none : [#users=0] = call_function[target=torch.fx._symbolic_trace._assert_is_none](args = (%bias_1, bias has been specialized to have value None but got another value), kwargs = {})
+    %aux_1 : [#users=1] = placeholder[target=aux_1](default=False)
+    %eq_1 : [#users=1] = call_function[target=operator.eq](args = (%aux_1, False), kwargs = {})
+    %_assert_1 : [#users=0] = call_function[target=torch._assert](args = (%eq_1, aux has been specialized to have value False but got another value), kwargs = {})
+    %mul : [#users=1] = call_function[target=operator.mul](args = (%other_1, 2.0), kwargs = {})
+    %add : [#users=1] = call_function[target=operator.add](args = (%x_1, %mul), kwargs = {})
+    return add
+{"placeholders": [{"name": "x_1", "target": "x_1", "args": "()"}, {"name": "other_1", "target": "other_1", "args": "()"}, {"name": "scale_1", "target": "scale_1", "args": "(2.0,)"}, {"name": "bias_1", "target": "bias_1", "args": "(None,)"}, {"name": "aux_1", "target": "aux_1", "args": "(False,)"}], "codegen_type": "CodeGen"}
+nested
+
+
+
+def forward(self, pair, options):
+    self, pair_1, pair_2, options_1, = fx_pytree.tree_flatten_spec([self, pair, options], self._in_spec)
+    eq = options_1 == 2.0;  options_1 = None
+    _assert = torch._assert(eq, 'options has been specialized to have value 2.0 but got another value');  eq = None
+    mul = pair_2 * 2.0;  pair_2 = None
+    add = pair_1 + mul;  pair_1 = mul = None
+    return pytree.tree_unflatten([add], self._out_spec)
+    
+graph():
+    %pair_1 : [#users=1] = placeholder[target=pair_1]
+    %pair_2 : [#users=1] = placeholder[target=pair_2]
+    %options_1 : [#users=1] = placeholder[target=options_1]
+    %eq : [#users=1] = call_function[target=operator.eq](args = (%options_1, 2.0), kwargs = {})
+    %_assert : [#users=0] = call_function[target=torch._assert](args = (%eq, options has been specialized to have value 2.0 but got another value), kwargs = {})
+    %mul : [#users=1] = call_function[target=operator.mul](args = (%pair_2, 2.0), kwargs = {})
+    %add : [#users=1] = call_function[target=operator.add](args = (%pair_1, %mul), kwargs = {})
+    return [add]
+{"placeholders": [{"name": "pair_1", "target": "pair_1", "args": "()"}, {"name": "pair_2", "target": "pair_2", "args": "()"}, {"name": "options_1", "target": "options_1", "args": "()"}], "codegen_type": "_PyTreeCodeGen"}

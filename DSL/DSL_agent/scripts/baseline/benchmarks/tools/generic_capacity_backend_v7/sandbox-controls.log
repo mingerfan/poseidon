@@ -1,0 +1,18 @@
+test_analyzer_filename_checks_do_not_create_fake_policy_edges (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_both_inventories_bind_mounted_bytes_and_detect_changes (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_malformed_inventory_cannot_hide_dependencies (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_missing_and_symlinked_mounts_fail_closed (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_child_observes_unchanged_resource_limits (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_compact_context_dependency_is_available_and_bound (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_feedback_dependencies_are_bound_to_the_program_identity (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_fresh_inventory_worker_imports_guidance_and_typed_feedback (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_fresh_poseidon_import_does_not_load_legacy_probe_or_provider (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_legacy_inventory_and_shared_limits_remain_available (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_math_role_verifier_is_read_only_and_bound (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_poseidon_command_retains_isolation_and_uses_own_inventory (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_program_binding_uses_poseidon_inventory (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.246s
+
+OK

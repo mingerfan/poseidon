@@ -1,0 +1,44 @@
+{
+  "base_dacapo_commit": "06bdd08b83676351186f6982b79921994298e51a",
+  "working_tree_modified": true,
+  "compiler_sha256": "284856906d996a32f8c9209f6215c75458d844355e039617a82e51756b6db7c6",
+  "sources": {
+    "README.md": "c5a1813432114f51238a545ec31ebab65c940f0a1388d717e2e9a071ad61c4d7",
+    "include/hecate/Dialect/Earth/Transforms/Passes.td": "17a35e802917197763d5a777f54d2cc75cdb80ba8c6462cf8683ae888b346689",
+    "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "3c611acebd8fba06cf53c22a64408bbcc419430275b820667ce6f8fb40abb8c8",
+    "lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp": "1173c359f830d936eb1b60d2574d16442c1777bb72df7a7d04cd97831a118047",
+    "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "1afd105cf3085fb77322872e2f2b7b547d21aea7aba55442dba582101d9cb3c3",
+    "lib/Dialect/Earth/Transforms/CMakeLists.txt": "670e6b65caa9defa8598374b5f341b748ab0379fb57833d95fa2e38a739087f6",
+    "tools/optimizer.cpp": "6485604435fe1f946fcd3b21bb28fcd78f791dd7519baf7f9c92eb638b96ad43",
+    "test/CMakeLists.txt": "ed91ae47fd55c71e470598b0163f7cdef8dbe1576c434649e0ef3a6818aff403",
+    "test/runtime-plan/check-greedy.py": "12929d2ca15c61846eb38e06724064577b4896c7e96b11fc853c11d644bd1f02"
+  },
+  "fhelipe_source_revision": "891b3086bf6a144deebac79290801253b9cc510c",
+  "fhelipe_source_files": [
+    "backend/src/dp_bootstrapping_pass.cc",
+    "backend/src/dag_depth_info.cc"
+  ],
+  "method": "Independent Earth adaptation of depth-boundary DP, with early Add reductions and deferred unary fanout; conservative shortcut skipping; eager per-Mul rescale. Not a complete Fhelipe port.",
+  "consulted_papers": [
+    {
+      "title": "Fhelipe",
+      "doi": "10.1145/3656382",
+      "url": "https://dspace.mit.edu/entities/publication/2cef6b74-b0eb-4b5b-abd1-16d59b12380e"
+    },
+    {
+      "title": "ReSBM",
+      "doi": "10.1145/3669940.3707276",
+      "url": "https://pacman.cs.tsinghua.edu.cn/~cwg/publication/10-1145-3669940-3707276/10-1145-3669940-3707276.pdf"
+    },
+    {
+      "title": "Orion",
+      "doi": "10.1145/3676641.3716008",
+      "url": "https://arxiv.org/abs/2311.03470"
+    }
+  ],
+  "frontend_sha256": "cfeb92a30bef7553143d66ced30ab9a8d1873d8f0f3281d657a5618b28cc9841",
+  "frontend_rebuilt": true,
+  "canonicalizer_fix": "Retain zero-padded prefix masks; full-slot units preserve encoding scale via Upscale. The old frontend exported an already corrupted graph; old numerical validation failed.",
+  "raw_frontend_slot_capacity_guard": true,
+  "integration_script_sha256": "3aa286901634b375a71186bad0d8db66a89dc249dcbd3018ab4502cde0bfba3f"
+}

@@ -1,0 +1,61 @@
+{
+  "approximations": {
+    "defaults": {},
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [
+      "index_method_nested"
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "8c135fa6a51814adac6245d50b5d61691c3b8c03fcb22de7cc1e9cefefe7e5bc"
+  },
+  "format": "poseidon-trusted-pytorch-v21",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        3
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ],
+  "weights": {
+    "public.index": {
+      "bytes": 136,
+      "dtype": "<i4",
+      "file": "state_0000.npy",
+      "sha256": "f03278057b4d5f43801f6d40872a9d20f6ef00d4b89530e1c5b25a9f7013b80c",
+      "shape": [
+        2
+      ]
+    },
+    "std": {
+      "bytes": 152,
+      "dtype": "<f8",
+      "file": "state_0001.npy",
+      "sha256": "64a0b9dca7e39d749bccb2bdc13262779f9d35b17c6df1c454f7b242a3e0541b",
+      "shape": [
+        3
+      ]
+    },
+    "unused_mask": {
+      "bytes": 130,
+      "dtype": "|b1",
+      "file": "state_0002.npy",
+      "sha256": "4257418724eeadfcfc6affd95584b6da87d3ac25effd1de68ad2f9907cbe104c",
+      "shape": [
+        2
+      ]
+    }
+  }
+}

@@ -1,0 +1,785 @@
+{
+  "agent_generation": 0,
+  "audit": {
+    "binding": "7b4c5f20728222c7817acc0a4bd2bc0aa8bc2c056e858b3229f3af0722a158e2",
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-mha-source-draft-r1063/report.json",
+    "sha256": "e29a16d18454b8db6f11d481782b144668560b2ea33db59266b8b4ee80e04da5"
+  },
+  "backend_modified": false,
+  "binding": "d4024bfd049f6c8f59c399c83ccd12b843ea8c28adf47d04a254c67a92f9b0dc",
+  "checkout": {
+    "branch": "lhy-agent-dsl",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "path": "/home/lhohy/Code/Poseidon",
+    "platform": "aarch64-linux"
+  },
+  "commit": false,
+  "compiler_calls": 0,
+  "decryption": 0,
+  "distinguishing_interventions": {
+    "extra_tokens": true,
+    "masks": true,
+    "original_cases_preserved": true,
+    "public_weights": true
+  },
+  "download": 0,
+  "encrypted_execution": 0,
+  "existing_reference_modified": false,
+  "explicit_approximations_required": true,
+  "format": "poseidon-mha-source-draft-acceptance-v1",
+  "frozen_benchmark_modified": false,
+  "handoff_before_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-mha-source-draft-review-r1064/handoff-before.md",
+  "handoff_before_sha256": "66080cd916afbf32d76b1cf6195e42b69bed64834fb00356588e922ef68a9e92",
+  "hecate_tracing": 0,
+  "http_attempts": 0,
+  "initial_failure": {
+    "common_root": "draft permute axes attribute did not match existing dims contract",
+    "original_evidence_preserved": true,
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-mha-source-draft-r1061/units-result.json",
+    "sha256": "f481a75f9c0b0e7f600a1a9b3871a3b865692af1bad71ca78844704220667cfb",
+    "units": {
+      "errors": 29,
+      "failed": 0,
+      "run": 22,
+      "skipped": 0
+    }
+  },
+  "installation": 0,
+  "installed_torch_source_hashes": {
+    "nn/functional.py": "f66a758d3f97f47b74291f3bdd945b6f9ce9be43b4e79a3bf0891f266abaea6c",
+    "nn/modules/activation.py": "e587c9f58d3f3d9ca2e906e5fa3f373f2d3f0463d055ea74ab7501dc86c2db4e"
+  },
+  "limits": {
+    "input_rank": [
+      2,
+      3
+    ],
+    "module": "exact native eval MultiheadAttention",
+    "native_attention_output_none": "explicit static structure",
+    "physical_resources": "unverified",
+    "rejects": [
+      "training",
+      "custom module",
+      "float32 public state",
+      "malformed shapes or parameters",
+      "invalid causal hints",
+      "all-masked attention rows",
+      "missing approximation",
+      "resource overflow"
+    ],
+    "state": "CPU float64",
+    "tested": {
+      "batch": 2,
+      "embed_dim": 4,
+      "expanded_nodes": [
+        55,
+        68
+      ],
+      "heads": 2,
+      "key_length": 3,
+      "query_length": 3
+    }
+  },
+  "mathematical_contexts": 12,
+  "mathematical_max_errors": {
+    "approximation": 4.384270724244743e-13,
+    "decomposition": 6.661338147750939e-16,
+    "fixture": 0.0,
+    "original": 5.551115123125783e-17,
+    "torch": 6.661338147750939e-16
+  },
+  "new_unique_benchmark_models_claimed": 0,
+  "numerical_threshold_modified": false,
+  "old_schema_and_source_interface_preserved": true,
+  "original_function_accuracy_certified": false,
+  "output_structure_preserved": true,
+  "output_values": 1920,
+  "paid_calls": 0,
+  "parameters_modified": false,
+  "pending_backend_scope": {
+    "approved_receipt_present": false,
+    "backend_output_present": false,
+    "binding": "ed3ffa719754bf75978d127e793c6c357516396e5302c3721ad40a08032f631d",
+    "cases": 151,
+    "files_checked": 5952,
+    "mismatches": [],
+    "package_reuse_cases": 25,
+    "proposal": "docs/baseline/agent-common-pytorch-offline-proposal-r1042.json",
+    "scope": {
+      "api_calls": 0,
+      "artifact_bytes": 4294967296,
+      "backend_changes": 0,
+      "candidate_seconds": 180,
+      "compile_jobs": 2,
+      "downloads": 0,
+      "encrypted_concurrency": 1,
+      "global_bytes": 34359738368,
+      "installs": 0,
+      "link_jobs": 1,
+      "max_shard_cases": 48,
+      "parameter_changes": 0,
+      "reserve_bytes": 4294967296,
+      "shards_sequential": true,
+      "wall_seconds": 7200
+    },
+    "status": "awaiting_explicit_offline_authorization"
+  },
+  "preservation": {
+    "protected-backend.json": {
+      "checked": 648,
+      "mismatches": []
+    },
+    "protected-current-history.json": {
+      "checked": 14,
+      "mismatches": []
+    },
+    "protected-history.json": {
+      "checked": 6,
+      "mismatches": []
+    },
+    "protected-new-history.json": {
+      "checked": 6,
+      "mismatches": []
+    },
+    "protected-references.json": {
+      "checked": 6,
+      "mismatches": []
+    }
+  },
+  "production_intake_integrated": false,
+  "production_source_capture": 0,
+  "pull_request": false,
+  "push": false,
+  "readme": {
+    "path": "scripts/baseline/benchmarks/tools/static_mha_source_draft_v1/README.md",
+    "sha256": "af7996dbcc2e634776e2ec121edf1ca63918266c35e8d28f9ed5423f3853a0b4"
+  },
+  "reference_groups": 192,
+  "remaining_work": [
+    "explicit production source version and isolated worker integration",
+    "source precision and original-function provenance",
+    "structured input feedback and tuple/static None output integration",
+    "layout and real backend execution",
+    "bounded real Agent acceptance for new source functionality",
+    "in-place and view alias semantics",
+    "capacity",
+    "bootstrap",
+    "ciphertext handoff",
+    "application accuracy",
+    "ResNet20",
+    "CUDA"
+  ],
+  "report_markdown_sha256": "972f797aaa5def966296a7832f9ada4c271f804e7911000f910b7517314a8fd5",
+  "revision": "r1064",
+  "rows": [
+    {
+      "configuration": {
+        "batch_first": false,
+        "e": 2,
+        "h": 1,
+        "id": "self_unbatched",
+        "l": 2,
+        "n": 1,
+        "s": 2,
+        "self_attention": true,
+        "unbatched": true
+      },
+      "expanded_nodes": 61,
+      "fx_code_sha256": "783f8a34871a13ed83f999cf2b0e0ecc890d2ae480e563db91bc7fe7cb6c1e05",
+      "id": "self_unbatched",
+      "input_count": 1,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 1.6653345369377348e-16,
+        "decomposition": 3.3306690738754696e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 3.3306690738754696e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 31,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 128,
+      "plan_binding": "4ef8cb7a0cdf57206c40f5af4a0746448052e8eb32e75db8b7260138774fba40",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "dda34a6525c474baf7a3c9e6f4d0007fab49048ca4fe774a72defc85bacfd595",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "average": false,
+        "batch_first": true,
+        "e": 4,
+        "h": 2,
+        "id": "self_multihead",
+        "l": 2,
+        "n": 1,
+        "s": 2,
+        "self_attention": true
+      },
+      "expanded_nodes": 55,
+      "fx_code_sha256": "708d475b0b8554b612a259b6fd164c040c1622fc9fd260deddefcadebc6ec502",
+      "id": "self_multihead",
+      "input_count": 1,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 2.220446049250313e-16,
+        "decomposition": 3.885780586188048e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 3.885780586188048e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 25,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 256,
+      "plan_binding": "a7020ceefc6ced20881fca4986a6eb046a3d19e165bfadd8ea2073ad28fe23c9",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "b29f9de9cdcba489c972583f143554224668b4b8888ef1c3d63c13f647dcc201",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": false,
+        "dropout": 0.25,
+        "e": 2,
+        "h": 1,
+        "id": "cross_sequence_first",
+        "l": 2,
+        "n": 2,
+        "need": false,
+        "s": 3
+      },
+      "expanded_nodes": 58,
+      "fx_code_sha256": "7f76c2d7cac2ef37baae90c326e6985939454a9a36341b8ec06bf023a869d13b",
+      "id": "cross_sequence_first",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 6.938893903907228e-18,
+        "decomposition": 6.938893903907228e-18,
+        "fixture": 0.0,
+        "original": 6.938893903907228e-18,
+        "torch": 0.0
+      },
+      "named_output_count": 1,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 28,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "none"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 128,
+      "plan_binding": "69d3178d1f9e2dfab5b45075e9149ec15dda4fe9653b2d41fa1f506b0819fca8",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "52a4194241d28498a3809c1e3b6d285d8bd90db6ac45224c9e8ad42785387c9c",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": true,
+        "e": 4,
+        "h": 2,
+        "id": "separate_dimensions",
+        "kdim": 2,
+        "l": 2,
+        "n": 1,
+        "s": 3,
+        "vdim": 3
+      },
+      "expanded_nodes": 56,
+      "fx_code_sha256": "951580b358a38d06850240df513c9efa88d946aefe91db3e1a9d1a17b280fff2",
+      "id": "separate_dimensions",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 3.3306690738754696e-16,
+        "decomposition": 2.220446049250313e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 2.220446049250313e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 26,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 224,
+      "plan_binding": "b2c4e289f50601d866dcba1fc55360497fb5f1f58ead7b67e732d9bb42e9d06b",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "fbbd8d04f388ef0cc485b3ccebdd2971d5d4b30f9a0fa122f05f3be24b22d354",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": true,
+        "e": 2,
+        "h": 1,
+        "id": "boolean_and_padding",
+        "l": 2,
+        "mask": "boolean_padding",
+        "n": 1,
+        "s": 3
+      },
+      "expanded_nodes": 58,
+      "fx_code_sha256": "bb2a0a4cc097e134994acafb2208d1024fc506974fb32c1fa7401dad0d090a90",
+      "id": "boolean_and_padding",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 1.2212453270876722e-15,
+        "decomposition": 6.661338147750939e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 6.661338147750939e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 28,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 160,
+      "plan_binding": "f0290e79b45a89c0e6dacde22b1696ba7fc4c088ef4c49538b8287ea205e1836",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "bfc6103af23349e40dddbc9e03ab4f40e98a1c88ec71750a28682f06ea3527a7",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "average": false,
+        "batch_first": true,
+        "e": 4,
+        "h": 2,
+        "id": "per_head_finite_bias",
+        "l": 2,
+        "mask": "per_head_float",
+        "n": 1,
+        "s": 2
+      },
+      "expanded_nodes": 56,
+      "fx_code_sha256": "e356e6990877fbaba1c60f7529cb30471b1f4ad7020c2d75119a9b165fa3edfe",
+      "id": "per_head_finite_bias",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 4.384270724244743e-13,
+        "decomposition": 5.551115123125783e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 5.551115123125783e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 26,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 256,
+      "plan_binding": "a4a4ff659e869b2a35192a0eaab2eaeddaf106f382654e76d318bf5827c6e113",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "1b625d3f03dac9c74decfaa90bdb7c9933796feac1d451578206089c32d26e6b",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": true,
+        "e": 2,
+        "h": 1,
+        "id": "negative_infinity_padding",
+        "l": 2,
+        "mask": "padding_neginf",
+        "n": 1,
+        "s": 3
+      },
+      "expanded_nodes": 58,
+      "fx_code_sha256": "363e8ce1cff1fd2ad9d0b778d493c74f8e84d631220751514361a6f35e98c3de",
+      "id": "negative_infinity_padding",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 1.1102230246251565e-16,
+        "decomposition": 5.551115123125783e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 5.551115123125783e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 28,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 160,
+      "plan_binding": "723ab9876a3b808ec9b072a3a775600f951ffbf49a480f1a052c12ef9a17d367",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "4beba44b006f114e2d2fddacaf0f2b7782ee33167c6ad3878f4ee8ebd6cdd34e",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "average": false,
+        "batch_first": true,
+        "bias_kv": true,
+        "e": 2,
+        "h": 1,
+        "id": "bias_kv",
+        "l": 2,
+        "n": 1,
+        "s": 2
+      },
+      "expanded_nodes": 65,
+      "fx_code_sha256": "1cae780de20c08875bb286db14f7807eaae1cb87608c971dab7ddd8300bcba01",
+      "id": "bias_kv",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 1.1102230246251565e-16,
+        "decomposition": 2.220446049250313e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 2.220446049250313e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 34,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 160,
+      "plan_binding": "43b506de7af4f701fd6800be09f221321f9d36da2800c2cfd47fe7e31bf111e5",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "73eb42c997a3a09e2c381b8bfdf355b619662ec79430d57d9f288fb55f9b9fc7",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": true,
+        "e": 2,
+        "h": 1,
+        "id": "zero_attention",
+        "l": 2,
+        "n": 1,
+        "s": 2,
+        "zero": true
+      },
+      "expanded_nodes": 58,
+      "fx_code_sha256": "951580b358a38d06850240df513c9efa88d946aefe91db3e1a9d1a17b280fff2",
+      "id": "zero_attention",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 1.1102230246251565e-16,
+        "decomposition": 2.7755575615628914e-16,
+        "fixture": 0.0,
+        "original": 5.551115123125783e-17,
+        "torch": 2.7755575615628914e-16
+      },
+      "named_output_count": 2,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 28,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "tensor",
+            "name": "attn_weights"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 160,
+      "plan_binding": "aa40acafd7649fd4a0943860cf45ba70115212b419cf2345283e437ac39ae542",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "94853864bf73a6ad8dbd35b7fb4ee969105a57b8ea3cfc208add8a9d05f653f5",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": true,
+        "bias_kv": true,
+        "dropout": 0.1,
+        "e": 4,
+        "h": 2,
+        "id": "bias_and_zero_padding",
+        "l": 2,
+        "mask": "tail_padding",
+        "n": 1,
+        "need": false,
+        "s": 3,
+        "zero": true
+      },
+      "expanded_nodes": 66,
+      "fx_code_sha256": "ea5cdf167c2995389d5c746a3fff8371ab31eeb5e2a12e74bff25b689fc779ac",
+      "id": "bias_and_zero_padding",
+      "input_count": 3,
+      "mask_dispatch": "explicit_public_masks",
+      "maximum_errors": {
+        "approximation": 2.7755575615628914e-17,
+        "decomposition": 2.7755575615628914e-17,
+        "fixture": 0.0,
+        "original": 2.7755575615628914e-17,
+        "torch": 2.7755575615628914e-17
+      },
+      "named_output_count": 1,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 35,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "none"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 128,
+      "plan_binding": "b8e7ac0cc1c5a7588d97663e7ff5720548e37d271ed4ed3070a71cfafb1b0280",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "7fb1db2be4d8f2a0b6bf8f47f50b70fdd31337aaed377afa0be64f433dbb110d",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": true,
+        "causal": true,
+        "e": 2,
+        "h": 1,
+        "id": "causal_hint",
+        "l": 2,
+        "mask": "causal",
+        "n": 1,
+        "need": false,
+        "s": 3
+      },
+      "expanded_nodes": 56,
+      "fx_code_sha256": "b3fa739627c1fbd7668949ed6454f1ca9c6e5fc98913ced7a8b97049adef8af7",
+      "id": "causal_hint",
+      "input_count": 3,
+      "mask_dispatch": "implicit_causal",
+      "maximum_errors": {
+        "approximation": 5.551115123125783e-17,
+        "decomposition": 2.7755575615628914e-17,
+        "fixture": 0.0,
+        "original": 2.7755575615628914e-17,
+        "torch": 2.7755575615628914e-17
+      },
+      "named_output_count": 1,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 26,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "none"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 64,
+      "plan_binding": "aa26e19566a40ef75e7c1b985d2343d9f3e74e97ec8bdcb812fe33f4b2449bb4",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "fdb73603845531710950e22afefcfe4050fb4eb224e9cf346fb4b674e7d2044c",
+      "status": "math_passed"
+    },
+    {
+      "configuration": {
+        "batch_first": true,
+        "bias_kv": true,
+        "causal": true,
+        "e": 2,
+        "h": 1,
+        "id": "causal_extra_tokens",
+        "l": 3,
+        "mask": "causal",
+        "n": 1,
+        "need": false,
+        "s": 2,
+        "zero": true
+      },
+      "expanded_nodes": 68,
+      "fx_code_sha256": "b3fa739627c1fbd7668949ed6454f1ca9c6e5fc98913ced7a8b97049adef8af7",
+      "id": "causal_extra_tokens",
+      "input_count": 3,
+      "mask_dispatch": "implicit_causal",
+      "maximum_errors": {
+        "approximation": 2.7755575615628914e-17,
+        "decomposition": 2.7755575615628914e-17,
+        "fixture": 0.0,
+        "original": 1.3877787807814457e-17,
+        "torch": 2.7755575615628914e-17
+      },
+      "named_output_count": 1,
+      "original_function_accuracy_certified": false,
+      "original_nodes": 37,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "attn_output"
+          },
+          {
+            "kind": "none"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 96,
+      "plan_binding": "0099a24140079a41c1d3f87d84de69904632043e6f253e7c1429dfd519c3ab04",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "fef0e64d0f5cac56abc2b79a9e5a327767512e0a67902873d872a93bb0d058e0",
+      "status": "math_passed"
+    }
+  ],
+  "runtime": {
+    "cuda": null,
+    "hip": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "source_hashes": {
+    "scripts/baseline/benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "scripts/baseline/benchmark_math.py": "e9bd86a4d7ea1b836efc96119d1f58aa607618a69c1572d865146d8f2bc30e70",
+    "scripts/baseline/benchmark_torch.py": "4f96357dc570e3471a7a4fdeaf841ee8687882c132b9ea8a409ba710e2f55436",
+    "scripts/baseline/benchmarks/tools/static_mha_source_draft_v1/audit.py": "44c1733ba4f6a99a9f709bfbb569d1374b3d0f05477a6d57c1d326e82075c10a",
+    "scripts/baseline/benchmarks/tools/static_mha_source_draft_v1/fixtures.py": "13f3dba8c321c273e70082d784ecbcd7ba7b5a3ef39593635afebdc9ec5405b6",
+    "scripts/baseline/benchmarks/tools/static_mha_source_draft_v1/mha_source_plan.py": "f1f845815f671091a71b9b86217c5b68644d704b736ed7a237f638dec6164f49",
+    "scripts/baseline/benchmarks/tools/static_mha_source_draft_v1/mha_source_reference.py": "25bdaf114101b57fe3b3f8b78f6fd2eb4e77e97f0e357851aef4e86b849817c5",
+    "scripts/baseline/benchmarks/tools/static_mha_source_draft_v1/test_mha_source_plan.py": "5c306045df76bd39dbc871ab4d712a843e3752b5d49709171cc887aeaae20c17",
+    "scripts/baseline/model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "scripts/baseline/model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+    "scripts/baseline/platform_config.py": "ed6272b5055a7d558e037cc0cada79be955c8c8c8d63fa5314086d0c6142c2f8"
+  },
+  "source_snapshot": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_mha_source_draft_v1/math-verified-r1063",
+  "source_variants_preserved": true,
+  "status": "draft_math_validated",
+  "tolerance": {
+    "ckks": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    },
+    "plaintext": {
+      "atol": 1e-12,
+      "rtol": 1e-12
+    }
+  },
+  "trusted_local_fixture_fx_captures": 12,
+  "units": {
+    "errors": 0,
+    "failed": 0,
+    "run": 25,
+    "skipped": 0
+  },
+  "x86_configuration_preserved": true
+}

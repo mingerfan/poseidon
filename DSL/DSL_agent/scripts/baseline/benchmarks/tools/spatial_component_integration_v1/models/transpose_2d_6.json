@@ -1,0 +1,85 @@
+{
+  "constants": {
+    "bias": [
+      -0.0012699898522269965,
+      -0.09829810917966551
+    ],
+    "weight": [
+      [
+        [
+          [
+            -0.12050156153136651,
+            0.2788930850284819
+          ],
+          [
+            -0.052556607529403776,
+            0.16773476615475436
+          ]
+        ],
+        [
+          [
+            0.1603105397037734,
+            -0.251024488015498
+          ],
+          [
+            -0.28342436565447576,
+            -0.1680849547372129
+          ]
+        ]
+      ]
+    ]
+  },
+  "format": "poseidon-operator-graph-v4",
+  "id": "transpose_2d_6",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        4,
+        4
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "dilation": [
+          2,
+          2
+        ],
+        "groups": 1,
+        "output_padding": [
+          1,
+          1
+        ],
+        "output_size": null,
+        "padding": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ]
+      },
+      "id": "transposed",
+      "inputs": [
+        "x",
+        "weight",
+        "bias"
+      ],
+      "op": "conv_transpose2d",
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

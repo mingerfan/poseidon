@@ -1,0 +1,31 @@
+test_chunk_after_linear_and_unbind (test_pytorch_partitions.CaptureTests) ... ok
+test_chunk_mutation_and_snapshot_preserve_reference (test_pytorch_partitions.CaptureTests) ... ok
+test_chunk_then_shared_arithmetic_and_outputs (test_pytorch_partitions.CaptureTests) ... ok
+test_unbind_then_stack_and_transpose (test_pytorch_partitions.CaptureTests) ... ok
+test_chunk_registered_projection_and_numerical_contribution (test_pytorch_partitions.GraphTests) ... ok
+test_data_dependent_chunk_count_rejects (test_pytorch_partitions.GraphTests) ... ok
+test_index_rewrite_tamper_rejects (test_pytorch_partitions.GraphTests) ... ok
+test_missing_partition_entry_rejects (test_pytorch_partitions.GraphTests) ... ok
+test_mutated_chunk_is_still_a_view_of_original_storage (test_pytorch_partitions.GraphTests) ... ok
+test_nested_partition_preserves_coordinate_mapping (test_pytorch_partitions.GraphTests) ... ok
+test_old_trace_policy_does_not_silently_enable_partition (test_pytorch_partitions.GraphTests) ... ok
+test_plan_tamper_with_recomputed_binding_rejects (test_pytorch_partitions.GraphTests) ... ok
+test_unbind_dictionary_structure (test_pytorch_partitions.GraphTests) ... ok
+test_all_static_shapes_match_torch_partition_semantics (test_pytorch_partitions.PlannerTests) ... ok
+test_axis_boundaries_reject (test_pytorch_partitions.PlannerTests) ... ok
+test_chunks_greater_than_axis (test_pytorch_partitions.PlannerTests) ... ok
+test_duplicate_and_unknown_fields_reject (test_pytorch_partitions.PlannerTests) ... ok
+test_empty_and_zero_shapes_reject (test_pytorch_partitions.PlannerTests) ... ok
+test_expansion_bound_is_checked_before_ports (test_pytorch_partitions.PlannerTests) ... ok
+test_positional_and_keyword_forms (test_pytorch_partitions.PlannerTests) ... ok
+test_rank_32_and_33_boundary (test_pytorch_partitions.PlannerTests) ... ok
+test_scalar_unbind_does_not_bypass_alias_contract (test_pytorch_partitions.PlannerTests) ... ok
+test_single_chunk_preserves_full_view (test_pytorch_partitions.PlannerTests) ... ok
+test_static_count_types_reject (test_pytorch_partitions.PlannerTests) ... ok
+test_unbind_removes_selected_axis (test_pytorch_partitions.PlannerTests) ... ok
+test_uneven_chunk_count_differs_from_requested (test_pytorch_partitions.PlannerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.457s
+
+OK

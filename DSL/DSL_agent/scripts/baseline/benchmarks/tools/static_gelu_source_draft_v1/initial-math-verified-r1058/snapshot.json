@@ -1,0 +1,8 @@
+{
+  "source_hashes": {
+    "gelu_source_plan.py": "2117495308ed462fa8c6e854ce9304d00fbde3e910eb2dcc2151627dc89a2417",
+    "test_gelu_source_plan.py": "382a20e60b144998ce3ce7ac109f6866738f6047ffd83ccd375766b81b2f21b7",
+    "audit.py": "ca6995c72ac082547a4d8db55485a4cc7f751ca5a1d3435714e28a637bb13698"
+  },
+  "verified_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-gelu-source-draft-r1058/report.json"
+}

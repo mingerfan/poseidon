@@ -1,0 +1,11 @@
+{
+  "automatic_restart": false,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "exit_code": 124,
+  "last_line": "test_service_exception_preserves_used_quota_and_redacts_private_message (test_application_assessment.ApplicationAssessmentTests) ... ",
+  "log_sha256": "4116b40161bfb69b4c1056d060f024579b1e8ec73ce94d5f89c12f941efdfea0",
+  "observed_ok": 50,
+  "provider_calls": 0,
+  "status": "timed_out"
+}

@@ -1,0 +1,270 @@
+--- before/application_component.py
++++ after/application_component.py
+@@ -11,6 +11,11 @@
+ from application_policy import budget,prepare,structured_failure,decision,BACKEND
+ from application_diagnostics import LEGACY, PRECISE, POLICIES, attach, repeat_key
+ from execution_input_domain import ApproximationDomainRejected
++from application_admission import (LEGACY as ADMISSION_LEGACY, STRUCTURED as ADMISSION_STRUCTURED,
++                                   AdmissionRejected, diagnostic as admission_diagnostic,
++                                   policy as check_admission_policy, precheck as admission_precheck)
++from application_artifact_budget import (ArtifactMonitor, OperationalStopped,
++                                        limits as operational_budget)
+ TERMINAL={"succeeded","unsupported","budget_exhausted","validation_failed","service_error","cancelled","timed_out"}
+ class Stopped(BaseException):
+     def __init__(self,status):self.status=status
+@@ -129,15 +134,25 @@
+             from application_identity import compatible
+             return compatible(meta["identity"], actual)
+         return actual == meta["identity"]
+-    def submit(self,model,*,backend=BACKEND,validation_level="numerical",options=None,limits=None,feedback_policy=PRECISE,model_provenance=None):
++    def submit(self,model,*,backend=BACKEND,validation_level="numerical",options=None,limits=None,
++               feedback_policy=PRECISE,model_provenance=None,admission_policy=ADMISSION_LEGACY,
++               operational_limits=None):
+         task=uuid.uuid4().hex;p=self._dir(task);p.mkdir(mode=0o700)
+         state=dict(task_id=task,status="queued",phase="input_check",validation_level=validation_level,
+                    generations=0,http_attempts=0,ledger=[],failure=None,package=None,acceptance=None,generation=None)
+         self._write(p/"state.json",state)
+         try:
++            check_admission_policy(admission_policy)
++            requested_limits=limits if limits is not None else dict(generations=4,http_attempts=16,wall_seconds=3600,
++                               api_timeout_seconds=1200,max_tokens=384000)
++            if admission_policy == ADMISSION_STRUCTURED:
++                admission_precheck(model,backend=backend,validation_level=validation_level,limits=requested_limits)
++            if operational_limits is not None:
++                try:operational_limits=operational_budget(operational_limits)
++                except (ValueError,TypeError,KeyError):
++                    raise AdmissionRejected("operational_limits",location="operational_limits") from None
+             require(feedback_policy in POLICIES,"Feedback policy")
+-            b=budget(limits if limits is not None else dict(generations=4,http_attempts=16,wall_seconds=3600,
+-                               api_timeout_seconds=1200,max_tokens=384000))
++            b=budget(requested_limits)
+             q,context=prepare(model,backend,validation_level,options)
+             if model_provenance is not None:
+                 from candidate_bundle import check_provenance
+@@ -145,9 +160,13 @@
+                 require(len(canonical(model_provenance))<=storage_limit(q),"Model provenance budget")
+                 model_provenance=copy.deepcopy(model_provenance)
+                 check_provenance(model_provenance,q["model"])
++        except AdmissionRejected as error:
++            state.update(status="unsupported",phase="complete",failure=error.public_failure)
++            self._write(p/"state.json",state);return task
+         except (ValueError,TypeError,KeyError,IndexError):
+-            state.update(status="unsupported",phase="complete",
+-                         failure=dict(code="input_or_capability_unsupported",layer="input",location=None,context={}))
++            fallback=(admission_diagnostic("unknown") if admission_policy == ADMISSION_STRUCTURED else
++                      dict(code="input_or_capability_unsupported",layer="input",location=None,context={}))
++            state.update(status="unsupported",phase="complete",failure=fallback)
+             self._write(p/"state.json",state);return task
+         identity_policy = "staged-v1" if callable(getattr(self.backend,"identity_manifest",None)) else "legacy-v1"
+         try:identity=self._identity(identity_policy)
+@@ -161,6 +180,10 @@
+         if model_provenance is not None:
+             payload["model_provenance"]=model_provenance
+             key["model_provenance_sha256"]=digest(model_provenance)
++        if admission_policy != ADMISSION_LEGACY:
++            payload["admission_policy"]=admission_policy
++        if operational_limits is not None:
++            payload["operational_limits"]=operational_limits
+         payload["binding"]=digest(payload)
+         if len(canonical(payload))>4*1024**2:
+             state.update(status="unsupported",phase="complete",
+@@ -168,7 +191,15 @@
+             self._write(p/"state.json",state);return task
+         self._write(p/"task.json",payload)
+         state["reuse_key"]=digest(key)
+-        state["phase"]="queued";self._write(p/"state.json",state)
++        state["phase"]="queued"
++        if operational_limits is not None:
++            try:
++                monitor=ArtifactMonitor(self,p,operational_limits,initialize=True)
++                monitor.check(force=True)
++                state["operational_usage"]=monitor.usage()
++            except OperationalStopped as stop:
++                state.update(status=stop.status,phase="complete",failure=stop.public_failure)
++        self._write(p/"state.json",state)
+         return task
+     def submit_import(self,model_import,**requirements):
+         """Submit a checked offline import; retained Python sources stay inert."""
+@@ -195,6 +226,7 @@
+                        "generations","http_attempts","failure","package","acceptance")} | {
+                            "generation":copy.deepcopy(s.get("generation"))}
+         if "intake" in s:result["intake"]=copy.deepcopy(s["intake"])
++        if "operational_usage" in s:result["operational_usage"]=copy.deepcopy(s["operational_usage"])
+         return result
+     def result(self,task):
+         s=self.status(task)
+@@ -210,7 +242,67 @@
+             except Exception:
+                 s.update(status="service_error",package=None,failure=dict(code="package_identity_mismatch",layer="delivery"))
+         return s
+-    def execute(self,task,samples):
++    def execute(self,task,samples,*,operational_limits=None):
++        """Package execution; an explicit resource budget applies to this call."""
++        if operational_limits is None:
++            return self._execute(task,samples)
++        try:
++            bounds=operational_budget(operational_limits)
++        except (ValueError,TypeError,KeyError):
++            return dict(status="unsupported",failure=admission_diagnostic("operational_limits",
++                        location="operational_limits"),agent_calls=0,compiler_calls=0,encrypted_execution=False)
++        try:
++            meta=self._checked_task_metadata(task)
++        except (ValueError,TypeError,KeyError,OSError):
++            return dict(status="service_error",failure=dict(code="task_integrity_rejected",layer="integrity"),
++                        agent_calls=0,compiler_calls=0,encrypted_execution=False)
++        folder=self._dir(task)/("execution-control-"+uuid.uuid4().hex)
++        folder.mkdir(mode=0o700)
++        monitor=None;previous=None;result=None
++        deadline=time.monotonic()+budget(meta["budget"])["wall_seconds"]
++        def check(*_):
++            if (self._dir(task)/"cancel.json").exists():raise Stopped("cancelled")
++            if time.monotonic()>=deadline:raise Stopped("timed_out")
++            if monitor is not None:monitor.check()
++        def alarm_check(*_):
++            try:check()
++            except (Stopped,OperationalStopped):
++                signal.setitimer(signal.ITIMER_REAL,0)
++                raise
++        def observe(path):
++            check()
++            monitor.register(path)
++        try:
++            monitor=ArtifactMonitor(self,folder,bounds,initialize=True)
++            monitor.check(force=True)
++            require(signal.getitimer(signal.ITIMER_REAL)==(0.,0.),"Worker already owns an alarm")
++            previous=signal.signal(signal.SIGALRM,alarm_check)
++            signal.setitimer(signal.ITIMER_REAL,.1,.1)
++            check()
++            result=self._execute(task,samples,artifact_observer=observe)
++            monitor.check(force=True)
++            result["operational_usage"]=monitor.usage()
++        except OperationalStopped as stop:
++            result=dict(status=stop.status,failure=stop.public_failure,
++                        agent_calls=0,compiler_calls=0,
++                        encrypted_execution_observed=(result.get("encrypted_execution") if result else None))
++        except Stopped as stop:
++            result=dict(status=stop.status,agent_calls=0,compiler_calls=0,
++                        encrypted_execution_observed=(result.get("encrypted_execution") if result else None))
++        except Exception:
++            result=dict(status="service_error",failure=dict(code="program_execution_unavailable",layer="environment"),
++                        agent_calls=0,compiler_calls=0)
++        finally:
++            if previous is not None:
++                signal.setitimer(signal.ITIMER_REAL,0);signal.signal(signal.SIGALRM,previous)
++            if result is not None:
++                if monitor is not None:result["operational_usage"]=monitor.usage()
++                self._write(folder/"state.json",{k:copy.deepcopy(result[k]) for k in
++                    ("status","failure","operational_usage","agent_calls","compiler_calls","encrypted_execution_observed")
++                    if k in result})
++        return result
++
++    def _execute(self,task,samples,*,artifact_observer=None):
+         """Local pinned-worker inference using a completed, checked package."""
+         result=self.result(task)
+         if result["status"] != "succeeded":
+@@ -218,7 +310,8 @@
+         from application_planning.compiled_resources import CompiledStorageRejected, CompiledResourceIntegrityRejected
+         try:
+             package=self._dir(result["package"]["task_id"])/"program"
+-            return self.backend.execute(package,samples)
++            options={} if artifact_observer is None else dict(artifact_observer=artifact_observer)
++            return self.backend.execute(package,samples,**options)
+         except CompiledResourceIntegrityRejected:
+             from application_diagnostics import make
+             return dict(status="service_error", failure=make("integrity_rejected"),
+@@ -276,19 +369,25 @@
+                 b=budget(meta["budget"]);level=meta["validation_level"]
+                 policy=meta.get("feedback_policy",LEGACY)
+                 require(policy in POLICIES,"Feedback policy")
++                if "admission_policy" in meta:check_admission_policy(meta["admission_policy"])
++                if "operational_limits" in meta:operational_budget(meta["operational_limits"])
+             except (ValueError,TypeError,KeyError,OSError):
+                 state.update(status="service_error",phase="complete",
+                              failure=dict(code="task_integrity_rejected",layer="integrity"))
+                 self._write(p/"state.json",state);return self.status(task)
+             state.update(status="running",phase="preflight");self._write(p/"state.json",state)
+-            control=Controller(self,p,state,b,policy=policy)
++            try:
++                control=Controller(self,p,state,b,policy=policy,operational_limits=meta.get("operational_limits"))
++            except OperationalStopped as stop:
++                state.update(status=stop.status,phase="complete",failure=stop.public_failure)
++                self._write(p/"state.json",state);return self.status(task)
+             previous=None;alarm=None;old_before=None;old_after=None
+             try:
+                 # Cover preflight and cached delivery as well as generation/validation.
+                 require(signal.getitimer(signal.ITIMER_REAL)==(0.,0.),"Worker already owns an alarm")
+                 def alarm_check(*_):
+                     try:control.check()
+-                    except Stopped:
++                    except (Stopped,OperationalStopped):
+                         signal.setitimer(signal.ITIMER_REAL,0)
+                         raise
+                 previous=signal.signal(signal.SIGALRM,alarm_check)
+@@ -356,7 +455,9 @@
+                                   diagnostic="Candidate violates the fixed DSL contract"))
+                         else:
+                             # Backend exceptions belong to the host, not generated syntax.
+-                            result=self.backend.qualify(meta["request"],candidate,level)
++                            options={} if control.artifacts is None else dict(artifact_observer=control.register_artifact)
++                            result=self.backend.qualify(meta["request"],candidate,level,**options)
++                            control.check(force=True)
+                     if policy == PRECISE:
+                         result=attach(result,candidate=candidate,request=meta["request"])
+                     last.clear();last.update(result)
+@@ -392,10 +493,11 @@
+                         state["generation"]=dict(provider=provider.kind,agent_generated=False,
+                             generations=loop["attempts"],http_attempts=state["http_attempts"])
+                     self.backend.export(last,p/"program",level,**export_options)
+-                    control.check()
++                    control.check(force=True)
+                     binding=self.backend.check_package(p/"program",level)
+                     require(self._identity_matches(meta),"Dependency changed during task")
+                     control.check()
++                    control.check(force=True)
+                     acceptance=dict(level=level,compiled=True,artifact_checked=True,
+                         encrypted_execution=level=="numerical",numerically_validated=level=="numerical",
+                         input_groups=4 if level=="numerical" else 0,
+@@ -418,6 +520,9 @@
+                     else:
+                         state["failure"]=control.last_failure or dict(code="provider_or_worker_failure",layer="provider")
+             except Stopped as stop:state["status"]=stop.status
++            except OperationalStopped as stop:
++                signal.setitimer(signal.ITIMER_REAL,0)
++                state.update(status=stop.status,failure=stop.public_failure,package=None,acceptance=None)
+             except PackageBindingRejected as error:
+                 state.update(status="service_error",failure=error.public_failure(),package=None)
+             except Exception as error:
+@@ -433,7 +538,7 @@
+         return self.result(task)
+ 
+ class Controller:
+-    def __init__(self,app,path,state,bounds,*,policy=LEGACY):
++    def __init__(self,app,path,state,bounds,*,policy=LEGACY,operational_limits=None):
+         require(policy in POLICIES,"Feedback policy")
+         self.policy=policy
+         from application_diagnostics import RepairDecision
+@@ -441,11 +546,22 @@
+         self.app=app;self.path=path;self.state=state;self.bounds=bounds
+         self.deadline=time.monotonic()+bounds["wall_seconds"]
+         self.seen=set();self.last_failure=None;self.last_key=None;self.repeated=0
++        self.artifacts=None if operational_limits is None else ArtifactMonitor(app,path,operational_limits)
+     def observe_failure(self,result):self.last_failure=structured_failure(result,self.policy)
+-    def save(self):self.app._write(self.path/"state.json",self.state)
+-    def check(self):
++    def save(self):
++        if self.artifacts is not None:self.state["operational_usage"]=self.artifacts.usage()
++        self.app._write(self.path/"state.json",self.state)
++    def check(self,*,force=False):
+         if (self.path/"cancel.json").exists():raise Stopped("cancelled")
+         if time.monotonic()>=self.deadline:raise Stopped("timed_out")
++        if self.artifacts is not None:
++            self.artifacts.check(force=force)
++            self.state["operational_usage"]=self.artifacts.usage()
++    def register_artifact(self,path):
++        self.check()
++        self.artifacts.register(path)
++        self.state["operational_usage"]=self.artifacts.usage()
++        self.save()
+     def before_generation(self,index):
+         self.check()
+         if self.state["generations"]>=self.bounds["generations"]:return "budget_exhausted"

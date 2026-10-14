@@ -1,0 +1,83 @@
+{
+  "binding": "28de113e56e701bea2a40689788707f42dae7c42499398b8e3208228e7e900c5",
+  "cases": [
+    {
+      "bytes_unchanged": true,
+      "case": "same_0",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "3c3977f162c02f3078e42247f3501e3eba36f2f0a4677b23ccc39b5ec29eda6c"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "same_1",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "e3805661f5a6860ff4c6681771c42c33826340675b85c6c862208bffc505fb2a"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "same_2",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "b7db92aef1d690113f86d5bafd10715283341a0d7dbdeb6f30976636e3d45b54"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "interleave_0",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "0a715e405f4c25d46c05d1c9ceb936c276cb18f0145c30ce02c407b6c3733243"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "interleave_1",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "d9d398c02d1e01502b4670fea28926c2e388863beeb6aabeb5d30dce0030aeee"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "interleave_2",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "85d5cb7079ca1b4d26a1ff5b1cacac233b340d454d912657a400e55e7555fc38"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "structure_0",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "e5e30c8e66226d42d66994ab3df75ad67074080d29033e34fcad9e82d70aa5a1"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "structure_1",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "5eb0a7ab00f6e56be7f99718dc02e0ef3b1ffdf344fe0af76c27bd306e031ab4"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "structure_2",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "0373f7e1279659ea210fed68e6acf06f4f74fa4df143f78984f76ca4992f6bfa"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "compat_mixed_cat_0",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "2bcc9ab6f16d6d4e05073c1b696d62948c797e3c8d502399967f68af30414405"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "compat_public_stack_0",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "e1b5f2ab4991fcc0140be183fb14c1d83f2d3decf843a948832da16ddd1c5323"
+    },
+    {
+      "bytes_unchanged": true,
+      "case": "compat_combination_5",
+      "policy": "descriptors-math-roles-v2",
+      "request_id": "a4897e7cd066aec8e8f0b597bdc21530e395c2468eb0b272d7837e61c8c252e8"
+    }
+  ],
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-legacy-request-byte-replay-v1",
+  "historical_records_rewritten": false,
+  "paid_calls": 0,
+  "status": "passed"
+}

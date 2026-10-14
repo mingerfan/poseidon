@@ -1,0 +1,8 @@
+{
+  "after": "5d0071a4d29e2725245ba41d4f0c8b98af368e35859b5bde504d0b787121ca9a",
+  "before": "7271b22949060a4e5d0a0ef78f24b70cd4ccfc0dca6921c4c66b2062b2ef908a",
+  "dedicated_integrity_controls": "test_compiled_execution_precheck",
+  "file": "scripts/baseline/test_execution_input_domain.py",
+  "production_checks_changed": false,
+  "reason": "existing non-FHE report-builder fixture lacked mandatory compiled resource precheck injection"
+}

@@ -1,0 +1,103 @@
+{
+  "backend_changes": false,
+  "binding": "5a4a489acfc7b06341c07c2dbc03775a6f8f5aeee9897f0414216273d5485217",
+  "bootstrap_verified": false,
+  "branch": "lhy-agent-dsl",
+  "broadcast_draft": {
+    "compared_values": 10384,
+    "compiled": false,
+    "encrypted_execution": false,
+    "maximum_difference": 0.0,
+    "plaintext_groups": 752,
+    "positive_contexts": 47,
+    "registered": false,
+    "rejected": 9
+  },
+  "broadcast_receipt": {
+    "binding": "ad5a82a12a81a2fda16fc302c9e58e5fbcec76ce9d576b01b0fa8a3177c68c73",
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-broadcast-source-draft-v2-1791754587839038814/report.json",
+    "sha256": "d4d0a6c73753e640a4aeaba64faccab813ea751f31de32f80d6f925f8ef88232"
+  },
+  "commits": 0,
+  "compared_values": 2968,
+  "cuda_verified": false,
+  "distinct_public_requests": 26,
+  "format": "poseidon-source-intake-phase-summary-v1",
+  "genuine_generation": {
+    "compiler_calls": 26,
+    "encrypted_calls": 78,
+    "failed": 0,
+    "first_attempt_passed": 26,
+    "generations": 26,
+    "http_attempts": 26,
+    "not_run": 0,
+    "passed": 26
+  },
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_records_rewritten": false,
+  "input_groups": 408,
+  "latest_selector": {
+    "active": "poseidon-trusted-pytorch-v27",
+    "failed": 0,
+    "identical_qualified_manifests": 3,
+    "legacy_default": "poseidon-trusted-pytorch-v18",
+    "new_api_calls": 0,
+    "new_native_calls": 0,
+    "skipped": 0,
+    "static_passed": 27
+  },
+  "mae": 1.3748300887420654e-09,
+  "mathematical_model_dedup_claim": false,
+  "maximum_absolute_error": 2.9944661714533247e-08,
+  "network_changes": false,
+  "new_downloads": 0,
+  "new_installation": 0,
+  "next_action": "Integrate static broadcast method normalization behind an explicit source contract; freeze a small representative native/Agent scope within remaining storage.",
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "original_source_replay": {
+    "compiler_calls": 25,
+    "encrypted_calls": 75,
+    "failed": 0,
+    "http_attempts": 0,
+    "not_run": 0,
+    "package_origin": "scripted replay; exact original genuine Agent source and receipt bound separately",
+    "paid_generations": 0,
+    "passed": 25
+  },
+  "parameter_changes": false,
+  "preserved_development_failures": [
+    "freeze-first.log",
+    "freeze-recovery.log",
+    "audit-first.log",
+    "controls-output-order.log"
+  ],
+  "pushes": 0,
+  "receipts": {
+    "latest_selector": {
+      "binding": "711f4032da755f0128cf88a1376efbc688180d9732536a988ca5fe3bae498d52",
+      "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-latest-source-selection-acceptance-r1425.json",
+      "sha256": "b204c0cd845618be4b4d4eef0b2c548af5872a81cb53c64ad0bfae853bee746f"
+    },
+    "original_source_replay": {
+      "binding": "9e9f039939b0967c36795feab5fb7dcb3ba966614b7e122475edab93b86d3f24",
+      "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-normalized-source-replay-acceptance-r1423.json",
+      "sha256": "1c30109ca89291586f850723419295b5fe8497a32e9c7d3ba5e10995d9ca8ff8"
+    },
+    "real_agent": {
+      "binding": "45fe79c246f0f6a3c5a2891b59efb965139aa21047e1666b604f8d9056c0b543",
+      "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-normalized-source-live-acceptance-r1420.json",
+      "sha256": "1cab43ba7f7565745a2ae5043359ebd7601d80d93ab9d063df66ed260f2b9451"
+    }
+  },
+  "resource": {
+    "global_bytes": 34230108160,
+    "limit_bytes": 34359738368,
+    "remaining_bytes": 129630208
+  },
+  "source_contexts": 51,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "status": "completed"
+}

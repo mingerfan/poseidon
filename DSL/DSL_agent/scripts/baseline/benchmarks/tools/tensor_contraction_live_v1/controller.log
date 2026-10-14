@@ -1,0 +1,10 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "dot_scalar", "status": "passed", "generations": 1, "http_attempts": 1}
+{"case": "matrix", "status": "passed", "generations": 2, "http_attempts": 2}
+{"case": "negative_axes", "status": "passed", "generations": 3, "http_attempts": 3}
+{"case": "outer", "status": "passed", "generations": 4, "http_attempts": 4}
+{"case": "singleton_broadcast", "status": "passed", "generations": 5, "http_attempts": 5}
+{"case": "scalar_intermediate", "status": "passed", "generations": 6, "http_attempts": 6}

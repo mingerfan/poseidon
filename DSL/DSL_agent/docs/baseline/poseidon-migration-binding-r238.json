@@ -1,0 +1,121 @@
+{
+  "format": "poseidon-migration-binding-audit-v1",
+  "backend_identity_format": "poseidon-backend-identity-v2",
+  "unit": {
+    "run": 58,
+    "passed": 58,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "paid_calls": 0,
+  "downloads": 0,
+  "new_dependencies": false,
+  "minimal_models": [
+    {
+      "name": "linear",
+      "status": "passed",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-eyfn2mii",
+      "max_absolute_error": 2.189237457983495e-09,
+      "compared_values": 8,
+      "package": null,
+      "package_replay_passed": false
+    },
+    {
+      "name": "mlp",
+      "status": "passed",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qgyop5jf",
+      "max_absolute_error": 8.624716563154777e-08,
+      "compared_values": 8,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-minimal-v2-r238/mlp-program",
+      "package_replay_passed": true
+    }
+  ],
+  "application": [
+    {
+      "level": "compiled",
+      "status": "succeeded",
+      "reload_status": "compiled",
+      "cache_provider_calls": 0
+    },
+    {
+      "level": "numerical",
+      "status": "succeeded",
+      "reload_status": "passed",
+      "cache_provider_calls": 0
+    }
+  ],
+  "build_configuration": {
+    "environment_files": {
+      "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+      "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+      "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+      "src/poseidon/tools/dacapo/poseidon-cpu-shell.nix": "38e03f4ec07fc089a14851595f7d1211fe07618875e9868bf5d205dd39274020",
+      "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+    },
+    "cmake_cache_sha256": {
+      "compiler": "76c058b5d19a3e27fe299a7cbd071888494cb48c19f27df2d4d71c807b86f51d",
+      "executor": "a2b446c164db2f71b3a999a10ea097b34267bd8d34aef68129e423362f76f789",
+      "poseidon": "a96456e4ac0651827a50d58c6c80f12c2772c005cd78d2949919a6e1d2106e32"
+    }
+  },
+  "requirements": [
+    {
+      "item": "pinned source integration and seven approved semantic patches",
+      "status": "implemented",
+      "evidence": "poseidon-runtime-sources.lock.json; r232"
+    },
+    {
+      "item": "RuntimePlan, OperatorSpec and plaintext bundle integrity",
+      "status": "representative_validation_passed",
+      "evidence": "r232/r233 and test_poseidon_runtime_backend.py"
+    },
+    {
+      "item": "Linear and Linear-square-Linear encrypted CPU execution",
+      "status": "passed_current_binding",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-minimal-v2-r238"
+    },
+    {
+      "item": "package reload and explicit validation grade",
+      "status": "passed_current_binding",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-application-r238"
+    },
+    {
+      "item": "packing, rotation, multi-input/output and native helper regressions",
+      "status": "scoped_prior_binding_passed",
+      "evidence": "poseidon-runtime-migration-r233.json"
+    },
+    {
+      "item": "historical SEAL evidence and no execution fallback",
+      "status": "preserved_and_fail_closed",
+      "evidence": "candidate_bundle.py replay; component_backend.py qualify"
+    },
+    {
+      "item": "native bootstrap numerical acceptance",
+      "status": "blocked",
+      "evidence": "poseidon-native-bootstrap-result-r234.json; poseidon-bootstrap-math-audit-r235.json"
+    },
+    {
+      "item": "native bootstrap Runtime wiring",
+      "status": "not_implemented",
+      "reason": "native numerical acceptance required; Runtime semantic change requires separate approval"
+    },
+    {
+      "item": "RMSNorm and Attention original models",
+      "status": "compiler_blocked",
+      "evidence": "poseidon-whole-models-r233; poseidon-whole-w40-r233"
+    },
+    {
+      "item": "real Agent qualification on Poseidon",
+      "status": "not_run",
+      "reason": "new frozen paid batch requires separate approval"
+    },
+    {
+      "item": "x86 native, blank-machine install and CUDA",
+      "status": "out_of_current_goal_scope"
+    }
+  ],
+  "completion": "not_complete",
+  "pending_approval": "docs/baseline/poseidon-native-bootstrap-proposal-r235.json"
+}

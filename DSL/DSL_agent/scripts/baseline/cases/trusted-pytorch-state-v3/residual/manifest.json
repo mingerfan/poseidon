@@ -1,0 +1,51 @@
+{
+  "format": "poseidon-trusted-pytorch-v3",
+  "files": {
+    "models.py": "1b09ea0975251c2b80e5e9d19560a560f140aa4d91d0c6ad74b5364c946a8deb"
+  },
+  "entry": "models.make_residual",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "merged"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [
+      2
+    ],
+    "kwargs": {
+      "seed": 73
+    }
+  },
+  "dtype_policy": "convert-float64-v1",
+  "weights": {
+    "project.bias": {
+      "file": "state_0000.npy",
+      "sha256": "1ca219e13ee990a774f453ff367c0e168d2d26cde5500b3fd01be84d3dfaf9e2",
+      "bytes": 136,
+      "shape": [
+        2
+      ],
+      "dtype": "<f4"
+    },
+    "project.weight": {
+      "file": "state_0001.npy",
+      "sha256": "657142d6d32f48d3d58ef32bc77bf5be5a73ed5fd2d66a18004b5bd9c1b7603b",
+      "bytes": 144,
+      "shape": [
+        2,
+        2
+      ],
+      "dtype": "<f4"
+    }
+  }
+}

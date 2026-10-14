@@ -1,0 +1,1 @@
+{"constants":{},"format":"poseidon-model-graph-v2","id":"suffix_three","inputs":[{"name":"x","shape":[4,3]}],"nodes":[{"attrs":{},"id":"square","inputs":["x"],"op":"square","outputs":["v"]},{"attrs":{"axes":[-1],"keepdims":false},"id":"mean","inputs":["v"],"op":"mean","outputs":["z"]}],"outputs":[{"name":"out","value":"z"}],"resource_profile":"general-tensors-v1"}

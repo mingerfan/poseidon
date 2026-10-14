@@ -1,0 +1,31 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{
+  "format": "poseidon-spatial-source-offline-independent-audit-v1",
+  "proposal_binding": "c563ee93d44018613d6ee4affc315414efacbace38a77fb5e81a60e2e9f7e592",
+  "authorization_binding": "ee72e7b14c54ed9cca2c056bfe52d9616b1af442bc70d998b9336d83614d6e32",
+  "report_binding": "a54a1cedeb9cb00c162967b116937a5f036de8ea4a7380c55cfabde3e2ac1a5d",
+  "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+  "status": "verified",
+  "completed": true,
+  "planned": 18,
+  "passed": 18,
+  "failed": 0,
+  "blocked": 0,
+  "not_run": 0,
+  "compiler_confirmed": 18,
+  "encrypted_confirmed": 27,
+  "package_reuse_passed": 3,
+  "input_groups": 93,
+  "compared_values": 1094,
+  "maximum_absolute_error": 9.14513568931602e-07,
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "agent_generated": false,
+  "measured_new_bytes": 226648064,
+  "current_bytes": 32451989504,
+  "free_bytes": 42268540928,
+  "binding": "5732c87524838ff102f2496e5d3a4dce509ab4f52bd47d3fce57aea9beeee5c9"
+}

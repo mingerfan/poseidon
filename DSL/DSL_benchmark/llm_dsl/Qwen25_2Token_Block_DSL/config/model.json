@@ -1,0 +1,12 @@
+{
+  "num_layers": 1,
+  "hidden_size": 896,
+  "intermediate_size": 4864,
+  "query_heads": 14,
+  "kv_heads": 2,
+  "head_dim": 64,
+  "vocab_size": 151936,
+  "max_sequence_length": 512,
+  "rope_theta": 1000000.0,
+  "rms_norm_eps": 1e-06
+}

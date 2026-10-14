@@ -1,0 +1,75 @@
+{
+  "approximations": {
+    "defaults": {},
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "call": {
+    "args": [
+      {
+        "kind": "tensor",
+        "name": "x"
+      }
+    ],
+    "format": "poseidon-pytorch-call-v1",
+    "kwargs": {
+      "z": {
+        "kind": "tensor",
+        "name": "z"
+      }
+    }
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "a834ae32bed56a4177291d66799694e9ce5163d82b410c8ab15c86f1a368d9ba"
+  },
+  "format": "poseidon-trusted-pytorch-v33",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "name": "z",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "y",
+    "snapshot",
+    "current"
+  ],
+  "weights": {
+    "mask": {
+      "bytes": 130,
+      "dtype": "|b1",
+      "file": "state_0000.npy",
+      "sha256": "4257418724eeadfcfc6affd95584b6da87d3ac25effd1de68ad2f9907cbe104c",
+      "shape": [
+        2
+      ]
+    },
+    "w": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "state_0001.npy",
+      "sha256": "f9a68066bd073af55ba86ae49bcaa0e9f0b73bc729861f19002fd8d0c3342912",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  }
+}

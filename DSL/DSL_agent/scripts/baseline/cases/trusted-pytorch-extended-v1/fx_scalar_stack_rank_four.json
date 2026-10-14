@@ -1,0 +1,1 @@
+{"approximations":{},"entry":"scalar_model.make_rank_four_stats","files":{"scalar_model.py":"dd39539f50dfc93af548cdb7a88e28d70fa38e8876445e7b00ce1db2f8cf7734"},"format":"poseidon-trusted-pytorch-v1","inputs":[{"name":"x","shape":[1,2,3,4]}],"outputs":["statistics"]}

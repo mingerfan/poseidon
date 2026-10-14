@@ -1,0 +1,313 @@
+{
+  "format": "poseidon-gelu-source-draft-acceptance-v1",
+  "revision": "r1060",
+  "status": "draft_math_validated",
+  "checkout": {
+    "path": "/home/lhohy/Code/Poseidon",
+    "branch": "lhy-agent-dsl",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "system": "Linux",
+    "architecture": "aarch64"
+  },
+  "audit": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-gelu-source-draft-r1059/report.json",
+    "sha256": "98a0390a332d15a7f7d60e4f8a9af5ba91aa0669a194012a2c1130b344ca7d9c",
+    "binding": "52162caf2804a67494539ccbb0745e0ff8d1f2c8d8a7895a2890f540edc342f2"
+  },
+  "runtime": {
+    "cuda": null,
+    "hip": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "units": {
+    "errors": 0,
+    "failed": 0,
+    "run": 20,
+    "skipped": 0
+  },
+  "contexts_by_variant": {
+    "none": 3,
+    "tanh": 3
+  },
+  "mathematical_contexts": 6,
+  "reference_groups": 96,
+  "output_values": 704,
+  "rows": [
+    {
+      "basis": "power",
+      "fx_code_sha256": "467f337db87f56f2e4ba1ba26984f3fed8d100c3331cc3cca016e4506b9cf7a8",
+      "id": "none_functional_vector",
+      "max_approximation_error": 0.00889284573401572,
+      "max_core_torch_error": 1.1102230246251565e-16,
+      "max_decomposition_error": 1.1102230246251565e-16,
+      "max_fixture_fx_error": 0.0,
+      "max_original_reference_error": 1.1102230246251565e-16,
+      "max_source_variant_difference": 0.00015275546026616293,
+      "original_function_accuracy_certified": false,
+      "output_values": 64,
+      "plan_binding": "1eb630565881c7d98048d92652a7b093b39ba5966c3bcb463bc5384275b89e3d",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "shape": [
+        4
+      ],
+      "source": "functional",
+      "source_call_sha256": "97a76b8f984b8c6bcf1b21ceb3665e59bd8b1bbd275900beac8b23f7f1971197",
+      "source_identity": {
+        "identity": "torch-2.0.1-gelu-erf-v1",
+        "operator": "gelu",
+        "variant": "none"
+      },
+      "status": "math_passed",
+      "variant": "none"
+    },
+    {
+      "basis": "power",
+      "fx_code_sha256": "1f94691d1547db8950be0487e3ebf6c9d765fbfc313573b3c5172e7f91130e59",
+      "id": "none_module_matrix",
+      "max_approximation_error": 0.00889284573401572,
+      "max_core_torch_error": 1.1102230246251565e-16,
+      "max_decomposition_error": 1.1102230246251565e-16,
+      "max_fixture_fx_error": 0.0,
+      "max_original_reference_error": 1.1102230246251565e-16,
+      "max_source_variant_difference": 0.00015275546026616293,
+      "original_function_accuracy_certified": false,
+      "output_values": 96,
+      "plan_binding": "fc7280c6cfb9e4bf7a6b86f423b25b1c48c60d782037fc416044a66459a23c78",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "shape": [
+        2,
+        3
+      ],
+      "source": "module",
+      "source_call_sha256": "46710e3b2d0023ad7e949df77aa0708f175826e8dbc35bb946458990b2e6970e",
+      "source_identity": {
+        "identity": "torch-2.0.1-gelu-erf-v1",
+        "operator": "gelu",
+        "variant": "none"
+      },
+      "status": "math_passed",
+      "variant": "none"
+    },
+    {
+      "basis": "chebyshev",
+      "fx_code_sha256": "aef2d08c637f3a65db6c6f18b8bd9f59a27bc656b5803f6fa5135e3168c7c1f2",
+      "id": "none_keyword_rank4",
+      "max_approximation_error": 0.00889284573401572,
+      "max_core_torch_error": 1.1102230246251565e-16,
+      "max_decomposition_error": 2.220446049250313e-16,
+      "max_fixture_fx_error": 0.0,
+      "max_original_reference_error": 1.1102230246251565e-16,
+      "max_source_variant_difference": 0.00015275546026616293,
+      "original_function_accuracy_certified": false,
+      "output_values": 192,
+      "plan_binding": "acf26cf60a617a058e7615bca6f03e58be184795f7c5b18b81938773bf6b371e",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "shape": [
+        1,
+        2,
+        2,
+        3
+      ],
+      "source": "input_keyword",
+      "source_call_sha256": "60acb412d42c1f5c67197fc3fee14af638554b62f8353c6d98280269819828fd",
+      "source_identity": {
+        "identity": "torch-2.0.1-gelu-erf-v1",
+        "operator": "gelu",
+        "variant": "none"
+      },
+      "status": "math_passed",
+      "variant": "none"
+    },
+    {
+      "basis": "power",
+      "fx_code_sha256": "ade8e3f4839c1f06dbc7dc3087be1af687434f83d20b68c00c413760011430a1",
+      "id": "tanh_functional_vector",
+      "max_approximation_error": 0.008740090273749557,
+      "max_core_torch_error": 1.1102230246251565e-16,
+      "max_decomposition_error": 1.1102230246251565e-16,
+      "max_fixture_fx_error": 0.0,
+      "max_original_reference_error": 0.0,
+      "max_source_variant_difference": 0.00015275546026616293,
+      "original_function_accuracy_certified": false,
+      "output_values": 64,
+      "plan_binding": "7dc45ecf41d77713611ba2231a4a84a90df2d40fba5e2cf6bf4a1110221c3a36",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "shape": [
+        4
+      ],
+      "source": "functional",
+      "source_call_sha256": "20c49ff0b7c9b274654312ddd7f1e79d3aa68419f378dd1a0647184fef4e8c44",
+      "source_identity": {
+        "identity": "torch-2.0.1-gelu-tanh-0.044715-v1",
+        "operator": "gelu",
+        "variant": "tanh"
+      },
+      "status": "math_passed",
+      "variant": "tanh"
+    },
+    {
+      "basis": "power",
+      "fx_code_sha256": "1f94691d1547db8950be0487e3ebf6c9d765fbfc313573b3c5172e7f91130e59",
+      "id": "tanh_module_matrix",
+      "max_approximation_error": 0.008740090273749557,
+      "max_core_torch_error": 1.1102230246251565e-16,
+      "max_decomposition_error": 1.1102230246251565e-16,
+      "max_fixture_fx_error": 0.0,
+      "max_original_reference_error": 0.0,
+      "max_source_variant_difference": 0.00015275546026616293,
+      "original_function_accuracy_certified": false,
+      "output_values": 96,
+      "plan_binding": "a6d3bc7b816ab7d60a01667ad338cf0aa253201f3bccc0e739c9bb1150e4f4c6",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "shape": [
+        2,
+        3
+      ],
+      "source": "module",
+      "source_call_sha256": "4902435a4a3dbb01ec8885d1ed0b4b38adb506bf3b5f5926f65a625f10271af7",
+      "source_identity": {
+        "identity": "torch-2.0.1-gelu-tanh-0.044715-v1",
+        "operator": "gelu",
+        "variant": "tanh"
+      },
+      "status": "math_passed",
+      "variant": "tanh"
+    },
+    {
+      "basis": "chebyshev",
+      "fx_code_sha256": "82c40d7b291333517f1781ef3901018dfe17b6aa6df3a9dcba0318bd752c199e",
+      "id": "tanh_keyword_rank4",
+      "max_approximation_error": 0.008740090273749557,
+      "max_core_torch_error": 1.1102230246251565e-16,
+      "max_decomposition_error": 1.1102230246251565e-16,
+      "max_fixture_fx_error": 0.0,
+      "max_original_reference_error": 5.551115123125783e-17,
+      "max_source_variant_difference": 0.00015275546026616293,
+      "original_function_accuracy_certified": false,
+      "output_values": 192,
+      "plan_binding": "511c9a5609283fb1abc7cc4641c4a16250e25681e3bc6a20ac0a0b84e3627257",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "shape": [
+        1,
+        2,
+        2,
+        3
+      ],
+      "source": "input_keyword",
+      "source_call_sha256": "abe1115b27662253bfdf07ff9a4a29041ac1d228b4ef4d8ec4270bdb7bb023cc",
+      "source_identity": {
+        "identity": "torch-2.0.1-gelu-tanh-0.044715-v1",
+        "operator": "gelu",
+        "variant": "tanh"
+      },
+      "status": "math_passed",
+      "variant": "tanh"
+    }
+  ],
+  "source_hashes": {
+    "scripts/baseline/benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "scripts/baseline/benchmark_math.py": "e9bd86a4d7ea1b836efc96119d1f58aa607618a69c1572d865146d8f2bc30e70",
+    "scripts/baseline/benchmark_torch.py": "4f96357dc570e3471a7a4fdeaf841ee8687882c132b9ea8a409ba710e2f55436",
+    "scripts/baseline/benchmarks/tools/static_gelu_source_draft_v1/audit.py": "d6725b04fe61b2f332a168767623546239e3dfa88ab55d4b98516e424eef733e",
+    "scripts/baseline/benchmarks/tools/static_gelu_source_draft_v1/gelu_source_plan.py": "c4ad233561b9d56b569594f6650cb36646553d898ae12db16daa1d331808f973",
+    "scripts/baseline/benchmarks/tools/static_gelu_source_draft_v1/gelu_source_reference.py": "5033fad8abb2e96119c329d3e134249cdc2d3c83983ba651ab01375613208de4",
+    "scripts/baseline/benchmarks/tools/static_gelu_source_draft_v1/test_gelu_source_plan.py": "f42f97b54b3459584b1268c7eee5891c1359b814dd796e172599900ef37f8afa",
+    "scripts/baseline/model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "scripts/baseline/model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+    "scripts/baseline/platform_config.py": "ed6272b5055a7d558e037cc0cada79be955c8c8c8d63fa5314086d0c6142c2f8"
+  },
+  "mathematical_max_errors": {
+    "max_original_reference_error": 1.1102230246251565e-16,
+    "max_fixture_fx_error": 0.0,
+    "max_decomposition_error": 2.220446049250313e-16,
+    "max_core_torch_error": 1.1102230246251565e-16,
+    "max_approximation_error": 0.00889284573401572,
+    "max_source_variant_difference": 0.00015275546026616293
+  },
+  "source_variants_preserved": true,
+  "implicit_source_variant_substitution": false,
+  "explicit_polynomial_required": true,
+  "original_function_accuracy_certified": false,
+  "new_independent_original_variant_reference_added": true,
+  "existing_reference_modified": false,
+  "production_intake_integrated": false,
+  "production_source_capture": 0,
+  "trusted_local_fixture_fx_captures": 6,
+  "hecate_tracing": 0,
+  "compiler_calls": 0,
+  "encrypted_execution": 0,
+  "decryption": 0,
+  "agent_generation": 0,
+  "paid_calls": 0,
+  "http_attempts": 0,
+  "installation": 0,
+  "download": 0,
+  "backend_modified": false,
+  "parameters_modified": false,
+  "numerical_threshold_modified": false,
+  "x86_configuration_preserved": true,
+  "old_schema_and_source_interface_preserved": true,
+  "frozen_benchmark_modified": false,
+  "new_unique_benchmark_models_claimed": 0,
+  "preservation": {
+    "source_hashes": 691,
+    "extra_source_hashes": 5,
+    "case_hashes": 5248,
+    "tool_hashes": 8,
+    "protected-backend.json": 648,
+    "protected-references.json": 6,
+    "protected-history.json": 6,
+    "protected-new-history.json": 6,
+    "protected-current-history.json": 14
+  },
+  "prior_verified_source_ops_report": {
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-static-source-ops-draft-acceptance-r1057.json",
+    "sha256": "56436d10dbea06d4b400d9265228918750233c8f08380024b4448df23835dbcb",
+    "binding": "2cbcf2e2dc84498acea16d7d3faab81fd84fa5a9b034a9399dddff5afcf2ee1a"
+  },
+  "initial_gelu_evidence": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-gelu-source-draft-r1058/report.json",
+    "sha256": "de838f3b2c81a23702785231ec8b8611dc81841ee3fbd18f948afd527271432f"
+  },
+  "handoff_before_sha256": "1ef25a51ff3133d0df9720812fdcb8f24eab4919196c79ec01fceffb7b0c4b9c",
+  "pending_backend_scope": {
+    "proposal": "docs/baseline/agent-common-pytorch-offline-proposal-r1042.json",
+    "binding": "ed3ffa719754bf75978d127e793c6c357516396e5302c3721ad40a08032f631d",
+    "cases": 151,
+    "packages": 25,
+    "execution_started": false,
+    "approval_receipt_present": false
+  },
+  "limits": [
+    "Draft supports normalized float64 operand metadata.",
+    "Functional GELU has keyword-only approximate and optional out=None; mutation is rejected.",
+    "Module mapping admits the exact fixed Torch GELU class and its explicit source variant.",
+    "Mathematical contexts vary calls, shapes and polynomial basis; they do not prove whole-model composition or encrypted execution."
+  ],
+  "remaining_work": [
+    "Integrate source-op and GELU drafts under a new input identity after the frozen backend safe boundary.",
+    "Extend original-variant metadata through production graph reference, provenance and application result interfaces; retain existing default GELU.",
+    "Complete actual production capture, affected backend compilation/numerical/package checks and separately approved Agent tests.",
+    "Continue MHA module mapping, in-place alias semantics, resource/layout capacity, bootstrap and CUDA independently."
+  ],
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "commit": 0,
+  "push": 0,
+  "pull_request": 0,
+  "binding": "c6182f3b8b06c55ae643f5ee0f1127e5893e16370409f41455ca6b1f3883bf95"
+}

@@ -1,0 +1,157 @@
+"""One immutable offline refresh of existing source cases; no Provider instance."""
+import json,os,pathlib,hashlib,shlex,shutil,subprocess,sys,time,traceback
+HERE=pathlib.Path(__file__).resolve().parent;ROOT=HERE.parents[4];BASE=ROOT/"scripts/baseline"
+sys.path.insert(0,str(BASE))
+os.environ["POSEIDON_PLATFORM"]="aarch64-linux";os.environ["POSEIDON_WORK_ROOT"]="/home/lhohy/poseidon-work"
+from hecate_python_env import VENV,enter_nix
+WORK=pathlib.Path("/home/lhohy/poseidon-work/platforms/aarch64-linux");RESULTS=WORK/"results"
+OUT=RESULTS/"agent-source-scope-refresh-v1"
+OPTIONS=dict(capacity_packing_version="capacity-public-tensors-v9",generation_guidance="explicit-v13",
+ public_weight_policy="descriptors-math-roles-v2",chunk_period=4)
+PROFILE="general-tensors-v1"
+SCOPE=dict(wall_seconds=900,new_bytes=256*1024**2,global_bytes=32*1024**3,reserve_bytes=4*1024**3,
+ compiler_jobs=2,link_jobs=1,native_concurrency=1,provider_calls=0,http_attempts=0,compiler_calls=0,encrypted_calls=0)
+def require(ok,code):
+ if not ok:raise ValueError(code)
+def read(p):return json.loads(pathlib.Path(p).read_text())
+def sha(p):return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+def digest(v):return hashlib.sha256(json.dumps(v,sort_keys=True,separators=(",",":"),allow_nan=False).encode()).hexdigest()
+def write(p,v):
+ path=pathlib.Path(p);temp=path.with_suffix(path.suffix+".next")
+ with temp.open("xb")as f:json.dump(v,f,sort_keys=True,allow_nan=False);f.write("\n")
+ temp.replace(path)
+def measure(p):return int(subprocess.check_output(["du","-sb",str(p)],text=True,timeout=20).split()[0])
+def check_cases():
+ cases=read(HERE/"cases.json")
+ require(len(cases)==len({c["id"]for c in cases})==36,"original_source_cases")
+ require({g:sum(c["group"]==g for c in cases)for g in {c["group"]for c in cases}}==
+  dict(einsum=8,static_partition=6,einsum_views=6,scalar_partition=6,exact_arithmetic=8,mha=2),"case_group_inventory")
+ for c in cases:
+  p=pathlib.Path(c["source_manifest"])
+  require(p.is_absolute()and p==p.resolve()and p.is_relative_to(ROOT)and p.is_file()and
+          not any(x.is_symlink()for x in(p,*p.parents)),"source_manifest_path")
+  require(sha(p)==c["source_manifest_sha256"]and read(p)["format"]==c["source_format"],"original_source_manifest_changed")
+ return cases
+def protected():
+ before=read(HERE.parent/"arithmetic_source_v1/before.json")
+ for key in ["protected_sources","historical_request_files"]:
+  for n,h in before[key].items():
+   require(sha(pathlib.Path(n)if pathlib.Path(n).is_absolute()else ROOT/n)==h,"protected_history_changed")
+ require(sha(ROOT/before["old_proposal_path"])==before["old_proposal_sha256"],"old_pending_proposal_changed")
+ return len(before["protected_sources"])
+def boundary(plan):
+ require(time.time()<plan["deadline_wall"],"fresh_preparation_deadline")
+ require(measure(OUT)<=SCOPE["new_bytes"],"preparation_space")
+ require(measure(RESULTS)<=SCOPE["global_bytes"]and shutil.disk_usage(WORK).free>=SCOPE["reserve_bytes"],"global_storage_boundary")
+ for n,h in {**plan["sources"],**plan["fixtures"]}.items():require(sha(ROOT/n)==h,"frozen_preparation_source_changed")
+ check_cases();protected()
+def outer():
+ require(not OUT.exists(),"fresh_preparation_directory")
+ controls=read(HERE.parent/"source_manifest_v1/controls-latest-fixed.json")
+ require(controls["status"]=="passed"and controls["tests_run"]==67 and controls["failed"]==controls["errors"]==controls["skipped"]==0,"latest_metadata_controls")
+ require(controls["source_sha256"]==sha(ROOT/"scripts/prepare_pytorch_source.py"),"latest_source_binding")
+ cases=check_cases();reference_identity=read(RESULTS/"agent-exact-arithmetic-v21-mask-support-v1/identity.json")
+ names=set()
+ for stage in ["generation","compilation","execution","validation"]:
+  names.update("scripts/baseline/"+n for n in reference_identity[stage]["sources"])
+  names.update(reference_identity[stage]["configuration_files"])
+ names.update(str(p.relative_to(ROOT))for p in BASE.glob("*.py"))
+ names.update(["scripts/prepare_pytorch_source.py",str(pathlib.Path(__file__).relative_to(ROOT)),str((HERE/"cases.json").relative_to(ROOT))])
+ # Reuse the tested Linux process-tree monitor, preserving its original frozen bytes.
+ monitor=HERE.parent/"einsum_live_v1/run.py";names.add(str(monitor.relative_to(ROOT)))
+ fixtures={}
+ for c in cases:
+  p=pathlib.Path(c["source_manifest"]);spec=read(p)
+  fixtures[str(p.relative_to(ROOT))]=sha(p)
+  for n,h in spec["files"].items():fixtures[str((p.parent/n).relative_to(ROOT))]=h
+  for v in spec["weights"].values():fixtures[str((p.parent/v["file"]).relative_to(ROOT))]=v["sha256"]
+ created=time.time()
+ plan=dict(format="poseidon-current-source-preparation-plan-v1",cases=cases,options=OPTIONS,resource_profile=PROFILE,
+  scope=SCOPE,source_stage_identity=reference_identity,created_wall=created,deadline_wall=created+SCOPE["wall_seconds"],
+  sources={n:sha(ROOT/n)for n in sorted(names)},fixtures=fixtures,
+  protected_sources_checked=protected(),cli_controls_sha256=sha(HERE.parent/"source_manifest_v1/controls-latest-fixed.json"),
+  old_authorizations_reused=False,old_unknown_http_retried=False,new_live_tasks_required=True)
+ plan["binding"]=digest(plan);OUT.mkdir(mode=0o700);write(OUT/"plan.json",plan)
+ sys.path.insert(0,str(monitor.parent));from run import OwnedTree
+ tree=OwnedTree().start()
+ try:
+  cmd='LD_LIBRARY_PATH="$HECATE_PYTHON_LIBRARY_PATH" OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '+shlex.join(
+   [str(VENV/"bin/python"),"-B",str(pathlib.Path(__file__).resolve()),"--inside"])
+  code=enter_nix(cmd,seconds=max(1,int(plan["deadline_wall"]-time.time())),keep_env=(),environment="poseidon-cpu")
+ finally:background=tree.finish()
+ if code or background:write(OUT/"termination.json",dict(exit_code=code,background_processes=background,automatic_restart=False,provider_calls=0))
+ return code or int(background)
+def inside():
+ require(os.environ.get("IN_NIX_SHELL")=="pure"and pathlib.Path(sys.prefix)==VENV,"pinned_source_worker")
+ from application_identity import current_identity_manifest
+ from application_execution.context import WorkerContext
+ from application_execution.backend import application
+ from public_weight_context import project
+ from candidate_contract import request_file_bytes
+ from unified_request_storage import restore_public_constants,restore_bindings
+ from benchmark_graph import signature
+ plan=read(OUT/"plan.json");identity=current_identity_manifest()
+ require(identity==plan["source_stage_identity"],"current_stage_identity")
+ write(OUT/"identity.json",identity)
+ app=application(WorkerContext.capture(OUT/"tasks"));rows=[]
+ report=dict(format="poseidon-current-source-preparation-report-v1",status="running",plan_binding=plan["binding"],
+  source_stage_identity_sha256=identity["manifest_sha256"],rows=rows,provider_calls=0,http_attempts=0,compiler_calls=0,
+  encrypted_calls=0,new_agent_generation=False,old_authorizations_reused=False,old_unknown_http_retried=False,
+  new_live_tasks_required=True,previous_preparation_deadline_reused=False)
+ def save(status):report.update(status=status,seconds=time.time()-plan["created_wall"]);write(OUT/"report.json",report)
+ save("running")
+ for c in plan["cases"]:
+  boundary(plan);case=OUT/c["id"];case.mkdir(mode=0o700)
+  row=dict(c,status="running",source_captured=False,independent_reference_verified=False);rows.append(row);save("running")
+  try:
+   task=app.submit_source(dict(format="poseidon-model-source-request-v1",kind="trusted_pytorch",
+    manifest=c["source_manifest"],trust_local_code=True),resource_profile=PROFILE,options=OPTIONS,
+    limits=dict(generations=4,http_attempts=16,wall_seconds=max(1,min(600,int(plan["deadline_wall"]-time.time()))),
+     api_timeout_seconds=1200,max_tokens=384000))
+   row["preparation_task_id"]=task;state=app.prepare_source(task);write(case/"source-preparation.json",state)
+   require(state["status"]=="queued"and state["phase"]=="queued"and
+           state.get("intake",{}).get("reference_verified")is True,"source_intake_rejected")
+   require(state["generations"]==state["http_attempts"]==0,"source_preparation_generated")
+   row.update(source_captured=True,independent_reference_verified=True)
+   meta=app._checked_task_metadata(task);require(meta["identity"]==identity,"task_stage_identity")
+   request=meta["request"];public=project(request)
+   full=HERE/(c["id"]+".request.json");pub=HERE/(c["id"]+".public.json")
+   with full.open("xb")as f:f.write(request_file_bytes(request))
+   with pub.open("xb")as f:f.write(request_file_bytes(public))
+   restored=read(full);restore_public_constants(restored)
+   restored_public=read(pub);restore_bindings(restored_public["constant_origins"]["capacity_tensor_packing"])
+   require(restored==request and restored_public==public,"lossless_public_projection")
+   require(digest({k:v for k,v in public.items()if k!="request_id"})==request["request_id"],"public_request_binding")
+   p=pathlib.Path(c["source_manifest"]);spec=read(p)
+   row.update(request_id=request["request_id"],full_request_file=str(full),full_request_file_sha256=sha(full),
+    public_request_file=str(pub),public_request_file_sha256=sha(pub),public_context_bytes=pub.stat().st_size,
+    model_sha256=digest(request["model"]),semantic_signature=signature(request["model"]),topology_signature=signature(request["model"],True),
+    source_files={str((p.parent/n).relative_to(ROOT)):h for n,h in spec["files"].items()},
+    weight_files={str((p.parent/v["file"]).relative_to(ROOT)):v["sha256"]for v in spec["weights"].values()},
+    source_stage_identity_sha256=identity["manifest_sha256"],resource_profile=PROFILE,options=OPTIONS,
+    validation_level="numerical",max_generations=4,max_http_attempts=16,max_repairs=3)
+   require(0<row["public_context_bytes"]<=131072,"generation_context_budget")
+   state=app.cancel(task);require(state["status"]=="cancelled"and state["generations"]==state["http_attempts"]==0,"preparation_task_not_closed")
+   row.update(status="prepared",preparation_task_final_status="cancelled",new_live_task_required=True)
+  except Exception as error:
+   with(case/"failure-private.txt").open("x")as f:f.write(traceback.format_exc())
+   row.update(status="failed",error_type=type(error).__name__,code=str(error)if str(error).replace("_","").isalnum()and len(str(error))<120 else"preparation_case_exception")
+   if "preparation_task_id"in row:
+    try:row["preparation_task_final_status"]=app.cancel(row["preparation_task_id"])["status"]
+    except Exception:row["preparation_task_final_status"]="unknown"
+  write(case/"receipt.json",row);save("running")
+  print(json.dumps(dict(case=c["id"],status=row["status"],source_captured=row["source_captured"],provider_calls=0)),flush=True)
+  boundary(plan);require(current_identity_manifest()==identity,"SDK_identity_changed")
+ prepared=[r for r in rows if r["status"]=="prepared"]
+ report.update(planned=len(rows),prepared=len(prepared),failed=len(rows)-len(prepared),source_captures=sum(r["source_captured"]for r in rows),
+  independent_references_verified=sum(r["independent_reference_verified"]for r in rows),
+  unique_generation_requests=len({r["request_id"]for r in prepared}),
+  unique_semantic_signatures=len({r["semantic_signature"]for r in prepared}),
+  unique_topology_signatures=len({r["topology_signature"]for r in prepared}),
+  protected_sources_checked=protected(),protected_sources_changed=0,preparation_tasks_closed=all(r.get("preparation_task_final_status")in("cancelled","failed","unsupported","service_error")for r in rows))
+ save("prepared"if len(prepared)==len(rows)else"partially_prepared")
+ report["binding"]=digest({k:v for k,v in report.items()if k!="binding"});write(OUT/"report.json",report)
+ print(json.dumps({k:report[k]for k in ["status","planned","prepared","failed","unique_generation_requests",
+  "unique_semantic_signatures","unique_topology_signatures","preparation_tasks_closed","seconds","provider_calls"]}),flush=True)
+ return 0 if report["failed"]==0 else 1
+if __name__=="__main__":raise SystemExit(inside()if sys.argv[1:]==["--inside"]else outer())

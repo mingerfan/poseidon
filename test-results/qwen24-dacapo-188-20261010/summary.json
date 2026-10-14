@@ -1,0 +1,276 @@
+{
+  "format": "qwen24-dacapo-native-compilation-v1",
+  "status": "passed",
+  "host": "188Server / HPU-001",
+  "remote_directory": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-native",
+  "scope": "Actual-size unsegmented 24 decoder blocks + final RMSNorm + complete 151936-vocabulary LM head, two-token prefill",
+  "model": {
+    "num_layers": 24,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "query_heads": 14,
+    "kv_heads": 2,
+    "head_dim": 64,
+    "vocab_size": 151936,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "weights": {
+    "synthetic": true,
+    "seed": 20261009,
+    "weight_files": 291,
+    "raw_weight_bytes": 2520669696,
+    "pretrained_checkpoint": false,
+    "layers_share_weights": false
+  },
+  "strategy": "depth-dp",
+  "native_compilation_completed": true,
+  "frontend_format": "lossless MLIR bytecode; all constants retained",
+  "phases": {
+    "fixture": {
+      "stage": "fixture24",
+      "returncode": 0,
+      "elapsed_seconds": 63.325054744724184,
+      "user_seconds": 39.059731,
+      "system_seconds": 5.9351,
+      "max_rss_MiB": 2498.46875,
+      "limits": {
+        "cpu_seconds": 900,
+        "address_space_GiB": 16
+      },
+      "stop_reason": null,
+      "command": [
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+        "--library-path",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+        "/opt/conda/bin/python",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/llm_dsl/Qwen25_24Layer_DSL/prepare_fixture.py",
+        "--output-dir",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-native/fixture"
+      ]
+    },
+    "frontend": {
+      "stage": "frontend24",
+      "returncode": 0,
+      "elapsed_seconds": 450.6807625279762,
+      "user_seconds": 418.052617,
+      "system_seconds": 30.675303,
+      "max_rss_MiB": 18250.33203125,
+      "limits": {
+        "cpu_seconds": 7200,
+        "address_space_GiB": 192
+      },
+      "stop_reason": null,
+      "command": [
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+        "--library-path",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+        "/opt/conda/bin/python",
+        "/tmp/poseidon-qwen24-IUOMH1/trace_progress.py"
+      ]
+    },
+    "optimizer": {
+      "stage": "qwen24_depth_dp",
+      "returncode": 0,
+      "elapsed_seconds": 593.2955625392497,
+      "user_seconds": 502.662263,
+      "system_seconds": 79.895326,
+      "max_rss_MiB": 60600.8515625,
+      "limits": {
+        "cpu_seconds": 115200,
+        "wall_seconds": 7200,
+        "address_space_GiB": 256,
+        "cpu_affinity": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "stop_reason": null,
+      "command": [
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+        "--library-path",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/bin/hecate-opt.depth-dp-final",
+        "--boot-placement=depth-dp",
+        "--mlir-elide-elementsattrs-if-larger=16",
+        "--dacapo",
+        "--ckks-config=/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/profiles/compiler-profile.json",
+        "--waterline=40",
+        "--mlir-disable-threading",
+        "--mlir-timing",
+        "--mlir-print-op-on-diagnostic=false",
+        "--runtime-plan-id=2401",
+        "--runtime-plan-target-id=poseidon-ckks-gpu",
+        "--runtime-plan-capability-version=1",
+        "--runtime-plan-operator-spec-id=poseidon-ckks-gpu-65536-estimated-v1",
+        "--runtime-plan-operator-spec-version=1",
+        "--runtime-plan-operator-spec-sha256=sha256:1f12fb5f6a7228e7373ada0d96d5115d190533a887f801a6928ba4ae14c193ff",
+        "--runtime-plan-context-id=poseidon-ckks-gpu-65536-estimated",
+        "--runtime-plan-ntt=true",
+        "--runtime-plan-boot-profile=poseidon-gpu-host-boot-v1",
+        "--runtime-plan-boot-implementation=decrypt_reencrypt",
+        "--runtime-plan-inline-payload-max-bytes=4096",
+        "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/profiles/operator-spec.json",
+        "--runtime-plan-levels-per-logical-level=4",
+        "--runtime-plan-device-count=0",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-native/traced/trace_qwen24.mlirbc",
+        "-o",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-native/qwen24.depth-dp.mlir"
+      ]
+    },
+    "validation": {
+      "stage": "validate24",
+      "returncode": 0,
+      "elapsed_seconds": 345.84313671989366,
+      "user_seconds": 274.778069,
+      "system_seconds": 57.374541,
+      "max_rss_MiB": 18210.76953125,
+      "limits": {
+        "cpu_seconds": 1800,
+        "address_space_GiB": 128
+      },
+      "stop_reason": null,
+      "command": [
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+        "--library-path",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+        "/opt/conda/bin/python",
+        "/tmp/poseidon-qwen24-IUOMH1/validate_compilation.py"
+      ]
+    }
+  },
+  "compiler_instrumented_seconds": 588.4829,
+  "compiler_pass_seconds": {
+    "Parser": 28.3634,
+    "GreedyBootstrapPlacement": 24.5583,
+    "EarthToCKKSConversion": 26.83,
+    "UpscaleToMulcpConversion": 11.9353,
+    "MaterializePhysicalLevels": 9.9935,
+    "EmitRuntimePlan": 359.151,
+    "Output": 28.4444
+  },
+  "boot_count": 10835,
+  "bootstrap_boundaries": 846,
+  "validation": {
+    "plan": "artifacts/qwen24-native/qwen24.depth-dp._hecate_qwen25_24layer.runtime-plan.json",
+    "plan_bytes": 4820471407,
+    "plan_sha256": "sha256:9526373525f0675bd88d71cae46109fcf3ee2d64cfc8b4c160778bd56b1df054",
+    "value_count": 8609612,
+    "execution_steps": 6224747,
+    "op_counts": {
+      "mul_cc": 8775,
+      "relinearize": 8775,
+      "mul_cp": 2699953,
+      "rescale": 1354364,
+      "rotate": 716207,
+      "add_cc": 1347874,
+      "add_cp": 3858,
+      "boot": 10835,
+      "mod_switch": 73963,
+      "negate": 143
+    },
+    "bundle_blobs": 784750,
+    "bundle_bytes": 14701969408,
+    "hashes_verified": true,
+    "topology_verified": true,
+    "physical_metadata_verified": true,
+    "encrypted_execution_tested": false,
+    "validation_seconds": 212.74834901094437,
+    "scope": "Complete 24 blocks plus final RMSNorm and full-vocabulary LM head, two-token prefill",
+    "native_source_bytes": 14821237862,
+    "native_source_sha256": "sha256:41e31a6a237901d88aba26631b850010dea89b0ec4bf2894f7f293d8baa56e6c",
+    "input_ciphertexts": 2,
+    "output_ciphertexts": 245,
+    "logit_ciphertexts": 149,
+    "kv_ciphertexts": 96,
+    "vocabulary": 151936,
+    "fixture_weights": "synthetic; 24 distinct layers, no pretrained checkpoint",
+    "full_model_runtime_executed": false,
+    "decoded_full_model_execution_tested": false,
+    "total_validation_seconds": 332.65171865327284
+  },
+  "provenance": {
+    "base_dacapo_commit": "06bdd08b83676351186f6982b79921994298e51a",
+    "working_tree_modified": true,
+    "compiler_sha256": "284856906d996a32f8c9209f6215c75458d844355e039617a82e51756b6db7c6",
+    "frontend_sha256": "6cb49745f348c8af30a24fc8cc08700666b12e5f1b44b7a65eb2309a1087d980",
+    "sources": {
+      "tools/frontend.cpp": "436c188bc7c73f9db78f5673afc440de878f004db6f2e5835d5449187644924b",
+      "tools/CMakeLists.txt": "55c635b2f7127ca185acef21d7c19b031869552eac77189fbb5dae27c469411c",
+      "python/hecate/hecate/expr.py": "2e45ebe6aa5631687c1ec7a84ae8096b4d5ac1f9262f9465b298dbf09d97f142",
+      "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "3c611acebd8fba06cf53c22a64408bbcc419430275b820667ce6f8fb40abb8c8",
+      "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "1afd105cf3085fb77322872e2f2b7b547d21aea7aba55442dba582101d9cb3c3",
+      "lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp": "1173c359f830d936eb1b60d2574d16442c1777bb72df7a7d04cd97831a118047",
+      "tools/optimizer.cpp": "6485604435fe1f946fcd3b21bb28fcd78f791dd7519baf7f9c92eb638b96ad43",
+      "test/runtime-plan/check-frontend-bytecode.py": "578db645dc752a6b84a706ad35ad2bee001565f8193e9f5142c1b6b2bf768fe5",
+      "test/runtime-plan/check-frontend-locations.py": "d78e1e75bdffd5bc803fb3c03cb86b74feaf0fd241b0971331686eddde605893",
+      "test/runtime-plan/check-greedy.py": "12929d2ca15c61846eb38e06724064577b4896c7e96b11fc853c11d644bd1f02"
+    },
+    "dsl_trace_sha256": "19f4f62712ead8b5fdbc59e427187a5e7a085e3a7479488ffaf1d65947512ee3",
+    "python_adapter": "Native NumPy C API unchanged; private server Python adapter removes unused Torch import/conversion and uses bytecode plus direct source-frame lookup.",
+    "compiler_strategy": "depth-dp",
+    "frontend_format": "lossless MLIR bytecode; all constants retained",
+    "full_scope": "2-token prefill, 24 decoder blocks, final RMSNorm, full 151936 vocabulary LM head, all 96 KV outputs",
+    "ctest_passed": 5,
+    "encrypted_runtime_executed": false
+  },
+  "tests": {
+    "ctest_passed": 5,
+    "ctest_total": 5,
+    "log": "artifacts/ctest-detail.log"
+  },
+  "artifact_inventory": {
+    "files": {
+      "traced/trace_qwen24.mlirbc": {
+        "bytes": 14821237862
+      },
+      "traced/signature.json": {
+        "bytes": 86472
+      },
+      "qwen24.depth-dp.mlir": {
+        "bytes": 1224124699
+      },
+      "qwen24.depth-dp._hecate_qwen25_24layer.runtime-plan.json": {
+        "bytes": 4820471407
+      },
+      "qwen24.depth-dp._hecate_qwen25_24layer.bundle/manifest.json": {
+        "bytes": 103078905
+      }
+    },
+    "native_binaries_and_adapter_sha256": {
+      "toolchain/bin/hecate-opt.depth-dp-final": "284856906d996a32f8c9209f6215c75458d844355e039617a82e51756b6db7c6",
+      "toolchain/lib/libHecateFrontend.so": "6cb49745f348c8af30a24fc8cc08700666b12e5f1b44b7a65eb2309a1087d980",
+      "toolchain/python/hecate/expr.py": "193a4b96e55dc6f41d8057a31b2060f74a934856312d1aa7289499cb31357fac"
+    },
+    "tmp_allocated_bytes": {
+      "/tmp/poseidon-qwen24-IUOMH1": 49152,
+      "/tmp/poseidon-boot-placement-IUOMH1": 86016
+    },
+    "large_artifacts_in_tmp": false,
+    "diagnostic_mlir_constants_elided": true,
+    "recompilable_source": "traced/trace_qwen24.mlirbc"
+  },
+  "limits": [
+    "Compilation, payload integrity, graph topology and physical metadata are verified",
+    "Full-size original-function NumPy reference and approximation-domain checks were generated with the fixture",
+    "Full-model compiled DAG decoded arithmetic, encrypted CKKS accuracy and GPU execution are untested",
+    "Runtime memory requirements are unmeasured; the reported memory is compiler/process RSS",
+    "Host decrypt_reencrypt Boot profile and estimated GPU latency table; not actual GPU Boot",
+    "No pretrained-weight calibration or language-generation quality claim"
+  ]
+}

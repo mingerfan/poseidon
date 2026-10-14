@@ -1,0 +1,8 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %a : [#users=1] = get_attr[target=a]
+    %std : [#users=1] = get_attr[target=std]
+    %add : [#users=1] = call_function[target=operator.add](args = (%std, 0.01), kwargs = {})
+    %div : [#users=1] = call_method[target=div](args = (%a, %add), kwargs = {rounding_mode: None})
+    %mul : [#users=1] = call_function[target=operator.mul](args = (%x, %div), kwargs = {})
+    return mul

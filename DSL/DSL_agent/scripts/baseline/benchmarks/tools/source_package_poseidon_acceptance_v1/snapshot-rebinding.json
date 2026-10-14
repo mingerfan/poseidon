@@ -1,0 +1,47 @@
+{
+  "binding": "064caa0e9d2b1f1d16a1194f008b04e49734579fadc5335800e5e20f8fcfc64d",
+  "cases": [
+    {
+      "case": "square_helper",
+      "model_weights_and_reference_unchanged": true,
+      "provenance_verified_current": true,
+      "request_id": "52bd931839765e4b486f7b3336ee43b49229c90391ac7ae6309f8109b9df732b",
+      "source_capture_repeated": false
+    },
+    {
+      "case": "nested_keyword_broadcast",
+      "model_weights_and_reference_unchanged": true,
+      "provenance_verified_current": true,
+      "request_id": "48dc2e42bab7ac6ee7290121e6c7455a21e991038edaa2c6dbe7f58ca225faff",
+      "source_capture_repeated": false
+    },
+    {
+      "case": "reexport_linear",
+      "model_weights_and_reference_unchanged": true,
+      "provenance_verified_current": true,
+      "request_id": "c02ffb368cd94ee706d24c1964545dcdcd3f00fe169a1120fc96c039a0ab4415",
+      "source_capture_repeated": false
+    }
+  ],
+  "compiler_calls": 0,
+  "deltas": {
+    "compilation": [
+      "application_model_source.py"
+    ],
+    "execution": [
+      "application_model_source.py"
+    ],
+    "generation": [
+      "application_model_source.py"
+    ],
+    "validation": [
+      "application_model_source.py"
+    ]
+  },
+  "encrypted_calls": 0,
+  "format": "poseidon-source-package-snapshot-rebinding-v1",
+  "old_sdk": "da4e3745ec8f8462c0d72b36b2cb569b162f6ecb4f57be19803bca464c9d9d13",
+  "provider_calls": 0,
+  "sdk": "4001c16ea743d6e8f96e82b07c5fd482c16c872f38ae4317e72d1df6a406c95d",
+  "source_capture_calls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "prlimit",
+    "--as=34359738368",
+    "--",
+    "nice",
+    "-n",
+    "10",
+    "/home/xuming/poseidon-runtime-io-20261010/build-o2/runtime_plan_io_benchmark",
+    "--compare-manifests",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-unit-plaintext/gpu-plans/gpu4/qwen24._hecate_qwen25_24layer.bundle/manifest.json",
+    "/home/xuming/poseidon-runtime-io-20261010/artifacts/gpu4/qwen24._hecate_qwen25_24layer.bundle/manifest.json"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 6.3908479660749435,
+  "address_space_limit_bytes": 34359738368,
+  "nice": 10
+}

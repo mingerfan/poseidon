@@ -1215,6 +1215,48 @@ __global__ void hybrid_modup_qp_row_tiled8_kernel(
 }
 
 template <int FixedSourceLimbCount>
+__global__ void hybrid_preweight_modup_source_p9_kernel(
+    GpuWord *weighted_source,
+    const GpuWord *c2_coeff,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *qi_inv_punctured,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t base_p_size,
+    std::size_t degree)
+{
+    static_assert(
+        FixedSourceLimbCount >= 1 && FixedSourceLimbCount <= 9,
+        "P=9 compact ModUp preweight supports one through nine source limbs");
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = FixedSourceLimbCount * degree;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t source_col = tid / degree;
+    const std::size_t coefficient = tid - source_col * degree;
+    const std::size_t source_limb = decomp_limb_begin + source_col;
+    GpuWord value = c2_coeff[source_limb * degree + coefficient];
+    if constexpr (FixedSourceLimbCount > 1)
+    {
+        const GpuWord inv_punctured = qi_inv_punctured[
+            decomp_index * base_p_size + source_col];
+        if (inv_punctured != 1)
+        {
+            value = mul_mod(
+                value,
+                inv_punctured,
+                rns_primes[source_limb],
+                rns_modulus_constants[source_limb]);
+        }
+    }
+    weighted_source[tid] = value;
+}
+
+template <int FixedSourceLimbCount>
 __global__ void hybrid_modup_qp_p9_row_tiled8_kernel(
     GpuWord *modup_q,
     GpuWord *modup_p,
@@ -3774,6 +3816,82 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_modup_decomposition_row_tiled8 kernel launch");
+}
+
+void launch_hybrid_preweight_modup_source_p9(
+    GpuWord *weighted_source,
+    const GpuWord *c2_coeff,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_preweight_modup_source_p9",
+        parameter_shard,
+        degree);
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    if (degree != 65536 || base_p_size != 9)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_preweight_modup_source_p9: N=65536 and P=9 are required");
+    }
+    if (weighted_source == nullptr || c2_coeff == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_preweight_modup_source_p9: null data pointer");
+    }
+    if (decomp_index >= parameter_shard.hybrid_decomp_count ||
+        decomp_limb_count == 0 || decomp_limb_count > base_p_size ||
+        decomp_limb_begin + decomp_limb_count > base_q_size)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_preweight_modup_source_p9: invalid decomposition range");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_preweight_modup_source_p9 cudaSetDevice");
+    constexpr unsigned int kBlockSize = 256;
+    const std::size_t total = decomp_limb_count * degree;
+    const unsigned int grid_size = static_cast<unsigned int>(
+        (total + kBlockSize - 1) / kBlockSize);
+
+#define POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(FIXED_COUNT)                   \
+    hybrid_preweight_modup_source_p9_kernel<FIXED_COUNT>                 \
+        <<<grid_size, kBlockSize>>>(                                     \
+            weighted_source,                                             \
+            c2_coeff,                                                     \
+            parameter_shard.rns_primes.data(),                           \
+            parameter_shard.rns_modulus_constants.data(),                \
+            parameter_shard.hybrid_qi_inv_punctured.data(),              \
+            decomp_index,                                                 \
+            decomp_limb_begin,                                            \
+            base_p_size,                                                  \
+            degree)
+
+    switch (decomp_limb_count)
+    {
+    case 1: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(1); break;
+    case 2: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(2); break;
+    case 3: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(3); break;
+    case 4: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(4); break;
+    case 5: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(5); break;
+    case 6: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(6); break;
+    case 7: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(7); break;
+    case 8: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(8); break;
+    case 9: POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(9); break;
+    default:
+        throw std::logic_error(
+            "launch_hybrid_preweight_modup_source_p9: unreachable decomposition width");
+    }
+#undef POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT
+
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_preweight_modup_source_p9 kernel launch");
 }
 
 #if 0

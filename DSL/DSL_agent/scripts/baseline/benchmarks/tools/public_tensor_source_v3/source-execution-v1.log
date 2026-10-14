@@ -1,0 +1,8 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "bool_multiply", "status": "failed", "error_type": "ValueError", "message": "Staging source worker failed; inspect capture.log"}
+{"case": "mask_index_residual", "status": "failed", "error_type": "ValueError", "message": "Staging source worker failed; inspect capture.log"}
+{"case": "method_channel_mask", "status": "failed", "error_type": "ValueError", "message": "Staging source worker failed; inspect capture.log"}
+{"format": "poseidon-public-boolean-source-report-v1", "plan_binding": "930ea939693dccf2721d4d0f86f722fcd8439c95603bad95e523b8d771c162b9", "status": "failed", "source_captures": 3, "source_capture_passed": 0, "previous_captures_data_revalidated": null, "tests_run": 37, "passed": 25, "failed": 0, "errors": 12, "skipped": 0, "seconds": 52.996317842999815, "prior_elapsed_seconds": 140.968327016, "production_activation": false, "provider_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "network_configuration_changes": 0, "binding": "1a9fa712e07849f5aecd4010dd71b06f93c96484420f436e27c56217d12c53a2"}

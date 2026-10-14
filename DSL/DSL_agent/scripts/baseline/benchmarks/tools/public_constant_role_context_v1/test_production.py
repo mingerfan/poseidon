@@ -1,0 +1,287 @@
+"""Actual production contract tests; fake backend and retained capture fixtures only.
+
+No Provider is constructed, no app.run is called, and no frontend/CKKS/FHE is
+executed. A fixture capture bypass only supplies an already checked provenance
+folder to the real source admission controller. It is not new capture evidence.
+"""
+import copy
+import hashlib
+import json
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+HERE=Path(__file__).resolve().parent
+ROOT=(Path(__file__).resolve().parents[7] if Path(__file__).resolve().parents[5].name == "DSL_agent" and Path(__file__).resolve().parents[6].name == "DSL" else Path(__file__).resolve().parents[5])
+BASE=ROOT/"scripts/baseline"
+sys.path.insert(0,str(BASE))
+import public_math_context as math_roles
+import public_weight_context as weights
+import component_contract as component
+import deepseek_provider as provider
+import run_candidate as cli
+import application_component as component_app
+from candidate_contract import request_file_bytes
+from candidate_bundle import load_model_provenance
+from application_model_source import FORMAT as SOURCE_FORMAT
+from benchmark_graph import canonical,digest
+from public_weight_cases import models as weight_models,period
+
+CASES=("tanh_module","tanh_functional","tanh_input_keyword")
+PROPOSAL=ROOT/"docs/baseline/agent-gelu-live-proposal-r1306.json"
+HISTORICAL_CAPTURE=Path("/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-gelu-source-v15-capture")
+CAPTURE=Path("/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-math-roles-capture-v2")
+POLICY="descriptors-math-roles-v2"
+
+def load(path):return json.loads(Path(path).read_bytes())
+def frozen(name):
+    case=next(c for c in load(PROPOSAL)["cases"] if c["id"]==name)
+    path=ROOT/case["full_request_file"]
+    raw=path.read_bytes()
+    if hashlib.sha256(raw).hexdigest()!=case["full_request_sha256"]:
+        raise AssertionError("Historical fixture bytes changed")
+    return load(path),case,raw
+
+def options(policy=POLICY):
+    return dict(generation_guidance="explicit-v11",public_weight_policy=policy,
+                capacity_packing_version="capacity-public-tensors-v9")
+
+def new_request(name):
+    old,_,_=frozen(name)
+    return component.prepare_task(old["model"],options())
+
+class IntakeOnlyBackend:
+    """Identity fixture only: any compile, generation delivery or execution fails."""
+    def identity(self):return dict(test_only=True,fixture="public-math-production-admission-v1")
+    def qualify(self,*args,**kwargs):raise AssertionError("Backend qualification is forbidden")
+    def export(self,*args,**kwargs):raise AssertionError("Program export is forbidden")
+    def check_package(self,*args,**kwargs):raise AssertionError("Package execution is forbidden")
+    def execute(self,*args,**kwargs):raise AssertionError("FHE execution is forbidden")
+
+class RetainedCaptureApplication(component_app.Application):
+    """Explicit capture fixture, not a claim that current isolation ran."""
+    def __init__(self,store,capture):
+        super().__init__(store,IntakeOnlyBackend())
+        self.capture_fixture=Path(capture)
+        self.capture_fixture_calls=0
+    def _capture(self,path,spec,check):
+        check()
+        self.capture_fixture_calls+=1
+        return self.capture_fixture
+
+class ProductionControls(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        for module in (math_roles,weights,component,provider,cli,component_app):
+            if Path(module.__file__).resolve().parent!=BASE:
+                raise AssertionError("Test must import the production module, not an overlay")
+        if weights.POLICY!="descriptors-v1" or weights.FORMAT!="poseidon-public-weight-descriptors-v1":
+            raise AssertionError("Legacy defaults changed")
+
+    def legacy(self,name):
+        q,c,raw=frozen(name)
+        self.assertEqual(component.reconstruct_request(q),q)
+        self.assertEqual(request_file_bytes(q),raw)
+        projected=provider.public_request(q)
+        self.assertEqual(canonical(projected),(ROOT/c["generation_context_file"]).read_bytes())
+        self.assertEqual(projected["request_id"],q["request_id"])
+        self.assertEqual(q["public_weight_binding"]["policy"],"descriptors-v1")
+    def test_v1_module_exact_bytes(self):self.legacy(CASES[0])
+    def test_v1_functional_exact_bytes(self):self.legacy(CASES[1])
+    def test_v1_keyword_exact_bytes(self):self.legacy(CASES[2])
+
+    def current(self,name):
+        q,c,raw=frozen(name);new=new_request(name)
+        self.assertEqual(component.reconstruct_request(new),new)
+        self.assertEqual(new,math_roles.upgrade(q))
+        self.assertEqual(provider.public_request(new),weights.project(new))
+        self.assertEqual(provider.public_request(weights.project(new)),weights.project(new))
+        self.assertEqual(weights.verify_binding(new),weights.project(new))
+        self.assertEqual(new["request_id"],weights.request_digest(new))
+        self.assertNotEqual(new["request_id"],q["request_id"])
+        self.assertEqual(new["layout"],q["layout"])
+        self.assertEqual(new["model"],q["model"])
+        self.assertEqual(new["public_constants"],q["public_constants"])
+        self.assertEqual(new["constant_origins"],q["constant_origins"])
+        self.assertEqual(request_file_bytes(q),raw)
+        self.assertIn(POLICY,component.runner_options(new))
+    def test_v2_module_roundtrip_transport(self):self.current(CASES[0])
+    def test_v2_functional_roundtrip_transport(self):self.current(CASES[1])
+    def test_v2_keyword_roundtrip_transport(self):self.current(CASES[2])
+
+    def test_default_policy_keeps_v1(self):
+        q,_,_=frozen(CASES[0])
+        self.assertEqual(weights.binding(q)["policy"],"descriptors-v1")
+        self.assertNotIn("math_roles",weights.binding(q))
+
+    def test_scalar_and_polynomial_bindings(self):
+        q=new_request(CASES[0]);record=q["public_weight_binding"]["math_roles"]
+        polynomial=next(r for r in record["constants"] if r["kind"]=="polynomial_coefficients")
+        self.assertEqual([r["plain_names"] for r in polynomial["elements"]],
+                         [["p3"],["p6"],["p5"],["p3"],["p2"]])
+        self.assertEqual([r["exact_zero"] for r in polynomial["elements"]],
+                         [True,False,False,True,False])
+        self.assertEqual(polynomial["polynomial_semantics"][0]["mathematical_degree"],4)
+        self.assertEqual(polynomial["polynomial_semantics"][0]["coefficient_order"],"ascending_basis_index")
+        scalar=[r for r in record["constants"] if r["kind"]=="scalar_operand"]
+        self.assertTrue(scalar)
+        for row in scalar:
+            for element in row["elements"]:
+                for name in element["plain_names"]:
+                    self.assertEqual(math_roles.binary64(element["value"]),math_roles.binary64(q["public_constants"][name]))
+        self.assertFalse(record["physical_layout_validated"])
+        self.assertTrue(record["backend_executable_not_established"])
+
+    def test_full_role_tamper_is_rejected(self):
+        q=new_request(CASES[0]);r=q["public_weight_binding"]["math_roles"]
+        r["constants"][0]["elements"][0]["value"]+=.25
+        r["binding"]=digest({k:v for k,v in r.items() if k!="binding"})
+        q["request_id"]=weights.request_digest(q)
+        with self.assertRaises(ValueError):weights.verify_binding(q)
+
+    def test_projected_role_tamper_is_rejected(self):
+        q=weights.project(new_request(CASES[0]));r=q["public_weight_binding"]["math_roles"]
+        poly=next(row for row in r["constants"] if row["kind"]=="polynomial_coefficients")
+        poly["polynomial_semantics"][0]["mathematical_degree"]=3
+        r["binding"]=digest({k:v for k,v in r.items() if k!="binding"})
+        q["request_id"]=weights.request_digest(q)
+        with self.assertRaises(provider.ProviderError):provider.public_request(q)
+
+    def test_unexpected_private_fields_are_rejected(self):
+        for field in ("private_reference","test_inputs","hecate_source","source_manifest"):
+            q=weights.project(new_request(CASES[0]));q[field]={"private":"SENTINEL_PRIVATE_123"}
+            with self.assertRaises(provider.ProviderError):provider.public_request(q)
+
+    def test_nested_private_field_is_rejected(self):
+        q=weights.project(new_request(CASES[0]));r=q["public_weight_binding"]["math_roles"]
+        r["constants"][0]["elements"][0]["reference_answer"]=123.
+        r["binding"]=digest({k:v for k,v in r.items() if k!="binding"})
+        q["request_id"]=weights.request_digest(q)
+        with self.assertRaises(provider.ProviderError):provider.public_request(q)
+
+    def test_context_excludes_retained_source_and_reference_reports(self):
+        q=provider.public_request(new_request(CASES[0]))
+        banned={"private_reference","test_inputs","reference_report","capture_reference", "trusted_pytorch","python","model_provenance","raw_source"}
+        def visit(value):
+            if type(value) is dict:
+                self.assertFalse(set(value)&banned)
+                for child in value.values():visit(child)
+            elif type(value) is list:
+                for child in value:visit(child)
+        visit(q)
+        self.assertEqual(q["fx_graph"],"independent typed logical DAG; no rule DSL included")
+        self.assertLessEqual(len(canonical(q)),131072)
+
+    def test_large_nonrepeating_weights_remain_descriptors(self):
+        model=weight_models()[-1]
+        q=component.prepare_task(model,dict(chunk_period=period(model),generation_guidance="explicit-v10",public_weight_policy=POLICY))
+        projected=provider.public_request(q)
+        largest=max(model["constants"].values(),key=lambda v:len(canonical(v)))
+        self.assertEqual(len({x for row in largest for x in row}),10000)
+        self.assertGreater(len(canonical(q["model"])),131072)
+        self.assertEqual(component.reconstruct_request(q),q)
+        descriptor=next(v for v in projected["model"]["constants"].values() if v["elements"]==10000)
+        self.assertEqual(descriptor["kind"],"tensor")
+        roles=projected["public_weight_binding"]["math_roles"]
+        self.assertEqual(roles["constants"],[])
+        self.assertEqual(roles["math_elements"],0)
+        self.assertNotIn("value",next(r for r in roles["opaque_constants"] if r["descriptor"]["elements"]==10000))
+        self.assertLessEqual(len(canonical(projected)),131072)
+
+    def test_large_v11_context_keeps_real_budget_rejection(self):
+        model=weight_models()[-1]
+        q=component.prepare_task(model,dict(chunk_period=period(model),generation_guidance="explicit-v11",public_weight_policy=POLICY))
+        self.assertEqual(len(canonical(weights.project(q))),132710)
+        self.assertGreater(len(canonical(weights.project(q))),weights.CONTEXT_BYTES)
+        with self.assertRaisesRegex(ValueError,"Weight descriptor generation context budget"):
+            weights.verify_binding(q)
+        with self.assertRaises(provider.ProviderError):provider.public_request(q)
+        with self.assertRaises(ValueError):component.reconstruct_request(q)
+
+    def test_historical_capture_binding_is_rejected(self):
+        for name in CASES:
+            folder=HISTORICAL_CAPTURE/name
+            with self.assertRaisesRegex(ValueError,"Ordered reference identity"):
+                load_model_provenance(folder,load(folder/"model.json"),max_bytes=weights.TRUSTED_BYTES)
+
+    def test_real_nonuniform_tensor_layout_preserved(self):
+        model=dict(format="poseidon-model-graph-v2",id="production_nonuniform_tensor",resource_profile="general-tensors-v1",
+            inputs=[dict(name="x",shape=[8])],constants=dict(gain=[.13,.27,-.41,.59,.61,-.73,.83,.97]),
+            nodes=[dict(id="product",op="multiply",inputs=["x","gain"],attrs={},outputs=["r"])],
+            outputs=[dict(name="result",value="r")])
+        opts=dict(chunk_period=4,generation_guidance="explicit-v11",capacity_packing_version="capacity-public-tensors-v9")
+        prior=component.prepare_task(model,dict(opts,public_weight_policy="descriptors-v1"))
+        current=component.prepare_task(model,dict(opts,public_weight_policy=POLICY))
+        self.assertEqual(current["layout"],prior["layout"])
+        self.assertEqual(current["constant_origins"],prior["constant_origins"])
+        self.assertEqual(current["public_constants"],prior["public_constants"])
+        self.assertEqual(current["public_weight_binding"]["math_roles"]["constants"],[])
+        self.assertEqual(component.reconstruct_request(current),current)
+        self.assertEqual(provider.public_request(current),weights.project(current))
+        self.assertTrue(current["constant_origins"]["capacity_tensor_packing"]["bindings"])
+
+    def test_actual_cli_reads_both_policies(self):
+        q,_,_=frozen(CASES[0])
+        with tempfile.TemporaryDirectory(dir=HERE) as tmp:
+            p=Path(tmp)/"model.json";p.write_bytes(canonical(q["model"]))
+            for policy in ("descriptors-v1",POLICY):self.assertEqual(cli.read_model(p,policy),q["model"])
+            with self.assertRaises(ValueError):cli.read_model(p,"unknown")
+            alias=Path(tmp)/"alias.json";alias.symlink_to(p)
+            with self.assertRaises(ValueError):cli.read_model(alias,POLICY)
+
+    def test_actual_cli_ceiling_is_unchanged(self):
+        class Oversized:
+            def is_file(self):return True
+            def is_symlink(self):return False
+            def stat(self):return type("Size",(),dict(st_size=4*1024**2+1))()
+            def read_text(self):raise AssertionError("Oversize data must be rejected before reading")
+        for policy in ("descriptors-v1",POLICY):
+            with self.assertRaises(ValueError):cli.read_model(Oversized(),policy)
+        self.assertEqual(weights.TRUSTED_BYTES,4*1024**2)
+        self.assertEqual(weights.CONTEXT_BYTES,131072)
+        self.assertEqual(math_roles.MAX_ROLE_BYTES,49152)
+        self.assertEqual(math_roles.MAX_MATH_ELEMENTS,256)
+
+    def app_submit(self,name):
+        folder=CAPTURE/name;model=load(folder/"model.json")
+        provenance=load_model_provenance(folder,model,max_bytes=weights.TRUSTED_BYTES)
+        with tempfile.TemporaryDirectory(dir=HERE) as tmp:
+            app=component_app.Application(Path(tmp)/"tasks",IntakeOnlyBackend())
+            task=app.submit(model,options=options(),model_provenance=provenance)
+            state=app.status(task)
+            self.assertEqual((state["status"],state["phase"]),("queued","queued"))
+            self.assertEqual(state["generations"],0);self.assertEqual(state["http_attempts"],0)
+            meta=app._checked_task_metadata(task)
+            self.assertEqual(meta["request"]["public_weight_binding"]["policy"],POLICY)
+            self.assertEqual(meta["model_provenance"],provenance)
+            self.assertEqual(provider.public_request(meta["request"]),weights.project(meta["request"]))
+    def test_app_submit_module_with_provenance(self):self.app_submit(CASES[0])
+    def test_app_submit_functional_with_provenance(self):self.app_submit(CASES[1])
+    def test_app_submit_keyword_with_provenance(self):self.app_submit(CASES[2])
+
+    def app_source(self,name):
+        old,case,_=frozen(name)
+        source=dict(format=SOURCE_FORMAT,kind="trusted_pytorch",manifest=str(ROOT/case["source_manifest"]),trust_local_code=True)
+        with tempfile.TemporaryDirectory(dir=HERE) as tmp:
+            app=RetainedCaptureApplication(Path(tmp)/"tasks",CAPTURE/name)
+            task=app.submit_source(source,resource_profile="general-tensors-v1",options=options())
+            state=app.status(task)
+            self.assertEqual((state["status"],state["phase"]),("queued","intake_queued"))
+            state=app.prepare_source(task)
+            self.assertEqual((state["status"],state["phase"]),("queued","queued"))
+            self.assertTrue(state["intake"]["reference_verified"])
+            self.assertEqual(app.capture_fixture_calls,1)
+            self.assertEqual(state["generations"],0);self.assertEqual(state["http_attempts"],0)
+            meta=app._checked_task_metadata(task)
+            self.assertEqual(meta["request"],new_request(name))
+            self.assertIn("model_provenance",meta)
+            self.assertEqual(meta["model_source"]["kind"],"trusted_pytorch")
+            public=provider.public_request(meta["request"])
+            self.assertNotIn("model_provenance",public)
+            self.assertNotIn("model_source",public)
+    def test_app_submit_source_module_with_provenance(self):self.app_source(CASES[0])
+    def test_app_submit_source_functional_with_provenance(self):self.app_source(CASES[1])
+    def test_app_submit_source_keyword_with_provenance(self):self.app_source(CASES[2])
+
+if __name__=="__main__":unittest.main()

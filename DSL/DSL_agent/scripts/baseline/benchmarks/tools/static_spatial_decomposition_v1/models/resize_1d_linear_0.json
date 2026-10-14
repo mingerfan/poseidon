@@ -1,0 +1,43 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v1",
+  "id": "resize_1d_linear_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "align_corners": true,
+        "antialias": false,
+        "mode": "linear",
+        "recompute_scale_factor": null,
+        "scale_factor": null,
+        "size": [
+          5
+        ]
+      },
+      "id": "resize",
+      "inputs": [
+        "x"
+      ],
+      "op": "resize",
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

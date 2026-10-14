@@ -1,0 +1,227 @@
+{
+  "agent_generation": 0,
+  "application": {
+    "accepted_task_cancelled_before_generation": true,
+    "binding": "ba2945b41408910283f4729bc1708da549372bc21f25cbd30a9a3443024a3636",
+    "cases": 6,
+    "error_code": "model_source_intake_rejected",
+    "expected_input_terminals": 5,
+    "input_accepted": 1,
+    "precise_source_feedback_pending": true,
+    "reference_groups": 16,
+    "reference_overlap_cli": true,
+    "rows": [
+      {
+        "accepted": false,
+        "compiler_calls": 0,
+        "encrypted_execution": false,
+        "expected_input_terminal": true,
+        "failure": {
+          "code": "model_source_intake_rejected",
+          "context": {},
+          "layer": "input",
+          "location": null,
+          "owner": "model_or_intake",
+          "retry_policy": "never_automatic"
+        },
+        "feedback_precise_source_code": false,
+        "id": "multihead_attention",
+        "paid_calls": 0,
+        "phase": "complete",
+        "reference_groups": 0,
+        "status": "validation_failed",
+        "task_id": "8377400594484777880465f9ca2eb602",
+        "terminal_repeat_preserved": true
+      },
+      {
+        "accepted": false,
+        "compiler_calls": 0,
+        "encrypted_execution": false,
+        "expected_input_terminal": true,
+        "failure": {
+          "code": "model_source_intake_rejected",
+          "context": {},
+          "layer": "input",
+          "location": null,
+          "owner": "model_or_intake",
+          "retry_policy": "never_automatic"
+        },
+        "feedback_precise_source_code": false,
+        "id": "functional_max_pool2d",
+        "paid_calls": 0,
+        "phase": "complete",
+        "reference_groups": 0,
+        "status": "validation_failed",
+        "task_id": "8c39c0997cb64eb8ad2d748d33291ecd",
+        "terminal_repeat_preserved": true
+      },
+      {
+        "accepted": false,
+        "compiler_calls": 0,
+        "encrypted_execution": false,
+        "expected_input_terminal": true,
+        "failure": {
+          "code": "model_source_intake_rejected",
+          "context": {},
+          "layer": "input",
+          "location": null,
+          "owner": "model_or_intake",
+          "retry_policy": "never_automatic"
+        },
+        "feedback_precise_source_code": false,
+        "id": "gelu_tanh",
+        "paid_calls": 0,
+        "phase": "complete",
+        "reference_groups": 0,
+        "status": "validation_failed",
+        "task_id": "11fb1616eccf409bbd0827e1b46964b1",
+        "terminal_repeat_preserved": true
+      },
+      {
+        "accepted": false,
+        "compiler_calls": 0,
+        "encrypted_execution": false,
+        "expected_input_terminal": true,
+        "failure": {
+          "code": "model_source_intake_rejected",
+          "context": {},
+          "layer": "input",
+          "location": null,
+          "owner": "model_or_intake",
+          "retry_policy": "never_automatic"
+        },
+        "feedback_precise_source_code": false,
+        "id": "relu_inplace",
+        "paid_calls": 0,
+        "phase": "complete",
+        "reference_groups": 0,
+        "status": "validation_failed",
+        "task_id": "8615fbc4fc4b4acf899cf2c529158319",
+        "terminal_repeat_preserved": true
+      },
+      {
+        "accepted": true,
+        "compiler_calls": 0,
+        "encrypted_execution": false,
+        "expected_input_terminal": null,
+        "failure": null,
+        "id": "contiguous_view",
+        "paid_calls": 0,
+        "phase": "queued",
+        "reference_groups": 16,
+        "status": "queued",
+        "stopped_before_generation": true,
+        "task_id": "1d28ac71e0254c118e4457dd28d213af",
+        "terminal_repeat_preserved": null
+      },
+      {
+        "accepted": false,
+        "compiler_calls": 0,
+        "encrypted_execution": false,
+        "expected_input_terminal": true,
+        "failure": {
+          "code": "model_source_intake_rejected",
+          "context": {},
+          "layer": "input",
+          "location": null,
+          "owner": "model_or_intake",
+          "retry_policy": "never_automatic"
+        },
+        "feedback_precise_source_code": false,
+        "id": "public_division",
+        "paid_calls": 0,
+        "phase": "complete",
+        "reference_groups": 0,
+        "status": "validation_failed",
+        "task_id": "dc6d8e1c215c4e83a2baccc563f797d0",
+        "terminal_repeat_preserved": true
+      }
+    ],
+    "terminal_repeat_preserved": 5
+  },
+  "backend_modified": false,
+  "binding": "e3575f63f702e19dd0af785fc487027b9b7d80677dc363936c61d731f8cfa4de",
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": 0,
+  "compiler_calls": 0,
+  "confirmed": [
+    "actual_source_results_and_app_terminal_behavior",
+    "no_automatic_reprocessing_of_terminal_intake_tasks",
+    "pending_source_scope_preserved"
+  ],
+  "created_utc": "2026-10-06T11:20:46.519152+00:00",
+  "current_151_approved": false,
+  "current_151_started": false,
+  "decryption": 0,
+  "download": 0,
+  "encrypted_execution": false,
+  "evidence": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-pytorch-offline-proposal-r1042.json": "5aaf64026340af03a234daec5d199630ad15569d1ba4c6c780e090411f448848",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-source-gaps-r1047.json": "6af4d8e7318f58a257ec573d28e786047020850e777266b0b5d187a953ab566d",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/audit_application_source_spellings.py": "01f587d91044c1d4dba36feae14b325d7cc7ef9b547e11827b9e322825e03d28",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-source-spellings-application-r1048.log": "0d7b45570bba839c39e6955a51bfdd44f45683232643885a3f29274eeab3a619",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-source-spellings-application-r1048/report.json": "6e5154d5ed1f5cb9843608d85729036df7a286556c2e9561c0e5c26705fd2b2b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-source-spellings-r1046/report.json": "9c2645b2f50809c4aae0249fa0ce5910aaef603212487fa9c4681307608126ab"
+  },
+  "format": "poseidon-source-application-compatibility-v1",
+  "frozen_benchmark_modified": false,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "inference": [
+    "current_math_graph_is_reusable_for_first_mapping_extensions_without_backend_core_changes"
+  ],
+  "installation": 0,
+  "new_hecate_tracing": 0,
+  "new_mathematical_model_count_claimed": false,
+  "next_priority": [
+    "functional_maxpool_and_public_division_static_adapters",
+    "multihead_module_binding",
+    "gelu_original_function_variant",
+    "safe_alias_functionalization",
+    "typed_redacted_source_failure_codes"
+  ],
+  "paid_calls": 0,
+  "parameter_changes": 0,
+  "preservation": {
+    "actual_workers": [],
+    "approval_receipt_present": false,
+    "backend_output_present": false,
+    "frozen_counts": {
+      "case_hashes": 5248,
+      "extra_source_hashes": 5,
+      "source_hashes": 691,
+      "tool_hashes": 8
+    },
+    "git_diff_check": 0,
+    "lost_original_status_rows": [],
+    "proposal_binding": "ed3ffa719754bf75978d127e793c6c357516396e5302c3721ad40a08032f631d",
+    "protected_counts": {
+      "protected-backend": 648,
+      "protected-current-history": 14,
+      "protected-history": 6,
+      "protected-new-history": 6,
+      "protected-references": 6
+    }
+  },
+  "production_modified": false,
+  "push": 0,
+  "source_probe": {
+    "binding": "2b66f55a38ed2d30c3fa8cabe460b9e260b2e810f2426313263c0aaa012bc159",
+    "cases": 6,
+    "input_accepted": 1,
+    "input_gaps": 5,
+    "reference_groups": 16
+  },
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "unique_reference_groups": 16,
+  "unverified": [
+    "expanded_source_compatibility",
+    "new_candidate_compilation_encrypted_execution_and_agent_generation",
+    "original_function_application_accuracy",
+    "general_inplace_alias_semantics"
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "format": "poseidon-bootstrap-parameter-proposal-v2",
+  "status": "pending_approval",
+  "context_id": "poseidon-bootstrap-cpu-n15-q17x48-p1x60-scale40-ratio128-experimental-v0",
+  "degree": 32768,
+  "log_slots": 14,
+  "q": [
+    281474976317441,
+    281474975662081,
+    281474974482433,
+    281474972188673,
+    281474971926529,
+    281474971533313,
+    281474966880257,
+    281474966683649,
+    281474962554881,
+    281474961309697,
+    281474960392193,
+    281474960326657,
+    281474957180929,
+    281474956066817,
+    281474955804673,
+    281474955673601,
+    281474955476993
+  ],
+  "p": [
+    1152921504606584833
+  ],
+  "nominal_scale_log2": 40,
+  "security": "tc128",
+  "actual_qp_product_bits": 876,
+  "security_table_max_bits": 881,
+  "bootstrap": {
+    "boundary_k": 25,
+    "log_message_ratio": 7,
+    "double_angle": 2,
+    "scaling_log": 48,
+    "output_ratio": 128,
+    "project_real": true,
+    "logical_rescale_count": 1,
+    "q0_modulus_count": 1,
+    "cosine_heap": "unchanged embedded polynomial in current Poseidon library"
+  },
+  "scope": [
+    "isolated existing-library CPU probe",
+    "four unchanged input groups from r234",
+    "refresh numerical comparison",
+    "square plus rescale",
+    "homomorphic multiply by public one and rescale to log2(scale) approximately 40 before second refresh",
+    "second refresh; no decrypt-reencrypt"
+  ],
+  "preserve_current_agent_context": true,
+  "runtime_core_changes": false,
+  "dacapo_changes": false,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "paid_calls": 0,
+  "new_dependencies": false,
+  "download_bytes": 0,
+  "limits": {
+    "max_wall_seconds": 1800,
+    "max_disk_bytes": 536870912,
+    "max_address_space_bytes": 6442450944,
+    "max_compile_jobs": 2,
+    "max_link_jobs": 1,
+    "max_native_tasks": 1
+  },
+  "locations": {
+    "source": "src/poseidon/tests/bootstrapping/agent_bootstrap_experiment_ratio128",
+    "work": "/home/lhohy/poseidon-work/platforms/aarch64-linux",
+    "results": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-bootstrap-ratio128-r236"
+  },
+  "rationale": "r234 signed-input bias is predicted by normalized sine approximation. Increase message ratio and matching output ratio together; keep Q/P/security unchanged.",
+  "key_memory_rationale": "Q17 with one P prime increases evaluation-key memory; 6 GiB applies only to this isolated probe, not candidate sandboxes.",
+  "rejection": "Stop on security rejection, resource/time limit, refresh failure or numerical failure. Preserve evidence; do not change parameters or tolerance automatically.",
+  "mathematical_prediction_only": [
+    {
+      "group": "zero",
+      "max_absolute_error": 0.0,
+      "failed_values": 0
+    },
+    {
+      "group": "signed",
+      "max_absolute_error": 5.049447929006412e-06,
+      "failed_values": 0
+    },
+    {
+      "group": "fixed_random",
+      "max_absolute_error": 2.351250414589501e-06,
+      "failed_values": 0
+    },
+    {
+      "group": "boundary",
+      "max_absolute_error": 3.7727197051418138e-06,
+      "failed_values": 0
+    }
+  ],
+  "prediction_limit": "Excludes encryption noise, integer carry and polynomial residuals. Does not establish encrypted acceptance.",
+  "additional_guard": "Require input scale at or below q0/message_ratio before each bootstrap. Normalize with actual multiply and rescale, never metadata-only scale override.",
+  "stop_on_first_failure": true,
+  "probe_source_sha256": {
+    "src/poseidon/tests/bootstrapping/agent_bootstrap_experiment_ratio128/approved_parameters.h": "dbce3f5a60b1b83e3955be4dbc42fed2c9cfd1145d850bff3856599cb332f437",
+    "src/poseidon/tests/bootstrapping/agent_bootstrap_experiment_ratio128/CMakeLists.txt": "3d798410fbfa14ae5369fa41e8a71355624a7a39994b13dcc9508f06310504f7",
+    "src/poseidon/tests/bootstrapping/agent_bootstrap_experiment_ratio128/test_bootstrap_experiment.cpp": "388eb141d3a2bb7324acb769feb6c6f7b673d0532643e73c9fcffd8ab6d1218d"
+  },
+  "proposal_sha256": "7d57710c2677b48333daa8a6ccd2a1890ab1877b032dbe77881daa4d8129ea73"
+}

@@ -1,0 +1,57 @@
+{
+  "source_revision": "6eba292b",
+  "scope": "Independent diagnostic Nsight Systems run Q=8 B=1, H2D, repeat=2 burst=1. Ranges include warmup. Kernel interval overlap is not SM utilization. No timings used in formal repeated results.",
+  "main_cupti_stream_id": 13,
+  "encode_cupti_stream_id": 14,
+  "kernel_count": 210354,
+  "ranges": [
+    {
+      "range": "contention.add.tilelang_tensor_encode",
+      "operator_kernel_count": 2801,
+      "operator_kernel_interval_ms": 70.219841,
+      "overlap_with_encode_interval_ms": 28.993668,
+      "overlap_with_tensor_tam_interval_ms": 5.826309,
+      "overlap_fraction": 0.4128985139684381
+    },
+    {
+      "range": "contention.multiply_plain.tilelang_tensor_encode",
+      "operator_kernel_count": 5838,
+      "operator_kernel_interval_ms": 63.057963,
+      "overlap_with_encode_interval_ms": 34.993418,
+      "overlap_with_tensor_tam_interval_ms": 5.961494,
+      "overlap_fraction": 0.5549405076722824
+    },
+    {
+      "range": "contention.multiply.tilelang_tensor_encode",
+      "operator_kernel_count": 4224,
+      "operator_kernel_interval_ms": 73.715194,
+      "overlap_with_encode_interval_ms": 36.805705,
+      "overlap_with_tensor_tam_interval_ms": 5.370308,
+      "overlap_fraction": 0.4992960474335861
+    },
+    {
+      "range": "contention.rescale.tilelang_tensor_encode",
+      "operator_kernel_count": 6276,
+      "operator_kernel_interval_ms": 70.091037,
+      "overlap_with_encode_interval_ms": 47.247556,
+      "overlap_with_tensor_tam_interval_ms": 9.446102,
+      "overlap_fraction": 0.6740884144715964
+    },
+    {
+      "range": "contention.relinearize.tilelang_tensor_encode",
+      "operator_kernel_count": 3050,
+      "operator_kernel_interval_ms": 84.720119,
+      "overlap_with_encode_interval_ms": 36.77187,
+      "overlap_with_tensor_tam_interval_ms": 8.168334,
+      "overlap_fraction": 0.43403940450083645
+    },
+    {
+      "range": "contention.rotate.tilelang_tensor_encode",
+      "operator_kernel_count": 2619,
+      "operator_kernel_interval_ms": 72.014584,
+      "overlap_with_encode_interval_ms": 29.987626,
+      "overlap_with_tensor_tam_interval_ms": 5.071691,
+      "overlap_fraction": 0.4164104593036322
+    }
+  ]
+}

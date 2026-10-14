@@ -1,0 +1,68 @@
+{
+  "backend_source_changes": false,
+  "binding": "5c6ea4d54468840bbb29d71198c3ddf9f2c1c8d859e419a79ea0ed601480974d",
+  "bootstrap_calls": 0,
+  "compiler_calls": 0,
+  "confirmed": {
+    "ciphertext_read_and_result_construction_public": true,
+    "current_agent_runner_instantiates_legacy_cpu_api": true,
+    "native_bootstrap_stage_methods_public": true,
+    "public_bootstrap_stage_methods_take_evaluation_keys_not_secret_key": true,
+    "runtime_accepts_explicit_api_type": true,
+    "runtime_calls_api_compute_and_validate_value": true
+  },
+  "constraints": [
+    "No decrypt_reencrypt, no secret key passed to the execution API.",
+    "No IR rewriting, backend code copying, monkeypatch or removal of unsupported capability checks.",
+    "No enablement by toggling OperatorSpec alone; explicit profile, artifacts, actual ciphertext state and numerical evidence required.",
+    "The historical ratio128 trial failed repeated-refresh precision; fixed-random/boundary remain unrun.",
+    "Current Agent w45 and the historical native-test parameters are separate identities; this audit authorizes no parameter or memory change."
+  ],
+  "date": "2026-10-12",
+  "dependency_changes": false,
+  "encrypted_calls": 0,
+  "evidence_locations": {
+    "current_runner": "cpu_runner.cpp:80-89,105-107",
+    "native_stages": "bootstrapper.h:19-58",
+    "runtime": "runtime.hpp:116,157,384,398",
+    "value": "poseidon_cpu_api.h:33-41"
+  },
+  "format": "poseidon-agent-native-bootstrap-public-api-audit-v1",
+  "inference": "An explicit Agent-owned API adapter could compose the existing CPU API with public Bootstrapper methods. The current source does not prove a Runtime-core change is necessary.",
+  "network_changes": false,
+  "next_action": "After the active frozen campaign, review the smallest Agent-owned interface prototype. Keep actual Boot requests blocked pending parameter, precision, key and execution acceptance.",
+  "paid_calls": 0,
+  "parameter_changes": false,
+  "proposed_owned_interface": {
+    "comm_handle": "PoseidonCpuApi::CommHandle",
+    "delegated_methods": [
+      "encode_plaintext",
+      "communicate_async",
+      "wait",
+      "synchronize",
+      "name",
+      "abort_all",
+      "validate_value"
+    ],
+    "native_methods": [
+      "compute: only explicitly bound Native Boot after numerical qualification",
+      "preflight: independently verify Native Boot capability, parameters, evaluation-key needs, layout and output state"
+    ],
+    "value": "PoseidonCpuValue"
+  },
+  "source_sha256": {
+    "src/poseidon/advance/bootstrapper.h": "fd0b9782d47bf543ffba19b7f2f8aa537d6874ea3051e1b1b41e47d2f2812803",
+    "src/poseidon/runtime_api/poseidon_cpu_api.cpp": "7f790015e9395ac13558ba72b56d3088b1ee2f70d1f94fccdda31b57eedc7645",
+    "src/poseidon/runtime_api/poseidon_cpu_api.h": "6987f26d6338efee0d2a838faf0fc89eabab2dccde7e9d5360bf55892d88e1a4",
+    "src/poseidon/tools/agent_runtime/cpu_runner.cpp": "53ea3382c9cfe5f3339899be812a6670b575f17a5383051e6ec0c39ba66fc9b2",
+    "third_party/ckks-runtime-agent/runtime/runtime.hpp": "7e2af31a3cb875d3909c7cb98f0c7ba72fbe259bab77702505c371bac4c32ab4"
+  },
+  "status": "public_integration_surface_identified_execution_unverified",
+  "unverified": [
+    "Compilation of a new composed API type",
+    "Compatibility with current w45 depth/scale and periodic layout",
+    "Complete native bootstrap numerical acceptance",
+    "CPU RuntimePlan native-Boot integration",
+    "CUDA execution"
+  ]
+}

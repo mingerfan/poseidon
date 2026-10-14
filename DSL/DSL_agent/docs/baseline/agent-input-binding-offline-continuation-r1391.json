@@ -1,0 +1,46 @@
+{
+  "format": "poseidon-offline-agent-adapter-continuation-v1",
+  "original_proposal_binding": "96e0c0f058429781a0d88fa0ed8333ca12e5924b0fc52356bd35ada8dfbc451f",
+  "authorization_sha256": "c67ae285793238ceaafcb0195c5e598b21d84fd0008fc2b0d57b0d9b6a2cbe59",
+  "authorization_unix": 1791711140.31324,
+  "original_worker_deadline_unix": 1791713540.31324,
+  "original_launcher_deadline_unix": 1791713840.31324,
+  "previous_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-input-binding-offline-r1390/continuation/report.json",
+  "protected_reports": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-input-binding-offline-r1390/report.json": "89d81dab2e5f0a1dbaf9eda7ae066264043b0ecf3bb379041745c301f025b18d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-input-binding-offline-r1390/continuation/report.json": "c72b96f73976a1c53f2039cf185a736960a30dce1fb8c1cee14de7adf3b87a20",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-input-binding-offline-proposal-r1390.json": "fce7c0b7e688ffe96ace77cf4d95b1493c0992c4424ff0ed11247fbc2c3f2d21"
+  },
+  "runner": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/pytorch_input_binding_v1/offline_continue_r1391.py",
+  "runner_sha256": "9dd6de8ae09929c4000d6f060297ecd3472eebe5cd7a20493791591c48c7d72b",
+  "controller_files": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/application_execution/backend.py": "c1a82eb74a0ed182100a40a699c877d72bc7cb6ed4d2d85b968cd02eeff68155",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/application_execution/tests/test_context.py": "5af7a7f25de13fc290c8fca02de25bc9620140729adf3a51fe35ff1c8b306830"
+  },
+  "original_compiler_confirmed": 3,
+  "original_encrypted_confirmed": 3,
+  "maximum_compiler_calls": 15,
+  "maximum_encrypted_calls": 24,
+  "remaining_compiler_calls": 12,
+  "remaining_encrypted_calls": 21,
+  "released_unstarted_reservation": {
+    "case": "defaults2",
+    "reason": "TypeError before backend execution; artifact monitor registered no execution directory",
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-input-binding-offline-r1390/defaults2/new-inputs.json",
+    "sha256": "e03b27fdeabdd3595c3b6cd1e3cb39295d1fa019285a551d8e89c92283de2c42"
+  },
+  "original_sdk_identity": "b9c4890b3569a998bd7d30f8252469a29d448ed7b200e834a2d9c89e60013b10",
+  "worker_source_identity_changed": true,
+  "cases_unchanged": true,
+  "no_model_reference_candidate_backend_parameter_network_changes": true,
+  "old_results_preserved": true,
+  "no_rerun_of_three_qualifications": true,
+  "scope_expanded": false,
+  "unit_regression": {
+    "passed": 86,
+    "failed": 0,
+    "skipped": 0,
+    "log_sha256": "ad19729ce58850939149321c436e0b0abda9153d699a55fff8a90d79420daea2"
+  },
+  "binding": "0786d3ead026fa12add96da528a7942d89ae5942063e09c6cd0f860fee0d71f4"
+}

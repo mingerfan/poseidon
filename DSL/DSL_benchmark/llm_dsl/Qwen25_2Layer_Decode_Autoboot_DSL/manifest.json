@@ -1,0 +1,153 @@
+{
+  "format": "qwen-decode-autoboot-source-v1",
+  "files": {
+    "compile_decode.py": {
+      "bytes": 5207,
+      "sha256": "e58d7ad7ba2886d676750abd6836373b8c938ed28e7fd9992777cf85b0208dd6"
+    },
+    "config/compiler-config.json": {
+      "bytes": 2098,
+      "sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110"
+    },
+    "config/operator-spec.json": {
+      "bytes": 2488,
+      "sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b"
+    },
+    "evidence/compile-full-timing.json": {
+      "bytes": 1191,
+      "sha256": "2c087fac65e7a2ce84e1cbe5e41a20ed48901e9fd625681d20916a8d510c631c"
+    },
+    "evidence/full-audit.json": {
+      "bytes": 729,
+      "sha256": "5a3dbbdfe28fb764f8d3570d7d3527c6fd4384824115aa475dd1f9eb5408aaa8"
+    },
+    "evidence/level-summary.json": {
+      "bytes": 2203,
+      "sha256": "509cef8eedcbeafd802ac290d600928dd91018bb2cfdbd32509ec92e37f01617"
+    },
+    "evidence/model-change.json": {
+      "bytes": 396,
+      "sha256": "6ba732003391a9add531217f7535cc01fd59db5a54bfab549842636d9f16dc87"
+    },
+    "evidence/packaging-validation.json": {
+      "bytes": 493,
+      "sha256": "4901fdfb45b6543f5c41a815a1b00aba5698a7ad800900ed75bcd8211d385cae"
+    },
+    "evidence/values-result.json": {
+      "bytes": 18526,
+      "sha256": "25ba30e440b58e2ea949a4f53c4dec4a53556f545b3520fc3c4e5339de3c7abb"
+    },
+    "interfaces/decode_pair.json": {
+      "bytes": 12188,
+      "sha256": "10972727dbd0008dd39f923a7581e40de40a3b148beb8bab32be5e2d9c2460d9"
+    },
+    "prepare_fixture.py": {
+      "bytes": 1291,
+      "sha256": "6ea4199a6b8ff0472bae6c820dbd828df0a52348dbaa00704ffe0436de5c7bcb"
+    },
+    "README.md": {
+      "bytes": 7861,
+      "sha256": "2dc855d62140b9b52783a59aedfac60d3dc94e9adc8e8c73442020c7425af805"
+    },
+    "source/Qwen25_24Layer_DSL/config/approximations.provisional.json": {
+      "bytes": 55601,
+      "sha256": "d3c8e3915697d4fde6536f86faf386a1534cbb6aa4a522a6b0fbcb0cb72f5342"
+    },
+    "source/Qwen25_24Layer_DSL/config/model.json": {
+      "bytes": 236,
+      "sha256": "75a88ca552e366dfc81a17fc6e92009475920bce91843ce3422e5d20d868d1a9"
+    },
+    "source/Qwen25_24Layer_DSL/config/weight_schema.json": {
+      "bytes": 20569,
+      "sha256": "82afdc3e3ea365e44cf482fb5b2b1dbc10703e1bb23c7ab57f0a5bae81474bc3"
+    },
+    "source/Qwen25_24Layer_DSL/prepare_fixture.py": {
+      "bytes": 3689,
+      "sha256": "53948fe482524b82c898bbc4edaf38665cfb82499fad9deb4324f75ce0bd28b0"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/__init__.py": {
+      "bytes": 49,
+      "sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/kernels/__init__.py": {
+      "bytes": 69,
+      "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/kernels/expr.py": {
+      "bytes": 95,
+      "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/kernels/ops.py": {
+      "bytes": 5772,
+      "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/kernels/qwen_layers.py": {
+      "bytes": 21564,
+      "sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/kernels/qwen_model.py": {
+      "bytes": 13502,
+      "sha256": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/kernels/qwen_nonlinear.py": {
+      "bytes": 9650,
+      "sha256": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/reference.py": {
+      "bytes": 3631,
+      "sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/runtime.py": {
+      "bytes": 3362,
+      "sha256": "53c85b23efa37b1273ae0021e630079e190318497100e7fa2e936494afa9ec75"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/spec.py": {
+      "bytes": 5126,
+      "sha256": "a012f4db2c1d10b51755596bedc180535e7859ecfd8b50ea77e3fd233477474a"
+    },
+    "source/Qwen25_24Layer_DSL/qwen24/weights.py": {
+      "bytes": 1957,
+      "sha256": "6f003998a7d684b85dca2588dfca56d2c402fcc176e8ee20233b08eef9d1dcb8"
+    },
+    "source/Qwen25_2Layer_Decode_Test/model_entry.py": {
+      "bytes": 4032,
+      "sha256": "5bb07c967976953ec1ccace21857753205fc3297f925d8dfd48c1b6b8cd2c6e6"
+    },
+    "source/Qwen25_2Layer_Decode_Test/prepare_and_check.py": {
+      "bytes": 4317,
+      "sha256": "a95da01d1635ba4e2b754258a2737f2c53d3a09463fc6091c569c94d2fb381e5"
+    },
+    "source/Qwen_DSL_Memory_Study/packed_linear.py": {
+      "bytes": 3147,
+      "sha256": "368a8e264910ae1ea734b543090a49f6d60a736feeaef2cd776ece0572e5658d"
+    },
+    "source/Qwen_DSL_Memory_Study/packed_lm_head.py": {
+      "bytes": 2531,
+      "sha256": "0581432e3c44f11c80dc21cf3165d3880baa09dce4d7709fc64f492be10a3c75"
+    },
+    "source-binding.json": {
+      "bytes": 7140,
+      "sha256": "32415125c58e860b6ae850cceab443c41d33bb6e4f5b3ab05be7005542a1741e"
+    },
+    "trace_decode.py": {
+      "bytes": 290,
+      "sha256": "5bf92f0b469eb6fc8917f22d42d574e967b8441f3da6046c1c40b500ab4ed9b4"
+    },
+    "verify_manifest.py": {
+      "bytes": 1083,
+      "sha256": "da542b9d92533e5aef2f202a7f11f3c33dc4b6ae0b540a93a1a30ab30565738c"
+    },
+    "BOOTSTRAP_LEVEL_AND_MEMORY_REPORT.md": {
+      "bytes": 13948,
+      "sha256": "08a92f90c101a6f4169b4f922bc6085480d9a1338c3fae2d0622b8f422eccbf0"
+    },
+    "evidence/full-ckks-result.json": {
+      "bytes": 169811,
+      "sha256": "8540154b0da2e6f8400c709ef6edc0da76732cfdf98d7acfb9aeec3852412f3a"
+    },
+    "evidence/levels-and-boot.json": {
+      "bytes": 536326,
+      "sha256": "429739f9d208b0d968b4f84e720d2d325ed20815ba2f2b99c0730de50aefb1e3"
+    }
+  }
+}

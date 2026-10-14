@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/freeze.py", line 56, in <module>
+    if __name__=="__main__":sys.exit(main())
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/freeze.py", line 12, in main
+    spec=importlib.util.spec_from_file_location("qualified_parent_scope",parent/"scope.py")
+UnboundLocalError: local variable 'importlib' referenced before assignment

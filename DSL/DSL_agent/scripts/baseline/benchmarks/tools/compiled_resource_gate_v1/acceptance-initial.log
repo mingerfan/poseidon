@@ -1,0 +1,16 @@
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-vya3q9nc
+attempt 0: passed / complete
+Candidate status: passed
+historical_linear failed ValueError Execution binding
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yf8pq_td
+attempt 0: passed / complete
+Candidate status: passed
+tanh_module failed ValueError Execution binding
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-u3jicg20
+attempt 0: passed / complete
+Candidate status: passed
+tanh_functional failed ValueError Execution binding
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-omllrsam
+attempt 0: passed / complete
+Candidate status: passed
+tanh_input_keyword failed ValueError Execution binding

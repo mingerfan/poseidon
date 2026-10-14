@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "contract": "decorated-functions-core-v7",
+  "source_sha256": "035d62c19d33c7d1bb5ad6550a56a9f92edfad099371979e1737872290bb2edb",
+  "functions": {
+    "golden": {
+      "parameters": [
+        "x0",
+        "x1",
+        "x2",
+        "x3",
+        "x4",
+        "x5",
+        "zero_ct"
+      ],
+      "kinds": [
+        "c",
+        "c",
+        "c",
+        "c",
+        "c",
+        "c",
+        "c"
+      ],
+      "signature": "c,c,c,c,c,c,c",
+      "result": [
+        "list",
+        [
+          "c",
+          "c",
+          "c",
+          "c",
+          "c"
+        ]
+      ],
+      "calls": [],
+      "rotation_steps": [
+        1,
+        2
+      ],
+      "expanded_cost": 403
+    }
+  },
+  "topological_order": [
+    "golden"
+  ],
+  "rotation_steps": [
+    1,
+    2
+  ],
+  "output_ciphertexts": 5,
+  "compilation_checked": false,
+  "encrypted_correctness_checked": false,
+  "agent_contract_enabled": true,
+  "agent_generation_validated": false,
+  "public_loops": {
+    "schema": 1,
+    "loops": [],
+    "iterations": 0,
+    "expanded_ast_sha256": "5b53cd37e6f6d942cc8b4df63cb1072eb023b4d829c07ad47c007cc697f9dad8",
+    "encrypted_control_flow": false,
+    "candidate_python_executed": false
+  },
+  "scalar_augmented": {
+    "schema": 1,
+    "sites": [],
+    "array_mutation_enabled": true
+  },
+  "array_mutation": {
+    "schema": 1,
+    "sites": [],
+    "subscript_writes_enabled": false
+  },
+  "packed_binding": {
+    "slot_period": 4,
+    "rotation_steps": [
+      1,
+      2
+    ],
+    "output_limit": 16,
+    "constant_limit": 256
+  }
+}

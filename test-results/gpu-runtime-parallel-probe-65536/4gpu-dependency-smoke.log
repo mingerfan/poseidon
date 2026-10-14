@@ -1,0 +1,2 @@
+FAIL boots=0 transfers=199 rotation_key_policy=binary rotations=1 key_seconds=5.22328 runtime_seconds=3.86364 initialization_seconds=0.809449 online_execution_seconds=3.86364 boot_seconds=0 python_max_abs=166.842 max_imaginary=0.000713281
+report=/home/xuming/test-results/gpu-runtime-parallel-probe-65536/reports/4gpu-dependency-smoke.json

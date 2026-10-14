@@ -1,0 +1,36 @@
+{
+  "approximations": {
+    "rsqrt": {
+      "domain": [
+        1.0,
+        5.0
+      ],
+      "iterations": 1,
+      "method": "newton"
+    }
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "models.make_layer",
+  "factory": {
+    "args": [],
+    "kwargs": {
+      "variant": 1
+    }
+  },
+  "files": {
+    "models.py": "4766608372a7a9adb91f59eeb9f75bfd7264a57ebf1c0acbe408cca4bb955b43"
+  },
+  "format": "poseidon-trusted-pytorch-v2",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ]
+}

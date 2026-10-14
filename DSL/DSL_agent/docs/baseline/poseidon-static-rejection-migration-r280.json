@@ -1,0 +1,132 @@
+{
+  "format": "poseidon-static-rejection-cli-migration-v1",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "changed_sources": {
+    "scripts/benchmark.py": "b6e5bffb97e1f8dea83dfd9c1c224b5db1c141301ca6175bb9e863a08bf72fef",
+    "scripts/baseline/benchmarks/tools/poseidon_rejection_entries.py": "1a1ecf059badab3dc6be1d40ff00d0d12d8380ca47e4d07bf5b9bbc129c03e3f",
+    "scripts/baseline/benchmarks/tools/test_poseidon_rejection_cli.py": "3ed14a2b6ff116e46c13feb682ca93f09fabc6b811ec1177934102f9fb846076"
+  },
+  "tests": {
+    "total": 50,
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-static-cli-r280/tests.log",
+    "log_sha256": "c069f1391207296faa2afd318538b7a421c8a4b0036cc044cf4991359d8d464d",
+    "seconds": 49.452
+  },
+  "static": {
+    "binding": "6d3c844aa57fbaffe0d43f7db8d60d5540da399a5db9752bed488ace8b7c0af1",
+    "planned": 48,
+    "passed": 48,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "partitions": 16,
+    "contexts_per_partition": 3,
+    "counts": {
+      "artifact_preflight": 6,
+      "candidate_ast_contract": 9,
+      "model_validation": 24,
+      "request_binding": 9
+    },
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-static-cli-r280/rejections.json",
+    "report_sha256": "dda013c1ba93a3a0103936f9d11fef51a0fb81805d75e8ef929336927b62b71a",
+    "scope": "static validators only; previous numerical controls remain separately bound",
+    "seconds": 0.45596608699997887,
+    "controls": [
+      {
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-supnyeva",
+        "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-supnyeva/attempt-00/output/bound",
+        "model_sha256": "8aef110c3ef37e106cd79a0674260ad811a51ada7e60f2a8c78bdea8cb1dcd3d",
+        "numerical_passed": true,
+        "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+        "plan_sha256": "5bd7cf45982172e63501bac59d52576addcfb840fa84b540f1f3f18a290ae14d",
+        "positive_execution_scope": "previously independently executed Poseidon control; no new execution",
+        "report_sha256": "31672d5465633d4c0b452d7ad832775ff83bce0c9b5c2cdc1c0a0f525cd95965",
+        "request_id": "b9f5003d49782d3141fc881ef4b97eb4132ccb21e980f59b9f504edcfc2a876d",
+        "request_sha256": "4c60f849368a4a330f4d7448618b05967fcb2e02bf31cc837fdd32a6e0bc397e",
+        "topology": "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216"
+      },
+      {
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b2l7o5wh",
+        "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b2l7o5wh/attempt-00/output/bound",
+        "model_sha256": "1767db40b3c85ca0625b9479cb9f529354cac1fa0a61e837b23bc7d0bad19fa3",
+        "numerical_passed": true,
+        "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+        "plan_sha256": "385d726d4f9624fafd246e7a33cfbcc9797746197985d067a7f31fca37635b6d",
+        "positive_execution_scope": "previously independently executed Poseidon control; no new execution",
+        "report_sha256": "8dfec4e202854da9c2ec1eb08a2ce039c40a4fd019eee0cea6ec32fc30f85636",
+        "request_id": "5feec98aef3a11a2f9179616434193d1bd667274c00c41c4122a2d0cc6fb1b7c",
+        "request_sha256": "ae41f3a39d45ebc50d2d9a90b4ba616b7bad0e6449547a8ddd38ad5764f1a6a3",
+        "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+      },
+      {
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-96xnx6pb",
+        "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-96xnx6pb/attempt-00/output/bound",
+        "model_sha256": "c936f37a04964a9c7fb5fed7f998231906a740782bf6b3e067215d598e161fa8",
+        "numerical_passed": true,
+        "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+        "plan_sha256": "ed51bc2df508ce689ffc3b4be548f05c750e012b238192604c4a7374c7238020",
+        "positive_execution_scope": "previously independently executed Poseidon control; no new execution",
+        "report_sha256": "85b6872c723aedf6d3508797ce8fb268dee328e11aaff4e8588feea33636f4a7",
+        "request_id": "98fdfcf3432ccd778cdc2b1c26d4d11cfe3b6f865a71cdeb331cf3278b3ab7c7",
+        "request_sha256": "ca031c50ce5c13971ec5319de2236a57831303dd50e73d23194ff1b5b88e0e0c",
+        "topology": "f2fa5096c565116f600cf6f8f5c796b8aee16a5f280b1c0ee6fe509b2b3e1d8f"
+      }
+    ]
+  },
+  "current_core": {
+    "files": 513,
+    "binding": "b130e29ba8b4e799435bd90977bf5b94534d243260079787e099e8eb952675ea",
+    "mismatches": [],
+    "paid_status": "pending_approval",
+    "proposal": "docs/baseline/poseidon-whole-models-live-proposal-r274.json"
+  },
+  "preservation": {
+    "boundary": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-static-cli-boundary-r278",
+    "previous_source": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-static-cli-r279/poseidon_rejection_entries.py.used",
+    "old_modules": true,
+    "old_reports": true,
+    "frozen_corpus": true,
+    "old_task_hashes": true
+  },
+  "partial_report_checks": {
+    "source_fault_keeps_completed": true,
+    "missing_controls": {
+      "passed": 42,
+      "blocked": 6,
+      "status": "blocked",
+      "exit_code": 1
+    }
+  },
+  "actual_compile": false,
+  "actual_sandbox_execution": false,
+  "actual_ciphertext_execution": false,
+  "agent_successes": 0,
+  "paid_calls": 0,
+  "downloads": 0,
+  "installs": 0,
+  "commits": 0,
+  "pushes": 0,
+  "parameters_changed": false,
+  "reference_changed": false,
+  "compiler_core_changed": false,
+  "runtime_core_changed": false,
+  "seal_execution": false,
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "remaining": {
+    "compiler_models": 12,
+    "bootstrap": "r234 numeric failed; r235 pending approval",
+    "whole_model_agent": "r274 pending approval",
+    "x86_native": "deferred",
+    "clean_install": "deferred",
+    "cuda": "deferred"
+  }
+}

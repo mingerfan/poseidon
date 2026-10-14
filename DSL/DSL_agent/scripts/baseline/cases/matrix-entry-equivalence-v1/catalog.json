@@ -1,0 +1,645 @@
+{
+  "cases": [
+    {
+      "context": 0,
+      "first_shape": [
+        2,
+        3
+      ],
+      "id": "matrix_matrix_0",
+      "manifest": "matrix_matrix_0/manifest.json",
+      "operator_model": "matrix_matrix_0/operator-model.json",
+      "operator_model_sha256": "367dee1a29f144706a9fdbeeee6b1a41f9364eec27fe466be5277b9cfddcd699",
+      "output_shape": [
+        2,
+        2
+      ],
+      "partition": "matrix_matrix",
+      "public_side": null,
+      "second_shape": [
+        3,
+        2
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        3,
+        2
+      ],
+      "id": "matrix_matrix_1",
+      "manifest": "matrix_matrix_1/manifest.json",
+      "operator_model": "matrix_matrix_1/operator-model.json",
+      "operator_model_sha256": "377a7643848a5a58b1091f739756ece0c21cdbd439c0b3c478c73d6fa40dd363",
+      "output_shape": [
+        3,
+        1
+      ],
+      "partition": "matrix_matrix",
+      "public_side": null,
+      "second_shape": [
+        2,
+        1
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        1,
+        4
+      ],
+      "id": "matrix_matrix_2",
+      "manifest": "matrix_matrix_2/manifest.json",
+      "operator_model": "matrix_matrix_2/operator-model.json",
+      "operator_model_sha256": "df2e63bd4ba825880d98996a03625beb9ceb8db75afd19d5bf6240ae7234d5f8",
+      "output_shape": [
+        1,
+        2
+      ],
+      "partition": "matrix_matrix",
+      "public_side": null,
+      "second_shape": [
+        4,
+        2
+      ]
+    },
+    {
+      "context": 0,
+      "first_shape": [
+        2,
+        2,
+        2
+      ],
+      "id": "batched_cipher_0",
+      "manifest": "batched_cipher_0/manifest.json",
+      "operator_model": "batched_cipher_0/operator-model.json",
+      "operator_model_sha256": "2b6919dce284821d518e40ebfb4bbe0478a30cd8670c5ae2d40ab2c5e06a68f0",
+      "output_shape": [
+        2,
+        2,
+        1
+      ],
+      "partition": "batched_cipher",
+      "public_side": null,
+      "second_shape": [
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        1,
+        3,
+        2
+      ],
+      "id": "batched_cipher_1",
+      "manifest": "batched_cipher_1/manifest.json",
+      "operator_model": "batched_cipher_1/operator-model.json",
+      "operator_model_sha256": "240ac543aabbfc2e7fc6ce1c17a89bb24165cad1e7c29e98b3f5590e9abf0bad",
+      "output_shape": [
+        1,
+        3,
+        2
+      ],
+      "partition": "batched_cipher",
+      "public_side": null,
+      "second_shape": [
+        1,
+        2,
+        2
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        2,
+        1,
+        3
+      ],
+      "id": "batched_cipher_2",
+      "manifest": "batched_cipher_2/manifest.json",
+      "operator_model": "batched_cipher_2/operator-model.json",
+      "operator_model_sha256": "da8f7d9b3fd6848f4fb38de4ce69933042d44be19663a685fc955974b9a19cb6",
+      "output_shape": [
+        2,
+        1,
+        2
+      ],
+      "partition": "batched_cipher",
+      "public_side": null,
+      "second_shape": [
+        2,
+        3,
+        2
+      ]
+    },
+    {
+      "context": 0,
+      "first_shape": [
+        2,
+        2,
+        2
+      ],
+      "id": "batch_broadcast_0",
+      "manifest": "batch_broadcast_0/manifest.json",
+      "operator_model": "batch_broadcast_0/operator-model.json",
+      "operator_model_sha256": "b3fb1f7ca6d9da449f49f5b81824cc4302da432513cb6b178fa6e4763e60fa76",
+      "output_shape": [
+        2,
+        2,
+        1
+      ],
+      "partition": "batch_broadcast",
+      "public_side": null,
+      "second_shape": [
+        2,
+        1
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        1,
+        2,
+        3
+      ],
+      "id": "batch_broadcast_1",
+      "manifest": "batch_broadcast_1/manifest.json",
+      "operator_model": "batch_broadcast_1/operator-model.json",
+      "operator_model_sha256": "2a76274148fde56db06f2fbde9cb872e2088f433d746440bf403227a1e26b564",
+      "output_shape": [
+        2,
+        2,
+        1
+      ],
+      "partition": "batch_broadcast",
+      "public_side": null,
+      "second_shape": [
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        2,
+        1,
+        2
+      ],
+      "id": "batch_broadcast_2",
+      "manifest": "batch_broadcast_2/manifest.json",
+      "operator_model": "batch_broadcast_2/operator-model.json",
+      "operator_model_sha256": "25cbd39cb13b49a67153fb879b2180bbd27d359b8163aee31e675524ca7eecf8",
+      "output_shape": [
+        2,
+        1,
+        2
+      ],
+      "partition": "batch_broadcast",
+      "public_side": null,
+      "second_shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "context": 0,
+      "first_shape": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "id": "higher_rank_cipher_0",
+      "manifest": "higher_rank_cipher_0/manifest.json",
+      "operator_model": "higher_rank_cipher_0/operator-model.json",
+      "operator_model_sha256": "df7ce7a7b5d066686b06857d9731a13eb9a041282a4c5363423a797af821815f",
+      "output_shape": [
+        1,
+        2,
+        2,
+        1
+      ],
+      "partition": "higher_rank_cipher",
+      "public_side": null,
+      "second_shape": [
+        1,
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2
+      ],
+      "id": "higher_rank_cipher_1",
+      "manifest": "higher_rank_cipher_1/manifest.json",
+      "operator_model": "higher_rank_cipher_1/operator-model.json",
+      "operator_model_sha256": "d397378b4b06fe9cd8664989678b7723425e7924bce9c8989283a2fbedc3ead1",
+      "output_shape": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "partition": "higher_rank_cipher",
+      "public_side": null,
+      "second_shape": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2
+      ],
+      "id": "higher_rank_cipher_2",
+      "manifest": "higher_rank_cipher_2/manifest.json",
+      "operator_model": "higher_rank_cipher_2/operator-model.json",
+      "operator_model_sha256": "3b8129d4b7973e0bd7a8126507270cabd2534aa36f924a7c471f2d23aa57f7cd",
+      "output_shape": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "partition": "higher_rank_cipher",
+      "public_side": null,
+      "second_shape": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "context": 0,
+      "first_shape": [
+        3
+      ],
+      "id": "vector_left_0",
+      "manifest": "vector_left_0/manifest.json",
+      "operator_model": "vector_left_0/operator-model.json",
+      "operator_model_sha256": "3d00e3baf95eec5853f043ad0adb5ab9f6d0865e1213fd3056cec5d006b21b67",
+      "output_shape": [
+        2
+      ],
+      "partition": "vector_left",
+      "public_side": null,
+      "second_shape": [
+        3,
+        2
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        2
+      ],
+      "id": "vector_left_1",
+      "manifest": "vector_left_1/manifest.json",
+      "operator_model": "vector_left_1/operator-model.json",
+      "operator_model_sha256": "5c5e880296c631b167140ae76554f0274d534b19d42bbec2430f31e0100a7536",
+      "output_shape": [
+        2,
+        1
+      ],
+      "partition": "vector_left",
+      "public_side": null,
+      "second_shape": [
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        4
+      ],
+      "id": "vector_left_2",
+      "manifest": "vector_left_2/manifest.json",
+      "operator_model": "vector_left_2/operator-model.json",
+      "operator_model_sha256": "6a8696b79d711a2751e0e5b73ef3edc0cc4941aa0c766552c9269aeb74abc75d",
+      "output_shape": [
+        1,
+        3
+      ],
+      "partition": "vector_left",
+      "public_side": null,
+      "second_shape": [
+        1,
+        4,
+        3
+      ]
+    },
+    {
+      "context": 0,
+      "first_shape": [
+        2,
+        3
+      ],
+      "id": "vector_right_0",
+      "manifest": "vector_right_0/manifest.json",
+      "operator_model": "vector_right_0/operator-model.json",
+      "operator_model_sha256": "5d277f551780a2f8ff349eaa64586723ad1578addfcd73d9c220fab81d53e8f2",
+      "output_shape": [
+        2
+      ],
+      "partition": "vector_right",
+      "public_side": null,
+      "second_shape": [
+        3
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        2,
+        2,
+        3
+      ],
+      "id": "vector_right_1",
+      "manifest": "vector_right_1/manifest.json",
+      "operator_model": "vector_right_1/operator-model.json",
+      "operator_model_sha256": "3274f367e97b502c2b4bbf7de188259b8a96b626583e8f7ddb81d39c1987f02a",
+      "output_shape": [
+        2,
+        2
+      ],
+      "partition": "vector_right",
+      "public_side": null,
+      "second_shape": [
+        3
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        1,
+        1,
+        2,
+        4
+      ],
+      "id": "vector_right_2",
+      "manifest": "vector_right_2/manifest.json",
+      "operator_model": "vector_right_2/operator-model.json",
+      "operator_model_sha256": "e9a81d486b211479645e0cacedc16e27a552fed901af6a87b1bac42371095ecb",
+      "output_shape": [
+        1,
+        1,
+        2
+      ],
+      "partition": "vector_right",
+      "public_side": null,
+      "second_shape": [
+        4
+      ]
+    },
+    {
+      "context": 0,
+      "first_shape": [
+        2,
+        3
+      ],
+      "id": "public_right_0",
+      "manifest": "public_right_0/manifest.json",
+      "operator_model": "public_right_0/operator-model.json",
+      "operator_model_sha256": "50b7c8c759dbc307c66e28113345f2ef0b60dee74ccbb8119ca86f1d1b4a80f7",
+      "output_shape": [
+        2,
+        2
+      ],
+      "partition": "public_right",
+      "public_side": "right",
+      "second_shape": [
+        3,
+        2
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        1,
+        2,
+        3
+      ],
+      "id": "public_right_1",
+      "manifest": "public_right_1/manifest.json",
+      "operator_model": "public_right_1/operator-model.json",
+      "operator_model_sha256": "41b6a7234cce117ba53853f4edc284ede78c8c1fad7f12828d2c6e81d4230930",
+      "output_shape": [
+        2,
+        2,
+        1
+      ],
+      "partition": "public_right",
+      "public_side": "right",
+      "second_shape": [
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        2
+      ],
+      "id": "public_right_2",
+      "manifest": "public_right_2/manifest.json",
+      "operator_model": "public_right_2/operator-model.json",
+      "operator_model_sha256": "064982b573ee855408140c1a7f82ad921ea6537274c560198e8a2ca93f0bfa3c",
+      "output_shape": [
+        3
+      ],
+      "partition": "public_right",
+      "public_side": "right",
+      "second_shape": [
+        2,
+        3
+      ]
+    },
+    {
+      "context": 0,
+      "first_shape": [
+        2,
+        3
+      ],
+      "id": "public_left_0",
+      "manifest": "public_left_0/manifest.json",
+      "operator_model": "public_left_0/operator-model.json",
+      "operator_model_sha256": "fb6400733804fa248663fae2c2475eb5e226a4d86b21317876f4e48833f09c69",
+      "output_shape": [
+        2,
+        2
+      ],
+      "partition": "public_left",
+      "public_side": "left",
+      "second_shape": [
+        3,
+        2
+      ]
+    },
+    {
+      "context": 1,
+      "first_shape": [
+        1,
+        2,
+        3
+      ],
+      "id": "public_left_1",
+      "manifest": "public_left_1/manifest.json",
+      "operator_model": "public_left_1/operator-model.json",
+      "operator_model_sha256": "2b3575f3a645fe16ec8f40447aeb05f8049b0aa9ffc92dc28cc0a553683ad11f",
+      "output_shape": [
+        2,
+        2,
+        1
+      ],
+      "partition": "public_left",
+      "public_side": "left",
+      "second_shape": [
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "context": 2,
+      "first_shape": [
+        3
+      ],
+      "id": "public_left_2",
+      "manifest": "public_left_2/manifest.json",
+      "operator_model": "public_left_2/operator-model.json",
+      "operator_model_sha256": "6b79342a8c323ac25a1753773e0f5b0a8d4b123b981e3541653530f6324db660",
+      "output_shape": [
+        2
+      ],
+      "partition": "public_left",
+      "public_side": "left",
+      "second_shape": [
+        3,
+        2
+      ]
+    }
+  ],
+  "format": "poseidon-matrix-input-contexts-v1",
+  "models_source_sha256": "3a8b4eb59cefb7d5e4ad0128427d99893968bbf03036e0f841fee9b54a0ef3a4",
+  "old_frozen_benchmark_changed": false,
+  "paid_calls": 0,
+  "partitions": 8,
+  "planned": 24,
+  "purpose": "Same static mathematical operation across JSON and trusted PyTorch inputs"
+}

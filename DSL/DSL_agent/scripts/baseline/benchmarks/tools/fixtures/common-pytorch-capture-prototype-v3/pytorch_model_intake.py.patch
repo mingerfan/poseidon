@@ -1,0 +1,12 @@
+--- pytorch_model_intake.py
++++ pytorch_model_intake.py
+@@ -227,6 +227,9 @@
+     rng=torch.get_rng_state().clone();py_rng=random.getstate();np_rng=np.random.get_state()
+     source_policy=source_shape_policy(spec)
+     traced=trace(module,spec["inputs"],resource_profile=profile,policy=source_policy)
++    from pytorch_arithmetic_normalization import normalize_common
++    traced,common_record=normalize_common(traced,spec["inputs"],resource_profile=profile)
++    Path("/out/common-normalization.json").write_text(json.dumps(common_record))
+     normalized,record=normalize(traced,resource_profile=profile)
+     canonical=trace(normalized,spec["inputs"],resource_profile=profile,policy=INDEX_POLICY)
+     record=rename_record(record,normalized,canonical)

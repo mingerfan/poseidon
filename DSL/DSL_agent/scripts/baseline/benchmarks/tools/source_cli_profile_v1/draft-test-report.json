@@ -1,0 +1,12 @@
+{
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "exit_code": 0,
+  "format": "poseidon-source-cli-draft-tests-v1",
+  "harness_sha256": "c8643caf8f18c74425ea034ee0871bd1593851112739f3e87560fe73fd013c0a",
+  "original_tests_sha256": "291887f8ae306b6cc1000f1888fb21cf97ae0c24f81ec1853739321ed3fff98b",
+  "production_modified": false,
+  "seconds": 0.49839491900638677,
+  "status": "passed"
+}

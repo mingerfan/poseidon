@@ -1,0 +1,13 @@
+{
+  "binding": "bd3e99151cdc0b262db4ee4cc086b09ae072f113b231e0f769487b4c6687d50f",
+  "format": "poseidon-original-live-continuation-runner-v2",
+  "proposal_binding": "06411a2e643d76d81e974349268f4bc887b84eacb0771748870e1093a1e792dd",
+  "proposal_sha256": "8d9388ac7797a97c31687a618a52b4d032f592f7e190216a4aebb74c504e9415",
+  "retired_audit_sha256": "b4c6bcfbd3d5434c92a83bc25fc119c3e2b7e08f291a3dac4d332fd2d9ebd635",
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/continuation_scope.py": "97c3b23c047e6d4f2ebfe37e8a325d0667068a3e3c3858ed4b600af62601daed",
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/controls.py": "f01f911ac287a2e071eead61de84893e06cba16dea8c73d8275d35af15dc4ad1",
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/run.py": "63764017ff74bab0e9903060179503ab8235580dd29b0b895283e7c0401ba730",
+    "scripts/baseline/benchmarks/tools/source_live_continuation_v2/test_continuation.py": "841c4cd0df7bc90405bc00df7daa767e5c27751dc4be086754a99f773460119c"
+  }
+}

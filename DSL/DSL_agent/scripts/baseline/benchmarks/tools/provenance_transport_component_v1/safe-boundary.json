@@ -1,0 +1,20 @@
+{
+  "format": "poseidon-provenance-safe-boundary-v1",
+  "previous_live_binding": "7aa7dcd2296a933d7cb210c1542adb78e524e8959b9604689b155108e91e82de",
+  "previous_live_plan_binding": "59073c05964274806ae0425181391dea92e8a6f45cab0ab0d3cb2017bed69658",
+  "terminal": {
+    "exit_code": 1,
+    "finished": 1791853363.6853175,
+    "plan_binding": "59073c05964274806ae0425181391dea92e8a6f45cab0ab0d3cb2017bed69658"
+  },
+  "audit_binding": "7b07ca3bbc682f8cee7a33ac2411d62498e798373448c0cb2c3e46f87110f0d4",
+  "calls_resolved": true,
+  "previous_owner_gone": true,
+  "audit_owner_gone": true,
+  "execution_processes": [],
+  "previous_sdk": "4ab8e18103ca0eac8e7b5541e02bbcd7644c37a47faac6e801fa0761dc4dbb3f",
+  "production_modified": false,
+  "prototype_tests_passed": 20,
+  "prototype_test_sha256": "706c81d7b5cc21c7b524a663475739abbdd5a8b907210ceb93f8f55930b83792",
+  "binding": "274f9d34105dee821c553b27101d3f3cf1d08496aa1ef8e01f8b54f927bc2ef6"
+}

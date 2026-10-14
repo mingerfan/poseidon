@@ -1,0 +1,34 @@
+test_boolean_expr_is_not_public_boolean (test_diagnostics.LocatedSyntaxTests) ... ok
+test_comparison_remains_rejected (test_diagnostics.LocatedSyntaxTests) ... ok
+test_comprehension_has_exact_location (test_diagnostics.LocatedSyntaxTests) ... ok
+test_conditional_expression_location (test_diagnostics.LocatedSyntaxTests) ... ok
+test_control_failure_forwarded_and_private_text_dropped (test_diagnostics.LocatedSyntaxTests) ... ok
+test_existing_array_constructor_feedback_preserved (test_diagnostics.LocatedSyntaxTests) ... ok
+test_if_has_exact_statement_location (test_diagnostics.LocatedSyntaxTests) ... ok
+test_new_reasons_require_bounded_static_witness (test_diagnostics.LocatedSyntaxTests) ... ok
+test_node_limit_unchanged (test_diagnostics.LocatedSyntaxTests) ... ok
+test_operator_uses_nearest_source_expression (test_diagnostics.LocatedSyntaxTests) ... ok
+test_positive_object_array_unchanged (test_diagnostics.LocatedSyntaxTests) ... ok
+test_positive_static_range_unchanged (test_diagnostics.LocatedSyntaxTests) ... ok
+test_real_current_candidates_preserve_acceptance (test_diagnostics.LocatedSyntaxTests) ... test_reconstructed_flags_cannot_be_forged (test_diagnostics.LocatedSyntaxTests) ... ok
+test_shared_operator_instances_keep_distinct_locations (test_diagnostics.LocatedSyntaxTests) ... ok
+test_while_remains_rejected (test_diagnostics.LocatedSyntaxTests) ... ok
+
+======================================================================
+FAIL: test_real_current_candidates_preserve_acceptance (test_diagnostics.LocatedSyntaxTests) (case='rank_axis_32', response='/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-live-r1504/rank_axis_32/tasks/df08dabbdad24569970d749fcf59c353/response-2.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_diagnostic_v1/test_diagnostics.py", line 140, in test_real_current_candidates_preserve_acceptance
+    self.assertEqual(caught.exception.location,dict(kind="source",line=3,column=4))
+AssertionError: {'kind': 'source', 'line': 34, 'column': 8} != {'kind': 'source', 'line': 3, 'column': 4}
+- {'column': 8, 'kind': 'source', 'line': 34}
+?            ^                             -
+
++ {'column': 4, 'kind': 'source', 'line': 3}
+?            ^
+
+
+----------------------------------------------------------------------
+Ran 16 tests in 2.687s
+
+FAILED (failures=1)

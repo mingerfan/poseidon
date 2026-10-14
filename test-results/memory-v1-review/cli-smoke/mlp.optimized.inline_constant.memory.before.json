@@ -1,0 +1,96 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "inline_constant",
+  "memory_planned": false,
+  "places": [
+    {
+      "distinct_allocation_bytes": 2555904,
+      "peak": {
+        "ciphertext_bytes": 2228224,
+        "instruction_ordinal": 1,
+        "largest_objects": [
+          {
+            "bytes": 2228224,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          },
+          {
+            "bytes": 327680,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "2"
+          }
+        ],
+        "operation": "ckks.encode",
+        "phase": "initialization",
+        "plaintext_bytes": 327680
+      },
+      "peak_bytes": 2555904,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 2555904
+    },
+    {
+      "distinct_allocation_bytes": 1933312,
+      "peak": {
+        "ciphertext_bytes": 1769472,
+        "instruction_ordinal": 4,
+        "largest_objects": [
+          {
+            "bytes": 1114112,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "4"
+          },
+          {
+            "bytes": 327680,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1"
+          },
+          {
+            "bytes": 327680,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "3"
+          },
+          {
+            "bytes": 163840,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "5"
+          }
+        ],
+        "operation": "ckks.addcp",
+        "phase": "execution",
+        "plaintext_bytes": 163840
+      },
+      "peak_bytes": 1933312,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 1933312
+    }
+  ],
+  "poly_degree": 8192,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

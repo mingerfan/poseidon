@@ -1,0 +1,513 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+test_capability_lists_explicit_version_without_promoting_default (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... ERROR
+test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... test_legacy_public_transform_rejects (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... test_named_none_outputs_and_versions (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... ERROR
+test_original_arrays_and_declared_version_cannot_change (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... ERROR
+test_public_logical_dtypes_remain_bound (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... test_rebound_cipher_bridge_rejects (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... ERROR
+test_rebound_transform_proof_cannot_change_semantics (test_pytorch_public_transform_capture.PublicTransformCaptureTests) ... ERROR
+test_forged_plan_rejected_even_after_rebinding (test_public_tensor_transforms.PublicTransformFlowTests) ... ok
+test_historical_public_policy_remains_closed (test_public_tensor_transforms.PublicTransformFlowTests) ... ok
+test_public_transform_flow_matches_original_framework (test_public_tensor_transforms.PublicTransformFlowTests) ... ok
+test_runtime_count_tensor_remains_rejected (test_public_tensor_transforms.PublicTransformFlowTests) ... ok
+test_source_order_and_roots_retained (test_public_tensor_transforms.PublicTransformFlowTests) ... ok
+test_allocation_rejected_before_numpy_work (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_constant_budget_is_distinct_from_cipher_tensor_budget (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_dtype_retained_before_exact_materialization (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_flattened_interleave_and_roll (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_invalid_axes_sizes_and_signatures (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_invalid_counts_are_closed (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_legacy_policies_keep_rejection (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_nonfinite_and_unsafe_dtype (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_only_registered_targets (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_rank_boundary (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_repeated_roll_axes_follow_framework_semantics (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_scalar_public_state_and_identity_copy (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_three_contexts_per_operation (test_public_tensor_transforms.PublicTransformMathTests) ... ok
+test_binary_repetition_preserves_eight_operand_gate (test_static_tensor_transforms.TransformMathTests) ... ok
+test_fifteen_math_contexts_and_immutable_source (test_static_tensor_transforms.TransformMathTests) ... ok
+test_identity_and_singleton_copy_values (test_static_tensor_transforms.TransformMathTests) ... ok
+test_negative_large_and_repeated_roll_axes (test_static_tensor_transforms.TransformMathTests) ... ok
+test_no_reference_uses_decomposition_plan (test_static_tensor_transforms.TransformMathTests) ... ok
+test_node_expansion_budget (test_static_tensor_transforms.TransformMathTests) ... ok
+test_plain_operand_rejected (test_static_tensor_transforms.TransformMathTests) ... ok
+test_prior_format_refuses_new_operator (test_static_tensor_transforms.TransformMathTests) ... ok
+test_rank_32_and_rank_overflow (test_static_tensor_transforms.TransformMathTests) ... ok
+test_rejections (test_static_tensor_transforms.TransformMathTests) ... ok
+test_all_fifteen_source_normalizations (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_capability_catalog_has_explicit_graph_and_source_partition (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_copy_storage_and_alias_mutation (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_dynamic_count_is_rejected (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_flip_empty_and_roll_zero_copy (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_method_and_keyword_forms (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_prior_trace_cannot_enable_calls (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_source_v30_routing_and_old_defaults (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_transport_tamper_even_if_rebound (test_static_tensor_transforms.TransformSourceTests) ... ok
+test_all_fifteen_contexts_preserve_cipher_ops_and_independent_reference (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_arithmetic_independent_torch_and_multiple_call_styles (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_broadcast_capacity_is_checked_before_result_materialization (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_cipher_plus_public_is_not_folded (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_derived_proof_and_source_roots_cannot_be_relabelled (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_descriptors_and_keyword_operands (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_existing_cast_versions_keep_records_and_reject_new_math (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_format_dispatch_and_capability_are_explicit (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_inplace_out_and_device_calls_stay_rejected (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_literal_and_two_parent_proofs_bind_values_order_and_attributes (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_public_state_mutation_still_rejected_before_folding (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_result_and_alpha_budgets_rejected (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_scalar_rank_zero_and_rank_32_are_bounded (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_unbound_dependency_and_scalar_only_proof_rejected (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_wrong_dtype_nonfinite_and_out_of_bound_values_rejected (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_zero_small_divisors_and_rounding_rejected (test_pytorch_closed_public_arithmetic.ClosedPublicArithmeticTests) ... ok
+test_integer_and_bool_capture_match_independent_reference (test_pytorch_public_dtype_cast.PublicCastCaptureTests) ... ok
+test_named_none_output_is_preserved (test_pytorch_public_dtype_cast.PublicCastCaptureTests) ... ok
+test_roundtrip_capture_and_data_only_reload (test_pytorch_public_dtype_cast.PublicCastCaptureTests) ... ok
+test_source_policy_and_original_state_tampering_reject (test_pytorch_public_dtype_cast.PublicCastCaptureTests) ... ok
+test_all_registered_dtype_pairs_match_torch_in_three_shapes (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_device_copy_integer_and_dynamic_cast_arguments_reject (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_equal_rounded_values_keep_different_source_bindings (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_explicit_rounding_is_bound (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_integer_rounding_matches_torch (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_old_bool_plan_is_byte_equivalent_to_baseline (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_old_contract_keeps_float_and_integer_cast_rejection (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_overflow_rejects_before_materialization (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_plan_and_weight_tampering_reject (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_to_positional_and_keyword_dtype (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_unknown_policy_and_dtype_operation_reject (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_unsupported_array_and_nonfinite_input_reject (test_pytorch_public_dtype_cast.PublicCastMathTests) ... ok
+test_future_contract_is_not_implicitly_enabled (test_pytorch_public_dtype_cast.PublicCastVersionTests) ... ok
+test_legacy_package_versions_stay_separate (test_pytorch_public_dtype_cast.PublicCastVersionTests) ... ok
+test_v24_has_separate_source_package_and_reference (test_pytorch_public_dtype_cast.PublicCastVersionTests) ... ok
+test_inplace_expansion_rejected (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_inplace_shape_preserved (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_invalid_broadcast_rejected (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_invalid_values_rejected (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_nonuniform_signed_channel (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_old_v21_identity_retained (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_payload_size_rejected (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_scalar_compatibility (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_unknown_version_rejected (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_v22_is_explicit_with_separate_package (test_pytorch_public_tensor_division.PublicDivisorTests) ... ok
+test_boolean_inplace_receiver_cannot_mutate_public_state (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_duplicate_registered_use_is_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_exact_complete_graph_and_raw_state (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_extra_computation_is_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_extra_keyword_is_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_fresh_node_cannot_overwrite_input (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_missing_registered_use_is_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_numeric_value_substitution (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_original_bool_array_cannot_be_replaced (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_output_binding_cannot_change (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_plaintext_only_mask_arithmetic_is_not_this_partition (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_public_mask_with_another_use_is_retained (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_raw_mask_substitution (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_removed_computation_is_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_reversed_public_operand_is_registered (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_source_identity_cannot_be_self_rebound (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_state_dtype_substitution (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_torch_mul_out_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_wrong_input_is_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_wrong_mask_tensor_metadata_rejected (test_pytorch_public_boolean_arithmetic.GraphBindingTests) ... ok
+test_bad_payload_size_rejected (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_column_broadcast (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_incompatible_broadcast_rejected (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_inplace_broadcast_expansion_rejected (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_list_payload_rejected (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_nonzero_bool_storage_represents_true (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_resource_rank_rejected (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_scalar_boolean_broadcast (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_zero_one_numeric_values (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+test_zero_or_negative_shape_rejected (test_pytorch_public_boolean_arithmetic.NumericMaskTests) ... ok
+
+======================================================================
+ERROR: test_capability_lists_explicit_version_without_promoting_default (test_pytorch_public_transform_capture.PublicTransformCaptureTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 111, in test_capability_lists_explicit_version_without_promoting_default
+    from application_capabilities import describe_inputs
+ImportError: cannot import name 'describe_inputs' from 'application_capabilities' (/home/lhohy/Code/Poseidon/scripts/baseline/application_capabilities.py)
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='repeat', context=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='repeat', context=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='repeat', context=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='tile', context=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='tile', context=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='tile', context=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='repeat_interleave', context=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='repeat_interleave', context=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='repeat_interleave', context=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='flip', context=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='flip', context=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='flip', context=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='roll', context=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='roll', context=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_five_operations_three_contexts_have_original_reference_and_replay (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='roll', context=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 56, in test_five_operations_three_contexts_have_original_reference_and_replay
+    module,spec,arrays,record=capture(kind,context)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_legacy_public_transform_rejects (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='repeat')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 85, in test_legacy_public_transform_rejects
+    capture(kind,version="poseidon-trusted-pytorch-v30")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_legacy_public_transform_rejects (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='flip')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 85, in test_legacy_public_transform_rejects
+    capture(kind,version="poseidon-trusted-pytorch-v30")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_legacy_public_transform_rejects (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (kind='roll')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 85, in test_legacy_public_transform_rejects
+    capture(kind,version="poseidon-trusted-pytorch-v30")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_named_none_outputs_and_versions (test_pytorch_public_transform_capture.PublicTransformCaptureTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 77, in test_named_none_outputs_and_versions
+    _,spec,_,record=capture("flip",2)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_original_arrays_and_declared_version_cannot_change (test_pytorch_public_transform_capture.PublicTransformCaptureTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 87, in test_original_arrays_and_declared_version_cannot_change
+    _,spec,arrays,record=capture()
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_public_logical_dtypes_remain_bound (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (dtype=torch.float32)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 71, in test_public_logical_dtypes_remain_bound
+    _,_,arrays,record=capture("roll",1,dtype)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_public_logical_dtypes_remain_bound (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (dtype=torch.float64)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 71, in test_public_logical_dtypes_remain_bound
+    _,_,arrays,record=capture("roll",1,dtype)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_public_logical_dtypes_remain_bound (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (dtype=torch.int32)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 71, in test_public_logical_dtypes_remain_bound
+    _,_,arrays,record=capture("roll",1,dtype)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_public_logical_dtypes_remain_bound (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (dtype=torch.int64)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 71, in test_public_logical_dtypes_remain_bound
+    _,_,arrays,record=capture("roll",1,dtype)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_public_logical_dtypes_remain_bound (test_pytorch_public_transform_capture.PublicTransformCaptureTests) (dtype=torch.bool)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 71, in test_public_logical_dtypes_remain_bound
+    _,_,arrays,record=capture("roll",1,dtype)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_rebound_cipher_bridge_rejects (test_pytorch_public_transform_capture.PublicTransformCaptureTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 103, in test_rebound_cipher_bridge_rejects
+    _,spec,arrays,record=capture("repeat",1)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+======================================================================
+ERROR: test_rebound_transform_proof_cannot_change_semantics (test_pytorch_public_transform_capture.PublicTransformCaptureTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 94, in test_rebound_transform_proof_cannot_change_semantics
+    _,spec,arrays,record=capture("roll")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_public_transform_capture.py", line 47, in capture
+    record=prepare(module,spec,folder/"capture",expected_weight_binding=binding(arrays,weights))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 88, in prepare
+    call_plan=plan(spec,signature_record(reference_source))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_input_binding.py", line 126, in plan
+    call = validate_call(spec["call"], spec["inputs"])
+KeyError: 'call'
+
+----------------------------------------------------------------------
+Ran 120 tests in 1.642s
+
+FAILED (errors=28)
+{"tests": 120, "failures": 0, "errors": 28, "skipped": 0, "passed": false}

@@ -1,0 +1,9 @@
+validating block-prefill.depth-dp-v2._hecate_qwen_block_2tokens.runtime-plan.json
+Traceback (most recent call last):
+  File "/tmp/poseidon-boot-placement-IUOMH1/validate_fast_plans.py", line 168, in <module>
+    record = validate(path, args.root, args.execute_full and path.name.startswith("block-prefill."))
+  File "/tmp/poseidon-boot-placement-IUOMH1/validate_fast_plans.py", line 25, in validate
+    assert digest(manifest_path) == plan["plaintext_bundle"]["manifest_sha256"]
+  File "/tmp/poseidon-boot-placement-IUOMH1/validate_fast_plans.py", line 16, in digest
+    return "sha256:" + hashlib.file_digest(stream, "sha256").hexdigest()
+AttributeError: module 'hashlib' has no attribute 'file_digest'

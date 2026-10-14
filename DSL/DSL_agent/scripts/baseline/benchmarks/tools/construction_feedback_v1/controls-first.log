@@ -1,0 +1,205 @@
+test_actual_helper_locations_without_source_or_identifier_echo (test_unified_construction_guidance.ConstructionGuidanceTests) ... ERROR
+test_both_sandbox_policies_bind_the_new_module (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_cli_accepts_explicit_v13 (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_context_retains_required_constraints_under_budget (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_host_and_integrity_failure_take_priority (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_legacy_nonchunk_layout_has_correct_element_count (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_limits_read_authoritative_constants_without_expansion (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_malformed_oversized_invalid_and_recursive_sources_are_data_only (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_model_id_does_not_dispatch_guidance (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_old_guidance_does_not_receive_new_hints (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_other_witness_cannot_generate_work_facts (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_private_result_fields_and_tool_text_do_not_leak (test_unified_construction_guidance.ConstructionGuidanceTests) ... FAIL
+test_public_contract_has_distinct_accounting (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_rehashed_constraint_tampering_is_rejected (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_reused_value_avoids_repeating_native_call (test_unified_construction_guidance.ConstructionGuidanceTests) ... ERROR
+test_rotation_steps_come_from_frozen_layout (test_unified_construction_guidance.ConstructionGuidanceTests) ... FAIL
+test_three_cost_contexts_match_actual_rejection (test_unified_construction_guidance.ConstructionGuidanceTests) ... test_version_opt_in_and_request_reconstruction (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_work_budget_remains_a_rejection (test_unified_construction_guidance.ConstructionGuidanceTests) ... FAIL
+test_wrong_count_or_location_cannot_generate_cost_claim (test_unified_construction_guidance.ConstructionGuidanceTests) ... ERROR
+test_zero_displacement_is_reuse_not_new_key (test_unified_construction_guidance.ConstructionGuidanceTests) ... ok
+test_only_bounded_integral_constraints_cross_feedback_boundary (test_unified_tensor_axis_guidance.CompilerContextTests) ... ok
+test_v1_v2_scale_advisory_is_public_but_not_exact_repeat_evidence (test_unified_tensor_axis_guidance.CompilerContextTests) ... ok
+test_adapter_compiler_failure_adds_axis_feedback (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_batched_linear_and_broadcast_groups (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_cli_sandbox_and_default_limits_unchanged (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_examples_and_bytes_bounded_without_losing_partition_counts (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_feedback_routes_tensor_rules_for_candidate_failures (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_full_reduction_singleton_output (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_graph_id_does_not_select_axis_rules (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_invalid_abi_and_unbound_chunk_range_rejected (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_large_fiber_marks_sample_as_incomplete (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_last_axis_keeps_head_and_row_groups (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_malformed_source_gets_no_guidance (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_multi_axis_mean_with_and_without_keepdims (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_non_contiguous_axis_preserves_distinct_columns (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_private_data_never_enters_public_context_or_feedback (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_rank_32_and_tail_chunk_coordinates (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_reshape_preserves_indices_and_permute_moves_coordinates (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_transpose_negative_axes (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_version_explicit_and_rehash_cannot_tamper_with_members (test_unified_tensor_axis_guidance.TensorAxisTests) ... ok
+test_component_tampering_rejected_after_rehash (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_composite_instructions_match_authority (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_guidance_does_not_supply_recipe_or_relax_validation (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_v1_has_no_new_fields_and_v2_no_implicit_requirements (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_v2_cli_forwarding (test_unified_generation_guidance.CompositeGuidanceTests) ... ok
+test_bare_missing_wrong_decorator_and_parameters (test_unified_generation_guidance.GuidanceTests) ... ok
+test_bounded_malformed_source (test_unified_generation_guidance.GuidanceTests) ... ok
+test_chunk_physical_header_and_compact (test_unified_generation_guidance.GuidanceTests) ... ok
+test_cli_forwarding (test_unified_generation_guidance.GuidanceTests) ... ok
+test_native_and_public_acceptance_unchanged (test_unified_generation_guidance.GuidanceTests) ... ok
+test_opt_in_identity_and_no_answer (test_unified_generation_guidance.GuidanceTests) ... ok
+test_rotation_and_public_helper_messages (test_unified_generation_guidance.GuidanceTests) ... ok
+test_tampered_guidance_rejected_after_rehash (test_unified_generation_guidance.GuidanceTests) ... ok
+test_wrong_entry_has_explicit_name_but_no_source_echo (test_unified_generation_guidance.GuidanceTests) ... ok
+test_all_operator_definitions_present (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_composite_requirements_not_replaced_by_math (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_legacy_request_hashes_match_frozen_baseline (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_math_metadata_contains_no_test_arrays_or_dsl_body (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_native_public_candidate_gate_unchanged (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_optional_v3_only_changes_guidance_and_identity (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_rehashed_math_and_backend_tampering_rejected (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_three_logical_rotation_contexts_match_both_independent_references (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_v3_cli_forwarding (test_unified_generation_guidance.MathematicalGuidanceTests) ... ok
+test_arbitrary_prior_diagnostic_is_not_forwarded (test_application_diagnostics.DiagnosticsTests) ... ok
+test_coarse_compile_and_numeric_have_no_repeat_key (test_application_diagnostics.DiagnosticsTests) ... ok
+test_controlled_tool_and_aggregate_fields_remain_available (test_application_diagnostics.DiagnosticsTests) ... ok
+test_environment_and_integrity_take_priority (test_application_diagnostics.DiagnosticsTests) ... ok
+test_exact_compiler_constraint_and_location_required (test_application_diagnostics.DiagnosticsTests) ... ok
+test_infrastructure_category_overrides_compiler_stage (test_application_diagnostics.DiagnosticsTests) ... ok
+test_invalid_location_and_constraints_are_rejected (test_application_diagnostics.DiagnosticsTests) ... ok
+test_legacy_provider_wire_unchanged (test_application_diagnostics.DiagnosticsTests) ... ok
+test_non_violation_cannot_be_repeat_witness (test_application_diagnostics.DiagnosticsTests) ... ok
+test_repeat_flag_cannot_be_forged (test_application_diagnostics.DiagnosticsTests) ... ok
+test_static_missing_entry_is_specific_and_public (test_application_diagnostics.DiagnosticsTests) ... ok
+test_syntax_location_but_no_false_exact_repeat (test_application_diagnostics.DiagnosticsTests) ... ok
+test_typed_hint_cannot_override_terminal_trust_failure (test_application_diagnostics.DiagnosticsTests) ... ok
+test_coarse_failure_breaks_precise_streak (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_different_instruction_is_not_same_failure (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_distinct_coarse_compiler_failures_can_reach_success (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_exact_repeated_failure_stops_distinct_candidates (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_new_task_binds_policy_without_changing_request (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_numeric_aggregates_do_not_trigger_repeat_stop (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_static_feedback_same_renderer_as_backend (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_task_without_version_retains_legacy_repeat_decision (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_unsupported_policy_rejected_without_generation (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_component_feedback_uses_witness_and_filters_private_text (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_declared_function_binding_is_protected (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_fresh_local_alias_and_accumulation_are_preserved (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_missing_location_extra_context_and_forged_repeat_are_rejected (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_public_constant_assignment_has_exact_source_location (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_runtime_and_zero_bindings_remain_immutable (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_tuple_and_augmented_targets_still_reject (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_zero_trip_loop_does_not_erase_binding_rejection (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_duplicate_and_constant_collision_are_distinct (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_plain_negation_still_rejected_cipher_expression_accepted (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_seventeen_parameters_report_capacity_not_name_collision (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_sixteen_parameters_remain_accepted (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_fixture_plans_and_old_contracts (test_native_public_loops.NativeLoopTests) ... ok
+test_invalid_control_and_induction_names_fail_before_frontend (test_native_public_loops.NativeLoopTests) ... ok
+test_provider_cli_batch_and_frozen_cohorts (test_native_public_loops.NativeLoopTests) ... ok
+test_python_final_binding_empty_ranges_and_integer_folding (test_native_public_loops.NativeLoopTests) ... ok
+test_range_expansion_and_integer_resource_bounds (test_native_public_loops.NativeLoopTests) ... ok
+
+======================================================================
+ERROR: test_actual_helper_locations_without_source_or_identifier_echo (test_unified_construction_guidance.ConstructionGuidanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 98, in test_actual_helper_locations_without_source_or_identifier_echo
+    self.assertEqual(value["largest_calls"][0]["location"]["line"],5)
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_reused_value_avoids_repeating_native_call (test_unified_construction_guidance.ConstructionGuidanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 84, in test_reused_value_avoids_repeating_native_call
+    checked=validate_candidate(candidate(r,source),r)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/unified_graph_contract.py", line 373, in validate_candidate
+    result=_native_candidate_plan(candidate["hecate_source"],request,p)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/unified_graph_contract.py", line 360, in _native_candidate_plan
+    return native_validate(source,request["public_constants"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/decorated_functions.py", line 319, in validate
+    return _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period,upstream_helpers=upstream_helpers,upstream_request=upstream_request,capacity_layout=capacity_layout)[1]
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/decorated_functions.py", line 295, in _analyze
+    for name in nodes: analyze(name)  # Reject invalid or recursive unused definitions too.
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/decorated_functions.py", line 282, in analyze
+    assign(statement.targets[0], expression(statement.value))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/decorated_functions.py", line 206, in expression
+    values.append(expression(argument, depth+1))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/decorated_functions.py", line 147, in expression
+    raise CandidateCheckError('undefined_value', n)
+candidate_check_diagnostic.CandidateCheckError: Undefined value
+
+======================================================================
+ERROR: test_wrong_count_or_location_cannot_generate_cost_claim (test_unified_construction_guidance.ConstructionGuidanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 107, in test_wrong_count_or_location_cannot_generate_cost_claim
+    if field=="count":bad["context"]["observed"]+=1
+KeyError: 'observed'
+
+======================================================================
+FAIL: test_private_result_fields_and_tool_text_do_not_leak (test_unified_construction_guidance.ConstructionGuidanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 174, in test_private_result_fields_and_tool_text_do_not_leak
+    self.assertIn("Static work accounting:",text)
+AssertionError: 'Static work accounting:' not found in '{"status": "failed", "layer": "static_check", "category": "candidate", "diagnostic": "The name at this source location is not bound. Use function parameters, earlier local assignments or approved public_constants names; model.constants names are not implicit DSL globals. Location: {\\"column\\": 10, \\"kind\\": \\"source\\", \\"line\\": 6}\\nBinding and shape guidance:\\nKeep supplied public constants, zero_ct, runtime names and declared function/helper names unchanged. Use fresh local names for intermediate expressions and distinct public loop indices.\\nAdmitted rotation steps: [1, 2]. Call rotate only with one of the supplied admitted_steps. A zero displacement reuses the value. Compose admitted steps for other displacements while preserving the actual slot and chunk mapping; a chunk rotation alone does not implement a rotation of the complete logical tensor.\\nLinear contracts the input\'s last axis with the weight\'s input-feature axis. All leading input coordinates remain separate. Compute every output-feature row with its declared coefficients and bias; neither head/batch groups nor uniform-looking matrix rows imply scalar multiplication.\\nInput annotations describe only the frozen input binding. Valid logical elements occupy their declared chunk prefix; padding is not another logical feature. A chunk can contain multiple logical rows or groups. Preserve their identities after projections and intermediate transforms. Intermediate ciphertext representations are your choice; named outputs still use the frozen selectors.\\nOnly names in public_constants or the explicitly admitted public-weight interface are bound DSL globals. Names under model.constants are logical graph references, not implicit Python variables. Respect the actual bound scalar/vector contents and the exact logical-to-public scalar matches; p-number order has no semantic role. A single-lane packing mask or a masked reduction coefficient is not an all-lane gain, zero bias or replicated scalar. A logical public tensor still needs its declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication."}'
+
+======================================================================
+FAIL: test_rotation_steps_come_from_frozen_layout (test_unified_construction_guidance.ConstructionGuidanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 122, in test_rotation_steps_come_from_frozen_layout
+    self.assertEqual(d["reason_code"],"rotation_step_not_allowed")
+AssertionError: 'undefined_value' != 'rotation_step_not_allowed'
+- undefined_value
++ rotation_step_not_allowed
+
+
+======================================================================
+FAIL: test_three_cost_contexts_match_actual_rejection (test_unified_construction_guidance.ConstructionGuidanceTests) (kind='single')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 71, in test_three_cost_contexts_match_actual_rejection
+    d=witness(r,source);self.assertEqual(d["reason_code"],"expanded_work_budget")
+AssertionError: 'undefined_value' != 'expanded_work_budget'
+- undefined_value
++ expanded_work_budget
+
+
+======================================================================
+FAIL: test_three_cost_contexts_match_actual_rejection (test_unified_construction_guidance.ConstructionGuidanceTests) (kind='nested')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 71, in test_three_cost_contexts_match_actual_rejection
+    d=witness(r,source);self.assertEqual(d["reason_code"],"expanded_work_budget")
+AssertionError: 'undefined_value' != 'expanded_work_budget'
+- undefined_value
++ expanded_work_budget
+
+
+======================================================================
+FAIL: test_three_cost_contexts_match_actual_rejection (test_unified_construction_guidance.ConstructionGuidanceTests) (kind='array')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 71, in test_three_cost_contexts_match_actual_rejection
+    d=witness(r,source);self.assertEqual(d["reason_code"],"expanded_work_budget")
+AssertionError: 'undefined_value' != 'expanded_work_budget'
+- undefined_value
++ expanded_work_budget
+
+
+======================================================================
+FAIL: test_work_budget_remains_a_rejection (test_unified_construction_guidance.ConstructionGuidanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_unified_construction_guidance.py", line 92, in test_work_budget_remains_a_rejection
+    self.assertIn("Static work accounting:",advice)
+AssertionError: 'Static work accounting:' not found in "Keep supplied public constants, zero_ct, runtime names and declared function/helper names unchanged. Use fresh local names for intermediate expressions and distinct public loop indices.\nAdmitted rotation steps: [1, 2]. Call rotate only with one of the supplied admitted_steps. A zero displacement reuses the value. Compose admitted steps for other displacements while preserving the actual slot and chunk mapping; a chunk rotation alone does not implement a rotation of the complete logical tensor.\nLinear contracts the input's last axis with the weight's input-feature axis. All leading input coordinates remain separate. Compute every output-feature row with its declared coefficients and bias; neither head/batch groups nor uniform-looking matrix rows imply scalar multiplication.\nInput annotations describe only the frozen input binding. Valid logical elements occupy their declared chunk prefix; padding is not another logical feature. A chunk can contain multiple logical rows or groups. Preserve their identities after projections and intermediate transforms. Intermediate ciphertext representations are your choice; named outputs still use the frozen selectors.\nOnly names in public_constants or the explicitly admitted public-weight interface are bound DSL globals. Names under model.constants are logical graph references, not implicit Python variables. Respect the actual bound scalar/vector contents and the exact logical-to-public scalar matches; p-number order has no semantic role. A single-lane packing mask or a masked reduction coefficient is not an all-lane gain, zero bias or replicated scalar. A logical public tensor still needs its declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication."
+
+----------------------------------------------------------------------
+Ran 103 tests in 0.734s
+
+FAILED (failures=6, errors=3)

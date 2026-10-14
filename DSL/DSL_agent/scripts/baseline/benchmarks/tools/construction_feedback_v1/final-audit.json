@@ -1,0 +1,16 @@
+{
+  "active_source_binding_preserved": true,
+  "api_calls": 0,
+  "branch": "lhy-agent-dsl",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "git_modified": 66,
+  "git_untracked": 921,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_requests_preserved": 2,
+  "identity_sha256": "6312151da9f93d55509afa80e21ff903f41dbb7191bc3557413367d0b8784f55",
+  "protected_preserved": 654,
+  "public_markdown_sha256": "b2e7f179e6bb4e22503e85fca4d0d55be914a042acd28ce7ce140ef64ab8c1c1",
+  "status": "passed",
+  "summary_sha256": "5de16c996ee03485ab98f642ac458ba6910745e5b5cbc396928d024c1fea3ec2"
+}

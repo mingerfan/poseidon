@@ -1,0 +1,15 @@
+{
+  "compiler_commit": "39c1fb255adddbfb9d7180f9d1b8535a31241bff",
+  "runtime_commit": "f7e9115eaec22e44c8e12ff9f53528e421691688",
+  "benchmark_host": "188Server / HPU-001",
+  "gpu_execution_host": "local RTX 4060 Laptop GPU",
+  "compiler_ctest": "10/10",
+  "runtime_ctest": "7/7",
+  "cpu_api_and_mpi_ctest": "3/3",
+  "gpu_mlp": "compiler-produced binary V3 + binary manifest, passed existing tolerances",
+  "whole_source_file_hashing": false,
+  "blob_payload_hashing": false,
+  "full_qwen_source": "existing independently compared binary, promoted to CKKSPL01",
+  "full_qwen_gpu_execution_tested": false,
+  "limits": "shared cache not controlled; full Qwen measurements only load, verify, manifest, optional raw preload"
+}

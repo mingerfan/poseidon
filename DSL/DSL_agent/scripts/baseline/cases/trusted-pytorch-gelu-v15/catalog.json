@@ -1,0 +1,41 @@
+{
+  "format": "poseidon-gelu-source-cases-v1",
+  "cases": [
+    {
+      "id": "none_module",
+      "manifest": "none_module.json",
+      "source_variant": "none",
+      "source_style": "module"
+    },
+    {
+      "id": "none_functional",
+      "manifest": "none_functional.json",
+      "source_variant": "none",
+      "source_style": "functional"
+    },
+    {
+      "id": "none_input_keyword",
+      "manifest": "none_input_keyword.json",
+      "source_variant": "none",
+      "source_style": "input_keyword"
+    },
+    {
+      "id": "tanh_module",
+      "manifest": "tanh_module.json",
+      "source_variant": "tanh",
+      "source_style": "module"
+    },
+    {
+      "id": "tanh_functional",
+      "manifest": "tanh_functional.json",
+      "source_variant": "tanh",
+      "source_style": "functional"
+    },
+    {
+      "id": "tanh_input_keyword",
+      "manifest": "tanh_input_keyword.json",
+      "source_variant": "tanh",
+      "source_style": "input_keyword"
+    }
+  ]
+}

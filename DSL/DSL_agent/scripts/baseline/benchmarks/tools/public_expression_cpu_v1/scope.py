@@ -1,0 +1,55 @@
+"""Frozen V23 offline CPU scope, separate from closed paid batches."""
+import hashlib,json,shutil,subprocess,time
+from pathlib import Path
+from benchmark_graph import require,digest
+from hecate_python_env import WORK
+HERE=Path(__file__).resolve().parent;ROOT=(Path(__file__).resolve().parents[7] if Path(__file__).resolve().parents[5].name == "DSL_agent" and Path(__file__).resolve().parents[6].name == "DSL" else Path(__file__).resolve().parents[5])
+OUT=WORK/"results/agent-public-expression-v23-cpu-v1"
+PROPOSAL=ROOT/"docs/baseline/agent-public-expression-offline-proposal-r1369.json"
+AUTHORIZATION=ROOT/"docs/baseline/agent-public-expression-offline-authorization-r1369.json"
+OPTIONS=dict(capacity_packing_version="capacity-public-tensors-v9",generation_guidance="explicit-v13",
+             public_weight_policy="descriptors-math-roles-v2",chunk_period=4)
+SCOPE=dict(wall_seconds=900,case_seconds=180,new_bytes=512*1024**2,global_bytes=32*1024**3,
+           reserve_bytes=4*1024**3,compiler_jobs=2,link_jobs=1,native_concurrency=1,
+           native_address_bytes=4*1024**3,native_cpu_seconds=150,provider_calls=0,http_attempts=0)
+CASES=tuple(f"{op}_{i}"for op in("reshape","permute","slice","bool_cast","identity")for i in range(3))+("float32","named","unused")
+REUSE=("permute_1","bool_cast_1","named")
+def read(path):return json.loads(Path(path).read_text())
+def write(path,value):
+    with Path(path).open("x")as f:json.dump(value,f,sort_keys=True,indent=2,allow_nan=False);f.write("\n")
+def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def identity():
+    from application_identity import current_identity_manifest
+    return current_identity_manifest()
+def measure(path):
+    return max(int(subprocess.check_output(["du",flag,"-s","-B1",str(path)],text=True,timeout=20).split()[0])
+               for flag in("--apparent-size","--count-links"))
+def verify(plan,*,sdk=True):
+    require(type(plan)is dict and plan.get("binding")==digest({k:v for k,v in plan.items()if k!="binding"}),
+            "offline_proposal_hash")
+    require(plan["format"]=="poseidon-public-expression-offline-proposal-v1"and plan["scope"]==SCOPE and
+            tuple(c["case"]for c in plan["cases"])==CASES and tuple(plan["reuse_cases"])==REUSE and
+            plan["options"]==OPTIONS and plan["candidate_origin"]=="deterministic_rule"and
+            plan["source_contract"]=="poseidon-trusted-pytorch-v23"and plan["backend"]=="poseidon_cpu"and
+            plan["numeric_tolerance"]==dict(atol=1e-5,rtol=1e-4),"offline_exact_scope")
+    for relative,h in plan["tools"].items():require(sha(ROOT/relative)==h,"offline_tool_integrity")
+    for row in plan["cases"]:
+        for p,h in row["files"].items():require(sha(p)==h,"offline_case_integrity")
+        request=read(row["request"])
+        require(digest(request)==row["request_sha256"]and
+                request["compiler_configuration"]["backend"]=="poseidon_cpu"and
+                request["compiler_configuration"]["name"]=="poseidon-cpu-eva-w45-v1"and
+                request["compiler_configuration"]["waterline"]==45,"offline_request_binding")
+    if sdk:require(identity()["manifest_sha256"]==plan["sdk_identity"],"offline_sdk_identity")
+    return plan
+def authorization(plan):
+    receipt=read(AUTHORIZATION)
+    require(type(receipt)is dict and receipt.get("format")=="poseidon-public-expression-offline-authorization-v1"and
+            receipt.get("proposal_binding")==plan["binding"]and receipt.get("human_reply")=="批准这18项离线验收",
+            "offline_human_authorization")
+    return receipt
+def boundary(plan,deadline):
+    verify(plan)
+    require(time.time()<deadline,"offline_deadline")
+    require(shutil.disk_usage(WORK).free>=SCOPE["reserve_bytes"],"offline_disk_reserve")
+    require(measure(WORK/"results")<=SCOPE["global_bytes"]and measure(OUT)<=SCOPE["new_bytes"],"offline_space_budget")

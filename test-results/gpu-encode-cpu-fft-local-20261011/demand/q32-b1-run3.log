@@ -1,0 +1,6 @@
+setting up operands and direct rotation/relinearization keys
+measuring relinearize + tilelang_tensor_encode_demand
+measuring relinearize + cpu_fft_tilelang_tensor_encode_demand
+measuring rotate + cpu_fft_tilelang_tensor_encode_demand
+measuring rotate + tilelang_tensor_encode_demand
+report: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/gpu-encode-cpu-fft-local-20261011/demand/q32-b1-run3.json

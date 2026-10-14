@@ -1,0 +1,2 @@
+NCCL version 2.20.5+cuda12.4
+Poseidon GPU MPI transfer passed: world=2 device_counts=2x2 rank_to_node=0x0

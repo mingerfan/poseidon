@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/home/xuming/poseidon-memory-step3-20261008/build/bin/poseidon_gpu_mpi_runtime_e2e",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-plaintext-streaming/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/profiles/operator-spec.json",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-plaintext-streaming/qwen24._hecate_qwen25_24layer.bundle",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-plaintext-streaming/runtime-result.json",
+    "--local",
+    "--warmups",
+    "0",
+    "--iterations",
+    "1",
+    "--execution-mode",
+    "sequential"
+  ],
+  "returncode": -15,
+  "stop_reason": "600 second smoke-test wall limit",
+  "elapsed_seconds": 603.8365409853868,
+  "peak_rss_bytes": 16112730112,
+  "sampled_gpu_used_bytes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "memory_sample_scope": "whole device, sampled every 2 seconds",
+  "complete_model_numerical_oracle": false
+}

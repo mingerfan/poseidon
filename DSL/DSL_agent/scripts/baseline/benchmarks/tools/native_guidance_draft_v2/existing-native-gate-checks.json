@@ -1,0 +1,94 @@
+{
+  "api_calls": 0,
+  "binding": "3ef6db7ee5afd4b35fbb2175a11fbf39fce49e4229b7af3056362dcca8b05cef",
+  "blocked": 1,
+  "cases": [
+    {
+      "actual_accepted": true,
+      "case": "literal_rotation",
+      "diagnostic": null,
+      "expected_accepted": true,
+      "source_sha256": "096f1ed45cbbbd612460d410362eff5044341987cf6311f6134311bacf0a84af",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": true,
+      "case": "static_range_rotation",
+      "diagnostic": null,
+      "expected_accepted": true,
+      "source_sha256": "10487aeac1c9331571a66fe47fcf204327f890f08628fcdbc3be736f7ec642c5",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": null,
+      "case": "object_array",
+      "diagnostic": "ModuleNotFoundError:No module named 'numpy'",
+      "expected_accepted": true,
+      "source_sha256": "e2d1b19bd27e9b8739ac83f6f0ef2a5a04d0d77bdc29abbcccad9b0c1ac93aaf",
+      "status": "blocked"
+    },
+    {
+      "actual_accepted": false,
+      "case": "native_literal_if",
+      "diagnostic": "Unsupported native loop syntax",
+      "expected_accepted": false,
+      "source_sha256": "eeb5c3d9a6a7eaeeca1fa165b48ab6837dd3a3a3ec2c9b8a7c92409925c746ad",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": false,
+      "case": "native_np_empty",
+      "diagnostic": "Unsupported native loop method",
+      "expected_accepted": false,
+      "source_sha256": "efe19475fe0ed3c498e4fab12bc47301856f40857be72fe1f03eccbe8d42a402",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": false,
+      "case": "native_np_full",
+      "diagnostic": "Unsupported native loop method",
+      "expected_accepted": false,
+      "source_sha256": "4736c5c011c9750c8fec71d210fa3893721ec3c3d423e6be9716143d77d7476f",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": false,
+      "case": "native_np_asarray",
+      "diagnostic": "Unsupported native loop method",
+      "expected_accepted": false,
+      "source_sha256": "46c8f4ec160aaeb0296bb7c34bf84f7bb675279b25eb2471e83e61f6ff35f716",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": false,
+      "case": "native_float",
+      "diagnostic": "Unknown/keyword native loop call",
+      "expected_accepted": false,
+      "source_sha256": "4b1681ee1aa8b54e491df9252e135de63851cf9ec3b6e71a05f87f68df9e50e3",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": false,
+      "case": "native_expr_unary_plus",
+      "diagnostic": "Unsupported native core expression: UnaryOp",
+      "expected_accepted": false,
+      "source_sha256": "f4ceb4d22848ba7af3cdc391be9ffdea6884d8e164a4c0483a7c951db1fbe3e9",
+      "status": "passed"
+    },
+    {
+      "actual_accepted": false,
+      "case": "plain_helper_rotation",
+      "diagnostic": "Rotation step must be a signed integer literal",
+      "expected_accepted": false,
+      "source_sha256": "bb892a63d07ae2aeb7deb149e803c833003e0bf2541dc796ace85b982c322b01",
+      "status": "passed"
+    }
+  ],
+  "compiled": false,
+  "encrypted_execution": false,
+  "failed": 0,
+  "format": "poseidon-guidance-existing-native-gate-check-v1",
+  "interpreter": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "passed": 9,
+  "production_wired": false
+}

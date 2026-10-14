@@ -1,0 +1,63 @@
+{
+  "format": "poseidon-public-constant-prechange-audit-v1",
+  "cases": [
+    {
+      "operation": "zeros_like",
+      "status": "rejected",
+      "error": "Unsupported PyTorch call: <built-in method zeros_like of type object at 0xffffba7cac78>"
+    },
+    {
+      "operation": "ones_like",
+      "status": "rejected",
+      "error": "Unsupported PyTorch call: <built-in method ones_like of type object at 0xffffba7cac78>"
+    },
+    {
+      "operation": "full_like",
+      "status": "rejected",
+      "error": "Unsupported PyTorch call: <built-in method full_like of type object at 0xffffba7cac78>"
+    },
+    {
+      "operation": "new_zeros",
+      "status": "rejected",
+      "error": "Unsupported PyTorch call: new_zeros"
+    },
+    {
+      "operation": "new_ones",
+      "status": "rejected",
+      "error": "Unsupported PyTorch call: new_ones"
+    },
+    {
+      "operation": "new_full",
+      "status": "rejected",
+      "error": "Unsupported PyTorch call: new_full"
+    },
+    {
+      "operation": "where",
+      "status": "rejected",
+      "error": "Boolean/complex public arithmetic is not supported"
+    },
+    {
+      "operation": "tensor_where",
+      "status": "rejected",
+      "error": "Boolean/complex public arithmetic is not supported"
+    },
+    {
+      "operation": "masked_fill",
+      "status": "rejected",
+      "error": "Boolean/complex public arithmetic is not supported"
+    },
+    {
+      "operation": "cat",
+      "status": "rejected",
+      "error": "The call must match the registered fixed Torch signature."
+    },
+    {
+      "operation": "stack",
+      "status": "rejected",
+      "error": "The call must match the registered fixed Torch signature."
+    }
+  ],
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

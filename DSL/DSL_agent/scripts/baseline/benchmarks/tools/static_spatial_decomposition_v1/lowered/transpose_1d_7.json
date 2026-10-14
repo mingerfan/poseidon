@@ -1,0 +1,76 @@
+{
+  "constants": {
+    "bias": [
+      0.09296436167616065
+    ],
+    "generated_0": [
+      [
+        0.0
+      ]
+    ],
+    "weight": [
+      [
+        [
+          -0.12050156153136651
+        ]
+      ]
+    ]
+  },
+  "format": "poseidon-model-graph-v2",
+  "id": "transpose_1d_7",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "generated_2",
+      "inputs": [
+        "x",
+        "generated_0"
+      ],
+      "op": "linear",
+      "outputs": [
+        "generated_1"
+      ]
+    },
+    {
+      "attrs": {
+        "dilation": [
+          1
+        ],
+        "groups": 1,
+        "padding": [
+          0
+        ],
+        "stride": [
+          1
+        ]
+      },
+      "id": "generated_4",
+      "inputs": [
+        "generated_1",
+        "weight",
+        "bias"
+      ],
+      "op": "conv1d",
+      "outputs": [
+        "generated_3"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_3"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

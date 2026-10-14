@@ -1,0 +1,12 @@
+test_changed_request_refused (__main__.ReplayControls) ... ok
+test_exact_source_without_transport_or_new_generation (__main__.ReplayControls) ... ok
+test_missing_response_field_refused (__main__.ReplayControls) ... ok
+test_modified_candidate_refused (__main__.ReplayControls) ... ok
+test_repeat_injection_refused (__main__.ReplayControls) ... ok
+test_tampered_receipt_refused (__main__.ReplayControls) ... ok
+test_wrong_generation_identity_refused (__main__.ReplayControls) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.007s
+
+OK

@@ -1,0 +1,45 @@
+{
+  "acceptance": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-alias-capture-tests-r1170/report.json",
+  "acceptance_sha256": "43458e089d76ec7fe5a07720847f6b9a7fbf90717f1ea5c4ba3e93c42c9f0427",
+  "agent_quality_evaluation": "pending",
+  "backend_changes": false,
+  "backend_verification": "pending",
+  "errors": 0,
+  "existing_production_sources": {
+    "pytorch_arithmetic_normalization.py": "69abb17e5627b7588eb37ad6f260c1c9ce34d5fbfb35a3196be5dfe849e73d9a",
+    "pytorch_model_capture.py": "a8b28753c7d6fc89ee82580924edd7e9321dbab570dd01d6bf3aaaadbe3c1ca2",
+    "pytorch_static_trace.py": "9e01d0f6b6180dceb2e1c3c0cf85acd78b8941f6802e934abb25d634e8e2c015"
+  },
+  "failed": 0,
+  "format": "poseidon-ordered-capture-staging-integration-v1",
+  "new_agent_modules": [
+    "pytorch_alias_capture_bridge.py",
+    "pytorch_alias_composition.py",
+    "pytorch_ordered_capture.py",
+    "pytorch_ordered_reference.py"
+  ],
+  "new_dependencies": 0,
+  "open_integration": [
+    "explicit source version and package provenance validation",
+    "trusted worker load/factory/weight package integration",
+    "reference/source implementation closure and identity",
+    "application/CLI opt-in routing and compatibility tests",
+    "representative Poseidon compile/encrypted/package validation",
+    "newly frozen Agent-quality evaluation approval"
+  ],
+  "production_guard": "No current batch or source freeze may be active before cutover",
+  "production_intake_integrated": false,
+  "skipped": 0,
+  "source_manifest_registered": false,
+  "stage": "tested_not_applied",
+  "target_hashes": {
+    "pytorch_alias_capture_bridge.py": "ff8490ba19cbebb94a9b73c22fb7d09bd3d843fb0d3465890ad70275f03a6496",
+    "pytorch_alias_composition.py": "6c0045698219361608408c688f3ea239986961e0650a716a72f99ecc442e010a",
+    "pytorch_arithmetic_normalization.py": "856fff7b17efbefb95e06366400d08271e193bea5c97015851756e5c6dd62f1e",
+    "pytorch_model_capture.py": "921d85c2c71ab475616eba613a0e63ef30314d63f1411ab34081f66ee59acffd",
+    "pytorch_ordered_capture.py": "0611f61e2b223a1c105de9431fb2632effa767efbca0add86cf65f77006d79ad",
+    "pytorch_ordered_reference.py": "3a6041569c3a706510008e102ec42441e4e8f6a075cc955499b4b71e78566771",
+    "pytorch_static_trace.py": "fda6318dfc9d543fddab3e1e904cd04bdd79923db48f124b42e5c3292949c2d8"
+  },
+  "tests": 32
+}

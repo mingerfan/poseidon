@@ -1,0 +1,125 @@
+{
+  "approximations": {
+    "defaults": {
+      "exp": {
+        "degree": 1,
+        "domain": [
+          -0.5,
+          0.5
+        ],
+        "method": "taylor"
+      },
+      "reciprocal": {
+        "domain": [
+          0.5,
+          8.0
+        ],
+        "iterations": 1,
+        "method": "goldschmidt"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "c617b310b89a623ebe2a8e209be8230717dca81b1e9e0e4ecc4ecba9c8559fe2"
+  },
+  "format": "poseidon-trusted-pytorch-v16",
+  "inputs": [
+    {
+      "name": "q",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "k",
+      "shape": [
+        1,
+        3,
+        2
+      ]
+    },
+    {
+      "name": "v",
+      "shape": [
+        1,
+        3,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "result",
+    "weights"
+  ],
+  "weights": {
+    "attention.in_proj_bias": {
+      "bytes": 176,
+      "dtype": "<f8",
+      "file": "weight_000.npy",
+      "sha256": "275fd1fe1cafd01ad12a022a718a427504ef57855d775365c20ff600bb5c3ad7",
+      "shape": [
+        6
+      ]
+    },
+    "attention.in_proj_weight": {
+      "bytes": 224,
+      "dtype": "<f8",
+      "file": "weight_001.npy",
+      "sha256": "1ab73ef0070465328b87d42887af59452f615d94b0b7034058d236b5fbb7d41b",
+      "shape": [
+        6,
+        2
+      ]
+    },
+    "attention.out_proj.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "weight_002.npy",
+      "sha256": "0a68918d81f866bf576033d8c2cdfdd0d56a29ad8d04bff33e690abb7d8c8410",
+      "shape": [
+        2
+      ]
+    },
+    "attention.out_proj.weight": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "weight_003.npy",
+      "sha256": "fa6f829810116911f719f725fd44b25eff7ab47213958142281c3b6a072aeb92",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "attn_mask": {
+      "bytes": 134,
+      "dtype": "|b1",
+      "file": "weight_004.npy",
+      "sha256": "de34a8b916d94f1453248fc083def06e63d73ed131b2b2a251a00d4a20b7404c",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    "padding_mask": {
+      "bytes": 131,
+      "dtype": "|b1",
+      "file": "weight_005.npy",
+      "sha256": "9dcd360f32a573cf83d05dd145abd2ab91b4d0730d7f4fef0e635ede32ab31ce",
+      "shape": [
+        1,
+        3
+      ]
+    }
+  }
+}

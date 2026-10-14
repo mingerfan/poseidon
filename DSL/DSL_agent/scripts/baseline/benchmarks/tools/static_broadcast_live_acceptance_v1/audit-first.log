@@ -1,0 +1,14 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_live_acceptance_v1/audit.py", line 48, in <module>
+    controls=read(controls_path)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_live_v1/scope.py", line 30, in read
+    def read(p):return decode(Path(p).read_bytes())
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_live_v1/runner-controls-acceptance.json'

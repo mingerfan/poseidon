@@ -1,0 +1,25 @@
+{
+  "compiler_calls": 0,
+  "elapsed_seconds": 3.0219934699998703,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-static-feedback-controls-v1",
+  "modules": [
+    "test_static_work_feedback",
+    "test_native_diagnostics",
+    "test_decorated_functions",
+    "test_binding_feedback",
+    "test_application_diagnostics",
+    "test_application_component",
+    "test_cli_feedback_policy",
+    "test_unified_graph",
+    "test_application_provenance_transport",
+    "test_poseidon_sandbox_policy",
+    "test_resource_feedback_chain"
+  ],
+  "passed": 164,
+  "provider_calls": 0,
+  "skipped": 0,
+  "tests": 164
+}

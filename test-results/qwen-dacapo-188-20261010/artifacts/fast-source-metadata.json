@@ -1,0 +1,84 @@
+{
+  "source": "artifacts/block-prefill-fixed2/trace_qwen_block.mlir",
+  "bytes": 2086266234,
+  "sha256": "sha256:cf4ed1490872b834c93fc53f950f3481a5130cf48325c41e0f9862bc7a77eb35",
+  "lines": 165175,
+  "earth_op_counts": {
+    "earth.mul": 44909,
+    "earth.constant": 44704,
+    "earth.rotate": 30318,
+    "earth.add": 45238
+  },
+  "total_earth_ops": 165169,
+  "frontend_slot_capacity_guard": true,
+  "diagnostic_mlir_constants_elided": true,
+  "runtime_plan_and_bundle_payloads_complete": true,
+  "files": [
+    {
+      "path": "artifacts/block-prefill.depth-dp-fixed.mlir",
+      "bytes": 41887430
+    },
+    {
+      "path": "artifacts/q-projection.depth-dp-fixed.mlir",
+      "bytes": 1700210
+    },
+    {
+      "path": "artifacts/rmsnorm.depth-dp-fixed.mlir",
+      "bytes": 43612
+    },
+    {
+      "path": "artifacts/block-prefill.depth-dp-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+      "bytes": 164212663,
+      "bundle": "artifacts/block-prefill.depth-dp-fixed._hecate_qwen_block_2tokens.bundle",
+      "bundle_blobs": 20911,
+      "bundle_bytes": 526513152
+    },
+    {
+      "path": "artifacts/q-projection.depth-dp-fixed._hecate_qwen_q_projection.runtime-plan.json",
+      "bytes": 6432252,
+      "bundle": "artifacts/q-projection.depth-dp-fixed._hecate_qwen_q_projection.bundle",
+      "bundle_blobs": 1793,
+      "bundle_bytes": 13107200
+    },
+    {
+      "path": "artifacts/rmsnorm.depth-dp-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+      "bytes": 172066,
+      "bundle": "artifacts/rmsnorm.depth-dp-fixed._hecate_qwen_rmsnorm.bundle",
+      "bundle_blobs": 22,
+      "bundle_bytes": 5257216
+    },
+    {
+      "path": "artifacts/block-prefill.lazy-fixed.mlir",
+      "bytes": 42218958
+    },
+    {
+      "path": "artifacts/q-projection.lazy-fixed.mlir",
+      "bytes": 1700210
+    },
+    {
+      "path": "artifacts/rmsnorm.lazy-fixed.mlir",
+      "bytes": 37871
+    },
+    {
+      "path": "artifacts/block-prefill.lazy-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+      "bytes": 166396778,
+      "bundle": "artifacts/block-prefill.lazy-fixed._hecate_qwen_block_2tokens.bundle",
+      "bundle_blobs": 20911,
+      "bundle_bytes": 526513152
+    },
+    {
+      "path": "artifacts/q-projection.lazy-fixed._hecate_qwen_q_projection.runtime-plan.json",
+      "bytes": 6432252,
+      "bundle": "artifacts/q-projection.lazy-fixed._hecate_qwen_q_projection.bundle",
+      "bundle_blobs": 1793,
+      "bundle_bytes": 13107200
+    },
+    {
+      "path": "artifacts/rmsnorm.lazy-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+      "bytes": 147759,
+      "bundle": "artifacts/rmsnorm.lazy-fixed._hecate_qwen_rmsnorm.bundle",
+      "bundle_blobs": 22,
+      "bundle_bytes": 5257216
+    }
+  ]
+}

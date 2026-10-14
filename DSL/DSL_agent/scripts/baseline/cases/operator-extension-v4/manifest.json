@@ -1,0 +1,248 @@
+{
+  "format": "poseidon-operator-regression-v1",
+  "cases": [
+    {
+      "id": "padding_0",
+      "operator": "padding",
+      "model": "padding_0-model.json",
+      "source": "padding_0-source.json",
+      "binding": "padding_0-binding.json",
+      "model_sha256": "65f9eac44b631edbeaf21deacdfd1641e69be25b7cc3f6f4cacedf3818ea0c93",
+      "source_sha256": "583b0f540bee2ac88dcb46207eeee72050aa1add5a926a2b98e814808319859e"
+    },
+    {
+      "id": "padding_1",
+      "operator": "padding",
+      "model": "padding_1-model.json",
+      "source": "padding_1-source.json",
+      "binding": "padding_1-binding.json",
+      "model_sha256": "355c043a488fdc4aab600a79b3f35015f2ec83703d6213730dba0fb1a1620da9",
+      "source_sha256": "5b6c8606a0e364000a7c2fddfeddf4c59e0ba467b0f7cd325dcd7e6ea6483de9"
+    },
+    {
+      "id": "padding_2",
+      "operator": "padding",
+      "model": "padding_2-model.json",
+      "source": "padding_2-source.json",
+      "binding": "padding_2-binding.json",
+      "model_sha256": "be4e3d513f7f570059d148116fc78e00d53f3bb71812851b51487299751300bb",
+      "source_sha256": "f39cce06ded75fc7e4b576e71f8be52dfe3cb6649d275d3cde7bece5e5c22d42"
+    },
+    {
+      "id": "padding_3",
+      "operator": "padding",
+      "model": "padding_3-model.json",
+      "source": "padding_3-source.json",
+      "binding": "padding_3-binding.json",
+      "model_sha256": "619d66a1e90a923b40b08b6ead42f33bcec4525662a24ccd275efe06c04f0127",
+      "source_sha256": "c4a5db93952673054da70b63a51a3bd8fbbae9edc3ab4b2a0b33df3aa2b71047"
+    },
+    {
+      "id": "padding_4",
+      "operator": "padding",
+      "model": "padding_4-model.json",
+      "source": "padding_4-source.json",
+      "binding": "padding_4-binding.json",
+      "model_sha256": "91ed1cde3204f1f3208ac656e6293fcef1da2c681a49e7a444f0d55de3bdc847",
+      "source_sha256": "d5b1508ec07e56becc59ce309195119a395735a5db233d54010f874ab5add8c0"
+    },
+    {
+      "id": "padding_5",
+      "operator": "padding",
+      "model": "padding_5-model.json",
+      "source": "padding_5-source.json",
+      "binding": "padding_5-binding.json",
+      "model_sha256": "b566b1309828576bd73ab29e77d64871b4124d0a594ffa330022ae2b9366bf2a",
+      "source_sha256": "99339f7791acd3b29c137bad96c1eb96c17d5555ae6cae7b17f4b0324019e74d"
+    },
+    {
+      "id": "padding_6",
+      "operator": "padding",
+      "model": "padding_6-model.json",
+      "source": "padding_6-source.json",
+      "binding": "padding_6-binding.json",
+      "model_sha256": "335050a70d6ab519d2b407a24b007bc63a7caba512b5d12e7e6a20e6e2078691",
+      "source_sha256": "2334bc4c3f590e9ad6d7489d1083eedd4242845985873ad98e3297cfc0d65e5e"
+    },
+    {
+      "id": "padding_7",
+      "operator": "padding",
+      "model": "padding_7-model.json",
+      "source": "padding_7-source.json",
+      "binding": "padding_7-binding.json",
+      "model_sha256": "4de787a199d42cede5057c2fba2e507a400234690b80586b9b1fe202693a4262",
+      "source_sha256": "e85a3d236871948acfa431b49d36b641c65b89aeab0767200bdf9fea07a3ea0a"
+    },
+    {
+      "id": "padding_8",
+      "operator": "padding",
+      "model": "padding_8-model.json",
+      "source": "padding_8-source.json",
+      "binding": "padding_8-binding.json",
+      "model_sha256": "c832dd90de61648576941ade7bd331dcae77e3601c31475c832d780bd126e810",
+      "source_sha256": "66cad2d6872940e3f1e936a83fc3ca9e6003c20243b20382dfc14f1c8522638d"
+    },
+    {
+      "id": "maximum_0",
+      "operator": "maximum",
+      "model": "maximum_0-model.json",
+      "source": "maximum_0-source.json",
+      "binding": "maximum_0-binding.json",
+      "model_sha256": "422b5778bd014e60ec4c14fc2928ee7a03a814eaa471ec093a1f6b9911892e46",
+      "source_sha256": "a07ca75ad3669c9a6945a6aa1c02b8a2f17a25153fc453675f5a4bfbc408ee9a"
+    },
+    {
+      "id": "maximum_1",
+      "operator": "maximum",
+      "model": "maximum_1-model.json",
+      "source": "maximum_1-source.json",
+      "binding": "maximum_1-binding.json",
+      "model_sha256": "a3e1a8313176133abbf4bba13da65abb9c79d54749e19c2e6b1777d8848f12fc",
+      "source_sha256": "f4ab2a0d69d180dcb610bfcdcd5865c214ccf80142432299c7671388d3da5c05"
+    },
+    {
+      "id": "maximum_2",
+      "operator": "maximum",
+      "model": "maximum_2-model.json",
+      "source": "maximum_2-source.json",
+      "binding": "maximum_2-binding.json",
+      "model_sha256": "7ca9f6242891fac82fbd7e4f8ee0fb3927bc16457458af9bf021e1efe2b42bb9",
+      "source_sha256": "fc469cd2320df2f0f44a9f1f5687b5ad3de00920843f2e0036d98348c05faac6"
+    },
+    {
+      "id": "minimum_0",
+      "operator": "minimum",
+      "model": "minimum_0-model.json",
+      "source": "minimum_0-source.json",
+      "binding": "minimum_0-binding.json",
+      "model_sha256": "992de510b3af55fd4ce071a851f90c1fbb7ba79dd301f354b5539fc48df18ca7",
+      "source_sha256": "c056295d2c35d8941c5c5813b977cda0f69f72bfa14df8715d9a8c2341c7cc03"
+    },
+    {
+      "id": "minimum_1",
+      "operator": "minimum",
+      "model": "minimum_1-model.json",
+      "source": "minimum_1-source.json",
+      "binding": "minimum_1-binding.json",
+      "model_sha256": "e242fdfef3029d54bc8cd227763ce940f17d301989b269edd0a719990d1097f6",
+      "source_sha256": "24b6b80e66aaf339690d51a3eb2eb9b0de393a3d0198f6b017feaafc144e4d2a"
+    },
+    {
+      "id": "minimum_2",
+      "operator": "minimum",
+      "model": "minimum_2-model.json",
+      "source": "minimum_2-source.json",
+      "binding": "minimum_2-binding.json",
+      "model_sha256": "828c29f03609ba2360b725cc8b3183e5c560470cf83540a835e0e6f3df418ae9",
+      "source_sha256": "96a0661de955ff4f6bf47a1888bcca338ee4f7eee1fe44a31a661df5dd0999e4"
+    },
+    {
+      "id": "max_0",
+      "operator": "max",
+      "model": "max_0-model.json",
+      "source": "max_0-source.json",
+      "binding": "max_0-binding.json",
+      "model_sha256": "cc815390b05362b72a176e211867b616042bf426fea4e2b2ffb1fb1a5673e609",
+      "source_sha256": "b03ff91098562ed5faee68853c026f8b41edcd52c9fc056daadf103c6d9ea350"
+    },
+    {
+      "id": "max_1",
+      "operator": "max",
+      "model": "max_1-model.json",
+      "source": "max_1-source.json",
+      "binding": "max_1-binding.json",
+      "model_sha256": "5817261729f396e400e575e7a951fc353a4156337fa81ead45880028766ff2d7",
+      "source_sha256": "ce0af6b2141b335b8084ceadb263a788582e698360401078081bf589bacad725"
+    },
+    {
+      "id": "max_2",
+      "operator": "max",
+      "model": "max_2-model.json",
+      "source": "max_2-source.json",
+      "binding": "max_2-binding.json",
+      "model_sha256": "4fdd959078358feb1f62217221c30d0ea3b5a4041b4a5eccfe18e4e39b62f823",
+      "source_sha256": "2fd98841361155697b83125f18abdac59d291536d9087a114634786c18a39865"
+    },
+    {
+      "id": "min_0",
+      "operator": "min",
+      "model": "min_0-model.json",
+      "source": "min_0-source.json",
+      "binding": "min_0-binding.json",
+      "model_sha256": "04a453931bc47e6312663446a98e7f5eb8b959d8d7744894dbd5032eacf74eeb",
+      "source_sha256": "6c3380b6f203f02d705e80240f6ee330b0b540064592ad1d7a6357b2cfabe875"
+    },
+    {
+      "id": "min_1",
+      "operator": "min",
+      "model": "min_1-model.json",
+      "source": "min_1-source.json",
+      "binding": "min_1-binding.json",
+      "model_sha256": "8ff90d201d0527d17fa117f26c73d4ae4cad28b049499377e066bc6c3c2b1006",
+      "source_sha256": "ba5dc29595d78164c0047dbab90ef511952c4acc2160b659dd4e90bfc75ce8f0"
+    },
+    {
+      "id": "min_2",
+      "operator": "min",
+      "model": "min_2-model.json",
+      "source": "min_2-source.json",
+      "binding": "min_2-binding.json",
+      "model_sha256": "69dfb8ea1bdf5c25e2369af7ba070878a94e6b1a69349195193a473003efd212",
+      "source_sha256": "e3eba99655ba468bfcc2a303bb6e2050e784434a45c9976dec8273fbc184c756"
+    },
+    {
+      "id": "max_pool1d_0",
+      "operator": "max_pool1d",
+      "model": "max_pool1d_0-model.json",
+      "source": "max_pool1d_0-source.json",
+      "binding": "max_pool1d_0-binding.json",
+      "model_sha256": "2890d33e197e4eb322d294d7eaf9bcbde08a1a8e3314bb16626a5139e02a89b2",
+      "source_sha256": "23b986a9dd1d2c278f89490c48f4681312cfe4a69438687a7110d3dd547e1eeb"
+    },
+    {
+      "id": "max_pool1d_1",
+      "operator": "max_pool1d",
+      "model": "max_pool1d_1-model.json",
+      "source": "max_pool1d_1-source.json",
+      "binding": "max_pool1d_1-binding.json",
+      "model_sha256": "0fd01a591ab755fd40d07bace79f290da70c64e3c7feb17a6bbc1ef190c7ce41",
+      "source_sha256": "71b602edc9377dd1ab22aeb895152da7e6580376243f919890a572f030daeb92"
+    },
+    {
+      "id": "max_pool1d_2",
+      "operator": "max_pool1d",
+      "model": "max_pool1d_2-model.json",
+      "source": "max_pool1d_2-source.json",
+      "binding": "max_pool1d_2-binding.json",
+      "model_sha256": "cbaf7e1b4f5f479f8d39bf8c463db727c7c4287e8e1ee2c2afbfb3bb0752a21b",
+      "source_sha256": "3cac875e05017205a6223f8b70d83e451b84fe810022505a0a3c397e72557101"
+    },
+    {
+      "id": "max_pool2d_0",
+      "operator": "max_pool2d",
+      "model": "max_pool2d_0-model.json",
+      "source": "max_pool2d_0-source.json",
+      "binding": "max_pool2d_0-binding.json",
+      "model_sha256": "0f64220cd125004e82a459f65afa7f191284dceea7d972f58eaff0c1954fc5aa",
+      "source_sha256": "45c7f42fa80d9327d18ebcda7394638e827fa2c4e9e43b8e14789cc4992f153d"
+    },
+    {
+      "id": "max_pool2d_1",
+      "operator": "max_pool2d",
+      "model": "max_pool2d_1-model.json",
+      "source": "max_pool2d_1-source.json",
+      "binding": "max_pool2d_1-binding.json",
+      "model_sha256": "72977294457a0405f320fce441ab01f3338901b76b50a57fa47e1b0df5160b3d",
+      "source_sha256": "fa630bc8f6133af213a1402090854d1cddb9d16545ce2d604e12be32248b7ef2"
+    },
+    {
+      "id": "max_pool2d_2",
+      "operator": "max_pool2d",
+      "model": "max_pool2d_2-model.json",
+      "source": "max_pool2d_2-source.json",
+      "binding": "max_pool2d_2-binding.json",
+      "model_sha256": "f74fcc77641c8c4c40ddd110d6f195ac2264924388be2807dec41abcd0157f7b",
+      "source_sha256": "70487b7d3f4998147a4a8884130d8b6d02af911495740808dfee280d721cc430"
+    }
+  ]
+}

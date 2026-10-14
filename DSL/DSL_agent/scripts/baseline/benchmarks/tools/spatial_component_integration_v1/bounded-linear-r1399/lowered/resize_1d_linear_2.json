@@ -1,0 +1,63 @@
+{
+  "constants": {
+    "generated_0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "format": "poseidon-model-graph-v2",
+  "id": "resize_1d_linear_2",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        4
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "generated_2",
+      "inputs": [
+        "x",
+        "generated_0"
+      ],
+      "op": "linear",
+      "outputs": [
+        "generated_1"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_1"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

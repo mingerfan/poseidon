@@ -1,0 +1,5 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"binding": "24892824d38f3a987239e63466e3c9201d6f16d4b9149ca5057abc4134a9c68a", "sdk": "03de9614dfda4e85e4315c4fd8a598d88cf888e508b3a79361bb95eef8090ce7", "source_contexts": 18, "first_attempt_passed": 13, "repairs": 5, "provider_usage_totals": {"prompt_tokens": 311053, "completion_tokens": 329320, "total_tokens": 640373, "reasoning_tokens": 325683, "prompt_cache_hit_tokens": 130560, "prompt_cache_miss_tokens": 180493, "responses_with_usage": 26, "responses_without_usage": 1, "unresolved_http_attempts": 0, "cost_usd": null}, "resources": {"approved_result_bytes": 51539607552, "per_batch_bytes": 4294967296, "reserve_bytes": 4294967296, "observed_result_bytes": 36879429632, "observed_free_bytes": 37735010304, "compiler_jobs": 2, "link_jobs": 1, "api_concurrency": 1, "encrypted_concurrency": 1}}

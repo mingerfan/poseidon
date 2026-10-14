@@ -1,0 +1,98 @@
+{
+  "approximations": {
+    "defaults": {},
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "call": {
+    "args": [
+      {
+        "kind": "tensor",
+        "name": "x"
+      }
+    ],
+    "format": "poseidon-pytorch-call-v1",
+    "kwargs": {}
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "f106f2da8f02a7530eef0141da0490a0dc84fe01138c0ebf642d923cb7943aec"
+  },
+  "format": "poseidon-trusted-pytorch-v34",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "output"
+  ],
+  "weights": {
+    "bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0000.npy",
+      "sha256": "3a575397609e09438d44d8c2a172773dba988bad15d56ad8911f035c46ef84cb",
+      "shape": [
+        2
+      ]
+    },
+    "i": {
+      "bytes": 160,
+      "dtype": "<i8",
+      "file": "state_0001.npy",
+      "sha256": "f3edf7ae421f63f8099add63adb009e90f654d984286522ed3c42f3508b03c4e",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "mask": {
+      "bytes": 132,
+      "dtype": "|b1",
+      "file": "state_0002.npy",
+      "sha256": "6ac393bc2949a72d75154bfebce15cdae4161f49193d16b3d90942a9adeaa83c",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "proj": {
+      "bytes": 192,
+      "dtype": "<f8",
+      "file": "state_0003.npy",
+      "sha256": "e694a82d0ef7a0078f2472b8f7d87b167fa8bf1448fba3897ee2f3945174a617",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "scalar": {
+      "bytes": 136,
+      "dtype": "<f8",
+      "file": "state_0004.npy",
+      "sha256": "a3cc97f979c354e0a09cd4b065355baa2966ffaef7c82409d1fc8603b91d5718",
+      "shape": []
+    },
+    "w": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "state_0005.npy",
+      "sha256": "c7de4feb8a6c74b66f1d24802ce6969c70c8e335e5d5179e7a93d973d3c69e4e",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  }
+}

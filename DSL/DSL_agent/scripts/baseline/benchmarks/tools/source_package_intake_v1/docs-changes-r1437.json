@@ -1,0 +1,26 @@
+{
+  "docs/README.md": {
+    "after": "83e066eb65bfe465d8aa23729145a980daa072a745d1ff0f8c25dbdbd62de09a",
+    "before": "23f303d7c51bdd241e397413d4ff0455e6378a8c1306476cf22171dbb5fc81e1"
+  },
+  "docs/baseline/agent-current-contract.md": {
+    "after": "cf56666ab18304818fa4fd3ab153ab67956638a3488bcf22c916cb9d857a443e",
+    "before": "c9687daf31bcef078592bf808f3f570d06b19b2249f0282e2b327f838508426d"
+  },
+  "docs/baseline/mac-migration-handoff.md": {
+    "after": "ce111796641a82f7c94709a0327726c00b83edda38d0578fbe3fed8e90b68466",
+    "before": "a7c2d4bfc612746fe2f7f1e5109d6d0092ad8e2c404098577562e5ebab51a132"
+  },
+  "docs/baseline/operator-decomposition-and-python.md": {
+    "after": "3c13c9db697889683a6642fec0768ede0a8d71f6e495d69b0c1000b00e598e80",
+    "before": "27d2874630c792594496c51473c0b97285c662134c1f6a021f15d72c3c4ae600"
+  },
+  "docs/baseline/supported-inputs-models-configurations.md": {
+    "after": "feefefbb06043d9e424cdaafa42cda669d923c8c98fd27d62596f5fee5b93bae",
+    "before": "1876ee31d0f4d6c0e98f0a9a86d70eb2795b1058a4b0a194aea04b4dbfce85fb"
+  },
+  "scripts/README.md": {
+    "after": "9593decc16ac2891ee131f46bb57657cdd3722d495cd414fec4fd21e811e4c7d",
+    "before": "07fe24e3316a141612960bc46edc3f0be6d3050ed0059baa7d0ed99030b79112"
+  }
+}

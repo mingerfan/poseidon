@@ -1,0 +1,66 @@
+{
+  "format": "poseidon-provenance-transport-draft-controls-v1",
+  "status": "passed",
+  "production_active": false,
+  "parent_scope_binding": "27e07e316501c9120ecec935fd36a83d1557bf0fff5267287a6a7c9208921caa",
+  "tests": {
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+  },
+  "failed_initial_tests": 1,
+  "cases": [
+    {
+      "case": "wide_tail_linear",
+      "logical_bytes": 5018295,
+      "source_wire_bytes": 178748,
+      "task_logical_bytes": 5018680,
+      "task_wire_bytes": 179215,
+      "logical_sha256": "999d78755836000d41ae6980cee87e8e466bb131644f2fe4e514256619670257",
+      "task_binding": "0f1b9f71ca4c1e779cfe090d4bf05ad3058aac39df16337c48e4909ed61bfb7b",
+      "manifest_and_source_retained": true,
+      "weight_file_payloads_retained": true,
+      "exact_ordered_provenance": true,
+      "exact_ordered_metadata": true,
+      "legacy_logical_task_binding_preserved": true,
+      "decoded_container_aliases": false,
+      "trusted_capture_semantics_currently_verified": false,
+      "application_intake_executed": false,
+      "compile_or_execution_executed": false
+    },
+    {
+      "case": "weights_linear_10k",
+      "logical_bytes": 13829670,
+      "source_wire_bytes": 381934,
+      "task_logical_bytes": 13830055,
+      "task_wire_bytes": 382399,
+      "logical_sha256": "40c2b4af2a03dff7ea2e20dff8c6e3f870c2b324636084b0038a4945f539e192",
+      "task_binding": "8c0c48c301163951d2ed09d9d8ec2a637e202386722e87d455d05226fb6b0d20",
+      "manifest_and_source_retained": true,
+      "weight_file_payloads_retained": true,
+      "exact_ordered_provenance": true,
+      "exact_ordered_metadata": true,
+      "legacy_logical_task_binding_preserved": true,
+      "decoded_container_aliases": false,
+      "trusted_capture_semantics_currently_verified": false,
+      "application_intake_executed": false,
+      "compile_or_execution_executed": false
+    }
+  ],
+  "source_analysis_binding": "25da86f461542b60c77514fe4124d088f980bc97a6d6767debc45f5fe30c931a",
+  "seconds": 15.219302444980713,
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "files": {
+    "wire.py": "669142da1858620c0a19681ee130c54650b4364ad16260017b48b633fd0e2715",
+    "test_wire.py": "51157bbb0a94ed5b6748701d6efab927570ab743fc9d08c6adf180831d39f641"
+  },
+  "remaining": [
+    "Versioned activation and capture-part serialization",
+    "Task source admission and application runtime integration",
+    "Package export, reload, execution and reference adapters",
+    "Fresh current-SDK source capture and encrypted acceptance"
+  ],
+  "binding": "f2ac51080de73b9719bf20c43bd260b73523e5b991f63833fcee90602d515450"
+}

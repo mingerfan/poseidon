@@ -1,0 +1,69 @@
+{
+  "all_result_bytes": 27919985630,
+  "binding": "f6538556418b020c7782ca14795e06aad492579450c33f10b2d5afb16d94ca2b",
+  "evidence_directories": 8,
+  "format": "poseidon-einsum-v19-final-audit-v1",
+  "frozen_fixtures_checked": 19,
+  "frozen_sources_checked": 669,
+  "historical_requests_checked": 2,
+  "new_artifact_bytes": 60190549,
+  "observed_wall": 1791587799.2577963,
+  "old_proposal_preserved": true,
+  "old_proposal_status": "superseded_pending",
+  "packages": [
+    {
+      "binding": "3f5b59eb8929e33426f3c1f4c10642fd92aa9f3135b4153bea30492f45921774",
+      "case": "diagonal_output_write",
+      "files": 28,
+      "manifest_sha256": "080c50269e2a075d4736dca887bcd5da66ef16948a769c7dbcbb5caf6c20a327"
+    },
+    {
+      "binding": "45c324568c23ef073c3990b116d6eb1b4cd954ac60650334b426bff1cb5d02be",
+      "case": "diagonal_source_write",
+      "files": 25,
+      "manifest_sha256": "52adbc3366c45c0c1e23e5ff9bfb5839d966895bc14ea7da908b147dda41bee5"
+    },
+    {
+      "binding": "af5fa1eb750e16b1441d180d44684904becfd44f0fa1b033339563e259600b2c",
+      "case": "diagonal_contraction",
+      "files": 25,
+      "manifest_sha256": "374d8e56be4701267538c3a1e0d1cc6065ef826ed22a74f15724d48455ad6927"
+    },
+    {
+      "binding": "67ee5628cd3f8a93413bd3ba613ba394ecf8a39118054c0877be52fe258a4de3",
+      "case": "trace_scalar_factor",
+      "files": 25,
+      "manifest_sha256": "4a0b8d4949bea05d12fd7f1ba0e623cdb2f3bfc98d3b3561dd6e719418e70da6"
+    },
+    {
+      "binding": "5a11dce5290d2cb162033c971b7ec18d703a3ca4c43bcb5d67ecad033d7c7fd9",
+      "case": "scalar_index_write",
+      "files": 27,
+      "manifest_sha256": "be7c370ec9f0971f5936cc361fc3e8a0935f6d9b27dec05a1e260216f8089f8f"
+    },
+    {
+      "binding": "49fd74bdedbf157ccf1de168fa7d258587e13ec11c969f48e90f9548faba8c12",
+      "case": "three_scalar_factors",
+      "files": 20,
+      "manifest_sha256": "6d19338180056a8b94f9f13e9cf44b732aec15b71791968a0dda6b5a830c5bd3"
+    },
+    {
+      "binding": "2272bf5642151aa4765efcf42362342295662a6e46fa47c6f74c50b6a40c663d",
+      "case": "legacy_linear",
+      "files": 23,
+      "manifest_sha256": "5769b40b6f96a85f6ce6ccdbab8c4137cb34a265464e0659a0451e5b1fe8f233"
+    },
+    {
+      "binding": "cdceee425a987505106dd9a78738f7a75bc35ce00954e193fafef59eab3fb956",
+      "case": "legacy_mlp",
+      "files": 27,
+      "manifest_sha256": "ef08a0ae7920a59a568fff0fce3bbcf8821458cda43c7effbfe02a30ba4ff5a4"
+    }
+  ],
+  "paid_calls": 0,
+  "protected_sources_checked": 654,
+  "report_binding": "7989bc80a3d42109393bf76befa3c38bf0b3074f359adb0effa96aca0c55ffbf",
+  "report_sha256": "0a697adaf39cc9105060f6b05fd813bbff6a8699dbc1d897944aff0a29533c03",
+  "source_format": "explicit v19 plus legacy v18",
+  "status": "passed"
+}

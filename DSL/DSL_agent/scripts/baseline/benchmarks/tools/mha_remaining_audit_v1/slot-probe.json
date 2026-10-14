@@ -1,0 +1,39 @@
+{
+  "binding": "bbd2077ad626597f9425a05ca01310fce0f26b668b88ec2c46caf91315ec18fc",
+  "candidate_plaintext_vs_model_reference": {
+    "mae": 0.0003571769294538859,
+    "max_absolute_error": 0.0023141186774697786,
+    "values": 64,
+    "violating_values": 40
+  },
+  "candidate_source_sha256": "0167c83eff89500edc05040e750cb94c42633208b3ac65cf1efce854d3d53677",
+  "controls": {
+    "failed": 0,
+    "passed": 6,
+    "skipped": 0
+  },
+  "evidence_sha256": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5z8pvlvi/attempt-00/output/inputs.json": "52f5aff90de2d924d1cc1c99a282a7c75602b4f8e2189c7800d14de5920477bd",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5z8pvlvi/attempt-00/report.json": "c1b4bdff3bdcb7bb2aff6263a12b10e90a9d0c7d428f19120fa5cbaf0639ea2a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5z8pvlvi/attempt-00/trace-payload.json": "78188cc7a4a4cac5b57830bbc52056decc290e65b05566fe273ede18197c89f0"
+  },
+  "external_arrays_written": false,
+  "fhe_vs_candidate_plaintext": {
+    "mae": 1.2158297577275282e-08,
+    "max_absolute_error": 1.383837180957137e-07,
+    "values": 64,
+    "violating_values": 0
+  },
+  "format": "poseidon-candidate-slot-semantic-probe-v1",
+  "input_groups": 4,
+  "new_compiler_calls": 0,
+  "new_fhe_calls": 0,
+  "new_provider_calls": 0,
+  "paired_score_lane_deviation": {
+    "max_absolute_error": 0.011756052128269866,
+    "nonzero_differences": 24
+  },
+  "public_period": 4,
+  "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+  "scope": "diagnostic of frozen candidate only, not an Agent pass or model correctness acceptance"
+}

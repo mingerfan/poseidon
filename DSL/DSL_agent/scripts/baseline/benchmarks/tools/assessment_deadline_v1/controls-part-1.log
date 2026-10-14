@@ -1,0 +1,25 @@
+test_interrupted_ledger_is_not_reexecuted (application_assessment_entry.test_cli.CliTests) ... ok
+test_invalid_cli_is_input_error_without_factory (application_assessment_entry.test_cli.CliTests) ... ok
+test_launcher_checks_response_binding (application_assessment_entry.test_cli.CliTests) ... ok
+test_launcher_checks_response_token (application_assessment_entry.test_cli.CliTests) ... ok
+test_launcher_filters_sdk_logs_from_machine_result (application_assessment_entry.test_cli.CliTests) ... ok
+test_launcher_preserves_missing_response_failure (application_assessment_entry.test_cli.CliTests) ... ok
+test_launcher_rejects_background_worker_and_confirms_cleanup (application_assessment_entry.test_cli.CliTests) ... ok
+test_launcher_rejects_duplicate_response_keys (application_assessment_entry.test_cli.CliTests) ... ok
+test_launcher_timeout_stops_detached_worker (application_assessment_entry.test_cli.CliTests) ... ok
+test_machine_result_keeps_numerical_and_accuracy_separate (application_assessment_entry.test_cli.CliTests) ... ok
+test_mathematical_policy_rejects_source_trust (application_assessment_entry.test_cli.CliTests) ... ok
+test_native_policy_needs_trust_and_dtypes (application_assessment_entry.test_cli.CliTests) ... ok
+test_numerical_failure_has_failure_exit_and_layer (application_assessment_entry.test_cli.CliTests) ... ok
+test_separate_command_objects_resume_without_repeat (application_assessment_entry.test_cli.CliTests) ... ok
+test_status_and_result_are_machine_readable_without_execution (application_assessment_entry.test_cli.CliTests) ... ok
+test_store_under_source_rejected_before_factory (application_assessment_entry.test_cli.CliTests) ... ok
+test_submit_only_pins_inputs_and_returns_handle (application_assessment_entry.test_cli.CliTests) ... ok
+test_symlink_command_results_reject_before_creating_target (application_assessment_entry.test_cli.CliTests) ... ok
+test_worker_identity_conflict_is_distinct (application_assessment_entry.test_cli.CliTests) ... ok
+test_world_readable_command_store_is_rejected (application_assessment_entry.test_cli.CliTests) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 21.481s
+
+OK

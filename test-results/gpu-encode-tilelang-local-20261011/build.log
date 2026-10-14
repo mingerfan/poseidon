@@ -1,0 +1,660 @@
+[  0%] Generating tilelang-ntt-generated.cu
+[ 72%] Built target poseidon_shared
+[ 93%] Built target poseidon_gpu
+Generated 11 TileLang NTT kernels: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/src/poseidon/gpu/tilelang-ntt-generated.cu
+[ 95%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_encode_tilelang.dir/tilelang-ntt-generated.cu.o
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(932): warning #20012-D: __device__ annotation is ignored on a non-virtual function("float_e4m3_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                             ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(932): warning #20012-D: __host__ annotation is ignored on a non-virtual function("float_e4m3_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                                                     ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(949): warning #20012-D: __device__ annotation is ignored on a non-virtual function("float_e5m2_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(949): warning #20012-D: __host__ annotation is ignored on a non-virtual function("float_e5m2_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                                                     ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(966): warning #20012-D: __device__ annotation is ignored on a non-virtual function("tfloat32_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(966): warning #20012-D: __host__ annotation is ignored on a non-virtual function("tfloat32_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                                                     ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(521): warning #1444-D: type "longlong4" was declared deprecated ("use longlong4_16a or longlong4_32a")
+    longlong4 result;
+              ^
+/opt/cuda/bin/../targets/x86_64-linux/include/vector_types.h(553): note #3287-D: because of a "deprecated" attribute
+  typedef __attribute__((device_builtin)) struct longlong4 __attribute__((deprecated("use longlong4_16a or longlong4_32a"))) longlong4;
+                                                                          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(539): warning #1444-D: type "longlong4" was declared deprecated ("use longlong4_16a or longlong4_32a")
+    longlong4 result;
+              ^
+/opt/cuda/bin/../targets/x86_64-linux/include/vector_types.h(553): note #3287-D: because of a "deprecated" attribute
+  typedef __attribute__((device_builtin)) struct longlong4 __attribute__((deprecated("use longlong4_16a or longlong4_32a"))) longlong4;
+                                                                          ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(557): warning #1444-D: type "ulonglong4" was declared deprecated ("use ulonglong4_16a or ulonglong4_32a")
+    ulonglong4 result;
+               ^
+/opt/cuda/bin/../targets/x86_64-linux/include/vector_types.h(554): note #3287-D: because of a "deprecated" attribute
+  typedef __attribute__((device_builtin)) struct ulonglong4 __attribute__((deprecated("use ulonglong4_16a or ulonglong4_32a"))) ulonglong4;
+                                                                           ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(932): warning #20012-D: __device__ annotation is ignored on a non-virtual function("float_e4m3_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(932): warning #20012-D: __host__ annotation is ignored on a non-virtual function("float_e4m3_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                                                     ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(949): warning #20012-D: __device__ annotation is ignored on a non-virtual function("float_e5m2_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(949): warning #20012-D: __host__ annotation is ignored on a non-virtual function("float_e5m2_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                                                     ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(966): warning #20012-D: __device__ annotation is ignored on a non-virtual function("tfloat32_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h(966): warning #20012-D: __host__ annotation is ignored on a non-virtual function("tfloat32_t") that is explicitly defaulted on its first declaration
+    __inline__ __attribute__((always_inline)) __attribute__((device)) __attribute__((host))
+                                                                                     ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value" was declared but never referenced
+    uint64_t value = (((uint64_t)c) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wc" was declared but never referenced
+    unsigned int wc = condval;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(13): warning #177-D: variable "value_1" was declared but never referenced
+    uint64_t value_1 = (((uint64_t)d) * root1);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "wd" was declared but never referenced
+    unsigned int wd = condval_1;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(127): warning #177-D: variable "sum_ac" was declared but never referenced
+    unsigned int sum_ac = (a + condval_2);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(128): warning #177-D: variable "sum_bd" was declared but never referenced
+    unsigned int sum_bd = (v + condval_3);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(147): warning #177-D: variable "x0" was declared but never referenced
+    unsigned int x0 = condval_4;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(148): warning #177-D: variable "x1" was declared but never referenced
+    unsigned int x1 = condval_8;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(149): warning #177-D: variable "x2" was declared but never referenced
+    unsigned int x2 = condval_12;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(150): warning #177-D: variable "x3" was declared but never referenced
+    unsigned int x3 = condval_16;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_2" was declared but never referenced
+    uint64_t value_2 = (((uint64_t)condval_20) * root2a);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w1" was declared but never referenced
+    unsigned int w1 = condval_32;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(37): warning #177-D: variable "value_3" was declared but never referenced
+    uint64_t value_3 = (((uint64_t)condval_33) * root2b);
+             ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(26): warning #177-D: variable "w3" was declared but never referenced
+    unsigned int w3 = condval_45;
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(161): warning #177-D: variable "sum01" was declared but never referenced
+    unsigned int sum01 = (condval_46 + condval_50);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/gpu_encode/tilelang_ntt.py(162): warning #177-D: variable "sum23" was declared but never referenced
+    unsigned int sum23 = (condval_51 + condval_55);
+                 ^
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/3rdparty/cutlass/include/cutlass/platform/platform.h:611:33: warning: ‘long4’ is deprecated: use long4_16a or long4_32a [-Wdeprecated-declarations]
+  611 | struct alignment_of<long4> {
+      |                                 ^    
+In file included from /opt/cuda/targets/x86_64-linux/include/driver_types.h:61,
+                 from /opt/cuda/bin/../targets/x86_64-linux/include/builtin_types.h:59,
+                 from /opt/cuda/bin/../targets/x86_64-linux/include/crt/host_runtime.h:58,
+                 from /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stddef.h:233:
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:535:98: note: declared here
+  535 | typedef __device_builtin__ struct long4 __VECTOR_TYPE_DEPRECATED__("use long4_16a or long4_32a") long4;
+      |                                                                                                  ^~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/3rdparty/cutlass/include/cutlass/platform/platform.h:615:33: warning: ‘ulong4’ is deprecated: use ulong4_16a or ulong4_32a [-Wdeprecated-declarations]
+  615 | struct alignment_of<ulong4> {
+      |                                 ^     
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:536:101: note: declared here
+  536 | typedef __device_builtin__ struct ulong4 __VECTOR_TYPE_DEPRECATED__("use ulong4_16a or ulong4_32a") ulong4;
+      |                                                                                                     ^~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/3rdparty/cutlass/include/cutlass/platform/platform.h:619:33: warning: ‘longlong4’ is deprecated: use longlong4_16a or longlong4_32a [-Wdeprecated-declarations]
+  619 | struct alignment_of<longlong4> {
+      |                                 ^        
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:553:110: note: declared here
+  553 | typedef __device_builtin__ struct longlong4 __VECTOR_TYPE_DEPRECATED__("use longlong4_16a or longlong4_32a") longlong4;
+      |                                                                                                              ^~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/3rdparty/cutlass/include/cutlass/platform/platform.h:623:33: warning: ‘ulonglong4’ is deprecated: use ulonglong4_16a or ulonglong4_32a [-Wdeprecated-declarations]
+  623 | struct alignment_of<ulonglong4> {
+      |                                 ^         
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:554:113: note: declared here
+  554 | typedef __device_builtin__ struct ulonglong4 __VECTOR_TYPE_DEPRECATED__("use ulonglong4_16a or ulonglong4_32a") ulonglong4;
+      |                                                                                                                 ^~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/3rdparty/cutlass/include/cutlass/platform/platform.h:627:33: warning: ‘double4’ is deprecated: use double4_16a or double4_32a [-Wdeprecated-declarations]
+  627 | struct alignment_of<double4> {
+      |                                 ^      
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:564:104: note: declared here
+  564 | typedef __device_builtin__ struct double4 __VECTOR_TYPE_DEPRECATED__("use double4_16a or double4_32a") double4;
+      |                                                                                                        ^~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h:520:19: warning: ‘longlong4’ is deprecated: use longlong4_16a or longlong4_32a [-Wdeprecated-declarations]
+  520 |                                    int z1, int w0, int w1) {
+      |                   ^
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:553:110: note: declared here
+  553 | typedef __device_builtin__ struct longlong4 __VECTOR_TYPE_DEPRECATED__("use longlong4_16a or longlong4_32a") longlong4;
+      |                                                                                                              ^~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h:538:51: warning: ‘longlong4’ is deprecated: use longlong4_16a or longlong4_32a [-Wdeprecated-declarations]
+  538 |                signed char w4, signed char w5, signed char w6, signed char w7) {
+      |                                                   ^
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:553:110: note: declared here
+  553 | typedef __device_builtin__ struct longlong4 __VECTOR_TYPE_DEPRECATED__("use longlong4_16a or longlong4_32a") longlong4;
+      |                                                                                                              ^~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/tilelang/src/tl_templates/cuda/instruction/../common.h:556:57: warning: ‘ulonglong4’ is deprecated: use ulonglong4_16a or ulonglong4_32a [-Wdeprecated-declarations]
+  556 |     unsigned char w4, unsigned char w5, unsigned char w6, unsigned char w7) {
+      |                                                         ^
+/opt/cuda/targets/x86_64-linux/include/vector_types.h:554:113: note: declared here
+  554 | typedef __device_builtin__ struct ulonglong4 __VECTOR_TYPE_DEPRECATED__("use ulonglong4_16a or ulonglong4_32a") ulonglong4;
+      |                                                                                                                 ^~~~~~~~~~
+[ 96%] Linking CUDA static library ../../../libposeidon_encode_tilelang.a
+[ 96%] Built target poseidon_encode_tilelang
+[ 96%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu_encode_bench.dir/__/tests/gpu_encode/gpu_encode_experiment.cu.o
+[ 98%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu_encode_bench.dir/__/tests/gpu_encode/gpu_encode_bench.cpp.o
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[100%] Linking CXX executable ../../../bin/poseidon_gpu_encode_bench
+[100%] Built target poseidon_gpu_encode_bench

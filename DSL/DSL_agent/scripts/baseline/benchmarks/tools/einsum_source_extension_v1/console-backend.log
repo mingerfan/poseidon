@@ -1,0 +1,14 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/backend_acceptance.py", line 157, in <module>
+    if __name__=="__main__":raise SystemExit(inside()if sys.argv[1:]==["--inside"]else outer())
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/backend_acceptance.py", line 83, in inside
+    torch.set_num_threads(1);plan=read(OUT/"plan.json");boundary(plan)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/backend_acceptance.py", line 34, in boundary
+    require(time.time()<plan["deadline_wall"],"offline_window_exhausted")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_source_extension_v1/backend_acceptance.py", line 15, in require
+    if not ok:raise ValueError(code)
+ValueError: offline_window_exhausted

@@ -1,0 +1,71 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "logsoftmax_2",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {
+    "input_scale": 0.125
+  },
+  "nodes": [
+    {
+      "id": "scale_input",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "input_scale"
+      ],
+      "attrs": {},
+      "outputs": [
+        "small_x"
+      ]
+    },
+    {
+      "id": "operation",
+      "op": "logsoftmax",
+      "inputs": [
+        "small_x"
+      ],
+      "attrs": {
+        "axis": -1,
+        "exp": {
+          "method": "taylor",
+          "domain": [
+            -0.2,
+            0.2
+          ],
+          "degree": 3
+        },
+        "log": {
+          "method": "polynomial",
+          "basis": "power",
+          "domain": [
+            1.0,
+            4.0
+          ],
+          "coefficients": [
+            -0.8068528194400547,
+            1.0,
+            -0.125
+          ]
+        }
+      },
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

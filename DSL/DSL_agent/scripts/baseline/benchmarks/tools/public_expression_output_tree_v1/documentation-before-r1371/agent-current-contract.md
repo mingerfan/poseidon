@@ -1,0 +1,112 @@
+# Agent 接口与模块
+
+用户入口见 [Agent README](../../scripts/README.md)，模型格式见[输入说明](supported-inputs-models-configurations.md)。
+
+## 调用链
+
+```text
+模型 → 类型/形状/布局检查 → 生成请求 → Provider
+     → DSL 检查 → Hecate tracing → dacapo-modified → RuntimePlan / plaintext bundle
+     → CKKS Runtime → Poseidon CPU → 解密比较 → 程序包
+```
+
+输入是静态图和公开权重。Provider 只接收公开模型、布局、DSL 规则和受控反馈，不接收参考答案、测试数组、凭据或私钥。候选响应只包含 schema、request_id、hecate_source。
+
+## 已有 DSL 验收
+
+生成与后端验收是两个边界。模型、公开权重和候选源码固定后，可直接通过 `component_backend.qualify()` 进入当前编译与数值链路。旧候选需要新后端请求绑定，原响应和原请求保留；不再调用 Provider。
+
+已验收的程序包由 `candidate_bundle` 重载，可重复执行或按相同身份复用。 宿主可通过[编译资源接口](application-agent-component-v1.md#编译程序包的资源分析)先分析当前产物；该分析不改变原验收等级。结果分别标明历史真实 Agent、规则基线、人工表达或当前新生成来源。后端通过不改变原生成来源，也不代表当前生成质量评测通过。历史来源封装及迁移结果见 [迁移验收](poseidon-migration-status-r373.md)。
+
+## 模块
+
+| 模块 | 职责 |
+|---|---|
+| application_component.py | 任务状态、预算、取消、终态、复用 |
+| application_policy.py / unified_poseidon_guidance.py | 能力描述、按公开图选择 Poseidon 上下文和修复决策 |
+| component_contract.py | 请求准备、候选检查、生成接口 |
+| run_candidate.py / run_feedback_loop | 单例 CLI 与生成修复循环 |
+| validation_adapter.py | 静态、编译、产物和数值验收 |
+| component_backend.py | 对接 Poseidon 验证运行器 |
+| deepseek_provider.py | DeepSeek 协议和受控传输重试 |
+| candidate_bundle.py | DSL 程序包导出、完整性和重放 |
+| application_planning/compiled_resources.py | 已编译程序包的资源事实、存储下界与可选预检 |
+| benchmark_graph.py | 通用图类型与 shape 检查 |
+| model_decomposition.py / restricted_model_python.py | 高层算子分解、受限 Python 导入 |
+
+文件均在 [scripts/baseline](../../scripts/baseline/) 下。`benchmark_graph` 不读取实验批次，模型准入不依赖模型名称。
+
+后端版本及验收范围见 [Poseidon Runtime](poseidon-runtime-migration.md)。
+
+## 运行约定
+
+默认要求真实密态执行并逐项比较；只有应用组件的显式 `compiled` 等级允许只编译。数值门限为 `1e-5 + 1e-4*abs(reference)`。
+
+模型、权重、布局、规则与配置参与请求身份；候选不能更改它们。生成和修复共用同一 Provider，额度由宿主控制。重复失败、不可自动修复错误、取消和超时均返回终态。
+
+应用 worker 与实验工具分开。宿主接口详见[应用组件](application-agent-component-v1.md)。应用与CLI共用QualificationSession直接验收候选；SDK及工作路径由独立worker绑定。当前编译／执行／验证源码身份已脱离Provider和实验运行器，仍保守绑定共享模型语义。
+
+## DSL 配置
+
+统一图默认 `native` 构造；`--unified-profile public-v1` 选择公开函数、容器和控制流的受限归一化。两者并非完整 Python，也不能任意混用旧构造开关。
+
+上游 helper 使用 `--unified-helpers` 显式选择受信适配器；定向构造和 helper 组合由契约检查。配置清单见 [DSL 选项](dsl-options.md)。可用值以 `candidate -- --help` 为准，绑定实现在 [upstream_candidate_helpers.py](../../scripts/baseline/upstream_candidate_helpers.py)。
+
+对象数组的一个 Expr 单元代表完整密文表达式，不是一个 slot。公开循环只展开公开计算，不能根据密文数据分支。当前 Runtime CPU API 尚未接入真实 bootstrap。
+
+Benchmark、人工探针和批次修复入口见[开发测试说明](semantic-benchmark-v1.md)，不属于应用请求流程。
+
+统一图 CLI 可选择 `--unified-guidance explicit-v10`；应用组件对相关图自动选择。新上下文区分 Earth 消耗深度、RuntimePlan 模数索引和实际 Poseidon 验收，旧指导版本保留原请求哈希。见 [应用上下文验收](poseidon-application-context-r241.md)。
+
+## 版本化容量
+
+prepare_task同时接受v1和显式 `poseidon-model-graph-v2`。v2的resource_profile属于模型身份，使用 `unified-capacity-chunked-inputs-v2`；旧默认与请求绑定保留。capabilities返回版本和状态。
+
+unified_capacity_layout负责逻辑/物理I/O、尾部和selector。unified_capacity_constants从公开模型生成张量与Linear绑定，与DSL生成和reference分开；capacity-public-tensors-v1/v2/v3/v4分别校验，旧请求按原版本重建。缺少capacity descriptor的历史请求按v3重建。v3绑定局部行宽重排与Linear映射，v4增加静态concat/stack/轴归约映射；参数只来自公开形状、轴和权重。新统一绑定由纯Python索引计算生成，不调用DSL转换器或reference。unified_capacity_lowering提供受预算约束的逐行归约与跨块旋转加权求和基线，不是请求准备的前提。基线的分块Linear typed helper已通过三个上下文；其他helper与Agent定向组合待验收。容量与Agent生成分别计分，见[r400](poseidon-capacity-linear-acceptance-r400.md)。
+
+当前基线路径为capacity-chunks-v5。连续旋转窗口及tiled行映射复用已开放的rotation和typed helper；内部节点名避开用户节点及其他虚拟节点。公开张量常量参与的连接仍可提交，当前跨块密文基线不将其冒充已验收范围。旧v1–v3绑定与原失败保留。矩形Linear见[r430](poseidon-capacity-tiled-linear-r430.md)，最新连接/归约见[r441](poseidon-capacity-tensor-acceptance-r441.md)。
+
+
+## 跨密文空间算子
+
+medium-v1已验收跨块Conv1d/2d（含分组/深度卷积）、AvgPool1d/2d及代表组合。新容量公开张量版本为v5；v5文件编码可无损压缩重复向量，展开后按原逻辑请求及公开绑定验证。旧版本按原规则重建。[范围与结果](poseidon-capacity-spatial-acceptance-r449.md)。当前结果为规则基线，真实Agent验收另计。
+
+## PyTorch v5 来源配置
+
+`pytorch_approximation.py` 对版本化选择器作确定性匹配：FX 节点优先于所属模块，模块优先于算子默认值。同级冲突和无效选择器在捕获阶段拒绝，惰性的程序包校验重新检查选择记录、配置和原图。该过程复用原算子注册和 reference，不调用生成模型；可信来源包通过已有 `submit_import`、程序包和执行接口进入应用流程。[接口](operator-decomposition-and-python.md#逐节点与模块近似) · [验收](agent-pytorch-approximation-acceptance-r721.md)。
+
+## PyTorch v7 矩阵来源
+
+pytorch_matrix_plan 对静态向量提升、批次广播、派生公开权重和输出形状作确定性规范化；matrix_capture重新核验节点、来源与权重。统一计算图、生成模型、验收服务和执行接口继续复用。v7容量导入采用v9公共路由，旧格式及显式选项保持。[输入说明](operator-decomposition-and-python.md#pytorch-矩阵运算) · [验收](agent-pytorch-matrix-acceptance-r815.md)。
+
+v7 同时接入 InstanceNorm1d／2d 与 F.instance_norm，能力标识为 `poseidon-pytorch-instance-normalization-v1`。非 batch 模块输入经显式 reshape 规范化；当前统计量使用声明的 rsqrt，冻结统计量复用公开 BatchNorm 推理分解。完整 NPY 状态、近似选择和输出结构参与来源绑定；数学请求与生成／执行身份分别校验。[输入说明](operator-decomposition-and-python.md#pytorch-instancenorm) · [验收](agent-pytorch-instance-acceptance-r847.md)。
+
+## 版本化 JSON 矩阵接入
+
+高层图增加显式 `poseidon-operator-graph-v2`，接入静态向量、矩阵、批次广播和固定公开矩阵两侧乘法。旧 v1 分解与请求规则保留。新格式的规范化版本、实现哈希、原图与节点来源参与程序包绑定；标量矩阵输出按 `[1]` 张量声明。
+
+用户层仍通过导入目录及 `submit_import` 接入。36例已完成导入、独立参考和静态任务准备，当前新格式的真实编译、密态和 Agent 验收待运行。[接口与示例](operator-decomposition-and-python.md#json-矩阵计算图)。
+
+## PyTorch v10 算子结果接口
+
+可信清单使用 `poseidon-trusted-pytorch-v10`，沿用工厂、NPY权重、dtype、输入/输出与资源配置。结果形状查询扩展到AdaptiveAvgPool、InstanceNorm和padding；函数式AdaptiveAvgPool映射到现有分解。旧v1–v9行为保持。新来源、参考和来源包具有独立版本与哈希绑定。
+
+[范围与用法](operator-decomposition-and-python.md#pytorch-v10-算子结果与形状查询) · [接入检查](agent-pytorch-operator-shape-v10-acceptance-r994.md)。本次没有扩大资源、算子数学、参数或后端执行范围。
+
+## PyTorch v22 公开张量算术
+
+显式 v22 将经原始 NPY 绑定的公开 Tensor 除法与 bool mask 乘法接入既有可信来源、应用和程序包接口。
+可信规范化分别记录原始状态、有效状态与派生倒数／0-1 常量，保留完整类型和返回依赖检查；
+float32 转换通过既有 `convert-float64-v1` 显式声明。旧 schema、来源版本、CLI 默认 v18 和 latest=v21 保持。
+v22 的 5 个代表组合已完成真实 Agent 生成、Poseidon CPU 密态数值验收和程序包复用；4 项首轮成功，1 项修复一次成功。
+[接口](operator-decomposition-and-python.md#pytorch-v22-公开张量算术) · [真实 Agent 验收](agent-public-tensor-live-acceptance-r1366.md) · [离线基线](agent-public-tensor-activation-acceptance-r1363.md)。
+
+
+## PyTorch v23 公开张量表达式
+
+显式 `poseidon-trusted-pytorch-v23` 将来自已绑定公开参数／buffer 的闭合张量表达式规范化为公开常量。登记范围为 reshape/view、permute/transpose/t/T、静态基础切片、unsqueeze/squeeze/flatten、contiguous 及 bool→float32/float64。密文运算顺序和静态输出结构沿用有序来源接口。
+
+原始数组、逻辑 dtype、物理 float64 数组、来源节点及变换参数分别绑定。程序包核验通过声明式记录与原始 NPY 重算派生状态；首次可信源码捕获仍在原隔离 worker 内执行。计算得到的公开除数沿用 v22 的非零、广播和幅值约束；模型输入相关的数据仍不能充当公开常量。
+
+253 项控制与兼容检查通过，18 份来源配置完成独立参考，其中 6 份完成隔离源码捕获。新版本的编译、密态和真实 Agent 验收尚未完成。默认 v18、latest=v21、旧格式哈希规则、资源配置及后端保持。
+[用法](operator-decomposition-and-python.md#pytorch-v23-公开张量表达式) · [当前检查](agent-public-expression-component-checkpoint-r1368.md) · [离线方案](agent-public-expression-offline-proposal-r1369.md)。

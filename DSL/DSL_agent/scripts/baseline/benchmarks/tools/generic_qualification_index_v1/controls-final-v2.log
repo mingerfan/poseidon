@@ -1,0 +1,31 @@
+test_artifact_tamper_rejected (__main__.Controls) ... ok
+test_bound_request_model_matches_model_file (__main__.Controls) ... ok
+test_candidate_tamper_rejected_without_changing_historical_response (__main__.Controls) ... ok
+test_comparison_rejects_boolean_numeric_data (__main__.Controls) ... ok
+test_comparison_rejects_claimed_pass_above_tolerance (__main__.Controls) ... ok
+test_comparison_rejects_nonfinite_data (__main__.Controls) ... ok
+test_comparison_rejects_relaxed_threshold (__main__.Controls) ... ok
+test_comparison_rejects_wrong_shape_same_flat_count (__main__.Controls) ... ok
+test_current_status_cannot_be_promoted_by_resigning_index (__main__.Controls) ... ok
+test_dynamic_registry_iterable_not_executed (__main__.Controls) ... ok
+test_index_file_drift_rejected (__main__.Controls) ... ok
+test_json_duplicate_field_rejected (__main__.Controls) ... ok
+test_json_nonfinite_rejected (__main__.Controls) ... ok
+test_mock_trace_not_qualified (__main__.Controls) ... ok
+test_operator_status_cannot_be_promoted_by_resigning (__main__.Controls) ... ok
+test_outside_root_rejected (__main__.Controls) ... ok
+test_provider_origin_cannot_be_invented (__main__.Controls) ... ok
+test_report_hash_drift_rejected (__main__.Controls) ... ok
+test_seal_backend_not_qualified_as_poseidon (__main__.Controls) ... ok
+test_secret_path_rejected (__main__.Controls) ... ok
+test_snapshot_cannot_be_relabeled_as_new_qualification (__main__.Controls) ... ok
+test_static_polynomial_registry_expansion (__main__.Controls) ... ok
+test_static_registry_only_reads_names (__main__.Controls) ... ok
+test_symbolic_link_rejected (__main__.Controls) ... ok
+test_test_result_bound_to_tested_auditor (__main__.Controls) ... ok
+test_valid_history_keeps_legacy_identity_and_rechecks_each_value (__main__.Controls) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.010s
+
+OK

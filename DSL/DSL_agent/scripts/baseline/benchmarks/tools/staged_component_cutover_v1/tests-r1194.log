@@ -1,0 +1,14 @@
+test_changed_production_freeze_rejected (test_joint_guard.JointReceiptTests) ... ok
+test_changed_target_rejected (test_joint_guard.JointReceiptTests) ... ok
+test_complete_staged_receipt (test_joint_guard.JointReceiptTests) ... ok
+test_extra_api_compiler_or_ciphertext_claim_rejected (test_joint_guard.JointReceiptTests) ... ok
+test_failed_error_and_skip_rejected (test_joint_guard.JointReceiptTests) ... ok
+test_missing_isolation_rejected (test_joint_guard.JointReceiptTests) ... ok
+test_synthetic_submit_cannot_claim_numeric_acceptance (test_joint_guard.JointReceiptTests) ... ok
+test_unpinned_runtime_rejected (test_joint_guard.JointReceiptTests) ... ok
+test_untested_target_rejected (test_joint_guard.JointReceiptTests) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.000s
+
+OK

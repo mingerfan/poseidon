@@ -1,0 +1,99 @@
+Starting program: /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/hecate-opt.debug-launch --dacapo --ckks-config=profiles/compiler-profile.json --waterline=40 --mlir-disable-threading --mlir-print-op-on-diagnostic=false artifacts/block-prefill/trace_qwen_block.mlir -o artifacts/block-prefill.profile-only.mlir
+warning: Unable to find libthread_db matching inferior's thread library, thread debugging will not be available.
+PASS_ENTER BypassDetection
+[Switching to LWP 4008855]
+BYPASS_WORKER_FIRST_EDGE 0
+#0  (anonymous namespace)::BypassDetectionPass::findBypassEdge (this=0x555555f59bc0, func=..., from=0) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp:65
+#1  0x00007fffeecf2fa4 in execute_native_thread_routine () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libstdc++.so.6
+#2  0x00007fffee89dd53 in start_thread () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#3  0x00007fffee92563c in __clone3 () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+
+Thread 1 "hecate-opt.debu" received signal SIGINT, Interrupt.
+[Switching to LWP 4008850]
+0x00007fffee8a6922 in __syscall_cancel_arch () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+[Switching to thread 1 (LWP 4008850)]
+#0  0x00007fffee8a6922 in __syscall_cancel_arch () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#0  0x00007fffee8a6922 in __syscall_cancel_arch () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#1  0x00007fffee89a00c in __internal_syscall_cancel () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#2  0x00007fffee89a78c in __futex_abstimed_wait_common () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#3  0x00007fffee89fb6c in __pthread_clockjoin_ex () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#4  0x00007fffeecf301b in std::thread::join() () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libstdc++.so.6
+#5  0x00005555556411b8 in (anonymous namespace)::BypassDetectionPass::runOnOperation (this=0x555555f59bc0) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp:53
+#6  0x0000555555b74cc5 in mlir::detail::OpToOpPassAdaptor::run(mlir::Pass*, mlir::Operation*, mlir::AnalysisManager, bool, unsigned int) ()
+#7  0x0000555555b75b45 in mlir::detail::OpToOpPassAdaptor::runPipeline(mlir::OpPassManager&, mlir::Operation*, mlir::AnalysisManager, bool, unsigned int, mlir::PassInstrumentor*, mlir::PassInstrumentation::PipelineParentInfo const*) ()
+#8  0x0000555555b763e6 in mlir::detail::OpToOpPassAdaptor::runOnOperationImpl(bool) ()
+#9  0x0000555555b7557d in mlir::detail::OpToOpPassAdaptor::run(mlir::Pass*, mlir::Operation*, mlir::AnalysisManager, bool, unsigned int) ()
+#10 0x0000555555b75b45 in mlir::detail::OpToOpPassAdaptor::runPipeline(mlir::OpPassManager&, mlir::Operation*, mlir::AnalysisManager, bool, unsigned int, mlir::PassInstrumentor*, mlir::PassInstrumentation::PipelineParentInfo const*) ()
+#11 0x0000555555b779c4 in mlir::PassManager::run(mlir::Operation*) ()
+#12 0x00005555555d513b in performActions(llvm::raw_ostream&, std::shared_ptr<llvm::SourceMgr> const&, mlir::MLIRContext*, mlir::MlirOptMainConfig const&) ()
+#13 0x00005555555d6665 in processBuffer(llvm::raw_ostream&, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, mlir::MlirOptMainConfig const&, mlir::DialectRegistry&, llvm::ThreadPool*) ()
+#14 0x00005555555d6794 in mlir::LogicalResult llvm::function_ref<mlir::LogicalResult (std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, llvm::raw_ostream&)>::callback_fn<mlir::MlirOptMain(llvm::raw_ostream&, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, mlir::DialectRegistry&, mlir::MlirOptMainConfig const&)::{lambda(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, llvm::raw_ostream&)#1}>(long, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, llvm::raw_ostream&) ()
+#15 0x0000555555d1ed6d in mlir::splitAndProcessBuffer(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, llvm::function_ref<mlir::LogicalResult (std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, llvm::raw_ostream&)>, llvm::raw_ostream&, bool, bool) ()
+#16 0x00005555555d2ac0 in mlir::MlirOptMain(llvm::raw_ostream&, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, mlir::DialectRegistry&, mlir::MlirOptMainConfig const&) ()
+#17 0x00005555555beeab in main (argc=9, argv=0x7fffffffe7e8) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp:197
+  Id   Target Id                     Frame 
+* 1    LWP 4008850 "hecate-opt.debu" 0x00007fffee8a6922 in __syscall_cancel_arch () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+  386  LWP 4009240 "hecate-opt.debu" 0x00007fffee8ae0cc in _int_malloc () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+  387  LWP 4009241 "hecate-opt.debu" 0x0000555555d0ef48 in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  388  LWP 4009242 "hecate-opt.debu" 0x00007fffee8acd6c in _int_free_chunk () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+  390  LWP 4009244 "hecate-opt.debu" 0x0000555555d0ef5b in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  392  LWP 4009246 "hecate-opt.debu" 0x0000555555d0fa75 in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  393  LWP 4009247 "hecate-opt.debu" 0x0000555555d10318 in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  395  LWP 4009249 "hecate-opt.debu" 0x00007fffee8acd8a in _int_free_chunk () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+  396  LWP 4009250 "hecate-opt.debu" 0x0000555555cca094 in mlir::Operation::dropAllReferences() ()
+  397  LWP 4009251 "hecate-opt.debu" 0x00007fffee8ab4cd in malloc_consolidate () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+  403  LWP 4009257 "hecate-opt.debu" 0x0000555555d0eddd in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  404  LWP 4009258 "hecate-opt.debu" 0x00007fffee8ab4d6 in malloc_consolidate () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+  405  LWP 4009259 "hecate-opt.debu" 0x0000555555d0ef5b in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  406  LWP 4009260 "hecate-opt.debu" 0x0000555555d1038d in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  409  LWP 4009263 "hecate-opt.debu" 0x0000555555cca064 in mlir::Operation::dropAllReferences() ()
+  411  LWP 4009265 "hecate-opt.debu" 0x0000555555cca060 in mlir::Operation::dropAllReferences() ()
+  413  LWP 4009267 "hecate-opt.debu" 0x0000555555cca0db in mlir::Operation::dropAllReferences() ()
+  415  LWP 4009269 "hecate-opt.debu" 0x0000555555cc98bd in mlir::Operation::create(mlir::OperationState const&) ()
+  417  LWP 4009271 "hecate-opt.debu" 0x0000555555c16c67 in bool llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>::callback_fn<mlir::StorageUniquer::get<mlir::detail::DictionaryAttrStorage, llvm::ArrayRef<mlir::NamedAttribute>&>(llvm::function_ref<void (mlir::detail::DictionaryAttrStorage*)>, mlir::TypeID, llvm::ArrayRef<mlir::NamedAttribute>&)::{lambda(mlir::StorageUniquer::BaseStorage const*)#1}>(long, mlir::StorageUniquer::BaseStorage const*) ()
+  418  LWP 4009272 "hecate-opt.debu" 0x0000555555d0eddd in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  419  LWP 4009273 "hecate-opt.debu" llvm::hashing::detail::fetch64 (p=0x7fff057f9548 "\252\301\337\001") at /nix/store/v0vnvpp16nijl7pf2yj8k4bvfdcfp65r-llvm-18.1.8-dev/include/llvm/ADT/Hashing.h:154
+  420  LWP 4009274 "hecate-opt.debu" 0x0000555555c16c85 in bool llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>::callback_fn<mlir::StorageUniquer::get<mlir::detail::DictionaryAttrStorage, llvm::ArrayRef<mlir::NamedAttribute>&>(llvm::function_ref<void (mlir::detail::DictionaryAttrStorage*)>, mlir::TypeID, llvm::ArrayRef<mlir::NamedAttribute>&)::{lambda(mlir::StorageUniquer::BaseStorage const*)#1}>(long, mlir::StorageUniquer::BaseStorage const*) ()
+  423  LWP 4009277 "hecate-opt.debu" 0x0000555555bb870a in mlir::InferTypeOpInterface::inferReturnTypes(mlir::MLIRContext*, std::optional<mlir::Location>, mlir::ValueRange, mlir::DictionaryAttr, mlir::OpaqueProperties, mlir::RegionRange, llvm::SmallVectorImpl<mlir::Type>&) ()
+  424  LWP 4009278 "hecate-opt.debu" 0x0000555555d10d54 in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+  425  LWP 4009279 "hecate-opt.debu" 0x0000555555cca094 in mlir::Operation::dropAllReferences() ()
+  428  LWP 4009282 "hecate-opt.debu" llvm::SmallVectorTemplateCommon<mlir::Type, void>::reserveForParamAndGetAddressImpl<llvm::SmallVectorTemplateBase<mlir::Type, true> > (This=0x7ffec7ffe578, N=1, Elt=...) at /nix/store/v0vnvpp16nijl7pf2yj8k4bvfdcfp65r-llvm-18.1.8-dev/include/llvm/ADT/SmallVector.h:246
+  431  LWP 4009285 "hecate-opt.debu" 0x00007fffee8accb5 in _int_free_chunk () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#5  0x00005555556411b8 in (anonymous namespace)::BypassDetectionPass::runOnOperation (this=0x555555f59bc0) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp:53
+53	/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp: No such file or directory.
+value has been optimized out
+value has been optimized out
+$1 = 48
+[Switching to thread 387 (LWP 4009241)]
+#0  0x0000555555d0ef48 in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+#0  0x0000555555d0ef48 in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+#1  0x0000555555c1a43d in mlir::StringAttr::get(mlir::MLIRContext*, llvm::Twine const&) [clone .part.0] ()
+#2  0x0000555555cdbe25 in mlir::NamedAttrList::append(llvm::StringRef, mlir::Attribute) ()
+#3  0x0000555555606cb2 in hecate::earth::ConstantOp::populateInherentAttrs (prop=..., ctx=<optimized out>, attrs=...) at include/hecate/Dialect/Earth/IR/EarthOps.cpp.inc:1391
+#4  mlir::RegisteredOperationName::Model<hecate::earth::ConstantOp>::populateInherentAttrs (this=<optimized out>, op=0x7ffec321cbe0, attrs=...) at /nix/store/6sgd3j8jw4624dnlwy4xldszblw4y0f0-mlir-18.1.8-dev/include/mlir/IR/OperationSupport.h:594
+#5  0x0000555555cc86f6 in mlir::Operation::getAttrDictionary() ()
+#6  0x0000555555637fdc in hecate::earth::inferTypeForward (sop=...) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/Common.cpp:142
+#7  0x0000555555641b5b in (anonymous namespace)::BypassDetectionPass::findBypassEdge (this=0x555555f59bc0, func=..., from=501) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp:104
+#8  0x00007fffeecf2fa4 in execute_native_thread_routine () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libstdc++.so.6
+#9  0x00007fffee89dd53 in start_thread () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#10 0x00007fffee92563c in __clone3 () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+[Switching to thread 396 (LWP 4009250)]
+#0  0x0000555555cca094 in mlir::Operation::dropAllReferences() ()
+#0  0x0000555555cca094 in mlir::Operation::dropAllReferences() ()
+#1  0x0000555555c0cf20 in mlir::Block::~Block() ()
+#2  0x0000555555ce7feb in mlir::Region::~Region() ()
+#3  0x0000555555cc7fbc in mlir::Operation::~Operation() ()
+#4  0x0000555555cc9cf3 in mlir::Operation::erase() ()
+#5  0x0000555555641c34 in mlir::OpState::erase (this=0x7fff6e1f3b90) at /nix/store/6sgd3j8jw4624dnlwy4xldszblw4y0f0-mlir-18.1.8-dev/include/mlir/IR/OpDefinition.h:131
+#6  (anonymous namespace)::BypassDetectionPass::findBypassEdge (this=0x555555f59bc0, func=..., from=510) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp:119
+#7  0x00007fffeecf2fa4 in execute_native_thread_routine () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libstdc++.so.6
+#8  0x00007fffee89dd53 in start_thread () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+#9  0x00007fffee92563c in __clone3 () from /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/libc.so.6
+[Switching to thread 387 (LWP 4009241)]
+#0  0x0000555555d0ef48 in mlir::StorageUniquer::getParametricStorageTypeImpl(mlir::TypeID, unsigned int, llvm::function_ref<bool (mlir::StorageUniquer::BaseStorage const*)>, llvm::function_ref<mlir::StorageUniquer::BaseStorage* (mlir::StorageUniquer::StorageAllocator&)>) ()
+#7  0x0000555555641b5b in (anonymous namespace)::BypassDetectionPass::findBypassEdge (this=0x555555f59bc0, func=..., from=501) at /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp:104
+104	in /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp
+$2 = 74657
+$3 = 164733
+$4 = 501
+[Inferior 1 (process 4008850) killed]

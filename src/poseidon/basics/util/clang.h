@@ -67,12 +67,12 @@ __extension__ typedef unsigned __int128 uint128_t;
     } while (false)
 #endif
 
-#ifdef POSEIDON_USE__ADDCARRY_U64
+#if defined(POSEIDON_USE__ADDCARRY_U64) && defined(__x86_64__)
 #define POSEIDON_ADD_CARRY_UINT64(operand1, operand2, carry, result)                               \
     _addcarry_u64(carry, operand1, operand2, result)
 #endif
 
-#ifdef POSEIDON_USE_SUBBORROW_U64
+#if defined(POSEIDON_USE_SUBBORROW_U64) && defined(__x86_64__)
 #define POSEIDON_SUB_BORROW_UINT64(operand1, operand2, borrow, result)                             \
     _subborrow_u64(borrow, operand1, operand2, result)
 #endif

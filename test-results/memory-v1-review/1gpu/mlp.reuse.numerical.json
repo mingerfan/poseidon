@@ -1,0 +1,94 @@
+{
+  "allow_no_boot": true,
+  "cuda_devices": [
+    0
+  ],
+  "device_worker_count": 0,
+  "device_workers": false,
+  "format_version": 1,
+  "input_level": 16,
+  "input_scale_log2": 40,
+  "key_generation_seconds": 0.781820823,
+  "logical_rotation_count": 111,
+  "max_imaginary": 7.705136032442338e-07,
+  "mock_comparison": {
+    "max_abs": 0.5247941110349359,
+    "max_relative": 0.012352698262685277,
+    "rms": 0.23571282841682373,
+    "within_tolerance": true
+  },
+  "mock_output": [
+    26.50720364428741,
+    71.27703900936244,
+    -5.018099794983987,
+    18.86925463333062,
+    92.18425497178299,
+    19.321834645114627,
+    -30.237559456043098,
+    -1.6612091043653043,
+    -31.89641055719177,
+    19.189542574867446
+  ],
+  "model": "mlp",
+  "model_sha256": "sha256:581ec4e02ac454e49f0ec0fa29ee2b2f8e1ddf43f797e9c96a363d23bfa41de3",
+  "operator_spec_sha256": "sha256:b37c827c139a227d95cc76b7e7c43677281a0e18752f540db8b714e37b79806b",
+  "output_level": 4,
+  "output_scale_log2": 80,
+  "passed": true,
+  "plan_sha256": "sha256:ba10d836878f713b1c353cd50d8a7d8d8fd44f4c5417103372978f7d528bf2e6",
+  "poly_degree": 8192,
+  "poseidon_output": [
+    26.659309294437698,
+    71.67650655294668,
+    -5.053607585710627,
+    18.97414020778497,
+    92.70904908281793,
+    19.433538090055315,
+    -30.403362821134607,
+    -1.6817295191827546,
+    -32.078374560961564,
+    19.29781944280502
+  ],
+  "python_comparison": {
+    "max_abs": 0.5247941110349359,
+    "max_relative": 0.01235269826265226,
+    "rms": 0.23571282841680544,
+    "within_tolerance": true
+  },
+  "python_output": [
+    26.507203644287394,
+    71.2770390093625,
+    -5.018099794983979,
+    18.86925463333058,
+    92.18425497178299,
+    19.321834645114635,
+    -30.237559456043147,
+    -1.6612091043653585,
+    -31.896410557191793,
+    19.18954257486757
+  ],
+  "q_modulus_count": 17,
+  "require_python_match": true,
+  "rotation_key_count": 14,
+  "rotation_key_policy": "binary",
+  "runtime_scope": "online_execution_only",
+  "runtime_seconds": 0.08761345400000001,
+  "runtime_timing": {
+    "boot_calls": 0,
+    "boot_seconds": 0.0,
+    "compute_calls": 375,
+    "compute_excluding_boot_seconds": 0.08385702,
+    "compute_including_boot_seconds": 0.08385702,
+    "initialization_seconds": 0.14877437000000002,
+    "online_execution_seconds": 0.08761345400000001,
+    "setup_seconds": 0.038427911
+  },
+  "seed": 20260717,
+  "tolerances": {
+    "absolute": 0.1,
+    "imaginary": 0.01,
+    "python_absolute": 0.1,
+    "relative": 0.006
+  },
+  "transfer_count": 122
+}

@@ -1,0 +1,30 @@
+{
+  "binding": "d92c6f1463341f33ce5b22027b193da5ea7ff08f433d3b142f022ef5fe4d005c",
+  "errors": 1,
+  "failed": 0,
+  "format": "poseidon-generic-application-controls-v1",
+  "log_sha256": "e75f7e2901ab52dfc6b3a4a1854c5e264f0706d4ae425b338cc51950a7307cf4",
+  "new_compiler_calls": 0,
+  "new_encrypted_calls": 0,
+  "new_hecate_capture": 0,
+  "new_provider_calls": 0,
+  "passed": 87,
+  "runner_sha256": "6ef23f23c069587b28539b60e2594b8379bbcffdcac4abfb5c7ccbe43d486c0b",
+  "scope": "Injected Fake Backend/Provider; WorkerContext and backend identity read installed files only",
+  "sdk_identity": "8ca41ede84d20c654fdc7885658e343d1d263cfc0885fd1a96ad259c54e38f8a",
+  "seconds": 3.3898566120042233,
+  "skipped": 0,
+  "stage_identities": {
+    "compilation": "c41a45f11cfe51c16d9ff6ce817ec11ffb62889cb2405362df8675d5c2cdacd8",
+    "execution": "a20d3873602ce4943d605fe391ab53152cd8b53edfae585cfc91bf77bf3a7c96",
+    "generation": "5dd8a970ab4daa4384ad5673544b7d0cbe10f20e5e026d1eaf1bfb295f2fc672",
+    "validation": "2132ceab6e841e59ab3067fb48bd07602452969e065b991e714255f2b5c423be"
+  },
+  "status": "failed",
+  "test_source_hashes": {
+    "test_application_component": "a0ec6cf377e1aeaa6e2acfe3ab48708525d0ba80e189e6c932252099a0ef47b7",
+    "test_application_diagnostics": "0529893ca45810a2f9f16be0b8554f75cbc43f774308ffae643b51c801d6775b",
+    "test_staged_application_reuse": "ad13c2707203902958a081226b5afba1658d53e36c3770f13989f0c29fc11bc5"
+  },
+  "tests": 88
+}

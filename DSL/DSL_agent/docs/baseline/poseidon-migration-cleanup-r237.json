@@ -1,0 +1,70 @@
+{
+  "format": "poseidon-migration-cleanup-v1",
+  "status": "targeted_validation_passed",
+  "unit": {
+    "run": 84,
+    "passed": 84,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "environment": {
+    "DACAPO_ROOT": "/home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo",
+    "DACAPO_BUILD_DIR": "/home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232",
+    "CC": "/nix/store/49nb1m1ysq0vx31qp94alpmi6ccsq9l3-gcc-wrapper-13.2.0/bin/gcc",
+    "CXX": "/nix/store/49nb1m1ysq0vx31qp94alpmi6ccsq9l3-gcc-wrapper-13.2.0/bin/g++",
+    "LLVM_ROOT": "/nix/store/qhvbldh8bzbamg154vqq711lx5bdl5mm-poseidon-llvm-mlir-18.1.2"
+  },
+  "application_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-application-clean-r237",
+  "preserved_initial_harness_failure": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-application-r237",
+  "changes": [
+    "Poseidon Nix shell no longer imports the SEAL shell or requires the SEAL package",
+    "Actual Dacapo source and configured compiler build paths exported",
+    "Backend-neutral numeric comparison and strict reports",
+    "Shared sandbox allowlist and unchanged resource limits",
+    "Package implementation binding includes extracted modules",
+    "Unit fixture imports backend identity before patching ROOT"
+  ],
+  "paid_calls": 0,
+  "new_dependencies": false,
+  "downloads": 0,
+  "bootstrap_status": "numerically_blocked; next parameter proposal awaiting approval",
+  "application": [
+    {
+      "level": "compiled",
+      "status": "succeeded",
+      "reload_status": "compiled",
+      "numerically_validated": false,
+      "agent_calls": 0,
+      "compiler_calls": 0,
+      "cache_provider_calls": 0,
+      "max_absolute_error": null
+    },
+    {
+      "level": "numerical",
+      "status": "succeeded",
+      "reload_status": "passed",
+      "numerically_validated": true,
+      "agent_calls": 0,
+      "compiler_calls": 0,
+      "cache_provider_calls": 0,
+      "max_absolute_error": 1.3264819243019588e-09
+    }
+  ],
+  "source_sha256": {
+    "numerical_results.py": "802c15ea58792aa90c046c15b1d99de81c931c7d1a1a10543f80a400b13f1871",
+    "sandbox_policy.py": "711f73d4f5da8541861e9e176bb251fa76e1229714cf6a6e8ed1b1d9ec7c5593",
+    "poseidon_candidate_sandbox.py": "2487352d88703b2043c70a927614d23cba0b9ed8ba00ff4012baf7c3a608c2fd",
+    "poseidon_package.py": "113f58a744ac0e4f16feab9f44b1dc8d02b325504065319a5a044b7de0ef0547",
+    "validation_adapter.py": "f6e0d3a0246f333f14b716778ed036016a5e8716c94871108a11ed3275d7c788",
+    "run_candidate.py": "673d639160083b1e51ebe373429c485d4c02ccbff4e5f0b8a3adbbc987386c14",
+    "candidate_bundle.py": "cae958cc10a56fba65ff17294fa0c65788a56407105038d5325c5a78bb95d7d1"
+  },
+  "fixture_regression": {
+    "passed": 6,
+    "errors": 0,
+    "failures": 0,
+    "identity_after_tests_passed": true
+  },
+  "binding_note": "Application results retain their exact implementation binding. Later fixture-only import-order fix was tested separately; historical task/cache identities were not rewritten."
+}

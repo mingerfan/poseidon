@@ -1,0 +1,12 @@
+{
+  "encrypted_calls": 0,
+  "first_patch_syntax_error": "unmatched parenthesis; compile rejected before saving or executing",
+  "format": "poseidon-einsum-extension-first-backend-failure-v1",
+  "next_tool": "scripts/baseline/benchmarks/tools/einsum_extensions_v1/backend_acceptance_v2.py",
+  "original_deadline_preserved": true,
+  "prior_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v1/report.json",
+  "production_changes": 0,
+  "provider_calls": 0,
+  "real_compilations": 0,
+  "reason": "incomplete application budget dictionary in offline harness"
+}

@@ -1,0 +1,146 @@
+[
+  {
+    "case": "reshape_0",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/manifest.json",
+    "model_binding": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+    "record_binding": "d368ef3350fa4b693c28512bdf6d3fef70903888fa6863f5d1346e93b5306023",
+    "reference_groups": 16
+  },
+  {
+    "case": "reshape_1",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/manifest.json",
+    "model_binding": "55d474358ba2931b6b862b28af774dffc93b56a82c02644e1a0cdab5f5c47e0e",
+    "record_binding": "0e4cbe08eb39748c605e12ffb25c507cbda3df1f74aafd1bc93a0e5401d997cb",
+    "reference_groups": 16
+  },
+  {
+    "case": "reshape_2",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/manifest.json",
+    "model_binding": "9cdddc2b3543443804e33c226eae4e003944439e6bb03354e3490ae5f7dd7185",
+    "record_binding": "2a4580d9baa945dd7ae73451ec826f9a75fd6c3f3dbcb58a7e02246065bef3d5",
+    "reference_groups": 16
+  },
+  {
+    "case": "permute_0",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/manifest.json",
+    "model_binding": "f909d9f1a77a86917a645805970b037d2f836da46e7bbc34c1d536dd9af994b8",
+    "record_binding": "6f9fb687daf10d1294d7e40f0864dc294055d68bc409b4ae67a3963a5dc835fa",
+    "reference_groups": 16
+  },
+  {
+    "case": "permute_1",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/manifest.json",
+    "model_binding": "d6f18e43b243fbb78deae48a27bfd0a66d146e1bb4e07c2d20280ea1b9cd4da7",
+    "record_binding": "c059ace2fce08ccd79927ffcf47af27a236f34825f24b470caf144b8ed5b19c5",
+    "reference_groups": 16
+  },
+  {
+    "case": "permute_2",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/manifest.json",
+    "model_binding": "2208ca50b074c91ec56a90b47172cf4482ff84af6c546edd93d0787c4a6cd3ee",
+    "record_binding": "93bf24210983c7ed49a8a112997e70e9781ae389ecc16097e64a0b8bfe1cb00a",
+    "reference_groups": 16
+  },
+  {
+    "case": "slice_0",
+    "compared_values": 48,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/manifest.json",
+    "model_binding": "b0fea7ec6b6edd50e4cdf71851775b722b8066c7e2b5cd58c0d1e1e4c3dd383e",
+    "record_binding": "64d0073412e53c3b7a94e1396fd4d658c16b00dd862e6255843a88c82d4c8cb9",
+    "reference_groups": 16
+  },
+  {
+    "case": "slice_1",
+    "compared_values": 64,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/manifest.json",
+    "model_binding": "defa121ffc93fde34e5a726646026f7254dbb53136158223089c3afe7b829976",
+    "record_binding": "94dc177081decc28ce302283fdcd46e791d6d6e3f0773d44ca3dcca4b7343be9",
+    "reference_groups": 16
+  },
+  {
+    "case": "slice_2",
+    "compared_values": 64,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/manifest.json",
+    "model_binding": "62017898f3314aefd9536f28ba67ae6d176f5dd0785a66b03cacbdea70455b33",
+    "record_binding": "3986d9d61e0eb5906d9ca734db0367408e19f8f57c8f4e3e2f78df0605a8d26a",
+    "reference_groups": 16
+  },
+  {
+    "case": "bool_cast_0",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/manifest.json",
+    "model_binding": "3c950df08e210e49b09d900a552dd86b5693402bb1a203731ef3c814b614aafe",
+    "record_binding": "924992fd67117df77d77b23e4dfb3f4cc32d738f16f555a28403d0b3000cfc6f",
+    "reference_groups": 16
+  },
+  {
+    "case": "bool_cast_1",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/manifest.json",
+    "model_binding": "278d9087ddcd6d684549e444682786d40fca63ce96750a57d47a56b20fb961ae",
+    "record_binding": "cabe141a5ebbbe1e1963d5f85d5a42eeabae65e9c1c99ad2bb6b6590b8b29436",
+    "reference_groups": 16
+  },
+  {
+    "case": "bool_cast_2",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/manifest.json",
+    "model_binding": "2d8718e09d0ffcb99d95077bca2f0b85506641366e2c83878d36de417a863358",
+    "record_binding": "8906a34545bd28652f3a2504505d1f4a8051cfc40830659f7279d9fbb228262f",
+    "reference_groups": 16
+  },
+  {
+    "case": "identity_0",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/manifest.json",
+    "model_binding": "f909d9f1a77a86917a645805970b037d2f836da46e7bbc34c1d536dd9af994b8",
+    "record_binding": "4fbf0b1693fb92ff6a1d5820d0d66a398b70871c7952cd3e83b817fce8aea46f",
+    "reference_groups": 16
+  },
+  {
+    "case": "identity_1",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/manifest.json",
+    "model_binding": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+    "record_binding": "f4daab53066ba00c306518ea4c7616bef067ec23a4499f8e043e3c447c0d8d91",
+    "reference_groups": 16
+  },
+  {
+    "case": "identity_2",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/manifest.json",
+    "model_binding": "4df4057ba7bc0d96b0f9a63f37a35a3179f8277b5d3c1ef37010cbae277a261a",
+    "record_binding": "a8b830df3e7f76871e9c08a0685ea2a65d043b751202f8bf094ab4e658d16133",
+    "reference_groups": 16
+  },
+  {
+    "case": "float32",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/manifest.json",
+    "model_binding": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+    "record_binding": "d6cac506992cd943478555e970db6cad1b33dac8ef3dde2f57281b99a35b99d7",
+    "reference_groups": 16
+  },
+  {
+    "case": "named",
+    "compared_values": 192,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/manifest.json",
+    "model_binding": "82341e7f74f73628abcf8ff69378a2d03ff81f776c50fe7bc21eab9e533ab04e",
+    "record_binding": "ee449cc72b7478a5ef4388df15732bc16c168ef931b2429052b26e5c1168e478",
+    "reference_groups": 16
+  },
+  {
+    "case": "unused",
+    "compared_values": 96,
+    "manifest_path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/manifest.json",
+    "model_binding": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+    "record_binding": "3765ff96932f2fbe6e1a24582e9584f109fa3ce6116a7cb820de0a63ac07e4ae",
+    "reference_groups": 16
+  }
+]

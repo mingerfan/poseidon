@@ -1,0 +1,12 @@
+{
+  "passed": 68,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "modules": [
+    "test_operator_spatial_graph",
+    "test_operator_arithmetic_graph",
+    "test_operator_graph_v2",
+    "test_model_decomposition"
+  ]
+}

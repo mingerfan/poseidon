@@ -1,0 +1,169 @@
+{
+  "acceptance_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-joint-component-tests-r1196/report.json",
+  "acceptance_report_sha256": "7e473448b9d220cd3e8acdb85fed54eddddb3f298cc0705d92b46cb5913ad00c",
+  "acceptance_sandbox": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-joint-component-tests-r1196/sandbox.json",
+  "acceptance_sandbox_sha256": "6639be148e27f87b1d32da2b0f63953e21b988aae9ac09bbb1e8adace4224dc3",
+  "application_acceptance": {
+    "encrypted_executions": 0,
+    "full_source_capture_supervisor": "pending_post_cutover",
+    "import_contexts": 3,
+    "provider_calls": 0,
+    "source_snapshot_admission_contexts": 3
+  },
+  "backend_changes": false,
+  "current_stage_tests": 251,
+  "cutover_record": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_component_cutover_v1/applied-20261007T100553-74042cb5/record.json",
+  "cutover_record_sha256": "ce52915b363963cc9525ef0893e399f6018481daf890848d09ea8a358826164f",
+  "exact_original_scope": 76,
+  "format": "poseidon-joint-source-cutover-plan-v1",
+  "guard_expected_branch": "lhy-agent-dsl",
+  "guard_expected_head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "new_files": [
+    "candidate_check_diagnostic.py",
+    "pytorch_alias_capture_bridge.py",
+    "pytorch_alias_composition.py",
+    "pytorch_ordered_capture.py",
+    "pytorch_ordered_contract.py",
+    "pytorch_ordered_intake.py",
+    "pytorch_ordered_reference.py",
+    "test_binding_feedback.py",
+    "unified_binding_guidance.py"
+  ],
+  "original_files": {
+    "scripts/baseline/application-source-catalog-v1.json": "de005e53765e79575aef2ed1bf94c0cf443efe1fe5b8a985b6c52f484516dac7",
+    "scripts/baseline/application_capabilities.py": "b52599197e40eb98a3892277297f8a720d543d4f4c9c03791707d556cb6dad1e",
+    "scripts/baseline/application_component.py": "757fcdd553630ca62458644f80a34f59ec45428d16cb7e3e10b7c7a631ef03cb",
+    "scripts/baseline/application_diagnostics.py": "92e5f0dad73eb19ca374480befb5697844b0dd2590b39ec06bc734d6614090f9",
+    "scripts/baseline/candidate_bundle.py": "df777d01cdd23db7e0775567f97c22c04152df0098f67eaa307f44150fd8ff7e",
+    "scripts/baseline/component_contract.py": "7ee006daaf7ef66a952c3442e2d5c235a6e6e5304d941453443fd4239c80198a",
+    "scripts/baseline/decorated_functions.py": "6338d89b5f86c3ffe06f18c92b18a2cfa175b77de45b5a48cf5f34c719568e96",
+    "scripts/baseline/native_array_core.py": "e58af49867951c4d283d4337ae0b2351fae472379fea1c573f6209cf0812f80d",
+    "scripts/baseline/pytorch_arithmetic_normalization.py": "69abb17e5627b7588eb37ad6f260c1c9ce34d5fbfb35a3196be5dfe849e73d9a",
+    "scripts/baseline/pytorch_model_capture.py": "a8b28753c7d6fc89ee82580924edd7e9321dbab570dd01d6bf3aaaadbe3c1ca2",
+    "scripts/baseline/pytorch_model_intake.py": "168e57654d30c8641b6a746d1bcc6a8e578b54947b273be543df3abfae9796f7",
+    "scripts/baseline/pytorch_static_trace.py": "9e01d0f6b6180dceb2e1c3c0cf85acd78b8941f6802e934abb25d634e8e2c015",
+    "scripts/baseline/run_candidate.py": "c706172f40456e44f42e77bd439f27898d4adefa7ad5a7313162253ca6140f0e",
+    "scripts/baseline/sandbox_policy.py": "2d67eb3e99bc0353a18b1b29caa00f37aa835b6d596073b35d4f9a2d10bae409",
+    "scripts/baseline/unified_graph_contract.py": "c6c9dd698c590419de3df6a977773de9b55f6e97da300fcbac792360e2e33f5c",
+    "scripts/baseline/validation_adapter.py": "d4f358afbc3bb3bc010c15ba609544ce785aa8fd8d12ea4871371c0c2fad7404"
+  },
+  "post_cutover_backend_acceptance_required": true,
+  "post_cutover_request_preflight": {
+    "acceptance_level": "source_and_static_only",
+    "backend_acceptance_required": true,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-joint-component-tests-r1210/report.json",
+    "report_sha256": "ddcba4dd786ed2ac934f461350b87acaaeb59ba56c31a876d9546b36de58cc69",
+    "sandbox": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-joint-component-tests-r1210/sandbox.json",
+    "sandbox_sha256": "211dac1b3714f0f1223fd5eb6fbe85ca51b9559057e5845579b6b77ba3b8fe0d"
+  },
+  "production_freeze": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approved-unstarted-continuation-r1174/plan.json",
+  "protected_records": {
+    "protected-backend.json": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-offline-prepared-r1040/protected-backend.json",
+    "protected-references.json": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-offline-prepared-r1040/protected-references.json"
+  },
+  "provider_calls": 0,
+  "source_batch_binding": "0623167de71327bb1d2ec15a2d0563b74ee1c5bd1d35acf61f072027e2521c1b",
+  "source_overlays": {
+    "application-source-catalog-v1.json": {
+      "sha256": "6d7ec81e4cce7f8a6656fd2173df1b31f32b32ffaaa69ca63a6638eb8f65da53",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/application-source-catalog-v1.json"
+    },
+    "application_capabilities.py": {
+      "sha256": "928aa32532feec6ca5e318ecf23e9e85c7db3ab55533a755aecef5d16efe0dc3",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/application_capabilities.py"
+    },
+    "application_component.py": {
+      "sha256": "1a2204471b294694666c22a95275ed48a251d84f8b2dd04f27fdf8e60062d3d7",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/application_component.py"
+    },
+    "application_diagnostics.py": {
+      "sha256": "0dddea20f17e1f85760524219f4fd6862d4103953ddbfe1a64b97c64b7c45693",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/application_diagnostics.py"
+    },
+    "candidate_bundle.py": {
+      "sha256": "a2c33c0771e25a0fcb3bbae241f711e79345f72cef5ed80b1d01402d4c208afc",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/candidate_bundle.py"
+    },
+    "candidate_check_diagnostic.py": {
+      "sha256": "4043cf8c493bb7e1194302e1035b64d0658b164bcc54d2896e22614431ab3662",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/candidate_check_diagnostic.py"
+    },
+    "component_contract.py": {
+      "sha256": "50b2ed32e17c2d82055540750db0ef9bab322f57568f334f3746c468b6ba480e",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/component_contract.py"
+    },
+    "decorated_functions.py": {
+      "sha256": "93ee703a21311ba1c8a675d43ecbc6eba63f381b916ffe539b3e010ed3d86801",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/decorated_functions.py"
+    },
+    "native_array_core.py": {
+      "sha256": "b1918062c25dfe0155b7d840ef5c6eee0949daaf6e88e37b7b7c7d93b4fa7799",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/native_array_core.py"
+    },
+    "pytorch_alias_capture_bridge.py": {
+      "sha256": "10b6d4aa72d77411c356597b82dae1005fe2f25285dcd195aa73eaddca24b1b2",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_alias_capture_bridge.py"
+    },
+    "pytorch_alias_composition.py": {
+      "sha256": "980937de2f66343163bdae434fc9a318973b48f267af6c54a1fbb8577ee375f8",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_alias_composition.py"
+    },
+    "pytorch_arithmetic_normalization.py": {
+      "sha256": "856fff7b17efbefb95e06366400d08271e193bea5c97015851756e5c6dd62f1e",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_arithmetic_normalization.py"
+    },
+    "pytorch_model_capture.py": {
+      "sha256": "baa9a6743c57256e85944ac5b9de9eca0585e9742902173e317dbf87bbf040de",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_model_capture.py"
+    },
+    "pytorch_model_intake.py": {
+      "sha256": "8f450250e8e07c4e15292ec5b934e8441e038f47ac8262a1ff97d1f6686bc31b",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_model_intake.py"
+    },
+    "pytorch_ordered_capture.py": {
+      "sha256": "57fbfe965f3c65530990b8086055732f0923c837a272aa2acd629fd6e32c3340",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_ordered_capture.py"
+    },
+    "pytorch_ordered_contract.py": {
+      "sha256": "7f9e014303310939c26703fc4d8caf6b0ebcf3d2b39cb0bb039303d64cefeadc",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_ordered_contract.py"
+    },
+    "pytorch_ordered_intake.py": {
+      "sha256": "01ba99e91bc6687ef8cae23e1124e270b230aa87519ed8f852037287c4798506",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_ordered_intake.py"
+    },
+    "pytorch_ordered_reference.py": {
+      "sha256": "534758f6d7bb15aa4a81196692f934dffec2e60e671f269abad74a7456c24804",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_ordered_reference.py"
+    },
+    "pytorch_static_trace.py": {
+      "sha256": "fda6318dfc9d543fddab3e1e904cd04bdd79923db48f124b42e5c3292949c2d8",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/targets/pytorch_static_trace.py"
+    },
+    "run_candidate.py": {
+      "sha256": "e5200e7272a7ab13bf12592324f05c88d1e3bcb6ee5ad2e0d6ad10b6dee37612",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/run_candidate.py"
+    },
+    "sandbox_policy.py": {
+      "sha256": "12af334efac84d2ea2c92c6bc83bae263809aff89687888b4b414896a819600a",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/sandbox_policy.py"
+    },
+    "test_binding_feedback.py": {
+      "sha256": "512bfd5fd926d0c0bc08bc8739a5cd36a9c83d4ffa6f868402c95673facd594b",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/test_binding_feedback.py"
+    },
+    "unified_binding_guidance.py": {
+      "sha256": "aae3c209132afa9a16abbfed8fb2ad8396d1a218ce7d03b418c554ddf5450e26",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/unified_binding_guidance.py"
+    },
+    "unified_graph_contract.py": {
+      "sha256": "0c330d7d0f681b0d03c8c6b4deb05192beed5fbfd97f81d08fdf66d13cb0b17a",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/unified_graph_contract.py"
+    },
+    "validation_adapter.py": {
+      "sha256": "8baf1a5893c782d0cb96317031123f37dc38c208ae53cda949828162a6df184d",
+      "source": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/targets/validation_adapter.py"
+    }
+  },
+  "stage": "applied_pending_backend_acceptance"
+}

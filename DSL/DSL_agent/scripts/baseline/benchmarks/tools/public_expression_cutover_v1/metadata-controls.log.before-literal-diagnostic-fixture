@@ -1,0 +1,33 @@
+test_cipher_cast_not_registered_as_public (test_public_metadata.Controls) ... ok
+test_divisor_reciprocal_limit_preserved (test_public_metadata.Controls) ... ok
+test_divisor_zero_rejected_without_execution (test_public_metadata.Controls) ... ok
+test_encrypted_divisor_rejected (test_public_metadata.Controls) ... ok
+test_large_public_value_uses_constant_budget (test_public_metadata.Controls) ... ok
+test_policy_requires_ordered_division_contract (test_public_metadata.Controls) ... ok
+test_prior_v22_direct_divisor_unchanged (test_public_metadata.Controls) ... ok
+test_prior_v22_rejects_computed_public_divisor (test_public_metadata.Controls) ... ok
+test_public_mutation_and_nonbool_cast_rejected (test_public_metadata.Controls) ... ok
+test_public_transform_tensor_divisors_and_boolean_multiply (test_public_metadata.Controls) ... ok
+test_rank_profile_bound_preserved (test_public_metadata.Controls) ... ok
+test_static_signature_shape_can_reshape_public (test_public_metadata.Controls) ... ok
+test_undeclared_literal_tensor_rejected (test_public_metadata.Controls) ... FAIL
+test_unknown_policy_is_rejected (test_public_metadata.Controls) ... ok
+
+======================================================================
+FAIL: test_undeclared_literal_tensor_rejected (test_public_metadata.Controls)
+----------------------------------------------------------------------
+ValueError: Static finite arithmetic parameter
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_metadata.py", line 119, in test_undeclared_literal_tensor_rejected
+    self.failure(lambda:selected(Literal(),[2]),"public_expression_attribute_not_declared")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_metadata.py", line 31, in failure
+    with self.assertRaisesRegex(ValueError,code):fn()
+AssertionError: "public_expression_attribute_not_declared" does not match "Static finite arithmetic parameter"
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.094s
+
+FAILED (failures=1)

@@ -1,0 +1,101 @@
+--- pytorch_arithmetic_normalization.py
++++ pytorch_arithmetic_normalization.py
+@@ -304,3 +304,98 @@
+     result["normalized_fx_sha256"]=hashlib.sha256(str(canonical.graph).encode()).hexdigest()
+     result["binding_sha256"]=digest(result)
+     return result
++
++
++# Development-only: called only by the explicitly staged intake worker.
++def normalize_common(traced,inputs,*,resource_profile="general-tensors-v1"):
++    import torch
++    from torch.nn import functional as F
++    require(isinstance(traced,torch.fx.GraphModule),"Explicit FX capture required")
++    limits=resolve(resource_profile)
++    source=str(traced.graph)
++    before={k:v.detach().clone() for k,v in traced.state_dict().items()}
++    result=copy.deepcopy(traced);entries=[]
++    placeholders=[n for n in result.graph.nodes if n.op=="placeholder"]
++    require(len(placeholders)==len(inputs),"Common normalization input binding")
++    signatures=dict(zip(placeholders,(x["shape"] for x in inputs)))
++    def arguments(node,names,defaults):
++        require(len(node.args)<=len(names) and not(set(node.kwargs)-set(names)),"Registered common call arguments")
++        values=dict(zip(names,node.args))
++        for name,value in node.kwargs.items():
++            require(name not in values,"Duplicate common call argument")
++            values[name]=value
++        for name,value in defaults.items():values.setdefault(name,value)
++        require(set(values)==set(names),"Common call required arguments")
++        return values
++    def scalar(value):
++        require(type(value) in (int,float) and math.isfinite(value),"Finite public scalar required")
++        return value
++    dropout_functions={F.dropout,F.dropout1d,F.dropout2d,F.dropout3d,F.alpha_dropout,F.feature_alpha_dropout}
++    dropout_modules=(torch.nn.Dropout,torch.nn.Dropout1d,torch.nn.Dropout2d,torch.nn.Dropout3d,
++                     torch.nn.AlphaDropout,torch.nn.FeatureAlphaDropout)
++    for node in list(result.graph.nodes):
++        kind=node.op;target=node.target
++        arithmetic=(kind=="call_function" and target in (torch.add,torch.sub,torch.subtract)) or (
++            kind=="call_method" and target in ("add","sub","subtract"))
++        if arithmetic:
++            names=("self","other","alpha","out") if kind=="call_method" else ("input","other","alpha","out")
++            value=arguments(node,names,{"alpha":1,"out":None})
++            require(len(node.args)<=2,"Arithmetic alpha is keyword-only")
++            alpha=scalar(value["alpha"])
++            require(value["out"] is None,"Arithmetic out mutation is unsupported")
++            if alpha==1:continue
++            left=value[names[0]];right=value["other"]
++            with result.graph.inserting_before(node):
++                weighted=result.graph.call_function(operator.mul,(right,alpha),{})
++            node.op="call_function";node.target=operator.add if target in (torch.add,"add") else operator.sub
++            node.args=(left,weighted);node.kwargs={}
++            entries.append(dict(source_node=node.name,rule="static_alpha_multiply",alpha=alpha,added=weighted.name))
++        elif (kind=="call_function" and target in dropout_functions) or kind=="call_module":
++            child=result.get_submodule(target) if kind=="call_module" else None
++            if child is not None and type(child) not in dropout_modules:continue
++            if child is not None:
++                require(len(node.args)==1 and not node.kwargs,"Dropout module arity")
++                data=node.args[0];p=child.p;training=child.training;inplace=child.inplace
++            else:
++                values=arguments(node,("input","p","training","inplace"),{"p":0.5,"training":True,"inplace":False})
++                data=values["input"];p=values["p"];training=values["training"];inplace=values["inplace"]
++            require(isinstance(data,torch.fx.Node),"Dropout tensor required")
++            require(0<=scalar(p)<=1,"Dropout probability")
++            require(training is False,"Only inference Dropout is supported")
++            require(inplace is False,"In-place Dropout is unsupported")
++            entries.append(dict(source_node=node.name,rule="inference_dropout_identity",source_kind=kind,p=p))
++            node.replace_all_uses_with(data);result.graph.erase_node(node)
++        elif kind=="call_function" and target is F.scaled_dot_product_attention:
++            value=arguments(node,("query","key","value","attn_mask","dropout_p","is_causal"),
++                            {"attn_mask":None,"dropout_p":0.,"is_causal":False})
++            require(value["attn_mask"] is None and value["is_causal"] is False,
++                    "Staged SDPA supports explicit dense attention only")
++            require(scalar(value["dropout_p"])==0,"SDPA dropout must be zero")
++            q,k,v=(value[x] for x in ("query","key","value"))
++            require(all(x in signatures for x in (q,k,v)),"Staged SDPA requires declared input tensors")
++            qs,ks,vs=(signatures[x] for x in (q,k,v))
++            require(all(2<=len(x)<=limits.rank and all(type(d) is int and d>0 for d in x) for x in (qs,ks,vs)),
++                    "Static SDPA tensor ranks")
++            require(qs[-1]==ks[-1] and ks[-2]==vs[-2],"SDPA contracting dimensions")
++            batch=list(torch.broadcast_shapes(qs[:-2],ks[:-2],vs[:-2]))
++            require(math.prod(batch+[qs[-2],ks[-2]])<=limits.tensor_elements and
++                    math.prod(batch+[qs[-2],vs[-1]])<=limits.tensor_elements,"SDPA tensor budget")
++            with result.graph.inserting_before(node):
++                kt=result.graph.call_method("transpose",(k,-1,-2),{})
++                logits=result.graph.call_function(operator.matmul,(q,kt),{})
++                scaled=result.graph.call_function(operator.mul,(logits,1/math.sqrt(qs[-1])),{})
++                probabilities=result.graph.call_function(torch.softmax,(scaled,),{"dim":-1})
++            node.op="call_function";node.target=operator.matmul;node.args=(probabilities,v);node.kwargs={}
++            entries.append(dict(source_node=node.name,rule="dense_sdpa",
++                                query_shape=qs,key_shape=ks,value_shape=vs,scale=1/math.sqrt(qs[-1])))
++    require(sum(n.op in ("call_function","call_method","call_module") for n in result.graph.nodes)<=limits.original_nodes,
++            "Common FX expansion budget")
++    result.graph.lint();result.recompile()
++    require(str(traced.graph)==source and before.keys()==result.state_dict().keys() and
++            all(torch.equal(v,result.state_dict()[k]) and torch.equal(v,traced.state_dict()[k]) for k,v in before.items()),
++            "Common normalization changed source or public state")
++    record=dict(format="poseidon-common-fx-prototype-v1",source_fx_text=source,
++                normalized_fx_text=str(result.graph),entries=entries,input_signature=inputs,
++                source_preserved=True,public_state_preserved=True,production_integrated=False)
++    record["binding"]=digest(record)
++    return result,record

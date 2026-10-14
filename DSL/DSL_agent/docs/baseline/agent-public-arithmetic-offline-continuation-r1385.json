@@ -1,0 +1,70 @@
+{
+  "format": "poseidon-public-arithmetic-offline-continuation-v1",
+  "proposal_binding": "2801d63485a56dddbb4aa7c6b782ee9d3a90e4a25e5bff6f6983341c4e9293c7",
+  "parent_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-cpu-v25-r1385/report.json",
+  "parent_report_sha256": "63bcb1d5b0db87e9963b7731c62d619415287c2ea0ad4e19e57661a578ee82d7",
+  "parent_report_binding": "1615e813d1d2f7e348835cbee81537ed71ca3b343fea18e1ce926665763ddf93",
+  "sdk_identity": "8e88db16925fad029bdeaea53ebb2ed927ebdb9aece66dd7a252923ccb711809",
+  "driver": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/offline_cpu_continue.py",
+  "driver_sha256": "896ae2ab7e1042b9c9b11dc713c4bceb393e77f490a3bcb3e59966ba7918ab28",
+  "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-cpu-v25-r1385-continuation",
+  "original_launch_epoch": 1791701591.436681,
+  "conservative_global_before_bytes": 30865879040,
+  "scope_unchanged": true,
+  "remaining_compiler_calls": 17,
+  "remaining_encrypted_calls": 23,
+  "reason": "Developer harness expected model_source at wrong manifest location; check_bundle already passed.",
+  "preserve_first_compilation": true,
+  "api_calls": 0,
+  "backend_changes": false,
+  "first_qualification": {
+    "acceptance": {
+      "artifact_checked": true,
+      "claim": "finite configured inputs only; no formal equivalence",
+      "compared_values": 24,
+      "compiled": true,
+      "encrypted_execution": true,
+      "input_groups": 4,
+      "level": "numerical",
+      "maximum_absolute_error": 3.346315891050722e-09,
+      "numerically_validated": true
+    },
+    "failure": null,
+    "generation": {
+      "agent_generated": false,
+      "generations": 1,
+      "http_attempts": 0,
+      "provider": "scripted_replay"
+    },
+    "generations": 1,
+    "http_attempts": 0,
+    "intake": {
+      "active_seconds": 3.8264240060088923,
+      "agent_calls": 0,
+      "encrypted_execution": false,
+      "kind": "trusted_pytorch",
+      "reference_verified": true,
+      "status": "prepared"
+    },
+    "operational_usage": {
+      "enforcement": "monitored-v1",
+      "evidence_directories": 1,
+      "format": "poseidon-artifact-monitor-v1",
+      "hard_filesystem_quota": false,
+      "max_new_artifact_bytes": 134217728,
+      "min_free_disk_bytes": 4294967296,
+      "observed_current_bytes": 7616192,
+      "observed_peak_bytes": 7616192
+    },
+    "package": {
+      "binding": "e43c462b1cf819720746c5da801af69143a847fdb33b6f4de7307987b5d32dcf",
+      "reused": false,
+      "task_id": "ef389f65bc9843abbf7728bbeb6eb9fe"
+    },
+    "phase": "complete",
+    "status": "succeeded",
+    "task_id": "ef389f65bc9843abbf7728bbeb6eb9fe",
+    "validation_level": "numerical"
+  },
+  "binding": "831887d80f3878fe80b08a1d27f6dcd571189d666a002f8fd25c2d5084708696"
+}

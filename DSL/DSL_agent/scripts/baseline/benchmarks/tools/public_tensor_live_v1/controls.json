@@ -1,0 +1,13 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "exit": 0,
+  "failed": 0,
+  "http_attempts": 0,
+  "proposal_binding": "8752cc0b9e0fb913dedea3f717be0320e5f0339802cd046603a04a772a1a21e2",
+  "provider_calls": 0,
+  "skipped": 0,
+  "tests": 34,
+  "tool_manifest": "70fa0fbcf0d132595b66021c9bd4443dc51ff95ccb27441f255dda3712f1d216"
+}

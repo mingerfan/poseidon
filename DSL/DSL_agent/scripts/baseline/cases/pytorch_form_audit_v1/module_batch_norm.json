@@ -1,0 +1,28 @@
+{
+  "format": "poseidon-trusted-pytorch-v2",
+  "files": {
+    "models.py": "f55b5c05ce3c38ba436df3f642246e0f842b455e9614238165de70e075202633"
+  },
+  "entry": "models.make",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [
+      "module_batch_norm"
+    ],
+    "kwargs": {}
+  },
+  "dtype_policy": "strict-float64-v1"
+}

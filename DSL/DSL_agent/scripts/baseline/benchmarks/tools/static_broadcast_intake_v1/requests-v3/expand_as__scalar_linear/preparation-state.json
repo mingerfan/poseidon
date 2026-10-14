@@ -1,0 +1,20 @@
+{
+  "acceptance": null,
+  "failure": null,
+  "generation": null,
+  "generations": 0,
+  "http_attempts": 0,
+  "intake": {
+    "active_seconds": 4.056350664992351,
+    "agent_calls": 0,
+    "encrypted_execution": false,
+    "kind": "trusted_pytorch",
+    "reference_verified": true,
+    "status": "prepared"
+  },
+  "package": null,
+  "phase": "queued",
+  "status": "queued",
+  "task_id": "ba0b77f5e1a84a0c8b4f8765a2613635",
+  "validation_level": "numerical"
+}

@@ -1,0 +1,2 @@
+PASS boots=0 transfers=340 rotations=14 key_seconds=1.78835 runtime_seconds=0.0574956 initialization_seconds=0.318775 online_execution_seconds=0.0574956 boot_seconds=0 python_max_abs=0.524793 max_imaginary=1.28783e-06
+report=test-results/e2e-new-profile-e63ec18/runs/measured-01-4gpu.json

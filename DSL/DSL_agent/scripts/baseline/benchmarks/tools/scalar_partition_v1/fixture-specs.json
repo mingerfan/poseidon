@@ -1,0 +1,188 @@
+[
+  {
+    "case": "scalar_function_merge",
+    "format": "poseidon-trusted-pytorch-v20",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  a,b=torch.unbind(input=x,dim=-1)\n  return a+b*.25\ndef make():return Model()\n",
+    "weights": {}
+  },
+  {
+    "case": "scalar_shared_write",
+    "format": "poseidon-trusted-pytorch-v20",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "scalar",
+      "updated"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  a,b=x.unbind()\n  a.add_(b*.125)\n  return a,x\ndef make():return Model()\n",
+    "weights": {}
+  },
+  {
+    "case": "scalar_source_snapshot",
+    "format": "poseidon-trusted-pytorch-v20",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "snapshot",
+      "merge"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  a,b=x.unbind()\n  s=a.clone()\n  x.mul_(.25)\n  return s,a+b\ndef make():return Model()\n",
+    "weights": {}
+  },
+  {
+    "case": "scalar_repeated_stack",
+    "format": "poseidon-trusted-pytorch-v20",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          3
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  p=x.unbind()\n  return torch.stack([p[-1],p[1],p[1]])\ndef make():return Model()\n",
+    "weights": {}
+  },
+  {
+    "case": "scalar_singleton_view",
+    "format": "poseidon-trusted-pytorch-v20",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  return x.unbind()[0]\ndef make():return Model()\n",
+    "weights": {}
+  },
+  {
+    "case": "scalar_public_weights",
+    "format": "poseidon-trusted-pytorch-v20",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def __init__(self):\n  super().__init__()\n  self.register_buffer('weight',torch.zeros(2,dtype=torch.float64))\n def forward(self,x):\n  a,b=self.weight.unbind()\n  return x*a+b\ndef make():return Model()\n",
+    "weights": {
+      "weight": [
+        0.2,
+        0.3
+      ]
+    }
+  },
+  {
+    "case": "diagonal_output_write",
+    "format": "poseidon-trusted-pytorch-v19",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2,
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "diag",
+      "updated"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  d=torch.einsum(\"ii->i\",x)\n  d.add_(.125)\n  return d,x\ndef make():return Model().eval()\n",
+    "weights": {}
+  },
+  {
+    "case": "legacy_mlp",
+    "format": "poseidon-trusted-pytorch-v18",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          4
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def __init__(self):\n  super().__init__()\n  self.register_buffer(\"w1\",torch.zeros((4,4),dtype=torch.float64))\n  self.register_buffer(\"w2\",torch.zeros((2,4),dtype=torch.float64))\n def forward(self,x):\n  x=torch.nn.functional.linear(x,self.w1)\n  return torch.nn.functional.linear(x.square(),self.w2)\ndef make():return Model().eval()\n",
+    "weights": {
+      "w1": [
+        [
+          0.125,
+          0.03125,
+          -0.0625,
+          0.09375
+        ],
+        [
+          -0.09375,
+          0.1875,
+          0.0625,
+          -0.03125
+        ],
+        [
+          0.0625,
+          -0.125,
+          0.15625,
+          0.03125
+        ],
+        [
+          0.09375,
+          0.0625,
+          -0.03125,
+          0.125
+        ]
+      ],
+      "w2": [
+        [
+          0.1875,
+          -0.09375,
+          0.125,
+          0.0625
+        ],
+        [
+          -0.0625,
+          0.15625,
+          0.09375,
+          -0.125
+        ]
+      ]
+    }
+  }
+]

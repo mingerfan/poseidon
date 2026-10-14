@@ -1,0 +1,14 @@
+{
+  "compiler_calls": 0,
+  "elapsed_seconds": 0.6821560090029379,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-mha-feedback-runner-controls-v1",
+  "passed": 60,
+  "production_authorization_created": false,
+  "provider_calls": 0,
+  "skipped": 0,
+  "synthetic_authorization_fixtures_only": true,
+  "tests": 60
+}

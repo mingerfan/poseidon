@@ -1,0 +1,13 @@
+{
+  "captured_models_reused": 3,
+  "compiler_calls_before_fix": 0,
+  "controls_elapsed_seconds": 22.06480164000095,
+  "cumulative_wall_seconds": 1200,
+  "fix": "compare through existing request_file_bytes transport; full serialized equality and original request_id preserved",
+  "model_changed": false,
+  "new_driver_sha256": "9863421ad7121d218087c2cf8c1f9467c47d8a8a9cbcdeacadc82b59d9fb7929",
+  "original_driver_sha256": "664cc6d5e5d7c1f4efd9322084d3bf86b4b2ff90f6fdffabe3895f94d86b911f",
+  "original_failure_report": "agent-mha-layout-component-backend-v1/report.json",
+  "prior_backend_elapsed_seconds": 53.656530069005385,
+  "production_source_changed": false
+}

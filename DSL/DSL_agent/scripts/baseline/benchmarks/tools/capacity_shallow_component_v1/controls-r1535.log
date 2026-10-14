@@ -1,0 +1,104 @@
+test_all_lanes (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_arithmetic_non_power_of_two_counts (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_arithmetic_power_of_two_counts (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_cross_chunk_broadcast (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_deterministic_sparse_destinations (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_disjoint_runs_and_tail (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_inner_axis_broadcast (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_invalid_destinations (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_invalid_period (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_invalid_work_limits (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_large_irregular_map_respects_budget (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_negative_and_zero_values (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_non_arithmetic_fallback (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_original_axis8_broadcast (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_original_axis8_cost (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_singleton (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_singleton_broadcast (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_tail_broadcast (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_work_limit_and_no_partial_emission (test_capacity_broadcast_runs.BroadcastRunTests) ... ok
+test_bad_budgets_duplicate_names_and_boolean_counts_rejected (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_cost_does_not_certify_backend_or_change_input (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_cross_chunk_masks_add_two_not_number_of_spans (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_diagonal_depth_beats_cheaper_row_sum (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_equal_depth_uses_work_and_stable_name (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_existing_plan_work_matches_for_rectangular_and_tail_blocks (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_existing_registry_deduplicates_contents (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_identity_and_zero_elision_keep_conservative_depth (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_independent_blocks_take_max_depth_not_sum (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_malformed_public_plan_is_rejected (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_partial_tail_uses_its_own_template (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_row_sum_adds_one_serial_mask (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_selection_is_inclusive_and_has_constant_budget (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_template_matches_public_row_stages (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_tiled_plan_does_not_mutate_and_does_not_trust_supplied_work (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_unknown_metrics_are_not_selectable (test_capacity_layout_costs.CapacityLayoutCostsTest) ... ok
+test_complete_suffix_including_nonpowers_and_tails (test_capacity_shallow_packing.ShallowPackingTests) ... ok
+test_new_packing_is_explicit_bound_and_inherits_codec_and_cli (test_capacity_shallow_packing.ShallowPackingTests) ... ok
+test_original_failures_use_bounded_shallow_routes_and_independent_reference (test_capacity_shallow_packing.ShallowPackingTests) ... ok
+test_original_requests_reconstruct_byte_for_byte (test_capacity_shallow_packing.ShallowPackingTests) ... ok
+test_planning_or_binding_tampering_is_rejected (test_capacity_shallow_packing.ShallowPackingTests) ... ok
+test_fifteen_routes_and_generated_arithmetic_match_independent_reference (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_masks_and_chunk_route_tampering_rejected_after_envelope_rehash (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_new_version_is_bound_even_without_tensor_routes (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_old_default_v8_keeps_small_slice_closed (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_request_reconstruction_codec_and_cli_select_v9 (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_six_existing_v8_requests_and_rule_sources_are_unchanged (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_v9_inherits_lossless_tiled_public_storage (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_wide_v9_is_explicit_and_preserves_original_v8_default (test_capacity_static_index_packing.StaticIndexPackingTests) ... ok
+test_binding_rows_limit (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_complete_request_roundtrip_and_hash_preserved (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_duplicate_columns_rejected (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_empty_row_rejected (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_nested_bool_nonfinite_and_large_cells_rejected (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_older_capacity_wire_versions_unchanged (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_optional_fields_and_order_preserved (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_original_combined_trace_byte_gate_preserved (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_tampered_routes_still_rejected_by_semantic_identity (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_width_and_unknown_format_rejected (test_capacity_binding_storage.BindingStorageTests) ... ok
+test_candidate_source_preserves_pair_interface (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_canonical_views_are_cipher_free (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_default_strategy_remains_the_existing_capacity_lowerer (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_foreign_cell_and_canonical_storage_are_rejected (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_late_linear_has_single_pack_boundary (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_model_and_node_names_do_not_select_strategy (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_periods_and_shape_partitions (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_poisoned_tail_is_not_logical_input (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_public_binding_tamper_fails_closed (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_registry_is_detached_and_not_an_execution_score (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_routed_broadcast_split_multioutput (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_runtime_component_has_no_experiment_import (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_unknown_strategy_and_provider_source_rejected (test_unified_mixed_layout.MixedLayoutComponentTests) ... ok
+test_analyzer_filename_checks_do_not_create_fake_policy_edges (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_both_inventories_bind_mounted_bytes_and_detect_changes (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_malformed_inventory_cannot_hide_dependencies (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_missing_and_symlinked_mounts_fail_closed (test_poseidon_sandbox_policy.SandboxInventoryIdentityTests) ... ok
+test_child_observes_unchanged_resource_limits (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_compact_context_dependency_is_available_and_bound (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_feedback_dependencies_are_bound_to_the_program_identity (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_fresh_inventory_worker_imports_guidance_and_typed_feedback (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_fresh_poseidon_import_does_not_load_legacy_probe_or_provider (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_legacy_inventory_and_shared_limits_remain_available (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_math_role_verifier_is_read_only_and_bound (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_poseidon_command_retains_isolation_and_uses_own_inventory (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_program_binding_uses_poseidon_inventory (test_poseidon_sandbox_policy.SandboxProfileTests) ... ok
+test_shallow_layout_dependencies_are_mounted_and_identity_bound (test_poseidon_sandbox_policy.SandboxProfileTests) ... ERROR
+test_each_actual_cache_changes_identity (test_poseidon_backend_identity.BackendConfigurationBindingTests) ... ok
+test_environment_change_invalidates_configuration (test_poseidon_backend_identity.BackendConfigurationBindingTests) ... ok
+test_missing_build_evidence_rejected (test_poseidon_backend_identity.BackendConfigurationBindingTests) ... ok
+test_old_identity_refused_before_package_execution (test_poseidon_backend_identity.BackendConfigurationBindingTests) ... ok
+test_parent_cache_is_limited_to_work_root (test_poseidon_backend_identity.BackendConfigurationBindingTests) ... ok
+test_symlink_configuration_rejected (test_poseidon_backend_identity.BackendConfigurationBindingTests) ... ok
+
+======================================================================
+ERROR: test_shallow_layout_dependencies_are_mounted_and_identity_bound (test_poseidon_sandbox_policy.SandboxProfileTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_poseidon_sandbox_policy.py", line 130, in test_shallow_layout_dependencies_are_mounted_and_identity_bound
+    self.assertEqual(implementation()[name],hashlib.sha256((base/name).read_bytes()).hexdigest())
+KeyError: 'capacity_layout_costs.py'
+
+----------------------------------------------------------------------
+Ran 91 tests in 16.568s
+
+FAILED (errors=1)

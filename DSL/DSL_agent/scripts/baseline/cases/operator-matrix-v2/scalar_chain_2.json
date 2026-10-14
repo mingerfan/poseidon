@@ -1,0 +1,68 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v2",
+  "id": "scalar_chain_2",
+  "inputs": [
+    {
+      "name": "left",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "right",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "dot",
+      "inputs": [
+        "left",
+        "right"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "scalar"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "square",
+      "inputs": [
+        "scalar"
+      ],
+      "op": "square",
+      "outputs": [
+        "squared"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 0
+      },
+      "id": "stack",
+      "inputs": [
+        "scalar",
+        "squared"
+      ],
+      "op": "stack",
+      "outputs": [
+        "pair"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "dot",
+      "value": "scalar"
+    },
+    {
+      "name": "pair",
+      "value": "pair"
+    }
+  ]
+}

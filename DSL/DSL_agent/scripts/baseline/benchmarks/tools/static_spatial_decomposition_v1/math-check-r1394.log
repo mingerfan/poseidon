@@ -1,0 +1,18 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+test_explicit_factor_and_cpu_dispatch (test_draft.SpatialTests) ... ok
+test_matrix_budget_precedes_allocation (test_draft.SpatialTests) ... ok
+test_model_references (test_draft.SpatialTests) ... ok
+test_nearest_generic_and_vectorized_2d_contexts (test_draft.SpatialTests) ... ok
+test_public_weight_change_changes_binding (test_draft.SpatialTests) ... ok
+test_resize_rejections (test_draft.SpatialTests) ... ok
+test_transpose_rejections (test_draft.SpatialTests) ... ok
+test_undefined_and_duplicate_nodes (test_draft.SpatialTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.441s
+
+OK
+{"status": "passed", "models": 42, "model_probe_groups": 672, "model_output_values": 13120, "maximum_reference_difference": 4.440892098500626e-16, "lowered_structure_signatures": 30, "lowered_topology_groups": 15, "binding": "fc0f12a8a1a5195150d159b5a24d22ebdc1ab607183002bf9ccd582becc5bd9c", "elapsed_seconds": 0.8068710779916728}

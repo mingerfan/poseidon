@@ -1,0 +1,12 @@
+{
+  "cases": 36,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "http_attempts": 0,
+  "previous_preparation_budget_reused": false,
+  "proposal_binding": "06411a2e643d76d81e974349268f4bc887b84eacb0771748870e1093a1e792dd",
+  "proposal_sha256": "8d9388ac7797a97c31687a618a52b4d032f592f7e190216a4aebb74c504e9415",
+  "provider_calls": 0,
+  "source_captures": 0,
+  "status": "prepared"
+}

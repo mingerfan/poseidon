@@ -1,0 +1,12 @@
+{
+  "format": "poseidon-public-mask-controls-v1",
+  "tests": 289,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "status": "passed",
+  "seconds": 38.425017566012684,
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

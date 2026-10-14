@@ -1,0 +1,15 @@
+{
+  "compilations": 0,
+  "encrypted_executions": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-cutover-boundary-tests-v1",
+  "passed": 18,
+  "provider_calls": 0,
+  "skipped": 0,
+  "source_hashes": {
+    "guarded_apply_joint.py": "13c9362b35b0f895e4638b11854dd2b7659230d6ed712e8063f2fc9843130f36",
+    "test_joint_guard.py": "f1679bd0fcbbc25bcab7e7dc7a5ab31c6f3b80468e47fea11454c782c7b2e563"
+  },
+  "tests": 18
+}

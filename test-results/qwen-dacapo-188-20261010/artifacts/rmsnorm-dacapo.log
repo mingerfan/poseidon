@@ -1,0 +1,218 @@
+/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/trace_rmsnorm.py:17:0: error: RuntimePlan export requires prefix, target-id, operator-spec-id, operator-spec-sha256 and context-id
+/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/trace_rmsnorm.py:17:0: note: see current operation: 
+"func.func"() <{function_type = (tensor<1x!ckks.poly<2 * 40 * 16>>) -> tensor<1x!ckks.poly<2 * 48 * 2>>, sym_name = "_hecate_qwen_rmsnorm"}> ({
+^bb0(%arg0: tensor<1x!ckks.poly<2 * 40 * 16>>):
+  %0 = "ckks.modswitchc"(%arg0) <{downFactor = 4 : i64}> : (tensor<1x!ckks.poly<2 * 40 * 16>>) -> tensor<1x!ckks.poly<2 * 40 * 12>>
+  %1 = "ckks.mulcc"(%0, %0) : (tensor<1x!ckks.poly<2 * 40 * 12>>, tensor<1x!ckks.poly<2 * 40 * 12>>) -> tensor<1x!ckks.poly<3 * 80 * 12>>
+  %2 = "ckks.relinearize"(%1) : (tensor<1x!ckks.poly<3 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %3 = "ckks.rotatec"(%2) <{offset = array<i64: 1>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %4 = "ckks.addcc"(%2, %3) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %5 = "ckks.rotatec"(%4) <{offset = array<i64: 2>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %6 = "ckks.addcc"(%4, %5) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %7 = "ckks.rotatec"(%6) <{offset = array<i64: 4>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %8 = "ckks.addcc"(%6, %7) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %9 = "ckks.rotatec"(%8) <{offset = array<i64: 8>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %10 = "ckks.addcc"(%8, %9) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %11 = "ckks.rotatec"(%10) <{offset = array<i64: 16>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %12 = "ckks.addcc"(%10, %11) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %13 = "ckks.rotatec"(%12) <{offset = array<i64: 32>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %14 = "ckks.addcc"(%12, %13) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %15 = "ckks.rotatec"(%14) <{offset = array<i64: 64>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %16 = "ckks.addcc"(%14, %15) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %17 = "ckks.rotatec"(%16) <{offset = array<i64: 128>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %18 = "ckks.addcc"(%16, %17) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %19 = "ckks.rotatec"(%18) <{offset = array<i64: 256>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %20 = "ckks.addcc"(%18, %19) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %21 = "ckks.rotatec"(%20) <{offset = array<i64: 512>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %22 = "ckks.addcc"(%20, %21) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %23 = "ckks.rotatec"(%22) <{offset = array<i64: 1024>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %24 = "ckks.addcc"(%22, %23) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %25 = "ckks.rotatec"(%24) <{offset = array<i64: 2048>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %26 = "ckks.addcc"(%24, %25) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %27 = "ckks.rotatec"(%26) <{offset = array<i64: 4096>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %28 = "ckks.addcc"(%26, %27) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %29 = "ckks.rotatec"(%28) <{offset = array<i64: 8192>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %30 = "ckks.addcc"(%28, %29) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %31 = "ckks.rotatec"(%30) <{offset = array<i64: 16384>}> : (tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %32 = "ckks.addcc"(%30, %31) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<2 * 80 * 12>>) -> tensor<1x!ckks.poly<2 * 80 * 12>>
+  %33 = "ckks.encode"() <{payload = dense<0.0011160714285714285> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 12>>
+  %34 = "ckks.mulcp"(%32, %33) : (tensor<1x!ckks.poly<2 * 80 * 12>>, tensor<1x!ckks.poly<1 * 40 * 12>>) -> tensor<1x!ckks.poly<2 * 120 * 12>>
+  %35 = "ckks.rescalec"(%34) : (tensor<1x!ckks.poly<2 * 120 * 12>>) -> tensor<1x!ckks.poly<2 * 69 * 11>>
+  %36 = "ckks.encode"() <{payload = dense<9.9999999999999995E-7> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 69 * 11>>
+  %37 = "ckks.addcp"(%35, %36) : (tensor<1x!ckks.poly<2 * 69 * 11>>, tensor<1x!ckks.poly<1 * 69 * 11>>) -> tensor<1x!ckks.poly<2 * 69 * 11>>
+  %38 = "ckks.encode"() <{payload = dense<1.3333333333333333> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 11>>
+  %39 = "ckks.mulcp"(%37, %38) : (tensor<1x!ckks.poly<2 * 69 * 11>>, tensor<1x!ckks.poly<1 * 40 * 11>>) -> tensor<1x!ckks.poly<2 * 109 * 11>>
+  %40 = "ckks.rescalec"(%39) : (tensor<1x!ckks.poly<2 * 109 * 11>>) -> tensor<1x!ckks.poly<2 * 58 * 10>>
+  %41 = "ckks.encode"() <{payload = dense<-1.6666666666666667> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 58 * 10>>
+  %42 = "ckks.addcp"(%40, %41) : (tensor<1x!ckks.poly<2 * 58 * 10>>, tensor<1x!ckks.poly<1 * 58 * 10>>) -> tensor<1x!ckks.poly<2 * 58 * 10>>
+  %43 = "ckks.mulcc"(%42, %42) : (tensor<1x!ckks.poly<2 * 58 * 10>>, tensor<1x!ckks.poly<2 * 58 * 10>>) -> tensor<1x!ckks.poly<3 * 116 * 10>>
+  %44 = "ckks.relinearize"(%43) : (tensor<1x!ckks.poly<3 * 116 * 10>>) -> tensor<1x!ckks.poly<2 * 116 * 10>>
+  %45 = "ckks.rescalec"(%44) : (tensor<1x!ckks.poly<2 * 116 * 10>>) -> tensor<1x!ckks.poly<2 * 65 * 9>>
+  %46 = "ckks.encode"() <{payload = dense<2.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 9>>
+  %47 = "ckks.mulcp"(%45, %46) : (tensor<1x!ckks.poly<2 * 65 * 9>>, tensor<1x!ckks.poly<1 * 40 * 9>>) -> tensor<1x!ckks.poly<2 * 105 * 9>>
+  %48 = "ckks.rescalec"(%47) : (tensor<1x!ckks.poly<2 * 105 * 9>>) -> tensor<1x!ckks.poly<2 * 54 * 8>>
+  %49 = "ckks.encode"() <{payload = dense<-1.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 54 * 8>>
+  %50 = "ckks.addcp"(%48, %49) : (tensor<1x!ckks.poly<2 * 54 * 8>>, tensor<1x!ckks.poly<1 * 54 * 8>>) -> tensor<1x!ckks.poly<2 * 54 * 8>>
+  %51 = "ckks.mulcc"(%50, %50) : (tensor<1x!ckks.poly<2 * 54 * 8>>, tensor<1x!ckks.poly<2 * 54 * 8>>) -> tensor<1x!ckks.poly<3 * 108 * 8>>
+  %52 = "ckks.relinearize"(%51) : (tensor<1x!ckks.poly<3 * 108 * 8>>) -> tensor<1x!ckks.poly<2 * 108 * 8>>
+  %53 = "ckks.rescalec"(%52) : (tensor<1x!ckks.poly<2 * 108 * 8>>) -> tensor<1x!ckks.poly<2 * 57 * 7>>
+  %54 = "ckks.encode"() <{payload = dense<2.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 7>>
+  %55 = "ckks.mulcp"(%53, %54) : (tensor<1x!ckks.poly<2 * 57 * 7>>, tensor<1x!ckks.poly<1 * 40 * 7>>) -> tensor<1x!ckks.poly<2 * 97 * 7>>
+  %56 = "ckks.rescalec"(%55) : (tensor<1x!ckks.poly<2 * 97 * 7>>) -> tensor<1x!ckks.poly<2 * 46 * 6>>
+  %57 = "ckks.encode"() <{payload = dense<-1.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 46 * 6>>
+  %58 = "ckks.addcp"(%56, %57) : (tensor<1x!ckks.poly<2 * 46 * 6>>, tensor<1x!ckks.poly<1 * 46 * 6>>) -> tensor<1x!ckks.poly<2 * 46 * 6>>
+  %59 = "ckks.mulcc"(%58, %58) : (tensor<1x!ckks.poly<2 * 46 * 6>>, tensor<1x!ckks.poly<2 * 46 * 6>>) -> tensor<1x!ckks.poly<3 * 92 * 6>>
+  %60 = "ckks.relinearize"(%59) : (tensor<1x!ckks.poly<3 * 92 * 6>>) -> tensor<1x!ckks.poly<2 * 92 * 6>>
+  %61 = "ckks.rescalec"(%60) : (tensor<1x!ckks.poly<2 * 92 * 6>>) -> tensor<1x!ckks.poly<2 * 41 * 5>>
+  %62 = "ckks.encode"() <{payload = dense<2.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 5>>
+  %63 = "ckks.mulcp"(%61, %62) : (tensor<1x!ckks.poly<2 * 41 * 5>>, tensor<1x!ckks.poly<1 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 81 * 5>>
+  %64 = "ckks.encode"() <{payload = dense<-1.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 81 * 5>>
+  %65 = "ckks.addcp"(%63, %64) : (tensor<1x!ckks.poly<2 * 81 * 5>>, tensor<1x!ckks.poly<1 * 81 * 5>>) -> tensor<1x!ckks.poly<2 * 81 * 5>>
+  %66 = "ckks.modswitchc"(%42) <{downFactor = 1 : i64}> : (tensor<1x!ckks.poly<2 * 58 * 10>>) -> tensor<1x!ckks.poly<2 * 58 * 9>>
+  %67 = "ckks.encode"() <{payload = dense<-3.7571014851979818E-5> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 9>>
+  %68 = "ckks.mulcp"(%66, %67) : (tensor<1x!ckks.poly<2 * 58 * 9>>, tensor<1x!ckks.poly<1 * 40 * 9>>) -> tensor<1x!ckks.poly<2 * 98 * 9>>
+  %69 = "ckks.rescalec"(%68) : (tensor<1x!ckks.poly<2 * 98 * 9>>) -> tensor<1x!ckks.poly<2 * 47 * 8>>
+  %70 = "ckks.encode"() <{payload = dense<5.9657330940573375E-5> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 47 * 8>>
+  %71 = "ckks.addcp"(%69, %70) : (tensor<1x!ckks.poly<2 * 47 * 8>>, tensor<1x!ckks.poly<1 * 47 * 8>>) -> tensor<1x!ckks.poly<2 * 47 * 8>>
+  %72 = "ckks.encode"() <{payload = dense<1.1889150955273893E-5> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 8>>
+  %73 = "ckks.mulcp"(%50, %72) : (tensor<1x!ckks.poly<2 * 54 * 8>>, tensor<1x!ckks.poly<1 * 40 * 8>>) -> tensor<1x!ckks.poly<2 * 94 * 8>>
+  %74 = "ckks.rescalec"(%73) : (tensor<1x!ckks.poly<2 * 94 * 8>>) -> tensor<1x!ckks.poly<2 * 43 * 7>>
+  %75 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 44 * 8>>
+  %76 = "ckks.mulcp"(%71, %75) : (tensor<1x!ckks.poly<2 * 47 * 8>>, tensor<1x!ckks.poly<1 * 44 * 8>>) -> tensor<1x!ckks.poly<2 * 91 * 8>>
+  %77 = "ckks.rescalec"(%76) : (tensor<1x!ckks.poly<2 * 91 * 8>>) -> tensor<1x!ckks.poly<2 * 40 * 7>>
+  %78 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 3 * 7>>
+  %79 = "ckks.mulcp"(%77, %78) : (tensor<1x!ckks.poly<2 * 40 * 7>>, tensor<1x!ckks.poly<1 * 3 * 7>>) -> tensor<1x!ckks.poly<2 * 43 * 7>>
+  %80 = "ckks.addcc"(%79, %74) : (tensor<1x!ckks.poly<2 * 43 * 7>>, tensor<1x!ckks.poly<2 * 43 * 7>>) -> tensor<1x!ckks.poly<2 * 43 * 7>>
+  %81 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 33 * 9>>
+  %82 = "ckks.mulcp"(%66, %81) : (tensor<1x!ckks.poly<2 * 58 * 9>>, tensor<1x!ckks.poly<1 * 33 * 9>>) -> tensor<1x!ckks.poly<2 * 91 * 9>>
+  %83 = "ckks.rescalec"(%82) : (tensor<1x!ckks.poly<2 * 91 * 9>>) -> tensor<1x!ckks.poly<2 * 40 * 8>>
+  %84 = "ckks.mulcc"(%83, %50) : (tensor<1x!ckks.poly<2 * 40 * 8>>, tensor<1x!ckks.poly<2 * 54 * 8>>) -> tensor<1x!ckks.poly<3 * 94 * 8>>
+  %85 = "ckks.relinearize"(%84) : (tensor<1x!ckks.poly<3 * 94 * 8>>) -> tensor<1x!ckks.poly<2 * 94 * 8>>
+  %86 = "ckks.rescalec"(%85) : (tensor<1x!ckks.poly<2 * 94 * 8>>) -> tensor<1x!ckks.poly<2 * 43 * 7>>
+  %87 = "ckks.mulcp"(%86, %54) : (tensor<1x!ckks.poly<2 * 43 * 7>>, tensor<1x!ckks.poly<1 * 40 * 7>>) -> tensor<1x!ckks.poly<2 * 83 * 7>>
+  %88 = "ckks.modswitchc"(%42) <{downFactor = 2 : i64}> : (tensor<1x!ckks.poly<2 * 58 * 10>>) -> tensor<1x!ckks.poly<2 * 58 * 8>>
+  %89 = "ckks.negatec"(%88) : (tensor<1x!ckks.poly<2 * 58 * 8>>) -> tensor<1x!ckks.poly<2 * 58 * 8>>
+  %90 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 33 * 8>>
+  %91 = "ckks.mulcp"(%89, %90) : (tensor<1x!ckks.poly<2 * 58 * 8>>, tensor<1x!ckks.poly<1 * 33 * 8>>) -> tensor<1x!ckks.poly<2 * 91 * 8>>
+  %92 = "ckks.rescalec"(%91) : (tensor<1x!ckks.poly<2 * 91 * 8>>) -> tensor<1x!ckks.poly<2 * 40 * 7>>
+  %93 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 43 * 7>>
+  %94 = "ckks.mulcp"(%92, %93) : (tensor<1x!ckks.poly<2 * 40 * 7>>, tensor<1x!ckks.poly<1 * 43 * 7>>) -> tensor<1x!ckks.poly<2 * 83 * 7>>
+  %95 = "ckks.addcc"(%87, %94) : (tensor<1x!ckks.poly<2 * 83 * 7>>, tensor<1x!ckks.poly<2 * 83 * 7>>) -> tensor<1x!ckks.poly<2 * 83 * 7>>
+  %96 = "ckks.encode"() <{payload = dense<-3.7477281694504764E-6> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 7>>
+  %97 = "ckks.mulcp"(%95, %96) : (tensor<1x!ckks.poly<2 * 83 * 7>>, tensor<1x!ckks.poly<1 * 40 * 7>>) -> tensor<1x!ckks.poly<2 * 123 * 7>>
+  %98 = "ckks.rescalec"(%97) : (tensor<1x!ckks.poly<2 * 123 * 7>>) -> tensor<1x!ckks.poly<2 * 72 * 6>>
+  %99 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 48 * 7>>
+  %100 = "ckks.mulcp"(%80, %99) : (tensor<1x!ckks.poly<2 * 43 * 7>>, tensor<1x!ckks.poly<1 * 48 * 7>>) -> tensor<1x!ckks.poly<2 * 91 * 7>>
+  %101 = "ckks.rescalec"(%100) : (tensor<1x!ckks.poly<2 * 91 * 7>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+  %102 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 32 * 6>>
+  %103 = "ckks.mulcp"(%101, %102) : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 32 * 6>>) -> tensor<1x!ckks.poly<2 * 72 * 6>>
+  %104 = "ckks.addcc"(%103, %98) : (tensor<1x!ckks.poly<2 * 72 * 6>>, tensor<1x!ckks.poly<2 * 72 * 6>>) -> tensor<1x!ckks.poly<2 * 72 * 6>>
+  %105 = "ckks.encode"() <{payload = dense<1.0855452764426164E-6> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 6>>
+  %106 = "ckks.mulcp"(%58, %105) : (tensor<1x!ckks.poly<2 * 46 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 86 * 6>>
+  %107 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 14 * 6>>
+  %108 = "ckks.mulcp"(%104, %107) : (tensor<1x!ckks.poly<2 * 72 * 6>>, tensor<1x!ckks.poly<1 * 14 * 6>>) -> tensor<1x!ckks.poly<2 * 86 * 6>>
+  %109 = "ckks.addcc"(%108, %106) : (tensor<1x!ckks.poly<2 * 86 * 6>>, tensor<1x!ckks.poly<2 * 86 * 6>>) -> tensor<1x!ckks.poly<2 * 86 * 6>>
+  %110 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 5 * 6>>
+  %111 = "ckks.mulcp"(%109, %110) : (tensor<1x!ckks.poly<2 * 86 * 6>>, tensor<1x!ckks.poly<1 * 5 * 6>>) -> tensor<1x!ckks.poly<2 * 91 * 6>>
+  %112 = "ckks.rescalec"(%111) : (tensor<1x!ckks.poly<2 * 91 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>
+  %113 = "ckks.mulcc"(%65, %112) : (tensor<1x!ckks.poly<2 * 81 * 5>>, tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<3 * 121 * 5>>
+  %114 = "ckks.relinearize"(%113) : (tensor<1x!ckks.poly<3 * 121 * 5>>) -> tensor<1x!ckks.poly<2 * 121 * 5>>
+  %115 = "ckks.rescalec"(%114) : (tensor<1x!ckks.poly<2 * 121 * 5>>) -> tensor<1x!ckks.poly<2 * 70 * 4>>
+  %116 = "ckks.encode"() <{payload = dense<-0.32835436875231444> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 8>>
+  %117 = "ckks.mulcp"(%88, %116) : (tensor<1x!ckks.poly<2 * 58 * 8>>, tensor<1x!ckks.poly<1 * 40 * 8>>) -> tensor<1x!ckks.poly<2 * 98 * 8>>
+  %118 = "ckks.rescalec"(%117) : (tensor<1x!ckks.poly<2 * 98 * 8>>) -> tensor<1x!ckks.poly<2 * 47 * 7>>
+  %119 = "ckks.encode"() <{payload = dense<0.97077311174593095> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 47 * 7>>
+  %120 = "ckks.addcp"(%118, %119) : (tensor<1x!ckks.poly<2 * 47 * 7>>, tensor<1x!ckks.poly<1 * 47 * 7>>) -> tensor<1x!ckks.poly<2 * 47 * 7>>
+  %121 = "ckks.modswitchc"(%50) <{downFactor = 1 : i64}> : (tensor<1x!ckks.poly<2 * 54 * 8>>) -> tensor<1x!ckks.poly<2 * 54 * 7>>
+  %122 = "ckks.encode"() <{payload = dense<0.082494300507629264> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 7>>
+  %123 = "ckks.mulcp"(%121, %122) : (tensor<1x!ckks.poly<2 * 54 * 7>>, tensor<1x!ckks.poly<1 * 40 * 7>>) -> tensor<1x!ckks.poly<2 * 94 * 7>>
+  %124 = "ckks.rescalec"(%123) : (tensor<1x!ckks.poly<2 * 94 * 7>>) -> tensor<1x!ckks.poly<2 * 43 * 6>>
+  %125 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 44 * 7>>
+  %126 = "ckks.mulcp"(%120, %125) : (tensor<1x!ckks.poly<2 * 47 * 7>>, tensor<1x!ckks.poly<1 * 44 * 7>>) -> tensor<1x!ckks.poly<2 * 91 * 7>>
+  %127 = "ckks.rescalec"(%126) : (tensor<1x!ckks.poly<2 * 91 * 7>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+  %128 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 3 * 6>>
+  %129 = "ckks.mulcp"(%127, %128) : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 3 * 6>>) -> tensor<1x!ckks.poly<2 * 43 * 6>>
+  %130 = "ckks.addcc"(%129, %124) : (tensor<1x!ckks.poly<2 * 43 * 6>>, tensor<1x!ckks.poly<2 * 43 * 6>>) -> tensor<1x!ckks.poly<2 * 43 * 6>>
+  %131 = "ckks.modswitchc"(%95) <{downFactor = 1 : i64}> : (tensor<1x!ckks.poly<2 * 83 * 7>>) -> tensor<1x!ckks.poly<2 * 83 * 6>>
+  %132 = "ckks.encode"() <{payload = dense<-0.022972180101814378> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 6>>
+  %133 = "ckks.mulcp"(%131, %132) : (tensor<1x!ckks.poly<2 * 83 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 123 * 6>>
+  %134 = "ckks.rescalec"(%133) : (tensor<1x!ckks.poly<2 * 123 * 6>>) -> tensor<1x!ckks.poly<2 * 72 * 5>>
+  %135 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 48 * 6>>
+  %136 = "ckks.mulcp"(%130, %135) : (tensor<1x!ckks.poly<2 * 43 * 6>>, tensor<1x!ckks.poly<1 * 48 * 6>>) -> tensor<1x!ckks.poly<2 * 91 * 6>>
+  %137 = "ckks.rescalec"(%136) : (tensor<1x!ckks.poly<2 * 91 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>
+  %138 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 32 * 5>>
+  %139 = "ckks.mulcp"(%137, %138) : (tensor<1x!ckks.poly<2 * 40 * 5>>, tensor<1x!ckks.poly<1 * 32 * 5>>) -> tensor<1x!ckks.poly<2 * 72 * 5>>
+  %140 = "ckks.addcc"(%139, %134) : (tensor<1x!ckks.poly<2 * 72 * 5>>, tensor<1x!ckks.poly<2 * 72 * 5>>) -> tensor<1x!ckks.poly<2 * 72 * 5>>
+  %141 = "ckks.modswitchc"(%58) <{downFactor = 1 : i64}> : (tensor<1x!ckks.poly<2 * 46 * 6>>) -> tensor<1x!ckks.poly<2 * 46 * 5>>
+  %142 = "ckks.encode"() <{payload = dense<0.0067097571545700896> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 5>>
+  %143 = "ckks.mulcp"(%141, %142) : (tensor<1x!ckks.poly<2 * 46 * 5>>, tensor<1x!ckks.poly<1 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 86 * 5>>
+  %144 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 14 * 5>>
+  %145 = "ckks.mulcp"(%140, %144) : (tensor<1x!ckks.poly<2 * 72 * 5>>, tensor<1x!ckks.poly<1 * 14 * 5>>) -> tensor<1x!ckks.poly<2 * 86 * 5>>
+  %146 = "ckks.addcc"(%145, %143) : (tensor<1x!ckks.poly<2 * 86 * 5>>, tensor<1x!ckks.poly<2 * 86 * 5>>) -> tensor<1x!ckks.poly<2 * 86 * 5>>
+  %147 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 37 * 8>>
+  %148 = "ckks.mulcp"(%50, %147) : (tensor<1x!ckks.poly<2 * 54 * 8>>, tensor<1x!ckks.poly<1 * 37 * 8>>) -> tensor<1x!ckks.poly<2 * 91 * 8>>
+  %149 = "ckks.rescalec"(%148) : (tensor<1x!ckks.poly<2 * 91 * 8>>) -> tensor<1x!ckks.poly<2 * 40 * 7>>
+  %150 = "ckks.mulcc"(%149, %95) : (tensor<1x!ckks.poly<2 * 40 * 7>>, tensor<1x!ckks.poly<2 * 83 * 7>>) -> tensor<1x!ckks.poly<3 * 123 * 7>>
+  %151 = "ckks.relinearize"(%150) : (tensor<1x!ckks.poly<3 * 123 * 7>>) -> tensor<1x!ckks.poly<2 * 123 * 7>>
+  %152 = "ckks.rescalec"(%151) : (tensor<1x!ckks.poly<2 * 123 * 7>>) -> tensor<1x!ckks.poly<2 * 72 * 6>>
+  %153 = "ckks.encode"() <{payload = dense<2.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 6>>
+  %154 = "ckks.mulcp"(%152, %153) : (tensor<1x!ckks.poly<2 * 72 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 112 * 6>>
+  %155 = "ckks.rescalec"(%154) : (tensor<1x!ckks.poly<2 * 112 * 6>>) -> tensor<1x!ckks.poly<2 * 61 * 5>>
+  %156 = "ckks.modswitchc"(%89) <{downFactor = 2 : i64}> : (tensor<1x!ckks.poly<2 * 58 * 8>>) -> tensor<1x!ckks.poly<2 * 58 * 6>>
+  %157 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 33 * 6>>
+  %158 = "ckks.mulcp"(%156, %157) : (tensor<1x!ckks.poly<2 * 58 * 6>>, tensor<1x!ckks.poly<1 * 33 * 6>>) -> tensor<1x!ckks.poly<2 * 91 * 6>>
+  %159 = "ckks.rescalec"(%158) : (tensor<1x!ckks.poly<2 * 91 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>
+  %160 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 21 * 5>>
+  %161 = "ckks.mulcp"(%159, %160) : (tensor<1x!ckks.poly<2 * 40 * 5>>, tensor<1x!ckks.poly<1 * 21 * 5>>) -> tensor<1x!ckks.poly<2 * 61 * 5>>
+  %162 = "ckks.addcc"(%155, %161) : (tensor<1x!ckks.poly<2 * 61 * 5>>, tensor<1x!ckks.poly<2 * 61 * 5>>) -> tensor<1x!ckks.poly<2 * 61 * 5>>
+  %163 = "ckks.encode"() <{payload = dense<-0.0020132450975651538> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 5>>
+  %164 = "ckks.mulcp"(%162, %163) : (tensor<1x!ckks.poly<2 * 61 * 5>>, tensor<1x!ckks.poly<1 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 101 * 5>>
+  %165 = "ckks.rescalec"(%164) : (tensor<1x!ckks.poly<2 * 101 * 5>>) -> tensor<1x!ckks.poly<2 * 50 * 4>>
+  %166 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 5 * 5>>
+  %167 = "ckks.mulcp"(%146, %166) : (tensor<1x!ckks.poly<2 * 86 * 5>>, tensor<1x!ckks.poly<1 * 5 * 5>>) -> tensor<1x!ckks.poly<2 * 91 * 5>>
+  %168 = "ckks.rescalec"(%167) : (tensor<1x!ckks.poly<2 * 91 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 4>>
+  %169 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 10 * 4>>
+  %170 = "ckks.mulcp"(%168, %169) : (tensor<1x!ckks.poly<2 * 40 * 4>>, tensor<1x!ckks.poly<1 * 10 * 4>>) -> tensor<1x!ckks.poly<2 * 50 * 4>>
+  %171 = "ckks.addcc"(%170, %165) : (tensor<1x!ckks.poly<2 * 50 * 4>>, tensor<1x!ckks.poly<2 * 50 * 4>>) -> tensor<1x!ckks.poly<2 * 50 * 4>>
+  %172 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 8 * 7>>
+  %173 = "ckks.mulcp"(%95, %172) : (tensor<1x!ckks.poly<2 * 83 * 7>>, tensor<1x!ckks.poly<1 * 8 * 7>>) -> tensor<1x!ckks.poly<2 * 91 * 7>>
+  %174 = "ckks.rescalec"(%173) : (tensor<1x!ckks.poly<2 * 91 * 7>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+  %175 = "ckks.mulcc"(%174, %174) : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<3 * 80 * 6>>
+  %176 = "ckks.relinearize"(%175) : (tensor<1x!ckks.poly<3 * 80 * 6>>) -> tensor<1x!ckks.poly<2 * 80 * 6>>
+  %177 = "ckks.mulcp"(%176, %153) : (tensor<1x!ckks.poly<2 * 80 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 120 * 6>>
+  %178 = "ckks.rescalec"(%177) : (tensor<1x!ckks.poly<2 * 120 * 6>>) -> tensor<1x!ckks.poly<2 * 69 * 5>>
+  %179 = "ckks.encode"() <{payload = dense<-1.000000e+00> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 69 * 5>>
+  %180 = "ckks.addcp"(%178, %179) : (tensor<1x!ckks.poly<2 * 69 * 5>>, tensor<1x!ckks.poly<1 * 69 * 5>>) -> tensor<1x!ckks.poly<2 * 69 * 5>>
+  %181 = "ckks.encode"() <{payload = dense<6.1023111821701694E-4> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 5>>
+  %182 = "ckks.mulcp"(%180, %181) : (tensor<1x!ckks.poly<2 * 69 * 5>>, tensor<1x!ckks.poly<1 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 109 * 5>>
+  %183 = "ckks.rescalec"(%182) : (tensor<1x!ckks.poly<2 * 109 * 5>>) -> tensor<1x!ckks.poly<2 * 58 * 4>>
+  %184 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 8 * 4>>
+  %185 = "ckks.mulcp"(%171, %184) : (tensor<1x!ckks.poly<2 * 50 * 4>>, tensor<1x!ckks.poly<1 * 8 * 4>>) -> tensor<1x!ckks.poly<2 * 58 * 4>>
+  %186 = "ckks.addcc"(%185, %183) : (tensor<1x!ckks.poly<2 * 58 * 4>>, tensor<1x!ckks.poly<2 * 58 * 4>>) -> tensor<1x!ckks.poly<2 * 58 * 4>>
+  %187 = "ckks.mulcc"(%174, %58) : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<2 * 46 * 6>>) -> tensor<1x!ckks.poly<3 * 86 * 6>>
+  %188 = "ckks.relinearize"(%187) : (tensor<1x!ckks.poly<3 * 86 * 6>>) -> tensor<1x!ckks.poly<2 * 86 * 6>>
+  %189 = "ckks.mulcp"(%188, %153) : (tensor<1x!ckks.poly<2 * 86 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 126 * 6>>
+  %190 = "ckks.rescalec"(%189) : (tensor<1x!ckks.poly<2 * 126 * 6>>) -> tensor<1x!ckks.poly<2 * 75 * 5>>
+  %191 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 35 * 5>>
+  %192 = "ckks.mulcp"(%159, %191) : (tensor<1x!ckks.poly<2 * 40 * 5>>, tensor<1x!ckks.poly<1 * 35 * 5>>) -> tensor<1x!ckks.poly<2 * 75 * 5>>
+  %193 = "ckks.addcc"(%190, %192) : (tensor<1x!ckks.poly<2 * 75 * 5>>, tensor<1x!ckks.poly<2 * 75 * 5>>) -> tensor<1x!ckks.poly<2 * 75 * 5>>
+  %194 = "ckks.encode"() <{payload = dense<-1.7203902432984573E-4> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 5>>
+  %195 = "ckks.mulcp"(%193, %194) : (tensor<1x!ckks.poly<2 * 75 * 5>>, tensor<1x!ckks.poly<1 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 115 * 5>>
+  %196 = "ckks.rescalec"(%195) : (tensor<1x!ckks.poly<2 * 115 * 5>>) -> tensor<1x!ckks.poly<2 * 64 * 4>>
+  %197 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 6 * 4>>
+  %198 = "ckks.mulcp"(%186, %197) : (tensor<1x!ckks.poly<2 * 58 * 4>>, tensor<1x!ckks.poly<1 * 6 * 4>>) -> tensor<1x!ckks.poly<2 * 64 * 4>>
+  %199 = "ckks.addcc"(%198, %196) : (tensor<1x!ckks.poly<2 * 64 * 4>>, tensor<1x!ckks.poly<2 * 64 * 4>>) -> tensor<1x!ckks.poly<2 * 64 * 4>>
+  %200 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<65536xf64>}> : () -> tensor<1x!ckks.poly<1 * 6 * 4>>
+  %201 = "ckks.mulcp"(%199, %200) : (tensor<1x!ckks.poly<2 * 64 * 4>>, tensor<1x!ckks.poly<1 * 6 * 4>>) -> tensor<1x!ckks.poly<2 * 70 * 4>>
+  %202 = "ckks.addcc"(%115, %201) : (tensor<1x!ckks.poly<2 * 70 * 4>>, tensor<1x!ckks.poly<2 * 70 * 4>>) -> tensor<1x!ckks.poly<2 * 70 * 4>>
+  %203 = "ckks.modswitchc"(%arg0) <{downFactor = 12 : i64}> : (tensor<1x!ckks.poly<2 * 40 * 16>>) -> tensor<1x!ckks.poly<2 * 40 * 4>>
+  %204 = "ckks.mulcc"(%203, %202) : (tensor<1x!ckks.poly<2 * 40 * 4>>, tensor<1x!ckks.poly<2 * 70 * 4>>) -> tensor<1x!ckks.poly<3 * 110 * 4>>
+  %205 = "ckks.relinearize"(%204) : (tensor<1x!ckks.poly<3 * 110 * 4>>) -> tensor<1x!ckks.poly<2 * 110 * 4>>
+  %206 = "ckks.rescalec"(%205) : (tensor<1x!ckks.poly<2 * 110 * 4>>) -> tensor<1x!ckks.poly<2 * 59 * 3>>
+  %207 = "ckks.encode"() <{payload = dense_resource<__elided__> : tensor<896xf64>}> : () -> tensor<1x!ckks.poly<1 * 40 * 3>>
+  %208 = "ckks.mulcp"(%206, %207) : (tensor<1x!ckks.poly<2 * 59 * 3>>, tensor<1x!ckks.poly<1 * 40 * 3>>) -> tensor<1x!ckks.poly<2 * 99 * 3>>
+  %209 = "ckks.rescalec"(%208) : (tensor<1x!ckks.poly<2 * 99 * 3>>) -> tensor<1x!ckks.poly<2 * 48 * 2>>
+  "func.return"(%209) : (tensor<1x!ckks.poly<2 * 48 * 2>>) -> ()
+}) {arg_scale = array<i64: 40>, btp_target = array<i64>, init_level = 16 : i64, res_scale = array<i64: 48>, selected_set = 1 : i64, smu0 = 0 : i64, smu_attached = false} : () -> ()
+Estimated Latency: 0.054085 (sec) 
+Number of Bootstrapping: 0

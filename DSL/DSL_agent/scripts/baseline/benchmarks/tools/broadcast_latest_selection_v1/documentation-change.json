@@ -1,0 +1,29 @@
+{
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "files": {
+    "docs/README.md": {
+      "after": "cfcdf61b03199d6460b02e94fb40a3f87b5da2330e0f3d204da343b7dd34059f",
+      "before": "01d6ab1c4b1d1b5960e262bc98c3498ffbd65fb2b6d25010d7bab8ae5854d316"
+    },
+    "docs/baseline/mac-migration-handoff.md": {
+      "after": "44bfeec22f5040d21236dc9bb3a01c9d6267873f7e6df81d484230c034dce847",
+      "before": "aa86f97f04c0af25b122ecc8c6ecd5140faf27da3e5bb66f6b74be204b0bdcf8"
+    },
+    "docs/baseline/operator-decomposition-and-python.md": {
+      "after": "27d2874630c792594496c51473c0b97285c662134c1f6a021f15d72c3c4ae600",
+      "before": "54fe79976fc732db2542910189dd4afd0940c191388a4086371f1d831f61a435"
+    },
+    "docs/baseline/supported-inputs-models-configurations.md": {
+      "after": "1876ee31d0f4d6c0e98f0a9a86d70eb2795b1058a4b0a194aea04b4dbfce85fb",
+      "before": "6f99d67db6544a4252c41b8eaabcdbe30d86d6c6b543357e8f0e9d16288a30a0"
+    },
+    "scripts/README.md": {
+      "after": "07fe24e3316a141612960bc46edc3f0be6d3050ed0059baa7d0ed99030b79112",
+      "before": "3649eff040cf2ceef02ac73ce699e5923a69b59cdb97ef91b405aad46b76e70b"
+    }
+  },
+  "format": "poseidon-static-broadcast-documentation-update-v1",
+  "source_stage_manifest_sha256": "5a88df990a07ead9e19944721146d997b04e23408b3e0266cff497ced7658343"
+}

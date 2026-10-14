@@ -1,0 +1,984 @@
+{
+  "agent_generated": false,
+  "backend_changes": 0,
+  "bindings": [
+    {
+      "binding": "d54bac112cb1601f61160e9b25187a21499fb05c3365c8cdd6e9447b79566fe5",
+      "frozen_agent_files": 644,
+      "plan_sha256": "3c0c3e6406791796cdc3a2a0bb7a17f5c09e81bbe0bff8fd2d9138ac947fda35",
+      "report_sha256": "185a1623047c28dc899c599d2d00c3c773f56949610852566a9edfbcf6ec8117"
+    },
+    {
+      "binding": "8f0a825b7e5552c48e229214df3d00cce4e44cc0405d0b81421ab2beb751b7eb",
+      "frozen_agent_files": 644,
+      "plan_sha256": "d9ee1f1ce0fdbe01f23ff3d63dd83cffb5e6e1ab65ac6ebe86fe63a837c370bf",
+      "report_sha256": "98284d01a1c721d0b128a16ebc8acaa8431b9abd4b8c49f9608a2a9ebc359171"
+    }
+  ],
+  "branch": "lhy-agent-dsl",
+  "budget": {
+    "aggregate_including_cli_upper_bound_seconds": 2175.406273310131,
+    "aggregate_limit_seconds": 3600,
+    "aggregate_seconds": 2055.406273310131,
+    "artifact_bytes": 45867418,
+    "cli_hard_timeout_seconds": 120,
+    "current_artifact_allocated_bytes": 25476009984,
+    "current_free_bytes": 49750601728,
+    "failed_supplement_test_seconds": 17.919382750056684,
+    "free_bytes": 49750396928,
+    "global_bytes": 24086703828,
+    "manual_seconds": 14.471428475051653,
+    "primary_seconds": 1496.5969302249723,
+    "prior_unit_seconds": 57.718123833998106,
+    "supplement_seconds": 468.7004080260522
+  },
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "date": "2026-10-05",
+  "downloads": 0,
+  "format": "poseidon-agent-approximation-acceptance-v1",
+  "functions": [
+    "exp",
+    "gelu",
+    "reciprocal",
+    "relu",
+    "sigmoid",
+    "silu",
+    "tanh"
+  ],
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "installs": 0,
+  "manual_probes": [
+    {
+      "compiled": false,
+      "encrypted_execution": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-p06hmafl",
+      "failure_layer": "static_check",
+      "label": "public initializer",
+      "numerically_correct": false,
+      "paid_calls": 0,
+      "revision": 714,
+      "seconds": 1.995568074984476,
+      "source": "manual equivalent expression",
+      "status": "failed"
+    },
+    {
+      "compiled": false,
+      "encrypted_execution": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w_tocop9",
+      "failure_layer": "compiler",
+      "label": "public initializer reassociation",
+      "numerically_correct": false,
+      "paid_calls": 0,
+      "revision": 715,
+      "seconds": 2.5678647910244763,
+      "source": "manual equivalent expression",
+      "status": "failed"
+    },
+    {
+      "compiled": false,
+      "encrypted_execution": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bdtopx03",
+      "failure_layer": "compiler",
+      "label": "centered pair layout",
+      "numerically_correct": false,
+      "paid_calls": 0,
+      "revision": 716,
+      "seconds": 2.566259509010706,
+      "source": "manual equivalent expression",
+      "status": "failed"
+    },
+    {
+      "compared_values": 8,
+      "compiled": true,
+      "encrypted_execution": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xzsmuvs2",
+      "failure_layer": null,
+      "label": "centered pair layout and balanced Newton",
+      "maximum_absolute_error": 1.370750310852153e-07,
+      "numerically_correct": true,
+      "paid_calls": 0,
+      "revision": 717,
+      "seconds": 4.783321007038467,
+      "source": "manual equivalent expression",
+      "status": "passed"
+    },
+    {
+      "compiled": false,
+      "encrypted_execution": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_87zot7w",
+      "failure_layer": "compiler",
+      "label": "original layout and balanced Newton",
+      "numerically_correct": false,
+      "paid_calls": 0,
+      "revision": 718,
+      "seconds": 2.5584150929935277,
+      "source": "manual equivalent expression",
+      "status": "failed"
+    }
+  ],
+  "manual_success_source": {
+    "origin": "manual equivalent expression",
+    "request_id": "4b99f4f0adfc6c7e51f00654592066d974f547ba2f06dd8c73f748ab05e74867",
+    "scope": {
+      "cases": [
+        "norms"
+      ],
+      "compiler_jobs": 2,
+      "encrypted_jobs": 1,
+      "format": "poseidon-manual-public-initializer-probe-v1",
+      "http_attempts": 0,
+      "link_jobs": 1,
+      "max_seconds": 300,
+      "model_sha256": "9514be3fc3a0a854896c171798feb8f2469ba3788c4e0a436f26148ebfbd674d",
+      "model_unchanged": true,
+      "old_source_sha256": "bfb39dcccb6592b2e2a60260209259fd1841a053868e4d4c89a6796f4553c551",
+      "origin": "manual equivalent centered layout with reassociated second Newton step, no changed iteration/coefficients",
+      "paid_calls": 0,
+      "parameters_unchanged": true,
+      "parent_source_sha256": "53af6af29abe18b4834f78a47b379a56a5791365e088a46607f66ffc3a5cde7e",
+      "reference_unchanged": true,
+      "request_id": "4b99f4f0adfc6c7e51f00654592066d974f547ba2f06dd8c73f748ab05e74867",
+      "source": "manual equivalent expression",
+      "source_sha256": "6dfdeba746a0c8077055de2ca253cff214dd75e8f8e9e09f2f1597ffe8afe147",
+      "threshold_unchanged": true
+    },
+    "source": "@hc.func('c')\ndef cap_period_sum_4(a0):\n    v1 = a0 + a0.rotate(1)\n    return v1 + v1.rotate(2)\n\n@hc.func('c,c')\ndef golden(x0, zero_ct):\n    delta = x0 - x0.rotate(1)\n    a = delta * p4 * pv0\n    va = cap_period_sum_4(a * a) + p6\n    ga = (va * p7 * p7 * p2 + p9) * p7\n    ya = a * ga\n    b = delta * p5 * pv0\n    vb = cap_period_sum_4(b * b) + p5\n    gb = (vb * p7 * p7 * p2 + p9) * p7\n    gb = gb * p9 + (gb * gb) * (gb * (vb * p2))\n    yb = b * gb\n    y = ya + yb\n    return [y - y.rotate(1).rotate(2)]\n",
+    "source_sha256": "6dfdeba746a0c8077055de2ca253cff214dd75e8f8e9e09f2f1597ffe8afe147"
+  },
+  "paid_calls": 0,
+  "parameter_changes": 0,
+  "pending": [
+    "New feature live Agent evaluation",
+    "Per-spelling backend and live Agent evaluation of remaining v5 functional/Tensor mappings",
+    "Generic centered-reduction and polynomial lowering for original normalization baseline",
+    "Further PyTorch static index syntax",
+    "Application identity parsing cost and developer dependency boundaries",
+    "Public weight deduplication",
+    "Attention compiler capacity",
+    "Native bootstrap",
+    "CUDA",
+    "x86 native execution",
+    "Clean installation",
+    "ResNet20"
+  ],
+  "protected": {
+    "backend": {
+      "changed": [],
+      "checked": 648
+    },
+    "current_agent": {
+      "changed": [],
+      "checked": 644
+    },
+    "old_agent_changes": [
+      "scripts/baseline/test_pytorch_approximation_capture.py",
+      "scripts/baseline/test_pytorch_approximation_import.py"
+    ],
+    "old_binding_and_prechange_snapshot_retained": true,
+    "references": {
+      "changed": [],
+      "checked": 6
+    }
+  },
+  "prs": 0,
+  "public_cli": {
+    "encrypted_execution": false,
+    "model_file_sha256": "95eff69ccdcdc738e2ff8eaee3b8f350d5b180699358f983e2100d8087b471cd",
+    "model_sha256": "92bfa418241443680b05a8d518d5cf216151a852539d077f02c030a980c55a65",
+    "paid_calls": 0,
+    "reference_probes": 16,
+    "reference_report_sha256": "231ac5696296a11509f7b3405803c4c96ed8c61f1f8ec5921230145c05af6e5f",
+    "status": "captured"
+  },
+  "pushes": 0,
+  "reference_changes": 0,
+  "rows": [
+    {
+      "approximation_accuracy_certified": false,
+      "candidate_sha256": "6b9e1f395b113658a430a111ec0a420a0fb6cd73cca1bd1dfb54dd96ce301a69",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-pp78dh8m",
+      "id": "modules",
+      "model_sha256": "a2c3f1c9250ec8dfe0e3a65ed4cd90e76936e4101d74dacaea485465833c9417",
+      "new_input_runs": 0,
+      "original_function_maximum_approximation_error": 0.09256572723388672,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approximation-offline-r712/tasks/c006b6892a674c4e9531c08de3951228/program",
+      "package_binding": "0775cc63e5fd68565c4e0deedce4e7986145505afce85a7bb3c320aef98f6b27",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.7263876656362087e-10,
+        "numerically_validated": true
+      },
+      "reference_probes": 16,
+      "reload": "not_planned",
+      "request_id": "08f87fe1272bd212f492c73833ec74a644eb2b6a7a83cb28c755a47ec5ce5c5e",
+      "selection": {
+        "configuration_sha256": "4f5896a3fe93ab7e03f63713454a84233492b6016415281be84ed1c869403e8c",
+        "format": "poseidon-pytorch-approximation-selection-v1",
+        "policy": "node-module-default-v1",
+        "selections": [
+          {
+            "function": "relu",
+            "module_paths": [
+              "branch",
+              "branch.0"
+            ],
+            "node_id": "fx_branch_0",
+            "operator": "relu",
+            "profile_sha256": "9d353ff2217ce901aa7f962361ea85c3e5765a3a4887738e86e3fed84b299e7b",
+            "source": {
+              "kind": "modules",
+              "selector": 0
+            }
+          },
+          {
+            "function": "relu",
+            "module_paths": [
+              "branch",
+              "branch.1"
+            ],
+            "node_id": "fx_branch_1",
+            "operator": "leaky_relu",
+            "profile_sha256": "6be3b457c433807d5a6c71c088bf7cc06b2b5160bc14da44f800d03cc7935465",
+            "source": {
+              "kind": "modules",
+              "selector": 1
+            }
+          }
+        ]
+      },
+      "source": "rule baseline",
+      "status": "passed"
+    },
+    {
+      "approximation_accuracy_certified": false,
+      "candidate_sha256": "188f5221649b1e6582aead98ad097f57fed356c7d1af5a8a3047a71691243860",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-joczdofw",
+      "id": "nodes",
+      "model_sha256": "92bfa418241443680b05a8d518d5cf216151a852539d077f02c030a980c55a65",
+      "new_input_runs": 2,
+      "original_function_maximum_approximation_error": 0.572265625,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approximation-offline-r712/tasks/21ccacc6b30c4b91a5f8a4b68d70df2d/program",
+      "package_binding": "4257104c990899eef083b285a46fdc7f739cf21714f9461287c6008292a721c8",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 7.316402206303252e-10,
+        "numerically_validated": true
+      },
+      "reference_probes": 16,
+      "reload": "passed",
+      "request_id": "13450c2cc8dd65b98fcf34edb93102d28ac89600f12e4dd910de1915fb05ce10",
+      "selection": {
+        "configuration_sha256": "16e1010e01320b357f9a974dd73ef3f7acb30ac7f06f9d3de3945382d6bec7ef",
+        "format": "poseidon-pytorch-approximation-selection-v1",
+        "policy": "node-module-default-v1",
+        "selections": [
+          {
+            "function": "relu",
+            "module_paths": [
+              "act"
+            ],
+            "node_id": "fx_act",
+            "operator": "relu",
+            "profile_sha256": "9d353ff2217ce901aa7f962361ea85c3e5765a3a4887738e86e3fed84b299e7b",
+            "source": {
+              "kind": "modules",
+              "selector": 0
+            }
+          },
+          {
+            "function": "relu",
+            "module_paths": [
+              "act"
+            ],
+            "node_id": "fx_act_1",
+            "operator": "relu",
+            "profile_sha256": "6be3b457c433807d5a6c71c088bf7cc06b2b5160bc14da44f800d03cc7935465",
+            "source": {
+              "kind": "nodes",
+              "selector": 0
+            }
+          },
+          {
+            "function": "relu",
+            "module_paths": [],
+            "node_id": "fx_relu",
+            "operator": "relu",
+            "profile_sha256": "9cb998a7cb2f184105f68e1cdc51002c9f2bd853fba0741503c35c4ee62dbd5a",
+            "source": {
+              "kind": "defaults",
+              "selector": "relu"
+            }
+          }
+        ]
+      },
+      "source": "rule baseline",
+      "status": "passed"
+    },
+    {
+      "approximation_accuracy_certified": false,
+      "candidate_sha256": "644853bbcd2cdfa42aaeff274d4e763411fd5eaf44f57c65d5d1f0f414bf3ca1",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-dpkytup0",
+      "id": "nested",
+      "model_sha256": "0e0666afd5a72664fb172ba335b62341519b293b4202a74e89e566bc68458585",
+      "new_input_runs": 0,
+      "original_function_maximum_approximation_error": 0.269439697265625,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approximation-offline-r712/tasks/b368f1d1350c481aafaf189a1b5a9545/program",
+      "package_binding": "faf6e9d166a447b08a0f28d0da946798eeb4aca9774dd6425b5aea6b11f7a8a1",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 3.075206200797709e-10,
+        "numerically_validated": true
+      },
+      "reference_probes": 16,
+      "reload": "not_planned",
+      "request_id": "f0b8fe283ca61a83b0b50ed38e3cc9ab7187ae17878d0b07c9ef186cf5922352",
+      "selection": {
+        "configuration_sha256": "c48d6ddfdfa3491d3e3970e6c20c4e9e43141b2eb1a2cd8776f2f3b3794fc572",
+        "format": "poseidon-pytorch-approximation-selection-v1",
+        "policy": "node-module-default-v1",
+        "selections": [
+          {
+            "function": "relu",
+            "module_paths": [
+              "left"
+            ],
+            "node_id": "fx_relu",
+            "operator": "relu",
+            "profile_sha256": "9d353ff2217ce901aa7f962361ea85c3e5765a3a4887738e86e3fed84b299e7b",
+            "source": {
+              "kind": "modules",
+              "selector": 0
+            }
+          },
+          {
+            "function": "relu",
+            "module_paths": [
+              "right"
+            ],
+            "node_id": "fx_relu_1",
+            "operator": "relu",
+            "profile_sha256": "6be3b457c433807d5a6c71c088bf7cc06b2b5160bc14da44f800d03cc7935465",
+            "source": {
+              "kind": "modules",
+              "selector": 1
+            }
+          }
+        ]
+      },
+      "source": "rule baseline",
+      "status": "passed"
+    },
+    {
+      "approximation_accuracy_certified": false,
+      "candidate_sha256": "9a169b9e5d2afb97e7ce038ae7c95390daf023105653a1fc932d699709f4192c",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qrlx9mw_",
+      "id": "functions",
+      "model_sha256": "2c61709f18be12159a4b2c9a6cc6bbc707c627a6a98596b66ce9e7ee4e445350",
+      "new_input_runs": 2,
+      "original_function_maximum_approximation_error": 0.04944065885917272,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approximation-offline-r712/tasks/1f2d06776a79440284c1222cb5a32fa8/program",
+      "package_binding": "b0060f0d77b23f110c5ac7d62f087dc75225d64a4afd04b8636336ce3912e701",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 16,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.6511873812685707e-10,
+        "numerically_validated": true
+      },
+      "reference_probes": 16,
+      "reload": "passed",
+      "request_id": "31377f4ac549a12ddb50b15e86104c8bb566615eafca5be34ad74b15b502a1f8",
+      "selection": {
+        "configuration_sha256": "66b9eb3261c396a8eee8be305dab9e2323cb5e4342121ae156ce38403a72ba34",
+        "format": "poseidon-pytorch-approximation-selection-v1",
+        "policy": "node-module-default-v1",
+        "selections": [
+          {
+            "function": "gelu",
+            "module_paths": [],
+            "node_id": "fx_gelu",
+            "operator": "gelu",
+            "profile_sha256": "9d353ff2217ce901aa7f962361ea85c3e5765a3a4887738e86e3fed84b299e7b",
+            "source": {
+              "kind": "defaults",
+              "selector": "gelu"
+            }
+          },
+          {
+            "function": "silu",
+            "module_paths": [],
+            "node_id": "fx_silu",
+            "operator": "silu",
+            "profile_sha256": "6be3b457c433807d5a6c71c088bf7cc06b2b5160bc14da44f800d03cc7935465",
+            "source": {
+              "kind": "defaults",
+              "selector": "silu"
+            }
+          },
+          {
+            "function": "sigmoid",
+            "module_paths": [],
+            "node_id": "fx_sigmoid",
+            "operator": "sigmoid",
+            "profile_sha256": "9f822b24d124df10bd040bf686c1cc0d967a703659dfe4481388e45de9256239",
+            "source": {
+              "kind": "defaults",
+              "selector": "sigmoid"
+            }
+          },
+          {
+            "function": "tanh",
+            "module_paths": [],
+            "node_id": "fx_tanh",
+            "operator": "tanh",
+            "profile_sha256": "9cb998a7cb2f184105f68e1cdc51002c9f2bd853fba0741503c35c4ee62dbd5a",
+            "source": {
+              "kind": "defaults",
+              "selector": "tanh"
+            }
+          }
+        ]
+      },
+      "source": "rule baseline",
+      "status": "passed"
+    },
+    {
+      "approximation_accuracy_certified": false,
+      "diagnosis": {
+        "backend": "poseidon_cpu",
+        "code": "earth_mul_constraints_rejected",
+        "compiler_accumulated_scale": 750,
+        "compiler_budget": 720,
+        "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+        "compiler_rescaling_factor": 60,
+        "compiler_upper_consumed_level": 12,
+        "evidence_kind": "interpretation_of_untrusted_compiler_log",
+        "failed_conditions": [
+          "compiler_accumulated_scale_budget"
+        ],
+        "format": "fixed-earth-mul-diagnosis-v2",
+        "level_semantics": "Earth consumed levels; not RuntimePlan/Poseidon zero-based data-modulus index",
+        "operands": [
+          {
+            "consumed_level": 11,
+            "kind": "ci",
+            "scale": 90,
+            "tensor_length": 1
+          },
+          {
+            "consumed_level": 11,
+            "kind": "ci",
+            "scale": 90,
+            "tensor_length": 1
+          }
+        ],
+        "proves_all_equivalent_programs_impossible": false,
+        "runtime_capacity_checked": false,
+        "seal_capacity_checked": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-lcavxiha",
+      "failure_layer": "compiler",
+      "id": "norms",
+      "model_sha256": "9514be3fc3a0a854896c171798feb8f2469ba3788c4e0a436f26148ebfbd674d",
+      "original_function_maximum_approximation_error": 0.16277179845886453,
+      "original_record_retained": true,
+      "reference_probes": 16,
+      "request_id": "4b99f4f0adfc6c7e51f00654592066d974f547ba2f06dd8c73f748ab05e74867",
+      "selection": {
+        "configuration_sha256": "7432a4783ad1bd4074df20501782a1a9bdfc733fe8d058063ba20ef0a35a27c6",
+        "format": "poseidon-pytorch-approximation-selection-v1",
+        "policy": "node-module-default-v1",
+        "selections": [
+          {
+            "function": "rsqrt",
+            "module_paths": [
+              "a"
+            ],
+            "node_id": "fx_a",
+            "operator": "layer_norm",
+            "profile_sha256": "35764bb393ddae6fba1d601a2e46f0bb386176a91c341873989cb748897fdeae",
+            "source": {
+              "kind": "modules",
+              "selector": 0
+            }
+          },
+          {
+            "function": "rsqrt",
+            "module_paths": [
+              "b"
+            ],
+            "node_id": "fx_b",
+            "operator": "layer_norm",
+            "profile_sha256": "521cbb573bea5c4c16a462b1f23af50a32bc0f01d59481c7ea86598b7f0371c5",
+            "source": {
+              "kind": "modules",
+              "selector": 1
+            }
+          }
+        ]
+      },
+      "source": "rule baseline",
+      "status": "failed"
+    },
+    {
+      "approximation_accuracy_certified": false,
+      "candidate_sha256": "1bf4c869037eeebe42688572fbb61da3a565e30c21e6cfd62f11a3bd0a8cb36d",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0hzmj9hr",
+      "id": "compound",
+      "model_sha256": "56708dc44f9dc8b8ab188d8e47a1f1e720f6c33d078e8249007c79656127bf45",
+      "new_input_runs": 0,
+      "original_function_maximum_approximation_error": 0.5043190827483504,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approximation-offline-r712/tasks/78636c5c59ad4c21abf5fd75ec89300a/program",
+      "package_binding": "ee3f3b50fab222c53ae06dc0aacabb826e57743eeedace16923cbe8d1291fc53",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 2.7683155767732615e-10,
+        "numerically_validated": true
+      },
+      "reference_probes": 16,
+      "reload": "not_planned",
+      "request_id": "05f9168f2f8f77150b28bdf1ecbd5bf481d4d4eb3dcc008757248fdc020f2767",
+      "selection": {
+        "configuration_sha256": "c77fefed61598cc77263c363b4120054b6ab9ad0b244a751f8952769c02eb835",
+        "format": "poseidon-pytorch-approximation-selection-v1",
+        "policy": "node-module-default-v1",
+        "selections": [
+          {
+            "function": "exp",
+            "module_paths": [],
+            "node_id": "fx_softmax",
+            "operator": "softmax",
+            "profile_sha256": "f0a6b25e61b1ebcd88d1681ed2e618cd8231f773007c66efba40370a3e2d0eed",
+            "source": {
+              "kind": "nodes",
+              "selector": 0
+            }
+          },
+          {
+            "function": "reciprocal",
+            "module_paths": [],
+            "node_id": "fx_softmax",
+            "operator": "softmax",
+            "profile_sha256": "0d1b0a3283d51ace91c4f4e4bd3578e3c152434f48ca88a85fccc61dc8cef88b",
+            "source": {
+              "kind": "defaults",
+              "selector": "reciprocal"
+            }
+          },
+          {
+            "function": "exp",
+            "module_paths": [
+              "sm"
+            ],
+            "node_id": "fx_sm",
+            "operator": "softmax",
+            "profile_sha256": "ee53dcc29096915c97e05c1f8e26c6891d774b9b5c9ccb8344dfd21ac8495283",
+            "source": {
+              "kind": "defaults",
+              "selector": "exp"
+            }
+          },
+          {
+            "function": "reciprocal",
+            "module_paths": [
+              "sm"
+            ],
+            "node_id": "fx_sm",
+            "operator": "softmax",
+            "profile_sha256": "3144393619b933ed61090b4766e1a554d32da09dcc5223658774f8ab8e3c6d2d",
+            "source": {
+              "kind": "modules",
+              "selector": 0
+            }
+          }
+        ]
+      },
+      "source": "rule baseline",
+      "status": "passed"
+    },
+    {
+      "approximation_accuracy_certified": false,
+      "candidate_sha256": "9a169b9e5d2afb97e7ce038ae7c95390daf023105653a1fc932d699709f4192c",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-uy8g9__5",
+      "id": "functions_nodes",
+      "model_sha256": "2c61709f18be12159a4b2c9a6cc6bbc707c627a6a98596b66ce9e7ee4e445350",
+      "new_input_runs": 2,
+      "original_function_maximum_approximation_error": 0.04944065885917272,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approximation-supplement-r720/tasks/dbca45b1615b4cbf972f429cf9fac313/program",
+      "package_binding": "fafec5079c2265abf6c398178df1e3fbc64f4dec7265f645833bc8de30111ace",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 16,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.9724674671373066e-10,
+        "numerically_validated": true
+      },
+      "reference_probes": 16,
+      "reload": "passed",
+      "request_id": "31377f4ac549a12ddb50b15e86104c8bb566615eafca5be34ad74b15b502a1f8",
+      "selection": {
+        "configuration_sha256": "f62ad040f9bc0b83a2b2a58c5c0d05c1a7db65732badfd6a54d28abfb72cadec",
+        "format": "poseidon-pytorch-approximation-selection-v1",
+        "policy": "node-module-default-v1",
+        "selections": [
+          {
+            "function": "gelu",
+            "module_paths": [],
+            "node_id": "fx_gelu",
+            "operator": "gelu",
+            "profile_sha256": "9d353ff2217ce901aa7f962361ea85c3e5765a3a4887738e86e3fed84b299e7b",
+            "source": {
+              "kind": "nodes",
+              "selector": 0
+            }
+          },
+          {
+            "function": "silu",
+            "module_paths": [],
+            "node_id": "fx_silu",
+            "operator": "silu",
+            "profile_sha256": "6be3b457c433807d5a6c71c088bf7cc06b2b5160bc14da44f800d03cc7935465",
+            "source": {
+              "kind": "defaults",
+              "selector": "silu"
+            }
+          },
+          {
+            "function": "sigmoid",
+            "module_paths": [],
+            "node_id": "fx_sigmoid",
+            "operator": "sigmoid",
+            "profile_sha256": "9f822b24d124df10bd040bf686c1cc0d967a703659dfe4481388e45de9256239",
+            "source": {
+              "kind": "defaults",
+              "selector": "sigmoid"
+            }
+          },
+          {
+            "function": "tanh",
+            "module_paths": [],
+            "node_id": "fx_tanh",
+            "operator": "tanh",
+            "profile_sha256": "9cb998a7cb2f184105f68e1cdc51002c9f2bd853fba0741503c35c4ee62dbd5a",
+            "source": {
+              "kind": "defaults",
+              "selector": "tanh"
+            }
+          }
+        ]
+      },
+      "source": "rule baseline",
+      "status": "passed"
+    }
+  ],
+  "selection_contexts": {
+    "defaults": [
+      "compound",
+      "functions",
+      "functions_nodes",
+      "nodes"
+    ],
+    "modules": [
+      "compound",
+      "modules",
+      "nested",
+      "nodes"
+    ],
+    "nodes": [
+      "compound",
+      "functions_nodes",
+      "nodes"
+    ]
+  },
+  "source": "rule baseline plus separately recorded manual expression",
+  "status": "complete_with_preserved_baseline_failure",
+  "totals": {
+    "cache_reused": 3,
+    "independent_structured_maximum_absolute_error": 1.4210701070743736e-09,
+    "independent_structured_values": 60,
+    "manual_algebraic_maximum_error": 2.220446049250313e-16,
+    "manual_algebraic_probes": 256,
+    "manual_compared_values": 8,
+    "manual_input_groups": 4,
+    "manual_maximum_absolute_error": 1.370750310852153e-07,
+    "package_files_checked": 157,
+    "packages_reloaded": 3,
+    "reference_probes": 112,
+    "rule_compared_values": 164,
+    "rule_failed": 1,
+    "rule_input_groups": 54,
+    "rule_maximum_absolute_error": 1.4210701070743736e-09,
+    "rule_not_run": 0,
+    "rule_passed": 6,
+    "scoped_rule_tasks": 7,
+    "unique_source_models": 6
+  },
+  "unit": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 226,
+    "skipped": 0,
+    "test_ids": [
+      "test_pytorch_capture.CaptureTests.test_conv_batchnorm_pool",
+      "test_pytorch_capture.CaptureTests.test_dynamic_control_rejected",
+      "test_pytorch_capture.CaptureTests.test_hash_reject",
+      "test_pytorch_capture.CaptureTests.test_input_budget_before_allocation",
+      "test_pytorch_capture.CaptureTests.test_missing_relu_approximation",
+      "test_pytorch_capture.CaptureTests.test_mlp_modulelist",
+      "test_pytorch_capture.CaptureTests.test_mutating_forward_rejected",
+      "test_pytorch_capture.CaptureTests.test_random_forward_rejected",
+      "test_pytorch_capture.CaptureTests.test_residual",
+      "test_pytorch_capture.CaptureTests.test_trust_required",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_float32_conversion_is_explicit_and_recorded",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_keyword_arithmetic_module_and_functional_linear",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_nested_dict_tuple_list_output",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_non_tensor_output_and_encrypted_shape_rejected",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_other_floating_and_complex_state_rejected",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_public_bool_arithmetic_and_inexact_integer_rejected",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_public_exact_integer_arithmetic",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_public_integer_indices_are_not_float_converted",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_squeeze_contiguous_three_contexts",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_static_shape_size_three_contexts",
+      "test_pytorch_general_capture.GeneralCaptureTests.test_strict_float64_rejects_float32_and_accepts_float64",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_bmm_batch_broadcast_is_rejected",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_bmm_three_contexts_and_spellings",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_dot_three_contexts_and_spellings",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_matmul_three_contexts_and_spellings",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_matrix_capacity_baselines_match_two_references",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_matrix_out_mutation_rejected",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_mm_rank_three_is_rejected",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_mm_three_contexts_and_spellings",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_public_matrix_normalizes_to_existing_linear",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_two_cipher_broadcast_three_contexts",
+      "test_pytorch_matrix_capture.MatrixCaptureTests.test_vector_matmul_keeps_existing_rank_contract",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_approximation_domain_checked_on_reference",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_duplicate_axes_rejected",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_epsilon_limit_preserved",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_float_correction_rejected_by_pinned_torch",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_functional_rules_are_shared_input_declarations",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_group_rank_two_reports_supported_rank",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_group_three_contexts",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_layer_three_contexts",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_legacy_unbiased_false_supported",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_nonzero_correction_rejected",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_norm_cipher_gain_rejected",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_norm_missing_approximation_rejected",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_source_operators_are_stable",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_variance_default_sample_correction_rejected",
+      "test_pytorch_functional_capture.FunctionalCaptureTests.test_variance_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_batch_norm_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_bound_source_weight_is_reused_for_public_T",
+      "test_pytorch_spelling_capture.SpellingTests.test_conv1_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_conv2_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_convolution_string_padding_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_encrypted_batch_norm_statistics_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_encrypted_convolution_weight_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_group_no_affine_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_layer_no_affine_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_module_and_function_group_norm_are_equivalent",
+      "test_pytorch_spelling_capture.SpellingTests.test_module_and_function_layer_norm_are_equivalent",
+      "test_pytorch_spelling_capture.SpellingTests.test_no_normalization_approximation_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_pool1_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_pool2_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_pool_ceil_mode_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_pool_divisor_override_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_public_batched_matrix_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_public_left_matrix_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_public_left_vector_matmul_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_public_right_matrix_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_public_right_vector_matmul_refused",
+      "test_pytorch_spelling_capture.SpellingTests.test_rules_describe_input_mapping_without_execution_claim",
+      "test_pytorch_spelling_capture.SpellingTests.test_tensor_T_three_contexts",
+      "test_pytorch_spelling_capture.SpellingTests.test_training_batch_norm_refused",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_concat_three_contexts",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_duplicate_axis_rejected",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_empty_axis_tuple_matches_torch_all_axes",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_explicit_float64_reduction",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_float32_reduction_rejected",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_mean_three_contexts",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_output_capacity_preserved",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_scalar_output_requires_explicit_shape",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_scalar_stack_arithmetic_alias",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_scalar_stack_internal_name_does_not_shadow_module",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_scalar_stack_negative_axis",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_scalar_stack_sum_mean",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_stack_three_contexts",
+      "test_pytorch_tensor_capture.TensorCaptureTests.test_sum_three_contexts",
+      "test_pytorch_source_contract.SourceContractTests.test_depth_size_and_keyword_names",
+      "test_pytorch_source_contract.SourceContractTests.test_factory_data_and_package_version",
+      "test_pytorch_source_contract.SourceContractTests.test_nonfinite_function_object_and_huge_integer",
+      "test_pytorch_source_contract.SourceContractTests.test_old_manifest_keeps_noarg_factory",
+      "test_pytorch_source_contract.SourceContractTests.test_output_signature_count_types_and_empty",
+      "test_pytorch_source_contract.SourceContractTests.test_static_output_tree_keeps_tuple_list_and_dict",
+      "test_pytorch_source_contract.SourceContractTests.test_tree_duplicates_extras_and_order",
+      "test_pytorch_source_contract.SourceContractTests.test_unknown_policy_and_fields",
+      "test_pytorch_state_weights.StateWeightTests.test_batchnorm_without_affine_uses_float64_public_ones",
+      "test_pytorch_state_weights.StateWeightTests.test_exact_float32_module_load_before_normalization",
+      "test_pytorch_state_weights.StateWeightTests.test_export_rejects_invalid_state_before_writing",
+      "test_pytorch_state_weights.StateWeightTests.test_export_round_trip_and_no_overwrite",
+      "test_pytorch_state_weights.StateWeightTests.test_forged_or_incomplete_binding_rejected",
+      "test_pytorch_state_weights.StateWeightTests.test_invalid_declarations_and_value_domains",
+      "test_pytorch_state_weights.StateWeightTests.test_loaded_dtype_metadata_cannot_be_forged",
+      "test_pytorch_state_weights.StateWeightTests.test_names_dtype_and_shape_are_not_silently_coerced",
+      "test_pytorch_state_weights.StateWeightTests.test_object_fortran_trailing_and_mismatched_headers_rejected",
+      "test_pytorch_state_weights.StateWeightTests.test_regular_file_and_symlink_integrity",
+      "test_pytorch_state_weights.StateWeightTests.test_supported_exact_types_including_scalar_buffers",
+      "test_pytorch_state_weights.StateWeightTests.test_tied_state_conflicting_values_rejected",
+      "test_pytorch_general_import.GeneralImportTests.test_application_import_and_export_keeps_provenance_private",
+      "test_pytorch_general_import.GeneralImportTests.test_crlf_sources_keep_exact_bytes_through_capture_and_package",
+      "test_pytorch_general_import.GeneralImportTests.test_invalid_import_is_terminal_without_provider",
+      "test_pytorch_general_import.GeneralImportTests.test_local_output_tree_is_a_hash_bound_snapshot",
+      "test_pytorch_general_import.GeneralImportTests.test_provenance_changes_reuse_identity_without_changing_generation_request",
+      "test_pytorch_general_import.GeneralImportTests.test_provenance_is_checked_without_importing_user_modules",
+      "test_pytorch_general_import.GeneralImportTests.test_six_real_captures_and_references_not_fhe_claims",
+      "test_pytorch_general_import.GeneralImportTests.test_source_capabilities_are_shared_and_do_not_claim_execution",
+      "test_pytorch_general_import.GeneralImportTests.test_source_factory_policy_and_tree_are_bound",
+      "test_pytorch_general_import.GeneralImportTests.test_structure_order_and_dtype_record_tampering_rejected",
+      "test_pytorch_state_import.StateImportTests.test_integer_scalar_buffer_keeps_source_dtype",
+      "test_pytorch_state_import.StateImportTests.test_retained_weight_file_hash_is_checked_before_application_admission",
+      "test_pytorch_state_import.StateImportTests.test_six_isolated_captures_reference_and_exact_state_binding",
+      "test_pytorch_state_import.StateImportTests.test_source_snapshot_includes_verified_npy_files",
+      "test_pytorch_state_import.StateImportTests.test_state_sources_stay_out_of_provider_request",
+      "test_pytorch_state_import.StateImportTests.test_static_output_structure_survives_v3_provenance",
+      "test_pytorch_state_import.StateImportTests.test_weight_dtype_source_and_declared_binding_tampering_rejected",
+      "test_pytorch_static_capture.StaticCaptureTests.test_data_dependent_controls_three_rejections",
+      "test_pytorch_static_capture.StaticCaptureTests.test_direct_scalars_three_contexts",
+      "test_pytorch_static_capture.StaticCaptureTests.test_expansion_budget_stops_before_real_tensor_execution",
+      "test_pytorch_static_capture.StaticCaptureTests.test_intermediate_shapes_and_module_result",
+      "test_pytorch_static_capture.StaticCaptureTests.test_legacy_public_shape_loop_rejection_is_preserved",
+      "test_pytorch_static_capture.StaticCaptureTests.test_legacy_scalar_rejection_is_preserved",
+      "test_pytorch_static_capture.StaticCaptureTests.test_nested_scalar_vector_and_matrix_output",
+      "test_pytorch_static_capture.StaticCaptureTests.test_non_shape_legacy_graph_and_request_identity_unchanged",
+      "test_pytorch_static_capture.StaticCaptureTests.test_policy_explicit_and_metadata_required",
+      "test_pytorch_static_capture.StaticCaptureTests.test_public_weight_budget_is_separate_from_intermediate_tensor_budget",
+      "test_pytorch_static_capture.StaticCaptureTests.test_random_and_state_mutation_still_rejected",
+      "test_pytorch_static_capture.StaticCaptureTests.test_reshape_shape_arithmetic_and_public_branch",
+      "test_pytorch_static_capture.StaticCaptureTests.test_root_linear_parameters_do_not_become_control_values",
+      "test_pytorch_static_capture.StaticCaptureTests.test_scalar_intermediate_shape_query",
+      "test_pytorch_static_capture.StaticCaptureTests.test_shape_budget_and_extra_input_rejected",
+      "test_pytorch_static_capture.StaticCaptureTests.test_signature_loop_shape_three_contexts",
+      "test_pytorch_static_capture.StaticCaptureTests.test_static_shape_values_are_not_tensor_output_leaves",
+      "test_pytorch_static_capture.StaticCaptureTests.test_unknown_metadata_and_encrypted_axis_rejected",
+      "test_pytorch_static_source.StaticSourceContractTests.test_explicit_v4_and_empty_complete_state",
+      "test_pytorch_static_source.StaticSourceContractTests.test_no_user_trace_callbacks_or_automatic_modes",
+      "test_pytorch_static_source.StaticSourceContractTests.test_registered_capability_is_shared",
+      "test_pytorch_static_source.StaticSourceContractTests.test_scalar_tree_is_version_opt_in",
+      "test_pytorch_static_source.StaticSourceContractTests.test_scalar_tree_rejects_nonzero_shape_and_wrong_abi",
+      "test_pytorch_static_source.StaticSourceContractTests.test_weights_required_and_legacy_fields_preserved",
+      "test_execution_input_domain.DomainTests.test_approximate_intermediate_semantics_are_used",
+      "test_execution_input_domain.DomainTests.test_every_sample_is_checked_with_stable_index",
+      "test_execution_input_domain.DomainTests.test_exact_graph_is_explicitly_not_declared",
+      "test_execution_input_domain.DomainTests.test_first_violating_node_is_located_after_exact_prefix",
+      "test_execution_input_domain.DomainTests.test_group_norm_three_contexts",
+      "test_execution_input_domain.DomainTests.test_instance_norm_checks_derived_variance",
+      "test_execution_input_domain.DomainTests.test_layer_norm_three_contexts",
+      "test_execution_input_domain.DomainTests.test_log_requires_its_declared_positive_interval",
+      "test_execution_input_domain.DomainTests.test_logsoftmax_checks_log_domain_of_exp_sum",
+      "test_execution_input_domain.DomainTests.test_maxpool_checks_comparison_domain",
+      "test_execution_input_domain.DomainTests.test_one_ulp_outside_boundaries_is_rejected",
+      "test_execution_input_domain.DomainTests.test_pair_extrema_use_difference_not_each_operand",
+      "test_execution_input_domain.DomainTests.test_polynomial_function_domains",
+      "test_execution_input_domain.DomainTests.test_post_domain_outputs_are_not_evaluated_or_certified",
+      "test_execution_input_domain.DomainTests.test_prelu_domain_uses_input_before_gain",
+      "test_execution_input_domain.DomainTests.test_profile_validation_is_strict",
+      "test_execution_input_domain.DomainTests.test_public_diagnostic_is_detached_and_redacted",
+      "test_execution_input_domain.DomainTests.test_reduction_extrema_check_later_tree_intermediates",
+      "test_execution_input_domain.DomainTests.test_rms_norm_checks_derived_variance",
+      "test_execution_input_domain.DomainTests.test_sample_count_boundary",
+      "test_execution_input_domain.DomainTests.test_sixteen_samples_and_original_snapshots_remain_unchanged",
+      "test_execution_input_domain.DomainTests.test_softmax_checks_denominator_after_exp",
+      "test_execution_input_domain.DomainTests.test_softmax_valid_denominator",
+      "test_execution_input_domain.DomainTests.test_sqrt_checks_its_positive_domain",
+      "test_execution_input_domain.DomainTests.test_three_shapes_and_closed_boundaries",
+      "test_execution_input_domain.DomainTests.test_unknown_reference_error_is_not_disclosed_as_domain_failure",
+      "test_execution_input_domain.IntegrationTests.test_application_returns_typed_failure_without_repair_or_values",
+      "test_execution_input_domain.IntegrationTests.test_bound_graph_mismatch_is_rejected",
+      "test_execution_input_domain.IntegrationTests.test_bound_original_model_is_reused_from_provenance",
+      "test_execution_input_domain.IntegrationTests.test_invalid_domain_stops_before_identity_artifacts_or_runtime",
+      "test_execution_input_domain.IntegrationTests.test_no_provenance_has_no_invented_domain",
+      "test_execution_input_domain.IntegrationTests.test_normalized_arrays_are_copied_before_packing",
+      "test_execution_input_domain.IntegrationTests.test_valid_mocked_execution_exposes_domain_check_without_numeric_claim",
+      "test_execution_input_domain.IntegrationTests.test_valid_mocked_execution_reports_the_normalized_snapshot_count",
+      "test_capacity_split_lowering.CapacitySplitTests.test_contiguous_full_chunks_retain_exact_outputs",
+      "test_capacity_split_lowering.CapacitySplitTests.test_input_and_every_split_result_can_be_reused",
+      "test_capacity_split_lowering.CapacitySplitTests.test_large_fallback_retains_existing_source_and_work_limits",
+      "test_capacity_split_lowering.CapacitySplitTests.test_partial_view_tail_is_excluded_from_reductions",
+      "test_capacity_split_lowering.CapacitySplitTests.test_public_data_is_not_mistaken_for_ciphertext",
+      "test_capacity_split_lowering.CapacitySplitTests.test_request_and_public_bindings_are_unchanged",
+      "test_capacity_split_lowering.CapacitySplitTests.test_three_contexts_independent_references_and_checked_source",
+      "test_pytorch_static_import.StaticImportTests.test_nonempty_state_package_v4_retains_exact_binding",
+      "test_pytorch_static_import.StaticImportTests.test_output_structure_is_bound_and_restored_without_source_execution",
+      "test_pytorch_static_import.StaticImportTests.test_real_isolated_capture_binding_and_sixteen_references",
+      "test_pytorch_static_import.StaticImportTests.test_static_policy_and_scalar_tree_tamper_rejected",
+      "test_pytorch_static_import.StaticImportTests.test_v3_cannot_claim_v4_scalar_metadata",
+      "test_pytorch_approximation.SelectionTests.test_bad_source_path_types_rejected",
+      "test_pytorch_approximation.SelectionTests.test_different_composite_functions_at_same_node_are_valid",
+      "test_pytorch_approximation.SelectionTests.test_duplicate_selector_same_priority_rejected",
+      "test_pytorch_approximation.SelectionTests.test_exact_module_path_no_glob_or_prefix",
+      "test_pytorch_approximation.SelectionTests.test_graph_record_checks_exact_profiles_and_source_selection",
+      "test_pytorch_approximation.SelectionTests.test_malformed_data_and_profiles_rejected",
+      "test_pytorch_approximation.SelectionTests.test_missing_profile_rejected_at_public_node",
+      "test_pytorch_approximation.SelectionTests.test_overlapping_module_scopes_conflict_even_with_node_override",
+      "test_pytorch_approximation.SelectionTests.test_selector_and_byte_limits",
+      "test_pytorch_approximation.SelectionTests.test_source_profiles_are_snapshots",
+      "test_pytorch_approximation.SelectionTests.test_three_priorities_and_shadowed_valid_defaults",
+      "test_pytorch_approximation.SelectionTests.test_unmatched_node_module_and_default_rejected",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_composite_softmax_components",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_config_change_changes_graph_and_request",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_different_functional_activations_and_named_outputs",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_functional_node_selector_third_context",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_module_specific_profiles",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_nested_function_owner_scope_and_public_shape_loop",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_new_function_spellings_three_shapes_each",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_norm_module_rsqrt_components",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_opt_in_and_old_graph_hash_preserved",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_prelu_function_three_shapes",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_scope_conflict_unused_and_wrong_component_rejected",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_shared_module_calls_node_override_and_default",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_side_effect_or_unconfigured_approximation_rejected",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_softmax_and_logsoftmax_three_spellings_each",
+      "test_pytorch_approximation_capture.ApproximationCaptureTests.test_unknown_policy_rejected",
+      "test_pytorch_approximation_import.ApproximationImportTests.test_old_format_cannot_claim_scoped_metadata",
+      "test_pytorch_approximation_import.ApproximationImportTests.test_package_metadata_never_reexecutes_trusted_sources",
+      "test_pytorch_approximation_import.ApproximationImportTests.test_real_isolated_capture_and_independent_references",
+      "test_pytorch_approximation_import.ApproximationImportTests.test_seven_manifest_packages_registered",
+      "test_pytorch_approximation_import.ApproximationImportTests.test_tampered_selection_and_graph_profile_rejected",
+      "test_pytorch_approximation_import.ApproximationImportTests.test_unmatched_selector_worker_failure_retained",
+      "test_pytorch_approximation_import.ApproximationImportTests.test_v5_requires_versioned_config_exact_fields"
+    ]
+  }
+}

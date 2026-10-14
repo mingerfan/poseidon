@@ -1,0 +1,25 @@
+{
+  "compilations": 0,
+  "encrypted_executions": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-joint-cutover-guard-tests-v1",
+  "gate": {
+    "applied": false,
+    "binding": "0623167de71327bb1d2ec15a2d0563b74ee1c5bd1d35acf61f072027e2521c1b",
+    "joint_staging_verified": true,
+    "post_cutover_backend_acceptance_required": true,
+    "status": "waiting_for_current_batch",
+    "targets": 25
+  },
+  "production_applied": false,
+  "provider_calls": 0,
+  "skipped": 0,
+  "source_hashes": {
+    "guarded_apply_joint.py": "1e0d801e9466abf68fe4cc4ae82ed14d991e1feaf6f3652d1393e07d8f02f8d6",
+    "plan.json": "5cca5c878862299c5e6ce6edfac78e1558c49224502a9f2c5071e9c6f9bec21d",
+    "test_joint_guard.py": "3c2d8f59ebf5c253f7c2023ce0fd88312473d209a8455d28040f88ae84255c01"
+  },
+  "status": "passed",
+  "tests": 12
+}

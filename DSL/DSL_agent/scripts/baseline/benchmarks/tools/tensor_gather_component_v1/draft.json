@@ -1,0 +1,21 @@
+{
+  "api_calls": 0,
+  "binding": "55e2a8c32a27165687111b8652572e3091f889f16f7fd4cc81bdc44c180eb7c1",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-public-tensor-gather-draft-v1",
+  "planned_next_gates": [
+    "pinned_torch_differential",
+    "core_decomposition",
+    "versioned_source_intake",
+    "poseidon_numerical_and_reuse",
+    "current_real_agent"
+  ],
+  "production_active": false,
+  "sdk_shared_source_frozen": true,
+  "source_files": {
+    "README.md": "657fe6df6abfba42ca0c9f7b1d55b2f6e5085cf2bd133f154cbd13d3d888ed91",
+    "tensor_gather_plan.py": "f216d48847db3819ac8f701d4d9e41d49f46a250a2d5af0a6effdbff7efdb63b",
+    "test_plan.py": "6f1a4523f382df5a1a3d58d0c96eab6356be04e258e2cd7e8027428aff026db7"
+  }
+}

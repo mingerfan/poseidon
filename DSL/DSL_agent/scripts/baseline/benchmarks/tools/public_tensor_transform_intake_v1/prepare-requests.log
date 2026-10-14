@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_transform_intake_v1/prepare_requests.py", line 21, in <module>
+    provenance=load_model_provenance(folder,model,max_bytes=4*1024**2)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 220, in load_model_provenance
+    arrays,raw_files=read(model_import/"trusted-python",package["weights"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_weight_package.py", line 60, in read
+    arrays[name]=decode(raw,item);raw_files[item["file"]]=raw
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_weight_package.py", line 39, in decode
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'

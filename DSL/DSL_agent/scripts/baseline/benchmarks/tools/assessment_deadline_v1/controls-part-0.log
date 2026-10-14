@@ -1,0 +1,25 @@
+test_service_exception_preserves_used_quota_and_redacts_private_message (test_application_assessment.ApplicationAssessmentTests) ... ok
+test_submit_status_result_do_not_execute_or_call_provider (test_application_assessment.ApplicationAssessmentTests) ... ok
+test_terminal_validation_and_quota_results_have_stable_failure_layers (test_application_assessment.ApplicationAssessmentTests) ... ok
+test_timeout_and_unsupported_do_not_become_numeric_success (test_application_assessment.ApplicationAssessmentTests) ... ok
+test_world_readable_store_is_rejected_for_private_inputs_and_receipts (test_application_assessment.ApplicationAssessmentTests) ... ok
+test_wrong_handle_and_path_traversal_are_rejected (test_application_assessment.ApplicationAssessmentTests) ... ok
+test_zero_budget_is_terminal_without_initial_assessment (test_application_assessment.ApplicationAssessmentTests) ... ok
+test_all_terminal_exit_codes_are_explicit (application_assessment_entry.test_cli.CliTests) ... ok
+test_bad_handle_identifier_has_no_factory_or_execution (application_assessment_entry.test_cli.CliTests) ... ok
+test_cancel_completed_task_preserves_result (application_assessment_entry.test_cli.CliTests) ... ok
+test_cancel_is_scoped_to_assessment (application_assessment_entry.test_cli.CliTests) ... ok
+test_controller_input_error_has_input_terminal (application_assessment_entry.test_cli.CliTests) ... ok
+test_controller_rejects_wrong_binding_without_execution (application_assessment_entry.test_cli.CliTests) ... ok
+test_credential_named_input_is_rejected_before_read (application_assessment_entry.test_cli.CliTests) ... ok
+test_criterion_duplicate_nonfinite_and_wrong_shape_are_input_errors (application_assessment_entry.test_cli.CliTests) ... ok
+test_deadline_stops_one_actual_local_child_without_fhe (application_assessment_entry.test_cli.CliTests) ... ok
+test_default_zero_quota_returns_budget_terminal (application_assessment_entry.test_cli.CliTests) ... ok
+test_environment_exception_does_not_leak_details (application_assessment_entry.test_cli.CliTests) ... ok
+test_existing_private_worker_receipt_is_not_rebound (application_assessment_entry.test_cli.CliTests) ... ok
+test_explicit_quota_executes_only_once_and_preserves_program (application_assessment_entry.test_cli.CliTests) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 21.610s
+
+OK

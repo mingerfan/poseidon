@@ -1,0 +1,11 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release
+    Start 1: poseidon_runtime_cpu_api_tests
+1/3 Test #1: poseidon_runtime_cpu_api_tests .........   Passed    0.87 sec
+    Start 2: poseidon_runtime_cpu_api_mpi_2_tests
+2/3 Test #2: poseidon_runtime_cpu_api_mpi_2_tests ...   Passed    3.32 sec
+    Start 3: poseidon_runtime_cpu_api_mpi_4_tests
+3/3 Test #3: poseidon_runtime_cpu_api_mpi_4_tests ...   Passed    1.47 sec
+
+100% tests passed out of 3
+
+Total Test time (real) =   5.66 sec

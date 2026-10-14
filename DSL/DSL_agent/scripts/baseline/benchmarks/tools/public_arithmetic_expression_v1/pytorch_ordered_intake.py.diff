@@ -1,0 +1,20 @@
+--- /home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/before/pytorch_ordered_intake.py	2026-10-11 06:24:52.556975972 +0000
++++ /home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_intake.py	2026-10-11 06:24:52.560975811 +0000
+@@ -58,7 +58,7 @@
+     require(isinstance(module,torch.nn.Module), "Trusted factory must return nn.Module")
+     arrays, _ = read(model_root,spec["weights"],resource_profile=profile)
+     loaded = load_state(module,arrays,spec["weights"])
+-    if spec.get("format")in("poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24"):
++    if spec.get("format")in("poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24","poseidon-trusted-pytorch-v25"):
+         from pytorch_public_expression_capture import capture_loaded_module as selected
+         return selected(request,module,arrays,loaded,output_root)
+     if spec.get("format")=="poseidon-trusted-pytorch-v22":
+@@ -152,7 +152,7 @@
+     require(proc.returncode == 0, "Trusted ordered capture failed; inspect capture.log")
+     require(source_identity() == frozen, "Ordered capture implementation changed")
+     original = json.loads(regular_bytes(output/"original.json",cap.json_bytes))
+-    public_options={"expected_weight_arrays":arrays} if spec["format"]in("poseidon-trusted-pytorch-v22","poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24") else {}
++    public_options={"expected_weight_arrays":arrays} if spec["format"]in("poseidon-trusted-pytorch-v22","poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24","poseidon-trusted-pytorch-v25") else {}
+     report = json.loads(regular_bytes(output/"capture-reference.json",cap.json_bytes))
+     lowered, bound = capture_binding(original,spec,resource_profile=resource_profile,
+                                     capture_metadata=report.get("capture_metadata"),

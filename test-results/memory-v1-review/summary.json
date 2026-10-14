@@ -1,0 +1,249 @@
+{
+  "remote_checks": {
+    "mlp-1gpu-baseline-numerical.json": true,
+    "mlp-1gpu-baseline-repeat.json": true,
+    "mlp-1gpu-release-numerical.json": true,
+    "mlp-1gpu-release-repeat.json": true,
+    "mlp-1gpu-reuse-numerical.json": true,
+    "mlp-1gpu-reuse-repeat.json": true,
+    "mlp-2x2-baseline-repeat.json": true,
+    "mlp-2x2-release-repeat.json": true,
+    "mlp-2x2-reuse-repeat.json": true,
+    "mlp-4gpu-baseline-numerical.json": true,
+    "mlp-4gpu-baseline-repeat.json": true,
+    "mlp-4gpu-release-numerical.json": true,
+    "mlp-4gpu-release-repeat.json": true,
+    "mlp-4gpu-reuse-numerical.json": true,
+    "mlp-4gpu-reuse-repeat.json": true,
+    "smoke-1gpu-baseline-per_device_workers.json": true,
+    "smoke-1gpu-baseline-sequential.json": true,
+    "smoke-1gpu-release-per_device_workers.json": true,
+    "smoke-1gpu-release-sequential.json": true,
+    "smoke-1gpu-reuse-per_device_workers.json": true,
+    "smoke-1gpu-reuse-sequential.json": true,
+    "smoke-2x2-baseline-per_device_workers.json": true,
+    "smoke-2x2-baseline-sequential.json": true,
+    "smoke-2x2-release-per_device_workers.json": true,
+    "smoke-2x2-release-sequential.json": true,
+    "smoke-2x2-reuse-per_device_workers.json": true,
+    "smoke-2x2-reuse-sequential.json": true,
+    "smoke-4gpu-baseline-per_device_workers.json": true,
+    "smoke-4gpu-baseline-sequential.json": true,
+    "smoke-4gpu-release-per_device_workers.json": true,
+    "smoke-4gpu-release-sequential.json": true,
+    "smoke-4gpu-reuse-per_device_workers.json": true,
+    "smoke-4gpu-reuse-sequential.json": true
+  },
+  "comparisons": {
+    "1gpu-release": {
+      "full_slot_max_error": 8.22061379668587e-07,
+      "tolerance": 0.0001,
+      "slots": 4096
+    },
+    "1gpu-reuse": {
+      "full_slot_max_error": 1.6348713262264917e-06,
+      "tolerance": 0.0001,
+      "slots": 4096
+    },
+    "4gpu-release": {
+      "full_slot_max_error": 4.93499019831859e-07,
+      "tolerance": 0.0001,
+      "slots": 4096
+    },
+    "4gpu-reuse": {
+      "full_slot_max_error": 9.66379302784314e-07,
+      "tolerance": 0.0001,
+      "slots": 4096
+    },
+    "2x2-release": {
+      "full_slot_max_error": 1.3936081268849319e-06,
+      "tolerance": 0.0001,
+      "slots": 4096
+    },
+    "2x2-reuse": {
+      "full_slot_max_error": 1.2469361534578927e-06,
+      "tolerance": 0.0001,
+      "slots": 4096
+    }
+  },
+  "memory": {
+    "1gpu": [
+      {
+        "rank": 0,
+        "index": 0,
+        "estimate_peak_bytes": {
+          "baseline": 238092288,
+          "release": 92635136,
+          "reuse": 92635136
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 284561656,
+          "release": 284561656,
+          "reuse": 284561656
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 242679808,
+          "release": 183468032,
+          "reuse": 186417152
+        }
+      }
+    ],
+    "4gpu": [
+      {
+        "rank": 0,
+        "index": 0,
+        "estimate_peak_bytes": {
+          "baseline": 100892672,
+          "release": 16842752,
+          "reuse": 16842752
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 237801720,
+          "release": 237801720,
+          "reuse": 237801720
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 103776256,
+          "release": 50364416,
+          "reuse": 53313536
+        }
+      },
+      {
+        "rank": 0,
+        "index": 1,
+        "estimate_peak_bytes": {
+          "baseline": 86802432,
+          "release": 15007744,
+          "reuse": 15007744
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 170561784,
+          "release": 170561784,
+          "reuse": 170561784
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 90832896,
+          "release": 47939584,
+          "reuse": 49119232
+        }
+      },
+      {
+        "rank": 0,
+        "index": 2,
+        "estimate_peak_bytes": {
+          "baseline": 83755008,
+          "release": 14319616,
+          "reuse": 14319616
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 239735032,
+          "release": 239735032,
+          "reuse": 239735032
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 93683712,
+          "release": 50790400,
+          "reuse": 49610752
+        }
+      },
+      {
+        "rank": 0,
+        "index": 3,
+        "estimate_peak_bytes": {
+          "baseline": 86835200,
+          "release": 19038208,
+          "reuse": 19038208
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 204181752,
+          "release": 204181752,
+          "reuse": 204181752
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 91783168,
+          "release": 46956544,
+          "reuse": 49020928
+        }
+      }
+    ],
+    "2x2": [
+      {
+        "rank": 0,
+        "index": 0,
+        "estimate_peak_bytes": {
+          "baseline": 100892672,
+          "release": 16842752,
+          "reuse": 16842752
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 237801720,
+          "release": 237801720,
+          "reuse": 237801720
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 110821376,
+          "release": 54493184,
+          "reuse": 55672832
+        }
+      },
+      {
+        "rank": 0,
+        "index": 1,
+        "estimate_peak_bytes": {
+          "baseline": 86802432,
+          "release": 15007744,
+          "reuse": 15007744
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 170561784,
+          "release": 170561784,
+          "reuse": 170561784
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 96731136,
+          "release": 49709056,
+          "reuse": 50298880
+        }
+      },
+      {
+        "rank": 1,
+        "index": 0,
+        "estimate_peak_bytes": {
+          "baseline": 83755008,
+          "release": 14319616,
+          "reuse": 14319616
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 239735032,
+          "release": 239735032,
+          "reuse": 239735032
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 94306304,
+          "release": 52854784,
+          "reuse": 52854784
+        }
+      },
+      {
+        "rank": 1,
+        "index": 1,
+        "estimate_peak_bytes": {
+          "baseline": 86835200,
+          "release": 19038208,
+          "reuse": 19038208
+        },
+        "rmm_warmup_baseline_bytes": {
+          "baseline": 204181752,
+          "release": 204181752,
+          "reuse": 204181752
+        },
+        "rmm_peak_increment_bytes": {
+          "baseline": 93683712,
+          "release": 56098816,
+          "reuse": 55508992
+        }
+      }
+    ]
+  },
+  "scope": "MLP degree 8192 without Boot; four physical GPUs on one host. RMM peak increments include asynchronous work and workspaces, with cached allocations recorded separately."
+}

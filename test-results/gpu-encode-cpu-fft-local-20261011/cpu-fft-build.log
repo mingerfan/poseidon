@@ -1,0 +1,38 @@
+[  3%] Built target poseidon_encode_tilelang
+[ 75%] Built target poseidon_shared
+[ 96%] Built target poseidon_gpu
+[ 98%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu_encode_contention_bench.dir/__/tests/gpu_encode/gpu_encode_experiment.cu.o
+[ 98%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu_encode_contention_bench.dir/__/tests/gpu_encode/gpu_encode_contention_bench.cpp.o
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[100%] Linking CXX executable ../../../bin/poseidon_gpu_encode_contention_bench
+[100%] Built target poseidon_gpu_encode_contention_bench
+[  3%] Built target poseidon_encode_tilelang
+[ 75%] Built target poseidon_shared
+[ 96%] Built target poseidon_gpu
+[ 98%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu_encode_bench.dir/__/tests/gpu_encode/gpu_encode_bench.cpp.o
+[ 98%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu_encode_bench.dir/__/tests/gpu_encode/gpu_encode_experiment.cu.o
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[100%] Linking CXX executable ../../../bin/poseidon_gpu_encode_bench
+[100%] Built target poseidon_gpu_encode_bench

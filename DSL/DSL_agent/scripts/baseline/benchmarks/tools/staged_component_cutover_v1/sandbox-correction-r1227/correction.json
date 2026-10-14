@@ -1,0 +1,25 @@
+{
+  "added_trusted_modules": [
+    "unified_binding_guidance.py",
+    "candidate_check_diagnostic.py"
+  ],
+  "compilations": 0,
+  "encrypted_executions": 0,
+  "format": "poseidon-sandbox-feedback-correction-v1",
+  "network_isolation_changed": false,
+  "new_sources": {
+    "scripts/baseline/candidate_bundle.py": "6d723fe974bba4d54e9a62cf49bee9074741fac51a265890590502c7ed6aad8e",
+    "scripts/baseline/poseidon_sandbox_policy.py": "e4887f8cef84840908413f8477ebb17f7cf4db35f146d61cadd74fbe11493cec",
+    "scripts/baseline/test_poseidon_sandbox_policy.py": "917b42ea122d6eb86d03a3e1d1a420a66e27eede382a5eaf05a8ae12246e558b"
+  },
+  "no_backend_library_changes": true,
+  "old_sources": {
+    "scripts/baseline/candidate_bundle.py": "a2c33c0771e25a0fcb3bbae241f711e79345f72cef5ed80b1d01402d4c208afc",
+    "scripts/baseline/poseidon_sandbox_policy.py": "a4fca37b627c960ac57f9b8e2505a754daf4d437d97adee04173c6729d844e42",
+    "scripts/baseline/test_poseidon_sandbox_policy.py": "cef761c778f751ccc9b19a228c269824cd3fa01a3038adfcfe27b9738a610bb6"
+  },
+  "prior_offline_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-joint-post-cutover-offline-r1225/report.json",
+  "provider_calls": 0,
+  "resource_limits_changed": false,
+  "tests_pending": true
+}

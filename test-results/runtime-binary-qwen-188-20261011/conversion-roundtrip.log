@@ -1,0 +1,4 @@
+loading source JSON
+{"blob_payloads_read":0,"bytes":8756201335,"file":"/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-plaintext-streaming/qwen24._hecate_qwen25_24layer.runtime-plan.json","hash_seconds":55.896987476000305,"instructions":22149239,"load_seconds":278.42350654,"mode":"plan-json","parse_build_seconds":220.6222790359997,"peak_rss_bytes":6108246016,"read_seconds":1.9040143729999743,"source_bytes":8756201335,"source_sha256":"sha256:bd6b45b7f06e04456b2cf4665e7c975d9bdd6b5a4c864f072ef3833a54939d9a","values":11064667}
+source PlanVerifier passed
+binary written; decoding for field comparison

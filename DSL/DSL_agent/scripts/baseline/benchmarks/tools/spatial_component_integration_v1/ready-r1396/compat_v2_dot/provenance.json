@@ -1,0 +1,203 @@
+{
+  "original": {
+    "format": "poseidon-operator-graph-v2",
+    "id": "compat_v2_dot",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          4
+        ]
+      },
+      {
+        "name": "z",
+        "shape": [
+          4
+        ]
+      }
+    ],
+    "constants": {},
+    "nodes": [
+      {
+        "id": "dot",
+        "op": "dot",
+        "inputs": [
+          "x",
+          "z"
+        ],
+        "attrs": {},
+        "outputs": [
+          "y"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "value": "y"
+      }
+    ]
+  },
+  "decomposition": {
+    "format": "poseidon-decomposition-binding-v2",
+    "registry_version": "operator-decomposition-v4",
+    "implementation_sha256": "074e1212b098fb46382640d912cd7792dd030384b33d91144fbab6bd6e33595d",
+    "implementation_sources": {
+      "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+      "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233",
+      "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+      "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+      "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89"
+    },
+    "original_sha256": "0138ece99eb52cf6078e2468bc847bd6f59422afdb158b52cb7c2cfd8f35c305",
+    "lowered_sha256": "7e5ebfb8b321fe95d84e36d361c55874ab524750b296dc85dfcd26a428c6f38a",
+    "source_map": {
+      "generated_1": "dot",
+      "generated_3": "dot",
+      "generated_5": "dot",
+      "generated_7": "dot",
+      "generated_9": "dot",
+      "generated_11": "dot",
+      "generated_13": "dot"
+    },
+    "required_capabilities": [
+      "ckks_add_multiply_rotate"
+    ],
+    "approximation_profiles": {},
+    "normalization": {
+      "version": "operator-graph-static-matrix-v1",
+      "matrix_policy": "static-tensor-matmul-v1",
+      "entries": [
+        {
+          "origin": "dot",
+          "operands": [
+            "x",
+            "z"
+          ],
+          "plan": {
+            "version": "static-tensor-matmul-v1",
+            "operation": "dot",
+            "source_shapes": [
+              [
+                4
+              ],
+              [
+                4
+              ]
+            ],
+            "public_side": null,
+            "promoted_shapes": [
+              [
+                1,
+                4
+              ],
+              [
+                4,
+                1
+              ]
+            ],
+            "batch_shape": [],
+            "result_shape": [],
+            "core_shape": [
+              1
+            ],
+            "strategy": "cipher_matmul",
+            "product_tensor_elements": 4,
+            "constant": null,
+            "steps": [
+              {
+                "op": "reshape",
+                "inputs": [
+                  "left"
+                ],
+                "attrs": {
+                  "shape": [
+                    1,
+                    4
+                  ]
+                }
+              },
+              {
+                "op": "reshape",
+                "inputs": [
+                  "right"
+                ],
+                "attrs": {
+                  "shape": [
+                    4,
+                    1
+                  ]
+                }
+              },
+              {
+                "op": "matmul",
+                "inputs": [
+                  "step_0",
+                  "step_1"
+                ],
+                "attrs": {}
+              },
+              {
+                "op": "reshape",
+                "inputs": [
+                  "step_2"
+                ],
+                "attrs": {
+                  "shape": [
+                    1
+                  ]
+                }
+              }
+            ]
+          },
+          "derived_constant": null,
+          "core_node_ids": [
+            "generated_1",
+            "generated_3",
+            "generated_5",
+            "generated_7",
+            "generated_9",
+            "generated_11",
+            "generated_13"
+          ]
+        }
+      ],
+      "scalar_carrier_shape": [
+        1
+      ]
+    },
+    "no_dsl_answer": true,
+    "resource_profile": {
+      "name": "general-tensors-v1",
+      "input_elements": 4096,
+      "output_elements": 4096,
+      "tensor_elements": 65536,
+      "original_nodes": 1024,
+      "expanded_nodes": 4096,
+      "constants": 1024,
+      "constant_elements": 1000000,
+      "total_constant_elements": 1000000,
+      "json_bytes": 33554432,
+      "axis_size": 65536,
+      "inputs": 4,
+      "outputs": 4,
+      "rank": 32,
+      "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871"
+    },
+    "runtime_layout_validated": false,
+    "binding_sha256": "969a713dc1b6f85dac238c9697042eb48cf6845cbe949c44c69d1c821402e303"
+  },
+  "reference_report": {
+    "schema": 1,
+    "mode": "offline_model_import",
+    "original_sha256": "0138ece99eb52cf6078e2468bc847bd6f59422afdb158b52cb7c2cfd8f35c305",
+    "model_sha256": "7e5ebfb8b321fe95d84e36d361c55874ab524750b296dc85dfcd26a428c6f38a",
+    "probes": 16,
+    "reference_status": "passed",
+    "max_decomposition_error": 5.551115123125783e-17,
+    "approximation_accuracy_certified": false,
+    "encrypted_execution": false,
+    "agent_generated": false,
+    "paid_calls": 0
+  }
+}

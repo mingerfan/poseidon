@@ -1830,7 +1830,7 @@ void EvaluatorCkksBase::ckks_multiply(Ciphertext &ciph1, const Ciphertext &ciph2
 
             // 开启 OpenMP 并行化 (作用于最外层模数循环)，每个线程需要处理不同的模数，互不干扰
             #pragma omp parallel for
-            for (size_t i = 0; i < coeff_modulus_size; i++) 
+            for (size_t i = 0; i < coeff_modulus_size; i++)
             {
                 auto &modulus = coeff_modulus[i];
 
@@ -1846,7 +1846,7 @@ void EvaluatorCkksBase::ckks_multiply(Ciphertext &ciph1, const Ciphertext &ciph2
                 ConstRNSIter it_y1(ciph2_iter[1][i], tile_size);
 
                 // 中层循环：遍历 Tile
-                for (size_t j = 0; j < num_tiles; j++) 
+                for (size_t j = 0; j < num_tiles; j++)
                 {
                     // 逻辑：x[2] = x[1] * y[1]，这里 it_x1[0] 返回的是当前 Tile 的 CoeffIter（即双重解引用后的指针）
                     dyadic_product_coeffmod(it_x1[0], it_y1[0], tile_size, modulus, it_x2[0]);
@@ -1929,6 +1929,12 @@ void EvaluatorCkksBase::relinearize(const Ciphertext &ciph, Ciphertext &result,
                                     const RelinKeys &relin_keys) const
 {
     kswitch_->relinearize(ciph, result, relin_keys);
+}
+
+void EvaluatorCkksBase::rotate_inplace(Ciphertext &ciph, int step,
+                                      const GaloisKeys &galois_keys) const
+{
+    kswitch_->rotate_internal(ciph, step, galois_keys);
 }
 
 void EvaluatorCkksBase::rotate(const Ciphertext &ciph, Ciphertext &result, int step,

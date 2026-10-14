@@ -1,0 +1,30 @@
+@hc.func('c,c,c,c')
+def golden(x, y, z, zero_ct):
+    v0 = x + p4
+    v1 = y + p4
+    v2 = z + p4
+    v4 = v0 + v0.rotate(1)
+    v6 = v4 + v4.rotate(2)
+    v10 = v1 + v1.rotate(1)
+    v12 = v10 + v10.rotate(2)
+    v17 = v2 + v2.rotate(1)
+    v19 = v17 + v17.rotate(2)
+    v24 = v0 + v0.rotate(1)
+    v26 = v24 + v24.rotate(2)
+    v30 = v1 + v1.rotate(1)
+    v32 = v30 + v30.rotate(2)
+    v37 = v2 + v2.rotate(1)
+    v39 = v37 + v37.rotate(2)
+    v45 = v0 + v0.rotate(1)
+    v47 = v45 + v45.rotate(2)
+    v51 = v1 + v1.rotate(1)
+    v53 = v51 + v51.rotate(2)
+    v58 = v2 + v2.rotate(1)
+    v60 = v58 + v58.rotate(2)
+    v65 = v0 + v0.rotate(1)
+    v67 = v65 + v65.rotate(2)
+    v71 = v1 + v1.rotate(1)
+    v73 = v71 + v71.rotate(2)
+    v78 = v2 + v2.rotate(1)
+    v80 = v78 + v78.rotate(2)
+    return [(v6 + v6.rotate(4) + (v12 + v12.rotate(4)) + (v19 + v19.rotate(4))) * pv0 + ((v26 + v26.rotate(4) + (v32 + v32.rotate(4)) + (v39 + v39.rotate(4))) * p3).rotate(1).rotate(2).rotate(4) * pv1 + (v47 + v47.rotate(4) + (v53 + v53.rotate(4)) + (v60 + v60.rotate(4)) - (v67 + v67.rotate(4) + (v73 + v73.rotate(4)) + (v80 + v80.rotate(4))) * p3).rotate(2).rotate(4) * pv2]

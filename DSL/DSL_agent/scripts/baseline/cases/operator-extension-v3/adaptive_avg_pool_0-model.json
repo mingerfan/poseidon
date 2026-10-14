@@ -1,0 +1,134 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "adaptive_avg_pool_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        5
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "stop": 2,
+        "step": 1
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "mean",
+      "inputs": [
+        "generated_0"
+      ],
+      "attrs": {
+        "axes": [
+          2
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 1,
+        "stop": 4,
+        "step": 1
+      },
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "mean",
+      "inputs": [
+        "generated_4"
+      ],
+      "attrs": {
+        "axes": [
+          2
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 3,
+        "stop": 5,
+        "step": 1
+      },
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "id": "generated_11",
+      "op": "mean",
+      "inputs": [
+        "generated_8"
+      ],
+      "attrs": {
+        "axes": [
+          2
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "generated_10"
+      ]
+    },
+    {
+      "id": "generated_13",
+      "op": "concat",
+      "inputs": [
+        "generated_2",
+        "generated_6",
+        "generated_10"
+      ],
+      "attrs": {
+        "axis": 2
+      },
+      "outputs": [
+        "generated_12"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_12"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+test_public_weight_context (unittest.loader._FailedTest) ... ERROR
+test_active_cancel_from_separate_process (test_application_component.ApplicationTests) ... ok
+test_backend_exception_is_not_candidate_error (test_application_component.ApplicationTests) ... ok
+test_bounded_repair (test_application_component.ApplicationTests) ... ok
+test_cancel_during_cached_package_check (test_application_component.ApplicationTests) ... ok
+test_cancel_queued (test_application_component.ApplicationTests) ... ok
+test_compiled_is_explicit_and_separate_cache (test_application_component.ApplicationTests) ... ok
+test_context_selection_not_model_name (test_application_component.ApplicationTests) ... ok
+test_deadline_interrupts_blocked_provider (test_application_component.ApplicationTests) ... ok
+test_dependency_drift_prevents_reuse (test_application_component.ApplicationTests) ... ok
+test_generation_budget (test_application_component.ApplicationTests) ... ok
+test_http_guard_participates_in_provider_retries (test_application_component.ApplicationTests) ... ok
+test_http_reserved_before_attempt (test_application_component.ApplicationTests) ... ok
+test_integrity_never_repairs (test_application_component.ApplicationTests) ... ok
+test_internal_metadata_rejects_nonfinite_duplicate_and_oversize (test_application_component.ApplicationTests) ... ok
+test_internal_metadata_uses_task_limit_not_candidate_response_limit (test_application_component.ApplicationTests) ... ok
+test_interrupted_worker_no_reissue (test_application_component.ApplicationTests) ... ok
+test_legacy_repeated_failure_stops_distinct_candidates (test_application_component.ApplicationTests) ... ok
+test_malformed_budget_is_terminal_unsupported (test_application_component.ApplicationTests) ... ok
+test_package_tampering_not_success (test_application_component.ApplicationTests) ... ok
+test_path_in_task_id_refused (test_application_component.ApplicationTests) ... ok
+test_repeated_candidate_not_recompiled (test_application_component.ApplicationTests) ... ok
+test_response_failure_is_repairable (test_application_component.ApplicationTests) ... ok
+test_source_policy_does_not_import_experiment_modules (test_application_component.ApplicationTests) ... ok
+test_success_and_reuse_without_provider (test_application_component.ApplicationTests) ... ok
+test_tampered_task_no_generation (test_application_component.ApplicationTests) ... ok
+test_unsupported_input_never_generates (test_application_component.ApplicationTests) ... ok
+test_altered_executed_source_is_rejected_even_after_resigning (test_application_generation.GenerationTests) ... ok
+test_changed_request_and_stage_are_rejected (test_application_generation.GenerationTests) ... ok
+test_changed_retained_answer_stops_packaging (test_application_generation.GenerationTests) ... ok
+test_component_attaches_exact_generation_receipt_and_reuses_it (test_application_generation.GenerationTests) ... ok
+test_invalid_or_private_usage_is_rejected (test_application_generation.GenerationTests) ... ok
+test_legacy_receipt_without_usage_is_not_given_zero_usage (test_application_generation.GenerationTests) ... ok
+test_missing_or_reordered_ledger_is_rejected (test_application_generation.GenerationTests) ... ok
+test_private_feedback_and_transport_fields_are_rejected (test_application_generation.GenerationTests) ... ok
+test_repairs_and_http_retries_are_separate (test_application_generation.GenerationTests) ... ok
+test_scripted_candidate_is_not_live_generation (test_application_generation.GenerationTests) ... ok
+test_backend_changed_between_submit_and_intake_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_bad_source_and_requirement_fields_are_terminal (test_application_model_source.SourceSubmissionTests) ... ok
+test_cancel_before_import_prevents_provider_and_capture (test_application_model_source.SourceSubmissionTests) ... ok
+test_cancel_during_preparation_from_another_process (test_application_model_source.SourceSubmissionTests) ... ok
+test_changed_source_binding_does_not_reuse (test_application_model_source.SourceSubmissionTests) ... ok
+test_changed_task_budget_reuses_identical_source (test_application_model_source.SourceSubmissionTests) ... ok
+test_controller_drift_after_preparation_stops_generation (test_application_model_source.SourceSubmissionTests) ... ok
+test_core_graph_resource_profile_mismatch_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_delivery_binds_source_record_and_rejects_source_tamper (test_application_model_source.SourceSubmissionTests) ... ok
+test_graph_snapshotted_at_submit (test_application_model_source.SourceSubmissionTests) ... ok
+test_invalid_generation_option_rejected_before_capture (test_application_model_source.SourceSubmissionTests) ... ok
+test_model_import_budget_is_not_reset_for_generation (test_application_model_source.SourceSubmissionTests) ... ok
+test_optional_none_budget_keeps_old_default (test_application_model_source.SourceSubmissionTests) ... ok
+test_original_json_request_hash_preserved (test_application_model_source.SourceSubmissionTests) ... ok
+test_recover_interrupted_import_does_not_capture_again (test_application_model_source.SourceSubmissionTests) ... ok
+test_repeat_same_source_reuses_without_provider (test_application_model_source.SourceSubmissionTests) ... ok
+test_resource_profile_is_intake_requirement_not_generation_option (test_application_model_source.SourceSubmissionTests) ... ok
+test_rule_provider_and_fake_backend_use_same_task (test_application_model_source.SourceSubmissionTests) ... ok
+test_slow_intake_timeout_does_not_start_generation (test_application_model_source.SourceSubmissionTests) ... ok
+test_snapshot_extra_file_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_snapshot_payload_tamper_before_worker_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_snapshot_symlink_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_source_metadata_tamper_rejected (test_application_model_source.SourceSubmissionTests) ... ok
+test_source_receipt_is_not_sent_to_generation_model (test_application_model_source.SourceSubmissionTests) ... ok
+test_status_hides_paths_and_model_data (test_application_model_source.SourceSubmissionTests) ... ok
+test_submit_has_one_queued_id_and_never_generates (test_application_model_source.SourceSubmissionTests) ... ok
+test_trusted_source_requires_explicit_true (test_application_model_source.SourceSubmissionTests) ... ok
+test_worker_environment_error_is_service_failure (test_application_model_source.SourceSubmissionTests) ... ok
+ERROR
+test_backend_binary_and_build_changes_invalidate_correct_stage (test_application_identity.IdentityTests) ... ok
+test_backend_explicit_new_api_delegates (test_application_identity.IdentityTests) ... ok
+test_explicit_import_of_prehashed_helper_still_checks_dynamic_code (test_application_identity.IdentityTests) ... ok
+test_generation_only_change_keeps_delivery_compatible (test_application_identity.IdentityTests) ... ok
+test_helper_verifier_inventory_is_preserved_as_data (test_application_identity.IdentityTests) ... ok
+test_identity_tampering_and_omitted_backend_fields_rejected (test_application_identity.IdentityTests) ... ok
+test_legacy_identity_method_is_unchanged (test_application_identity.IdentityTests) ... ok
+test_literal_dynamic_import_is_bound (test_application_identity.IdentityTests) ... ok
+test_new_program_execution_entry_is_bound (test_application_identity.IdentityTests) ... ok
+test_parameters_locks_patches_invalidate (test_application_identity.IdentityTests) ... ok
+test_relative_imports_and_package_initializers_are_bound (test_application_identity.IdentityTests) ... ok
+test_sandbox_non_imported_worker_and_data_are_bound (test_application_identity.IdentityTests) ... ok
+test_shared_prompt_module_is_not_falsely_excluded (test_application_identity.IdentityTests) ... ok
+test_symlink_source_and_asset_rejected (test_application_identity.IdentityTests) ... ok
+test_transitive_function_import_is_bound_without_execution (test_application_identity.IdentityTests) ... ok
+test_unknown_backend_fields_are_bound_conservatively (test_application_identity.IdentityTests) ... ok
+test_unknown_dynamic_dependency_fails_closed (test_application_identity.IdentityTests) ... ok
+test_unrelated_tests_docs_and_research_tools_do_not_invalidate (test_application_identity.IdentityTests) ... ok
+test_capacity_binding_storage (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: test_public_weight_context (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_public_weight_context
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_public_weight_context.py", line 15, in <module>
+    from unified_graph_lowering import candidate_source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/unified_graph_lowering.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: setUpClass (test_application_model_source_context.SourceContextTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_application_model_source_context.py", line 21, in setUpClass
+    cls.context=WorkerContext.capture(cls.root/"tasks")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/application_execution/context.py", line 82, in capture
+    return cls(canonical(_snapshot(task_store)))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/application_execution/context.py", line 34, in _snapshot
+    import numpy,torch
+ModuleNotFoundError: No module named 'numpy'
+
+======================================================================
+ERROR: test_capacity_binding_storage (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_capacity_binding_storage
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_capacity_binding_storage.py", line 6, in <module>
+    from unified_graph_lowering import candidate_source
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/unified_graph_lowering.py", line 3, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+----------------------------------------------------------------------
+Ran 84 tests in 3.544s
+
+FAILED (errors=3)

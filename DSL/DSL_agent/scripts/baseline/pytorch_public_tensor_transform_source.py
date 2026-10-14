@@ -1,0 +1,6 @@
+"""Explicit public-state transform intake identities."""
+SOURCE_FORMAT = "poseidon-trusted-pytorch-v31"
+PACKAGE_FORMAT = "poseidon-trusted-pytorch-provenance-v31"
+REFERENCE_FORMAT = "poseidon-trusted-pytorch-reference-v31"
+CAPTURE_FORMAT = "poseidon-public-expression-source-capture-v8"
+VALUE_POLICY = "poseidon-public-value-expressions-v4"

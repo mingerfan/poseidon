@@ -1,0 +1,18 @@
+test_approval_file_absent_does_not_construct_provider (test_run.RunTests) ... ok
+test_existing_root_rejected (test_run.RunTests) ... ok
+test_hidden_approval_path (test_run.RunTests) ... ok
+test_no_approval_no_execution (test_run.RunTests) ... ok
+test_owned_tree_only_owned_child (test_run.RunTests) ... ok
+test_pid_identity (test_run.RunTests) ... ok
+test_plan_extended_deadline (test_run.RunTests) ... ok
+test_plan_tamper (test_run.RunTests) ... ok
+test_plan_unknown_field (test_run.RunTests) ... ok
+test_public_budget (test_run.RunTests) ... ok
+test_public_cases (test_run.RunTests) ... ok
+test_transport_receipt_normalized_roundtrip_preserves_diagnostics (test_run.RunTests) ... ok
+test_wrong_root_rejected (test_run.RunTests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.204s
+
+OK

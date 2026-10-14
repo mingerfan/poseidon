@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/binding_frames_source_live_audit_v1/audit.py", line 618, in <module>
+    require(sys.argv[1:] in (["--audit"], ["--inside"]), "explicit_audit_required")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/binding_frames_source_live_audit_v1/audit.py", line 28, in require
+    raise ValueError(code)
+ValueError: explicit_audit_required

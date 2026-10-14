@@ -1,0 +1,10 @@
+{
+  "errors": 0,
+  "expected_failures": 0,
+  "failed": 0,
+  "passed": 68,
+  "skipped": 0,
+  "status": "passed",
+  "tests_run": 68,
+  "unexpected_successes": 0
+}

@@ -1,0 +1,39 @@
+test_capacity_still_limits_inputs (test_latest_selection.LatestSelection) ... <unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+ok
+test_duplicate_input_name_is_rejected (test_latest_selection.LatestSelection) ... ok
+test_duplicate_tensor_binding_does_not_fallback (test_latest_selection.LatestSelection) ... ok
+test_explicit_v21_keeps_flat_manifest (test_latest_selection.LatestSelection) ... ok
+test_explicit_v26_and_v27_still_require_call (test_latest_selection.LatestSelection) ... ok
+test_four_input_boundary (test_latest_selection.LatestSelection) ... ok
+test_invalid_explicit_call_does_not_fallback (test_latest_selection.LatestSelection) ... ok
+test_latest_and_explicit_v27_are_identical (test_latest_selection.LatestSelection) ... ok
+test_latest_cli_does_not_import_model (test_latest_selection.LatestSelection) ... ok
+test_latest_is_registered_v27 (test_latest_selection.LatestSelection) ... ok
+test_latest_preserves_explicit_keyword_binding (test_latest_selection.LatestSelection) ... ok
+test_latest_preserves_nested_dictionary_binding (test_latest_selection.LatestSelection) ... ok
+test_legacy_default_stays_v18 (test_latest_selection.LatestSelection) ... ok
+test_multiple_inputs_keep_declared_order (test_latest_selection.LatestSelection) ... ok
+test_saved_manifest_not_overwritten (test_latest_selection.LatestSelection) ... ok
+test_saved_manifest_records_explicit_version (test_latest_selection.LatestSelection) ... ok
+test_single_input_flat_call (test_latest_selection.LatestSelection) ... ok
+test_unknown_version_is_rejected (test_latest_selection.LatestSelection) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.373s
+
+OK
+test_existing_manifest_is_never_overwritten (test_pytorch_spatial_cli.SpatialCliTests) ... <unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+ok
+test_invalid_binding_fails_before_manifest_save (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_main_prints_v27_and_preserves_source_inertness (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_older_source_does_not_receive_structured_calls (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_private_transports_are_not_cli_choices (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v26_output_is_identical (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v27_and_v26_require_explicit_binding (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v27_flat_binding_and_default_versions (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v27_keyword_dictionary_calls (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.321s
+
+OK

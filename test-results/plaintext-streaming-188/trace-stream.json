@@ -1,0 +1,33 @@
+{
+  "source": "build-plaintext-models/stream.sqlite",
+  "scope": "all H2D copies in online iterations; overlap with union of kernels on the same GPU; NVTX range includes output check",
+  "iterations": [
+    {
+      "range": "online.iteration.1",
+      "wall_seconds": 0.5111495260000001,
+      "h2d_count": 122,
+      "h2d_bytes": 34177024,
+      "h2d_milliseconds": 3.24204,
+      "same_gpu_kernel_overlap_milliseconds": 0.0,
+      "overlap_fraction": 0.0
+    },
+    {
+      "range": "online.iteration.2",
+      "wall_seconds": 0.539713689,
+      "h2d_count": 122,
+      "h2d_bytes": 34177024,
+      "h2d_milliseconds": 3.2768249999999997,
+      "same_gpu_kernel_overlap_milliseconds": 0.0,
+      "overlap_fraction": 0.0
+    },
+    {
+      "range": "online.iteration.3",
+      "wall_seconds": 0.5146324840000001,
+      "h2d_count": 122,
+      "h2d_bytes": 34177024,
+      "h2d_milliseconds": 3.2275829999999996,
+      "same_gpu_kernel_overlap_milliseconds": 0.0,
+      "overlap_fraction": 0.0
+    }
+  ]
+}

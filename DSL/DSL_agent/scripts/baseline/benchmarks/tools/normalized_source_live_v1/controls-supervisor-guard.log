@@ -1,0 +1,25 @@
+test_approval_file_absent_does_not_construct_provider (test_run.RunTests) ... ok
+test_cpu_executable_spellings_block_execution (test_run.RunTests) ... ok
+test_existing_root_rejected (test_run.RunTests) ... ok
+test_hidden_approval_path (test_run.RunTests) ... ok
+test_no_approval_no_execution (test_run.RunTests) ... ok
+test_null_arguments_do_not_block (test_run.RunTests) ... ok
+test_other_campaign_supervisor_blocks_execution (test_run.RunTests) ... ok
+test_owned_tree_only_owned_child (test_run.RunTests) ... ok
+test_pid_identity (test_run.RunTests) ... ok
+test_plan_extended_deadline (test_run.RunTests) ... ok
+test_plan_tamper (test_run.RunTests) ... ok
+test_plan_unknown_field (test_run.RunTests) ... ok
+test_public_budget (test_run.RunTests) ... ok
+test_public_cases (test_run.RunTests) ... ok
+test_read_only_plan_is_not_execution (test_run.RunTests) ... ok
+test_source_and_transport_workers_block_execution (test_run.RunTests) ... ok
+test_supervisor_inside_and_case_block_execution (test_run.RunTests) ... ok
+test_transport_receipt_normalized_roundtrip_preserves_diagnostics (test_run.RunTests) ... ok
+test_unrelated_execution_does_not_block (test_run.RunTests) ... ok
+test_wrong_root_rejected (test_run.RunTests) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.205s
+
+OK

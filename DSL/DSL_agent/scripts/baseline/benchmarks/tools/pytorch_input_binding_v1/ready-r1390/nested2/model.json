@@ -1,0 +1,312 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "id": "static_alias_source",
+  "inputs": [
+    {
+      "name": "y",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "x",
+      "shape": [
+        2,
+        3
+      ]
+    }
+  ],
+  "constants": {
+    "public_7": 0.5,
+    "public_9": -0.25
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "reshape",
+      "inputs": [
+        "y"
+      ],
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "reshape",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "reshape",
+      "inputs": [
+        "generated_0"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "multiply",
+      "inputs": [
+        "generated_4",
+        "public_7"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "reshape",
+      "inputs": [
+        "generated_6"
+      ],
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "id": "generated_11",
+      "op": "reshape",
+      "inputs": [
+        "generated_2"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "outputs": [
+        "generated_10"
+      ]
+    },
+    {
+      "id": "generated_13",
+      "op": "reshape",
+      "inputs": [
+        "generated_8"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "outputs": [
+        "generated_12"
+      ]
+    },
+    {
+      "id": "generated_15",
+      "op": "add",
+      "inputs": [
+        "generated_10",
+        "generated_12"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_14"
+      ]
+    },
+    {
+      "id": "generated_17",
+      "op": "reshape",
+      "inputs": [
+        "generated_14"
+      ],
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "outputs": [
+        "generated_16"
+      ]
+    },
+    {
+      "id": "generated_19",
+      "op": "multiply",
+      "inputs": [
+        "generated_4",
+        "public_9"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_18"
+      ]
+    },
+    {
+      "id": "generated_21",
+      "op": "reshape",
+      "inputs": [
+        "generated_18"
+      ],
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "outputs": [
+        "generated_20"
+      ]
+    },
+    {
+      "id": "generated_23",
+      "op": "reshape",
+      "inputs": [
+        "generated_20"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "outputs": [
+        "generated_22"
+      ]
+    },
+    {
+      "id": "generated_25",
+      "op": "subtract",
+      "inputs": [
+        "generated_10",
+        "generated_22"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_24"
+      ]
+    },
+    {
+      "id": "generated_27",
+      "op": "reshape",
+      "inputs": [
+        "generated_24"
+      ],
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "outputs": [
+        "generated_26"
+      ]
+    },
+    {
+      "id": "generated_29",
+      "op": "reshape",
+      "inputs": [
+        "generated_16"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "outputs": [
+        "generated_28"
+      ]
+    },
+    {
+      "id": "generated_31",
+      "op": "reshape",
+      "inputs": [
+        "generated_26"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "outputs": [
+        "generated_30"
+      ]
+    },
+    {
+      "id": "generated_33",
+      "op": "concat",
+      "inputs": [
+        "generated_28",
+        "generated_30"
+      ],
+      "attrs": {
+        "axis": 1
+      },
+      "outputs": [
+        "generated_32"
+      ]
+    },
+    {
+      "id": "generated_35",
+      "op": "reshape",
+      "inputs": [
+        "generated_32"
+      ],
+      "attrs": {
+        "shape": [
+          12
+        ]
+      },
+      "outputs": [
+        "generated_34"
+      ]
+    },
+    {
+      "id": "generated_37",
+      "op": "reshape",
+      "inputs": [
+        "generated_34"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          6
+        ]
+      },
+      "outputs": [
+        "generated_36"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_36"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

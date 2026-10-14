@@ -1,0 +1,441 @@
+{
+  "constants": {
+    "bias": [
+      -0.04544277942823993,
+      -0.09322180095752507
+    ],
+    "generated_14": [
+      [
+        [
+          [
+            0.0
+          ],
+          [
+            1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            0.0
+          ]
+        ]
+      ]
+    ],
+    "generated_29": [
+      [
+        [
+          [
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      ]
+    ],
+    "generated_32": [
+      [
+        [
+          [
+            -0.029510064564914784,
+            -0.060696421075272344,
+            0.11276672941940707
+          ],
+          [
+            0.17966159916581975,
+            -0.2142737382394034,
+            0.09282888069510359
+          ]
+        ],
+        [
+          [
+            -0.21860434119969868,
+            -0.016285275479822503,
+            0.1500411169378194
+          ],
+          [
+            0.08401665108406803,
+            0.15712396340480123,
+            0.14475058817553027
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -0.2874426709278221,
+            0.06025545259246562,
+            0.0884870900592834
+          ],
+          [
+            0.1881724933589755,
+            -0.047926315862306224,
+            -0.298268964037227
+          ]
+        ],
+        [
+          [
+            -0.038453143097378795,
+            -0.06473594333522822,
+            -0.1115453672083821
+          ],
+          [
+            -0.07201536224396679,
+            0.1653860701145628,
+            -0.08262952591211348
+          ]
+        ]
+      ]
+    ],
+    "weight": [
+      [
+        [
+          [
+            0.09282888069510359,
+            -0.2142737382394034,
+            0.17966159916581975
+          ],
+          [
+            0.11276672941940707,
+            -0.060696421075272344,
+            -0.029510064564914784
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            0.14475058817553027,
+            0.15712396340480123,
+            0.08401665108406803
+          ],
+          [
+            0.1500411169378194,
+            -0.016285275479822503,
+            -0.21860434119969868
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -0.298268964037227,
+            -0.047926315862306224,
+            0.1881724933589755
+          ],
+          [
+            0.0884870900592834,
+            0.06025545259246562,
+            -0.2874426709278221
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -0.08262952591211348,
+            0.1653860701145628,
+            -0.07201536224396679
+          ],
+          [
+            -0.1115453672083821,
+            -0.06473594333522822,
+            -0.038453143097378795
+          ]
+        ]
+      ]
+    ]
+  },
+  "format": "poseidon-model-graph-v2",
+  "id": "transpose_2d_1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        4,
+        2,
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_1",
+      "inputs": [
+        "x"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_3",
+      "inputs": [
+        "x"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_5",
+      "inputs": [
+        "x"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 2,
+        "start": 1,
+        "step": 1,
+        "stop": 2
+      },
+      "id": "generated_7",
+      "inputs": [
+        "x"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_9",
+      "inputs": [
+        "x"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_11",
+      "inputs": [
+        "x"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_10"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 2
+      },
+      "id": "generated_13",
+      "inputs": [
+        "generated_0",
+        "generated_2",
+        "generated_4",
+        "generated_6",
+        "generated_8",
+        "generated_10"
+      ],
+      "op": "concat",
+      "outputs": [
+        "generated_12"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_16",
+      "inputs": [
+        "generated_12",
+        "generated_14"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_15"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 3,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_18",
+      "inputs": [
+        "generated_15"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_17"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 3,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_20",
+      "inputs": [
+        "generated_15"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_19"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 3,
+        "start": 1,
+        "step": 1,
+        "stop": 2
+      },
+      "id": "generated_22",
+      "inputs": [
+        "generated_15"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_21"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 3,
+        "start": 2,
+        "step": 1,
+        "stop": 3
+      },
+      "id": "generated_24",
+      "inputs": [
+        "generated_15"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_23"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 3,
+        "start": 0,
+        "step": 1,
+        "stop": 1
+      },
+      "id": "generated_26",
+      "inputs": [
+        "generated_15"
+      ],
+      "op": "slice",
+      "outputs": [
+        "generated_25"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 3
+      },
+      "id": "generated_28",
+      "inputs": [
+        "generated_17",
+        "generated_19",
+        "generated_21",
+        "generated_23",
+        "generated_25"
+      ],
+      "op": "concat",
+      "outputs": [
+        "generated_27"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_31",
+      "inputs": [
+        "generated_27",
+        "generated_29"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_30"
+      ]
+    },
+    {
+      "attrs": {
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 2,
+        "padding": [
+          0,
+          0
+        ],
+        "stride": [
+          1,
+          1
+        ]
+      },
+      "id": "generated_34",
+      "inputs": [
+        "generated_30",
+        "generated_32",
+        "bias"
+      ],
+      "op": "conv2d",
+      "outputs": [
+        "generated_33"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_33"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

@@ -1,0 +1,116 @@
+{
+  "artifact_bytes": {
+    "all_results": 27919985630,
+    "free": 45468708864,
+    "new": 60190549
+  },
+  "binding": "10676fe8da94895a0e47cd581d0b245192c4892e30a89b3bc71e746e46935cff",
+  "commit": 0,
+  "confirmed": {
+    "backend": "poseidon_cpu_ckks_runtime",
+    "backend_libraries_changed": false,
+    "branch": "lhy-agent-dsl",
+    "candidate_origin": "deterministic_rule_baseline",
+    "checkout": "/home/lhohy/Code/Poseidon",
+    "cli_v19_manifest_matches_captured_fixture": true,
+    "compared_values": 184,
+    "compilations": 8,
+    "default_manifest_format": "poseidon-trusted-pytorch-v18",
+    "encrypted_calls": 16,
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "historical_request_files_preserved": 2,
+    "input_groups": 64,
+    "mathematical_reference_changed": false,
+    "maximum_absolute_error": 1.0362645463946052e-08,
+    "new_agent_generation": false,
+    "package_reload_new_input_cases": 8,
+    "paid_api_calls": 0,
+    "parameters_changed": false,
+    "protected_sources_checked": 654,
+    "sdk_identity": "2132baea1319258bd677ca8bb7cb5d704906617406719979834479b42cbadf45",
+    "source_captures": 8,
+    "source_contract": "poseidon-trusted-pytorch-v19",
+    "source_signature_ranks": [
+      1,
+      32
+    ],
+    "stage_sources": {
+      "compilation": 626,
+      "execution": 626,
+      "generation": 632,
+      "validation": 626
+    },
+    "tests": {
+      "compatibility": 156,
+      "errors": 0,
+      "failed": 0,
+      "metadata_cli": 59,
+      "new_semantic": 30,
+      "skipped": 0,
+      "total_distinct": 245
+    },
+    "tolerance": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "downloads": 0,
+  "evidence": {
+    "audit_sha256": "1d9ec7f08c021f384bc3b81edd89d748b68a93cf4eed7e9bc95ed84c8985c724",
+    "backend_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-v19-source-acceptance-v2/report.json",
+    "backend_report_binding": "7989bc80a3d42109393bf76befa3c38bf0b3074f359adb0effa96aca0c55ffbf",
+    "backend_report_sha256": "0a697adaf39cc9105060f6b05fd813bbff6a8699dbc1d897944aff0a29533c03",
+    "cli_controls": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_manifest_v1/controls-v19-compatibility.json",
+    "controls": {
+      "compatibility": "12a6cb52fb9082a480a5462debd32409202958b73269488fa209805f3e1d1c0e",
+      "finalnew": "6834a3c26abb335ba0976c4a3a06ce537b1cfe79db007e6a038d284a07051ea7"
+    }
+  },
+  "evidence_based_inference": "Explicit v19 normalization is connected to existing source intake and Poseidon CPU validation for these representative contexts.",
+  "format": "poseidon-pytorch-einsum-views-acceptance-v1",
+  "historical_pending_paid_plan": {
+    "bytes_preserved": true,
+    "current_entry_rejection": "source_identity_changed",
+    "path": "docs/baseline/agent-einsum-live-proposal-r1341.json",
+    "sha256": "b70cf2d9d94fc6dc07c94beca32cda515f0dab1674424a8e97a11dc173b5f484",
+    "status": "superseded_pending"
+  },
+  "installation": 0,
+  "local_source_changes": {
+    "application_capabilities.py": "157eabdd7cac94a24579ca8f6071c3624a2eba40ff05bdc46cdb29496ca5e993",
+    "pytorch_alias_capture_bridge.py": "ae595c4ce8e06f5edddb98107603ccf2c8754abee06b1de210c8b66f4f5d31e7",
+    "pytorch_alias_composition.py": "11c73c4326f82ca46489462219f45389a77e8053c436dc20c3f84abf90ebee50",
+    "pytorch_model_capture.py": "b7abd2ea2a2dcab72439afe432eb8439965180af2f7d2e966a9fa8db6e4ae5d9",
+    "pytorch_model_intake.py": "b71ad57b53499c587481261f1a9c5f41a762fa1383c9237a7ed639588984108e",
+    "pytorch_ordered_capture.py": "f26fabb61a00657775b4df880132d67df9b5387a453f193923c036a5a0fe18e3",
+    "pytorch_ordered_contract.py": "b791e372a5e6da659a45b42f6d219ea120f791a25c6ecef348bf55d62a2e6301",
+    "pytorch_ordered_intake.py": "0ba7b955bc0051491156c8bedeb7f0e22e3a012d0726bd902d86d573657cd2c7",
+    "pytorch_static_trace.py": "9426ac247129013f13612652b6f80d09bc74384d6a62485812eac4c1c09ceefa",
+    "scripts/prepare_pytorch_source.py": "23cf588df4674d3e7b91536425cc23e863228c80c71121451d05db742c64775c",
+    "source_precision_reference.py": "eb0dd774fef66f1f4d176a40e9d224bb901ef00892b827792a8f1b8d7fdbf703"
+  },
+  "new_modules": [
+    "pytorch_einsum_extension.py",
+    "test_pytorch_einsum_views.py"
+  ],
+  "next_command": "python3 -B scripts/prepare_pytorch_source.py --help",
+  "preserved_initial_diagnostics": [
+    "controls-newtests.log",
+    "controls-newtests2.log",
+    "controls-newtests3.log",
+    "first-backend-preflight-failure.json"
+  ],
+  "push": 0,
+  "status": "passed",
+  "unverified": [
+    "new real-Agent generation for v19",
+    "all rank/shape/operator combinations",
+    "direct rank-zero source inputs",
+    "rank-one unbind scalar views",
+    "native CPU bootstrap",
+    "CUDA hardware execution",
+    "large-model capacity and original-model application accuracy",
+    "continuous encrypted partition handoff",
+    "end-to-end ResNet20"
+  ]
+}

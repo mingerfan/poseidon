@@ -1,0 +1,12 @@
+--- a/scripts/baseline/pytorch_model_intake.py
++++ b/scripts/baseline/pytorch_model_intake.py
+@@ -223,7 +223,8 @@
+     original,lowered,captured=capture(canonical,spec["inputs"],spec["outputs"],approximations=spec["approximations"],
+         resource_profile=profile,dtype_policy=spec["dtype_policy"],preserve_output_structure=True,
+         record_state_sources=True,capture_policy=INDEX_POLICY,approximation_policy="node-module-default-v1",
+-        matrix_policy="static-tensor-matmul-v1")
++        matrix_policy="static-tensor-matmul-v1",
++        functional_policy="adaptive-pool-static-prototype-v1" if spec["format"]==SHAPE_FORMAT else "registered-v2")
+     metadata=captured["pytorch_capture"]
+     metadata["source_state_dtypes"]=original_dtypes
+     metadata["state_constant_sources"]={name:state for name,state in metadata["state_constant_sources"].items()

@@ -1,0 +1,31 @@
+{
+  "format": "poseidon-trusted-pytorch-v2",
+  "files": {
+    "models.py": "b554ae82d8c58ba9aba7b0e816ded60da70f4c6e1d69277fbfe3216185efe639"
+  },
+  "entry": "models.make_normalization",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "normalized",
+    "residual"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [
+      2
+    ],
+    "kwargs": {
+      "seed": 74
+    }
+  },
+  "dtype_policy": "convert-float64-v1"
+}

@@ -1,0 +1,167 @@
+{
+  "package": "Qwen25_2Token_Block_DSL",
+  "date": "2026-09-29",
+  "scope": "Qwen2.5-0.5B single real-size decoder block; two tokens; synthetic weights; prefill and decode-pair",
+  "full_24_layer_model_validated": false,
+  "gpu_validated": false,
+  "historical_backend": "Poseidon CPU diagnostic with real CKKS bootstrapping",
+  "current_validation": "NumPy slot arithmetic through both authored tracing entrypoints",
+  "files": {
+    "check_gpu_outputs.py": {
+      "bytes": 2022,
+      "sha256": "cec31ee85eb59b68d5e361bc1db30213c580084c27d6b692578e831e039580cc"
+    },
+    "config/approximations.json": {
+      "bytes": 2885,
+      "sha256": "607b7c6295585e97b14f9c722aedd0fa127aab40f84b2ff0b9b42155b5238f59"
+    },
+    "config/contract.json": {
+      "bytes": 470,
+      "sha256": "7d6cfaf8cf7f7f31e610befc0e6b203c98dbb7409e2a1e67e85bae18b3b5332d"
+    },
+    "config/cpu_bootstrap_reference.json": {
+      "bytes": 1224,
+      "sha256": "61d4ea3fd6da240708690d1aedc872c6b01b125b6c9bf9a7d6f00e5f4ae8c93a"
+    },
+    "config/model.json": {
+      "bytes": 235,
+      "sha256": "558ae492901c7dfd24aff657598cbcb52544105b76d99b6154e2d42eb6eeda26"
+    },
+    "data/input_hidden.npy": {
+      "bytes": 14464,
+      "sha256": "aa8c8f608841c589a3ad56f6e10c33b08711dd05b68297fb477000db1c1d9bb1"
+    },
+    "data/reference_hidden.npy": {
+      "bytes": 14464,
+      "sha256": "8aae0c6211593a3c45a0b39c0e347dd13893be2d78c2abf078aff02d9225c167"
+    },
+    "prepare_fixture.py": {
+      "bytes": 430,
+      "sha256": "4e6e722786c82e33998f8e3ffed6f6c8cad54662875b8b2120d3600724766d91"
+    },
+    "provenance/original_tools/export_qwen_block_probe.py": {
+      "bytes": 8365,
+      "sha256": "773360fb803cda4fa5e183aa0af9aa5bc7e042786276deb263cdd2d6165dfd58"
+    },
+    "provenance/original_tools/export_qwen_fullsize_block_probe.py": {
+      "bytes": 8837,
+      "sha256": "27aea54428fe1f949d8ac461ba9fb8c9b7426794b254a53639f9d1f09d9dae74"
+    },
+    "provenance/original_tools/export_qwen_layer_probe.py": {
+      "bytes": 6012,
+      "sha256": "a3c44cfb319e1df33cf20eaae98fd0bbbddaeef46414d88e803c018f81eb3cc8"
+    },
+    "provenance/source_binding.json": {
+      "bytes": 931,
+      "sha256": "48b72fc57968262a17ef0a3be00632b4357ec5a8864b49af281dee28dac78d5d"
+    },
+    "qwen2token/__init__.py": {
+      "bytes": 56,
+      "sha256": "e37e7da0be2b7a4de2e7c79ca06e9a23e22a6d4c2532ee5979f3ef33d3b4498d"
+    },
+    "qwen2token/block.py": {
+      "bytes": 2850,
+      "sha256": "342adcf645b628804dc0450d2747670d490cc316146cdc6cc2bc03c906b9feac"
+    },
+    "qwen2token/fixture.py": {
+      "bytes": 5184,
+      "sha256": "3cd6aca496013e78fc07bb4a03b54af7067d6ba1c5e962f3a633875c89c6ea46"
+    },
+    "qwen2token/kernels/__init__.py": {
+      "bytes": 69,
+      "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+    },
+    "qwen2token/kernels/expr.py": {
+      "bytes": 95,
+      "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff"
+    },
+    "qwen2token/kernels/ops.py": {
+      "bytes": 5772,
+      "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+    },
+    "qwen2token/kernels/qwen_layers.py": {
+      "bytes": 21564,
+      "sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75"
+    },
+    "qwen2token/kernels/qwen_model.py": {
+      "bytes": 13502,
+      "sha256": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a"
+    },
+    "qwen2token/kernels/qwen_nonlinear.py": {
+      "bytes": 9650,
+      "sha256": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760"
+    },
+    "README.md": {
+      "bytes": 9209,
+      "sha256": "c15fd1fe4797c8898f64992e4df2f2b5d16dc370202bb7e1bc1ed3a6f875c502"
+    },
+    "trace_qwen_block.py": {
+      "bytes": 960,
+      "sha256": "908e38da79ca90f0f418684b6c6ccbfd499e11f6654b57eb73554c31346e12fe"
+    },
+    "verification/cpu_decode_decrypted_real.npy": {
+      "bytes": 14464,
+      "sha256": "cced501fbaa72f81d1214624b75944cbda328b48dea10b79ec1d48514f9856e2"
+    },
+    "verification/cpu_decode_fixture_summary.json": {
+      "bytes": 4672,
+      "sha256": "604b41cce90db8f5ebb99ffbd0f24f153e215539eff0c19c75ac8df5305a06ce"
+    },
+    "verification/cpu_decode_result.json": {
+      "bytes": 3732,
+      "sha256": "5d520680d2ce042a1bb1a7ef1958d0cc36034434ee8bf4861c1fa1eed87cfbc8"
+    },
+    "verification/cpu_prefill_decrypted_real.npy": {
+      "bytes": 14464,
+      "sha256": "053f9896e03a3f8cd6bfd55ab790a1dad799b773c5952cb7427da15cfe93c8d2"
+    },
+    "verification/cpu_prefill_fixture_summary.json": {
+      "bytes": 4674,
+      "sha256": "57f1f49f8803d91f73a57215ec923d043533e65b3ef0af7dbabb02bedcd39da5"
+    },
+    "verification/cpu_prefill_result.json": {
+      "bytes": 3733,
+      "sha256": "b589f4196c694585e552303dad083e63e1b6f9161b372b508d5b219cab362bce"
+    },
+    "verification/cpu_real_prefix_recheck.json": {
+      "bytes": 918,
+      "sha256": "c179d179c6c264f2da47cddcc0f64815d998bd328d32cbed23c28e2188e864f1"
+    },
+    "verification/cpu_summary.json": {
+      "bytes": 1403,
+      "sha256": "c61732c7aa393aacf326fb79ddd7c9b7959bb6ef6e6d0e77bbcca890fa620133"
+    },
+    "verification/decode_signature.json": {
+      "bytes": 917,
+      "sha256": "9ab632c94de78d9d7558f157cd0d580ae9bdec6da897dd9926e413b730a66a71"
+    },
+    "verification/fixture_manifest.json": {
+      "bytes": 3066,
+      "sha256": "371a6d1369c947b9afef49692ab60d966f447d5846c5960bc191a2cae1b6439a"
+    },
+    "verification/numpy_output_check.json": {
+      "bytes": 865,
+      "sha256": "256af6db5ba595064596e8360b028434fc1f09cfde73a230c4e288a3f56c7cb5"
+    },
+    "verification/numpy_validation.json": {
+      "bytes": 991,
+      "sha256": "80fea45f501621d778d1193cb174f85ce337856e2124b49b7258288ce058d0c6"
+    },
+    "verification/packaging_validation.json": {
+      "bytes": 308,
+      "sha256": "f05a0a949a3c0e78574093e5eaf8fc265c95b426efbfdf7a8ee45b9ca442e9a3"
+    },
+    "verification/prefill_signature.json": {
+      "bytes": 913,
+      "sha256": "c886dabf5b81857fafda82f2d6438fbb6eabb10b46e1fe1d591b4c6ccf8fd351"
+    },
+    "verification/validate_numpy.py": {
+      "bytes": 4189,
+      "sha256": "53b86cade20cdf8a9763513136b56487213fc7a92c2620bbc463b85f2c430321"
+    },
+    "verify_manifest.py": {
+      "bytes": 684,
+      "sha256": "8120f54d1bdb94334aaf7deb00607f79751fbab3ff09d3294aa278416634510b"
+    }
+  }
+}

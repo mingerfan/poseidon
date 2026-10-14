@@ -1,0 +1,13 @@
+op,input_level,output_level,1gpu_total,4gpu_total,gpu0,gpu1,gpu2,gpu3,consistent
+add_cc,4,4,23,23,5,14,2,2,True
+add_cc,8,8,102,102,42,25,23,12,True
+add_cp,4,4,1,1,1,0,0,0,True
+add_cp,8,8,1,1,0,0,1,0,True
+mod_switch,16,8,1,1,1,0,0,0,True
+mul_cc,8,8,1,1,0,0,1,0,True
+mul_cp,4,4,19,19,1,7,1,10,True
+mul_cp,8,8,100,100,25,18,25,32,True
+relinearize,8,8,1,1,0,0,1,0,True
+rescale,8,4,1,1,0,0,1,0,True
+rotate,4,4,23,23,8,4,6,5,True
+rotate,8,8,102,102,21,24,30,27,True

@@ -1,0 +1,7 @@
+measuring {"backend":"cuda_ntt","submission":"individual"}
+measuring {"backend":"cuda_ntt","submission":"batched"}
+measuring {"backend":"tensor_ntt","submission":"individual"}
+measuring {"backend":"tensor_ntt","submission":"batched"}
+measuring {"backend":"tilelang_cuda_ntt","submission":"individual"}
+measuring {"backend":"tilelang_cuda_ntt","submission":"batched"}
+measuring {"backend":"tilelang_tensor_ntt","submission":"individual"}

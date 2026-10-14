@@ -1,0 +1,236 @@
+{
+  "constants": {
+    "public_4": 0.125
+  },
+  "format": "poseidon-operator-graph-v4",
+  "id": "static_alias_source",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "shape": [
+          3
+        ]
+      },
+      "id": "node_3",
+      "inputs": [
+        "x"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_2"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          3
+        ]
+      },
+      "id": "node_7",
+      "inputs": [
+        "tensor_2"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_6"
+      ]
+    },
+    {
+      "attrs": {
+        "align_corners": false,
+        "antialias": false,
+        "mode": "linear",
+        "recompute_scale_factor": null,
+        "scale_factor": null,
+        "size": [
+          5
+        ]
+      },
+      "id": "node_10",
+      "inputs": [
+        "tensor_6"
+      ],
+      "op": "resize",
+      "outputs": [
+        "tensor_9"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          5
+        ]
+      },
+      "id": "node_13",
+      "inputs": [
+        "tensor_9"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_12"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          5
+        ]
+      },
+      "id": "node_15",
+      "inputs": [
+        "tensor_12"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_14"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          5
+        ]
+      },
+      "id": "node_17",
+      "inputs": [
+        "tensor_14"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_16"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          5
+        ]
+      },
+      "id": "node_20",
+      "inputs": [
+        "tensor_12"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_19"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "node_22",
+      "inputs": [
+        "tensor_19",
+        "public_4"
+      ],
+      "op": "add",
+      "outputs": [
+        "tensor_21"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          5
+        ]
+      },
+      "id": "node_25",
+      "inputs": [
+        "tensor_21"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_24"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          5
+        ]
+      },
+      "id": "node_27",
+      "inputs": [
+        "tensor_24"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_26"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          5
+        ]
+      },
+      "id": "node_29",
+      "inputs": [
+        "tensor_26"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_28"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          5
+        ]
+      },
+      "id": "node_31",
+      "inputs": [
+        "tensor_16"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_30"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          5
+        ]
+      },
+      "id": "node_33",
+      "inputs": [
+        "tensor_28"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_32"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "before",
+      "value": "tensor_30"
+    },
+    {
+      "name": "after",
+      "value": "tensor_32"
+    }
+  ]
+}

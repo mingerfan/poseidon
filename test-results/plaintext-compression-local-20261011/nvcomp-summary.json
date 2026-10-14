@@ -1,0 +1,1161 @@
+{
+  "runs": 3,
+  "all_exact_round_trips": true,
+  "aggregation": "median of process medians; 10 async API calls per sample; Python dispatch gaps included; no locked clocks",
+  "format": "GPU-generated nvCOMP-native 64KiB chunks; batch8 duplicates one payload",
+  "scope": "CUDA decode, not Tensor Core; CPU payload interoperability not tested",
+  "rows": [
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 17.33633117312525,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 7561.0,
+      "device_only": {
+        "us_per_plaintext": 256.94720745086676,
+        "decompressed_output_gb_per_second": 0.5101437034495306
+      },
+      "with_h2d": {
+        "us_per_plaintext": 259.0896010398864,
+        "decompressed_output_gb_per_second": 0.5059253612414203
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.995714512258698,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2106178.0,
+      "device_only": {
+        "us_per_plaintext": 272.9520082473755,
+        "decompressed_output_gb_per_second": 7.683226122664605
+      },
+      "with_h2d": {
+        "us_per_plaintext": 437.54241466522217,
+        "decompressed_output_gb_per_second": 4.793025612395998
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1552.2960769800147,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 1351.0,
+      "device_only": {
+        "us_per_plaintext": 70.80160081386566,
+        "decompressed_output_gb_per_second": 29.620121238689528
+      },
+      "with_h2d": {
+        "us_per_plaintext": 75.62080025672913,
+        "decompressed_output_gb_per_second": 27.732475626815184
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.995714512258698,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2106178.0,
+      "device_only": {
+        "us_per_plaintext": 274.8736023902893,
+        "decompressed_output_gb_per_second": 7.629514008487007
+      },
+      "with_h2d": {
+        "us_per_plaintext": 435.51039695739746,
+        "decompressed_output_gb_per_second": 4.815389057646649
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 819.2410256410257,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 195.0,
+      "device_only": {
+        "us_per_plaintext": 80.63360154628754,
+        "decompressed_output_gb_per_second": 1.9812087881042337
+      },
+      "with_h2d": {
+        "us_per_plaintext": 87.04639971256256,
+        "decompressed_output_gb_per_second": 1.8352510905392971
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 200.94591194968552,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 795.0,
+      "device_only": {
+        "us_per_plaintext": 48.43360036611558,
+        "decompressed_output_gb_per_second": 3.298371353614327
+      },
+      "with_h2d": {
+        "us_per_plaintext": 50.70720016956329,
+        "decompressed_output_gb_per_second": 3.150479605771849
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9950875425116513,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 111146.0,
+      "device_only": {
+        "us_per_plaintext": 275.8463978767395,
+        "decompressed_output_gb_per_second": 0.40094777691975164
+      },
+      "with_h2d": {
+        "us_per_plaintext": 288.4240031242371,
+        "decompressed_output_gb_per_second": 0.3834632305285619
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9951895822872969,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 123482.0,
+      "device_only": {
+        "us_per_plaintext": 275.5408048629761,
+        "decompressed_output_gb_per_second": 0.4459883902172351
+      },
+      "with_h2d": {
+        "us_per_plaintext": 290.9168004989624,
+        "decompressed_output_gb_per_second": 0.4224163052433897
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 15.898354938973542,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 131910.0,
+      "device_only": {
+        "us_per_plaintext": 318.50080490112305,
+        "decompressed_output_gb_per_second": 6.584448038211552
+      },
+      "with_h2d": {
+        "us_per_plaintext": 334.57919359207153,
+        "decompressed_output_gb_per_second": 6.26802873629048
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 1.000480342590105,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 122829.0,
+      "device_only": {
+        "us_per_plaintext": 2917.251205444336,
+        "decompressed_output_gb_per_second": 0.04212458624429038
+      },
+      "with_h2d": {
+        "us_per_plaintext": 2930.238437652588,
+        "decompressed_output_gb_per_second": 0.0419378841055834
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 27.113553208269227,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 77347.0,
+      "device_only": {
+        "us_per_plaintext": 321.51520252227783,
+        "decompressed_output_gb_per_second": 6.522714893566154
+      },
+      "with_h2d": {
+        "us_per_plaintext": 336.5839958190918,
+        "decompressed_output_gb_per_second": 6.230694346879118
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 24.455223880597014,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 5360.0,
+      "device_only": {
+        "us_per_plaintext": 359.716796875,
+        "decompressed_output_gb_per_second": 0.3643977738563866
+      },
+      "with_h2d": {
+        "us_per_plaintext": 366.73920154571533,
+        "decompressed_output_gb_per_second": 0.3574202033693974
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.0083474733759306,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2079791.0,
+      "device_only": {
+        "us_per_plaintext": 3635.2895736694336,
+        "decompressed_output_gb_per_second": 0.5768871935786812
+      },
+      "with_h2d": {
+        "us_per_plaintext": 3792.3761367797847,
+        "decompressed_output_gb_per_second": 0.5529915610588015
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 0.9989612970238901,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 110715.0,
+      "device_only": {
+        "us_per_plaintext": 3177.1535873413086,
+        "decompressed_output_gb_per_second": 0.034811033511461996
+      },
+      "with_h2d": {
+        "us_per_plaintext": 3198.1663703918457,
+        "decompressed_output_gb_per_second": 0.034582315987035116
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.0083125667411748,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2079863.0,
+      "device_only": {
+        "us_per_plaintext": 3531.896018981934,
+        "decompressed_output_gb_per_second": 0.5937751249552647
+      },
+      "with_h2d": {
+        "us_per_plaintext": 3727.6174545288086,
+        "decompressed_output_gb_per_second": 0.5625985030873002
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 225.84018953262978,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 9286.0,
+      "device_only": {
+        "us_per_plaintext": 49.74240064620972,
+        "decompressed_output_gb_per_second": 42.16024905826091
+      },
+      "with_h2d": {
+        "us_per_plaintext": 60.74880063533783,
+        "decompressed_output_gb_per_second": 34.52170212526102
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1627.1182232567162,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 1288.875,
+      "device_only": {
+        "us_per_plaintext": 14.650000631809235,
+        "decompressed_output_gb_per_second": 143.15030099360533
+      },
+      "with_h2d": {
+        "us_per_plaintext": 15.329399704933168,
+        "decompressed_output_gb_per_second": 136.80587892330274
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 11.461673825840792,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 11436.375,
+      "device_only": {
+        "us_per_plaintext": 63.40880095958709,
+        "decompressed_output_gb_per_second": 2.0672209222745344
+      },
+      "with_h2d": {
+        "us_per_plaintext": 65.09599983692169,
+        "decompressed_output_gb_per_second": 2.013641396220678
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 220.53770491803277,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 724.375,
+      "device_only": {
+        "us_per_plaintext": 10.337799787521362,
+        "decompressed_output_gb_per_second": 15.453191518840864
+      },
+      "with_h2d": {
+        "us_per_plaintext": 11.318400129675865,
+        "decompressed_output_gb_per_second": 14.11436229234767
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 15.905740479147507,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 131848.75,
+      "device_only": {
+        "us_per_plaintext": 45.09900063276291,
+        "decompressed_output_gb_per_second": 46.5010747594369
+      },
+      "with_h2d": {
+        "us_per_plaintext": 55.5757999420166,
+        "decompressed_output_gb_per_second": 37.73498541070039
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.9957418148370208,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2106120.25,
+      "device_only": {
+        "us_per_plaintext": 73.01660180091858,
+        "decompressed_output_gb_per_second": 28.721577672402947
+      },
+      "with_h2d": {
+        "us_per_plaintext": 228.46839427947998,
+        "decompressed_output_gb_per_second": 9.17917774409796
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 0.9996712202474096,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 110636.375,
+      "device_only": {
+        "us_per_plaintext": 438.10319900512695,
+        "decompressed_output_gb_per_second": 0.2524519342729239
+      },
+      "with_h2d": {
+        "us_per_plaintext": 449.53300952911377,
+        "decompressed_output_gb_per_second": 0.24603310025186714
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9957213690718679,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 111075.25,
+      "device_only": {
+        "us_per_plaintext": 34.99480038881302,
+        "decompressed_output_gb_per_second": 3.1604695203621196
+      },
+      "with_h2d": {
+        "us_per_plaintext": 43.8728004693985,
+        "decompressed_output_gb_per_second": 2.520924099138464
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 1.001025356965758,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 122762.125,
+      "device_only": {
+        "us_per_plaintext": 436.1232042312622,
+        "decompressed_output_gb_per_second": 0.2817735878479798
+      },
+      "with_h2d": {
+        "us_per_plaintext": 445.0270175933838,
+        "decompressed_output_gb_per_second": 0.27613604374977835
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 1371.2618025751074,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 116.5,
+      "device_only": {
+        "us_per_plaintext": 9.983399882912636,
+        "decompressed_output_gb_per_second": 16.001763114129883
+      },
+      "with_h2d": {
+        "us_per_plaintext": 10.87999977171421,
+        "decompressed_output_gb_per_second": 14.683088543376881
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9957117015652188,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 123417.25,
+      "device_only": {
+        "us_per_plaintext": 35.058800876140594,
+        "decompressed_output_gb_per_second": 3.5051968957566917
+      },
+      "with_h2d": {
+        "us_per_plaintext": 45.39479911327363,
+        "decompressed_output_gb_per_second": 2.7070942575020016
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 27.13411945845672,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 77288.375,
+      "device_only": {
+        "us_per_plaintext": 50.403398275375366,
+        "decompressed_output_gb_per_second": 41.60735330864716
+      },
+      "with_h2d": {
+        "us_per_plaintext": 57.557398080825806,
+        "decompressed_output_gb_per_second": 36.43583744100184
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.008342685691004,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2079800.875,
+      "device_only": {
+        "us_per_plaintext": 499.0110158920288,
+        "decompressed_output_gb_per_second": 4.2026166421419475
+      },
+      "with_h2d": {
+        "us_per_plaintext": 655.1363945007324,
+        "decompressed_output_gb_per_second": 3.2010921963787426
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 24.774144774144773,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 5291.0,
+      "device_only": {
+        "us_per_plaintext": 48.80699962377548,
+        "decompressed_output_gb_per_second": 2.68568035344149
+      },
+      "with_h2d": {
+        "us_per_plaintext": 49.354599416255944,
+        "decompressed_output_gb_per_second": 2.6558821579012983
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.9957418148370208,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2106120.25,
+      "device_only": {
+        "us_per_plaintext": 75.8873999118805,
+        "decompressed_output_gb_per_second": 27.635048801713946
+      },
+      "with_h2d": {
+        "us_per_plaintext": 231.39580488204956,
+        "decompressed_output_gb_per_second": 9.063051082836143
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.0083775944111946,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 2079728.875,
+      "device_only": {
+        "us_per_plaintext": 506.41579627990717,
+        "decompressed_output_gb_per_second": 4.141166242059436
+      },
+      "with_h2d": {
+        "us_per_plaintext": 661.5269899368286,
+        "decompressed_output_gb_per_second": 3.1701684616076875
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 227.33971110328193,
+      "raw_bytes_per_plaintext": 2097152.0,
+      "compressed_bytes_per_plaintext": 9224.75,
+      "device_only": {
+        "us_per_plaintext": 9.565600007772446,
+        "decompressed_output_gb_per_second": 219.23893935518706
+      },
+      "with_h2d": {
+        "us_per_plaintext": 10.735999792814255,
+        "decompressed_output_gb_per_second": 195.33830481290167
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 17.28147659854977,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 7585.0,
+      "device_only": {
+        "us_per_plaintext": 252.21439599990848,
+        "decompressed_output_gb_per_second": 0.5197165668530973
+      },
+      "with_h2d": {
+        "us_per_plaintext": 255.56479692459106,
+        "decompressed_output_gb_per_second": 0.5129031915873667
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.9957388599402742,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8424506.0,
+      "device_only": {
+        "us_per_plaintext": 273.8687992095947,
+        "decompressed_output_gb_per_second": 30.63002439200863
+      },
+      "with_h2d": {
+        "us_per_plaintext": 928.3167839050293,
+        "decompressed_output_gb_per_second": 9.036363605010711
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1615.9907532267387,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 5191.0,
+      "device_only": {
+        "us_per_plaintext": 112.38240003585815,
+        "decompressed_output_gb_per_second": 74.64343168791042
+      },
+      "with_h2d": {
+        "us_per_plaintext": 117.17759966850281,
+        "decompressed_output_gb_per_second": 71.58883629406557
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.9957407510721717,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8424490.0,
+      "device_only": {
+        "us_per_plaintext": 275.00959634780884,
+        "decompressed_output_gb_per_second": 30.50296466524317
+      },
+      "with_h2d": {
+        "us_per_plaintext": 941.4959907531738,
+        "decompressed_output_gb_per_second": 8.909871186269543
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 819.2410256410257,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 195.0,
+      "device_only": {
+        "us_per_plaintext": 80.17600178718567,
+        "decompressed_output_gb_per_second": 1.9925164193649372
+      },
+      "with_h2d": {
+        "us_per_plaintext": 85.90239882469177,
+        "decompressed_output_gb_per_second": 1.8596919548896336
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 200.94591194968552,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 795.0,
+      "device_only": {
+        "us_per_plaintext": 48.43040108680725,
+        "decompressed_output_gb_per_second": 3.2985892417793226
+      },
+      "with_h2d": {
+        "us_per_plaintext": 50.347200036048896,
+        "decompressed_output_gb_per_second": 3.173006639606902
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9950875425116513,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 111146.0,
+      "device_only": {
+        "us_per_plaintext": 276.13919973373413,
+        "decompressed_output_gb_per_second": 0.40052263534712024
+      },
+      "with_h2d": {
+        "us_per_plaintext": 289.2527937889099,
+        "decompressed_output_gb_per_second": 0.3823645004470151
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9951895822872969,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 123482.0,
+      "device_only": {
+        "us_per_plaintext": 273.12960624694824,
+        "decompressed_output_gb_per_second": 0.4499255927930847
+      },
+      "with_h2d": {
+        "us_per_plaintext": 286.78879737854004,
+        "decompressed_output_gb_per_second": 0.428496514240746
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 15.904684981893332,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 527430.0,
+      "device_only": {
+        "us_per_plaintext": 333.6127996444702,
+        "decompressed_output_gb_per_second": 25.144742674560764
+      },
+      "with_h2d": {
+        "us_per_plaintext": 382.1151971817016,
+        "decompressed_output_gb_per_second": 21.953086560990897
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 1.000480342590105,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 122829.0,
+      "device_only": {
+        "us_per_plaintext": 3070.9359169006348,
+        "decompressed_output_gb_per_second": 0.04001646511856413
+      },
+      "with_h2d": {
+        "us_per_plaintext": 3090.640068054199,
+        "decompressed_output_gb_per_second": 0.039761343053242575
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 27.13679667963885,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 309123.0,
+      "device_only": {
+        "us_per_plaintext": 358.59360694885254,
+        "decompressed_output_gb_per_second": 23.3930773930292
+      },
+      "with_h2d": {
+        "us_per_plaintext": 384.57279205322266,
+        "decompressed_output_gb_per_second": 21.8127963635011
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 25.48211508553655,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 5144.0,
+      "device_only": {
+        "us_per_plaintext": 315.9424066543579,
+        "decompressed_output_gb_per_second": 0.4148857425885281
+      },
+      "with_h2d": {
+        "us_per_plaintext": 320.5072045326233,
+        "decompressed_output_gb_per_second": 0.4089767660329078
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.0087681185998283,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8315695.0,
+      "device_only": {
+        "us_per_plaintext": 3691.7984008789062,
+        "decompressed_output_gb_per_second": 2.2722280821192524
+      },
+      "with_h2d": {
+        "us_per_plaintext": 4318.619155883789,
+        "decompressed_output_gb_per_second": 1.9424282848769292
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 0.999412641756653,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 110665.0,
+      "device_only": {
+        "us_per_plaintext": 2425.321578979492,
+        "decompressed_output_gb_per_second": 0.04560220012000941
+      },
+      "with_h2d": {
+        "us_per_plaintext": 2439.7696495056152,
+        "decompressed_output_gb_per_second": 0.04533214847656274
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.0087699382371615,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8315680.0,
+      "device_only": {
+        "us_per_plaintext": 3689.5360946655273,
+        "decompressed_output_gb_per_second": 2.2736213401268985
+      },
+      "with_h2d": {
+        "us_per_plaintext": 4323.324775695801,
+        "decompressed_output_gb_per_second": 1.9403140951051794
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 227.12427573509504,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 36934.0,
+      "device_only": {
+        "us_per_plaintext": 55.83840012550354,
+        "decompressed_output_gb_per_second": 150.23009221513496
+      },
+      "with_h2d": {
+        "us_per_plaintext": 62.56479918956756,
+        "decompressed_output_gb_per_second": 134.07871692488015
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1635.5649143330652,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 5128.875,
+      "device_only": {
+        "us_per_plaintext": 47.46680110692978,
+        "decompressed_output_gb_per_second": 176.7257915927966
+      },
+      "with_h2d": {
+        "us_per_plaintext": 48.765599727630615,
+        "decompressed_output_gb_per_second": 172.0189651486437
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 13.715062974927738,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 9557.375,
+      "device_only": {
+        "us_per_plaintext": 55.32439947128295,
+        "decompressed_output_gb_per_second": 2.3692981984926784
+      },
+      "with_h2d": {
+        "us_per_plaintext": 55.556800961494446,
+        "decompressed_output_gb_per_second": 2.359387108895084
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 220.53770491803277,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 724.375,
+      "device_only": {
+        "us_per_plaintext": 10.377199947834015,
+        "decompressed_output_gb_per_second": 15.394518830037992
+      },
+      "with_h2d": {
+        "us_per_plaintext": 11.349600180983543,
+        "decompressed_output_gb_per_second": 14.075561909895937
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 15.906532194029321,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 527368.75,
+      "device_only": {
+        "us_per_plaintext": 98.45739901065826,
+        "decompressed_output_gb_per_second": 85.2003819346468
+      },
+      "with_h2d": {
+        "us_per_plaintext": 137.10360527038574,
+        "decompressed_output_gb_per_second": 61.184445029411144
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.9957456857782941,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8424448.25,
+      "device_only": {
+        "us_per_plaintext": 169.78620290756226,
+        "decompressed_output_gb_per_second": 49.40688852419334
+      },
+      "with_h2d": {
+        "us_per_plaintext": 799.4855880737305,
+        "decompressed_output_gb_per_second": 10.492506838317619
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 1.000106249985871,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 110588.25,
+      "device_only": {
+        "us_per_plaintext": 440.4142141342163,
+        "decompressed_output_gb_per_second": 0.2511272262577216
+      },
+      "with_h2d": {
+        "us_per_plaintext": 449.59800243377686,
+        "decompressed_output_gb_per_second": 0.24599753424458493
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9957213690718679,
+      "raw_bytes_per_plaintext": 110600.0,
+      "compressed_bytes_per_plaintext": 111075.25,
+      "device_only": {
+        "us_per_plaintext": 34.59159880876542,
+        "decompressed_output_gb_per_second": 3.197308127081257
+      },
+      "with_h2d": {
+        "us_per_plaintext": 44.217200577259064,
+        "decompressed_output_gb_per_second": 2.501289058468384
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 1.000943821734779,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 122772.125,
+      "device_only": {
+        "us_per_plaintext": 437.46280670166016,
+        "decompressed_output_gb_per_second": 0.2809107382786187
+      },
+      "with_h2d": {
+        "us_per_plaintext": 447.1336126327514,
+        "decompressed_output_gb_per_second": 0.2748350750828764
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 1371.2618025751074,
+      "raw_bytes_per_plaintext": 159752.0,
+      "compressed_bytes_per_plaintext": 116.5,
+      "device_only": {
+        "us_per_plaintext": 9.487000107765198,
+        "decompressed_output_gb_per_second": 16.83904270953275
+      },
+      "with_h2d": {
+        "us_per_plaintext": 10.112399980425835,
+        "decompressed_output_gb_per_second": 15.797634617818273
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-integer-bitpacked-realhalf",
+      "algorithm": "LZ4",
+      "ratio": 0.9957117015652188,
+      "raw_bytes_per_plaintext": 122888.0,
+      "compressed_bytes_per_plaintext": 123417.25,
+      "device_only": {
+        "us_per_plaintext": 35.03720015287399,
+        "decompressed_output_gb_per_second": 3.5073578785923587
+      },
+      "with_h2d": {
+        "us_per_plaintext": 44.18739974498749,
+        "decompressed_output_gb_per_second": 2.781064301343962
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 27.141944133807076,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 309064.375,
+      "device_only": {
+        "us_per_plaintext": 169.4835960865021,
+        "decompressed_output_gb_per_second": 49.49510273382782
+      },
+      "with_h2d": {
+        "us_per_plaintext": 192.4228012561798,
+        "decompressed_output_gb_per_second": 43.59466729117994
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "dense",
+      "representation": "dense-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.008777580785647,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8315617.0,
+      "device_only": {
+        "us_per_plaintext": 738.3244037628174,
+        "decompressed_output_gb_per_second": 11.361683234697459
+      },
+      "with_h2d": {
+        "us_per_plaintext": 1357.9067707061768,
+        "decompressed_output_gb_per_second": 6.177602307437882
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "representation": "periodic1024-integer-bitpacked-realhalf",
+      "algorithm": "Zstd",
+      "ratio": 25.838754188842895,
+      "raw_bytes_per_plaintext": 131080.0,
+      "compressed_bytes_per_plaintext": 5073.0,
+      "device_only": {
+        "us_per_plaintext": 42.41259992122651,
+        "decompressed_output_gb_per_second": 3.0905910093570457
+      },
+      "with_h2d": {
+        "us_per_plaintext": 43.57440024614334,
+        "decompressed_output_gb_per_second": 3.008188277051537
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 0.9957475769361194,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8424432.25,
+      "device_only": {
+        "us_per_plaintext": 170.32099962234497,
+        "decompressed_output_gb_per_second": 49.25175415010582
+      },
+      "with_h2d": {
+        "us_per_plaintext": 798.950982093811,
+        "decompressed_output_gb_per_second": 10.499527740758229
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "prefix896",
+      "representation": "prefix896-ntt-gpu-uint32",
+      "algorithm": "Zstd",
+      "ratio": 1.0087756549738254,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 8315632.875,
+      "device_only": {
+        "us_per_plaintext": 729.0531873703003,
+        "decompressed_output_gb_per_second": 11.506167376152302
+      },
+      "with_h2d": {
+        "us_per_plaintext": 1348.8328456878662,
+        "decompressed_output_gb_per_second": 6.219160533358787
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "scalar",
+      "representation": "scalar-ntt-gpu-uint32",
+      "algorithm": "LZ4",
+      "ratio": 227.50155602714742,
+      "raw_bytes_per_plaintext": 8388608.0,
+      "compressed_bytes_per_plaintext": 36872.75,
+      "device_only": {
+        "us_per_plaintext": 40.44580012559891,
+        "decompressed_output_gb_per_second": 207.40368527635314
+      },
+      "with_h2d": {
+        "us_per_plaintext": 42.82039999961853,
+        "decompressed_output_gb_per_second": 195.90214010319218
+      }
+    }
+  ]
+}

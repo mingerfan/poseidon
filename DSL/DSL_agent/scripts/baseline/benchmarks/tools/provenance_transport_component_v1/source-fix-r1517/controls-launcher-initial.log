@@ -1,0 +1,49 @@
+test_logical_view_normalization (unittest.loader._FailedTest) ... ERROR
+test_provenance_json_transport (unittest.loader._FailedTest) ... ERROR
+test_pytorch_model_intake (unittest.loader._FailedTest) ... ERROR
+test_pytorch_spatial_cli (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: test_logical_view_normalization (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_logical_view_normalization
+Traceback (most recent call last):
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_logical_view_normalization'
+
+
+======================================================================
+ERROR: test_provenance_json_transport (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_provenance_json_transport
+Traceback (most recent call last):
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_provenance_json_transport'
+
+
+======================================================================
+ERROR: test_pytorch_model_intake (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_pytorch_model_intake
+Traceback (most recent call last):
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_pytorch_model_intake'
+
+
+======================================================================
+ERROR: test_pytorch_spatial_cli (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_pytorch_spatial_cli
+Traceback (most recent call last):
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_pytorch_spatial_cli'
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+FAILED (errors=4)

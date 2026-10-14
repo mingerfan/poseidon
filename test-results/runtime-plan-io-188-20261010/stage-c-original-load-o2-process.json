@@ -1,0 +1,17 @@
+{
+  "command": [
+    "prlimit",
+    "--as=34359738368",
+    "--",
+    "nice",
+    "-n",
+    "10",
+    "/home/xuming/poseidon-runtime-io-20261010/build-o2/runtime_plan_io_benchmark",
+    "--plan",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-unit-plaintext/gpu-plans/gpu4/qwen24._hecate_qwen25_24layer.runtime-plan.json"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 273.3805244099349,
+  "address_space_limit_bytes": 34359738368,
+  "nice": 10
+}

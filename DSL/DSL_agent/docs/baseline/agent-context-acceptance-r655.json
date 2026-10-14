@@ -1,0 +1,375 @@
+{
+  "backend_edits": 0,
+  "boundaries": {
+    "bootstrap_extended": false,
+    "cuda_hardware": false,
+    "full_runner_path_injection": false,
+    "new_state_weights_agent_approval": false,
+    "precompile_peak_memory_certified": false,
+    "thread_safe_sdk": false,
+    "x86_native_execution": false
+  },
+  "branch": "lhy-agent-dsl",
+  "commits": 0,
+  "downloads": 0,
+  "format": "poseidon-context-acceptance-v1",
+  "frozen_atol": 1e-05,
+  "frozen_rtol": 0.0001,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "installs": 0,
+  "new_agent_programs": 0,
+  "numerical": {
+    "binding": "e005ff9b9f61f0fb690816cf06c0d9e3d4249e8f1d202bd400cce1f377a0e53d",
+    "failed": 0,
+    "models": 3,
+    "new_execution_groups": 18,
+    "new_unique_input_groups": 9,
+    "passed": 3,
+    "qualification_input_groups": 12,
+    "reload_input_groups": 12,
+    "rows": [
+      {
+        "agent_generated": false,
+        "cache_generations": 0,
+        "cache_http_attempts": 0,
+        "cache_reused": true,
+        "context_binding": "c805febd97fce3c15b5ca21cdf5c3ff4621a80a2b8e2dd78d5287dfd43da0c0c",
+        "id": "weights_linear",
+        "input_sha256": "1349efc25d7ef521bee9d1d79611795af1466c3d1facabd38ef6ad2fcd8691e2",
+        "new_input_runs": [
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 9,
+              "cosine_similarity": 0.9999999999989552,
+              "mae": 2.063121961758032e-08,
+              "max_absolute_error": 5.8619650050717453e-08,
+              "max_nonzero_reference_relative_error": 1.546323397340968e-05,
+              "nonzero_reference_count": 9,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 0,
+            "run_context_binding": "c805febd97fce3c15b5ca21cdf5c3ff4621a80a2b8e2dd78d5287dfd43da0c0c"
+          },
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 9,
+              "cosine_similarity": 0.9999999999997392,
+              "mae": 1.0269211313856612e-08,
+              "max_absolute_error": 2.942787014938164e-08,
+              "max_nonzero_reference_relative_error": 9.51546466603627e-06,
+              "nonzero_reference_count": 9,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 1,
+            "run_context_binding": "c805febd97fce3c15b5ca21cdf5c3ff4621a80a2b8e2dd78d5287dfd43da0c0c"
+          }
+        ],
+        "observed_stages": {
+          "compiled": true,
+          "encrypted_execution": true,
+          "evidence_integrity_not_rejected": true,
+          "numerically_compared": true,
+          "traced": true
+        },
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-numerical-r651/tasks/649525edf67e40cb825fb42fa4a26866/program",
+        "package_binding": "b2efceb1b805b04cacc1afaa7ef8d9a162f5a4964fddddf96025e4f9340eb728",
+        "qualification": {
+          "atol": 1e-05,
+          "compared_values": 12,
+          "cosine_similarity": 0.9999999999999978,
+          "mae": 3.7193295405330007e-09,
+          "max_absolute_error": 9.754349564183862e-09,
+          "max_nonzero_reference_relative_error": 8.297477641852548e-07,
+          "nonzero_reference_count": 12,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "reload": {
+          "atol": 1e-05,
+          "compared_values": 12,
+          "cosine_similarity": 0.9999999999999973,
+          "mae": 3.985418584271742e-09,
+          "max_absolute_error": 1.0172139051217721e-08,
+          "max_nonzero_reference_relative_error": 9.041111296068879e-07,
+          "nonzero_reference_count": 12,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "task_id": "649525edf67e40cb825fb42fa4a26866"
+      },
+      {
+        "agent_generated": false,
+        "cache_generations": 0,
+        "cache_http_attempts": 0,
+        "cache_reused": true,
+        "context_binding": "cfd88ad09ea39fc2290ceab7a4b5f5bbfdd63c2aca254d813619fd6b2f4ff244",
+        "id": "pytorch_state_mlp",
+        "input_sha256": "713bd52a5b4abde01241ac0d94ff9c74f1658822b6673ecde444b2aea2bac95a",
+        "new_input_runs": [
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 6,
+              "cosine_similarity": 1.0,
+              "mae": 1.272428875228234e-10,
+              "max_absolute_error": 2.8519092643009003e-10,
+              "max_nonzero_reference_relative_error": 3.015172771751175e-09,
+              "nonzero_reference_count": 6,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 0,
+            "run_context_binding": "cfd88ad09ea39fc2290ceab7a4b5f5bbfdd63c2aca254d813619fd6b2f4ff244"
+          },
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 6,
+              "cosine_similarity": 1.0,
+              "mae": 3.321169080490923e-10,
+              "max_absolute_error": 6.754127396257914e-10,
+              "max_nonzero_reference_relative_error": 7.1407815378472915e-09,
+              "nonzero_reference_count": 6,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 1,
+            "run_context_binding": "cfd88ad09ea39fc2290ceab7a4b5f5bbfdd63c2aca254d813619fd6b2f4ff244"
+          }
+        ],
+        "observed_stages": {
+          "compiled": true,
+          "encrypted_execution": true,
+          "evidence_integrity_not_rejected": true,
+          "numerically_compared": true,
+          "traced": true
+        },
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-numerical-r651/tasks/8c3c4b5859a241e7a0fd5212d5aa302a/program",
+        "package_binding": "e00db243ff0f0b29ae84a34bcd7327aedcbbef56520efd7f17c6f145cde218db",
+        "qualification": {
+          "atol": 1e-05,
+          "compared_values": 8,
+          "cosine_similarity": 1.0000000000000002,
+          "mae": 1.4343678154948858e-10,
+          "max_absolute_error": 3.596546532813605e-10,
+          "max_nonzero_reference_relative_error": 3.829173430690796e-09,
+          "nonzero_reference_count": 8,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "reload": {
+          "atol": 1e-05,
+          "compared_values": 8,
+          "cosine_similarity": 1.0,
+          "mae": 1.3518871872647553e-10,
+          "max_absolute_error": 4.724226843055845e-10,
+          "max_nonzero_reference_relative_error": 5.029792814562544e-09,
+          "nonzero_reference_count": 8,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "task_id": "8c3c4b5859a241e7a0fd5212d5aa302a"
+      },
+      {
+        "agent_generated": false,
+        "cache_generations": 0,
+        "cache_http_attempts": 0,
+        "cache_reused": true,
+        "context_binding": "22d05ec300515d72fdc9d31540aadc121f1dbc1b3439ee3b22d9441a4210c95e",
+        "id": "pytorch_state_matrix_fusion",
+        "input_sha256": "b245e2394db74f1f71c651177c5e978de3027d5937606dc51f7ffbc97b716956",
+        "new_input_runs": [
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 36,
+              "cosine_similarity": 0.9999999999999999,
+              "mae": 1.3731123353099698e-09,
+              "max_absolute_error": 9.284095520145641e-09,
+              "max_nonzero_reference_relative_error": 5.948074060290691e-07,
+              "nonzero_reference_count": 36,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 0,
+            "run_context_binding": "22d05ec300515d72fdc9d31540aadc121f1dbc1b3439ee3b22d9441a4210c95e"
+          },
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 36,
+              "cosine_similarity": 1.0,
+              "mae": 9.850800303596592e-10,
+              "max_absolute_error": 6.255341508665246e-09,
+              "max_nonzero_reference_relative_error": 7.338415748199558e-07,
+              "nonzero_reference_count": 36,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 1,
+            "run_context_binding": "22d05ec300515d72fdc9d31540aadc121f1dbc1b3439ee3b22d9441a4210c95e"
+          }
+        ],
+        "observed_stages": {
+          "compiled": true,
+          "encrypted_execution": true,
+          "evidence_integrity_not_rejected": true,
+          "numerically_compared": true,
+          "traced": true
+        },
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-numerical-r651/tasks/e1d8ec98f18f4587b1b5d83b6cede6c3/program",
+        "package_binding": "d00ba550848074213c9ef90e7d905b85a50909daaa5b9fbfd6dd63935b1efa6e",
+        "qualification": {
+          "atol": 1e-05,
+          "compared_values": 48,
+          "cosine_similarity": 1.0,
+          "mae": 1.195750127824002e-09,
+          "max_absolute_error": 1.5153386989652518e-08,
+          "max_nonzero_reference_relative_error": 4.30649392272036e-08,
+          "nonzero_reference_count": 24,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "reload": {
+          "atol": 1e-05,
+          "compared_values": 48,
+          "cosine_similarity": 1.0000000000000002,
+          "mae": 1.0836704721222465e-09,
+          "max_absolute_error": 5.812339720634441e-09,
+          "max_nonzero_reference_relative_error": 4.665627560622637e-08,
+          "nonzero_reference_count": 24,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "task_id": "e1d8ec98f18f4587b1b5d83b6cede6c3"
+      }
+    ],
+    "seconds": 1307.5585867280024,
+    "skipped": 0,
+    "source": "rule baseline",
+    "summary": {
+      "new_inputs": {
+        "compared_values": 102,
+        "mae": 3.5858329639261815e-09,
+        "max_absolute_error": 5.8619650050717453e-08
+      },
+      "qualification": {
+        "compared_values": 68,
+        "mae": 1.5172861010932944e-09,
+        "max_absolute_error": 1.5153386989652518e-08
+      },
+      "reload": {
+        "compared_values": 68,
+        "mae": 1.4841575797491256e-09,
+        "max_absolute_error": 1.0172139051217721e-08
+      }
+    }
+  },
+  "old_cli": {
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-legacy-cli-r653.log",
+    "historical_lock_failure": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-legacy-cli-r652.log",
+    "passed": true
+  },
+  "paid_calls": 0,
+  "pending_live_binding": "d3377af18686f84d36e58a5b24b36407bf1513273c86cb8543d04d44627d7623",
+  "pending_live_proposal": "agent-pytorch-state-live-proposal-r635.json",
+  "preserved_failures": [
+    {
+      "id": "r648",
+      "layer": "test_fixture",
+      "reason": "Existing backend identity is nested under tools; one lookup fixed; original log retained"
+    },
+    {
+      "id": "r650",
+      "layer": "developer_tool_import",
+      "reason": "Use qualified developer module import; no backend/model change"
+    },
+    {
+      "id": "r652",
+      "layer": "launcher_lock",
+      "reason": "Overlapping Nix shells competed for exclusive launcher lock; sequential CLI passed"
+    }
+  ],
+  "pushes": 0,
+  "raw_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-numerical-r651",
+  "source_audit": {
+    "backend_edits": 0,
+    "backend_files_unchanged": 582,
+    "branch": "lhy-agent-dsl",
+    "commits": 0,
+    "dirty_entries": 425,
+    "downloads": 0,
+    "format": "poseidon-context-final-audit-v1",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "installs": 0,
+    "new_dependencies": 0,
+    "numerical_report_sha256": "86c967e58f96aefcd25696b93da00d87083d67e404713cb8dc30f3d7ed577adc",
+    "own_source_files": {
+      "__init__.py": "529692e1b1f59e06bbf122d0a926ead0af418fe2d23fb471118ecaed1481bb82",
+      "backend.py": "80129319a3e4b9383791422070b8626ad88eae71361480c7f52f5f94fd67ad9b",
+      "context.py": "f5ee2dd85168169561e712c4aa49ac31d9b62ebf1d294f1c9063afb01a14c042",
+      "tests/test_context.py": "6617f1d1171ae3fd3ef0597bed58bce8e86aff14f223ac65938ae3403eec1c89",
+      "tools/check_context.py": "f7d75ee34c627e6e77600c62e2e0a089a00abff1d8fb131897891dce6534def0"
+    },
+    "own_source_sha256": "9fc074b4132e1ee357447fea31a9bb441aa58b31b811848dd7ec2c0084e3343e",
+    "paid_calls": 0,
+    "passed": true,
+    "pending_paid_binding_unchanged": "d3377af18686f84d36e58a5b24b36407bf1513273c86cb8543d04d44627d7623",
+    "platform": {
+      "byteorder": "little",
+      "configured_platform": "aarch64-linux",
+      "machine": "aarch64",
+      "pointer_bits": 64,
+      "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "system": "linux",
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+    },
+    "pushes": 0,
+    "reference_files_unchanged": [
+      "scripts/baseline/benchmark_math.py",
+      "scripts/baseline/benchmark_torch.py",
+      "scripts/baseline/numerical_results.py"
+    ],
+    "versions": {
+      "cuda": null,
+      "numpy": "1.25.2",
+      "python": [
+        3,
+        10,
+        14
+      ],
+      "torch": "2.0.1"
+    },
+    "worker_binding": "f6ee26379d749f2a6bbf221a2fbff1482f2f8ea28b7b60fe351daf2fb83d7be9"
+  },
+  "static_tests": {
+    "errors": 0,
+    "evidence": [
+      "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-tests-r648.log",
+      "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-context-test-r649.log"
+    ],
+    "failed": 0,
+    "historical_fixture_errors": 1,
+    "passed": 17,
+    "scope": "16 unchanged tests from r648 plus one corrected-fixture test at r649",
+    "skipped": 0
+  },
+  "status": "passed",
+  "worker_binding": "f6ee26379d749f2a6bbf221a2fbff1482f2f8ea28b7b60fe351daf2fb83d7be9"
+}

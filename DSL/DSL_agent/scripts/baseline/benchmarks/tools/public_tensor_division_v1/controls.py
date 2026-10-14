@@ -1,0 +1,32 @@
+"""Run a fresh bounded mathematical prototype check. No Hecate, compiler, FHE or Provider."""
+import ast,io,json,os,shlex,sys,time,unittest
+from pathlib import Path
+HERE=Path(__file__).resolve().parent;ROOT=(Path(__file__).resolve().parents[7] if Path(__file__).resolve().parents[5].name == "DSL_agent" and Path(__file__).resolve().parents[6].name == "DSL" else Path(__file__).resolve().parents[5]);BASE=ROOT/"scripts/baseline"
+os.environ["POSEIDON_PLATFORM"]="aarch64-linux";os.environ["POSEIDON_WORK_ROOT"]="/home/lhohy/poseidon-work"
+sys.path.insert(0,str(BASE))
+def inside():
+ import test_division
+ from benchmark_graph import digest
+ from public_tensor_division import sha
+ from hecate_python_env import VENV
+ assert os.environ.get("IN_NIX_SHELL")=="pure"and Path(sys.prefix)==VENV
+ output=HERE/"controls-v3.json";log=HERE/"controls-v3.log"
+ assert not output.exists()and not log.exists()
+ started=time.monotonic();buffer=io.StringIO()
+ result=unittest.TextTestRunner(stream=buffer,verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(test_division))
+ log.write_text(buffer.getvalue())
+ record=dict(format="poseidon-public-tensor-division-draft-controls-v1",status="passed"if result.wasSuccessful()and not result.skipped else"failed",
+  passed=result.testsRun-len(result.errors)-len(result.failures)-len(result.skipped),tests_run=result.testsRun,
+  failed=len(result.failures),errors=len(result.errors),skipped=len(result.skipped),seconds=time.monotonic()-started,
+  numerical=test_division.METRICS,production_activated=False,source_capture_calls=0,hecate_tracing_calls=0,
+  compiler_calls=0,encrypted_calls=0,provider_calls=0,http_attempts=0,
+  tools={p.name:sha(p.read_bytes())for p in HERE.glob("*.py")})
+ record["binding"]=digest(record)
+ with output.open("x")as stream:json.dump(record,stream,indent=2,sort_keys=True);stream.write("\n")
+ print(json.dumps({k:v for k,v in record.items()if k not in ["numerical","tools"]}),flush=True)
+ return 0 if record["status"]=="passed"else 1
+def outer():
+ from hecate_python_env import VENV,enter_nix
+ command='LD_LIBRARY_PATH="$HECATE_PYTHON_LIBRARY_PATH" OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '+shlex.join([str(VENV/"bin/python"),"-B",str(Path(__file__).resolve()),"--inside"])
+ return enter_nix(command,seconds=180,keep_env=(),environment="poseidon-cpu")
+if __name__=="__main__":raise SystemExit(inside()if sys.argv[1:]==["--inside"]else outer())

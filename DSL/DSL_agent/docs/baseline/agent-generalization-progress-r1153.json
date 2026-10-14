@@ -1,0 +1,83 @@
+{
+  "audited_agent_packages": 45,
+  "audited_input_groups": 315,
+  "audited_output_values": 2114,
+  "confirmed": {
+    "backend_protected_hashes": 648,
+    "reference_protected_hashes": 6
+  },
+  "continuation_control_tests": {
+    "passed": 18
+  },
+  "diagnostic_interpreter_tests": {
+    "passed": 18
+  },
+  "evidence_hashes": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approved-functional-source-audit-r1102/delivery-audit.json": "4d20aef6816bdc39352fd90c775156bd41206bdae1c7565630c216955b75d4e9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approved-unstarted-continuation-r1141/plan.json": "cd9cf1b5075fdc3230843c25d3d4aef7f845f152d268f4199e52cd0195d3e3c0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-current-passed-subset-audit-r1145/report.json": "ffb063dad45ce7ee2f7cfb40891e94ab1be335740aee59b52bedca8502cbccf7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-snapshot-r1152/snapshot.json": "45a87f997a0fa8976ec3aab132a12f14f6caac5e8794a42d42a9174292f842c1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-instance-helper-diagnosis-r1149/report.json": "2e4f9f10fd85df5cb0d9c08b5c000f33dfee69e6d5ac843916165feb47a84587",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-instance-terminal-subset-audit-r1143/report.json": "b8f7f4cbee6ee390c4e65be2af897a15d0ffa8e9a0df0e2813d11a61bcacfb02",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-matrix-closed-partial-audit-r1117/report.json": "45b39330b3bfcd23a04196b8f4437808213784d517a20b38bd6c15a7aa46e50f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-module1-frozen-passed-audit-r1151/report.json": "5dc1f94513a4d7d197a01b74bf96431b31415e50335fdd7eb15eb1d5fee02165",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-repeat-real-source-diagnostic-r1150/report.json": "25f7e525524805179b9228e51c38d1f8fc7b9d5a37a326c8cd46c8309bd75905"
+  },
+  "format": "poseidon-agent-generalization-progress-v1",
+  "maximum_absolute_error": 1.0207768190717559e-06,
+  "paid_scope": "Original approved 76 only; untouched 24 plus 1 continuation",
+  "production_fixes_applied": false,
+  "report_sha256": "07577c575d189d97b55d1503db2728a2ff7327627c42677fcb8418b152ae69c3",
+  "snapshot": {
+    "active": [
+      {
+        "generations": 4,
+        "http_attempts": 4,
+        "id": "instance__module1_input_0",
+        "phase": "generating",
+        "task_id": "4a2d981e00b44aa88641ad2e2edc574e"
+      }
+    ],
+    "closed_generations": 90,
+    "closed_http_attempts": 90,
+    "current_binding": "f6e6d61be8418f044641c17fae045eb67c3bf82d01c6375734ed0b3837c944dd",
+    "disk_available": 47185973248,
+    "failed": 9,
+    "git_branch": "lhy-agent-dsl",
+    "git_head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "git_tracked_modified": 63,
+    "git_untracked": 4189,
+    "not_started": 21,
+    "passed": 45,
+    "planned": 76,
+    "reserved_generations": 94,
+    "reserved_http_attempts": 94,
+    "results_bytes": 26418015893,
+    "retained_hashes": 1253,
+    "source_files": 695,
+    "time_utc": "2026-10-07T07:06:09.355784+00:00"
+  },
+  "source_cutover_tests": {
+    "passed": 18
+  },
+  "staged_component_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 113,
+    "skipped": 0
+  },
+  "staged_feedback_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 27,
+    "skipped": 0
+  },
+  "staged_test_receipts": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/acceptance-r1147.json": "8f84d7eeb0ebb7cc03d7eb1ed9947930e29c6a5aff9a6ff944685bd15abc0dbd",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/acceptance-r1148.json": "cbbaea25092a7a0df99f110e6bbb672c04928928219127ca84b770e5c8f19ddb"
+  },
+  "threshold": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  }
+}

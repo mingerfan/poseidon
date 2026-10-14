@@ -1,0 +1,13 @@
+{
+  "cases": 8,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-einsum-live-preparation-v1",
+  "http_attempts": 0,
+  "previous_preparation_window_reused": false,
+  "proposal_binding": "f6a8b322dbcbf083e8ce7e914940d0d5ca4f60cfb114a8b59c0fe5eaf287083d",
+  "proposal_sha256": "b70cf2d9d94fc6dc07c94beca32cda515f0dab1674424a8e97a11dc173b5f484",
+  "provider_calls": 0,
+  "source_captures": 0,
+  "status": "prepared"
+}

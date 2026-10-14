@@ -1,0 +1,14 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/audit_source_r1405.py", line 217, in <module>
+    if __name__=="__main__":main()
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/audit_source_r1405.py", line 148, in main
+    independent=[np.concatenate([evaluate_reference(expected["original"],batch)[port["name"]].reshape(-1)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/audit_source_r1405.py", line 148, in <listcomp>
+    independent=[np.concatenate([evaluate_reference(expected["original"],batch)[port["name"]].reshape(-1)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/audit_source_r1405.py", line 148, in <listcomp>
+    independent=[np.concatenate([evaluate_reference(expected["original"],batch)[port["name"]].reshape(-1)
+TypeError: string indices must be integers

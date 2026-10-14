@@ -1,0 +1,37 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-u0ozdn5_
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "diagonal_output_write", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9jax3ozx
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "diagonal_source_write", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cqwet_ty
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "diagonal_contraction", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7f4dfzlu
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "trace_scalar_factor", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-s9xuc9r8
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "scalar_index_write", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-z5zv6tpz
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "three_scalar_factors", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kh5w9xl3
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "legacy_linear", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b94dqspu
+attempt 0: passed / complete
+Candidate status: passed
+{"case": "legacy_mlp", "status": "passed", "source_captured": true, "compiled": true, "encrypted_execution": true}
+{"status": "passed", "passed": 8, "failed": 0, "source_captures": 8, "compilations": 8, "encrypted_calls": 16, "input_groups": 64, "compared_values": 184, "maximum_absolute_error": 1.0362645463946052e-08, "seconds": 566.5571603120006, "provider_calls": 0}

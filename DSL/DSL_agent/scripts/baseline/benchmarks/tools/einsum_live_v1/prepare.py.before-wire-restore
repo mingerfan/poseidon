@@ -1,0 +1,61 @@
+"""Freeze verified current-identity mathematical requests as data only, without source execution."""
+import pathlib,json,sys
+from scope import ROOT,BASE,HERE,PROPOSAL,CASES,PROVIDER,BUDGET,read,sha,digest,require,verify
+sys.path.insert(0,str(BASE))
+from public_weight_context import project
+from candidate_contract import request_file_bytes
+OUT=pathlib.Path("/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-source-acceptance-v2")
+def write(p,v):
+ with pathlib.Path(p).open("x")as f:json.dump(v,f,sort_keys=True,indent=2,ensure_ascii=False,allow_nan=False);f.write("\n")
+def main():
+ require(not PROPOSAL.exists(),"fresh_proposal")
+ report=read(OUT/"report.json");identity=read(OUT/"identity.json")
+ require(report["binding"]==digest({k:v for k,v in report.items()if k!="binding"})and
+         report["status"]=="passed"and report["passed"]==8 and report["failed"]==0,"native_acceptance_required")
+ require(report["identity_sha256"]==identity["manifest_sha256"],"acceptance_identity")
+ rows=[]
+ for row in report["rows"]:
+  require(row["case"]==CASES[len(rows)],"original_cases")
+  task=read(OUT/"tasks"/row["task_id"]/"task.json")
+  request=task["request"]
+  fixture=HERE.parent/"einsum_input_v1/fixtures"/row["case"]/"manifest.json"
+  spec=read(fixture)
+  full=HERE/(row["case"]+".request.json");public_path=HERE/(row["case"]+".public.json")
+  with full.open("xb")as f:f.write(request_file_bytes(request))
+  public=project(request)
+  with public_path.open("xb")as f:f.write(request_file_bytes(public))
+  require(request["request_id"]==row["request_id"],"qualified_request")
+  item=dict(id=row["case"],source_manifest=str(fixture),source_manifest_sha256=sha(fixture),
+    source_format=spec["format"],source_files={str((fixture.parent/n).relative_to(ROOT)):h
+      for n,h in spec["files"].items()},weight_files={str((fixture.parent/v["file"]).relative_to(ROOT)):v["sha256"]
+      for v in spec["weights"].values()},request_id=request["request_id"],full_request_file=str(full),
+    full_request_file_sha256=sha(full),public_request_file=str(public_path),public_request_file_sha256=sha(public_path),
+    public_context_bytes=public_path.stat().st_size,model_sha256=digest(request["model"]),
+    baseline_task_id=row["task_id"],baseline_task_is_closed=True,new_live_task_required=True,
+    max_generations=4,max_http_attempts=16,max_repairs=3,validation_level="numerical",
+    resource_profile="general-tensors-v1",
+    options=dict(generation_guidance="explicit-v13",public_weight_policy="descriptors-math-roles-v2",chunk_period=4))
+  rows.append(item)
+ value=dict(format="poseidon-einsum-live-proposal-v1",revision="r1341",approved=False,executed=False,
+  development_checkout=str(ROOT),branch="lhy-agent-dsl",platform="aarch64-linux",
+  source_stage_identity=identity,identity_sha256=identity["manifest_sha256"],
+  preparation_origin="immutable eight already-captured numerical-accepted task requests; data only",
+  baseline_report=str(OUT/"report.json"),baseline_report_sha256=sha(OUT/"report.json"),
+  baseline_report_binding=report["binding"],cases=rows,provider=PROVIDER,budget=BUDGET,
+  validation=["source_capture_and_frozen_request_match","real_agent_generation","true_compile","artifact_integrity",
+              "poseidon_cpu_encrypted_numerical","package_reload","new_inputs","cache_reuse"],
+  disclosure=["public mathematical model","public weights or descriptors","layout","DSL rules","controlled feedback"],
+  excluded_disclosure=["scripted DSL answers","test arrays","reference outputs","credentials","source provenance internals"],
+  previous_unknown_http_retried=False,
+  pending_outside_scope=["six v17 partition live cases","two MHA live cases requiring new source preparation",
+                        "larger graphs and model families","application accuracy","bootstrap","CUDA","whole networks"],
+  provider_calls=0,compiler_calls=0,encrypted_calls=0,
+  preparation_tools={str((HERE/n).relative_to(ROOT)):sha(HERE/n)for n in("scope.py","prepare.py")})
+ value["binding"]=digest(value);verify(value);write(PROPOSAL,value)
+ write(HERE/"preparation-report.json",dict(format="poseidon-einsum-live-preparation-v1",
+      status="prepared",cases=8,proposal_binding=value["binding"],proposal_sha256=sha(PROPOSAL),
+      source_captures=0,compiler_calls=0,encrypted_calls=0,provider_calls=0,http_attempts=0,
+      previous_preparation_window_reused=False))
+ print(json.dumps(dict(status="prepared",cases=8,proposal_binding=value["binding"],
+                       public_context_bytes=[r["public_context_bytes"]for r in rows],provider_calls=0)))
+if __name__=="__main__":main()

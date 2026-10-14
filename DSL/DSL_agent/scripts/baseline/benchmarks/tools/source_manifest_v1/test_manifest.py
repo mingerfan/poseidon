@@ -1,0 +1,229 @@
+"""Input ergonomics, source non-execution and weight/signature safety controls."""
+import contextlib,hashlib,importlib.util,io,json,math,pathlib,struct,subprocess,sys,tempfile,unittest
+ROOT=(Path(__file__).resolve().parents[7] if Path(__file__).resolve().parents[5].name == "DSL_agent" and Path(__file__).resolve().parents[6].name == "DSL" else Path(__file__).resolve().parents[5])
+SCRIPT=ROOT/"scripts/prepare_pytorch_source.py"
+spec=importlib.util.spec_from_file_location("source_manifest_preparer",SCRIPT)
+cli=importlib.util.module_from_spec(spec);spec.loader.exec_module(cli)
+def npy(dims=(2,2),dtype="<f8",values=(.1,-.2,.3,.4),version=1,fortran=False,extra=b""):
+ header=repr(dict(descr=dtype,fortran_order=fortran,shape=tuple(dims))).encode("latin1")
+ width=2 if version==1 else 4
+ padding=16-((8+width+len(header)+1)%16)
+ header+=b" "*padding+b"\n"
+ fmt={"<f8":"d","<f4":"f","<i4":"i","<i8":"q","|b1":"?"}.get(dtype)
+ data=b""if fmt is None else b"".join(struct.pack("<"+fmt,v)for v in values)
+ return b"\x93NUMPY"+bytes([version,0])+len(header).to_bytes(width,"little")+header+data+extra
+class ManifestTests(unittest.TestCase):
+ def setUp(self):
+  self.temp=tempfile.TemporaryDirectory();self.root=pathlib.Path(self.temp.name)
+  self.model=self.root/"model.py";self.model.write_text("def make():\n    raise AssertionError('must not execute source')\n")
+ def tearDown(self):self.temp.cleanup()
+ def build(self,**kwargs):
+  defaults=dict(entry="model.make",inputs=["x:2,2"],outputs=["out"]);defaults.update(kwargs)
+  return cli.build(self.model,**defaults)[0]
+ def weight(self,raw=None,name="weight.npy"):
+  p=self.root/name;p.write_bytes(npy()if raw is None else raw);return p
+ def test_default_current_manifest(self):
+  v=self.build();self.assertEqual(v["format"],"poseidon-trusted-pytorch-v18")
+  self.assertEqual(v["inputs"],[dict(name="x",shape=[2,2])]);self.assertEqual(v["outputs"],["out"])
+  self.assertEqual(v["files"]["model.py"],hashlib.sha256(self.model.read_bytes()).hexdigest())
+ def test_static_source_not_imported(self):
+  marker=self.root/"executed.txt"
+  self.model.write_text("from pathlib import Path\nPath("+repr(str(marker))+").write_text('wrong')\ndef make(): pass\n")
+  self.build();self.assertFalse(marker.exists())
+ def test_file_content_changes_hash(self):
+  first=self.build()["files"];self.model.write_text("def make(): return 2\n")
+  self.assertNotEqual(self.build()["files"],first)
+ def test_factory_data(self):
+  v=self.build(factory_args=[2],factory_kwargs=dict(bias=False,nested=[None,1.5]))
+  self.assertEqual(v["factory"],dict(args=[2],kwargs=dict(bias=False,nested=[None,1.5])))
+ def test_factory_callable_rejected(self):
+  with self.assertRaisesRegex(ValueError,"Only data values"):self.build(factory_kwargs=dict(f=lambda:1))
+ def test_factory_int_precision(self):
+  with self.assertRaisesRegex(ValueError,"Factory integer precision"):self.build(factory_args=[2**53+1])
+ def test_factory_nan(self):
+  with self.assertRaisesRegex(ValueError,"Nonfinite factory"):self.build(factory_args=[float("nan")])
+ def test_factory_depth(self):
+  v=[1]
+  for _ in range(9):v=[v]
+  with self.assertRaisesRegex(ValueError,"structure budget"):self.build(factory_args=v)
+ def test_source_version_choices(self):
+  for v in range(12,19):
+   with self.subTest(version=v):self.assertEqual(self.build(source_format="poseidon-trusted-pytorch-v"+str(v))["format"],
+                                               "poseidon-trusted-pytorch-v"+str(v))
+ def test_latest_resolves_to_registered_contract(self):
+  self.assertIn(cli.LATEST_FORMAT,cli.SOURCE_FORMATS)
+  self.assertEqual(self.build(source_format="latest")["format"],"poseidon-trusted-pytorch-v21")
+ def test_latest_equals_explicit_manifest(self):
+  self.assertEqual(self.build(source_format="latest"),self.build(source_format=cli.LATEST_FORMAT))
+ def test_latest_keeps_source_metadata_only(self):
+  marker=self.root/"executed-latest"
+  self.model.write_text("from pathlib import Path\nPath("+repr(str(marker))+").write_text('wrong')\ndef make(): pass\n")
+  self.build(source_format="latest");self.assertFalse(marker.exists())
+ def test_source_selection_types_and_names(self):
+  for value in [None,21,["latest"],{},"Latest","auto","v21"]:
+   with self.subTest(value=value):
+    with self.assertRaisesRegex(ValueError,"Source version"):self.build(source_format=value)
+ def test_all_registered_explicit_versions_unchanged(self):
+  for version in cli.SOURCE_FORMATS:
+   with self.subTest(version=version):self.assertEqual(self.build(source_format=version)["format"],version)
+ def test_latest_cli_preview_is_concrete(self):
+  b=io.StringIO()
+  with contextlib.redirect_stdout(b):cli.main([str(self.model),"--entry","model.make","--input","x:2","--output","out","--source-format","latest"])
+  self.assertEqual(json.loads(b.getvalue())["format"],cli.LATEST_FORMAT)
+  self.assertEqual({p.name for p in self.root.iterdir()},{"model.py"})
+ def test_latest_cli_saved_contract_is_concrete(self):
+  p=self.root/"latest.json";b=io.StringIO()
+  with contextlib.redirect_stdout(b):cli.main([str(self.model),"--entry","model.make","--input","x:2","--output","out","--source-format","latest","--manifest",str(p)])
+  report=json.loads(b.getvalue())
+  self.assertEqual(report["source_format"],cli.LATEST_FORMAT)
+  self.assertFalse(report["source_executed"]);self.assertEqual(report["provider_calls"],0)
+  self.assertEqual(json.loads(p.read_text())["format"],cli.LATEST_FORMAT)
+ def test_latest_does_not_expand_resource_profile(self):
+  with self.assertRaisesRegex(ValueError,"rank/axis"):self.build(source_format="latest",inputs=["x:1,1,1,1,1"],resource_profile="legacy-v1")
+ def test_unknown_source_version(self):
+  with self.assertRaisesRegex(ValueError,"Source version"):self.build(source_format="poseidon-trusted-pytorch-v999")
+ def test_helper_collection(self):
+  p=self.root/"helpers.py";p.write_text("def helper(x): return x\n")
+  self.assertEqual(set(self.build(helpers=[p])["files"]),{"model.py","helpers.py"})
+ def test_duplicate_helper(self):
+  with self.assertRaisesRegex(ValueError,"Duplicate/reserved"):self.build(helpers=[self.model])
+ def test_reserved_source_helper(self):
+  p=self.root/"pytorch_model_intake.py";p.write_text("x=1\n")
+  with self.assertRaisesRegex(ValueError,"Duplicate/reserved"):self.build(helpers=[p])
+ def test_helper_outside_root(self):
+  sub=self.root/"sub";sub.mkdir();p=sub/"helper.py";p.write_text("x=1\n")
+  with self.assertRaisesRegex(ValueError,"flat Python"):self.build(helpers=[p])
+ def test_excess_helpers(self):
+  with self.assertRaisesRegex(ValueError,"Source inventory"):self.build(helpers=[self.model]*8)
+ def test_symlink_source_rejected(self):
+  p=self.root/"alias.py";p.symlink_to(self.model)
+  with self.assertRaisesRegex(ValueError,"Regular source"):cli.build(p,entry="alias.make",inputs=["x:2"],outputs=["out"])
+ def test_source_syntax_checked(self):
+  self.model.write_text("def invalid(:\n")
+  with self.assertRaises(SyntaxError):self.build()
+ def test_source_byte_limit(self):
+  self.model.write_text("#"+"x"*65536)
+  with self.assertRaisesRegex(ValueError,"size/type"):self.build()
+ def test_entry_module_must_be_declared(self):
+  with self.assertRaisesRegex(ValueError,"Factory module missing"):self.build(entry="absent.make")
+ def test_entry_is_one_module_and_attribute(self):
+  with self.assertRaisesRegex(ValueError,"Factory entry"):self.build(entry="model.nested.make")
+ def test_rank32_generic(self):
+  self.assertEqual(len(self.build(inputs=["x:"+",".join(["1"]*32)])["inputs"][0]["shape"]),32)
+ def test_legacy_rank_limit(self):
+  with self.assertRaisesRegex(ValueError,"rank/axis"):self.build(inputs=["x:1,1,1,1,1"],resource_profile="legacy-v1")
+ def test_rank33_rejected(self):
+  with self.assertRaisesRegex(ValueError,"rank/axis"):self.build(inputs=["x:"+",".join(["1"]*33)])
+ def test_input_elements(self):
+  with self.assertRaisesRegex(ValueError,"element budget"):self.build(inputs=["x:4097"])
+ def test_profile_respected(self):
+  with self.assertRaisesRegex(ValueError,"element budget"):self.build(inputs=["x:1025"],resource_profile="medium-v1")
+ def test_input_axis_bound(self):
+  with self.assertRaisesRegex(ValueError,"rank/axis"):self.build(inputs=["x:65537"])
+ def test_empty_or_dynamic_dimensions(self):
+  for text in ["x:","x:0","x:-1","x:2,n","x:2,,2","x:2.0","x:[2]"]:
+   with self.subTest(text=text):
+    with self.assertRaises(ValueError):self.build(inputs=[text])
+ def test_duplicate_inputs(self):
+  with self.assertRaisesRegex(ValueError,"Input inventory"):self.build(inputs=["x:2","x:3"])
+ def test_too_many_inputs(self):
+  with self.assertRaisesRegex(ValueError,"Input inventory"):self.build(inputs=[v+":1"for v in ["a","b","c","d","e"]])
+ def test_four_inputs_and_outputs(self):
+  v=self.build(inputs=[n+":1"for n in["a","b","c","d"]],outputs=["w","x","y","z"])
+  self.assertEqual((len(v["inputs"]),len(v["outputs"])),(4,4))
+ def test_duplicate_outputs(self):
+  with self.assertRaisesRegex(ValueError,"Output names"):self.build(outputs=["y","y"])
+ def test_output_count_limit(self):
+  with self.assertRaisesRegex(ValueError,"Output names"):self.build(outputs=["a","b","c","d","e"])
+ def test_npy_descriptor_auto(self):
+  p=self.weight();v=self.build(weights=["weight="+p.name])
+  self.assertEqual(v["weights"]["weight"],dict(file="weight.npy",sha256=hashlib.sha256(p.read_bytes()).hexdigest(),
+                                           bytes=p.stat().st_size,shape=[2,2],dtype="<f8"))
+ def test_npy_version2(self):
+  p=self.weight(npy(version=2));self.assertEqual(self.build(weights=["weight="+p.name])["weights"]["weight"]["dtype"],"<f8")
+ def test_float32_requires_explicit_policy(self):
+  p=self.weight(npy(dtype="<f4"))
+  with self.assertRaisesRegex(ValueError,"Float32 weights"):self.build(weights=["weight="+p.name])
+  self.assertEqual(self.build(weights=["weight="+p.name],dtype_policy="convert-float64-v1")["weights"]["weight"]["dtype"],"<f4")
+ def test_integer_and_bool_dtypes(self):
+  for dtype,vals in[("<i4",[1,2,-3,4]),("<i8",[2**53,0,-2**53,1]),("|b1",[True,False,True,False])]:
+   p=self.weight(npy(dtype=dtype,values=vals))
+   self.assertEqual(self.build(weights=["weight="+p.name])["weights"]["weight"]["dtype"],dtype)
+ def test_integer_precision_limit(self):
+  p=self.weight(npy(dtype="<i8",values=[2**53+1,0,1,2]))
+  with self.assertRaisesRegex(ValueError,"integer precision"):self.build(weights=["weight="+p.name])
+ def test_float_weight_values(self):
+  for bad in(float("nan"),float("inf"),1024.1):
+   p=self.weight(npy(values=[bad,0,1,2]))
+   with self.assertRaisesRegex(ValueError,"floating values"):self.build(weights=["weight="+p.name])
+ def test_object_dtype_rejected(self):
+  p=self.weight(npy(dtype="|O"));self.assertRaises(ValueError,self.build,weights=["weight="+p.name])
+ def test_fortran_rejected(self):
+  p=self.weight(npy(fortran=True))
+  with self.assertRaisesRegex(ValueError,"dtype/order"):self.build(weights=["weight="+p.name])
+ def test_mismatched_payload_rejected(self):
+  for data in(npy(values=[1,2]),npy(extra=b"x")):
+   p=self.weight(data)
+   with self.assertRaisesRegex(ValueError,"payload/element"):self.build(weights=["weight="+p.name])
+ def test_weight_content_changes_binding(self):
+  p=self.weight();first=self.build(weights=["weight="+p.name])["weights"]
+  p.write_bytes(npy(values=[.2,.3,.4,.5]))
+  self.assertNotEqual(self.build(weights=["weight="+p.name])["weights"],first)
+ def test_duplicate_weight_names(self):
+  p=self.weight()
+  with self.assertRaisesRegex(ValueError,"Duplicate state"):self.build(weights=["weight="+p.name,"weight="+p.name])
+ def test_state_names_with_module_dots(self):
+  p=self.weight()
+  self.assertIn("layers.0.weight",self.build(weights=["layers.0.weight="+p.name])["weights"])
+ def test_weight_symlink_rejected(self):
+  p=self.weight();alias=self.root/"alias.npy";alias.symlink_to(p)
+  with self.assertRaisesRegex(ValueError,"Regular source"):self.build(weights=["weight="+alias.name])
+ def test_scalar_weight(self):
+  p=self.weight(npy(dims=(),values=[.2]));self.assertEqual(self.build(weights=["weight="+p.name])["weights"]["weight"]["shape"],[])
+ def test_weight_version3_rejected(self):
+  p=self.weight(npy(version=3))
+  with self.assertRaisesRegex(ValueError,"NPY version"):self.build(weights=["weight="+p.name])
+ def test_pickle_header_never_executes(self):
+  marker=self.root/"header-executed"
+  header=("__import__('pathlib').Path("+repr(str(marker))+").write_text('bad')").encode()
+  self.weight(b"\x93NUMPY\x01\x00"+len(header).to_bytes(2,"little")+header)
+  with self.assertRaisesRegex(ValueError,"literal header"):self.build(weights=["weight=weight.npy"])
+  self.assertFalse(marker.exists())
+ def test_bad_approximation_declaration(self):
+  with self.assertRaises(ValueError):self.build(approximations=dict(format="unknown"))
+ def test_approximation_metadata_kept(self):
+  approximation=dict(format="poseidon-pytorch-approximations-v1",defaults={"exp":dict(method="taylor",degree=1,domain=[-.5,.5])},modules=[],nodes=[])
+  self.assertEqual(self.build(approximations=approximation)["approximations"],approximation)
+ def test_duplicate_json_rejected(self):
+  with self.assertRaisesRegex(ValueError,"Duplicate JSON"):cli.strict_json('{"a":1,"a":2}')
+ def test_nonfinite_json_rejected(self):
+  with self.assertRaisesRegex(ValueError,"Nonfinite JSON"):cli.strict_json('{"a":NaN}')
+ def test_excess_json_rejected(self):
+  with self.assertRaisesRegex(ValueError,"byte limit"):cli.strict_json(" "*131073)
+ def test_save_and_load_same_manifest(self):
+  v=self.build();p=cli.save(v,self.root/"prepared.json",self.root)
+  self.assertEqual(json.loads(p.read_text()),v)
+ def test_existing_manifest_preserved(self):
+  p=self.root/"existing.json";p.write_text("KEEP")
+  with self.assertRaisesRegex(ValueError,"already exists"):cli.save(self.build(),p,self.root)
+  self.assertEqual(p.read_text(),"KEEP")
+ def test_output_must_be_in_model_directory(self):
+  sub=self.root/"other";sub.mkdir()
+  with self.assertRaisesRegex(ValueError,"model directory"):cli.save(self.build(),sub/"prepared.json",self.root)
+ def test_cli_preview_no_write(self):
+  buffer=io.StringIO()
+  with contextlib.redirect_stdout(buffer):self.assertEqual(cli.main([str(self.model),"--entry","model.make","--input","x:2,2","--output","out"]),0)
+  self.assertEqual(json.loads(buffer.getvalue())["files"],self.build()["files"])
+  self.assertEqual({p.name for p in self.root.iterdir()},{"model.py"})
+ def test_cli_create(self):
+  p=self.root/"generated.json";buffer=io.StringIO()
+  with contextlib.redirect_stdout(buffer):cli.main([str(self.model),"--entry","model.make","--input","x:2,2","--output","out","--manifest",str(p)])
+  info=json.loads(buffer.getvalue());self.assertFalse(info["source_executed"])
+  self.assertEqual(info["provider_calls"],0);self.assertEqual(json.loads(p.read_text()),self.build())
+ def test_cli_bad_json_no_partial_output(self):
+  p=self.root/"bad.json"
+  with contextlib.redirect_stderr(io.StringIO()):
+   with self.assertRaises(SystemExit):cli.main([str(self.model),"--entry","model.make","--input","x:2","--output","out",
+                       "--factory-kwargs",'{"x":NaN}',"--manifest",str(p)])
+  self.assertFalse(p.exists())
+if __name__=="__main__":unittest.main()

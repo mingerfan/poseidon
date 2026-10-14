@@ -1,0 +1,303 @@
+[1/5] Building EarthCanonicalizerPattern.inc...
+[2/5] Building CXX object lib/Dialect/Earth/IR/CMakeFiles/obj.EarthDialect.dir/EarthDialect.cpp.o
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:9211:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 9211 |             default:            // LCOV_EXCL_LINE
+      |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:9894:21: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 9894 |                     default:                 // LCOV_EXCL_LINE
+      |                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12021:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 12021 |             default:            // LCOV_EXCL_LINE
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:19730:17: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 19730 |                 default:
+       |                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:19873:17: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 19873 |                 default:
+       |                 ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:21:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/include/hecate/Dialect/Earth/IR/EarthOps.cpp.inc:331:11: warning: unused variable 'overLevel' [-Wunused-variable]
+  331 |       int overLevel = (getOperandScale(i) - param) / hecate::earth::EarthDialect::rescalingFactor;
+      |           ^~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/include/hecate/Dialect/Earth/IR/EarthOps.cpp.inc:1960:23: warning: comparison of integers of different signs: 'int' and 'uint64_t' (aka 'unsigned long') [-Wsign-compare]
+ 1960 |   for ( int i = 0 ; i < getDownFactor(); i++ ){
+      |                     ~ ^ ~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/include/hecate/Dialect/Earth/IR/EarthOps.cpp.inc:2171:11: warning: unused variable 'overLevel' [-Wunused-variable]
+ 2171 |       int overLevel = (getOperandScale(i) - param) / hecate::earth::EarthDialect::rescalingFactor;
+      |           ^~~~~~~~~
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:19730:17: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 19730 |                 default:
+       |                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23421:26: note: in instantiation of member function 'nlohmann::basic_json<>::json_value::json_value' requested here
+ 23421 |             : m_type(v), m_value(v)
+       |                          ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20034:11: note: in instantiation of member function 'nlohmann::basic_json<>::data::data' requested here
+ 20034 |         : m_data(v)
+       |           ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20042:11: note: in instantiation of member function 'nlohmann::basic_json<>::basic_json' requested here
+ 20042 |         : basic_json(value_t::null)
+       |           ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23257:20: note: in instantiation of member function 'nlohmann::basic_json<>::basic_json' requested here
+ 23257 |         basic_json result;
+       |                    ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:19873:17: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 19873 |                 default:
+       |                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23439:21: note: in instantiation of member function 'nlohmann::basic_json<>::json_value::destroy' requested here
+ 23439 |             m_value.destroy(m_type);
+       |                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20033:5: note: in instantiation of member function 'nlohmann::basic_json<>::data::~data' requested here
+ 20033 |     basic_json(const value_t v)
+       |     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20042:11: note: in instantiation of member function 'nlohmann::basic_json<>::basic_json' requested here
+ 20042 |         : basic_json(value_t::null)
+       |           ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23257:20: note: in instantiation of member function 'nlohmann::basic_json<>::basic_json' requested here
+ 23257 |         basic_json result;
+       |                    ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12454:21: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 12454 |                     default: // the last token was unexpected
+       |                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12200:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::sax_parse_internal<nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>>' requested here
+ 12200 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23258:113: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::parse' requested here
+ 23258 |         parser(detail::input_adapter(std::move(first), std::move(last)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:22228:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 22228 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:6995:117: note: in instantiation of member function 'nlohmann::basic_json<>::max_size' requested here
+ 6995 |         if (ref_stack.back() && JSON_HEDLEY_UNLIKELY(len != static_cast<std::size_t>(-1) && len > ref_stack.back()->max_size()))
+      |                                                                                                                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12299:56: note: in instantiation of member function 'nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>::start_object' requested here
+ 12299 |                         if (JSON_HEDLEY_UNLIKELY(!sax->start_object(static_cast<std::size_t>(-1))))
+       |                                                        ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12200:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::sax_parse_internal<nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>>' requested here
+ 12200 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23258:113: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::parse' requested here
+ 23258 |         parser(detail::input_adapter(std::move(first), std::move(last)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20420:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 20420 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:7027:37: note: in instantiation of member function 'nlohmann::basic_json<>::basic_json' requested here
+ 7027 |                 *ref_stack.back() = discarded;
+      |                                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12307:60: note: in instantiation of member function 'nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>::end_object' requested here
+ 12307 |                             if (JSON_HEDLEY_UNLIKELY(!sax->end_object()))
+       |                                                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12200:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::sax_parse_internal<nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>>' requested here
+ 12200 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23258:113: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::parse' requested here
+ 23258 |         parser(detail::input_adapter(std::move(first), std::move(last)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:13140:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 13140 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:7045:23: note: in instantiation of member function 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::operator->' requested here
+ 7045 |                 if (it->is_discarded())
+      |                       ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12307:60: note: in instantiation of member function 'nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>::end_object' requested here
+ 12307 |                             if (JSON_HEDLEY_UNLIKELY(!sax->end_object()))
+       |                                                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12200:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::sax_parse_internal<nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>>' requested here
+ 12200 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23258:113: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::parse' requested here
+ 23258 |         parser(detail::input_adapter(std::move(first), std::move(last)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:21704:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 21704 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:7047:39: note: in instantiation of function template specialization 'nlohmann::basic_json<>::erase<nlohmann::detail::iter_impl<nlohmann::basic_json<>>, 0>' requested here
+ 7047 |                     ref_stack.back()->erase(it);
+      |                                       ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12307:60: note: in instantiation of member function 'nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>::end_object' requested here
+ 12307 |                             if (JSON_HEDLEY_UNLIKELY(!sax->end_object()))
+       |                                                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12200:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::sax_parse_internal<nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>>' requested here
+ 12200 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23258:113: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::parse' requested here
+ 23258 |         parser(detail::input_adapter(std::move(first), std::move(last)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:7404:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 7404 |             default: // catch non-enum values
+      |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12586:57: note: in instantiation of member function 'nlohmann::detail::lexer_base<nlohmann::basic_json<>>::token_type_name' requested here
+ 12586 |             error_msg += concat("unexpected ", lexer_t::token_type_name(last_token));
+       |                                                         ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12208:53: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::exception_message' requested here
+ 12208 |                                                     exception_message(token_type::end_of_input, "value"), nullptr));
+       |                                                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23258:113: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::parse' requested here
+ 23258 |         parser(detail::input_adapter(std::move(first), std::move(last)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12454:21: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 12454 |                     default: // the last token was unexpected
+       |                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12228:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::sax_parse_internal<nlohmann::detail::json_sax_dom_parser<nlohmann::basic_json<>>>' requested here
+ 12228 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23258:113: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::iterator_input_adapter<const char *>>::parse' requested here
+ 23258 |         parser(detail::input_adapter(std::move(first), std::move(last)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:24394:28: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<const char *>' requested here
+ 24394 |     return nlohmann::json::parse(s, s + n);
+       |                            ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12454:21: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 12454 |                     default: // the last token was unexpected
+       |                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12200:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::input_stream_adapter>::sax_parse_internal<nlohmann::detail::json_sax_dom_callback_parser<nlohmann::basic_json<>>>' requested here
+ 12200 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23243:106: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::input_stream_adapter>::parse' requested here
+ 23243 |         parser(detail::input_adapter(std::forward<InputType>(i)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                          ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:144:43: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<std::basic_ifstream<char> &>' requested here
+  144 |   nlohmann::json config = nlohmann::json::parse(iff);
+      |                                           ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12454:21: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 12454 |                     default: // the last token was unexpected
+       |                     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12228:13: note: in instantiation of function template specialization 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::input_stream_adapter>::sax_parse_internal<nlohmann::detail::json_sax_dom_parser<nlohmann::basic_json<>>>' requested here
+ 12228 |             sax_parse_internal(&sdp);
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:23243:106: note: in instantiation of member function 'nlohmann::detail::parser<nlohmann::basic_json<>, nlohmann::detail::input_stream_adapter>::parse' requested here
+ 23243 |         parser(detail::input_adapter(std::forward<InputType>(i)), cb, allow_exceptions, ignore_comments).parse(true, result);
+       |                                                                                                          ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:144:43: note: in instantiation of function template specialization 'nlohmann::basic_json<>::parse<std::basic_ifstream<char> &>' requested here
+  144 |   nlohmann::json config = nlohmann::json::parse(iff);
+      |                                           ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:22194:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 22194 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:161:55: note: in instantiation of member function 'nlohmann::basic_json<>::size' requested here
+  161 |           config["latencyTable"][name.str() + suffix].size()) {
+      |                                                       ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:12916:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 12916 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:21989:18: note: in instantiation of member function 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::iter_impl' requested here
+ 21989 |         iterator result(this);
+       |                  ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:162:26: note: in instantiation of member function 'nlohmann::basic_json<>::begin' requested here
+  162 |         for (auto &&data : config["latencyTable"][name.str() + suffix]) {
+      |                          ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:13019:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 13019 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:21990:16: note: in instantiation of member function 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::set_begin' requested here
+ 21990 |         result.set_begin();
+       |                ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:162:26: note: in instantiation of member function 'nlohmann::basic_json<>::begin' requested here
+  162 |         for (auto &&data : config["latencyTable"][name.str() + suffix]) {
+      |                          ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:13057:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 13057 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:22015:16: note: in instantiation of member function 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::set_end' requested here
+ 22015 |         result.set_end();
+       |                ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:162:26: note: in instantiation of member function 'nlohmann::basic_json<>::end' requested here
+  162 |         for (auto &&data : config["latencyTable"][name.str() + suffix]) {
+      |                          ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:13285:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 13285 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:13297:17: note: in instantiation of function template specialization 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::operator==<nlohmann::detail::iter_impl<nlohmann::basic_json<>>, nullptr>' requested here
+ 13297 |         return !operator==(other);
+       |                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:162:26: note: in instantiation of function template specialization 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::operator!=<nlohmann::detail::iter_impl<nlohmann::basic_json<>>, nullptr>' requested here
+  162 |         for (auto &&data : config["latencyTable"][name.str() + suffix]) {
+      |                          ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:13193:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 13193 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:162:26: note: in instantiation of member function 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::operator++' requested here
+  162 |         for (auto &&data : config["latencyTable"][name.str() + suffix]) {
+      |                          ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:13098:13: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 13098 |             default:
+       |             ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:162:26: note: in instantiation of member function 'nlohmann::detail::iter_impl<nlohmann::basic_json<>>::operator*' requested here
+  162 |         for (auto &&data : config["latencyTable"][name.str() + suffix]) {
+      |                          ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp:10:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:4638:9: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 4638 |         default:
+      |         ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:4695:5: note: in instantiation of function template specialization 'nlohmann::detail::get_arithmetic_value<nlohmann::basic_json<>, long, 0>' requested here
+ 4695 |     get_arithmetic_value(j, val);
+      |     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:5038:16: note: in instantiation of function template specialization 'nlohmann::detail::from_json<nlohmann::basic_json<>>' requested here
+ 5038 |         return from_json(j, std::forward<T>(val));
+      |                ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:5774:9: note: in instantiation of function template specialization 'nlohmann::detail::from_json_fn::operator()<nlohmann::basic_json<>, long &>' requested here
+ 5774 |         ::nlohmann::from_json(std::forward<BasicJsonType>(j), val);
+      |         ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20826:36: note: in instantiation of function template specialization 'nlohmann::adl_serializer<long>::from_json<const nlohmann::basic_json<> &, long>' requested here
+ 20826 |         JSONSerializer<ValueType>::from_json(*this, ret);
+       |                                    ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20969:16: note: in instantiation of function template specialization 'nlohmann::basic_json<>::get_impl<long, 0>' requested here
+ 20969 |         return get_impl<ValueType>(detail::priority_tag<4> {});
+       |                ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:4638:9: warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+ 4638 |         default:
+      |         ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:4683:5: note: in instantiation of function template specialization 'nlohmann::detail::get_arithmetic_value<nlohmann::basic_json<>, double, 0>' requested here
+ 4683 |     get_arithmetic_value(j, val);
+      |     ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:5038:16: note: in instantiation of function template specialization 'nlohmann::detail::from_json<nlohmann::basic_json<>>' requested here
+ 5038 |         return from_json(j, std::forward<T>(val));
+      |                ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:5774:9: note: in instantiation of function template specialization 'nlohmann::detail::from_json_fn::operator()<nlohmann::basic_json<>, double &>' requested here
+ 5774 |         ::nlohmann::from_json(std::forward<BasicJsonType>(j), val);
+      |         ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20826:36: note: in instantiation of function template specialization 'nlohmann::adl_serializer<double>::from_json<const nlohmann::basic_json<> &, double>' requested here
+ 20826 |         JSONSerializer<ValueType>::from_json(*this, ret);
+       |                                    ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/nlohmann/json.hpp:20969:16: note: in instantiation of function template specialization 'nlohmann::basic_json<>::get_impl<double, 0>' requested here
+ 20969 |         return get_impl<ValueType>(detail::priority_tag<4> {});
+       |                ^
+28 warnings generated.
+[3/5] Linking CXX static library lib/libEarthDialect.a
+[4/5] Linking CXX shared library lib/libHecateFrontend.so
+[5/5] Linking CXX executable bin/hecate-opt

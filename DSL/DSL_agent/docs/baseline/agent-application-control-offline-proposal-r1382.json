@@ -1,0 +1,238 @@
+{
+  "approved": false,
+  "backend": "poseidon_cpu",
+  "backend_identity": {
+    "api_tree_sha256": "c8a3d120aae1800ce48a5d3085044b00c7f92c844a7e1531615df3a4babccbf7",
+    "build_configuration": {
+      "cmake_cache_sha256": {
+        "compiler": "76c058b5d19a3e27fe299a7cbd071888494cb48c19f27df2d4d71c807b86f51d",
+        "executor": "181cd264efe24024ab5b98a745b1052f17f54b6772a68110e942ed44f9c77779",
+        "poseidon": "a96456e4ac0651827a50d58c6c80f12c2772c005cd78d2949919a6e1d2106e32"
+      },
+      "environment_files": {
+        "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+        "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+        "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+        "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+        "src/poseidon/tools/dacapo/poseidon-cpu-shell.nix": "38e03f4ec07fc089a14851595f7d1211fe07618875e9868bf5d205dd39274020",
+        "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+      }
+    },
+    "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+    "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+    "executor_sha256": "6cdd255e321025e9286d9968864c5ce0db9333017ca62e6618c6d9830178afd4",
+    "format": "poseidon-backend-identity-v2",
+    "frontend_sha256": "0baecce07032d37aaecba38b64b93cbbc23fb21dac8476de85598dc9ba8d6e73",
+    "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+    "platform": {
+      "byteorder": "little",
+      "configured_platform": "aarch64-linux",
+      "machine": "aarch64",
+      "pointer_bits": 64,
+      "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "system": "linux",
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+    },
+    "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+    "runner_tree_sha256": "bad66abf5c45cc0e920083d368ce510167940a67b65181349933fbe40845ade2",
+    "runtime_dacapo_tree_sha256": "f2ef1a237d1cb6d782e1013372e9d395f4e88e7aa449b9301a1fc2956d22a23a",
+    "source_lock": {
+      "dacapo": {
+        "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+        "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+        "patches": [
+          {
+            "file": "dacapo-plaintext-subtraction.patch",
+            "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+          },
+          {
+            "file": "dacapo-concat-layout.patch",
+            "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+          },
+          {
+            "file": "dacapo-bootstrap-containers.patch",
+            "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+          },
+          {
+            "file": "dacapo-native-function-calls.patch",
+            "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+          },
+          {
+            "file": "dacapo-refined-function-input-types.patch",
+            "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+          },
+          {
+            "file": "dacapo-augmented-operand-order.patch",
+            "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+          },
+          {
+            "file": "dacapo-constant-output-path.patch",
+            "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+          },
+          {
+            "file": "dacapo-minimal-mlir-link.patch",
+            "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+          },
+          {
+            "file": "dacapo-gcc-qualified-casts.patch",
+            "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+          },
+          {
+            "file": "dacapo-unused-mlir-dependencies.patch",
+            "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+          }
+        ],
+        "path": "third_party/ckks-runtime-agent/third_party/dacapo"
+      },
+      "format": "poseidon-runtime-source-lock-v1",
+      "integration_method": "reviewed source archives; original independent repositories preserved",
+      "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+      "runtime": {
+        "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+        "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+        "path": "third_party/ckks-runtime-agent"
+      }
+    },
+    "source_lock_sha256": "5e8d7adebd0cac8e9748bcddf0dc5ea408b7123095ff79199cdf47738de84647"
+  },
+  "backend_unchanged_from_r1376": true,
+  "binding": "ed7765a63eb36d64030a8b2f25994ae36d0ac320f095e022a6f0b0c4203f0a5e",
+  "candidate_origin": "frozen_deterministic_rule",
+  "cases": [
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c0/candidate.py",
+      "case": "f64_to_f32_c0",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/manifest.json": "680ee0ba29df7d9b4f0c1dce340c6d98b9b3eeefcf80259eead7b4004e83e0d5",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c0/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c0/request.json": "61508764e6e01c364255c7fe7675fc2ec1cbe40481bdfa9536ac14b4630085d3",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-source-v24-v1/f64_to_f32_c0/model.json": "4167d1a138fb2e640e7ca8ffe620ad29a7007fab5edc7267020503a6e10ef635",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-source-v24-v1/f64_to_f32_c0/provenance.json": "fac97d066369702d3eae5fa8cc64598f5e8b94b31dd1583001d2ddae376aaea5"
+      },
+      "historical_task_metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c0/tasks/2e1d7af2cc294e369677400e81793b3c/task.json",
+      "historical_task_metadata_sha256": "7129d34bd3b960b30e6039d7dcf81b7883561555981ccba4a6b24c5b98c55046",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c0/request.json",
+      "request_id": "21e88cd0994546af28042d5e21b99d2fbd901554900bedff84b4c6e99c7f3b60",
+      "resource_profile": "general-tensors-v1",
+      "source_contract": "poseidon-trusted-pytorch-v24",
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/manifest.json"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c2/candidate.py",
+      "case": "f64_roundtrip_c2",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/manifest.json": "4eccd7db5b6b50ac435e3a016fd33ddadfdc28e67ecc428dc93c76cbd741cb3a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c2/candidate.py": "27ca2f51a18423b6fde74b44c76093c50915b51936a064f6fc3283d8a9e969e6",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c2/request.json": "4f08ad5a0732e6caaf0c5ead59f0f79a000a9a7f134cc76b7f27b8ca920034c5",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-source-v24-v1/f64_roundtrip_c2/model.json": "744c4102195674ddfd391e9673e811aabc28ee32d38d72731033e85553c4090f",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-source-v24-v1/f64_roundtrip_c2/provenance.json": "f697fe2039df95467232b71de899b42095bd548ce9b3f0db10ac9897eea1e78d"
+      },
+      "historical_task_metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c2/tasks/1ca54c7beeb149b391eb0e709597338c/task.json",
+      "historical_task_metadata_sha256": "98628fd4746a35331ca468ca33fac39cf46c1beb23ddd0ec24ebd896230fdf79",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c2/request.json",
+      "request_id": "87ef604f3dd0810ce7ab985663f35172c59fe364da9485ed272b3017c46a85d5",
+      "resource_profile": "general-tensors-v1",
+      "source_contract": "poseidon-trusted-pytorch-v24",
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/manifest.json"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/compat_v23_named/candidate.py",
+      "case": "compat_v23_named",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/compat-fixtures/compat_v23_named/manifest.json": "0342578d349bd07c378d47fe025cc87f86d2fd55103d4297f2687e3697ad8204",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/compat-fixtures/compat_v23_named/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/compat-fixtures/compat_v23_named/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/compat_v23_named/candidate.py": "27ca2f51a18423b6fde74b44c76093c50915b51936a064f6fc3283d8a9e969e6",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/compat_v23_named/request.json": "665c70b71639cd72d302b90285c4ecf206112e98cef87141436edbe796fb8654",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-compat-source-v1/compat_v23_named/model.json": "00c36cc53f89e80127b24de261a56a0557067ae4701e3869f16286b5b43e7284",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-compat-source-v1/compat_v23_named/provenance.json": "03bd70abccaffbfaa4d4bf337e3ab84e30e137bc5ece6cdac99bf8ab589ec6eb"
+      },
+      "historical_task_metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/compat_v23_named/tasks/304b3913821c4bcea45b1d0f0e345a22/task.json",
+      "historical_task_metadata_sha256": "8f019c9e923704f05ae54cf5578646de697580f223a3402d101f71e923082fba",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/compat_v23_named/request.json",
+      "request_id": "33fa5b955a769b8446e175efb0913142445f09a9ebce95b17221c17f06f6a0fa",
+      "resource_profile": "general-tensors-v1",
+      "source_contract": "poseidon-trusted-pytorch-v23",
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/compat-fixtures/compat_v23_named/manifest.json"
+    }
+  ],
+  "downloads": 0,
+  "execution_operational_limits": {
+    "format": "poseidon-operational-limits-v1",
+    "max_new_artifact_bytes": 67108864,
+    "min_free_disk_bytes": 4294967296
+  },
+  "format": "poseidon-application-control-offline-ready-v1",
+  "generation_limits": {
+    "api_timeout_seconds": 1200,
+    "generations": 1,
+    "http_attempts": 1,
+    "max_tokens": 384000,
+    "wall_seconds": 180
+  },
+  "historical_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+  "http_attempts": 0,
+  "installations": 0,
+  "network_changes": false,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "options": {
+    "capacity_packing_version": "capacity-public-tensors-v9",
+    "chunk_period": 4,
+    "generation_guidance": "explicit-v13",
+    "public_weight_policy": "descriptors-math-roles-v2"
+  },
+  "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-application-control-cpu-r1382",
+  "program_checks": [
+    "fresh_source_capture",
+    "unchanged_public_model_weights_dsl",
+    "tracing_earth_ckks",
+    "runtime_plan_operator_spec_plaintext_bundle",
+    "poseidon_cpu_four_input_comparison",
+    "package_reload",
+    "three_new_inputs",
+    "one_repeat_input",
+    "named_none_output",
+    "no_generation_cache_reuse",
+    "optional_monitored_artifact_usage"
+  ],
+  "provider_calls": 0,
+  "request_operational_limits": {
+    "format": "poseidon-operational-limits-v1",
+    "max_new_artifact_bytes": 134217728,
+    "min_free_disk_bytes": 4294967296
+  },
+  "scope": {
+    "compiler_jobs": 2,
+    "global_bytes": 34359738368,
+    "initial_task_seconds": 180,
+    "launcher_total_seconds": 720,
+    "link_jobs": 1,
+    "maximum_compiler_calls": 3,
+    "maximum_encrypted_calls": 9,
+    "native_address_bytes": 4294967296,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "new_bytes": 536870912,
+    "reserve_bytes": 4294967296,
+    "wall_seconds": 600
+  },
+  "sdk_identity": "4469dc8dea04cdee31c354f728a830d23f447d702836d2d8e8a057c9014e9c86",
+  "stage_identities": {
+    "compilation": "d70e41b6af6ef0b6303bedd8d565a6832a20d009e2177b6661d83d6031f7b5b6",
+    "execution": "5acc90e0e0325076ed87216abfc7927b72587b55b3c475105a569ac3937da7dd",
+    "generation": "bf31dd2f763520a5689fa579860b8a603cb66f81da85d5b14da7945d1d9a008d",
+    "validation": "ba9af52d9e5ab2a363484d841ec00132aedc0dbdfe5ee4f0bc092dc282f37bab"
+  },
+  "tools": {
+    "scripts/baseline/benchmarks/tools/application_admission_budget_v1/current-sdk-r1382.json": "8f07eef5da321f905f96a3c10867b3f13ec1df426dcaee105440e48c76449dc4",
+    "scripts/baseline/benchmarks/tools/application_admission_budget_v1/offline_cpu.py": "26ebc31b221bf16961ae3fe65b478ce30de4c77e1f39ddfd9901f0134de2102d",
+    "scripts/baseline/benchmarks/tools/application_admission_budget_v1/selected-cases-r1382.json": "15eaae15beadaf2a1ec7f998b9f71499028e646a603e1357128627033c85d45b"
+  }
+}

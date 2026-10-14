@@ -1,0 +1,268 @@
+{
+  "backend_changed": false,
+  "compilations": 0,
+  "contexts": [
+    {
+      "group": "linear",
+      "lowered_sha256": "a132300301a6876ea1fc77d86b7d53b79808e3fec52ee57cc7237265db8ce72c",
+      "mathematical_sha256": "88ea3843104fd14de42e81bc6b3720a98d9495587d38b5ed9e0ced8ae77228d2",
+      "max_error": 2.7755575615628914e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 0
+    },
+    {
+      "group": "linear",
+      "lowered_sha256": "93923acb7e0eff0b245d7cac39e87dd0c884cb628b77495ae8d3610c1c47d6d4",
+      "mathematical_sha256": "83205978562e725b0abaadc8a34e1c66cc7a32e7d42c0da14b60827b55c746d9",
+      "max_error": 6.938893903907228e-18,
+      "probes": 16,
+      "values": 160,
+      "variant": 1
+    },
+    {
+      "group": "linear",
+      "lowered_sha256": "8388d73b7de2d83d4a78335c386c653d04b6b9557af6d26fc73850196fa91564",
+      "mathematical_sha256": "5e8fe1ada8866ba24da43cc80921f6978858a85b8d943ee0a0f7ade8948f8aec",
+      "max_error": 2.7755575615628914e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 2
+    },
+    {
+      "group": "matmul",
+      "lowered_sha256": "bae3af5e78db9ea268954f9b1739c5e3560a244feb60ad95b0144a47f9950e2d",
+      "mathematical_sha256": "3ed5cd98ad88dcdc70d264951c14fb02e7c4fe5efda3b3f4489e61fe4bd82013",
+      "max_error": 2.7755575615628914e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 0
+    },
+    {
+      "group": "matmul",
+      "lowered_sha256": "0e63f74c7b8f1877f29611e3d48ae4230794b07fb68d13c2f8bac7a4c29fc453",
+      "mathematical_sha256": "c66607bbf96ca7406e5a5f3affad8096ae08355879a192c1d34226229ece25dc",
+      "max_error": 3.469446951953614e-18,
+      "probes": 16,
+      "values": 160,
+      "variant": 1
+    },
+    {
+      "group": "matmul",
+      "lowered_sha256": "373f303b2c1ddd486e5e35a403c9bc7d234c6afdc5179650e541ac2d99d82070",
+      "mathematical_sha256": "10b619402364b53164b88f9251dee32e21c8c2787003adce36618a93209f1aca",
+      "max_error": 2.7755575615628914e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 2
+    },
+    {
+      "group": "conv1d",
+      "lowered_sha256": "69da180e0f184c3f2a6df3f61466ad1298dff1bff2615f44ec24da6cdf43f074",
+      "mathematical_sha256": "aab6b6e5463ff7f615da5fca7e30b372961f913939eedea3b596725c8f1edbfa",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 144,
+      "variant": 0
+    },
+    {
+      "group": "conv1d",
+      "lowered_sha256": "6713c4fbd932b4a6928e8d091bff91c6f34f33f3361d412e8a245a2b7e872c20",
+      "mathematical_sha256": "8ea9025852859811c79983f4d20b88585c7c9cdd2aa37c043a2447fd130bfa40",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 112,
+      "variant": 1
+    },
+    {
+      "group": "conv1d",
+      "lowered_sha256": "423e6df0b36282b1bf8af0fa1aefe2091187efd32c7145afe9d5939f9dd00201",
+      "mathematical_sha256": "f471be63745826ef2f04f5b5df27d54da5ef0292b468dde35a302a732acab970",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 144,
+      "variant": 2
+    },
+    {
+      "group": "conv2d",
+      "lowered_sha256": "52f2af567e89e786de4e886bf9b896aa4be1a4a901c5742a05ecab5d6016742a",
+      "mathematical_sha256": "20ddba9b5d1970686645546a1cae0a93e38fc1be4da036662414dd3a1531dfe0",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 192,
+      "variant": 0
+    },
+    {
+      "group": "conv2d",
+      "lowered_sha256": "31c21e9f9dac7d6c5e779cb64554c9098765ea80e41f60affad88939a7026a28",
+      "mathematical_sha256": "92f5b3d6ee98ca03e635fb5daea6cf23580c7ee6bfc44ab0f71a585ac7dbc1a2",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 160,
+      "variant": 1
+    },
+    {
+      "group": "conv2d",
+      "lowered_sha256": "c1852a51e5646814b7d127e9e51932caa3773a3547544812b39a2534c5c4195b",
+      "mathematical_sha256": "3296ea4de7af62836c54f11ceeda1af9379aae672009a314be9a2f8b4fe5efae",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 192,
+      "variant": 2
+    },
+    {
+      "group": "reduction",
+      "lowered_sha256": "8383452bfcb95c43a063dd4e3c74284a29f275c1725d59ce7cabb86023ffe580",
+      "mathematical_sha256": "42628cf7934ee917ac15e4d5243e7666b49ca758e8d853daed1223bac96ed391",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 288,
+      "variant": 0
+    },
+    {
+      "group": "reduction",
+      "lowered_sha256": "90c772b0a5908c3f234cc78c2d5ebbbd8424d4f6441a7e9b8bd737dcac2f5ed7",
+      "mathematical_sha256": "2c44f606df52dccc627b744e85923b4e0e0aa14eeedb5e7b7c64f98de4db68b5",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 224,
+      "variant": 1
+    },
+    {
+      "group": "reduction",
+      "lowered_sha256": "ead9920f535a9515ec67915cf91d7190999ef34ac610aa10c10967831855e094",
+      "mathematical_sha256": "afd664d724576e054ec12b409c2aa714eb86388a1f387169bc5ea491cafaa5e0",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 288,
+      "variant": 2
+    },
+    {
+      "group": "join",
+      "lowered_sha256": "f89f129368c15d9719ad20e700057a44b2918e628f3d9435bf0fa1d291bc9aa8",
+      "mathematical_sha256": "ada6431e47541c65a2b1847bd78bb245e698392fbd294fb847cb85e2be28c8ce",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 384,
+      "variant": 0
+    },
+    {
+      "group": "join",
+      "lowered_sha256": "a2fe063f60012229c3c5bb4ae60aff0b1d5b700a21f9f93b4c7ffda080fe6d90",
+      "mathematical_sha256": "32fcc017f58f61f73fef874f399782696dc62dd26ab7af54354f935270461d77",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 320,
+      "variant": 1
+    },
+    {
+      "group": "join",
+      "lowered_sha256": "c3ef2d9e3bc64d6bf94feaaafadcf7ccc2c3ad1d88d887b5d00da2da775b6eac",
+      "mathematical_sha256": "b939f4b0f69f1fc3b0853b8d331aacc90babf5c1a3522aac291ec08db0f03cfa",
+      "max_error": 0.0,
+      "probes": 16,
+      "values": 384,
+      "variant": 2
+    },
+    {
+      "group": "layer_norm",
+      "lowered_sha256": "7c3df771a0091ca134836f736e1643b37561d34195e75e82e13a3589afbd5634",
+      "mathematical_sha256": "54061ccad58f135010ab4388d82d76f8d377d8d815852e3b72f16ada5eeccdfa",
+      "max_error": 2.7755575615628914e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 0
+    },
+    {
+      "group": "layer_norm",
+      "lowered_sha256": "8ba14228ead7bd6c2109ae32fdcf3af13af91b9e2b47878921664ece7788c15e",
+      "mathematical_sha256": "9dcd10fe4ff684a390afd0f3cb3029b0e380c667ce0f8f192e8af7b819277f14",
+      "max_error": 4.163336342344337e-17,
+      "probes": 16,
+      "values": 160,
+      "variant": 1
+    },
+    {
+      "group": "layer_norm",
+      "lowered_sha256": "6cd5cdb54996c0750450c0fd4bd57c61e155f101d76f91eb3d1bee582bec7432",
+      "mathematical_sha256": "2873e0918ac4d585feb2855389196c3edaf9e87bba06e6f4c689d99322c61ec5",
+      "max_error": 4.163336342344337e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 2
+    },
+    {
+      "group": "group_norm",
+      "lowered_sha256": "0c812d3a16dd7bebde96874a5856d5f4281fa31585deba8810a644c3ca5cb7cb",
+      "mathematical_sha256": "056bb95e2c91039abf771d69df3e0be487c7d13d713f35bf8d2f03393f445393",
+      "max_error": 2.7755575615628914e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 0
+    },
+    {
+      "group": "group_norm",
+      "lowered_sha256": "517ab908ee7e7d203e7e7d057f5f93fd9c5b7c297795c24ad8a2df92c4a69bab",
+      "mathematical_sha256": "4291c00917ce8cb6782d349d9ad70b3d187ceae87138bef093996a7c461b305d",
+      "max_error": 4.163336342344337e-17,
+      "probes": 16,
+      "values": 160,
+      "variant": 1
+    },
+    {
+      "group": "group_norm",
+      "lowered_sha256": "caae2a1cd971c6b53508a4de842498de21471436164524483e9988054d1f1593",
+      "mathematical_sha256": "d8c09b64e14cac622be51bce2f7e4a56e222e38c880441006a2b0c18305fbd36",
+      "max_error": 4.163336342344337e-17,
+      "probes": 16,
+      "values": 192,
+      "variant": 2
+    }
+  ],
+  "encrypted_executions": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-staged-alias-composition-acceptance-v2",
+  "new_dependencies": 0,
+  "origin": {
+    "backend_changed": false,
+    "origin": "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/alias_source_plan.py",
+    "production_integrated": false,
+    "sha256": "f40ddf6d00dbf565c6e055f744dfad37dd913d34dec5932eca8304a6afe03557",
+    "source_version": "poseidon-ordered-tensor-source-v1"
+  },
+  "paid_calls": 0,
+  "production_freeze_checks": 695,
+  "production_intake_integrated": false,
+  "real_tracing": 0,
+  "runtime": {
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      12
+    ],
+    "torch_loaded": false
+  },
+  "scope": "Isolated Agent alias/registered-operator composition. Independent ordered NumPy vs high-level and lowered references; not PyTorch capture or FHE.",
+  "seconds": 0.22470850800164044,
+  "skipped": 0,
+  "source_hashes": {
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/before-origins-r1129/pytorch_alias_composition.py": "8f5c19c28253d7f3214ca5969a1ce9f4fbca06bd2dd8c8fd9b3b553445cfa497",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/before-origins-r1129/run_tests.py": "43abfee29faab1f3327bd23f719f41b2d9906c2e3dab1ea1d27e5e53766f1045",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/before-origins-r1129/test_composition.py": "e47c0326ba1625a5fb676625c51a20a3c4910607ee003f0ffdecc69720060f68",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/before-probe-name-r1127/pytorch_alias_composition.py": "b41181cd7a242b9c1129cb7b85af84b24a443870e6e27d90a063bdedcbe2c414",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/before-probe-name-r1127/run_tests.py": "c6c6726a0b79ac40b2fc8d187e1d762996da764f2d8f52b45c98beb41bd41a5d",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/before-probe-name-r1127/test_composition.py": "700a2fc53dde5b987fa2f96971b4f122b84da00de8275eab72d3d06296ffc45a",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/initial-r1121/pytorch_alias_composition.py": "87c5b0bbcd43d651233300752a5436271dd1227b400a6d24118fd4e87e521625",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/initial-r1121/reference.py": "a199083bfbd8adcb12a7b66b3391423ae7f657d0e9588de20f274e96878565af",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/initial-r1121/run_tests.py": "8606b15bf63bf4b8ba49d70808287de12517f16580d0f1559e2252385b7179db",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/initial-r1121/test_composition.py": "59c0e4e1185490829b9f3a9b5fe0ec585b6178d83dc67d636e226ff76786a0de",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/reference.py": "a199083bfbd8adcb12a7b66b3391423ae7f657d0e9588de20f274e96878565af",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/run_tests.py": "339f2719bfaa6e7c2eb84b2b1eae9bc6b15445b615332b343798de35e9315514",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/targets/pytorch_alias_composition.py": "b2ff2a7b95a76bc8815f82cb0fdd11550ca8dcda1170edff22aecb9172995cfd",
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/test_composition.py": "2198851538bcec4ade9880a7bbce81543e607acb68a8f57816158f4212ba3832"
+  },
+  "status": "passed",
+  "tests": 21
+}

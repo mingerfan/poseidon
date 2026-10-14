@@ -1,0 +1,28 @@
+{
+  "api_calls": 0,
+  "binding": "7017c011e991294db5a6c32a4f82f00dbb4eff447480cf4098566f2a8d6bfb1f",
+  "compiler_calls": 0,
+  "cuda": null,
+  "encrypted_calls": 0,
+  "format": "poseidon-tensor-gather-draft-plaintext-v1",
+  "fx_normalization_contexts": 4,
+  "independent_public_state_checks": true,
+  "log_sha256": "d0cfebef6877aa1fcb4dc00576590f6f9ca4d05debeb450f21bd7bfd7517d00f",
+  "numpy": "1.25.2",
+  "production_active": false,
+  "python": "3.10.14 (main, Mar 19 2024, 21:46:16) [GCC 13.2.0]",
+  "returncode": 1,
+  "seconds": 0.48263620398938656,
+  "source_capture_validated": false,
+  "sources": {
+    "fx_tests-r1.py": "0c419c0ff176a07782c316c74c4374d2005045a4405dfb6eb1477973dd1935ea",
+    "fx_tests.py": "3a26616947f28e3d77e52167e2596854bfde3b378063b04baee42d7919629d98",
+    "gather_fx_normalization-r2.py": "c50e8a9347e95a5555b38a4af51cabfb286fb39526c008acc73c51859c9bcf9e",
+    "gather_fx_normalization.py": "622bb8cb690d1471c39ead1cafc50cdcfaecb5ae4f3ff37a6e4178b42c05bf0d",
+    "tensor_gather_plan.py": "dd7d45f9a6b08c113d75f1e2b196e5ea0c5807dc41b7648ec3fc844873501ea5",
+    "test_fx.py": "02aaef9c0a8f9c2a6d0d3297db70dac277a1344bf519140be9ea6006032d2521"
+  },
+  "status": "failed",
+  "tests": 8,
+  "torch": "2.0.1"
+}

@@ -1,0 +1,62 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-construction-cost-readonly-v1",
+  "provider_calls": 0,
+  "rows": [
+    {
+      "candidate_still_rejected": true,
+      "limit": 1024,
+      "native_call_work": 2612,
+      "native_helper_invocations": 22,
+      "observed": 2766,
+      "public_binding_count": 105,
+      "repeated_registry_contribution": 2310,
+      "round": 0,
+      "top_costs": [
+        {
+          "calls": 10,
+          "helper": "lin4",
+          "per_call_work": 117,
+          "total_work": 1170
+        },
+        {
+          "calls": 4,
+          "helper": "mmul",
+          "per_call_work": 131,
+          "total_work": 524
+        },
+        {
+          "calls": 3,
+          "helper": "p1lo",
+          "per_call_work": 114,
+          "total_work": 342
+        }
+      ]
+    },
+    {
+      "candidate_still_rejected": true,
+      "limit": 1024,
+      "native_call_work": 2948,
+      "native_helper_invocations": 26,
+      "observed": 3205,
+      "public_binding_count": 105,
+      "repeated_registry_contribution": 2730,
+      "round": 2,
+      "top_costs": [
+        {
+          "calls": 16,
+          "helper": "repl",
+          "per_call_work": 113,
+          "total_work": 1808
+        },
+        {
+          "calls": 10,
+          "helper": "dlinr",
+          "per_call_work": 114,
+          "total_work": 1140
+        }
+      ]
+    }
+  ]
+}

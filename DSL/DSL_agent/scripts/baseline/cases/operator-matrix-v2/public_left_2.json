@@ -1,0 +1,40 @@
+{
+  "constants": {
+    "public_weight": [
+      -0.28125,
+      -0.0625,
+      0.15625
+    ]
+  },
+  "format": "poseidon-operator-graph-v2",
+  "id": "public_left_2",
+  "inputs": [
+    {
+      "name": "right",
+      "shape": [
+        3,
+        2
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "product",
+      "inputs": [
+        "public_weight",
+        "right"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "result"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "result"
+    }
+  ]
+}

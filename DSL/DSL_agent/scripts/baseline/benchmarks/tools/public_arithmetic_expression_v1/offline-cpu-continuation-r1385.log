@@ -1,0 +1,55 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0uaj5irr
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-uzmp0fgy
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-s3f9otw_
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-hiz109_x
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-uqz55mj7
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-e3ch6oer
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-hrf8su_e
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-51hl14hh
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-z23ypucm
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-4iwccdda
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-2xpupyep
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w1o65a24
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-4fofv7ms
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-a8n9ajtl
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-k9y3i2mu
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-x8vwo343
+attempt 0: passed / complete
+Candidate status: passed
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-m1s5ly59
+attempt 0: passed / complete
+Candidate status: passed

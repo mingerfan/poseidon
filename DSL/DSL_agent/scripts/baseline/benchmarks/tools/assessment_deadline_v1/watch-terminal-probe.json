@@ -1,0 +1,13 @@
+{
+  "deadline_after_terminal_change": null,
+  "deadline_before_terminal_change": [
+    "timed_out",
+    "assessment_controller_deadline_reached"
+  ],
+  "deadline_monitor_suppressed": true,
+  "encrypted_calls": 0,
+  "format": "poseidon-assessment-time-watch-regression-probe-v1",
+  "live_worker_control_path": true,
+  "provider_calls": 0,
+  "static_synthetic_metadata": true
+}

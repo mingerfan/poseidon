@@ -1,0 +1,21 @@
+{
+  "before": {
+    "application_diagnostics.py": "73c0109e5a788f4cb745da0b0b54db9d3109896e6d21cd9cc8adcc8856a0f5d3",
+    "poseidon_sandbox_policy.py": "c066c0a258e1737c3a806fe7c350ee24f11db66864f0da82e31508442c1ac31e",
+    "run_candidate.py": "b088c0a7212ace12b6808c00be8b5a5e96fab9894afe6f8bf80cdaa0705fb36b",
+    "sandbox_policy.py": "bd2ebf6833777757337ca1e6f3761da48abe305e3484525290364dc36e3b66d9",
+    "unified_contract_scope_guidance.py": "80ef476b580f4d7f84a1752f3c3a55b84d6303f8c1110d331c6fb41a141b5a5d",
+    "unified_graph_contract.py": "536b7d73412fa2e87d6bd01db3123fa3dfcedaf80f0f3b49a50da225b76bba67",
+    "validation_adapter.py": "832dc5b7612abe40d3d13ccd643ed8736c33ad50637835ee94209b5556590725"
+  },
+  "binding": "67ec5d77abc89a97ff1a0d0fbef97455b8145505bc12242b55be8d2b69c9532b",
+  "branch": "lhy-agent-dsl",
+  "calls_resolved": true,
+  "format": "poseidon-binding-frames-safe-boundary-v1",
+  "main_owner_absent": true,
+  "old_http": 4,
+  "old_live_audit": "4d92a16d8a36a620d6db39ea07ca24cc826d43549f0f7d00f049f01d101b1a79",
+  "post_audit_owner_absent": true,
+  "timestamp": 1791891339.82912,
+  "unknown_http": 0
+}

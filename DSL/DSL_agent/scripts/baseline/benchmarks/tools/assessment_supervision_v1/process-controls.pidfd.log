@@ -1,0 +1,16 @@
+test_double_fork_orphan_is_adopted_and_stopped (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_interruption_stops_term_ignoring_detached_child (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_invalid_invocation_is_rejected_before_spawn (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_new_session_child_is_stopped_after_parent_exits (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_nonzero_worker_exit_is_preserved (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_pid_reuse_during_descriptor_acquisition_is_rejected (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_pid_reuse_is_never_signalled (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_receipt_tampering_is_rejected (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_signalling_uses_bound_pidfd_without_numeric_pid_signal (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_success_has_no_running_descendants (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+test_unrelated_sibling_is_preserved (application_assessment_entry.test_supervision.SupervisionTests) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.849s
+
+OK

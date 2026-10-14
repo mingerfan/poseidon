@@ -1,0 +1,1 @@
+{"constants":{},"format":"poseidon-model-graph-v2","id":"capacity_join_aligned_2","inputs":[{"name":"input0","shape":[1,2,256]},{"name":"input1","shape":[1,2,256]}],"nodes":[{"attrs":{"axis":0},"id":"n0","inputs":["input0","input1"],"op":"concat","outputs":["v0"]}],"outputs":[{"name":"result","value":"v0"}],"resource_profile":"medium-v1"}

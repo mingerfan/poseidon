@@ -1,0 +1,89 @@
+test_activation_patch_is_clean_and_current_source_is_frozen (test_backend_parameters_boundary.ParameterBoundaryTests) ... ok
+test_address_policy_requires_one_equal_positive_soft_and_hard_limit (test_backend_parameters_boundary.ParameterBoundaryTests) ... ok
+test_literal_limit_arithmetic_rejects_nonliteral_or_unbounded_values (test_backend_parameters_boundary.ParameterBoundaryTests) ... ok
+test_native_limit_is_exact_and_does_not_modify_host_rlimits (test_backend_parameters_boundary.ParameterBoundaryTests) ... ok
+test_new_module_has_complete_provider_free_source_closure (test_backend_parameters_boundary.ParameterBoundaryTests) ... ok
+test_other_backend_is_rejected (test_backend_parameters_boundary.ParameterBoundaryTests) ... ERROR
+test_parameter_shape_contract_is_not_relaxed (test_backend_parameters_boundary.ParameterBoundaryTests) ... ERROR
+test_patch_removes_backedges_without_changing_old_interface (test_backend_parameters_boundary.ParameterBoundaryTests) ... ok
+test_real_parameters_equal_legacy_for_both_reviewed_models (test_backend_parameters_boundary.ParameterBoundaryTests) ... test_spec_content_mismatch_rejected_before_parameter_use (test_backend_parameters_boundary.ParameterBoundaryTests) ... 
+======================================================================
+ERROR: test_other_backend_is_rejected (test_backend_parameters_boundary.ParameterBoundaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_backend_parameters_boundary.py", line 96, in test_other_backend_is_rejected
+    config=copy.deepcopy(request_configuration(self.requests[0]));config["backend"]="seal_cpu"
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 79, in request_configuration
+    require(expected_hash == request.get('request_id'),'Compiler configuration request hash mismatch')
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 27, in require
+    raise ValueError(message)
+ValueError: Compiler configuration request hash mismatch
+
+======================================================================
+ERROR: test_parameter_shape_contract_is_not_relaxed (test_backend_parameters_boundary.ParameterBoundaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_backend_parameters_boundary.py", line 85, in test_parameter_shape_contract_is_not_relaxed
+    config=copy.deepcopy(request_configuration(self.requests[0]))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 79, in request_configuration
+    require(expected_hash == request.get('request_id'),'Compiler configuration request hash mismatch')
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 27, in require
+    raise ValueError(message)
+ValueError: Compiler configuration request hash mismatch
+
+======================================================================
+ERROR: test_real_parameters_equal_legacy_for_both_reviewed_models (test_backend_parameters_boundary.ParameterBoundaryTests) (request='147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_backend_parameters_boundary.py", line 27, in test_real_parameters_equal_legacy_for_both_reviewed_models
+    self.assertEqual(isolated.parameters(request),legacy.parameters(request))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/application_planning/backend_parameters.py", line 52, in parameters
+    config=request_configuration(request)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 79, in request_configuration
+    require(expected_hash == request.get('request_id'),'Compiler configuration request hash mismatch')
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 27, in require
+    raise ValueError(message)
+ValueError: Compiler configuration request hash mismatch
+
+======================================================================
+ERROR: test_real_parameters_equal_legacy_for_both_reviewed_models (test_backend_parameters_boundary.ParameterBoundaryTests) (request='5eebc4fccd6b1f0ece4bd65989daed863475c982ffbf3acaf53fd349c4eb9a54')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_backend_parameters_boundary.py", line 27, in test_real_parameters_equal_legacy_for_both_reviewed_models
+    self.assertEqual(isolated.parameters(request),legacy.parameters(request))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/application_planning/backend_parameters.py", line 52, in parameters
+    config=request_configuration(request)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 79, in request_configuration
+    require(expected_hash == request.get('request_id'),'Compiler configuration request hash mismatch')
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/compiler_configuration.py", line 27, in require
+    raise ValueError(message)
+ValueError: Compiler configuration request hash mismatch
+
+======================================================================
+FAIL: test_spec_content_mismatch_rejected_before_parameter_use (test_backend_parameters_boundary.ParameterBoundaryTests) (module='application_planning.backend_parameters')
+----------------------------------------------------------------------
+ValueError: Compiler configuration request hash mismatch
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_backend_parameters_boundary.py", line 71, in test_spec_content_mismatch_rejected_before_parameter_use
+    with self.assertRaisesRegex(ValueError,"resource_spec_identity"):
+AssertionError: "resource_spec_identity" does not match "Compiler configuration request hash mismatch"
+
+======================================================================
+FAIL: test_spec_content_mismatch_rejected_before_parameter_use (test_backend_parameters_boundary.ParameterBoundaryTests) (module='application_planning.resources')
+----------------------------------------------------------------------
+ValueError: Compiler configuration request hash mismatch
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_backend_parameters_boundary.py", line 71, in test_spec_content_mismatch_rejected_before_parameter_use
+    with self.assertRaisesRegex(ValueError,"resource_spec_identity"):
+AssertionError: "resource_spec_identity" does not match "Compiler configuration request hash mismatch"
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.031s
+
+FAILED (failures=2, errors=4)

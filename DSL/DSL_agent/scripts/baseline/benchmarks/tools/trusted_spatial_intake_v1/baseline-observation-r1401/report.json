@@ -1,0 +1,43 @@
+{
+  "api_calls": 0,
+  "binding": "7ef257814cc3d8d589f545bc24513804e24c18d810ee0eab2db9c2e50bfe509a",
+  "compilations": 0,
+  "encrypted_calls": 0,
+  "failed": 0,
+  "format": "poseidon-spatial-pytorch-draft-observation-v1",
+  "implementation": {
+    "pytorch_alias_capture_bridge.py": "20de8bdf93f2af7db38e9ec4da12a3681d077d04ab8aab557045758069cbd901",
+    "pytorch_alias_composition.py": "f2a91924eb30aa938053cb2a2b3dcdbf4c88063c72f13d813f124b88be3d6077",
+    "pytorch_model_capture.py": "b85222f47b08184693d4ca53a8d4ed163e09b2343f7ef694a3c7621bf3a48a7d",
+    "pytorch_ordered_capture.py": "8f444c51e827ac97f1f84bd0a30ff2b578dbf3d749129f97f44ea124d9db1ade",
+    "pytorch_spatial_source.py": "19e67ed8986ad320b2779d307d79f5f2882f627d582de2e9e85434ab38086e03",
+    "pytorch_static_trace.py": "b68b30d10c43ca96f1d8580b273be9740b6aa37d9a16d4fb0528eecdbc12e0cd"
+  },
+  "logical_outputs": 0,
+  "maximum_difference": 0.0,
+  "mode": "baseline",
+  "passed": 0,
+  "probe_groups": 0,
+  "production_registered": false,
+  "rejected": 3,
+  "rows": [
+    {
+      "case": "resize_1_linear_0",
+      "error": "Unsupported PyTorch module: Upsample",
+      "error_type": "ValueError",
+      "status": "rejected"
+    },
+    {
+      "case": "resize_2_bilinear_0",
+      "error": "Unsupported PyTorch module: Upsample",
+      "error_type": "ValueError",
+      "status": "rejected"
+    },
+    {
+      "case": "transpose_1_0",
+      "error": "Unsupported PyTorch module: ConvTranspose1d",
+      "error_type": "ValueError",
+      "status": "rejected"
+    }
+  ]
+}

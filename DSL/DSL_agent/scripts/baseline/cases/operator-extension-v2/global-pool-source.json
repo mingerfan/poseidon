@@ -1,0 +1,35 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "global_pool",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "compute",
+      "op": "global_avg_pool",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

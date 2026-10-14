@@ -1,0 +1,11 @@
+{
+  "after_sha256": "661c86d99e32a4e7f87201070e631c61295530ef4ac672ca7d540006fca6bc99",
+  "backend_libraries_changed": false,
+  "before_sha256": "230f89c54bbd0dcf1046c61655e472266a10dcf7a30301d6567f9c39903b1474",
+  "closed_live_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-mha-source-live-v2/report.json",
+  "format": "poseidon-mha-delivery-recovery-source-change-v1",
+  "old_records_rewritten": false,
+  "paid_calls_added": 0,
+  "request_hash_policy_changed": false,
+  "scope": "application task.json provenance transport only"
+}

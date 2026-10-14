@@ -1,0 +1,145 @@
+{
+  "actual_intake": {
+    "binding": "60ffe60827a1cca88a37dedb666bb89066934d720c3120a793a7472b18ca022b",
+    "cancellation": {
+      "encrypted_execution": false,
+      "observed_processes": [
+        {
+          "kind": "intake_supervisor",
+          "pid": 832365
+        },
+        {
+          "kind": "sandbox",
+          "pid": 832366
+        }
+      ],
+      "orphaned_processes": [],
+      "paid_calls": 0,
+      "resource_limits": {
+        "address_space": [
+          4294967296,
+          4294967296
+        ],
+        "core": [
+          0,
+          0
+        ],
+        "cpu": [
+          150,
+          155
+        ],
+        "file_size": [
+          16777216,
+          16777216
+        ],
+        "open_files": [
+          128,
+          128
+        ]
+      },
+      "status": "cancelled"
+    },
+    "failed": 0,
+    "passed": 6,
+    "production_integrated": false,
+    "reference_groups": 96,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-model-source-prototype-r996/actual-source-r1006/report.json",
+    "sha256": "337943e0e1be598d8d9b5fb98b5549ffeeeda5e0e022047a16d28ed871481481",
+    "snapshot_isolation": "passed",
+    "source_kinds": 3,
+    "source_variants": 6
+  },
+  "binding": "3273e55ca1737a3601aab29b968bec9d50cf4112be2f9db1a35c79f9fa07a069",
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "current_production_changed": false,
+  "date": "2026-10-06",
+  "early_records": [
+    "unit-launch-error-r997.json",
+    "actual-source-r998-first-result.json",
+    "actual-source-r1001-first-result.json"
+  ],
+  "existing_failures": {
+    "binding": "381f6189a41cdbc6be1c2aa27d95af87106dd667e1e38b9349290a0b64ce39df",
+    "failed_historical_rule_cases": 8,
+    "groups": {
+      "attention_core": 3,
+      "channel_broadcast_mix": 3,
+      "norm_depth_branches": 2
+    },
+    "new_execution": false,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-model-source-prototype-r996/existing-compiler-failures-r1009.json",
+    "sha256": "2a42d468096990f88504577d9a5028e20f408b531744853e42eec683b797c004"
+  },
+  "flags": {
+    "backend_modified": false,
+    "commit": false,
+    "compiled": false,
+    "decrypted": false,
+    "downloads": 0,
+    "encrypted_execution": false,
+    "hecate_tracing": false,
+    "installations": 0,
+    "new_agent_generation": false,
+    "paid_calls": 0,
+    "parameters_modified": false,
+    "push": false,
+    "reference_modified": false,
+    "sdk_builds": 0,
+    "tolerance_modified": false
+  },
+  "format": "poseidon-model-source-prototype-stage-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "pending_backend_proposal": {
+    "approved": false,
+    "backend_output_exists": false,
+    "binding": "32ade2c4bb66fc021f283e1264e79dad1fb12f68fb16e971bb99afb41ed3025d",
+    "frozen": {
+      "case_hashes": {
+        "changed": [],
+        "count": 3171
+      },
+      "source_hashes": {
+        "changed": [],
+        "count": 684
+      },
+      "tool_hashes": {
+        "changed": [],
+        "count": 4
+      }
+    },
+    "receipt_exists": false
+  },
+  "platform": "aarch64-linux",
+  "remaining": [
+    "production_source_intake_integration",
+    "pending_112_backend_cases_and_15_reuse_checks",
+    "eight_original_compiler_failures",
+    "new_input_live_agent_tests",
+    "ciphertext_partition",
+    "physical_capacity",
+    "bootstrap",
+    "application_accuracy",
+    "resnet20",
+    "cuda",
+    "x86_native",
+    "clean_install"
+  ],
+  "revision": "r1010",
+  "staged_tools": {
+    "scripts/baseline/benchmarks/tools/audit_existing_composition_failures.py": "89448358d1a964262e7db3add7f48dab11e0e3bddd7b10bdc952c16d792d643b",
+    "scripts/baseline/benchmarks/tools/audit_model_source_component_prototype.py": "80c77997929644c1c104a2c0c48b78cc14b3776bd3f52fe04776ca2614c92248",
+    "scripts/baseline/benchmarks/tools/model_source_component_prototype.py": "039ecb494bd824b8cc04ce2a2f122727f817b9c107c212ebc6c0216b1ed75477",
+    "scripts/baseline/benchmarks/tools/test_model_source_component_prototype.py": "9389f33656bc48114d07507de64fe2555700f28940621d40b006c06f278c7b6e"
+  },
+  "units": {
+    "encrypted_execution": false,
+    "errors": 0,
+    "failures": 0,
+    "fake_backend_only": true,
+    "paid_calls": 0,
+    "passed": 25,
+    "run": 25,
+    "skipped": 0
+  }
+}

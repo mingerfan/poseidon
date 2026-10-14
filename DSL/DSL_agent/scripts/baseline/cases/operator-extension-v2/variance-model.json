@@ -1,0 +1,77 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "variance",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        4
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "mean",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "subtract",
+      "inputs": [
+        "x",
+        "generated_0"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "square",
+      "inputs": [
+        "generated_2"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "mean",
+      "inputs": [
+        "generated_4"
+      ],
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "generated_6"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_6"
+    }
+  ]
+}

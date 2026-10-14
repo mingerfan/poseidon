@@ -1,0 +1,28 @@
+{
+  "seed": 20260922,
+  "positions": [
+    7,
+    8
+  ],
+  "numpy_version": "2.4.0",
+  "synthetic_weights": true,
+  "input_shape": [
+    2,
+    896
+  ],
+  "physical_slot_shape": [
+    2,
+    32768
+  ],
+  "input_tail_probe": [
+    0.3,
+    -0.2
+  ],
+  "input_sha256": "bfa959e790de228e41c22e6a7954b981e4be722e995b7951c59deb154c8c6cb8",
+  "reference_sha256": "6ecd717f72e72bea45c26df507200e336645317ba638d526e7e8e23b1e99703f",
+  "bounds": {
+    "observed_centered_bound": 0.03760949183853862,
+    "observed_gate_abs_max": 0.5954980732893502
+  },
+  "reference_difference_from_frozen": 4.440892098500626e-16
+}

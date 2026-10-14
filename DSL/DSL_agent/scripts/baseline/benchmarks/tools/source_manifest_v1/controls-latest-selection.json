@@ -1,0 +1,15 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 1,
+  "failed": 0,
+  "format": "poseidon-source-manifest-controls-v1",
+  "provider_calls": 0,
+  "seconds": 28.01695076299802,
+  "skipped": 0,
+  "source_executed": false,
+  "source_sha256": "9c48099d7b858747018b0b07c4ceb51bf23989ded5991ef5f80fec00f91ea806",
+  "status": "failed",
+  "test_sha256": "b530840fee048138ae87ede19165d125b172df36960739b3a513b1f7bb41788c",
+  "tests_run": 67
+}

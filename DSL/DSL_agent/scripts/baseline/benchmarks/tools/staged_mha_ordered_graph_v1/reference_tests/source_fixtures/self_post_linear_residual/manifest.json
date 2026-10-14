@@ -1,0 +1,108 @@
+{
+  "approximations": {
+    "defaults": {
+      "exp": {
+        "degree": 6,
+        "domain": [
+          -0.5,
+          0.5
+        ],
+        "method": "taylor"
+      },
+      "reciprocal": {
+        "domain": [
+          0.5,
+          8.0
+        ],
+        "iterations": 8,
+        "method": "goldschmidt"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "e407f508da49a5a30732276f51ea837751e3d064e07072026f69145623ab8eff"
+  },
+  "format": "poseidon-trusted-pytorch-v16",
+  "inputs": [
+    {
+      "name": "q",
+      "shape": [
+        1,
+        2,
+        4
+      ]
+    }
+  ],
+  "outputs": [
+    "result",
+    "weights"
+  ],
+  "weights": {
+    "attention.in_proj_bias": {
+      "bytes": 224,
+      "dtype": "<f8",
+      "file": "weight_000.npy",
+      "sha256": "347b1517ab695b3097a6b03f7ff1982ae665d7d3d9ff5cf449700e688dcc3694",
+      "shape": [
+        12
+      ]
+    },
+    "attention.in_proj_weight": {
+      "bytes": 512,
+      "dtype": "<f8",
+      "file": "weight_001.npy",
+      "sha256": "26884d33775d38a795018642ffa9da76d96ac1a209c62c621c4d0401b945b08f",
+      "shape": [
+        12,
+        4
+      ]
+    },
+    "attention.out_proj.bias": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "weight_002.npy",
+      "sha256": "ac4406769ce42fd297391cacad7684ffbba0046b3dd9e5ef43c9e95b2f8c2a01",
+      "shape": [
+        4
+      ]
+    },
+    "attention.out_proj.weight": {
+      "bytes": 256,
+      "dtype": "<f8",
+      "file": "weight_003.npy",
+      "sha256": "6484f8022c97d8c027df2559a5858588309f9b1e7ff551495c02920e2618d60f",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "post.bias": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "weight_004.npy",
+      "sha256": "5f39461cba9037a3f085714ca446ff43f3939c15f2f2aa978b2abd89b1f269e3",
+      "shape": [
+        4
+      ]
+    },
+    "post.weight": {
+      "bytes": 256,
+      "dtype": "<f8",
+      "file": "weight_005.npy",
+      "sha256": "52b37ebe458b1a2713e6755572d37bf2b144ad5ca04ec4dac512f865540647f0",
+      "shape": [
+        4,
+        4
+      ]
+    }
+  }
+}

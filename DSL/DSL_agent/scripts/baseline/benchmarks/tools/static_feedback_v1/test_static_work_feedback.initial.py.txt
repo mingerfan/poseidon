@@ -1,0 +1,142 @@
+"""Authoritative static feedback and bounded repair; fake backend, no API/FHE."""
+import ast,copy,json,tempfile,unittest
+from benchmark_suite import Builder
+from candidate_check_diagnostic import CandidateCheckError
+from component_contract import prepare_task,validate_program,reconstruct_request
+from application_diagnostics import make,checked,attach,render,repeat_key
+from application_component import Application
+from test_application_component import Backend,Provider
+
+def tiny_model():
+    b=Builder([(2,)])
+    return b.finish(b.node("square",["input0"]))
+
+def response(q,source):
+    return dict(schema=1,request_id=q["request_id"],hecate_source=source)
+
+def work_source(q,total):
+    # The native counter includes every public constant in each function.
+    constants=len(q["public_constants"])
+    repeats=max(n for n in range(1,17)
+                if constants+n*(constants+61)+n-1 <= total)
+    base=constants+repeats*(constants+61)+repeats-1
+    lines=['@hc.func("c")','def work(value):','    z=value']
+    lines+=['    z=z+value']*60
+    lines+=['    return z','@hc.func("c,c")','def golden(x0,zero_ct):',
+            '    z='+ '+'.join(['work(x0)']*repeats)]
+    lines+=['    z=z+zero_ct']*(total-base)
+    lines+=['    return [z]']
+    return "\n".join(lines)+"\n"
+
+class StaticWorkFeedback(unittest.TestCase):
+    def setUp(self):
+        self.q=prepare_task(tiny_model())
+
+    def test_signature_requires_commas_with_parameter_counts(self):
+        source='@hc.func("cc")\ndef golden(x0,zero_ct):\n    return [x0*x0]\n'
+        out=validate_program(response(self.q,source),self.q)
+        self.assertEqual(out["status"],"rejected")
+        self.assertEqual(out["failure"]["reason_code"],"native_signature_mismatch")
+        self.assertEqual(out["failure"]["context"],dict(expected=2,actual=1))
+        self.assertEqual(out["failure"]["location"],dict(kind="source",line=1,column=9))
+        public=attach(dict(status="failed",failure=out["failure"]))["public_feedback"]
+        self.assertIn("comma-separated",public["diagnostic"])
+        self.assertIsNone(repeat_key(out["failure"]))
+
+    def test_unknown_type_tag_is_rejected_even_when_field_count_matches(self):
+        source='@hc.func("c,q")\ndef golden(x0,zero_ct):\n    return [x0*x0]\n'
+        out=validate_program(response(self.q,source),self.q)
+        self.assertEqual(out["failure"]["reason_code"],"native_signature_mismatch")
+        self.assertEqual(out["failure"]["context"],dict(expected=2,actual=2))
+
+    def test_valid_signature_remains_accepted(self):
+        source='@hc.func("c,c")\ndef golden(x0,zero_ct):\n    return [x0*x0]\n'
+        out=validate_program(response(self.q,source),self.q)
+        self.assertEqual(out["status"],"static_accepted_not_executed")
+        self.assertFalse(out["encrypted_execution"])
+
+    def test_fixed_work_boundary_accepts_1023_and_1024(self):
+        for cost in (1023,1024):
+            with self.subTest(cost=cost):
+                out=validate_program(response(self.q,work_source(self.q,cost)),self.q)
+                self.assertEqual(out["status"],"static_accepted_not_executed")
+                self.assertFalse(out["encrypted_execution"])
+
+    def test_first_over_budget_keeps_rejection_and_exact_counter(self):
+        obj=response(self.q,work_source(self.q,1025))
+        out=validate_program(obj,self.q)
+        d=out["failure"]
+        self.assertEqual(out["status"],"rejected")
+        self.assertEqual(d["reason_code"],"expanded_work_budget")
+        self.assertEqual(d["context"],dict(observed=1025,limit=1024))
+        self.assertEqual(d["location"]["kind"],"source")
+        self.assertEqual(checked(d),d)
+        public=attach(dict(status="failed",failure=d),candidate=obj)["public_feedback"]
+        self.assertIn("1025",public["diagnostic"])
+        self.assertIn("helper call",public["diagnostic"])
+        # Same counts alone do not prove equivalent failure for different ASTs.
+        self.assertIsNone(repeat_key(d))
+
+    def test_constructor_rejects_private_or_unproved_context(self):
+        node=ast.parse('def golden(x):\n return x').body[0]
+        for context in (dict(observed=1025,limit=2048),dict(observed=1024,limit=1024),
+                        dict(observed=True,limit=1024),dict(observed=1025,limit=1024,reference=[1])):
+            with self.subTest(context=context),self.assertRaises(ValueError):
+                CandidateCheckError("expanded_work_budget",node,context=context)
+
+    def test_renderer_rejects_invalid_source_location_and_context(self):
+        for loc in (None,[],dict(kind="instruction",index=1),dict(kind="source",path="/private")):
+            with self.subTest(loc=loc),self.assertRaises(ValueError):
+                make("expanded_work_budget",location=loc,context=dict(observed=1025,limit=1024))
+        for context in ({},dict(observed=1025,limit=1024,reference=7),
+                        dict(observed=1025,limit=1025)):
+            with self.subTest(context=context),self.assertRaises(ValueError):
+                make("expanded_work_budget",location=dict(kind="source",line=2,column=0),context=context)
+
+    def test_private_previous_failure_text_is_not_forwarded(self):
+        d=make("expanded_work_budget",location=dict(kind="source",line=2,column=0),
+               context=dict(observed=1025,limit=1024))
+        out=render(d,dict(status="failed",layer="static_check",category="candidate",
+                         diagnostic="PRIVATE_REFERENCE /private/inputs.npy KEY"))
+        text=json.dumps(out)
+        for token in ("PRIVATE_REFERENCE","/private","KEY"):
+            self.assertNotIn(token,text)
+
+    def test_integrity_failure_has_priority_over_specific_static_hint(self):
+        d=make("expanded_work_budget",location=dict(kind="source",line=2,column=0),
+               context=dict(observed=1025,limit=1024))
+        out=attach(dict(status="failed",failure=dict(layer="integrity"),structured_diagnostic=d))
+        self.assertEqual(out["failure"]["reason_code"],"integrity_rejected")
+
+    def test_existing_request_reconstruction_is_unchanged(self):
+        self.assertEqual(reconstruct_request(copy.deepcopy(self.q)),self.q)
+
+    def test_same_reasons_without_typed_witness_remain_generic(self):
+        out=attach(dict(status="failed",failure=dict(layer="static_check",
+                   diagnostic="Unified candidate work budget: private /home/ref")))
+        self.assertEqual(out["failure"]["reason_code"],"contract_rejected")
+        self.assertNotIn("/home",json.dumps(out["public_feedback"]))
+
+    def test_normal_application_repair_receives_checked_feedback(self):
+        class RepairProvider(Provider):
+            def __init__(self):
+                super().__init__();self.history=[]
+            def generate(self,q,h):
+                self.history.append(copy.deepcopy(h))
+                sources=(work_source(q,1025),
+                         '@hc.func("cc")\ndef golden(x0,zero_ct):\n return [x0*x0]\n',
+                         '@hc.func("c,c")\ndef golden(x0,zero_ct):\n return [x0*x0]\n')
+                source=sources[self.calls];self.calls+=1
+                return json.dumps(response(q,source))
+        with tempfile.TemporaryDirectory() as tmp:
+            backend=Backend();app=Application(tmp,backend);provider=RepairProvider()
+            result=app.run(app.submit(tiny_model()),provider)
+            self.assertEqual(result["status"],"succeeded")
+            self.assertEqual(provider.calls,3)
+            self.assertEqual(backend.calls,1)
+            self.assertIn("1025",provider.history[1][-1]["diagnostic"])
+            self.assertIn("comma-separated",provider.history[2][-1]["diagnostic"])
+            self.assertEqual(result["http_attempts"],0)
+
+if __name__=="__main__":
+    unittest.main(verbosity=2)

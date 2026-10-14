@@ -1,0 +1,57 @@
+{
+  "approximations": {
+    "defaults": {},
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "call": {
+    "args": [
+      {
+        "kind": "tensor",
+        "name": "x"
+      }
+    ],
+    "format": "poseidon-pytorch-call-v1",
+    "kwargs": {
+      "second": {
+        "kind": "tensor",
+        "name": "y"
+      }
+    }
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "models.nested.network.build",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "models/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "models/nested/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "models/nested/network.py": "37d94a59526c7053e4dfe8dbc51ac1f46b6f4ab1baf2ec0e76b6b3b8c62cf0f7",
+    "models/ops.py": "ee1fa87482f084aa29fb17c1183eba4039f624a630c137cbadbe68af68c0747f"
+  },
+  "format": "poseidon-trusted-pytorch-v29",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "fused",
+    "summary"
+  ],
+  "weights": {}
+}

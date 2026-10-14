@@ -1,0 +1,245 @@
+{
+  "format": "poseidon-pytorch-offline-cases-v1",
+  "cases": [
+    {
+      "id": "conv1_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/conv1_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "conv1_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/conv1_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "conv1_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/conv1_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "conv2_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/conv2_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "conv2_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/conv2_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "conv2_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/conv2_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": true
+    },
+    {
+      "id": "pool1_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/pool1_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "pool1_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/pool1_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "pool1_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/pool1_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "pool2_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/pool2_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "pool2_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/pool2_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "pool2_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/pool2_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "batch_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/batch_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "batch_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/batch_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "batch_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/batch_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "layer_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/layer_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "layer_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/layer_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "layer_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/layer_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "group_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/group_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "group_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/group_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": true
+    },
+    {
+      "id": "group_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/group_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "transpose_0",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/transpose_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": true
+    },
+    {
+      "id": "transpose_1",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/transpose_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    },
+    {
+      "id": "transpose_2",
+      "manifest": "scripts/baseline/cases/pytorch_spelling_v1/transpose_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    }
+  ]
+}

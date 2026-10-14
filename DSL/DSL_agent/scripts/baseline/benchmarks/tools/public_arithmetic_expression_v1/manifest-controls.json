@@ -1,0 +1,104 @@
+{
+  "format": "poseidon-public-arithmetic-manifest-controls-v1",
+  "checks": [
+    {
+      "case": "add_c0",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "add_c1",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "add_c2",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "subtract_c0",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "subtract_c1",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "subtract_c2",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "multiply_c0",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "multiply_c1",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "multiply_c2",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "divide_c0",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "divide_c1",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "divide_c2",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "negate_c0",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "negate_c1",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    },
+    {
+      "case": "negate_c2",
+      "status": "passed",
+      "source_format": "poseidon-trusted-pytorch-v25",
+      "manifest_equal": true
+    }
+  ],
+  "passed": 15,
+  "failed": 0,
+  "default": "poseidon-trusted-pytorch-v18",
+  "latest": "poseidon-trusted-pytorch-v21",
+  "source_executed": false,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "provider_calls": 0,
+  "binding": "c20c87f3275ba3dfa2b0764c76a24b5cf824157aa8b18cc0ed04d3c86d8199cb"
+}

@@ -1,0 +1,64 @@
+[
+  {
+    "group": "static_partition",
+    "id": "chunk_branches",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/chunk_branches/manifest.json",
+    "source_manifest_sha256": "59691bfb2daece617c84eb51fec7822b2369a204752bc6faa09bd5c13ad65fbc"
+  },
+  {
+    "group": "static_partition",
+    "id": "chunk_projection",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/chunk_projection/manifest.json",
+    "source_manifest_sha256": "60a9d8954b0e99b3658eb39202b8e2988cf438aa4aef3a9a23686bab0377ebcb"
+  },
+  {
+    "group": "static_partition",
+    "id": "chunk_public_weight",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/chunk_public_weight/manifest.json",
+    "source_manifest_sha256": "1f3977dad2a65262c3a5d82cdecda44c2a8e298e36a427e8f5cdbc744b486b81"
+  },
+  {
+    "group": "static_partition",
+    "id": "unbind_fusion",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/unbind_fusion/manifest.json",
+    "source_manifest_sha256": "c579d1e2d893a0ae108b85302ad2f955be45e00c8cfa695665c17ad357cdd10d"
+  },
+  {
+    "group": "static_partition",
+    "id": "unbind_mutation",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/unbind_mutation/manifest.json",
+    "source_manifest_sha256": "f14cf60cb523de62d0cb7d9776912335fec009811a9077e6e0706626b62157f6"
+  },
+  {
+    "group": "static_partition",
+    "id": "unbind_sequence",
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/fixtures/unbind_sequence/manifest.json",
+    "source_manifest_sha256": "c4508cf0a30d5e0bea73e445d9f48ae76529c7c7145378b015949bb3f93d2ead"
+  },
+  {
+    "group": "mha",
+    "id": "self_post_linear_residual__declared_shallow_v1",
+    "old_authorization_closed": true,
+    "old_proposal_sha256": "c6735908b974db4b802323f2a65dc4c922ca71f7eb5c4a686000c56dd0fe4825",
+    "old_request_id": "5a4136d4ccdab5dd1ee478fe7b4fe71f727ec7a5f5386ace41e1c488c10185b2",
+    "source_format": "poseidon-trusted-pytorch-v16",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/cases/trusted-pytorch-mha-v16/self_post_linear_residual__declared_shallow_v1/manifest.json",
+    "source_manifest_sha256": "24a89b13aeefc6ac3e2c6dc78063d07497938b8f1698388971f6d31bbd0fba6c"
+  },
+  {
+    "group": "mha",
+    "id": "linear_into_separate_cross_none__declared_shallow_v1",
+    "old_authorization_closed": true,
+    "old_proposal_sha256": "c6735908b974db4b802323f2a65dc4c922ca71f7eb5c4a686000c56dd0fe4825",
+    "old_request_id": "8d51d457fab5f907b287daaa7a62a933e1156cdba3de340d099de5d811a6c15a",
+    "source_format": "poseidon-trusted-pytorch-v16",
+    "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/cases/trusted-pytorch-mha-v16/linear_into_separate_cross_none__declared_shallow_v1/manifest.json",
+    "source_manifest_sha256": "f35c7a28cae57c61b7d1ad0220d876f076ced5f795ed25daf33d7e41801d4886"
+  }
+]

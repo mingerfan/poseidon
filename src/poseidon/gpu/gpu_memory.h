@@ -3,13 +3,15 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
 
 #include <cuda_runtime_api.h>
 #include <rmm/cuda_stream_view.hpp>
-#include <rmm/mr/per_device_resource.hpp>
+#include <rmm/mr/device/device_memory_resource.hpp>
+#include <rmm/mr/device/per_device_resource.hpp>
 
 namespace poseidon
 {
@@ -35,6 +37,19 @@ inline void gpu_check_cuda(cudaError_t status, const char *what)
             std::string(what) + ": " + cudaGetErrorString(status));
     }
 }
+
+inline cudaStream_t gpu_execution_stream() noexcept
+{
+    return cudaStreamPerThread;
+}
+
+std::shared_ptr<void> device_memory_resource_owner(
+    rmm::mr::device_memory_resource *resource);
+void register_device_memory_resource_owner(
+    rmm::mr::device_memory_resource *resource,
+    const std::shared_ptr<void> &owner);
+void unregister_device_memory_resource_owner(
+    rmm::mr::device_memory_resource *resource, const void *owner) noexcept;
 
 /**
  * @brief Lightweight GPU memory owner.
@@ -108,10 +123,11 @@ public:
         }
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
+        resource_ = rmm::mr::get_current_device_resource();
+        resource_owner_ = device_memory_resource_owner(resource_);
         ptr_ = static_cast<T *>(
-            rmm::mr::get_current_device_resource()->allocate(
-                bytes_,
-                rmm::cuda_stream_default));
+            resource_->allocate(
+                bytes_, rmm::cuda_stream_view{gpu_execution_stream()}));
     }
 
     void copy_from_host(const T *src, std::size_t count)
@@ -131,8 +147,12 @@ public:
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         gpu_check_cuda(
-            cudaMemcpy(ptr_, src, count * sizeof(T), cudaMemcpyHostToDevice),
-            "cudaMemcpyHostToDevice");
+            cudaMemcpyAsync(ptr_, src, count * sizeof(T), cudaMemcpyHostToDevice,
+                            gpu_execution_stream()),
+            "cudaMemcpyAsync HostToDevice");
+        gpu_check_cuda(
+            cudaStreamSynchronize(gpu_execution_stream()),
+            "cudaStreamSynchronize HostToDevice");
     }
 
     void copy_to_host(T *dst, std::size_t count) const
@@ -152,8 +172,12 @@ public:
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         gpu_check_cuda(
-            cudaMemcpy(dst, ptr_, count * sizeof(T), cudaMemcpyDeviceToHost),
-            "cudaMemcpyDeviceToHost");
+            cudaMemcpyAsync(dst, ptr_, count * sizeof(T), cudaMemcpyDeviceToHost,
+                            gpu_execution_stream()),
+            "cudaMemcpyAsync DeviceToHost");
+        gpu_check_cuda(
+            cudaStreamSynchronize(gpu_execution_stream()),
+            "cudaStreamSynchronize DeviceToHost");
     }
 
     void fill_zero()
@@ -164,7 +188,9 @@ public:
         }
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
-        gpu_check_cuda(cudaMemset(ptr_, 0, bytes_), "cudaMemset");
+        gpu_check_cuda(
+            cudaMemsetAsync(ptr_, 0, bytes_, gpu_execution_stream()),
+            "cudaMemsetAsync");
     }
 
     void release()
@@ -172,15 +198,15 @@ public:
         if (ptr_ != nullptr)
         {
             gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
-            rmm::mr::get_current_device_resource()->deallocate(
-                ptr_,
-                bytes_,
-                rmm::cuda_stream_default);
+            resource_->deallocate(
+                ptr_, bytes_, rmm::cuda_stream_view{gpu_execution_stream()});
         }
         ptr_ = nullptr;
         size_ = 0;
         bytes_ = 0;
         device_id_ = 0;
+        resource_ = nullptr;
+        resource_owner_.reset();
     }
 
     T *data()
@@ -215,11 +241,14 @@ private:
         size_ = other.size_;
         bytes_ = other.bytes_;
         device_id_ = other.device_id_;
+        resource_ = other.resource_;
+        resource_owner_ = std::move(other.resource_owner_);
 
         other.ptr_ = nullptr;
         other.size_ = 0;
         other.bytes_ = 0;
         other.device_id_ = 0;
+        other.resource_ = nullptr;
     }
 
 private:
@@ -227,6 +256,8 @@ private:
     std::size_t size_ = 0;
     std::size_t bytes_ = 0;
     int device_id_ = 0;
+    rmm::mr::device_memory_resource *resource_ = nullptr;
+    std::shared_ptr<void> resource_owner_;
 };
 
 /**

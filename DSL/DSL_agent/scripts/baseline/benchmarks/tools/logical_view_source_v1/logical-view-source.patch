@@ -1,0 +1,752 @@
+--- a/scripts/baseline/pytorch_model_intake.py
++++ b/scripts/baseline/pytorch_model_intake.py
+@@ -1,3 +1,4 @@
++from pytorch_logical_view_source import SOURCE_FORMAT as VIEW_SOURCE_FORMAT, PACKAGE_FORMAT as VIEW_PACKAGE_FORMAT, REFERENCE_FORMAT as VIEW_REFERENCE_FORMAT
+ from pytorch_public_join_source import SOURCE_FORMAT as JOIN_SOURCE_FORMAT, PACKAGE_FORMAT as JOIN_PACKAGE_FORMAT, REFERENCE_FORMAT as JOIN_REFERENCE_FORMAT
+ from pytorch_public_mask_source import SOURCE_FORMAT as MASK_SOURCE_FORMAT, PACKAGE_FORMAT as MASK_PACKAGE_FORMAT, REFERENCE_FORMAT as MASK_REFERENCE_FORMAT
+ """Versioned trusted PyTorch intake facade.
+@@ -66,7 +67,7 @@
+ ORDERED_FUSED_PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v14"
+ ORDERED_FUSED_REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v14"
+ def ordered(spec):
+-    return type(spec) is dict and spec.get("format") in (ORDERED_FORMAT,ORDERED_COMMON_FORMAT,ORDERED_FUSED_FORMAT,GELU_FORMAT,MHA_FORMAT,PARTITION_FORMAT,EINSUM_FORMAT,EINSUM_VIEW_FORMAT,SCALAR_PARTITION_FORMAT,EXACT_ARITHMETIC_FORMAT,PUBLIC_TENSOR_FORMAT,PUBLIC_EXPRESSION_FORMAT,PUBLIC_DTYPE_FORMAT,PUBLIC_ARITHMETIC_FORMAT,INPUT_BINDING_FORMAT,SPATIAL_FORMAT,BROADCAST_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT)
++    return type(spec) is dict and spec.get("format") in (ORDERED_FORMAT,ORDERED_COMMON_FORMAT,ORDERED_FUSED_FORMAT,GELU_FORMAT,MHA_FORMAT,PARTITION_FORMAT,EINSUM_FORMAT,EINSUM_VIEW_FORMAT,SCALAR_PARTITION_FORMAT,EXACT_ARITHMETIC_FORMAT,PUBLIC_TENSOR_FORMAT,PUBLIC_EXPRESSION_FORMAT,PUBLIC_DTYPE_FORMAT,PUBLIC_ARITHMETIC_FORMAT,INPUT_BINDING_FORMAT,SPATIAL_FORMAT,BROADCAST_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT)
+ 
+ FORMAT="poseidon-trusted-pytorch-v8"
+ PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v8"
+@@ -80,10 +81,10 @@
+ COMMON_FORMAT="poseidon-trusted-pytorch-v11"
+ COMMON_PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v11"
+ COMMON_REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v11"
+-SOURCE_FORMATS=(FORMAT,SHAPE_FORMAT,OPERATOR_SHAPE_FORMAT,COMMON_FORMAT,ORDERED_FORMAT,ORDERED_COMMON_FORMAT,ORDERED_FUSED_FORMAT,GELU_FORMAT,MHA_FORMAT,PARTITION_FORMAT,EINSUM_FORMAT,EINSUM_VIEW_FORMAT,SCALAR_PARTITION_FORMAT,EXACT_ARITHMETIC_FORMAT,PUBLIC_TENSOR_FORMAT,PUBLIC_EXPRESSION_FORMAT,PUBLIC_DTYPE_FORMAT,PUBLIC_ARITHMETIC_FORMAT,INPUT_BINDING_FORMAT,SPATIAL_FORMAT,BROADCAST_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT)
++SOURCE_FORMATS=(FORMAT,SHAPE_FORMAT,OPERATOR_SHAPE_FORMAT,COMMON_FORMAT,ORDERED_FORMAT,ORDERED_COMMON_FORMAT,ORDERED_FUSED_FORMAT,GELU_FORMAT,MHA_FORMAT,PARTITION_FORMAT,EINSUM_FORMAT,EINSUM_VIEW_FORMAT,SCALAR_PARTITION_FORMAT,EXACT_ARITHMETIC_FORMAT,PUBLIC_TENSOR_FORMAT,PUBLIC_EXPRESSION_FORMAT,PUBLIC_DTYPE_FORMAT,PUBLIC_ARITHMETIC_FORMAT,INPUT_BINDING_FORMAT,SPATIAL_FORMAT,BROADCAST_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT)
+ SOURCE_SHAPE_FORMATS=(SHAPE_FORMAT,OPERATOR_SHAPE_FORMAT,COMMON_FORMAT)
+-PACKAGES={FORMAT:PACKAGE_FORMAT,SHAPE_FORMAT:SHAPE_PACKAGE_FORMAT,OPERATOR_SHAPE_FORMAT:OPERATOR_SHAPE_PACKAGE_FORMAT,COMMON_FORMAT:COMMON_PACKAGE_FORMAT,ORDERED_FORMAT:ORDERED_PACKAGE_FORMAT,ORDERED_COMMON_FORMAT:ORDERED_COMMON_PACKAGE_FORMAT,ORDERED_FUSED_FORMAT:ORDERED_FUSED_PACKAGE_FORMAT,GELU_FORMAT:GELU_PACKAGE_FORMAT,MHA_FORMAT:MHA_PACKAGE_FORMAT,PARTITION_FORMAT:PARTITION_PACKAGE_FORMAT,EINSUM_FORMAT:EINSUM_PACKAGE_FORMAT,EINSUM_VIEW_FORMAT:EINSUM_VIEW_PACKAGE_FORMAT,SCALAR_PARTITION_FORMAT:SCALAR_PARTITION_PACKAGE_FORMAT,EXACT_ARITHMETIC_FORMAT:EXACT_ARITHMETIC_PACKAGE_FORMAT,PUBLIC_TENSOR_FORMAT:PUBLIC_TENSOR_PACKAGE_FORMAT,PUBLIC_EXPRESSION_FORMAT:PUBLIC_EXPRESSION_PACKAGE_FORMAT,PUBLIC_DTYPE_FORMAT:PUBLIC_DTYPE_PACKAGE_FORMAT,PUBLIC_ARITHMETIC_FORMAT:PUBLIC_ARITHMETIC_PACKAGE_FORMAT,INPUT_BINDING_FORMAT:INPUT_BINDING_PACKAGE_FORMAT,SPATIAL_FORMAT:SPATIAL_PACKAGE_FORMAT,BROADCAST_FORMAT:BROADCAST_PACKAGE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_PROVENANCE,TENSOR_SOURCE_FORMAT:TENSOR_PACKAGE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_PACKAGE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_PACKAGE_FORMAT,MASK_SOURCE_FORMAT:MASK_PACKAGE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_PACKAGE_FORMAT}
+-REFERENCES={FORMAT:REFERENCE_FORMAT,SHAPE_FORMAT:SHAPE_REFERENCE_FORMAT,OPERATOR_SHAPE_FORMAT:OPERATOR_SHAPE_REFERENCE_FORMAT,COMMON_FORMAT:COMMON_REFERENCE_FORMAT,ORDERED_FORMAT:ORDERED_REFERENCE_FORMAT,ORDERED_COMMON_FORMAT:ORDERED_COMMON_REFERENCE_FORMAT,ORDERED_FUSED_FORMAT:ORDERED_FUSED_REFERENCE_FORMAT,GELU_FORMAT:GELU_REFERENCE_FORMAT,MHA_FORMAT:MHA_REFERENCE_FORMAT,PARTITION_FORMAT:PARTITION_REFERENCE_FORMAT,EINSUM_FORMAT:EINSUM_REFERENCE_FORMAT,EINSUM_VIEW_FORMAT:EINSUM_VIEW_REFERENCE_FORMAT,SCALAR_PARTITION_FORMAT:SCALAR_PARTITION_REFERENCE_FORMAT,EXACT_ARITHMETIC_FORMAT:EXACT_ARITHMETIC_REFERENCE_FORMAT,PUBLIC_TENSOR_FORMAT:PUBLIC_TENSOR_REFERENCE_FORMAT,PUBLIC_EXPRESSION_FORMAT:PUBLIC_EXPRESSION_REFERENCE_FORMAT,PUBLIC_DTYPE_FORMAT:PUBLIC_DTYPE_REFERENCE_FORMAT,PUBLIC_ARITHMETIC_FORMAT:PUBLIC_ARITHMETIC_REFERENCE_FORMAT,INPUT_BINDING_FORMAT:INPUT_BINDING_REFERENCE_FORMAT,SPATIAL_FORMAT:SPATIAL_REFERENCE_FORMAT,BROADCAST_FORMAT:BROADCAST_REFERENCE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_REFERENCE,TENSOR_SOURCE_FORMAT:TENSOR_REFERENCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_REFERENCE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_REFERENCE_FORMAT,MASK_SOURCE_FORMAT:MASK_REFERENCE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_REFERENCE_FORMAT}
++PACKAGES={FORMAT:PACKAGE_FORMAT,SHAPE_FORMAT:SHAPE_PACKAGE_FORMAT,OPERATOR_SHAPE_FORMAT:OPERATOR_SHAPE_PACKAGE_FORMAT,COMMON_FORMAT:COMMON_PACKAGE_FORMAT,ORDERED_FORMAT:ORDERED_PACKAGE_FORMAT,ORDERED_COMMON_FORMAT:ORDERED_COMMON_PACKAGE_FORMAT,ORDERED_FUSED_FORMAT:ORDERED_FUSED_PACKAGE_FORMAT,GELU_FORMAT:GELU_PACKAGE_FORMAT,MHA_FORMAT:MHA_PACKAGE_FORMAT,PARTITION_FORMAT:PARTITION_PACKAGE_FORMAT,EINSUM_FORMAT:EINSUM_PACKAGE_FORMAT,EINSUM_VIEW_FORMAT:EINSUM_VIEW_PACKAGE_FORMAT,SCALAR_PARTITION_FORMAT:SCALAR_PARTITION_PACKAGE_FORMAT,EXACT_ARITHMETIC_FORMAT:EXACT_ARITHMETIC_PACKAGE_FORMAT,PUBLIC_TENSOR_FORMAT:PUBLIC_TENSOR_PACKAGE_FORMAT,PUBLIC_EXPRESSION_FORMAT:PUBLIC_EXPRESSION_PACKAGE_FORMAT,PUBLIC_DTYPE_FORMAT:PUBLIC_DTYPE_PACKAGE_FORMAT,PUBLIC_ARITHMETIC_FORMAT:PUBLIC_ARITHMETIC_PACKAGE_FORMAT,INPUT_BINDING_FORMAT:INPUT_BINDING_PACKAGE_FORMAT,SPATIAL_FORMAT:SPATIAL_PACKAGE_FORMAT,BROADCAST_FORMAT:BROADCAST_PACKAGE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_PROVENANCE,TENSOR_SOURCE_FORMAT:TENSOR_PACKAGE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_PACKAGE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_PACKAGE_FORMAT,MASK_SOURCE_FORMAT:MASK_PACKAGE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_PACKAGE_FORMAT,VIEW_SOURCE_FORMAT:VIEW_PACKAGE_FORMAT}
++REFERENCES={FORMAT:REFERENCE_FORMAT,SHAPE_FORMAT:SHAPE_REFERENCE_FORMAT,OPERATOR_SHAPE_FORMAT:OPERATOR_SHAPE_REFERENCE_FORMAT,COMMON_FORMAT:COMMON_REFERENCE_FORMAT,ORDERED_FORMAT:ORDERED_REFERENCE_FORMAT,ORDERED_COMMON_FORMAT:ORDERED_COMMON_REFERENCE_FORMAT,ORDERED_FUSED_FORMAT:ORDERED_FUSED_REFERENCE_FORMAT,GELU_FORMAT:GELU_REFERENCE_FORMAT,MHA_FORMAT:MHA_REFERENCE_FORMAT,PARTITION_FORMAT:PARTITION_REFERENCE_FORMAT,EINSUM_FORMAT:EINSUM_REFERENCE_FORMAT,EINSUM_VIEW_FORMAT:EINSUM_VIEW_REFERENCE_FORMAT,SCALAR_PARTITION_FORMAT:SCALAR_PARTITION_REFERENCE_FORMAT,EXACT_ARITHMETIC_FORMAT:EXACT_ARITHMETIC_REFERENCE_FORMAT,PUBLIC_TENSOR_FORMAT:PUBLIC_TENSOR_REFERENCE_FORMAT,PUBLIC_EXPRESSION_FORMAT:PUBLIC_EXPRESSION_REFERENCE_FORMAT,PUBLIC_DTYPE_FORMAT:PUBLIC_DTYPE_REFERENCE_FORMAT,PUBLIC_ARITHMETIC_FORMAT:PUBLIC_ARITHMETIC_REFERENCE_FORMAT,INPUT_BINDING_FORMAT:INPUT_BINDING_REFERENCE_FORMAT,SPATIAL_FORMAT:SPATIAL_REFERENCE_FORMAT,BROADCAST_FORMAT:BROADCAST_REFERENCE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_REFERENCE,TENSOR_SOURCE_FORMAT:TENSOR_REFERENCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_REFERENCE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_REFERENCE_FORMAT,MASK_SOURCE_FORMAT:MASK_REFERENCE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_REFERENCE_FORMAT,VIEW_SOURCE_FORMAT:VIEW_REFERENCE_FORMAT}
+ EXTRA_IMPLEMENTATION=("pytorch_model_intake.py","pytorch_arithmetic_normalization.py")
+ IMPLEMENTATION=(*legacy.IMPLEMENTATION,*EXTRA_IMPLEMENTATION)
+ 
+--- a/scripts/baseline/pytorch_static_broadcast.py
++++ b/scripts/baseline/pytorch_static_broadcast.py
+@@ -151,4 +151,4 @@
+ 
+ def supports_source(spec):
+     from pytorch_source_package_policy import SOURCE_FORMAT as package_format
+-    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT, package_format, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34")
++    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT, package_format, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34","poseidon-trusted-pytorch-v35")
+--- a/scripts/baseline/pytorch_source_package_policy.py
++++ b/scripts/baseline/pytorch_source_package_policy.py
+@@ -7,7 +7,7 @@
+ 
+ 
+ def selected(spec):
+-    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34")
++    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34","poseidon-trusted-pytorch-v35")
+ 
+ 
+ def envelope(spec):
+--- /dev/null
++++ b/scripts/baseline/pytorch_logical_view_source.py
+@@ -0,0 +1,9 @@
++"""Explicit logical axis-view normalization after trusted PyTorch capture."""
++SOURCE_FORMAT="poseidon-trusted-pytorch-v35"
++PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v35"
++REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v35"
++CAPTURE_FORMAT="poseidon-public-expression-source-capture-v12"
++POLICY="poseidon-static-logical-views-v1"
++
++def selected(spec):
++    return type(spec) is dict and spec.get("format") == SOURCE_FORMAT
+--- a/scripts/baseline/pytorch_spatial_policy.py
++++ b/scripts/baseline/pytorch_spatial_policy.py
+@@ -15,7 +15,7 @@
+ POLICY = "poseidon-pytorch-static-spatial-v1"
+ INTERNAL_FORMATS = (PUBLIC_FORMAT, CORE_FORMAT)
+ def supports_input_call(spec):
+-    return type(spec) is dict and spec.get("format") in ("poseidon-trusted-pytorch-v26", SOURCE_FORMAT, "poseidon-trusted-pytorch-v28", SOURCE_PACKAGE_FORMAT, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34")
++    return type(spec) is dict and spec.get("format") in ("poseidon-trusted-pytorch-v26", SOURCE_FORMAT, "poseidon-trusted-pytorch-v28", SOURCE_PACKAGE_FORMAT, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34","poseidon-trusted-pytorch-v35")
+ 
+ def supports_spatial(spec):
+-    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT, "poseidon-trusted-pytorch-v28", SOURCE_PACKAGE_FORMAT, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34")
++    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT, "poseidon-trusted-pytorch-v28", SOURCE_PACKAGE_FORMAT, "poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34","poseidon-trusted-pytorch-v35")
+--- a/scripts/baseline/pytorch_ordered_contract.py
++++ b/scripts/baseline/pytorch_ordered_contract.py
+@@ -1,3 +1,4 @@
++from pytorch_logical_view_source import SOURCE_FORMAT as VIEW_SOURCE_FORMAT, PACKAGE_FORMAT as VIEW_PACKAGE_FORMAT, REFERENCE_FORMAT as VIEW_REFERENCE_FORMAT
+ from pytorch_public_join_source import SOURCE_FORMAT as JOIN_SOURCE_FORMAT, PACKAGE_FORMAT as JOIN_PACKAGE_FORMAT, REFERENCE_FORMAT as JOIN_REFERENCE_FORMAT
+ from pytorch_public_mask_source import SOURCE_FORMAT as MASK_SOURCE_FORMAT, PACKAGE_FORMAT as MASK_PACKAGE_FORMAT, REFERENCE_FORMAT as MASK_REFERENCE_FORMAT
+ """V12 trusted-source provenance and finite-reference contract.
+@@ -77,24 +78,24 @@
+ INPUT_BINDING_SOURCE_FORMAT="poseidon-trusted-pytorch-v26"
+ INPUT_BINDING_PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v26"
+ INPUT_BINDING_REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v26"
+-SOURCE_FORMATS = (FORMAT, COMMON_SOURCE_FORMAT, FUSED_SOURCE_FORMAT, GELU_SOURCE_FORMAT, MHA_SOURCE_FORMAT, PARTITION_SOURCE_FORMAT,EINSUM_SOURCE_FORMAT,EINSUM_VIEW_SOURCE_FORMAT,SCALAR_PARTITION_SOURCE_FORMAT,EXACT_ARITHMETIC_SOURCE_FORMAT,PUBLIC_TENSOR_SOURCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT)
++SOURCE_FORMATS = (FORMAT, COMMON_SOURCE_FORMAT, FUSED_SOURCE_FORMAT, GELU_SOURCE_FORMAT, MHA_SOURCE_FORMAT, PARTITION_SOURCE_FORMAT,EINSUM_SOURCE_FORMAT,EINSUM_VIEW_SOURCE_FORMAT,SCALAR_PARTITION_SOURCE_FORMAT,EXACT_ARITHMETIC_SOURCE_FORMAT,PUBLIC_TENSOR_SOURCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT)
+ 
+ def allows_none_output(spec):
+     """Only contracts inheriting the registered static MHA output tree allow None."""
+     require(type(spec)is dict,"Static output source contract")
+     return spec.get("format")in(MHA_SOURCE_FORMAT,PARTITION_SOURCE_FORMAT,EINSUM_SOURCE_FORMAT,
+         EINSUM_VIEW_SOURCE_FORMAT,SCALAR_PARTITION_SOURCE_FORMAT,EXACT_ARITHMETIC_SOURCE_FORMAT,
+-        PUBLIC_TENSOR_SOURCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,*SPATIAL_INTERNAL_FORMATS)
++        PUBLIC_TENSOR_SOURCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT,*SPATIAL_INTERNAL_FORMATS)
+ 
+ def package_version(spec):
+     require(type(spec) is dict and spec.get("format") in (*SOURCE_FORMATS,*SPATIAL_INTERNAL_FORMATS), "Trusted ordered source version")
+     return {FORMAT:PACKAGE_FORMAT, COMMON_SOURCE_FORMAT:COMMON_PACKAGE_FORMAT,
+-            FUSED_SOURCE_FORMAT:FUSED_PACKAGE_FORMAT,GELU_SOURCE_FORMAT:GELU_PACKAGE_FORMAT,MHA_SOURCE_FORMAT:MHA_PACKAGE_FORMAT,PARTITION_SOURCE_FORMAT:PARTITION_PACKAGE_FORMAT,EINSUM_SOURCE_FORMAT:EINSUM_PACKAGE_FORMAT,EINSUM_VIEW_SOURCE_FORMAT:EINSUM_VIEW_PACKAGE_FORMAT,SCALAR_PARTITION_SOURCE_FORMAT:SCALAR_PARTITION_PACKAGE_FORMAT,EXACT_ARITHMETIC_SOURCE_FORMAT:EXACT_ARITHMETIC_PACKAGE_FORMAT,PUBLIC_TENSOR_SOURCE_FORMAT:PUBLIC_TENSOR_PACKAGE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT:PUBLIC_EXPRESSION_PACKAGE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT:PUBLIC_DTYPE_PACKAGE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT:PUBLIC_ARITHMETIC_PACKAGE_FORMAT,INPUT_BINDING_SOURCE_FORMAT:INPUT_BINDING_PACKAGE_FORMAT,SPATIAL_SOURCE_FORMAT:SPATIAL_PACKAGE_FORMAT,BROADCAST_SOURCE_FORMAT:BROADCAST_PACKAGE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_PROVENANCE,TENSOR_SOURCE_FORMAT:TENSOR_PACKAGE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_PACKAGE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_PACKAGE_FORMAT,MASK_SOURCE_FORMAT:MASK_PACKAGE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_PACKAGE_FORMAT,SPATIAL_PUBLIC_SOURCE_FORMAT:SPATIAL_PUBLIC_PACKAGE_FORMAT,SPATIAL_CORE_SOURCE_FORMAT:SPATIAL_CORE_PACKAGE_FORMAT}[spec["format"]]
++            FUSED_SOURCE_FORMAT:FUSED_PACKAGE_FORMAT,GELU_SOURCE_FORMAT:GELU_PACKAGE_FORMAT,MHA_SOURCE_FORMAT:MHA_PACKAGE_FORMAT,PARTITION_SOURCE_FORMAT:PARTITION_PACKAGE_FORMAT,EINSUM_SOURCE_FORMAT:EINSUM_PACKAGE_FORMAT,EINSUM_VIEW_SOURCE_FORMAT:EINSUM_VIEW_PACKAGE_FORMAT,SCALAR_PARTITION_SOURCE_FORMAT:SCALAR_PARTITION_PACKAGE_FORMAT,EXACT_ARITHMETIC_SOURCE_FORMAT:EXACT_ARITHMETIC_PACKAGE_FORMAT,PUBLIC_TENSOR_SOURCE_FORMAT:PUBLIC_TENSOR_PACKAGE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT:PUBLIC_EXPRESSION_PACKAGE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT:PUBLIC_DTYPE_PACKAGE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT:PUBLIC_ARITHMETIC_PACKAGE_FORMAT,INPUT_BINDING_SOURCE_FORMAT:INPUT_BINDING_PACKAGE_FORMAT,SPATIAL_SOURCE_FORMAT:SPATIAL_PACKAGE_FORMAT,BROADCAST_SOURCE_FORMAT:BROADCAST_PACKAGE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_PROVENANCE,TENSOR_SOURCE_FORMAT:TENSOR_PACKAGE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_PACKAGE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_PACKAGE_FORMAT,MASK_SOURCE_FORMAT:MASK_PACKAGE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_PACKAGE_FORMAT,VIEW_SOURCE_FORMAT:VIEW_PACKAGE_FORMAT,SPATIAL_PUBLIC_SOURCE_FORMAT:SPATIAL_PUBLIC_PACKAGE_FORMAT,SPATIAL_CORE_SOURCE_FORMAT:SPATIAL_CORE_PACKAGE_FORMAT}[spec["format"]]
+ 
+ def reference_version(spec):
+     require(type(spec) is dict and spec.get("format") in (*SOURCE_FORMATS,*SPATIAL_INTERNAL_FORMATS), "Trusted ordered source version")
+     return {FORMAT:REFERENCE_FORMAT, COMMON_SOURCE_FORMAT:COMMON_REFERENCE_FORMAT,
+-            FUSED_SOURCE_FORMAT:FUSED_REFERENCE_FORMAT,GELU_SOURCE_FORMAT:GELU_REFERENCE_FORMAT,MHA_SOURCE_FORMAT:MHA_REFERENCE_FORMAT,PARTITION_SOURCE_FORMAT:PARTITION_REFERENCE_FORMAT,EINSUM_SOURCE_FORMAT:EINSUM_REFERENCE_FORMAT,EINSUM_VIEW_SOURCE_FORMAT:EINSUM_VIEW_REFERENCE_FORMAT,SCALAR_PARTITION_SOURCE_FORMAT:SCALAR_PARTITION_REFERENCE_FORMAT,EXACT_ARITHMETIC_SOURCE_FORMAT:EXACT_ARITHMETIC_REFERENCE_FORMAT,PUBLIC_TENSOR_SOURCE_FORMAT:PUBLIC_TENSOR_REFERENCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT:PUBLIC_EXPRESSION_REFERENCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT:PUBLIC_DTYPE_REFERENCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT:PUBLIC_ARITHMETIC_REFERENCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT:INPUT_BINDING_REFERENCE_FORMAT,SPATIAL_SOURCE_FORMAT:SPATIAL_REFERENCE_FORMAT,BROADCAST_SOURCE_FORMAT:BROADCAST_REFERENCE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_REFERENCE,TENSOR_SOURCE_FORMAT:TENSOR_REFERENCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_REFERENCE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_REFERENCE_FORMAT,MASK_SOURCE_FORMAT:MASK_REFERENCE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_REFERENCE_FORMAT,SPATIAL_PUBLIC_SOURCE_FORMAT:SPATIAL_PUBLIC_REFERENCE_FORMAT,SPATIAL_CORE_SOURCE_FORMAT:SPATIAL_CORE_REFERENCE_FORMAT}[spec["format"]]
++            FUSED_SOURCE_FORMAT:FUSED_REFERENCE_FORMAT,GELU_SOURCE_FORMAT:GELU_REFERENCE_FORMAT,MHA_SOURCE_FORMAT:MHA_REFERENCE_FORMAT,PARTITION_SOURCE_FORMAT:PARTITION_REFERENCE_FORMAT,EINSUM_SOURCE_FORMAT:EINSUM_REFERENCE_FORMAT,EINSUM_VIEW_SOURCE_FORMAT:EINSUM_VIEW_REFERENCE_FORMAT,SCALAR_PARTITION_SOURCE_FORMAT:SCALAR_PARTITION_REFERENCE_FORMAT,EXACT_ARITHMETIC_SOURCE_FORMAT:EXACT_ARITHMETIC_REFERENCE_FORMAT,PUBLIC_TENSOR_SOURCE_FORMAT:PUBLIC_TENSOR_REFERENCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT:PUBLIC_EXPRESSION_REFERENCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT:PUBLIC_DTYPE_REFERENCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT:PUBLIC_ARITHMETIC_REFERENCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT:INPUT_BINDING_REFERENCE_FORMAT,SPATIAL_SOURCE_FORMAT:SPATIAL_REFERENCE_FORMAT,BROADCAST_SOURCE_FORMAT:BROADCAST_REFERENCE_FORMAT,SOURCE_PACKAGE_FORMAT:SOURCE_PACKAGE_REFERENCE,TENSOR_SOURCE_FORMAT:TENSOR_REFERENCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT:STATE_TRANSFORM_REFERENCE_FORMAT,CONSTANT_SOURCE_FORMAT:CONSTANT_REFERENCE_FORMAT,MASK_SOURCE_FORMAT:MASK_REFERENCE_FORMAT,JOIN_SOURCE_FORMAT:JOIN_REFERENCE_FORMAT,VIEW_SOURCE_FORMAT:VIEW_REFERENCE_FORMAT,SPATIAL_PUBLIC_SOURCE_FORMAT:SPATIAL_PUBLIC_REFERENCE_FORMAT,SPATIAL_CORE_SOURCE_FORMAT:SPATIAL_CORE_REFERENCE_FORMAT}[spec["format"]]
+ EXTRA_IMPLEMENTATION = (
+     "pytorch_arithmetic_normalization.py", "operator_graph.py",
+     "pytorch_alias_composition.py", "pytorch_alias_capture_bridge.py",
+@@ -304,7 +305,7 @@
+ 
+ def check_capture_metadata(metadata, original, spec, *, resource_profile,
+                            expected_weight_binding, expected_weight_arrays=None):
+-    if spec.get("format")in(PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++    if spec.get("format")in(PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_public_expression_capture import check_capture_metadata as selected
+         return selected(metadata,original,spec,resource_profile=resource_profile,
+                         expected_weight_binding=expected_weight_binding,expected_weight_arrays=expected_weight_arrays)
+@@ -514,11 +515,14 @@
+ def capture_binding(original, spec, *, resource_profile, capture_metadata, expected_weight_binding, expected_weight_arrays=None):
+     from operator_graph import decompose
+     if original.get("format")=="poseidon-operator-graph-v4":
+-        require(spec.get("format")in(SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,*SPATIAL_INTERNAL_FORMATS),"Explicit spatial decomposition contract")
++        require(spec.get("format")in(SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT,*SPATIAL_INTERNAL_FORMATS),"Explicit spatial decomposition contract")
+         from operator_spatial_graph import decompose
+     checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+                                      expected_weight_binding=expected_weight_binding,expected_weight_arrays=expected_weight_arrays)
+     lowered, binding = decompose(original, resource_profile=resource_profile)
++    if spec["format"]==VIEW_SOURCE_FORMAT:
++        from logical_view_normalization import apply_binding
++        lowered,binding=apply_binding(lowered,binding)
+     require(canonical(lowered) == canonical(checked), "Ordered decomposition differs")
+     binding.update(trusted_source_hashes=spec["files"], manifest_sha256=digest(spec),
+                    capture_implementation=source_identity(), capture_torch_version=legacy.runtime_identity()["torch"],
+@@ -528,7 +532,7 @@
+     return lowered, binding
+ 
+ def check_reference(report, original, lowered, spec, *, resource_profile, expected_weight_binding, expected_weight_arrays=None):
+-    if spec.get("format")in(PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++    if spec.get("format")in(PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_public_expression_capture import check_reference as selected
+         return selected(report,original,lowered,spec,resource_profile=resource_profile,
+                         expected_weight_binding=expected_weight_binding,expected_weight_arrays=expected_weight_arrays)
+--- a/scripts/baseline/candidate_bundle.py
++++ b/scripts/baseline/candidate_bundle.py
+@@ -1,3 +1,4 @@
++from pytorch_logical_view_source import SOURCE_FORMAT as VIEW_SOURCE_FORMAT, PACKAGE_FORMAT as VIEW_PACKAGE_FORMAT, REFERENCE_FORMAT as VIEW_REFERENCE_FORMAT
+ from pytorch_public_join_source import SOURCE_FORMAT as JOIN_SOURCE_FORMAT, PACKAGE_FORMAT as JOIN_PACKAGE_FORMAT, REFERENCE_FORMAT as JOIN_REFERENCE_FORMAT
+ from pytorch_public_mask_source import SOURCE_FORMAT as MASK_SOURCE_FORMAT, PACKAGE_FORMAT as MASK_PACKAGE_FORMAT, REFERENCE_FORMAT as MASK_REFERENCE_FORMAT
+ """Portable source manifests; exact SDK replay is separate from source integrity."""
+@@ -44,7 +45,7 @@
+         if ordered:
+             options["expected_weight_binding"]=weight_binding_from_payload(
+                 package["manifest"],package["weight_files"],resource_profile=resource_profile)
+-            if package["manifest"]["format"]in(PUBLIC_TENSOR_SOURCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++            if package["manifest"]["format"]in(PUBLIC_TENSOR_SOURCE_FORMAT,PUBLIC_EXPRESSION_SOURCE_FORMAT,PUBLIC_DTYPE_SOURCE_FORMAT,PUBLIC_ARITHMETIC_SOURCE_FORMAT,INPUT_BINDING_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+                 options["expected_weight_arrays"]=weight_arrays_from_payload(package["manifest"],package["weight_files"],resource_profile=resource_profile)
+         lowered,binding=capture_binding(value["original"],package["manifest"],resource_profile=resource_profile,
+                                        capture_metadata=value["reference_report"].get("capture_metadata"),**options)
+--- a/scripts/baseline/pytorch_public_expression_capture.py
++++ b/scripts/baseline/pytorch_public_expression_capture.py
+@@ -1,3 +1,4 @@
++from pytorch_logical_view_source import SOURCE_FORMAT as VIEW_SOURCE_FORMAT, PACKAGE_FORMAT as VIEW_PACKAGE_FORMAT, REFERENCE_FORMAT as VIEW_REFERENCE_FORMAT
+ from pytorch_public_join_source import SOURCE_FORMAT as JOIN_SOURCE_FORMAT, PACKAGE_FORMAT as JOIN_PACKAGE_FORMAT, REFERENCE_FORMAT as JOIN_REFERENCE_FORMAT
+ from pytorch_public_mask_source import SOURCE_FORMAT as MASK_SOURCE_FORMAT, PACKAGE_FORMAT as MASK_PACKAGE_FORMAT, REFERENCE_FORMAT as MASK_REFERENCE_FORMAT
+ """V23 public-expression intake, using the retained V22 capture and reference."""
+@@ -29,16 +30,19 @@
+ ARITHMETIC_SOURCE_FORMAT="poseidon-trusted-pytorch-v25"
+ INPUT_SOURCE_FORMAT="poseidon-trusted-pytorch-v26"
+ INPUT_CAPTURE_FORMAT="poseidon-public-expression-source-capture-v4"
+-SOURCE_FORMATS=(SOURCE_FORMAT,CAST_SOURCE_FORMAT,ARITHMETIC_SOURCE_FORMAT,INPUT_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT)
++SOURCE_FORMATS=(SOURCE_FORMAT,CAST_SOURCE_FORMAT,ARITHMETIC_SOURCE_FORMAT,INPUT_SOURCE_FORMAT,SPATIAL_SOURCE_FORMAT,BROADCAST_SOURCE_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT)
+ CAST_FORMAT="poseidon-public-expression-source-capture-v2"
+ ARITHMETIC_FORMAT="poseidon-public-expression-source-capture-v3"
+ 
+ def source_policy(spec):
+     require(type(spec)is dict and spec.get("format")in SOURCE_FORMATS,"Explicit public expression source contract")
+-    return {SOURCE_FORMAT:POLICY,CAST_SOURCE_FORMAT:CAST_POLICY,ARITHMETIC_SOURCE_FORMAT:ARITHMETIC_POLICY,INPUT_SOURCE_FORMAT:ARITHMETIC_POLICY,SPATIAL_SOURCE_FORMAT:ARITHMETIC_POLICY,BROADCAST_SOURCE_FORMAT:ARITHMETIC_POLICY,SOURCE_PACKAGE_FORMAT:ARITHMETIC_POLICY,TENSOR_SOURCE_FORMAT:ARITHMETIC_POLICY,STATE_TRANSFORM_SOURCE_FORMAT:TRANSFORM_POLICY,CONSTANT_SOURCE_FORMAT:CONSTANT_POLICY,MASK_SOURCE_FORMAT:MASK_POLICY,JOIN_SOURCE_FORMAT:JOIN_POLICY}[spec["format"]]
++    return {SOURCE_FORMAT:POLICY,CAST_SOURCE_FORMAT:CAST_POLICY,ARITHMETIC_SOURCE_FORMAT:ARITHMETIC_POLICY,INPUT_SOURCE_FORMAT:ARITHMETIC_POLICY,SPATIAL_SOURCE_FORMAT:ARITHMETIC_POLICY,BROADCAST_SOURCE_FORMAT:ARITHMETIC_POLICY,SOURCE_PACKAGE_FORMAT:ARITHMETIC_POLICY,TENSOR_SOURCE_FORMAT:ARITHMETIC_POLICY,STATE_TRANSFORM_SOURCE_FORMAT:TRANSFORM_POLICY,CONSTANT_SOURCE_FORMAT:CONSTANT_POLICY,MASK_SOURCE_FORMAT:MASK_POLICY,JOIN_SOURCE_FORMAT:JOIN_POLICY,VIEW_SOURCE_FORMAT:JOIN_POLICY}[spec["format"]]
+ 
+ def capture_format(spec):
+-    if spec.get("format")==JOIN_SOURCE_FORMAT:
++    if spec.get("format")==VIEW_SOURCE_FORMAT:
++        from pytorch_logical_view_source import CAPTURE_FORMAT
++        return CAPTURE_FORMAT
++    if spec.get("format") in (JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_public_join_source import CAPTURE_FORMAT
+         return CAPTURE_FORMAT
+     if spec.get("format")==MASK_SOURCE_FORMAT:
+@@ -103,20 +107,20 @@
+                        **({"spatial_source_policy":SPATIAL_POLICY}if supports_spatial(spec) else {}),
+                        **({"broadcast_source_policy":BROADCAST_POLICY}if supports_broadcast(spec) else {}),
+                        **({"tensor_transform_source_policy":TENSOR_POLICY}if supports_transforms(spec) else {}),
+-                       **({"public_mask_source_policy":__import__("pytorch_public_mask_source").POLICY}if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT) else {}))
++                       **({"public_mask_source_policy":__import__("pytorch_public_mask_source").POLICY}if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT) else {}))
+     input_flow=None;input_reference=reference_source
+     if call_plan is not None:
+         from pytorch_input_binding import normalize as normalize_inputs,reference_module
+         Path(output,"fx-input-source.txt").write_text(str(source_graph.graph))
+         source_graph,input_flow=normalize_inputs(source_graph,call_plan)
+         input_reference=reference_module(reference_source,call_plan,
+-            input_effect_policy="registered-working-copy-inputs-v1"if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT) else"immutable-inputs-v1")
++            input_effect_policy="registered-working-copy-inputs-v1"if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT) else"immutable-inputs-v1")
+     broadcast_flow=None
+     if supports_broadcast(spec):
+         from pytorch_static_broadcast import normalize as normalize_broadcast
+         source_graph,broadcast_flow=normalize_broadcast(source_graph,spec["inputs"],resource_profile=resource_profile)
+     transform_flow=None
+-    if supports_transforms(spec) and spec["format"] not in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++    if supports_transforms(spec) and spec["format"] not in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_static_tensor_transforms import normalize as normalize_transforms
+         source_graph,transform_flow=normalize_transforms(source_graph,spec["inputs"],resource_profile=resource_profile)
+     traced=_arrays(source_graph);traced_records=state_records(traced)
+@@ -127,15 +131,15 @@
+     normalized,flow=normalize(source_graph,traced,
+                               expected_state=state_identity(traced,resource_profile=resource_profile),
+                               resource_profile=resource_profile,policy=policy)
+-    if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++    if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_static_tensor_transforms import normalize as normalize_transforms
+         normalized,transform_flow=normalize_transforms(normalized,spec["inputs"],resource_profile=resource_profile)
+     mask_flow=None
+-    if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++    if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_public_mask_selection import normalize as normalize_mask_selection
+         normalized,mask_flow=normalize_mask_selection(normalized,spec["inputs"],resource_profile=resource_profile)
+     join_flow=None
+-    if spec["format"]==JOIN_SOURCE_FORMAT:
++    if spec["format"] in (JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_public_join_normalization import normalize as normalize_joins
+         normalized,join_flow=normalize_joins(normalized,spec["inputs"],resource_profile=resource_profile)
+     metadata={n.name:copy.deepcopy(n.meta)for n in normalized.graph.nodes}
+@@ -153,7 +157,7 @@
+                               expected_weight_binding=binding(effective_arrays,weights),
+                               resource_profile=resource_profile,_return_context=True)
+     require(structural(base["division_capture"]["source_inventory"])==
+-            structural(join_flow["normalized_inventory"]if join_flow is not None else mask_flow["normalized_inventory"]if mask_flow is not None else transform_flow["normalized_inventory"] if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT) else
++            structural(join_flow["normalized_inventory"]if join_flow is not None else mask_flow["normalized_inventory"]if mask_flow is not None else transform_flow["normalized_inventory"] if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT) else
+                        flow["normalized_inventory"]),"Expression/retained tracing structural bridge")
+     high,lowered,bound,base_context=context
+     original_context=dict(base_context);original_context["original_module"]=input_reference
+@@ -170,6 +174,14 @@
+                 high_graph=high,lowered_graph=lowered,original_reference=finite,
+                 production_intake_integrated=True,provider_calls=0,compiler_calls=0,encrypted_calls=0,
+                 resource_profile=resource_profile)
++    if spec["format"]==VIEW_SOURCE_FORMAT:
++        from logical_view_normalization import apply_binding
++        normalized_lowered, normalized_binding = apply_binding(lowered, bound)
++        normalized_reference = validate((high,normalized_lowered,normalized_binding,original_context),
++            spec["inputs"],spec["outputs"],resource_profile=resource_profile,count=16)
++        result["lowered_graph"] = normalized_lowered
++        result["logical_view_normalization"] = normalized_binding["logical_view_normalization"]
++        result["logical_view_reference"] = normalized_reference
+     if join_flow is not None:result["public_tensor_join_flow"]=join_flow
+     if mask_flow is not None:
+         result["public_mask_selection_flow"]=mask_flow
+@@ -200,7 +212,7 @@
+     if supports_transforms(spec):
+         from pytorch_static_tensor_transforms import check as check_transforms
+         transforms=record["static_tensor_transform_flow"]
+-        if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++        if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+             full,effective=check_flow(flow,selected,expected_binding=flow["binding"],
+                 expected_source_inventory=flow["source_inventory"],resource_profile=resource_profile,policy=source_policy(spec))
+             check_transforms(transforms,spec["inputs"],resource_profile=resource_profile,
+@@ -225,17 +237,17 @@
+     else:require("input_call_flow"not in record,"Unexpected structured input flow")
+     require(flow["original_state"]==state_identity(selected,resource_profile=resource_profile),
+             "Public expression original FX state")
+-    if spec["format"] not in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++    if spec["format"] not in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         _,effective=check_flow(flow,selected,expected_binding=flow["binding"],
+                                expected_source_inventory=flow["source_inventory"],resource_profile=resource_profile,policy=source_policy(spec))
+-    if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT):
++    if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_public_mask_selection import check as check_mask_selection
+         require(record.get("input_effect_policy")=="registered-working-copy-inputs-v1","public_mask_input_effect_policy")
+         masks=record["public_mask_selection_flow"]
+         mask_full,effective=check_mask_selection(masks,spec["inputs"],full,resource_profile=resource_profile,
+             expected_source_inventory=record["static_tensor_transform_flow"]["normalized_inventory"])
+     else:require("public_mask_selection_flow"not in record and "input_effect_policy"not in record,"Unexpected public mask selection flow")
+-    if spec["format"]==JOIN_SOURCE_FORMAT:
++    if spec["format"] in (JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT):
+         from pytorch_public_join_normalization import check as check_joins
+         _,effective=check_joins(record["public_tensor_join_flow"],spec["inputs"],mask_full,
+             resource_profile=resource_profile,expected_source_inventory=record["public_mask_selection_flow"]["normalized_inventory"])
+@@ -262,9 +274,24 @@
+     base=record["base_capture"];base_spec=record["internal_manifest"]
+     check_base(base,base_spec,effective,final,expected_record_binding=base["binding"],
+                resource_profile=resource_profile)
+-    require(record["high_graph"]==base["high_graph"]and record["lowered_graph"]==base["lowered_graph"]and
++    if spec["format"]==VIEW_SOURCE_FORMAT:
++        from logical_view_normalization import apply_binding,check_finite
++        from pytorch_ordered_contract import capture_binding
++        old_lowered,old_binding=capture_binding(base["high_graph"],base["internal_manifest"],
++            resource_profile=resource_profile,capture_metadata=base["base_reference"]["capture_metadata"],
++            expected_weight_binding=base["internal_weight_binding"])
++        expected_lowered,expected_binding=apply_binding(old_lowered,old_binding)
++        require(record.get("logical_view_normalization")==expected_binding["logical_view_normalization"] and
++                record["lowered_graph"]==expected_lowered,"Logical view proof changed")
++        check_finite(record.get("logical_view_reference"),record["original_reference"],
++                     expected_lowered,expected_binding)
++    else:
++        require("logical_view_normalization"not in record and "logical_view_reference"not in record,
++                "Unexpected logical view normalization")
++        require(record["lowered_graph"]==base["lowered_graph"],"Public expression lowered graph changed")
++    require(record["high_graph"]==base["high_graph"]and
+             structural(base["division_capture"]["source_inventory"])==
+-            structural(record["public_tensor_join_flow"]["normalized_inventory"]if spec["format"]==JOIN_SOURCE_FORMAT else record["public_mask_selection_flow"]["normalized_inventory"]if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT) else record["static_tensor_transform_flow"]["normalized_inventory"] if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT) else
++            structural(record["public_tensor_join_flow"]["normalized_inventory"]if spec["format"] in (JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT) else record["public_mask_selection_flow"]["normalized_inventory"]if spec["format"] in(MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT) else record["static_tensor_transform_flow"]["normalized_inventory"] if spec["format"] in (STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT) else
+                        record["public_expression_flow"]["normalized_inventory"]),
+             "Public expression complete graph bridge")
+     require(record["provider_calls"]==record["compiler_calls"]==record["encrypted_calls"]==0,
+@@ -310,7 +337,10 @@
+     _,bound=capture_binding(record["high_graph"],spec,resource_profile=resource_profile,capture_metadata=metadata,
+                            expected_weight_binding=record["original_weight_binding"],
+                            expected_weight_arrays=expected_weight_arrays)
+-    finite=copy.deepcopy(record["original_reference"])
++    finite=copy.deepcopy(record["logical_view_reference"] if spec["format"]==VIEW_SOURCE_FORMAT
++                         else record["original_reference"])
++    if spec["format"]==VIEW_SOURCE_FORMAT:
++        expected["model_sha256"]=digest(record["lowered_graph"])
+     finite["capture_binding_sha256"]=bound["binding_sha256"];finite.pop("binding",None);finite["binding"]=digest(finite)
+     expected["finite_reference"]=finite
+     return expected
+--- /dev/null
++++ b/scripts/baseline/logical_view_normalization.py
+@@ -0,0 +1,141 @@
++"""Prove logical axis views before generating DSL; bounded, deterministic and pure."""
++import copy,hashlib,itertools,json,math
++from dataclasses import dataclass
++from benchmark_graph import validate
++FORMAT="poseidon-static-logical-view-normalization-v1"
++MAX_ELEMENTS=4096
++MAX_INDEX_CELLS=262144
++def canonical(v):
++ return json.dumps(v,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
++def digest(v):return hashlib.sha256(canonical(v)).hexdigest()
++def strides(shape):
++ result=[1]*len(shape)
++ for i in range(len(shape)-2,-1,-1):result[i]=result[i+1]*shape[i+1]
++ return result
++def permutation(shape,target,indices):
++ """Infer axes from strides, then verify every coordinate; never guess by size."""
++ if len(shape)!=len(target)or sorted(shape)!=sorted(target)or len(indices)!=math.prod(shape):
++  return None
++ n=math.prod(shape)
++ if n>MAX_ELEMENTS or sorted(indices)!=list(range(n))or indices[0]!=0:return None
++ source_strides=strides(shape);target_strides=strides(target);axes=[];unused=set(range(len(shape)))
++ for dim,stride in zip(target,target_strides):
++  if dim==1:
++   axes.append(None);continue
++  delta=indices[stride]-indices[0]
++  choices=[i for i in unused if shape[i]==dim and source_strides[i]==delta]
++  if len(choices)!=1:return None
++  found=choices[0];axes.append(found);unused.remove(found)
++ singleton=iter(sorted(unused))
++ for j in range(len(axes)):
++  if axes[j]is None:
++   i=next(singleton)
++   if shape[i]!=1:return None
++   axes[j]=i
++ for flat in range(n):
++  expected=sum(((flat//target_strides[j])%target[j])*source_strides[i]for j,i in enumerate(axes))
++  if indices[flat]!=expected:return None
++ return axes
++@dataclass(frozen=True)
++class Trace:
++ root:str
++ indices:tuple
++ nodes:frozenset
++def normalize(model,*,max_index_cells=MAX_INDEX_CELLS):
++ if type(max_index_cells)is not int or not 1<=max_index_cells<=MAX_INDEX_CELLS:
++  raise ValueError("Closed normalization work budget")
++ before=validate(model);shapes=before["shapes"];cache={};spent=0;exhausted=False;rewrites=[];nodes=[]
++ def admit(root,indices,contributors):
++  nonlocal spent,exhausted
++  cost=len(indices)+len(contributors)
++  if len(indices)>MAX_ELEMENTS or spent+cost>max_index_cells:
++   exhausted=True;return None
++  spent+=cost;return Trace(root,tuple(indices),frozenset(contributors))
++ def trace(value):
++  if value not in cache:
++   shape=shapes[value];count=math.prod(shape)
++   cache[value]=admit(value,range(count),())if count<=MAX_ELEMENTS else None
++  return cache[value]
++ for node in model["nodes"]:
++  n=copy.deepcopy(node);op=n["op"];refs=n["inputs"];a=n["attrs"];out=n["outputs"]
++  result=None
++  if len(out)==1 and op=="reshape":
++   t=trace(refs[0])
++   if t is not None:
++    result=admit(t.root,t.indices,t.nodes|{n["id"]})
++    axes=permutation(shapes[t.root],shapes[out[0]],t.indices)
++    if axes is not None and axes!=list(range(len(axes)))and len(t.nodes)>=2:
++     n=dict(id=n["id"],op="permute",inputs=[t.root],attrs=dict(dims=axes),outputs=out)
++     rewrites.append(dict(final_node=n["id"],root_value=t.root,output_value=out[0],
++       source_shape=shapes[t.root],target_shape=shapes[out[0]],axes=axes,
++       index_map_sha256=digest(list(t.indices)),contributing_nodes=sorted(t.nodes),
++       rule="flat_slice_concat_to_full_axis_permutation"))
++  elif len(out)==1 and op=="slice" and len(shapes[refs[0]])==1 and a["axis"]in(0,-1):
++   t=trace(refs[0])
++   if t is not None:
++    selected=t.indices[slice(a["start"],a["stop"],a["step"])]
++    result=admit(t.root,selected,t.nodes|{n["id"]})
++  elif len(out)==1 and op=="concat" and a["axis"]in(0,-1)and all(len(shapes[r])==1 for r in refs):
++   ts=[trace(r)for r in refs]
++   if all(t is not None for t in ts)and len({t.root for t in ts})==1:
++    indices=tuple(itertools.chain.from_iterable(t.indices for t in ts))
++    contributors=frozenset().union(*(t.nodes for t in ts))|{n["id"]}
++    result=admit(ts[0].root,indices,contributors)
++  nodes.append(n)
++  for value in out:cache[value]=result
++  # An unsupported mathematical producer becomes a fresh root on later use.
++  # Failed work allocation remains unavailable; it must not be bypassed.
++  if op not in("reshape","slice","concat")or len(out)!=1:
++   for value in out:cache.pop(value,None)
++ result_model=copy.deepcopy(model)
++ if rewrites:
++  active={o["value"]for o in model["outputs"]};kept=[]
++  for n in reversed(nodes):
++   if any(v in active for v in n["outputs"]):
++    kept.append(n);active.update(n["inputs"])
++  result_model["nodes"]=list(reversed(kept))
++ after=validate(result_model)
++ if after["output_shapes"]!=before["output_shapes"]:
++  raise ValueError("Output shape changed")
++ if result_model["inputs"]!=model["inputs"]or result_model["constants"]!=model["constants"]or result_model["outputs"]!=model["outputs"]:
++  raise ValueError("Immutable declarations changed")
++ record=dict(format=FORMAT,original_sha256=digest(model),normalized_sha256=digest(result_model),
++  original_nodes=len(model["nodes"]),normalized_nodes=len(result_model["nodes"]),
++  rules=rewrites,exact_coordinate_verification=True,proof_max_elements=MAX_ELEMENTS,
++  proof_index_cells=spent,proof_index_cell_limit=max_index_cells,work_budget_exhausted=exhausted,
++  production_active=True,backend_calls=0,provider_calls=0)
++ record["binding"]=digest(record)
++ return result_model,record
++
++def apply_binding(model, binding):
++    """Keep the original decomposition identity beside the exact coordinate proof."""
++    lowered, record = normalize(model)
++    result = copy.deepcopy(binding)
++    result["logical_view_normalization"] = record
++    result["base_model_sha256"] = digest(model)
++    result["model_sha256"] = digest(lowered)
++    result.pop("binding_sha256", None)
++    result["binding_sha256"] = digest(result)
++    return lowered, result
++
++def check_finite(reference, original_reference, lowered, binding):
++    """Validate the worker's normalized-reference receipt without executing source."""
++    from benchmark_graph import require
++    require(type(reference) is dict and set(reference) == set(original_reference),
++            "Logical view reference fields")
++    require(reference.get("binding") == digest({k:v for k,v in reference.items() if k != "binding"}),
++            "Logical view reference integrity")
++    changed = {"binding", "lowered_sha256", "capture_binding_sha256",
++               "max_decomposition_error", "max_reference_tolerance_ratio"}
++    require(all(reference[k] == original_reference[k] for k in reference if k not in changed),
++            "Logical view reference immutable scope")
++    require(reference["lowered_sha256"] == digest(lowered) and
++            reference["capture_binding_sha256"] == binding["binding_sha256"],
++            "Logical view reference graph binding")
++    for key in ("max_decomposition_error", "max_reference_tolerance_ratio"):
++        value = reference[key]
++        require(type(value) in (int,float) and math.isfinite(value) and value >= 0,
++                "Logical view reference metric")
++    require(reference["max_reference_tolerance_ratio"] <= 1,
++            "Logical view reference comparison")
++    return reference
+--- a/scripts/baseline/application_capabilities.py
++++ b/scripts/baseline/application_capabilities.py
+@@ -39,6 +39,7 @@
+     from pytorch_public_tensor_transform_source import SOURCE_FORMAT as STATE_TRANSFORM_FORMAT, VALUE_POLICY as STATE_TRANSFORM_POLICY
+     from pytorch_public_constant_source import SOURCE_FORMAT as CONSTANT_FORMAT, VALUE_POLICY as CONSTANT_POLICY
+     from pytorch_public_mask_source import SOURCE_FORMAT as MASK_FORMAT, POLICY as MASK_POLICY, VALUE_POLICY as MASK_VALUE_POLICY
++    from pytorch_logical_view_source import SOURCE_FORMAT as VIEW_FORMAT
+     from pytorch_public_join_source import SOURCE_FORMAT as JOIN_FORMAT, POLICY as JOIN_POLICY, VALUE_POLICY as JOIN_VALUE_POLICY
+     from pytorch_model_capture import functional_input_rules
+     # Public source contracts own these gates. Private capture transports and
+@@ -81,7 +82,12 @@
+                 bounds="selected resource profile and compiled physical layout",
+                 input_status="registered",compiler_status="unverified",
+                 encrypted_status="unverified",agent_status="unverified"),
+-            static_broadcast=dict(version=BROADCAST_FORMAT,versions=[BROADCAST_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_FORMAT,STATE_TRANSFORM_FORMAT,CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT],
++            logical_axis_views=dict(version="poseidon-trusted-pytorch-v35",
++                policy="poseidon-static-logical-views-v1",full_axis_permutations=True,
++                max_proof_elements=4096,max_proof_index_cells=262144,
++                preserves_original_graph=True,records_coordinate_proof=True,
++                input_status="registered",compiler_status="unverified",encrypted_status="unverified",agent_status="unverified"),
++            static_broadcast=dict(version=BROADCAST_FORMAT,versions=[BROADCAST_FORMAT,SOURCE_PACKAGE_FORMAT,TENSOR_FORMAT,STATE_TRANSFORM_FORMAT,CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT,VIEW_FORMAT],
+                 policy=BROADCAST_POLICY,calls=["Tensor."+name for name in sorted(BROADCAST_METHODS)],
+                 target="registered public static shape or target tensor shape",
+                 size_containers=["tuple","list","torch.Size"],scalar_intermediates=True,
+@@ -89,7 +95,7 @@
+                 dynamic_shape=False,bounds="selected resource profile and per-operator shape rules",
+                 input_status="registered",decomposition_status="registered",
+                 compiler_status="unverified",encrypted_status="unverified",agent_status="unverified"),
+-            static_tensor_transforms=dict(version=TENSOR_FORMAT,versions=[TENSOR_FORMAT,STATE_TRANSFORM_FORMAT,CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT],policy=TENSOR_POLICY,
++            static_tensor_transforms=dict(version=TENSOR_FORMAT,versions=[TENSOR_FORMAT,STATE_TRANSFORM_FORMAT,CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT,VIEW_FORMAT],policy=TENSOR_POLICY,
+                 calls=["Tensor.repeat","torch.tile","Tensor.tile","torch.repeat_interleave",
+                        "Tensor.repeat_interleave","torch.flip","Tensor.flip","torch.roll","Tensor.roll"],
+                 counts="positive static integer factors; scalar repeat_interleave count",
+@@ -109,8 +115,8 @@
+                 bounds="selected profile rank, axes and public constant elements; allocation checked first",
+                 input_status="registered",decomposition_status="registered",
+                 compiler_status="unverified",encrypted_status="unverified",agent_status="unverified"),
+-            public_constructors=dict(version=CONSTANT_FORMAT,versions=[CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT],policy=CONSTANT_POLICY,
+-                source_policies={CONSTANT_FORMAT:CONSTANT_POLICY,MASK_FORMAT:MASK_VALUE_POLICY,JOIN_FORMAT:JOIN_VALUE_POLICY},
++            public_constructors=dict(version=CONSTANT_FORMAT,versions=[CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT,VIEW_FORMAT],policy=CONSTANT_POLICY,
++                source_policies={CONSTANT_FORMAT:CONSTANT_POLICY,MASK_FORMAT:MASK_VALUE_POLICY,JOIN_FORMAT:JOIN_VALUE_POLICY,VIEW_FORMAT:JOIN_VALUE_POLICY},
+                 calls=["torch.zeros_like","torch.ones_like","torch.full_like",
+                        "Tensor.new_zeros","Tensor.new_ones","Tensor.new_full"],
+                 shape="static signature-derived or explicitly declared dimensions",
+@@ -120,7 +126,7 @@
+                 bounds="selected resource profile; no allocation before capacity checks",
+                 input_status="registered",decomposition_status="registered",
+                 compiler_status="unverified",encrypted_status="unverified",agent_status="unverified"),
+-            public_tensor_joins=dict(version=JOIN_FORMAT,policy=JOIN_POLICY,
++            public_tensor_joins=dict(version=JOIN_FORMAT,versions=[JOIN_FORMAT,VIEW_FORMAT],policy=JOIN_POLICY,
+                 calls=["torch.cat","torch.concat","torch.concatenate","torch.stack"],
+                 tensors="1-8 static tensors; public and registered float64 encrypted operands",
+                 public_types=["bool","int32","int64","float32","float64"],
+@@ -128,13 +134,13 @@
+                 encrypted_materialization="zero-from-encrypted-anchor-v1; recorded extra arithmetic",
+                 input_status="registered",decomposition_status="registered",
+                 compiler_status="unverified",encrypted_status="unverified",agent_status="unverified"),
+-            public_mask_selection=dict(version=MASK_FORMAT,versions=[MASK_FORMAT,JOIN_FORMAT],policy=MASK_POLICY,
++            public_mask_selection=dict(version=MASK_FORMAT,versions=[MASK_FORMAT,JOIN_FORMAT,VIEW_FORMAT],policy=MASK_POLICY,
+                 calls=["torch.where","Tensor.where","Tensor.masked_fill","Tensor.masked_fill_"],
+                 condition="bound public boolean tensor",values="registered float64 encrypted branches or finite public values",
+                 broadcast="static registered tensor broadcasting; in-place result shape unchanged",
+                 input_status="registered",decomposition_status="registered",
+                 compiler_status="unverified",encrypted_status="unverified",agent_status="unverified"),
+-            source_package=dict(version=SOURCE_PACKAGE_FORMAT,versions=[SOURCE_PACKAGE_FORMAT,TENSOR_FORMAT,STATE_TRANSFORM_FORMAT,CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT],policy=SOURCE_PACKAGE_POLICY,
++            source_package=dict(version=SOURCE_PACKAGE_FORMAT,versions=[SOURCE_PACKAGE_FORMAT,TENSOR_FORMAT,STATE_TRANSFORM_FORMAT,CONSTANT_FORMAT,MASK_FORMAT,JOIN_FORMAT,VIEW_FORMAT],policy=SOURCE_PACKAGE_POLICY,
+                 paths="explicit relative module paths",packages="regular packages with listed __init__.py",
+                 factory_entry="package.module.factory",files=8,bytes=65536,path_depth=8,
+                 input_status="registered",compiler_status="unverified",encrypted_status="unverified",agent_status="unverified"),
+--- a/scripts/baseline/pytorch_ordered_intake.py
++++ b/scripts/baseline/pytorch_ordered_intake.py
+@@ -1,3 +1,4 @@
++from pytorch_logical_view_source import SOURCE_FORMAT as VIEW_SOURCE_FORMAT, PACKAGE_FORMAT as VIEW_PACKAGE_FORMAT, REFERENCE_FORMAT as VIEW_REFERENCE_FORMAT
+ """Explicit trusted-local PyTorch V12 worker and capture boundary.
+ 
+ No model source is imported in the caller. The worker runs with the existing
+@@ -59,7 +60,7 @@
+     require(isinstance(module,torch.nn.Module), "Trusted factory must return nn.Module")
+     arrays, _ = read(model_root,spec["weights"],resource_profile=profile)
+     loaded = load_state(module,arrays,spec["weights"])
+-    if spec.get("format")in("poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24","poseidon-trusted-pytorch-v25","poseidon-trusted-pytorch-v26","poseidon-trusted-pytorch-v27","poseidon-trusted-pytorch-v28","poseidon-trusted-pytorch-v29","poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34"):
++    if spec.get("format")in("poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24","poseidon-trusted-pytorch-v25","poseidon-trusted-pytorch-v26","poseidon-trusted-pytorch-v27","poseidon-trusted-pytorch-v28","poseidon-trusted-pytorch-v29","poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34","poseidon-trusted-pytorch-v35"):
+         from pytorch_public_expression_capture import capture_loaded_module as selected
+         return selected(request,module,arrays,loaded,output_root)
+     if spec.get("format")=="poseidon-trusted-pytorch-v22":
+@@ -168,7 +169,7 @@
+             raise ApproximationRequired(read(output / FILENAME, spec, frozen)) from None
+         raise ValueError("Trusted ordered capture failed; inspect capture.log")
+     original = json.loads(regular_bytes(output/"original.json",cap.json_bytes))
+-    public_options={"expected_weight_arrays":arrays} if spec["format"]in("poseidon-trusted-pytorch-v22","poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24","poseidon-trusted-pytorch-v25","poseidon-trusted-pytorch-v26","poseidon-trusted-pytorch-v27","poseidon-trusted-pytorch-v28","poseidon-trusted-pytorch-v29","poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34") else {}
++    public_options={"expected_weight_arrays":arrays} if spec["format"]in("poseidon-trusted-pytorch-v22","poseidon-trusted-pytorch-v23","poseidon-trusted-pytorch-v24","poseidon-trusted-pytorch-v25","poseidon-trusted-pytorch-v26","poseidon-trusted-pytorch-v27","poseidon-trusted-pytorch-v28","poseidon-trusted-pytorch-v29","poseidon-trusted-pytorch-v30","poseidon-trusted-pytorch-v31","poseidon-trusted-pytorch-v32","poseidon-trusted-pytorch-v33","poseidon-trusted-pytorch-v34","poseidon-trusted-pytorch-v35") else {}
+     report = json.loads(regular_bytes(output/"capture-reference.json",cap.json_bytes))
+     lowered, bound = capture_binding(original,spec,resource_profile=resource_profile,
+                                     capture_metadata=report.get("capture_metadata"),
+--- a/scripts/baseline/pytorch_static_tensor_transforms.py
++++ b/scripts/baseline/pytorch_static_tensor_transforms.py
+@@ -1,3 +1,4 @@
++from pytorch_logical_view_source import SOURCE_FORMAT as VIEW_SOURCE_FORMAT, PACKAGE_FORMAT as VIEW_PACKAGE_FORMAT, REFERENCE_FORMAT as VIEW_REFERENCE_FORMAT
+ from pytorch_public_join_source import SOURCE_FORMAT as JOIN_SOURCE_FORMAT, PACKAGE_FORMAT as JOIN_PACKAGE_FORMAT, REFERENCE_FORMAT as JOIN_REFERENCE_FORMAT
+ from pytorch_public_mask_source import SOURCE_FORMAT as MASK_SOURCE_FORMAT, PACKAGE_FORMAT as MASK_PACKAGE_FORMAT, REFERENCE_FORMAT as MASK_REFERENCE_FORMAT
+ from pytorch_public_constant_source import SOURCE_FORMAT as CONSTANT_SOURCE_FORMAT, PACKAGE_FORMAT as CONSTANT_PACKAGE_FORMAT, REFERENCE_FORMAT as CONSTANT_REFERENCE_FORMAT
+@@ -17,7 +18,7 @@
+ FUNCTIONS = frozenset("torch."+name for name in ("tile","repeat_interleave","flip","roll"))
+ 
+ def selected(spec):
+-    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT)
++    return type(spec) is dict and spec.get("format") in (SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT,CONSTANT_SOURCE_FORMAT,MASK_SOURCE_FORMAT,JOIN_SOURCE_FORMAT,VIEW_SOURCE_FORMAT)
+ 
+ def operation(kind, target):
+     if kind=="call_method" and target in OPERATORS: return target
+--- /dev/null
++++ b/scripts/baseline/test_logical_view_normalization.py
+@@ -0,0 +1,170 @@
++"""Coordinate, version-selection and reference-binding rejection tests."""
++import copy,itertools,json,math,random,sys,unittest
++from pathlib import Path
++HERE=Path(__file__).resolve().parent
++sys.path.insert(0,str(HERE))
++from logical_view_normalization import normalize,permutation,digest,apply_binding,check_finite
++from benchmark_graph import validate
++def oracle(shape,axes):
++ """Map labeled input coordinates to output coordinates, without stride inference."""
++ labels={tuple(coord[i]for i in axes):j for j,coord in enumerate(itertools.product(*(range(d)for d in shape)))}
++ return [labels[c]for c in sorted(labels)]
++def fixture(shape,axes,*,indices=None,partial=False,changed_root=False):
++ indices=oracle(shape,axes)if indices is None else list(indices)
++ nodes=[];counter=0
++ def emit(op,refs,attrs):
++  nonlocal counter
++  name="value_"+str(counter);identifier="node_"+str(counter);counter+=1
++  nodes.append(dict(id=identifier,op=op,inputs=refs,attrs=attrs,outputs=[name]));return name
++ root="x";constants={}
++ if changed_root:
++  constants["gain"]=2.0;root=emit("add",[root,"gain"],{})
++ flat=emit("reshape",[root],dict(shape=[math.prod(shape)]))
++ leaves=[emit("slice",[flat],dict(axis=0,start=i,stop=i+1,step=1))for i in indices]
++ saved=leaves[0]
++ while len(leaves)>1:
++  leaves=[emit("concat",leaves[i:i+8],dict(axis=0))for i in range(0,len(leaves),8)]
++ final=emit("reshape",[leaves[0]],dict(shape=[shape[i]for i in axes]))
++ outputs=[dict(name="result",value=final)]
++ if partial:outputs.append(dict(name="partial",value=saved))
++ return dict(format="poseidon-model-graph-v2",resource_profile="general-tensors-v1",
++  id="view_fixture",inputs=[dict(name="x",shape=list(shape))],constants=constants,nodes=nodes,outputs=outputs)
++def evaluate(model,inputs):
++ values={n:list(v)for n,v in inputs.items()};shapes=validate(model)["shapes"]
++ for n,value in model["constants"].items():values[n]=[float(value)]
++ for n in model["nodes"]:
++  op=n["op"];refs=n["inputs"];a=n["attrs"];x=values[refs[0]]
++  if op=="reshape":value=list(x)
++  elif op=="slice":value=x[slice(a["start"],a["stop"],a["step"])]
++  elif op=="concat":value=list(itertools.chain.from_iterable(values[r]for r in refs))
++  elif op=="permute":value=[x[i]for i in oracle(shapes[refs[0]],a["dims"])]
++  elif op=="add":value=[v+values[refs[1]][0]for v in x]
++  else:raise AssertionError(op)
++  values[n["outputs"][0]]=value
++ return {o["name"]:values[o["value"]]for o in model["outputs"]}
++class CoordinateTests(unittest.TestCase):
++ def assert_equivalent(self,model):
++  frozen=copy.deepcopy(model);before=digest(model);new,record=normalize(model)
++  inputs={d["name"]:[(-.25 if i%2 else .375)*(i+1)for i in range(math.prod(d["shape"]))]for d in model["inputs"]}
++  self.assertEqual(evaluate(model,inputs),evaluate(new,inputs))
++  self.assertEqual(model,frozen);self.assertEqual(digest(model),before)
++  self.assertEqual(validate(model)["output_shapes"],validate(new)["output_shapes"])
++  self.assertEqual(record["original_sha256"],before);self.assertTrue(record["production_active"])
++  return new,record
++ def test_asymmetric_three_contexts(self):
++  for shape,axes in (((2,3),(1,0)),((2,3,2),(2,0,1)),((3,2,4),(2,1,0))):
++   with self.subTest(shape=shape):
++    original=fixture(shape,axes);new,r=self.assert_equivalent(original)
++    self.assertTrue(r["rules"]);self.assertLess(len(new["nodes"]),len(original["nodes"]))
++ def test_rank_8_16_32(self):
++  for rank in(8,16,32):
++   shape=(1,)*(rank-6)+(2,3,2,3,2,3);axes=list(range(rank));axes[-1],axes[-2]=axes[-2],axes[-1]
++   new,r=self.assert_equivalent(fixture(shape,axes));self.assertTrue(r["rules"])
++   self.assertEqual(new["nodes"][-1]["op"],"permute")
++ def test_seeded_permutations(self):
++  rng=random.Random(20261013)
++  for i in range(36):
++   active=rng.randrange(2,6);shape=tuple(rng.choice((2,3))for _ in range(active));axes=list(range(active));rng.shuffle(axes)
++   with self.subTest(case=i):self.assert_equivalent(fixture(shape,axes))
++ def test_named_partial_preserved(self):
++  new,r=self.assert_equivalent(fixture((2,3,4),(2,0,1),partial=True))
++  self.assertTrue(r["rules"]);self.assertEqual(len(new["outputs"]),2)
++ def test_updated_ssa_root_preserved(self):
++  new,r=self.assert_equivalent(fixture((2,3),(1,0),changed_root=True))
++  self.assertTrue(r["rules"]);self.assertEqual(new["nodes"][0]["op"],"add")
++  self.assertEqual(new["nodes"][-1]["inputs"],new["nodes"][0]["outputs"])
++ def test_same_size_not_enough(self):
++  model=fixture((2,3),(1,0),indices=(0,1,2,3,5,4));new,r=self.assert_equivalent(model)
++  self.assertFalse(r["rules"]);self.assertEqual(new,model)
++ def test_duplicate_indices_rejected_as_permutation(self):
++  model=fixture((2,3),(1,0),indices=(0,2,4,1,3,3));new,r=self.assert_equivalent(model)
++  self.assertFalse(r["rules"]);self.assertEqual(new,model)
++ def test_mixed_roots_not_collapsed(self):
++  model=fixture((2,3),(1,0));model["inputs"].append(dict(name="y",shape=[6]))
++  first_slice=next(n for n in model["nodes"]if n["op"]=="slice");first_slice["inputs"]=["y"]
++  new,r=self.assert_equivalent(model);self.assertFalse(r["rules"]);self.assertEqual(new,model)
++ def test_budget_preserves_original(self):
++  model=fixture((2,3),(1,0));new,r=normalize(model,max_index_cells=1)
++  self.assertEqual(new,model);self.assertTrue(r["work_budget_exhausted"])
++ def test_idempotence(self):
++  model=fixture((2,3,4),(2,0,1));first,_=normalize(model);second,r=normalize(first)
++  self.assertEqual(first,second);self.assertFalse(r["rules"])
++ def test_invalid_budget_rejected(self):
++  for value in(0,-1,True,262145,"262144"):
++   with self.subTest(value=value),self.assertRaises(ValueError):normalize(fixture((2,3),(1,0)),max_index_cells=value)
++ def test_forward_dependency_rejected(self):
++  model=fixture((2,3),(1,0));model["nodes"][0]["inputs"]=[model["nodes"][-1]["outputs"][0]]
++  with self.assertRaises(ValueError):normalize(model)
++ def test_explicit_axes_verifies_entire_map(self):
++  expected=oracle((2,3,4),(2,0,1));self.assertEqual(permutation((2,3,4),(4,2,3),expected),[2,0,1])
++  invalid=list(expected);invalid[-1],invalid[-2]=invalid[-2],invalid[-1]
++  self.assertIsNone(permutation((2,3,4),(4,2,3),invalid))
++
++class BindingAndScopeTests(unittest.TestCase):
++ def test_explicit_version_keeps_v34_and_unknown_closed(self):
++  from pytorch_logical_view_source import selected,SOURCE_FORMAT,PACKAGE_FORMAT,REFERENCE_FORMAT
++  from pytorch_model_intake import ordered,SOURCE_FORMATS,PACKAGES,REFERENCES
++  from pytorch_spatial_policy import supports_spatial,supports_input_call
++  from pytorch_static_broadcast import supports_source
++  from pytorch_source_package_policy import selected as packaged
++  from pytorch_static_tensor_transforms import selected as transforms
++  from pytorch_public_expression_capture import capture_format,source_policy
++  spec={"format":SOURCE_FORMAT}
++  self.assertTrue(selected(spec));self.assertTrue(ordered(spec))
++  self.assertTrue(all(f(spec)for f in (supports_spatial,supports_input_call,supports_source,packaged,transforms)))
++  self.assertEqual(PACKAGES[SOURCE_FORMAT],PACKAGE_FORMAT)
++  self.assertEqual(REFERENCES[SOURCE_FORMAT],REFERENCE_FORMAT)
++  self.assertNotEqual(capture_format(spec),capture_format({"format":"poseidon-trusted-pytorch-v34"}))
++  self.assertEqual(source_policy(spec),source_policy({"format":"poseidon-trusted-pytorch-v34"}))
++  for version in ("poseidon-trusted-pytorch-v34","poseidon-trusted-pytorch-v36"):
++   self.assertFalse(selected({"format":version}))
++  self.assertIn("poseidon-trusted-pytorch-v34",SOURCE_FORMATS)
++  self.assertNotIn("poseidon-trusted-pytorch-v36",SOURCE_FORMATS)
++ def fixture(self):
++  original=fixture((2,3),(1,0));old=dict(model_sha256=digest(original),binding_sha256="old",original_sha256="source",source_hashes={"a":"b"})
++  lowered,binding=apply_binding(original,old)
++  reference=dict(format="finite",groups=16,status="passed",lowered_sha256=digest(lowered),
++      capture_binding_sha256=binding["binding_sha256"],max_decomposition_error=0.,
++      max_reference_tolerance_ratio=0.,comparison_tolerance={"atol":1e-12,"rtol":1e-12})
++  reference["binding"]=digest(reference)
++  original_reference=dict(reference,lowered_sha256=digest(original),capture_binding_sha256="original")
++  original_reference.pop("binding");original_reference["binding"]=digest(original_reference)
++  return original,lowered,old,binding,original_reference,reference
++ def test_binds_original_and_normalized_without_mutating_original(self):
++  original,lowered,old,binding,a,b=self.fixture()
++  self.assertEqual(old["model_sha256"],digest(original));self.assertEqual(old["binding_sha256"],"old")
++  self.assertEqual(binding["base_model_sha256"],digest(original))
++  self.assertEqual(binding["model_sha256"],digest(lowered))
++  self.assertEqual(binding["binding_sha256"],digest({k:v for k,v in binding.items()if k!="binding_sha256"}))
++  self.assertNotEqual(digest(original),digest(lowered))
++  self.assertEqual(check_finite(b,a,lowered,binding),b)
++ def test_reference_scope_cannot_change(self):
++  _,lowered,_,binding,a,b=self.fixture()
++  for key,value in (("groups",4),("comparison_tolerance",{"atol":1e-5,"rtol":1e-4}),("status","failed")):
++   with self.subTest(key=key):
++    altered=copy.deepcopy(b);altered[key]=value;altered.pop("binding");altered["binding"]=digest(altered)
++    with self.assertRaises(ValueError):check_finite(altered,a,lowered,binding)
++ def test_reference_graph_binding_cannot_change(self):
++  _,lowered,_,binding,a,b=self.fixture()
++  for key in ("lowered_sha256","capture_binding_sha256"):
++   with self.subTest(key=key):
++    altered=dict(b);altered[key]="0"*64;altered.pop("binding");altered["binding"]=digest(altered)
++    with self.assertRaises(ValueError):check_finite(altered,a,lowered,binding)
++ def test_reference_ratio_and_types_reject(self):
++  _,lowered,_,binding,a,b=self.fixture()
++  for value in (True,-1.,1.01):
++   with self.subTest(value=value):
++    altered=dict(b);altered["max_reference_tolerance_ratio"]=value;altered.pop("binding");altered["binding"]=digest(altered)
++    with self.assertRaises(ValueError):check_finite(altered,a,lowered,binding)
++ def test_capabilities_are_explicit_and_registered(self):
++  from application_capabilities import input_sources
++  c=input_sources()["trusted_pytorch"];self.assertIn("poseidon-trusted-pytorch-v35",c["formats"])
++  self.assertEqual(c["logical_axis_views"]["max_proof_elements"],4096)
++  self.assertEqual(c["logical_axis_views"]["compiler_status"],"unverified")
++  for field in ("spatial_calls","input_call","static_broadcast","static_tensor_transforms","public_mask_selection","source_package"):
++   self.assertIn("poseidon-trusted-pytorch-v35",c[field]["versions"])
++ def test_new_capture_metadata_not_accepted_by_old_version(self):
++  from pytorch_public_expression_capture import capture_format
++  self.assertNotEqual(capture_format({"format":"poseidon-trusted-pytorch-v34"}),"poseidon-public-expression-source-capture-v12")
++
++if __name__=="__main__":unittest.main()

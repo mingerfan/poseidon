@@ -1,0 +1,149 @@
+{
+  "format": "poseidon-pytorch-input-form-audit-v1",
+  "cases": [
+    {
+      "id": "module_linear",
+      "manifest": "module_linear.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "functional_linear",
+      "manifest": "functional_linear.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "matrix_linear",
+      "manifest": "matrix_linear.json",
+      "expected": "rejected",
+      "reason": "Tensor.T property normalization"
+    },
+    {
+      "id": "module_conv",
+      "manifest": "module_conv.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "functional_conv",
+      "manifest": "functional_conv.json",
+      "expected": "rejected",
+      "reason": "Functional convolution mapping"
+    },
+    {
+      "id": "module_pool",
+      "manifest": "module_pool.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "functional_pool",
+      "manifest": "functional_pool.json",
+      "expected": "rejected",
+      "reason": "Functional average-pool mapping"
+    },
+    {
+      "id": "module_batch_norm",
+      "manifest": "module_batch_norm.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "functional_batch_norm",
+      "manifest": "functional_batch_norm.json",
+      "expected": "rejected",
+      "reason": "Functional inference BatchNorm mapping"
+    },
+    {
+      "id": "module_layer_no_affine",
+      "manifest": "module_layer_no_affine.json",
+      "expected": "rejected",
+      "reason": "LayerNorm affine=False mapping"
+    },
+    {
+      "id": "functional_layer_no_affine",
+      "manifest": "functional_layer_no_affine.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "module_group_no_affine",
+      "manifest": "module_group_no_affine.json",
+      "expected": "rejected",
+      "reason": "GroupNorm affine=False mapping"
+    },
+    {
+      "id": "functional_group_no_affine",
+      "manifest": "functional_group_no_affine.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "shape_reshape",
+      "manifest": "shape_reshape.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "shape_loop",
+      "manifest": "shape_loop.json",
+      "expected": "rejected",
+      "reason": "Shape-derived static loop tracing"
+    },
+    {
+      "id": "public_loop",
+      "manifest": "public_loop.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "scalar_output",
+      "manifest": "scalar_output.json",
+      "expected": "rejected",
+      "reason": "Scalar output shape restoration"
+    },
+    {
+      "id": "scalar_reshape",
+      "manifest": "scalar_reshape.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "tuple_output",
+      "manifest": "tuple_output.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "dict_output",
+      "manifest": "dict_output.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "data_branch",
+      "manifest": "data_branch.json",
+      "expected": "rejected",
+      "reason": "Encrypted-data branch refusal"
+    },
+    {
+      "id": "float32_strict",
+      "manifest": "float32_strict.json",
+      "expected": "rejected",
+      "reason": "Explicit strict source dtype refusal"
+    },
+    {
+      "id": "float32_convert",
+      "manifest": "float32_convert.json",
+      "expected": "reference_passed",
+      "reason": "Existing mapping compatibility"
+    },
+    {
+      "id": "sample_variance",
+      "manifest": "sample_variance.json",
+      "expected": "rejected",
+      "reason": "Sample variance differs from registered population variance"
+    }
+  ]
+}

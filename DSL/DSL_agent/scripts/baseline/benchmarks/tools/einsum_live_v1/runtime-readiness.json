@@ -1,0 +1,18 @@
+{
+  "approved": false,
+  "binding": "30dadc006681501c55f424444fd26c20912225f915e831a7ec32febf0729b666",
+  "compiler_calls": 0,
+  "controls_passed": 61,
+  "current_identity": "ee05605763e8f26e106c8c48167afb7017cee7c6fa946093626dc9c35bf29995",
+  "encrypted_calls": 0,
+  "exact_frozen_requests": 8,
+  "executed": false,
+  "format": "poseidon-einsum-live-entry-readiness-v1",
+  "manifest_sha256": "c682918617545ec69b88f33926c3caef5ba09c1b476c4d4db1612ea82eb61d08",
+  "proposal_binding": "f6a8b322dbcbf083e8ce7e914940d0d5ca4f60cfb114a8b59c0fe5eaf287083d",
+  "proposal_sha256": "b70cf2d9d94fc6dc07c94beca32cda515f0dab1674424a8e97a11dc173b5f484",
+  "provider_calls": 0,
+  "report_binding": "096e1b636e6fb094e2133b96ca2fca5cf1678b14cb52386155ae9ce7d6050a7e",
+  "source_captures": 8,
+  "status": "ready_waiting_for_approval"
+}

@@ -1,0 +1,26 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "zeros_like_0", "status": "passed", "seconds": 3.6892554170044605, "bytes": 1200128, "budget_stop": null}
+{"case": "zeros_like_1", "status": "passed", "seconds": 2.047493799997028, "bytes": 1921024, "budget_stop": null}
+{"case": "zeros_like_2", "status": "passed", "seconds": 1.9490109800244682, "bytes": 1495040, "budget_stop": null}
+{"case": "ones_like_0", "status": "passed", "seconds": 1.9205289870151319, "bytes": 1200128, "budget_stop": null}
+{"case": "ones_like_1", "status": "passed", "seconds": 2.0258900740009267, "bytes": 1835008, "budget_stop": null}
+{"case": "ones_like_2", "status": "passed", "seconds": 1.9546169189852662, "bytes": 1507328, "budget_stop": null}
+{"case": "full_like_0", "status": "passed", "seconds": 1.9332457479904406, "bytes": 1212416, "budget_stop": null}
+{"case": "full_like_1", "status": "passed", "seconds": 3.7619257640035357, "bytes": 2330624, "budget_stop": null}
+{"case": "full_like_2", "status": "passed", "seconds": 1.918889764987398, "bytes": 1499136, "budget_stop": null}
+{"case": "new_zeros_0", "status": "passed", "seconds": 1.9292404539883137, "bytes": 1200128, "budget_stop": null}
+{"case": "new_zeros_1", "status": "passed", "seconds": 2.032373419002397, "bytes": 1822720, "budget_stop": null}
+{"case": "new_zeros_2", "status": "passed", "seconds": 2.2028546560031828, "bytes": 1482752, "budget_stop": null}
+{"case": "new_ones_0", "status": "passed", "seconds": 2.2187267399858683, "bytes": 1212416, "budget_stop": null}
+{"case": "new_ones_1", "status": "passed", "seconds": 4.516082955000456, "bytes": 1835008, "budget_stop": null}
+{"case": "new_ones_2", "status": "passed", "seconds": 1.9532623330014758, "bytes": 1482752, "budget_stop": null}
+{"case": "new_full_0", "status": "passed", "seconds": 1.963064632989699, "bytes": 1200128, "budget_stop": null}
+{"case": "new_full_1", "status": "passed", "seconds": 2.039258211007109, "bytes": 1835008, "budget_stop": null}
+{"case": "new_full_2", "status": "passed", "seconds": 1.9182424629980233, "bytes": 1499136, "budget_stop": null}
+{"case": "compat_v31_public_repeat_1", "status": "passed", "seconds": 1.924460067995824, "bytes": 1265664, "budget_stop": null}
+{"case": "compat_v31_public_tile_2", "status": "passed", "seconds": 1.9359754860051908, "bytes": 1277952, "budget_stop": null}
+{"case": "compat_v31_public_roll_2", "status": "passed", "seconds": 2.063339885993628, "bytes": 1785856, "budget_stop": null}
+{"passed": 21, "failed": 0, "not_run": 0, "source_capture_calls": 21, "results_bytes": 32194560, "global_result_bytes": 35571752960}

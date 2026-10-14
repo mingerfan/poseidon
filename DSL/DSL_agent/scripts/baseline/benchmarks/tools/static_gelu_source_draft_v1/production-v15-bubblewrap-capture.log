@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_gelu_source_draft_v1/capture_production_v15.py", line 3, in <module>
+    from benchmark_graph import digest
+ModuleNotFoundError: No module named 'benchmark_graph'

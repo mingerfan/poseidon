@@ -1,0 +1,478 @@
+{
+  "format": "poseidon-lane-schedule-diagnostics-v1",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "original_models": 12,
+  "unique_attempted_models": 6,
+  "compile_attempts": 12,
+  "compile_passed": 0,
+  "compile_failed": 12,
+  "actual_ciphertext_execution": false,
+  "agent_successes": 0,
+  "paid_calls": 0,
+  "reference_changed": false,
+  "parameters_changed": false,
+  "compiler_changed": false,
+  "runtime_changed": false,
+  "threshold_changed": false,
+  "compile_rows": [
+    {
+      "model_id": "bench_helper_0040",
+      "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "f82a857cd2479ccb5561d2566c4c5ab024d768aa6edc2cbd62915bd9c959518a",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wcr12ker",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wcr12ker/attempt-00/compile.log",
+      "compile_log_sha256": "105c9535776a972409ce5e074a21b1e322b19bcd50909ebf50262870732240b8",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %223 = \"earth.mul\"(%221, %222) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0044",
+      "model_sha256": "41682ade40051e88b1348bc657effe9a7b95756a5cc51cf13c406ecad41c705c",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "629da6247d40ac3470129cd1772ab9752bb578683ee20d699dbee6887452198d",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jjn93ae3",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jjn93ae3/attempt-00/compile.log",
+      "compile_log_sha256": "3956d507b53cb391cbc9f5d7ed3ae4e60e38b5d59045f4f21beea2da1652a748",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %224 = \"earth.mul\"(%222, %223) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0042",
+      "model_sha256": "819b7d137d193a8008187b7cd8b937fb583da74762763c27f3136090e9e946e0",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "e62108a38bced1c00330e28d08c83ee5b152b52c5fe1573a69ba04511c12a5d4",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-dgpeu6a0",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-dgpeu6a0/attempt-00/compile.log",
+      "compile_log_sha256": "105c9535776a972409ce5e074a21b1e322b19bcd50909ebf50262870732240b8",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %223 = \"earth.mul\"(%221, %222) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0046",
+      "model_sha256": "3409dead9f6affb47a174499cdf47c2494b9a2ac7d3404a6ed3f5cfa7b6db102",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "3b456a1e47a32b87c1b6a6adb4154ff40309518e28b94bc3d847b047ca2358f8",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_6a64a4_",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_6a64a4_/attempt-00/compile.log",
+      "compile_log_sha256": "3956d507b53cb391cbc9f5d7ed3ae4e60e38b5d59045f4f21beea2da1652a748",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %224 = \"earth.mul\"(%222, %223) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0043",
+      "model_sha256": "8af9d9afaddd02d4fe328c2bf730ab5135e75565d2e15788015b84390b42c559",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "fdca0c30c07fb7d9b94c5955325de9b31c8bca78708a984d90510bc00d4734e7",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-90lt1iay",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-90lt1iay/attempt-00/compile.log",
+      "compile_log_sha256": "105c9535776a972409ce5e074a21b1e322b19bcd50909ebf50262870732240b8",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %223 = \"earth.mul\"(%221, %222) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0047",
+      "model_sha256": "6183887fabc9e0f599d520685c583093619816ec0529a681291d71f56e4bbc0d",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "e7ebd7b9b963b3a0f5bc77cd1a078f855a56171fcbbbd61e81684ff8d88b00d5",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bd8d0502",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bd8d0502/attempt-00/compile.log",
+      "compile_log_sha256": "3956d507b53cb391cbc9f5d7ed3ae4e60e38b5d59045f4f21beea2da1652a748",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %224 = \"earth.mul\"(%222, %223) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0040",
+      "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "1f35fae898062e235436094d1cbde8caf0d39563e74ae025181e853c9baef6d7",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xgsp78_q",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xgsp78_q/attempt-00/compile.log",
+      "compile_log_sha256": "105c9535776a972409ce5e074a21b1e322b19bcd50909ebf50262870732240b8",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %223 = \"earth.mul\"(%221, %222) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0044",
+      "model_sha256": "41682ade40051e88b1348bc657effe9a7b95756a5cc51cf13c406ecad41c705c",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "1f586ee35bbbfaa085ff1242bbe4c3e40708a9744e63a1d4ea15fdeba7ba50ab",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ld9id7bx",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ld9id7bx/attempt-00/compile.log",
+      "compile_log_sha256": "3956d507b53cb391cbc9f5d7ed3ae4e60e38b5d59045f4f21beea2da1652a748",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %224 = \"earth.mul\"(%222, %223) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0042",
+      "model_sha256": "819b7d137d193a8008187b7cd8b937fb583da74762763c27f3136090e9e946e0",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "68e8db779e3c577bcffa273f94c3e080337c71ef0c924dad3646578afc4c8780",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ojuv2ej5",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ojuv2ej5/attempt-00/compile.log",
+      "compile_log_sha256": "105c9535776a972409ce5e074a21b1e322b19bcd50909ebf50262870732240b8",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %223 = \"earth.mul\"(%221, %222) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0046",
+      "model_sha256": "3409dead9f6affb47a174499cdf47c2494b9a2ac7d3404a6ed3f5cfa7b6db102",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "719b1aaccb21955e47ba7dcacd71927ce5fec1fb82eb49f74a2aff4d93847b8d",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-a6w722bz",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-a6w722bz/attempt-00/compile.log",
+      "compile_log_sha256": "3956d507b53cb391cbc9f5d7ed3ae4e60e38b5d59045f4f21beea2da1652a748",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %224 = \"earth.mul\"(%222, %223) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0043",
+      "model_sha256": "8af9d9afaddd02d4fe328c2bf730ab5135e75565d2e15788015b84390b42c559",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "0e531bfe598fb1d88e9b6843ea2e99af504824c347aab3d868d22db0b2c77de4",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-q3denq3p",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-q3denq3p/attempt-00/compile.log",
+      "compile_log_sha256": "105c9535776a972409ce5e074a21b1e322b19bcd50909ebf50262870732240b8",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %223 = \"earth.mul\"(%221, %222) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    },
+    {
+      "model_id": "bench_helper_0047",
+      "model_sha256": "6183887fabc9e0f599d520685c583093619816ec0529a681291d71f56e4bbc0d",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "candidate_sha256": "90582cf413c831a53d96ea0dfa8c5488c52e4bd6acaeb7f64231c58ebac8b23a",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-4vjez4oz",
+      "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-4vjez4oz/attempt-00/compile.log",
+      "compile_log_sha256": "3956d507b53cb391cbc9f5d7ed3ae4e60e38b5d59045f4f21beea2da1652a748",
+      "first_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %224 = \"earth.mul\"(%222, %223) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "input_log2_scales": [
+        90,
+        45
+      ],
+      "earth_consumed_level": 11,
+      "physical_level": 1,
+      "data_moduli": 2,
+      "capacity_bits": 120,
+      "product_log2_scale": 135,
+      "compiled": false,
+      "encrypted_execution": false
+    }
+  ],
+  "blocked_variants": [
+    {
+      "ast_nodes": 1866,
+      "compact_expanded_cost": 1063,
+      "compile_attempted": false,
+      "encrypted_execution": false,
+      "model_id": "bench_helper_0032",
+      "model_sha256": "e156be0aee814237c457e8642ec7242033ecacc2a5294ad3119a6a4516deda80",
+      "original_expanded_cost": 1063,
+      "paid_calls": 0,
+      "request_id": "1856fbdac55477fef9083c1effc7a7a6f2b1ab924f194cd04f8d522aa3170bf7",
+      "semantic_probe": {
+        "kind": "checked AST native vectors; not FHE or Agent evidence",
+        "max_absolute_error": 1.1102230246251565e-16,
+        "probes": 16,
+        "references": 2
+      },
+      "source_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-diagnostic-r294/bench_helper_0032.py",
+      "source_sha256": "b9a128a765f0dc50d1b9cddbdda4459a9db6a56aa04a3558e6a07eb58ca6ed19",
+      "status": "blocked_work_budget"
+    },
+    {
+      "ast_nodes": 1873,
+      "compact_expanded_cost": 1064,
+      "compile_attempted": false,
+      "encrypted_execution": false,
+      "model_id": "bench_helper_0036",
+      "model_sha256": "55617d86cbab85f76a4119fc24636ce649b8ad421832fd3ec8a9a237c56e8e53",
+      "original_expanded_cost": 1064,
+      "paid_calls": 0,
+      "request_id": "e566575ba5a9cb8ede0cebc98d005e8dd205930732657a515205cf307c327c18",
+      "semantic_probe": {
+        "kind": "checked AST native vectors; not FHE or Agent evidence",
+        "max_absolute_error": 1.1102230246251565e-16,
+        "probes": 16,
+        "references": 2
+      },
+      "source_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-diagnostic-r294/bench_helper_0036.py",
+      "source_sha256": "e748a02f0c21d7d645390c9345b867f47db647f5cf14511c8e42f77fcd25b2e9",
+      "status": "blocked_work_budget"
+    },
+    {
+      "ast_nodes": 1884,
+      "compact_expanded_cost": 1079,
+      "compile_attempted": false,
+      "encrypted_execution": false,
+      "model_id": "semantic_context_331124fd5981bd48a0c2971f",
+      "model_sha256": "6436d4ae89fecee80b2fafdcfb977b63574ef8a0baf8b008ec76d7306e29753f",
+      "original_expanded_cost": 1079,
+      "paid_calls": 0,
+      "request_id": "90a09c412f2692a7e1354e428710ae32aea7e45f8eb7b423711c656d62cb5d01",
+      "semantic_probe": {
+        "kind": "checked AST native vectors; not FHE or Agent evidence",
+        "max_absolute_error": 1.6653345369377348e-16,
+        "probes": 16,
+        "references": 2
+      },
+      "source_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-diagnostic-r294/semantic_context_331124fd5981bd48a0c2971f.py",
+      "source_sha256": "757d9e46ef8f06dfa0473252bd27bda060000ecb6b2d66597fc80cf58d54bb58",
+      "status": "blocked_work_budget"
+    },
+    {
+      "ast_nodes": 2067,
+      "compact_expanded_cost": 1601,
+      "compile_attempted": false,
+      "encrypted_execution": false,
+      "model_id": "bench_helper_0035",
+      "model_sha256": "fb2f6be2755870ab149ed7467b1c7887f6f5688c60359e38a4586e1a57366b88",
+      "original_expanded_cost": 1601,
+      "paid_calls": 0,
+      "request_id": "c7cb0d16bfe05aa3385b78cf7a31a35488624ddfdb7e79a8efbaf5c5e69437a9",
+      "semantic_probe": {
+        "kind": "checked AST native vectors; not FHE or Agent evidence",
+        "max_absolute_error": 1.6653345369377348e-16,
+        "probes": 16,
+        "references": 2
+      },
+      "source_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-diagnostic-r294/bench_helper_0035.py",
+      "source_sha256": "967413a6297f3515cedca7274128e1ddf14feaad18ccd24b51e0b203a1d1ef72",
+      "status": "blocked_work_budget"
+    },
+    {
+      "ast_nodes": 2074,
+      "compact_expanded_cost": 1602,
+      "compile_attempted": false,
+      "encrypted_execution": false,
+      "model_id": "bench_helper_0039",
+      "model_sha256": "4d3762fdfc4b6ea21e84698ea4564cb1ba0953189e0b0484f8618faff5f3aeda",
+      "original_expanded_cost": 1602,
+      "paid_calls": 0,
+      "request_id": "1d4ca592a3eb50367d9e5cc4a8f6e92b58d3d79cd782c6282a0fcdc92a2f56be",
+      "semantic_probe": {
+        "kind": "checked AST native vectors; not FHE or Agent evidence",
+        "max_absolute_error": 1.6653345369377348e-16,
+        "probes": 16,
+        "references": 2
+      },
+      "source_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-diagnostic-r294/bench_helper_0039.py",
+      "source_sha256": "b1abc4f4274db37bf1dd45472bcc822e99dfa3e84056eff3b0359e12fd33f005",
+      "status": "blocked_work_budget"
+    },
+    {
+      "ast_nodes": 2085,
+      "compact_expanded_cost": 1623,
+      "compile_attempted": false,
+      "encrypted_execution": false,
+      "model_id": "semantic_context_89458ebf15d877d81d6b8b2d",
+      "model_sha256": "0cc2ed35c5b3385913dc292f7183cbf1526d9e9b9df82dd418d4b461c5d55573",
+      "original_expanded_cost": 1623,
+      "paid_calls": 0,
+      "request_id": "4c17a199b64ab72518a287bb106a5465cbe565c9dd217a1a444e513f57da2e16",
+      "semantic_probe": {
+        "kind": "checked AST native vectors; not FHE or Agent evidence",
+        "max_absolute_error": 1.6653345369377348e-16,
+        "probes": 16,
+        "references": 2
+      },
+      "source_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-diagnostic-r294/semantic_context_89458ebf15d877d81d6b8b2d.py",
+      "source_sha256": "1623fc9c72147577abaf410ffb06070d7f0c0500f62c659e90deec9ffe08ba19",
+      "status": "blocked_work_budget"
+    }
+  ],
+  "scopes": {
+    "poseidon-lane-schedule-prepare-r289": {
+      "paid_calls": 0,
+      "planned": 12,
+      "ready": 6
+    },
+    "poseidon-lane-schedule-r290": {
+      "binding": "dd8c898aed6cdeb926c76a7d0e965844a5ec3d5a72c01baea8c157940a9dc904",
+      "blocked": 0,
+      "failed": 6,
+      "not_run": 0,
+      "paid_calls": 0,
+      "passed": 0,
+      "planned": 6,
+      "seconds": 11.774191029020585
+    },
+    "poseidon-lane-doubles-prepare-r291": {
+      "paid_calls": 0,
+      "planned": 12,
+      "ready": 6
+    },
+    "poseidon-lane-doubles-r292": {
+      "binding": "3097704ba5932d59cbc63020f3b8af863dff80806fce1ceaba7d323a2cf07e69",
+      "blocked": 0,
+      "failed": 6,
+      "not_run": 0,
+      "paid_calls": 0,
+      "passed": 0,
+      "planned": 6,
+      "seconds": 11.511106084042694
+    },
+    "poseidon-lane-compact-prepare-r293": {
+      "paid_calls": 0,
+      "planned": 12,
+      "ready": 6
+    },
+    "poseidon-lane-diagnostic-r294": {
+      "blocked": 6,
+      "paid_calls": 0,
+      "passed": 0,
+      "planned": 6
+    }
+  },
+  "preservation": [
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-schedule-prepare-r289/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-schedule-r290/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-doubles-prepare-r291/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-doubles-r292/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-compact-prepare-r293/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-lane-diagnostic-r294/report.json"
+  ],
+  "sources": {
+    "prepare_poseidon_lane_schedule.py": "88aab7d065ad1712fedb29c6a106f8602d13737514a2e60e1c68d63db5f06757",
+    "prepare_poseidon_lane_doubles.py": "9be2531320dc3ad0df0f91c151f3e7cdd4c5d1cdddb399ad1c7ba8aa2a2db5e7",
+    "prepare_poseidon_lane_compact.py": "8aa80fa4da8d6d8e2b2bae10555c20166a8bf26f8396d2de2f187089c82dd6a8"
+  },
+  "current_core": {
+    "files": 514,
+    "binding": "0d877eaacbb985a649e43584b59494b0f3525ca8acc564f0053ca5a4cd823de5",
+    "mismatch": []
+  },
+  "coverage": {
+    "accepted_models": 268,
+    "total_models": 280,
+    "accepted_tasks": 442,
+    "total_tasks": 459
+  },
+  "installs": 0,
+  "downloads": 0,
+  "commits": 0,
+  "pushes": 0
+}

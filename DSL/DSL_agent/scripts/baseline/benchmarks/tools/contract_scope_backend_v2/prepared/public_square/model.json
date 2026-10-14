@@ -1,0 +1,1 @@
+{"constants":{},"format":"poseidon-model-graph-v1","id":"pending","inputs":[{"name":"input0","shape":[4]}],"nodes":[{"attrs":{},"id":"n0","inputs":["input0"],"op":"square","outputs":["n0v0"]}],"outputs":[{"name":"output0","value":"n0v0"}]}

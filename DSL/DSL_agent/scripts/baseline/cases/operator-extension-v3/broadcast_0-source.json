@@ -1,0 +1,37 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "broadcast_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "operation",
+      "op": "broadcast",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "shape": [
+          3,
+          2
+        ]
+      },
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+test_plan (unittest.loader._FailedTest) ... ERROR
+test_pinned (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: test_plan (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_plan
+Traceback (most recent call last):
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_plan'
+
+
+======================================================================
+ERROR: test_pinned (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_pinned
+Traceback (most recent call last):
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_pinned'
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+FAILED (errors=2)

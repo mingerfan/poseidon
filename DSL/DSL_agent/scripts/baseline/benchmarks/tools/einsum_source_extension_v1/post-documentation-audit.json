@@ -1,0 +1,20 @@
+{
+  "diff_check": "passed",
+  "doc_sha256": {
+    "docs/baseline/mac-migration-handoff.md": "48ced1e4d3bcbfc1f6bc6cb8fd6eb9e006d946ad86389c9a1b8486dec185de70",
+    "docs/baseline/operator-decomposition-and-python.md": "876f9d1f9f2d0322b06fb889b09503ae3575b4301930b2f53c719ac606cc39bc",
+    "scripts/README.md": "9b2fc06303bf6d62fa8dbdfc11c0baacc9f59546404ec588b44b17a04ee21af4"
+  },
+  "format": "poseidon-einsum-v19-post-documentation-audit-v1",
+  "git": {
+    "branch": "lhy-agent-dsl",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "tracked_changes": 66,
+    "untracked_files": 5809
+  },
+  "old_proposal_unchanged": true,
+  "protected_sources_checked": 654,
+  "report_binding": "10676fe8da94895a0e47cd581d0b245192c4892e30a89b3bc71e746e46935cff",
+  "sdk_identity": "2132baea1319258bd677ca8bb7cb5d704906617406719979834479b42cbadf45",
+  "status": "passed"
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "poseidon_resnet20_s2c_first_acceptance_v1",
+  "date": "2026-09-14",
+  "device": "NVIDIA V100",
+  "configuration": {
+    "profile": "q50-fixed45",
+    "q": 50,
+    "p": 25,
+    "dnum": 2,
+    "h": 192,
+    "s2c_first": true,
+    "security_approved": false
+  },
+  "correctness": {
+    "integration": "PASS",
+    "first_failure": "none",
+    "completed_blocks": 9,
+    "bootstraps": 18,
+    "convolutions": 18,
+    "residual_adds": 9,
+    "input_encryptions": 27,
+    "intermediate_reencryptions": 0,
+    "true_label": 3,
+    "plain_prediction": 3,
+    "gpu_prediction": 3,
+    "max_logit_error": 0.01224267227883669,
+    "max_boundary_error": 0.0003693679798005443,
+    "oom": false
+  },
+  "bootstrap_offline_cache": {
+    "misses": 1,
+    "hits": 17
+  },
+  "bootstrap_synchronized_stage_timing_ms": {
+    "count": 18,
+    "sum": 5577.616708,
+    "mean": 309.86759488888885,
+    "median": 310.07034,
+    "min": 304.773896,
+    "max": 311.884059,
+    "stage_sum": {
+      "S2C": 393.54784,
+      "prepare": 3.450856,
+      "ModRaise": 10.534209,
+      "C2S": 2157.417711,
+      "EvalMod_real": 1494.934827,
+      "EvalMod_imag": 1463.818378,
+      "recombine_project_real": 53.912887
+    },
+    "cupti_activity_union": false,
+    "end_to_end_online_inference": false
+  },
+  "reference_end_to_end_estimate_seconds": {
+    "lower": 7.8,
+    "upper": 8.0,
+    "measured": false
+  },
+  "validation_wall_seconds": 4868.0,
+  "artifacts": {
+    "acceptance_binary_sha256": "cf50f4c502a8652dac4a087b923276b159ba733f848f3aa2e3377e134991ceab",
+    "log_sha256": "44129ecada743bd9414aa075bb0101c88df5ed64c2f845ccf216d10c77b2ddac"
+  },
+  "cupti_runtime_contract": {
+    "status": "PASS",
+    "gpu_total_ms": 0.040064,
+    "activities": 2,
+    "host_transfers": 0,
+    "scope": "collector contract only; not the full-network measurement"
+  }
+}

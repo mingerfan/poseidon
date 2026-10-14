@@ -1,0 +1,16 @@
+{
+  "approved": true,
+  "authorization": "human_explicit_current_plan_test_approval",
+  "authorization_record": "/home/lhohy/Code/Poseidon/docs/baseline/agent-static-broadcast-live-authorization-r1428.json",
+  "authorization_sha256": "cb62f62c35c6d9df451107a742d7aed556a2ae372047e9fa17ab8c164b025efb",
+  "format": "poseidon-static-broadcast-live-approval-v1",
+  "proposal_binding": "cecd9ba0273880891ae02bbe5cf29c67755d5b656f5cdfd25cb16df59817580a",
+  "proposal_sha256": "997420b7679ac663816eb19dd296bd82bf5db060516adbad0226f6ce23d2266e",
+  "runner_manifest_sha256": "f066f9317370321a167fa4b2ab92c1ef69fd50359dcce82dddbe34f181704bb7",
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/package_checks.py": "4b82156f7b40f1b78afd4990b64fa43f80630414b34e4f5c4cd42da6bb48f95a",
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/run.py": "08b07c36797b0db540e4b988b7f0641ed8650bc4fc3db8ec9ac144870090b5e6",
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/scope.py": "6ed1f1c9dc09617cc60dcf0637b3bd55a595c7f537513d878b9e030e41ada0b4",
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/test_scope.py": "117d7d921d465cb9c3b9f29834e075878913c1e1394a2cef8676ba8344a1b64e"
+  }
+}

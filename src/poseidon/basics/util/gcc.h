@@ -80,7 +80,7 @@ __extension__ typedef unsigned __int128 uint128_t;
 //#define POSEIDON_ADD_CARRY_UINT64(operand1, operand2, carry, result) _addcarry_u64(carry,
 // operand1, operand2, result) #endif
 
-#ifdef POSEIDON_USE_SUBBORROW_U64
+#if defined(POSEIDON_USE_SUBBORROW_U64) && defined(__x86_64__)
 #if ((__GNUC__ == 7) && (__GNUC_MINOR__ >= 2)) || (__GNUC__ >= 8)
 // The inverted arguments problem was fixed in GCC-7.2
 // (https://patchwork.ozlabs.org/patch/784309/)

@@ -1,0 +1,33 @@
+{
+  "authenticated_historical_source_metadata": 6,
+  "binding": "46aedfcd6f1c9c25e18ee83bdb70172dc1734c9ef314140ce40e85d53ee98826",
+  "compiler_calls": 0,
+  "draft_files": {
+    "build_fixtures.py": "4d4fa8f82706ad92e8090d861351cfe2c205d19a04e08437ee6aae01609ef778",
+    "capture_adapter.py": "21b607fd8745a18cfe5c091318e6707a6289570d5c1b1065ea1d287cedf77d4d",
+    "controls.py": "f72db36d160bdb20b1de8a61e8f415acaf6fde1ceb122c38f74132f05ca556de",
+    "fixture_model.py": "8c135fa6a51814adac6245d50b5d61691c3b8c03fcb22de7cc1e9cefefe7e5bc",
+    "public_state_binding.py": "e51ed98c3932ab732cedc4d74d058d05b4fd08c6ea190f81bec45d31e2c4d8e7",
+    "public_tensor_division.py": "7d2e3d10df6770c87fe3acb536c7384bd9e44c5818f12180f5a3090d0e922b8f",
+    "sandbox.py": "fc46328939e198a1147d043cb5998bb13ad64f9228d64fb9f703086940ed3e04",
+    "source_tests.py": "953ab2f0a98338e25f0eee58c3661504c29c7ee0feec659836ca3edf57290f50",
+    "staged_static_trace.py": "b8419374a861a15391d79be5b17c88f6e39b150fc8e5a22a781abe26e59173d4",
+    "test_authenticated_metadata.py": "78d83b9ab41179d4e49e642a36932e7b34b01f3f545d6764159073f32db18b7b",
+    "test_controls.py": "7127d4c55714f5744a89c9fa96871462314a063cd4e7e96cb42bf0a3eb60ee59",
+    "test_state_admission.py": "de3a12de9e7c455c2b3d769ce3d1473799fcfe4f26c4bababa7f2e8bd49d1430"
+  },
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-public-state-static-controls-v4",
+  "network_configuration_changes": 0,
+  "new_source_capture_calls": 0,
+  "original_float32_execution_certified": false,
+  "passed": 58,
+  "production_activation": false,
+  "provider_calls": 0,
+  "seconds": 0.018953810998937115,
+  "skipped": 0,
+  "status": "passed",
+  "tests_run": 58
+}

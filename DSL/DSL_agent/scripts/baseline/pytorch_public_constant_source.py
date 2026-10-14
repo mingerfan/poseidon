@@ -1,0 +1,6 @@
+"""Explicit static public-constructor intake identities."""
+SOURCE_FORMAT = "poseidon-trusted-pytorch-v32"
+PACKAGE_FORMAT = "poseidon-trusted-pytorch-provenance-v32"
+REFERENCE_FORMAT = "poseidon-trusted-pytorch-reference-v32"
+CAPTURE_FORMAT = "poseidon-public-expression-source-capture-v9"
+VALUE_POLICY = "poseidon-public-value-expressions-v5"

@@ -1,0 +1,26 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-einsum-live-runtime-controls-v1",
+  "http_attempts": 0,
+  "manifest_sha256": "c682918617545ec69b88f33926c3caef5ba09c1b476c4d4db1612ea82eb61d08",
+  "proposal_binding": "f6a8b322dbcbf083e8ce7e914940d0d5ca4f60cfb114a8b59c0fe5eaf287083d",
+  "provider_calls": 0,
+  "seconds": 1.0664044580007612,
+  "skipped": 0,
+  "status": "passed",
+  "tests_run": 61,
+  "tools": {
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/package_checks.py": "79105ec8ff6a72a66325251f81b6e23f8179d30c30c07c4a1975c12b33104c5c",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/prepare.py": "14e9548fe0074e24200e56c1537b0386a43a86a5f499e782196cf88f2b3e122c",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/run.py": "27d61e74af101594e1d4c950b9d6ceceb81976ff598507ae2d21fd970dbaa2df",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/runner_scope.py": "878980fba8ade1a235173b0823a6d91e5e7ccb462e2a04de3354f17b14050d28",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/runtime_controls.py": "681ca3bbc912f9dd1589be2cd4bfe536f8dcffdf7649ef43c9d7a8a4c2d2ac84",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/scope.py": "3e1baddf968e1547ccac27bcb8d038ce2f5557c9e70ccc84517c9b0ec72fe268",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/test_run.py": "a3bc71a735b611ec22e672f5beb74d59acad2025934cbc0225591cbac4850d34",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/test_runner_scope.py": "0abc2abbf33eed8d07107049736d4b78208d8993d049a16542f58e349ec2d4bf",
+    "scripts/baseline/benchmarks/tools/einsum_live_v1/test_scope.py": "c5253b68349517241aef7e4da5ee1ec47be968f1510980819e2c3063ff91eb2c"
+  }
+}

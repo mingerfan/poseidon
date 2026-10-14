@@ -1,0 +1,27 @@
+--- a/scripts/baseline/pytorch_model_capture.py
++++ b/scripts/baseline/pytorch_model_capture.py
+@@ -6,7 +6,8 @@
+ 
+ def capture(module, inputs, outputs, *, approximations=None, resource_profile="legacy-v1",
+             dtype_policy="legacy-float64-v1", preserve_output_structure=False, record_state_sources=False,
+-            capture_policy="symbolic-v1", approximation_policy="operator-defaults-v1", matrix_policy="rank-two-three-v1"):
++            capture_policy="symbolic-v1", approximation_policy="operator-defaults-v1", matrix_policy="rank-two-three-v1", functional_policy="registered-v2"):
++    require(functional_policy in ("registered-v2","adaptive-pool-static-prototype-v1"),"Functional capture policy")
+     from model_resources import resolve
+     import math
+     limits=resolve(resource_profile)
+@@ -506,6 +507,14 @@
+                      dict(kernel=pair(kernel,rank),stride=pair(stride,rank),
+                           padding=pair(static_value(values["padding"]),rank),
+                           count_include_pad=values["count_include_pad"]))
++            elif functional_policy=="adaptive-pool-static-prototype-v1" and target in (
++                    torch.nn.functional.adaptive_avg_pool1d,torch.nn.functional.adaptive_avg_pool2d):
++                rank=1 if target is torch.nn.functional.adaptive_avg_pool1d else 2
++                values=static_arguments(node,("input","output_size"),(None,None),"Functional adaptive average pool")
++                require(isinstance(values["input"],torch.fx.Node),"Adaptive pool tensor input")
++                require(len(shape(values["input"]))==rank+2,"Adaptive pool N,C,spatial rank")
++                emit(node,"adaptive_avg_pool",[ref(values["input"])],
++                     dict(output_size=pair(static_value(values["output_size"]),rank)))
+             elif target is torch.nn.functional.batch_norm:
+                 values=static_arguments(node,
+                     ("input","running_mean","running_var","weight","bias","training","momentum","eps"),

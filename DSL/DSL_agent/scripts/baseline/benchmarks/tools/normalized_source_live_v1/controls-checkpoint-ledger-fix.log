@@ -1,0 +1,21 @@
+test_changed_file (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_increased_deadline (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_nonoriginal_log (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_omitted_file (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_original (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_wrong_context_order (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_wrong_identity (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_wrong_source_directory (test_capture_checkpoint.CaptureCheckpoint) ... ok
+test_changed_file (test_capture_checkpoint.ExtraCheckpoint) ... ok
+test_increased_deadline (test_capture_checkpoint.ExtraCheckpoint) ... ok
+test_nonoriginal_log (test_capture_checkpoint.ExtraCheckpoint) ... ok
+test_omitted_file (test_capture_checkpoint.ExtraCheckpoint) ... ok
+test_original (test_capture_checkpoint.ExtraCheckpoint) ... ok
+test_wrong_context_order (test_capture_checkpoint.ExtraCheckpoint) ... ok
+test_wrong_identity (test_capture_checkpoint.ExtraCheckpoint) ... ok
+test_wrong_source_directory (test_capture_checkpoint.ExtraCheckpoint) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.278s
+
+OK

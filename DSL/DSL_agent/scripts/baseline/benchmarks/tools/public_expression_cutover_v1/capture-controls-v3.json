@@ -1,0 +1,44 @@
+{
+  "compiler_calls": 0,
+  "counters": {
+    "compared_values": 1712,
+    "models": 18,
+    "package_provenance_checks": 18,
+    "pure_reloads": 18,
+    "reference_groups": 288
+  },
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-public-expression-capture-controls-v1",
+  "http_attempts": 0,
+  "production_intake_connected": true,
+  "provider_calls": 0,
+  "runtime": {
+    "cuda": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "seconds": 15.507570477999252,
+  "skipped": 0,
+  "sources": {
+    "benchmarks/tools/public_expression_cutover_v1/capture_controls.py": "b3922f9402f694e86d97ecf7d824401b2ace604432def751121441ddcdb12b56",
+    "benchmarks/tools/public_expression_cutover_v1/test_public_capture.py": "b80cce228578046800bd7b8fc9b1dc3e2054b14902222b9c70bc8f6151cfe8b2",
+    "candidate_bundle.py": "697969dd670f1a9f26521b64d32077ef7e35de081ad3c7ef312686eb3147361c",
+    "pytorch_model_intake.py": "d2ef7d63a8a5b35704c30978f113cb3dd0767c7c4af063bed295e0f8230e5c7d",
+    "pytorch_ordered_contract.py": "3f5299093260d0bb74caca27f9d95a7c8d6fa8d6d0abe1c94c834e6abfc3dd9a",
+    "pytorch_ordered_intake.py": "93b2318b70e4af9a81dadef04434645f8ae4d3979d912f69731b0b1a687f9bff",
+    "pytorch_public_arithmetic_capture.py": "3cb07144f732769762ead0b0f933542a20e937f721825949e4e5c8579dd5d66f",
+    "pytorch_public_expression_capture.py": "b45d11229475a8593163fb445990c657a3aa6280a457382e3bf3a980fefb1862",
+    "pytorch_public_expression_flow.py": "d2bd5962d250b5bb94ba5b0e23d7bf25cb13450d0bd4c10a4f36e33e86e62738",
+    "pytorch_public_expression_metadata.py": "5b0df536f9739b9209a8805b129abd968ea809ac16b1001a37577dc73d856c43",
+    "pytorch_public_value_ops.py": "586cc9da0742d50628e6ad4f0350d81792b5d1223d3a208a284c0fe9a8a79a63",
+    "pytorch_static_trace.py": "0b505d8234fcdc1980c226039686925125328c81a85f26a778d5ddfaa9963607"
+  },
+  "tests": 12
+}

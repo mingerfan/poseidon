@@ -1,0 +1,2 @@
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=0.781821 runtime_seconds=0.0876135 initialization_seconds=0.148774 online_execution_seconds=0.0876135 boot_seconds=0 python_max_abs=0.524794 max_imaginary=7.70514e-07
+report=test-results/memory-v1-review/1gpu/mlp.reuse.numerical.json

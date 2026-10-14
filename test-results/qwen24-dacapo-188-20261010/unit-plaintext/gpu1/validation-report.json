@@ -1,0 +1,17 @@
+{
+  "devices": 1,
+  "returncode": 0,
+  "elapsed_seconds": 445.7108133388683,
+  "user_seconds": 522.997544,
+  "system_seconds": 126.422259,
+  "max_rss_MiB": 18946.2578125,
+  "command": [
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+    "--library-path",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+    "/opt/conda/bin/python",
+    "/tmp/poseidon-qwen24-IUOMH1/validate_unit_plans.py",
+    "--devices",
+    "1"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "backend_changes": false,
+  "format": "poseidon-staged-agent-source-fix-v1",
+  "new_files": {
+    "candidate_check_diagnostic.py": null,
+    "unified_binding_guidance.py": null
+  },
+  "original_files": {
+    "scripts/baseline/application_component.py": "757fcdd553630ca62458644f80a34f59ec45428d16cb7e3e10b7c7a631ef03cb",
+    "scripts/baseline/application_diagnostics.py": "92e5f0dad73eb19ca374480befb5697844b0dd2590b39ec06bc734d6614090f9",
+    "scripts/baseline/component_contract.py": "7ee006daaf7ef66a952c3442e2d5c235a6e6e5304d941453443fd4239c80198a",
+    "scripts/baseline/decorated_functions.py": "6338d89b5f86c3ffe06f18c92b18a2cfa175b77de45b5a48cf5f34c719568e96",
+    "scripts/baseline/native_array_core.py": "e58af49867951c4d283d4337ae0b2351fae472379fea1c573f6209cf0812f80d",
+    "scripts/baseline/run_candidate.py": "c706172f40456e44f42e77bd439f27898d4adefa7ad5a7313162253ca6140f0e",
+    "scripts/baseline/sandbox_policy.py": "2d67eb3e99bc0353a18b1b29caa00f37aa835b6d596073b35d4f9a2d10bae409",
+    "scripts/baseline/unified_graph_contract.py": "c6c9dd698c590419de3df6a977773de9b55f6e97da300fcbac792360e2e33f5c",
+    "scripts/baseline/validation_adapter.py": "d4f358afbc3bb3bc010c15ba609544ce785aa8fd8d12ea4871371c0c2fad7404"
+  },
+  "paid_calls": 0,
+  "pretest_revisions": "initial-r1106",
+  "revision": "wired-opt-in-v11; defaults and all old request recipes preserved",
+  "running_batch_binding": "81c396aeb46344fdce88d746ea781e784afd0647b58d37ff848027028d57c01e",
+  "scope": "Agent-only error locations, syntax-identical duplicate detection and public context draft. No production application while live sources are frozen.",
+  "stage": "not_applied",
+  "staged_files": {
+    "targets/application_component.py": "75e5664cf738ef16c7035c6b4d3ad4eab69c6f3b3ad65ea3a90111211830bf6f",
+    "targets/application_diagnostics.py": "7ccbfb095c5d64acd6aad9bf8a9ce29d62abe6870083524bec39eb0e946bb0f0",
+    "targets/candidate_check_diagnostic.py": "896e07dd0069070831575a072ca106b1e95f5b2b59bcf34f2170e19c0ae11b3b",
+    "targets/component_contract.py": "50b2ed32e17c2d82055540750db0ef9bab322f57568f334f3746c468b6ba480e",
+    "targets/decorated_functions.py": "3b7eee5fa8314999a1f2e95e1defdfb20cba16f79a526b9a5e7fbffd29f8a82e",
+    "targets/native_array_core.py": "b1918062c25dfe0155b7d840ef5c6eee0949daaf6e88e37b7b7c7d93b4fa7799",
+    "targets/run_candidate.py": "e5200e7272a7ab13bf12592324f05c88d1e3bcb6ee5ad2e0d6ad10b6dee37612",
+    "targets/sandbox_policy.py": "12af334efac84d2ea2c92c6bc83bae263809aff89687888b4b414896a819600a",
+    "targets/unified_binding_guidance.py": "82dd26d77a81f1d4fe635bd2d795bb0a489d171ff6f0ca624e6bd169cbadcc79",
+    "targets/unified_graph_contract.py": "0c330d7d0f681b0d03c8c6b4deb05192beed5fbfd97f81d08fdf66d13cb0b17a",
+    "targets/validation_adapter.py": "8baf1a5893c782d0cb96317031123f37dc38c208ae53cda949828162a6df184d"
+  }
+}

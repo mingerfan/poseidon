@@ -1,0 +1,93 @@
+test_bound_plan_hash_and_artifact_gate_cannot_be_bypassed (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_checked_bundle_length_is_used (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_custom_analysis_cannot_expand_execution_limit (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_exact_boundary_and_unknown_peak (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_io_failure_remains_service_environment_not_candidate (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_known_over_limit_records_analysis_and_rejects_without_execution (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_native_file_fresh_check_is_stable_and_tamper_rejected (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_precheck_symlink_and_invalid_policy_are_integrity_errors (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_second_artifact_audit_detects_changed_gate (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_source_policy_and_backend_identity_drift (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_explicit_compile_grade_keeps_original_contract (test_compiled_execution_precheck.CandidateAdapterControls) ... ok
+test_integrity_rejection_does_not_trigger_candidate_repair (test_compiled_execution_precheck.CandidateAdapterControls) ... ok
+test_resource_rejection_preserves_real_stage_facts (test_compiled_execution_precheck.CandidateAdapterControls) ... ok
+test_central_execute_blocks_before_native_runner (test_compiled_execution_precheck.NativeExecutionControls) ... ok
+test_checked_return_includes_lower_bound_not_peak_claim (test_compiled_execution_precheck.NativeExecutionControls) ... ok
+test_precheck_mutation_and_private_key_executor_are_rejected (test_compiled_execution_precheck.NativeExecutionControls) ... ok
+test_ordered_package_tree_is_preserved_v12_through_v15 (test_compiled_execution_precheck.OutputProvenanceControls) ... ok
+test_binding_and_exact_integer_context_are_required (test_compiled_execution_precheck.TypedResourceControls) ... ok
+test_external_input_location_is_public_candidate (test_compiled_execution_precheck.TypedResourceControls) ... ok
+test_analysis_does_not_load_unchecked_packages_or_execute (application_planning.tests.test_compiled_resources.CompiledAnalysisContractTests) ... ok
+test_blocked_budget_is_terminal_for_host_gate (application_planning.tests.test_compiled_resources.CompiledAnalysisContractTests) ... ok
+test_forged_fields_or_stale_identity_are_not_reused (application_planning.tests.test_compiled_resources.CompiledAnalysisContractTests) ... ok
+test_matching_report_is_checked_before_host_execution (application_planning.tests.test_compiled_resources.CompiledAnalysisContractTests) ... ok
+test_parsed_snapshot_must_match_bound_artifact_bytes (application_planning.tests.test_compiled_resources.CompiledArtifactSnapshotTests) ... ok
+test_artifact_symlink_and_size_bound_are_preserved (application_planning.tests.test_compiled_resources.CompiledPlanProtocolTests) ... ok
+test_duplicate_keys_and_nonfinite_numbers_are_rejected (application_planning.tests.test_compiled_resources.CompiledPlanProtocolTests) ... ok
+test_runtime_plan_uses_artifact_capacity_not_response_capacity (application_planning.tests.test_compiled_resources.CompiledPlanProtocolTests) ... ok
+test_all_definitions_remain_even_when_no_longer_used (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_bundle_length_cannot_be_unknown_or_over_capacity (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_bundle_slot_content_is_deduplicated_but_encoded_values_are_not (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_duplicate_final_output_is_one_existing_object (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_exact_boundary_and_first_exceeding_definition (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_inline_payloads_in_both_phases_are_retained (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_invalid_graph_definitions_are_rejected (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_invalid_metadata_and_parameters_are_rejected (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_requested_rotation_steps_are_unique_and_sorted (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_table_of_coefficients_components_and_levels (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_unused_descriptors_have_no_allocated_payload (application_planning.tests.test_compiled_resources.CompiledStorageTests) ... ok
+test_parse_failure_and_integrity_are_independent (test_validation_adapter.AdapterTests) ... ok
+test_nine_compositions_and_both_witnesses (test_validation_adapter.CompositionTests) ... ok
+test_other_upstream_callee_is_not_silently_combined (test_validation_adapter.CompositionTests) ... ok
+test_unopted_and_public_chunk_compositions_rejected (test_validation_adapter.CompositionTests) ... ok
+test_unused_native_and_unused_helper_do_not_cross_credit (test_validation_adapter.CompositionTests) ... ok
+test_artifact_failure_and_integrity_are_distinct (test_validation_adapter.QualificationStageTests) ... ok
+test_numeric_failure_retains_completed_execution (test_validation_adapter.QualificationStageTests) ... ok
+test_list_comprehension_preserves_cipher_cells (test_validation_adapter.RemainingWitnessTests) ... ok
+test_mapping_update_keeps_keys_and_write_contribution (test_validation_adapter.RemainingWitnessTests) ... ok
+test_mapping_write_keeps_inserted_key (test_validation_adapter.RemainingWitnessTests) ... ok
+test_omitted_construct_has_explicit_reason (test_validation_adapter.RemainingWitnessTests) ... ok
+test_slice_write_keeps_cipher_element_type (test_validation_adapter.RemainingWitnessTests) ... ok
+test_sort_key_order_and_commutative_negative (test_validation_adapter.RemainingWitnessTests) ... ok
+test_starred_sequence_arguments (test_validation_adapter.RemainingWitnessTests) ... ok
+test_values_keep_length_and_symbolic_cells (test_validation_adapter.RemainingWitnessTests) ... ok
+test_bad_output_count_and_nonfinite (test_program_execution.ProgramInputTests) ... ok
+test_chunk_tail (test_program_execution.ProgramInputTests) ... ok
+test_named_inputs_and_zero_are_independent (test_program_execution.ProgramInputTests) ... ok
+test_named_outputs_restore_tensor_shape (test_program_execution.ProgramInputTests) ... ok
+test_sample_count (test_program_execution.ProgramInputTests) ... ok
+test_signature_shape_and_dtype (test_program_execution.ProgramInputTests) ... ok
+test_missing_approximation_and_unknown_policy_rejected (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... ok
+test_old_capture_none_hash_and_default_policy_unchanged (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... ok
+test_old_capture_tanh_still_rejected (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... ok
+test_polynomial_and_source_identity_tampering_rejected (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... ok
+test_six_actual_capture_contexts_match_source_and_two_polynomial_references (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... ok
+test_submit_source_v15_uses_existing_application_boundary (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... <unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+<unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+ok
+test_tanh_is_distinct_from_erf_source_function (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... ok
+test_v14_rejects_v15_policy_metadata (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... ok
+test_v15_manifest_and_current_capture_provenance_reconstruct (test_pytorch_gelu_source_capture.GeluSourceCaptureTests) ... <unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+<unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+<unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+<unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+<unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+<unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+<unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+ok
+test_pytorch_approximation_reference (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: test_pytorch_approximation_reference (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_pytorch_approximation_reference
+Traceback (most recent call last):
+  File "/nix/store/yzxzhwpji1qwaf0nll86ivha7g8in9wv-python3-3.10.14/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_pytorch_approximation_reference'
+
+
+----------------------------------------------------------------------
+Ran 69 tests in 2.442s
+
+FAILED (errors=1)

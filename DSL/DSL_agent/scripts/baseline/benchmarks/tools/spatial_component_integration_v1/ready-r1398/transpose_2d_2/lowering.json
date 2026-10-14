@@ -1,0 +1,27 @@
+{
+  "centered_pairs": 0,
+  "semantic_pairs": true,
+  "scheduling": {
+    "version": "capacity-algebraic-schedule-v4",
+    "applied": false,
+    "rejected": "AST node limit"
+  },
+  "strategy": "capacity-chunks-v10",
+  "request_changed": false,
+  "reference_changed": false,
+  "physical_input_chunks": 6,
+  "physical_output_chunks": 6,
+  "neutral_factors": {
+    "version": "capacity-bound-identities-v1",
+    "applied": true,
+    "removed_multiplications": 14,
+    "scalar_multiplications": 0,
+    "vector_multiplications": 14,
+    "bound_names": [
+      "pv0"
+    ],
+    "request_changed": false,
+    "reference_changed": false,
+    "provider_candidate_rewritten": false
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "backend_changes": false,
+  "changes": [
+    "Keep original bool bytes and state identity.",
+    "Bind derived float64 masks to exact false=0/true=1 conversion.",
+    "Preserve and replay all graph effects; erase only unused original bool get_attr nodes.",
+    "Reuse existing decomposition/reference/backend without modification."
+  ],
+  "copied_source": {
+    "capture_adapter.py": "21b607fd8745a18cfe5c091318e6707a6289570d5c1b1065ea1d287cedf77d4d",
+    "public_state_binding.py": "e51ed98c3932ab732cedc4d74d058d05b4fd08c6ea190f81bec45d31e2c4d8e7",
+    "public_tensor_division.py": "7d2e3d10df6770c87fe3acb536c7384bd9e44c5818f12180f5a3090d0e922b8f",
+    "sandbox.py": "fc46328939e198a1147d043cb5998bb13ad64f9228d64fb9f703086940ed3e04",
+    "staged_static_trace.py": "b8419374a861a15391d79be5b17c88f6e39b150fc8e5a22a781abe26e59173d4"
+  },
+  "existing_failed_cases_preserved": [
+    "bool_multiply",
+    "mask_index_residual"
+  ],
+  "format": "poseidon-public-boolean-agent-draft-v1",
+  "initial_control_review": {
+    "cause": "Synthetic tests shared nested source and normalized objects; mutation rejected at the earlier source identity gate.",
+    "errors": 0,
+    "failed": 2,
+    "fix": "Use independent nested snapshots, matching serialized capture records.",
+    "passed": 28,
+    "record": "controls-static-v1.json",
+    "safety_change": "Bound raw and projected FX inventories by the existing expanded-node resource limit.",
+    "skipped": 0
+  },
+  "production_activation": false,
+  "provider_calls": 0,
+  "reference_changes": false,
+  "scope": "Direct authenticated public boolean tensors multiplied by encrypted float tensors.",
+  "state_projection_review": {
+    "cause": "Original bool buffers become unreferenced after explicit numeric-mask derivation.",
+    "check_not_relaxed": true,
+    "cumulative_wall_ceiling": 480,
+    "failure": "Fused matrix original source identity",
+    "fix": "Construct an equivalent GraphModule from the unchanged graph; bind effective state separately from authenticated original state.",
+    "initial_attempt_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-boolean-source-draft-v1/report.json",
+    "model_files_unchanged": true,
+    "new_adapter_sha256": "35b4b85f9e9db2a75a9c80ccf2fbba760703f533fefb77206096540e5a5f0767",
+    "old_adapter_sha256": "ad524739cbc59f3724b3431a9b181b33f7e6d7e28f0a226e87df15d9ce159e77",
+    "prior_seconds": 195.1824116089998,
+    "references_unchanged": true,
+    "remaining_seconds": 284
+  }
+}

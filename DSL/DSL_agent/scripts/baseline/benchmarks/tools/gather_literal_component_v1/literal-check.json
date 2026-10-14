@@ -1,0 +1,15 @@
+{
+  "api_calls": 0,
+  "cases": [
+    {
+      "case": "explicit",
+      "status": "passed"
+    },
+    {
+      "case": "inferred",
+      "status": "passed"
+    }
+  ],
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

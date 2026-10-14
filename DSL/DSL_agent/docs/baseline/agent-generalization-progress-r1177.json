@@ -1,0 +1,63 @@
+{
+  "alias_capture": {
+    "capture_contexts": 42,
+    "capture_groups": 672,
+    "capture_values": 8848,
+    "compilations": 0,
+    "encrypted_executions": 0,
+    "errors": 0,
+    "failed": 0,
+    "hecate_traces": 0,
+    "max_decomposition": 2.7755575615628914e-17,
+    "max_ideal": 2.7755575615628914e-17,
+    "max_probe_approximation": 0.12037448379162087,
+    "passed": 32,
+    "production_integrated": false,
+    "provider_calls": 0,
+    "reference_contexts": 28,
+    "reference_groups": 448,
+    "reference_values": 6000,
+    "skipped": 0
+  },
+  "audited_agent_packages": {
+    "groups": 343,
+    "maximum": 1.0207768190717559e-06,
+    "passed": 49,
+    "values": 2366
+  },
+  "backend_changes": false,
+  "commits": 0,
+  "downloads": 0,
+  "format": "poseidon-generalization-progress-v1",
+  "hash_checks": {
+    "backend": 648,
+    "references": 6,
+    "retained_hashes": 1375,
+    "source_hashes": 695,
+    "tool_hashes": 3
+  },
+  "installation": 0,
+  "local": {
+    "branch": "lhy-agent-dsl",
+    "disk_free": 47145041920,
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "tracked_modified": 63
+  },
+  "new_paid_scope": 0,
+  "parameters_changed": false,
+  "pushes": 0,
+  "snapshot": {
+    "active": 1,
+    "binding": "0623167de71327bb1d2ec15a2d0563b74ee1c5bd1d35acf61f072027e2521c1b",
+    "failed": 13,
+    "matrix_deadline": 1791387505.0085838,
+    "not_started": 13,
+    "passed": 49,
+    "planned": 76,
+    "reserved_generations": 109,
+    "reserved_http_attempts": 109,
+    "root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approved-unstarted-continuation-r1174",
+    "time_utc": "2026-10-07T07:54:57.846630+00:00"
+  },
+  "threshold_changed": false
+}

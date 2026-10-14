@@ -1,0 +1,240 @@
+[
+  {
+    "case": "tensor_square_division",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2,
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "weights": {},
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  return torch.pow(x,2)/2\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "linear_fourth_power_division",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "weights": {
+      "weight": [
+        [
+          0.17,
+          -0.09
+        ],
+        [
+          0.08,
+          0.11
+        ]
+      ]
+    },
+    "source": "import torch\nclass Model(torch.nn.Module):\n def __init__(self):\n  super().__init__()\n  self.register_buffer('weight',torch.zeros((2, 2),dtype=torch.float64))\n def forward(self,x):\n  a=torch.nn.functional.linear(x,self.weight)\n  return torch.pow(a,4)/2\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "scalar_shared_power_division",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "updated",
+      "scalar"
+    ],
+    "weights": {},
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  a,b=x.unbind()\n  a.pow_(4)\n  b.div_(2)\n  return x,a\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "snapshot_fourth_power_division",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "snapshot",
+      "updated"
+    ],
+    "weights": {},
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  a=x.clone()\n  x.pow_(4)\n  x.div_(2)\n  return a,x\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "diagonal_square_division",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2,
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "updated",
+      "diagonal"
+    ],
+    "weights": {},
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  d=torch.einsum(\"ii->i\",x)\n  d.pow_(2)\n  d.div_(2)\n  return x,d\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "public_buffer_division_square",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "weights": {
+      "gain": 0.375
+    },
+    "source": "import torch\nclass Model(torch.nn.Module):\n def __init__(self):\n  super().__init__()\n  self.register_buffer('gain',torch.zeros((),dtype=torch.float64))\n def forward(self,x):\n  x.div_(self.gain)\n  return x.pow(2)\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "method_power_shape_division",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "weights": {},
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  a=x.pow(exponent=4)\n  return a.divide(2).reshape(a.numel())\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "multi_input_power_division",
+    "format": "poseidon-trusted-pytorch-v21",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      },
+      {
+        "name": "y",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "main",
+      "secondary"
+    ],
+    "weights": {},
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x,y):\n  a=torch.true_divide(x,2)\n  b=y.pow(2)\n  return dict(main=a+b,secondary=torch.stack([a,b]))\ndef make():return Model().eval()\n"
+  },
+  {
+    "case": "scalar_shared_write",
+    "format": "poseidon-trusted-pytorch-v20",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          2
+        ]
+      }
+    ],
+    "outputs": [
+      "scalar",
+      "updated"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def forward(self,x):\n  a,b=x.unbind()\n  a.add_(b*.125)\n  return a,x\ndef make():return Model()\n",
+    "weights": {}
+  },
+  {
+    "case": "legacy_mlp",
+    "format": "poseidon-trusted-pytorch-v18",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          4
+        ]
+      }
+    ],
+    "outputs": [
+      "out"
+    ],
+    "source": "import torch\nclass Model(torch.nn.Module):\n def __init__(self):\n  super().__init__()\n  self.register_buffer(\"w1\",torch.zeros((4,4),dtype=torch.float64))\n  self.register_buffer(\"w2\",torch.zeros((2,4),dtype=torch.float64))\n def forward(self,x):\n  x=torch.nn.functional.linear(x,self.w1)\n  return torch.nn.functional.linear(x.square(),self.w2)\ndef make():return Model().eval()\n",
+    "weights": {
+      "w1": [
+        [
+          0.125,
+          0.03125,
+          -0.0625,
+          0.09375
+        ],
+        [
+          -0.09375,
+          0.1875,
+          0.0625,
+          -0.03125
+        ],
+        [
+          0.0625,
+          -0.125,
+          0.15625,
+          0.03125
+        ],
+        [
+          0.09375,
+          0.0625,
+          -0.03125,
+          0.125
+        ]
+      ],
+      "w2": [
+        [
+          0.1875,
+          -0.09375,
+          0.125,
+          0.0625
+        ],
+        [
+          -0.0625,
+          0.15625,
+          0.09375,
+          -0.125
+        ]
+      ]
+    }
+  }
+]

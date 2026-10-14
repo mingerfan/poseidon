@@ -1,0 +1,12 @@
+{
+  "agent_status": "unverified",
+  "cases": [
+    "resize_1d_linear_0.json",
+    "resize_2d_bilinear_0.json",
+    "transpose_2d_1.json"
+  ],
+  "encrypted_status": "unverified",
+  "format": "poseidon-spatial-examples-v1",
+  "graph_format": "poseidon-operator-graph-v4",
+  "reference_status": "passed"
+}

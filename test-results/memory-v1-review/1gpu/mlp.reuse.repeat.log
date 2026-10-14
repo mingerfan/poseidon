@@ -1,0 +1,2 @@
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.0817426 cross_rank_communication=0
+report=test-results/memory-v1-review/1gpu/mlp.reuse.repeat.json

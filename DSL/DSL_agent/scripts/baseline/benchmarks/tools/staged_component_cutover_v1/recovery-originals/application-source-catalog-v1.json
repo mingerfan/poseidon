@@ -1,0 +1,73 @@
+{
+  "format": "poseidon-identity-source-catalog-v1",
+  "roots": {
+    "generation": [
+      "application_component.py",
+      "application_policy.py",
+      "component_contract.py",
+      "candidate_contract.py",
+      "deepseek_provider.py",
+      "deepseek_http_worker.py",
+      "agent_response_provenance.py",
+      "application_model_source.py"
+    ],
+    "compilation": [
+      "component_backend.py",
+      "validation_adapter.py",
+      "candidate_trace.py",
+      "poseidon_runtime_compile.py",
+      "poseidon_artifact_gate.py",
+      "poseidon_candidate_sandbox.py"
+    ],
+    "execution": [
+      "poseidon_package.py",
+      "poseidon_validation.py",
+      "poseidon_candidate_sandbox.py",
+      "native_execution_slots.py"
+    ],
+    "validation": [
+      "candidate_bundle.py",
+      "audit_unified_candidate.py",
+      "unified_graph_prepare.py",
+      "numerical_results.py",
+      "model_source_provenance.py"
+    ]
+  },
+  "optional_roots": {
+    "execution": [
+      "program_execution.py"
+    ]
+  },
+  "dynamic_loads": [
+    {
+      "module": "candidate_trace.py",
+      "expression": "importlib.util.spec_from_file_location('hecate_expr', '/frontend/hecate/expr.py')",
+      "authority": "backend.runtime_dacapo_tree_sha256"
+    },
+    {
+      "module": "candidate_trace.py",
+      "expression": "spec.loader.exec_module(module)",
+      "authority": "backend.runtime_dacapo_tree_sha256"
+    },
+    {
+      "module": "python_compiler_smoke.py",
+      "expression": "importlib.util.spec_from_file_location(f'reference_{case}', SOURCE / case / 'model.py')",
+      "authority": "golden_cases Python sources and fixtures"
+    },
+    {
+      "module": "python_compiler_smoke.py",
+      "expression": "spec.loader.exec_module(module)",
+      "authority": "golden_cases Python sources and fixtures"
+    },
+    {
+      "module": "trusted_pytorch_import.py",
+      "expression": "importlib.import_module(mod)",
+      "authority": "request-bound trusted source package; validate_package and capture_binding"
+    },
+    {
+      "module": "pytorch_model_intake.py",
+      "expression": "importlib.import_module(module_name)",
+      "authority": "request-bound V8/V9/V10 source package in isolated worker; validate_package and capture_binding"
+    }
+  ]
+}

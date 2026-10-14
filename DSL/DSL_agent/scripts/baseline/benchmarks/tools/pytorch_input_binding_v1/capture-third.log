@@ -1,0 +1,16 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "dictionary0", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/dictionary0"}
+{"case": "dictionary1", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/dictionary1"}
+{"case": "dictionary2", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/dictionary2"}
+{"case": "nested0", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/nested0"}
+{"case": "nested1", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/nested1"}
+{"case": "nested2", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/nested2"}
+{"case": "keywords0", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/keywords0"}
+{"case": "keywords1", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/keywords1"}
+{"case": "keywords2", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/keywords2"}
+{"case": "defaults0", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/defaults0"}
+{"case": "defaults1", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/defaults1"}
+{"case": "defaults2", "status": "failed", "error": "ValueError: Trusted ordered capture failed; inspect capture.log", "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-binding-source-r1389-v3/defaults2"}

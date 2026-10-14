@@ -1,0 +1,27 @@
+{
+  "backend_changes": false,
+  "binding": "e290541eafc6a2766689df631ae6e802efe34d28a224e2fc9c03fc5c38a986c6",
+  "defaults_unchanged": true,
+  "format": "poseidon-tensor-axis-guidance-activation-v1",
+  "prior_live_report": "docs/baseline/agent-mha-feedback-live-results-r1331.json",
+  "prior_live_sha256": "fd0dbe56726bc68728c5eb1c0e2a37f2cf72f720f5b1f63d7c886c81c50ec186",
+  "private_data_not_used": true,
+  "provider_calls": 0,
+  "resource_expansion": false,
+  "source_before": {
+    "application_component.py": "4590d737b5dd6c835627ebc7600e7ff713d5f09a3caa6468caa1ef545833bc87",
+    "application_diagnostics.py": "f4cc7e168e1ca8c6c803bf691ddb2a97be2bc0ba986e443803bb9b3d97772fd3",
+    "poseidon_sandbox_policy.py": "1b371e9784532e8003146d393dddaadf47fdc55ca1f3394a0c52c4f4c4028c36",
+    "run_candidate.py": "c4a4bd4cca1625e21fd578a6b186de9e7f69b95265030cfa65a162bfce46e8e2",
+    "sandbox_policy.py": "12af334efac84d2ea2c92c6bc83bae263809aff89687888b4b414896a819600a",
+    "unified_graph_contract.py": "d106c89e7ed4237efb07f2d269facedb522f28ff8da039c5d30f30c95254bf5f",
+    "validation_adapter.py": "a61fbf94f5f240967073245c7761dab6f2d82bee2afb3cffcdedbdd713fa2ccf"
+  },
+  "source_scope": "Agent guidance and feedback only",
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "transport_receipt_scope": "Separate bounded host-collected diagnostics; old generation receipt and retry policy unchanged.",
+  "version": "explicit-v12"
+}

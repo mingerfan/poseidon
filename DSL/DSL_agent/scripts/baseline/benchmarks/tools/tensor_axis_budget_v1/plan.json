@@ -1,0 +1,14 @@
+{
+  "backend_changes": false,
+  "binding": "f73e13fd6f2f375eccc4aea2353b812bb362575d34a28619c7793c8d0e6d0618",
+  "context_limit_bytes": 131072,
+  "format": "poseidon-tensor-axis-context-budget-fix-v1",
+  "prior_report": "docs/baseline/agent-tensor-axis-guidance-r1332.json",
+  "prior_report_sha256": "28faf8a488a6b56c15fdae58509b944d7af8b167e724d43015953a012b992f24",
+  "provider_calls": 0,
+  "resource_expansion": false,
+  "source_before": {
+    "unified_graph_contract.py": "9a4255f40741471c730ec7d4f0a6dc51ecfa72c22b0c246d6959eae6660849da",
+    "unified_tensor_axis_guidance.py": "a3a73b06a2e576b78b241f150f65af52e821865bae22ea91f3eadbb118ab22f6"
+  }
+}

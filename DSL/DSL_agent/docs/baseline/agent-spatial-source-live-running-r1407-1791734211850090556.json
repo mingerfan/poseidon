@@ -1,0 +1,27 @@
+{
+  "format": "poseidon-spatial-source-live-checkpoint-v1",
+  "timestamp_unix": 1791734211.8500583,
+  "status": "running",
+  "proposal_binding": "d1f7942b50a359ba32ab57738adc06209b07f9cbdc948ae58e141b39df46867c",
+  "plan_binding": "3bc843d15ae99d6c576a744313f5d069e30cc22a0b1e97e8ff43dc5d32dcb026",
+  "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+  "planned": 34,
+  "passed": 1,
+  "failed": 0,
+  "not_run": 33,
+  "generations_reserved": 2,
+  "http_attempts_reserved": 2,
+  "calls_resolved": false,
+  "active": [
+    {
+      "case": "resize_1_nearest_1",
+      "phase": "generating"
+    }
+  ],
+  "terminal_acceptance": false,
+  "source_frozen": true,
+  "network_changes": false,
+  "backend_changes": false,
+  "new_agent_generation": true,
+  "binding": "bc44faa473868a1cb44ae5ddff612b11b7317d6bfca56df0de3a263ac0c459a7"
+}

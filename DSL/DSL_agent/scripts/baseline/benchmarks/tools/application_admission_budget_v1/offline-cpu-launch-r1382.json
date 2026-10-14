@@ -1,0 +1,9 @@
+{
+  "command": "scripts/baseline/benchmarks/tools/application_admission_budget_v1/offline_cpu.py",
+  "format": "poseidon-offline-worker-launch-v1",
+  "hard_seconds": 720,
+  "log": "scripts/baseline/benchmarks/tools/application_admission_budget_v1/offline-cpu-launch-r1382.log",
+  "pid": 176150,
+  "proposal_binding": "ed7765a63eb36d64030a8b2f25994ae36d0ac320f095e022a6f0b0c4203f0a5e",
+  "started_wall": 1791697834.4581769
+}

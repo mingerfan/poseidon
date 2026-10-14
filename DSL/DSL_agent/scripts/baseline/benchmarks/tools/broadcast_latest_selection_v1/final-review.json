@@ -1,0 +1,37 @@
+{
+  "backend_changes": false,
+  "binding": "0763062676d2fa2a58c681cd1fc8cd316a6badf032185d0da238ce198d1f6c88",
+  "branch": "lhy-agent-dsl",
+  "current_guides": [
+    "scripts/README.md",
+    "docs/baseline/operator-decomposition-and-python.md",
+    "docs/baseline/supported-inputs-models-configurations.md"
+  ],
+  "format": "poseidon-static-broadcast-final-review-v1",
+  "git_diff_check": "passed",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "network_changes": false,
+  "new_api_calls": 0,
+  "new_compiler_calls": 0,
+  "new_encrypted_calls": 0,
+  "new_reports_bound": true,
+  "no_active_execution": true,
+  "owned_sources": [
+    "scripts/baseline/pytorch_static_broadcast.py",
+    "scripts/baseline/pytorch_spatial_policy.py",
+    "scripts/baseline/pytorch_static_trace.py",
+    "scripts/baseline/pytorch_public_expression_capture.py",
+    "scripts/baseline/pytorch_ordered_contract.py",
+    "scripts/baseline/pytorch_model_intake.py",
+    "scripts/baseline/pytorch_ordered_intake.py",
+    "scripts/baseline/candidate_bundle.py",
+    "scripts/baseline/test_pytorch_static_broadcast.py",
+    "scripts/baseline/test_pytorch_spatial_cli.py",
+    "scripts/prepare_pytorch_source.py"
+  ],
+  "resource_remaining_bytes": 5275648,
+  "resource_used_bytes": 34354462720,
+  "sdk_manifest_sha256": "5a88df990a07ead9e19944721146d997b04e23408b3e0266cff497ced7658343",
+  "source_whitespace_check": "passed",
+  "status": "passed"
+}

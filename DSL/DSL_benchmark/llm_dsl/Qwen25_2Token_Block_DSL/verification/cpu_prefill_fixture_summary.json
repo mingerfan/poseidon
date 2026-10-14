@@ -1,0 +1,154 @@
+{
+  "name": "qwen_block_prefill",
+  "source_sha256": {
+    "qwen_layers.py": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+    "qwen_model.py": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+    "qwen_nonlinear.py": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760",
+    "ops.py": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+  },
+  "fixture_sha256": "c0fcf78a00ee2d362f34d1bedc8b9f40dbed3a77e75d09d234857790135297a1",
+  "vector_file": "fullsize-qwen-prefill-v1.vectors.bin",
+  "vector_sha256": "617f186858c32d963eccb7f64633aa7fabeecab9255a76584cdfa213536d33d1",
+  "vector_bytes": 1879065968,
+  "node_count": 135259,
+  "planned_bootstraps": 103,
+  "distinct_rotation_steps": 9728,
+  "power_of_two_key_steps": 30,
+  "plaintext_approximation_error": 1.5206731207584312e-08,
+  "contract": {
+    "config": {
+      "num_layers": 1,
+      "hidden_size": 896,
+      "intermediate_size": 4864,
+      "query_heads": 14,
+      "kv_heads": 2,
+      "head_dim": 64,
+      "vocab_size": 151936,
+      "max_sequence_length": 512,
+      "rope_theta": 1000000.0,
+      "rms_norm_eps": 1e-06
+    },
+    "profiles": {
+      "blocks": [
+        {
+          "pre_norm": {
+            "method": "chebyshev",
+            "function": "rsqrt",
+            "coefficients": [
+              0.970773111745931,
+              -0.32835436875231444,
+              0.08249430050762926,
+              -0.022972180101814378,
+              0.006710299927208311,
+              -0.002015118961649879,
+              0.0006161756936946539,
+              -0.00019082453175583563,
+              5.9657330940573375e-05,
+              -1.878550742598991e-05,
+              5.9445754776369464e-06,
+              -1.8738640847252382e-06,
+              5.427726382213082e-07
+            ],
+            "domain": [
+              0.5,
+              2.0
+            ],
+            "evaluation": "blocked",
+            "block_size": 8
+          },
+          "post_norm": {
+            "method": "chebyshev",
+            "function": "rsqrt",
+            "coefficients": [
+              0.970773111745931,
+              -0.32835436875231444,
+              0.08249430050762926,
+              -0.022972180101814378,
+              0.006710299927208311,
+              -0.002015118961649879,
+              0.0006161756936946539,
+              -0.00019082453175583563,
+              5.9657330940573375e-05,
+              -1.878550742598991e-05,
+              5.9445754776369464e-06,
+              -1.8738640847252382e-06,
+              5.427726382213082e-07
+            ],
+            "domain": [
+              0.5,
+              2.0
+            ],
+            "evaluation": "blocked",
+            "block_size": 8
+          },
+          "silu": {
+            "method": "chebyshev",
+            "function": "silu",
+            "coefficients": [
+              0.4058378425657395,
+              0.9999999999999998,
+              0.3787149374031208,
+              -3.0744637605004334e-16,
+              -0.02486449417225911,
+              -3.0744637605004334e-16,
+              0.00206718747643809,
+              -3.416070845000482e-16,
+              -0.0001750023807192136,
+              -3.0744637605004334e-16,
+              1.4854569353222731e-05,
+              3.416070845000482e-16,
+              -1.3665638488847576e-06
+            ],
+            "domain": [
+              -2.0,
+              2.0
+            ],
+            "evaluation": "blocked",
+            "block_size": 8
+          },
+          "softmax": {
+            "method": "normalize_square",
+            "centered_bound": 0.5,
+            "squarings": 0,
+            "reciprocal_iterations": 6,
+            "max_length": 2,
+            "exp_degree": 8,
+            "intermediate_iterations": null,
+            "exp_bound": 0.5
+          }
+        }
+      ],
+      "final_norm": {
+        "method": "chebyshev",
+        "function": "rsqrt",
+        "coefficients": [
+          0.970773111745931,
+          -0.32835436875231444,
+          0.08249430050762926,
+          -0.022972180101814378,
+          0.006710299927208311,
+          -0.002015118961649879,
+          0.0006161756936946539,
+          -0.00019082453175583563,
+          5.9657330940573375e-05,
+          -1.878550742598991e-05,
+          5.9445754776369464e-06,
+          -1.8738640847252382e-06,
+          5.427726382213082e-07
+        ],
+        "domain": [
+          0.5,
+          2.0
+        ],
+        "evaluation": "blocked",
+        "block_size": 8
+      }
+    },
+    "positions": [
+      7,
+      8
+    ],
+    "observed_centered_bound": 0.03760949183853862,
+    "observed_gate_abs_max": 0.595498073289351
+  }
+}

@@ -1,0 +1,71 @@
+"""Agent-owned pure public-value normalization draft. No DSL/backend implementation."""
+import hashlib,json
+import numpy as np
+VERSION="poseidon-public-value-expression-draft-v1"
+MAX_RANK=32;MAX_ELEMENTS=4096;MAX_STEPS=64
+def require(ok,code):
+ if not ok:raise ValueError(code)
+def checked(value):
+ require(type(value)is np.ndarray and value.dtype in(np.dtype("float64"),np.dtype("bool"),np.dtype("float32")),"public_value_type")
+ require(value.ndim<=MAX_RANK and 0<value.size<=MAX_ELEMENTS and all(n>0 for n in value.shape),"public_value_capacity")
+ require(np.isfinite(value).all(),"public_value_nonfinite")
+ out=np.array(value,copy=True,order="C");out.flags.writeable=False;return out
+def signature(v):
+ v=checked(v)
+ header=json.dumps(dict(dtype=v.dtype.str,shape=list(v.shape)),sort_keys=True,separators=(",",":")).encode()
+ return dict(dtype=v.dtype.str,shape=list(v.shape),sha256=hashlib.sha256(header+b"\0"+v.tobytes()).hexdigest())
+def axis(a,rank):
+ require(type(a)is int and -rank<=a<rank,"public_axis");return a%rank
+def evaluate(original,steps):
+ require(type(original)is dict and 0<len(original)<=32 and type(steps)is list and len(steps)<=MAX_STEPS,"public_plan_capacity")
+ require(all(type(n)is str and 0<len(n)<=160 for n in original),"public_name")
+ values={n:checked(v)for n,v in original.items()};origins={n:signature(v)for n,v in values.items()};records=[]
+ for step in steps:
+  require(type(step)is dict and set(step)=={"name","op","input","attributes"},"public_step_fields")
+  name=step["name"];op=step["op"];parent=step["input"];attrs=step["attributes"]
+  require(type(name)is str and 0<len(name)<=160 and name not in values,"public_name")
+  require(type(parent)is str and parent in values,"public_dependency")
+  require(type(attrs)is dict,"public_attributes")
+  value=values[parent]
+  if op=="reshape":
+   require(set(attrs)=={"shape"}and type(attrs["shape"])is list and len(attrs["shape"])<=MAX_RANK,"public_reshape")
+   shape=attrs["shape"];require(all(type(n)is int and(n>0 or n==-1)for n in shape)and shape.count(-1)<=1,"public_reshape")
+   known=1
+   for n in shape:
+    if n>0:known*=n;require(known<=MAX_ELEMENTS,"public_value_capacity")
+   require(known==value.size if -1 not in shape else value.size%known==0,"public_reshape")
+   result=value.reshape(shape)
+  elif op=="permute":
+   require(set(attrs)=={"dims"}and type(attrs["dims"])is list and len(attrs["dims"])==value.ndim,"public_permute")
+   dims=[axis(a,value.ndim)for a in attrs["dims"]]
+   require(len(set(dims))==value.ndim,"public_permute");result=value.transpose(dims)
+  elif op=="slice":
+   require(set(attrs)=={"selectors"}and type(attrs["selectors"])is list,"public_slice")
+   selectors=[];dim=0
+   for item in attrs["selectors"]:
+    if item is None:selectors.append(None);continue
+    require(dim<value.ndim,"public_slice");width=value.shape[dim];dim+=1
+    if type(item)is int:
+     require(-width<=item<width,"public_index");selectors.append(item)
+    else:
+     require(type(item)is dict and set(item)=={"start","stop","step"},"public_slice")
+     require(all(x is None or type(x)is int for x in item.values()),"public_slice")
+     require(item["step"]is None or item["step"]>0,"public_slice_step")
+     selectors.append(slice(item["start"],item["stop"],item["step"]))
+   require(value.ndim+sum(s is None for s in selectors)-sum(type(s)is int for s in selectors)<=MAX_RANK,"public_value_capacity")
+   result=np.asarray(value[tuple(selectors)])
+  elif op=="bool_cast":
+   require(set(attrs)=={"dtype"}and attrs["dtype"]in("float32","float64")and value.dtype==np.dtype("bool"),"public_bool_cast")
+   result=value.astype(attrs["dtype"])
+  else:raise ValueError("public_operation_not_registered")
+  result=checked(result);values[name]=result
+  records.append(dict(name=name,op=op,input=parent,attributes=attrs,input_signature=signature(value),output_signature=signature(result)))
+ record=dict(format=VERSION,original=origins,steps=records,production_integrated=False)
+ record["binding"]=hashlib.sha256(json.dumps(record,sort_keys=True,separators=(",",":"),allow_nan=False).encode()).hexdigest()
+ return values,record
+def reciprocal(value):
+ value=checked(value);require(value.dtype==np.dtype("float64"),"public_divisor_type")
+ require(np.all(value!=0)and np.all(np.abs(value)<=1024),"public_divisor_bounds")
+ inverse=1/value
+ require(np.isfinite(inverse).all()and np.all(np.abs(inverse)<=1024),"public_divisor_bounds")
+ return checked(inverse)

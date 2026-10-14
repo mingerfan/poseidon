@@ -1,0 +1,50 @@
+{
+  "format": "poseidon-public-arithmetic-human-authorization-v1",
+  "approved": true,
+  "authorization": "human_explicit_case_budget_approval",
+  "bounds": {
+    "api_concurrency": 1,
+    "batch_wall_seconds": 43200,
+    "case_wall_seconds": 14400,
+    "compiler_jobs": 2,
+    "encrypted_concurrency": 1,
+    "global_result_bytes": 34359738368,
+    "link_jobs": 1,
+    "max_generations": 48,
+    "max_http_attempts": 192,
+    "minimum_free_bytes": 4294967296,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "new_batch_bytes": 4294967296,
+    "max_compiler_calls": 48,
+    "max_encrypted_calls": 72
+  },
+  "cases": [
+    "defaults0",
+    "defaults1",
+    "defaults2",
+    "dictionary0",
+    "dictionary1",
+    "dictionary2",
+    "keywords0",
+    "keywords1",
+    "keywords2",
+    "nested0",
+    "nested1",
+    "nested2"
+  ],
+  "human_message": "批准这12项有界测试",
+  "proposal_binding": "300f7f4d74f414858a5c837b83a16f052f16a53c40609eade8c739cfa0098f93",
+  "proposal_sha256": "8de8d5c1e7ef3ac9569fa0465802dbc1f09ff787b24053bd660b7e71fb6f9da8",
+  "provider": {
+    "name": "deepseek",
+    "model": "deepseek-flash",
+    "reasoning_effort": "high",
+    "max_tokens": 384000,
+    "timeout_seconds": 1200,
+    "transport_retries": 3,
+    "stream": true
+  },
+  "question_item_id": "[\"request_user_input_async\",\"call_07285ccec36b4be482fc3e4e0f25fbb5\",0]",
+  "binding": "00c2d5b1261317355d62db39aa5b6cfd9ec4d08d2928277cf9423d5ab227b577"
+}

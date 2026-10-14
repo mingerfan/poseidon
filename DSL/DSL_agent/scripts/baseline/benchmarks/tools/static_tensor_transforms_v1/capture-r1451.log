@@ -1,0 +1,19 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "tile_1", "status": "passed", "seconds": 3.506736919982359, "bytes": 1404928, "budget_stop": null}
+{"case": "tile_2", "status": "passed", "seconds": 1.8420829369861167, "bytes": 1073152, "budget_stop": null}
+{"case": "interleave_0", "status": "passed", "seconds": 1.8334616729989648, "bytes": 1380352, "budget_stop": null}
+{"case": "interleave_1", "status": "passed", "seconds": 1.9118357779807411, "bytes": 1601536, "budget_stop": null}
+{"case": "interleave_2", "status": "passed", "seconds": 1.886929528991459, "bytes": 1392640, "budget_stop": null}
+{"case": "flip_0", "status": "passed", "seconds": 1.8307449499843642, "bytes": 1429504, "budget_stop": null}
+{"case": "flip_1", "status": "passed", "seconds": 3.590953206992708, "bytes": 2011136, "budget_stop": null}
+{"case": "flip_2", "status": "passed", "seconds": 1.9040339339990169, "bytes": 1576960, "budget_stop": null}
+{"case": "roll_0", "status": "passed", "seconds": 1.8470482650154736, "bytes": 1171456, "budget_stop": null}
+{"case": "roll_1", "status": "passed", "seconds": 2.0642221809830517, "bytes": 2019328, "budget_stop": null}
+{"case": "roll_2", "status": "passed", "seconds": 1.9465761679748539, "bytes": 1380352, "budget_stop": null}
+{"case": "compat_v29_square_helper", "status": "passed", "seconds": 1.8648897550010588, "bytes": 983040, "budget_stop": null}
+{"case": "compat_v29_nested_keyword_broadcast", "status": "passed", "seconds": 1.9096133449929766, "bytes": 1196032, "budget_stop": null}
+{"case": "compat_v29_reexport_linear", "status": "passed", "seconds": 1.826506318000611, "bytes": 970752, "budget_stop": null}
+{"passed": 14, "failed": 0, "not_run": 0, "source_capture_calls": 14, "results_bytes": 19656704, "global_result_bytes": 34468274176}

@@ -1,0 +1,18 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-einsum-alias-controls-v1",
+  "production_source_policy": false,
+  "provider_calls": 0,
+  "seconds": 0.35302704199784785,
+  "skipped": 0,
+  "sources": {
+    "alias_audit.py": "d72bdcb6bfd9e6926df65b9b9e739b2917bc3720e05ad76c44e3d7e36d39d365",
+    "alias_projection.py": "5b4168e39f55e89055b137965cbfc537d601244a330101475a602694da77a161",
+    "planner.py": "7d86821e30f7abef6a442c2d54646b71a40e33ab9854214b35fd7e02045efb1d"
+  },
+  "status": "passed",
+  "tests_run": 13
+}

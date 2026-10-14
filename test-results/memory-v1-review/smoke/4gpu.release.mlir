@@ -1,0 +1,84 @@
+module {
+  func.func @memory_smoke(%arg0: tensor<1x!ckks.poly<2 * 40 * 6>> {dist.device = -1 : i64, dist.rank = 0 : i64}) -> tensor<1x!ckks.poly<2 * 40 * 6>> attributes {dist.device_counts = array<i64: 4>, runtime.memory_planned} {
+    %0 = "ckks.encode"() <{payload = dense<1.000000e+00> : tensor<1xf64>}> {dist.device = -1 : i64, dist.logical_id = 1 : i64, dist.rank = 0 : i64, runtime.value_id = 1 : i64} : () -> tensor<1x!ckks.poly<1 * 40 * 6>>
+    %1 = "dist.transfer"(%arg0) <{destination_device = 0 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 0 : i64}> {dist.device = 0 : i64, dist.rank = 0 : i64, runtime.value_id = 29 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    %2 = "dist.transfer"(%0) <{destination_device = 0 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 1 : i64}> {dist.device = 0 : i64, dist.rank = 0 : i64, runtime.value_id = 30 : i64} : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<1 * 40 * 6>>
+    %3 = "dist.transfer"(%arg0) <{destination_device = 1 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 2 : i64}> {dist.device = 1 : i64, dist.rank = 0 : i64, runtime.value_id = 31 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    %4 = "dist.transfer"(%0) <{destination_device = 1 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 3 : i64}> {dist.device = 1 : i64, dist.rank = 0 : i64, runtime.value_id = 32 : i64} : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<1 * 40 * 6>>
+    %5 = "dist.transfer"(%arg0) <{destination_device = 2 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 4 : i64}> {dist.device = 2 : i64, dist.rank = 0 : i64, runtime.value_id = 33 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    %6 = "dist.transfer"(%0) <{destination_device = 2 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 5 : i64}> {dist.device = 2 : i64, dist.rank = 0 : i64, runtime.value_id = 34 : i64} : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<1 * 40 * 6>>
+    %7 = "dist.transfer"(%arg0) <{destination_device = 3 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 6 : i64}> {dist.device = 3 : i64, dist.rank = 0 : i64, runtime.value_id = 35 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%arg0) <{initialization = true}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %8 = "dist.transfer"(%0) <{destination_device = 3 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 7 : i64}> {dist.device = 3 : i64, dist.rank = 0 : i64, runtime.value_id = 36 : i64} : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<1 * 40 * 6>>
+    "dist.release"(%0) <{initialization = true}> : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> ()
+    %9 = "ckks.addcp"(%1, %2) {dist.device = 0 : i64, dist.logical_id = 2 : i64, dist.rank = 0 : i64, runtime.value_id = 2 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%1) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %10 = "ckks.addcp"(%9, %2) {dist.device = 0 : i64, dist.logical_id = 3 : i64, dist.rank = 0 : i64, runtime.value_id = 3 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%9) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %11 = "ckks.addcp"(%10, %2) {dist.device = 0 : i64, dist.logical_id = 4 : i64, dist.rank = 0 : i64, runtime.value_id = 4 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%10) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %12 = "ckks.addcp"(%11, %2) {dist.device = 0 : i64, dist.logical_id = 5 : i64, dist.rank = 0 : i64, runtime.value_id = 5 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%11) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    "dist.release"(%2) <{initialization = false}> : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> ()
+    %13 = "ckks.rotatec"(%12) <{offset = array<i64: 1>}> {dist.device = 0 : i64, dist.logical_id = 6 : i64, dist.rank = 0 : i64, runtime.value_id = 6 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%12) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %14 = "ckks.rotatec"(%13) <{offset = array<i64: -1>}> {dist.device = 0 : i64, dist.logical_id = 7 : i64, dist.rank = 0 : i64, runtime.value_id = 7 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%13) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %15 = "ckks.addcp"(%3, %4) {dist.device = 1 : i64, dist.logical_id = 8 : i64, dist.rank = 0 : i64, runtime.value_id = 8 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%3) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %16 = "ckks.addcp"(%15, %4) {dist.device = 1 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, runtime.value_id = 9 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%15) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %17 = "ckks.addcp"(%16, %4) {dist.device = 1 : i64, dist.logical_id = 10 : i64, dist.rank = 0 : i64, runtime.value_id = 10 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%16) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %18 = "ckks.addcp"(%17, %4) {dist.device = 1 : i64, dist.logical_id = 11 : i64, dist.rank = 0 : i64, runtime.value_id = 11 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%17) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    "dist.release"(%4) <{initialization = false}> : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> ()
+    %19 = "ckks.rotatec"(%18) <{offset = array<i64: 1>}> {dist.device = 1 : i64, dist.logical_id = 12 : i64, dist.rank = 0 : i64, runtime.value_id = 12 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%18) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %20 = "ckks.rotatec"(%19) <{offset = array<i64: -1>}> {dist.device = 1 : i64, dist.logical_id = 13 : i64, dist.rank = 0 : i64, runtime.value_id = 13 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%19) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %21 = "dist.transfer"(%20) <{destination_device = 0 : i64, destination_rank = 0 : i64, initialization = false, source_device = 1 : i64, source_rank = 0 : i64, transfer_id = 8 : i64}> {dist.device = 0 : i64, dist.rank = 0 : i64, runtime.value_id = 37 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%20) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %22 = "ckks.addcp"(%5, %6) {dist.device = 2 : i64, dist.logical_id = 14 : i64, dist.rank = 0 : i64, runtime.value_id = 14 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%5) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %23 = "ckks.addcp"(%22, %6) {dist.device = 2 : i64, dist.logical_id = 15 : i64, dist.rank = 0 : i64, runtime.value_id = 15 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%22) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %24 = "ckks.addcp"(%23, %6) {dist.device = 2 : i64, dist.logical_id = 16 : i64, dist.rank = 0 : i64, runtime.value_id = 16 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%23) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %25 = "ckks.addcp"(%24, %6) {dist.device = 2 : i64, dist.logical_id = 17 : i64, dist.rank = 0 : i64, runtime.value_id = 17 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%24) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    "dist.release"(%6) <{initialization = false}> : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> ()
+    %26 = "ckks.rotatec"(%25) <{offset = array<i64: 1>}> {dist.device = 2 : i64, dist.logical_id = 18 : i64, dist.rank = 0 : i64, runtime.value_id = 18 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%25) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %27 = "ckks.rotatec"(%26) <{offset = array<i64: -1>}> {dist.device = 2 : i64, dist.logical_id = 19 : i64, dist.rank = 0 : i64, runtime.value_id = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%26) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %28 = "dist.transfer"(%27) <{destination_device = 0 : i64, destination_rank = 0 : i64, initialization = false, source_device = 2 : i64, source_rank = 0 : i64, transfer_id = 9 : i64}> {dist.device = 0 : i64, dist.rank = 0 : i64, runtime.value_id = 38 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%27) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %29 = "ckks.addcp"(%7, %8) {dist.device = 3 : i64, dist.logical_id = 20 : i64, dist.rank = 0 : i64, runtime.value_id = 20 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%7) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %30 = "ckks.addcp"(%29, %8) {dist.device = 3 : i64, dist.logical_id = 21 : i64, dist.rank = 0 : i64, runtime.value_id = 21 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%29) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %31 = "ckks.addcp"(%30, %8) {dist.device = 3 : i64, dist.logical_id = 22 : i64, dist.rank = 0 : i64, runtime.value_id = 22 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%30) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %32 = "ckks.addcp"(%31, %8) {dist.device = 3 : i64, dist.logical_id = 23 : i64, dist.rank = 0 : i64, runtime.value_id = 23 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<1 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%31) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    "dist.release"(%8) <{initialization = false}> : (tensor<1x!ckks.poly<1 * 40 * 6>>) -> ()
+    %33 = "ckks.rotatec"(%32) <{offset = array<i64: 1>}> {dist.device = 3 : i64, dist.logical_id = 24 : i64, dist.rank = 0 : i64, runtime.value_id = 24 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%32) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %34 = "ckks.rotatec"(%33) <{offset = array<i64: -1>}> {dist.device = 3 : i64, dist.logical_id = 25 : i64, dist.rank = 0 : i64, runtime.value_id = 25 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%33) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %35 = "dist.transfer"(%34) <{destination_device = 0 : i64, destination_rank = 0 : i64, initialization = false, source_device = 3 : i64, source_rank = 0 : i64, transfer_id = 10 : i64}> {dist.device = 0 : i64, dist.rank = 0 : i64, runtime.value_id = 39 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%34) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %36 = "ckks.addcc"(%14, %21) {dist.device = 0 : i64, dist.logical_id = 26 : i64, dist.rank = 0 : i64, runtime.value_id = 26 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%14) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    "dist.release"(%21) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %37 = "ckks.addcc"(%36, %28) {dist.device = 0 : i64, dist.logical_id = 27 : i64, dist.rank = 0 : i64, runtime.value_id = 27 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%36) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    "dist.release"(%28) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    %38 = "ckks.addcc"(%37, %35) {dist.device = 0 : i64, dist.logical_id = 28 : i64, dist.rank = 0 : i64, runtime.value_id = 28 : i64} : (tensor<1x!ckks.poly<2 * 40 * 6>>, tensor<1x!ckks.poly<2 * 40 * 6>>) -> tensor<1x!ckks.poly<2 * 40 * 6>>
+    "dist.release"(%37) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    "dist.release"(%35) <{initialization = false}> : (tensor<1x!ckks.poly<2 * 40 * 6>>) -> ()
+    return %38 : tensor<1x!ckks.poly<2 * 40 * 6>>
+  }
+}
+

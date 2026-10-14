@@ -1,0 +1,110 @@
+{
+  "constants": {
+    "public_4": [
+      [
+        0.1250000149011612,
+        -0.3750000298023224,
+        0.625
+      ],
+      [
+        0.875,
+        -1.125,
+        1.375
+      ]
+    ]
+  },
+  "format": "poseidon-model-graph-v2",
+  "id": "static_alias_source",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "id": "generated_1",
+      "inputs": [
+        "x"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "id": "generated_3",
+      "inputs": [
+        "generated_0"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_5",
+      "inputs": [
+        "generated_2",
+        "public_4"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          6
+        ]
+      },
+      "id": "generated_7",
+      "inputs": [
+        "generated_4"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "id": "generated_9",
+      "inputs": [
+        "generated_6"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "generated_8"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "y",
+      "value": "generated_8"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

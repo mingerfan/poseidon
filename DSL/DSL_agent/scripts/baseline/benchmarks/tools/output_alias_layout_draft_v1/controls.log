@@ -1,0 +1,23 @@
+test_bad_shape_and_enormous_shape_rejected_before_selectors (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_changed_shape_rejected (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_changed_source_rejected (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_different_refs_do_not_alias_equal_shapes (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_duplicate_names_rejected (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_independent_selectors_match_256_contexts (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_interleaved_sources_preserve_order (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_logical_limit_does_not_disappear_with_alias (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_model_binding_required (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_period_and_limit_types (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_physical_limit_applies_to_distinct_sources (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_rank32_boundary (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_rehashed_forged_selector_rejected (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_scalar_alias (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_shared_ref_has_one_physical_output (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_source_input_not_mutated (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_tail_alias_and_offsets (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+test_unknown_source_rejected (test_output_alias_plan_draft.OutputAliasPlan) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.009s
+
+OK

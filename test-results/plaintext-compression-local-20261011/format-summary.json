@@ -1,0 +1,2335 @@
+{
+  "runs": 3,
+  "all_exact_cpu_ntt_matches": true,
+  "aggregation": "median of per-process medians; event includes host submission; no locked clocks",
+  "rows": [
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "dense",
+      "coefficient_bits": [
+        30,
+        30,
+        30
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 122888.0,
+      "replication_group": 1,
+      "modes": {
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.83199906349182,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.215999998152256,
+            "ntt_us_per_plaintext": 84.03199911117554,
+            "wall_us_per_plaintext": 96.61600000000001
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 119.31199952960014,
+            "h2d_us_per_plaintext": 21.391999907791615,
+            "unpack_or_rns_us_per_plaintext": 12.463999912142754,
+            "ntt_us_per_plaintext": 84.89599823951721,
+            "wall_us_per_plaintext": 123.3175
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.088000267744064,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 47.444
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 66.78400188684464,
+            "h2d_us_per_plaintext": 21.12000063061714,
+            "unpack_or_rns_us_per_plaintext": 10.704000014811754,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 71.0515
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 161.15200519561768,
+            "h2d_us_per_plaintext": 158.39999914169312,
+            "unpack_or_rns_us_per_plaintext": 1.4400000218302011,
+            "ntt_us_per_plaintext": 1.3119999784976244,
+            "wall_us_per_plaintext": 165.4245
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 94.224002212286,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 98.404
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 138.35199922323227,
+            "h2d_us_per_plaintext": 42.09600016474724,
+            "unpack_or_rns_us_per_plaintext": 11.727999895811081,
+            "ntt_us_per_plaintext": 84.99199897050858,
+            "wall_us_per_plaintext": 142.38400000000001
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 9.216000325977802,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 13.613
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 161.79199516773224,
+            "h2d_us_per_plaintext": 148.83199334144592,
+            "unpack_or_rns_us_per_plaintext": 11.69600011780858,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 165.45000000000002
+          },
+          "decompressed_output_gb_per_second": 292.5714245584547
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.007999658584595,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 47.222
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 56.07999861240387,
+            "h2d_us_per_plaintext": 12.032000347971916,
+            "unpack_or_rns_us_per_plaintext": 9.184000082314014,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 60.223
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 45.05600035190582,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 49.222
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 90.14400094747543,
+            "h2d_us_per_plaintext": 41.680000722408295,
+            "unpack_or_rns_us_per_plaintext": 13.472000136971474,
+            "ntt_us_per_plaintext": 34.832000732421875,
+            "wall_us_per_plaintext": 94.65399999999998
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.86399930715561,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 84.07999947667122,
+            "wall_us_per_plaintext": 96.854
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 107.77600109577179,
+            "h2d_us_per_plaintext": 12.000000104308128,
+            "unpack_or_rns_us_per_plaintext": 11.504000052809715,
+            "ntt_us_per_plaintext": 84.89599823951721,
+            "wall_us_per_plaintext": 111.99000000000001
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "coefficient_bits": [
+        32,
+        32,
+        32
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 131080.0,
+      "replication_group": 32,
+      "modes": {
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 10.127999819815159,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 14.027
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 161.79199516773224,
+            "h2d_us_per_plaintext": 148.8799974322319,
+            "unpack_or_rns_us_per_plaintext": 10.928000323474407,
+            "ntt_us_per_plaintext": 2.047999994829297,
+            "wall_us_per_plaintext": 165.511
+          },
+          "decompressed_output_gb_per_second": 292.5714245584547
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 161.16800159215927,
+            "h2d_us_per_plaintext": 158.39999914169312,
+            "unpack_or_rns_us_per_plaintext": 1.4400000218302011,
+            "ntt_us_per_plaintext": 1.3119999784976244,
+            "wall_us_per_plaintext": 165.64800000000002
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.007999658584595,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.55999866127968,
+            "wall_us_per_plaintext": 46.834
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 58.320000767707825,
+            "h2d_us_per_plaintext": 12.624000199139118,
+            "unpack_or_rns_us_per_plaintext": 10.784000158309937,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 61.947500000000005
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 45.05600035190582,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 34.7680002450943,
+            "wall_us_per_plaintext": 49.099500000000006
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 91.07200056314468,
+            "h2d_us_per_plaintext": 41.88799858093262,
+            "unpack_or_rns_us_per_plaintext": 13.87199992313981,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 95.189
+          }
+        },
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 13.648000080138445,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 11.264000087976456,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 17.737000000000002
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 25.407999753952026,
+            "h2d_us_per_plaintext": 7.679999805986881,
+            "unpack_or_rns_us_per_plaintext": 16.575999557971954,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 29.3065
+          },
+          "decompressed_output_gb_per_second": 186.1818167276619
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.20800176262856,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 96.608
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 117.79200285673141,
+            "h2d_us_per_plaintext": 22.655999287962914,
+            "unpack_or_rns_us_per_plaintext": 10.639999993145466,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 122.042
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.16000139713287,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 96.45349999999999
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 108.59199985861778,
+            "h2d_us_per_plaintext": 12.575999833643436,
+            "unpack_or_rns_us_per_plaintext": 12.480000033974648,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 113.195
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 94.2080020904541,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 98.3435
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 139.16800171136856,
+            "h2d_us_per_plaintext": 42.01599955558777,
+            "unpack_or_rns_us_per_plaintext": 12.768000364303589,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 142.983
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.007999658584595,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.78400036692619,
+            "wall_us_per_plaintext": 46.9015
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 71.44000008702278,
+            "h2d_us_per_plaintext": 22.38400001078844,
+            "unpack_or_rns_us_per_plaintext": 13.983999844640493,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 75.021
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "prefix896",
+      "coefficient_bits": [
+        27,
+        27,
+        28
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 110600.0,
+      "replication_group": 1,
+      "modes": {
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.007999658584595,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 47.326
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 64.01599943637848,
+            "h2d_us_per_plaintext": 19.328000023961067,
+            "unpack_or_rns_us_per_plaintext": 9.775999933481216,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 68.312
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 9.55200009047985,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 13.5635
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 161.77599877119064,
+            "h2d_us_per_plaintext": 148.83199334144592,
+            "unpack_or_rns_us_per_plaintext": 11.055999901145697,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 165.38
+          },
+          "decompressed_output_gb_per_second": 292.5714245584547
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.94399991631508,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 96.913
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 115.7120019197464,
+            "h2d_us_per_plaintext": 19.74399946630001,
+            "unpack_or_rns_us_per_plaintext": 11.183999944478273,
+            "ntt_us_per_plaintext": 84.89599823951721,
+            "wall_us_per_plaintext": 120.09100000000001
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.02399978041649,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 47.285999999999994
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 56.40000104904175,
+            "h2d_us_per_plaintext": 11.295999865978956,
+            "unpack_or_rns_us_per_plaintext": 9.935999754816294,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 61.172999999999995
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 95.10400146245956,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 83.98399874567986,
+            "wall_us_per_plaintext": 99.1425
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 140.22399485111237,
+            "h2d_us_per_plaintext": 42.11200028657913,
+            "unpack_or_rns_us_per_plaintext": 12.271999847143888,
+            "ntt_us_per_plaintext": 84.99199897050858,
+            "wall_us_per_plaintext": 144.31850000000003
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 93.18400174379349,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 84.22400057315826,
+            "wall_us_per_plaintext": 97.3725
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 103.42399775981903,
+            "h2d_us_per_plaintext": 11.168000288307667,
+            "unpack_or_rns_us_per_plaintext": 8.112000301480293,
+            "ntt_us_per_plaintext": 84.6719965338707,
+            "wall_us_per_plaintext": 107.759
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 161.45599633455276,
+            "h2d_us_per_plaintext": 158.54399651288986,
+            "unpack_or_rns_us_per_plaintext": 1.4720000326633453,
+            "ntt_us_per_plaintext": 1.3279999839141965,
+            "wall_us_per_plaintext": 165.73100000000002
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 45.05600035190582,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 49.124
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 90.59200063347816,
+            "h2d_us_per_plaintext": 41.85599833726883,
+            "unpack_or_rns_us_per_plaintext": 13.856000266969204,
+            "ntt_us_per_plaintext": 34.912001341581345,
+            "wall_us_per_plaintext": 94.859
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "pattern": "scalar",
+      "coefficient_bits": [
+        39,
+        39,
+        39
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 159752.0,
+      "replication_group": 65536,
+      "modes": {
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.007999658584595,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.703999757766724,
+            "wall_us_per_plaintext": 46.821
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 71.68000191450119,
+            "h2d_us_per_plaintext": 26.688000187277794,
+            "unpack_or_rns_us_per_plaintext": 10.240000206977129,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 75.667
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.007999658584595,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 34.78400036692619,
+            "wall_us_per_plaintext": 47.212
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 62.463998794555664,
+            "h2d_us_per_plaintext": 14.768000226467848,
+            "unpack_or_rns_us_per_plaintext": 13.295999728143215,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 66.4435
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.16000139713287,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 96.417
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 123.58400225639343,
+            "h2d_us_per_plaintext": 26.863999664783478,
+            "unpack_or_rns_us_per_plaintext": 12.384000234305859,
+            "ntt_us_per_plaintext": 84.03199911117554,
+            "wall_us_per_plaintext": 127.3555
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 161.53599321842194,
+            "h2d_us_per_plaintext": 158.57599675655365,
+            "unpack_or_rns_us_per_plaintext": 1.4560000272467732,
+            "ntt_us_per_plaintext": 1.3279999839141965,
+            "wall_us_per_plaintext": 165.776
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.38400310277939,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 96.432
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 109.56799983978271,
+            "h2d_us_per_plaintext": 14.895999804139137,
+            "unpack_or_rns_us_per_plaintext": 10.17600018531084,
+            "ntt_us_per_plaintext": 84.06399935483932,
+            "wall_us_per_plaintext": 114.18
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 10.239999741315842,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 7.168000098317862,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 14.536999999999999
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 161.79199516773224,
+            "h2d_us_per_plaintext": 149.1519957780838,
+            "unpack_or_rns_us_per_plaintext": 11.584000196307898,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 166.37049999999996
+          },
+          "decompressed_output_gb_per_second": 292.5714245584547
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 45.05600035190582,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 34.703999757766724,
+            "wall_us_per_plaintext": 48.906000000000006
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 90.11200070381165,
+            "h2d_us_per_plaintext": 41.919998824596405,
+            "unpack_or_rns_us_per_plaintext": 13.423999771475792,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 94.01899999999999
+          }
+        },
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 13.311999849975109,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 11.264000087976456,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 17.645999999999997
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 15.343999955803156,
+            "h2d_us_per_plaintext": 3.008000086992979,
+            "unpack_or_rns_us_per_plaintext": 11.264000087976456,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 19.3515
+          },
+          "decompressed_output_gb_per_second": 186.1818167276619
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 94.2080020904541,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 98.237
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 139.6320015192032,
+            "h2d_us_per_plaintext": 42.047999799251556,
+            "unpack_or_rns_us_per_plaintext": 12.655999977141619,
+            "ntt_us_per_plaintext": 83.96799862384796,
+            "wall_us_per_plaintext": 143.58350000000002
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "dense",
+      "coefficient_bits": [
+        30,
+        30,
+        30
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 122881.0,
+      "replication_group": 1,
+      "modes": {
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 156.468003988266,
+            "h2d_us_per_plaintext": 156.04999661445618,
+            "unpack_or_rns_us_per_plaintext": 0.22600000374950469,
+            "ntt_us_per_plaintext": 0.1720000000204891,
+            "wall_us_per_plaintext": 157.1499375
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 5.504000000655651,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 5.247999913990498,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 6.05375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 152.19199657440186,
+            "h2d_us_per_plaintext": 146.3960036635399,
+            "unpack_or_rns_us_per_plaintext": 5.619999952614307,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 152.83350000000002
+          },
+          "decompressed_output_gb_per_second": 399.6097626467677
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 93.18400174379349,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 7.679999805986881,
+            "ntt_us_per_plaintext": 85.37600189447403,
+            "wall_us_per_plaintext": 93.839125
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 123.89199808239937,
+            "h2d_us_per_plaintext": 39.45599868893623,
+            "unpack_or_rns_us_per_plaintext": 8.067999966442585,
+            "ntt_us_per_plaintext": 76.01400092244148,
+            "wall_us_per_plaintext": 124.48362499999999
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 39.5480003207922,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.016000173985958,
+            "ntt_us_per_plaintext": 33.28000009059906,
+            "wall_us_per_plaintext": 40.1003125
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 48.183999955654144,
+            "h2d_us_per_plaintext": 9.603999555110931,
+            "unpack_or_rns_us_per_plaintext": 6.5020001493394375,
+            "ntt_us_per_plaintext": 32.127998769283295,
+            "wall_us_per_plaintext": 48.75
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 89.65799957513809,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 5.760000087320805,
+            "ntt_us_per_plaintext": 83.71199667453766,
+            "wall_us_per_plaintext": 90.2586875
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 96.70399874448776,
+            "h2d_us_per_plaintext": 9.67800011858344,
+            "unpack_or_rns_us_per_plaintext": 6.244000047445297,
+            "ntt_us_per_plaintext": 80.77799901366234,
+            "wall_us_per_plaintext": 97.2783125
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 41.21600091457367,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 8.078000042587519,
+            "ntt_us_per_plaintext": 32.896000891923904,
+            "wall_us_per_plaintext": 41.859375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 78.06999981403351,
+            "h2d_us_per_plaintext": 39.451999589800835,
+            "unpack_or_rns_us_per_plaintext": 8.193999994546175,
+            "ntt_us_per_plaintext": 30.46399913728237,
+            "wall_us_per_plaintext": 78.61925000000001
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 41.21600091457367,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.783999968320131,
+            "ntt_us_per_plaintext": 34.28000025451183,
+            "wall_us_per_plaintext": 41.8068125
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 55.93600124120712,
+            "h2d_us_per_plaintext": 18.698000349104404,
+            "unpack_or_rns_us_per_plaintext": 6.34999992325902,
+            "ntt_us_per_plaintext": 30.33600002527237,
+            "wall_us_per_plaintext": 56.466
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 90.25800228118896,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.399999838322401,
+            "ntt_us_per_plaintext": 83.71199667453766,
+            "wall_us_per_plaintext": 90.9025
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 104.01200130581856,
+            "h2d_us_per_plaintext": 18.744000233709812,
+            "unpack_or_rns_us_per_plaintext": 6.858000066131353,
+            "ntt_us_per_plaintext": 78.46400141716003,
+            "wall_us_per_plaintext": 104.60731249999999
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "coefficient_bits": [
+        32,
+        32,
+        32
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 131073.0,
+      "replication_group": 32,
+      "modes": {
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 82.23199844360352,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 5.638000089675188,
+            "ntt_us_per_plaintext": 76.53399929404259,
+            "wall_us_per_plaintext": 82.80862499999999
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 92.16799959540367,
+            "h2d_us_per_plaintext": 10.28400007635355,
+            "unpack_or_rns_us_per_plaintext": 6.415999960154295,
+            "ntt_us_per_plaintext": 75.39400085806847,
+            "wall_us_per_plaintext": 92.77825
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 156.39199316501617,
+            "h2d_us_per_plaintext": 156.02000057697296,
+            "unpack_or_rns_us_per_plaintext": 0.19999999494757503,
+            "ntt_us_per_plaintext": 0.16399999731220305,
+            "wall_us_per_plaintext": 157.00025
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 36.99199855327606,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.527999881654978,
+            "ntt_us_per_plaintext": 30.33600002527237,
+            "wall_us_per_plaintext": 37.566562499999996
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 56.807998567819595,
+            "h2d_us_per_plaintext": 19.923999905586243,
+            "unpack_or_rns_us_per_plaintext": 6.945999804884195,
+            "ntt_us_per_plaintext": 29.952000826597214,
+            "wall_us_per_plaintext": 57.3778125
+          }
+        },
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 9.600000455975533,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 9.344000369310379,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 10.1266875
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 15.58600040152669,
+            "h2d_us_per_plaintext": 5.2200001664459705,
+            "unpack_or_rns_us_per_plaintext": 10.206000413745642,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 16.0619375
+          },
+          "decompressed_output_gb_per_second": 224.43834729372742
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 83.0719992518425,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.271999794989824,
+            "ntt_us_per_plaintext": 76.67200267314911,
+            "wall_us_per_plaintext": 83.675625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 102.6500016450882,
+            "h2d_us_per_plaintext": 19.93199996650219,
+            "unpack_or_rns_us_per_plaintext": 6.760000018402934,
+            "ntt_us_per_plaintext": 75.52000135183334,
+            "wall_us_per_plaintext": 103.2134375
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 5.119999870657921,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 4.82399994507432,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 5.671499999999999
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 152.41999924182892,
+            "h2d_us_per_plaintext": 146.41200006008148,
+            "unpack_or_rns_us_per_plaintext": 5.774000193923712,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 152.9415625
+          },
+          "decompressed_output_gb_per_second": 434.7330066082102
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 37.50399872660637,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.144000217318535,
+            "ntt_us_per_plaintext": 31.231999397277832,
+            "wall_us_per_plaintext": 38.105374999999995
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 46.720001846551895,
+            "h2d_us_per_plaintext": 10.194000322371721,
+            "unpack_or_rns_us_per_plaintext": 6.698000011965632,
+            "ntt_us_per_plaintext": 30.079999938607216,
+            "wall_us_per_plaintext": 47.2695
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 38.40000182390213,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 8.063999935984612,
+            "ntt_us_per_plaintext": 30.254000797867775,
+            "wall_us_per_plaintext": 39.05375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 77.41599902510643,
+            "h2d_us_per_plaintext": 39.40200060606003,
+            "unpack_or_rns_us_per_plaintext": 7.897999603301287,
+            "ntt_us_per_plaintext": 30.079999938607216,
+            "wall_us_per_plaintext": 78.031125
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 83.83999764919281,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 7.436000043526292,
+            "ntt_us_per_plaintext": 76.1599987745285,
+            "wall_us_per_plaintext": 84.470875
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 123.1900006532669,
+            "h2d_us_per_plaintext": 39.434000849723816,
+            "unpack_or_rns_us_per_plaintext": 7.958000060170889,
+            "ntt_us_per_plaintext": 75.77600330114365,
+            "wall_us_per_plaintext": 123.77812499999999
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "prefix896",
+      "coefficient_bits": [
+        27,
+        27,
+        28
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 110593.0,
+      "replication_group": 1,
+      "modes": {
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 92.26399660110474,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 7.679999805986881,
+            "ntt_us_per_plaintext": 84.22400057315826,
+            "wall_us_per_plaintext": 92.88737499999999
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 123.77600371837616,
+            "h2d_us_per_plaintext": 39.41799886524677,
+            "unpack_or_rns_us_per_plaintext": 8.179999887943268,
+            "ntt_us_per_plaintext": 76.01400092244148,
+            "wall_us_per_plaintext": 124.41706250000001
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 91.89999848604202,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.399999838322401,
+            "ntt_us_per_plaintext": 85.37600189447403,
+            "wall_us_per_plaintext": 92.471
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 105.71800172328949,
+            "h2d_us_per_plaintext": 16.95400010794401,
+            "unpack_or_rns_us_per_plaintext": 6.7460001446306705,
+            "ntt_us_per_plaintext": 81.68400079011917,
+            "wall_us_per_plaintext": 106.3066875
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 43.248001486063,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 8.191999979317188,
+            "ntt_us_per_plaintext": 34.81600061058998,
+            "wall_us_per_plaintext": 43.799749999999996
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 77.81200110912323,
+            "h2d_us_per_plaintext": 39.381999522447586,
+            "unpack_or_rns_us_per_plaintext": 8.29799985513091,
+            "ntt_us_per_plaintext": 30.079999938607216,
+            "wall_us_per_plaintext": 78.446875
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 41.826000437140465,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.016000173985958,
+            "ntt_us_per_plaintext": 35.58399900794029,
+            "wall_us_per_plaintext": 42.36575
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 47.73799888789654,
+            "h2d_us_per_plaintext": 8.653999771922827,
+            "unpack_or_rns_us_per_plaintext": 6.169999949634075,
+            "ntt_us_per_plaintext": 32.896000891923904,
+            "wall_us_per_plaintext": 48.3064375
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 91.30600094795227,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 5.760000087320805,
+            "ntt_us_per_plaintext": 85.37600189447403,
+            "wall_us_per_plaintext": 91.844625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 98.1760025024414,
+            "h2d_us_per_plaintext": 8.734000381082296,
+            "unpack_or_rns_us_per_plaintext": 6.316000130027533,
+            "ntt_us_per_plaintext": 83.08999985456467,
+            "wall_us_per_plaintext": 98.8315
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 5.888000130653381,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 5.504000000655651,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 6.3854375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 153.58000248670578,
+            "h2d_us_per_plaintext": 146.37400209903717,
+            "unpack_or_rns_us_per_plaintext": 6.918000057339668,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 154.1964375
+          },
+          "decompressed_output_gb_per_second": 381.023255768565
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 156.41199797391891,
+            "h2d_us_per_plaintext": 156.0320034623146,
+            "unpack_or_rns_us_per_plaintext": 0.20399999630171806,
+            "ntt_us_per_plaintext": 0.16399999731220305,
+            "wall_us_per_plaintext": 157.05081250000003
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 41.822001338005066,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.6559999249875546,
+            "ntt_us_per_plaintext": 34.94400158524513,
+            "wall_us_per_plaintext": 42.421749999999996
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 54.646000266075134,
+            "h2d_us_per_plaintext": 16.850000247359276,
+            "unpack_or_rns_us_per_plaintext": 6.6899999510496855,
+            "ntt_us_per_plaintext": 30.719999223947525,
+            "wall_us_per_plaintext": 55.19525
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "pattern": "scalar",
+      "coefficient_bits": [
+        39,
+        39,
+        39
+      ],
+      "encoded_gpu_bytes_per_plaintext": 2097152,
+      "half_integer_bytes_per_plaintext": 159745.0,
+      "replication_group": 65536,
+      "modes": {
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 9.568000212311745,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 10.0874375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 9.727999567985535,
+            "h2d_us_per_plaintext": 0.38400001358240843,
+            "unpack_or_rns_us_per_plaintext": 9.216000325977802,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 10.251812499999998
+          },
+          "decompressed_output_gb_per_second": 227.5555475067212
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 85.24800091981888,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.674000062048435,
+            "ntt_us_per_plaintext": 78.33600044250488,
+            "wall_us_per_plaintext": 85.7920625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 107.37400129437447,
+            "h2d_us_per_plaintext": 24.16200004518032,
+            "unpack_or_rns_us_per_plaintext": 7.288000080734491,
+            "ntt_us_per_plaintext": 75.88599994778633,
+            "wall_us_per_plaintext": 107.9275625
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 86.63799986243248,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 7.552000228315592,
+            "ntt_us_per_plaintext": 78.84799689054489,
+            "wall_us_per_plaintext": 87.1595625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 123.37400019168854,
+            "h2d_us_per_plaintext": 39.437999948859215,
+            "unpack_or_rns_us_per_plaintext": 8.100000210106373,
+            "ntt_us_per_plaintext": 75.90200006961823,
+            "wall_us_per_plaintext": 123.99112500000001
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 39.15200009942055,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 8.063999935984612,
+            "ntt_us_per_plaintext": 31.018000096082687,
+            "wall_us_per_plaintext": 39.749125
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 77.44000107049942,
+            "h2d_us_per_plaintext": 39.420001208782196,
+            "unpack_or_rns_us_per_plaintext": 8.081999607384205,
+            "ntt_us_per_plaintext": 30.079999938607216,
+            "wall_us_per_plaintext": 78.1099375
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 5.247999913990498,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 4.881999921053648,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 5.754312500000001
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 152.19199657440186,
+            "h2d_us_per_plaintext": 146.42199873924255,
+            "unpack_or_rns_us_per_plaintext": 5.632000043988228,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 152.8358125
+          },
+          "decompressed_output_gb_per_second": 429.5682166966087
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 156.41599893569946,
+            "h2d_us_per_plaintext": 156.02999925613403,
+            "unpack_or_rns_us_per_plaintext": 0.20399999630171806,
+            "ntt_us_per_plaintext": 0.16599999798927456,
+            "wall_us_per_plaintext": 157.06537500000002
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 84.48000252246857,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 5.632000043988228,
+            "ntt_us_per_plaintext": 78.72000336647034,
+            "wall_us_per_plaintext": 85.060625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 94.76599842309952,
+            "h2d_us_per_plaintext": 12.356000021100044,
+            "unpack_or_rns_us_per_plaintext": 6.2519998755306005,
+            "ntt_us_per_plaintext": 76.10199972987175,
+            "wall_us_per_plaintext": 95.31468749999999
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 38.656000047922134,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 7.040000054985285,
+            "ntt_us_per_plaintext": 31.416000798344612,
+            "wall_us_per_plaintext": 39.245937500000004
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 61.48399971425533,
+            "h2d_us_per_plaintext": 24.18600022792816,
+            "unpack_or_rns_us_per_plaintext": 7.3460000567138195,
+            "ntt_us_per_plaintext": 29.952000826597214,
+            "wall_us_per_plaintext": 62.0806875
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 37.76000067591667,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 6.144000217318535,
+            "ntt_us_per_plaintext": 31.468000262975693,
+            "wall_us_per_plaintext": 38.268875
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 48.378000035881996,
+            "h2d_us_per_plaintext": 12.32199976220727,
+            "unpack_or_rns_us_per_plaintext": 6.012000143527985,
+            "ntt_us_per_plaintext": 30.064000748097897,
+            "wall_us_per_plaintext": 48.904937499999996
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "dense",
+      "coefficient_bits": [
+        30,
+        30,
+        30
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 122888.0,
+      "replication_group": 1,
+      "modes": {
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 374.65599179267883,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 19.45599913597107,
+            "ntt_us_per_plaintext": 353.5519987344742,
+            "wall_us_per_plaintext": 378.779
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 407.55200386047363,
+            "h2d_us_per_plaintext": 42.160000652074814,
+            "unpack_or_rns_us_per_plaintext": 22.92799949645996,
+            "ntt_us_per_plaintext": 343.03998947143555,
+            "wall_us_per_plaintext": 412.14649999999995
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 151.5520066022873,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 133.12000036239624,
+            "wall_us_per_plaintext": 156.2995
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 173.0560064315796,
+            "h2d_us_per_plaintext": 21.487999707460403,
+            "unpack_or_rns_us_per_plaintext": 20.447999238967896,
+            "ntt_us_per_plaintext": 131.04000687599182,
+            "wall_us_per_plaintext": 177.316
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 22.52800017595291,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 20.479999482631683,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 26.8735
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 617.1679794788361,
+            "h2d_us_per_plaintext": 586.8800282478333,
+            "unpack_or_rns_us_per_plaintext": 28.60799990594387,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 621.1679999999999
+          },
+          "decompressed_output_gb_per_second": 409.6000103473666
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 628.7360191345215,
+            "h2d_us_per_plaintext": 625.6639957427979,
+            "unpack_or_rns_us_per_plaintext": 1.6319999704137444,
+            "ntt_us_per_plaintext": 1.3760000001639128,
+            "wall_us_per_plaintext": 633.634
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 359.42399501800537,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 339.9679958820343,
+            "wall_us_per_plaintext": 363.8835
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 377.4239867925644,
+            "h2d_us_per_plaintext": 21.71199955046177,
+            "unpack_or_rns_us_per_plaintext": 21.119999699294567,
+            "ntt_us_per_plaintext": 333.8240087032318,
+            "wall_us_per_plaintext": 381.966
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 154.62400019168854,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 18.432000651955605,
+            "ntt_us_per_plaintext": 135.16800105571747,
+            "wall_us_per_plaintext": 158.955
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 190.97600132226944,
+            "h2d_us_per_plaintext": 41.919998824596405,
+            "unpack_or_rns_us_per_plaintext": 22.607999853789806,
+            "ntt_us_per_plaintext": 125.95200538635254,
+            "wall_us_per_plaintext": 195.5
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 144.75199580192566,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 16.383999958634377,
+            "ntt_us_per_plaintext": 126.97599828243256,
+            "wall_us_per_plaintext": 149.41899999999998
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 163.80799561738968,
+            "h2d_us_per_plaintext": 12.048000004142523,
+            "unpack_or_rns_us_per_plaintext": 18.736000172793865,
+            "ntt_us_per_plaintext": 132.9919993877411,
+            "wall_us_per_plaintext": 167.9655
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 359.42399501800537,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 340.9920036792755,
+            "wall_us_per_plaintext": 363.7085
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 368.6400055885315,
+            "h2d_us_per_plaintext": 12.143999803811312,
+            "unpack_or_rns_us_per_plaintext": 17.872000113129616,
+            "ntt_us_per_plaintext": 338.9439880847931,
+            "wall_us_per_plaintext": 372.9295
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "periodic1024",
+      "coefficient_bits": [
+        32,
+        32,
+        32
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 131080.0,
+      "replication_group": 32,
+      "modes": {
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 335.87199449539185,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 18.432000651955605,
+            "ntt_us_per_plaintext": 317.440003156662,
+            "wall_us_per_plaintext": 340.1805
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 380.7999938726425,
+            "h2d_us_per_plaintext": 42.17600077390671,
+            "unpack_or_rns_us_per_plaintext": 22.432000376284122,
+            "ntt_us_per_plaintext": 315.39198756217957,
+            "wall_us_per_plaintext": 384.634
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 142.31999963521957,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 146.13799999999998
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 187.391996383667,
+            "h2d_us_per_plaintext": 41.9359989464283,
+            "unpack_or_rns_us_per_plaintext": 22.14400004595518,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 191.7495
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 628.7840008735657,
+            "h2d_us_per_plaintext": 625.7280111312866,
+            "unpack_or_rns_us_per_plaintext": 1.6479999758303165,
+            "ntt_us_per_plaintext": 1.3119999784976244,
+            "wall_us_per_plaintext": 633.437
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 140.28799533843994,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 15.407999977469444,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 144.79799999999997
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 167.93599724769592,
+            "h2d_us_per_plaintext": 22.39999920129776,
+            "unpack_or_rns_us_per_plaintext": 21.967999637126923,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 172.6575
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 22.52800017595291,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 20.479999482631683,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 27.007000000000005
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 617.4719929695129,
+            "h2d_us_per_plaintext": 587.007999420166,
+            "unpack_or_rns_us_per_plaintext": 27.904000133275986,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 621.9395000000001
+          },
+          "decompressed_output_gb_per_second": 409.6000103473666
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 336.89600229263306,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 16.383999958634377,
+            "ntt_us_per_plaintext": 319.487988948822,
+            "wall_us_per_plaintext": 340.996
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 355.3279936313629,
+            "h2d_us_per_plaintext": 22.640000097453594,
+            "unpack_or_rns_us_per_plaintext": 19.64799966663122,
+            "ntt_us_per_plaintext": 312.3199939727783,
+            "wall_us_per_plaintext": 359.483
+          }
+        },
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 38.91199827194214,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 36.86400130391121,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 43.31699999999999
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 67.48799979686737,
+            "h2d_us_per_plaintext": 22.336000576615334,
+            "unpack_or_rns_us_per_plaintext": 44.03200000524521,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 71.24
+          },
+          "decompressed_output_gb_per_second": 227.5555475067212
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 140.28799533843994,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 15.359999611973763,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 144.777
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 154.55999970436096,
+            "h2d_us_per_plaintext": 12.671999633312225,
+            "unpack_or_rns_us_per_plaintext": 17.823999747633934,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 158.334
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 331.88800513744354,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 16.383999958634377,
+            "ntt_us_per_plaintext": 315.3599947690964,
+            "wall_us_per_plaintext": 336.385
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 343.02400052547455,
+            "h2d_us_per_plaintext": 12.784000020474195,
+            "unpack_or_rns_us_per_plaintext": 16.736000776290894,
+            "ntt_us_per_plaintext": 313.34400177001953,
+            "wall_us_per_plaintext": 347.251
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "prefix896",
+      "coefficient_bits": [
+        27,
+        27,
+        27
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 110600.0,
+      "replication_group": 1,
+      "modes": {
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 151.5520066022873,
+            "h2d_us_per_plaintext": 1.8560000462457538,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 133.12000036239624,
+            "wall_us_per_plaintext": 157.159
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 158.51200371980667,
+            "h2d_us_per_plaintext": 11.04000024497509,
+            "unpack_or_rns_us_per_plaintext": 18.976000137627125,
+            "ntt_us_per_plaintext": 128.00000607967377,
+            "wall_us_per_plaintext": 162.52450000000002
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 149.50400590896606,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 16.383999958634377,
+            "ntt_us_per_plaintext": 132.09599256515503,
+            "wall_us_per_plaintext": 154.07349999999997
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 167.42400079965591,
+            "h2d_us_per_plaintext": 19.471999257802963,
+            "unpack_or_rns_us_per_plaintext": 20.06400004029274,
+            "ntt_us_per_plaintext": 126.97599828243256,
+            "wall_us_per_plaintext": 172.09400000000002
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 151.5520066022873,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 18.432000651955605,
+            "ntt_us_per_plaintext": 132.09599256515503,
+            "wall_us_per_plaintext": 155.50900000000001
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 189.43999707698822,
+            "h2d_us_per_plaintext": 41.82400181889534,
+            "unpack_or_rns_us_per_plaintext": 22.1599992364645,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 193.75799999999998
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 348.0000048875809,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 328.70399951934814,
+            "wall_us_per_plaintext": 352.2205000000001
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 363.9039993286133,
+            "h2d_us_per_plaintext": 19.696000032126904,
+            "unpack_or_rns_us_per_plaintext": 21.23199962079525,
+            "ntt_us_per_plaintext": 322.56001234054565,
+            "wall_us_per_plaintext": 368.0025
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 351.52000188827515,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 16.97599980980158,
+            "ntt_us_per_plaintext": 333.8240087032318,
+            "wall_us_per_plaintext": 355.87100000000004
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 359.8560094833374,
+            "h2d_us_per_plaintext": 11.103999800980091,
+            "unpack_or_rns_us_per_plaintext": 17.59999990463257,
+            "ntt_us_per_plaintext": 331.7759931087494,
+            "wall_us_per_plaintext": 364.15149999999994
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 628.7520229816437,
+            "h2d_us_per_plaintext": 625.6960034370422,
+            "unpack_or_rns_us_per_plaintext": 1.6799999866634607,
+            "ntt_us_per_plaintext": 1.3119999784976244,
+            "wall_us_per_plaintext": 633.375
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 22.52800017595291,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 20.479999482631683,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 27.002
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 617.1839833259583,
+            "h2d_us_per_plaintext": 586.896002292633,
+            "unpack_or_rns_us_per_plaintext": 28.672000393271446,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 621.2230000000001
+          },
+          "decompressed_output_gb_per_second": 409.6000103473666
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 338.3679986000061,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 319.2480057477951,
+            "wall_us_per_plaintext": 342.747
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 385.0400000810623,
+            "h2d_us_per_plaintext": 42.11200028657913,
+            "unpack_or_rns_us_per_plaintext": 21.104000508785248,
+            "ntt_us_per_plaintext": 322.4480003118515,
+            "wall_us_per_plaintext": 389.278
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "pattern": "scalar",
+      "coefficient_bits": [
+        39,
+        39,
+        39
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 159752.0,
+      "replication_group": 65536,
+      "modes": {
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 337.92001008987427,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 16.383999958634377,
+            "ntt_us_per_plaintext": 320.51199674606323,
+            "wall_us_per_plaintext": 342.12350000000004
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 348.60800206661224,
+            "h2d_us_per_plaintext": 14.879999682307243,
+            "unpack_or_rns_us_per_plaintext": 18.5759998857975,
+            "ntt_us_per_plaintext": 315.3599947690964,
+            "wall_us_per_plaintext": 352.63899999999995
+          }
+        },
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 38.91199827194214,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 36.01600043475628,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 43.485499999999995
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 40.95999896526337,
+            "h2d_us_per_plaintext": 3.0720001086592674,
+            "unpack_or_rns_us_per_plaintext": 35.90400144457817,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 45.419000000000004
+          },
+          "decompressed_output_gb_per_second": 232.91336902319665
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 138.31999897956848,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 15.935999806970358,
+            "ntt_us_per_plaintext": 120.83200365304947,
+            "wall_us_per_plaintext": 143.57150000000001
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 171.00800573825836,
+            "h2d_us_per_plaintext": 26.655999943614006,
+            "unpack_or_rns_us_per_plaintext": 20.447999238967896,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 175.7825
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 22.52800017595291,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 20.479999482631683,
+            "ntt_us_per_plaintext": 1.0239999974146485,
+            "wall_us_per_plaintext": 26.770000000000003
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 617.2960102558136,
+            "h2d_us_per_plaintext": 586.9119763374329,
+            "unpack_or_rns_us_per_plaintext": 28.431999497115612,
+            "ntt_us_per_plaintext": 1.3599999947473407,
+            "wall_us_per_plaintext": 621.475
+          },
+          "decompressed_output_gb_per_second": 409.6000103473666
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 142.33599603176117,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.40800030529499,
+            "ntt_us_per_plaintext": 124.23999980092049,
+            "wall_us_per_plaintext": 146.897
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 189.2159953713417,
+            "h2d_us_per_plaintext": 41.9359989464283,
+            "unpack_or_rns_us_per_plaintext": 22.0959996804595,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 192.9735
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 629.1519999504089,
+            "h2d_us_per_plaintext": 625.8559823036194,
+            "unpack_or_rns_us_per_plaintext": 1.7920000245794654,
+            "ntt_us_per_plaintext": 1.3760000001639128,
+            "wall_us_per_plaintext": 634.262
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 140.28799533843994,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 15.455999877303839,
+            "ntt_us_per_plaintext": 123.29600006341934,
+            "wall_us_per_plaintext": 144.48699999999997
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 159.18400138616562,
+            "h2d_us_per_plaintext": 14.76799976080656,
+            "unpack_or_rns_us_per_plaintext": 21.023999899625778,
+            "ntt_us_per_plaintext": 123.90399724245071,
+            "wall_us_per_plaintext": 163.85850000000002
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 330.1759958267212,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 16.383999958634377,
+            "ntt_us_per_plaintext": 312.3199939727783,
+            "wall_us_per_plaintext": 334.648
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 363.2480055093765,
+            "h2d_us_per_plaintext": 26.815999299287796,
+            "unpack_or_rns_us_per_plaintext": 21.183999255299568,
+            "ntt_us_per_plaintext": 315.39198756217957,
+            "wall_us_per_plaintext": 367.436
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 343.03998947143555,
+            "h2d_us_per_plaintext": 1.0239999974146485,
+            "unpack_or_rns_us_per_plaintext": 17.59999990463257,
+            "ntt_us_per_plaintext": 324.6079981327057,
+            "wall_us_per_plaintext": 347.614
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 380.41600584983826,
+            "h2d_us_per_plaintext": 42.01599955558777,
+            "unpack_or_rns_us_per_plaintext": 21.887999959290028,
+            "ntt_us_per_plaintext": 316.4159953594208,
+            "wall_us_per_plaintext": 384.27599999999995
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "dense",
+      "coefficient_bits": [
+        30,
+        30,
+        30
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 122881.0,
+      "replication_group": 1,
+      "modes": {
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 482.81000554561615,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.73199920356274,
+            "ntt_us_per_plaintext": 446.90799713134766,
+            "wall_us_per_plaintext": 483.4755
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 484.7579896450043,
+            "h2d_us_per_plaintext": 9.78600000962615,
+            "unpack_or_rns_us_per_plaintext": 35.64999997615814,
+            "ntt_us_per_plaintext": 438.93200159072876,
+            "wall_us_per_plaintext": 485.546625
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 184.9599927663803,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 32.76799991726875,
+            "ntt_us_per_plaintext": 152.0639955997467,
+            "wall_us_per_plaintext": 185.5984375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 194.73600387573242,
+            "h2d_us_per_plaintext": 9.586000349372625,
+            "unpack_or_rns_us_per_plaintext": 33.34200009703636,
+            "ntt_us_per_plaintext": 151.87199413776398,
+            "wall_us_per_plaintext": 195.3079375
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 623.6839890480042,
+            "h2d_us_per_plaintext": 623.308002948761,
+            "unpack_or_rns_us_per_plaintext": 0.20399999630171806,
+            "ntt_us_per_plaintext": 0.1720000000204891,
+            "wall_us_per_plaintext": 624.5735
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 189.82800096273422,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 34.17599946260452,
+            "ntt_us_per_plaintext": 155.2640050649643,
+            "wall_us_per_plaintext": 190.73218749999998
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 206.2080055475235,
+            "h2d_us_per_plaintext": 18.72800011187792,
+            "unpack_or_rns_us_per_plaintext": 34.44800153374672,
+            "ntt_us_per_plaintext": 153.16200256347656,
+            "wall_us_per_plaintext": 206.7759375
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 70.96400111913681,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 70.65600156784058,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 71.578875
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 651.3879895210266,
+            "h2d_us_per_plaintext": 584.604024887085,
+            "unpack_or_rns_us_per_plaintext": 66.43600016832352,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 652.092875
+          },
+          "decompressed_output_gb_per_second": 118.72463504668676
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 488.5599911212921,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 38.784001022577286,
+            "ntt_us_per_plaintext": 449.14399087429047,
+            "wall_us_per_plaintext": 489.425875
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 514.9440169334412,
+            "h2d_us_per_plaintext": 39.45400007069111,
+            "unpack_or_rns_us_per_plaintext": 36.81799955666065,
+            "ntt_us_per_plaintext": 438.52800130844116,
+            "wall_us_per_plaintext": 515.5324375
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 191.6159987449646,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.21999903023243,
+            "ntt_us_per_plaintext": 156.22399747371674,
+            "wall_us_per_plaintext": 192.18625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 225.65000504255295,
+            "h2d_us_per_plaintext": 39.420001208782196,
+            "unpack_or_rns_us_per_plaintext": 35.53000092506409,
+            "ntt_us_per_plaintext": 150.52799880504608,
+            "wall_us_per_plaintext": 226.17675
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 495.10401487350464,
+            "h2d_us_per_plaintext": 0.1740000006975606,
+            "unpack_or_rns_us_per_plaintext": 37.06599958240986,
+            "ntt_us_per_plaintext": 457.8559994697571,
+            "wall_us_per_plaintext": 495.65325000000007
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 503.71599197387695,
+            "h2d_us_per_plaintext": 18.76400038599968,
+            "unpack_or_rns_us_per_plaintext": 36.46400012075901,
+            "ntt_us_per_plaintext": 448.3019858598709,
+            "wall_us_per_plaintext": 504.21925
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "periodic1024",
+      "coefficient_bits": [
+        32,
+        32,
+        32
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 131073.0,
+      "replication_group": 32,
+      "modes": {
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 70.7160010933876,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 70.40400058031082,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 71.3513125
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 651.1240005493164,
+            "h2d_us_per_plaintext": 584.2060148715973,
+            "unpack_or_rns_us_per_plaintext": 66.50800257921219,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 651.9785625000001
+          },
+          "decompressed_output_gb_per_second": 119.14959279098065
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 464.76200222969055,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 36.86400130391121,
+            "ntt_us_per_plaintext": 427.90400981903076,
+            "wall_us_per_plaintext": 465.40274999999997
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 482.35200345516205,
+            "h2d_us_per_plaintext": 20.031999796628952,
+            "unpack_or_rns_us_per_plaintext": 36.25799901783466,
+            "ntt_us_per_plaintext": 425.9839951992035,
+            "wall_us_per_plaintext": 483.0385625
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 623.3740150928497,
+            "h2d_us_per_plaintext": 622.9719817638397,
+            "unpack_or_rns_us_per_plaintext": 0.20399999630171806,
+            "ntt_us_per_plaintext": 0.16399999731220305,
+            "wall_us_per_plaintext": 624.083625
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 183.67999792099,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.96799820661545,
+            "ntt_us_per_plaintext": 147.58799970149994,
+            "wall_us_per_plaintext": 184.31175
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 225.2039983868599,
+            "h2d_us_per_plaintext": 39.462000131607056,
+            "unpack_or_rns_us_per_plaintext": 36.216000095009804,
+            "ntt_us_per_plaintext": 149.42199736833572,
+            "wall_us_per_plaintext": 225.9134375
+          }
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 182.27200210094452,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 33.15199911594391,
+            "ntt_us_per_plaintext": 149.20999854803085,
+            "wall_us_per_plaintext": 182.93375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 194.1640004515648,
+            "h2d_us_per_plaintext": 10.17000013962388,
+            "unpack_or_rns_us_per_plaintext": 35.14599986374378,
+            "ntt_us_per_plaintext": 148.8640010356903,
+            "wall_us_per_plaintext": 194.799
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 182.53400176763535,
+            "h2d_us_per_plaintext": 0.21800000104121864,
+            "unpack_or_rns_us_per_plaintext": 34.17599946260452,
+            "ntt_us_per_plaintext": 148.22399616241455,
+            "wall_us_per_plaintext": 183.1454375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 204.64399456977844,
+            "h2d_us_per_plaintext": 19.90799978375435,
+            "unpack_or_rns_us_per_plaintext": 36.11600026488304,
+            "ntt_us_per_plaintext": 148.8500013947487,
+            "wall_us_per_plaintext": 205.3950625
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 467.6479995250702,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 38.336001336574554,
+            "ntt_us_per_plaintext": 429.24799025058746,
+            "wall_us_per_plaintext": 468.32225
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 500.14999508857727,
+            "h2d_us_per_plaintext": 39.45600055158138,
+            "unpack_or_rns_us_per_plaintext": 36.7639996111393,
+            "ntt_us_per_plaintext": 423.49399626255035,
+            "wall_us_per_plaintext": 500.915625
+          }
+        },
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 44.519999995827675,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 44.172000139951706,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 45.05675
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 64.85600024461746,
+            "h2d_us_per_plaintext": 19.896000623703003,
+            "unpack_or_rns_us_per_plaintext": 44.746000319719315,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 65.3965
+          },
+          "decompressed_output_gb_per_second": 189.9078143036783
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 461.88800036907196,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.711999982595444,
+            "ntt_us_per_plaintext": 425.6639927625656,
+            "wall_us_per_plaintext": 462.70181249999996
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 467.53400564193726,
+            "h2d_us_per_plaintext": 10.802000295370817,
+            "unpack_or_rns_us_per_plaintext": 35.80999933183193,
+            "ntt_us_per_plaintext": 420.8639860153198,
+            "wall_us_per_plaintext": 468.313125
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "prefix896",
+      "coefficient_bits": [
+        28,
+        28,
+        28
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 114689.0,
+      "replication_group": 1,
+      "modes": {
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 479.18601334095,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.58399900794029,
+            "ntt_us_per_plaintext": 443.5200095176697,
+            "wall_us_per_plaintext": 479.82606250000003
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 485.492005944252,
+            "h2d_us_per_plaintext": 9.519999846816063,
+            "unpack_or_rns_us_per_plaintext": 35.99599935114384,
+            "ntt_us_per_plaintext": 440.12801349163055,
+            "wall_us_per_plaintext": 486.24187500000005
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 484.3299984931946,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 38.27200084924698,
+            "ntt_us_per_plaintext": 445.68799436092377,
+            "wall_us_per_plaintext": 485.02931250000006
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 513.8820111751556,
+            "h2d_us_per_plaintext": 39.545999839901924,
+            "unpack_or_rns_us_per_plaintext": 36.965999752283096,
+            "ntt_us_per_plaintext": 437.3759925365448,
+            "wall_us_per_plaintext": 514.6651250000001
+          }
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 189.47400152683258,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.32800078392029,
+            "ntt_us_per_plaintext": 153.90199422836304,
+            "wall_us_per_plaintext": 189.98443749999998
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 224.8860001564026,
+            "h2d_us_per_plaintext": 39.44000042974949,
+            "unpack_or_rns_us_per_plaintext": 35.6879997998476,
+            "ntt_us_per_plaintext": 149.4860053062439,
+            "wall_us_per_plaintext": 225.571125
+          }
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 187.26399540901184,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 33.92000123858452,
+            "ntt_us_per_plaintext": 153.21600437164307,
+            "wall_us_per_plaintext": 187.892625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 203.514002263546,
+            "h2d_us_per_plaintext": 17.482000403106213,
+            "unpack_or_rns_us_per_plaintext": 33.78999978303909,
+            "ntt_us_per_plaintext": 152.25199609994888,
+            "wall_us_per_plaintext": 204.180125
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 71.27000018954277,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 70.91200351715088,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 71.77987499999999
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 653.8240015506744,
+            "h2d_us_per_plaintext": 587.4019861221313,
+            "unpack_or_rns_us_per_plaintext": 66.69200211763382,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 654.4662500000001
+          },
+          "decompressed_output_gb_per_second": 118.29602301352435
+        },
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 187.77400255203247,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 32.76799991726875,
+            "ntt_us_per_plaintext": 154.62800115346909,
+            "wall_us_per_plaintext": 188.4279375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 195.12199610471725,
+            "h2d_us_per_plaintext": 8.988000452518463,
+            "unpack_or_rns_us_per_plaintext": 33.02999958395958,
+            "ntt_us_per_plaintext": 153.08800339698792,
+            "wall_us_per_plaintext": 195.84418749999998
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 623.4340071678162,
+            "h2d_us_per_plaintext": 623.0419874191284,
+            "unpack_or_rns_us_per_plaintext": 0.21399999968707561,
+            "ntt_us_per_plaintext": 0.16799999866634607,
+            "wall_us_per_plaintext": 624.2390625
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 481.1500012874603,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 36.6859994828701,
+            "ntt_us_per_plaintext": 444.11401450634,
+            "wall_us_per_plaintext": 481.88025
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 496.751993894577,
+            "h2d_us_per_plaintext": 17.525999806821346,
+            "unpack_or_rns_us_per_plaintext": 36.37399896979332,
+            "ntt_us_per_plaintext": 442.74599850177765,
+            "wall_us_per_plaintext": 497.37275000000005
+          }
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "pattern": "scalar",
+      "coefficient_bits": [
+        39,
+        39,
+        39
+      ],
+      "encoded_gpu_bytes_per_plaintext": 8388608,
+      "half_integer_bytes_per_plaintext": 159745.0,
+      "replication_group": 65536,
+      "modes": {
+        "integer_realhalf_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 185.60200184583664,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.34800000488758,
+            "ntt_us_per_plaintext": 150.14399588108063,
+            "wall_us_per_plaintext": 186.23806249999998
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 197.49599695205688,
+            "h2d_us_per_plaintext": 12.325999792665243,
+            "unpack_or_rns_us_per_plaintext": 35.5600006878376,
+            "ntt_us_per_plaintext": 149.7659981250763,
+            "wall_us_per_plaintext": 198.14206249999998
+          }
+        },
+        "fft_fp64_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 458.37999880313873,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 38.289999589324,
+            "ntt_us_per_plaintext": 419.5840060710907,
+            "wall_us_per_plaintext": 459.0675625
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 496.76600098609924,
+            "h2d_us_per_plaintext": 39.470000192523,
+            "unpack_or_rns_us_per_plaintext": 36.81199997663498,
+            "ntt_us_per_plaintext": 420.66600918769836,
+            "wall_us_per_plaintext": 497.43550000000005
+          }
+        },
+        "ntt_replication_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 34.94400158524513,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 34.57400016486645,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 35.53175
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 35.19999980926514,
+            "h2d_us_per_plaintext": 0.5119999987073243,
+            "unpack_or_rns_us_per_plaintext": 34.512000158429146,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 35.8430625
+          },
+          "decompressed_output_gb_per_second": 242.62763810952865
+        },
+        "fft_fp64_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 187.59199976921082,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 37.88800165057182,
+            "ntt_us_per_plaintext": 149.63200688362122,
+            "wall_us_per_plaintext": 188.2154375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 225.66400468349457,
+            "h2d_us_per_plaintext": 39.42599892616272,
+            "unpack_or_rns_us_per_plaintext": 36.44200041890144,
+            "ntt_us_per_plaintext": 149.75999295711517,
+            "wall_us_per_plaintext": 226.299625
+          }
+        },
+        "encoded_uint32_upload": {
+          "with_h2d": {
+            "total_us_per_plaintext": 623.3299970626831,
+            "h2d_us_per_plaintext": 622.9380071163177,
+            "unpack_or_rns_us_per_plaintext": 0.22200000239536166,
+            "ntt_us_per_plaintext": 0.16399999731220305,
+            "wall_us_per_plaintext": 624.05
+          }
+        },
+        "ntt_bitpack30_cuda": {
+          "device_only": {
+            "total_us_per_plaintext": 70.19799947738647,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 69.95199993252754,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 70.79575
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 650.9860157966614,
+            "h2d_us_per_plaintext": 584.2440128326416,
+            "unpack_or_rns_us_per_plaintext": 66.55200198292732,
+            "ntt_us_per_plaintext": 0.12799999967683107,
+            "wall_us_per_plaintext": 651.65375
+          },
+          "decompressed_output_gb_per_second": 119.91948776434215
+        },
+        "integer_bitpack_cuda_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 186.63600087165833,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 36.86400130391121,
+            "ntt_us_per_plaintext": 149.63200688362122,
+            "wall_us_per_plaintext": 187.263375
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 210.30400693416595,
+            "h2d_us_per_plaintext": 24.155999533832073,
+            "unpack_or_rns_us_per_plaintext": 36.34599968791008,
+            "ntt_us_per_plaintext": 149.8439982533455,
+            "wall_us_per_plaintext": 210.892125
+          }
+        },
+        "integer_bitpack_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 456.83999359607697,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 37.248000502586365,
+            "ntt_us_per_plaintext": 419.45600509643555,
+            "wall_us_per_plaintext": 457.5866875
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 480.3819954395294,
+            "h2d_us_per_plaintext": 24.224000051617622,
+            "unpack_or_rns_us_per_plaintext": 36.622000858187675,
+            "ntt_us_per_plaintext": 419.45600509643555,
+            "wall_us_per_plaintext": 481.165125
+          }
+        },
+        "integer_realhalf_tilelang_tensor_ntt": {
+          "device_only": {
+            "total_us_per_plaintext": 455.4160088300705,
+            "h2d_us_per_plaintext": 0.12799999967683107,
+            "unpack_or_rns_us_per_plaintext": 35.711999982595444,
+            "ntt_us_per_plaintext": 419.4580018520355,
+            "wall_us_per_plaintext": 456.1075
+          },
+          "with_h2d": {
+            "total_us_per_plaintext": 467.6879942417145,
+            "h2d_us_per_plaintext": 13.002000283449888,
+            "unpack_or_rns_us_per_plaintext": 35.46000085771084,
+            "ntt_us_per_plaintext": 419.35400664806366,
+            "wall_us_per_plaintext": 468.42175
+          }
+        }
+      }
+    }
+  ]
+}

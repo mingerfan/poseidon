@@ -1,0 +1,59 @@
+{
+  "cases": [
+    {
+      "chunk_period": 256,
+      "file": "capacity_cipher_broadcast_add_0.json",
+      "id": "capacity_cipher_broadcast_add_0",
+      "sha256": "711e78109fea4b38647dcbf6ed3592cd00e6e83f81c0ff1163e4fa8634e6b376"
+    },
+    {
+      "chunk_period": 256,
+      "file": "capacity_cipher_broadcast_add_1.json",
+      "id": "capacity_cipher_broadcast_add_1",
+      "sha256": "9e3b2f6871176c82d30b45a9d9eb0cedfb87fd07b6f14b16ef89cace293779b1"
+    },
+    {
+      "chunk_period": 4,
+      "file": "capacity_cipher_broadcast_add_2.json",
+      "id": "capacity_cipher_broadcast_add_2",
+      "sha256": "c07e4fef3d9930325abd91bbfe09afdc16e841631def7129824f2d1fad4dfb74"
+    },
+    {
+      "chunk_period": 256,
+      "file": "capacity_cipher_broadcast_subtract_0.json",
+      "id": "capacity_cipher_broadcast_subtract_0",
+      "sha256": "924f7cad9de2e6931eb4a061f2ddb537ad245cc8dccd2f9d57456cda7ea8844b"
+    },
+    {
+      "chunk_period": 256,
+      "file": "capacity_cipher_broadcast_subtract_1.json",
+      "id": "capacity_cipher_broadcast_subtract_1",
+      "sha256": "e17fb406c1a6c290461fc4d169c42fdca4f1801482cf9711012a74c7abe5aa79"
+    },
+    {
+      "chunk_period": 4,
+      "file": "capacity_cipher_broadcast_subtract_2.json",
+      "id": "capacity_cipher_broadcast_subtract_2",
+      "sha256": "da1a35b77a8d2fbf5f65a983604cf4c81a44feaee097d0aeafe1f7becf310a8a"
+    },
+    {
+      "chunk_period": 256,
+      "file": "capacity_cipher_broadcast_multiply_0.json",
+      "id": "capacity_cipher_broadcast_multiply_0",
+      "sha256": "557d68b5f12c7577bd0473612464bd4774db5e1c649c9fec4a1b24ed8782a625"
+    },
+    {
+      "chunk_period": 256,
+      "file": "capacity_cipher_broadcast_multiply_1.json",
+      "id": "capacity_cipher_broadcast_multiply_1",
+      "sha256": "740084ff26dcf312aa8eb071adb5fff7d52a2856d90cc131035f881af5ef18b2"
+    },
+    {
+      "chunk_period": 4,
+      "file": "capacity_cipher_broadcast_multiply_2.json",
+      "id": "capacity_cipher_broadcast_multiply_2",
+      "sha256": "35a74776d7769d276de22181fc3ce8512625cb8e59f27523d32edd8f699a5804"
+    }
+  ],
+  "format": "poseidon-capacity-regression-list-v2"
+}

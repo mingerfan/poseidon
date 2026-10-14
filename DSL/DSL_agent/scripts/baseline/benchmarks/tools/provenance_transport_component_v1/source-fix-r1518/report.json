@@ -1,0 +1,23 @@
+{
+  "format": "poseidon-provenance-part-budget-fix-v1",
+  "graph_json_bytes": 33554432,
+  "transport_wire_bytes": 4194304,
+  "wire_limit_unchanged": true,
+  "logical_work_bytes": 16777216,
+  "previous_failed_scope": "843ce357b980f1e1723f20cb9f617644df91e4326b3b22c55802e1a2284206e8",
+  "files": {
+    "provenance_json_transport.py": {
+      "before": "6b4f9585537f18e9d1302709fadc7af99016cee4e228d3708b690ee7bf0072ca",
+      "after": "40b8beae020f46e956cc8f7c5aa004f8c762e01001622f127eb88daeea107655"
+    },
+    "test_provenance_json_transport.py": {
+      "before": "f53f4e75b14417dad0d8f5e0fc2aed4414fae86f8a0e70f6e9386b5ff2a63ef0",
+      "after": "6e8f4206dc007f4459035f569195f5cab5b881d6a840cb7d679794415a89ed1f"
+    }
+  },
+  "sdk": "a957171552f6df93bbd4b006b33a5ef85c28fded0ea5cd54d3911146908d742e",
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "binding": "047893978b5bed8cf1aef97a89ab9f15429cc4ae2511720a4d6a16b40bcc757c"
+}

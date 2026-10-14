@@ -1,0 +1,10 @@
+Summary checks passed: 33 reports; all repetitions return to baseline
+1gpu-release max error 8.22061379668587e-07
+1gpu-reuse max error 1.6348713262264917e-06
+4gpu-release max error 4.93499019831859e-07
+4gpu-reuse max error 9.66379302784314e-07
+2x2-release max error 1.3936081268849319e-06
+2x2-reuse max error 1.2469361534578927e-06
+1gpu estimate reuse MiB [88.34375] RMM reuse peak increment MiB [177.78125]
+4gpu estimate reuse MiB [16.0625, 14.3125, 13.65625, 18.15625] RMM reuse peak increment MiB [50.84375, 46.84375, 47.3125, 46.75]
+2x2 estimate reuse MiB [16.0625, 14.3125, 13.65625, 18.15625] RMM reuse peak increment MiB [53.09375, 47.96875, 50.40625, 52.9375]

@@ -1,0 +1,63 @@
+{
+  "approximations": {
+    "defaults": {
+      "rsqrt": {
+        "domain": [
+          0.5,
+          1.0
+        ],
+        "iterations": 1,
+        "method": "newton"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "models.make_model",
+  "factory": {
+    "args": [
+      "unbatched1",
+      1
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "models.py": "80bc376561193e5219ff2cd9bd77a1543ac2d55047c3c6ac4e28fc7ddccca672"
+  },
+  "format": "poseidon-trusted-pytorch-v7",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "out",
+    "summary"
+  ],
+  "weights": {
+    "norm.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0000.npy",
+      "sha256": "c1df42c28abb2cceff60825756aa75df043c504901e975479ecc0c59beaf112f",
+      "shape": [
+        2
+      ]
+    },
+    "norm.weight": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0001.npy",
+      "sha256": "6b213f5a7c40b67dee5bf7e9dde1808258e191841a485d3921f22c0cc101a976",
+      "shape": [
+        2
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "original_sha256": "c563dfc1234423807a6a88352ab39c99dd59ac7ef9802dfce06d1701ce0fdc26",
+  "updated_sha256": "5bb07c967976953ec1ccace21857753205fc3297f925d8dfd48c1b6b8cd2c6e6",
+  "lowering_sha256": "0581432e3c44f11c80dc21cf3165d3880baa09dce4d7709fc64f492be10a3c75",
+  "change": "Only LM-head linear lowering changes; original weights, blocks, nonlinear approximations and output ABI retained"
+}

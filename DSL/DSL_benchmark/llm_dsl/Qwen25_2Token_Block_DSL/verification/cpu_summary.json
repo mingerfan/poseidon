@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "remote_job": "/home/gy/qwen-ckks/experiments/fullsize_1789998599039624068",
+  "programs": [
+    {
+      "name": "qwen_block_prefill",
+      "status": "passed",
+      "final_max_abs_error_vs_function": 0.00040365166993099473,
+      "final_max_abs_output_tail": 2.2276698242107383e-07,
+      "final_level": 0,
+      "elapsed_ms_including_validation_decryption": 35598143.174749
+    },
+    {
+      "name": "qwen_block_decode",
+      "status": "passed",
+      "final_max_abs_error_vs_function": 0.00045542584525012637,
+      "final_max_abs_output_tail": 4.5204048157529733e-07,
+      "final_level": 0,
+      "elapsed_ms_including_validation_decryption": 35704514.459091
+    }
+  ],
+  "prefill_decode_max_abs_difference": 0.0005691433342602248,
+  "synthetic_weights": true,
+  "num_blocks": 1,
+  "seq_len": 2,
+  "source_sha256": {
+    "ops.py": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+    "qwen_layers.py": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+    "qwen_model.py": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+    "qwen_nonlinear.py": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760"
+  },
+  "elapsed_seconds": 35941.953744888306,
+  "evidence_file": "fullsize-status-1790041387696198400.json",
+  "evidence_sha256": "b3f76271ece97084e9d504c8c34ae903ad7dbc0060d612877b24afc2915d9620"
+}

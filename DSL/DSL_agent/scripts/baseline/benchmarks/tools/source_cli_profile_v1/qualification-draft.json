@@ -1,0 +1,17 @@
+{
+  "api_calls_max": 0,
+  "cases": 3,
+  "compiler_calls_max": 3,
+  "encrypted_calls_max": 9,
+  "format": "poseidon-source-cli-qualification-draft-v1",
+  "not_verified": [
+    "source_capture",
+    "real_compile",
+    "encrypted_numerical",
+    "package_reuse"
+  ],
+  "production_modified": false,
+  "source_sha256": "e3d5c0a0df6b5ca049ff1501ac385cc1c70871e0ffc7b93d22204f09efa17c03",
+  "status": "draft_not_executed",
+  "wall_seconds": 720
+}

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "purpose": "optional upstream poly helper imports",
+  "python": "3.10.14",
+  "platforms": [
+    "x86_64-linux",
+    "aarch64-linux"
+  ],
+  "download_budget_bytes": 1048576,
+  "disk_budget_bytes": 10485760,
+  "wheels": [
+    {
+      "name": "einops",
+      "version": "0.6.1",
+      "filename": "einops-0.6.1-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/68/24/b05452c986e8eff11f47e123a40798ae693f2fa1ed2f9546094997d2f6be/einops-0.6.1-py3-none-any.whl",
+      "bytes": 42232,
+      "sha256": "99149e46cc808956b174932fe563d920db4d6e5dadb8c6ecdaa7483b7ef7cfc3",
+      "requires_dist": []
+    }
+  ]
+}

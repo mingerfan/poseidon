@@ -1,0 +1,118 @@
+{
+  "format": "poseidon-dataset-assessment-phase-v1",
+  "status": "offline_component_acceptance_passed",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "source_changes": {
+    "scripts/baseline/task_dataset_assessment.py": "8b4ff0ff2801ab5517151942b4f05292224ac216b562eb5c21a64ae92adb9e35",
+    "scripts/baseline/test_task_dataset_assessment.py": "73e190cfa1e621acc963efa64a691c164b8286936d593cc006155b7749127cbe"
+  },
+  "controls": {
+    "report": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/dataset_assessment_v1/controls.final2.json",
+    "binding": "578682fa9a709756e7e47df4b291de7f5a37ed2a2089e901b37d76c44719bf62",
+    "tests": {
+      "run": 65,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "new_dataset_tests": 25,
+    "existing_compatibility_tests": 40,
+    "kind": "Injected control fixtures"
+  },
+  "cached_real_evidence_audit": {
+    "format": "poseidon-dataset-receipt-real-evidence-audit-v1",
+    "status": "passed",
+    "audit_kind": "Original real application-accuracy failure retained; no new execution",
+    "dataset_status": "validation_failed",
+    "dataset_binding": "ea7731ae011493a43407253e041fbbfec14fca7fa1bd323127cff08025fa1f50",
+    "summary_binding": "d6962dd2cdaab89474ba7236850ed496f97b60e48d841e77538710b81bb7eb47",
+    "source_phase_binding": "b420a4b717a2996ca6437721e3d0eaf3c77790486fb82ac7f0296d8bbd74b7fd",
+    "historical_assessment_binding": "a49082ff553bea124677e2374e70dabbe4449e3f374482efd9d91d3f80c78142",
+    "samples": 3,
+    "compared_values": 30,
+    "numerical_receipts": 1,
+    "ckks_max_absolute_error": 2.48294335092325e-09,
+    "ckks_mae": 4.0934349106201144e-10,
+    "source_total_max_absolute_error": 0.7657156480471775,
+    "source_application_accuracy_passed": false,
+    "repeated_receipt_counted_once": true,
+    "original_evidence_unchanged": true,
+    "source_forward_calls": 0,
+    "new_encrypted_calls": 0,
+    "compiler_calls": 0,
+    "api_calls": 0,
+    "stage_identity": "aea83c53afb1bd7456c2c5fc90c56b45cb2886d1a47b9739e3da156381e7c2ad",
+    "elapsed_seconds": 2.2808303630008595,
+    "sources": {
+      "scripts/baseline/task_dataset_assessment.py": "8b4ff0ff2801ab5517151942b4f05292224ac216b562eb5c21a64ae92adb9e35",
+      "scripts/baseline/benchmarks/tools/dataset_assessment_v1/real_receipt_audit_v2.py": "ba6c5971d16f287e1669853fdaa8db45d12ff5425061fea165bbdbeefa3249b2"
+    },
+    "binding": "4e15dc64f3dd3ea257c3a63d1a3e0698b03b980e3a739f3a00d8a45556e6ec94"
+  },
+  "cached_real_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-dataset-receipt-audit-v2/report.json",
+  "dataset_summary": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-dataset-receipt-audit-v2/summary.json",
+  "dataset_summary_binding": "d6962dd2cdaab89474ba7236850ed496f97b60e48d841e77538710b81bb7eb47",
+  "original_application_accuracy_passed": false,
+  "bounds": {
+    "max_parts": 4096,
+    "max_samples": 65536,
+    "part_samples": [
+      1,
+      16
+    ],
+    "declaration_bytes": 4194304,
+    "receipt_bytes": 16777216,
+    "tensor_capacity_changed": false,
+    "execution_limits_changed": false
+  },
+  "evidence_states": {
+    "real_evidence_samples": 3,
+    "real_evidence_values": 30,
+    "new_source_forward_calls": 0,
+    "new_encrypted_calls": 0,
+    "new_compiler_calls": 0,
+    "new_api_calls": 0,
+    "large_multi_part_real_dataset_execution": false,
+    "full_dataset_accuracy_certified": false
+  },
+  "preserved_development_records": [
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/dataset_assessment_v1/controls.json",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/dataset_assessment_v1/controls.final.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-dataset-receipt-audit-v1/report.json"
+  ],
+  "protected_files": {
+    "count": 654,
+    "changed": 0
+  },
+  "stage_identity": "aea83c53afb1bd7456c2c5fc90c56b45cb2886d1a47b9739e3da156381e7c2ad",
+  "pending_mha_scope": {
+    "plan": "passed",
+    "provider_calls": 0,
+    "authorized": false,
+    "proposal_binding": "509391f78f2bc75e6f5fb749e9c048ce9ea049b9aa0e51f5d7c62521b8fd4d69",
+    "execution_started": false
+  },
+  "permissions": {
+    "backend_changes": 0,
+    "parameter_changes": 0,
+    "threshold_changes": 0,
+    "installations": 0,
+    "downloads": 0,
+    "paid_calls": 0,
+    "commits": 0,
+    "pushes": 0
+  },
+  "resources": {
+    "total_results_bytes": 27067122776,
+    "free_bytes": 46087135232
+  },
+  "remaining": [
+    "Collector is an explicit host adapter; current CLI behavior is preserved",
+    "Full native-source dataset accuracy requires the declared real inputs and evidence",
+    "Larger tensor/layout capacity, whole models, bootstrap and CUDA remain separate work",
+    "Two pending MHA new-generation cases are not executed without the scoped authorization"
+  ],
+  "binding": "df6e6aed9ee0f1013502d3c1fa108dc0303952fafe7910077d521c1a9fcca044"
+}

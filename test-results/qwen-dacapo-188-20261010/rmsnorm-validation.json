@@ -1,0 +1,25 @@
+{
+  "format": "qwen188-rmsnorm-artifact-check-v1",
+  "native_compiler_exit_code": 0,
+  "plan": "test-results/qwen-dacapo-188-20261010/artifacts/rmsnorm.complete._hecate_qwen_rmsnorm.runtime-plan.json",
+  "value_count": 162,
+  "execution_steps": 122,
+  "op_counts": {
+    "mul_cc": 10,
+    "relinearize": 10,
+    "rotate": 15,
+    "add_cc": 28,
+    "mul_cp": 31,
+    "add_cp": 8,
+    "rescale": 15,
+    "mod_switch": 3,
+    "boot": 1,
+    "negate": 1
+  },
+  "bundle_blobs": 21,
+  "bundle_bytes": 5250048,
+  "bundle_hashes_verified": true,
+  "operator_spec_hash_verified": true,
+  "topological_references_verified": true,
+  "encrypted_runtime_execution_tested": false
+}

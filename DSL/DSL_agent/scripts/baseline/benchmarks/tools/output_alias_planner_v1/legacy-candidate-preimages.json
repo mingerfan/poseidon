@@ -1,0 +1,1993 @@
+[
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "same_0",
+    "model": {
+      "constants": {
+        "public_2": 0.5,
+        "public_4": 0.125
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            5
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_3",
+          "inputs": [
+            "generated_0",
+            "public_2"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2",
+            "public_4"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_4"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "first",
+          "value": "generated_4"
+        },
+        {
+          "name": "second",
+          "value": "generated_4"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "same_1",
+    "model": {
+      "constants": {
+        "public_2": 0.5,
+        "public_4": 0.125
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            7
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_3",
+          "inputs": [
+            "generated_0",
+            "public_2"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2",
+            "public_4"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_4"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "first",
+          "value": "generated_4"
+        },
+        {
+          "name": "second",
+          "value": "generated_4"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 16,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 32,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "same_2",
+    "model": {
+      "constants": {
+        "public_2": 0.5,
+        "public_4": 0.125
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            20
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_3",
+          "inputs": [
+            "generated_0",
+            "public_2"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2",
+            "public_4"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_4"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "first",
+          "value": "generated_4"
+        },
+        {
+          "name": "second",
+          "value": "generated_4"
+        },
+        {
+          "name": "third",
+          "value": "generated_4"
+        },
+        {
+          "name": "fourth",
+          "value": "generated_4"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "interleave_0",
+    "model": {
+      "constants": {
+        "public_2": 0.25
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            5
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_3",
+          "inputs": [
+            "generated_0",
+            "public_2"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2",
+            "x"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_4"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "main",
+          "value": "generated_4"
+        },
+        {
+          "name": "original",
+          "value": "x"
+        },
+        {
+          "name": "again",
+          "value": "generated_4"
+        },
+        {
+          "name": "original_again",
+          "value": "x"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "interleave_1",
+    "model": {
+      "constants": {
+        "public_2": 0.25
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            7
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_3",
+          "inputs": [
+            "generated_0",
+            "public_2"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2",
+            "x"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_4"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "main",
+          "value": "generated_4"
+        },
+        {
+          "name": "original",
+          "value": "x"
+        },
+        {
+          "name": "again",
+          "value": "generated_4"
+        },
+        {
+          "name": "original_again",
+          "value": "x"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 16,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "interleave_2",
+    "model": {
+      "constants": {
+        "public_2": 0.25
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            9
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_3",
+          "inputs": [
+            "generated_0",
+            "public_2"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2",
+            "x"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_4"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "main",
+          "value": "generated_4"
+        },
+        {
+          "name": "original",
+          "value": "x"
+        },
+        {
+          "name": "again",
+          "value": "generated_4"
+        },
+        {
+          "name": "original_again",
+          "value": "x"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "structure_0",
+    "model": {
+      "constants": {},
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            3
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {
+            "shape": [
+              6
+            ]
+          },
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              3
+            ]
+          },
+          "id": "generated_3",
+          "inputs": [
+            "generated_0"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_4"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              6
+            ]
+          },
+          "id": "generated_7",
+          "inputs": [
+            "generated_4"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_6"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              3
+            ]
+          },
+          "id": "generated_9",
+          "inputs": [
+            "generated_6"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_8"
+          ]
+        },
+        {
+          "attrs": {
+            "axes": [
+              0,
+              1
+            ],
+            "keepdims": false
+          },
+          "id": "generated_11",
+          "inputs": [
+            "generated_8"
+          ],
+          "op": "sum",
+          "outputs": [
+            "generated_10"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scalar",
+          "value": "generated_10"
+        },
+        {
+          "name": "scalar_alias",
+          "value": "generated_10"
+        },
+        {
+          "name": "tensor",
+          "value": "generated_2"
+        },
+        {
+          "name": "tensor_alias",
+          "value": "generated_2"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 16,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "structure_1",
+    "model": {
+      "constants": {},
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            5
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {
+            "shape": [
+              10
+            ]
+          },
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              5
+            ]
+          },
+          "id": "generated_3",
+          "inputs": [
+            "generated_0"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_4"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              10
+            ]
+          },
+          "id": "generated_7",
+          "inputs": [
+            "generated_4"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_6"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              5
+            ]
+          },
+          "id": "generated_9",
+          "inputs": [
+            "generated_6"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_8"
+          ]
+        },
+        {
+          "attrs": {
+            "axes": [
+              0,
+              1
+            ],
+            "keepdims": false
+          },
+          "id": "generated_11",
+          "inputs": [
+            "generated_8"
+          ],
+          "op": "sum",
+          "outputs": [
+            "generated_10"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scalar",
+          "value": "generated_10"
+        },
+        {
+          "name": "scalar_alias",
+          "value": "generated_10"
+        },
+        {
+          "name": "tensor",
+          "value": "generated_2"
+        },
+        {
+          "name": "tensor_alias",
+          "value": "generated_2"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 16,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "structure_2",
+    "model": {
+      "constants": {},
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            3,
+            3
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {
+            "shape": [
+              9
+            ]
+          },
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              3,
+              3
+            ]
+          },
+          "id": "generated_3",
+          "inputs": [
+            "generated_0"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2"
+          ],
+          "op": "square",
+          "outputs": [
+            "generated_4"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              9
+            ]
+          },
+          "id": "generated_7",
+          "inputs": [
+            "generated_4"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_6"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              3,
+              3
+            ]
+          },
+          "id": "generated_9",
+          "inputs": [
+            "generated_6"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_8"
+          ]
+        },
+        {
+          "attrs": {
+            "axes": [
+              0,
+              1
+            ],
+            "keepdims": false
+          },
+          "id": "generated_11",
+          "inputs": [
+            "generated_8"
+          ],
+          "op": "sum",
+          "outputs": [
+            "generated_10"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "scalar",
+          "value": "generated_10"
+        },
+        {
+          "name": "scalar_alias",
+          "value": "generated_10"
+        },
+        {
+          "name": "tensor",
+          "value": "generated_2"
+        },
+        {
+          "name": "tensor_alias",
+          "value": "generated_2"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "compat_mixed_cat_0",
+    "model": {
+      "constants": {
+        "public_4": 0.0,
+        "public_6": [
+          [
+            -0.3661109215685738,
+            0.33908093709950826
+          ],
+          [
+            -0.15634208025334032,
+            -0.0005310448665894474
+          ]
+        ]
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            2
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_3",
+          "inputs": [
+            "generated_0"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_5",
+          "inputs": [
+            "generated_2",
+            "public_4"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_4"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_7",
+          "inputs": [
+            "generated_4"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_6"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_9",
+          "inputs": [
+            "generated_6"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_8"
+          ]
+        },
+        {
+          "attrs": {
+            "axes": [
+              0,
+              1
+            ],
+            "keepdims": false
+          },
+          "id": "generated_11",
+          "inputs": [
+            "generated_8"
+          ],
+          "op": "sum",
+          "outputs": [
+            "generated_10"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              1,
+              1
+            ]
+          },
+          "id": "generated_13",
+          "inputs": [
+            "generated_10"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_12"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 0
+          },
+          "id": "generated_15",
+          "inputs": [
+            "generated_12",
+            "generated_12"
+          ],
+          "op": "concat",
+          "outputs": [
+            "generated_14"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 1
+          },
+          "id": "generated_17",
+          "inputs": [
+            "generated_14",
+            "generated_14"
+          ],
+          "op": "concat",
+          "outputs": [
+            "generated_16"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_19",
+          "inputs": [
+            "generated_16",
+            "public_6"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_18"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_21",
+          "inputs": [
+            "generated_18"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_20"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_23",
+          "inputs": [
+            "generated_20"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_22"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 0
+          },
+          "id": "generated_25",
+          "inputs": [
+            "generated_2",
+            "generated_22"
+          ],
+          "op": "concat",
+          "outputs": [
+            "generated_24"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              8
+            ]
+          },
+          "id": "generated_27",
+          "inputs": [
+            "generated_24"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_26"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4,
+              2
+            ]
+          },
+          "id": "generated_29",
+          "inputs": [
+            "generated_26"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_28"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "value": "generated_28"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "compat_public_stack_0",
+    "model": {
+      "constants": {
+        "public_4": [
+          [
+            [
+              -0.29763615619916967,
+              -0.05465188605837079
+            ],
+            [
+              -0.19992345901310404,
+              -0.2208696962044285
+            ]
+          ],
+          [
+            [
+              -0.05465188605837079,
+              -0.29763615619916967
+            ],
+            [
+              -0.2208696962044285,
+              -0.19992345901310404
+            ]
+          ]
+        ]
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            2
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              1,
+              2,
+              2
+            ]
+          },
+          "id": "generated_3",
+          "inputs": [
+            "generated_0"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              1,
+              2,
+              2
+            ]
+          },
+          "id": "generated_5",
+          "inputs": [
+            "generated_2"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_4"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 0
+          },
+          "id": "generated_7",
+          "inputs": [
+            "generated_4",
+            "generated_4"
+          ],
+          "op": "concat",
+          "outputs": [
+            "generated_6"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_9",
+          "inputs": [
+            "generated_6",
+            "public_4"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_8"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              8
+            ]
+          },
+          "id": "generated_11",
+          "inputs": [
+            "generated_8"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_10"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2,
+              2
+            ]
+          },
+          "id": "generated_13",
+          "inputs": [
+            "generated_10"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_12"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "value": "generated_12"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  },
+  {
+    "candidate_options": [
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 4,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      },
+      {
+        "capacity_packing_version": "capacity-public-tensors-v9",
+        "chunk_period": 8,
+        "public_weight_policy": "descriptors-math-roles-v2"
+      }
+    ],
+    "case": "compat_combination_5",
+    "model": {
+      "constants": {
+        "public_10": [
+          [
+            -0.25,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.25
+          ]
+        ],
+        "public_4": 0.0,
+        "public_6": [
+          [
+            0.04281489366473129,
+            -0.192781806686161
+          ],
+          [
+            0.3982745656108839,
+            0.032346724463840903
+          ]
+        ],
+        "public_8": [
+          [
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "static_alias_source",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            2
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_1",
+          "inputs": [
+            "x"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_0"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_3",
+          "inputs": [
+            "generated_0"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_2"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_5",
+          "inputs": [
+            "generated_2"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_4"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_7",
+          "inputs": [
+            "generated_4"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_6"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_9",
+          "inputs": [
+            "generated_6",
+            "public_4"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_8"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_11",
+          "inputs": [
+            "generated_8"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_10"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_13",
+          "inputs": [
+            "generated_10"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_12"
+          ]
+        },
+        {
+          "attrs": {
+            "axes": [
+              0,
+              1
+            ],
+            "keepdims": false
+          },
+          "id": "generated_15",
+          "inputs": [
+            "generated_12"
+          ],
+          "op": "sum",
+          "outputs": [
+            "generated_14"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              1,
+              1
+            ]
+          },
+          "id": "generated_17",
+          "inputs": [
+            "generated_14"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_16"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 0
+          },
+          "id": "generated_19",
+          "inputs": [
+            "generated_16",
+            "generated_16"
+          ],
+          "op": "concat",
+          "outputs": [
+            "generated_18"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 1
+          },
+          "id": "generated_21",
+          "inputs": [
+            "generated_18",
+            "generated_18"
+          ],
+          "op": "concat",
+          "outputs": [
+            "generated_20"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_23",
+          "inputs": [
+            "generated_20",
+            "public_6"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_22"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_25",
+          "inputs": [
+            "generated_22"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_24"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_27",
+          "inputs": [
+            "generated_24"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_26"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 1
+          },
+          "id": "generated_29",
+          "inputs": [
+            "generated_6",
+            "generated_26"
+          ],
+          "op": "concat",
+          "outputs": [
+            "generated_28"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              8
+            ]
+          },
+          "id": "generated_31",
+          "inputs": [
+            "generated_28"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_30"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_33",
+          "inputs": [
+            "generated_2"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_32"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_35",
+          "inputs": [
+            "generated_32"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_34"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_37",
+          "inputs": [
+            "generated_34",
+            "public_8"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "generated_36"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_39",
+          "inputs": [
+            "generated_36"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_38"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_41",
+          "inputs": [
+            "generated_38"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_40"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_43",
+          "inputs": [
+            "generated_40"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_42"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_45",
+          "inputs": [
+            "generated_42"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_44"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "generated_47",
+          "inputs": [
+            "generated_44",
+            "public_10"
+          ],
+          "op": "add",
+          "outputs": [
+            "generated_46"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_49",
+          "inputs": [
+            "generated_46"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_48"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_51",
+          "inputs": [
+            "generated_48"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_50"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              4
+            ]
+          },
+          "id": "generated_53",
+          "inputs": [
+            "generated_50"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_52"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              4
+            ]
+          },
+          "id": "generated_55",
+          "inputs": [
+            "generated_30"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_54"
+          ]
+        },
+        {
+          "attrs": {
+            "shape": [
+              2,
+              2
+            ]
+          },
+          "id": "generated_57",
+          "inputs": [
+            "generated_52"
+          ],
+          "op": "reshape",
+          "outputs": [
+            "generated_56"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "joined",
+          "value": "generated_54"
+        },
+        {
+          "name": "updated",
+          "value": "generated_56"
+        },
+        {
+          "name": "snapshot",
+          "value": "generated_6"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    }
+  }
+]

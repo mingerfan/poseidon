@@ -15,26 +15,8 @@
 # Use CPM to find or clone NVTX3
 function(find_and_configure_nvtx3)
 
-  if(TARGET nvtx3::nvtx3-cpp)
-    return()
-  endif()
-
-  set(_poseidon_nvtx_dir "${CMAKE_CURRENT_LIST_DIR}/../../../nvtx")
-  if(EXISTS "${_poseidon_nvtx_dir}/c/CMakeLists.txt")
-    add_subdirectory("${_poseidon_nvtx_dir}/c" "${CMAKE_BINARY_DIR}/third_party/nvtx" EXCLUDE_FROM_ALL)
-    if(TARGET nvtx3-c AND NOT TARGET nvtx3::nvtx3-c)
-      add_library(nvtx3::nvtx3-c ALIAS nvtx3-c)
-    endif()
-    if(TARGET nvtx3-cpp AND NOT TARGET nvtx3::nvtx3-cpp)
-      add_library(nvtx3::nvtx3-cpp ALIAS nvtx3-cpp)
-    endif()
-    return()
-  endif()
-
-  message(
-    FATAL_ERROR
-      "Bundled NVTX was not found at ${_poseidon_nvtx_dir}. "
-      "Offline builds require third_party/nvtx.")
+  include(${rapids-cmake-dir}/cpm/nvtx3.cmake)
+  rapids_cpm_nvtx3(BUILD_EXPORT_SET rmm-exports INSTALL_EXPORT_SET rmm-exports)
 
 endfunction()
 

@@ -1,17 +1,48 @@
 #include "homomorphic_dft.h"
 
+#include <limits>
+
 namespace poseidon
 {
 HomomorphicDFTMatrixLiteral::HomomorphicDFTMatrixLiteral(LinearType type, uint32_t log_n,
                                                          uint32_t log_slots, uint32_t level_start,
                                                          vector<uint32_t> levels,
                                                          bool repack_imag_to_real, double scaling,
-                                                         bool bit_reversed, uint32_t log_bsgs_ratio)
+                                                         bool bit_reversed, uint32_t log_bsgs_ratio,
+                                                         vector<uint32_t> layer_groups,
+                                                         uint32_t direct_layer_threshold)
 
     : type_(type), log_n_(log_n), log_slots_(log_slots), level_start_(level_start),
       levels_(std::move(levels)), repack_imag_to_real_(repack_imag_to_real), scaling_(scaling),
-      bit_reversed_(bit_reversed), log_bsgs_ratio_(log_bsgs_ratio)
+      bit_reversed_(bit_reversed), log_bsgs_ratio_(log_bsgs_ratio),
+      layer_groups_(std::move(layer_groups)),
+      direct_layer_threshold_(direct_layer_threshold)
 {
+    if (!layer_groups_.empty())
+    {
+        uint32_t total_layers = 0;
+        for (const auto layers : layer_groups_)
+        {
+            if (layers == 0)
+            {
+                POSEIDON_THROW(invalid_argument_error, "DFT layer group cannot be zero");
+            }
+            total_layers += layers;
+        }
+        if (total_layers != log_slots_ ||
+            layer_groups_.size() != levels_.size())
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "explicit DFT layer groups must match log_slots and level count");
+        }
+    }
+    else if (direct_layer_threshold_ != 0)
+    {
+        POSEIDON_THROW(
+            invalid_argument_error,
+            "direct DFT layer threshold requires explicit layer groups");
+    }
 }
 
 LinearType HomomorphicDFTMatrixLiteral::get_type() const { return type_; }
@@ -26,6 +57,8 @@ uint32_t HomomorphicDFTMatrixLiteral::get_log_bsgs_ratio() const { return log_bs
 
 uint32_t HomomorphicDFTMatrixLiteral::get_depth(bool actual)
 {
+    if (!layer_groups_.empty())
+        return static_cast<uint32_t>(layer_groups_.size());
     if (actual)
         return levels_.size();
     else
@@ -43,6 +76,8 @@ void HomomorphicDFTMatrixLiteral::create(LinearMatrixGroup &mat_group, CKKSEncod
     auto context_data = encoder.context().crt_context()->first_context_data();
     auto &modulus = context_data->parms().q();
     auto x = this->gen_matrices();
+    const auto encoded_log_slots =
+        log_slots_ < log_n_ - 1 && repack_imag_to_real_ ? log_slots_ + 1 : log_slots_;
     mat_group.data().resize(x.size());
     mat_group.set_step(step);
     auto leveld = level_start_;
@@ -59,7 +94,11 @@ void HomomorphicDFTMatrixLiteral::create(LinearMatrixGroup &mat_group, CKKSEncod
         }
 
         gen_linear_transform_bsgs(mat_group.data()[i], mat_group.rot_index(), encoder, x[i], leveld,
-                                  modulus_group, log_bsgs_ratio_, log_slots_);
+                                  modulus_group, log_bsgs_ratio_, encoded_log_slots,
+                                  !layer_groups_.empty() &&
+                                          layer_groups_[i] <= direct_layer_threshold_
+                                      ? (1U << log_slots_)
+                                      : 0);
         leveld = leveld - step;
     }
 }
@@ -86,6 +125,8 @@ void HomomorphicDFTMatrixLiteral::create_dynamic(
     }
     const auto &modulus = context_data->parms().q();
     auto matrices = gen_matrices();
+    const auto encoded_log_slots =
+        log_slots_ < log_n_ - 1 && repack_imag_to_real_ ? log_slots_ + 1 : log_slots_;
 
     std::size_t q_count = static_cast<std::size_t>(level_start_) + 1;
     if (q_count == 0 || q_count > modulus.size())
@@ -181,7 +222,11 @@ void HomomorphicDFTMatrixLiteral::create_dynamic(
             static_cast<uint32_t>(q_count - 1),
             plaintext_scale,
             log_bsgs_ratio_,
-            log_slots_);
+            encoded_log_slots,
+            !layer_groups_.empty() &&
+                    layer_groups_[stage] <= direct_layer_threshold_
+                ? (1U << log_slots_)
+                : 0);
         q_count -= rescale_counts[stage];
     }
 }
@@ -197,6 +242,7 @@ vector<map<int, vector<complex<double>>>> HomomorphicDFTMatrixLiteral::gen_matri
     auto logd_slots = log_slots;
     if (logd_slots < log_n_ - 1 && repack_imag_to_real_)
         logd_slots++;
+    const auto dslots = 1U << logd_slots;
 
     vector<complex<double>> roots = get_roots_float64(slots << 2);
 
@@ -215,26 +261,34 @@ vector<map<int, vector<complex<double>>>> HomomorphicDFTMatrixLiteral::gen_matri
     vector<vector<complex<double>>> a, b, c;
     if (lt_type == encode)
     {
-        tie(a, b, c) = ifft_plain_vec(log_slots, 1 << log_slots, roots, pow5);
+        tie(a, b, c) = ifft_plain_vec(log_slots, dslots, roots, pow5);
     }
     else
     {
-        tie(a, b, c) = fft_plain_vec(log_slots, 1 << log_slots, roots, pow5);
+        tie(a, b, c) = fft_plain_vec(log_slots, dslots, roots, pow5);
     }
 
     vector<map<int, vector<complex<double>>>> plain_vector(max_depth);
 
     vector<int> merge(max_depth);
-    for (auto i = 0; i < max_depth; ++i)
+    if (!layer_groups_.empty())
     {
-        depth = int(ceil(float(fft_level) / float(max_depth - i)));
+        for (std::size_t i = 0; i < layer_groups_.size(); ++i)
+            merge[i] = static_cast<int>(layer_groups_[i]);
+    }
+    else
+    {
+        for (auto i = 0; i < max_depth; ++i)
+        {
+            depth = int(ceil(float(fft_level) / float(max_depth - i)));
 
-        if (lt_type == encode)
-            merge[i] = depth;
-        else
-            merge[merge.size() - i - 1] = depth;
+            if (lt_type == encode)
+                merge[i] = depth;
+            else
+                merge[merge.size() - i - 1] = depth;
 
-        fft_level -= depth;
+            fft_level -= depth;
+        }
     }
 
     fft_level = log_slots;
@@ -287,7 +341,7 @@ vector<map<int, vector<complex<double>>>> HomomorphicDFTMatrixLiteral::gen_matri
     // ..., 0, 0]).
     if (log_slots != logd_slots && lt_type == encode && repack_imag_to_real_)
     {
-        for (auto j : plain_vector[max_depth - 1])
+        for (auto &j : plain_vector[max_depth - 1])
         {
             for (int x = 0; x < slots; x++)
                 j.second[x + slots] = complex<double>(0, 0);
@@ -627,9 +681,34 @@ std::map<int, std::vector<std::complex<double>>> multiply_fft_matrix_with_next_f
 
 map<int, vector<complex<double>>> gen_repack_matrix(uint32_t log_l, bool bit_reversed)
 {
-    std::map<int, std::vector<std::complex<double>>> new_vec;
+    // This is the sparse real/imaginary repacking matrix used before the
+    // SlotToCoeff DFT. It maps two n-slot halves into one 2n-slot transform:
+    //   diagonal 0: [1, ..., 1, i, ..., i]
+    //   diagonal n: [i, ..., i, 1, ..., 1]
+    // The matrix is invariant under the optional bit-reversed convention.
+    // Keeping this helper empty used to make the first sparse DFT matrix empty
+    // and led to memory corruption in the matrix-merging routine.
+    (void)bit_reversed;
+    if (log_l >= std::numeric_limits<std::size_t>::digits - 1)
+    {
+        POSEIDON_THROW(invalid_argument_error, "repack matrix size overflows");
+    }
 
-    return new_vec;
+    const std::size_t slots = std::size_t{1} << log_l;
+    vector<complex<double>> diagonal0(2 * slots);
+    vector<complex<double>> diagonal_n(2 * slots);
+    for (std::size_t i = 0; i < slots; ++i)
+    {
+        diagonal0[i] = complex<double>(1.0, 0.0);
+        diagonal0[i + slots] = complex<double>(0.0, 1.0);
+        diagonal_n[i] = complex<double>(0.0, 1.0);
+        diagonal_n[i + slots] = complex<double>(1.0, 0.0);
+    }
+
+    std::map<int, std::vector<std::complex<double>>> result;
+    add_to_diag_matrix(result, 0, diagonal0);
+    add_to_diag_matrix(result, static_cast<int>(slots), diagonal_n);
+    return result;
 }
 
 }  // namespace poseidon

@@ -1,0 +1,67 @@
+test_add_case (test_scope.ScopeTests) ... ok
+test_authority_accepts_actual_normalized_execution_view (test_scope.ScopeTests) ... ok
+test_authority_refuses_changed_application_identity (test_scope.ScopeTests) ... ok
+test_authority_refuses_changed_case_execution_fields (test_scope.ScopeTests) ... ok
+test_authority_refuses_changed_derived_budget (test_scope.ScopeTests) ... ok
+test_authority_refuses_raw_proposal_as_execution_view (test_scope.ScopeTests) ... ok
+test_authority_refuses_unknown_execution_field (test_scope.ScopeTests) ... ok
+test_authorization_cannot_grant_extra_budget (test_scope.ScopeTests) ... ok
+test_authorization_cannot_include_private_or_extra_fields (test_scope.ScopeTests) ... ok
+test_authorization_cannot_use_integer_approval (test_scope.ScopeTests) ... ok
+test_authorization_requires_human_record_metadata (test_scope.ScopeTests) ... ok
+test_authorization_sha_pair_cannot_be_mixed (test_scope.ScopeTests) ... ok
+test_boolean_accounting (test_scope.ScopeTests) ... ok
+test_boolean_budget_is_distinct_from_integer_budget (test_scope.ScopeTests) ... ok
+test_budget (test_scope.ScopeTests) ... ok
+test_budget_bool (test_scope.ScopeTests) ... ok
+test_complete_means_both_reviewed_cases (test_scope.ScopeTests) ... ok
+test_correction_cannot_add_unreviewed_source (test_scope.ScopeTests) ... ok
+test_correction_cannot_change_request_or_budget (test_scope.ScopeTests) ... ok
+test_correction_matches_already_reviewed_execution_identity (test_scope.ScopeTests) ... ok
+test_duplicate_json (test_scope.ScopeTests) ... ok
+test_duplicate_terminal_case (test_scope.ScopeTests) ... ok
+test_failure_not_pass (test_scope.ScopeTests) ... ok
+test_generation_bound (test_scope.ScopeTests) ... ok
+test_http_bound (test_scope.ScopeTests) ... ok
+test_illegal_terminal_case (test_scope.ScopeTests) ... ok
+test_ledger_gap (test_scope.ScopeTests) ... ok
+test_matching_authorization_data_schema (test_scope.ScopeTests) ... ok
+test_missing_approval (test_scope.ScopeTests) ... ok
+test_missing_self_binding (test_scope.ScopeTests) ... ok
+test_model_name (test_scope.ScopeTests) ... ok
+test_no_calls (test_scope.ScopeTests) ... ok
+test_nonfinite_json (test_scope.ScopeTests) ... ok
+test_original_proposal (test_scope.ScopeTests) ... ok
+test_original_three_case_approval_is_rejected (test_scope.ScopeTests) ... ok
+test_pending_calls (test_scope.ScopeTests) ... ok
+test_previous_proposal_authorization_cannot_authorize_new_source (test_scope.ScopeTests) ... ok
+test_regular_symlink_scope (test_scope.ScopeTests) ... ok
+test_remove_case (test_scope.ScopeTests) ... ok
+test_resolved_calls (test_scope.ScopeTests) ... ok
+test_source_case_order (test_scope.ScopeTests) ... ok
+test_third_generation_scope_rejected (test_scope.ScopeTests) ... ok
+test_threshold (test_scope.ScopeTests) ... ok
+test_tool_manifest_cannot_add_file (test_scope.ScopeTests) ... ok
+test_two_cases_exact_maximum (test_scope.ScopeTests) ... ok
+test_unapproved_record_rejected (test_scope.ScopeTests) ... ok
+test_unknown_outcome (test_scope.ScopeTests) ... ok
+test_validation_grade (test_scope.ScopeTests) ... ok
+test_approval_file_absent_does_not_construct_provider (test_run.RunTests) ... ok
+test_existing_root_rejected (test_run.RunTests) ... ok
+test_hidden_approval_path (test_run.RunTests) ... ok
+test_no_approval_no_execution (test_run.RunTests) ... ok
+test_owned_tree_only_owned_child (test_run.RunTests) ... ok
+test_pid_identity (test_run.RunTests) ... ok
+test_plan_extended_deadline (test_run.RunTests) ... ok
+test_plan_tamper (test_run.RunTests) ... ok
+test_plan_unknown_field (test_run.RunTests) ... ok
+test_public_budget (test_run.RunTests) ... ok
+test_public_cases (test_run.RunTests) ... ok
+test_transport_receipt_normalized_roundtrip_preserves_diagnostics (test_run.RunTests) ... ok
+test_wrong_root_rejected (test_run.RunTests) ... ok
+
+----------------------------------------------------------------------
+Ran 61 tests in 0.720s
+
+OK
+{"format": "poseidon-mha-tensor-axis-runner-controls-v1", "tests": 61, "passed": 61, "failed": 0, "errors": 0, "skipped": 0, "elapsed_seconds": 0.7374314240005333, "provider_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "synthetic_authorization_fixtures_only": true, "production_authorization_created": false}

@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "returncode": 0,
+  "sdk": "7300861557e66fcbe3b3ffbabccb2eb563374e59322bdef53d49dd9d8af51bee",
+  "tests_line": "Ran 68 tests in 4.972s",
+  "code_fix_binding": "51880ab81d81832b5984acff7dd6f4fb24fd2fb452fec873bc817bd23ef67fcf",
+  "log_sha256": "2edf03f39dc8fdc743b20765f7a5b1be6c878f410341229efdf051314b5adac8",
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

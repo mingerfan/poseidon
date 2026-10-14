@@ -1,0 +1,67 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "resource_profile": "resnet20-v1",
+  "id": "wide_elementwise_4096",
+  "inputs": [
+    {
+      "name": "image",
+      "shape": [
+        1,
+        4,
+        32,
+        32
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "scale",
+      "op": "multiply",
+      "inputs": [
+        "image",
+        "gain"
+      ],
+      "outputs": [
+        "scaled"
+      ],
+      "attrs": {}
+    },
+    {
+      "id": "bias",
+      "op": "add",
+      "inputs": [
+        "scaled",
+        "bias"
+      ],
+      "outputs": [
+        "shifted"
+      ],
+      "attrs": {}
+    },
+    {
+      "id": "square",
+      "op": "square",
+      "inputs": [
+        "shifted"
+      ],
+      "outputs": [
+        "squared"
+      ],
+      "attrs": {}
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "squared"
+    }
+  ],
+  "constants": {
+    "gain": [
+      0.5
+    ],
+    "bias": [
+      -0.125
+    ]
+  }
+}

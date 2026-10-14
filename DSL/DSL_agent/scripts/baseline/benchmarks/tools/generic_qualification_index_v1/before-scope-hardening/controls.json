@@ -1,0 +1,16 @@
+{
+  "api_calls": 0,
+  "collector_note": "Tests ran once after AST registry fix; corrected collector regex; no test rerun",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-qualification-index-controls-v1",
+  "log_sha256": "0d3a771577378ecf53108bea0e1eec683f766af188b99c052980788075e60fa7",
+  "passed": 22,
+  "seconds": 0.007,
+  "skipped": 0,
+  "status": "passed",
+  "test_source_sha256": "b112ba4086c00a677933bee444c221a5adafc9b66e20504dc220c1802cf221c6",
+  "tests": 22
+}

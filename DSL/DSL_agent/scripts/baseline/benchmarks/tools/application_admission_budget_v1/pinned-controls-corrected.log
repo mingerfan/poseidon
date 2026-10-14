@@ -1,0 +1,60 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+model_weight_package.py:91: DeprecationWarning: invalid escape sequence '\.'
+  type(item["file"]) is str and re.fullmatch("[A-Za-z0-9_-]+\.npy",item["file"]) and
+test_binary_and_parameter_identity_changes_reject (test_staged_application_reuse.StagedContextControls) ... ok
+test_compilation_execution_and_validation_changes_reject (test_staged_application_reuse.StagedContextControls) ... ok
+test_existing_legacy_receipt_is_not_promoted_or_overwritten (test_staged_application_reuse.StagedContextControls) ... ok
+test_generation_only_change_keeps_worker_current (test_staged_application_reuse.StagedContextControls) ... ok
+test_legacy_context_keeps_full_generation_binding (test_staged_application_reuse.StagedContextControls) ... ok
+test_new_stores_use_versioned_sdk_policy (test_staged_application_reuse.StagedContextControls) ... ok
+test_resigned_payload_cannot_hide_sdk_drift (test_staged_application_reuse.StagedContextControls) ... ok
+test_sdk_source_authority_excludes_generation (test_staged_application_reuse.StagedContextControls) ... ok
+test_staged_receipt_roundtrip_and_conflict_check (test_staged_application_reuse.StagedContextControls) ... ok
+test_unknown_policy_and_generation_hash_are_rejected (test_staged_application_reuse.StagedContextControls) ... ok
+test_actual_pinned_sdk_and_private_paths (application_execution.tests.test_context.ContextTests) ... ok
+test_drift_prevents_any_backend_call (application_execution.tests.test_context.ContextTests) ... ok
+test_environment_failure_precedes_generation (application_execution.tests.test_context.ContextTests) ... ok
+test_export_outside_own_store_rejected_before_delivery (application_execution.tests.test_context.ContextTests) ... ok
+test_library_environment_change_rejected (application_execution.tests.test_context.ContextTests) ... ok
+test_original_application_keeps_budget_state_and_cancel (application_execution.tests.test_context.ContextTests) ... ok
+test_per_request_shape_and_acceptance_bindings (application_execution.tests.test_context.ContextTests) ... ok
+test_private_configuration_does_not_read_credential_environment (application_execution.tests.test_context.ContextTests) ... ok
+test_qualification_delegates_exactly_and_records_context (application_execution.tests.test_context.ContextTests) ... ok
+test_receipts_are_private_idempotent_and_conflict_checked (application_execution.tests.test_context.ContextTests) ... ok
+test_record_copies_cannot_mutate_frozen_context (application_execution.tests.test_context.ContextTests) ... ok
+test_resigned_request_receipt_cannot_change_binding (application_execution.tests.test_context.ContextTests) ... ok
+test_store_paths_reject_indirection_and_source_checkout (application_execution.tests.test_context.ContextTests) ... ok
+test_tool_manifest_change_is_not_hidden_by_cached_paths (application_execution.tests.test_context.ContextTests) ... ok
+test_work_root_change_is_rejected_without_rebinding_globals (application_execution.tests.test_context.ContextTests) ... ok
+test_wrong_level_and_mutated_request_rejected (application_execution.tests.test_context.ContextTests) ... ok
+test_wrong_platform_and_impure_worker_rejected (application_execution.tests.test_context.ContextTests) ... ok
+test_actual_context_application_prepares_source_under_same_task (test_application_model_source_context.SourceContextTests) ... ok
+test_context_adapter_forwards_source_origin (test_application_model_source_context.SourceContextTests) ... ok
+test_legacy_context_export_signature_is_preserved (test_application_model_source_context.SourceContextTests) ... ok
+test_original_public_envelope_and_deep_copy (test_qualification_session.PublicFeedbackTests) ... ok
+test_private_data_and_nonfinite_summary_are_refused (test_qualification_session.PublicFeedbackTests) ... ok
+test_provider_wrapper_keeps_original_error_codes_and_class (test_qualification_session.PublicFeedbackTests) ... ok
+test_actual_session_and_feedback_import_without_provider_or_cli (test_qualification_session.QualificationBoundaryTests) ... ok
+test_cli_and_component_share_the_real_validation_adapter (test_qualification_session.QualificationBoundaryTests) ... ok
+test_cli_json_assets_remain_bound_and_tampering_is_refused (test_qualification_session.QualificationBoundaryTests) ... ok
+test_component_consumes_direct_request_candidate_and_level (test_qualification_session.QualificationBoundaryTests) ... ok
+test_component_preserves_controlled_failure_feedback (test_qualification_session.QualificationBoundaryTests) ... ok
+test_non_poseidon_backend_refused_before_session (test_qualification_session.QualificationBoundaryTests) ... ok
+test_component_adapter_passes_observer_to_session (test_application_artifact_adapter.ArtifactAdapterTests) ... ok
+test_context_qualify_preserves_observer_and_receipt (test_application_artifact_adapter.ArtifactAdapterTests) ... ok
+test_execution_registers_before_copy_or_native_runner (test_application_artifact_adapter.ArtifactAdapterTests) ... ok
+test_poseidon_backend_declares_fixed_evidence_roots (test_application_artifact_adapter.ArtifactAdapterTests) ... ok
+test_poseidon_execute_forwards_observer (test_application_artifact_adapter.ArtifactAdapterTests) ... ok
+test_poseidon_legacy_qualify_omits_optional_keyword (test_application_artifact_adapter.ArtifactAdapterTests) ... ok
+test_poseidon_qualify_forwards_observer (test_application_artifact_adapter.ArtifactAdapterTests) ... ok
+test_qualification_registers_fresh_directory_before_reference (test_application_artifact_adapter.ArtifactAdapterTests) ... Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9axhxbh_
+Candidate status: budget_exhausted
+ok
+
+----------------------------------------------------------------------
+Ran 47 tests in 45.004s
+
+OK

@@ -1,0 +1,97 @@
+{
+  "constants": {
+    "weight": [
+      [
+        0.125
+      ],
+      [
+        -0.375
+      ]
+    ]
+  },
+  "format": "poseidon-operator-graph-v2",
+  "id": "matrix_chain_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "dot",
+      "inputs": [
+        "x",
+        "y"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "product"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "square",
+      "inputs": [
+        "product"
+      ],
+      "op": "square",
+      "outputs": [
+        "squared"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "project",
+      "inputs": [
+        "squared",
+        "weight"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "projection"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          0
+        ],
+        "keepdims": false
+      },
+      "id": "mean",
+      "inputs": [
+        "projection"
+      ],
+      "op": "mean",
+      "outputs": [
+        "reduced"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "projection"
+    },
+    {
+      "name": "mean",
+      "value": "reduced"
+    },
+    {
+      "name": "shared",
+      "value": "product"
+    }
+  ]
+}

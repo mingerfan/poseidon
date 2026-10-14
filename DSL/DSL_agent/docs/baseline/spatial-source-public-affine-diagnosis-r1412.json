@@ -1,0 +1,89 @@
+{
+  "binding": "588c5eb2936c11bf7938e97dd96f4e7deca714bf436ac808278139eecc4c01f8",
+  "controls_log_sha256": "4b8d70b8b752cf034bf7c9b815df7159ac1e3c8b89d0093ea2080787a9838981",
+  "date": "2026-10-12",
+  "format": "poseidon-spatial-source-public-affine-diagnosis-v1",
+  "new_compilations": 0,
+  "new_encrypted_execution": 0,
+  "new_provider_calls": 0,
+  "private_reference_outputs_used": false,
+  "private_test_inputs_used": false,
+  "probe_source_sha256": "411478588180644e8d8b2af314c92f4d9f9e7b71b6c6b0e5906e153490671bed",
+  "probe_tests_sha256": "528ee7253c42b190c53cd73954889d0917ae73cff764d03a50f7651dde435542",
+  "proposal_binding": "d1f7942b50a359ba32ab57738adc06209b07f9cbdc948ae58e141b39df46867c",
+  "rows": [
+    {
+      "candidate_source_sha256": "e01f09b0ad3e8030d4bd2e1ef059e14644b8c2ef7d375da19a92ae743bd59d53",
+      "case": "resize_2_bilinear_0",
+      "generation_index": 0,
+      "historical_or_current_batch_case_outcome": "failed",
+      "public_affine": {
+        "coefficient_mismatches": 6,
+        "compiled": false,
+        "encrypted_execution": false,
+        "exact_public_affine_match": false,
+        "maximum_absolute_coefficient_difference": 1.0,
+        "private_reference_outputs_used": false,
+        "private_test_inputs_used": false,
+        "public_input_elements": 12,
+        "public_output_elements": 24,
+        "scope": "Exact rational arithmetic on serialized public coefficients; restricted affine graph/AST subset, not CKKS or full DSL acceptance.",
+        "worst_input_index": 10,
+        "worst_output_index": 16
+      },
+      "request_sha256": "c959443f707849fdbb0d2dc7e59b56ca74c3c09670e466d40c59197c6d7643ee",
+      "response_sha256": "ba2b60d8034e225e82a259684a4c466440c44b1d54b33499dd582909137a88e3",
+      "status": "analyzed"
+    },
+    {
+      "candidate_source_sha256": "0bc96e186fd3aff5cbc5e33b8add7e961c4701b563d87fa0571d689258573b88",
+      "case": "resize_2_bilinear_1",
+      "generation_index": 0,
+      "historical_or_current_batch_case_outcome": "passed",
+      "public_affine": {
+        "coefficient_mismatches": 0,
+        "compiled": false,
+        "encrypted_execution": false,
+        "exact_public_affine_match": true,
+        "maximum_absolute_coefficient_difference": 0.0,
+        "private_reference_outputs_used": false,
+        "private_test_inputs_used": false,
+        "public_input_elements": 12,
+        "public_output_elements": 30,
+        "scope": "Exact rational arithmetic on serialized public coefficients; restricted affine graph/AST subset, not CKKS or full DSL acceptance.",
+        "worst_input_index": null,
+        "worst_output_index": null
+      },
+      "request_sha256": "d121a3b50d104286b766d150197f00ff20cec13709dc2d8899662868ef22f90b",
+      "response_sha256": "26a6761ba738664606f2f39cae3096a6cf30cfece4a951c1f03a4ba8a4e6d26a",
+      "status": "analyzed"
+    },
+    {
+      "candidate_source_sha256": "f957654577ca322024c6d11793d74f4282856b128279e3c3fdc5f1fb5b81ca16",
+      "case": "resize_2_bilinear_2",
+      "generation_index": 0,
+      "historical_or_current_batch_case_outcome": "passed",
+      "public_affine": {
+        "coefficient_mismatches": 0,
+        "compiled": false,
+        "encrypted_execution": false,
+        "exact_public_affine_match": true,
+        "maximum_absolute_coefficient_difference": 0.0,
+        "private_reference_outputs_used": false,
+        "private_test_inputs_used": false,
+        "public_input_elements": 12,
+        "public_output_elements": 24,
+        "scope": "Exact rational arithmetic on serialized public coefficients; restricted affine graph/AST subset, not CKKS or full DSL acceptance.",
+        "worst_input_index": null,
+        "worst_output_index": null
+      },
+      "request_sha256": "29bc54f860f3e56fd0594b1abfe96703bb98dd48e901e648ff9c62bd82daf777",
+      "response_sha256": "13f43ad5c7fc4ced9babcde5aa46080201e0908fd69acdebfdccc5fb01e255f3",
+      "status": "analyzed"
+    }
+  ],
+  "scope": "Read-only developer analysis of exact original Agent sources and frozen public logical models. Does not replace encrypted validation or deliver a repaired candidate.",
+  "unit_tests_failed": 0,
+  "unit_tests_passed": 16,
+  "unit_tests_skipped": 0
+}

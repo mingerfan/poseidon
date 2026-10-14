@@ -1,0 +1,20 @@
+{
+  "format": "poseidon-compiled-resource-policy-v1",
+  "policy": "fixed-cpu-retained-coefficients-v1",
+  "retention": "all_defined_values_until_runtime_destruction",
+  "source_basis_sha256": {
+    "src/poseidon/ciphertext.cpp": "3874d7ab46e344e0e3896ec740583b48f10cdba953d3ef697685eb3b24f42466",
+    "src/poseidon/ciphertext.h": "b79556774f2be55f840e4585fa3b55af0a975bb4e56a7f20fecb0fb2dd68c3d7",
+    "src/poseidon/ckks_encoder.cpp": "e9d46f7bf1f3daf91ff35d2687ac7162c84b9a9773fb4a0a01975218a2e2de65",
+    "src/poseidon/ckks_encoder.h": "5a6d7f5c54bbe463b00c9b2af6886cb584483218e1890cbf0de49e2a40ea5f6a",
+    "src/poseidon/crt_context.cpp": "fa97b58c96b5a00f9fa5e58b4a9499e762c8af1b8fffb91f7015caa1881f9c39",
+    "src/poseidon/plaintext.cpp": "b627cc2bb8682434558de00aac904794551bcd9dc5da77df167946e59b32cace",
+    "src/poseidon/plaintext.h": "44fa98943030c246728891c33c227b8d52ac130944eabf704af64f7cd50711ba",
+    "src/poseidon/runtime_api/poseidon_cpu_api.cpp": "7f790015e9395ac13558ba72b56d3088b1ee2f70d1f94fccdda31b57eedc7645",
+    "src/poseidon/runtime_api/poseidon_cpu_api.h": "6987f26d6338efee0d2a838faf0fc89eabab2dccde7e9d5360bf55892d88e1a4",
+    "src/poseidon/tools/agent_runtime/CMakeLists.txt": "7140cdc58c2bef3c2f4d3293740be747fb62ea4a14ad2794da27e7b4a4db7bd3",
+    "src/poseidon/tools/agent_runtime/cpu_runner.cpp": "53ea3382c9cfe5f3339899be812a6670b575f17a5383051e6ec0c39ba66fc9b2",
+    "third_party/ckks-runtime-agent/runtime/runtime.hpp": "7e2af31a3cb875d3909c7cb98f0c7ba72fbe259bab77702505c371bac4c32ab4"
+  },
+  "word_bytes": 8
+}

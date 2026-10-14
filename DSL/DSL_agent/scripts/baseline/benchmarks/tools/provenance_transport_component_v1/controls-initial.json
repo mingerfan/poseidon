@@ -1,0 +1,12 @@
+{
+  "format": "poseidon-provenance-controls-initial-v1",
+  "tests": 365,
+  "passed": 364,
+  "failed": 1,
+  "skipped": 0,
+  "failure": "test_explicit_version_keeps_v34_and_unknown_closed retained pre-v36 rejection expectation",
+  "launcher_failure": "enter_nix returns integer exit code, not CompletedProcess",
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

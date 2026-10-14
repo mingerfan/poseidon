@@ -1,0 +1,29 @@
+--- a/scripts/prepare_pytorch_source.py
++++ b/scripts/prepare_pytorch_source.py
+@@ -12,7 +12,7 @@
+ from pytorch_weight_package import declarations,DTYPES
+ import trusted_pytorch_import as legacy
+ DEFAULT_FORMAT="poseidon-trusted-pytorch-v18"
+-LATEST_FORMAT="poseidon-trusted-pytorch-v21"
++LATEST_FORMAT="poseidon-trusted-pytorch-v27"
+ SOURCE_SELECTIONS=(*SOURCE_FORMATS,"latest")
+ def resolve_source_format(value):
+  require(type(value)is str,"Source version selection")
+@@ -77,6 +77,7 @@
+  require(type(helpers)in(list,tuple)and len(helpers)<8,"Source inventory")
+  require(type(weights)in(list,tuple)and len(weights)<=limits.constants,"State weight inventory")
+  require(type(factory_args)in(list,tuple),"Factory args type")
++ selected_latest=source_format=="latest"
+  source_format=resolve_source_format(source_format)
+  require(dtype_policy in FLOAT_POLICIES,"Source version/float policy")
+  files={};text_files={};total=0;reserved=set(implementation_paths())|RESERVED
+@@ -113,6 +114,9 @@
+  from pytorch_input_binding import validate_call
+  from pytorch_spatial_policy import supports_input_call
+  if supports_input_call(dict(format=source_format)):
++  if call is None and selected_latest:
++   call=dict(format="poseidon-pytorch-call-v1",
++    args=[dict(kind="tensor",name=item["name"])for item in signature],kwargs={})
+   require(call is not None,"Structured input source requires --call JSON")
+   spec["call"]=validate_call(call,signature)
+  else:require(call is None,"Structured calls require explicit v26/v27")

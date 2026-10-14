@@ -1,0 +1,78 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "leaky_relu_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {
+    "generated_0": 0.2,
+    "generated_1": [
+      0.1875,
+      0.5,
+      0.3125
+    ]
+  },
+  "nodes": [
+    {
+      "id": "generated_3",
+      "op": "polynomial",
+      "inputs": [
+        "x",
+        "generated_1"
+      ],
+      "attrs": {
+        "basis": "power"
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "subtract",
+      "inputs": [
+        "x",
+        "generated_2"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "multiply",
+      "inputs": [
+        "generated_4",
+        "generated_0"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "add",
+      "inputs": [
+        "generated_2",
+        "generated_6"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_8"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_8"
+    }
+  ]
+}

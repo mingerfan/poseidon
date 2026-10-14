@@ -152,13 +152,6 @@ struct GpuParameterShard
     std::size_t bootstrap_raise_target_q_count = 0;
     DeviceVector<GpuWord> bootstrap_raise_inv_punctured;
     DeviceVector<GpuWord> bootstrap_raise_matrix;
-    // Bootstrap alternates between its evaluation-chain target and the
-    // application-chain target. Keep the inactive table device-resident so
-    // selecting either target is a host-side pointer swap, not another H2D.
-    std::size_t bootstrap_raise_cached_source_q_count = 0;
-    std::size_t bootstrap_raise_cached_target_q_count = 0;
-    DeviceVector<GpuWord> bootstrap_raise_cached_inv_punctured;
-    DeviceVector<GpuWord> bootstrap_raise_cached_matrix;
 
     /**
      * @brief NTT tables for q/p RNS limbs.
@@ -247,6 +240,19 @@ public:
     explicit GpuParameterData(const PoseidonContext &context, int device_id = 0);
 
     /**
+     * @brief Build only the requested q-only modulus-chain levels.
+     *
+     * This is intended for exact-level application KeySwitch runtimes.  It
+     * keeps the context and evaluation keys unchanged, while avoiding GPU
+     * NTT/RNS tables for chain levels that the runtime can never consume.
+     * active_q_counts must be non-empty and contain unique q limb counts.
+     */
+    GpuParameterData(
+        const PoseidonContext &context,
+        int device_id,
+        const std::vector<std::size_t> &active_q_counts);
+
+    /**
      * @brief Build GPU-side parameter tables from PoseidonContext.
      *
      * TODO:
@@ -259,13 +265,10 @@ public:
      */
     void build_from_poseidon_context(const PoseidonContext &context, int device_id);
 
-    // Rebuild the ModRaise base-conversion table for one q-only source level
-    // and a selected q-only target prefix. This is used by short-chain
-    // bootstrapping inside a longer application context.
-    void configure_bootstrap_raise_target(
+    void build_from_poseidon_context(
         const PoseidonContext &context,
-        std::size_t source_q_count,
-        std::size_t target_q_count);
+        int device_id,
+        const std::vector<std::size_t> &active_q_counts);
 
     /**
      * @brief Query level information by parms_id.
@@ -304,6 +307,11 @@ public:
     const GpuLevelInfo &get_first_q_level() const;
 
     bool empty() const;
+
+    std::size_t level_count() const noexcept
+    {
+        return levels_.size();
+    }
 
 private:
     std::vector<GpuLevelInfo> levels_;

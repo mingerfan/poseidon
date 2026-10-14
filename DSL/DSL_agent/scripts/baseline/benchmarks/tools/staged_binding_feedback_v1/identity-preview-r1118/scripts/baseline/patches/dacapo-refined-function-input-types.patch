@@ -1,0 +1,17 @@
+diff --git a/lib/Dialect/Earth/Transforms/Common.cpp b/lib/Dialect/Earth/Transforms/Common.cpp
+--- a/lib/Dialect/Earth/Transforms/Common.cpp
++++ b/lib/Dialect/Earth/Transforms/Common.cpp
+@@ -79,6 +79,13 @@ void hecate::earth::refineReturnValues(mlir::func::FuncOp func,
+   });
+ 
+   /* func.walk([&](func::ReturnOp rop) { */
++  // Operand scale management may retune Plain block arguments after
++  // refineInputValues captured inputTypes (for example a bias after mul).
++  // Re-read the final block types so the function signature and arg_scale
++  // describe the same ABI. Do not keep the initial waterline snapshot.
++  inputTypes.clear();
++  for (auto arg : func.getArguments())
++    inputTypes.push_back(arg.getType());
+   // Remap the return types
+   func.setFunctionType(
+       builder.getFunctionType(inputTypes, rop.getOperandTypes()));

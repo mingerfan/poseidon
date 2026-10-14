@@ -1,0 +1,19 @@
+{
+  "agent_status": "unverified",
+  "cases": [
+    "resize_1d_linear_0.json",
+    "resize_2d_bilinear_0.json",
+    "transpose_2d_1.json"
+  ],
+  "encrypted_status": "passed_representative_poseidon_cpu",
+  "format": "poseidon-spatial-examples-v1",
+  "graph_format": "poseidon-operator-graph-v4",
+  "reference_status": "passed",
+  "compiler_status": "passed_representative",
+  "package_status": "reload_new_inputs_repeat_cache_passed",
+  "qualification": {
+    "report": "docs/baseline/agent-spatial-offline-results-r1403.json",
+    "sdk_identity": "388e891a44863d95e6a8ce7e83c4206799434e08e122c63ff58afa2b62452337",
+    "binding": "337df162d3f3009b4b792535d26a1eb5ca01fff23d7746a727cada993bc41f92"
+  }
+}

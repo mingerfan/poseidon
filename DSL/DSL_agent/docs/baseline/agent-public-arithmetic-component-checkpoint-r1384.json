@@ -1,0 +1,741 @@
+{
+  "format": "poseidon-public-arithmetic-component-checkpoint-v1",
+  "created_at": "2026-10-11T06:47:31.514812+00:00",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "sdk_identity": "8e88db16925fad029bdeaea53ebb2ed927ebdb9aece66dd7a252923ccb711809",
+  "backend_identity": {
+    "format": "poseidon-backend-identity-v2",
+    "platform": {
+      "configured_platform": "aarch64-linux",
+      "system": "linux",
+      "machine": "aarch64",
+      "byteorder": "little",
+      "pointer_bits": 64,
+      "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+    },
+    "build_configuration": {
+      "environment_files": {
+        "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+        "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+        "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+        "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+        "src/poseidon/tools/dacapo/poseidon-cpu-shell.nix": "38e03f4ec07fc089a14851595f7d1211fe07618875e9868bf5d205dd39274020",
+        "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+      },
+      "cmake_cache_sha256": {
+        "compiler": "76c058b5d19a3e27fe299a7cbd071888494cb48c19f27df2d4d71c807b86f51d",
+        "executor": "181cd264efe24024ab5b98a745b1052f17f54b6772a68110e942ed44f9c77779",
+        "poseidon": "a96456e4ac0651827a50d58c6c80f12c2772c005cd78d2949919a6e1d2106e32"
+      }
+    },
+    "source_lock_sha256": "5e8d7adebd0cac8e9748bcddf0dc5ea408b7123095ff79199cdf47738de84647",
+    "source_lock": {
+      "format": "poseidon-runtime-source-lock-v1",
+      "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+      "runtime": {
+        "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+        "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+        "path": "third_party/ckks-runtime-agent"
+      },
+      "dacapo": {
+        "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+        "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+        "path": "third_party/ckks-runtime-agent/third_party/dacapo",
+        "patches": [
+          {
+            "file": "dacapo-plaintext-subtraction.patch",
+            "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+          },
+          {
+            "file": "dacapo-concat-layout.patch",
+            "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+          },
+          {
+            "file": "dacapo-bootstrap-containers.patch",
+            "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+          },
+          {
+            "file": "dacapo-native-function-calls.patch",
+            "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+          },
+          {
+            "file": "dacapo-refined-function-input-types.patch",
+            "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+          },
+          {
+            "file": "dacapo-augmented-operand-order.patch",
+            "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+          },
+          {
+            "file": "dacapo-constant-output-path.patch",
+            "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+          },
+          {
+            "file": "dacapo-minimal-mlir-link.patch",
+            "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+          },
+          {
+            "file": "dacapo-gcc-qualified-casts.patch",
+            "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+          },
+          {
+            "file": "dacapo-unused-mlir-dependencies.patch",
+            "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+          }
+        ]
+      },
+      "integration_method": "reviewed source archives; original independent repositories preserved"
+    },
+    "runtime_dacapo_tree_sha256": "f2ef1a237d1cb6d782e1013372e9d395f4e88e7aa449b9301a1fc2956d22a23a",
+    "api_tree_sha256": "c8a3d120aae1800ce48a5d3085044b00c7f92c844a7e1531615df3a4babccbf7",
+    "runner_tree_sha256": "bad66abf5c45cc0e920083d368ce510167940a67b65181349933fbe40845ade2",
+    "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+    "frontend_sha256": "0baecce07032d37aaecba38b64b93cbbc23fb21dac8476de85598dc9ba8d6e73",
+    "executor_sha256": "6cdd255e321025e9286d9968864c5ce0db9333017ca62e6618c6d9830178afd4",
+    "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+    "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+    "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e"
+  },
+  "backend_unchanged_from_r1383": true,
+  "source_contract": "poseidon-trusted-pytorch-v25",
+  "policy": "poseidon-public-value-expressions-v3",
+  "production_changes": [
+    {
+      "path": "scripts/baseline/application_capabilities.py",
+      "before_sha256": "ac97aa39f9c4862fe9c345189c1fa14d071fc6897d82a2e111652b6353813da1",
+      "after_sha256": "95659ee8bf41caf15d1c10b7f554cf225df6893d3b84966eb5e38a7e74711d67"
+    },
+    {
+      "path": "scripts/baseline/candidate_bundle.py",
+      "before_sha256": "43be197c28cc1fe95c1eb515b7002f7cb72165f448b49c1d15e2dbfb4f323bf2",
+      "after_sha256": "d35fba2f4bade08bd92f2430e72814bb2a2c0b0c2821f4e006c1b911681c5ce8"
+    },
+    {
+      "path": "scripts/baseline/pytorch_model_intake.py",
+      "before_sha256": "f2b089242b18ae91d656e7dbcad0b13c8868d145b4ea9b7ac33f357c3edbaf48",
+      "after_sha256": "77e82673d4db613df6ef33dd4c6b1fda587f3161196246c4f48f48773a8e1aec"
+    },
+    {
+      "path": "scripts/baseline/pytorch_ordered_contract.py",
+      "before_sha256": "f294aed6303fea0446122128f2c3a177b23d4f18bb92df3be2d8353bc4fbdfad",
+      "after_sha256": "07ae1a3a4919c4b69f11a7cca33e98e0f5527ec6205bfb8c3d3a80514a839e1a"
+    },
+    {
+      "path": "scripts/baseline/pytorch_ordered_intake.py",
+      "before_sha256": "2536c8849061ec482f45e8ac400662bbe5c805e0ca5ca87ab2fc5df3b32fb96f",
+      "after_sha256": "80fa4707988d941ae2318ab0f028c4f48c36223070a9e143c842fdde1ea0df9f"
+    },
+    {
+      "path": "scripts/baseline/pytorch_public_expression_capture.py",
+      "before_sha256": "0313b1db5ddd0f1358d2008c1833da409cf454a7708fccf8b6aaa40c2d1d4fcd",
+      "after_sha256": "84cfbe1442e7ba565fe3065832356b5c3cf77b1c94c23c72f21b17a103e86f1c"
+    },
+    {
+      "path": "scripts/baseline/pytorch_public_expression_flow.py",
+      "before_sha256": "9399b6bfc39e3974890174bc6734b4c9386c935d93f14f471225c1f8de765266",
+      "after_sha256": "0568bb6cf01effbf233eeafcb2c34ea5ffed6edabc98c33263d37253cdeec4f0"
+    },
+    {
+      "path": "scripts/baseline/pytorch_public_expression_metadata.py",
+      "before_sha256": "7d8c4c43ee94ccef0641cddc36705505796bd4e044392d64503cee22e99dd40f",
+      "after_sha256": "0bde5587c1c691ab0602328cc3609b1310ed3ceecefbf23bced5e2fa5ae1896b"
+    },
+    {
+      "path": "scripts/baseline/pytorch_public_value_ops.py",
+      "before_sha256": "4dc0235a3efa92ef1248b905ca9260e1f5ad39d1d120a1f80c4c4fc987353355",
+      "after_sha256": "5c5e42bfced017f6da4071c4fe12fd4c0f4410024f1b3f1010e41ac5f2c1f5e9"
+    },
+    {
+      "path": "scripts/baseline/pytorch_static_trace.py",
+      "before_sha256": "87e0cad3dd4a7adc430a128ba64cbaa6c12ffb51e36a4e96fc2c4a7ea9e7153d",
+      "after_sha256": "262cab772a63996560b28194c55aefb0b4d84469af744d9b5ac608d7a9bbf8fc"
+    },
+    {
+      "path": "scripts/baseline/test_pytorch_public_dtype_cast.py",
+      "before_sha256": "113d3e0d951ba59d6e8120026abe197cd0aa57b9c19001b5cd4617a68cfd62d6",
+      "after_sha256": "430e93265852af491d449fa571c25cd2cf423ad19397535aaa7878325ec10bc5"
+    }
+  ],
+  "new_production_module": "scripts/baseline/pytorch_public_arithmetic_values.py",
+  "new_tests": "scripts/baseline/test_pytorch_closed_public_arithmetic.py",
+  "unit_tests": [
+    {
+      "log": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/controls-final.log",
+      "sha256": "bafa92b8c61670da547da61f72d0e0ad5d5e205e900db2dd9c78c231037d94f6",
+      "passed": 75,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "log": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/compatibility-controls.log",
+      "sha256": "16da44218f2f4a51b559228f3b4ea4e419a46306c014751541c8f522cabb7bdd",
+      "passed": 129,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "unit_passed": 204,
+  "unit_failed": 0,
+  "unit_skipped": 0,
+  "manifest_controls": {
+    "format": "poseidon-public-arithmetic-manifest-controls-v1",
+    "checks": [
+      {
+        "case": "add_c0",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "add_c1",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "add_c2",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "subtract_c0",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "subtract_c1",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "subtract_c2",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "multiply_c0",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "multiply_c1",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "multiply_c2",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "divide_c0",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "divide_c1",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "divide_c2",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "negate_c0",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "negate_c1",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      },
+      {
+        "case": "negate_c2",
+        "status": "passed",
+        "source_format": "poseidon-trusted-pytorch-v25",
+        "manifest_equal": true
+      }
+    ],
+    "passed": 15,
+    "failed": 0,
+    "default": "poseidon-trusted-pytorch-v18",
+    "latest": "poseidon-trusted-pytorch-v21",
+    "source_executed": false,
+    "compiler_calls": 0,
+    "encrypted_calls": 0,
+    "provider_calls": 0,
+    "binding": "c20c87f3275ba3dfa2b0764c76a24b5cf824157aa8b18cc0ed04d3c86d8199cb"
+  },
+  "source_controls": {
+    "binding": "f2b1f982a06ba499f656fc4c25f84e89ba1227c6eb04c94243d34a628350783f",
+    "cases": [
+      {
+        "capture_binding": "f2b2c645d962ca9808a0cc2628935a6bd7da889740ce4e1d4367fa42adae778a",
+        "case": "add_c0",
+        "context": 0,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 2.220446049250313e-16,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/add_c0",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c0/source/manifest.json",
+        "manifest_sha256": "6c2698e8306443f308a90cf54c502558444857d9294b54f38cdd2eb55f5084a3",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c0/model.json",
+        "model_sha256": "e37ce5a2c11f165b92ff97018627bfb9cbbdb78e383e3f7f4b0194e30ab72c7a",
+        "operation": "add",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c0/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "35454d6064fc731f151a558bc2cf6a748eb62d26e48f49f003ab6c129f34967e",
+        "case": "add_c1",
+        "context": 1,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 0.0,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/add_c1",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c1/source/manifest.json",
+        "manifest_sha256": "56793562bb8ec70786410be0f5d96bb3532e52c230ded6a75bd6b12b39ad425c",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c1/model.json",
+        "model_sha256": "a3e2efbb5af30cffcf896f92bcb94b902765d5e239b6c53dece2841e5f9b2c60",
+        "operation": "add",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c1/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "932c1aafc79b48afed95b4abd9899079f23eb957c4b69c5df9e41fa45b5d382b",
+        "case": "add_c2",
+        "context": 2,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 2.220446049250313e-16,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/add_c2",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c2/source/manifest.json",
+        "manifest_sha256": "bcdf8e21e38d67ca3f3645ce97cb9ba9c299a37e2278958c1129d55345048d3e",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c2/model.json",
+        "model_sha256": "3946dbd97db3c0bfb30cf7a349af6d3894de4e73884065de90e10f724a165ff2",
+        "operation": "add",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c2/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "aaafd7ab6c2d0d261babdd0b344cce4871c079fb195b021bf1148a5ad05369d6",
+        "case": "subtract_c0",
+        "context": 0,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 0.0,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/subtract_c0",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c0/source/manifest.json",
+        "manifest_sha256": "1a521576007a6052b1208aaf90c0bb41ac3a623f36546ba430c496f0459e410d",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c0/model.json",
+        "model_sha256": "251f4e1339e500007df5e58ac1f25eec8bc5db6ec1451ed349c8bd618292f551",
+        "operation": "subtract",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c0/provenance.json",
+        "public_entries": 2,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "78988d6af862b5ae05ff8f8c272e7d708b6e8c9cf2b396167c578f522bbd5d9f",
+        "case": "subtract_c1",
+        "context": 1,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 0.0,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/subtract_c1",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c1/source/manifest.json",
+        "manifest_sha256": "a2850ef4cd485e9e97c8d63c8866aa88cb3962e6374d2235abd8ba91b7b94d60",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c1/model.json",
+        "model_sha256": "211b20885c856056fa318332c8ae6464bd50a4e76b86c443c513cb136ed64e43",
+        "operation": "subtract",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c1/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "919ef8f96674473c1b3301eef01cd14382841efb7af51d87ba8d7c82b5a97f02",
+        "case": "subtract_c2",
+        "context": 2,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 0.0,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/subtract_c2",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c2/source/manifest.json",
+        "manifest_sha256": "269a185cb312c19da9854a80150130a56cc981576714ed6f45ea4ad00d62318b",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c2/model.json",
+        "model_sha256": "9618d19dc041b5a6b30ebddcabf4b3a08bad07a959cc1aa0a05f9ce08022b8e6",
+        "operation": "subtract",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/subtract_c2/provenance.json",
+        "public_entries": 2,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "19fe35cc3a0c2b1b3ec50cd1ac470063e5aa7dec16a28b0db2165fd9831749df",
+        "case": "multiply_c0",
+        "context": 0,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 2.220446049250313e-16,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/multiply_c0",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c0/source/manifest.json",
+        "manifest_sha256": "d341f29c6b58e6a82de7a7984aa39838cd85bba59f2f10339de1c6b690ec0ec0",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c0/model.json",
+        "model_sha256": "37311a7288f0153420653c6af2ad88c18597240345645380cac9227583e477b1",
+        "operation": "multiply",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c0/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "17fe58e9476bc02b1e901e09b0d6abe582f797a85cd305422acba6e559e60a8c",
+        "case": "multiply_c1",
+        "context": 1,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 0.0,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/multiply_c1",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c1/source/manifest.json",
+        "manifest_sha256": "a3f229dd0795c9d3f73bac480029c98aa0f7dd8b99ec041803f1bd7dfde7935e",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c1/model.json",
+        "model_sha256": "0985ff353d15b32b47f29d84f4f2475383e7764af83ca6d9cbb378b38e416c6c",
+        "operation": "multiply",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c1/provenance.json",
+        "public_entries": 2,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "c05d76a867f6868bddcf4a10a26f19201d3c7c21efe172386cde15155631f1db",
+        "case": "multiply_c2",
+        "context": 2,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 2.7755575615628914e-17,
+        "independent_values": 8,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/multiply_c2",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c2/source/manifest.json",
+        "manifest_sha256": "4763fe0bdb774f750ca6c694fd1cbb06ffe3cc940283679c362ea9b5b4cde172",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c2/model.json",
+        "model_sha256": "91385e2064aea6f672fa6763ea8195500f8a10580cdf11e29ed70a78b2e3b09c",
+        "operation": "multiply",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c2/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 32
+      },
+      {
+        "capture_binding": "0838c3437d2c4f4832dc86b08a6962f791e5d72aa3162f50e4e8027421b2d084",
+        "case": "divide_c0",
+        "context": 0,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 2.220446049250313e-16,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/divide_c0",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c0/source/manifest.json",
+        "manifest_sha256": "bdfb215e6c9959ffe4b95206c0b1f30acdb9bc50224bf947ad4007ab17a4166f",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c0/model.json",
+        "model_sha256": "249c90bb6f130907e0692c6bb6a11ac503da5bd599e5b1e94045414cbb919357",
+        "operation": "divide",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c0/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "3c44e9d68baf5d3a022b0421b10dba96401653a29a83f4bceecd5735204cba24",
+        "case": "divide_c1",
+        "context": 1,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 2.220446049250313e-16,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/divide_c1",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c1/source/manifest.json",
+        "manifest_sha256": "15a9e12ddca4ae0ef055ca07426f5e8f69b12e5bce6ecd75257782758e865efe",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c1/model.json",
+        "model_sha256": "f0f9f1aec42ca4f387f36116a9191bf6f84df6953001c52ce0aff7effd20fc27",
+        "operation": "divide",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c1/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "80b951c63c46074c353e4027f5a368133a0e7e8fde14244e1b037feb2611a33b",
+        "case": "divide_c2",
+        "context": 2,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 2.220446049250313e-16,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/divide_c2",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c2/source/manifest.json",
+        "manifest_sha256": "d82d5a5560ed9433295141aeecc2d91e6f093491c79e62e0a565feb31995958e",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c2/model.json",
+        "model_sha256": "a5e1c235c7f6abb515907d0220335e9e287580551843b0b1aea28f715ad08e69",
+        "operation": "divide",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/divide_c2/provenance.json",
+        "public_entries": 2,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "8350396bc383de26ac9ebbf65b37eea1d29ba7be5d38cbc38e9cd3abc283cbab",
+        "case": "negate_c0",
+        "context": 0,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 0.0,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/negate_c0",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c0/source/manifest.json",
+        "manifest_sha256": "203533724c197b0d0941cea29839f91b0c59fad481492b728c7d5e3c3766cc4a",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c0/model.json",
+        "model_sha256": "1c3ee6216fd5fa228e55062b789bb8e3f9ee59dee3d7bc9802c907e53fb73f87",
+        "operation": "negate",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c0/provenance.json",
+        "public_entries": 1,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "62ac348bbb419d55e2a98d55401c8034efb1505ffea9f210e8b316ab7cd72fb0",
+        "case": "negate_c1",
+        "context": 1,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 0.0,
+        "independent_values": 24,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/negate_c1",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c1/source/manifest.json",
+        "manifest_sha256": "2013c5ebb1f0af0ee000152994a73c1579e4122bf62c22214ee9ed4f3b9164bd",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c1/model.json",
+        "model_sha256": "e6e0788b46c2fee683a574c3f2a7f218df45146a5ce897cbd8872e566a7db963",
+        "operation": "negate",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c1/provenance.json",
+        "public_entries": 2,
+        "source_groups": 16,
+        "source_values": 96
+      },
+      {
+        "capture_binding": "fdbb29a311edde41c9cc5c55eafc7a769e684ef5e96c4534d543b2af845504b0",
+        "case": "negate_c2",
+        "context": 2,
+        "independent_groups": 4,
+        "independent_max_absolute_error": 5.551115123125783e-17,
+        "independent_values": 8,
+        "isolated_output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-source-r1384/negate_c2",
+        "isolated_status": "passed",
+        "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c2/source/manifest.json",
+        "manifest_sha256": "6d418590c304e3382e072da3bb741a7c22a48e61f6007ba6bad73176dca86ced",
+        "model": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c2/model.json",
+        "model_sha256": "4eb3d5724e3b4e2a6b92726cfb353dedb738826f9b89b337f355cb3edefd6907",
+        "operation": "negate",
+        "provenance": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c2/provenance.json",
+        "public_entries": 2,
+        "source_groups": 16,
+        "source_values": 32
+      }
+    ],
+    "compiler_calls": 0,
+    "contexts": 15,
+    "encrypted_calls": 0,
+    "format": "poseidon-closed-public-arithmetic-source-controls-v1",
+    "independent_groups": 60,
+    "independent_max_absolute_error": 2.220446049250313e-16,
+    "independent_values": 328,
+    "isolated_failed": 0,
+    "isolated_passed": 15,
+    "provider_calls": 0,
+    "sdk_identity": "8e88db16925fad029bdeaea53ebb2ed927ebdb9aece66dd7a252923ccb711809",
+    "seconds": 38.90216662098828,
+    "source_contract": "poseidon-trusted-pytorch-v25",
+    "source_reference_groups": 240,
+    "source_reference_values": 1312
+  },
+  "application_controls": {
+    "format": "poseidon-public-arithmetic-application-controls-v1",
+    "sdk_identity": "8e88db16925fad029bdeaea53ebb2ed927ebdb9aece66dd7a252923ccb711809",
+    "rows": [
+      {
+        "case": "add_c0",
+        "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/add_c0/source/manifest.json",
+        "source_contract": "poseidon-trusted-pytorch-v25",
+        "task": "5289dbe2e0bf409ebf90473f7c0be748",
+        "metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/add_c0/metadata.json",
+        "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/add_c0/request.json",
+        "request_id": "dd1ab54776b09496b6a72b315dbe49a022317334eacd9e1be7d0d226cfc7974d",
+        "status": "passed",
+        "cancelled": true,
+        "source_reference_verified": true,
+        "compiled": false,
+        "encrypted_execution": false,
+        "agent_generated": false,
+        "provider_calls": 0,
+        "http_attempts": 0
+      },
+      {
+        "case": "multiply_c2",
+        "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/multiply_c2/source/manifest.json",
+        "source_contract": "poseidon-trusted-pytorch-v25",
+        "task": "08f865ef24b84248bf4bcf9a3df2b357",
+        "metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/multiply_c2/metadata.json",
+        "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/multiply_c2/request.json",
+        "request_id": "894913b5e3041c4b7956c0c8c3564e50f88fa3de747f3b5b996b5657b3cc1e89",
+        "status": "passed",
+        "cancelled": true,
+        "source_reference_verified": true,
+        "compiled": false,
+        "encrypted_execution": false,
+        "agent_generated": false,
+        "provider_calls": 0,
+        "http_attempts": 0
+      },
+      {
+        "case": "negate_c1",
+        "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/fixtures/negate_c1/source/manifest.json",
+        "source_contract": "poseidon-trusted-pytorch-v25",
+        "task": "249904d9a1424386906fdf4dec2b0677",
+        "metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/negate_c1/metadata.json",
+        "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/negate_c1/request.json",
+        "request_id": "7bfe00ace91551bd64df9c19ad8a0466fbf3a9e0a6074d9a4b3600798c97a820",
+        "status": "passed",
+        "cancelled": true,
+        "source_reference_verified": true,
+        "compiled": false,
+        "encrypted_execution": false,
+        "agent_generated": false,
+        "provider_calls": 0,
+        "http_attempts": 0
+      },
+      {
+        "case": "compat_f64_to_f32_c0",
+        "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/manifest.json",
+        "source_contract": "poseidon-trusted-pytorch-v24",
+        "task": "9ff79ba68b6e463e89c9ad16b1cec3b4",
+        "metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/compat_f64_to_f32_c0/metadata.json",
+        "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/compat_f64_to_f32_c0/request.json",
+        "request_id": "21e88cd0994546af28042d5e21b99d2fbd901554900bedff84b4c6e99c7f3b60",
+        "status": "passed",
+        "cancelled": true,
+        "source_reference_verified": true,
+        "compiled": false,
+        "encrypted_execution": false,
+        "agent_generated": false,
+        "provider_calls": 0,
+        "http_attempts": 0
+      },
+      {
+        "case": "compat_f64_roundtrip_c2",
+        "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/manifest.json",
+        "source_contract": "poseidon-trusted-pytorch-v24",
+        "task": "b28068096d044eaba17cec4cd7e2b982",
+        "metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/compat_f64_roundtrip_c2/metadata.json",
+        "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/compat_f64_roundtrip_c2/request.json",
+        "request_id": "87ef604f3dd0810ce7ab985663f35172c59fe364da9485ed272b3017c46a85d5",
+        "status": "passed",
+        "cancelled": true,
+        "source_reference_verified": true,
+        "compiled": false,
+        "encrypted_execution": false,
+        "agent_generated": false,
+        "provider_calls": 0,
+        "http_attempts": 0
+      },
+      {
+        "case": "compat_compat_v23_named",
+        "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/compat-fixtures/compat_v23_named/manifest.json",
+        "source_contract": "poseidon-trusted-pytorch-v23",
+        "task": "c1048385fff84761b5f80186c332f5d1",
+        "metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/compat_compat_v23_named/metadata.json",
+        "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-arithmetic-application-r1384/compat_compat_v23_named/request.json",
+        "request_id": "33fa5b955a769b8446e175efb0913142445f09a9ebce95b17221c17f06f6a0fa",
+        "status": "passed",
+        "cancelled": true,
+        "source_reference_verified": true,
+        "compiled": false,
+        "encrypted_execution": false,
+        "agent_generated": false,
+        "provider_calls": 0,
+        "http_attempts": 0
+      }
+    ],
+    "passed": 6,
+    "failed": 0,
+    "old_requests_equal": 3,
+    "seconds": 46.1369276070036,
+    "provider_calls": 0,
+    "http_attempts": 0,
+    "compiler_calls": 0,
+    "encrypted_calls": 0,
+    "binding": "a659d67bc9189d6dadae906cdfe0b7fcfc067f285474cd3b51a45392c4305cd4"
+  },
+  "status": {
+    "input": "registered_and_source_verified",
+    "decomposition": "independent_reference_verified",
+    "compiler": "not_run_new_binding",
+    "encrypted": "not_run_new_binding",
+    "agent": "not_run_new_binding"
+  },
+  "prior_errors": {
+    "first_unit_failures": 3,
+    "first_unit_subtest_errors": 17,
+    "third_unit_errors": 1,
+    "resolved": true,
+    "logs_preserved": true,
+    "driver_platform_error": "explicit aarch64 selection omitted before Nix entry; gate refused before tests",
+    "first_baseline_probe": "incorrect developer trace kwargs; corrected probe recorded source-level rejection"
+  },
+  "old_requests_unchanged": 3,
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "network_changes": false,
+  "installation": false,
+  "downloads": false,
+  "backend_changes": false,
+  "parameter_changes": false,
+  "commit": false,
+  "push": false,
+  "offline_proposal_binding": "2801d63485a56dddbb4aa7c6b782ee9d3a90e4a25e5bff6f6983341c4e9293c7",
+  "offline_started": false,
+  "binding": "d07c23d84b49bce2ff9a4ffa1854159abdfc43dc7790e432d9603434815bcfe3"
+}

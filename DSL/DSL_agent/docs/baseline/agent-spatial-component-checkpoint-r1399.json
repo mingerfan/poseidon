@@ -1,0 +1,122 @@
+{
+  "active_graph_format": "poseidon-operator-graph-v4",
+  "actual_fhe_status": "not_run",
+  "api_calls": 0,
+  "backend_changes": false,
+  "backend_identity_unchanged": true,
+  "binding": "98ffba78f9bd9fdb4976fd9dcd229f233a1dd4d7e4769547f3d2d1a7d4f80af2",
+  "branch": "lhy-agent-dsl",
+  "changed_existing": [
+    {
+      "added_lines": 12,
+      "after": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+      "before": "5b7ff6be62709d8c33a39d4b5cac0a01c77a9b07cd50d9bcd703af6297dd2066",
+      "path": "scripts/baseline/operator_arithmetic_graph.py",
+      "removed_lines": 2
+    },
+    {
+      "added_lines": 6,
+      "after": "ad4b2ca066458699a66a010b30a7448d423967083a3014282175bd293fc5fbdb",
+      "before": "4da2311b2f815f6a01fd1915721b54ca3b29d8cd1e5d7c8300dd98fb28772ed7",
+      "path": "scripts/baseline/application_capabilities.py",
+      "removed_lines": 0
+    },
+    {
+      "added_lines": 3,
+      "after": "7f0cdca0406b8ef9446e74faad18e8ed1990e3dbad477a2a773f56737dcf7995",
+      "before": "f6eb3169b82e95f8fd74aa4fcda03eba320b313beb8c0c8c4d289c0e352671ee",
+      "path": "scripts/baseline/model_import_cli.py",
+      "removed_lines": 3
+    }
+  ],
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "compilations": 0,
+  "controls": {
+    "binding": "a6c91c13e9c9b9e823ebc17726783c61ce73fda229be996417af814f44ed9758",
+    "errors": 0,
+    "failed": 0,
+    "passed": 72,
+    "skipped": 0,
+    "status": "passed"
+  },
+  "date": "2026-10-11",
+  "downloads": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-spatial-component-checkpoint-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "histories_preserved": [
+    "r1392/r1393 live evidence",
+    "r1396 preflight 40/45",
+    "r1398 preflight 42/45",
+    "component-math-r1395.log: incorrect capacity test fixture",
+    "route-controls-r1399.log: resource_profile metadata assertion",
+    "source-admission-r1400.log: task store inside checkout rejected"
+  ],
+  "http_attempts": 0,
+  "installs": 0,
+  "math": {
+    "binding": "06151aaac85345e42d73c718a48c877581ef74d62856c0e66192e7b9fb387fb4",
+    "logical_outputs": 13120,
+    "mae": 1.7676756185223754e-18,
+    "maximum_difference": 4.440892098500626e-16,
+    "model_contexts": 42,
+    "numpy": "1.25.2",
+    "probe_groups": 672,
+    "python": "3.10.14",
+    "status": "passed",
+    "torch": "2.0.1"
+  },
+  "network_changes": false,
+  "new_agent_status": "not_run",
+  "new_sources": [
+    "scripts/baseline/operator_spatial_graph.py",
+    "scripts/baseline/operator_spatial_reference.py",
+    "scripts/baseline/test_operator_spatial_graph.py"
+  ],
+  "next_action": "Approve and run the exact frozen r1400 offline scope; do not reuse r1396/r1398 source bindings",
+  "operators": [
+    "resize",
+    "conv_transpose1d",
+    "conv_transpose2d"
+  ],
+  "original_benchmark_changed": false,
+  "parameter_changes": false,
+  "prepared": {
+    "agent": false,
+    "approved": false,
+    "blocked": 0,
+    "cases": 45,
+    "compiler": false,
+    "encrypted": false,
+    "proposal_binding": "86b1c249c3844f350de4e2dc2304b08994d24d5744712eb2cd37585a74928202",
+    "static_passed": 45
+  },
+  "production_sources": {
+    "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+    "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+    "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+    "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+    "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+    "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+  },
+  "pushes": 0,
+  "pytorch_spatial_intake": "pending",
+  "sdk_identity": "388e891a44863d95e6a8ce7e83c4206799434e08e122c63ff58afa2b62452337",
+  "source_admission": {
+    "binding": "e7ce91fd9ec2e9cef718b3a651ca29acec207247551af201a644e045c506340d",
+    "contexts": 3,
+    "file": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-admission-r1400/source-admission.json",
+    "status": "passed"
+  },
+  "spatial_registry_version": "static-spatial-decomposition-v3",
+  "unverified": [
+    "Poseidon compilation and numerical execution of spatial v4",
+    "package export/reload/reexecution",
+    "PyTorch spatial input mappings",
+    "new real Agent generation",
+    "new CUDA execution"
+  ]
+}

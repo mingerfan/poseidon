@@ -1,0 +1,14 @@
+{
+  "binding": "70fa0fbcf0d132595b66021c9bd4443dc51ff95ccb27441f255dda3712f1d216",
+  "format": "poseidon-public-tensor-live-runner-v1",
+  "proposal_binding": "8752cc0b9e0fb913dedea3f717be0320e5f0339802cd046603a04a772a1a21e2",
+  "proposal_sha256": "274fb4619ff46015d552db0f3cb1f9ebc867b216439f2f613b45d5014aa82789",
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/public_tensor_live_v1/freeze.py": "26718e96c50ba449b973810c8c4e2b08ee96b6ee97e6b06f2e5d9a3803a81a1e",
+    "scripts/baseline/benchmarks/tools/public_tensor_live_v1/package_checks.py": "1597bb2f8559c9d7a18f974028a5bf0e86131acd22b3f3163273bc986a565923",
+    "scripts/baseline/benchmarks/tools/public_tensor_live_v1/run.py": "859082afa44a91b360b09cd920ebaa6f1aa40e0cc04f9bf29ec18339b4bc1957",
+    "scripts/baseline/benchmarks/tools/public_tensor_live_v1/scope.py": "767a3056585787de4094dd052704c98a0f9343ea4968160c00b77514774d00d2",
+    "scripts/baseline/benchmarks/tools/public_tensor_live_v1/test_run.py": "e9333ba0520e5a809f5bc8034ad68d4fbc76aa78eb2688a5734427ab5287a6b9",
+    "scripts/baseline/benchmarks/tools/public_tensor_live_v1/test_scope.py": "dab5059b6ae226439f25307e2f1ecdce5099d07dacdaaccc80b5f49f81115c8f"
+  }
+}

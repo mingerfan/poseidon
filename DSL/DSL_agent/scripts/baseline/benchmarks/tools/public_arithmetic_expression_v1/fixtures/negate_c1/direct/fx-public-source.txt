@@ -1,0 +1,7 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %a : [#users=1] = get_attr[target=a]
+    %neg : [#users=1] = call_method[target=neg](args = (%a,), kwargs = {})
+    %reshape : [#users=1] = call_method[target=reshape](args = (%neg, 1, 3), kwargs = {})
+    %add : [#users=1] = call_function[target=operator.add](args = (%x, %reshape), kwargs = {})
+    return add

@@ -1,0 +1,38 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "adaptive_avg_pool_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        5
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "operation",
+      "op": "adaptive_avg_pool",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "output_size": [
+          3
+        ]
+      },
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

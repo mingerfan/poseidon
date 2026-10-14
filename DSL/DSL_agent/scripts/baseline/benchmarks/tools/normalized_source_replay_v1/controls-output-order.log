@@ -1,0 +1,22 @@
+test_saved_outputs (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: test_saved_outputs (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_saved_outputs
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_replay_v1/test_saved_outputs.py", line 2, in <module>
+    from saved_outputs import declared_outputs
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/normalized_source_replay_v1/saved_outputs.py", line 2, in <module>
+    from benchmark_graph import require
+ModuleNotFoundError: No module named 'benchmark_graph'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

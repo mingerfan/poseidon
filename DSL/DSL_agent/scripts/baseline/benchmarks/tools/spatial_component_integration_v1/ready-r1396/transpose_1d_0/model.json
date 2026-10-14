@@ -1,0 +1,172 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "id": "transpose_1d_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        4
+      ]
+    }
+  ],
+  "constants": {
+    "weight": [
+      [
+        [
+          -0.14199377185367934,
+          -0.14526057601325867,
+          -0.042702753497009915
+        ],
+        [
+          -0.1999920108525015,
+          -0.2006055232772388,
+          0.1666909734424516
+        ]
+      ]
+    ],
+    "generated_2": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "generated_5": [
+      [
+        [
+          -0.042702753497009915,
+          -0.14526057601325867,
+          -0.14199377185367934
+        ]
+      ],
+      [
+        [
+          0.1666909734424516,
+          -0.2006055232772388,
+          -0.1999920108525015
+        ]
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "reshape",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_4",
+      "op": "linear",
+      "inputs": [
+        "generated_0",
+        "generated_2"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_3"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "conv1d",
+      "inputs": [
+        "generated_3",
+        "generated_5"
+      ],
+      "attrs": {
+        "stride": [
+          1
+        ],
+        "padding": [
+          0
+        ],
+        "dilation": [
+          1
+        ],
+        "groups": 1
+      },
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "reshape",
+      "inputs": [
+        "generated_6"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          6
+        ]
+      },
+      "outputs": [
+        "generated_8"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_8"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

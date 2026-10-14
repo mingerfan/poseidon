@@ -1,0 +1,46 @@
+{
+  "binding": "ec61dfa24da6cd0f6178fd41e0db74c1544bfe68269ccd4bdc0ffff30d007afb",
+  "encrypted_execution": false,
+  "errors": 3,
+  "failed": 1,
+  "format": "poseidon-tensor-axis-controls-v1",
+  "historical_requests": [
+    {
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+      "sha256": "45b0df496e105b2cd19a7d7f80a2f2ef5fc49cdab09f68cc46a033f31bce4964",
+      "unchanged": true
+    },
+    {
+      "case": "linear_into_separate_cross_none__declared_shallow_v1",
+      "request_id": "5eebc4fccd6b1f0ece4bd65989daed863475c982ffbf3acaf53fd349c4eb9a54",
+      "sha256": "dcb53ad285e19f2e5efac4b6c45a7d378e16eadd5564d7303a2d6aa090779c24",
+      "unchanged": true
+    }
+  ],
+  "identity_sha256": "fc3f6a15c1cc9a0aff98e69390dd464099cc6351949374018d991f3c63e766ba",
+  "modules": [
+    "test_unified_tensor_axis_guidance",
+    "test_binding_feedback",
+    "test_unified_poseidon_guidance",
+    "test_unified_generation_guidance",
+    "test_unified_expression_guidance",
+    "test_application_diagnostics",
+    "test_earth_failure_diagnostic",
+    "test_static_work_feedback",
+    "test_validation_adapter",
+    "test_component_contract"
+  ],
+  "passed": 158,
+  "provider_calls": 0,
+  "seconds": 0.9976461629994446,
+  "skipped": 0,
+  "source_stage_counts": {
+    "compilation": 622,
+    "execution": 622,
+    "generation": 627,
+    "validation": 622
+  },
+  "status": "failed",
+  "tests": 162
+}

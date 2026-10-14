@@ -1,0 +1,8 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "failure_layer": "developer_fixture_manifest",
+  "provider_calls": 0,
+  "reason": "build returns (spec, root); partial writer output preserved",
+  "status": "failed"
+}

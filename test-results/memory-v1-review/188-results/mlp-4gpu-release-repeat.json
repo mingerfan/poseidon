@@ -1,0 +1,51 @@
+{
+  "device_counts": [
+    4
+  ],
+  "device_execution_mode": "per_device_workers",
+  "execution_mode": "local",
+  "format_version": 1,
+  "iterations": 10,
+  "mpi_initialized": false,
+  "nccl_transport_enabled": false,
+  "online_timing": {
+    "average_seconds": 0.2512671704,
+    "max_seconds": 0.304900287,
+    "min_seconds": 0.20974798400000003,
+    "per_iteration_seconds": [
+      0.25689335,
+      0.25894046000000004,
+      0.22145995300000001,
+      0.22092639300000003,
+      0.25834834,
+      0.239956897,
+      0.20974798400000003,
+      0.304900287,
+      0.27958820300000004,
+      0.26190983700000003
+    ]
+  },
+  "operator_spec_sha256": "sha256:b37c827c139a227d95cc76b7e7c43677281a0e18752f540db8b714e37b79806b",
+  "passed": true,
+  "plan_sha256": "sha256:42f0e3e6e9858ef4a90ef4475b36a2e069735b1b1eddebaa73adeddbf7521d62",
+  "plan_stats": {
+    "communication_instructions": 340,
+    "compute_instructions": 375,
+    "cross_rank_communication": 0,
+    "cross_rank_device_communication": 0,
+    "execution_communication": 218,
+    "execution_compute": 375,
+    "finalization_communication": 0,
+    "finalization_compute": 0,
+    "initialization_communication": 122,
+    "initialization_compute": 0,
+    "release_instructions": 836
+  },
+  "rank_to_node": [
+    0
+  ],
+  "runner": "poseidon_gpu_mpi_runtime_e2e",
+  "runtime_scope": "online_execution_only",
+  "warmups": 1,
+  "world_size": 1
+}

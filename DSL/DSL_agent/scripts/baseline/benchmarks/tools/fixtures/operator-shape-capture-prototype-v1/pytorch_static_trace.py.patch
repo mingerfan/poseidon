@@ -1,0 +1,41 @@
+--- a/scripts/baseline/pytorch_static_trace.py
++++ b/scripts/baseline/pytorch_static_trace.py
+@@ -6,7 +6,7 @@
+ LEGACY_POLICY = "symbolic-v1"
+ POLICY = "signature-static-v1"
+ INDEX_POLICY = "signature-static-index-v1"
+-ARITHMETIC_POLICY = "signature-static-arithmetic-shape-v1"
++ARITHMETIC_POLICY = "signature-static-operator-shape-prototype-v1"
+ 
+ def policy_record(inputs, resource_profile, *, policy=POLICY):
+     limits = resolve(resource_profile)
+@@ -113,7 +113,8 @@
+                        "dot","expand","index_select","amax","amin","relu","sigmoid","tanh",
+                        "exp","reciprocal","rsqrt","sqrt","softmax","log_softmax"}
+             if policy==ARITHMETIC_POLICY:
+-                functions|={torch.subtract,torch.multiply}
++                functions|={torch.subtract,torch.multiply,F.instance_norm,
++                            F.adaptive_avg_pool1d,F.adaptive_avg_pool2d}
+                 methods|={"add","sub","subtract","mul","multiply"}
+             if policy in (INDEX_POLICY,ARITHMETIC_POLICY):
+                 functions|={torch.select,torch.narrow}
+@@ -150,6 +151,19 @@
+                     return fn(x,self.meta_tensor(child._parameters["weight"]),
+                               None if child._parameters["bias"] is None else self.meta_tensor(child._parameters["bias"]),
+                               child.stride,child.padding,child.dilation,child.groups)
++                if policy==ARITHMETIC_POLICY:
++                    if type(child) in (torch.nn.InstanceNorm1d,torch.nn.InstanceNorm2d):
++                        return x
++                    if type(child) in (torch.nn.AdaptiveAvgPool1d,torch.nn.AdaptiveAvgPool2d):
++                        fn=F.adaptive_avg_pool1d if type(child) is torch.nn.AdaptiveAvgPool1d else F.adaptive_avg_pool2d
++                        return fn(x,child.output_size)
++                    if type(child) in (torch.nn.ConstantPad1d,torch.nn.ConstantPad2d,torch.nn.ZeroPad2d,
++                                      torch.nn.ReflectionPad1d,torch.nn.ReflectionPad2d,
++                                      torch.nn.ReplicationPad1d,torch.nn.ReplicationPad2d):
++                        mode=("reflect" if type(child) in (torch.nn.ReflectionPad1d,torch.nn.ReflectionPad2d)
++                              else "replicate" if type(child) in (torch.nn.ReplicationPad1d,torch.nn.ReplicationPad2d)
++                              else "constant")
++                        return F.pad(x,child.padding,mode,getattr(child,"value",0.))
+                 if type(child) is torch.nn.Flatten:
+                     return x.flatten(child.start_dim,child.end_dim)
+                 if type(child) in (torch.nn.Identity,torch.nn.Dropout,torch.nn.BatchNorm1d,

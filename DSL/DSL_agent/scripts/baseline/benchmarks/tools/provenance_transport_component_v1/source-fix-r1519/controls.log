@@ -1,0 +1,82 @@
+test_binds_original_and_normalized_without_mutating_original (test_logical_view_normalization.BindingAndScopeTests) ... ok
+test_capabilities_are_explicit_and_registered (test_logical_view_normalization.BindingAndScopeTests) ... ok
+test_explicit_version_keeps_v34_and_unknown_closed (test_logical_view_normalization.BindingAndScopeTests) ... ok
+test_new_capture_metadata_not_accepted_by_old_version (test_logical_view_normalization.BindingAndScopeTests) ... ok
+test_reference_graph_binding_cannot_change (test_logical_view_normalization.BindingAndScopeTests) ... ok
+test_reference_ratio_and_types_reject (test_logical_view_normalization.BindingAndScopeTests) ... ok
+test_reference_scope_cannot_change (test_logical_view_normalization.BindingAndScopeTests) ... ok
+test_asymmetric_three_contexts (test_logical_view_normalization.CoordinateTests) ... ok
+test_budget_preserves_original (test_logical_view_normalization.CoordinateTests) ... ok
+test_duplicate_indices_rejected_as_permutation (test_logical_view_normalization.CoordinateTests) ... ok
+test_explicit_axes_verifies_entire_map (test_logical_view_normalization.CoordinateTests) ... ok
+test_forward_dependency_rejected (test_logical_view_normalization.CoordinateTests) ... ok
+test_idempotence (test_logical_view_normalization.CoordinateTests) ... ok
+test_invalid_budget_rejected (test_logical_view_normalization.CoordinateTests) ... ok
+test_mixed_roots_not_collapsed (test_logical_view_normalization.CoordinateTests) ... ok
+test_named_partial_preserved (test_logical_view_normalization.CoordinateTests) ... ok
+test_rank_8_16_32 (test_logical_view_normalization.CoordinateTests) ... ok
+test_same_size_not_enough (test_logical_view_normalization.CoordinateTests) ... ok
+test_seeded_permutations (test_logical_view_normalization.CoordinateTests) ... ok
+test_updated_ssa_root_preserved (test_logical_view_normalization.CoordinateTests) ... ok
+test_body_alias_not_shared (test_provenance_json_transport.TransportTests) ... ok
+test_capture_graph_budget_keeps_wire_bound (test_provenance_json_transport.TransportTests) ... ok
+test_duplicate_json (test_provenance_json_transport.TransportTests) ... ok
+test_float_conversion_override_not_called (test_provenance_json_transport.TransportTests) ... ok
+test_forward_reference (test_provenance_json_transport.TransportTests) ... ok
+test_fresh_decoded_records (test_provenance_json_transport.TransportTests) ... ok
+test_full_large_provenance (test_provenance_json_transport.TransportTests) ... ok
+test_json_tuple_semantics_preserved (test_provenance_json_transport.TransportTests) ... ok
+test_legacy_canonical_identity (test_provenance_json_transport.TransportTests) ... ok
+test_legacy_part_representation (test_provenance_json_transport.TransportTests) ... ok
+test_legacy_task_wire_not_expanded (test_provenance_json_transport.TransportTests) ... ok
+test_logical_capacity (test_provenance_json_transport.TransportTests) ... ok
+test_metadata_binding_preserved (test_provenance_json_transport.TransportTests) ... ok
+test_nested_envelope_rejected (test_provenance_json_transport.TransportTests) ... ok
+test_nonfinite_json (test_provenance_json_transport.TransportTests) ... ok
+test_numpy_double_matches_standard_json (test_provenance_json_transport.TransportTests) ... ok
+test_numpy_single_is_still_rejected (test_provenance_json_transport.TransportTests) ... ok
+test_packet_binding_tamper (test_provenance_json_transport.TransportTests) ... ok
+test_packet_non_v36_contract (test_provenance_json_transport.TransportTests) ... ok
+test_part_contract (test_provenance_json_transport.TransportTests) ... ok
+test_role_fields_closed (test_provenance_json_transport.TransportTests) ... ok
+test_scope_budget_not_arbitrary (test_provenance_json_transport.TransportTests) ... ok
+test_small_limit_no_large_work_expansion (test_provenance_json_transport.TransportTests) ... ok
+test_unknown_purpose_plain (test_provenance_json_transport.TransportTests) ... ok
+test_v36_plain_capture_still_obeys_wire_bound (test_provenance_json_transport.TransportTests) ... ok
+test_wire_capacity (test_provenance_json_transport.TransportTests) ... ok
+test_wrong_purpose (test_provenance_json_transport.TransportTests) ... ok
+test_all_legacy_versions_keep_their_package_format (test_pytorch_model_intake.FacadeTests) ... ok
+test_application_identity_binds_the_exact_isolated_loader (test_pytorch_model_intake.FacadeTests) ... model_weight_package.py:91: DeprecationWarning: invalid escape sequence '\.'
+  type(item["file"]) is str and re.fullmatch("[A-Za-z0-9_-]+\.npy",item["file"]) and
+ok
+test_flat_and_reserved_files_rejected_before_source_read (test_pytorch_model_intake.FacadeTests) ... ok
+test_legacy_prepare_and_run_delegate_unchanged (test_pytorch_model_intake.FacadeTests) ... ok
+test_manifest_budget_is_checked_before_copy (test_pytorch_model_intake.FacadeTests) ... ok
+test_metadata_requires_the_arithmetic_record (test_pytorch_model_intake.FacadeTests) ... ok
+test_source_identity_keeps_all_seventeen_legacy_hashes (test_pytorch_model_intake.FacadeTests) ... ok
+test_v8_manifest_retains_explicit_version (test_pytorch_model_intake.FacadeTests) ... ok
+test_attribute_read_reorder_is_accepted_with_exact_dependencies (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_cipher_operands_cannot_be_swapped_by_rebinding_report (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_negation_cannot_bind_the_other_input (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_public_content_change_is_rejected_even_with_new_report_hash (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_retrace_changed_operation_is_rejected (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_retrace_changed_output_is_rejected (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_retrace_changed_public_buffer_is_rejected (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_source_text_hash_and_action_are_checked (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_split_port_operand_is_bound (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_wrong_source_operand_mapping_is_rejected (test_pytorch_model_intake.ProvenanceTests) ... ok
+test_existing_manifest_is_never_overwritten (test_pytorch_spatial_cli.SpatialCliTests) ... <unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+ok
+test_invalid_binding_fails_before_manifest_save (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_main_prints_v27_and_preserves_source_inertness (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_older_source_does_not_receive_structured_calls (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_private_transports_are_not_cli_choices (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v26_output_is_identical (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v27_and_v26_require_explicit_binding (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v27_flat_binding_and_default_versions (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+test_v27_keyword_dictionary_calls (test_pytorch_spatial_cli.SpatialCliTests) ... ok
+
+----------------------------------------------------------------------
+Ran 74 tests in 6.907s
+
+OK

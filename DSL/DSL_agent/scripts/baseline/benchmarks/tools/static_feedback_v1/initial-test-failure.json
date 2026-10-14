@@ -1,0 +1,1 @@
+{"tests":12,"failures":4,"errors":1,"skipped":0,"cause":"New test fixture used x0 while the actual old default single-input ABI declares x; fixture corrected, ABI unchanged.","paid_calls":0,"compiler_calls":0,"encrypted_calls":0}

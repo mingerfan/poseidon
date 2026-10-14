@@ -1,0 +1,39 @@
+{
+  "format": "poseidon-operator-graph-v2",
+  "id": "compat_v2_dot",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "z",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "dot",
+      "op": "dot",
+      "inputs": [
+        "x",
+        "z"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "compiler_calls": 0,
+  "counters": {
+    "contexts": 15,
+    "contexts_by_operation": {
+      "bool_cast": [
+        "9915c3acdf84c830423d0a4d19ea44ed407a0654639ef0116a684048ffda0f1f",
+        "95bd306c2fcacac87dbf2daa340f3f162063c8bbf0181c4c16dfa23075fc8343",
+        "a2d5cfdb4de50c190f0865c43870289e7edb8ff98b9773110bd9cefcdc1d4739"
+      ],
+      "identity": [
+        "49fad0d8daf16c9591d2a2d26a20582078a6c470a852efefcfe915d3b0a82778",
+        "df216a2d97407bcb895bee399d6eb9320a70b2eb330e29f8962f6a3798a07a29",
+        "ff13e0becdf467d981721ae682c292c50ce54b8469d722e32babb63597a4cd49"
+      ],
+      "permute": [
+        "db38b44885bc6c5cd8fe09ef6b947d937ad656442be19b7a3637b1d794e7fd55",
+        "db84bcb34ceadd326f67a1e1a7d0f046d5980f8abd6118ba87f5f79299c307e6",
+        "da503ecbbe6cf27256a39d4617d5c9b284ba4d2190db7d5db0ec0e67369993b6"
+      ],
+      "reshape": [
+        "64e4123fde64d39c8a27778aff3b8c59cf6e81cb25f122890b7a6f220a2a920e",
+        "197a49c955a269b50c4d6280ce40f39de244571eb6a0c7d37beee4f56bb75ca4",
+        "b3c82be6bc66c781556a301cf86fbab4ff50f5c70632051aae681e244198328c"
+      ],
+      "slice": [
+        "7017c411717fcd5b958b6633752b0e281710036ea0f4f91f50fc0ac532125739",
+        "92ff296094b712f87566d8acb4183257d2329f5914cca232f8476db39c76104d",
+        "36cad012d7a6870aa896dc0cc416ceda656018aafcf0f0bce27ee04e04a408cf"
+      ]
+    },
+    "reference_groups": 60
+  },
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-public-expression-flow-controls-v1",
+  "http_attempts": 0,
+  "production_intake_connected": false,
+  "provider_calls": 0,
+  "runtime": {
+    "cuda": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "seconds": 0.4250166830024682,
+  "skipped": 0,
+  "sources": {
+    "benchmarks/tools/public_expression_cutover_v1/flow_controls.py": "bfc457c3b7573b8cec23adb0316c7d0a9a03e49a0e8a65acaa7b449692143f83",
+    "benchmarks/tools/public_expression_cutover_v1/test_public_flow.py": "56723eebc8601466b8f26e334b0edd4fdac10d023f606126c371d2e74bf737b5",
+    "pytorch_public_expression_flow.py": "d2bd5962d250b5bb94ba5b0e23d7bf25cb13450d0bd4c10a4f36e33e86e62738",
+    "pytorch_public_value_ops.py": "586cc9da0742d50628e6ad4f0350d81792b5d1223d3a208a284c0fe9a8a79a63"
+  },
+  "tests": 22
+}

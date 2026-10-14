@@ -1,0 +1,14 @@
+{
+  "binding": "d27e623f98b4e754a6ed3ee3281c2c807f584103df0e28cb31d08fbad5f50fb2",
+  "format": "poseidon-public-arithmetic-live-runner-v1",
+  "proposal_binding": "093d8de29da92f57680066c97925680fbc524fa9232b1acc00ebd46d0b9c9755",
+  "proposal_sha256": "e7dc15a17baecc337a7d5700a82c1653a55fd819366781185265004baa6f50b9",
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/freeze.py": "b1f49c45c04a8d6898118802e7d4b8d6707f1f1f496a2186c938d99571e01cd4",
+    "scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/package_checks.py": "1597bb2f8559c9d7a18f974028a5bf0e86131acd22b3f3163273bc986a565923",
+    "scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/run.py": "b8c87201f3ca3d0c68cb780a0348a359569f0909b19692b15d92b246308ea1c9",
+    "scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/scope.py": "4a5206e2085b61b6fe03b300d043a9c8ab012438c301fa749c650f2f1a12c0a8",
+    "scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/test_run.py": "e9333ba0520e5a809f5bc8034ad68d4fbc76aa78eb2688a5734427ab5287a6b9",
+    "scripts/baseline/benchmarks/tools/public_arithmetic_live_v1/test_scope.py": "777184095084e33675e28b5997796e3622bddd020423af83b68b061e4e3f4ea6"
+  }
+}

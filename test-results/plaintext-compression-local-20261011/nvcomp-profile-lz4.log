@@ -1,0 +1,7 @@
+Capture range started in the application.
+Capture range ended in the application.
+Generating '/tmp/nsys-xs/nsys-report-76eb.qdstrm'
+[1/1] [0%                          ] nvcomp-profile-lz4.nsys-repProcessing events...
+[1/1] [0%                          ] nvcomp-profile-lz4.nsys-rep[1/1] [1%                          ] nvcomp-profile-lz4.nsys-rep[1/1] [2%                          ] nvcomp-profile-lz4.nsys-rep[1/1] [5%                          ] nvcomp-profile-lz4.nsys-rep[1/1] [==19%                       ] nvcomp-profile-lz4.nsys-rep[1/1] [==20%                       ] nvcomp-profile-lz4.nsys-rep[1/1] [====27%                     ] nvcomp-profile-lz4.nsys-rep[1/1] [=======39%                  ] nvcomp-profile-lz4.nsys-rep[1/1] [=======================96%  ] nvcomp-profile-lz4.nsys-rep[1/1] [========================98% ] nvcomp-profile-lz4.nsys-rep[1/1] [========================100%] nvcomp-profile-lz4.nsys-rep[1/1] [========================100%] nvcomp-profile-lz4.nsys-rep
+Generated:
+	/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/nvcomp-profile-lz4.nsys-rep

@@ -1,0 +1,16 @@
+{
+  "api_calls": 0,
+  "audit_source_sha256": "f21a279328db923ae1e864fb04d71570bb6195f8f3d316d2ac771555c18b77f8",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-qualification-index-controls-v1",
+  "log_sha256": "be8750a481b617ad67c8c23856e1510fab9fa94056d288254f5c180d43be082a",
+  "passed": 26,
+  "seconds": 0.03963613900123164,
+  "skipped": 0,
+  "status": "passed",
+  "test_source_sha256": "f45dfc70ff2829b0dfd9a92e2d1e0293a71a3f8478bb906c81f5dc2ec45d258c",
+  "tests": 26
+}

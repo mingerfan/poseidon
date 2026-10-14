@@ -1,0 +1,38 @@
+{
+  "format": "poseidon-mha-tensor-axis-human-authorization-v1",
+  "approved": true,
+  "authorization": "human_explicit_case_budget_approval",
+  "bounds": {
+    "api_concurrency": 1,
+    "batch_wall_seconds": 28800,
+    "case_wall_seconds": 14400,
+    "compiler_jobs": 2,
+    "encrypted_concurrency": 1,
+    "global_result_bytes": 34359738368,
+    "link_jobs": 1,
+    "max_generations": 8,
+    "max_http_attempts": 32,
+    "minimum_free_bytes": 4294967296,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "new_batch_bytes": 4294967296
+  },
+  "cases": [
+    "self_post_linear_residual__declared_shallow_v1",
+    "linear_into_separate_cross_none__declared_shallow_v1"
+  ],
+  "human_message": "批准这两项有界重测",
+  "proposal_binding": "475391a7ef31efef047900e89fe39db9bbc70d63ea63a900e1e88c0f82ae2d1f",
+  "proposal_sha256": "c6735908b974db4b802323f2a65dc4c922ca71f7eb5c4a686000c56dd0fe4825",
+  "provider": {
+    "max_tokens": 384000,
+    "model": "deepseek-flash",
+    "name": "deepseek",
+    "reasoning_effort": "high",
+    "stream": true,
+    "timeout_seconds": 1200,
+    "transport_retries": 3
+  },
+  "question_item_id": "[\"request_user_input_async\",\"call_ed50e06dc7ab4250b161fbccc5510370\",0]",
+  "binding": "37ada23b4f0cb6bb956544f55236b221240dd58b43b764214993e2477157702f"
+}

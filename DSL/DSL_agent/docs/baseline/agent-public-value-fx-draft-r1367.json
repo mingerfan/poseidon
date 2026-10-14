@@ -1,0 +1,121 @@
+{
+  "backend_changes": false,
+  "binding": "fbd9f0e6d90a6d18ca233ecc90b10d8650b58dcded12c0fc1afeb5dcd5917a4c",
+  "commits": 0,
+  "compiler_calls": 0,
+  "controls": {
+    "claim": "trusted fixtures: public-expression provenance and retained strict FX tracing only",
+    "compiler_calls": 0,
+    "counters": {
+      "contexts": 12,
+      "reference_groups": 48,
+      "strict_traces": 12
+    },
+    "encrypted_calls": 0,
+    "errors": 0,
+    "failed": 0,
+    "format": "poseidon-public-value-fx-draft-controls-v1",
+    "http_attempts": 0,
+    "production_integrated": false,
+    "provider_calls": 0,
+    "runtime": {
+      "cuda": null,
+      "numpy": "1.25.2",
+      "python": [
+        3,
+        10,
+        14
+      ],
+      "torch": "2.0.1"
+    },
+    "seconds": 0.4201266750005743,
+    "skipped": 0,
+    "sources": {
+      "benchmarks/tools/public_value_expression_draft_v1/public_values.py": "581ef9a16a6df921cac902a041145209425b0155c674082b4297b73882308d5f",
+      "benchmarks/tools/public_value_fx_draft_v1/check.py": "145230880ab28438460853005bc68657e9dabb0c3c05961bbb1f846efad316b6",
+      "benchmarks/tools/public_value_fx_draft_v1/fx_public.py": "9ca0538717c0f10a6c10e7e9298ece4299decaf66b321c2d8b15822a9aff039a",
+      "benchmarks/tools/public_value_fx_draft_v1/test_fx_public.py": "fa4761ffa3c02e3a15ecc3b98ca03874864380d9ba3837e68ed2f160b10837d6",
+      "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+      "pytorch_arithmetic_normalization.py": "f34f292232f469a65e813d0621509f47019b15ff32b76e23fdc4ee6c370451ca",
+      "pytorch_public_arithmetic_capture.py": "f32a8f65cddbbe40844d250757735d750dea8442d57f8f39e7c7f0cd40678014",
+      "pytorch_static_trace.py": "353ddb39f68153c09d62e13cc6bff9582021ff8891400abe9391c97d22aba9a7"
+    },
+    "tests": 21
+  },
+  "downloads": 0,
+  "encrypted_calls": 0,
+  "evidence_scope": "trusted developer fixtures; real Torch/NumPy math and retained strict FX trace. No uploaded model or candidate execution.",
+  "expression_elements": 4096,
+  "format": "poseidon-public-value-fx-checkpoint-v1",
+  "http_attempts": 0,
+  "initial_controls": {
+    "claim": "trusted fixtures: public-expression provenance and retained strict FX tracing only",
+    "compiler_calls": 0,
+    "counters": {
+      "contexts": 12,
+      "reference_groups": 48,
+      "strict_traces": 12
+    },
+    "encrypted_calls": 0,
+    "errors": 0,
+    "failed": 1,
+    "format": "poseidon-public-value-fx-draft-controls-v1",
+    "http_attempts": 0,
+    "production_integrated": false,
+    "provider_calls": 0,
+    "runtime": {
+      "cuda": null,
+      "numpy": "1.25.2",
+      "python": [
+        3,
+        10,
+        14
+      ],
+      "torch": "2.0.1"
+    },
+    "seconds": 0.42521628599934047,
+    "skipped": 0,
+    "sources": {
+      "benchmarks/tools/public_value_expression_draft_v1/public_values.py": "581ef9a16a6df921cac902a041145209425b0155c674082b4297b73882308d5f",
+      "benchmarks/tools/public_value_fx_draft_v1/check.py": "c68daea45a4c9ad8bf879526992743aefdfdc44370ad8ef827136f8ae5b2d3a0",
+      "benchmarks/tools/public_value_fx_draft_v1/fx_public.py": "9ca0538717c0f10a6c10e7e9298ece4299decaf66b321c2d8b15822a9aff039a",
+      "benchmarks/tools/public_value_fx_draft_v1/test_fx_public.py": "a79a29c81e0d692b9780a30aa057068b900b60fd360f9c99abe678cce4a8a244",
+      "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+      "pytorch_arithmetic_normalization.py": "f34f292232f469a65e813d0621509f47019b15ff32b76e23fdc4ee6c370451ca",
+      "pytorch_public_arithmetic_capture.py": "f32a8f65cddbbe40844d250757735d750dea8442d57f8f39e7c7f0cd40678014",
+      "pytorch_static_trace.py": "353ddb39f68153c09d62e13cc6bff9582021ff8891400abe9391c97d22aba9a7"
+    },
+    "tests": 20
+  },
+  "installation": 0,
+  "network_configuration_changes": false,
+  "original_source_preserved": true,
+  "parameter_changes": false,
+  "preserved_failure": "initial fixture expected get_attr rejection; FX registered Tensor as a buffer, so complete public-state authority rejected earlier. Both rejection contexts now tested.",
+  "production_integrated": false,
+  "provider_calls": 0,
+  "pushes": 0,
+  "registered_operations": [
+    "reshape/view",
+    "permute",
+    "static_slice",
+    "bool_to_float32_or_float64"
+  ],
+  "remaining": [
+    "production provenance/capture integration",
+    "full resource-profile public-expression limits",
+    "immutable state/projection package binding",
+    "real Hecate/Poseidon acceptance",
+    "new genuine Agent acceptance"
+  ],
+  "resource_profile": "general-tensors-v1",
+  "retained_initial_sources": {
+    "check.py.before-fixture-fix": "c68daea45a4c9ad8bf879526992743aefdfdc44370ad8ef827136f8ae5b2d3a0",
+    "controls.json.before-fixture-fix": "1e6bd2ca937b4942a1f4fbb09cdbe9419a3beca089e81c6bff9d2f8859f1d3b0",
+    "controls.log.before-fixture-fix": "fd78032295dee429e053fa216904b7807c670a1e65568fa18f5eb4241237b24d",
+    "fx_public.py.before-fixture-fix": "9ca0538717c0f10a6c10e7e9298ece4299decaf66b321c2d8b15822a9aff039a",
+    "test_fx_public.py.before-fixture-fix": "a79a29c81e0d692b9780a30aa057068b900b60fd360f9c99abe678cce4a8a244"
+  },
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "status": "draft_reference_and_fx_passed"
+}

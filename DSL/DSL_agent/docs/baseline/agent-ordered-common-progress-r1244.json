@@ -1,0 +1,159 @@
+{
+  "actual_compilation": false,
+  "approximation_accuracy_certified": false,
+  "binding": "5acb11cfb23762ba218c5f09d4fa05e9e6fb310fca12a01cdea15539d2f33879",
+  "branch": "lhy-agent-dsl",
+  "encrypted_execution": false,
+  "format": "poseidon-agent-ordered-common-progress-v1",
+  "frozen_production_files": 704,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "original_live_76": {
+    "failed": 20,
+    "failures_by_layer": {
+      "compiler": 2,
+      "numerical": 12,
+      "provider": 3,
+      "static": 3
+    },
+    "generations": 145,
+    "http_attempts": 145,
+    "passed": 56,
+    "unrun": 0
+  },
+  "pending": [
+    "Representative Poseidon compile and encrypted regression for the staged route",
+    "Production cutover at a source-freeze-safe boundary",
+    "Separate real Agent approval for new route quality",
+    "Original-model approximation accuracy",
+    "Backend/bootstrap/capacity/CUDA work remains separately tracked"
+  ],
+  "pending_live_approved": false,
+  "pending_live_proposal_binding": "1120ab0063c801e2d4199e956bb55dec12f0a68a167c17325ef7bb2a77a21481",
+  "production_applied": false,
+  "protected": {
+    "protected-backend.json": {
+      "changed": 0,
+      "files": 648
+    },
+    "protected-references.json": {
+      "changed": 0,
+      "files": 6
+    }
+  },
+  "provider_calls": 0,
+  "recorded_at": "2026-10-07T11:44:45.015760+00:00",
+  "retained_failure_records": [
+    "agent-ordered-common-tests-r1237",
+    "agent-ordered-common-tests-r1241",
+    "agent-ordered-common-tests-r1243"
+  ],
+  "root": "/home/lhohy/Code/Poseidon",
+  "source_manifest_version_exposed": false,
+  "stage": "staged_source_and_component_verified",
+  "staged_modules": {
+    "application_capabilities.py": {
+      "original_sha256": "928aa32532feec6ca5e318ecf23e9e85c7db3ab55533a755aecef5d16efe0dc3",
+      "target_sha256": "b99406c151d7739a1d738ca4e20acf65c688e7acc6da0a884d3b67f6f3a31c62"
+    },
+    "candidate_bundle.py": {
+      "original_sha256": "6d723fe974bba4d54e9a62cf49bee9074741fac51a265890590502c7ed6aad8e",
+      "target_sha256": "32bbf98a57f5bad1267acd51de9c57db9e1a370cc4bf24bb7158143cdda69310"
+    },
+    "pytorch_arithmetic_normalization.py": {
+      "original_sha256": "856fff7b17efbefb95e06366400d08271e193bea5c97015851756e5c6dd62f1e",
+      "target_sha256": "204413449f94f8a8668602b46cfcd227d63b19c76b058f66bb52fabf239ca3b2"
+    },
+    "pytorch_common_constant_provenance.py": {
+      "original_sha256": null,
+      "target_sha256": "594cc9a40ed8f4315879885e8861030106b96e3a7791758d450bae4a5dcfa4bb"
+    },
+    "pytorch_model_intake.py": {
+      "original_sha256": "8f450250e8e07c4e15292ec5b934e8441e038f47ac8262a1ff97d1f6686bc31b",
+      "target_sha256": "efbef197a506b5db6707668655c1b0d74d5585a90c0a8659a3e1bb66e158c63e"
+    },
+    "pytorch_ordered_capture.py": {
+      "original_sha256": "57fbfe965f3c65530990b8086055732f0923c837a272aa2acd629fd6e32c3340",
+      "target_sha256": "bd459ca42ae675461b5b956ae7ff0b74dd456ff426ddaf5f18bca78e54557803"
+    },
+    "pytorch_ordered_contract.py": {
+      "original_sha256": "7f9e014303310939c26703fc4d8caf6b0ebcf3d2b39cb0bb039303d64cefeadc",
+      "target_sha256": "c80b4638f249dea27b4f0db7bf092e72ecccd362a7fbd5e4ecff4ad4ddddfb66"
+    },
+    "pytorch_ordered_intake.py": {
+      "original_sha256": "01ba99e91bc6687ef8cae23e1124e270b230aa87519ed8f852037287c4798506",
+      "target_sha256": "e89ddfcda414d393dae5d8d845ff786d451f17b19c140156ade2c813c2e2f0a2"
+    }
+  },
+  "staged_source_format": "poseidon-trusted-pytorch-v13",
+  "tests": [
+    {
+      "compared_values": 0,
+      "errors": 0,
+      "failed": 0,
+      "input_groups": 0,
+      "max_decomposition_error": 0.0,
+      "max_original_function_approximation_error": 0.0,
+      "max_source_normalization_error": 0.0,
+      "reference_contexts": 0,
+      "report_sha256": "942a4cceca50411a20d49eb25a3bc4f7c0bdb3ac06e9e31af895b5c115e7c542",
+      "result_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1245",
+      "sandbox_sha256": "c95941c9b47b1c9311c848a88df377fe3ee9a75200434d7b1e4693790fd409f9",
+      "scope": "component",
+      "skipped": 0,
+      "tests": 87
+    },
+    {
+      "compared_values": 18624,
+      "errors": 0,
+      "failed": 0,
+      "input_groups": 1056,
+      "max_decomposition_error": 1.3877787807814457e-16,
+      "max_original_function_approximation_error": 1.044131746932627,
+      "max_source_normalization_error": 2.220446049250313e-16,
+      "reference_contexts": 66,
+      "report_sha256": "74698101cafb39aac75268719570d914c5685775d7c146241aa1c5e3e3d585a9",
+      "result_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1246",
+      "sandbox_sha256": "d46908042901ee99bd7fad8913616ed19bfc40b25e5b5f9a3167ec81330cda0f",
+      "scope": "reference",
+      "skipped": 0,
+      "tests": 54
+    },
+    {
+      "compared_values": 1280,
+      "errors": 0,
+      "failed": 0,
+      "input_groups": 160,
+      "max_decomposition_error": 2.220446049250313e-16,
+      "max_original_function_approximation_error": 0.6394196895522962,
+      "max_source_normalization_error": 0.0,
+      "reference_contexts": 10,
+      "report_sha256": "e98d0d395d2870e85521e4ab954f60fc8acf43b0d569d720954d0ef4d726276e",
+      "result_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1247",
+      "sandbox_sha256": "261c120c89bb7c5a1a77c6569c53ba6f07d0b0bf42fce101990690c77708b822",
+      "scope": "retained",
+      "skipped": 0,
+      "tests": 28
+    },
+    {
+      "compared_values": 1632,
+      "errors": 0,
+      "failed": 0,
+      "input_groups": 112,
+      "max_decomposition_error": 1.249000902703301e-16,
+      "max_original_function_approximation_error": 0.9281171083845574,
+      "max_source_normalization_error": 1.1102230246251565e-16,
+      "reference_contexts": 7,
+      "report_sha256": "909c1489cf862e9a0c51097c1c91adf8a692febfac0c87fdcbefa579d61b3b4d",
+      "result_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1248",
+      "sandbox_sha256": "471146d0a7fa5dd8b1a0f8a4717041ed55cdd03190185ae067927e8d9f5ebc7e",
+      "scope": "source",
+      "skipped": 0,
+      "tests": 9
+    }
+  ],
+  "tests_errors": 0,
+  "tests_failed": 0,
+  "tests_passed": 178,
+  "tests_skipped": 0
+}

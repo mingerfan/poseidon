@@ -1,0 +1,217 @@
+{
+  "api_calls": 0,
+  "backend_status": "not_run",
+  "cases": [
+    {
+      "average": false,
+      "batch_first": true,
+      "e": 4,
+      "h": 2,
+      "id": "self_post_linear_residual",
+      "l": 2,
+      "n": 1,
+      "need": true,
+      "post_width": 4,
+      "residual": true,
+      "s": 2,
+      "self_attention": true,
+      "tree": "named"
+    },
+    {
+      "average": true,
+      "batch_first": true,
+      "e": 4,
+      "h": 2,
+      "id": "linear_into_separate_cross_none",
+      "kdim": 3,
+      "l": 2,
+      "n": 1,
+      "need": false,
+      "pre_width": 3,
+      "projected_output": true,
+      "s": 3,
+      "tree": "nested_none",
+      "vdim": 2
+    },
+    {
+      "average": true,
+      "batch_first": true,
+      "e": 2,
+      "h": 1,
+      "id": "boolean_padding_residual",
+      "l": 2,
+      "mask": "bool_padding",
+      "n": 1,
+      "need": true,
+      "residual": true,
+      "s": 3,
+      "tree": "tuple_none"
+    },
+    {
+      "average": false,
+      "batch_first": true,
+      "e": 4,
+      "h": 2,
+      "id": "additive_heads_post_linear",
+      "l": 1,
+      "mask": "additive_heads_padding",
+      "n": 2,
+      "need": true,
+      "post_width": 2,
+      "s": 2,
+      "tree": "named"
+    },
+    {
+      "average": true,
+      "batch_first": true,
+      "e": 4,
+      "h": 2,
+      "id": "unbatched_cross_none",
+      "l": 2,
+      "n": 1,
+      "need": false,
+      "s": 3,
+      "tree": "nested_none",
+      "unbatched": true
+    },
+    {
+      "average": true,
+      "batch_first": false,
+      "bias_kv": true,
+      "e": 2,
+      "h": 1,
+      "id": "sequence_first_bias_zero",
+      "l": 2,
+      "n": 1,
+      "need": true,
+      "post_width": 2,
+      "residual": true,
+      "s": 2,
+      "tree": "tuple_none",
+      "zero_attn": true
+    }
+  ],
+  "format": "poseidon-ordered-mha-composition-cases-v1",
+  "original_profile": {
+    "exp": {
+      "degree": 6,
+      "domain": [
+        -0.5,
+        0.5
+      ],
+      "method": "taylor"
+    },
+    "reciprocal": {
+      "domain": [
+        0.5,
+        8.0
+      ],
+      "iterations": 8,
+      "method": "goldschmidt"
+    }
+  },
+  "separate_execution_candidates": [
+    {
+      "approximation": {
+        "exp": {
+          "degree": 1,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 1,
+          "method": "goldschmidt"
+        }
+      },
+      "average": false,
+      "batch_first": true,
+      "e": 4,
+      "h": 2,
+      "id": "self_post_linear_residual__declared_shallow_v1",
+      "l": 2,
+      "n": 1,
+      "need": true,
+      "original_accuracy_certified": false,
+      "post_width": 4,
+      "residual": true,
+      "s": 2,
+      "self_attention": true,
+      "tree": "named"
+    },
+    {
+      "approximation": {
+        "exp": {
+          "degree": 1,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 1,
+          "method": "goldschmidt"
+        }
+      },
+      "average": true,
+      "batch_first": true,
+      "e": 4,
+      "h": 2,
+      "id": "linear_into_separate_cross_none__declared_shallow_v1",
+      "kdim": 3,
+      "l": 2,
+      "n": 1,
+      "need": false,
+      "original_accuracy_certified": false,
+      "pre_width": 3,
+      "projected_output": true,
+      "s": 3,
+      "tree": "nested_none",
+      "vdim": 2
+    },
+    {
+      "approximation": {
+        "exp": {
+          "degree": 1,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 1,
+          "method": "goldschmidt"
+        }
+      },
+      "average": true,
+      "batch_first": true,
+      "e": 2,
+      "h": 1,
+      "id": "boolean_padding_residual__declared_shallow_v1",
+      "l": 2,
+      "mask": "bool_padding",
+      "n": 1,
+      "need": true,
+      "original_accuracy_certified": false,
+      "residual": true,
+      "s": 3,
+      "tree": "tuple_none"
+    }
+  ]
+}

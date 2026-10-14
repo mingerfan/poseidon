@@ -1,0 +1,1 @@
+{"api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "errors": [], "failures": [], "format": "poseidon-output-alias-adapter-controls-v2", "modules": ["test_unified_output_aliases", "test_agent_component", "test_program_execution"], "skipped": [], "status": "passed", "tests": 51}

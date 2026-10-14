@@ -1,0 +1,11 @@
+{
+  "errors": 0,
+  "failed": 0,
+  "log_sha256": "d3f9864e6938b4ac1ec58ae028104bf166a8172275e2225addb59e3edf871dfc",
+  "seconds": 0.01925389500684105,
+  "skipped": 0,
+  "source_sha256": "aa89ea10705a9d7a786fc6353cbfd2cf0f9cf3e1d8313b2b64830e073e0dcac2",
+  "status": "passed",
+  "test_source_sha256": "c2b62e19de720908eb19f81acd5a4f826c55eff0b6b202fb8a3d77fabe2a9e6c",
+  "tests": 9
+}

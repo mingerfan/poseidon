@@ -1,0 +1,143 @@
+{
+  "format": "poseidon-assessment-total-budget-phase-report-v1",
+  "status": "completed_scoped_acceptance",
+  "version": "r1338",
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "source_identity_sha256": "6312151da9f93d55509afa80e21ff903f41dbb7191bc3557413367d0b8784f55",
+  "implementation_changes": [
+    "scripts/baseline/assessment_time_budget.py",
+    "scripts/baseline/application_assessment.py",
+    "scripts/baseline/application_assessment_entry/cli.py",
+    "scripts/baseline/test_assessment_time_budget.py",
+    "scripts/baseline/application_assessment_entry/test_total_budget.py"
+  ],
+  "source_hashes": {
+    "scripts/baseline/assessment_time_budget.py": "9823ad745482b295b0313b1885b0ba243ba1efe6b5bb7de4813d15229ac3941c",
+    "scripts/baseline/application_assessment.py": "1efec25d47c437be0af135795ffb516a94950a95a10c32e28850f09d041e54f5",
+    "scripts/baseline/application_assessment_entry/cli.py": "3992c15f5546db8c397aa729241ed555bb887f60590542606075d6281f80edfd",
+    "scripts/baseline/test_assessment_time_budget.py": "d0b44db26384c4044b09ab3d8f20c2b258118b0d5d6b2dd04450c3cd5fb95f05",
+    "scripts/baseline/application_assessment_entry/test_total_budget.py": "237b38d5aed712a791329e47b2143f195ecde9a64d61a7c82843188ad958de71"
+  },
+  "total_deadline": {
+    "explicit_only": true,
+    "api_option": "total_wall_seconds",
+    "cli_option": "--total-wall-seconds",
+    "seconds_min": 1,
+    "seconds_max": 14400,
+    "legacy_default_preserved": true,
+    "binding": "poseidon-application-assessment-plan-v2",
+    "shared_between_commands": true,
+    "monotonic_clock": "Linux CLOCK_BOOTTIME",
+    "wall_clock": true,
+    "boot_change": "service_error",
+    "cli_advance_cancellation": "owned process tree stopped",
+    "direct_api_cancellation": "cooperative boundary checks"
+  },
+  "controls": {
+    "initial": {
+      "tests_run": 102,
+      "passed": 102,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "binding": "88cad8e94ee70ee49046c8f44be889c14a6cc9345ebc78100d84d146ba9136fe",
+      "scope": "before final watcher correction; 50 observed passes plus 52 nonduplicate continuations"
+    },
+    "final_affected": {
+      "tests_run": 29,
+      "passed": 29,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "binding": "e55c1280b40ceea273e8460ca487466a104745b3f5885fb377af88262b4e9c75",
+      "scope": "final watcher source; 27 existing affected tests plus 2 new watcher regressions"
+    },
+    "distinct_test_ids_across_bindings": 104,
+    "overlap": 27,
+    "full_104_final_source_rerun": false,
+    "actual_linux_process_tree_tests": 2,
+    "numerical_test_backend": "injected, not counted as FHE"
+  },
+  "backend": {
+    "backend": "poseidon-cpu",
+    "candidate_origin": "deterministic_rule_baseline",
+    "compared_values": 8,
+    "compiler_calls": 0,
+    "encrypted_calls": 2,
+    "http_attempts": 0,
+    "input_groups": 2,
+    "maximum_absolute_error": 3.9523462835866496e-08,
+    "numerical_tolerance": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    },
+    "original_application_accuracy_certified": false,
+    "program_binding": "a784ec3b141f55f4d55980e3bcf33f98d0a66060ac0e23dd81d569037f53ea24",
+    "program_task": "43dbbf49599c458fb4f38e38dbf434c6",
+    "provider_calls": 0,
+    "reload": true,
+    "cached_receipt_adoption": true,
+    "cache_added_calls": 0,
+    "repeated_terminal_added_calls": 0,
+    "confirmed_command_cleanups": 7,
+    "existing_program_source_unchanged": true,
+    "backend_evidence_audit_binding": "31c7acb17925e22c7fb36afab486c2161f1f62636350097777bbe5ac7c0e62d7",
+    "backend_evidence_audit": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-assessment-total-deadline-acceptance-v1/committed-evidence-audit.json"
+  },
+  "preserved_harness_failures": {
+    "initial_control_timeout": {
+      "seconds": 120,
+      "observed_passes": 50,
+      "missing_tests_continued": 52
+    },
+    "backend_harness_timeout": {
+      "seconds": 300,
+      "exit_code": 124,
+      "completed_before_stop": "seven commands, two actual numerical receipts and cache terminal state",
+      "follow_up": "metadata/hash audit only; no backend reexecution",
+      "original_termination_preserved": true
+    }
+  },
+  "protected_sources_checked": 654,
+  "protected_sources_changed": 0,
+  "historical_paid_requests_preserved": true,
+  "original_numerical_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "x86_configuration_preserved": true,
+  "x86_actual_retest": false,
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 2,
+  "installs": 0,
+  "downloads": 0,
+  "backend_changes": 0,
+  "parameter_changes": 0,
+  "commit": 0,
+  "push": 0,
+  "new_result_bytes": 4245738,
+  "total_result_bytes": 27649910104,
+  "free_bytes": 45776211968,
+  "evidence_sha256": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/assessment_deadline_v1/baseline.json": "002ef6f70fd4e8e1643c4b05efca600e2fd50462cfff4f37ea76d184b243ffff",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/assessment_deadline_v1/controls-initial-combined.json": "647989c63a25608af5727a1e58c98c5db1ee555346b962cc87b0435b40f4c408",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/assessment_deadline_v1/controls-affected.json": "177e84dcedefb2c49aa79261c2623830612973e8a46ef11cf93c0f30884b1c2b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-assessment-total-deadline-acceptance-v1/plan.json": "c4fd888a55b68c8bc450269f295a6bef32adfabd05696a4a6e87aea241ae1cf2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-assessment-total-deadline-acceptance-v1/termination.json": "b1a7aace7f878be8626d1926fa1eac1ad9dfb93971faf41aa0983646842e250d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-assessment-total-deadline-acceptance-v1/committed-evidence-audit.json": "c594bdad9c2928f1c32a6f1cd7088b7ae09997e265423d97b160ca6125516390"
+  },
+  "remaining": [
+    "explicit-v13 new Agent generation quality requires separate live approval",
+    "cross old paid HTTP outcome/cost remains unknown",
+    "generic inputs, operators, capacity and original-model application precision",
+    "physical execution resource estimates remain partly unknown",
+    "direct synchronous API active hard-abort is not provided by this change",
+    "ciphertext partition handoff, CPU bootstrap and CUDA hardware acceptance",
+    "whole-network and generalization targets"
+  ],
+  "binding": "eab1c6165e513c9c27c592147cb4f08dad76c149034782f52aa1a0c06232d94e"
+}

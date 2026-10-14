@@ -1,0 +1,22 @@
+{
+  "api_calls": 0,
+  "binding": "793bc83009ec195e7e0df92cef3dc2982af5a17004a5c9553520aac3e80a4b2a",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-static-broadcast-runner-controls-v1",
+  "log": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_live_v1/scope-controls.log",
+  "log_sha256": "a521e8e166f747752d4a1dc1952d2a52e03a78e465251da09f3e19854bcd41f0",
+  "proposal_binding": "cecd9ba0273880891ae02bbe5cf29c67755d5b656f5cdfd25cb16df59817580a",
+  "scope": "Frozen plan identity, mutation rejection, version selection and authorization",
+  "skipped": 0,
+  "status": "passed",
+  "tests": 4,
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/package_checks.py": "4b82156f7b40f1b78afd4990b64fa43f80630414b34e4f5c4cd42da6bb48f95a",
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/run.py": "08b07c36797b0db540e4b988b7f0641ed8650bc4fc3db8ec9ac144870090b5e6",
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/scope.py": "6ed1f1c9dc09617cc60dcf0637b3bd55a595c7f537513d878b9e030e41ada0b4",
+    "scripts/baseline/benchmarks/tools/static_broadcast_live_v1/test_scope.py": "117d7d921d465cb9c3b9f29834e075878913c1e1394a2cef8676ba8344a1b64e"
+  }
+}

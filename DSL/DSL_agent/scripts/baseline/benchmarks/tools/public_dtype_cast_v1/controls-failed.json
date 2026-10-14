@@ -1,0 +1,24 @@
+{
+  "binding": "9b138a0998fdc40941a21c33d36878b599c5e92ff7e61173ac4e4f0ae39cd3ee",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 1,
+  "failed": 0,
+  "format": "poseidon-public-dtype-cast-controls-v1",
+  "modules": [
+    "test_pytorch_public_dtype_cast",
+    "test_program_output_tree_contract",
+    "test_pytorch_public_tensor_division",
+    "test_pytorch_public_boolean_arithmetic",
+    "test_source_precision_reference",
+    "test_pytorch_model_intake",
+    "test_pytorch_weight_package",
+    "test_pytorch_source_contract",
+    "test_candidate_bundle",
+    "test_application_capabilities"
+  ],
+  "provider_calls": 0,
+  "seconds": 14.319543550001981,
+  "skipped": 0,
+  "tests": 150
+}

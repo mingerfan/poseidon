@@ -1,0 +1,1159 @@
+{
+  "format": "poseidon-agent-generalization-live-acceptance-v1",
+  "date_utc": "2026-10-03T15:46:34.333050+00:00",
+  "source_batch_binding": "207f317b36f217482f095c1b97c26520bdf901f12d1b617f4975a98087dfa850",
+  "source_checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "platform": "aarch64-linux",
+  "backend": "poseidon_cpu",
+  "status": "passed",
+  "planned": 14,
+  "passed": 14,
+  "failed": 0,
+  "skipped": 0,
+  "not_run": 0,
+  "first_attempt_passed": 12,
+  "repair_successes": 2,
+  "generations": 16,
+  "http_attempts": 16,
+  "transport_retries": 0,
+  "usage": {
+    "completion_tokens": 263691,
+    "prompt_cache_hit_tokens": 25856,
+    "prompt_cache_miss_tokens": 104808,
+    "prompt_tokens": 130664,
+    "reasoning_tokens": 260096,
+    "responses_with_usage": 16,
+    "responses_without_usage": 0,
+    "total_tokens": 394355,
+    "unresolved_http_attempts": 0
+  },
+  "cost_usd": null,
+  "wall_seconds": 2526.052196428005,
+  "input_groups": 56,
+  "compared_values": 268,
+  "maximum_absolute_error": 6.287110561803351e-07,
+  "reload_maximum_absolute_error": 4.844279301063593e-07,
+  "atol": 1e-05,
+  "rtol": 0.0001,
+  "rows": [
+    {
+      "id": "pytorch_mlp",
+      "name": "PyTorch MLP",
+      "status": "passed",
+      "request_id": "5e441f83f1a62ba3bfae547841e9eceb10e469357e563b31ba68333907075644",
+      "task_id": "c2e251bd496b46cab2c91af80a914e70",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/c2e251bd496b46cab2c91af80a914e70/program",
+      "package_binding": "a20923450d66d4cbcbff374abf2a8d248556a20a23432d49a2dbe39508005cfe",
+      "bundle_format": "poseidon-dsl-bundle-v5",
+      "candidate_sha256": "17e1cf176d9d66d1cfc4d1a56899976aa744523d679839d2747ce42531ba120c",
+      "generation_receipt_binding": "04c83e1b1356ccedde29c57333fef3d0a82fe543ea7accba9bd1d662f371a2e1",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-6_y7382e",
+      "qualification": {
+        "mae": 4.3774771339301463e-11,
+        "max_absolute_error": 7.022512432675043e-11,
+        "max_nonzero_reference_relative_error": 8.216405555461736e-07,
+        "nonzero_reference_count": 8,
+        "cosine_similarity": 1.0,
+        "compared_values": 8,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            4
+          ]
+        }
+      ],
+      "output_names": [
+        "scores"
+      ],
+      "node_count": 7,
+      "operators": [
+        "linear",
+        "multiply",
+        "reshape"
+      ],
+      "public_weight_policy": null,
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-ht7qjc5_",
+      "reload": {
+        "mae": 5.170320101942409e-10,
+        "max_absolute_error": 1.2334025814575433e-09,
+        "max_nonzero_reference_relative_error": 1.4811036597080909e-06,
+        "nonzero_reference_count": 8,
+        "cosine_similarity": 0.9999999999999998,
+        "compared_values": 8,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "pytorch_conv_pool",
+      "name": "PyTorch Conv→Pool",
+      "status": "passed",
+      "request_id": "32b2a06d0cfd8efe60265e66f63458ee2340c7bca43e40baa29d91ddda70f3d4",
+      "task_id": "3d36be49b21e47718e704dfd7fedeb29",
+      "generations": 2,
+      "http_attempts": 2,
+      "first_attempt_passed": false,
+      "repairs_used": 1,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/3d36be49b21e47718e704dfd7fedeb29/program",
+      "package_binding": "64456b7e9400a1953ea0b621a2032939830637bc4adbda57b0c1e1f579ed9395",
+      "bundle_format": "poseidon-dsl-bundle-v5",
+      "candidate_sha256": "894c8f048d864bfd80bacc2600cef5d91d689e820c46f2b0b199b86a865ce400",
+      "generation_receipt_binding": "32d74f7469cbd7658e52c04cb4d61fa6da9035ffe8be47a6516dae269c79bcbb",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-x4nrpj2l",
+      "qualification": {
+        "mae": 1.0684956763774497e-09,
+        "max_absolute_error": 3.596478434508832e-09,
+        "max_nonzero_reference_relative_error": 1.8197818709672122e-07,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999993,
+        "compared_values": 16,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            1,
+            2,
+            4
+          ]
+        }
+      ],
+      "output_names": [
+        "pooled"
+      ],
+      "node_count": 4,
+      "operators": [
+        "avg_pool2d",
+        "conv2d",
+        "reshape"
+      ],
+      "public_weight_policy": null,
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-geyk604l",
+      "reload": {
+        "mae": 1.9429317592734724e-09,
+        "max_absolute_error": 5.653903602242938e-09,
+        "max_nonzero_reference_relative_error": 1.6525244405577042e-07,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999982,
+        "compared_values": 16,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "pytorch_residual",
+      "name": "PyTorch 残差",
+      "status": "passed",
+      "request_id": "98ac2ae894abacf4bf3a9e35242941053ab5561d4fb9d97a7557e212ddcf1e52",
+      "task_id": "caa2499a43e8428bbe3b59af2ec78b8a",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/caa2499a43e8428bbe3b59af2ec78b8a/program",
+      "package_binding": "12251c0376525b9ab6469f66d20dc056fc381680a78b8516716b0e966e1ffe14",
+      "bundle_format": "poseidon-dsl-bundle-v5",
+      "candidate_sha256": "68f8dc548ed9c539bf0d390d5b7473c3c476bfe9688695c0e337db83209f126c",
+      "generation_receipt_binding": "a36733700bc4981f07234f292f734d76da742ce0b329fdf3a83b75e842567838",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wwg9q0qt",
+      "qualification": {
+        "mae": 4.372234364488636e-09,
+        "max_absolute_error": 1.541461593090876e-08,
+        "max_nonzero_reference_relative_error": 1.4769613629195457e-07,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999999,
+        "compared_values": 16,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            2,
+            2
+          ]
+        }
+      ],
+      "output_names": [
+        "merged"
+      ],
+      "node_count": 6,
+      "operators": [
+        "add",
+        "linear",
+        "reshape"
+      ],
+      "public_weight_policy": null,
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-vctwtwvg",
+      "reload": {
+        "mae": 1.4452928409191407e-09,
+        "max_absolute_error": 4.788763052765432e-09,
+        "max_nonzero_reference_relative_error": 7.619040337085277e-08,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999999,
+        "compared_values": 16,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "pytorch_batchnorm",
+      "name": "PyTorch BatchNorm／双输出",
+      "status": "passed",
+      "request_id": "40ffe7b51e9fb01542f40cc75ea12421431b35835f76d01a1ece16e8621f971c",
+      "task_id": "df37f1ff7caa40c78bc79ced5b9d0e3b",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/df37f1ff7caa40c78bc79ced5b9d0e3b/program",
+      "package_binding": "9ad98e16e046d694c1b91f216baa89a8899ae2b3d8e803d44f2bfff6de03e364",
+      "bundle_format": "poseidon-dsl-bundle-v5",
+      "candidate_sha256": "efb96f0c372b8e7becdb11737a76328f60de8446a027e3024c1a19b8457f7d5a",
+      "generation_receipt_binding": "e7e488b40cc8ba19fc73c81430c6b34623da0dab8d1d71a66b69dc3efb63e7cb",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ae91hkxy",
+      "qualification": {
+        "mae": 6.705638727394405e-10,
+        "max_absolute_error": 3.167240025803153e-09,
+        "max_nonzero_reference_relative_error": 5.990650206942151e-07,
+        "nonzero_reference_count": 32,
+        "cosine_similarity": 1.0000000000000002,
+        "compared_values": 32,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            2,
+            2
+          ]
+        }
+      ],
+      "output_names": [
+        "normalized",
+        "residual"
+      ],
+      "node_count": 3,
+      "operators": [
+        "batch_norm",
+        "reshape",
+        "subtract"
+      ],
+      "public_weight_policy": null,
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-rov8ckbn",
+      "reload": {
+        "mae": 6.741593382310731e-10,
+        "max_absolute_error": 3.2033476982107345e-09,
+        "max_nonzero_reference_relative_error": 1.0566813103496562e-06,
+        "nonzero_reference_count": 32,
+        "cosine_similarity": 1.0,
+        "compared_values": 32,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "pytorch_matrix_fusion",
+      "name": "PyTorch 矩阵融合／三输出",
+      "status": "passed",
+      "request_id": "ee20686f6fc9958b3fc66d68ee2931b4d50c63fadad2c0bc847ae934d56799e6",
+      "task_id": "f928d595ad0448d7b19a0f861a8a9a60",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/f928d595ad0448d7b19a0f861a8a9a60/program",
+      "package_binding": "001e8f7eb7c4d7d9ad471428dd1e72c4c9eb75e082b6698392f83c9b8efe2f25",
+      "bundle_format": "poseidon-dsl-bundle-v5",
+      "candidate_sha256": "c16b0f3bc576201316e79f159d688ff573f532cbe61534c34d74bf5f6827681c",
+      "generation_receipt_binding": "0ee5db73cd9a4a5d92fe865115ace52a2133a7b54d32208df5e2ab5224c621e0",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-y0hs56in",
+      "qualification": {
+        "mae": 2.5649017469465036e-08,
+        "max_absolute_error": 6.287110561803351e-07,
+        "max_nonzero_reference_relative_error": 1.5740557572641036e-06,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.9999999999999911,
+        "compared_values": 48,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            2
+          ]
+        },
+        {
+          "name": "y",
+          "shape": [
+            2,
+            2
+          ]
+        }
+      ],
+      "output_names": [
+        "product",
+        "sum",
+        "difference"
+      ],
+      "node_count": 6,
+      "operators": [
+        "add",
+        "multiply",
+        "reshape",
+        "subtract",
+        "sum"
+      ],
+      "public_weight_policy": null,
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-xbvvf2f7",
+      "reload": {
+        "mae": 2.311795700428974e-08,
+        "max_absolute_error": 4.844279301063593e-07,
+        "max_nonzero_reference_relative_error": 1.3263742655589274e-06,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.999999999999994,
+        "compared_values": 48,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "pytorch_shape_linear",
+      "name": "PyTorch 形状→Linear／双输出",
+      "status": "passed",
+      "request_id": "bfd7d89b66d952892d8568d079213132e9b862c88c73fd5e1ab2e70cccbe36bb",
+      "task_id": "e05e6c0d258c4fd5bcb992cfb8920e22",
+      "generations": 2,
+      "http_attempts": 2,
+      "first_attempt_passed": false,
+      "repairs_used": 1,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/e05e6c0d258c4fd5bcb992cfb8920e22/program",
+      "package_binding": "76008a7c0c20b8ac85dfe7f0d1f37a34acc0630ed876b3757bb350e0879b8272",
+      "bundle_format": "poseidon-dsl-bundle-v5",
+      "candidate_sha256": "e1bf4903b3f9c23488892857986e20441912860c761428eb78d8854d87a0018d",
+      "generation_receipt_binding": "3486f7422d66bcf6b7e150f2c4aae6d30bd71138c1c7a0384175449a44d4973f",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-fzk1bidg",
+      "qualification": {
+        "mae": 8.902082012648494e-09,
+        "max_absolute_error": 2.4519205825412893e-08,
+        "max_nonzero_reference_relative_error": 5.558039295235379e-06,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999623,
+        "compared_values": 16,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            2,
+            2
+          ]
+        }
+      ],
+      "output_names": [
+        "projected",
+        "scaled"
+      ],
+      "node_count": 6,
+      "operators": [
+        "linear",
+        "multiply",
+        "reshape"
+      ],
+      "public_weight_policy": null,
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-pdxentd9",
+      "reload": {
+        "mae": 5.636701615385146e-09,
+        "max_absolute_error": 2.000812989594314e-08,
+        "max_nonzero_reference_relative_error": 4.730797532932643e-06,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999746,
+        "compared_values": 16,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_linear",
+      "name": "随机权重 Linear",
+      "status": "passed",
+      "request_id": "114cfa81fb7ba6e1bb2edb5a4cd1a804192e159d5b911d910f37ae15b9f179ce",
+      "task_id": "e8da64536af84502ac91072b722d00b4",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/e8da64536af84502ac91072b722d00b4/program",
+      "package_binding": "1e9a9c300ea07f5d034ebd14dbdb16df790c9bb0c8970e484c95bcc8d376bb89",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "d3b6f69e085e2f4dd332d4cbad46d0738c97ea9bdf85d203e45b6dc370b6f49d",
+      "generation_receipt_binding": "43646a47613efc1cf31ec15e87abb849210ac67c5d82ac2a520ae74cd3459b6b",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-72cbho2_",
+      "qualification": {
+        "mae": 1.3105463601779018e-08,
+        "max_absolute_error": 3.716802804767938e-08,
+        "max_nonzero_reference_relative_error": 3.3714237637100596e-06,
+        "nonzero_reference_count": 12,
+        "cosine_similarity": 0.9999999999999635,
+        "compared_values": 12,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "output_names": [
+        "output0"
+      ],
+      "node_count": 1,
+      "operators": [
+        "linear"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-1klfjwv3",
+      "reload": {
+        "mae": 1.0442361271830134e-08,
+        "max_absolute_error": 3.089269454310817e-08,
+        "max_nonzero_reference_relative_error": 2.740668614154228e-06,
+        "nonzero_reference_count": 12,
+        "cosine_similarity": 0.9999999999999749,
+        "compared_values": 12,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_mlp",
+      "name": "随机权重 MLP",
+      "status": "passed",
+      "request_id": "906eee45cb0452d6f76b0e82916d49b3a7701bf0a5909759fa0145507dad102f",
+      "task_id": "00ea2be7b34c442fb0976198b6ddb726",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/00ea2be7b34c442fb0976198b6ddb726/program",
+      "package_binding": "1cff701d9b57282bd448f14cd601511cd07e8aae4617ff794cdc5e8a0c9a90d6",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "dc4dc8c373ec43b6386ba20edd46a61d4476d0a612531cbea22319ac121bf4d3",
+      "generation_receipt_binding": "a59b269f2e1b145f78dc5c581f8b32edd1a63365cf4f3e55bcac557f177501b3",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-leemff0d",
+      "qualification": {
+        "mae": 1.234840264980122e-10,
+        "max_absolute_error": 3.368213659371566e-10,
+        "max_nonzero_reference_relative_error": 4.413086732762081e-08,
+        "nonzero_reference_count": 8,
+        "cosine_similarity": 0.9999999999999999,
+        "compared_values": 8,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "output_names": [
+        "output0"
+      ],
+      "node_count": 3,
+      "operators": [
+        "linear",
+        "square"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-gzk246p9",
+      "reload": {
+        "mae": 7.242075927664515e-11,
+        "max_absolute_error": 2.0685047424917613e-10,
+        "max_nonzero_reference_relative_error": 2.7101875827702127e-08,
+        "nonzero_reference_count": 8,
+        "cosine_similarity": 1.0,
+        "compared_values": 8,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_residual",
+      "name": "随机权重残差",
+      "status": "passed",
+      "request_id": "b11006c70cd27e226ff22e15629df85888c6b75f3b57738b8050cca0c1bda599",
+      "task_id": "b61444e9bf954c439bd18974225794f3",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/b61444e9bf954c439bd18974225794f3/program",
+      "package_binding": "f4d21ab4baf0de7d6a17d8f84fa2f2e70f2b2a1846c31ae87cb11d17d20161a1",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "8a2f89d1162db0af5f2ac1d793bf6041345166958947a26e9e7a63b623d84655",
+      "generation_receipt_binding": "226f815c8fc8d156f98088f733feef4c0e3e4f56b1be641ff0b9683b79256b19",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qdc51cm_",
+      "qualification": {
+        "mae": 6.358257582548751e-09,
+        "max_absolute_error": 2.1391383109303774e-08,
+        "max_nonzero_reference_relative_error": 5.367028159789442e-07,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 1.0,
+        "compared_values": 16,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "output_names": [
+        "output0"
+      ],
+      "node_count": 4,
+      "operators": [
+        "add",
+        "linear"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-azl3s2sf",
+      "reload": {
+        "mae": 2.0109829516022637e-08,
+        "max_absolute_error": 7.746401577135575e-08,
+        "max_nonzero_reference_relative_error": 2.1190418893285007e-06,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.999999999999999,
+        "compared_values": 16,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_channel_linear",
+      "name": "随机权重通道 Linear",
+      "status": "passed",
+      "request_id": "05221669a9da56794540fd12b0f22565d86b7f2d532746fbb7c472594cf2b851",
+      "task_id": "a4232d05f5b3481bb7703e97ca7e42c6",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/a4232d05f5b3481bb7703e97ca7e42c6/program",
+      "package_binding": "ce7c9eb064625650b2f83f0b911561802b3e6416ce63d7279683b2566bce9ea0",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "f3f14ba674e64a629f870fe30f8b55b4bc9aa8e8afbf2e7a34ce74ab91c202d2",
+      "generation_receipt_binding": "f33208ad11475da863500ce54e915d7cbd6b7952bc4e70cd3d393642a22dd455",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-t0bps0ow",
+      "qualification": {
+        "mae": 5.781530527565152e-09,
+        "max_absolute_error": 1.9963782231513516e-08,
+        "max_nonzero_reference_relative_error": 3.1291343320237693e-06,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.999999999999991,
+        "compared_values": 24,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            1,
+            1,
+            2,
+            2
+          ]
+        }
+      ],
+      "output_names": [
+        "output0"
+      ],
+      "node_count": 1,
+      "operators": [
+        "linear"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-m_fdg_ke",
+      "reload": {
+        "mae": 4.471221540357561e-09,
+        "max_absolute_error": 1.1782457010056646e-08,
+        "max_nonzero_reference_relative_error": 1.8495693002674145e-06,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.9999999999999959,
+        "compared_values": 24,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_batched_linear",
+      "name": "随机权重批量 Linear",
+      "status": "passed",
+      "request_id": "d750714e8aaa45efe1a93acea6bd2743cf22fb52ee5213ff56f71021804a5c25",
+      "task_id": "1a00c8b17f38420c8fa29020b9b6019a",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/1a00c8b17f38420c8fa29020b9b6019a/program",
+      "package_binding": "b3b7d32f26df176d97cdc75df4fc159e16ecdeada0491e15a7ad6069012ccb41",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "376e3dab78e0c492bc3590fda9beb19178f6990e7dec96dea6f355f53a6beb7d",
+      "generation_receipt_binding": "0e003019a3a9a18247e450bae39653484773382d51f1122bee7c0ae852f6c442",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-4nk0hyrw",
+      "qualification": {
+        "mae": 2.1268699994596717e-09,
+        "max_absolute_error": 7.960313071903036e-09,
+        "max_nonzero_reference_relative_error": 2.7075523923262832e-06,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.9999999999999926,
+        "compared_values": 24,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            2,
+            2
+          ]
+        }
+      ],
+      "output_names": [
+        "output0"
+      ],
+      "node_count": 1,
+      "operators": [
+        "linear"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-9yersnrf",
+      "reload": {
+        "mae": 1.9994875867633877e-09,
+        "max_absolute_error": 9.321258908831509e-09,
+        "max_nonzero_reference_relative_error": 1.1659893370618898e-05,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.9999999999999903,
+        "compared_values": 24,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_multi_input",
+      "name": "随机权重双输入融合",
+      "status": "passed",
+      "request_id": "49608f804fdc55314cc5f89d811ebcf4b86ba4c8817d9d5a9bf2d116e5951826",
+      "task_id": "f550782694a14b91944057d964285eae",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/f550782694a14b91944057d964285eae/program",
+      "package_binding": "ba0a795b31d6a2c7927a0e693ddd89413b8c5809705bd1e9807090bf26e8ace9",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "31ec19077d12354ce7bbd218be4f09f1ec5fb965b1764f4ea7a0d38f319f48f6",
+      "generation_receipt_binding": "3f9ff4ec8813f97ed263b3d6eb18c943d303829d12b3b10ca3704c8cb961b0c2",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-q8_e10uw",
+      "qualification": {
+        "mae": 5.2432196853018954e-09,
+        "max_absolute_error": 1.490130378811738e-08,
+        "max_nonzero_reference_relative_error": 5.165509205862734e-07,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999983,
+        "compared_values": 16,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "input1",
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "output_names": [
+        "output0"
+      ],
+      "node_count": 2,
+      "operators": [
+        "concat",
+        "linear"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-zqh4wnqa",
+      "reload": {
+        "mae": 3.4886858664515824e-09,
+        "max_absolute_error": 1.5383605278529444e-08,
+        "max_nonzero_reference_relative_error": 2.98465115170186e-07,
+        "nonzero_reference_count": 16,
+        "cosine_similarity": 0.9999999999999991,
+        "compared_values": 16,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_shared_outputs",
+      "name": "随机权重共享多输出",
+      "status": "passed",
+      "request_id": "67fc54daa40f0195f9ff6e6712bf51500098056e96aa809387437aa634d4b9f9",
+      "task_id": "c9c7330d71d34bfda256480cab7158ef",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/c9c7330d71d34bfda256480cab7158ef/program",
+      "package_binding": "1f2d61585741dd0b7a2f0e7509126251d8d6ff09176b6ed8e911f9a40c7ff0c5",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "3ace45d83da2eae35cc7ab5eafda9c1466acbeaac420137d892241ea23224845",
+      "generation_receipt_binding": "7d072c113df96aa43b754163120c27fcddbd12551dc3f94af8f5721ea3ffed76",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0fn3z0cf",
+      "qualification": {
+        "mae": 5.212306736996482e-09,
+        "max_absolute_error": 2.204845242492759e-08,
+        "max_nonzero_reference_relative_error": 2.8297033271896913e-05,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.9999999999999926,
+        "compared_values": 24,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "output_names": [
+        "output0",
+        "output1"
+      ],
+      "node_count": 3,
+      "operators": [
+        "linear",
+        "negate",
+        "square"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-tc58ra3h",
+      "reload": {
+        "mae": 3.6179723612054927e-09,
+        "max_absolute_error": 1.3200439094888591e-08,
+        "max_nonzero_reference_relative_error": 8.460302059251131e-05,
+        "nonzero_reference_count": 24,
+        "cosine_similarity": 0.9999999999999972,
+        "compared_values": 24,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    },
+    {
+      "id": "weights_conv_pool",
+      "name": "随机权重 Conv→Pool",
+      "status": "passed",
+      "request_id": "853df61719cd88b8d6e1cc5f7e7b6ff4fefee6ebb5d3ce8a493dd866d53ea394",
+      "task_id": "c862605988b943a7bcb45c8492033063",
+      "generations": 1,
+      "http_attempts": 1,
+      "first_attempt_passed": true,
+      "repairs_used": 0,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/tasks/c862605988b943a7bcb45c8492033063/program",
+      "package_binding": "0739122bfebed56cc6326b021218a6721ba5427f7ae694e487547a0a4994d601",
+      "bundle_format": "poseidon-dsl-bundle-v6",
+      "candidate_sha256": "a658e1ec2a15dcccb3c0c4a2b16ff1f501220e6573a2f4310dca63a8b3533fa8",
+      "generation_receipt_binding": "aaaeb92b0f74427656a4447ed272ef19ac4df11d16b446167ffbf6b77ee13c78",
+      "qualification_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-la032gxy",
+      "qualification": {
+        "mae": 2.6182995936305242e-09,
+        "max_absolute_error": 5.041888110138282e-09,
+        "max_nonzero_reference_relative_error": 5.458211277548003e-07,
+        "nonzero_reference_count": 8,
+        "cosine_similarity": 0.999999999999981,
+        "compared_values": 8,
+        "passed": true
+      },
+      "input_groups": 4,
+      "input_signature": [
+        {
+          "name": "input0",
+          "shape": [
+            1,
+            1,
+            3,
+            3
+          ]
+        }
+      ],
+      "output_names": [
+        "output0"
+      ],
+      "node_count": 2,
+      "operators": [
+        "avg_pool2d",
+        "conv2d"
+      ],
+      "public_weight_policy": "descriptors-v1",
+      "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-eb5aq8ur",
+      "reload": {
+        "mae": 3.213495389058074e-09,
+        "max_absolute_error": 6.389448518884233e-09,
+        "max_nonzero_reference_relative_error": 6.865379182122708e-07,
+        "nonzero_reference_count": 8,
+        "cosine_similarity": 0.9999999999999697,
+        "compared_values": 8,
+        "passed": true
+      },
+      "recompiled_on_reload": false,
+      "new_agent_generation": true,
+      "source_manually_edited": false
+    }
+  ],
+  "original_failed_attempts": [
+    {
+      "id": "pytorch_conv_pool",
+      "attempt": 0,
+      "failure": {
+        "code": "candidate_contract_rejected",
+        "context": {},
+        "format": "poseidon-diagnostic-v2",
+        "layer": "static_check",
+        "location": null,
+        "owner": "candidate",
+        "reason_code": "contract_rejected",
+        "repeat_key_available": false,
+        "retry_policy": "repair_within_budget"
+      },
+      "public_feedback": {
+        "category": "candidate",
+        "diagnostic": "Candidate violates the fixed DSL contract.",
+        "layer": "static_check",
+        "status": "failed"
+      },
+      "evidence": null
+    },
+    {
+      "id": "pytorch_shape_linear",
+      "attempt": 0,
+      "failure": {
+        "code": "numerical_mismatch",
+        "context": {},
+        "format": "poseidon-diagnostic-v2",
+        "layer": "numerical_comparison",
+        "location": null,
+        "owner": "candidate_or_backend",
+        "reason_code": "numerical_mismatch",
+        "repeat_key_available": false,
+        "retry_policy": "diagnose"
+      },
+      "public_feedback": {
+        "category": "candidate",
+        "diagnostic": "Encrypted outputs failed the fixed numerical comparison.",
+        "layer": "numerical_comparison",
+        "numerical_summary": {
+          "compared_values": 16,
+          "mae": 0.010674404282697121,
+          "max_absolute_error": 0.07784778148861508,
+          "passed": false
+        },
+        "status": "failed"
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-j2p1b6ti"
+    }
+  ],
+  "new_input_execution": {
+    "planned": 3,
+    "passed": 3,
+    "samples_per_case": 3,
+    "repetitions": 2,
+    "unique_input_groups": 9,
+    "execution_input_groups": 18,
+    "total_compared_values": 120,
+    "maximum_absolute_error": 6.248978227235691e-08,
+    "paid_calls": 0,
+    "compiler_calls": 0,
+    "new_agent_generation": false,
+    "rows": [
+      {
+        "id": "pytorch_matrix_fusion",
+        "task_id": "f928d595ad0448d7b19a0f861a8a9a60",
+        "status": "passed",
+        "candidate_sha256": "c16b0f3bc576201316e79f159d688ff573f532cbe61534c34d74bf5f6827681c",
+        "package_binding": "001e8f7eb7c4d7d9ad471428dd1e72c4c9eb75e082b6698392f83c9b8efe2f25",
+        "generation_receipt_binding": "0ee5db73cd9a4a5d92fe865115ace52a2133a7b54d32208df5e2ab5224c621e0",
+        "reference_agreement_max_abs": 0.0,
+        "input_sha256": "68818bf0e886b7bd485ebe85e6f1d05648292df677a995ab2d58785b12b70e74",
+        "runs": [
+          {
+            "repetition": 0,
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-ufw1i1q1",
+            "backend": "poseidon_cpu",
+            "encrypted_execution": true,
+            "compiler_calls": 0,
+            "agent_calls": 0,
+            "caller_reference_compared": true,
+            "reused_execution": true,
+            "executor_secret_key": false,
+            "comparison": {
+              "mae": 4.6179811217361485e-09,
+              "max_absolute_error": 6.248978227235691e-08,
+              "max_nonzero_reference_relative_error": 3.183628427871611e-06,
+              "nonzero_reference_count": 36,
+              "cosine_similarity": 0.999999999999997,
+              "compared_values": 36,
+              "passed": true
+            }
+          },
+          {
+            "repetition": 1,
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-q94866gk",
+            "backend": "poseidon_cpu",
+            "encrypted_execution": true,
+            "compiler_calls": 0,
+            "agent_calls": 0,
+            "caller_reference_compared": true,
+            "reused_execution": false,
+            "executor_secret_key": false,
+            "comparison": {
+              "mae": 4.348774219268628e-09,
+              "max_absolute_error": 4.2440216875549996e-08,
+              "max_nonzero_reference_relative_error": 3.586350666355647e-05,
+              "nonzero_reference_count": 36,
+              "cosine_similarity": 0.9999999999999977,
+              "compared_values": 36,
+              "passed": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "weights_shared_outputs",
+        "task_id": "c9c7330d71d34bfda256480cab7158ef",
+        "status": "passed",
+        "candidate_sha256": "3ace45d83da2eae35cc7ab5eafda9c1466acbeaac420137d892241ea23224845",
+        "package_binding": "1f2d61585741dd0b7a2f0e7509126251d8d6ff09176b6ed8e911f9a40c7ff0c5",
+        "generation_receipt_binding": "7d072c113df96aa43b754163120c27fcddbd12551dc3f94af8f5721ea3ffed76",
+        "reference_agreement_max_abs": 8.673617379884035e-19,
+        "input_sha256": "003b9828c4fbd1f43e9d2423a2e2b6c50c2ac5c82ff6425eacc3c42ade8522b5",
+        "runs": [
+          {
+            "repetition": 0,
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-4vtd38uy",
+            "backend": "poseidon_cpu",
+            "encrypted_execution": true,
+            "compiler_calls": 0,
+            "agent_calls": 0,
+            "caller_reference_compared": true,
+            "reused_execution": false,
+            "executor_secret_key": false,
+            "comparison": {
+              "mae": 3.953872188559312e-09,
+              "max_absolute_error": 2.131190736387456e-08,
+              "max_nonzero_reference_relative_error": 6.0593212880535705e-06,
+              "nonzero_reference_count": 18,
+              "cosine_similarity": 0.999999999999793,
+              "compared_values": 18,
+              "passed": true
+            }
+          },
+          {
+            "repetition": 1,
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-vk9dj6wy",
+            "backend": "poseidon_cpu",
+            "encrypted_execution": true,
+            "compiler_calls": 0,
+            "agent_calls": 0,
+            "caller_reference_compared": true,
+            "reused_execution": false,
+            "executor_secret_key": false,
+            "comparison": {
+              "mae": 2.9656804658756058e-09,
+              "max_absolute_error": 1.743679265212017e-08,
+              "max_nonzero_reference_relative_error": 4.9031802537338e-06,
+              "nonzero_reference_count": 18,
+              "cosine_similarity": 0.9999999999998604,
+              "compared_values": 18,
+              "passed": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "weights_conv_pool",
+        "task_id": "c862605988b943a7bcb45c8492033063",
+        "status": "passed",
+        "candidate_sha256": "a658e1ec2a15dcccb3c0c4a2b16ff1f501220e6573a2f4310dca63a8b3533fa8",
+        "package_binding": "0739122bfebed56cc6326b021218a6721ba5427f7ae694e487547a0a4994d601",
+        "generation_receipt_binding": "aaaeb92b0f74427656a4447ed272ef19ac4df11d16b446167ffbf6b77ee13c78",
+        "reference_agreement_max_abs": 0.0,
+        "input_sha256": "2abf1e90eaf613364edd7680f892d5053a59889a1ac2f7e00f470dc69a17ef30",
+        "runs": [
+          {
+            "repetition": 0,
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-h9a4ntsu",
+            "backend": "poseidon_cpu",
+            "encrypted_execution": true,
+            "compiler_calls": 0,
+            "agent_calls": 0,
+            "caller_reference_compared": true,
+            "reused_execution": false,
+            "executor_secret_key": false,
+            "comparison": {
+              "mae": 3.577240572771173e-09,
+              "max_absolute_error": 7.206297208267598e-09,
+              "max_nonzero_reference_relative_error": 7.801341845019666e-07,
+              "nonzero_reference_count": 6,
+              "cosine_similarity": 0.9999999999999684,
+              "compared_values": 6,
+              "passed": true
+            }
+          },
+          {
+            "repetition": 1,
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-ywj744m8",
+            "backend": "poseidon_cpu",
+            "encrypted_execution": true,
+            "compiler_calls": 0,
+            "agent_calls": 0,
+            "caller_reference_compared": true,
+            "reused_execution": false,
+            "executor_secret_key": false,
+            "comparison": {
+              "mae": 2.1900498636817645e-09,
+              "max_absolute_error": 4.291370073530865e-09,
+              "max_nonzero_reference_relative_error": 4.6457208132759917e-07,
+              "nonzero_reference_count": 6,
+              "cosine_similarity": 0.9999999999999882,
+              "compared_values": 6,
+              "passed": true
+            }
+          }
+        ]
+      }
+    ],
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-programs-r625/report.json",
+    "harness_failure_preserved": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-programs-r624-harness-failure.json"
+  },
+  "source_audit": {
+    "backend": {
+      "checked": 582,
+      "changed": [],
+      "missing": []
+    },
+    "protected_reference": {
+      "checked": 3,
+      "changed": [],
+      "missing": []
+    },
+    "paid_frozen_sources": {
+      "checked": 628,
+      "changed": [],
+      "missing": []
+    },
+    "branch": "lhy-agent-dsl",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "git_status_entries": 406,
+    "free_bytes": 50294046720
+  },
+  "static_test_scope": {
+    "joint_r616": {
+      "run": 372,
+      "passed": 369,
+      "failed": 0,
+      "skipped": 3
+    },
+    "evaluation_control_r620": {
+      "run": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "authorization_record": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623-authorization.json",
+  "raw_batch_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-live-r623/report.json",
+  "new_dependencies": false,
+  "new_downloads": false,
+  "sdk_rebuilt": false,
+  "backend_sources_modified": false,
+  "commit": false,
+  "push": false,
+  "remaining": [
+    "PyTorch direct external weight/state_dict binding",
+    "Layout candidates and conservative resource forecasts",
+    "Request-level context extraction",
+    "Additional operators, approximations and unseen composition",
+    "Ciphertext-preserving graph partition, bootstrap, native x86, clean installation, CUDA hardware and ResNet20"
+  ],
+  "source_precision_note": "PyTorch source is normalized CPU float64; original float32 arithmetic/application accuracy not certified",
+  "post_documentation_git_status_entries": 408
+}

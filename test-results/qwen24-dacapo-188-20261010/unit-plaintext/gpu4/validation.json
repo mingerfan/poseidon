@@ -1,0 +1,80 @@
+{
+  "devices": 4,
+  "plan": "artifacts/qwen24-unit-plaintext/gpu-plans/gpu4/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+  "format_version": 2,
+  "plan_sha256": "sha256:e7b0f54fb91ca0a606b021ba9dd7b7ac8f47e345aa8fedfdd440933575e15547",
+  "plan_bytes": 8427772779,
+  "value_count": 10669278,
+  "instruction_counts": {
+    "transfer": 4759899,
+    "release": 10666832,
+    "encode": 1019527,
+    "compute": 4889850,
+    "reuse_input": 2201
+  },
+  "op_counts": {
+    "mul_cc": 8775,
+    "mod_switch": 74106,
+    "relinearize": 8775,
+    "mul_cp": 1365056,
+    "rescale": 1354221,
+    "rotate": 716207,
+    "add_cc": 1347874,
+    "add_cp": 3858,
+    "boot": 10835,
+    "negate": 143
+  },
+  "input_ciphertexts": 2,
+  "output_ciphertexts": 245,
+  "decoded_graph_sha256": "sha256:b7ebb08742f0a9a5013596c63c866cbe060b483a5e34e072808ff0fc09b51418",
+  "matches_complete_decoded_host_graph": true,
+  "full_unit_encode_count": 10,
+  "distinct_full_unit_types": 10,
+  "hashes_verified": true,
+  "topology_verified": true,
+  "physical_metadata_verified": true,
+  "release_reuse_verified": true,
+  "memory_report_independently_verified": true,
+  "bundle_blobs": 784750,
+  "bundle_bytes": 14701969408,
+  "object_memory": [
+    {
+      "place_index": -1,
+      "peak_bytes": 1916796928,
+      "plaintext_peak_bytes": 20971520,
+      "ciphertext_peak_bytes": 1916796928
+    },
+    {
+      "place_index": 0,
+      "peak_bytes": 2913863729152,
+      "plaintext_peak_bytes": 2913664499712,
+      "ciphertext_peak_bytes": 9334423552
+    },
+    {
+      "place_index": 1,
+      "peak_bytes": 2774194454528,
+      "plaintext_peak_bytes": 2770826428416,
+      "ciphertext_peak_bytes": 17926455296
+    },
+    {
+      "place_index": 2,
+      "peak_bytes": 2633677930496,
+      "plaintext_peak_bytes": 2628877549568,
+      "ciphertext_peak_bytes": 12211716096
+    },
+    {
+      "place_index": 3,
+      "peak_bytes": 2465529331712,
+      "plaintext_peak_bytes": 2461940056064,
+      "ciphertext_peak_bytes": 10114564096
+    }
+  ],
+  "aggregate_gpu_peak": {
+    "bytes": 10775629398016,
+    "instruction_ordinal": 3282343,
+    "plaintext_bytes": 10775262396416,
+    "ciphertext_bytes": 367001600
+  },
+  "runtime_execution_tested": false,
+  "seconds": 739.6886433139443
+}

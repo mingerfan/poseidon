@@ -1,0 +1,18 @@
+{
+  "changes": [
+    "Resume only seven never-started cases.",
+    "Charge both prior ledgers: 34 generations and 35 HTTP attempts.",
+    "Park both unknown calls without retry.",
+    "Preserve original human approval, deadline, artifact baseline, backend and requests.",
+    "Use a fresh run directory and immutable records."
+  ],
+  "copied_files": {
+    "continuation_scope.py": "ee07b9d4cdb22b9d14ee7fd0a521aba3f4a220f0fe2d59ca0478940fd105ca3b",
+    "controls.py": "0ab196beccdb6df6a0aa311875e3e3a952f155076dbbbed7422ff081dfbc82f0",
+    "run.py": "1199808971b917d2ef65e9f4ea3f1bd480aa191a1218cf24ddebf296b35b25d5",
+    "test_continuation.py": "3668bb642af7fa1b0a90b8fadbe1afa57e0521c5aeafb4179371a02ddaed6245"
+  },
+  "format": "poseidon-dev-continuation-origin-v2",
+  "production_changes": false,
+  "source_directory": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_live_continuation_v1"
+}

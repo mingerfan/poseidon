@@ -1,0 +1,86 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "id": "transpose_1d_7",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "constants": {
+    "bias": [
+      0.09296436167616065
+    ],
+    "weight": [
+      [
+        [
+          -0.12050156153136651
+        ]
+      ]
+    ],
+    "generated_2": [
+      [
+        0.0
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "reshape",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          1
+        ]
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_4",
+      "op": "linear",
+      "inputs": [
+        "generated_0",
+        "generated_2",
+        "bias"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_3"
+      ]
+    },
+    {
+      "id": "generated_6",
+      "op": "reshape",
+      "inputs": [
+        "generated_3"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          1
+        ]
+      },
+      "outputs": [
+        "generated_5"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_5"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

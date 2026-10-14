@@ -1,0 +1,22 @@
+{
+  "binding": "4b08139fef023de74f2f4ba867e561e9f7fc0d5c65ce8f63870327dbadf06230",
+  "compared_values": 8304,
+  "format": "poseidon-static-broadcast-draft-plaintext-acceptance-v1",
+  "groups": 560,
+  "maximum_difference": 0.0,
+  "new_api": 0,
+  "new_compiles": 0,
+  "new_encrypted": 0,
+  "positive_contexts": 35,
+  "rejected": 6,
+  "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-broadcast-source-draft-1791746962392316679/report.json",
+  "report_binding": "c5655e48d75d685d90a3b9315420e76d1fd3747029a2bff5c2bb06a308f26ca7",
+  "report_sha256": "ee0f830d59276013619aa599701456d8d49fdcd3e645849e4e58d06fb64ec07c",
+  "source_admission_registered": false,
+  "source_sha256": {
+    "normalize.py": "cbe0e10f03e8ad6c6f75005c3e5e9b0054dfdb8f4974b11aaa3e7b4c7be498c4",
+    "verify.py": "6a8284a2bb1fc274ca1d46cf93c09296c02570d2c69f40d8590eb6d32e541203"
+  },
+  "static_shape_query": "passed",
+  "status": "passed"
+}

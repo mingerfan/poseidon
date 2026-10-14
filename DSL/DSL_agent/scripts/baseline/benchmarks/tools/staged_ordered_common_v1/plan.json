@@ -1,0 +1,81 @@
+{
+  "actual_compilation": false,
+  "component_compatibility_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1245",
+  "diagnosed_initial_errors": {
+    "legacy_v11_errors": 0,
+    "original_causal_domain_rejection": 3,
+    "unmatched_approximation_defaults": 48,
+    "unused_boolean_mask_read": 3
+  },
+  "encrypted_execution": false,
+  "fixture_scope_correction": "Distinct fixed forward signatures; omitted optional placeholders retained as rejection",
+  "format": "poseidon-ordered-common-draft-v1",
+  "latest_reference_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1246",
+  "new_agent_generation": false,
+  "new_sdpa_profile": {
+    "basis": "absolute logit bound sqrt(2)*1.125+.2; each mask row retains at least one key",
+    "exp_domain": [
+      -8.0,
+      8.0
+    ],
+    "input_domain": [
+      -1.0,
+      1.0
+    ],
+    "original_narrow_domain_cases_preserved_as_rejections": true,
+    "reciprocal_domain": [
+      0.125,
+      16.0
+    ],
+    "reference_scope": "new explicitly bounded test fixtures"
+  },
+  "pending_live_proposal": "1120ab0063c801e2d4199e956bb55dec12f0a68a167c17325ef7bb2a77a21481",
+  "previous_route_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1241",
+  "prior_component_loader_failure": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1243",
+  "prior_draft_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1237",
+  "production_applied": false,
+  "progress_report": "docs/baseline/agent-ordered-common-progress-r1244.json",
+  "progress_report_sha256": "fc3a4a9e10b79c835062c6965d31ee23445fdf9f5872f488c603ea122d41c652",
+  "provider_calls": 0,
+  "retained_compatibility_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1247",
+  "revision": 7,
+  "source_manifest_version_exposed": false,
+  "source_package_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-ordered-common-tests-r1248",
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "stage": "staged_source_and_component_verified",
+  "targets": {
+    "application_capabilities.py": {
+      "original_sha256": "928aa32532feec6ca5e318ecf23e9e85c7db3ab55533a755aecef5d16efe0dc3",
+      "target_sha256": "b99406c151d7739a1d738ca4e20acf65c688e7acc6da0a884d3b67f6f3a31c62"
+    },
+    "candidate_bundle.py": {
+      "original_sha256": "6d723fe974bba4d54e9a62cf49bee9074741fac51a265890590502c7ed6aad8e",
+      "target_sha256": "32bbf98a57f5bad1267acd51de9c57db9e1a370cc4bf24bb7158143cdda69310"
+    },
+    "pytorch_arithmetic_normalization.py": {
+      "original_sha256": "856fff7b17efbefb95e06366400d08271e193bea5c97015851756e5c6dd62f1e",
+      "target_sha256": "204413449f94f8a8668602b46cfcd227d63b19c76b058f66bb52fabf239ca3b2"
+    },
+    "pytorch_common_constant_provenance.py": {
+      "original_sha256": null,
+      "target_sha256": "594cc9a40ed8f4315879885e8861030106b96e3a7791758d450bae4a5dcfa4bb"
+    },
+    "pytorch_model_intake.py": {
+      "original_sha256": "8f450250e8e07c4e15292ec5b934e8441e038f47ac8262a1ff97d1f6686bc31b",
+      "target_sha256": "efbef197a506b5db6707668655c1b0d74d5585a90c0a8659a3e1bb66e158c63e"
+    },
+    "pytorch_ordered_capture.py": {
+      "original_sha256": "57fbfe965f3c65530990b8086055732f0923c837a272aa2acd629fd6e32c3340",
+      "target_sha256": "bd459ca42ae675461b5b956ae7ff0b74dd456ff426ddaf5f18bca78e54557803"
+    },
+    "pytorch_ordered_contract.py": {
+      "original_sha256": "7f9e014303310939c26703fc4d8caf6b0ebcf3d2b39cb0bb039303d64cefeadc",
+      "target_sha256": "c80b4638f249dea27b4f0db7bf092e72ecccd362a7fbd5e4ecff4ad4ddddfb66"
+    },
+    "pytorch_ordered_intake.py": {
+      "original_sha256": "01ba99e91bc6687ef8cae23e1124e270b230aa87519ed8f852037287c4798506",
+      "target_sha256": "e89ddfcda414d393dae5d8d845ff786d451f17b19c140156ade2c813c2e2f0a2"
+    }
+  },
+  "test_harness_root_policy": "Native read-only paths for root-dependent component imports; /app kept for capture workers"
+}

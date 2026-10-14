@@ -1,0 +1,104 @@
+{
+  "format": "poseidon-bootstrap-numerical-audit-v1",
+  "status": "failed",
+  "source_report_sha256": "2c5b3320c0afbf1af675eae6bdf127ea93148a36913f6db7d6b196382f067817",
+  "execution_log_sha256": "7c22b86a4f28ca118ba34e8dcebe1b18476c363528e1abcd4c369d736a555e7a",
+  "comparisons": [
+    {
+      "group": "zero",
+      "stage": "first_refresh",
+      "compared_values": 16384,
+      "passed_values": 16384,
+      "failed_values": 0,
+      "max_absolute_error": 4.98331846577555e-07,
+      "mae": 4.888243218495588e-08
+    },
+    {
+      "group": "zero",
+      "stage": "square_rescale",
+      "compared_values": 16384,
+      "passed_values": 16384,
+      "failed_values": 0,
+      "max_absolute_error": 3.552713660602515e-15,
+      "mae": 3.552713660602515e-15
+    },
+    {
+      "group": "zero",
+      "stage": "second_refresh",
+      "compared_values": 16384,
+      "passed_values": 16384,
+      "failed_values": 0,
+      "max_absolute_error": 4.4918750179829184e-08,
+      "mae": 8.016730379873268e-09
+    },
+    {
+      "group": "signed",
+      "stage": "first_refresh",
+      "compared_values": 16384,
+      "passed_values": 0,
+      "failed_values": 16384,
+      "max_absolute_error": 0.00010398136097777844,
+      "mae": 9.657549377005761e-05
+    }
+  ],
+  "planned_checks": 12,
+  "passed_checks": 3,
+  "failed_checks": 1,
+  "not_run_checks": 8,
+  "parameter_admission": "passed",
+  "native_bootstrap_returned": true,
+  "numerical_acceptance": false,
+  "elapsed_seconds": 32.65925998595776,
+  "disk_bytes": 9929383,
+  "memory": {
+    "rlimit_as_bytes": 6442450944,
+    "observed_probe_rss_kib": 5647664,
+    "observed_rss_is_peak": false,
+    "peak_child_rss_kib_in_original_report": "launcher accounting only; not the isolated probe peak"
+  },
+  "unchanged": [
+    "Agent context",
+    "candidate sandbox limits",
+    "Dacapo",
+    "Runtime core",
+    "Poseidon library",
+    "reference",
+    "numeric tolerance"
+  ],
+  "paid_calls": 0,
+  "downloads": 0,
+  "evidence_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-bootstrap-experiment-r234",
+  "source_location_note": "Separate agent_bootstrap_experiment directory preserves previous fixed-context probe.",
+  "inference": "Sign-directed error suggests a numerical approximation or scaling issue; no unique root cause established.",
+  "next_action": "Audit EvalMod approximation and stage normalization against independent mathematics before proposing any implementation or parameter change.",
+  "signed_error_by_reference": [
+    {
+      "reference": 0.125,
+      "mean_signed_error": -8.959236032370088e-05,
+      "min_signed_error": -9.276380722683664e-05,
+      "max_signed_error": -8.631809147334468e-05,
+      "allowed_absolute_error": 2.25e-05
+    },
+    {
+      "reference": -0.25,
+      "mean_signed_error": 9.53058189246958e-05,
+      "min_signed_error": 9.223452906811924e-05,
+      "max_signed_error": 9.853194313197422e-05,
+      "allowed_absolute_error": 3.5000000000000004e-05
+    },
+    {
+      "reference": 0.375,
+      "mean_signed_error": -0.0001009791706351737,
+      "min_signed_error": -0.00010398136097777844,
+      "max_signed_error": -9.682797771792817e-05,
+      "allowed_absolute_error": 4.75e-05
+    },
+    {
+      "reference": -0.5,
+      "mean_signed_error": 0.00010042462519666007,
+      "min_signed_error": 9.658610385043787e-05,
+      "max_signed_error": 0.00010349297390038759,
+      "allowed_absolute_error": 6e-05
+    }
+  ]
+}

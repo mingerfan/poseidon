@@ -1,0 +1,39 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "resize_1_nearest_0", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_nearest_1", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_nearest_2", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_nearest_exact_0", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_nearest_exact_1", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_nearest_exact_2", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_linear_0", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_linear_1", "status": "frozen", "provider_calls": 0}
+{"case": "resize_1_linear_2", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_nearest_0", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_nearest_1", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_nearest_2", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_nearest_exact_0", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_nearest_exact_1", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_nearest_exact_2", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_bilinear_0", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_bilinear_1", "status": "frozen", "provider_calls": 0}
+{"case": "resize_2_bilinear_2", "status": "frozen", "provider_calls": 0}
+{"case": "transpose_1_0", "status": "frozen", "provider_calls": 0}
+{"case": "transpose_1_1", "status": "frozen", "provider_calls": 0}
+{"case": "transpose_1_2", "status": "frozen", "provider_calls": 0}
+{"case": "transpose_2_0", "status": "frozen", "provider_calls": 0}
+{"case": "transpose_2_1", "status": "frozen", "provider_calls": 0}
+{"case": "transpose_2_2", "status": "frozen", "provider_calls": 0}
+{"case": "composition_0", "status": "frozen", "provider_calls": 0}
+{"case": "composition_1", "status": "frozen", "provider_calls": 0}
+{"case": "composition_2", "status": "frozen", "provider_calls": 0}
+{"case": "structured_dict", "status": "frozen", "provider_calls": 0}
+{"case": "nested_keywords", "status": "frozen", "provider_calls": 0}
+{"case": "public_defaults", "status": "frozen", "provider_calls": 0}
+{"case": "float32_public_weight", "status": "frozen", "provider_calls": 0}
+{"case": "named_alias", "status": "frozen", "provider_calls": 0}
+{"case": "nearest_2d_module", "status": "frozen", "provider_calls": 0}
+{"case": "bilinear_2d_module", "status": "frozen", "provider_calls": 0}
+{"proposal": "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-live-proposal-r1407.json", "binding": "d1f7942b50a359ba32ab57738adc06209b07f9cbdc948ae58e141b39df46867c", "cases": 34, "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6", "provider_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "seconds": 272.8493096349994}

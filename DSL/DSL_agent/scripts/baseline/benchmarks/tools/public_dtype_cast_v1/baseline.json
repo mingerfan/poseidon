@@ -1,0 +1,131 @@
+{
+  "backend": {
+    "api_tree_sha256": "c8a3d120aae1800ce48a5d3085044b00c7f92c844a7e1531615df3a4babccbf7",
+    "build_configuration": {
+      "cmake_cache_sha256": {
+        "compiler": "76c058b5d19a3e27fe299a7cbd071888494cb48c19f27df2d4d71c807b86f51d",
+        "executor": "181cd264efe24024ab5b98a745b1052f17f54b6772a68110e942ed44f9c77779",
+        "poseidon": "a96456e4ac0651827a50d58c6c80f12c2772c005cd78d2949919a6e1d2106e32"
+      },
+      "environment_files": {
+        "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+        "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+        "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+        "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+        "src/poseidon/tools/dacapo/poseidon-cpu-shell.nix": "38e03f4ec07fc089a14851595f7d1211fe07618875e9868bf5d205dd39274020",
+        "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+      }
+    },
+    "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+    "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+    "executor_sha256": "6cdd255e321025e9286d9968864c5ce0db9333017ca62e6618c6d9830178afd4",
+    "format": "poseidon-backend-identity-v2",
+    "frontend_sha256": "0baecce07032d37aaecba38b64b93cbbc23fb21dac8476de85598dc9ba8d6e73",
+    "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+    "platform": {
+      "byteorder": "little",
+      "configured_platform": "aarch64-linux",
+      "machine": "aarch64",
+      "pointer_bits": 64,
+      "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "system": "linux",
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+    },
+    "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+    "runner_tree_sha256": "bad66abf5c45cc0e920083d368ce510167940a67b65181349933fbe40845ade2",
+    "runtime_dacapo_tree_sha256": "f2ef1a237d1cb6d782e1013372e9d395f4e88e7aa449b9301a1fc2956d22a23a",
+    "source_lock": {
+      "dacapo": {
+        "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+        "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+        "patches": [
+          {
+            "file": "dacapo-plaintext-subtraction.patch",
+            "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+          },
+          {
+            "file": "dacapo-concat-layout.patch",
+            "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+          },
+          {
+            "file": "dacapo-bootstrap-containers.patch",
+            "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+          },
+          {
+            "file": "dacapo-native-function-calls.patch",
+            "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+          },
+          {
+            "file": "dacapo-refined-function-input-types.patch",
+            "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+          },
+          {
+            "file": "dacapo-augmented-operand-order.patch",
+            "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+          },
+          {
+            "file": "dacapo-constant-output-path.patch",
+            "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+          },
+          {
+            "file": "dacapo-minimal-mlir-link.patch",
+            "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+          },
+          {
+            "file": "dacapo-gcc-qualified-casts.patch",
+            "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+          },
+          {
+            "file": "dacapo-unused-mlir-dependencies.patch",
+            "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+          }
+        ],
+        "path": "third_party/ckks-runtime-agent/third_party/dacapo"
+      },
+      "format": "poseidon-runtime-source-lock-v1",
+      "integration_method": "reviewed source archives; original independent repositories preserved",
+      "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+      "runtime": {
+        "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+        "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+        "path": "third_party/ckks-runtime-agent"
+      }
+    },
+    "source_lock_sha256": "5e8d7adebd0cac8e9748bcddf0dc5ea408b7123095ff79199cdf47738de84647"
+  },
+  "binding": "be3f4cf0809f28d2f6b9f77c36c60248492ebc151bdad246dc8369ed5e97a2cb",
+  "branch": "lhy-agent-dsl",
+  "created_at_utc": "2026-10-11T03:14:33.915696+00:00",
+  "format": "poseidon-public-dtype-cast-development-baseline-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "planned_source_files": {
+    "application_capabilities.py": "decc7e3b6b62d4964db65a4ffd54318200e7882ac747d1dd06a21e8c2296668e",
+    "candidate_bundle.py": "697969dd670f1a9f26521b64d32077ef7e35de081ad3c7ef312686eb3147361c",
+    "pytorch_model_intake.py": "d2ef7d63a8a5b35704c30978f113cb3dd0767c7c4af063bed295e0f8230e5c7d",
+    "pytorch_ordered_contract.py": "3f5299093260d0bb74caca27f9d95a7c8d6fa8d6d0abe1c94c834e6abfc3dd9a",
+    "pytorch_ordered_intake.py": "93b2318b70e4af9a81dadef04434645f8ae4d3979d912f69731b0b1a687f9bff",
+    "pytorch_public_expression_capture.py": "b45d11229475a8593163fb445990c657a3aa6280a457382e3bf3a980fefb1862",
+    "pytorch_public_expression_flow.py": "d2bd5962d250b5bb94ba5b0e23d7bf25cb13450d0bd4c10a4f36e33e86e62738",
+    "pytorch_public_expression_metadata.py": "5b0df536f9739b9209a8805b129abd968ea809ac16b1001a37577dc73d856c43",
+    "pytorch_public_value_ops.py": "586cc9da0742d50628e6ad4f0350d81792b5d1223d3a208a284c0fe9a8a79a63",
+    "pytorch_static_trace.py": "0b505d8234fcdc1980c226039686925125328c81a85f26a778d5ddfaa9963607",
+    "test_program_output_tree_contract.py": "cf8c7bfa77e67d5747189cc40f80440d90618b38aff8b3819b779e731be58f2e"
+  },
+  "protected_records": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-results-r1370.json": "a68382b15dfdafd38c6b63bf5e257459460dcd18ac9cdedab59b4c58addcdb1b",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-results-r1370.md": "ec3187a583b1a4e373bf697527db2e9a991b5064d7134d57cbbb870c4ae5a41c",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-offline-proposal-r1372.json": "bf43002b956471f5a05854f9a1a25c132b715f11d3a7e13a6cef23af85293013",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-offline-proposal-r1372.md": "720e0019f9ad8b815203e59bddd0111c9f6be78dbdac432d9f41c582576e2820",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-repair-r1371.json": "63258765e2db20c9e8f43dfa9f3225abe0a327d8e051ea32f259ccfcb27d7d3e",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-repair-r1371.md": "4983124b9c7c9fd19cca3df09761c5142aae793e0512f4185db66655ee902e12",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-results-r1373.json": "83e9a49e575fde52a8eeb34989cc239e69117aa9c541367c5948861423e08be7",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-results-r1373.md": "7d4238b406fadb8ddb2b5f749f005bca4f93e9d028b7a6db3c0d80a78c87f4f1",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-acceptance-r1366.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-acceptance-r1366.md": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-authorization-r1364.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-live-proposal-r1364.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-value-fx-draft-r1367.json": true,
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-value-fx-draft-r1367.md": true
+  },
+  "sdk_identity": "e2b3e63c27e8ed49f6ddca34b2c5a5d8be366eefa9cdb1ab67d9b953b8a64992"
+}

@@ -1,0 +1,3990 @@
+{
+  "active_graph_format": "poseidon-operator-graph-v4",
+  "active_pytorch_format": null,
+  "api_calls": 0,
+  "binding": "91f9e214ebdde13a836b73f4a0547b01f7a8baea4453c2f40a1d8ad1498c3e65",
+  "compilations": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-spatial-component-math-v1",
+  "implementation_sources": {
+    "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+    "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+    "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+    "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+    "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+    "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+  },
+  "logical_outputs": 13120,
+  "mae": 1.7529110982627393e-18,
+  "maximum_difference": 4.440892098500626e-16,
+  "model_contexts": 42,
+  "numpy": "1.25.2",
+  "original_benchmark_changed": false,
+  "probe_groups": 672,
+  "python": "3.10.14",
+  "rows": [
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "9a03f39bd264622ac19a8085d7324bf48e585b2419a8d569f8c5fe01dd7746ad",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "4ddabb7b43c84d0071cfaa89481d358ddf6b4d6c7e2ba8aa37794bf73ce1d10e",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                1,
+                3
+              ],
+              "matrix_elements": 15,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                5
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "92780808499260f8332d9ddf739e26e8bcfd26d8d1bedd18d2ba87c1b975b3af",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_linear_0",
+      "logical_outputs": 80,
+      "lowered_sha256": "4ddabb7b43c84d0071cfaa89481d358ddf6b4d6c7e2ba8aa37794bf73ce1d10e",
+      "maximum_difference": 0.0,
+      "original_sha256": "92780808499260f8332d9ddf739e26e8bcfd26d8d1bedd18d2ba87c1b975b3af",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "6888b5cec416f6ca9413404faa8139b58dfa0fcf26bd7c3af06a5c407e7b43f3",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "6a0f3a9ac5eabb5ca9f81630e89ee54d2fb9a02ddf8fb0162e9cfc42c81893b5",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                2,
+                2,
+                3
+              ],
+              "matrix_elements": 15,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                2,
+                2,
+                5
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "e163e3bb0e97917e7d0ffc145f6d57f98ccb788327b63b6ebe7b783efabd7e12",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_linear_1",
+      "logical_outputs": 320,
+      "lowered_sha256": "6a0f3a9ac5eabb5ca9f81630e89ee54d2fb9a02ddf8fb0162e9cfc42c81893b5",
+      "maximum_difference": 4.440892098500626e-16,
+      "original_sha256": "e163e3bb0e97917e7d0ffc145f6d57f98ccb788327b63b6ebe7b783efabd7e12",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "c234290e59018db2321ef30c8c611dc0f1a4c45747d75677757c1d8e8e6493d3",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "28cff159e3c8ccdd9790f1bb8dbdc400694ff6e036b41a5a234ce8590085d49d",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                2,
+                4
+              ],
+              "matrix_elements": 16,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                2,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "4853584fe64ac05c48244aaf7a1a9394bcaff1132267e49187cb99f284dd5bd2",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_linear_2",
+      "logical_outputs": 128,
+      "lowered_sha256": "28cff159e3c8ccdd9790f1bb8dbdc400694ff6e036b41a5a234ce8590085d49d",
+      "maximum_difference": 0.0,
+      "original_sha256": "4853584fe64ac05c48244aaf7a1a9394bcaff1132267e49187cb99f284dd5bd2",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "6938decec340f633c5d168b55fc33b0bf941d0442a5cc3aeaa1bef61d41059d7",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "ad6a08643b3e3ee29638cffb5a476acc3ebc5f1ff75d6150b9cf5470da07e895",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                1,
+                3
+              ],
+              "matrix_elements": 15,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                5
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "83925d314eedf3d40b7029fd425e6b797324e6b3f334f0a7b7a317567bdb93b2",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_nearest_0",
+      "logical_outputs": 80,
+      "lowered_sha256": "ad6a08643b3e3ee29638cffb5a476acc3ebc5f1ff75d6150b9cf5470da07e895",
+      "maximum_difference": 0.0,
+      "original_sha256": "83925d314eedf3d40b7029fd425e6b797324e6b3f334f0a7b7a317567bdb93b2",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "5b371968087f5962c5d209a71093042f6c076e749698ae09ed670d8366dffe94",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "563210adfa7fdd0463308679a65b764e90cf1ce01fe69ba83924b133fc24e010",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                2,
+                2,
+                3
+              ],
+              "matrix_elements": 15,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                2,
+                2,
+                5
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "3a2d7e815402ee04b0e83d692795d095e5067aeabcc1a92311816289595760a1",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_nearest_1",
+      "logical_outputs": 320,
+      "lowered_sha256": "563210adfa7fdd0463308679a65b764e90cf1ce01fe69ba83924b133fc24e010",
+      "maximum_difference": 0.0,
+      "original_sha256": "3a2d7e815402ee04b0e83d692795d095e5067aeabcc1a92311816289595760a1",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "5674b285fa6354ba43cc031aeb3713b38070561263e63078cb5fced88ee10b33",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "5f00aafe9b7f32a03351046740e2299edf41e947be53ab077d7a810c3452ebfe",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                2,
+                4
+              ],
+              "matrix_elements": 16,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                2,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "b337203932035c5c8e0420f403755cecd5826bcda717dfbf4992ba11ccda733a",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_nearest_2",
+      "logical_outputs": 128,
+      "lowered_sha256": "5f00aafe9b7f32a03351046740e2299edf41e947be53ab077d7a810c3452ebfe",
+      "maximum_difference": 0.0,
+      "original_sha256": "b337203932035c5c8e0420f403755cecd5826bcda717dfbf4992ba11ccda733a",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "d28bcbbd7233c2a48b2ea20bedeb276d4c5b033068e2484ab9506e1eb9460e19",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "c9e84d4842384255b1fb1f4fe4a9ea2a0f9b4e5ac3fa8384bd2f32a770702381",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                1,
+                3
+              ],
+              "matrix_elements": 15,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                5
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "bf908f08e1c37c42b5b06ca341dabd598e4cab2e3040df02784f8aa9e17d0031",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_nearest_exact_0",
+      "logical_outputs": 80,
+      "lowered_sha256": "c9e84d4842384255b1fb1f4fe4a9ea2a0f9b4e5ac3fa8384bd2f32a770702381",
+      "maximum_difference": 0.0,
+      "original_sha256": "bf908f08e1c37c42b5b06ca341dabd598e4cab2e3040df02784f8aa9e17d0031",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "4ef402c3947703f821ac5ca425d399e82f79f55a367882658942b882cfd7140e",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "baab475f59ca883abd636d2cbf17203e15a42c4c6c48944005a89e98ba7ce8fd",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                2,
+                2,
+                3
+              ],
+              "matrix_elements": 15,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                2,
+                2,
+                5
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "8ab18bfe4d73151d0fec18afda5b86e825dde856554bed023610156e49481ed0",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_nearest_exact_1",
+      "logical_outputs": 320,
+      "lowered_sha256": "baab475f59ca883abd636d2cbf17203e15a42c4c6c48944005a89e98ba7ce8fd",
+      "maximum_difference": 0.0,
+      "original_sha256": "8ab18bfe4d73151d0fec18afda5b86e825dde856554bed023610156e49481ed0",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "f42849f97075358cf71d04a26015eddd0151fb916ae3595d95e580477e4a3a23",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "7408e492bb604f9160a20530fb32c0c67703bfcf1c8479c641003d80fdf8f311",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                2,
+                4
+              ],
+              "matrix_elements": 16,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                2,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "da5633873378eb8737964ef5fc5449802016599dead686eb2039885587ceb168",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_1d_nearest_exact_2",
+      "logical_outputs": 128,
+      "lowered_sha256": "7408e492bb604f9160a20530fb32c0c67703bfcf1c8479c641003d80fdf8f311",
+      "maximum_difference": 0.0,
+      "original_sha256": "da5633873378eb8737964ef5fc5449802016599dead686eb2039885587ceb168",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "4d64f9157ed8b1dbb8064ff01707abb64dfd581c3b379620ec4e09498b6b455e",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "3297879f7c10681e79ac1f99b1440d8876f598ecd4e6ec45e93a521fd7e0332c",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                1,
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 18,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                3,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "e442fb5ae8e2204388c6cef8e36b1783e4e98dd950f84e3bd643168364d3a497",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_bilinear_0",
+      "logical_outputs": 192,
+      "lowered_sha256": "3297879f7c10681e79ac1f99b1440d8876f598ecd4e6ec45e93a521fd7e0332c",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "e442fb5ae8e2204388c6cef8e36b1783e4e98dd950f84e3bd643168364d3a497",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "1ab822cd19e9fc6420e5878fd0674f85684589f1b4e056dbf78bd418173e8eb4",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "de58acf3cca37a656c7db0f82ae4862d7f3b4b43c26a204e4c68b1c922174dc9",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "matrix_elements": 23,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                2,
+                5,
+                2
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "2b3af6f4c37b5ac640c4f0ba83befb63bf3365bd6586a26a2f4e7bcf5d91db11",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_bilinear_1",
+      "logical_outputs": 320,
+      "lowered_sha256": "de58acf3cca37a656c7db0f82ae4862d7f3b4b43c26a204e4c68b1c922174dc9",
+      "maximum_difference": 1.6653345369377348e-16,
+      "original_sha256": "2b3af6f4c37b5ac640c4f0ba83befb63bf3365bd6586a26a2f4e7bcf5d91db11",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "a009e91cd91b51ba0f89ba08e311be4de049444a4775a64d424b4540d5931f0f",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "7e2628360fc820f785a7ae91d14e6f94ef51461ac437119dc63fd65db2d278e6",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                2,
+                1,
+                4,
+                2
+              ],
+              "matrix_elements": 14,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                2,
+                1,
+                2,
+                3
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "3bfee53d4554462bae20425c623830335e0e99ea4f0fcfc23cec3bc1ed81b296",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_bilinear_2",
+      "logical_outputs": 192,
+      "lowered_sha256": "7e2628360fc820f785a7ae91d14e6f94ef51461ac437119dc63fd65db2d278e6",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "3bfee53d4554462bae20425c623830335e0e99ea4f0fcfc23cec3bc1ed81b296",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "ee4871950fac800fdae2b52be5855846b4777cdfd82afff6c57546002ec86ce8",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "7d0ad9cb05396b60f0126fddc7eb5f069e8b236958aad3a3c76cbd627d7d0a0e",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                1,
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 18,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                3,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "cb14f102a5ae6251f0f21a6d25921ce95cd06546a4ec6dc92c21a608ec8ce342",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_nearest_0",
+      "logical_outputs": 192,
+      "lowered_sha256": "7d0ad9cb05396b60f0126fddc7eb5f069e8b236958aad3a3c76cbd627d7d0a0e",
+      "maximum_difference": 0.0,
+      "original_sha256": "cb14f102a5ae6251f0f21a6d25921ce95cd06546a4ec6dc92c21a608ec8ce342",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "0977f3a687c6be9113ad62db1d4a41aa145ec057a3e3c8ae78dfe175cc79c423",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "90f9a3a76adf67d15e724a88d14d7266af1e6589916df35d8bd5a95a45f8c44c",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "matrix_elements": 23,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                2,
+                5,
+                2
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "8f4ebc7858f34cf92dae10e54d8ebf15b3a5c61cfc2ad4a4e8fb0d788421b3db",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_nearest_1",
+      "logical_outputs": 320,
+      "lowered_sha256": "90f9a3a76adf67d15e724a88d14d7266af1e6589916df35d8bd5a95a45f8c44c",
+      "maximum_difference": 0.0,
+      "original_sha256": "8f4ebc7858f34cf92dae10e54d8ebf15b3a5c61cfc2ad4a4e8fb0d788421b3db",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "a10458d545ec1accaf75bf64e95f9deb3a3160ad29543c942c0e5c0bb69a4b68",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "51a5f7f3d31f7368f2a9f12c0c95c634a69c745cc43d0f3de5f628e532a648c8",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                2,
+                1,
+                4,
+                2
+              ],
+              "matrix_elements": 14,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                2,
+                1,
+                2,
+                3
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "c229a46ba941598c9c5ed4a6870013bd127331e9575a11cb8a5bad9c7700f96b",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_nearest_2",
+      "logical_outputs": 192,
+      "lowered_sha256": "51a5f7f3d31f7368f2a9f12c0c95c634a69c745cc43d0f3de5f628e532a648c8",
+      "maximum_difference": 0.0,
+      "original_sha256": "c229a46ba941598c9c5ed4a6870013bd127331e9575a11cb8a5bad9c7700f96b",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "2acf3648f2002f5411bc387e661beb08717187ba371d001fc08f6559804fd4d5",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "ea52acb8b87fc12009cdc1ee948b9ec643343f41f97157e88344766f4b7d388c",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                1,
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 18,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                3,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "ba42139c4fd9ade116fe9557d90f2388006e95f29d8edab0c3ecfbe89ef9b5cd",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_nearest_exact_0",
+      "logical_outputs": 192,
+      "lowered_sha256": "ea52acb8b87fc12009cdc1ee948b9ec643343f41f97157e88344766f4b7d388c",
+      "maximum_difference": 0.0,
+      "original_sha256": "ba42139c4fd9ade116fe9557d90f2388006e95f29d8edab0c3ecfbe89ef9b5cd",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "7830db58770cc8ad85bcb62d85683b9d942c22b0924a3d11ed24a2ea06e89509",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "9e91524202f8224f8291629a0ed291a56bf85746d63d177b8ff243f81c2b38a3",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "matrix_elements": 23,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                2,
+                5,
+                2
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "59e403f4d6e465d6a392085b10ebc1a338614198d96929aa3cce8983aeda91ae",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_nearest_exact_1",
+      "logical_outputs": 320,
+      "lowered_sha256": "9e91524202f8224f8291629a0ed291a56bf85746d63d177b8ff243f81c2b38a3",
+      "maximum_difference": 0.0,
+      "original_sha256": "59e403f4d6e465d6a392085b10ebc1a338614198d96929aa3cce8983aeda91ae",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "e9a547788c6f5f74ece7600fc552b770a4112126d59590e492a9136c22bc2d42",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "fb1d04332784305561147f450149939aca67ffdec6faa72d33710e09eab98cc5",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                2,
+                1,
+                4,
+                2
+              ],
+              "matrix_elements": 14,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                2,
+                1,
+                2,
+                3
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "3958bc0241525c87bbd4408b921bc4e18fdd477fe22b1d10c30522a00d50982c",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "resize_2d_nearest_exact_2",
+      "logical_outputs": 192,
+      "lowered_sha256": "fb1d04332784305561147f450149939aca67ffdec6faa72d33710e09eab98cc5",
+      "maximum_difference": 0.0,
+      "original_sha256": "3958bc0241525c87bbd4408b921bc4e18fdd477fe22b1d10c30522a00d50982c",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "bd39972d38e2cb6e68a7ae4c85484f5430a007aaf8a32df9fca58bbb00532efe",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "13866d739f744e09e097af6fbd8b92daad86f258194de11a58055afd3f802cb1",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                1,
+                3
+              ],
+              "matrix_elements": 15,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                5
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "55d6b5d0f34ed8b390cda2c17368ea762c0e82aacd8f8216e5657c3b5642cd5a",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize",
+          "generated_4": "square"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "spatial_composition_0",
+      "logical_outputs": 160,
+      "lowered_sha256": "13866d739f744e09e097af6fbd8b92daad86f258194de11a58055afd3f802cb1",
+      "maximum_difference": 0.0,
+      "original_sha256": "55d6b5d0f34ed8b390cda2c17368ea762c0e82aacd8f8216e5657c3b5642cd5a",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "417b6b676fcf6f61c6e3d774f7141360607679e9ae0bc724d588e8ad0efe865f",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "9428c42da11a4777ad79dde194cf43382120326cdfcefd2b4ac2d56caf7abe6f",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2"
+              ],
+              "input_shape": [
+                1,
+                2,
+                4
+              ],
+              "matrix_elements": 16,
+              "nearest_vectorized_path": false,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                2,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "9058def6343f62688dae07a1ceea7769f2036222eb9391f08539132022333b1c",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize",
+          "generated_4": "reduce"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "spatial_composition_1",
+      "logical_outputs": 160,
+      "lowered_sha256": "9428c42da11a4777ad79dde194cf43382120326cdfcefd2b4ac2d56caf7abe6f",
+      "maximum_difference": 0.0,
+      "original_sha256": "9058def6343f62688dae07a1ceea7769f2036222eb9391f08539132022333b1c",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "07e80355890ee3dab50b8c4db7faa574f62e639fbbf012e51657b26aae02bc4e",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "ea8a85023c89952506bb09b69630d0280fc23709517bdef3a15337d76aa6b7cf",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                1,
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 18,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                1,
+                1,
+                3,
+                4
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "5b1b8a3161f4bfc3757c9c8ab487d47c7d7cf45ffae14b05c6c08865e64f9918",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_11": "square",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "spatial_composition_2",
+      "logical_outputs": 384,
+      "lowered_sha256": "ea8a85023c89952506bb09b69630d0280fc23709517bdef3a15337d76aa6b7cf",
+      "maximum_difference": 0.0,
+      "original_sha256": "5b1b8a3161f4bfc3757c9c8ab487d47c7d7cf45ffae14b05c6c08865e64f9918",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "3540154e6066cc9538074bb10e786ef1652e7b5ec73ecc4b01234502b4e8ed04",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "6afa12cf81157a1e3a2fc3ae440c0024c465835e45d5b31be62267821aa678d7",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9"
+              ],
+              "input_shape": [
+                2,
+                1,
+                4,
+                2
+              ],
+              "matrix_elements": 14,
+              "nearest_vectorized_path": true,
+              "operator": "resize",
+              "origin": "resize",
+              "output_shape": [
+                2,
+                1,
+                2,
+                3
+              ],
+              "runtime_validated": false,
+              "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "d465f2d83924d639427150847d795bd2c366fd5ae26c61aaa787eaaa3fd4d6b9",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_11": "reduce",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "spatial_composition_3",
+      "logical_outputs": 224,
+      "lowered_sha256": "6afa12cf81157a1e3a2fc3ae440c0024c465835e45d5b31be62267821aa678d7",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "d465f2d83924d639427150847d795bd2c366fd5ae26c61aaa787eaaa3fd4d6b9",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "0e50383bd5649a7eee905e8b2e74941c274b093f2886ed79f08ffe9d8ed9f2a7",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "3cb09315debabd2366f3fc325f2c439c24bd06640f75e881c943573601ead40d",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "4b50de18c556e5e0c6bf35aa54a275e18a7134b9ad35dec9f1b61e5bc701871c",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_5"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 24,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "8748d31763dc2c4e39fa03d3f7b52fcc56b924916754c93f98e7b1859e81fdf1",
+              "output_shape": [
+                1,
+                2,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "36cc6022444760dcf3f4f6848efc109b9373b44dd313e2dbe3401d0dc66ef0ce"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "6697e2b993ec8f0f3ae68c0c50b72f3e4637c42273f1970ef5d6d5453e368f72",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed",
+          "generated_7": "square"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "spatial_composition_4",
+      "logical_outputs": 384,
+      "lowered_sha256": "3cb09315debabd2366f3fc325f2c439c24bd06640f75e881c943573601ead40d",
+      "maximum_difference": 5.551115123125783e-17,
+      "original_sha256": "6697e2b993ec8f0f3ae68c0c50b72f3e4637c42273f1970ef5d6d5453e368f72",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "12f0dfc3ed967ceac736687782bd9b1f5ae7e3a232fe22d2bcc4d8ee242f9d45",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "7d9b352e40617dd21665498de23185b6ca8594557116a2337ae7f36fafbb0b7d",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "9bcb16e428f84cc7b0bbbe0497061d20bca18be3546c724f8454c0a7065249a7",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9",
+                "generated_12"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                2,
+                2,
+                3
+              ],
+              "matrix_elements": 36,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "1fab2715436c6505e21bd21abb45ce3566a1141f48fb3cb603b75e8bbceb647f",
+              "output_shape": [
+                1,
+                2,
+                4,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "c7af2d9f44169fb47e6f44de814015af6312619dd5c1e0df1df2d55c8b7a48c7"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "7a6f53342a75e78637e6dc0a647acf70f251bba0a626ad9325d3dd6154735b47",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_14": "reduce",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "spatial_composition_5",
+      "logical_outputs": 800,
+      "lowered_sha256": "7d9b352e40617dd21665498de23185b6ca8594557116a2337ae7f36fafbb0b7d",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "7a6f53342a75e78637e6dc0a647acf70f251bba0a626ad9325d3dd6154735b47",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "cdd83cbd39ae0ef3b6eef2b9d09150657640ddcef622ae460ae21b0eaac5dbb5",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "728295c534dea0e43b95f445b307e3508da0c98f939e40d65d5926fb943c8a42",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "f1aa1a85234ae25c57237c700390a90f5ca9c97cc8965f61a34105419d3076d8",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_7",
+                "generated_9"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                4
+              ],
+              "matrix_elements": 32,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "319da88c60465e4f068b690a5645fa6ee448cdf742e6281eb95398d63e2b7a6b",
+              "output_shape": [
+                2,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "146caa90de9960e6788374645f2a0062bdff6f3ee224c17a9c3ed4b24eda3af4"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "69d8d22f3b9e78af3791cef3fbd2b11fd77bf8826abe3950edcdaf97065c8580",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_4": "transposed",
+          "generated_7": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_0",
+      "logical_outputs": 192,
+      "lowered_sha256": "728295c534dea0e43b95f445b307e3508da0c98f939e40d65d5926fb943c8a42",
+      "maximum_difference": 2.7755575615628914e-17,
+      "original_sha256": "69d8d22f3b9e78af3791cef3fbd2b11fd77bf8826abe3950edcdaf97065c8580",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "d9baa867af22cfdd9f93f17177fb93400fce314573208d7da6de0932fc06ca6b",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "0673c22d9e1eccaf2db51dca8a0d1bea933f66e4e13eae7c76b9bd90d797eb0c",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "f401508aa84a32c56532c01cb4b924c4f82dc107054f4dfbe456deb56e1491aa",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_5"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                4,
+                3
+              ],
+              "matrix_elements": 21,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "fa9373b5e2d03b8a98c9f022a506c7f55eb89f06c43d5487507a2157791e9793",
+              "output_shape": [
+                1,
+                2,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "ecc6e23f0c07c511b34466d1d3a6c6ffd45dddda13fd018c7ec85c259aa1a826"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "fcdbf8546e2e15ef2a7f23b3a02e434550bedacdd27618f5ea527e2697131aa2",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_1",
+      "logical_outputs": 192,
+      "lowered_sha256": "0673c22d9e1eccaf2db51dca8a0d1bea933f66e4e13eae7c76b9bd90d797eb0c",
+      "maximum_difference": 5.551115123125783e-17,
+      "original_sha256": "fcdbf8546e2e15ef2a7f23b3a02e434550bedacdd27618f5ea527e2697131aa2",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "06c2effd426b08c88424beb27adf4ee2b5b49835f92197f491fe06c90f241274",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "07d0ee88f49383df8eb1690e932ac540191593e6665a8c324a246e26075db117",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "04b18a3ff81c422f1f7b9045c76913d90a7a08ef2bbb9bbde5f05e12519b2572",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_5"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                2,
+                5
+              ],
+              "matrix_elements": 45,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "ffd1ecbaac8e71378689387e6e1d96ba263892ff418b4be0969328f194e0e896",
+              "output_shape": [
+                1,
+                2,
+                5
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "41313c1fd88a8c5e4b71003eefd316de4393a8d1c156f40d2244992575fec56b"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "cd9941e777fe03c7fa10c5d4d961cf93a42fd547173e3b7e6f69314d139323a4",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_2",
+      "logical_outputs": 160,
+      "lowered_sha256": "07d0ee88f49383df8eb1690e932ac540191593e6665a8c324a246e26075db117",
+      "maximum_difference": 2.7755575615628914e-17,
+      "original_sha256": "cd9941e777fe03c7fa10c5d4d961cf93a42fd547173e3b7e6f69314d139323a4",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "9adab990da470d26ee030e51784716048f201753753c7a4681b42f96887951d8",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "18d9bd7261e5892d5c8cc153946d2d39e3519b752596fa3e7ece7fc3689aa231",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "4b50de18c556e5e0c6bf35aa54a275e18a7134b9ad35dec9f1b61e5bc701871c",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_5"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 24,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "8748d31763dc2c4e39fa03d3f7b52fcc56b924916754c93f98e7b1859e81fdf1",
+              "output_shape": [
+                1,
+                2,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "36cc6022444760dcf3f4f6848efc109b9373b44dd313e2dbe3401d0dc66ef0ce"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "6781f3d07206865000aad2db8a2dff1a3abc02300acdc45d04c37fe259b691a5",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_3",
+      "logical_outputs": 192,
+      "lowered_sha256": "18d9bd7261e5892d5c8cc153946d2d39e3519b752596fa3e7ece7fc3689aa231",
+      "maximum_difference": 5.551115123125783e-17,
+      "original_sha256": "6781f3d07206865000aad2db8a2dff1a3abc02300acdc45d04c37fe259b691a5",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "ae509fc54b9710006e71ab5019658db7bff3a612cbfefd9815d31dc614822962",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "0702a1e21df49df0b28a07afe96a4b80d515266d8563041e376cbdedeb619a9d",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "380e5adf935133a05b20afee600493eb5e3ed3d72c048130ba51abceb0b4732d",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_5"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                1,
+                3
+              ],
+              "matrix_elements": 24,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "f18de59b945097bb3581c2bc438c7c7a98dbd4be3f38c3d75c39dd8c966ce5ae",
+              "output_shape": [
+                1,
+                2,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "04d2ee266e28f0583125160fb0f68b739d88e372ba34fbce6eec76e980dd2e87"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "92cc206dfc93ec133c8333ef9305517c8cf0589b0c435229a7949e6ed4f44833",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_4",
+      "logical_outputs": 192,
+      "lowered_sha256": "0702a1e21df49df0b28a07afe96a4b80d515266d8563041e376cbdedeb619a9d",
+      "maximum_difference": 2.7755575615628914e-17,
+      "original_sha256": "92cc206dfc93ec133c8333ef9305517c8cf0589b0c435229a7949e6ed4f44833",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "3b1d5d5764e689d2524c126f05bea1768350d3445bc94bc8b18a697c1c7dc8c5",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "c207f4e375a6f28a68e3e653b7588a37715e8f0e934c8f710d452c9d0fc79421",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "47e377c42149d95ec3cd92ee17a7ebd9131f39dbc6fe973fa9ce7fe4f1a6224f",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_5"
+              ],
+              "ignored_output_size_leading": [
+                999,
+                999
+              ],
+              "input_shape": [
+                1,
+                1,
+                3
+              ],
+              "matrix_elements": 24,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "0981199bb65590e61f370e6d0d658aa71f8cc436b22d0aecdc89289aeb97f012",
+              "output_shape": [
+                1,
+                2,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "6cb307739fff3406335646207c27a744babe6f6fee8a946652d608cdcfea50f6"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "ae83922d1169b87fa983843d5fb8275892ed09c2dd0187a256497854c35633ff",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_5",
+      "logical_outputs": 192,
+      "lowered_sha256": "c207f4e375a6f28a68e3e653b7588a37715e8f0e934c8f710d452c9d0fc79421",
+      "maximum_difference": 2.7755575615628914e-17,
+      "original_sha256": "ae83922d1169b87fa983843d5fb8275892ed09c2dd0187a256497854c35633ff",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "4c7b80d7de13991a2815a4c4a1a7d97eb1f2d9c40370bc66fc78bcdc0c0ff67c",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "3009ea5109c93e1d9d35d69410c71a8fd8ef2be6131b328a975b9f4e5fcc5332",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "77e706f3ee27a962f86942119b3bd41e8c0ced3fc8c3b748b543b0e652a0ccdb",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_5"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                1,
+                6
+              ],
+              "matrix_elements": 48,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "7ec54155d32ce9c8387ee92c96f9c99c963f7981f3ed338b466dcb08b9a2b858",
+              "output_shape": [
+                1,
+                2,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "cb872da77903ef2dbd90d3662aa84ecdf594f5d787fad7765bc775ff6de26508"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "7f3bf17cf2bab82a86a0e8cc4c0bc2818ec576198623e6e83abab19f1ec8e849",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_6",
+      "logical_outputs": 192,
+      "lowered_sha256": "3009ea5109c93e1d9d35d69410c71a8fd8ef2be6131b328a975b9f4e5fcc5332",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "7f3bf17cf2bab82a86a0e8cc4c0bc2818ec576198623e6e83abab19f1ec8e849",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "5e97c54ec460067ec44bca7fb15672c13536d85501d1a0077147df0cef4b0744",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "14c2520aa57a2eb22183771e9b4552bfb7f5f66a7b358b4e1ed778672d65397d",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "a6cb3a2d52823186299cc9267ef011c9d6df3e99e87f0ad594818d193becff2f",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_2",
+                "generated_4"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                1,
+                1
+              ],
+              "matrix_elements": 1,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "901e94687604661c35f20bda639fdf40eded2daf9b271c753ccf03e62c6eefa5",
+              "output_shape": [
+                1,
+                1,
+                1
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "901e94687604661c35f20bda639fdf40eded2daf9b271c753ccf03e62c6eefa5"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "482b0eaf1d102db8c2b66621a294da3a9ea5923d4fd2b5f1be95952249dfd995",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_4": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_7",
+      "logical_outputs": 16,
+      "lowered_sha256": "14c2520aa57a2eb22183771e9b4552bfb7f5f66a7b358b4e1ed778672d65397d",
+      "maximum_difference": 0.0,
+      "original_sha256": "482b0eaf1d102db8c2b66621a294da3a9ea5923d4fd2b5f1be95952249dfd995",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "efc2227fc9942846e34dbf0c334a6af6969b80e7470e8b12fe564d14c16a1a2f",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "6451fdee4d246d189264ed73c3f81dd6751b07e9215aa970cfdd8d9caca5f9e2",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "0bcceee79d50d8d80e4cb83440d229a82e6f6e71c28e9e5bea4af18b7f8d4d85",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_7",
+                "generated_9"
+              ],
+              "ignored_output_size_leading": [
+                999
+              ],
+              "input_shape": [
+                2,
+                3
+              ],
+              "matrix_elements": 18,
+              "operator": "conv_transpose1d",
+              "origin": "transposed",
+              "original_weight_sha256": "6241b116e199201ac1581b968e60f983c9a67b3b4bd38a8174a93983765b153b",
+              "output_shape": [
+                4,
+                5
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "8f6970e839e86764573f4d0e99f79076212035f1648ed1f22ca6f4ab39957ca6"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "11e93707f4124c9ca56c3339a2fb36cd71bd43e14150ba36be0df0160ec216b7",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_4": "transposed",
+          "generated_7": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_1d_8",
+      "logical_outputs": 320,
+      "lowered_sha256": "6451fdee4d246d189264ed73c3f81dd6751b07e9215aa970cfdd8d9caca5f9e2",
+      "maximum_difference": 0.0,
+      "original_sha256": "11e93707f4124c9ca56c3339a2fb36cd71bd43e14150ba36be0df0160ec216b7",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "7e3379f7052137b798f0132da3ba000161e6b5eb3a7f25a5ca9b46d6596f54a3",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "9c75ac803655234235fe4e3c92ac74150b639af1d4ae41ab879f4cbfbfaae624",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "14a6d0630e1c50c206c044f18f70fbe679d11d05ba8c2ebae1f0cee860486498",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_3",
+                "generated_6",
+                "generated_8",
+                "generated_11",
+                "generated_14",
+                "generated_16"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 23,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "fdeab38c2e13cdd5c4de39f95e0ff0bdb2ccd06bc4dfa2e3f4adaf520dac790c",
+              "output_shape": [
+                2,
+                3,
+                4
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "7b7c1441ed17ed7eeb1a5c41a2735a7fd8f202db1cae7fd6c204f95854819389"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "7f45820e899adcfe7c502b2a429c5d818d5839d78333f385dc9b6c75ddaf9350",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_14": "transposed",
+          "generated_16": "transposed",
+          "generated_3": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_0",
+      "logical_outputs": 384,
+      "lowered_sha256": "9c75ac803655234235fe4e3c92ac74150b639af1d4ae41ab879f4cbfbfaae624",
+      "maximum_difference": 5.551115123125783e-17,
+      "original_sha256": "7f45820e899adcfe7c502b2a429c5d818d5839d78333f385dc9b6c75ddaf9350",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "feb601c10a7812ec54ed6d4ddd8fac2607a54515b0afb5f2ff3729b73b8cdb8e",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "54b784af3167fa8de6b5dc70211471367d332508317ceb8dbf5ba8dce72ef3e8",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "87be484cc420d7163ad3dfc47bb7a0ef377e1bbac2a81f8e646f4912e9981c51",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9",
+                "generated_12"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                4,
+                2,
+                3
+              ],
+              "matrix_elements": 27,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "22dcfdc25b76919e3dfc4ba2cf2da15fb609598759eaeffae99f51a11daef49b",
+              "output_shape": [
+                1,
+                2,
+                5,
+                3
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "713234aaa98fe84c76a31a87009242fefaa7cc0010de73b043503c41d94ea470"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "8ad3467b8881b7aa5354af3fa10908d0b4001feccbd0e64cf3d176c44d713276",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_1",
+      "logical_outputs": 480,
+      "lowered_sha256": "54b784af3167fa8de6b5dc70211471367d332508317ceb8dbf5ba8dce72ef3e8",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "8ad3467b8881b7aa5354af3fa10908d0b4001feccbd0e64cf3d176c44d713276",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "17f3bc816e433f3d5f2af2468db624763eca40ff69e58ffa13dbd4e13014bfb3",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "3407adf55c6ba9785892503115add906f8a944586f1e61f8bf3282e4358c2767",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "63fc5094f69e9236565d13dfbe734f4ac123113d1845402de887143d506a11c8",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9",
+                "generated_12"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "matrix_elements": 45,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "bd0b8cf70abec712a714bad416f5d5d16c76cc496cb8ce8aeeadef282aaaa8b1",
+              "output_shape": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "d5399ca76fbafba3eb3580fbd587d73d43c19805f2e1d360ebece53276fb6bc7"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "1173ec2c3d29132fb7cf1946d960cf8ef183469a80073c01570320a10384a39c",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_2",
+      "logical_outputs": 384,
+      "lowered_sha256": "3407adf55c6ba9785892503115add906f8a944586f1e61f8bf3282e4358c2767",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "1173ec2c3d29132fb7cf1946d960cf8ef183469a80073c01570320a10384a39c",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "fa4f8f6151e34cd1e5bd56589f144223432104c49652785dcd2ae76dab305445",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "ac96dcea82c8f45f387b10850fb60b0a02a8ea3a6153d787a8c156f6ec4bcb70",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "9bcb16e428f84cc7b0bbbe0497061d20bca18be3546c724f8454c0a7065249a7",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9",
+                "generated_12"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                2,
+                2,
+                3
+              ],
+              "matrix_elements": 36,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "1fab2715436c6505e21bd21abb45ce3566a1141f48fb3cb603b75e8bbceb647f",
+              "output_shape": [
+                1,
+                2,
+                4,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "c7af2d9f44169fb47e6f44de814015af6312619dd5c1e0df1df2d55c8b7a48c7"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "681916b8b57e5d958775bc8572e64404aa692713ea5660795caa05d64e1298cf",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_3",
+      "logical_outputs": 768,
+      "lowered_sha256": "ac96dcea82c8f45f387b10850fb60b0a02a8ea3a6153d787a8c156f6ec4bcb70",
+      "maximum_difference": 1.1102230246251565e-16,
+      "original_sha256": "681916b8b57e5d958775bc8572e64404aa692713ea5660795caa05d64e1298cf",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "793a02c81aca247cbfe9f0c5f5d9cc4fc8328cca43812630cb298e06707d2afd",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "5c151fca3c4223464d2035a5d3ced6c293cd48462b1b0f78db3e693a7bf8c047",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "297c0562c8c9640eb03941ec41e01aedc67562377a2b1c0aa546e6a16854a490",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_8",
+                "generated_11"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                1,
+                3,
+                3
+              ],
+              "matrix_elements": 48,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "168a000691f95757d6559dfc85f414b1379b42d43ec9f7ca8d87503e0c4bdb47",
+              "output_shape": [
+                1,
+                2,
+                6,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "8c99c0a2f62366633cf386ee994bb1cdb99ae2b02edb660d26904c13c9d38e43"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "46d7647b00caf44fedfd42b216cf9543de001da80c0c1e2b26250b5e473254df",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_4",
+      "logical_outputs": 1152,
+      "lowered_sha256": "5c151fca3c4223464d2035a5d3ced6c293cd48462b1b0f78db3e693a7bf8c047",
+      "maximum_difference": 5.551115123125783e-17,
+      "original_sha256": "46d7647b00caf44fedfd42b216cf9543de001da80c0c1e2b26250b5e473254df",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "425cc52cbf19650356909ce629e3b754cab2be864f04282e7053778742c75fd7",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "926b6f853987b63daf154ccd4d3cc6f6e8e90aa9b1838493524efa5cfd141fe9",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "30a133cbd8051d20b06b9d8b903428f33f717bfafce1a93b432f0cdda51ad68b",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9",
+                "generated_12"
+              ],
+              "ignored_output_size_leading": [
+                999,
+                999
+              ],
+              "input_shape": [
+                1,
+                1,
+                2,
+                3
+              ],
+              "matrix_elements": 36,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "4b91be6fed5c28aaacfa87e031436e5e49479d7789416427263ed974a0933385",
+              "output_shape": [
+                1,
+                2,
+                4,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "65a360d8679b2b7c413a44fc1878d8efd4c244fba768694a8d0dae34676f7305"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "5c38b7e9453b6a5268b4f2ba6febfff5e17db1a78fe0a6b8dc4b4ede9708ba1f",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_5",
+      "logical_outputs": 768,
+      "lowered_sha256": "926b6f853987b63daf154ccd4d3cc6f6e8e90aa9b1838493524efa5cfd141fe9",
+      "maximum_difference": 5.551115123125783e-17,
+      "original_sha256": "5c38b7e9453b6a5268b4f2ba6febfff5e17db1a78fe0a6b8dc4b4ede9708ba1f",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "e7703b0a610cc8bfce21def68f38d7a8a4c256188fff0c52ef0a3a696e06832d",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "443a73990e134d23eff4f92f7f86cfa071ba2010f8ff723191fa871db2cf9fb5",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "38aed353ec6700073b6ee1be846715eb813f49f0b31d4db0bc56b9cdd7799bd8",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_8",
+                "generated_11"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                1,
+                4,
+                4
+              ],
+              "matrix_elements": 48,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "b761e2a402700ba370de079bb4fa7f796d7122c5ee3309f8355465a4b4b16d5f",
+              "output_shape": [
+                1,
+                2,
+                4,
+                4
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "66d3413008f24b40bfdc31331543119ca9030b7ce388887685a7058bd02ef9a5"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "a2f1ae901d5adf0035752f26509406cda498d55e26f20dac195c52db4fb9b529",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_6",
+      "logical_outputs": 512,
+      "lowered_sha256": "443a73990e134d23eff4f92f7f86cfa071ba2010f8ff723191fa871db2cf9fb5",
+      "maximum_difference": 2.220446049250313e-16,
+      "original_sha256": "a2f1ae901d5adf0035752f26509406cda498d55e26f20dac195c52db4fb9b529",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "4d88482021890f101f78aefc6d1b0b9debd1657957cbb7cbb87a7b5fc0c6e683",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "27d65fc7c565ccaf1487ac5e4894486a609695598dae8958a366ce2213144377",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "2c1e4fafe1d6f5c66386c464d1c5d951d0e765b5fbb49354eb6b02a326d4d2c6",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_4",
+                "generated_6",
+                "generated_9",
+                "generated_11"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                1,
+                1,
+                1,
+                2
+              ],
+              "matrix_elements": 9,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "d01b067203e6e4853b1a37783f1ed6680882a7aa066d8b03a27d3784b5515350",
+              "output_shape": [
+                1,
+                1,
+                1,
+                4
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "d01b067203e6e4853b1a37783f1ed6680882a7aa066d8b03a27d3784b5515350"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "8d0ec033b4faca6e2c790b459e75f36ad30e7aaf2a9477dcf7ffc400e754c243",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_7",
+      "logical_outputs": 64,
+      "lowered_sha256": "27d65fc7c565ccaf1487ac5e4894486a609695598dae8958a366ce2213144377",
+      "maximum_difference": 0.0,
+      "original_sha256": "8d0ec033b4faca6e2c790b459e75f36ad30e7aaf2a9477dcf7ffc400e754c243",
+      "probe_groups": 16
+    },
+    {
+      "agent": false,
+      "binding": {
+        "approximation_profiles": {},
+        "binding_sha256": "645e35676c4d7aead34e6c9191af52a485dee1abb27b5d5880d369d31f54e754",
+        "format": "poseidon-decomposition-binding-v4",
+        "implementation_sha256": "75e857222b7f9389730952b1cef62fd197f9d188a8d1b6fba45278c99437a816",
+        "implementation_sources": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_spatial_graph.py": "d1535ed1557e4747ace32682e35fb266450ed8df9cd535d99aabe7a61e0ef519",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "lowered_sha256": "952249f49702c3bbe1433c6572af8a3ba3b0099f80cb0712ac665eed21e9fae5",
+        "no_dsl_answer": true,
+        "normalization": {
+          "arithmetic_entries": [],
+          "matrix_entries": [],
+          "matrix_policy": "static-tensor-matmul-v1",
+          "public_constants_sha256": "921576f99f1701ef42054c0571c3333634fd5a9681452c3340ab26e1d9528c8c",
+          "scalar_carrier_shape": [
+            1
+          ],
+          "spatial_entries": [
+            {
+              "core_node_ids": [
+                "generated_1",
+                "generated_3",
+                "generated_6",
+                "generated_8",
+                "generated_11",
+                "generated_14",
+                "generated_16"
+              ],
+              "ignored_output_size_leading": null,
+              "input_shape": [
+                2,
+                2,
+                3
+              ],
+              "matrix_elements": 32,
+              "operator": "conv_transpose2d",
+              "origin": "transposed",
+              "original_weight_sha256": "3b3b31ba78d13ddf20a0caa1e6c9d6e4ac531ed509b965a56d8ee4ab7709ac2a",
+              "output_shape": [
+                4,
+                3,
+                6
+              ],
+              "runtime_validated": false,
+              "transformed_weight_sha256": "03c23c3f64f5da199c1c2388bad868797ed8d73289fc459cf96882e5cbd378d6"
+            }
+          ],
+          "version": "static-spatial-decomposition-v1"
+        },
+        "original_sha256": "eecc627cc557b378b309b52d5d9b0d33a2f6507c5452d7ef132ef862e34019bc",
+        "registry_version": "operator-decomposition-v4+spatial-v1",
+        "required_capabilities": [
+          "ckks_add_multiply_rotate"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_14": "transposed",
+          "generated_16": "transposed",
+          "generated_3": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        }
+      },
+      "compiler": false,
+      "encrypted": false,
+      "id": "transpose_2d_8",
+      "logical_outputs": 1152,
+      "lowered_sha256": "952249f49702c3bbe1433c6572af8a3ba3b0099f80cb0712ac665eed21e9fae5",
+      "maximum_difference": 2.7755575615628914e-17,
+      "original_sha256": "eecc627cc557b378b309b52d5d9b0d33a2f6507c5452d7ef132ef862e34019bc",
+      "probe_groups": 16
+    }
+  ],
+  "runtime_layout_validated": false,
+  "status": "passed",
+  "torch": "2.0.1",
+  "unit_controls": {
+    "errors": 0,
+    "failed": 0,
+    "modules": [
+      "test_operator_spatial_graph",
+      "test_operator_arithmetic_graph",
+      "test_operator_graph_v2",
+      "test_model_decomposition"
+    ],
+    "passed": 69,
+    "skipped": 0
+  }
+}

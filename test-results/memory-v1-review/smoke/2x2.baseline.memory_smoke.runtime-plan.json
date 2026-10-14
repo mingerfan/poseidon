@@ -1,0 +1,1332 @@
+{
+  "execution": [
+    {
+      "inputs": [
+        "29",
+        "30"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 9,
+      "output": "2",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "2",
+        "30"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 10,
+      "output": "3",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "3",
+        "30"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 11,
+      "output": "4",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "4",
+        "30"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 12,
+      "output": "5",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "steps": 1
+      },
+      "inputs": [
+        "5"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 13,
+      "output": "6",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "steps": -1
+      },
+      "inputs": [
+        "6"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 14,
+      "output": "7",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "31",
+        "32"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 15,
+      "output": "8",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "8",
+        "32"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 16,
+      "output": "9",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "9",
+        "32"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 17,
+      "output": "10",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "10",
+        "32"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 18,
+      "output": "11",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "steps": 1
+      },
+      "inputs": [
+        "11"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 19,
+      "output": "12",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "steps": -1
+      },
+      "inputs": [
+        "12"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 20,
+      "output": "13",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "13"
+      ],
+      "kind": "transfer",
+      "ordinal": 21,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "37"
+      ],
+      "sources": [
+        {
+          "index": 1,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "8"
+    },
+    {
+      "inputs": [
+        "33",
+        "34"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 22,
+      "output": "14",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "inputs": [
+        "14",
+        "34"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 23,
+      "output": "15",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "inputs": [
+        "15",
+        "34"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 24,
+      "output": "16",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "inputs": [
+        "16",
+        "34"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 25,
+      "output": "17",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "attrs": {
+        "steps": 1
+      },
+      "inputs": [
+        "17"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 26,
+      "output": "18",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "attrs": {
+        "steps": -1
+      },
+      "inputs": [
+        "18"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 27,
+      "output": "19",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "19"
+      ],
+      "kind": "transfer",
+      "ordinal": 28,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "38"
+      ],
+      "sources": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 1
+        }
+      ],
+      "transfer_id": "9"
+    },
+    {
+      "inputs": [
+        "35",
+        "36"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 29,
+      "output": "20",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "inputs": [
+        "20",
+        "36"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 30,
+      "output": "21",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "inputs": [
+        "21",
+        "36"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 31,
+      "output": "22",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "inputs": [
+        "22",
+        "36"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 32,
+      "output": "23",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "attrs": {
+        "steps": 1
+      },
+      "inputs": [
+        "23"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 33,
+      "output": "24",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "attrs": {
+        "steps": -1
+      },
+      "inputs": [
+        "24"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 34,
+      "output": "25",
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      }
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "25"
+      ],
+      "kind": "transfer",
+      "ordinal": 35,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "39"
+      ],
+      "sources": [
+        {
+          "index": 1,
+          "kind": "device",
+          "rank": 1
+        }
+      ],
+      "transfer_id": "10"
+    },
+    {
+      "inputs": [
+        "7",
+        "37"
+      ],
+      "kind": "compute",
+      "op": "add_cc",
+      "ordinal": 36,
+      "output": "26",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "26",
+        "38"
+      ],
+      "kind": "compute",
+      "op": "add_cc",
+      "ordinal": 37,
+      "output": "27",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "27",
+        "39"
+      ],
+      "kind": "compute",
+      "op": "add_cc",
+      "ordinal": 38,
+      "output": "28",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    }
+  ],
+  "external_inputs": [
+    "0"
+  ],
+  "final_outputs": [
+    "28"
+  ],
+  "finalization": [],
+  "format_version": 1,
+  "initialization": [
+    {
+      "kind": "encode",
+      "ordinal": 0,
+      "output": "1",
+      "payload": {
+        "kind": "inline",
+        "values": [
+          1.0
+        ]
+      }
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "0"
+      ],
+      "kind": "transfer",
+      "ordinal": 1,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "29"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "0"
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "1"
+      ],
+      "kind": "transfer",
+      "ordinal": 2,
+      "output_kinds": [
+        "plaintext"
+      ],
+      "outputs": [
+        "30"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "1"
+    },
+    {
+      "destinations": [
+        {
+          "index": 1,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "0"
+      ],
+      "kind": "transfer",
+      "ordinal": 3,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "31"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "2"
+    },
+    {
+      "destinations": [
+        {
+          "index": 1,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "1"
+      ],
+      "kind": "transfer",
+      "ordinal": 4,
+      "output_kinds": [
+        "plaintext"
+      ],
+      "outputs": [
+        "32"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "3"
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 1
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "0"
+      ],
+      "kind": "transfer",
+      "ordinal": 5,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "33"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "4"
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 1
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "1"
+      ],
+      "kind": "transfer",
+      "ordinal": 6,
+      "output_kinds": [
+        "plaintext"
+      ],
+      "outputs": [
+        "34"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "5"
+    },
+    {
+      "destinations": [
+        {
+          "index": 1,
+          "kind": "device",
+          "rank": 1
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "0"
+      ],
+      "kind": "transfer",
+      "ordinal": 7,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "35"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "6"
+    },
+    {
+      "destinations": [
+        {
+          "index": 1,
+          "kind": "device",
+          "rank": 1
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "1"
+      ],
+      "kind": "transfer",
+      "ordinal": 8,
+      "output_kinds": [
+        "plaintext"
+      ],
+      "outputs": [
+        "36"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "7"
+    }
+  ],
+  "plan_id": "104",
+  "target": {
+    "capability_version": 1,
+    "device_counts": [
+      2,
+      2
+    ],
+    "operator_spec": {
+      "id": "poseidon-runtime-memory-smoke-v1",
+      "source_sha256": "sha256:7b12038e80d890d08b0e1a13ab988e69740ec4a7563e0867e4c9d2aad9e24ed9",
+      "version": 1
+    },
+    "target_id": "poseidon-ckks-gpu",
+    "world_size": 2
+  },
+  "values": [
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "0",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 1,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "1",
+      "kind": "plaintext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "2",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "3",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "4",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "5",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "6",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "7",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "8",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "9",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "10",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "11",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "12",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "13",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "14",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "15",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "16",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "17",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "18",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "19",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "20",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "21",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "22",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "23",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "24",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "25",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "26",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "27",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "28",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "29",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 1,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "30",
+      "kind": "plaintext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "31",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 1,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "32",
+      "kind": "plaintext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "33",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 1,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "34",
+      "kind": "plaintext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "35",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 1,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "36",
+      "kind": "plaintext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 1
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "37",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "38",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-runtime-memory-smoke",
+      "id": "39",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    }
+  ]
+}

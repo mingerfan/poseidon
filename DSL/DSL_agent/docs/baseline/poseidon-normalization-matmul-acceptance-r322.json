@@ -1,0 +1,930 @@
+{
+  "format": "poseidon-normalization-matmul-acceptance-v1",
+  "backend": "poseidon_cpu",
+  "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "scope": {
+    "operators": 4,
+    "contexts_per_operator": 3,
+    "supplemental_fixtures": 12,
+    "frozen_1200_model_set_changed": false,
+    "benchmark_overlap_not_yet_audited": true
+  },
+  "references": {
+    "unique_models": 12,
+    "probe_groups_per_model": 16,
+    "total_probe_groups": 192,
+    "independent_decomposed_references": 2,
+    "maximum_error": 2.220446049250313e-16
+  },
+  "final_routes": {
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "encrypted_input_groups": 48,
+    "compared_values": 336,
+    "maximum_absolute_error": 7.561723511795293e-07,
+    "agent_generated_successes": 0
+  },
+  "rows": [
+    {
+      "id": "layer_norm_0",
+      "operator": "layer_norm",
+      "input_shapes": [
+        [
+          4
+        ]
+      ],
+      "model_sha256": "f965ab78fce5155b0c22d3d12e5642656da4e3fc4243d74b53c3d5c66decf206",
+      "high_graph_sha256": "470809cc08e33f89e9426896c7094f270f580bc67782f196061ec3243e4951b9",
+      "core_nodes": 20,
+      "decomposition_binding": "fa18d985db2d4e13173f67800387d9676d9c1b84c2dbbb6f3c00512e3c72dd67",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 2.220446049250313e-16,
+      "approximation_max_error": 0.4882676815136071,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xxx97s1p",
+      "report_sha256": "384733c3ff1ff5102cf5d595ec03014a031908eba562479bdd52200234a5e3f2",
+      "request_id": "2383e2529c516eb70f74dedf93f6eeda0dbcaa4dc70f0a81521e1c4d4bea9f85",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "c97531bd61193dad815ef6ab54a44d1cf1d12c1d9c057561ee697cf05679cf93",
+      "comparison": {
+        "max_absolute_error": 1.3408300580941557e-08,
+        "compared_values": 16
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "layer_norm_1",
+      "operator": "layer_norm",
+      "input_shapes": [
+        [
+          2,
+          3
+        ]
+      ],
+      "model_sha256": "3e0af109124d5509ea39109d9bc64884abd5499e4207f8ef9e9270ce6c18a29d",
+      "high_graph_sha256": "fb95d412574fb6650ba7ad5d0d8a7b5d1569184abb8aef5d1306318c400f0fdf",
+      "core_nodes": 20,
+      "decomposition_binding": "d2fcf22867efadb4876afdd66e8a6dfa475d0410d1967d6137bfa01839920754",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.39126209297885806,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-pjjpo9pu",
+      "report_sha256": "4a3e7754a3aa7da998117fdb5d792061d836a58d14bde1ce48c424483f7b8e22",
+      "request_id": "862fb15895c5f9b4ac41f8347fb696ecd4b6a9aca6ee29a4e4b20927297172af",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "72afd1a8c792eb0c6e050f8e116fe2cd6f02130cac84992b698d6ddb8dc098c8",
+      "comparison": {
+        "max_absolute_error": 1.9712204375743614e-08,
+        "compared_values": 24
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "layer_norm_2",
+      "operator": "layer_norm",
+      "input_shapes": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "model_sha256": "a4b1c6c171944eda41e5dff8ecb49b45f78a9496174adeaeb5043dbca37454df",
+      "high_graph_sha256": "0c3d499613cdd71546fa20df335a5cd8e2135b6a75dae2a0b11c9d4c94780728",
+      "core_nodes": 20,
+      "decomposition_binding": "44272d765cf759bb2e351407f4c22c9c4cd0583b7caef58b0d087ef6ec95d762",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 2.220446049250313e-16,
+      "approximation_max_error": 0.5406279347405829,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-nrpiz1w6",
+      "report_sha256": "bcc9291f525c1a35fae47d5681009e09bd7512f8e268ac984ddd29deffa1eec1",
+      "request_id": "de9d96bbe16f0a0b18895835c7a2eceb410da7030e73b324eea2dcd84d9d2562",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "27589f4aae6c8926283790e1b73de9806bf6d1ca417fdab5846faa208d1729aa",
+      "comparison": {
+        "max_absolute_error": 2.6857791873141634e-07,
+        "compared_values": 24
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "group_norm_0",
+      "operator": "group_norm",
+      "input_shapes": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "model_sha256": "f3337afebb277c90b1ea2596aa6873dcd9497cf91274d859ed39fda579b87efa",
+      "high_graph_sha256": "dfdd2aa4207e05fc2d54a715c763ad2aa13979b3b2907d5fd049e2aa69732fc9",
+      "core_nodes": 22,
+      "decomposition_binding": "290fffb25cca1d862971ec98b2d9f9698bbfe30dd31a6bb01d833d29fa425702",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 2.220446049250313e-16,
+      "approximation_max_error": 0.6326497108666393,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-6zcebwfr",
+      "report_sha256": "4d265748d0b460b5ed3ab772b9cf39ddbd99530dd45b7d0594ffbcf87b5d4c32",
+      "request_id": "123cad06f78486b42a8883354ce69c136bbe0121da5870f41009167b3320b550",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "046ed91725d8f12530c19f73deb3d7c0df4820e4ea3bd05d71449f028c03ce48",
+      "comparison": {
+        "max_absolute_error": 1.1373332461928065e-07,
+        "compared_values": 24
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "group_norm_1",
+      "operator": "group_norm",
+      "input_shapes": [
+        [
+          1,
+          4,
+          2
+        ]
+      ],
+      "model_sha256": "20311c5fd0d4ae367f8267d3e5d4a7895e8a283af51b318c05a74b3899bb872f",
+      "high_graph_sha256": "ee2762726668cbb7ae316f136edf8a919f59303e0a034aa78d31c70a3ba6eff2",
+      "core_nodes": 22,
+      "decomposition_binding": "5f3043d77d735d323177e4e0c6e5707ed8fb93d4ee6f3ab0a045bfebec7bbdc9",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 2.220446049250313e-16,
+      "approximation_max_error": 0.4180217676897441,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-etnub5_z",
+      "report_sha256": "ce737f24f38379eb31cd152ea1f82706c98bfcd25d9b4afbc611479e55ac288c",
+      "request_id": "d5181cbb159e86343d5c28b95e559beb9d78b212bf40c826538044f5c94a4102",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "947abbfb9b03d61d4a463a0a280c47a0d7129fe6cc28e5ccae10d73cd7e7a8dc",
+      "comparison": {
+        "max_absolute_error": 3.0343006281186025e-07,
+        "compared_values": 32
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "group_norm_2",
+      "operator": "group_norm",
+      "input_shapes": [
+        [
+          1,
+          2,
+          2,
+          2
+        ]
+      ],
+      "model_sha256": "fd30e0f434dbb50eb89d46400e41aeaea08dc97380c6eab275b752a42be543cc",
+      "high_graph_sha256": "1278d50b428d753b82a05d0d558c876805f09f78b8ed4fa02c1d3e4d730b0190",
+      "core_nodes": 22,
+      "decomposition_binding": "676281602c15108d61192b5e1f405c06b9d47578f6bd31ec223d3bf5b4ddf371",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.43410816580811784,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ltofex61",
+      "report_sha256": "14a73f70a6be80748bd56132adadde353d060819d93f99e8b61c405fd3ef969e",
+      "request_id": "b254bf20543fdfd8ef37ff9b2a7aec709007d7290b81bae2d64c32f573c3cf48",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "69066daecc1116f1e652e8540e2e43150cdaa6ce9b00a61c0699da61836dc05a",
+      "comparison": {
+        "max_absolute_error": 3.182304427751248e-07,
+        "compared_values": 32
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "instance_norm_0",
+      "operator": "instance_norm",
+      "input_shapes": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "model_sha256": "e2bf831721c1599f2dcac31f1e3d8529f0e307d57f46969df82d91c65578dbe6",
+      "high_graph_sha256": "2bd3bf9cc76cd4e3f8e1cf45e9efb3010965523c733f214a1d437cc32f071dac",
+      "core_nodes": 22,
+      "decomposition_binding": "01fae37be75eb1f46f78da6be1e1bb189a4ffbf233e7065e2debbb276d71eb30",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.39126209297885806,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-789gdoyr",
+      "report_sha256": "fe823ed5524f5d3aa144e72e37dae3c4c6c4a32ef307b6df1f078a4fb0354f50",
+      "request_id": "329061d9e5c1631ebaf3e1e30e8f3d1353a4db6aa89a36f87a7497917ca92234",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "df28655b13d1590e212a2f791168fd26b963d298eedcc1087f8d2d543adcb923",
+      "comparison": {
+        "max_absolute_error": 1.4495186524687842e-07,
+        "compared_values": 24
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "instance_norm_1",
+      "operator": "instance_norm",
+      "input_shapes": [
+        [
+          2,
+          2,
+          2
+        ]
+      ],
+      "model_sha256": "f31e9115b711ee9e6944f9aba1d1bfba74275b644c85b392f369c8d833fe9059",
+      "high_graph_sha256": "6fed70d885c876555bbf4f97f609b4898a359f60a43713304fa6fc4c0dc8b45b",
+      "core_nodes": 22,
+      "decomposition_binding": "1319c65916849dc1308c89ecc57a3936ab25d37009446f3dbbffb5bb3dd4ee79",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.28369820747673014,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cetgc54_",
+      "report_sha256": "c530feebd72f7b78cf6aff9f8dd6a4a1ee80ff95b9d7984f63c6cfe2a60c8318",
+      "request_id": "25aec8d932ee66a95dd58183e1ca8340e1692d10ed002d28cac92297faa8b85e",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "5a8a11f21d63bcffb0ad8b398508bccf82a9ad10d66f055db191fba21536e833",
+      "comparison": {
+        "max_absolute_error": 6.541528974751687e-08,
+        "compared_values": 32
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "instance_norm_2",
+      "operator": "instance_norm",
+      "input_shapes": [
+        [
+          1,
+          2,
+          2,
+          2
+        ]
+      ],
+      "model_sha256": "ebde62bb1da9bc5d862281ee6fed128730e76500025eb3764a229d5352083c48",
+      "high_graph_sha256": "d86cbec2ce62f56a2de5816786cff561a8a39edeef97acb9c3c0134e421afb72",
+      "core_nodes": 22,
+      "decomposition_binding": "6cfe86a79756fcd98a45d400399d604c9d298f033b16ebe4ca2e9e76bf38dbd8",
+      "status": "numerical_passed",
+      "candidate_kind": "packed_early_gain_manual",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.43410816580811784,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bs3cwusy",
+      "report_sha256": "1409895828299b0a6046ed6b3508009d0e0e2e44093b1455cfa0cea48c17b3d5",
+      "request_id": "5db1c2b241494e9b068257e9089efe90d77bf596fd9ad30feca2425a66ef5bdf",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "69066daecc1116f1e652e8540e2e43150cdaa6ce9b00a61c0699da61836dc05a",
+      "comparison": {
+        "max_absolute_error": 1.1973367775031107e-07,
+        "compared_values": 32
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "batched_matmul_0",
+      "operator": "batched_matmul",
+      "input_shapes": [
+        [
+          2,
+          2,
+          3
+        ],
+        [
+          2,
+          3,
+          2
+        ]
+      ],
+      "model_sha256": "f6b77fad740cba941e349981f0ee9e83049db55e5bf5fd208bf307a0578157e0",
+      "high_graph_sha256": "215ea5360dd38fc55846e5c27f793e4800eb1f1c9f87d4954c9bc618f2981dc8",
+      "core_nodes": 4,
+      "decomposition_binding": "b94151801ec45d8031769e34ca16d02b8b21a375f34de963901ae843a098637d",
+      "status": "numerical_passed",
+      "candidate_kind": "deterministic_rule_self_test",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.0,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-msdrppdn",
+      "report_sha256": "b45a82ea85106ec8ee47a753032c9aa1c2ae47d3b39cc6f0cc70cbbc62fe3690",
+      "request_id": "7451c51d83eb2758b79930063f43312ab2e00db5b0bf10cd468f7f01a4b79920",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "cec3f66ad90af148a80092e774a9833ffbfd8b957c10a163868bdcf485f602fc",
+      "comparison": {
+        "max_absolute_error": 7.561723511795293e-07,
+        "compared_values": 32
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "batched_matmul_1",
+      "operator": "batched_matmul",
+      "input_shapes": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          2,
+          3,
+          2
+        ]
+      ],
+      "model_sha256": "d2e1d92bd5956300a8d449419b17acaf2928a9a3f5cb4d46021039903e844f9a",
+      "high_graph_sha256": "5cfceb9f86d5876302ec7c821af5cfdcf111ca97ffaaf54980c1c69b68022c0d",
+      "core_nodes": 4,
+      "decomposition_binding": "f5f81e5e68bad1e3841ad6782ae2718471bce57237c3fdaf0a7c8addf8f9131a",
+      "status": "numerical_passed",
+      "candidate_kind": "deterministic_rule_self_test",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.0,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w1cbvpt9",
+      "report_sha256": "ee6a3e2141bfb727853d994e03900397dbfd23c5a5828cc983180a7d0ba63469",
+      "request_id": "61933af414aa1868eabb36f4d875a581622be4a95f21d2bcbd0855868f64640b",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "032f795e4909a08405bddaf3b8bbc34443d6f7bcb0371b6758443ffb8619f48e",
+      "comparison": {
+        "max_absolute_error": 6.11178159859449e-07,
+        "compared_values": 32
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    },
+    {
+      "id": "batched_matmul_2",
+      "operator": "batched_matmul",
+      "input_shapes": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          3,
+          2
+        ]
+      ],
+      "model_sha256": "c1d3f34357f3d24c839824db025820b0a33a6b1d4653963ee668e6832a5d30fa",
+      "high_graph_sha256": "d0d8882649b6c8d1280578ffd1ccf21ef9552634728e95b12b89e206e2e252e0",
+      "core_nodes": 4,
+      "decomposition_binding": "4c19f6dd7222bef58aa17f6df575ab5ca59964614c67fdc4e8c81068d5f4425e",
+      "status": "numerical_passed",
+      "candidate_kind": "deterministic_rule_self_test",
+      "reference_groups": 16,
+      "dual_reference_max_error": 1.1102230246251565e-16,
+      "approximation_max_error": 0.0,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-m1p38h27",
+      "report_sha256": "a214bd2fc817038a0485cf415f3938c67d078ebd9ce0a5a9c9fab7e29359edd8",
+      "request_id": "2b2f03dd9f446059e9c2adf534227b6b669982e639a7e284c603fdee3859dca2",
+      "source_hashes_sha256": "ed7f10f9b7bd171522ed0af710bf98dc92ea56760519fc26d47dfbe35de86840",
+      "candidate_sha256": "032f795e4909a08405bddaf3b8bbc34443d6f7bcb0371b6758443ffb8619f48e",
+      "comparison": {
+        "max_absolute_error": 2.728567067844523e-07,
+        "compared_values": 32
+      },
+      "real_frontend_tracing": true,
+      "real_compile": true,
+      "artifact_gate": true,
+      "encrypted_execution": true,
+      "decryption_and_independent_reference": true,
+      "public_execution_parameters": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      }
+    }
+  ],
+  "initial_rule_baseline": {
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-norm-matmul-r314/report.json",
+    "sha256": "e592cf75e383e04d012846aa7dcbc49e39f3e4c2dc54b37ab86d6714b2e05fb9",
+    "states": {
+      "failed": 9,
+      "passed": 3
+    },
+    "compiler_failed_models": [
+      "layer_norm_0",
+      "layer_norm_1",
+      "layer_norm_2",
+      "group_norm_0",
+      "group_norm_1",
+      "group_norm_2",
+      "instance_norm_0",
+      "instance_norm_1",
+      "instance_norm_2"
+    ],
+    "old_records_preserved": true,
+    "normalization_default_rule_path_still_fails": true,
+    "compiler_attempts_this_scope": 21
+  },
+  "expression_checks": {
+    "first_static_probe": "poseidon-normalization-prepare-r315",
+    "first_probe_failed": 9,
+    "causes": [
+      "Nonconfigured rotation steps",
+      "Masks for tail slots not declared in request"
+    ],
+    "corrected_probe": "poseidon-normalization-prepare-r316",
+    "corrected_static_and_dual_reference_ready": 9,
+    "contracts_not_relaxed": true,
+    "sources": {
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/group_norm_1.py": "947abbfb9b03d61d4a463a0a280c47a0d7129fe6cc28e5ccae10d73cd7e7a8dc",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/instance_norm_2.py": "69066daecc1116f1e652e8540e2e43150cdaa6ce9b00a61c0699da61836dc05a",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/layer_norm_0.py": "c97531bd61193dad815ef6ab54a44d1cf1d12c1d9c057561ee697cf05679cf93",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/instance_norm_0.py": "df28655b13d1590e212a2f791168fd26b963d298eedcc1087f8d2d543adcb923",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/instance_norm_1.py": "5a8a11f21d63bcffb0ad8b398508bccf82a9ad10d66f055db191fba21536e833",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/group_norm_2.py": "69066daecc1116f1e652e8540e2e43150cdaa6ce9b00a61c0699da61836dc05a",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/layer_norm_2.py": "27589f4aae6c8926283790e1b73de9806bf6d1ca417fdab5846faa208d1729aa",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/layer_norm_1.py": "72afd1a8c792eb0c6e050f8e116fe2cd6f02130cac84992b698d6ddb8dc098c8",
+      "scripts/baseline/golden_cases/poseidon_normalization_v2/group_norm_0.py": "046ed91725d8f12530c19f73deb3d7c0df4820e4ea3bd05d71449f028c03ce48"
+    }
+  },
+  "package_reloads": {
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-packages-r321/report.json",
+    "sha256": "05bfa857d3578abe3982b9ab812240299f2cff9681659569354464d26894ac8f",
+    "passed": 2,
+    "failed": 0,
+    "compared_values": 56,
+    "max_absolute_error": 2.3025788836728012e-07,
+    "agent_calls": 0,
+    "compiler_calls": 0,
+    "rows": [
+      {
+        "actual_compile": false,
+        "agent_calls": 0,
+        "comparison": {
+          "compared_values": 24,
+          "max_absolute_error": 2.3025788836728012e-07
+        },
+        "compiler_calls": 0,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-nrpiz1w6",
+        "id": "layer_norm_2",
+        "newly_executed": false,
+        "package_binding": "1ad9e80f27ffe7ea16cd9ea4b6cb6d4e98d3b11ec9d489ab1bb33306c8b18bb5",
+        "program": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-packages-r319/layer_norm_2/program",
+        "recovered_from_same_binding_evidence": true,
+        "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-0tyw63gs",
+        "reload_report_sha256": "be5499d40967ed5071d3cce2a3e4a3b60a56a696bc42df04c788cb284337005d",
+        "status": "passed"
+      },
+      {
+        "actual_compile": false,
+        "agent_calls": 0,
+        "comparison": {
+          "compared_values": 32,
+          "max_absolute_error": 2.0134963907292303e-07
+        },
+        "compiler_calls": 0,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w1cbvpt9",
+        "id": "batched_matmul_1",
+        "newly_executed": true,
+        "package_binding": "8b3e75243cc465a67c7b43935c179695ba676566f7d5cb504cf663127ed2b370",
+        "program": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-packages-r321/batched_matmul_1/program",
+        "recovered_from_same_binding_evidence": false,
+        "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-r9d9i9wc",
+        "reload_report_sha256": "62efe284bfd76fa6a4aec4bf3edce1c67cae87ecfbd635661ee389a26a452745",
+        "status": "passed"
+      }
+    ],
+    "first_attempt_report_writer_error": "r319 used binding_sha256 instead of the v4 manifest field binding; original summary and log preserved",
+    "recovery_policy": "Re-audit the first successful reload under the same source binding; execute only the second package"
+  },
+  "approximation": {
+    "method": "Two explicit Newton iterations for rsqrt, domain [.1,4], epsilon .2",
+    "maximum_error_against_original_function": 0.6326497108666393,
+    "suitable_for_target_network_accuracy_acceptance": false,
+    "ckks_error_scored_against_declared_approximation_only": true
+  },
+  "active_source": {
+    "proposal": "docs/baseline/poseidon-whole-models-live-proposal-r286.json",
+    "binding": "0d877eaacbb985a649e43584b59494b0f3525ca8acc564f0053ca5a4cd823de5",
+    "files": 514,
+    "mismatch": [],
+    "status": "pending_approval"
+  },
+  "limits": {
+    "native_jobs": 1,
+    "compiler_jobs": 2,
+    "link_jobs": 1,
+    "numeric_absolute": 1e-05,
+    "numeric_relative": 0.0001
+  },
+  "application_core_changed": false,
+  "compiler_runtime_library_changed": false,
+  "parameters_reference_or_tolerance_changed": false,
+  "paid_calls": 0,
+  "agent_generated": false,
+  "installations": 0,
+  "downloads": 0,
+  "commit_or_push": false,
+  "remaining": {
+    "original_benchmark_compiler_models": 12,
+    "default_normalization_lowering_models_with_manual_alternative": 9,
+    "bootstrap": "r234 signed input threshold failure preserved; ratio128 r235 pending approval",
+    "poseidon_real_agent": "r286 three whole models pending approval",
+    "physical_large_layout": "not yet executable",
+    "cuda_x86_native_clean_install": "deferred"
+  },
+  "evidence_files": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-norm-matmul-prepare-r313/report.json": "27638b0b0a301f59250a72b2f11c57c341d90a47ab951c2b564b14802c0149c9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-norm-matmul-r314/report.json": "e592cf75e383e04d012846aa7dcbc49e39f3e4c2dc54b37ab86d6714b2e05fb9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-prepare-r315/report.json": "46a22c4f53a34f89b83d3f5c08c088353a4041f879fbad57e9df31f13ae75411",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-prepare-r316/report.json": "a6da8a567d2a951a975f1251338a7f3f46fa6b3a08224527787959f8727d0fa7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-first-r317/report.json": "a530e0e110f425aa770f8512d24cb1154b7b65132ac4dca9b58659a1fb7e4553",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-rest-r318/report.json": "54e69041dec3eeadead9c03425ef670d403b00874c74d4b280e9d53212c62c9d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-normalization-packages-r321/report.json": "05bfa857d3578abe3982b9ab812240299f2cff9681659569354464d26894ac8f"
+  }
+}

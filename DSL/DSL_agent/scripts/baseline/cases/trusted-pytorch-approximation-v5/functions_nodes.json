@@ -1,0 +1,103 @@
+{
+  "approximations": {
+    "defaults": {
+      "gelu": {
+        "basis": "power",
+        "coefficients": [
+          0.0,
+          0.5,
+          0.125
+        ],
+        "domain": [
+          -2.0,
+          2.0
+        ],
+        "method": "polynomial"
+      },
+      "sigmoid": {
+        "basis": "power",
+        "coefficients": [
+          0.5,
+          0.125
+        ],
+        "domain": [
+          -2.0,
+          2.0
+        ],
+        "method": "polynomial"
+      },
+      "silu": {
+        "basis": "power",
+        "coefficients": [
+          0.0,
+          0.375,
+          0.0625
+        ],
+        "domain": [
+          -2.0,
+          2.0
+        ],
+        "method": "polynomial"
+      },
+      "tanh": {
+        "basis": "power",
+        "coefficients": [
+          0.0,
+          0.25,
+          0.0625
+        ],
+        "domain": [
+          -2.0,
+          2.0
+        ],
+        "method": "polynomial"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": [
+      {
+        "function": "gelu",
+        "name": "gelu",
+        "profile": {
+          "basis": "power",
+          "coefficients": [
+            0.0,
+            0.5,
+            0.125
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "method": "polynomial"
+        }
+      }
+    ]
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "models.make",
+  "factory": {
+    "args": [
+      "functions"
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "models.py": "f891f983cae3868134819e4d3e5f4c6bb72b49a536f65e4781854d2f4b41b31d"
+  },
+  "format": "poseidon-trusted-pytorch-v5",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "activation",
+    "gate"
+  ],
+  "weights": {}
+}

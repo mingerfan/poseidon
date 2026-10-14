@@ -1,0 +1,177 @@
+{
+  "spec_format_version": 1,
+  "spec_id": "poseidon-runtime-release-smoke-v1",
+  "version": 1,
+  "status": "validated",
+  "target_id": "poseidon-ckks-gpu",
+  "rescale_mode": "lazy",
+  "context": {
+    "context_id": "poseidon-runtime-release-smoke",
+    "poly_degree": 4096,
+    "rns_moduli_log2": [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "max_modulus_log2": 30,
+    "default_scale_log2": 40
+  },
+  "levels": {
+    "lower_bound": 0,
+    "upper_bound": 6
+  },
+  "operators": {
+    "add_cc": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "add_cp": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "sub_cc": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "sub_cp": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "mul_cc": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "mul_cp": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "negate": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "rotate": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "mod_switch": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "relinearize": {
+      "supported": false,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null
+    },
+    "rescale": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "noise_by_level": null,
+      "max_levels_per_op": 4
+    },
+    "boot": {
+      "supported": false
+    }
+  },
+  "boot_profiles": []
+}

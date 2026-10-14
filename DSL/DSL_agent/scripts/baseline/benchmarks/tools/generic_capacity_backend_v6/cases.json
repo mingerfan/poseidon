@@ -1,0 +1,652 @@
+[
+  {
+    "input_ranks": [
+      8,
+      2
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3
+        ]
+      },
+      {
+        "name": "y",
+        "shape": [
+          2,
+          3
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_axis_8/manifest.json",
+    "name": "rank_axis_8",
+    "nonrepeating_public_weights": 0,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "pooled",
+      "same",
+      "flat"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "different-rank encrypted broadcast, noncontiguous transpose and partial reduction",
+    "registered_weight_entries": 0,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 222
+  },
+  {
+    "input_ranks": [
+      8
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_linear_8/manifest.json",
+    "name": "rank_linear_8",
+    "nonrepeating_public_weights": 9,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "features",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "high-rank transpose, nonrepeating public Linear, square and reduction",
+    "registered_weight_entries": 2,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 216
+  },
+  {
+    "input_ranks": [
+      8
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_permute_8/manifest.json",
+    "name": "rank_permute_8",
+    "nonrepeating_public_weights": 64,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "features",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "six nontrivial axes, public tensor weights, residual fusion and nonadjacent reduction",
+    "registered_weight_entries": 1,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 64
+  },
+  {
+    "input_ranks": [
+      16,
+      2
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3
+        ]
+      },
+      {
+        "name": "y",
+        "shape": [
+          2,
+          3
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_axis_16/manifest.json",
+    "name": "rank_axis_16",
+    "nonrepeating_public_weights": 0,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "pooled",
+      "same",
+      "flat"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "different-rank encrypted broadcast, noncontiguous transpose and partial reduction",
+    "registered_weight_entries": 0,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 222
+  },
+  {
+    "input_ranks": [
+      16
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_linear_16/manifest.json",
+    "name": "rank_linear_16",
+    "nonrepeating_public_weights": 9,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "features",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "high-rank transpose, nonrepeating public Linear, square and reduction",
+    "registered_weight_entries": 2,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 216
+  },
+  {
+    "input_ranks": [
+      16
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_permute_16/manifest.json",
+    "name": "rank_permute_16",
+    "nonrepeating_public_weights": 64,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "features",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "six nontrivial axes, public tensor weights, residual fusion and nonadjacent reduction",
+    "registered_weight_entries": 1,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 64
+  },
+  {
+    "input_ranks": [
+      32,
+      2
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3
+        ]
+      },
+      {
+        "name": "y",
+        "shape": [
+          2,
+          3
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_axis_32/manifest.json",
+    "name": "rank_axis_32",
+    "nonrepeating_public_weights": 0,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "pooled",
+      "same",
+      "flat"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "different-rank encrypted broadcast, noncontiguous transpose and partial reduction",
+    "registered_weight_entries": 0,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 222
+  },
+  {
+    "input_ranks": [
+      32
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_linear_32/manifest.json",
+    "name": "rank_linear_32",
+    "nonrepeating_public_weights": 9,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "features",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "high-rank transpose, nonrepeating public Linear, square and reduction",
+    "registered_weight_entries": 2,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 216
+  },
+  {
+    "input_ranks": [
+      32
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/rank_permute_32/manifest.json",
+    "name": "rank_permute_32",
+    "nonrepeating_public_weights": 64,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "features",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "six nontrivial axes, public tensor weights, residual fusion and nonadjacent reduction",
+    "registered_weight_entries": 1,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 64
+  },
+  {
+    "input_ranks": [
+      2
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          8,
+          512
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/wide_square_reduce/manifest.json",
+    "name": "wide_square_reduce",
+    "nonrepeating_public_weights": 0,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "pooled",
+      "same",
+      "head"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "4096 input elements, row-axis square reduction and output slicing",
+    "registered_weight_entries": 0,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 4096
+  },
+  {
+    "input_ranks": [
+      2,
+      2
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          32,
+          96
+        ]
+      },
+      {
+        "name": "y",
+        "shape": [
+          32,
+          32
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/wide_concat_reduce/manifest.json",
+    "name": "wide_concat_reduce",
+    "nonrepeating_public_weights": 0,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "rows",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "4096 elements in two shapes, interleaved row concat and hierarchical reduction",
+    "registered_weight_entries": 0,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 4096
+  },
+  {
+    "input_ranks": [
+      3,
+      2
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          2,
+          1025
+        ]
+      },
+      {
+        "name": "y",
+        "shape": [
+          2,
+          1
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/wide_tail_linear/manifest.json",
+    "name": "wide_tail_linear",
+    "nonrepeating_public_weights": 3078,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "output_binding_policy": "exact-values-v1",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "projection",
+      "summary",
+      "same"
+    ],
+    "prior_mathematical_overlap": null,
+    "purpose": "1025 row width, encrypted broadcast and nonrepeating public Linear",
+    "registered_weight_entries": 2,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 2052
+  },
+  {
+    "input_ranks": [
+      1
+    ],
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          100
+        ]
+      }
+    ],
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/generic_capacity_intake_v1/cases/weights_linear_10k/manifest.json",
+    "name": "weights_linear_10k",
+    "nonrepeating_public_weights": 10100,
+    "options": {
+      "capacity_packing_version": "capacity-public-tensors-v9",
+      "chunk_period": 128,
+      "compiler_configuration": "poseidon-cpu-eva-w45-compact-v1",
+      "generation_guidance": "explicit-v15",
+      "public_weight_policy": "descriptors-math-roles-v2"
+    },
+    "outputs": [
+      "output0"
+    ],
+    "prior_mathematical_overlap": {
+      "model_sha256": "2b8801feb08515dcedd97d71955ef2cd91fc228fa6c7e34b9052a30f54047207",
+      "period_unchanged": 128,
+      "report": "docs/baseline/agent-resource-acceptance-r665.json",
+      "source": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-resource-large-weights-r661/model.json",
+      "source_sha256": "2b8801feb08515dcedd97d71955ef2cd91fc228fa6c7e34b9052a30f54047207",
+      "weights_unchanged": true
+    },
+    "purpose": "real Agent generation for original independently verified 10000-weight Linear",
+    "registered_weight_entries": 2,
+    "source_format": "poseidon-trusted-pytorch-v34",
+    "source_kind": "trusted_pytorch",
+    "total_input_elements": 100
+  }
+]

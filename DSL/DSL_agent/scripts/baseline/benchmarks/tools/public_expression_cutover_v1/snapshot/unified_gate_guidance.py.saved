@@ -1,0 +1,8 @@
+"""Public model-preservation guidance, opt-in only; no repair answer or oracle."""
+def specification():
+ return dict(
+  constant_bindings="Every graph node retains its own named public constants. Reusing a helper does not authorize reusing another node's bias, weight, gain or coefficient. Pass the exact constants of each call site, even when two nodes have identical shapes or weight values.",
+  public_arithmetic="Supplied pN bindings are Plain expressions unless the existing construction contract explicitly converts them to public numeric data. Plain+Plain and Plain*Plain are not native ciphertext arithmetic. Evaluate known public scalar coefficient arithmetic at the admitted public construction stage or use its public literal value; retain every nonzero coefficient. Do not perform it as an operation on two Plain Expr objects.",
+  scale_semantics="The checker propagates actual SEAL scales, all intermediate capacities and register overwrites. There is no universal 180-bit cap. This grants no new DSL operator, key or modulus level. Balanced equivalent evaluation and ciphertext doubling by addition are allowed; manually setting scale/level or changing frozen coefficients, approximations, packing and compiler configuration is not.",
+  additive_semantics="Operands added as the same mathematical quantity need matching nominal scale. The runtime's scale metadata override is not a numerical conversion and must not be used to repair a different mathematical scaling.",
+  authority="Public clarification only. No test arrays, reference, deterministic DSL solution or extra runtime capability.")

@@ -1,0 +1,379 @@
+"""Durable local dataset assessment over an existing Application.
+
+submit/status/advance/cancel/result share one admission ledger. Completed
+receipts are replayed without executing; an interrupted unrecorded attempt is
+terminal. Existing runtime workers retain their limits. No Provider is called.
+"""
+import contextlib,fcntl,functools,hashlib,json,os,re,stat,uuid
+from pathlib import Path
+from benchmark_graph import canonical,digest
+from model_output_contract import snapshot,is_hash,OutputError
+from model_weight_package import regular_bytes
+from assessment_array_dataset import load_dataset,MAX_ARRAY_BYTES,MAX_MANIFEST_BYTES
+from task_numerical_assessment import (TaskNumericalAssessment,POLICY,NATIVE_POLICY,
+    SOURCE_SELECTION,implementation as reference_identity,criterion,CODES as NUMERIC_CODES)
+from source_precision_reference import CODES as SOURCE_CODES
+from task_dataset_assessment import reference_anchor,part_criterion,MAX_PARTS
+from task_dataset_evaluation import TaskDatasetEvaluation,evaluation_identity
+ROOT=Path(__file__).resolve().parents[2]
+FORMAT="poseidon-application-assessment-v1"
+PLAN="poseidon-application-assessment-plan-v1"
+HANDLE="poseidon-application-assessment-handle-v1"
+STATE="poseidon-application-assessment-state-v1"
+STORE="poseidon-application-assessment-store-v1"
+STATE_BYTES=16*1024**2
+RECEIPT_BYTES=16*1024**2
+ID=re.compile("[0-9a-f]{32}")
+TERMINAL={"succeeded","validation_failed","unsupported","cancelled","timed_out","service_error","budget_exhausted"}
+CODES={
+ "assessment_controller_input_rejected":"Assessment signature, policy, dataset or budget is invalid.",
+ "assessment_controller_binding_changed":"Assessment, program, input or implementation identity changed.",
+ "assessment_controller_state_rejected":"Assessment state or receipt journal is inconsistent.",
+ "assessment_controller_busy":"This assessment already has an active worker.",
+ "assessment_controller_environment_unavailable":"Assessment cannot proceed in the current environment.",
+ "assessment_controller_execution_uncertain":"An interrupted attempt has no confirmed receipt; automatic execution is stopped.",
+ "assessment_controller_receipt_budget_exhausted":"The declared receipt storage budget is exhausted.",
+}
+class AssessmentControllerError(ValueError):
+    def __init__(self,code):
+        if code not in CODES:raise ValueError("Unknown controller diagnostic")
+        self.code=code;super().__init__(CODES[code])
+    def feedback(self):
+        return dict(code=self.code,layer="assessment_control",message=CODES[self.code],
+                    retry_policy="never_automatic")
+def require(ok,code="assessment_controller_input_rejected"):
+    if not ok:raise AssessmentControllerError(code)
+def public(code):
+    def decorator(function):
+        @functools.wraps(function)
+        def call(*args,**kwargs):
+            try:return function(*args,**kwargs)
+            except AssessmentControllerError:raise
+            except (ValueError,TypeError,KeyError,OSError,RuntimeError,OverflowError):
+                raise AssessmentControllerError(code) from None
+        return call
+    return decorator
+def read(path,limit=STATE_BYTES):
+    def pairs(items):
+        result={}
+        for name,value in items:require(name not in result,"assessment_controller_state_rejected");result[name]=value
+        return result
+    value=json.loads(regular_bytes(path,limit),object_pairs_hook=pairs,
+        parse_constant=lambda _: (_ for _ in ()).throw(AssessmentControllerError("assessment_controller_state_rejected")))
+    return snapshot(value,limit=limit)
+def bound(value,expected=None):
+    require(type(value)is dict and is_hash(value.get("binding")) and
+        (expected is None or value["binding"]==expected) and
+        digest({k:v for k,v in value.items() if k!="binding"})==value["binding"],
+        "assessment_controller_binding_changed")
+    return value
+def seal(value):
+    value={k:v for k,v in value.items() if k!="binding"};value["binding"]=digest(value);return value
+def write_new(path,value):
+    raw=canonical(value);fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+    try:
+        with os.fdopen(fd,"wb")as file:file.write(raw);file.flush();os.fsync(file.fileno())
+    except BaseException:raise
+def update(path,value):
+    raw=canonical(value);require(len(raw)<=STATE_BYTES,"assessment_controller_state_rejected")
+    temporary=path.parent/("."+path.name+"."+uuid.uuid4().hex)
+    write_new(temporary,value);os.replace(temporary,path)
+    fd=os.open(path.parent,os.O_RDONLY|os.O_DIRECTORY)
+    try:os.fsync(fd)
+    finally:os.close(fd)
+def identity(policy):
+    return digest(dict(controller_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                       evaluation=evaluation_identity(policy)))
+def failure(report):
+    given=report.get("failure");code=given.get("code") if type(given)is dict else None
+    if code not in {*NUMERIC_CODES,*SOURCE_CODES,*CODES}:code="assessment_controller_environment_unavailable"
+    layer=given.get("layer") if type(given)is dict else None
+    if layer not in ("assessment","source_reference","execution","artifact","input","assessment_control"):layer="assessment"
+    return dict(code=code,layer=layer,retry_policy="never_automatic")
+class ApplicationAssessment:
+    """Explicit optional application entry; serial advance, boundary cancellation."""
+    @public("assessment_controller_input_rejected")
+    def __init__(self,application,store):
+        self.numeric=TaskNumericalAssessment(application);self.application=application
+        self.store=Path(store)
+        require(self.store.is_absolute() and self.store==self.store.resolve() and
+            not self.store.is_relative_to(ROOT) and self.store!=Path.home() and
+            self.store!=Path(self.store.anchor) and not self.store.is_symlink())
+        marker=self.store/"store.json"
+        if not self.store.exists():self.store.mkdir(mode=0o700,parents=True)
+        require(self.store.is_dir())
+        expected=dict(format=STORE,path=str(self.store),uid=os.getuid())
+        if marker.exists():require(read(marker)==expected)
+        else:
+            require(not any(self.store.iterdir()))
+            write_new(marker,expected)
+    def _path(self,handle):
+        handle=snapshot(handle,limit=65536)
+        require(type(handle)is dict and set(handle)=={"format","evaluation_id","binding"} and
+            handle["format"]==HANDLE and type(handle["evaluation_id"])is str and
+            ID.fullmatch(handle["evaluation_id"]) and is_hash(handle["binding"]),
+            "assessment_controller_binding_changed")
+        path=self.store/handle["evaluation_id"]
+        require(path.is_dir() and not path.is_symlink() and path==path.resolve(),
+                "assessment_controller_binding_changed")
+        return path,handle
+    @contextlib.contextmanager
+    def _lock(self,path,*,blocking=False):
+        fd=os.open(path/"worker.lock",os.O_RDWR|os.O_NOFOLLOW)
+        try:
+            require(stat.S_ISREG(os.fstat(fd).st_mode),"assessment_controller_state_rejected")
+            try:fcntl.flock(fd,fcntl.LOCK_EX|(0 if blocking else fcntl.LOCK_NB))
+            except BlockingIOError:raise AssessmentControllerError("assessment_controller_busy") from None
+            yield
+        finally:os.close(fd)
+    def _cancelled(self,path,handle):
+        p=path/"cancel.json"
+        if not p.exists():return False
+        require(read(p)==dict(format=FORMAT,evaluation_id=handle["evaluation_id"],
+            submission_binding=handle["binding"],cancel_requested=True),
+            "assessment_controller_binding_changed")
+        return True
+    def _scene(self,path,handle):
+        plan=bound(read(path/"plan.json"),handle["binding"])
+        require(plan["format"]==PLAN and plan["evaluation_id"]==handle["evaluation_id"])
+        require(identity(plan["reference_policy"])==plan["implementation_identity"],
+                "assessment_controller_binding_changed")
+        metadata=self.numeric.outputs._metadata(plan["program_task"])
+        outcome=self.application.result(plan["program_task"])
+        package,_=self.numeric.outputs._package(outcome,metadata)
+        require(outcome["status"]=="succeeded" and digest(outcome)==plan["task_result_sha256"] and
+            metadata["binding"]==plan["task_metadata_binding"] and package["binding"]==plan["package_binding"] and
+            reference_identity(policy=plan["reference_policy"])==plan["reference_identity"],
+            "assessment_controller_binding_changed")
+        dataset=load_dataset(metadata["request"],path/"dataset/dataset.json",expected_binding=plan["dataset_file_binding"])
+        state=bound(read(path/"state.json"))
+        require(state["format"]==STATE and state["submission_binding"]==handle["binding"] and
+            state["status"]in ({"queued","ready","running"}|TERMINAL) and
+            type(state["used"])is int and 0<=state["used"]<=plan["max_new_assessments"] and
+            type(state["ledger"])is list and len(state["ledger"])==state["used"] and
+            type(state["receipts"])is dict and type(state["receipt_bytes"])is int and
+            0<=state["receipt_bytes"]<=plan["max_receipt_bytes"],
+            "assessment_controller_state_rejected")
+        batches=dataset.batches(plan["part_samples"]);names={b["id"] for b in batches}
+        require(set(state["receipts"])<=names,"assessment_controller_state_rejected")
+        attempted=set()
+        for index,entry in enumerate(state["ledger"]):
+            require(type(entry)is dict and entry["number"]==index+1 and entry["part_id"]in names and
+                entry["part_id"]not in attempted and entry["phase"]in ("started","recorded","failed"),
+                "assessment_controller_state_rejected")
+            attempted.add(entry["part_id"])
+        cache={}
+        for name,item in state["receipts"].items():
+            require(type(item)is dict and set(item)=={"binding","sha256","bytes"} and
+                is_hash(item["binding"]) and is_hash(item["sha256"]) and type(item["bytes"])is int and
+                0<item["bytes"]<=RECEIPT_BYTES,"assessment_controller_state_rejected")
+            raw=regular_bytes(path/"receipts"/(name+".json"),RECEIPT_BYTES)
+            require(len(raw)==item["bytes"] and hashlib.sha256(raw).hexdigest()==item["sha256"],
+                    "assessment_controller_binding_changed")
+            report=bound(read(path/"receipts"/(name+".json")),item["binding"])
+            cache[name]=dict(receipt=report,binding=item["binding"])
+        require(sum(v["bytes"] for v in state["receipts"].values())==state["receipt_bytes"],
+                "assessment_controller_state_rejected")
+        return plan,state,metadata,dataset,batches,cache
+    def _driver(self,path,plan,dataset,cache,*,new_calls=0):
+        if not cache:return None
+        first=next(iter(cache.values()));anchor=reference_anchor(first["receipt"],expected_binding=first["binding"])
+        require(anchor["reference_policy"]==plan["reference_policy"] and
+            anchor["reference_identity_sha256"]==plan["reference_identity"],
+            "assessment_controller_binding_changed")
+        for value in cache.values():
+            require(value["receipt"].get("task_id")==plan["program_task"] and
+                value["receipt"].get("task_metadata_binding")==plan["task_metadata_binding"],
+                "assessment_controller_binding_changed")
+        options=None
+        if plan["reference_policy"]==NATIVE_POLICY and new_calls:
+            options=dict(input_dtypes=plan["input_dtypes"],trust_local_code=True,
+                evidence_root=str(path/("native-attempt-"+str(new_calls)+"-"+uuid.uuid4().hex)))
+        return TaskDatasetEvaluation(self.application,plan["program_task"],dataset,
+            anchor=anchor,application_criterion=plan["application_criterion"],
+            max_new_assessments=new_calls,part_samples=plan["part_samples"],
+            native_source=options,cached_receipts=cache)
+    def _save(self,path,state):
+        state=seal(state);update(path/"state.json",state);return state
+    def _frame(self,path,handle,plan,state,dataset,cache,*,busy=False):
+        driver=self._driver(path,plan,dataset,cache)
+        summary=None if driver is None else driver.advance(max_new_parts=0)["summary"]
+        numerical=bool(summary and summary["complete"] and summary["supplied_inputs_numerically_validated"])
+        result=dict(format=FORMAT,evaluation_id=handle["evaluation_id"],submission_binding=handle["binding"],
+            status=state["status"],program_task=plan["program_task"],package_binding=plan["package_binding"],
+            reference_policy=plan["reference_policy"],dataset_binding=plan["dataset_file_binding"],
+            worker_active=busy,cancel_requested=self._cancelled(path,handle),
+            budget=dict(max_new_assessments=plan["max_new_assessments"],used=state["used"],
+                remaining=plan["max_new_assessments"]-state["used"],
+                max_receipt_bytes=plan["max_receipt_bytes"],receipt_bytes=state["receipt_bytes"]),
+            planned_parts=plan["planned_parts"],completed_parts=len(cache),planned_samples=plan["planned_samples"],
+            ledger=state["ledger"],summary=summary,failure=state["failure"],
+            acceptance=dict(numerical_on_declared_dataset=numerical,
+                application_criterion_validated=bool(summary and summary["dataset_criterion_validated"]),
+                original_source_accuracy_certified=False,formal_equivalence=False),
+            evidence=dict(receipts={n:v["binding"] for n,v in cache.items()}),
+            new_agent_calls=0,new_compiler_calls=0)
+        return seal(snapshot(result,limit=STATE_BYTES))
+    def _recover(self,path,state):
+        started=[e for e in state["ledger"] if e["phase"]=="started"]
+        if started:
+            # A receipt not pinned by the committed state is deliberately not
+            # adopted. The execution may have happened; quota stays consumed.
+            for entry in started:
+                entry.update(phase="failed",outcome="service_error",execution_uncertain=True)
+            state["status"]="service_error"
+            state["failure"]=AssessmentControllerError("assessment_controller_execution_uncertain").feedback()
+            return self._save(path,state)
+        return state
+    @public("assessment_controller_input_rejected")
+    def submit(self,program_task,dataset_path,*,expected_dataset_binding,reference_policy=POLICY,
+               application_criterion=None,max_new_assessments=0,part_samples=16,
+               input_dtypes=None,trust_local_code=False,max_receipt_bytes=64*1024**2,
+               cached_receipts=None):
+        self.numeric.outputs._task(program_task)
+        outcome=self.application.result(program_task)
+        require(outcome["status"]=="succeeded")
+        metadata=self.numeric.outputs._metadata(program_task)
+        package,_=self.numeric.outputs._package(outcome,metadata)
+        require(reference_policy in (POLICY,NATIVE_POLICY) and type(max_new_assessments)is int and
+            0<=max_new_assessments<=MAX_PARTS and type(max_receipt_bytes)is int and
+            1<=max_receipt_bytes<=MAX_ARRAY_BYTES)
+        dataset=load_dataset(metadata["request"],dataset_path,expected_binding=expected_dataset_binding)
+        batches=dataset.batches(part_samples);profile=dataset.criterion(application_criterion)
+        criterion(profile,metadata["request"]["model"],dataset.manifest["samples"])
+        if reference_policy==NATIVE_POLICY:
+            origin=metadata.get("model_source")
+            require(trust_local_code is True and type(origin)is dict and origin.get("kind")=="trusted_pytorch")
+            wanted={n:{"<f4":"float32","<f8":"float64"}[v["dtype"]] for n,v in dataset.manifest["inputs"].items()}
+            require(type(input_dtypes)is dict and input_dtypes==wanted)
+        else:require(input_dtypes is None and trust_local_code is False)
+        eid=uuid.uuid4().hex;path=self.store/eid;path.mkdir(mode=0o700)
+        plan=dict(format=PLAN,evaluation_id=eid,program_task=program_task,
+            task_metadata_binding=metadata["binding"],task_result_sha256=digest(outcome),
+            package_binding=package["binding"],dataset_file_binding=expected_dataset_binding,
+            reference_policy=reference_policy,reference_identity=reference_identity(policy=reference_policy),
+            implementation_identity=identity(reference_policy),input_dtypes=input_dtypes,
+            application_criterion=snapshot(application_criterion,limit=4*1024**2),
+            part_samples=part_samples,planned_samples=dataset.manifest["samples"],planned_parts=len(batches),
+            max_new_assessments=max_new_assessments,max_receipt_bytes=max_receipt_bytes)
+        plan=seal(plan);handle=dict(format=HANDLE,evaluation_id=eid,binding=plan["binding"])
+        dest=path/"dataset";dest.mkdir(mode=0o700);manifest=dataset.manifest
+        arrays=list(manifest["inputs"].values())
+        if manifest["labels"]is not None:arrays.append(manifest["labels"]["array"])
+        source=Path(dataset_path).parent
+        for expected in arrays:
+            name=expected["file"];raw=regular_bytes(source/name,MAX_ARRAY_BYTES)
+            require(len(raw)==expected["bytes"] and hashlib.sha256(raw).hexdigest()==expected["sha256"],
+                "assessment_controller_binding_changed")
+            fd=os.open(dest/name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+            with os.fdopen(fd,"wb")as file:file.write(raw);file.flush();os.fsync(file.fileno())
+        write_new(dest/"dataset.json",manifest)
+        load_dataset(metadata["request"],dest/"dataset.json",expected_binding=expected_dataset_binding)
+        receipts=path/"receipts";receipts.mkdir(mode=0o700)
+        state=dict(format=STATE,submission_binding=plan["binding"],status="queued",used=0,
+            ledger=[],receipts={},receipt_bytes=0,failure=None)
+        cache={} if cached_receipts is None else snapshot(cached_receipts,limit=max_receipt_bytes)
+        require(type(cache)is dict and set(cache)<={b["id"] for b in batches})
+        if cache:
+            self._driver(path,plan,dataset,cache).advance(max_new_parts=0)
+            first=next(iter(cache.values()))
+            require(first["receipt"]["reference_policy"]==reference_policy,"assessment_controller_binding_changed")
+            for name,value in cache.items():
+                raw=canonical(value["receipt"])
+                state["receipt_bytes"]+=len(raw)
+                require(state["receipt_bytes"]<=max_receipt_bytes)
+                write_new(receipts/(name+".json"),value["receipt"])
+                state["receipts"][name]=dict(binding=value["binding"],sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw))
+        write_new(path/"worker.lock",dict(format=FORMAT))
+        write_new(path/"plan.json",plan);write_new(path/"state.json",seal(state))
+        return handle
+    @public("assessment_controller_binding_changed")
+    def status(self,handle):
+        path,handle=self._path(handle)
+        try:
+            with self._lock(path):
+                plan,state,_,dataset,_,cache=self._scene(path,handle)
+                state=self._recover(path,state)
+                return self._frame(path,handle,plan,state,dataset,cache)
+        except AssessmentControllerError as error:
+            if error.code!="assessment_controller_busy":raise
+            plan,state,_,dataset,_,cache=self._scene(path,handle)
+            return self._frame(path,handle,plan,state,dataset,cache,busy=True)
+    result=status
+    @public("assessment_controller_binding_changed")
+    def cancel(self,handle):
+        path,handle=self._path(handle)
+        plan=bound(read(path/"plan.json"),handle["binding"])
+        p=path/"cancel.json"
+        if not p.exists():
+            try:write_new(p,dict(format=FORMAT,evaluation_id=handle["evaluation_id"],
+                submission_binding=handle["binding"],cancel_requested=True))
+            except FileExistsError:pass
+        self._cancelled(path,handle)
+        try:
+            with self._lock(path):
+                plan,state,_,dataset,_,cache=self._scene(path,handle)
+                state=self._recover(path,state)
+                if state["status"]not in TERMINAL:
+                    state["status"]="cancelled";state=self._save(path,state)
+                return self._frame(path,handle,plan,state,dataset,cache)
+        except AssessmentControllerError as error:
+            if error.code!="assessment_controller_busy":raise
+            return self.status(handle)
+    @public("assessment_controller_environment_unavailable")
+    def advance(self,handle,*,max_new_parts=1):
+        require(type(max_new_parts)is int and 0<=max_new_parts<=MAX_PARTS)
+        path,handle=self._path(handle)
+        with self._lock(path):
+            plan,state,metadata,dataset,batches,cache=self._scene(path,handle)
+            state=self._recover(path,state);calls=0
+            while state["status"]not in TERMINAL:
+                if self._cancelled(path,handle):state["status"]="cancelled";state=self._save(path,state);break
+                pending=[b for b in batches if b["id"]not in cache]
+                if not pending:
+                    summary=self._driver(path,plan,dataset,cache).advance(max_new_parts=0)["summary"]
+                    state["status"]="succeeded" if summary["status"]=="passed" else "validation_failed"
+                    state=self._save(path,state);break
+                if state["used"]>=plan["max_new_assessments"]:
+                    state["status"]="budget_exhausted";state=self._save(path,state);break
+                if calls>=max_new_parts:state["status"]="ready";state=self._save(path,state);break
+                batch=pending[0];name=batch["id"]
+                entry=dict(number=state["used"]+1,part_id=name,phase="started",outcome=None)
+                state["used"]+=1;state["ledger"].append(entry);state["status"]="running"
+                state=self._save(path,state);entry=state["ledger"][-1];calls+=1
+                try:
+                    if not cache:
+                        source=None
+                        if plan["reference_policy"]==NATIVE_POLICY:
+                            parent=path/"native-first";parent.mkdir(mode=0o700)
+                            source=dict(format=SOURCE_SELECTION,input_dtypes=plan["input_dtypes"],
+                                trust_local_code=True,evidence_directory=str(parent/name))
+                        profile=part_criterion(dataset.criterion(plan["application_criterion"]),
+                            batches.index(batch)*plan["part_samples"],len(batch["samples"]),metadata["request"]["model"])
+                        report=self.numeric.assess(plan["program_task"],batch["samples"],
+                            expected_package_binding=plan["package_binding"],application_criterion=profile,native_source=source)
+                    else:
+                        driver=self._driver(path,plan,dataset,cache,new_calls=1)
+                        driver.advance(max_new_parts=1);report=driver.receipts[name]
+                    report=snapshot(report,limit=RECEIPT_BYTES)
+                    if report.get("encrypted_execution")is not True or "ckks_comparison"not in report:
+                        entry.update(phase="failed",outcome=report.get("status"))
+                        state["status"]=report["status"] if report.get("status")in TERMINAL else "service_error"
+                        state["failure"]=failure(report);state=self._save(path,state);break
+                    new=dict(receipt=report,binding=report["binding"]);checked=dict(cache);checked[name]=new
+                    self._driver(path,plan,dataset,checked).advance(max_new_parts=0)
+                    raw=canonical(report)
+                    if state["receipt_bytes"]+len(raw)>plan["max_receipt_bytes"]:
+                        entry.update(phase="failed",outcome="budget_exhausted")
+                        state["status"]="budget_exhausted"
+                        state["failure"]=AssessmentControllerError("assessment_controller_receipt_budget_exhausted").feedback()
+                        state=self._save(path,state);break
+                    write_new(path/"receipts"/(name+".json"),report)
+                    state["receipts"][name]=dict(binding=report["binding"],sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw))
+                    state["receipt_bytes"]+=len(raw);entry.update(phase="recorded",outcome=report["status"])
+                    state["status"]="ready";state=self._save(path,state);cache[name]=new
+                except Exception:
+                    entry.update(phase="failed",outcome="service_error");state["status"]="service_error"
+                    state["failure"]=AssessmentControllerError("assessment_controller_environment_unavailable").feedback()
+                    state=self._save(path,state);break
+            return self._frame(path,handle,plan,state,dataset,cache)

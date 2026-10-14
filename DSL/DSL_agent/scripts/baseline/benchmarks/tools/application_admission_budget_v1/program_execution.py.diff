@@ -1,0 +1,20 @@
+--- before/program_execution.py
++++ after/program_execution.py
+@@ -130,7 +130,7 @@
+     """Compatibility interface for callers reading the output tree."""
+     return package_execution_metadata(folder,manifest,model)["output_structure"]
+ 
+-def execute_program(folder, samples):
++def execute_program(folder, samples, *, artifact_observer=None):
+     """Execute 1..16 named samples; package verification remains mandatory."""
+     from candidate_bundle import check_execution_dependencies
+     from hecate_python_env import WORK, VENV, digest
+@@ -154,6 +154,8 @@
+     packed = _pack_logical_samples(request, logical)
+     start_identity = identity()
+     evidence = Path(tempfile.mkdtemp(prefix="poseidon-program-execution-", dir=WORK/"results"))
++    if artifact_observer is not None:
++        artifact_observer(evidence)
+     output = evidence/"output"
+     output.mkdir()
+     copy_checked_artifacts(folder, manifest, output)

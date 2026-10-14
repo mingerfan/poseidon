@@ -1,0 +1,50 @@
+{
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "default": "poseidon-trusted-pytorch-v18",
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-latest-broadcast-controls-v1",
+  "latest": "poseidon-trusted-pytorch-v28",
+  "skipped": 0,
+  "source_manifests": [
+    {
+      "context": "expand_as__arithmetic",
+      "identical": true,
+      "manifest": "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/expand_as__arithmetic/source/manifest.json",
+      "sha256": "05862a0d78ad20556fbe2bc67d06e18931504e968cd0da4725c1f357caebd617"
+    },
+    {
+      "context": "expand_as__transpose_alias",
+      "identical": true,
+      "manifest": "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/expand_as__transpose_alias/source/manifest.json",
+      "sha256": "42c85188f24340aec6cab1d5bcf413571ec1fa416020474cb7a4b73762a9ec20"
+    },
+    {
+      "context": "expand_as__scalar_linear",
+      "identical": true,
+      "manifest": "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/expand_as__scalar_linear/source/manifest.json",
+      "sha256": "9c71d15da6f7f2cfc752fe47aa761843b63869b2d4467be38997cb86e3f424d4"
+    },
+    {
+      "context": "broadcast_to__arithmetic",
+      "identical": true,
+      "manifest": "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/broadcast_to__arithmetic/source/manifest.json",
+      "sha256": "611f6ff16073219105b216f31e5f30c894947f06d3cba62cce1ce75dd5d08e16"
+    },
+    {
+      "context": "broadcast_to__transpose_alias",
+      "identical": true,
+      "manifest": "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/broadcast_to__transpose_alias/source/manifest.json",
+      "sha256": "7271daa4bceeed9fec4ca888cfc901c8a38e3f77169869aae7f253fa6f4833db"
+    },
+    {
+      "context": "broadcast_to__scalar_linear",
+      "identical": true,
+      "manifest": "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/requests-v3/broadcast_to__scalar_linear/source/manifest.json",
+      "sha256": "269257071a368b6c73a6526d50157d930fd591eef5f0ea779cccba0900db3cac"
+    }
+  ],
+  "tests": 18
+}

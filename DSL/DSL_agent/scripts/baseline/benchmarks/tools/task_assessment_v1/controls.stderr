@@ -1,0 +1,27 @@
+test_approximation_and_ckks_errors_are_separate_in_three_contexts (test_task_numerical_assessment.AssessmentTests) ... ok
+test_bad_metrics_do_not_execute (test_task_numerical_assessment.AssessmentTests) ... ok
+test_bad_outputs_are_rejected_without_disclosing_them (test_task_numerical_assessment.AssessmentTests) ... ok
+test_cancelled_and_pending_tasks_do_not_execute (test_task_numerical_assessment.AssessmentTests) ... ok
+test_compiled_package_grade_is_not_rewritten (test_task_numerical_assessment.AssessmentTests) ... ok
+test_conversion_hooks_in_criterion_are_not_executed (test_task_numerical_assessment.AssessmentTests) ... ok
+test_dependency_drift_after_execution_is_rejected (test_task_numerical_assessment.AssessmentTests) ... ok
+test_domain_rejection_stops_before_execution_and_redacts_values (test_task_numerical_assessment.AssessmentTests) ... ok
+test_explicit_max_error_criterion_cannot_hide_ckks_failure (test_task_numerical_assessment.AssessmentTests) ... ok
+test_frozen_threshold_boundary_is_inclusive (test_task_numerical_assessment.AssessmentTests) ... ok
+test_invalid_samples_stop_before_execution (test_task_numerical_assessment.AssessmentTests) ... ok
+test_no_application_criterion_does_not_impose_original_threshold (test_task_numerical_assessment.AssessmentTests) ... ok
+test_original_execution_failure_stays_a_failure (test_task_numerical_assessment.AssessmentTests) ... ok
+test_reference_mismatch_stops_before_execution (test_task_numerical_assessment.AssessmentTests) ... ok
+test_repeat_and_cached_task_do_not_regenerate_or_compile (test_task_numerical_assessment.AssessmentTests) ... ok
+test_sample_snapshot_is_detached_from_caller_buffers (test_task_numerical_assessment.AssessmentTests) ... ok
+test_sixteen_samples_and_seventeen_rejection (test_task_numerical_assessment.AssessmentTests) ... ok
+test_three_shapes_compare_all_values_without_source_accuracy_claim (test_task_numerical_assessment.AssessmentTests) ... ok
+test_top1_drop_and_label_shapes_are_explicit (test_task_numerical_assessment.AssessmentTests) ... ok
+test_top1_success_never_replaces_elementwise_comparison (test_task_numerical_assessment.AssessmentTests) ... ok
+test_wrong_execution_identity_and_private_key_flag_are_rejected (test_task_numerical_assessment.AssessmentTests) ... ok
+test_wrong_package_binding_stops_before_execution (test_task_numerical_assessment.AssessmentTests) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 5.397s
+
+OK

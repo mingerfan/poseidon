@@ -1,0 +1,129 @@
+--- a/third_party/ckks-runtime-agent/runtime/runtime.hpp
++++ b/third_party/ckks-runtime-agent/runtime/runtime.hpp
+@@ -108,6 +108,12 @@
+         if (it == entries_.end()) throw std::runtime_error("ValueId is absent from local ValueStore: " + std::to_string(id));
+         return it->second;
+     }
++    void erase_ready(ValueId id) {
++        auto it = entries_.find(id);
++        if (it == entries_.end() || !std::holds_alternative<Ready>(it->second))
++            throw std::runtime_error("cannot release absent/pending host value");
++        entries_.erase(it);
++    }
+     const std::unordered_map<ValueId, Entry> &entries() const { return entries_; }
+ private:
+     std::unordered_map<ValueId, Entry> entries_;
+@@ -130,7 +136,8 @@
+     RunArtifact<Value> run(const LoadedRuntimePlan &loaded_plan,
+                            const RuntimeResources &resources,
+                            const std::unordered_map<ValueId, Value> &local_inputs,
+-                           DiffMode diff_mode = DiffMode::FinalOnly) {
++                           DiffMode diff_mode = DiffMode::FinalOnly,
++                           bool release_consumed_host_values = false) {
+         plan_ = &loaded_plan.plan;
+         plan_source_sha256_ = loaded_plan.source_sha256;
+         current_ = nullptr;
+@@ -140,6 +147,8 @@
+         reset_parallel_execution_state();
+         bundle_slots_.clear();
+         return_all_values_ = diff_mode == DiffMode::AllValuesAfterRun;
++        release_host_values_ = release_consumed_host_values;
++        remaining_host_uses_.clear();
+         timing_ = RuntimeTiming{};
+         ThreadTrace::set_thread_name("rank-" + std::to_string(rank_) + "-main");
+         open_trace();
+@@ -153,11 +162,14 @@
+             const PlanRequirements requirements = PlanVerifier::verify(
+                 *plan_, resources.operator_spec, resources.skip_artifact_digest_checks);
+             PlanVerifier::verify_runtime_target(*plan_, rank_, world_size_, local_devices_);
++            prepare_host_releases();
+             load_bundle(resources);
+             api_.preflight(loaded_plan.source_sha256,
+                            resources.skip_artifact_digest_checks,
+                            plan_->target, resources.operator_spec.spec, requirements);
+             bind_inputs(local_inputs);
++            if (release_host_values_)
++                for (ValueId id : plan_->external_inputs) release_unused_host_value(id);
+ 
+             const auto initialization_start = std::chrono::steady_clock::now();
+             timing_.setup_nanoseconds = elapsed_nanoseconds(
+@@ -337,6 +349,43 @@
+         if (inputs.size() != expected) throw std::runtime_error("unexpected local external input binding");
+     }
+ 
++    void prepare_host_releases() {
++        if (!release_host_values_) return;
++        if (return_all_values_ || world_size_ != 1 || local_devices_ != 0 ||
++            device_execution_mode_ != DeviceExecutionMode::Sequential)
++            throw std::runtime_error("host releases require single-host FinalOnly execution");
++        for (const auto &value : plan_->values)
++            if (value.place.kind != PlaceKind::Host || value.place.rank != rank_)
++                throw std::runtime_error("host releases cannot run a nonlocal/device plan");
++        for (const auto *phase : {&plan_->initialization, &plan_->execution, &plan_->finalization}) {
++            for (const auto &instruction : *phase) {
++                if (const auto *op = std::get_if<ComputeOp>(&instruction.body)) {
++                    for (ValueId id : op->inputs) ++remaining_host_uses_[id];
++                } else if (!std::holds_alternative<EncodeOp>(instruction.body)) {
++                    throw std::runtime_error("host releases do not support communication");
++                }
++            }
++        }
++        for (ValueId id : plan_->final_outputs) ++remaining_host_uses_[id];
++    }
++
++    void release_unused_host_value(ValueId id) {
++        if (!release_host_values_) return;
++        auto it = remaining_host_uses_.find(id);
++        if (it == remaining_host_uses_.end() || it->second == 0) store_.erase_ready(id);
++    }
++
++    void release_compute_inputs(const ComputeOp &op) {
++        if (!release_host_values_) return;
++        for (ValueId id : op.inputs) {
++            auto &uses = remaining_host_uses_.at(id);
++            if (uses == 0) throw std::runtime_error("host value use accounting underflow");
++            --uses;
++            if (uses == 0) store_.erase_ready(id);
++        }
++        release_unused_host_value(op.output);
++    }
++
+     void execute_phase(const std::vector<Instruction> &instructions) {
+         for (const auto &instruction : instructions) {
+             current_ = &instruction;
+@@ -361,6 +410,7 @@
+         Value output = api_.encode_plaintext(output_desc, slots);
+         api_.validate_value(output, output_desc);
+         store_.define_ready(op.output, output_desc.place, std::move(output));
++        release_unused_host_value(op.output);
+     }
+ 
+     Value &ensure_ready(ValueId id, const Place &expected_place) {
+@@ -397,6 +447,7 @@
+         const auto &output_desc = desc(op.output);
+         api_.validate_value(output, output_desc);
+         store_.define_ready(op.output, op.place, std::move(output));
++        release_compute_inputs(op);
+     }
+ 
+     void execute_communication(const CommAction &action) {
+@@ -1051,6 +1102,8 @@
+     std::mutex parallel_failure_mutex_;
+     std::exception_ptr parallel_failure_;
+     bool return_all_values_ = false;
++    bool release_host_values_ = false;
++    std::unordered_map<ValueId, std::size_t> remaining_host_uses_;
+ };
+ 
+ } // namespace fhegpu
+--- a/src/poseidon/tools/agent_runtime/cpu_runner.cpp
++++ b/src/poseidon/tools/agent_runtime/cpu_runner.cpp
+@@ -74,7 +74,7 @@
+   }
+   fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(0,1,0,api);
+   fhegpu::RuntimeResources resources{spec,std::filesystem::path(argv[3]),false};
+-  auto result=runtime.run(loaded,resources,inputs);
++  auto result=runtime.run(loaded,resources,inputs,fhegpu::DiffMode::FinalOnly,true);
+   Json sample_out=Json::array();
+   for(auto id:loaded.plan.final_outputs){
+    Plaintext plain;dec.decrypt(result.values.at(id).value.ciphertext(),plain);

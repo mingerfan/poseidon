@@ -1,0 +1,292 @@
+{
+  "api_calls": 0,
+  "binding": "812da418e818822d6d4f63927b9853b809dcc328911162a6655a162eb5133524",
+  "cases": [
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 6,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 8,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "fixed_original_math_profile",
+      "id": "self_post_linear_residual",
+      "manifest": "source_fixtures/self_post_linear_residual/manifest.json",
+      "manifest_sha256": "f0c41c58b09a5ecd1024cabe4166f1e2c9f0fa88db865fce3c97826dabd448bb",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "e407f508da49a5a30732276f51ea837751e3d064e07072026f69145623ab8eff",
+      "weight_elements": 100,
+      "weight_files": 6
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 6,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 8,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "fixed_original_math_profile",
+      "id": "linear_into_separate_cross_none",
+      "manifest": "source_fixtures/linear_into_separate_cross_none/manifest.json",
+      "manifest_sha256": "77e9b9163fe1214dc174e3feb67fc1d13e3e4f43f7911073a0868794d32eb2ae",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "6bd3799a9f4b586434371812e4fa8309d76f3f72ec88b04e61ed6035a1094c4f",
+      "weight_elements": 84,
+      "weight_files": 8
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 6,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 8,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "fixed_original_math_profile",
+      "id": "boolean_padding_residual",
+      "manifest": "source_fixtures/boolean_padding_residual/manifest.json",
+      "manifest_sha256": "fab6aa193b914c0624d050c817f0b4e8975fb9ccc4960c898e7efe461cdfa0e7",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "c617b310b89a623ebe2a8e209be8230717dca81b1e9e0e4ecc4ecba9c8559fe2",
+      "weight_elements": 33,
+      "weight_files": 6
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 6,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 8,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "fixed_original_math_profile",
+      "id": "additive_heads_post_linear",
+      "manifest": "source_fixtures/additive_heads_post_linear/manifest.json",
+      "manifest_sha256": "ee6507c7c9651770d5e28c801b9fabc1f26971cb4da13f6f022e894f3e1242fd",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "897b48ef204a8cf2983537443c848d6bf150dc24e1325b2a8590843fb1a8a367",
+      "weight_elements": 102,
+      "weight_files": 8
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 6,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 8,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "fixed_original_math_profile",
+      "id": "unbatched_cross_none",
+      "manifest": "source_fixtures/unbatched_cross_none/manifest.json",
+      "manifest_sha256": "6f3376e6e1e45464b5a25566342a24111dc1c787ed4bb0cd592bd3957770a595",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "fe0eb2b61f2a502106fc964753cdfd54f1eb4e3eadb28d8e544cddca08c020d0",
+      "weight_elements": 80,
+      "weight_files": 4
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 6,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 8,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "fixed_original_math_profile",
+      "id": "sequence_first_bias_zero",
+      "manifest": "source_fixtures/sequence_first_bias_zero/manifest.json",
+      "manifest_sha256": "5ebb9d4179d22f500e3cfdb360d3678f36dee5224da19ede672483384274bd2e",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "bafde82d62bdf79c84288500787a67980cd66c1e222c80b43dd2897afecd57a5",
+      "weight_elements": 34,
+      "weight_files": 8
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 1,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 1,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "separate_declared_shallow_feasibility",
+      "id": "self_post_linear_residual__declared_shallow_v1",
+      "manifest": "source_fixtures/self_post_linear_residual__declared_shallow_v1/manifest.json",
+      "manifest_sha256": "24a89b13aeefc6ac3e2c6dc78063d07497938b8f1698388971f6d31bbd0fba6c",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "e407f508da49a5a30732276f51ea837751e3d064e07072026f69145623ab8eff",
+      "weight_elements": 100,
+      "weight_files": 6
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 1,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 1,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "separate_declared_shallow_feasibility",
+      "id": "linear_into_separate_cross_none__declared_shallow_v1",
+      "manifest": "source_fixtures/linear_into_separate_cross_none__declared_shallow_v1/manifest.json",
+      "manifest_sha256": "f35c7a28cae57c61b7d1ad0220d876f076ced5f795ed25daf33d7e41801d4886",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "6bd3799a9f4b586434371812e4fa8309d76f3f72ec88b04e61ed6035a1094c4f",
+      "weight_elements": 84,
+      "weight_files": 8
+    },
+    {
+      "agent_status": "not_run",
+      "approximation": {
+        "exp": {
+          "degree": 1,
+          "domain": [
+            -0.5,
+            0.5
+          ],
+          "method": "taylor"
+        },
+        "reciprocal": {
+          "domain": [
+            0.5,
+            8.0
+          ],
+          "iterations": 1,
+          "method": "goldschmidt"
+        }
+      },
+      "backend_status": "not_run",
+      "configuration_kind": "separate_declared_shallow_feasibility",
+      "id": "boolean_padding_residual__declared_shallow_v1",
+      "manifest": "source_fixtures/boolean_padding_residual__declared_shallow_v1/manifest.json",
+      "manifest_sha256": "9098dc0ff89c07c41a2e60823be4d55aaec527f59327b8e6613c025707f2539c",
+      "original_accuracy_certified": false,
+      "source_capture_status": "not_run",
+      "source_sha256": "c617b310b89a623ebe2a8e209be8230717dca81b1e9e0e4ecc4ecba9c8559fe2",
+      "weight_elements": 33,
+      "weight_files": 6
+    }
+  ],
+  "compiler_calls": 0,
+  "encrypted_executions": 0,
+  "format": "poseidon-ordered-mha-source-fixtures-v1",
+  "implementation_sha256": "e3baf602d112c6e02e771599c1dcbe4aff63f8a53098ce8bb1418f2496193072",
+  "production_activation": false,
+  "reference_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-mha-ordered-composition-reference-v1/report.json",
+  "reference_report_binding": "dbce73028d2835ce17a82d839e903e0e61d50a1f7a92ca7b1880f2241fdd090f"
+}

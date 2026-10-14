@@ -1,0 +1,45 @@
+@hc.func('c,c,c')
+def golden(x0, x1, zero_ct):
+    v0 = x0.rotate(1)
+    v1 = v0 * pv0
+    v2 = x0 * pv0
+    v3 = v2.rotate(1)
+    v4 = v3.rotate(2)
+    v5 = v4 * pv4
+    v6 = v1 + v5
+    v7 = x0.rotate(2)
+    v8 = v7 * pv0
+    v9 = v8.rotate(2)
+    v10 = v6 + v9
+    v11 = v3 * pv4
+    v12 = v10 + v11
+    v13 = v12 * pv5
+    v14 = v12.rotate(2)
+    v15 = v14 * pv6
+    v16 = v13 + v15
+    v17 = v0.rotate(2)
+    v18 = v17 * pv0
+    v19 = v18 + v5
+    v20 = x1 * pv0
+    v21 = v20.rotate(2)
+    v22 = v19 + v21
+    v23 = v22 + v11
+    v24 = v23.rotate(2)
+    v25 = v24 * pv10
+    v26 = v16 + v25
+    v27 = v26 + pv13
+    v28 = v12 * pv7
+    v29 = v14 * pv8
+    v30 = v28 + v29
+    v31 = v23 * pv11
+    v32 = v24 * pv6
+    v33 = v31 + v32
+    v34 = v30 + v33
+    v35 = v34 + pv14
+    v36 = v14 * pv9
+    v37 = v23 * pv12
+    v38 = v24 * pv8
+    v39 = v37 + v38
+    v40 = v36 + v39
+    v41 = v40 + pv15
+    return [v27, v35, v41]

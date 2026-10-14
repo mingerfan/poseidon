@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "sdk": "79dd8de151db680469d8de5a2a771e4a4f30161e9d6ff1ee3527466360f81b56",
+  "tests_line": "Ran 74 tests in 6.907s",
+  "log_sha256": "43eb3aba5d243601ad5aadc5c401542614234d0686f76640b2a6b37954e35077",
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

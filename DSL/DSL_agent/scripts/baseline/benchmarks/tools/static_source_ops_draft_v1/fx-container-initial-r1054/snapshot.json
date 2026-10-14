@@ -1,0 +1,10 @@
+{
+  "source_hashes": {
+    "source_ops_draft.py": "d4b08c786a2567d269c14bb90e0407009ea108c88c90eb48e92023b3377f0fad",
+    "test_source_ops_draft.py": "67197af5aaaadd070acd4da7962db4a93b3b6aa6097bb9888367c288feb533c7",
+    "fx_source_ops_draft.py": "4282344dc7bc187dfd02c718d109faedb50f0439f07f6bb59f5112d84e65b5e9",
+    "test_fx_source_ops_draft.py": "46aa81e817330ecff805d19b830778fd4947b7a65ea257dd4786e5f94767f988",
+    "audit.py": "f6d8dab342cf4eea30d44a3eac23e40e917755e6dca9fff376ab0d513f9542e1"
+  },
+  "failed_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-source-ops-draft-r1054.log"
+}

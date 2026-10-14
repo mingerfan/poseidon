@@ -1,0 +1,32 @@
+"""Read-only check of pinned source, reports, models and program artifacts."""
+import os,sys,json,hashlib,shlex
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[5]
+sys.path.insert(0,str(ROOT/"scripts/baseline"))
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from hecate_python_env import VENV,enter_nix
+if os.environ.get("IN_NIX_SHELL")!="pure" or Path(sys.prefix)!=VENV:
+    command="PYTHONPATH="+shlex.quote(str(ROOT/"scripts/baseline"))+' LD_LIBRARY_PATH="$HECATE_PYTHON_LIBRARY_PATH" OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 '
+    command+=shlex.quote(str(VENV/"bin/python"))+" -B "+shlex.quote(__file__)
+    sys.exit(enter_nix(command,seconds=60,environment="poseidon-cpu"))
+from offline_cpu_continuation import verify
+from benchmark_graph import digest,require
+plan,continuation=verify()
+path=ROOT/"docs/baseline/agent-application-control-offline-results-r1383.json"
+value=json.loads(path.read_text())
+require(value["binding"]==digest({k:v for k,v in value.items()if k!="binding"}),"result_binding")
+require(value["proposal_binding"]==plan["binding"] and value["continuation_binding"]==continuation["binding"] and
+        value["sdk_identity"]==plan["sdk_identity"],"result_identity")
+count=0
+for field in ("source_files","evidence_files"):
+    for name,expected in value[field].items():
+        p=Path(name)if Path(name).is_absolute()else ROOT/name
+        require(hashlib.sha256(p.read_bytes()).hexdigest()==expected,"result_file_integrity")
+        count+=1
+require((value["passed"],value["failed"],value["skipped"],value["not_run"])==(3,0,0),"result_scope")
+print(json.dumps(dict(format="poseidon-readonly-acceptance-inspection-v1",status="intact",
+    binding=value["binding"],sdk_identity=value["sdk_identity"],checked_files=count,
+    historical_compilations=value["compiler_calls"],historical_encrypted_calls=value["encrypted_calls"],
+    inspection_compiler_calls=0,inspection_encrypted_calls=0,inspection_provider_calls=0,
+    compared_group_times=value["total_group_times"],compared_values=value["total_values"],
+    maximum_absolute_error=value["maximum_absolute_error"]),indent=2))

@@ -1,0 +1,2141 @@
+{
+  "active_agent_capability": false,
+  "agent_generated": false,
+  "api_calls": 0,
+  "binding": "fc0f12a8a1a5195150d159b5a24d22ebdc1ab607183002bf9ccd582becc5bd9c",
+  "compiler_calls": 0,
+  "elapsed_seconds": 0.8068710779916728,
+  "encrypted_calls": 0,
+  "format": "poseidon-spatial-draft-math-acceptance-v1",
+  "lowered_structure_signatures": 30,
+  "lowered_topology_groups": 15,
+  "mae": 1.7529110982627393e-18,
+  "maximum_reference_difference": 4.440892098500626e-16,
+  "model_output_values": 13120,
+  "model_probe_groups": 672,
+  "models": 42,
+  "numpy_version": "1.25.2",
+  "original_frozen_benchmark_changed": false,
+  "python": "3.10.14",
+  "reference_comparisons": 39360,
+  "rows": [
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "c4a3f85589ac8be01de7047dc9deecabbf556ee1460981a1638854e3269ddbff",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "ad6a08643b3e3ee29638cffb5a476acc3ebc5f1ff75d6150b9cf5470da07e895",
+        "no_dsl_answer": true,
+        "original_sha256": "8c92853eeab7cdf6f1d695b6f66ed59b554ee4c72c5af32f73bad1ed1d773a5c",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              3
+            ],
+            "matrix_elements": 15,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              5
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 80,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_nearest_0",
+      "lowered_sha256": "ad6a08643b3e3ee29638cffb5a476acc3ebc5f1ff75d6150b9cf5470da07e895",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "8c92853eeab7cdf6f1d695b6f66ed59b554ee4c72c5af32f73bad1ed1d773a5c"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "42bb093b7f5eefcbad46135e057b71915f5e45d53486239df800d69c5f8f11a7",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "563210adfa7fdd0463308679a65b764e90cf1ce01fe69ba83924b133fc24e010",
+        "no_dsl_answer": true,
+        "original_sha256": "8c5c5c706f80d720a31b8debf47b370d91651942036bc871ad1917a0f522ccf4",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              2,
+              2,
+              3
+            ],
+            "matrix_elements": 15,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              2,
+              2,
+              5
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 320,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_nearest_1",
+      "lowered_sha256": "563210adfa7fdd0463308679a65b764e90cf1ce01fe69ba83924b133fc24e010",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "8c5c5c706f80d720a31b8debf47b370d91651942036bc871ad1917a0f522ccf4"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "16be07a43471ec1a336024b8d3b7e7c0752f14bea816d4a45f73c9fec44d6dc6",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "5f00aafe9b7f32a03351046740e2299edf41e947be53ab077d7a810c3452ebfe",
+        "no_dsl_answer": true,
+        "original_sha256": "b939f05e6e43ce78e6e96c607c0af0d6641c18f224943143e70dd47b4189030a",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              2,
+              4
+            ],
+            "matrix_elements": 16,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              2,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 128,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_nearest_2",
+      "lowered_sha256": "5f00aafe9b7f32a03351046740e2299edf41e947be53ab077d7a810c3452ebfe",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "b939f05e6e43ce78e6e96c607c0af0d6641c18f224943143e70dd47b4189030a"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "a402aa24fdeb630e60bffda555e984a1d8ac4d3780f0a43350237de5bfb71499",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "c9e84d4842384255b1fb1f4fe4a9ea2a0f9b4e5ac3fa8384bd2f32a770702381",
+        "no_dsl_answer": true,
+        "original_sha256": "54997d591f0e4596b4f68b117d3efcf594c171d10e6c896f19e84851036e12ab",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              3
+            ],
+            "matrix_elements": 15,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              5
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 80,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_nearest_exact_0",
+      "lowered_sha256": "c9e84d4842384255b1fb1f4fe4a9ea2a0f9b4e5ac3fa8384bd2f32a770702381",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "54997d591f0e4596b4f68b117d3efcf594c171d10e6c896f19e84851036e12ab"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "95160780b192723e4993d5fbf532d4bce2a60835e8457fa0ecb30a99a0088e39",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "baab475f59ca883abd636d2cbf17203e15a42c4c6c48944005a89e98ba7ce8fd",
+        "no_dsl_answer": true,
+        "original_sha256": "e7896fee35671bdcd8554812a97d6d1f7a05ed819e83b3573fc4092cb16d5627",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              2,
+              2,
+              3
+            ],
+            "matrix_elements": 15,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              2,
+              2,
+              5
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 320,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_nearest_exact_1",
+      "lowered_sha256": "baab475f59ca883abd636d2cbf17203e15a42c4c6c48944005a89e98ba7ce8fd",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "e7896fee35671bdcd8554812a97d6d1f7a05ed819e83b3573fc4092cb16d5627"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "197e1fb3200fdbc63484edcc8db2147854eb633ec97ccfb6eb06da67d6319eef",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "7408e492bb604f9160a20530fb32c0c67703bfcf1c8479c641003d80fdf8f311",
+        "no_dsl_answer": true,
+        "original_sha256": "1634f41463dee879a6ece328529bd8ec92e28ad46b87e29a6d34fc6da56bca5c",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              2,
+              4
+            ],
+            "matrix_elements": 16,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              2,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 128,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_nearest_exact_2",
+      "lowered_sha256": "7408e492bb604f9160a20530fb32c0c67703bfcf1c8479c641003d80fdf8f311",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "1634f41463dee879a6ece328529bd8ec92e28ad46b87e29a6d34fc6da56bca5c"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "2d8650391dd20788cc3ba825828043b40b6cc6f682a6f1a57d73f3df406cc952",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "4ddabb7b43c84d0071cfaa89481d358ddf6b4d6c7e2ba8aa37794bf73ce1d10e",
+        "no_dsl_answer": true,
+        "original_sha256": "928bf37192eec80bd4d8807594a0ca9a8cb051ccb7d349fcfb8332c18bdf9bcb",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              3
+            ],
+            "matrix_elements": 15,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              5
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 80,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_linear_0",
+      "lowered_sha256": "4ddabb7b43c84d0071cfaa89481d358ddf6b4d6c7e2ba8aa37794bf73ce1d10e",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "928bf37192eec80bd4d8807594a0ca9a8cb051ccb7d349fcfb8332c18bdf9bcb"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "37983f6380fdad6e951630fbb1fc4e7569ab798bb287352b4e7930073842418a",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "6a0f3a9ac5eabb5ca9f81630e89ee54d2fb9a02ddf8fb0162e9cfc42c81893b5",
+        "no_dsl_answer": true,
+        "original_sha256": "fa071bb8568e5709d6dae86e721de41ed42c7f3c26878fdf60b145bfee96a446",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              2,
+              2,
+              3
+            ],
+            "matrix_elements": 15,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              2,
+              2,
+              5
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 320,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_linear_1",
+      "lowered_sha256": "6a0f3a9ac5eabb5ca9f81630e89ee54d2fb9a02ddf8fb0162e9cfc42c81893b5",
+      "maximum_reference_difference": 4.440892098500626e-16,
+      "original_sha256": "fa071bb8568e5709d6dae86e721de41ed42c7f3c26878fdf60b145bfee96a446"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "130a6735538cd2d8052bda113585c819bdedf6c4510ba7270a569a522e33c7f3",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "28cff159e3c8ccdd9790f1bb8dbdc400694ff6e036b41a5a234ce8590085d49d",
+        "no_dsl_answer": true,
+        "original_sha256": "8dc190beec872406c1dc9ed05130c6e443a647300bd5c76f1001ce1acb3bbf26",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              2,
+              4
+            ],
+            "matrix_elements": 16,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              2,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 128,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_1d_linear_2",
+      "lowered_sha256": "28cff159e3c8ccdd9790f1bb8dbdc400694ff6e036b41a5a234ce8590085d49d",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "8dc190beec872406c1dc9ed05130c6e443a647300bd5c76f1001ce1acb3bbf26"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "6316200ecde5093a56ff1e51dc4b9c5f5198e72ebf9b6b448b53f988b1ad091e",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "7d0ad9cb05396b60f0126fddc7eb5f069e8b236958aad3a3c76cbd627d7d0a0e",
+        "no_dsl_answer": true,
+        "original_sha256": "898c3c76f6d7c370fe19b78de16b80af30b27ee90f4c08d871b161bde5bc9472",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 18,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              3,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_nearest_0",
+      "lowered_sha256": "7d0ad9cb05396b60f0126fddc7eb5f069e8b236958aad3a3c76cbd627d7d0a0e",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "898c3c76f6d7c370fe19b78de16b80af30b27ee90f4c08d871b161bde5bc9472"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "f2c500ec7bb497b0e577908c58c7d2a4c2021d57a9add7061e4d4c1c5ec522cc",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "90f9a3a76adf67d15e724a88d14d7266af1e6589916df35d8bd5a95a45f8c44c",
+        "no_dsl_answer": true,
+        "original_sha256": "89335005d51f151cee4923998113d507ded27c6f09661d59499938886cc7fe86",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "matrix_elements": 23,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              2,
+              5,
+              2
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 320,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_nearest_1",
+      "lowered_sha256": "90f9a3a76adf67d15e724a88d14d7266af1e6589916df35d8bd5a95a45f8c44c",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "89335005d51f151cee4923998113d507ded27c6f09661d59499938886cc7fe86"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "6fa17e21fdeefdcb300f3bb6a889ab760fe8c919ee3c024d87c3532baa6a70d4",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "51a5f7f3d31f7368f2a9f12c0c95c634a69c745cc43d0f3de5f628e532a648c8",
+        "no_dsl_answer": true,
+        "original_sha256": "fc45397af25f7cb8e1bf87bcaa9cbec3dea12dcda9d9aca5bd6890e75390df78",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              2,
+              1,
+              4,
+              2
+            ],
+            "matrix_elements": 14,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              2,
+              1,
+              2,
+              3
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_nearest_2",
+      "lowered_sha256": "51a5f7f3d31f7368f2a9f12c0c95c634a69c745cc43d0f3de5f628e532a648c8",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "fc45397af25f7cb8e1bf87bcaa9cbec3dea12dcda9d9aca5bd6890e75390df78"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "ce661b42c776b9855ea54b8883d33b0bfaf8900ce147c304cac3ca5cc2406ad2",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "ea52acb8b87fc12009cdc1ee948b9ec643343f41f97157e88344766f4b7d388c",
+        "no_dsl_answer": true,
+        "original_sha256": "4a08104f72afcbe4eec16f5580eae70f2b4bcb75e04b1e8118c88f814c0927a8",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 18,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              3,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_nearest_exact_0",
+      "lowered_sha256": "ea52acb8b87fc12009cdc1ee948b9ec643343f41f97157e88344766f4b7d388c",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "4a08104f72afcbe4eec16f5580eae70f2b4bcb75e04b1e8118c88f814c0927a8"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "aecfc43e1581ea858955665565c6ef69c06084b6f77723bd94d4a3b05432832a",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "9e91524202f8224f8291629a0ed291a56bf85746d63d177b8ff243f81c2b38a3",
+        "no_dsl_answer": true,
+        "original_sha256": "99958d1cf38b6f73fc2348db0b29fa71c06a205672dba155f5b38575a787c516",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "matrix_elements": 23,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              2,
+              5,
+              2
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 320,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_nearest_exact_1",
+      "lowered_sha256": "9e91524202f8224f8291629a0ed291a56bf85746d63d177b8ff243f81c2b38a3",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "99958d1cf38b6f73fc2348db0b29fa71c06a205672dba155f5b38575a787c516"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "3e2be453f2db953b747e0810c1446831356e3f7da7d6eaa0aaa5f9e45220df42",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "fb1d04332784305561147f450149939aca67ffdec6faa72d33710e09eab98cc5",
+        "no_dsl_answer": true,
+        "original_sha256": "5d82e87b89e7c5034586c2e1c46a79e89ae8d294f1adbad004dd274d12ca2dcc",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              2,
+              1,
+              4,
+              2
+            ],
+            "matrix_elements": 14,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              2,
+              1,
+              2,
+              3
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_nearest_exact_2",
+      "lowered_sha256": "fb1d04332784305561147f450149939aca67ffdec6faa72d33710e09eab98cc5",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "5d82e87b89e7c5034586c2e1c46a79e89ae8d294f1adbad004dd274d12ca2dcc"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "8accdd288c29fb8859b526372cffd61e5e0e5daf1ac68b4a7bcf8c58379eb331",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "3297879f7c10681e79ac1f99b1440d8876f598ecd4e6ec45e93a521fd7e0332c",
+        "no_dsl_answer": true,
+        "original_sha256": "e363ea4351d5682f38fb4eebd9c3186ca644abeef35c20148dbe44114e2865b0",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 18,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              3,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_bilinear_0",
+      "lowered_sha256": "3297879f7c10681e79ac1f99b1440d8876f598ecd4e6ec45e93a521fd7e0332c",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "e363ea4351d5682f38fb4eebd9c3186ca644abeef35c20148dbe44114e2865b0"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "f76b4ed7cf16cc91a0fc70a403a1cb3f84cdc143aa13cae270b3dd795327d4a2",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "de58acf3cca37a656c7db0f82ae4862d7f3b4b43c26a204e4c68b1c922174dc9",
+        "no_dsl_answer": true,
+        "original_sha256": "7e1ac1f3f11e6a74eab4d3d40ea6b0494b6ede4474115034d144454145171690",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "matrix_elements": 23,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              2,
+              5,
+              2
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 320,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_bilinear_1",
+      "lowered_sha256": "de58acf3cca37a656c7db0f82ae4862d7f3b4b43c26a204e4c68b1c922174dc9",
+      "maximum_reference_difference": 1.6653345369377348e-16,
+      "original_sha256": "7e1ac1f3f11e6a74eab4d3d40ea6b0494b6ede4474115034d144454145171690"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "a4144297ac06528d512658ca099d485a3c275efc9bcc36c13b49198598d5705d",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "7e2628360fc820f785a7ae91d14e6f94ef51461ac437119dc63fd65db2d278e6",
+        "no_dsl_answer": true,
+        "original_sha256": "6fcc9031764f22c4711d88029688d14ba21dce008307af4b1a2a75617610de5e",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              2,
+              1,
+              4,
+              2
+            ],
+            "matrix_elements": 14,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              2,
+              1,
+              2,
+              3
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "resize_2d_bilinear_2",
+      "lowered_sha256": "7e2628360fc820f785a7ae91d14e6f94ef51461ac437119dc63fd65db2d278e6",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "6fcc9031764f22c4711d88029688d14ba21dce008307af4b1a2a75617610de5e"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "515da588138cfd968c36dd23693a5eabc505337017e74251ed083c5ce0f19cd6",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "728295c534dea0e43b95f445b307e3508da0c98f939e40d65d5926fb943c8a42",
+        "no_dsl_answer": true,
+        "original_sha256": "3767145e6e7582a716b13ec55e74a65d79e7083bd60339843dc39edd8aa4536e",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_4": "transposed",
+          "generated_7": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              4
+            ],
+            "matrix_elements": 32,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "319da88c60465e4f068b690a5645fa6ee448cdf742e6281eb95398d63e2b7a6b",
+            "output_shape": [
+              2,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "146caa90de9960e6788374645f2a0062bdff6f3ee224c17a9c3ed4b24eda3af4"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_0",
+      "lowered_sha256": "728295c534dea0e43b95f445b307e3508da0c98f939e40d65d5926fb943c8a42",
+      "maximum_reference_difference": 2.7755575615628914e-17,
+      "original_sha256": "3767145e6e7582a716b13ec55e74a65d79e7083bd60339843dc39edd8aa4536e"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "9c6014a116e3bd5d7b49612c1e303c8281e3756d34b5d48d3bb0d2d60e487ae2",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "0673c22d9e1eccaf2db51dca8a0d1bea933f66e4e13eae7c76b9bd90d797eb0c",
+        "no_dsl_answer": true,
+        "original_sha256": "e208e3ee87739931e26c750c6a891cffa7ec31ece357add17e6a390ac15cd85a",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              4,
+              3
+            ],
+            "matrix_elements": 21,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "fa9373b5e2d03b8a98c9f022a506c7f55eb89f06c43d5487507a2157791e9793",
+            "output_shape": [
+              1,
+              2,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "ecc6e23f0c07c511b34466d1d3a6c6ffd45dddda13fd018c7ec85c259aa1a826"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_1",
+      "lowered_sha256": "0673c22d9e1eccaf2db51dca8a0d1bea933f66e4e13eae7c76b9bd90d797eb0c",
+      "maximum_reference_difference": 5.551115123125783e-17,
+      "original_sha256": "e208e3ee87739931e26c750c6a891cffa7ec31ece357add17e6a390ac15cd85a"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "18f23034bc23fe023e9421fba963051d1ef74b7f9ff0d7fe246341f0fd458e20",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "07d0ee88f49383df8eb1690e932ac540191593e6665a8c324a246e26075db117",
+        "no_dsl_answer": true,
+        "original_sha256": "63ab71cd477c28b9cd35e4f245f637caa200f7311523d18bf74f402650948156",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              2,
+              5
+            ],
+            "matrix_elements": 45,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "ffd1ecbaac8e71378689387e6e1d96ba263892ff418b4be0969328f194e0e896",
+            "output_shape": [
+              1,
+              2,
+              5
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "41313c1fd88a8c5e4b71003eefd316de4393a8d1c156f40d2244992575fec56b"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 160,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_2",
+      "lowered_sha256": "07d0ee88f49383df8eb1690e932ac540191593e6665a8c324a246e26075db117",
+      "maximum_reference_difference": 2.7755575615628914e-17,
+      "original_sha256": "63ab71cd477c28b9cd35e4f245f637caa200f7311523d18bf74f402650948156"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "4c8f6619ab07901201df79f1cd148ef5037a43faba56aa5fc59c00fffdebecb5",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "18d9bd7261e5892d5c8cc153946d2d39e3519b752596fa3e7ece7fc3689aa231",
+        "no_dsl_answer": true,
+        "original_sha256": "a22a2b4341c7da7a7c5fc2621b548f1a6d4d64e277702b54e7ab5b034e757f1c",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 24,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "8748d31763dc2c4e39fa03d3f7b52fcc56b924916754c93f98e7b1859e81fdf1",
+            "output_shape": [
+              1,
+              2,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "36cc6022444760dcf3f4f6848efc109b9373b44dd313e2dbe3401d0dc66ef0ce"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_3",
+      "lowered_sha256": "18d9bd7261e5892d5c8cc153946d2d39e3519b752596fa3e7ece7fc3689aa231",
+      "maximum_reference_difference": 5.551115123125783e-17,
+      "original_sha256": "a22a2b4341c7da7a7c5fc2621b548f1a6d4d64e277702b54e7ab5b034e757f1c"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "af9570c5ef2a458e531b15b939cfdc2eaf459a5e6147105873dff132a58287fc",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "0702a1e21df49df0b28a07afe96a4b80d515266d8563041e376cbdedeb619a9d",
+        "no_dsl_answer": true,
+        "original_sha256": "a4875ae5a96c77cee043ac7a06fd5ff0139debcd63a86f7d05ab048005845a62",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              1,
+              3
+            ],
+            "matrix_elements": 24,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "f18de59b945097bb3581c2bc438c7c7a98dbd4be3f38c3d75c39dd8c966ce5ae",
+            "output_shape": [
+              1,
+              2,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "04d2ee266e28f0583125160fb0f68b739d88e372ba34fbce6eec76e980dd2e87"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_4",
+      "lowered_sha256": "0702a1e21df49df0b28a07afe96a4b80d515266d8563041e376cbdedeb619a9d",
+      "maximum_reference_difference": 2.7755575615628914e-17,
+      "original_sha256": "a4875ae5a96c77cee043ac7a06fd5ff0139debcd63a86f7d05ab048005845a62"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "97b0da8447be40f151a4fd59967c654670cb56e01d8ba35b813345ce6e62262d",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "c207f4e375a6f28a68e3e653b7588a37715e8f0e934c8f710d452c9d0fc79421",
+        "no_dsl_answer": true,
+        "original_sha256": "3a43c5d82f96436476c73a74f0ec2fd37dd308bdc19e684c7bc489be2d958239",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": [
+              999,
+              999
+            ],
+            "input_shape": [
+              1,
+              1,
+              3
+            ],
+            "matrix_elements": 24,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "0981199bb65590e61f370e6d0d658aa71f8cc436b22d0aecdc89289aeb97f012",
+            "output_shape": [
+              1,
+              2,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "6cb307739fff3406335646207c27a744babe6f6fee8a946652d608cdcfea50f6"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_5",
+      "lowered_sha256": "c207f4e375a6f28a68e3e653b7588a37715e8f0e934c8f710d452c9d0fc79421",
+      "maximum_reference_difference": 2.7755575615628914e-17,
+      "original_sha256": "3a43c5d82f96436476c73a74f0ec2fd37dd308bdc19e684c7bc489be2d958239"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "78e5e6c635e3750397428f1550a11b16b2bda7fc1fc66a3b5f4425cc0a4faae2",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "3009ea5109c93e1d9d35d69410c71a8fd8ef2be6131b328a975b9f4e5fcc5332",
+        "no_dsl_answer": true,
+        "original_sha256": "39a04e3d4b31a717371b67fa8d587fe4d677b9ed6a74854863930aedab150ce2",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              1,
+              6
+            ],
+            "matrix_elements": 48,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "7ec54155d32ce9c8387ee92c96f9c99c963f7981f3ed338b466dcb08b9a2b858",
+            "output_shape": [
+              1,
+              2,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "cb872da77903ef2dbd90d3662aa84ecdf594f5d787fad7765bc775ff6de26508"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 192,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_6",
+      "lowered_sha256": "3009ea5109c93e1d9d35d69410c71a8fd8ef2be6131b328a975b9f4e5fcc5332",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "39a04e3d4b31a717371b67fa8d587fe4d677b9ed6a74854863930aedab150ce2"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "c88a91b655522851e11c75e8867f6d23462b9d2c49fcd16a89f3ae36f958de2a",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "14c2520aa57a2eb22183771e9b4552bfb7f5f66a7b358b4e1ed778672d65397d",
+        "no_dsl_answer": true,
+        "original_sha256": "77a77a867a67bd03978a07bdf29d812a133497fef0ec39dc2e65e85e3cc78527",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_4": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              1,
+              1
+            ],
+            "matrix_elements": 1,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "901e94687604661c35f20bda639fdf40eded2daf9b271c753ccf03e62c6eefa5",
+            "output_shape": [
+              1,
+              1,
+              1
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "901e94687604661c35f20bda639fdf40eded2daf9b271c753ccf03e62c6eefa5"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 16,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_7",
+      "lowered_sha256": "14c2520aa57a2eb22183771e9b4552bfb7f5f66a7b358b4e1ed778672d65397d",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "77a77a867a67bd03978a07bdf29d812a133497fef0ec39dc2e65e85e3cc78527"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "076adbdb6d359b8bd0c1565adf202a53a60c40a988357202c56ef764a649c10d",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "6451fdee4d246d189264ed73c3f81dd6751b07e9215aa970cfdd8d9caca5f9e2",
+        "no_dsl_answer": true,
+        "original_sha256": "8f3589d4cb3e0067ebb44c55e57ecdd0465b6ea5a8c7649b6896b5cfe4bc6925",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_4": "transposed",
+          "generated_7": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": [
+              999
+            ],
+            "input_shape": [
+              2,
+              3
+            ],
+            "matrix_elements": 18,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "6241b116e199201ac1581b968e60f983c9a67b3b4bd38a8174a93983765b153b",
+            "output_shape": [
+              4,
+              5
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "8f6970e839e86764573f4d0e99f79076212035f1648ed1f22ca6f4ab39957ca6"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 320,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_1d_8",
+      "lowered_sha256": "6451fdee4d246d189264ed73c3f81dd6751b07e9215aa970cfdd8d9caca5f9e2",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "8f3589d4cb3e0067ebb44c55e57ecdd0465b6ea5a8c7649b6896b5cfe4bc6925"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "dfc813aa1fe38240dfd655c7cbb3b5adf73ee3bb6493b3cf37f2cf5f3d346858",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "9c75ac803655234235fe4e3c92ac74150b639af1d4ae41ab879f4cbfbfaae624",
+        "no_dsl_answer": true,
+        "original_sha256": "db8e60c7532ced6a632013f13b2a19c27130bc0151c26668d5535a2e8477f276",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_14": "transposed",
+          "generated_16": "transposed",
+          "generated_3": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 23,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "fdeab38c2e13cdd5c4de39f95e0ff0bdb2ccd06bc4dfa2e3f4adaf520dac790c",
+            "output_shape": [
+              2,
+              3,
+              4
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "7b7c1441ed17ed7eeb1a5c41a2735a7fd8f202db1cae7fd6c204f95854819389"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 384,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_0",
+      "lowered_sha256": "9c75ac803655234235fe4e3c92ac74150b639af1d4ae41ab879f4cbfbfaae624",
+      "maximum_reference_difference": 5.551115123125783e-17,
+      "original_sha256": "db8e60c7532ced6a632013f13b2a19c27130bc0151c26668d5535a2e8477f276"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "7f3d0c28b6315785d97d65096fca5caabe078a99cda17f6a79a4d166ba314c2f",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "54b784af3167fa8de6b5dc70211471367d332508317ceb8dbf5ba8dce72ef3e8",
+        "no_dsl_answer": true,
+        "original_sha256": "5a6c4ec409160129afd1691a1857f9983001dc9fbfc36aedcceb87eb64b58ad9",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              4,
+              2,
+              3
+            ],
+            "matrix_elements": 27,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "22dcfdc25b76919e3dfc4ba2cf2da15fb609598759eaeffae99f51a11daef49b",
+            "output_shape": [
+              1,
+              2,
+              5,
+              3
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "713234aaa98fe84c76a31a87009242fefaa7cc0010de73b043503c41d94ea470"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 480,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_1",
+      "lowered_sha256": "54b784af3167fa8de6b5dc70211471367d332508317ceb8dbf5ba8dce72ef3e8",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "5a6c4ec409160129afd1691a1857f9983001dc9fbfc36aedcceb87eb64b58ad9"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "8f1a596fa5c0e8c993718c38cc7bda7243a757acab4bab62c7077d7509b54dea",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "3407adf55c6ba9785892503115add906f8a944586f1e61f8bf3282e4358c2767",
+        "no_dsl_answer": true,
+        "original_sha256": "0a92f5c60e1ce39c74f2f58747771f79fcb0c543b7cfb735ebd9e48019dafab2",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "matrix_elements": 45,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "bd0b8cf70abec712a714bad416f5d5d16c76cc496cb8ce8aeeadef282aaaa8b1",
+            "output_shape": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "d5399ca76fbafba3eb3580fbd587d73d43c19805f2e1d360ebece53276fb6bc7"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 384,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_2",
+      "lowered_sha256": "3407adf55c6ba9785892503115add906f8a944586f1e61f8bf3282e4358c2767",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "0a92f5c60e1ce39c74f2f58747771f79fcb0c543b7cfb735ebd9e48019dafab2"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "f856a2dd6303c37a0793661cdcb3a54f3c2137c3b739ec1dc6896cf0c4e18859",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "ac96dcea82c8f45f387b10850fb60b0a02a8ea3a6153d787a8c156f6ec4bcb70",
+        "no_dsl_answer": true,
+        "original_sha256": "ad70849b6f6643b5b371872ca1344372e9e8838d86d3a3b133003c08bf5ceb89",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              2,
+              2,
+              3
+            ],
+            "matrix_elements": 36,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "1fab2715436c6505e21bd21abb45ce3566a1141f48fb3cb603b75e8bbceb647f",
+            "output_shape": [
+              1,
+              2,
+              4,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "c7af2d9f44169fb47e6f44de814015af6312619dd5c1e0df1df2d55c8b7a48c7"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 768,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_3",
+      "lowered_sha256": "ac96dcea82c8f45f387b10850fb60b0a02a8ea3a6153d787a8c156f6ec4bcb70",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "ad70849b6f6643b5b371872ca1344372e9e8838d86d3a3b133003c08bf5ceb89"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "761ce8eb18f89380bdd19f2a404958f0844f528134a753e4e71744ace794f1dc",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "5c151fca3c4223464d2035a5d3ced6c293cd48462b1b0f78db3e693a7bf8c047",
+        "no_dsl_answer": true,
+        "original_sha256": "16e72a867b110481b2ace12865e25bfcad1c2a052447172459b6fff94abb522d",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              1,
+              3,
+              3
+            ],
+            "matrix_elements": 48,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "168a000691f95757d6559dfc85f414b1379b42d43ec9f7ca8d87503e0c4bdb47",
+            "output_shape": [
+              1,
+              2,
+              6,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "8c99c0a2f62366633cf386ee994bb1cdb99ae2b02edb660d26904c13c9d38e43"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 1152,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_4",
+      "lowered_sha256": "5c151fca3c4223464d2035a5d3ced6c293cd48462b1b0f78db3e693a7bf8c047",
+      "maximum_reference_difference": 5.551115123125783e-17,
+      "original_sha256": "16e72a867b110481b2ace12865e25bfcad1c2a052447172459b6fff94abb522d"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "31af3ca50414cb5e84d1564885de514424bf79dedca6424dd30ca22e78735abf",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "926b6f853987b63daf154ccd4d3cc6f6e8e90aa9b1838493524efa5cfd141fe9",
+        "no_dsl_answer": true,
+        "original_sha256": "b44d87d61250287903d8315d0b7113ecaa08058372f9858d8ed339123017a601",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": [
+              999,
+              999
+            ],
+            "input_shape": [
+              1,
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 36,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "4b91be6fed5c28aaacfa87e031436e5e49479d7789416427263ed974a0933385",
+            "output_shape": [
+              1,
+              2,
+              4,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "65a360d8679b2b7c413a44fc1878d8efd4c244fba768694a8d0dae34676f7305"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 768,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_5",
+      "lowered_sha256": "926b6f853987b63daf154ccd4d3cc6f6e8e90aa9b1838493524efa5cfd141fe9",
+      "maximum_reference_difference": 5.551115123125783e-17,
+      "original_sha256": "b44d87d61250287903d8315d0b7113ecaa08058372f9858d8ed339123017a601"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "9dccace8167e4fb0e5b28b52fff6bf85c6050a8e0acb32cbac6e5475ce1910e5",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "443a73990e134d23eff4f92f7f86cfa071ba2010f8ff723191fa871db2cf9fb5",
+        "no_dsl_answer": true,
+        "original_sha256": "b80e9ddac0480d7b8d7a66bb2261410d450fbabb26c98eacfe96544d7d3cfe04",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              1,
+              4,
+              4
+            ],
+            "matrix_elements": 48,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "b761e2a402700ba370de079bb4fa7f796d7122c5ee3309f8355465a4b4b16d5f",
+            "output_shape": [
+              1,
+              2,
+              4,
+              4
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "66d3413008f24b40bfdc31331543119ca9030b7ce388887685a7058bd02ef9a5"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 512,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_6",
+      "lowered_sha256": "443a73990e134d23eff4f92f7f86cfa071ba2010f8ff723191fa871db2cf9fb5",
+      "maximum_reference_difference": 2.220446049250313e-16,
+      "original_sha256": "b80e9ddac0480d7b8d7a66bb2261410d450fbabb26c98eacfe96544d7d3cfe04"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "30987ebdcb2bf074844fb1899246a7a16c32894c716f6f2058e85ddea4e61bd8",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "27d65fc7c565ccaf1487ac5e4894486a609695598dae8958a366ce2213144377",
+        "no_dsl_answer": true,
+        "original_sha256": "a9b1db50e1f431ecc492cd985a83c131bef6221207bd87a59ce2a04963ed7b8e",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              1,
+              1,
+              2
+            ],
+            "matrix_elements": 9,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "d01b067203e6e4853b1a37783f1ed6680882a7aa066d8b03a27d3784b5515350",
+            "output_shape": [
+              1,
+              1,
+              1,
+              4
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "d01b067203e6e4853b1a37783f1ed6680882a7aa066d8b03a27d3784b5515350"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 64,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_7",
+      "lowered_sha256": "27d65fc7c565ccaf1487ac5e4894486a609695598dae8958a366ce2213144377",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "a9b1db50e1f431ecc492cd985a83c131bef6221207bd87a59ce2a04963ed7b8e"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "01e40dfe2be97bdbbc772cf60c149652b0f4f8a451b4cacdb83312ca0547f90d",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "952249f49702c3bbe1433c6572af8a3ba3b0099f80cb0712ac665eed21e9fae5",
+        "no_dsl_answer": true,
+        "original_sha256": "e4041638cf98fbdb68f2e5fd717348af22cafee5056b3a920dce0b7a389b193f",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_11": "transposed",
+          "generated_14": "transposed",
+          "generated_16": "transposed",
+          "generated_3": "transposed",
+          "generated_6": "transposed",
+          "generated_8": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              2,
+              2,
+              3
+            ],
+            "matrix_elements": 32,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "3b3b31ba78d13ddf20a0caa1e6c9d6e4ac531ed509b965a56d8ee4ab7709ac2a",
+            "output_shape": [
+              4,
+              3,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "03c23c3f64f5da199c1c2388bad868797ed8d73289fc459cf96882e5cbd378d6"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 1152,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "transpose_2d_8",
+      "lowered_sha256": "952249f49702c3bbe1433c6572af8a3ba3b0099f80cb0712ac665eed21e9fae5",
+      "maximum_reference_difference": 2.7755575615628914e-17,
+      "original_sha256": "e4041638cf98fbdb68f2e5fd717348af22cafee5056b3a920dce0b7a389b193f"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "336e7ff4ca2ffd0c80aa851408fda75a4527ac1c2808e035301712a0fb387151",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "13866d739f744e09e097af6fbd8b92daad86f258194de11a58055afd3f802cb1",
+        "no_dsl_answer": true,
+        "original_sha256": "24c7b20da0b7c1777ce5db2b4965643ac841d1b086f22b435cad4c1516585efc",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize",
+          "generated_4": "square"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              3
+            ],
+            "matrix_elements": 15,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              5
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 160,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "spatial_composition_0",
+      "lowered_sha256": "13866d739f744e09e097af6fbd8b92daad86f258194de11a58055afd3f802cb1",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "24c7b20da0b7c1777ce5db2b4965643ac841d1b086f22b435cad4c1516585efc"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "c549ce7de5f9fd03d351f28b4729b1ab06531e3ca048aa329df5fde4d377aba3",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "9428c42da11a4777ad79dde194cf43382120326cdfcefd2b4ac2d56caf7abe6f",
+        "no_dsl_answer": true,
+        "original_sha256": "27802b1dbb868c6a6b9714f8cf89b5f7c9e8db427692e21e3b8ce4ec74464910",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "resize",
+          "generated_4": "reduce"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              2,
+              4
+            ],
+            "matrix_elements": 16,
+            "nearest_vectorized_path": false,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              2,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 160,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "spatial_composition_1",
+      "lowered_sha256": "9428c42da11a4777ad79dde194cf43382120326cdfcefd2b4ac2d56caf7abe6f",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "27802b1dbb868c6a6b9714f8cf89b5f7c9e8db427692e21e3b8ce4ec74464910"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "fa94f315f25c0fcfb915b3356f92c9cee327c55cf3eb8d87f5caf12122b2d2e8",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "ea8a85023c89952506bb09b69630d0280fc23709517bdef3a15337d76aa6b7cf",
+        "no_dsl_answer": true,
+        "original_sha256": "06ab607207cffc7e9a50d22727d7ac5a1a7a3ba54016cd7e3074d931b1e77b1f",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_11": "square",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              1,
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 18,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              1,
+              1,
+              3,
+              4
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 384,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "spatial_composition_2",
+      "lowered_sha256": "ea8a85023c89952506bb09b69630d0280fc23709517bdef3a15337d76aa6b7cf",
+      "maximum_reference_difference": 0.0,
+      "original_sha256": "06ab607207cffc7e9a50d22727d7ac5a1a7a3ba54016cd7e3074d931b1e77b1f"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "e26764a8b963fb09eefca34f034b4254ee135e4ca00b29fd100026d297222e75",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "6afa12cf81157a1e3a2fc3ae440c0024c465835e45d5b31be62267821aa678d7",
+        "no_dsl_answer": true,
+        "original_sha256": "f97c4e124adfd09c0003d6f256fee7b8f6e5f7d9f568acd5a68c84423c69ee14",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "resize",
+          "generated_11": "reduce",
+          "generated_4": "resize",
+          "generated_6": "resize",
+          "generated_9": "resize"
+        },
+        "spatial_evidence": [
+          {
+            "input_shape": [
+              2,
+              1,
+              4,
+              2
+            ],
+            "matrix_elements": 14,
+            "nearest_vectorized_path": true,
+            "operator": "resize",
+            "origin": "resize",
+            "output_shape": [
+              2,
+              1,
+              2,
+              3
+            ],
+            "runtime_validated": false,
+            "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 224,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "spatial_composition_3",
+      "lowered_sha256": "6afa12cf81157a1e3a2fc3ae440c0024c465835e45d5b31be62267821aa678d7",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "f97c4e124adfd09c0003d6f256fee7b8f6e5f7d9f568acd5a68c84423c69ee14"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "d75378957e9f000299877cf74e98d448d8deedd4b408e1d24fb5eeda4753ecf5",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "3cb09315debabd2366f3fc325f2c439c24bd06640f75e881c943573601ead40d",
+        "no_dsl_answer": true,
+        "original_sha256": "ed2b45080d131731c3dcdde6fed8e65dde30fb85034a6909c9cda0a66ac5d774",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_2": "transposed",
+          "generated_5": "transposed",
+          "generated_7": "square"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              2,
+              3
+            ],
+            "matrix_elements": 24,
+            "operator": "conv_transpose1d",
+            "origin": "transposed",
+            "original_weight_sha256": "8748d31763dc2c4e39fa03d3f7b52fcc56b924916754c93f98e7b1859e81fdf1",
+            "output_shape": [
+              1,
+              2,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "36cc6022444760dcf3f4f6848efc109b9373b44dd313e2dbe3401d0dc66ef0ce"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 384,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "spatial_composition_4",
+      "lowered_sha256": "3cb09315debabd2366f3fc325f2c439c24bd06640f75e881c943573601ead40d",
+      "maximum_reference_difference": 5.551115123125783e-17,
+      "original_sha256": "ed2b45080d131731c3dcdde6fed8e65dde30fb85034a6909c9cda0a66ac5d774"
+    },
+    {
+      "agent_generated": false,
+      "binding": {
+        "active_agent_capability": false,
+        "binding_sha256": "a3d336960bf0ca351780d8afaf547b5fb86ae8a11a143b096473bb04d9c56980",
+        "format": "poseidon-spatial-draft-binding-v1",
+        "implementation_sha256": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+        "lowered_sha256": "7d9b352e40617dd21665498de23185b6ca8594557116a2337ae7f36fafbb0b7d",
+        "no_dsl_answer": true,
+        "original_sha256": "0dee32e31c8b0b38ae492656a43909aa7fb69af6aa841e6b7a55c368444163a9",
+        "resource_profile": "general-tensors-v1",
+        "runtime_layout_validated": false,
+        "source_map": {
+          "generated_1": "transposed",
+          "generated_12": "transposed",
+          "generated_14": "reduce",
+          "generated_4": "transposed",
+          "generated_6": "transposed",
+          "generated_9": "transposed"
+        },
+        "spatial_evidence": [
+          {
+            "ignored_output_size_leading": null,
+            "input_shape": [
+              1,
+              2,
+              2,
+              3
+            ],
+            "matrix_elements": 36,
+            "operator": "conv_transpose2d",
+            "origin": "transposed",
+            "original_weight_sha256": "1fab2715436c6505e21bd21abb45ce3566a1141f48fb3cb603b75e8bbceb647f",
+            "output_shape": [
+              1,
+              2,
+              4,
+              6
+            ],
+            "runtime_validated": false,
+            "transformed_weight_sha256": "c7af2d9f44169fb47e6f44de814015af6312619dd5c1e0df1df2d55c8b7a48c7"
+          }
+        ],
+        "version": "static-spatial-decomposition-draft-v1"
+      },
+      "compared_values": 800,
+      "compiled": false,
+      "encrypted_execution": false,
+      "groups": 16,
+      "id": "spatial_composition_5",
+      "lowered_sha256": "7d9b352e40617dd21665498de23185b6ca8594557116a2337ae7f36fafbb0b7d",
+      "maximum_reference_difference": 1.1102230246251565e-16,
+      "original_sha256": "0dee32e31c8b0b38ae492656a43909aa7fb69af6aa841e6b7a55c368444163a9"
+    }
+  ],
+  "runtime_layout_validated": false,
+  "source_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_math.py": "e9bd86a4d7ea1b836efc96119d1f58aa607618a69c1572d865146d8f2bc30e70",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_torch.py": "4f96357dc570e3471a7a4fdeaf841ee8687882c132b9ea8a409ba710e2f55436",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_spatial_decomposition_v1/cases.py": "e7ee64da00e9f7ba7e5a58704f4e6d18c817bbeb0640db92225f104f32d9fd47",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_spatial_decomposition_v1/draft.py": "fc3f38ed37d3f7a186f77a56d81a640e462a34cc9fe2e56f6df7c245ef632d81",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_spatial_decomposition_v1/reference.py": "019bcc5b4605c6ef9d8bdb705b88698ee7383d0b5cf4a03beeab1aac6a8ece30",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_spatial_decomposition_v1/run_math.py": "c69abc715ecb819e43246ad5cdf19fecd7c629780e5ee3a55d09bf9ca8c03e1c",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_spatial_decomposition_v1/test_draft.py": "ab3032bd0f7054b081a93ebaefd2138efb481daf9aabc24e499e395d97fef2c2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb"
+  },
+  "status": "passed",
+  "torch_cuda": null,
+  "torch_version": "2.0.1",
+  "unit_tests": {
+    "active_agent_capability": false,
+    "api_calls": 0,
+    "compiler_calls": 0,
+    "encrypted_calls": 0,
+    "errors": 0,
+    "failed": 0,
+    "format": "poseidon-spatial-draft-test-result-v1",
+    "passed": 8,
+    "skipped": 0
+  }
+}

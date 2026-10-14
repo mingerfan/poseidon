@@ -1,0 +1,18 @@
+{
+  "activation_condition": "original live batch closed and independently audited",
+  "api_calls": 0,
+  "compatibility": "previous explicit manifests remain byte-identical; latest is resolved before writing the manifest",
+  "compiler_calls": 0,
+  "default_format": "poseidon-trusted-pytorch-v18",
+  "encrypted_calls": 0,
+  "exit_code": 0,
+  "failures": 0,
+  "format": "poseidon-source-cli-draft-v2",
+  "latest_format": "poseidon-trusted-pytorch-v34",
+  "production_modified": false,
+  "proposed_cli_sha256": "3c223ec320f4481460f74009a44c518bfc7d2ab003cbaef98144721782c2f59f",
+  "seconds": 0.58995703200344,
+  "status": "passed",
+  "tests": 17,
+  "tests_sha256": "398d7e9de80701440e31180189ceba763556c0aa7d96e35984124a187797e945"
+}

@@ -1,0 +1,71 @@
+{
+  "state": "finished",
+  "completed": [
+    {
+      "stage": "rmsnorm_fixed2_frontend",
+      "returncode": 0,
+      "elapsed_seconds": 3.0061448249034584,
+      "user_seconds": 0.428936,
+      "system_seconds": 0.050991999999999996,
+      "max_rss_MiB": 70.921875,
+      "limits": {
+        "cpu_seconds": 120,
+        "address_space_GiB": 16
+      },
+      "stop_reason": null,
+      "command": [
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+        "--library-path",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+        "/opt/conda/bin/python",
+        "/tmp/poseidon-boot-placement-IUOMH1/trace_rmsnorm_fixed.py"
+      ]
+    },
+    {
+      "stage": "projection_fixed2_frontend",
+      "returncode": 0,
+      "elapsed_seconds": 3.006822641938925,
+      "user_seconds": 2.812159,
+      "system_seconds": 0.20493799999999998,
+      "max_rss_MiB": 91.5390625,
+      "limits": {
+        "cpu_seconds": 120,
+        "address_space_GiB": 16
+      },
+      "stop_reason": null,
+      "command": [
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+        "--library-path",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+        "/opt/conda/bin/python",
+        "/tmp/poseidon-boot-placement-IUOMH1/trace_projection_fixed.py"
+      ]
+    },
+    {
+      "stage": "block_fixed2_frontend",
+      "returncode": 0,
+      "elapsed_seconds": 126.1781842240598,
+      "user_seconds": 119.137074,
+      "system_seconds": 6.765436,
+      "max_rss_MiB": 846.97265625,
+      "limits": {
+        "cpu_seconds": 360,
+        "address_space_GiB": 64
+      },
+      "stop_reason": null,
+      "command": [
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+        "--library-path",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+        "/opt/conda/bin/python",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/llm_dsl/Qwen25_2Token_Block_DSL/trace_qwen_block.py",
+        "--mode",
+        "prefill",
+        "--weights",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/fixture/weights.npz",
+        "--output-dir",
+        "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/block-prefill-fixed2"
+      ]
+    }
+  ]
+}

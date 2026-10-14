@@ -1,0 +1,68 @@
+{
+  "repositories": [
+    {
+      "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon",
+      "branch": "integration/runtime-gpu",
+      "head": "c49f6b0aee21a02ed7f1f2141fd7c1bb0aa3e674"
+    },
+    {
+      "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime",
+      "branch": "integration/source",
+      "head": "61efa1dafbbfe3cd1191f9fc9c65dc78940ec77e"
+    },
+    {
+      "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo",
+      "branch": "",
+      "head": "edcebf5de955dd2a5cd1b87726b92355276e4390"
+    }
+  ],
+  "files": {
+    "src/poseidon/evaluator/evaluator_ckks_base.cpp": "4a61ab46284eaf777fe7f68e7da718493c8b2a98b87e4c71a3fe591db41f2b58",
+    "src/poseidon/evaluator/evaluator_ckks_base.h": "01d95efc22c75ca2c14875d7f3086059a82d4dbbd34f8bfca3cc684831d0d317",
+    "src/poseidon/gpu/gpu_evaluator.cpp": "40ab54e26bb27797c72bc10b887cd6a1eae1e5e4bfbebaaf7a48337de6055bf2",
+    "src/poseidon/gpu/gpu_evaluator.h": "24e415f08ff2480f3972a64fae03dafde5db19cb781fb8ddc65f3b36213b0033",
+    "src/poseidon/gpu/gpu_keyswitch_handler.cpp": "3082a1b9c700ac09a25549e433bfb112038c60629d4b5ba7ecddb7174a7ef63f",
+    "src/poseidon/gpu/gpu_keyswitch_handler.h": "ec09a42c6301fd8631de760991605ee336f014ef92e6a18423f72df29ac9b4bb",
+    "src/poseidon/runtime_api/communication/cuda_local_transfer.cpp": "9d4a7cc3b59e2251ee34b3a7d4f0eaa5521ff3a96d71af2f975773d7c5da507d",
+    "src/poseidon/runtime_api/communication/nccl_mpi_transport.cpp": "42905318fd7c0ba6e6657afdd0c87f5b3249cdc7c481ffc4f76cf562ca2c7a6f",
+    "src/poseidon/runtime_api/poseidon_cpu_api.cpp": "14dd88871699ce6b75efda0d991e87f7a05ed745eef0713b75962aa4f14aed63",
+    "src/poseidon/runtime_api/poseidon_cpu_api.h": "35f4c5e3f2f58c9eb1cea6d2c8e02448c52894e02c28bdfcb4584a61b92ab44a",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "73fb0d01db2e1d3af19671077dd567b0aa8dac600a8bdcaf74f4fa8291da4dae",
+    "src/poseidon/runtime_api/poseidon_gpu_api.h": "08eebdaf4730c3aeafc5ea04ae18e862067f54d4f7712459a1d1679ab8153e2d",
+    "src/poseidon/tests/runtime_api/poseidon_cpu_api_test.cpp": "9f8bb413c01258dfa930859e037450d6c741ad3ab717f38868312b382fb5737e",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "368871b971730ad1a404a0a5355e769267e85882d24e584eff6aa5bd3d7c5247",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_mpi_plan_e2e.cpp": "a3b515741312319a4102318ab6c77c97b550b6d6ae3b003cf81a6bdbd0c8a373",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_mpi_runtime_e2e.cpp": "4ad808938552c675f1b1d4b42195cb3d82c9aa459318ac23ae36b446241baadc",
+    "scripts/generate_runtime_memory_smoke_plans.py": "ac2cac729b2306529a9e6b536b2e746af89f877b757404fb43518120ad8193a4",
+    "scripts/generate_runtime_release_smoke_plans.py": "d9ae38b129c770160beff782a331f5ad4773676d745f6b8dffd8f47895505842",
+    "third_party/ckks-runtime/api/mock_api.cpp": "1b42caa8639bcc9b325c82a3d4db24fad36916fc276484ba40c97ed332268a13",
+    "third_party/ckks-runtime/api/mock_api.hpp": "4df54ad748874bbe1b3dec0d7051788b7905d4891b39c09a4aef554aa2d93fb3",
+    "third_party/ckks-runtime/api/mpi_api.hpp": "c483c328711fec22a979c856d5b94f42d6344466111df5a7802c3f99cf18bb3e",
+    "third_party/ckks-runtime/api/vec_api.cpp": "fa6b8384d668448069dfaab13644888eedbc8cb1d43c46d93c81689c171fbab5",
+    "third_party/ckks-runtime/api/vec_api.hpp": "a1606a7c1f47f826fa67ec5f041fa2c98eae7d55563d361a58ba3cacee909d0a",
+    "third_party/ckks-runtime/api/vec_value.cpp": "bedde2c443937f364dfbcd46d3a0cb607c0a4929e651f3b83c726b8b996446c3",
+    "third_party/ckks-runtime/api/vec_value.hpp": "a39de85b274b09b618d45584d55453197edfeb70cd03ca0cb3fbefadc8e03052",
+    "third_party/ckks-runtime/integrations/dacapo/generate_model_artifacts.py": "3f1ff92bf70e7e11dc62ff44dbfeb7d2a03b916ed90b10ea3c96ba88d8dbb85d",
+    "third_party/ckks-runtime/runtime/runtime.hpp": "d191d7784253714482ce2dc18885f6818f5efa57123a29c763e8a66a819ebbdd",
+    "third_party/ckks-runtime/testing/testing.cpp": "6b335139985a577bcfbb5f2a641a743bef04e337810564250d230a1699c76a33",
+    "third_party/ckks-runtime/testing/testing.hpp": "94fb7012893dbda1aeae962a009a75c4497aaf8284a99007037a3afb8f6e8699",
+    "third_party/ckks-runtime/tests/mpi_runtime_test.cpp": "c360970558ee2c00e440d0f3f72828e8830619848cb3a55f2464f971b8052326",
+    "third_party/ckks-runtime/tests/runtime_plan_memory_tests.cpp": "b5a6650b5cffb7f8c26544ff197824b04fc23118441915d6ab85a26fec91d279",
+    "third_party/ckks-runtime/tests/runtime_release_tests.cpp": "92f108935b714ada2929937677ca7fe5722a6ecf999c6f0e61e31145a1f6f5b4",
+    "third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/CKKS/Transforms/Passes.td": "2a2eb8fc6bd6c4b0e4b93bcfb88f14e69ada1563553192f7d3a3e0a76f5a4b30",
+    "third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Dist/IR/DistOps.h": "6ae27875c2aea222666bf03d10d5e12a912e1f509cea8a0c0266b70aa1ba234a",
+    "third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Dist/IR/DistOps.td": "2769ce8a486b789d2d5d2922511f83c0652bb490b1e0f57a1b5e13843ca246c0",
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp": "b36cd5b6a065a96a3b0470ae4af2c80247ca7b032af1bb3e42917d5c80778f85",
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Dist/IR/DistDialect.cpp": "1f1ff42ecd81e7a74dc1990da8ea7a26232c12645f440e257799337419fb54b6",
+    "third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp": "cff012b3893ff8193d11ab6afbcb2e18d9903732583e130851b91861f46dd4a4",
+    "third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/CKKS/Transforms/RuntimePlanUtils.h": "ada6c3271bfe9199e23083e20c2a2e13bed213cd42280f74bfff6eb87182a099",
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EstimateRuntimeMemory.cpp": "d9fe7c31f0b20ff502c081fa83108a138fb5ac3343e9bfad7351d4e03abcb997",
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/PlanRuntimeMemory.cpp": "68e53963ac23778584c9a198c57c1f8ac188e85f71d5b18e67a4c1e8495c5035",
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/RuntimePlanUtils.cpp": "8ca191f226be24d1221fe052b2f57fc3ed89011844e0a2128219018d45e2db53",
+    "third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-memory.py": "3313ccab201a42388dcf3754d5b32c6ba4213eebb38303d119b52de517c46650",
+    "third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/memory-devices.mlir": "2b3676b99d05b4243aa13953051ea350f86ec08daa2b0ec98157101f71671da5",
+    "third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/memory-final-fanout.mlir": "46e43dd264de1390dc360e309d5d1550442811d77bc1f1922c073530a8f8c6f7",
+    "third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/memory-host.mlir": "9c86ef6a20391b49d54bc644a1e1287693b8c0f690795fadf8f050f1574c9869",
+    "third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/memory-levels.mlir": "891311112f70c073a3d034d58eaf70a6e6a6a1959e1e0b4800a43efbcbedb946"
+  }
+}

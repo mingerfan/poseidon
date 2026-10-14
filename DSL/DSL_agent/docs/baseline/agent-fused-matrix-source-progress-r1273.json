@@ -1,0 +1,186 @@
+{
+  "acceptance": {
+    "audit": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-fused-matrix-source-audit-r1273/report.json",
+    "binding": "75fad1285ce2cfab6eda17fd561029b5c9bfaf24f5880feae9e09ac55abd8a35",
+    "host_controls": {
+      "binding": "af759babbd0a4abe0891b05b2a01c37a9c5e2205dede28c284244242fcd425fd",
+      "python": "3.10.12",
+      "result": "agent-fused-matrix-host-checks-r1272",
+      "seconds": 0.026060886913910508,
+      "tests": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 54,
+        "skipped": 0
+      }
+    },
+    "raw_runs": [
+      {
+        "errors": 0,
+        "exit_code": 1,
+        "failed": 1,
+        "run": "agent-fused-matrix-intake-r1268",
+        "seconds": 86.15976548893377,
+        "skipped": 0,
+        "status": "failed",
+        "tests": 16
+      },
+      {
+        "errors": 0,
+        "exit_code": 1,
+        "failed": 2,
+        "run": "agent-fused-matrix-intake-r1269",
+        "seconds": 21.857791675953194,
+        "skipped": 0,
+        "status": "failed",
+        "tests": 29
+      },
+      {
+        "errors": 0,
+        "exit_code": 0,
+        "failed": 0,
+        "run": "agent-fused-matrix-intake-r1270",
+        "seconds": 11.663413677015342,
+        "skipped": 0,
+        "status": "passed",
+        "tests": 1
+      }
+    ],
+    "sha256": "be42af07a5376fe7f153cd86ce09cc72a94198ec6a046f74e9d1c39085545d40",
+    "single_green_run": false,
+    "successful_method_count": 44
+  },
+  "application_submit_cancel_checks": 3,
+  "backend_changes": 0,
+  "branch": "lhy-agent-dsl",
+  "compiler_calls": 0,
+  "downloads": 0,
+  "draft": "scripts/baseline/benchmarks/tools/fused_matrix_source_draft_v1",
+  "encrypted_executions": 0,
+  "format": "poseidon-fused-matrix-source-progress-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "installations": 0,
+  "next_actions": [
+    "Execute the pending r1263 common-call offline scope only after human approval, retaining its frozen binding.",
+    "After a reviewed safety boundary, combine the verified source changes and qualify physical layout, compiler, Poseidon execution and compiled package.",
+    "Execute the existing r1232 live scope only after its explicit human approval; do not claim staging as new Agent success."
+  ],
+  "numerical_tolerance_changes": 0,
+  "operations": [
+    "addmm",
+    "baddbmm",
+    "addbmm"
+  ],
+  "paid_api_calls": 0,
+  "pending_bindings": {
+    "live_r1232": "1120ab0063c801e2d4199e956bb55dec12f0a68a167c17325ef7bb2a77a21481",
+    "offline_r1263": "c91c0fa28ae574fecbdb12fd6267165bfd135d34eaef3bdd7be7b88c790697a9"
+  },
+  "production_applied": false,
+  "protected_checks": {
+    "production": 704,
+    "protected-backend.json": 648,
+    "protected-references.json": 6
+  },
+  "recorded_at": "2026-10-07T13:39:54.463789+00:00",
+  "reference_changes": 0,
+  "reference_scopes": {
+    "affected_fused_contexts": {
+      "compared_values": 16096,
+      "contexts": 41,
+      "evidence_bindings": [
+        "75a31a530d3afaa6e13500a370750b5e10cad0f72ec4d34da9d62fdeca50e39b",
+        "2e7bb3f0f59c411ca97ee68322273a914c6a10f661753d43f798eefc67027e62",
+        "01a778635b353a672834c8c705f86b0aaf0fd5457f4122fe6580d1513b38bd86",
+        "c82c8c0c40146d48ca17ef8883c8126626faa25cbaf6d1afe471f7bf73c4f7a1",
+        "6a41ef3648a7c7fdc36f9580c13ddca33c297975f2aba1fccb8967b8a2b363a8",
+        "91c109f59b038f802163ca133b56533c542ea02b065d31d5c8482592819354cc",
+        "4d76a493fb4f2a35aa387a5ded5f201a72641855c68e9cb75c927ee055150f66",
+        "0e98137af71354ec58db892e0f519f052ba611b2f467abe5dd6b2081b884ec7a",
+        "d8969d1ff23649959551aac71a441b37d70daec70597eace3b3e51079aa2fc48",
+        "3b68f0b1886fb095c46e3ba4fd02a94fd86693e692b44a5b35963703b2859c55",
+        "6d8877103cc33727a5a58b71a8b05e9f34aa3db9ce55c8138d30134cb19755ac",
+        "50f717366068a41b0af6a45858a20a0669183dc83be08d1cad2eb347a6d112b9",
+        "9b5187a931b548e7d817a57420685e788be306da01fa5de32f33f9c04820740f",
+        "6b9acb746840f3a059d1582de6d72e1326ce83a632abcfad9585ad835dcf1d9a",
+        "0bf1dcd89dc6e5d1598f08abe46fa90b9df0b7a095bf86f22f54fa105ebf8bab",
+        "2f4485678168e714da9bc9ec8e4b141095ad938c052447fc9cdd8610299ec2be",
+        "eedbee185f030cb9cfc9fa1870e982a72eb6508cd7d4b0fd860ad1e6c7a87c8c",
+        "95160aa116e7dd103367e47b5a1432a4160a4981f3dbba2377ad3705b6f45981",
+        "09e341b0a61bfdc21a8df6ff2bfa574fb83b8cd4e651e8bcf298ff2f66a1581e",
+        "196a6a8c05a75822356b2529899d78849849fbfa1326beebce2c8c93ab92bf53",
+        "bcb3d221a264de3e56e4398cfc01b9324c01463c332e72a3986d68aba2933423",
+        "dd6e933364989415bd2ac92ad4edd586dabf6403da2ec72550c1a1ebef3150b3",
+        "48ead6b71e7ccd9830b26548ca393c907a56f77956a4e5332e27456d5eeebfcf",
+        "03577373f5ac0d951c133cdf2ebcdd157a62c4c3eb99ae9553777c1d7a02345f",
+        "d9c2f9316419700777ef2306b32b5cbfa602f4ff71870dbda759ac7b76e84dff",
+        "3db0605fd7ee7c4c8bcf0c62c7060954c370a805ec7762b352bfc92be57436f7",
+        "64d7bc1ca7049bfeadcb027a10e4871ed46ce631e1c428d16851dba6d77bb4d6",
+        "67e0fb9d01c88f1727608eb0ab2ffdbcc4a43006e3aa960a1bd74054840533ed",
+        "62d1326081bb0644cc1ec638c4140cf31cd099e3bcce52d0a4f8a4bcef9b795a",
+        "e499cd75f444b9b1dfc7340c12c61234ce4fd98f2b84dfdd85550182ee37463e",
+        "d7268731d4c1b9b00646a3d3f239aa200397c55cd2909ccf3f95c07f5e37c547",
+        "9ec104fde3023b2c7758d5c262fa24aaa63b1869187fd5ea225c1c42e3108f01",
+        "247ed2f9485c98d97565bfe77795073ac2edfc34af3a0c18935f49037cb885dc",
+        "48ead6b71e7ccd9830b26548ca393c907a56f77956a4e5332e27456d5eeebfcf",
+        "70b2351e893056f5d529ccbd6d5b8907da784a25cc4decf18beb15c84a33f177",
+        "c349c200f4beb7408a9a93ad8394527609cbe4c38694be12c8d3b8b207508b48",
+        "03a2a26065bedd0176b6ab9f75fece24546d64ce365d07448b5e9ce9afb0c0dd",
+        "944c74b02a10a8e2d5c129c5631ccefcf50d01515b79d33d55d9aed5cbdf51cb",
+        "69b1e16ee9f587528178cdcd4176df1f45b2030974211099a0d1a0a31ec3349c",
+        "c13c113940cd1d258ec1eabf8b85770b0d884082564a3c0709f834aee2ead5b8",
+        "1728e7d7244d7a12c04bd823a1c183bbf278fea35789ec32824dceb59bb08977"
+      ],
+      "input_groups": 656,
+      "max_decomposition_error": 4.440892098500626e-16,
+      "max_normalization_error": 4.440892098500626e-16
+    },
+    "groups_are_reported_separately": true,
+    "new_source": {
+      "compared_values": 3488,
+      "contexts": 9,
+      "evidence_bindings": [
+        "5dcdc5261a2f37309879a32f4a3309525e91e9b3d14c2c0d8f0eeb279f601ff5",
+        "907d492069f8692f5964451d1dd17a31184abab4cf615fd92577917ad90610c5",
+        "31ded25ad4f188a85b7ed4c47ec309b44461dc488ebb92a1df39923247807724",
+        "a46f58cb575e9ad58b64d54ff8f72e6c6dbce7033d2df8e1b7c1739aab4b4baf",
+        "4e472bba1747a9e8f107f24524ef1a0f55b2317cf1d1901621f3a5ed7c2a513a",
+        "941af23aeed8aeca9bb057e38c007187c3a64d7ce87999638d1c0db723a3a730",
+        "14abab754c722515fbb9c4f8fbf4e855cafca4a60c41f460dfd7d51769b2fa58",
+        "01a5b941522fca9537d76906dcba86bdab894b28d97377ab011d173620bf382a",
+        "3a1040ab88dba5f2050da1d6e51e41b8e71353d7ba3bc8c2222c2de81d89da2d"
+      ],
+      "input_groups": 144,
+      "max_decomposition_error": 2.220446049250313e-16,
+      "max_normalization_error": 2.220446049250313e-16
+    },
+    "retained_v12_v13": {
+      "compared_values": 368,
+      "contexts": 2,
+      "evidence_bindings": [
+        "08b139cf7c3c4eaaec9a5afec94cd128f07d61f5521c88f4f3c287f51a1de484",
+        "22a6441f3688c6c2cfc4a0f356adcff53cc801c53b3dcb2d56f23ea46a7c2a1e"
+      ],
+      "input_groups": 32,
+      "max_decomposition_error": 0.0,
+      "max_normalization_error": 0.0
+    }
+  },
+  "security_parameter_changes": 0,
+  "source_format": "poseidon-trusted-pytorch-v14",
+  "source_package_reloads": 3,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "stage": "staged_source_package_and_submission_verified",
+  "statuses": {
+    "application_submit_cancel": "verified_with_injected_identity",
+    "compiled_program_package": "not_run",
+    "compiler": "not_run",
+    "data_provenance": "verified_staging",
+    "new_agent_generation": "not_run",
+    "physical_layout": "unverified",
+    "poseidon_encrypted_execution": "not_run",
+    "source_intake": "verified_staging",
+    "source_package_reload": "verified_staging"
+  },
+  "unchanged_production_contract": true
+}

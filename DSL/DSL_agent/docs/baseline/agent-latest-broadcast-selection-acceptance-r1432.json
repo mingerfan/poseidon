@@ -1,0 +1,27 @@
+{
+  "accepted_source_manifests_identical": 6,
+  "binding": "7fff9cfc6bed71fe9b7e06c9cadb2b1794e0f6de0c921c8079b72a9b6660bb7d",
+  "branch": "lhy-agent-dsl",
+  "errors": 0,
+  "evidence": {
+    "scripts/baseline/benchmarks/tools/broadcast_latest_selection_v1/activation.json": "cafe9a23db4a2df3833d95fe4de7241617b93d24378a1488be893b5f1b9cfc78",
+    "scripts/baseline/benchmarks/tools/broadcast_latest_selection_v1/controls-current.json": "7131cd81cc21fbe336a5fbf7dedb4f618515475e341b1c7893d2e8b299e387b1",
+    "scripts/baseline/benchmarks/tools/broadcast_latest_selection_v1/controls-current.log": "27f5c451934c9e6acc332d36c9a11a9888c01c9a883cca50bf70ac5d22fb1e90",
+    "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/controls-regression-latest.json": "d0018fd84ef7e08bfeb35c23b504f669c51acc83ed8bc6896e1e4c1405a14ee9",
+    "scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/controls-regression-latest.log": "1b7c111c570759c3af85f344a7e66e870da1974bf95fa768e0075d4f94b9ef57"
+  },
+  "execution_identity_unchanged": true,
+  "failed": 0,
+  "format": "poseidon-latest-broadcast-selection-acceptance-v1",
+  "latest": "poseidon-trusted-pytorch-v28",
+  "legacy_default": "poseidon-trusted-pytorch-v18",
+  "new_api_calls": 0,
+  "new_compiler_calls": 0,
+  "new_encrypted_calls": 0,
+  "related_regression_tests": 120,
+  "skipped": 0,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "source_stage_manifest_sha256": "5a88df990a07ead9e19944721146d997b04e23408b3e0266cff497ced7658343",
+  "static_cli_tests": 18,
+  "status": "passed"
+}

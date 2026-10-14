@@ -1,0 +1,13 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "failed": 0,
+  "format": "poseidon-public-mask-execution-guards-v1",
+  "log": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_mask_intake_v1/controls-qualified.log",
+  "log_sha256": "0a6ec5353f54859475e54e3c464289bcc1a3fb35096affcde6e7e1a45ec84ced",
+  "passed": 12,
+  "provider_calls": 0,
+  "skipped": 0,
+  "status": "passed",
+  "test_source_sha256": "0062fe690ce8cca731b148765c449059f7fe0305404ddd68be1c2268cd1448c9"
+}

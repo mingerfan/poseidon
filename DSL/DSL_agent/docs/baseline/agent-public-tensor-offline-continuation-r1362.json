@@ -1,0 +1,129 @@
+{
+  "backend_changes": 0,
+  "binding": "86ec0da725c528ffc95c0bbe565ab64ea5d4fc0c5de8ea19f97bbbf4faf7b272",
+  "cases": [
+    {
+      "case": "mask_index_residual",
+      "files": {
+        "model.py": "8c135fa6a51814adac6245d50b5d61691c3b8c03fcb22de7cc1e9cefefe7e5bc",
+        "state_0000.npy": "f94104994e2df6fcb82fb05a9f59088d0942f64826cabc523f7f7bd6c23660cf",
+        "state_0001.npy": "67c5322b3a41bd511d187bf14aa4032195ab34034d7c31199d9408522483f689",
+        "state_0002.npy": "64a0b9dca7e39d749bccb2bdc13262779f9d35b17c6df1c454f7b242a3e0541b"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/mask_index_residual/manifest.json",
+      "manifest_sha256": "e0db4276e71e65c2c2223a6558920b12e3abd87ce6256aec7e23ca49a37dd9dd",
+      "original_case_retained": true
+    },
+    {
+      "case": "float32_batch_norm",
+      "files": {
+        "model.py": "8c135fa6a51814adac6245d50b5d61691c3b8c03fcb22de7cc1e9cefefe7e5bc",
+        "state_0000.npy": "aadd25ff6da243ad8739b409d108662727aa43000f371775b58cdad40f8b2536",
+        "state_0001.npy": "bf829c4710025ea559002e4a00d3d062c0ff73f046ff4419e374d3656ce1c1c3",
+        "state_0002.npy": "9abd3f73a5d8d9c8e077488b36315dd6dae2336526b5678868ebe849cb6b9116",
+        "state_0003.npy": "d86905d2aa60d6744775b8b25f29db9e57aa9afdafeb608f65e5e1e67547b9ac",
+        "state_0004.npy": "14408900b988bcc5c59738fabe2ef9febbdcb84fe3693166267a25842fce4a7e",
+        "state_0005.npy": "82c42f6575495aa0503ccb113ac18e0560e5dd774abe5e2ee8615f07c020d4c2"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/float32_batch_norm/manifest.json",
+      "manifest_sha256": "4a5586e3b7da95ff5d84b210abee5bd1f9e65085526f5efc44bf36c671c760c8",
+      "original_case_retained": true
+    },
+    {
+      "case": "method_channel_mask",
+      "files": {
+        "model.py": "6292bc15bb9c5a3beaef5c6c08c9384df697c98f43bbd2c8d4fb40d53b571095",
+        "state_0000.npy": "e685d190029a635356b1d89e7cbc34d33d2f501735a815e3f2acafe564392148",
+        "state_0001.npy": "64a0b9dca7e39d749bccb2bdc13262779f9d35b17c6df1c454f7b242a3e0541b"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/method_channel_mask/manifest.json",
+      "manifest_sha256": "164d04db3ea69ec26c0a5f7d460a3fb13a9c8256e5019c854008b0ab92784e0a",
+      "original_case_retained": true
+    },
+    {
+      "case": "divided_gelu_linear",
+      "files": {
+        "model.py": "8c135fa6a51814adac6245d50b5d61691c3b8c03fcb22de7cc1e9cefefe7e5bc",
+        "state_0000.npy": "e0db2fad2a9a32e32fb6d046eed24d7606143b18ad5f1bcff9ccaefe9360b615",
+        "state_0001.npy": "c44a03719d4928e02ff511c2a420ba03d0352a6a4cc48986b60822987d96ab73",
+        "state_0002.npy": "64a0b9dca7e39d749bccb2bdc13262779f9d35b17c6df1c454f7b242a3e0541b"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/divided_gelu_linear/manifest.json",
+      "manifest_sha256": "2c15d5b4b05920a73f445ff0a34fbc766bc91027292d1a2412b3c1ad20c0e63b",
+      "original_case_retained": true
+    }
+  ],
+  "controls": {
+    "cache": {
+      "currsize": 121,
+      "hits": 484,
+      "maxsize": 256,
+      "misses": 121
+    },
+    "compiler_calls": 0,
+    "current_hashing_retained": true,
+    "current_source_files": 130,
+    "encrypted_calls": 0,
+    "errors": 0,
+    "failed": 0,
+    "provider_calls": 0,
+    "sdk_identity": "1066e8ae9e5ffed034a3c8341ac25aa4d1603f1070d2cec67235475a6ec8a7b6",
+    "skipped": 0,
+    "source_identity_seconds": [
+      0.30227321699931053,
+      0.005708216000130051,
+      0.005653381000229274,
+      0.0057014230005734134,
+      0.005600046999461483
+    ],
+    "tests": 157
+  },
+  "download": 0,
+  "format": "poseidon-public-tensor-v22-offline-continuation-proposal-v1",
+  "http_attempts": 0,
+  "installation": 0,
+  "model_reference_threshold_changes": 0,
+  "network_configuration_changes": 0,
+  "old_failures_and_bindings_preserved": true,
+  "old_success_not_rerun": true,
+  "provider_calls": 0,
+  "scope": {
+    "compiler_jobs": 2,
+    "global_bytes": 34359738368,
+    "link_jobs": 1,
+    "native_address_bytes": 4294967296,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "new_bytes": 268435456,
+    "reserve_bytes": 4294967296,
+    "source_capture_seconds": 180,
+    "wall_seconds": 480
+  },
+  "sdk_identity": "1066e8ae9e5ffed034a3c8341ac25aa4d1603f1070d2cec67235475a6ec8a7b6",
+  "source_hashes": {
+    "scripts/baseline/pytorch_public_arithmetic_capture.py": "f32a8f65cddbbe40844d250757735d750dea8442d57f8f39e7c7f0cd40678014",
+    "scripts/baseline/pytorch_public_boolean_arithmetic.py": "d89e70aa85600dbe38ef81cb257241a7c7293175887ca54b1d9e5ba436a11b46",
+    "scripts/baseline/pytorch_public_state_binding.py": "3e7cc36d213b574d2a82ef399703ff05701d808978e6e93fa42d32c7839a4627",
+    "scripts/baseline/pytorch_public_tensor_division.py": "aa93e7e26dd5ce38944c249b431742ee38f19ee39df989fb753ccc806eeefd07"
+  },
+  "status": "pending_approval",
+  "tools": {
+    "fixture_factory.py": "147f34b19757d1abcbbe353205fae73aee2c1027c32f36901b6e739ab04b3ba2",
+    "profile_provenance.py": "254122cf53d20fb8f26585b6ead9c42384adcd6a4bf9fa87343fd0a737e0b7e4",
+    "qualify_backend.py": "9496fc97cc76f8921c31630994ab1817862d0fa7fdab3cfd027ee5284bf22cbd",
+    "qualify_backend_retry.py": "8d8c44d4fce86f7f0e8e48d7f817130a20fa1938e6ae923e5b2e884a11d8e341",
+    "qualify_controls.py": "92f7904de873e4063689405d401f569baf838d662df444592af30f4d4b6eb9de",
+    "qualify_source.py": "0c1846d23ba529867e519df11dbf2faa44052af8660e9e4216a62a76d11b414d",
+    "qualify_source_retry.py": "caee9dd9cc95145059784d8081368d85ae275cbe4357159a37d79a6fb8d4906c"
+  },
+  "validations": [
+    "cold_application_source",
+    "actual_compile",
+    "artifact_integrity",
+    "poseidon_cpu_encrypted",
+    "four_private_input_groups",
+    "package_export_reload",
+    "three_new_input_groups",
+    "repeat_and_cache"
+  ]
+}

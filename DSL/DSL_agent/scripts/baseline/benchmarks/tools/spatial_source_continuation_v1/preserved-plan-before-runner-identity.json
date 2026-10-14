@@ -1,0 +1,53 @@
+{
+  "audit_seconds": 330,
+  "binding": "65cd6aa8932dde905ba5e71884868d35fd164414e4891cecafee12fbf7264225",
+  "created": 1791743395.193004,
+  "format": "poseidon-spatial-live-continuation-v1",
+  "frozen_files": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-retest-approval-r1413.json": "8d36a1aea178713bd57377bd933903fb36f7743b04bc80fa45921a3c0a2d91ae",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-retest-authorization-r1413.json": "e795076cfe12140902d1fc8e2e31bc4b62538095bc86d753d6a13ee25bc1ef1e",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-retest-proposal-r1413.json": "9afd1a61902681526581fbf936ef9ecafceb123bc1800dd62a278c5c3a19de61",
+    "/home/lhohy/Code/Poseidon/docs/baseline/current-plan-test-authorization-2026-10-11.json": "95af7ce87c2b3c0ac1dee5e3e54f8a3e39d1d5e6fcc8f721385747184d455730",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_live_acceptance_v1/acceptance_outcomes.py": "9a54b49ab12694efdbe3a1b585ba277881f2afa4587239d650a1796e37622877",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_live_acceptance_v1/audit.py": "7686047ada1586ba44b8abf2810dce3e6fad30d825189d652045bf299fce5be3",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/controls-frozen-second.json": "7a311b4d4864f8274dce1b74ad1878059ccca1be15e471966976e164558eaed4",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/freeze.py": "1aba67eb129c169ee29d4782ec0b30d312718ec8b0d767657a3675f730a659d9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/package_checks.py": "00519a4b0b4f24b8132c9836c44ea82ad85d8eda7aad394a3a25c2a83b0a5116",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/run.py": "ca1d1f2e36d89cabeaf0c731521c648b83d5d5ba9b511efe15b904b1627616aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/runner-manifest.json": "24d97f3880186a8d8cb17426ee38d1b14b62eb8d1e1092388c75d72aad8b9a97",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/scope.py": "eddab079971eb4954a08a008255e33e4e3eedf250840740f272a43c7defe86f5",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/test_package_calls.py": "ab1d80723b40bd38064b5a13760857ea8afe12e7eac46b73588c1a81658d3efa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/test_run.py": "93446d4e5912db46eb5df8c821043e194f01c409636e2472ae39810a75551d34",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/test_scope.py": "bc35d96985e7d6940227b8028db93c66f28b68fdf627384bed318ae40cd757b8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-live-v1/plan.json": "cfd67a91c2b145da806181b9c960d6c815312a81d8d55d10c2a6e844706485b5"
+  },
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "human_authorization": "/home/lhohy/Code/Poseidon/docs/baseline/current-plan-test-authorization-2026-10-11.json",
+  "human_authorization_binding": "12a8ab8ea5da8f601a7db9546f895ed3a1e7c58023ec0912cd7969bc556c867d",
+  "main_owner": {
+    "pid": 296400,
+    "start": 10932969
+  },
+  "main_plan_binding": "3bc843d15ae99d6c576a744313f5d069e30cc22a0b1e97e8ff43dc5d32dcb026",
+  "main_proposal_binding": "d1f7942b50a359ba32ab57738adc06209b07f9cbdc948ae58e141b39df46867c",
+  "main_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-live-v1",
+  "maximum_wait_seconds": 3600,
+  "network_changes": false,
+  "new_dependencies": false,
+  "no_manual_candidate_substitution": true,
+  "no_unknown_call_retry": true,
+  "original_acceptance": "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-live-acceptance-r1408.json",
+  "production_sdk_modified": false,
+  "retest_acceptance": "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-retest-acceptance-r1415.json",
+  "retest_approval": "/home/lhohy/Code/Poseidon/docs/baseline/agent-spatial-source-retest-approval-r1413.json",
+  "retest_proposal_binding": "4740ce158851472cdd93b7852b73e86d28976ecf5ac1df93756d2472eb23e60d",
+  "retest_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-retest-v1",
+  "retest_seconds": 14460,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "stages": [
+    "wait_for_verified_main_terminal",
+    "audit_original_34_cases",
+    "fresh_bilinear_retest",
+    "audit_retest"
+  ]
+}

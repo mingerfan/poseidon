@@ -1,0 +1,18 @@
+{
+  "automatic_restart": false,
+  "binding": "e5c05597784082052358dad85628abbfbff49af3bc28993cb4d24059f2ab85f5",
+  "created_wall": 1791625623.0371764,
+  "format": "poseidon-original-live-second-continuation-launch-v1",
+  "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-expansions-live-continuation-v2-launch.log",
+  "manifest_sha256": "6a4148909cd4dce8fc50eaa066613543b6b5f671715d9825bdc3a3a0ef465c89",
+  "network_configuration_changes": 0,
+  "original_approval_reused": true,
+  "owner": {
+    "pid": 3838,
+    "start": 122065
+  },
+  "preflight": "/home/lhohy/Code/Poseidon/docs/baseline/agent-source-expansions-second-continuation-preflight-r1358.json",
+  "preflight_sha256": "c1034ec4abe01c2434436437c03f99e1e90d29a5d92b187d445c9fa7f6b122e2",
+  "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-expansions-live-continuation-v2",
+  "scope_expanded": false
+}

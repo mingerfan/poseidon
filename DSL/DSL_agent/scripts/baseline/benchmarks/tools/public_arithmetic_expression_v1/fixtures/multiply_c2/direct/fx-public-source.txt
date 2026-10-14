@@ -1,0 +1,7 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %a : [#users=1] = get_attr[target=a]
+    %b : [#users=1] = get_attr[target=b]
+    %multiply : [#users=1] = call_function[target=torch.multiply](args = (%a, %b), kwargs = {})
+    %linear : [#users=1] = call_function[target=torch._C._nn.linear](args = (%x, %multiply), kwargs = {})
+    return linear

@@ -1,0 +1,146 @@
+{
+  "backend_changes": false,
+  "binding": "a95383121cc40d42c39df0c44401cafdf39aa750e347e1fd4cdfaf878473de2b",
+  "bootstrap_validated": false,
+  "branch": "lhy-agent-dsl",
+  "combined_execution": {
+    "compared_values": 272,
+    "compiler_qualifications": 6,
+    "counting": "48 sample groups include repeat and mathematically equivalent source contexts; not unique models.",
+    "encrypted_calls": 18,
+    "input_groups": 48,
+    "mae": 1.1715217520066876e-08,
+    "maximum_absolute_error": 3.506945543685358e-07
+  },
+  "commits": 0,
+  "contexts": [
+    "broadcast_arithmetic",
+    "transpose_view_alias_and_axis_mean",
+    "scalar_mean_broadcast_linear"
+  ],
+  "cuda_validated": false,
+  "current_genuine_agent": {
+    "compared_values": 136,
+    "compiler_qualifications": 3,
+    "encrypted_calls": 9,
+    "failed": 0,
+    "first_attempt_passed": 2,
+    "generations": 4,
+    "http_attempts": 4,
+    "input_groups": 24,
+    "mae": 1.599835745320316e-08,
+    "maximum_absolute_error": 3.506945543685358e-07,
+    "not_run": 0,
+    "original_repair": {
+      "case": "expand_as__transpose_alias",
+      "layer": "static_check",
+      "reason": "native_array_constructor",
+      "resolved_by": "same Agent automatic repair within approved budget"
+    },
+    "passed": 3,
+    "repaired_passed": 1,
+    "requests": 3,
+    "skipped": 0
+  },
+  "downloads": 0,
+  "evidence": {
+    "docs/baseline/agent-latest-broadcast-selection-acceptance-r1432.json": {
+      "binding": "7fff9cfc6bed71fe9b7e06c9cadb2b1794e0f6de0c921c8079b72a9b6660bb7d",
+      "sha256": "6db2acee72127c258496fa55da54cec9d002d0461f6b3fe773cfaf85339a7291"
+    },
+    "docs/baseline/agent-static-broadcast-live-acceptance-r1429.json": {
+      "binding": "3f55f73a143413f3ccfc36a42ca64963e589a5fef89fc1f0fdb2c59f5b8bfbcc",
+      "sha256": "7cfc6ec5c89350b04108cef94040bfda7ae474fc6c157634030e1ab94db6d2d4"
+    },
+    "docs/baseline/agent-static-broadcast-replay-acceptance-r1431.json": {
+      "binding": "3a17c9d22b48b748d077d891c45bfdbd1714b14be85e9c3260fc7e5decea5df9",
+      "sha256": "53f2aa94eca07ac0816cb1b89f2d7616a232a3e63bc1301d304afb131db23de1"
+    }
+  },
+  "format": "poseidon-static-broadcast-phase-summary-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "independent_source_references": {
+    "failed": 0,
+    "qualified": 6,
+    "reference_and_models_changed": false
+  },
+  "input_methods": [
+    "Tensor.expand_as",
+    "Tensor.broadcast_to"
+  ],
+  "installations": 0,
+  "latest": "poseidon-trusted-pytorch-v28",
+  "legacy_default": "poseidon-trusted-pytorch-v18",
+  "mathematical_request_groups": 3,
+  "network_changes": false,
+  "next_action": "Result storage budget review before any further backend batch; continue Agent-only input work without changing backend.",
+  "not_claimed": [
+    "arbitrary dynamic broadcasting",
+    "all PyTorch inputs or DSL combinations",
+    "original model application accuracy",
+    "complete generic Agent plan"
+  ],
+  "numerical_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "package_checks": {
+    "new_inputs": true,
+    "reload": true,
+    "repeat_inputs": true,
+    "same_source_cache_without_calls": true
+  },
+  "parameter_changes": false,
+  "preserved_history": {
+    "failed_candidates": true,
+    "old_reports_and_bindings": true,
+    "original_responses": true,
+    "preparation_failures": true,
+    "read_only_audit_reporting_failures": true
+  },
+  "pushes": 0,
+  "resource_observation": {
+    "disk_free_bytes": 40330321920,
+    "global_limit_bytes": 34359738368,
+    "measured_bytes": 34354462720,
+    "measurement": "max(du --apparent-size, du --count-links)",
+    "minimum_disk_free_bytes": 4294967296,
+    "observed_at": "2026-10-11T22:52:44.262157+00:00",
+    "remaining_bytes": 5275648,
+    "results_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results"
+  },
+  "sdk_manifest_sha256": "5a88df990a07ead9e19944721146d997b04e23408b3e0266cff497ced7658343",
+  "source_contexts": 6,
+  "source_contract": "Only registered static shapes, dtype, alias and capacity rules. expand_as consumes target shape, not target values.",
+  "source_format": "poseidon-trusted-pytorch-v28",
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "stage_release": {
+    "owners_exited": true,
+    "source_freeze_released": true
+  },
+  "static_validation": {
+    "cli_tests": 18,
+    "counting": "Separate suites and reruns; do not add them as unique test counts.",
+    "errors": 0,
+    "failed": 0,
+    "related_regression_tests": 120,
+    "skipped": 0,
+    "source_manifest_equivalence_checks": 6
+  },
+  "status": "passed_for_declared_scope",
+  "unchanged_genuine_source_replay": {
+    "compared_values": 136,
+    "compiler_qualifications": 3,
+    "encrypted_calls": 9,
+    "failed": 0,
+    "http_attempts": 0,
+    "input_groups": 24,
+    "mae": 7.432077586930594e-09,
+    "maximum_absolute_error": 2.332495153065106e-07,
+    "not_run": 0,
+    "package_origin": "scripted_replay; genuine origin response/source/receipt bound separately",
+    "paid_generations": 0,
+    "passed": 3,
+    "source_contexts": 3
+  }
+}

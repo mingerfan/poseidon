@@ -1,0 +1,23 @@
+{
+  "binding": "2dc27e3103be75cf698ac81317f61e5f24ebcead85d24a19fc0ed751061ac66f",
+  "contract": "poseidon-public-diagnostic-format-binding-v1",
+  "reason": "Keep approximation configuration and diagnostic format identifiers separate after moving the exception.",
+  "sources": {
+    "pytorch_approximation.py": "3c9b0657beeb14a93aa604fc96346e7dddc9d9f8c45d05d8790c5e619717a5fa",
+    "pytorch_intake_diagnostics.py": "fc13ea63474d71c2b33097e20b97df9a6984290d3656a4e23c1b386618d3150d"
+  },
+  "tooling_failures": [
+    {
+      "effect": "No file changes before execution",
+      "layer": "development_tool",
+      "record": "format-tool-error.txt",
+      "type": "SyntaxError"
+    },
+    {
+      "effect": "Production edit completed; metadata writer stopped before output",
+      "layer": "development_tool",
+      "module": "benchmark_graph",
+      "type": "ModuleNotFoundError"
+    }
+  ]
+}

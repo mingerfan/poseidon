@@ -1,0 +1,16 @@
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-oqb_80v5
+attempt 0: passed / complete
+Candidate status: passed
+historical_linear failed AttributeError 'list' object has no attribute 'dtype'
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5e_m8_fx
+attempt 0: passed / complete
+Candidate status: passed
+tanh_module failed AttributeError 'list' object has no attribute 'dtype'
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8zuiydcr
+attempt 0: passed / complete
+Candidate status: passed
+tanh_functional failed AttributeError 'list' object has no attribute 'dtype'
+Candidate evidence: /home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xq5ui7be
+attempt 0: passed / complete
+Candidate status: passed
+tanh_input_keyword failed AttributeError 'list' object has no attribute 'dtype'

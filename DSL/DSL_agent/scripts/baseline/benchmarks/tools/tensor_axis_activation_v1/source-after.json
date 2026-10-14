@@ -1,0 +1,30 @@
+{
+  "after": {
+    "scripts/baseline/application_component.py": "81ec24cb6bfe1457910738b675795e0f1662766267585b1b8bec12c399142a50",
+    "scripts/baseline/application_diagnostics.py": "87b1752f1202eef2cdd418b294db7662ca01e44fdef7ff216d8cafcb5b230359",
+    "scripts/baseline/application_transport_receipt.py": "c983c32f0cc28598366791f2c74638ed2fb60ee088c3269642edb2562d82b8f1",
+    "scripts/baseline/poseidon_sandbox_policy.py": "d6832f5cf9a3563c052ce5609a5e5cbe1373e9248258599964974a508c114164",
+    "scripts/baseline/run_candidate.py": "451e5f5745bb5991bad882b4ca375ea8604ca3b8bd893be653d2996ee91d743c",
+    "scripts/baseline/sandbox_policy.py": "fef45ab3c9492b6379d8c83610f4932fd65cddbc09f701a302101a8179c6d939",
+    "scripts/baseline/test_application_transport_receipt.py": "1980705bf3c8f966e4dce64398e7930da8f83ebe9ccd7a54c402dffd93377d70",
+    "scripts/baseline/test_unified_tensor_axis_guidance.py": "30057e4f1210de8a4f24ae9a0cbe081bf8eb51c04562445277f89c5cc69d4229",
+    "scripts/baseline/unified_graph_contract.py": "9a4255f40741471c730ec7d4f0a6dc51ecfa72c22b0c246d6959eae6660849da",
+    "scripts/baseline/unified_tensor_axis_guidance.py": "a3a73b06a2e576b78b241f150f65af52e821865bae22ea91f3eadbb118ab22f6",
+    "scripts/baseline/validation_adapter.py": "5b89b976e12d8b0c9c645466717066d5f4d57ad8434b92a75fb77cfa1402b389"
+  },
+  "before": {
+    "application_component.py": "4590d737b5dd6c835627ebc7600e7ff713d5f09a3caa6468caa1ef545833bc87",
+    "application_diagnostics.py": "f4cc7e168e1ca8c6c803bf691ddb2a97be2bc0ba986e443803bb9b3d97772fd3",
+    "poseidon_sandbox_policy.py": "1b371e9784532e8003146d393dddaadf47fdc55ca1f3394a0c52c4f4c4028c36",
+    "run_candidate.py": "c4a4bd4cca1625e21fd578a6b186de9e7f69b95265030cfa65a162bfce46e8e2",
+    "sandbox_policy.py": "12af334efac84d2ea2c92c6bc83bae263809aff89687888b4b414896a819600a",
+    "unified_graph_contract.py": "d106c89e7ed4237efb07f2d269facedb522f28ff8da039c5d30f30c95254bf5f",
+    "validation_adapter.py": "a61fbf94f5f240967073245c7761dab6f2d82bee2afb3cffcdedbdd713fa2ccf"
+  },
+  "binding": "2516331eea14fef4b903b395883d25af8c02766b28ad3bc7d0abcc5ac6398f48",
+  "delta_sha256": "76f49355c0c0a0b25c4ff3467097072427a7407a81f84e15419bb55256cdad1f",
+  "format": "poseidon-tensor-axis-reviewed-source-transition-v1",
+  "phase_plan_binding": "e290541eafc6a2766689df631ae6e802efe34d28a224e2fc9c03fc5c38a986c6",
+  "protected_sources_changed": 0,
+  "protected_sources_checked": 654
+}

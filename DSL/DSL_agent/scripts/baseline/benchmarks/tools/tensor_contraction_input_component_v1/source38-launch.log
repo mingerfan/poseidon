@@ -1,0 +1,70 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"format": "poseidon-source38-compatibility-controls-v1", "status": "failed", "returncode": 1, "tests": 156, "modules": ["test_tensor_contraction_source", "test_tensor_gather_source", "test_gather_capabilities", "test_application_capabilities", "test_provenance_json_transport", "test_pytorch_model_intake", "test_pytorch_source_contract", "test_logical_view_normalization", "test_source_cli_package_policy", "test_model_source_provenance", "test_application_provenance_transport"], "seconds": 13.835830528987572, "log_sha256": "57634e982658735b2d89efc0f0fccbe38ee4e5fea516172b130087bf8ab652a5", "api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "binding": "bb0157030c2c02c9f5a798aa8594b13184cf1cc74729b2aac24c0376e3e6378b"}
+_not_enough (test_logical_view_normalization.CoordinateTests) ... ok
+test_seeded_permutations (test_logical_view_normalization.CoordinateTests) ... ok
+test_updated_ssa_root_preserved (test_logical_view_normalization.CoordinateTests) ... ok
+test_default_legacy_manifest_exact (test_source_cli_package_policy.SourceCLI) ... ok
+test_default_stays_v18 (test_source_cli_package_policy.SourceCLI) ... ok
+test_explicit_flat_new_contracts (test_source_cli_package_policy.SourceCLI) ... ok
+test_explicit_v28_manifest_exact (test_source_cli_package_policy.SourceCLI) ... ok
+test_explicit_v28_stays_flat (test_source_cli_package_policy.SourceCLI) ... ok
+test_latest_and_explicit_v34_match_exactly (test_source_cli_package_policy.SourceCLI) ... ok
+test_latest_creates_ordered_call (test_source_cli_package_policy.SourceCLI) ... ok
+test_latest_nested_creates_ordered_call (test_source_cli_package_policy.SourceCLI) ... ok
+test_latest_selects_v34 (test_source_cli_package_policy.SourceCLI) ... ok
+test_nested_entry_preserved (test_source_cli_package_policy.SourceCLI) ... ok
+test_nested_symlink_rejected (test_source_cli_package_policy.SourceCLI) ... ok
+test_old_contract_cannot_acquire_packages (test_source_cli_package_policy.SourceCLI) ... ok
+test_outside_root_rejected (test_source_cli_package_policy.SourceCLI) ... ok
+test_reserved_module_rejected (test_source_cli_package_policy.SourceCLI) ... ok
+test_saved_manifest_keeps_root_and_exact_files (test_source_cli_package_policy.SourceCLI) ... ok
+test_source_bytes_change_binding (test_source_cli_package_policy.SourceCLI) ... ok
+test_v29_to_v34_nested_contracts (test_source_cli_package_policy.SourceCLI) ... ok
+test_actual_record_file_read_checks_generation_dependency (test_model_source_provenance.SourceOriginTests) ... ok
+test_descriptor_version_and_path_rejection (test_model_source_provenance.SourceOriginTests) ... ok
+test_identity_is_checked_against_package_generation_stage (test_model_source_provenance.SourceOriginTests) ... ok
+test_invalid_source_kind_and_fields_rejected (test_model_source_provenance.SourceOriginTests) ... ok
+test_missing_descriptor_rejects_unreferenced_origin_file (test_model_source_provenance.SourceOriginTests) ... ok
+test_old_packages_without_origin_remain_optional (test_model_source_provenance.SourceOriginTests) ... ok
+test_origin_is_separate_from_validation_and_request (test_model_source_provenance.SourceOriginTests) ... ok
+test_python_claim_requires_full_model_provenance (test_model_source_provenance.SourceOriginTests) ... ok
+test_rehashed_different_model_or_source_inventory_rejected (test_model_source_provenance.SourceOriginTests) ... ok
+test_reuse_identity_preserves_semantics_but_excludes_task_snapshot (test_model_source_provenance.SourceOriginTests) ... ok
+test_capture_graph_round_trip_uses_original_constant_coordinates (test_application_provenance_transport.ProvenanceTransport) ... ok
+test_graph_only_task_keeps_original_canonical_bytes (test_application_provenance_transport.ProvenanceTransport) ... ok
+test_nonfinite_provenance_cannot_be_persisted (test_application_provenance_transport.ProvenanceTransport) ... ok
+test_old_sorting_changes_capture_normalization_proof (test_application_provenance_transport.ProvenanceTransport) ... ok
+test_status_and_ledger_serialization_remains_canonical (test_application_provenance_transport.ProvenanceTransport) ... ok
+
+======================================================================
+FAIL: test_float_public_dimensions_and_out_mutation_rejected (test_tensor_contraction_source.SourceContractionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_tensor_contraction_source.py", line 70, in test_float_public_dimensions_and_out_mutation_rejected
+    with self.assertRaises(ValueError):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_old_trace_policy_cannot_admit_new_call (test_tensor_contraction_source.SourceContractionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_tensor_contraction_source.py", line 60, in test_old_trace_policy_cannot_admit_new_call
+    with self.assertRaises(ValueError):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_private_dimension_tensor_rejected (test_tensor_contraction_source.SourceContractionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_tensor_contraction_source.py", line 66, in test_private_dimension_tensor_rejected
+    with self.assertRaises(ValueError):
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 156 tests in 13.268s
+
+FAILED (failures=3)
+

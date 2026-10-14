@@ -1,0 +1,64 @@
+{
+  "constants": {
+    "weight": [
+      [
+        [
+          -0.14199377185367934,
+          -0.14526057601325867,
+          -0.042702753497009915
+        ],
+        [
+          -0.1999920108525015,
+          -0.2006055232772388,
+          0.1666909734424516
+        ]
+      ]
+    ]
+  },
+  "format": "poseidon-operator-graph-v4",
+  "id": "transpose_1d_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        4
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "dilation": [
+          1
+        ],
+        "groups": 1,
+        "output_padding": [
+          0
+        ],
+        "output_size": null,
+        "padding": [
+          0
+        ],
+        "stride": [
+          1
+        ]
+      },
+      "id": "transposed",
+      "inputs": [
+        "x",
+        "weight"
+      ],
+      "op": "conv_transpose1d",
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

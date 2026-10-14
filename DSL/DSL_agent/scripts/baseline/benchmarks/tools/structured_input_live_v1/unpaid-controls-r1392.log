@@ -1,0 +1,47 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+test_dictionary_binding_follows_names_not_input_order (test_package_calls.PackageCallTests) ... ok
+test_forwarding_does_not_mutate_frozen_manifest (test_package_calls.PackageCallTests) ... ok
+test_nested_containers_keep_tuple_list_and_public_flag (test_package_calls.PackageCallTests) ... ok
+test_old_source_kind_rejected (test_package_calls.PackageCallTests) ... ok
+test_approval_file_absent_does_not_construct_provider (test_run.RunTests) ... ok
+test_existing_root_rejected (test_run.RunTests) ... ok
+test_hidden_approval_path (test_run.RunTests) ... ok
+test_no_approval_no_execution (test_run.RunTests) ... ok
+test_owned_tree_only_owned_child (test_run.RunTests) ... ok
+test_pid_identity (test_run.RunTests) ... ok
+test_plan_extended_deadline (test_run.RunTests) ... ok
+test_plan_tamper (test_run.RunTests) ... ok
+test_plan_unknown_field (test_run.RunTests) ... ok
+test_public_budget (test_run.RunTests) ... ok
+test_public_cases (test_run.RunTests) ... ok
+test_transport_receipt_normalized_roundtrip_preserves_diagnostics (test_run.RunTests) ... ok
+test_wrong_root_rejected (test_run.RunTests) ... ok
+test_approval_cannot_use_old_format (test_scope.ScopeTests) ... ok
+test_boolean_budget (test_scope.ScopeTests) ... ok
+test_compiled_only (test_scope.ScopeTests) ... ok
+test_duplicate_case (test_scope.ScopeTests) ... ok
+test_duplicate_json (test_scope.ScopeTests) ... ok
+test_exact_ceiling (test_scope.ScopeTests) ... ok
+test_extra_calls (test_scope.ScopeTests) ... ok
+test_extra_case (test_scope.ScopeTests) ... ok
+test_failed_not_passed (test_scope.ScopeTests) ... ok
+test_generation_limit (test_scope.ScopeTests) ... ok
+test_http_limit (test_scope.ScopeTests) ... ok
+test_missing_case (test_scope.ScopeTests) ... ok
+test_more_budget (test_scope.ScopeTests) ... ok
+test_no_approval (test_scope.ScopeTests) ... ok
+test_nonfinite_json (test_scope.ScopeTests) ... ok
+test_original (test_scope.ScopeTests) ... ok
+test_reorder (test_scope.ScopeTests) ... ok
+test_reordered_ledger (test_scope.ScopeTests) ... ok
+test_threshold (test_scope.ScopeTests) ... ok
+test_unknown_call (test_scope.ScopeTests) ... ok
+test_wrong_model (test_scope.ScopeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 0.335s
+
+OK

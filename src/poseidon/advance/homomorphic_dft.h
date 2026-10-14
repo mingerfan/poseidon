@@ -52,7 +52,9 @@ public:
     HomomorphicDFTMatrixLiteral(LinearType type, uint32_t log_n, uint32_t log_slots,
                                 uint32_t level_start, std::vector<uint32_t> levels,
                                 bool repack_imag_to_real = false, double scaling = 1.0,
-                                bool bit_reversed = false, uint32_t log_bsgs_ratio = 0);
+                                bool bit_reversed = false, uint32_t log_bsgs_ratio = 0,
+                                std::vector<uint32_t> layer_groups = {},
+                                uint32_t direct_layer_threshold = 0);
 
     POSEIDON_NODISCARD LinearType get_type() const;
     POSEIDON_NODISCARD uint32_t get_log_n() const;
@@ -88,6 +90,8 @@ private:
     double scaling_;
     bool bit_reversed_;
     uint32_t log_bsgs_ratio_;
+    std::vector<uint32_t> layer_groups_;
+    uint32_t direct_layer_threshold_;
     uint32_t get_depth(bool actual);
 };
 

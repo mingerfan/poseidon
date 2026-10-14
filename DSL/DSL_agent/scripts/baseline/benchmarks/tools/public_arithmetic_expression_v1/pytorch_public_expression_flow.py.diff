@@ -1,0 +1,85 @@
+--- /home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/before/pytorch_public_expression_flow.py	2026-10-11 06:20:15.883347086 +0000
++++ /home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_flow.py	2026-10-11 06:22:00.397067734 +0000
+@@ -4,12 +4,14 @@
+ import numpy as np
+ from benchmark_graph import require,digest
+ from model_resources import resolve,identity as resource_identity
+-from pytorch_public_value_ops import POLICY,CAST_POLICY,checked_policy,checked_array,signature,plan
++from pytorch_public_value_ops import POLICY,CAST_POLICY,ARITHMETIC_POLICY,checked_policy,checked_array,signature,plan
++from pytorch_public_arithmetic_values import registered as arithmetic_registered,plan as arithmetic_plan
+ 
+ METHODS=frozenset(("reshape","view","permute","transpose","t","unsqueeze","squeeze","flatten","contiguous","float","double","to"))
+ FUNCTIONS=frozenset(("torch.reshape","torch.permute","torch.transpose","torch.t","torch.unsqueeze","torch.squeeze","torch.flatten","operator.getitem","_operator.getitem","builtins.getattr"))
+ FORMAT="poseidon-public-expression-flow-v1"
+ CAST_FORMAT="poseidon-public-expression-flow-v2"
++ARITHMETIC_FORMAT="poseidon-public-expression-flow-v3"
+ @dataclass(frozen=True)
+ class Ref:
+     name:str
+@@ -89,37 +91,51 @@
+         if kind=="output"or any(roles[r.name]=="cipher"for r in references):
+             roles[name]="cipher";rewritten.append(row);continue
+         require(references and all(roles[r.name]=="public"for r in references),"public_expression_public_dependency")
+-        require(kind=="call_method"and target in METHODS or kind=="call_function"and target in FUNCTIONS,"public_expression_operation_not_registered")
+-        # Torch functions also permit a keyword input. Bind it without executing a callable.
+-        bound_args=list(args);bound_kwargs=dict(kwargs)
+-        if kind=="call_function"and target.startswith("torch.")and not bound_args:
+-            require("input"in bound_kwargs,"public_expression_input")
+-            bound_args=[bound_kwargs.pop("input")]
+-        require(bound_args and type(bound_args[0])is Ref and
+-                all(r is bound_args[0]for r in references),"public_expression_dynamic_metadata")
+-        parent=public[bound_args[0].name]
+-        stable_target="operator.getitem"if target=="_operator.getitem"else target
+-        logical,physical,proof=plan(parent["logical"],kind,stable_target,tuple(bound_args),bound_kwargs,resource_profile=resource_profile,policy=policy)
++        arithmetic=policy==ARITHMETIC_POLICY and arithmetic_registered(kind,target)
++        require(arithmetic or kind=="call_method"and target in METHODS or kind=="call_function"and target in FUNCTIONS,"public_expression_operation_not_registered")
++        if arithmetic:
++            def public_operand(value):
++                return (value.name,public[value.name]["logical"])if type(value)is Ref and value.name in public else None
++            logical,physical,proof=arithmetic_plan(kind,target,args,kwargs,resolve_value=public_operand,resource_profile=resource_profile)
++            parents=list(dict.fromkeys(v["name"]for v in proof["operands"]if v["kind"]=="public_node"))
++            roots=list(dict.fromkeys(root for n in parents for root in public[n]["roots"]))
++            parent_record=dict(source_parents=parents)
++        else:
++            # Existing unary metadata contracts retain their original records.
++            bound_args=list(args);bound_kwargs=dict(kwargs)
++            if kind=="call_function"and target.startswith("torch.")and not bound_args:
++                require("input"in bound_kwargs,"public_expression_input")
++                bound_args=[bound_kwargs.pop("input")]
++            require(bound_args and type(bound_args[0])is Ref and
++                    all(r is bound_args[0]for r in references),"public_expression_dynamic_metadata")
++            parent=public[bound_args[0].name]
++            stable_target="operator.getitem"if target=="_operator.getitem"else target
++            logical,physical,proof=plan(parent["logical"],kind,stable_target,tuple(bound_args),bound_kwargs,resource_profile=resource_profile,policy=policy)
++            roots=list(parent["roots"]);parent_record=dict(source_parent=bound_args[0].name)
+         attribute="_poseidon_public_expression_"+str(len(entries))
+         require(attribute not in states,"public_expression_materialization_collision")
+         new_elements+=physical.size
+         require(len(entries)<limits.constants and new_elements<=limits.total_constant_elements,"public_expression_derived_capacity")
++        if policy==ARITHMETIC_POLICY:
++            require(len(states)<limits.constants and
++                    sum(v.size for v in states.values())+physical.size<=limits.total_constant_elements,
++                    "public_expression_total_state_capacity")
+         states[attribute]=physical
+         tensor=copy.deepcopy(row["tensor"])
+         if tensor is not None:
+             require(type(tensor)is dict and set(tensor)=={"policy","shape","dtype"},"public_expression_tensor_metadata")
+             tensor.update(shape=list(physical.shape),dtype={"<f8":"float64","<f4":"float32","|b1":"bool","<i4":"int32","<i8":"int64"}[physical.dtype.str])
+         row.update(op="get_attr",target=attribute,args=dict(kind="tuple",items=[]),kwargs=dict(kind="dict",items=[]),tensor=tensor)
+-        entries.append(dict(source_fx_node=name,source_kind=kind,source_target=target,source_parent=bound_args[0].name,
+-                            state_name=attribute,roots=list(parent["roots"]),plan=proof))
+-        public[name]=dict(logical=logical,physical=physical,roots=list(parent["roots"]),origin=name)
++        entries.append(dict(source_fx_node=name,source_kind=kind,source_target=target,**parent_record,
++                            state_name=attribute,roots=roots,plan=proof))
++        public[name]=dict(logical=logical,physical=physical,roots=roots,origin=name)
+         roles[name]="public";rewritten.append(row)
+     # Remove only unused get_attr reads. Keep encrypted operations and their order.
+     used={r.name for row in rewritten for r in _refs((_decode(row["args"],names),_decode(row["kwargs"],names)))}
+     dropped=[row["name"]for row in rewritten if row["op"]=="get_attr"and row["name"]not in used]
+     normalized=[row for row in rewritten if row["name"]not in dropped]
+     effective={row["target"]:states[row["target"]]for row in normalized if row["op"]=="get_attr"}
+-    record=dict(format=CAST_FORMAT if policy==CAST_POLICY else FORMAT,policy=policy,resource_profile=resource_identity(resource_profile),
++    record=dict(format={POLICY:FORMAT,CAST_POLICY:CAST_FORMAT,ARITHMETIC_POLICY:ARITHMETIC_FORMAT}[policy],policy=policy,resource_profile=resource_identity(resource_profile),
+                 source_inventory=copy.deepcopy(inventory),normalized_inventory=normalized,original_state=initial,
+                 full_normalized_state=state_identity(states,resource_profile=resource_profile),
+                 effective_state=state_identity(effective,resource_profile=resource_profile),

@@ -1,0 +1,55 @@
+{
+  "binding": "f7740c49b94d29fb3819a8555c106cb48e911547b65f2ce948eb027fb716d9b4",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 24,
+  "failed": 0,
+  "format": "poseidon-public-tensor-division-draft-controls-v1",
+  "hecate_tracing_calls": 0,
+  "http_attempts": 0,
+  "numerical": [
+    {
+      "divisor_shape": [
+        3
+      ],
+      "input_groups": 4,
+      "input_shape": [
+        2,
+        3
+      ],
+      "max_abs_error": 0.0,
+      "mode": "snapshot",
+      "output_values": 48,
+      "public_state_preserved": true,
+      "source_preserved": true
+    },
+    {
+      "divisor_shape": [
+        2
+      ],
+      "input_groups": 4,
+      "input_shape": [
+        2,
+        3
+      ],
+      "max_abs_error": 0.0,
+      "mode": "transpose",
+      "output_values": 48,
+      "public_state_preserved": true,
+      "source_preserved": true
+    }
+  ],
+  "passed": 22,
+  "production_activated": false,
+  "provider_calls": 0,
+  "seconds": 0.4277882499991392,
+  "skipped": 0,
+  "source_capture_calls": 0,
+  "status": "failed",
+  "tests_run": 46,
+  "tools": {
+    "controls.py": "848173ccabc6ba97a20d2ae2350df1f2db0aba4275d9a7b0ea97dde8fb2c693f",
+    "public_tensor_division.py": "a6794273dc1adfce2745505df084d9505a68295d9586b848b5cc25dc16580f3e",
+    "test_division.py": "63119e7639aef1645e8b8a6e342e6cd40edb01698d45a6d78780c2ba9e42d402"
+  }
+}

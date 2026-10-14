@@ -1,0 +1,8 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %mean : [#users=1] = get_attr[target=mean]
+    %sub : [#users=1] = call_function[target=operator.sub](args = (%x, %mean), kwargs = {})
+    %std : [#users=1] = get_attr[target=std]
+    %add : [#users=1] = call_function[target=operator.add](args = (%std, 0.01), kwargs = {})
+    %truediv : [#users=1] = call_function[target=operator.truediv](args = (%sub, %add), kwargs = {})
+    return truediv

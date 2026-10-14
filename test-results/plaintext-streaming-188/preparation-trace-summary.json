@@ -1,0 +1,18 @@
+{
+  "source": "188Server:/home/xuming/poseidon-plaintext-streaming-models/trace/preparation.json",
+  "scope": "One cold four-GPU prefetch worker run; host call durations, not disjoint wall times",
+  "durations": {
+    "runtime.communication_wait": {
+      "count": 340,
+      "nanoseconds": 1203454
+    },
+    "upload.packing": {
+      "count": 122,
+      "nanoseconds": 13096418
+    },
+    "runtime.compute": {
+      "count": 375,
+      "nanoseconds": 330667188
+    }
+  }
+}

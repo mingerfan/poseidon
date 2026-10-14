@@ -1,0 +1,44 @@
+diff --git a/python/hecate/hecate/expr.py b/python/hecate/hecate/expr.py
+--- a/python/hecate/hecate/expr.py
++++ b/python/hecate/hecate/expr.py
+@@ -116,15 +116,31 @@ def unaryFactory(name, opcode):
+     def unaryMethod(self):
+         (frame, filename, line_number, function_name, lines,
+                 index) = inspect.stack()[1]
+-        if isinstance(self, Iterable):
+-            for tt in self : 
+-                tt = Expr(
+-                    lt.createUnary(ctxt, opcode, tt.obj, filename.encode('utf-8'),
+-                    line_number))
+-            return self 
+-        else :
+-            return Expr(lt.createUnary(ctxt, opcode, self.obj, filename.encode('utf-8'),
+-                line_number)) 
++        def apply(value):
++            return Expr(lt.createUnary(ctxt, opcode, value.obj,
++                filename.encode('utf-8'), line_number))
++
++        if isinstance(self, Expr):
++            return apply(self)
++        if isinstance(self, np.ndarray):
++            if self.dtype != object or not self.flags.writeable:
++                raise TypeError("Unary expression arrays must be writable object arrays")
++            values = list(self.flat)
++        elif isinstance(self, (list, tuple)):
++            values = list(self)
++        else:
++            raise TypeError("Unary expression requires Expr, list, tuple or object ndarray")
++        # Validate every cell before emitting IR or mutating shared storage.
++        if not all(isinstance(value, Expr) for value in values):
++            raise TypeError("Unary expression container cells must be Expr values")
++        results = [apply(value) for value in values]
++        if isinstance(self, tuple):
++            return tuple(results)
++        if isinstance(self, np.ndarray):
++            self.flat[:] = results
++        else:
++            self[:] = results
++        return self
+ 
+     globals()[name] = unaryMethod
+ [unaryFactory(name, opcode) for name, opcode in toUnary.items()]

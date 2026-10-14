@@ -1,0 +1,1462 @@
+{
+  "authority": "current-plan-test-authorization-2026-10-11.json",
+  "binding": "ce45b32bf738ba01af66c1cd8d36f0709e809d847ba87ceae645cb3f42ba4d88",
+  "contexts": [
+    {
+      "category": "public_expression",
+      "context": "public_expression/reshape_0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/manifest.json": "769e28f757953a0d5e5f71e08dd4c7501de925083f251ea0ebafeeba07bee41c",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/reshape_1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "2415a642ff92b0b4211c4a0fa9290252fcfb723f4a7a036c517009010e02dd29",
+      "request_id": "d83974f41e7d848483c300d636eb38f58d0f59077acfbc5acb56accd7f104f33",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/manifest.json": "b49fb88275d5a97907cf52e1dd00e790935eed14df2f5e913dea36c485b4948e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/reshape_2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "3e97dce28afe2bca5d75bbf87f31c0f67f4576890187369212e4ceb42fa2ebc2",
+      "request_id": "30baf614dcd1a8e2c37cb63a652e7df8f33a6b9b64b96c350dcacf546585904f",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/manifest.json": "da0b0b1ae63e60119fc40ebacfaf69d413d6f32cdbcf184a317ed3e27dacc0ff",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/permute_0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "ee37d5dd4e5d96b049f9ecd8307f1d77c4b64b672ac22e3d983f6bf4c4ca6ca7",
+      "request_id": "ad6bae0e9224108eb611f7db2d5e2140e8e215d8d00ba85c2720a5afbdb44fa9",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/manifest.json": "d167cbe1fcf7cfdd2a7866b346685d70b1e05f355c87ec056d1ef1abd15a06e7",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/permute_1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "f9dfe9f716f11ffca0c96e5502ab9af606040a7782859cafd7e59988cd1da9c7",
+      "request_id": "e465db200bcf99e26b65da89f83b7c1c4b43a186966c6921450874056d455be8",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/manifest.json": "b6c811ce74a23ac478a6674fc6b3ad6787f26170947ac91622e5675dc5698cf5",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/permute_2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "0c81dbe70dda290c1bed1d78fb70726e5863b500ad718a3da63c1bbd319b4883",
+      "request_id": "c8b7d1f986f462671c214eae4728b630ba2c746f6557e5d6a2d1d3a8d6579ee7",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/manifest.json": "a17204de4856be57d9cee14bbcecca25665f8aaee119b9176b52f3585d25d8bf",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/slice_0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "26823a32b9da004520d7483c97b4a417a018d657491b9eff1c3eb9453be0da24",
+      "request_id": "bd9caec3d7047760650c13857759c41c9d907988f5f00d4045482fa0ecb598c5",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/manifest.json": "369159a8be1ca95613d836ee3353fac35c4c4465de5c3122298ad830ebce3f8b",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/slice_1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "94329dfe8e5bab67c41a9c1ea05c0cec5423d85d4e5cd8f85034dc31ec081581",
+      "request_id": "dbbd92d8fa56d038f5af9fff2ca19d5bcf6b2bcead4de97fa4f00db48e62d79f",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/manifest.json": "e6db5c02730fb01ec4bbee4ab5da992ebec3e1ea893cf93a35668f7f2607a713",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/slice_2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "f1cc35f80d1ca0bc8b135c465fecd3e770a0c4dc9d89c5e8a9aacde48b8682af",
+      "request_id": "1bce88ae9b54465ce0c0589a0bc2de97cc9188bcd36b188591c75b1720a188c6",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/manifest.json": "5b7b32cc62e7ec0df7c007a95d0e1d94b32d18429ce902bffb2f1cefc2eb9164",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/bool_cast_0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "609bf40a022d206f00703440c6a7d6846704899d6e6fde8ca6d338510622185b",
+      "request_id": "1de53aa804f0c312e41775809ad13ea95c8dede914c71eb396c212b1d3f15f35",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/manifest.json": "4e718e6f92a27a4c4ffa78160da5c3cd8ad7c27130fca1ccbcc034756d1f9482",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/state_0000.npy": "8a5f12b3ff91a780a3a465dd60bac4962f937211c474bd7ddf73f9ebfbbddf9c"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/bool_cast_1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "142ab85f435e6d97e384c8cd560b19862220bf36ce3b970cf97c9d7fbef40caf",
+      "request_id": "5b500ffbaac96efb3beef1d72edd9da6f8f9edf7e63f0dbad915695f13c7681e",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/manifest.json": "6e530de274ce1813cc61309239fce3f012c01099598d13bfdc0952ae32b56cbf",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/state_0000.npy": "122742851ab4d502356d8ad66fb364f007af36df7803235ac275ce0c9e4b2b1f"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/bool_cast_2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "425f7a7b085653549436eb55aa59d94a91dff9a88c23aedbac3482e36d0afdf4",
+      "request_id": "6992b1189a0965d1f097426c067c32a8dc1069ba511da64df0a728e4e01d30a0",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/manifest.json": "7204aa81189f981cfcce5ea1da1be3ffef500516344524c41ecbefe751e9b0ca",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/state_0000.npy": "660091e64631a38850f35cf88eb6e10415ce3d48866b2b9077438977c2e4aa0d"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/identity_0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "ee37d5dd4e5d96b049f9ecd8307f1d77c4b64b672ac22e3d983f6bf4c4ca6ca7",
+      "request_id": "ad6bae0e9224108eb611f7db2d5e2140e8e215d8d00ba85c2720a5afbdb44fa9",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/manifest.json": "b0e5fb9063bd462d23ace0d71c99519729cb949cd438a95e94996327c778694e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/identity_1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/manifest.json": "8b6ad95ac417b637f2d7bf1b9a41cb19abcc1f623d1a3f8080b14f381e4b2ec4",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/identity_2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "c0b1ff024ceb5db4ede2ca4e09210376f65794c0259401caad56eb466e850258",
+      "request_id": "3c6ee0fdae53d10a5eeb33be5c8982e847bcf545b3abe37bb1e4c07dae88614f",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/manifest.json": "712d6bc45cc9eef1f3af71b84a007436ed760f3d1add15265d9584568b572463",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/float32",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/float32/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/manifest.json": "af8df6ef305865ec7c815b9178c9d65294772c2c8751b375fd1bd3f2c28725fb",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/state_0000.npy": "7d19ffd5c2d1d87ad4c97a9996916601c2f1bbf2d63067db0ebc53677001845d"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/named",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "ed82f9bab7d239ee79f22daf2e324f22b817a024ac05abf404d33af320d99be6",
+      "request_id": "61e277c6e9d3062e24c98c14cadb54702edd201785b4f8c3b780c50257e6372d",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/manifest.json": "2204e27558e7fe0a4c3d83f20271684082586b624ab925026757a9395c10d8cc",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/manifest.json"
+    },
+    {
+      "category": "public_expression",
+      "context": "public_expression/unused",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/unused/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+      "public_request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v23",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/manifest.json": "90181ca63f090ac3cc0e02ca09e406d5e91a511ecd52d6704ee32b7cced45497",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/state_0001.npy": "339fb06679091dd9a30361f56d2914a698ecf5e9f423d074eb957219a833a137"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f32_to_f32_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f32_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "770fc9c3322a72341005f58c03fd859dbf0af92c1b5a339d9120433b0b8854b6",
+      "request_id": "21e88cd0994546af28042d5e21b99d2fbd901554900bedff84b4c6e99c7f3b60",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c0/weights/manifest.json": "17f3535a3c767aafa0958c77608a5fec3af763a32ec3303ea6d82269f61ede75",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c0/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f32_to_f32_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f32_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "59d48304d75e0408e6b670dfb95ef5c87d6d3175b464101e4f6d335cc9d909af",
+      "request_id": "9d06713209ee6fcaca1a6e08464e5318e79872c950f4b5e9eb397a352a4ed0b4",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c1/weights/manifest.json": "2ad977acccdd65f3c62d3a115f60063bce02d7fd7e6bf490874c7253e385b224",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c1/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f32_to_f32_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f32_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "c93d7e3760c7367dc4e82acf02f973928aeb29ea6c310d9d9a2dff08260418dc",
+      "request_id": "87ef604f3dd0810ce7ab985663f35172c59fe364da9485ed272b3017c46a85d5",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c2/weights/manifest.json": "ac98f1a27b1d0f33ab63c4ab93dbbb0e92a32259948903b9db4cc0ee484d2fe4",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c2/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f32_to_f64_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f64_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "770fc9c3322a72341005f58c03fd859dbf0af92c1b5a339d9120433b0b8854b6",
+      "request_id": "21e88cd0994546af28042d5e21b99d2fbd901554900bedff84b4c6e99c7f3b60",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c0/weights/manifest.json": "eb886fe01382e14938bb2ed533a01905a8a4272a7e89e9e152a9357763e25277",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c0/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f32_to_f64_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f64_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "59d48304d75e0408e6b670dfb95ef5c87d6d3175b464101e4f6d335cc9d909af",
+      "request_id": "9d06713209ee6fcaca1a6e08464e5318e79872c950f4b5e9eb397a352a4ed0b4",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c1/weights/manifest.json": "b0f6aa6837b3ce2ee1060b74751088fa3142e2fe58813930f1f8d8f85e9a4b13",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c1/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f32_to_f64_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f64_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "c93d7e3760c7367dc4e82acf02f973928aeb29ea6c310d9d9a2dff08260418dc",
+      "request_id": "87ef604f3dd0810ce7ab985663f35172c59fe364da9485ed272b3017c46a85d5",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c2/weights/manifest.json": "2ea60b564d3f7053a0459d26e9ab2efff1653be83340524e9dd6577c5c232a9b",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c2/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_to_f32_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "770fc9c3322a72341005f58c03fd859dbf0af92c1b5a339d9120433b0b8854b6",
+      "request_id": "21e88cd0994546af28042d5e21b99d2fbd901554900bedff84b4c6e99c7f3b60",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/manifest.json": "680ee0ba29df7d9b4f0c1dce340c6d98b9b3eeefcf80259eead7b4004e83e0d5",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_to_f32_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "59d48304d75e0408e6b670dfb95ef5c87d6d3175b464101e4f6d335cc9d909af",
+      "request_id": "9d06713209ee6fcaca1a6e08464e5318e79872c950f4b5e9eb397a352a4ed0b4",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c1/weights/manifest.json": "19767fd66b60dcbb8c01e32c2fd5c33329f6b859638c1cf63fd7fbd1b328cd87",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c1/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_to_f32_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "c93d7e3760c7367dc4e82acf02f973928aeb29ea6c310d9d9a2dff08260418dc",
+      "request_id": "87ef604f3dd0810ce7ab985663f35172c59fe364da9485ed272b3017c46a85d5",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c2/weights/manifest.json": "fd5c1c1c9de25b9f9f1226af0c22bd4fba84d5f4717787841f427825b2ccf843",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c2/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_to_f64_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f64_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "0c4ebaaf7cea58819d8d180b76bc90192e9424bbe5d3ed0e77ecf84808e9d1cb",
+      "request_id": "69037a05bf69743bc58c3654187faf9cfccf3292124cf42651f896513d9658f9",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c0/weights/manifest.json": "3a4f721d5f8b7572463e18cca6b6effe55cd1032dfbb9a4467c8a3fac2e7c89b",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c0/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_to_f64_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f64_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "ea246c2f158f14f43e4102f8314d6105e4fab672f9ad28a94be669fab998ae13",
+      "request_id": "147feff2cd7b2266c4d57efc610708210fec9ba3747c0e32e899aac99b27955c",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c1/weights/manifest.json": "c65c0fb575c8ad40a7df7eb569fb4bbbe5319bdc461bccab65413ff29bd99e82",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c1/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_to_f64_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f64_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "88e47ad73b68eac8facf0b153b02e33dceafc4bb36bddc9d826ebf006fb0e73c",
+      "request_id": "d6eac7c7f72cd45df041fa343e8ef2a276f96d4c73d43b0ae8da26e63be2a511",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c2/weights/manifest.json": "3c97517e6084a21447cb06fc907e9a30f1c25a2d0921a8ef1eb8b045dba5f63c",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c2/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i32_to_f32_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f32_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "468d9a6b60771e7f19fdda614b4a2acccfab78afa3b5d474e48d9ffd4f3ea9f3",
+      "request_id": "ebab5dd38529ba64b1e2dcf1c48c1ffc5af1d95767e58c07fedeb15c745fa84c",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c0/weights/manifest.json": "39cf37d8dcec0b275412cf970a19f260bf1be8e9baa8e920a742a5ba220eb1c0",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c0/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i32_to_f32_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f32_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "f9092bfdafc2be77c63f7e326d3f94c72acd5a31593df232407b273a1b7a6ae4",
+      "request_id": "a89ca04d0bf2c68993af33164a87d1965675a4b81adfa4efffb9cf89c966cd32",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c1/weights/manifest.json": "9646c30b325bc567d9c82a24ac64063c410f5c88e0206e5fb58baa7637c9d119",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c1/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i32_to_f32_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f32_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "6bf6ff39307d743baf8fca692febaf08ee2100626a3f5a29cd4cdda625beb692",
+      "request_id": "a797e56f88c7d555139406a847e0442fcce87b5bafd73424772eb68b9d943511",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c2/weights/manifest.json": "15c86bc4b1f6f26082fb9b703485ea0448800e686e092a7cbdd7c2b6c7e268ce",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c2/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i32_to_f64_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f64_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "468d9a6b60771e7f19fdda614b4a2acccfab78afa3b5d474e48d9ffd4f3ea9f3",
+      "request_id": "ebab5dd38529ba64b1e2dcf1c48c1ffc5af1d95767e58c07fedeb15c745fa84c",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c0/weights/manifest.json": "8109061103df320cdb7b3d7b57c8904cd2fcef683d27b90ebc0c26c33ce25a73",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c0/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i32_to_f64_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f64_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "f9092bfdafc2be77c63f7e326d3f94c72acd5a31593df232407b273a1b7a6ae4",
+      "request_id": "a89ca04d0bf2c68993af33164a87d1965675a4b81adfa4efffb9cf89c966cd32",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c1/weights/manifest.json": "cbde80800b95971ecd01b691bad707089b03fff737b4f1c292b8ac1fc2654642",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c1/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i32_to_f64_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f64_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "6bf6ff39307d743baf8fca692febaf08ee2100626a3f5a29cd4cdda625beb692",
+      "request_id": "a797e56f88c7d555139406a847e0442fcce87b5bafd73424772eb68b9d943511",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c2/weights/manifest.json": "4aa2ecb81f80736b511e9c51a4a77c444b39ae8f5ae07be9c150a7fec147c8d0",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c2/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i64_to_f32_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f32_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "468d9a6b60771e7f19fdda614b4a2acccfab78afa3b5d474e48d9ffd4f3ea9f3",
+      "request_id": "ebab5dd38529ba64b1e2dcf1c48c1ffc5af1d95767e58c07fedeb15c745fa84c",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c0/weights/manifest.json": "5d04adb24a7323ae21b604319c3f1c5359e24caada2575a5afa29dbca830130d",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c0/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i64_to_f32_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f32_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "f9092bfdafc2be77c63f7e326d3f94c72acd5a31593df232407b273a1b7a6ae4",
+      "request_id": "a89ca04d0bf2c68993af33164a87d1965675a4b81adfa4efffb9cf89c966cd32",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c1/weights/manifest.json": "f35ee9452d330b7c157bc204b255c58ada6e405dbd76a068e0e718f12bd4ae44",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c1/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i64_to_f32_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f32_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "6bf6ff39307d743baf8fca692febaf08ee2100626a3f5a29cd4cdda625beb692",
+      "request_id": "a797e56f88c7d555139406a847e0442fcce87b5bafd73424772eb68b9d943511",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c2/weights/manifest.json": "5d51b581fd5f1c7eb9e73aeb34d8b9e2863fcb46c99aaf0f4b88463f3a183252",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c2/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i64_to_f64_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f64_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "468d9a6b60771e7f19fdda614b4a2acccfab78afa3b5d474e48d9ffd4f3ea9f3",
+      "request_id": "ebab5dd38529ba64b1e2dcf1c48c1ffc5af1d95767e58c07fedeb15c745fa84c",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c0/weights/manifest.json": "f693c987b0315bf4ad91fc5870ebe88ffe853e186e295c4c7122c6f81251a900",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c0/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i64_to_f64_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f64_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "f9092bfdafc2be77c63f7e326d3f94c72acd5a31593df232407b273a1b7a6ae4",
+      "request_id": "a89ca04d0bf2c68993af33164a87d1965675a4b81adfa4efffb9cf89c966cd32",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c1/weights/manifest.json": "616fbb662fb410b432d2bbed7b4e75b4bf8ddafd8b0bfe48d0c86503a43ab03e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c1/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/i64_to_f64_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f64_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "6bf6ff39307d743baf8fca692febaf08ee2100626a3f5a29cd4cdda625beb692",
+      "request_id": "a797e56f88c7d555139406a847e0442fcce87b5bafd73424772eb68b9d943511",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c2/weights/manifest.json": "837c20ab8863b22078629c5fd36d419109c7369c730d96aa5b312bdd2d912c86",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c2/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/bool_to_f32_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f32_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "066cfa8b7edd101b6ea7d787365fdffce8b55a6b9b2f0d11a44a3c597cd7dae2",
+      "request_id": "e3a83ea122600229c5c530b92ce1c537f16f3567b0eaba514ffd93522b832f76",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c0/weights/manifest.json": "e38a96de41857541d678d084aea5abbd01a1c155670490f9adcb43e074b5fdf2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c0/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/bool_to_f32_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f32_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "98b2d0df04607d720b312adbd25469ccfa9a867889582b5e4ceb70ec1da15619",
+      "request_id": "26b53600e2f2b0076726b8d026ebb6ab04c7b2f92823fc6728e147a1fca00246",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c1/weights/manifest.json": "78b5d19f22c4beb40de0aca8e91c70fb05d4f6efd99c942ccd9696819f50f868",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c1/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/bool_to_f32_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f32_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "791a3c35d611c7c985f0a53a36f98141ed060527ab79bc6c320a0895d61365f6",
+      "request_id": "33fa5b955a769b8446e175efb0913142445f09a9ebce95b17221c17f06f6a0fa",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c2/weights/manifest.json": "d764bc5932ae0342f1c6be882cdeffc11b770c38b045dd3e60e07b46a93a7382",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c2/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/bool_to_f64_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f64_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "066cfa8b7edd101b6ea7d787365fdffce8b55a6b9b2f0d11a44a3c597cd7dae2",
+      "request_id": "e3a83ea122600229c5c530b92ce1c537f16f3567b0eaba514ffd93522b832f76",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c0/weights/manifest.json": "5a79938cff59e27ceddb5645d50d19bbc23211d4e4077fbe26e43da9cbd158b3",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c0/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/bool_to_f64_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f64_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "98b2d0df04607d720b312adbd25469ccfa9a867889582b5e4ceb70ec1da15619",
+      "request_id": "26b53600e2f2b0076726b8d026ebb6ab04c7b2f92823fc6728e147a1fca00246",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c1/weights/manifest.json": "5923ef9c6fb79a03eb3a0bb44943c19f0f6767fc853265ba33285436aab2f209",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c1/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/bool_to_f64_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f64_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "791a3c35d611c7c985f0a53a36f98141ed060527ab79bc6c320a0895d61365f6",
+      "request_id": "33fa5b955a769b8446e175efb0913142445f09a9ebce95b17221c17f06f6a0fa",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c2/weights/manifest.json": "0432b97502dc2f7bbb1562b09be87c794a8f7ed5cf3b2424b36f3b1eebf8c8d8",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c2/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c2/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_roundtrip_c0",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c0/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "770fc9c3322a72341005f58c03fd859dbf0af92c1b5a339d9120433b0b8854b6",
+      "request_id": "21e88cd0994546af28042d5e21b99d2fbd901554900bedff84b4c6e99c7f3b60",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c0/weights/manifest.json": "2709cdbc833373629161e07a66eb434e22eb3bd0479c939f28bd23892907d629",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c0/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c0/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_roundtrip_c1",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c1/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "59d48304d75e0408e6b670dfb95ef5c87d6d3175b464101e4f6d335cc9d909af",
+      "request_id": "9d06713209ee6fcaca1a6e08464e5318e79872c950f4b5e9eb397a352a4ed0b4",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c1/weights/manifest.json": "cb094cae3f7c929f3fe068bedb84c7944d19443dd5d38b8ff8ad96550a54e6b2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c1/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c1/weights/manifest.json"
+    },
+    {
+      "category": "public_dtype",
+      "context": "public_dtype/f64_roundtrip_c2",
+      "current_poseidon_validation": "not_run",
+      "current_source_acceptance": "not_run",
+      "historical_public_request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c2/request.json",
+      "new_agent_generation": "not_run",
+      "old_offline_proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+      "public_request_sha256": "c93d7e3760c7367dc4e82acf02f973928aeb29ea6c310d9d9a2dff08260418dc",
+      "request_id": "87ef604f3dd0810ce7ab985663f35172c59fe364da9485ed272b3017c46a85d5",
+      "source_acceptance": "historical_offline_verified",
+      "source_format": "poseidon-trusted-pytorch-v24",
+      "source_hashes": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/manifest.json": "4eccd7db5b6b50ac435e3a016fd33ddadfdc28e67ecc428dc93c76cbd741cb3a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc"
+      },
+      "source_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/manifest.json"
+    }
+  ],
+  "current_source_freeze": false,
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "distinct_public_requests": 26,
+  "excludes": [
+    "candidate source answers",
+    "private test inputs",
+    "reference output arrays",
+    "credentials",
+    "new backend changes",
+    "new dependencies",
+    "parameter changes",
+    "budget expansion"
+  ],
+  "execution_queued": false,
+  "format": "poseidon-pending-source-test-inventory-v1",
+  "grouping": "exact canonical public request including model weights configuration and rules",
+  "historical_sources_preserved": true,
+  "limits": {
+    "api_concurrency": 1,
+    "compile_jobs": 2,
+    "encrypted_concurrency": 1,
+    "generations_per_request": 4,
+    "global_result_bytes": 34359738368,
+    "http_attempts_per_request": 16,
+    "link_jobs": 1,
+    "max_tokens": 384000,
+    "minimum_free_bytes": 4294967296,
+    "per_generation_timeout": 1200,
+    "shard_maximum_requests": 48
+  },
+  "new_compiler_calls": 0,
+  "new_encrypted_calls": 0,
+  "new_provider_calls": 0,
+  "next_steps": [
+    "current batch terminal audit",
+    "current source recapture and independent reference",
+    "freeze current request and implementation identities",
+    "bounded real-Agent group evaluation",
+    "bind each original source context to its independently checked generated package"
+  ],
+  "request_groups": [
+    {
+      "contexts": [
+        "public_expression/reshape_0",
+        "public_expression/identity_1",
+        "public_expression/float32",
+        "public_expression/unused"
+      ],
+      "public_request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "representative_context": "public_expression/reshape_0",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a"
+    },
+    {
+      "contexts": [
+        "public_expression/reshape_1"
+      ],
+      "public_request_sha256": "2415a642ff92b0b4211c4a0fa9290252fcfb723f4a7a036c517009010e02dd29",
+      "representative_context": "public_expression/reshape_1",
+      "request_id": "d83974f41e7d848483c300d636eb38f58d0f59077acfbc5acb56accd7f104f33"
+    },
+    {
+      "contexts": [
+        "public_expression/reshape_2"
+      ],
+      "public_request_sha256": "3e97dce28afe2bca5d75bbf87f31c0f67f4576890187369212e4ceb42fa2ebc2",
+      "representative_context": "public_expression/reshape_2",
+      "request_id": "30baf614dcd1a8e2c37cb63a652e7df8f33a6b9b64b96c350dcacf546585904f"
+    },
+    {
+      "contexts": [
+        "public_expression/permute_0",
+        "public_expression/identity_0"
+      ],
+      "public_request_sha256": "ee37d5dd4e5d96b049f9ecd8307f1d77c4b64b672ac22e3d983f6bf4c4ca6ca7",
+      "representative_context": "public_expression/permute_0",
+      "request_id": "ad6bae0e9224108eb611f7db2d5e2140e8e215d8d00ba85c2720a5afbdb44fa9"
+    },
+    {
+      "contexts": [
+        "public_expression/permute_1"
+      ],
+      "public_request_sha256": "f9dfe9f716f11ffca0c96e5502ab9af606040a7782859cafd7e59988cd1da9c7",
+      "representative_context": "public_expression/permute_1",
+      "request_id": "e465db200bcf99e26b65da89f83b7c1c4b43a186966c6921450874056d455be8"
+    },
+    {
+      "contexts": [
+        "public_expression/permute_2"
+      ],
+      "public_request_sha256": "0c81dbe70dda290c1bed1d78fb70726e5863b500ad718a3da63c1bbd319b4883",
+      "representative_context": "public_expression/permute_2",
+      "request_id": "c8b7d1f986f462671c214eae4728b630ba2c746f6557e5d6a2d1d3a8d6579ee7"
+    },
+    {
+      "contexts": [
+        "public_expression/slice_0"
+      ],
+      "public_request_sha256": "26823a32b9da004520d7483c97b4a417a018d657491b9eff1c3eb9453be0da24",
+      "representative_context": "public_expression/slice_0",
+      "request_id": "bd9caec3d7047760650c13857759c41c9d907988f5f00d4045482fa0ecb598c5"
+    },
+    {
+      "contexts": [
+        "public_expression/slice_1"
+      ],
+      "public_request_sha256": "94329dfe8e5bab67c41a9c1ea05c0cec5423d85d4e5cd8f85034dc31ec081581",
+      "representative_context": "public_expression/slice_1",
+      "request_id": "dbbd92d8fa56d038f5af9fff2ca19d5bcf6b2bcead4de97fa4f00db48e62d79f"
+    },
+    {
+      "contexts": [
+        "public_expression/slice_2"
+      ],
+      "public_request_sha256": "f1cc35f80d1ca0bc8b135c465fecd3e770a0c4dc9d89c5e8a9aacde48b8682af",
+      "representative_context": "public_expression/slice_2",
+      "request_id": "1bce88ae9b54465ce0c0589a0bc2de97cc9188bcd36b188591c75b1720a188c6"
+    },
+    {
+      "contexts": [
+        "public_expression/bool_cast_0"
+      ],
+      "public_request_sha256": "609bf40a022d206f00703440c6a7d6846704899d6e6fde8ca6d338510622185b",
+      "representative_context": "public_expression/bool_cast_0",
+      "request_id": "1de53aa804f0c312e41775809ad13ea95c8dede914c71eb396c212b1d3f15f35"
+    },
+    {
+      "contexts": [
+        "public_expression/bool_cast_1"
+      ],
+      "public_request_sha256": "142ab85f435e6d97e384c8cd560b19862220bf36ce3b970cf97c9d7fbef40caf",
+      "representative_context": "public_expression/bool_cast_1",
+      "request_id": "5b500ffbaac96efb3beef1d72edd9da6f8f9edf7e63f0dbad915695f13c7681e"
+    },
+    {
+      "contexts": [
+        "public_expression/bool_cast_2"
+      ],
+      "public_request_sha256": "425f7a7b085653549436eb55aa59d94a91dff9a88c23aedbac3482e36d0afdf4",
+      "representative_context": "public_expression/bool_cast_2",
+      "request_id": "6992b1189a0965d1f097426c067c32a8dc1069ba511da64df0a728e4e01d30a0"
+    },
+    {
+      "contexts": [
+        "public_expression/identity_2"
+      ],
+      "public_request_sha256": "c0b1ff024ceb5db4ede2ca4e09210376f65794c0259401caad56eb466e850258",
+      "representative_context": "public_expression/identity_2",
+      "request_id": "3c6ee0fdae53d10a5eeb33be5c8982e847bcf545b3abe37bb1e4c07dae88614f"
+    },
+    {
+      "contexts": [
+        "public_expression/named"
+      ],
+      "public_request_sha256": "ed82f9bab7d239ee79f22daf2e324f22b817a024ac05abf404d33af320d99be6",
+      "representative_context": "public_expression/named",
+      "request_id": "61e277c6e9d3062e24c98c14cadb54702edd201785b4f8c3b780c50257e6372d"
+    },
+    {
+      "contexts": [
+        "public_dtype/f32_to_f32_c0",
+        "public_dtype/f32_to_f64_c0",
+        "public_dtype/f64_to_f32_c0",
+        "public_dtype/f64_roundtrip_c0"
+      ],
+      "public_request_sha256": "770fc9c3322a72341005f58c03fd859dbf0af92c1b5a339d9120433b0b8854b6",
+      "representative_context": "public_dtype/f32_to_f32_c0",
+      "request_id": "21e88cd0994546af28042d5e21b99d2fbd901554900bedff84b4c6e99c7f3b60"
+    },
+    {
+      "contexts": [
+        "public_dtype/f32_to_f32_c1",
+        "public_dtype/f32_to_f64_c1",
+        "public_dtype/f64_to_f32_c1",
+        "public_dtype/f64_roundtrip_c1"
+      ],
+      "public_request_sha256": "59d48304d75e0408e6b670dfb95ef5c87d6d3175b464101e4f6d335cc9d909af",
+      "representative_context": "public_dtype/f32_to_f32_c1",
+      "request_id": "9d06713209ee6fcaca1a6e08464e5318e79872c950f4b5e9eb397a352a4ed0b4"
+    },
+    {
+      "contexts": [
+        "public_dtype/f32_to_f32_c2",
+        "public_dtype/f32_to_f64_c2",
+        "public_dtype/f64_to_f32_c2",
+        "public_dtype/f64_roundtrip_c2"
+      ],
+      "public_request_sha256": "c93d7e3760c7367dc4e82acf02f973928aeb29ea6c310d9d9a2dff08260418dc",
+      "representative_context": "public_dtype/f32_to_f32_c2",
+      "request_id": "87ef604f3dd0810ce7ab985663f35172c59fe364da9485ed272b3017c46a85d5"
+    },
+    {
+      "contexts": [
+        "public_dtype/f64_to_f64_c0"
+      ],
+      "public_request_sha256": "0c4ebaaf7cea58819d8d180b76bc90192e9424bbe5d3ed0e77ecf84808e9d1cb",
+      "representative_context": "public_dtype/f64_to_f64_c0",
+      "request_id": "69037a05bf69743bc58c3654187faf9cfccf3292124cf42651f896513d9658f9"
+    },
+    {
+      "contexts": [
+        "public_dtype/f64_to_f64_c1"
+      ],
+      "public_request_sha256": "ea246c2f158f14f43e4102f8314d6105e4fab672f9ad28a94be669fab998ae13",
+      "representative_context": "public_dtype/f64_to_f64_c1",
+      "request_id": "147feff2cd7b2266c4d57efc610708210fec9ba3747c0e32e899aac99b27955c"
+    },
+    {
+      "contexts": [
+        "public_dtype/f64_to_f64_c2"
+      ],
+      "public_request_sha256": "88e47ad73b68eac8facf0b153b02e33dceafc4bb36bddc9d826ebf006fb0e73c",
+      "representative_context": "public_dtype/f64_to_f64_c2",
+      "request_id": "d6eac7c7f72cd45df041fa343e8ef2a276f96d4c73d43b0ae8da26e63be2a511"
+    },
+    {
+      "contexts": [
+        "public_dtype/i32_to_f32_c0",
+        "public_dtype/i32_to_f64_c0",
+        "public_dtype/i64_to_f32_c0",
+        "public_dtype/i64_to_f64_c0"
+      ],
+      "public_request_sha256": "468d9a6b60771e7f19fdda614b4a2acccfab78afa3b5d474e48d9ffd4f3ea9f3",
+      "representative_context": "public_dtype/i32_to_f32_c0",
+      "request_id": "ebab5dd38529ba64b1e2dcf1c48c1ffc5af1d95767e58c07fedeb15c745fa84c"
+    },
+    {
+      "contexts": [
+        "public_dtype/i32_to_f32_c1",
+        "public_dtype/i32_to_f64_c1",
+        "public_dtype/i64_to_f32_c1",
+        "public_dtype/i64_to_f64_c1"
+      ],
+      "public_request_sha256": "f9092bfdafc2be77c63f7e326d3f94c72acd5a31593df232407b273a1b7a6ae4",
+      "representative_context": "public_dtype/i32_to_f32_c1",
+      "request_id": "a89ca04d0bf2c68993af33164a87d1965675a4b81adfa4efffb9cf89c966cd32"
+    },
+    {
+      "contexts": [
+        "public_dtype/i32_to_f32_c2",
+        "public_dtype/i32_to_f64_c2",
+        "public_dtype/i64_to_f32_c2",
+        "public_dtype/i64_to_f64_c2"
+      ],
+      "public_request_sha256": "6bf6ff39307d743baf8fca692febaf08ee2100626a3f5a29cd4cdda625beb692",
+      "representative_context": "public_dtype/i32_to_f32_c2",
+      "request_id": "a797e56f88c7d555139406a847e0442fcce87b5bafd73424772eb68b9d943511"
+    },
+    {
+      "contexts": [
+        "public_dtype/bool_to_f32_c0",
+        "public_dtype/bool_to_f64_c0"
+      ],
+      "public_request_sha256": "066cfa8b7edd101b6ea7d787365fdffce8b55a6b9b2f0d11a44a3c597cd7dae2",
+      "representative_context": "public_dtype/bool_to_f32_c0",
+      "request_id": "e3a83ea122600229c5c530b92ce1c537f16f3567b0eaba514ffd93522b832f76"
+    },
+    {
+      "contexts": [
+        "public_dtype/bool_to_f32_c1",
+        "public_dtype/bool_to_f64_c1"
+      ],
+      "public_request_sha256": "98b2d0df04607d720b312adbd25469ccfa9a867889582b5e4ceb70ec1da15619",
+      "representative_context": "public_dtype/bool_to_f32_c1",
+      "request_id": "26b53600e2f2b0076726b8d026ebb6ab04c7b2f92823fc6728e147a1fca00246"
+    },
+    {
+      "contexts": [
+        "public_dtype/bool_to_f32_c2",
+        "public_dtype/bool_to_f64_c2"
+      ],
+      "public_request_sha256": "791a3c35d611c7c985f0a53a36f98141ed060527ab79bc6c320a0895d61365f6",
+      "representative_context": "public_dtype/bool_to_f32_c2",
+      "request_id": "33fa5b955a769b8446e175efb0913142445f09a9ebce95b17221c17f06f6a0fa"
+    }
+  ],
+  "source_contexts": 51,
+  "source_files": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-dtype-offline-proposal-r1376.json": "c6fc6d28d39b45595e172c89a972bda268cd9800688041c5d0cfcefda9e79508",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-proposal-r1369.json": "975b02922ada6070129a94f9d6086578041fe395a2d663c8df7334f39b1833cf",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c0/weights/manifest.json": "e38a96de41857541d678d084aea5abbd01a1c155670490f9adcb43e074b5fdf2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c0/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c1/weights/manifest.json": "78b5d19f22c4beb40de0aca8e91c70fb05d4f6efd99c942ccd9696819f50f868",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c1/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c2/weights/manifest.json": "d764bc5932ae0342f1c6be882cdeffc11b770c38b045dd3e60e07b46a93a7382",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f32_c2/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c0/weights/manifest.json": "5a79938cff59e27ceddb5645d50d19bbc23211d4e4077fbe26e43da9cbd158b3",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c0/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c1/weights/manifest.json": "5923ef9c6fb79a03eb3a0bb44943c19f0f6767fc853265ba33285436aab2f209",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c1/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c2/weights/manifest.json": "0432b97502dc2f7bbb1562b09be87c794a8f7ed5cf3b2424b36f3b1eebf8c8d8",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/bool_to_f64_c2/weights/state_0000.npy": "d61c8cde7710eb3b0ddc0abc37984ae811fcfc75dbb991b24d5367ef201cf398",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c0/weights/manifest.json": "17f3535a3c767aafa0958c77608a5fec3af763a32ec3303ea6d82269f61ede75",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c0/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c1/weights/manifest.json": "2ad977acccdd65f3c62d3a115f60063bce02d7fd7e6bf490874c7253e385b224",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c1/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c2/weights/manifest.json": "ac98f1a27b1d0f33ab63c4ab93dbbb0e92a32259948903b9db4cc0ee484d2fe4",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f32_c2/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c0/weights/manifest.json": "eb886fe01382e14938bb2ed533a01905a8a4272a7e89e9e152a9357763e25277",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c0/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c1/weights/manifest.json": "b0f6aa6837b3ce2ee1060b74751088fa3142e2fe58813930f1f8d8f85e9a4b13",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c1/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c2/weights/manifest.json": "2ea60b564d3f7053a0459d26e9ab2efff1653be83340524e9dd6577c5c232a9b",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f32_to_f64_c2/weights/state_0000.npy": "04918e7356c001de2846fadc2eadc0b33dfc4e3785825484298fcf3b93bf74aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c0/weights/manifest.json": "2709cdbc833373629161e07a66eb434e22eb3bd0479c939f28bd23892907d629",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c0/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c1/weights/manifest.json": "cb094cae3f7c929f3fe068bedb84c7944d19443dd5d38b8ff8ad96550a54e6b2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c1/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/manifest.json": "4eccd7db5b6b50ac435e3a016fd33ddadfdc28e67ecc428dc93c76cbd741cb3a",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_roundtrip_c2/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/manifest.json": "680ee0ba29df7d9b4f0c1dce340c6d98b9b3eeefcf80259eead7b4004e83e0d5",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c0/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c1/weights/manifest.json": "19767fd66b60dcbb8c01e32c2fd5c33329f6b859638c1cf63fd7fbd1b328cd87",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c1/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c2/weights/manifest.json": "fd5c1c1c9de25b9f9f1226af0c22bd4fba84d5f4717787841f427825b2ccf843",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f32_c2/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c0/weights/manifest.json": "3a4f721d5f8b7572463e18cca6b6effe55cd1032dfbb9a4467c8a3fac2e7c89b",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c0/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c1/weights/manifest.json": "c65c0fb575c8ad40a7df7eb569fb4bbbe5319bdc461bccab65413ff29bd99e82",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c1/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c2/weights/manifest.json": "3c97517e6084a21447cb06fc907e9a30f1c25a2d0921a8ef1eb8b045dba5f63c",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/f64_to_f64_c2/weights/state_0000.npy": "deab0f91de86cdff036428a6ddf839d5de5913514f236df6b85b2a2b46ef87dc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c0/weights/manifest.json": "39cf37d8dcec0b275412cf970a19f260bf1be8e9baa8e920a742a5ba220eb1c0",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c0/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c1/weights/manifest.json": "9646c30b325bc567d9c82a24ac64063c410f5c88e0206e5fb58baa7637c9d119",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c1/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c2/weights/manifest.json": "15c86bc4b1f6f26082fb9b703485ea0448800e686e092a7cbdd7c2b6c7e268ce",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f32_c2/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c0/weights/manifest.json": "8109061103df320cdb7b3d7b57c8904cd2fcef683d27b90ebc0c26c33ce25a73",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c0/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c1/weights/manifest.json": "cbde80800b95971ecd01b691bad707089b03fff737b4f1c292b8ac1fc2654642",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c1/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c2/weights/manifest.json": "4aa2ecb81f80736b511e9c51a4a77c444b39ae8f5ae07be9c150a7fec147c8d0",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i32_to_f64_c2/weights/state_0000.npy": "4fad7a1466800f23c03784838f265d7f600361c69e3d5df905dce7182d89c026",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c0/weights/manifest.json": "5d04adb24a7323ae21b604319c3f1c5359e24caada2575a5afa29dbca830130d",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c0/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c1/weights/manifest.json": "f35ee9452d330b7c157bc204b255c58ada6e405dbd76a068e0e718f12bd4ae44",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c1/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c2/weights/manifest.json": "5d51b581fd5f1c7eb9e73aeb34d8b9e2863fcb46c99aaf0f4b88463f3a183252",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f32_c2/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c0/weights/manifest.json": "f693c987b0315bf4ad91fc5870ebe88ffe853e186e295c4c7122c6f81251a900",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c0/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c0/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c1/weights/manifest.json": "616fbb662fb410b432d2bbed7b4e75b4bf8ddafd8b0bfe48d0c86503a43ab03e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c1/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c1/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c2/weights/manifest.json": "837c20ab8863b22078629c5fd36d419109c7369c730d96aa5b312bdd2d912c86",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c2/weights/model.py": "a450aeb855b274aa9b8528d1c794d8824106932073cb7bfd09cbfc6fefe27118",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_dtype_cast_v1/fixtures-r2/i64_to_f64_c2/weights/state_0000.npy": "5ae031a8f6f1a24e3840e97eb3bd0aa204945908425303ff1e02ba982e261391",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/manifest.json": "4e718e6f92a27a4c4ffa78160da5c3cd8ad7c27130fca1ccbcc034756d1f9482",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/state_0000.npy": "8a5f12b3ff91a780a3a465dd60bac4962f937211c474bd7ddf73f9ebfbbddf9c",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/manifest.json": "6e530de274ce1813cc61309239fce3f012c01099598d13bfdc0952ae32b56cbf",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/state_0000.npy": "122742851ab4d502356d8ad66fb364f007af36df7803235ac275ce0c9e4b2b1f",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/manifest.json": "7204aa81189f981cfcce5ea1da1be3ffef500516344524c41ecbefe751e9b0ca",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/state_0000.npy": "660091e64631a38850f35cf88eb6e10415ce3d48866b2b9077438977c2e4aa0d",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/manifest.json": "af8df6ef305865ec7c815b9178c9d65294772c2c8751b375fd1bd3f2c28725fb",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/state_0000.npy": "7d19ffd5c2d1d87ad4c97a9996916601c2f1bbf2d63067db0ebc53677001845d",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/manifest.json": "b0e5fb9063bd462d23ace0d71c99519729cb949cd438a95e94996327c778694e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/manifest.json": "8b6ad95ac417b637f2d7bf1b9a41cb19abcc1f623d1a3f8080b14f381e4b2ec4",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/manifest.json": "712d6bc45cc9eef1f3af71b84a007436ed760f3d1add15265d9584568b572463",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/manifest.json": "2204e27558e7fe0a4c3d83f20271684082586b624ab925026757a9395c10d8cc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/manifest.json": "d167cbe1fcf7cfdd2a7866b346685d70b1e05f355c87ec056d1ef1abd15a06e7",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/manifest.json": "b6c811ce74a23ac478a6674fc6b3ad6787f26170947ac91622e5675dc5698cf5",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/manifest.json": "a17204de4856be57d9cee14bbcecca25665f8aaee119b9176b52f3585d25d8bf",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/manifest.json": "769e28f757953a0d5e5f71e08dd4c7501de925083f251ea0ebafeeba07bee41c",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/manifest.json": "b49fb88275d5a97907cf52e1dd00e790935eed14df2f5e913dea36c485b4948e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/manifest.json": "da0b0b1ae63e60119fc40ebacfaf69d413d6f32cdbcf184a317ed3e27dacc0ff",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/manifest.json": "369159a8be1ca95613d836ee3353fac35c4c4465de5c3122298ad830ebce3f8b",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/manifest.json": "e6db5c02730fb01ec4bbee4ab5da992ebec3e1ea893cf93a35668f7f2607a713",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/manifest.json": "5b7b32cc62e7ec0df7c007a95d0e1d94b32d18429ce902bffb2f1cefc2eb9164",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/manifest.json": "90181ca63f090ac3cc0e02ca09e406d5e91a511ecd52d6704ee32b7cced45497",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/state_0001.npy": "339fb06679091dd9a30361f56d2914a698ecf5e9f423d074eb957219a833a137",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f32_c0/request.json": "8916997ec4a08d5ac9f3000a340153a7f55289a65261895541e6d9a179080f49",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f32_c1/request.json": "60dc385355fb4073e6ba1ed9ea9a5e9f55cb0f0168ecc0a390a9741484380602",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f32_c2/request.json": "665c70b71639cd72d302b90285c4ecf206112e98cef87141436edbe796fb8654",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f64_c0/request.json": "8916997ec4a08d5ac9f3000a340153a7f55289a65261895541e6d9a179080f49",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f64_c1/request.json": "60dc385355fb4073e6ba1ed9ea9a5e9f55cb0f0168ecc0a390a9741484380602",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/bool_to_f64_c2/request.json": "665c70b71639cd72d302b90285c4ecf206112e98cef87141436edbe796fb8654",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f32_c0/request.json": "61508764e6e01c364255c7fe7675fc2ec1cbe40481bdfa9536ac14b4630085d3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f32_c1/request.json": "5f9138b7c8a15db32f9fd35a17fe7beda030395c9c0c9f72f677258bd34b879b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f32_c2/request.json": "4f08ad5a0732e6caaf0c5ead59f0f79a000a9a7f134cc76b7f27b8ca920034c5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f64_c0/request.json": "61508764e6e01c364255c7fe7675fc2ec1cbe40481bdfa9536ac14b4630085d3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f64_c1/request.json": "5f9138b7c8a15db32f9fd35a17fe7beda030395c9c0c9f72f677258bd34b879b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f32_to_f64_c2/request.json": "4f08ad5a0732e6caaf0c5ead59f0f79a000a9a7f134cc76b7f27b8ca920034c5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c0/request.json": "61508764e6e01c364255c7fe7675fc2ec1cbe40481bdfa9536ac14b4630085d3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c1/request.json": "5f9138b7c8a15db32f9fd35a17fe7beda030395c9c0c9f72f677258bd34b879b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_roundtrip_c2/request.json": "4f08ad5a0732e6caaf0c5ead59f0f79a000a9a7f134cc76b7f27b8ca920034c5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c0/request.json": "61508764e6e01c364255c7fe7675fc2ec1cbe40481bdfa9536ac14b4630085d3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c1/request.json": "5f9138b7c8a15db32f9fd35a17fe7beda030395c9c0c9f72f677258bd34b879b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f32_c2/request.json": "4f08ad5a0732e6caaf0c5ead59f0f79a000a9a7f134cc76b7f27b8ca920034c5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f64_c0/request.json": "e555b3578f030b0f2d4b5384584dd78a17ae2b1d4ab062db80c36eea48a61135",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f64_c1/request.json": "beaf72cd081a2d761c428183697e6121a52ffb73258c7349c5c103ba3a83dad0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/f64_to_f64_c2/request.json": "294b41656599e03ee1ee05379c52e5ce9bad7b809d1e728974eacadc3a07878e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f32_c0/request.json": "3044350aeccbc087cba9e7c81bd1a643bfa0e86998ea1de41365e736baa9302d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f32_c1/request.json": "85b56ea3c978ee96557ece1749200ec05e81557accefb40ff1fa60f1063faaa9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f32_c2/request.json": "5d3b962ca101f6af827cc80fc189f66e0dfda8c14554db796d7c0c542273cb34",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f64_c0/request.json": "3044350aeccbc087cba9e7c81bd1a643bfa0e86998ea1de41365e736baa9302d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f64_c1/request.json": "85b56ea3c978ee96557ece1749200ec05e81557accefb40ff1fa60f1063faaa9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i32_to_f64_c2/request.json": "5d3b962ca101f6af827cc80fc189f66e0dfda8c14554db796d7c0c542273cb34",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f32_c0/request.json": "3044350aeccbc087cba9e7c81bd1a643bfa0e86998ea1de41365e736baa9302d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f32_c1/request.json": "85b56ea3c978ee96557ece1749200ec05e81557accefb40ff1fa60f1063faaa9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f32_c2/request.json": "5d3b962ca101f6af827cc80fc189f66e0dfda8c14554db796d7c0c542273cb34",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f64_c0/request.json": "3044350aeccbc087cba9e7c81bd1a643bfa0e86998ea1de41365e736baa9302d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f64_c1/request.json": "85b56ea3c978ee96557ece1749200ec05e81557accefb40ff1fa60f1063faaa9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-dtype-cast-cpu-v24-v1/i64_to_f64_c2/request.json": "5d3b962ca101f6af827cc80fc189f66e0dfda8c14554db796d7c0c542273cb34",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_0/request.json": "c1e61b29cd150f4453d24ef59f73ead23f91cdec765c1937bc6e0018da7949bd",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_1/request.json": "88cfb40cdad3507623a2e18bda300c3567c720d32ef16dd1fd4176881004497e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_2/request.json": "b68d99f8bf9faee6fff94c73b264d8b79393ffa1cb38705c00a2c277d80eba4c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/float32/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_0/request.json": "bffb1668d1321a1bebdd51552c1f1f431f5d2ed9a92efdb836e5e1988010fdea",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_1/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_2/request.json": "22854375e5cafa94d043b72fb0b044358141a8d9f47f6eec21ae1bde94b9f5d6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/request.json": "b6772eb945f86b651c79c86245d9bfc206d5925da34e0fafbefe319cd773fd87",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_0/request.json": "bffb1668d1321a1bebdd51552c1f1f431f5d2ed9a92efdb836e5e1988010fdea",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_1/request.json": "206d6bf00c77d04dd2492a0f138e97375d781f425c60f14737691dcf932e4ff8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_2/request.json": "45afe2b4954009d3d68dd1adf9828ca4da7e2004646ff8e956a900aa67cbebde",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_0/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_1/request.json": "1a2ba05e49a4217c88deaa6de410bae9ac6eb73648b8f07818761ad820a8d7ab",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_2/request.json": "cb0a53670e81743648de70c35239715b7ae9b584415bad9e2faa14879059072e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_0/request.json": "487c3729bd9d2777427ffa768a5300851834cf67b4bbaca5b39d39eb0061cff4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_1/request.json": "8792c8dd63ed0e84f58603bcdd249f8062beb6bd7a0602c76b2ebc6156d86bf1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_2/request.json": "cb0b4554376b6e3504397af7fe0741a5e4dc5bc30da5f872452b0e3a4650b494",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/unused/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f"
+  },
+  "status": "inventory_only"
+}

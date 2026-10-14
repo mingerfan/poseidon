@@ -1,0 +1,31 @@
+{
+  "format": "poseidon-trusted-pytorch-v2",
+  "files": {
+    "models.py": "b554ae82d8c58ba9aba7b0e816ded60da70f4c6e1d69277fbfe3216185efe639"
+  },
+  "entry": "models.make_shape",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "projected",
+    "scaled"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [
+      2
+    ],
+    "kwargs": {
+      "seed": 75
+    }
+  },
+  "dtype_policy": "strict-float64-v1"
+}

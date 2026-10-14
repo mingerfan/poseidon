@@ -1,0 +1,23 @@
+{
+  "api_calls": 0,
+  "binding": "635a5ea7652f3cf2cb42c8d363a24d43ff4a13b56a538c0ea5e60b5a81dc96a9",
+  "compiles": 0,
+  "encrypted_calls": 0,
+  "errors": 1,
+  "failed": 0,
+  "format": "poseidon-spatial-retest-controls-v1",
+  "log_sha256": "ee3963dd93e53fe811db1d20521b68bee8e109c4340c11372cb343f9165dde5f",
+  "seconds": 0.3010781819903059,
+  "skipped": 0,
+  "source_sha256": {
+    "freeze.py": "1aba67eb129c169ee29d4782ec0b30d312718ec8b0d767657a3675f730a659d9",
+    "package_checks.py": "00519a4b0b4f24b8132c9836c44ea82ad85d8eda7aad394a3a25c2a83b0a5116",
+    "run.py": "ca1d1f2e36d89cabeaf0c731521c648b83d5d5ba9b511efe15b904b1627616aa",
+    "scope.py": "eddab079971eb4954a08a008255e33e4e3eedf250840740f272a43c7defe86f5",
+    "test_package_calls.py": "ab1d80723b40bd38064b5a13760857ea8afe12e7eac46b73588c1a81658d3efa",
+    "test_run.py": "93446d4e5912db46eb5df8c821043e194f01c409636e2472ae39810a75551d34",
+    "test_scope.py": "bc35d96985e7d6940227b8028db93c66f28b68fdf627384bed318ae40cd757b8"
+  },
+  "status": "failed",
+  "tests": 42
+}

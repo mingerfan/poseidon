@@ -1,0 +1,43 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v4",
+  "id": "resize_1d_nearest_exact_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "align_corners": null,
+        "antialias": false,
+        "mode": "nearest-exact",
+        "recompute_scale_factor": null,
+        "scale_factor": null,
+        "size": [
+          5
+        ]
+      },
+      "id": "resize",
+      "inputs": [
+        "x"
+      ],
+      "op": "resize",
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

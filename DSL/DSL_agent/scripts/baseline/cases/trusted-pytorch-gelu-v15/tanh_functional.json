@@ -1,0 +1,49 @@
+{
+  "format": "poseidon-trusted-pytorch-v15",
+  "files": {
+    "models.py": "594b88e6bb8b60d915b08399312a9ee3d7203d93936f50b9455aef72eb296144"
+  },
+  "entry": "models.make",
+  "factory": {
+    "args": [
+      "tanh",
+      "functional"
+    ],
+    "kwargs": {}
+  },
+  "dtype_policy": "strict-float64-v1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "outputs": [
+    "result"
+  ],
+  "approximations": {
+    "format": "poseidon-pytorch-approximations-v1",
+    "defaults": {
+      "gelu": {
+        "method": "polynomial",
+        "basis": "power",
+        "domain": [
+          -2.0,
+          2.0
+        ],
+        "coefficients": [
+          0.0,
+          0.5,
+          0.3989422804014327,
+          0.0,
+          -0.06649038006690546
+        ]
+      }
+    },
+    "modules": [],
+    "nodes": []
+  },
+  "weights": {}
+}

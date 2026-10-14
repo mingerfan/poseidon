@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "contract": "decorated-functions-core-v7",
+  "source_sha256": "f62c177a6dec5a0c1edf9c97b2eaff1eb8087befa6d287dbf712cb9b58d9d0df",
+  "functions": {
+    "golden": {
+      "parameters": [
+        "x0",
+        "zero_ct"
+      ],
+      "kinds": [
+        "c",
+        "c"
+      ],
+      "signature": "c,c",
+      "result": [
+        "list",
+        [
+          "c",
+          "c",
+          "c",
+          "c",
+          "c"
+        ]
+      ],
+      "calls": [],
+      "rotation_steps": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "expanded_cost": 861
+    }
+  },
+  "topological_order": [
+    "golden"
+  ],
+  "rotation_steps": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "output_ciphertexts": 5,
+  "compilation_checked": false,
+  "encrypted_correctness_checked": false,
+  "agent_contract_enabled": true,
+  "agent_generation_validated": false,
+  "public_loops": {
+    "schema": 1,
+    "loops": [],
+    "iterations": 0,
+    "expanded_ast_sha256": "d0cd859a3dfea218227cd44efa1a763c7156f6973d4faa3ad7af8c98a7e24386",
+    "encrypted_control_flow": false,
+    "candidate_python_executed": false
+  },
+  "scalar_augmented": {
+    "schema": 1,
+    "sites": [],
+    "array_mutation_enabled": true
+  },
+  "array_mutation": {
+    "schema": 1,
+    "sites": [],
+    "subscript_writes_enabled": false
+  },
+  "packed_binding": {
+    "slot_period": 16,
+    "rotation_steps": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "output_limit": 16,
+    "constant_limit": 256
+  }
+}

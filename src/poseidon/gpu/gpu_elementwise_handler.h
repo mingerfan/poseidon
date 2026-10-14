@@ -36,6 +36,21 @@ class GpuElementwiseHandler
 public:
     explicit GpuElementwiseHandler(const GpuParameterData &params);
 
+    /** Exact modular sum of 1..4 plaintext products, with no intermediate CT. */
+    void multiply_plain_sum(
+        GpuCiphertextView &destination_view,
+        const std::vector<GpuConstCiphertextView> &ciphertexts,
+        const std::vector<GpuConstPlaintextView> &plaintexts,
+        const GpuLevelInfo &level_info,
+        bool accumulate = false) const;
+
+    void double_sub_plain(
+        GpuCiphertextView &destination,
+        const GpuConstCiphertextView &source,
+        const GpuConstPlaintextView &plaintext,
+        const GpuConstCiphertextView *correction,
+        const GpuLevelInfo &level) const;
+
     /**
      * @brief destination_ciphertext = left_ciphertext + right_ciphertext.
      *
@@ -106,6 +121,17 @@ public:
     void sub_plain_from_ciphertext(
         GpuCiphertextView &destination_view,
         const GpuConstCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
+    /** Add/subtract a plaintext directly in c0, preserving c1/c2 in place. */
+    void add_plain_to_ciphertext_inplace(
+        GpuCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
+    void sub_plain_from_ciphertext_inplace(
+        GpuCiphertextView &ciphertext_view,
         const GpuConstPlaintextView &plaintext_view,
         const GpuLevelInfo &level_info) const;
 

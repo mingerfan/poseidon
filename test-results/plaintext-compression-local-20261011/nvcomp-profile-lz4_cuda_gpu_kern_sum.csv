@@ -1,0 +1,4 @@
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+99.1,6393665,20,319683.3,319675.0,319611,319899,62.2,"void nvcomp::lowlevel::lz4DecompressBatchKernel<(bool)0>(const unsigned char *const *, const unsigned long *, const unsigned long *, unsigned long, unsigned char *const *, unsigned long *, nvcompStatus_t *, nvcomp::LZ4CorrectnessChecker<T1> *, bool)"
+0.5,32704,20,1635.2,1632.0,1600,1760,31.0,"nvcomp::setup_decomp_llif_buffers(const CommonHeader *, unsigned char *, const unsigned char *, unsigned char **, const unsigned char **, const unsigned long *, unsigned long *, const unsigned long *, const unsigned long *, bool)"
+0.4,25056,20,1252.8,1248.0,1216,1280,18.8,"void nvcomp::max_reduce_device_status_kernel<(unsigned int)256>(int *, int *, unsigned int)"

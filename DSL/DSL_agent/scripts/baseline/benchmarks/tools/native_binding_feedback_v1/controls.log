@@ -1,0 +1,44 @@
+test_component_feedback_uses_witness_and_filters_private_text (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_declared_function_binding_is_protected (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_fresh_local_alias_and_accumulation_are_preserved (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_missing_location_extra_context_and_forged_repeat_are_rejected (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_public_constant_assignment_has_exact_source_location (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_runtime_and_zero_bindings_remain_immutable (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_tuple_and_augmented_targets_still_reject (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_zero_trip_loop_does_not_erase_binding_rejection (test_native_reserved_binding_feedback.ReservedBindingFeedbackTests) ... ok
+test_duplicate_and_constant_collision_are_distinct (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_plain_negation_still_rejected_cipher_expression_accepted (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_seventeen_parameters_report_capacity_not_name_collision (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_sixteen_parameters_remain_accepted (test_native_diagnostics.NativeDiagnosticTests) ... ok
+test_arbitrary_prior_diagnostic_is_not_forwarded (test_application_diagnostics.DiagnosticsTests) ... ok
+test_coarse_compile_and_numeric_have_no_repeat_key (test_application_diagnostics.DiagnosticsTests) ... ok
+test_controlled_tool_and_aggregate_fields_remain_available (test_application_diagnostics.DiagnosticsTests) ... ok
+test_environment_and_integrity_take_priority (test_application_diagnostics.DiagnosticsTests) ... ok
+test_exact_compiler_constraint_and_location_required (test_application_diagnostics.DiagnosticsTests) ... ok
+test_infrastructure_category_overrides_compiler_stage (test_application_diagnostics.DiagnosticsTests) ... ok
+test_invalid_location_and_constraints_are_rejected (test_application_diagnostics.DiagnosticsTests) ... ok
+test_legacy_provider_wire_unchanged (test_application_diagnostics.DiagnosticsTests) ... ok
+test_non_violation_cannot_be_repeat_witness (test_application_diagnostics.DiagnosticsTests) ... ok
+test_repeat_flag_cannot_be_forged (test_application_diagnostics.DiagnosticsTests) ... ok
+test_static_missing_entry_is_specific_and_public (test_application_diagnostics.DiagnosticsTests) ... ok
+test_syntax_location_but_no_false_exact_repeat (test_application_diagnostics.DiagnosticsTests) ... ok
+test_typed_hint_cannot_override_terminal_trust_failure (test_application_diagnostics.DiagnosticsTests) ... ok
+test_coarse_failure_breaks_precise_streak (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_different_instruction_is_not_same_failure (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_distinct_coarse_compiler_failures_can_reach_success (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_exact_repeated_failure_stops_distinct_candidates (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_new_task_binds_policy_without_changing_request (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_numeric_aggregates_do_not_trigger_repeat_stop (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_static_feedback_same_renderer_as_backend (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_task_without_version_retains_legacy_repeat_decision (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_unsupported_policy_rejected_without_generation (test_application_diagnostics.PreciseApplicationTests) ... ok
+test_fixture_plans_and_old_contracts (test_native_public_loops.NativeLoopTests) ... ok
+test_invalid_control_and_induction_names_fail_before_frontend (test_native_public_loops.NativeLoopTests) ... ok
+test_provider_cli_batch_and_frozen_cohorts (test_native_public_loops.NativeLoopTests) ... ok
+test_python_final_binding_empty_ranges_and_integer_folding (test_native_public_loops.NativeLoopTests) ... ok
+test_range_expansion_and_integer_resource_bounds (test_native_public_loops.NativeLoopTests) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.210s
+
+OK

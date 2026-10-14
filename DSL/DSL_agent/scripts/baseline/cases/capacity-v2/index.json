@@ -1,0 +1,98 @@
+{
+  "format": "poseidon-capacity-models-v1",
+  "models": [
+    {
+      "id": "capacity_elementwise_0",
+      "file": "capacity_elementwise_0.json",
+      "sha256": "f8c5fae110515df31c708d2f3cceaf7f070f0bd9b55ebdba1488074c077e976f"
+    },
+    {
+      "id": "capacity_elementwise_1",
+      "file": "capacity_elementwise_1.json",
+      "sha256": "4a8119573bd27dd2e8bf913e77425f03a40d120d4b1020064f77dc40864a2af2"
+    },
+    {
+      "id": "capacity_elementwise_2",
+      "file": "capacity_elementwise_2.json",
+      "sha256": "17940c687b289ea14da7d57349508bc0c74a0cb4e532c53d60c75d4ed35bd0e7"
+    },
+    {
+      "id": "capacity_mean_tail_0",
+      "file": "capacity_mean_tail_0.json",
+      "sha256": "005b5b04eb430401b8afe8c0cdffb3e6ff986bd66113d2f3c6d8b95e5e4615ee"
+    },
+    {
+      "id": "capacity_mean_tail_1",
+      "file": "capacity_mean_tail_1.json",
+      "sha256": "e4891c05d11ce005bffd036e079fde41b08c3d478dc7086161ab1bc0e1a017e0"
+    },
+    {
+      "id": "capacity_mean_tail_2",
+      "file": "capacity_mean_tail_2.json",
+      "sha256": "93c5b10fde4e618b3a558d00a3d74a9fe9873e2e5ccef741892e8f8f05b38ade"
+    },
+    {
+      "id": "capacity_scalar_broadcast_0",
+      "file": "capacity_scalar_broadcast_0.json",
+      "sha256": "b2afecab9899d1f3f3b319c6b1ead326488d767de3b2c29448d68319b6241041"
+    },
+    {
+      "id": "capacity_scalar_broadcast_1",
+      "file": "capacity_scalar_broadcast_1.json",
+      "sha256": "72dd7b41b633e1b4bc156f3f2e202072ba4bb8333777be8fa470aee88c0da8d7"
+    },
+    {
+      "id": "capacity_scalar_broadcast_2",
+      "file": "capacity_scalar_broadcast_2.json",
+      "sha256": "9785e3b092e0ecd9a8428d153dfefd905cd8188c99144190422b0f3e048fa411"
+    },
+    {
+      "id": "capacity_binary_0",
+      "file": "capacity_binary_0.json",
+      "sha256": "65b1609b26819f909aac04f9f160683e05237ad17267d0813b44ec5195bf1b5f"
+    },
+    {
+      "id": "capacity_binary_1",
+      "file": "capacity_binary_1.json",
+      "sha256": "280607c50539601924a0490a45297f7dc52ac7be8980ef8382f7d888e783af91"
+    },
+    {
+      "id": "capacity_binary_2",
+      "file": "capacity_binary_2.json",
+      "sha256": "d85a0a9bc6f237c80270bd6b41a7ad69ab544a7022e6dfc9279fa41af41a366f"
+    },
+    {
+      "id": "capacity_join_aligned_0",
+      "file": "capacity_join_aligned_0.json",
+      "sha256": "8f5fd943b4da498803252197df3820717ee48dff8ff1bbf4b0bfc55c73faa134"
+    },
+    {
+      "id": "capacity_join_aligned_1",
+      "file": "capacity_join_aligned_1.json",
+      "sha256": "f7f998d343aa836cef56d6e23a901c3867fa1489bb4d75f28b7834885d6e9430"
+    },
+    {
+      "id": "capacity_join_aligned_2",
+      "file": "capacity_join_aligned_2.json",
+      "sha256": "74d35ec37e22ddaf76fd066387445b4f7900d98ebe2ecd175f8e6014bdef5682"
+    },
+    {
+      "id": "capacity_reshape_output_0",
+      "file": "capacity_reshape_output_0.json",
+      "sha256": "1c64718d7cdbf745d6c9e9b7e18d7cb8007e6c9d54a85360ffd40424458b6a17"
+    },
+    {
+      "id": "capacity_reshape_output_1",
+      "file": "capacity_reshape_output_1.json",
+      "sha256": "3a15aa0fa705cc4dc57d06aa1c3c8d61b0413d4883ba1768ea5c2b20e66324e2"
+    },
+    {
+      "id": "capacity_reshape_output_2",
+      "file": "capacity_reshape_output_2.json",
+      "sha256": "679956b1f8632f212b58c813717213b89c561bcdb63edd11b1a0aa31082c294d"
+    }
+  ],
+  "physical_period": 256,
+  "resource_profile": "medium-v1",
+  "frozen_benchmark_modified": false
+}

@@ -1,0 +1,23 @@
+{
+  "format": "poseidon-source-precision-controls-v1",
+  "status": "failed",
+  "tests": {
+    "run": 19,
+    "failed": 0,
+    "errors": 1,
+    "skipped": 0
+  },
+  "elapsed_seconds": 44.105175986995164,
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_execution": false,
+  "successful_native_reference_reports": 9,
+  "source_forward_executed": true,
+  "source_models_imported_in_host": false,
+  "files": {
+    "scripts/baseline/source_precision_reference.py": "5a1476afd47931c22591768be3a1b64bcbbb30ba97c4e54253c59fa0fe4db68d",
+    "scripts/baseline/test_source_precision_reference.py": "764c94dccc9278f4e6d37d979aa6ef8ba0e6ee65c246e1d0559390d0aa64b41b",
+    "scripts/baseline/benchmarks/tools/source_precision_v1/controls.py": "bf044e8e6851df32be444f08e67842281185b95b674ab253d1e65e2b317f739f"
+  },
+  "binding": "1d4455f8d3603fb774e82fa8ad51fab896a373c7931c79d8121744682da3b476"
+}

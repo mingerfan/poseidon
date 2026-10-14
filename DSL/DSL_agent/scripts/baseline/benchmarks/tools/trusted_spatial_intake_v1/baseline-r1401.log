@@ -1,0 +1,4 @@
+{"case": "resize_1_linear_0", "status": "rejected", "error_type": "ValueError", "error": "Unsupported PyTorch module: Upsample"}
+{"case": "resize_2_bilinear_0", "status": "rejected", "error_type": "ValueError", "error": "Unsupported PyTorch module: Upsample"}
+{"case": "transpose_1_0", "status": "rejected", "error_type": "ValueError", "error": "Unsupported PyTorch module: ConvTranspose1d"}
+{"format": "poseidon-spatial-pytorch-draft-observation-v1", "mode": "baseline", "passed": 0, "rejected": 3, "failed": 0, "probe_groups": 0, "logical_outputs": 0, "maximum_difference": 0.0, "production_registered": false, "api_calls": 0, "compilations": 0, "encrypted_calls": 0, "binding": "7ef257814cc3d8d589f545bc24513804e24c18d810ee0eab2db9c2e50bfe509a"}

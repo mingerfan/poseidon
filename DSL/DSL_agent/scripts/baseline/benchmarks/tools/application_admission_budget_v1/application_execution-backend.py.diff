@@ -1,0 +1,30 @@
+--- before/application_execution/backend.py
++++ after/application_execution/backend.py
+@@ -17,9 +17,10 @@
+         self.context.check_current()
+         return super().identity_manifest()
+ 
+-    def qualify(self,request,candidate,level):
++    def qualify(self,request,candidate,level,*,artifact_observer=None):
+         context=self.context.request(request,level)
+-        result=super().qualify(request,candidate,level)
++        options={} if artifact_observer is None else dict(artifact_observer=artifact_observer)
++        result=super().qualify(request,candidate,level,**options)
+         context.check(self.context,request,level)
+         receipt=context.record();request_receipt(self.context,receipt)
+         result["run_context"]=receipt
+@@ -47,11 +48,12 @@
+         self.context.check_current()
+         return binding
+ 
+-    def execute(self,folder,samples):
++    def execute(self,folder,samples,*,artifact_observer=None):
+         from candidate_bundle import check_execution_dependencies
+         manifest,request=check_execution_dependencies(Path(folder))
+         context=self.context.request(request,manifest["validation"]["level"])
+-        result=super().execute(folder,samples)
++        options={} if artifact_observer is None else dict(artifact_observer=artifact_observer)
++        result=super().execute(folder,samples,**options)
+         context.check(self.context,request,manifest["validation"]["level"])
+         result["run_context"]=context.record()
+         request_receipt(self.context,result["run_context"])

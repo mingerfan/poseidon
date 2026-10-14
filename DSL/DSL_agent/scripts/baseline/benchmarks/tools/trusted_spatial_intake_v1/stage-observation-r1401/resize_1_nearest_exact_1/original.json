@@ -1,0 +1,107 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v4",
+  "id": "static_alias_source",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "shape": [
+          3
+        ]
+      },
+      "id": "node_3",
+      "inputs": [
+        "x"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_2"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          3
+        ]
+      },
+      "id": "node_5",
+      "inputs": [
+        "tensor_2"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_4"
+      ]
+    },
+    {
+      "attrs": {
+        "align_corners": null,
+        "antialias": false,
+        "mode": "nearest-exact",
+        "recompute_scale_factor": false,
+        "scale_factor": [
+          1.7
+        ],
+        "size": null
+      },
+      "id": "node_8",
+      "inputs": [
+        "tensor_4"
+      ],
+      "op": "resize",
+      "outputs": [
+        "tensor_7"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          5
+        ]
+      },
+      "id": "node_11",
+      "inputs": [
+        "tensor_7"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_10"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          5
+        ]
+      },
+      "id": "node_13",
+      "inputs": [
+        "tensor_10"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "tensor_12"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "tensor_12"
+    }
+  ]
+}

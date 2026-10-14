@@ -104,6 +104,7 @@ public:
     virtual void multiply_relin(const Ciphertext &ciph1, const Ciphertext &ciph2,
                                 Ciphertext &result, const RelinKeys &relin_keys) const override;
 
+    void rotate_inplace(Ciphertext &ciph, int step, const GaloisKeys &galois_keys) const;
     virtual void rotate(const Ciphertext &ciph, Ciphertext &result, int step,
                         const GaloisKeys &galois_keys) const override;
     virtual void rotate_row(const Ciphertext &ciph, Ciphertext &result, int step,

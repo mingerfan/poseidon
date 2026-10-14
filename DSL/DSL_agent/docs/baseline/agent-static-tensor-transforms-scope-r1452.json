@@ -1,0 +1,115 @@
+{
+  "authorization": "\u76ee\u524d\u6267\u884c\u7684\u8ba1\u5212\u5185\u540e\u7eed\u6240\u6709\u7684\u79bb\u7ebf\u548c\u771f\u5b9e\u6d4b\u8bd5\u5168\u90e8\u6279\u51c6\u540c\u610f",
+  "backend_changes": false,
+  "binding": "61e7a863f2d8346c2d69a75ce282ef6cad10a3bb2a5718c5d2f9b6686c95315d",
+  "cases": [
+    {
+      "id": "repeat_0",
+      "operator": "repeat",
+      "request_id": "428af55cf32b90ad4d4bd2b3378efd7af610076a55647015630a550fbae729f5"
+    },
+    {
+      "id": "repeat_1",
+      "operator": "repeat",
+      "request_id": "f1fd46bdccf8e6e577eeab3af6a9443ea0328c8d1d852081297ab68c429c0fd7"
+    },
+    {
+      "id": "repeat_2",
+      "operator": "repeat",
+      "request_id": "5683d3246ecfb484c77f187f1aa1601df76ea39ffc4927fc06a55ac11fa2780c"
+    },
+    {
+      "id": "tile_0",
+      "operator": "tile",
+      "request_id": "646c3c22cb539d8541a9c3fb12207f83d278744549d8cf247c97acc60087a243"
+    },
+    {
+      "id": "tile_1",
+      "operator": "tile",
+      "request_id": "4136961523f9a2d8b492644921893e3027f1ed541623e2dd01deac27e4e73d12"
+    },
+    {
+      "id": "tile_2",
+      "operator": "tile",
+      "request_id": "c6aa2084b741dbb31f19d15a4f264e3b6061716576e36dc482990c4c60e8a083"
+    },
+    {
+      "id": "interleave_0",
+      "operator": "repeat_interleave",
+      "request_id": "e9a63285473e6f9d0745e0fb39bf006747e2059c8f1be0dc5b6e3f85916e6fd3"
+    },
+    {
+      "id": "interleave_1",
+      "operator": "repeat_interleave",
+      "request_id": "023d291daf54da2af9fe16846f865555a44d46aae9fc0a6e1bf5af79ede7f106"
+    },
+    {
+      "id": "interleave_2",
+      "operator": "repeat_interleave",
+      "request_id": "5683d3246ecfb484c77f187f1aa1601df76ea39ffc4927fc06a55ac11fa2780c"
+    },
+    {
+      "id": "flip_0",
+      "operator": "flip",
+      "request_id": "d5e803124c24741ba948befadf1ed29176dc0ffc0fd11e57ed210a099bc89225"
+    },
+    {
+      "id": "flip_1",
+      "operator": "flip",
+      "request_id": "7171066924f105e798ff8cc4b910c6cd06ac552e6f30d1937f4fc19037ee98ff"
+    },
+    {
+      "id": "flip_2",
+      "operator": "flip",
+      "request_id": "a878bbe2d2ff8b1b28414fe4c0eeb57fa842dabf4e984e135be367029d45b504"
+    },
+    {
+      "id": "roll_0",
+      "operator": "roll",
+      "request_id": "d9730f90607365de94a512c069780f316ddae1f0a93c5dac59aa7050604bea5d"
+    },
+    {
+      "id": "roll_1",
+      "operator": "roll",
+      "request_id": "7171066924f105e798ff8cc4b910c6cd06ac552e6f30d1937f4fc19037ee98ff"
+    },
+    {
+      "id": "roll_2",
+      "operator": "roll",
+      "request_id": "c000fe638482835fc7344716f487fa81893482521ff0325a2b02cda8c1197636"
+    }
+  ],
+  "compiler_jobs": 2,
+  "controls": {
+    "errors": 0,
+    "failed": 0,
+    "financial": 12,
+    "skipped": 0,
+    "tests": 140
+  },
+  "currency_limit": null,
+  "downloads": 0,
+  "encrypted_concurrency": 1,
+  "format": "poseidon-static-transform-validation-scope-v1",
+  "git_actions": [],
+  "installations": 0,
+  "link_jobs": 1,
+  "live_binding": "6a92989a343607b9f9291c69791e153ff53fdfdd190b256a16a56f19e35cb18c",
+  "live_plan": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/live-plan.json",
+  "network_changes": false,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "offline_binding": "e38ba4abfcfd6f1d667b8d23b5cbdbf4e43ebc5e8e050eba12cf72b034eb0e0c",
+  "offline_plan": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/offline-plan.json",
+  "parameter_changes": false,
+  "plaintext": {
+    "groups": 288,
+    "independent_references": true,
+    "values": 1120
+  },
+  "retries_may_duplicate_billing": true,
+  "sdk": "6f5c77e2c8ec43ee08cb1fe4e2a7aa292f3a4beccfa0e0f3fee5abf55bed9e2c",
+  "storage_authorization": "\u6279\u51c6\u63d0\u9ad8\u81f3 48 GiB"
+}

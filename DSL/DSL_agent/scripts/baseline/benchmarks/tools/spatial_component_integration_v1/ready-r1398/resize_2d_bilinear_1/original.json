@@ -1,0 +1,45 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v4",
+  "id": "resize_2d_bilinear_1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "align_corners": false,
+        "antialias": false,
+        "mode": "bilinear",
+        "recompute_scale_factor": null,
+        "scale_factor": [
+          1.7,
+          0.7
+        ],
+        "size": null
+      },
+      "id": "resize",
+      "inputs": [
+        "x"
+      ],
+      "op": "resize",
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

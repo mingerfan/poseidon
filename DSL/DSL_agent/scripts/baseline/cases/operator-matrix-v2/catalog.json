@@ -1,0 +1,277 @@
+{
+  "cases": [
+    {
+      "context": 0,
+      "graph": "matrix_matrix_0.json",
+      "id": "matrix_matrix_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/matrix_matrix_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "matrix_matrix"
+    },
+    {
+      "context": 1,
+      "graph": "matrix_matrix_1.json",
+      "id": "matrix_matrix_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/matrix_matrix_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "matrix_matrix"
+    },
+    {
+      "context": 2,
+      "graph": "matrix_matrix_2.json",
+      "id": "matrix_matrix_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/matrix_matrix_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "matrix_matrix"
+    },
+    {
+      "context": 0,
+      "graph": "batched_cipher_0.json",
+      "id": "batched_cipher_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/batched_cipher_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "batched_cipher"
+    },
+    {
+      "context": 1,
+      "graph": "batched_cipher_1.json",
+      "id": "batched_cipher_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/batched_cipher_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "batched_cipher"
+    },
+    {
+      "context": 2,
+      "graph": "batched_cipher_2.json",
+      "id": "batched_cipher_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/batched_cipher_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "batched_cipher"
+    },
+    {
+      "context": 0,
+      "graph": "batch_broadcast_0.json",
+      "id": "batch_broadcast_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/batch_broadcast_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "batch_broadcast"
+    },
+    {
+      "context": 1,
+      "graph": "batch_broadcast_1.json",
+      "id": "batch_broadcast_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/batch_broadcast_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "batch_broadcast"
+    },
+    {
+      "context": 2,
+      "graph": "batch_broadcast_2.json",
+      "id": "batch_broadcast_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/batch_broadcast_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "batch_broadcast"
+    },
+    {
+      "context": 0,
+      "graph": "higher_rank_cipher_0.json",
+      "id": "higher_rank_cipher_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/higher_rank_cipher_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "higher_rank_cipher"
+    },
+    {
+      "context": 1,
+      "graph": "higher_rank_cipher_1.json",
+      "id": "higher_rank_cipher_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/higher_rank_cipher_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "higher_rank_cipher"
+    },
+    {
+      "context": 2,
+      "graph": "higher_rank_cipher_2.json",
+      "id": "higher_rank_cipher_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/higher_rank_cipher_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "higher_rank_cipher"
+    },
+    {
+      "context": 0,
+      "graph": "vector_left_0.json",
+      "id": "vector_left_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/vector_left_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "vector_left"
+    },
+    {
+      "context": 1,
+      "graph": "vector_left_1.json",
+      "id": "vector_left_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/vector_left_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "vector_left"
+    },
+    {
+      "context": 2,
+      "graph": "vector_left_2.json",
+      "id": "vector_left_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/vector_left_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "vector_left"
+    },
+    {
+      "context": 0,
+      "graph": "vector_right_0.json",
+      "id": "vector_right_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/vector_right_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "vector_right"
+    },
+    {
+      "context": 1,
+      "graph": "vector_right_1.json",
+      "id": "vector_right_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/vector_right_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "vector_right"
+    },
+    {
+      "context": 2,
+      "graph": "vector_right_2.json",
+      "id": "vector_right_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/vector_right_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "vector_right"
+    },
+    {
+      "context": 0,
+      "graph": "public_right_0.json",
+      "id": "public_right_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/public_right_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "public_right"
+    },
+    {
+      "context": 1,
+      "graph": "public_right_1.json",
+      "id": "public_right_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/public_right_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "public_right"
+    },
+    {
+      "context": 2,
+      "graph": "public_right_2.json",
+      "id": "public_right_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/public_right_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "public_right"
+    },
+    {
+      "context": 0,
+      "graph": "public_left_0.json",
+      "id": "public_left_0",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/public_left_0/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "public_left"
+    },
+    {
+      "context": 1,
+      "graph": "public_left_1.json",
+      "id": "public_left_1",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/public_left_1/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "public_left"
+    },
+    {
+      "context": 2,
+      "graph": "public_left_2.json",
+      "id": "public_left_2",
+      "legacy_graph": "scripts/baseline/cases/matrix-entry-equivalence-v1/public_left_2/operator-model.json",
+      "original_weights_and_shapes_preserved": true,
+      "partition": "public_left"
+    },
+    {
+      "context": 0,
+      "graph": "scalar_chain_0.json",
+      "id": "scalar_chain_0",
+      "partition": "scalar_chain"
+    },
+    {
+      "context": 1,
+      "graph": "scalar_chain_1.json",
+      "id": "scalar_chain_1",
+      "partition": "scalar_chain"
+    },
+    {
+      "context": 2,
+      "graph": "scalar_chain_2.json",
+      "id": "scalar_chain_2",
+      "partition": "scalar_chain"
+    },
+    {
+      "context": 0,
+      "graph": "public_dot_0.json",
+      "id": "public_dot_0",
+      "partition": "public_dot"
+    },
+    {
+      "context": 1,
+      "graph": "public_dot_1.json",
+      "id": "public_dot_1",
+      "partition": "public_dot"
+    },
+    {
+      "context": 2,
+      "graph": "public_dot_2.json",
+      "id": "public_dot_2",
+      "partition": "public_dot"
+    },
+    {
+      "context": 0,
+      "graph": "matrix_chain_0.json",
+      "id": "matrix_chain_0",
+      "partition": "matrix_chain"
+    },
+    {
+      "context": 1,
+      "graph": "matrix_chain_1.json",
+      "id": "matrix_chain_1",
+      "partition": "matrix_chain"
+    },
+    {
+      "context": 2,
+      "graph": "matrix_chain_2.json",
+      "id": "matrix_chain_2",
+      "partition": "matrix_chain"
+    },
+    {
+      "context": 0,
+      "graph": "scalar_domain_0.json",
+      "id": "scalar_domain_0",
+      "partition": "scalar_domain",
+      "purpose": "Scalar carrier composition and explicit approximation domain"
+    },
+    {
+      "context": 1,
+      "graph": "scalar_domain_1.json",
+      "id": "scalar_domain_1",
+      "partition": "scalar_domain",
+      "purpose": "Scalar carrier composition and explicit approximation domain"
+    },
+    {
+      "context": 2,
+      "graph": "scalar_domain_2.json",
+      "id": "scalar_domain_2",
+      "partition": "scalar_domain",
+      "purpose": "Scalar carrier composition and explicit approximation domain"
+    }
+  ],
+  "count": 36,
+  "format": "poseidon-json-matrix-contexts-v2",
+  "old_frozen_benchmark_changed": false,
+  "paid_calls": 0,
+  "partitions": 11,
+  "planned": 33
+}

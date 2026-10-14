@@ -1,0 +1,7 @@
+"""Explicit public-mask source intake identities."""
+SOURCE_FORMAT = "poseidon-trusted-pytorch-v33"
+PACKAGE_FORMAT = "poseidon-trusted-pytorch-provenance-v33"
+REFERENCE_FORMAT = "poseidon-trusted-pytorch-reference-v33"
+CAPTURE_FORMAT = "poseidon-public-expression-source-capture-v10"
+VALUE_POLICY = "poseidon-public-value-expressions-v6"
+POLICY = "poseidon-public-mask-selection-v1"

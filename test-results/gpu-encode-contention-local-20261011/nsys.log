@@ -1,0 +1,19 @@
+setting up operands and direct rotation/relinearization keys
+measuring add + tilelang_tensor_encode
+measuring add + cuda_encode
+measuring multiply_plain + cuda_encode
+measuring multiply_plain + tilelang_tensor_encode
+measuring multiply + tilelang_tensor_encode
+measuring multiply + cuda_encode
+measuring rescale + cuda_encode
+measuring rescale + tilelang_tensor_encode
+measuring relinearize + cuda_encode
+measuring relinearize + tilelang_tensor_encode
+measuring rotate + cuda_encode
+measuring rotate + tilelang_tensor_encode
+report: build-runtime-gpu-api-release/contention-profile.json
+Collecting data...
+Generating '/tmp/nsys-xs/nsys-report-7e85.qdstrm'
+[1/1] [0%                          ] contention-profile.nsys-rep[1/1] [0%                          ] contention-profile.nsys-rep[1/1] [1%                          ] contention-profile.nsys-rep[1/1] [2%                          ] contention-profile.nsys-rep[1/1] [5%                          ] contention-profile.nsys-rep[1/1] [6%                          ] contention-profile.nsys-rep[1/1] [7%                          ] contention-profile.nsys-rep[1/1] [8%                          ] contention-profile.nsys-rep[1/1] [9%                          ] contention-profile.nsys-rep[1/1] [10%                         ] contention-profile.nsys-rep[1/1] [11%                         ] contention-profile.nsys-rep[1/1] [12%                         ] contention-profile.nsys-rep[1/1] [13%                         ] contention-profile.nsys-rep[1/1] [14%                         ] contention-profile.nsys-rep[1/1] [=15%                        ] contention-profile.nsys-rep[1/1] [=16%                        ] contention-profile.nsys-rep[1/1] [=17%                        ] contention-profile.nsys-rep[1/1] [==18%                       ] contention-profile.nsys-rep[1/1] [==19%                       ] contention-profile.nsys-rep[1/1] [==20%                       ] contention-profile.nsys-rep[1/1] [=====================87%    ] contention-profile.nsys-rep[1/1] [======================90%   ] contention-profile.nsys-rep[1/1] [=======================96%  ] contention-profile.nsys-rep[1/1] [========================98% ] contention-profile.nsys-rep[1/1] [========================100%] contention-profile.nsys-rep[1/1] [========================100%] contention-profile.nsys-rep
+Generated:
+	/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/contention-profile.nsys-rep

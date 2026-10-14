@@ -348,5 +348,59 @@ vector<complex<double>> ApproximateCos(int k, int degree, double dev, int scnum)
     return res;
 }
 
+vector<complex<double>> ApproximateCosFixedDegree(
+    int k, int degree, int scnum)
+{
+    if (k <= 0 || degree < 0 || scnum < 0 || scnum >= 31)
+    {
+        throw std::invalid_argument(
+            "ApproximateCosFixedDegree: invalid parameter");
+    }
+
+    const int node_count = degree + 1;
+    const long double pi_value = std::acos(-1.0L);
+    const long double scale = std::ldexp(1.0L, scnum);
+    vector<complex<double>> result(
+        static_cast<std::size_t>(node_count));
+
+    /*
+     * ApproximateCos samples z around the integer message buckets, uses
+     * u=z/k as the Chebyshev coordinate, and evaluates
+     *
+     *   cos(2*pi*(z-1/4)/2^scnum).
+     *
+     * Expressing the same function directly in u gives the target below.
+     * Gauss-Chebyshev interpolation fixes the output degree exactly while
+     * preserving the phase required for the existing sine-producing
+     * double-angle recurrence.
+     */
+    for (int node = 0; node < node_count; ++node)
+    {
+        const long double theta =
+            pi_value * (static_cast<long double>(node) + 0.5L) /
+            static_cast<long double>(node_count);
+        const long double u = std::cos(theta);
+        const long double value = std::cos(
+            2.0L * pi_value *
+            (static_cast<long double>(k) * u - 0.25L) / scale);
+
+        for (int coeff = 0; coeff < node_count; ++coeff)
+        {
+            result[static_cast<std::size_t>(coeff)] +=
+                static_cast<double>(
+                    value * std::cos(
+                        static_cast<long double>(coeff) * theta));
+        }
+    }
+
+    result[0] /= static_cast<double>(node_count);
+    for (int coeff = 1; coeff < node_count; ++coeff)
+    {
+        result[static_cast<std::size_t>(coeff)] *=
+            2.0 / static_cast<double>(node_count);
+    }
+    return result;
+}
+
 }  // namespace util
 }  // namespace poseidon

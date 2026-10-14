@@ -1,0 +1,103 @@
+{
+  "draft_not_applied": true,
+  "estimate_excludes": [
+    "evaluation_keys",
+    "NTT/scratch",
+    "API input copies",
+    "memory_pool_retention",
+    "allocator/virtual_memory"
+  ],
+  "estimates": [
+    {
+      "actual_memory_measurement": false,
+      "batch": "poseidon-pytorch-medium-r484",
+      "case": "linear_fusion",
+      "execution_ops": 567,
+      "last_use_ciphertext_polynomial_peak_bytes": 69206016,
+      "plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ltzqrpdt/attempt-00/output/bound/plan.json",
+      "plan_sha256": "5a4cdae053adc82bf19ae1958b7db5a97235ec56bfa6b25a8b0fab3e8fac5d5b",
+      "retained_ciphertext_polynomial_bytes": 2862612480,
+      "status": "failed",
+      "value_count": 601
+    },
+    {
+      "actual_memory_measurement": false,
+      "batch": "poseidon-pytorch-medium-r487",
+      "case": "spatial_residual",
+      "execution_ops": 969,
+      "last_use_ciphertext_polynomial_peak_bytes": 412614656,
+      "plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kjv8h7b6/attempt-00/output/bound/plan.json",
+      "plan_sha256": "1933953cdc66979478439f7224ed833370fd5726e06966b8a5f325a3975e71ce",
+      "retained_ciphertext_polynomial_bytes": 4857266176,
+      "status": "failed",
+      "value_count": 1193
+    },
+    {
+      "actual_memory_measurement": false,
+      "batch": "poseidon-pytorch-medium-r487",
+      "case": "linear_fusion",
+      "execution_ops": 375,
+      "last_use_ciphertext_polynomial_peak_bytes": 47710208,
+      "plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-phv251cb/attempt-00/output/bound/plan.json",
+      "plan_sha256": "25fef1142c321967f9e6917ba29718d21637e82b3e09261647e2ab52b96ed912",
+      "retained_ciphertext_polynomial_bytes": 1757413376,
+      "status": "passed",
+      "value_count": 409
+    }
+  ],
+  "format": "poseidon-runtime-host-lifetime-proposal-v1",
+  "limits": {
+    "build_bytes": 4294967296,
+    "build_seconds": 7200,
+    "compile_jobs": 2,
+    "download_bytes": 0,
+    "free_disk_bytes": 4294967296,
+    "global_results_bytes": 34359738368,
+    "link_jobs": 1,
+    "native_as_bytes": 4294967296,
+    "native_seconds": 150,
+    "native_workers": 1,
+    "new_dependencies": 0,
+    "validation_bytes": 1073741824,
+    "validation_seconds": 1800
+  },
+  "observation": "ValueStore retains Ready values until reset; FinalOnly filters returned artifacts but does not erase intermediates",
+  "paid_calls": 0,
+  "patch": "docs/baseline/poseidon-runtime-lifetime-proposal-r490.patch",
+  "patch_sha256": "5a35988c1fa148598c28fd3085e0bd0f93411d946bbec06122bff959deabc4e7",
+  "scope": [
+    "optional single-host sequential FinalOnly last-use release",
+    "preserve default and AllValuesAfterRun behaviour",
+    "explicit Poseidon CPU runner opt-in",
+    "new runtime/build/package identities",
+    "object lifetime tests and exact candidate numeric/reload regressions"
+  ],
+  "source_hashes": {
+    "src/poseidon/tools/agent_runtime/cpu_runner.cpp": "47896f99d2aca52458434e43844cc99c8fbf48d1ace7c3d5baef2630a7698741",
+    "third_party/ckks-runtime-agent/runtime/runtime.hpp": "7e2af31a3cb875d3909c7cb98f0c7ba72fbe259bab77702505c371bac4c32ab4"
+  },
+  "status": "pending_approval",
+  "tests": [
+    "duplicate input use",
+    "fanout/shared intermediates",
+    "final outputs used again",
+    "unused encoding",
+    "cross-phase use",
+    "repeated run",
+    "default/AllValues preservation",
+    "reject GPU/communication",
+    "original spatial_residual candidate and 3 medium captures",
+    "MLP/RMS historical exact sources",
+    "nine routing contexts"
+  ],
+  "unchanged": [
+    "Dacapo",
+    "OperatorSpec semantics",
+    "CKKS parameters",
+    "models",
+    "reference",
+    "candidate DSL",
+    "tolerance",
+    "sandbox resource limits"
+  ]
+}

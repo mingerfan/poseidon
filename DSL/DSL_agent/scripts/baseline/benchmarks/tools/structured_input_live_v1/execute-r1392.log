@@ -1,0 +1,16 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "defaults0", "status": "passed", "generations": 1, "http_attempts": 1, "calls_resolved": true}
+{"case": "defaults1", "status": "passed", "generations": 2, "http_attempts": 2, "calls_resolved": true}
+{"case": "defaults2", "status": "passed", "generations": 3, "http_attempts": 3, "calls_resolved": true}
+{"case": "dictionary0", "status": "passed", "generations": 4, "http_attempts": 4, "calls_resolved": true}
+{"case": "dictionary1", "status": "passed", "generations": 5, "http_attempts": 5, "calls_resolved": true}
+{"case": "dictionary2", "status": "passed", "generations": 6, "http_attempts": 6, "calls_resolved": true}
+{"case": "keywords0", "status": "passed", "generations": 7, "http_attempts": 7, "calls_resolved": true}
+{"case": "keywords1", "status": "passed", "generations": 9, "http_attempts": 9, "calls_resolved": true}
+{"case": "keywords2", "status": "passed", "generations": 10, "http_attempts": 10, "calls_resolved": true}
+{"case": "nested0", "status": "passed", "generations": 11, "http_attempts": 11, "calls_resolved": true}
+{"case": "nested1", "status": "passed", "generations": 12, "http_attempts": 12, "calls_resolved": true}
+{"case": "nested2", "status": "passed", "generations": 13, "http_attempts": 13, "calls_resolved": true}

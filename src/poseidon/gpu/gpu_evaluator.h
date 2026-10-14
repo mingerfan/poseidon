@@ -114,7 +114,8 @@ struct GpuEvalModPolynomialCombineStep
  */
 std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
     GpuEvalModPolynomialBasis basis,
-    const std::vector<std::uint32_t> &requested_degrees);
+    const std::vector<std::uint32_t> &requested_degrees,
+    std::uint32_t preferred_giant_stride = 0);
 
 /**
  * @brief GPU-resident bootstrapping constants and precomputed objects.
@@ -127,11 +128,9 @@ struct GpuBootstrapData
 {
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::ClassicBsgs;
+    bool allow_environment_linear_transform_override = true;
 
     parms_id_type q0_parms_id{};
-    // Optional q-only prefix targeted by ModRaise. parms_id_zero preserves
-    // the historical behavior of raising to the first/full Q level.
-    parms_id_type raised_parms_id{};
     double q0_over_message_ratio = 0.0;
 
     double raised_scale_override = 0.0;
@@ -164,6 +163,11 @@ struct GpuBootstrapData
          */
         GpuEvalModPolynomialBasis polynomial_basis =
             GpuEvalModPolynomialBasis::Monomial;
+        std::uint32_t polynomial_degree = 0;
+        std::uint32_t polynomial_log_split = 0;
+        bool polynomial_flat_bsgs = false;
+        bool polynomial_degree_bound_virtual = false;
+        std::size_t polynomial_root_anchor_q_count = 0;
         std::vector<GpuEvalModBasisStep> basis_steps;
         std::vector<GpuEvalModPolynomialTerm> polynomial_terms;
 
@@ -183,6 +187,8 @@ struct GpuBootstrapData
          * performs one logical rescale; the legacy plan rescales every term.
          */
         std::uint32_t polynomial_rescale_count = 1;
+        /* Setup-time exact final drop count; zero means no final rescale. */
+        std::uint32_t polynomial_final_rescale_count = 0;
         double polynomial_output_scale = 0.0;
         bool rescale_polynomial_terms_individually = false;
 
@@ -341,6 +347,13 @@ struct GpuBootstrapWorkspace
  * It does not directly launch CUDA kernels.
  * Kernel launch planning belongs to handler classes.
  */
+struct GpuRotateWorkspace
+{
+    GpuCiphertextData permutation;
+    GpuDoubleHoistWorkspace pre_rotated;
+    std::shared_ptr<void> key_switch;
+};
+
 class GpuEvaluator
 {
 public:
@@ -370,10 +383,52 @@ public:
         const GpuPlaintextData &source_plaintext,
         GpuCiphertextData &destination_ciphertext) const;
 
+    void add_plain_inplace(GpuCiphertextData &ciphertext,
+                           const GpuPlaintextData &plaintext) const;
+    void sub_plain_inplace(GpuCiphertextData &ciphertext,
+                           const GpuPlaintextData &plaintext) const;
+
     void multiply_plain(
         const GpuCiphertextData &source_ciphertext,
         const GpuPlaintextData &source_plaintext,
         GpuCiphertextData &destination_ciphertext) const;
+
+    /**
+     * @brief Multiply a read-only ciphertext Q prefix by a target-level plaintext.
+     *
+     * source_ciphertext may reside at a higher q-only level than the plaintext.
+     * Its trailing q limbs remain owned and unchanged but are hidden from the
+     * kernel view. No prefix materialization copy is issued.
+     */
+    void multiply_plain_q_prefix(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuPlaintextData &source_plaintext,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /**
+     * Sum one to four plaintext products at the plaintexts' common Q level.
+     * Reads const ciphertext Q prefixes and preserves every term. Product
+     * scales must already agree (apart from floating metadata roundoff).
+     * No rescale, modulus conversion, or coefficient approximation is done.
+     * With accumulate=true, add into an already aligned two-component
+     * destination in place; its scale metadata is preserved.
+     */
+    void multiply_plain_sum_q_prefix(
+        const std::vector<const GpuCiphertextData *> &ciphertexts,
+        const std::vector<const GpuPlaintextData *> &plaintexts,
+        GpuCiphertextData &destination_ciphertext,
+        bool accumulate = false) const;
+
+    /** Exact 2*source - plaintext, or 2*source - correction*plaintext.
+     * Source and plaintext are at the output Q level; an optional correction
+     * is read through a const Q prefix. The encoded plaintext is not changed.
+     * All inputs are immutable, output aliasing is safe, and no rescale occurs.
+     */
+    void double_sub_plain_q_prefix(
+        const GpuCiphertextData &source,
+        const GpuPlaintextData &plaintext,
+        GpuCiphertextData &destination,
+        const GpuCiphertextData *correction = nullptr) const;
 
     void multiply_plain_accumulate(
         const GpuCiphertextData &source_ciphertext,
@@ -392,6 +447,19 @@ public:
         const GpuCiphertextData &left_ciphertext,
         const GpuCiphertextData &right_ciphertext,
         GpuCiphertextData &destination_ciphertext) const;
+
+    /**
+     * @brief Multiply read-only q-only prefixes at target_parms_id.
+     *
+     * Either input may reside above the target level. The operation creates
+     * temporary const views with shortened logical limb counts, leaving both
+     * owners unchanged and avoiding ModDrop prefix copies.
+     */
+    void multiply_q_prefix(
+        const GpuCiphertextData &left_ciphertext,
+        const GpuCiphertextData &right_ciphertext,
+        GpuCiphertextData &destination_ciphertext,
+        parms_id_type target_parms_id) const;
 
     void square(
         const GpuCiphertextData &source_ciphertext,
@@ -433,6 +501,19 @@ public:
         parms_id_type target_parms_id) const;
 
     /**
+     * @brief Logically discard an owned ciphertext's trailing q limbs.
+     *
+     * This is the consuming/last-use counterpart of drop_modulus(). It keeps
+     * the existing device allocation and component offsets, but shortens each
+     * component's visible q prefix. No CUDA work or device copy is issued.
+     * The caller must own the ciphertext exclusively because the discarded
+     * suffix is no longer addressable through its metadata.
+     */
+    void drop_modulus_inplace(
+        GpuCiphertextData &ciphertext,
+        parms_id_type target_parms_id) const;
+
+    /**
      * @brief Multiply every ciphertext component by one integer scalar modulo q.
      *
      * This is primarily used by bootstrap scale matching before ModRaise.
@@ -452,11 +533,6 @@ public:
      */
     void raise_modulus(
         const GpuCiphertextData &source_ciphertext,
-        GpuCiphertextData &destination_ciphertext) const;
-
-    void raise_modulus(
-        const GpuCiphertextData &source_ciphertext,
-        parms_id_type destination_parms_id,
         GpuCiphertextData &destination_ciphertext) const;
 
     /**
@@ -513,6 +589,9 @@ public:
         const GpuGaloisKeysData &galois_keys,
         GpuCiphertextData &destination_ciphertext) const;
 
+    void rotate_inplace(GpuCiphertextData &ciphertext, int step,
+                        const GpuGaloisKeysData &galois_keys,
+                        GpuRotateWorkspace &workspace) const;
     /**
      * @brief Rotate one ciphertext by several direct steps with one shared
      * HYBRID decomposition/ModUp of c1.
@@ -565,6 +644,20 @@ public:
         std::uint32_t rescale_count,
         GpuCiphertextData &destination_ciphertext) const;
 
+    /**
+     * Execute the explicit loose-coupled BSGS graph.  Every baby rotation,
+     * plaintext product, giant-group reduction, giant rotation, and final
+     * reduction is separated by an ordinary Q-basis ciphertext boundary.
+     * This reference executor is single-device; make_gpu_loose_bsgs_plan()
+     * exposes the same graph for later multi-GPU lowering.
+     */
+    void multiply_by_diag_matrix_bsgs_loose(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuMatrixPlain &matrix,
+        const GpuGaloisKeysData &galois_keys,
+        std::uint32_t rescale_count,
+        GpuCiphertextData &destination_ciphertext) const;
+
     void multiply_by_diag_matrix_bsgs_double_hoist(
         const GpuCiphertextData &source_ciphertext,
         const GpuMatrixPlainQP &matrix,
@@ -577,6 +670,12 @@ public:
      * @brief Apply a pre-uploaded DFT linear matrix group.
      */
     void dft(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuLinearMatrixGroup &matrix_group,
+        const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    void dft_loose(
         const GpuCiphertextData &source_ciphertext,
         const GpuLinearMatrixGroup &matrix_group,
         const GpuGaloisKeysData &galois_keys,
@@ -604,6 +703,14 @@ public:
         GpuCiphertextData &result_real,
         GpuCiphertextData &result_imag) const;
 
+    void coeff_to_slot_loose(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuLinearMatrixGroup &matrix_group,
+        const GpuPlaintextData &minus_i_plaintext,
+        const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &result_real,
+        GpuCiphertextData &result_imag) const;
+
     void coeff_to_slot_double_hoist(
         const GpuCiphertextData &source_ciphertext,
         const GpuLinearMatrixGroupQP &matrix_group,
@@ -621,6 +728,14 @@ public:
      * outside the timed GPU path.
      */
     void slot_to_coeff(
+        const GpuCiphertextData &source_real,
+        const GpuCiphertextData &source_imag,
+        const GpuLinearMatrixGroup &matrix_group,
+        const GpuPlaintextData &plus_i_plaintext,
+        const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &result) const;
+
+    void slot_to_coeff_loose(
         const GpuCiphertextData &source_real,
         const GpuCiphertextData &source_imag,
         const GpuLinearMatrixGroup &matrix_group,
@@ -668,6 +783,8 @@ public:
         GpuCiphertextData &destination_ciphertext) const;
 
 private:
+    void validate_plain_input(const GpuCiphertextData &ciphertext,
+                              const GpuPlaintextData &plaintext) const;
     const GpuParameterData &params_;
 
     GpuElementwiseHandler elementwise_handler_;

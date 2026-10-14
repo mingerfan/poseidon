@@ -1,0 +1,25 @@
+{
+  "active_sdk_unchanged": true,
+  "api_calls": 0,
+  "backend_changes": false,
+  "base_sha256": {
+    "pytorch_alias_capture_bridge.py": "ae595c4ce8e06f5edddb98107603ccf2c8754abee06b1de210c8b66f4f5d31e7",
+    "pytorch_alias_composition.py": "8224d65c2068212d7bed477cbacf3899b85e3a3310e3478f3ccd36efdc513374",
+    "pytorch_model_capture.py": "b7abd2ea2a2dcab72439afe432eb8439965180af2f7d2e966a9fa8db6e4ae5d9",
+    "pytorch_ordered_capture.py": "761880cbc60157fcb75c7fe66936c249f321093a68f0cf2e8e0a2b032b7fdbf0",
+    "pytorch_static_trace.py": "2fee3dc5bb6094751037c5c9e6de6cc7b23912b3ebb68fdab1da1e82d9ab0c8b"
+  },
+  "compilations": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-trusted-spatial-agent-draft-v1",
+  "modified_agent_files": [
+    "pytorch_static_trace.py",
+    "pytorch_model_capture.py",
+    "pytorch_alias_capture_bridge.py",
+    "pytorch_alias_composition.py",
+    "pytorch_ordered_capture.py"
+  ],
+  "new_helper": "pytorch_spatial_source.py",
+  "production_registered": false,
+  "stage": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/stage"
+}

@@ -1,0 +1,255 @@
+{
+  "alias_controls": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 13,
+    "record": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_extensions_v1/alias-controls.json",
+    "skipped": 0,
+    "source_mutation_integration": false,
+    "verified": [
+      "storage sharing",
+      "logical index projection",
+      "output write updates source",
+      "source write updates output"
+    ]
+  },
+  "backend": {
+    "actual_artifacts": [
+      "Earth IR",
+      "CKKS IR",
+      "RuntimePlan",
+      "OperatorSpec",
+      "plaintext bundle"
+    ],
+    "candidate_origin": "deterministic_rule_baseline",
+    "cases": [
+      {
+        "case": "diagonal_batch",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v3/tasks/42eebd12157d43c68ec2a64a97f4e7c1/program",
+        "package_binding": "3cc894e59ba967427ec213f8c21507c46b750dd74ae1558d9bce6fcc68274a22",
+        "partition": "diagonal",
+        "reuse_maximum_absolute_error": 1.877992816812224e-09,
+        "reuse_passed": true
+      },
+      {
+        "case": "diagonal_matrix_fusion",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v3/tasks/a4186d157b6a4b98b7b3d086c4905b93/program",
+        "package_binding": "2662f95ef07bc8b4d6844bc3a996f58e365f613434712dd3c99498027f358d50",
+        "partition": "diagonal",
+        "reuse_maximum_absolute_error": 2.330898515867652e-09,
+        "reuse_passed": true
+      },
+      {
+        "case": "diagonal_vector",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v3/tasks/de4e92a25e004420a61b686d2199a98d/program",
+        "package_binding": "a8cf8493000ffa60898dbbc7ef9b94728a24d7dec7b09386e988ef226729a9fc",
+        "partition": "diagonal",
+        "reuse_maximum_absolute_error": 2.491931661019464e-09,
+        "reuse_passed": true
+      },
+      {
+        "case": "scalar_matrix_factor",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v2/tasks/d1e4b7ac80204b1180403cdd757a19de/program",
+        "package_binding": "73f13b63b5fefe654880318026eef3cda7cd9de769ed867b1f8ddd2ec0a17ef2",
+        "partition": "scalar_tensor",
+        "reuse_maximum_absolute_error": 1.4145561388900774e-09,
+        "reuse_passed": true
+      },
+      {
+        "case": "scalar_vector_reduction",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v2/tasks/592119b01ab64a96b7fa5599b0f316da/program",
+        "package_binding": "528f4867b42b455c564dcae8fe1fcb15553951abf7824177caa798943c5d0e7f",
+        "partition": "scalar_tensor",
+        "reuse_maximum_absolute_error": 1.40268326120907e-09,
+        "reuse_passed": true
+      },
+      {
+        "case": "three_scalar_factors",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v2/tasks/5e920371269946039c211f6408ceb6b2/program",
+        "package_binding": "4e2cd3ccf22f2e3933a8ce5e6c4f11d8480b10275b10dc1ff92a4e91af777894",
+        "partition": "scalar_tensor",
+        "reuse_maximum_absolute_error": 6.107901406871008e-10,
+        "reuse_passed": true
+      },
+      {
+        "case": "trace_batch",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v3/tasks/6b951200799442dea5a99d7c5d55a3eb/program",
+        "package_binding": "a74c98b6988cd4bd48d3dc5da8d5bd045c557b4d779e1987a34ae18b19a2d229",
+        "partition": "trace",
+        "reuse_maximum_absolute_error": 8.694419628696437e-09,
+        "reuse_passed": true
+      },
+      {
+        "case": "trace_scalar",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v3/tasks/baf49ef082004bdca736fd42fbee14bc/program",
+        "package_binding": "18118aacd3ceeb4dfef0e9ec40764ceb3af4c81e4d180580aaec67653dd0822b",
+        "partition": "trace",
+        "reuse_maximum_absolute_error": 7.457891915141346e-09,
+        "reuse_passed": true
+      },
+      {
+        "case": "trace_scalar_factor",
+        "compiled": true,
+        "encrypted_execution": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v3/tasks/e60249b0afa741668ee1fdeac71ccbbe/program",
+        "package_binding": "51b35ec2f03f784b6b0fd4fb71f2d7934d21bc50c0398185e481b40bf0432862",
+        "partition": "trace",
+        "reuse_maximum_absolute_error": 1.6365403442131221e-09,
+        "reuse_passed": true
+      }
+    ],
+    "compared_values": 144,
+    "compiled": 9,
+    "encrypted_calls": 18,
+    "failed_current": 0,
+    "histories": [
+      {
+        "binding": "a7e6c9388283c789e03cbcaf7fa525269ef408025edab98a4a33a7381d5b54b6",
+        "compilations": 0,
+        "encrypted_calls": 0,
+        "failed": 9,
+        "passed": 0,
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v1/report.json",
+        "sha256": "194fbdec7b69dde58dea95d5e20334d5d2ac5c9e6ed0fcec804873728a8fcc89"
+      },
+      {
+        "binding": "70f95555a742d8f4059cca6f1e6bcf5351ed52b8ca50cc6caaa9a321d349a8d3",
+        "compilations": 3,
+        "encrypted_calls": 6,
+        "failed": 6,
+        "passed": 3,
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v2/report.json",
+        "sha256": "13351172c4e925b60b8ce2df827a5d6851ec8ea8121dd0257298125a0cbc079f"
+      },
+      {
+        "binding": "e163b138d6af79a0170ca4dc5641d7644eec64de75dd341084d8fa2da255bf47",
+        "compilations": 6,
+        "encrypted_calls": 12,
+        "failed": 0,
+        "passed": 6,
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v3/report.json",
+        "sha256": "76260a585eb166c36b891579f716c2a66219dc3de0718232ed29dc7574df1c44"
+      }
+    ],
+    "identity_manifest_sha256": "ee05605763e8f26e106c8c48167afb7017cee7c6fa946093626dc9c35bf29995",
+    "input_groups": 72,
+    "maximum_absolute_error": 8.694419628696437e-09,
+    "new_agent_generation": false,
+    "original_deadline_unchanged": true,
+    "package_reload_and_new_inputs": true,
+    "passed": 9,
+    "skipped": 0,
+    "source_capture": false,
+    "tolerance": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "binding": "edf04ededbc99446e6ceeb7291b0421e63009bc9a0acc7df4bfbafa497b4573f",
+  "branch": "lhy-agent-dsl",
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "first_failures": {
+    "budget_fields": "first offline harness omitted two required fields; 9 input refusals, no compiler/FHE",
+    "default_layout": "six examples needed existing index packing v9; rule preparation stopped before compiler",
+    "first_patch": "syntax compile rejected an unmatched parenthesis before saving/executing",
+    "originals_preserved": true,
+    "passed_cases_not_repeated": true
+  },
+  "format": "poseidon-einsum-extension-draft-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "limits": {
+    "decomposition_budget_preserved": true,
+    "diagonal_indices_bounded": true,
+    "logical_scalar_carrier": [
+      1
+    ],
+    "max_operands": 4,
+    "rank": 32,
+    "resource_profile": "general-tensors-v1"
+  },
+  "mathematical_controls": {
+    "errors": 0,
+    "failed": 0,
+    "input_groups_per_model": 4,
+    "models": 21,
+    "passed": 49,
+    "record": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/einsum_extensions_v1/controls-round1.json",
+    "references": [
+      "Torch einsum",
+      "existing independent core mathematical interpreter"
+    ],
+    "skipped": 0
+  },
+  "model_semantics": [
+    "repeated-label diagonal gather",
+    "diagonal trace and reduction",
+    "scalar Tensor factors"
+  ],
+  "operations": {
+    "backend_library_changes": false,
+    "commit": false,
+    "compiler_changes": false,
+    "downloads": 0,
+    "http_attempts": 0,
+    "installations": 0,
+    "new_agent_generation": false,
+    "parameter_changes": false,
+    "pr": false,
+    "provider_calls": 0,
+    "push": false,
+    "reference_changes": false,
+    "runtime_changes": false,
+    "tolerance_changes": false
+  },
+  "outstanding": [
+    "new source-policy integration with immutable metadata and alias/write validation",
+    "production capability admission and activation",
+    "new Agent generation under separate bounded approval",
+    "generic capacity/application accuracy/bootstrap/ciphertext handoff/CUDA/whole-network milestones"
+  ],
+  "platform": "aarch64-linux",
+  "production_source_policy": false,
+  "production_source_version": "poseidon-trusted-pytorch-v18",
+  "revision": "r1345",
+  "source_files": {
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/alias_audit.py": "d72bdcb6bfd9e6926df65b9b9e739b2917bc3720e05ad76c44e3d7e36d39d365",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/alias_projection.py": "5b4168e39f55e89055b137965cbfc537d601244a330101475a602694da77a161",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/backend_acceptance.py": "2e50498cd9c9ec0dbdfb38e482269949e4bea0c842469ab4dd161c76014f9043",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/backend_acceptance_v2.py": "3f3679512076a74aebd29dc60364637267e60beee0ca484e2fe3b8061110b832",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/backend_acceptance_v3.py": "d36f9f8bd01125150570e204443b0b27dab0b27fa568f692efc922598e107485",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/controls.py": "722049d8dc6647065b323c39412b0169cd50d482df008f71cf4ec9d64ecde650",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/controls_launch.py": "c7ab924d3bb091e0aada31c910eeb7972d52d6a977f507c977919c3f7e3cc74b",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/planner.py": "7d86821e30f7abef6a442c2d54646b71a40e33ab9854214b35fd7e02045efb1d",
+    "scripts/baseline/benchmarks/tools/einsum_extensions_v1/test_extension.py": "90f8054f3bc67d31f6943252204b22fff8f8c0ee2fe30b24e81cf04133f5b53e"
+  },
+  "space": {
+    "disk_free_bytes": 45550297088,
+    "new_bytes": 38292830,
+    "total_results_bytes": 27859795081
+  },
+  "status": "development_decomposition_accepted",
+  "unchanged": {
+    "historical_requests": 2,
+    "production_root_python_files": 663,
+    "protected_backend_and_reference_files": 654,
+    "r1341_authorization_pending": true,
+    "r1341_proposal_sha256": "b70cf2d9d94fc6dc07c94beca32cda515f0dab1674424a8e97a11dc173b5f484",
+    "source_identity_unchanged": true
+  }
+}

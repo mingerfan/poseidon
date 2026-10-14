@@ -54,7 +54,8 @@ public:
         const GpuConstEvaluationKeyView &switch_keys_view,
         const GpuEvaluationKeyData &switch_keys_data,
         std::size_t key_index,
-        const GpuLevelInfo &level_info) const;
+        const GpuLevelInfo &level_info,
+        std::shared_ptr<void> *workspace = nullptr) const;
 
     /**
      * Decompose one Q/NTT polynomial once and retain every HYBRID digit in
@@ -64,7 +65,8 @@ public:
         const GpuConstRNSPolyView &switch_poly_ntt,
         const GpuLevelInfo &level_info,
         GpuHoistedDecomposition &destination,
-        GpuHybridKeySwitchWorkspace &workspace) const;
+        GpuHybridKeySwitchWorkspace &workspace,
+        const GpuWord *precomputed_source_intt_q = nullptr) const;
 
     /**
      * Standard-key staged path. The automorphism is applied to each already
@@ -81,7 +83,8 @@ public:
         std::size_t destination_batch,
         bool initialize,
         const GpuLevelInfo &level_info,
-        GpuHybridKeySwitchWorkspace &workspace) const;
+        GpuHybridKeySwitchWorkspace &workspace,
+        const GpuWord *lifted_c0_source_q = nullptr) const;
 
     /**
      * Apply HYBRID P->Q ModDown to one QP ciphertext batch. P INTT and its
@@ -131,7 +134,8 @@ private:
         const GpuLevelInfo &level_info,
         const GpuConstRNSPolyView *add_source0,
         const GpuConstRNSPolyView *add_source1,
-        const GpuLevelInfo *rescale_x2_destination_level = nullptr) const;
+        const GpuLevelInfo *rescale_x2_destination_level = nullptr,
+        std::shared_ptr<void> *workspace = nullptr) const;
 
     struct PersistentWorkspace;
 

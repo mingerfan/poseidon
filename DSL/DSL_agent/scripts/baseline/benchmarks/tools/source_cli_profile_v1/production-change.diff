@@ -1,0 +1,30 @@
+--- before/scripts/prepare_pytorch_source.py
++++ after/scripts/prepare_pytorch_source.py
+@@ -15,7 +15,7 @@
+ from pytorch_weight_package import declarations,DTYPES
+ import trusted_pytorch_import as legacy
+ DEFAULT_FORMAT="poseidon-trusted-pytorch-v18"
+-LATEST_FORMAT="poseidon-trusted-pytorch-v28"
++LATEST_FORMAT="poseidon-trusted-pytorch-v34"
+ SOURCE_SELECTIONS=(*SOURCE_FORMATS,"latest")
+ def resolve_source_format(value):
+  require(type(value)is str,"Source version selection")
+@@ -82,7 +82,8 @@
+  require(type(factory_args)in(list,tuple),"Factory args type")
+  selected_latest=source_format=="latest"
+  source_format=resolve_source_format(source_format)
+- packaged=source_format in (SOURCE_PACKAGE_FORMAT,TENSOR_SOURCE_FORMAT,STATE_TRANSFORM_SOURCE_FORMAT)
++ from pytorch_source_package_policy import selected as selected_source_package
++ packaged=selected_source_package(dict(format=source_format))
+  if packaged:
+   root=Path(os.path.abspath(source_root))if source_root is not None else root
+   require(root.is_dir(),"Source root directory")
+@@ -156,7 +157,7 @@
+ def main(argv=None):
+  parser=argparse.ArgumentParser(description=__doc__)
+  parser.add_argument("model_file",type=Path);parser.add_argument("--entry",required=True)
+- parser.add_argument("--source-root",type=Path,help="Explicit package root for v29-v31")
++ parser.add_argument("--source-root",type=Path,help="Root for explicitly listed source package files")
+  parser.add_argument("--input",action="append",required=True,help="Static input, e.g. x:1,3,32,32")
+  parser.add_argument("--output",action="append",required=True,help="Tensor output name in declaration order")
+  parser.add_argument("--helper",action="append",type=Path,default=[])

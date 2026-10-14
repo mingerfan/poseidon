@@ -1,0 +1,7 @@
+{
+  "period": 256,
+  "status": "blocked",
+  "layer": "rule_preflight",
+  "type": "ValueError",
+  "message": "Tensor-axis required public context exceeds generation budget"
+}

@@ -1,0 +1,45 @@
+{
+  "format": "poseidon-trusted-pytorch-v3",
+  "files": {
+    "models.py": "1b09ea0975251c2b80e5e9d19560a560f140aa4d91d0c6ad74b5364c946a8deb"
+  },
+  "entry": "models.make_weighted_matrix",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "product",
+    "sum",
+    "difference"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [],
+    "kwargs": {
+      "scale": 1
+    }
+  },
+  "dtype_policy": "strict-float64-v1",
+  "weights": {
+    "scale": {
+      "file": "state_0000.npy",
+      "sha256": "8525e9da150a7a1cf6e13a69f4e3134f4aff9287cf768282b9ec90b854f4d116",
+      "bytes": 136,
+      "shape": [],
+      "dtype": "<f8"
+    }
+  }
+}

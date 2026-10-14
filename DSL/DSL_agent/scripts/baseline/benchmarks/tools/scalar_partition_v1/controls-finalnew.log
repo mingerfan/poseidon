@@ -1,0 +1,44 @@
+test_detach_keeps_alias (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_dictionary_list_output (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_direct_stack (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_dynamic_port_rejected (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_function_keywords_scalar_arithmetic (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_legacy_partial_ports_are_already_supported (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_method_tuple_output (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_nested_chunk_then_scalar_unbind (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_old_version_scalar_unbind_rejected (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_partial_negative_ports (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_public_chunk_affine (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_public_scalar_gain (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_public_scalar_left_subtraction (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_public_unbind_read (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_public_unbind_write_rejected (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_public_view_operand_substitution_rejected (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_public_view_root_content_substitution_rejected (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_repeated_port_write (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_repeated_ports (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_scalar_einsum_factor (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_scalar_reshape_write (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_scalar_view_write_updates_source (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_singleton_scalar_output (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_snapshot_breaks_alias (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_source_write_updates_views (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_transposed_tensor_unbind (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_tuple_slice (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_v2_requires_scalar_alias_contract (test_pytorch_scalar_partitions.SourceTests) ... ok
+test_axis_and_budget_rejected (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_empty_shape_rejected (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_explicit_scalar_plan (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_missing_entry_rejected (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_missing_port_rejected (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_old_checker_does_not_accept_v2 (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_policy_downgrade_rejected (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_rank_one_ports_must_retain_logical_scalar (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_registered_policy_only (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_versions_and_capability (test_pytorch_scalar_partitions.TransportTests) ... ok
+test_wrong_index_rejected (test_pytorch_scalar_partitions.TransportTests) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 10.283s
+
+OK

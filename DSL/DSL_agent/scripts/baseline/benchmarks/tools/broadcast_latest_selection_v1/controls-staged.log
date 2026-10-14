@@ -1,0 +1,24 @@
+test_capacity_still_limits_inputs (test_latest_selection.LatestSelection) ... <unknown>:91: DeprecationWarning: invalid escape sequence '\.'
+ok
+test_duplicate_input_name_is_rejected (test_latest_selection.LatestSelection) ... ok
+test_duplicate_tensor_binding_does_not_fallback (test_latest_selection.LatestSelection) ... ok
+test_explicit_v21_keeps_flat_manifest (test_latest_selection.LatestSelection) ... ok
+test_explicit_v26_and_v27_still_require_call (test_latest_selection.LatestSelection) ... ok
+test_four_input_boundary (test_latest_selection.LatestSelection) ... ok
+test_invalid_explicit_call_does_not_fallback (test_latest_selection.LatestSelection) ... ok
+test_latest_and_explicit_v28_are_identical (test_latest_selection.LatestSelection) ... ok
+test_latest_cli_does_not_import_model (test_latest_selection.LatestSelection) ... ok
+test_latest_is_registered_v28 (test_latest_selection.LatestSelection) ... ok
+test_latest_preserves_explicit_keyword_binding (test_latest_selection.LatestSelection) ... ok
+test_latest_preserves_nested_dictionary_binding (test_latest_selection.LatestSelection) ... ok
+test_legacy_default_stays_v18 (test_latest_selection.LatestSelection) ... ok
+test_multiple_inputs_keep_declared_order (test_latest_selection.LatestSelection) ... ok
+test_saved_manifest_not_overwritten (test_latest_selection.LatestSelection) ... ok
+test_saved_manifest_records_explicit_version (test_latest_selection.LatestSelection) ... ok
+test_single_input_flat_call (test_latest_selection.LatestSelection) ... ok
+test_unknown_version_is_rejected (test_latest_selection.LatestSelection) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.428s
+
+OK

@@ -1,0 +1,12 @@
+{
+  "format": "poseidon-output-alias-execution-controls-v1",
+  "status": "passed",
+  "tests": 12,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 0.0032516329956706613,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "api_calls": 0
+}

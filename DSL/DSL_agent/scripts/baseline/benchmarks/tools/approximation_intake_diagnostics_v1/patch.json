@@ -1,0 +1,31 @@
+{
+  "added_source": {
+    "pytorch_intake_diagnostics.py": "4b7d75f1d321652132b64d6b01bdf91805259981b2cfdc8358a4f8db3c9442f2"
+  },
+  "backend_modified": false,
+  "before_sdk": "438cf30898f5b3a055c3bc60c37e0923a7425677a6d7011eec02edc0125ce525",
+  "binding": "2a3c6fde80dce74a848b7628ecc164372e9664fb22930dba7a9689264ca22380",
+  "changed_sources": {
+    "application_model_source.py": {
+      "after": "ff548796b05aacdde28edbefd2c760da3af07d4c473c49c3d9115ce7d5be8a47",
+      "before": "c9f2c6cf79c1e9f9c1737717f675f2cba03b5ca632e212db87ce41fc7ba6b960"
+    },
+    "model_import_cli.py": {
+      "after": "83800f33deda10ff1c0de05783f527befda80a862c5a59671fa001fb92d55bfa",
+      "before": "7f0cdca0406b8ef9446e74faad18e8ed1990e3dbad477a2a773f56737dcf7995"
+    },
+    "pytorch_approximation.py": {
+      "after": "1671967279cd6443cb61c2a7a284df1f9ab321e202d6f481da15075e10bffefd",
+      "before": "2995e10e2ee76f81a2cde6f47df74a3871c200f2ce3727e570d7039242af782c"
+    },
+    "pytorch_ordered_intake.py": {
+      "after": "ccc764d3a401be5f00f3f025e792d973d0fc9f2e559e833804fd3fd5f25e9a69",
+      "before": "d786d4f4b2345b126d794281b597d1df8dc71c98c5b74328d461cccc5db8d12a"
+    }
+  },
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-approximation-intake-patch-v1",
+  "model_or_reference_modified": false,
+  "paid_calls": 0
+}

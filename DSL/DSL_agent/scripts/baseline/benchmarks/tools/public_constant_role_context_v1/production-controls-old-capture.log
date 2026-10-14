@@ -1,0 +1,150 @@
+test_actual_cli_ceiling_is_unchanged (test_production.ProductionControls) ... ok
+test_actual_cli_reads_both_policies (test_production.ProductionControls) ... ok
+test_app_submit_functional_with_provenance (test_production.ProductionControls) ... ERROR
+test_app_submit_keyword_with_provenance (test_production.ProductionControls) ... ERROR
+test_app_submit_module_with_provenance (test_production.ProductionControls) ... ERROR
+test_app_submit_source_functional_with_provenance (test_production.ProductionControls) ... FAIL
+test_app_submit_source_keyword_with_provenance (test_production.ProductionControls) ... FAIL
+test_app_submit_source_module_with_provenance (test_production.ProductionControls) ... FAIL
+test_context_excludes_retained_source_and_reference_reports (test_production.ProductionControls) ... ok
+test_default_policy_keeps_v1 (test_production.ProductionControls) ... ok
+test_full_role_tamper_is_rejected (test_production.ProductionControls) ... ok
+test_large_nonrepeating_weights_remain_descriptors (test_production.ProductionControls) ... ERROR
+test_nested_private_field_is_rejected (test_production.ProductionControls) ... ok
+test_projected_role_tamper_is_rejected (test_production.ProductionControls) ... ok
+test_real_nonuniform_tensor_layout_preserved (test_production.ProductionControls) ... ok
+test_scalar_and_polynomial_bindings (test_production.ProductionControls) ... ok
+test_unexpected_private_fields_are_rejected (test_production.ProductionControls) ... ok
+test_v1_functional_exact_bytes (test_production.ProductionControls) ... ok
+test_v1_keyword_exact_bytes (test_production.ProductionControls) ... ok
+test_v1_module_exact_bytes (test_production.ProductionControls) ... ok
+test_v2_functional_roundtrip_transport (test_production.ProductionControls) ... ok
+test_v2_keyword_roundtrip_transport (test_production.ProductionControls) ... ok
+test_v2_module_roundtrip_transport (test_production.ProductionControls) ... ok
+
+======================================================================
+ERROR: test_app_submit_functional_with_provenance (test_production.ProductionControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 243, in test_app_submit_functional_with_provenance
+    def test_app_submit_functional_with_provenance(self):self.app_submit(CASES[1])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 231, in app_submit
+    provenance=load_model_provenance(folder,model,max_bytes=weights.TRUSTED_BYTES)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 220, in load_model_provenance
+    check_provenance(value,model)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 45, in check_provenance
+    check_reference(value["reference_report"],value["original"],lowered,package["manifest"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_intake.py", line 168, in check_reference
+    return selected(report,original,lowered,spec,resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 347, in check_reference
+    require(type(report) is dict and report.get("format") == reference_version(spec)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Ordered reference identity
+
+======================================================================
+ERROR: test_app_submit_keyword_with_provenance (test_production.ProductionControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 244, in test_app_submit_keyword_with_provenance
+    def test_app_submit_keyword_with_provenance(self):self.app_submit(CASES[2])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 231, in app_submit
+    provenance=load_model_provenance(folder,model,max_bytes=weights.TRUSTED_BYTES)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 220, in load_model_provenance
+    check_provenance(value,model)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 45, in check_provenance
+    check_reference(value["reference_report"],value["original"],lowered,package["manifest"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_intake.py", line 168, in check_reference
+    return selected(report,original,lowered,spec,resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 347, in check_reference
+    require(type(report) is dict and report.get("format") == reference_version(spec)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Ordered reference identity
+
+======================================================================
+ERROR: test_app_submit_module_with_provenance (test_production.ProductionControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 242, in test_app_submit_module_with_provenance
+    def test_app_submit_module_with_provenance(self):self.app_submit(CASES[0])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 231, in app_submit
+    provenance=load_model_provenance(folder,model,max_bytes=weights.TRUSTED_BYTES)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 220, in load_model_provenance
+    check_provenance(value,model)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 45, in check_provenance
+    check_reference(value["reference_report"],value["original"],lowered,package["manifest"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_intake.py", line 168, in check_reference
+    return selected(report,original,lowered,spec,resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 347, in check_reference
+    require(type(report) is dict and report.get("format") == reference_version(spec)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Ordered reference identity
+
+======================================================================
+ERROR: test_large_nonrepeating_weights_remain_descriptors (test_production.ProductionControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 178, in test_large_nonrepeating_weights_remain_descriptors
+    projected=provider.public_request(q)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/deepseek_provider.py", line 91, in public_request
+    raise ProviderError("request_contract_changed") from None
+generation_protocol.ProviderError: request_contract_changed
+
+======================================================================
+FAIL: test_app_submit_source_functional_with_provenance (test_production.ProductionControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 267, in test_app_submit_source_functional_with_provenance
+    def test_app_submit_source_functional_with_provenance(self):self.app_source(CASES[1])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 255, in app_source
+    self.assertEqual((state["status"],state["phase"]),("queued","queued"))
+AssertionError: Tuples differ: ('validation_failed', 'complete') != ('queued', 'queued')
+
+First differing element 0:
+'validation_failed'
+'queued'
+
+- ('validation_failed', 'complete')
++ ('queued', 'queued')
+
+======================================================================
+FAIL: test_app_submit_source_keyword_with_provenance (test_production.ProductionControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 268, in test_app_submit_source_keyword_with_provenance
+    def test_app_submit_source_keyword_with_provenance(self):self.app_source(CASES[2])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 255, in app_source
+    self.assertEqual((state["status"],state["phase"]),("queued","queued"))
+AssertionError: Tuples differ: ('validation_failed', 'complete') != ('queued', 'queued')
+
+First differing element 0:
+'validation_failed'
+'queued'
+
+- ('validation_failed', 'complete')
++ ('queued', 'queued')
+
+======================================================================
+FAIL: test_app_submit_source_module_with_provenance (test_production.ProductionControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 266, in test_app_submit_source_module_with_provenance
+    def test_app_submit_source_module_with_provenance(self):self.app_source(CASES[0])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_role_context_v1/test_production.py", line 255, in app_source
+    self.assertEqual((state["status"],state["phase"]),("queued","queued"))
+AssertionError: Tuples differ: ('validation_failed', 'complete') != ('queued', 'queued')
+
+First differing element 0:
+'validation_failed'
+'queued'
+
+- ('validation_failed', 'complete')
++ ('queued', 'queued')
+
+----------------------------------------------------------------------
+Ran 23 tests in 7.769s
+
+FAILED (failures=3, errors=4)
+{"binding": "f97f93106ae058879253de88c44c577f2f8ececfd5c9d2b7ddf3a0ce052459ed", "compiler_calls": 0, "encrypted_executions": 0, "errors": 4, "failed": 3, "format": "poseidon-public-math-production-controls-v1", "passed": 16, "planned": 23, "provider_calls": 0, "skipped": 0}

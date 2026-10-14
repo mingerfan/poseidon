@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980">
+  <defs>
+    <style>
+      text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; fill: #172033; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 16px; fill: #687386; }
+      .label { font-size: 15px; font-weight: 650; }
+      .small { font-size: 13px; fill: #586579; }
+      .inside { font-size: 12px; font-weight: 650; fill: white; }
+    </style>
+    <pattern id="blankPattern" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#eef1f5"/><line x1="0" y1="0" x2="0" y2="8" stroke="#cbd3df" stroke-width="2"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-20%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.12"/></filter>
+  </defs>
+  <rect width="1600" height="980" fill="#f7f9fc"/>
+  <text x="70" y="62" class="title">示意图 3｜CPU worker 时间构成</text>
+  <text x="70" y="94" class="subtitle">每根条独立归一化到同一个 execution window；C=compute worker，X=communication worker</text>
+
+  <rect x="70" y="125" width="1460" height="745" rx="18" fill="white" filter="url(#shadow)"/>
+  <g transform="translate(100,155)">
+    <rect x="0" y="0" width="24" height="16" rx="3" fill="#4f7cff"/><text x="34" y="13" class="small">Kernel launch（包含嵌套 driver mutex）</text>
+    <rect x="325" y="0" width="24" height="16" rx="3" fill="#8b5cf6"/><text x="359" y="13" class="small">pthread_cond_wait</text>
+    <rect x="540" y="0" width="24" height="16" rx="3" fill="#8a97aa"/><text x="574" y="13" class="small">其他 Nsight 可见活动</text>
+    <rect x="800" y="0" width="24" height="16" rx="3" fill="url(#blankPattern)"/><text x="834" y="13" class="small">无可见事件 / 未归因</text>
+  </g>
+
+  <!-- ruler -->
+  <g transform="translate(320,205)">
+    <text x="0" y="0" class="small">0%</text><text x="225" y="0" text-anchor="middle" class="small">25%</text><text x="450" y="0" text-anchor="middle" class="small">50%</text><text x="675" y="0" text-anchor="middle" class="small">75%</text><text x="900" y="0" text-anchor="end" class="small">100%</text>
+    <line x1="0" y1="10" x2="0" y2="590" stroke="#e1e6ee"/><line x1="225" y1="10" x2="225" y2="590" stroke="#e1e6ee"/><line x1="450" y1="10" x2="450" y2="590" stroke="#e1e6ee"/><line x1="675" y1="10" x2="675" y2="590" stroke="#e1e6ee"/><line x1="900" y1="10" x2="900" y2="590" stroke="#e1e6ee"/>
+  </g>
+
+  <!-- 1GPU -->
+  <text x="105" y="267" class="label">1GPU main</text>
+  <g transform="translate(320,240)">
+    <rect x="0" y="0" width="108" height="38" rx="6" fill="#4f7cff"/><text x="54" y="24" text-anchor="middle" class="inside">Launch 12%</text>
+    <rect x="108" y="0" width="0" height="38" fill="#8b5cf6"/>
+    <rect x="108" y="0" width="162" height="38" fill="#8a97aa"/><text x="189" y="24" text-anchor="middle" class="inside">其他 18%</text>
+    <rect x="270" y="0" width="630" height="38" rx="6" fill="url(#blankPattern)"/><text x="585" y="24" text-anchor="middle" font-size="12" font-weight="650" fill="#596579">Blank 70%</text>
+  </g>
+
+  <line x1="100" y1="305" x2="1480" y2="305" stroke="#e4e9f0"/>
+  <text x="105" y="337" class="small">4GPU compute workers</text>
+
+  <!-- Compute workers -->
+  <text x="105" y="382" class="label">GPU0-C</text>
+  <g transform="translate(320,355)"><rect x="0" width="162" height="38" rx="6" fill="#4f7cff"/><text x="81" y="24" text-anchor="middle" class="inside">Launch 18%</text><rect x="162" width="387" height="38" fill="#8b5cf6"/><text x="355" y="24" text-anchor="middle" class="inside">cond 43%</text><rect x="549" width="81" height="38" fill="#8a97aa"/><rect x="630" width="270" height="38" rx="6" fill="url(#blankPattern)"/><text x="765" y="24" text-anchor="middle" font-size="12" font-weight="650" fill="#596579">Blank 30%</text></g>
+  <text x="105" y="432" class="label">GPU1-C</text>
+  <g transform="translate(320,405)"><rect x="0" width="180" height="38" rx="6" fill="#4f7cff"/><text x="90" y="24" text-anchor="middle" class="inside">Launch 20%</text><rect x="180" width="324" height="38" fill="#8b5cf6"/><text x="342" y="24" text-anchor="middle" class="inside">cond 36%</text><rect x="504" width="99" height="38" fill="#8a97aa"/><rect x="603" width="297" height="38" rx="6" fill="url(#blankPattern)"/><text x="751" y="24" text-anchor="middle" font-size="12" font-weight="650" fill="#596579">Blank 33%</text></g>
+  <text x="105" y="482" class="label">GPU2-C</text>
+  <g transform="translate(320,455)"><rect x="0" width="198" height="38" rx="6" fill="#4f7cff"/><text x="99" y="24" text-anchor="middle" class="inside">Launch 22%</text><rect x="198" width="279" height="38" fill="#8b5cf6"/><text x="337" y="24" text-anchor="middle" class="inside">cond 31%</text><rect x="477" width="108" height="38" fill="#8a97aa"/><rect x="585" width="315" height="38" rx="6" fill="url(#blankPattern)"/><text x="742" y="24" text-anchor="middle" font-size="12" font-weight="650" fill="#596579">Blank 35%</text></g>
+  <text x="105" y="532" class="label">GPU3-C</text>
+  <g transform="translate(320,505)"><rect x="0" width="171" height="38" rx="6" fill="#4f7cff"/><text x="85" y="24" text-anchor="middle" class="inside">Launch 19%</text><rect x="171" width="351" height="38" fill="#8b5cf6"/><text x="346" y="24" text-anchor="middle" class="inside">cond 39%</text><rect x="522" width="90" height="38" fill="#8a97aa"/><rect x="612" width="288" height="38" rx="6" fill="url(#blankPattern)"/><text x="756" y="24" text-anchor="middle" font-size="12" font-weight="650" fill="#596579">Blank 32%</text></g>
+
+  <text x="105" y="588" class="small">4GPU communication workers</text>
+  <!-- Comm workers -->
+  <text x="105" y="632" class="label">GPU0-X</text>
+  <g transform="translate(320,605)"><rect x="0" width="0" height="38" fill="#4f7cff"/><rect x="0" width="648" height="38" rx="6" fill="#8b5cf6"/><text x="324" y="24" text-anchor="middle" class="inside">cond 72%</text><rect x="648" width="108" height="38" fill="#8a97aa"/><text x="702" y="24" text-anchor="middle" class="inside">其他12%</text><rect x="756" width="144" height="38" rx="6" fill="url(#blankPattern)"/></g>
+  <text x="105" y="682" class="label">GPU1-X</text>
+  <g transform="translate(320,655)"><rect x="0" width="585" height="38" rx="6" fill="#8b5cf6"/><text x="292" y="24" text-anchor="middle" class="inside">cond 65%</text><rect x="585" width="144" height="38" fill="#8a97aa"/><text x="657" y="24" text-anchor="middle" class="inside">其他16%</text><rect x="729" width="171" height="38" rx="6" fill="url(#blankPattern)"/></g>
+  <text x="105" y="732" class="label">GPU2-X</text>
+  <g transform="translate(320,705)"><rect x="0" width="621" height="38" rx="6" fill="#8b5cf6"/><text x="310" y="24" text-anchor="middle" class="inside">cond 69%</text><rect x="621" width="126" height="38" fill="#8a97aa"/><text x="684" y="24" text-anchor="middle" class="inside">其他14%</text><rect x="747" width="153" height="38" rx="6" fill="url(#blankPattern)"/></g>
+  <text x="105" y="782" class="label">GPU3-X</text>
+  <g transform="translate(320,755)"><rect x="0" width="603" height="38" rx="6" fill="#8b5cf6"/><text x="301" y="24" text-anchor="middle" class="inside">cond 67%</text><rect x="603" width="135" height="38" fill="#8a97aa"/><text x="670" y="24" text-anchor="middle" class="inside">其他15%</text><rect x="738" width="162" height="38" rx="6" fill="url(#blankPattern)"/></g>
+
+  <rect x="95" y="815" width="1390" height="38" rx="9" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="115" y="840" font-size="13" fill="#9a4e12">注意：cond_wait 是阻塞时间，不是 CPU 正在运行；Blank 可能是普通 C++、线程被调度出去或未采集事件，不能直接叫 runtime 计算开销。</text>
+  <text x="1515" y="930" text-anchor="end" class="small">示意数据，仅用于确认图形表达方式</text>
+</svg>

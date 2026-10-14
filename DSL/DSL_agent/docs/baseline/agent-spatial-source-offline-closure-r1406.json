@@ -1,0 +1,18 @@
+{
+  "format": "poseidon-offline-authorization-closure-v1",
+  "revision": "r1406",
+  "authorization_binding": "ee72e7b14c54ed9cca2c056bfe52d9616b1af442bc70d998b9336d83614d6e32",
+  "proposal_binding": "c563ee93d44018613d6ee4affc315414efacbace38a77fb5e81a60e2e9f7e592",
+  "report_binding": "a54a1cedeb9cb00c162967b116937a5f036de8ea4a7380c55cfabde3e2ac1a5d",
+  "independent_audit_binding": "5732c87524838ff102f2496e5d3a4dce509ab4f52bd47d3fce57aea9beeee5c9",
+  "status": "closed_complete",
+  "compiler_calls": 18,
+  "encrypted_calls": 27,
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "remaining_compiler_calls": 0,
+  "remaining_encrypted_calls": 0,
+  "additional_execution_authorized": false,
+  "source_documents_unchanged": true,
+  "binding": "baff542014ffdadeb5cc85270c35b5b16174a34b86c6ce1381ab126ae883935e"
+}

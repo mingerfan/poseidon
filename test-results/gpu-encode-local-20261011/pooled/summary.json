@@ -1,0 +1,313 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "degree": 65536,
+  "scale_log2": 40,
+  "initial_pool_mb": 64,
+  "runs": 3,
+  "warmup": 5,
+  "repeat": 30,
+  "case_order": [
+    {
+      "case": "q8-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 45, P0, 12.24 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 46, P0, 16.66 W, 2565 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 50, P0, 12.90 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b32-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 51, P0, 18.88 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b32-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 49, P0, 15.27 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 51, P0, 12.60 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 52, P0, 19.24 W, 2610 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b32-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 52, P0, 19.83 W, 2610 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b32-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 52, P0, 12.64 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 48, P0, 14.60 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 50, P0, 18.89 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 50, P0, 12.80 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 51, P0, 18.38 W, 2610 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 51, P0, 19.65 W, 2610 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 51, P0, 12.73 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b32-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 51, P0, 17.75 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b32-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 50, P0, 13.95 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 52, P0, 13.63 W, 1890 MHz, 8001 MHz, 2 MiB"
+    }
+  ],
+  "rows": [
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "cpu_encode_ms_per_plaintext": 6.355959,
+      "cuda_ntt_individual": {
+        "device_ms_per_plaintext": 0.17351999878883362,
+        "raw_h2d_encode_ms_per_plaintext": 0.20068800449371338,
+        "ntt_ms_per_plaintext": 0.04689599946141243,
+        "prepare_fft_rns_ms_per_plaintext": 0.1255040019750595,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_ntt_batched": {
+        "device_ms_per_plaintext": 0.17444799840450287,
+        "raw_h2d_encode_ms_per_plaintext": 0.20003199577331543,
+        "ntt_ms_per_plaintext": 0.047040000557899475,
+        "prepare_fft_rns_ms_per_plaintext": 0.12609600275754929,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_individual": {
+        "device_ms_per_plaintext": 1.6182079911231995,
+        "raw_h2d_encode_ms_per_plaintext": 1.642304003238678,
+        "ntt_ms_per_plaintext": 1.4899200201034546,
+        "prepare_fft_rns_ms_per_plaintext": 0.12619200348854065,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_batched": {
+        "device_ms_per_plaintext": 1.1794719696044922,
+        "raw_h2d_encode_ms_per_plaintext": 1.2015520334243774,
+        "ntt_ms_per_plaintext": 1.0854400396347046,
+        "prepare_fft_rns_ms_per_plaintext": 0.0926399976015091,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_batch_speedup": 0.99468036535726
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "cpu_encode_ms_per_plaintext": 6.355183,
+      "cuda_ntt_individual": {
+        "device_ms_per_plaintext": 0.17013800144195557,
+        "raw_h2d_encode_ms_per_plaintext": 0.19082000106573105,
+        "ntt_ms_per_plaintext": 0.046720001846551895,
+        "prepare_fft_rns_ms_per_plaintext": 0.12322600185871124,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_ntt_batched": {
+        "device_ms_per_plaintext": 0.12649600207805634,
+        "raw_h2d_encode_ms_per_plaintext": 0.14678599685430527,
+        "ntt_ms_per_plaintext": 0.04032000154256821,
+        "prepare_fft_rns_ms_per_plaintext": 0.08590799942612648,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_individual": {
+        "device_ms_per_plaintext": 1.1811479926109314,
+        "raw_h2d_encode_ms_per_plaintext": 1.2018240094184875,
+        "ntt_ms_per_plaintext": 1.0908160209655762,
+        "prepare_fft_rns_ms_per_plaintext": 0.09016800299286842,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_batched": {
+        "device_ms_per_plaintext": 0.5728719830513,
+        "raw_h2d_encode_ms_per_plaintext": 0.5934240221977234,
+        "ntt_ms_per_plaintext": 0.5096319913864136,
+        "prepare_fft_rns_ms_per_plaintext": 0.06272800266742706,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_batch_speedup": 1.345006946045372
+    },
+    {
+      "q_limbs": 8,
+      "batch": 32,
+      "cpu_encode_ms_per_plaintext": 6.414620046875,
+      "cuda_ntt_individual": {
+        "device_ms_per_plaintext": 0.17218150198459625,
+        "raw_h2d_encode_ms_per_plaintext": 0.14729849994182587,
+        "ntt_ms_per_plaintext": 0.04934399947524071,
+        "prepare_fft_rns_ms_per_plaintext": 0.12277249991893768,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 1572864
+      },
+      "cuda_ntt_batched": {
+        "device_ms_per_plaintext": 0.0978190004825592,
+        "raw_h2d_encode_ms_per_plaintext": 0.11675750091671944,
+        "ntt_ms_per_plaintext": 0.035599999129772186,
+        "prepare_fft_rns_ms_per_plaintext": 0.06216050125658512,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 1572864
+      },
+      "tensor_ntt_individual": {
+        "device_ms_per_plaintext": 1.1829274892807007,
+        "raw_h2d_encode_ms_per_plaintext": 1.2029235363006592,
+        "ntt_ms_per_plaintext": 1.0930880308151245,
+        "prepare_fft_rns_ms_per_plaintext": 0.08978050202131271,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 1572864
+      },
+      "tensor_ntt_batched": {
+        "device_ms_per_plaintext": 0.532806009054184,
+        "raw_h2d_encode_ms_per_plaintext": 0.552588015794754,
+        "ntt_ms_per_plaintext": 0.4710790067911148,
+        "prepare_fft_rns_ms_per_plaintext": 0.06165950000286102,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 1572864
+      },
+      "cuda_batch_speedup": 1.7602050842391876
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "cpu_encode_ms_per_plaintext": 30.325587,
+      "cuda_ntt_individual": {
+        "device_ms_per_plaintext": 0.34566399455070496,
+        "raw_h2d_encode_ms_per_plaintext": 0.37198400497436523,
+        "ntt_ms_per_plaintext": 0.1669120043516159,
+        "prepare_fft_rns_ms_per_plaintext": 0.1773120015859604,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_ntt_batched": {
+        "device_ms_per_plaintext": 0.34353598952293396,
+        "raw_h2d_encode_ms_per_plaintext": 0.3686400055885315,
+        "ntt_ms_per_plaintext": 0.16435199975967407,
+        "prepare_fft_rns_ms_per_plaintext": 0.17681600153446198,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_individual": {
+        "device_ms_per_plaintext": 6.1000800132751465,
+        "raw_h2d_encode_ms_per_plaintext": 4.480207920074463,
+        "ntt_ms_per_plaintext": 5.923327922821045,
+        "prepare_fft_rns_ms_per_plaintext": 0.17468799650669098,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_batched": {
+        "device_ms_per_plaintext": 4.456912040710449,
+        "raw_h2d_encode_ms_per_plaintext": 4.480288028717041,
+        "ntt_ms_per_plaintext": 4.325824022293091,
+        "prepare_fft_rns_ms_per_plaintext": 0.1295360028743744,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_batch_speedup": 1.006194416575469
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "cpu_encode_ms_per_plaintext": 29.92033875,
+      "cuda_ntt_individual": {
+        "device_ms_per_plaintext": 0.33788999915122986,
+        "raw_h2d_encode_ms_per_plaintext": 0.28567999601364136,
+        "ntt_ms_per_plaintext": 0.16739799827337265,
+        "prepare_fft_rns_ms_per_plaintext": 0.17031200230121613,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_ntt_batched": {
+        "device_ms_per_plaintext": 0.24495800584554672,
+        "raw_h2d_encode_ms_per_plaintext": 0.26315000653266907,
+        "ntt_ms_per_plaintext": 0.1453320011496544,
+        "prepare_fft_rns_ms_per_plaintext": 0.09956200048327446,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_individual": {
+        "device_ms_per_plaintext": 4.484588146209717,
+        "raw_h2d_encode_ms_per_plaintext": 4.504292011260986,
+        "ntt_ms_per_plaintext": 4.358784198760986,
+        "prepare_fft_rns_ms_per_plaintext": 0.1254820004105568,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "tensor_ntt_batched": {
+        "device_ms_per_plaintext": 2.1682159900665283,
+        "raw_h2d_encode_ms_per_plaintext": 2.1890199184417725,
+        "ntt_ms_per_plaintext": 2.0724480152130127,
+        "prepare_fft_rns_ms_per_plaintext": 0.09445400163531303,
+        "max_input_error": 3.0351055002597604e-10,
+        "cpu_ntt_residue_differences": 0
+      },
+      "cuda_batch_speedup": 1.3793792857877831
+    },
+    {
+      "q_limbs": 32,
+      "batch": 32,
+      "cpu_encode_ms_per_plaintext": 30.38630825,
+      "cuda_ntt_individual": {
+        "device_ms_per_plaintext": 0.25745050609111786,
+        "raw_h2d_encode_ms_per_plaintext": 0.2773034870624542,
+        "ntt_ms_per_plaintext": 0.13281600177288055,
+        "prepare_fft_rns_ms_per_plaintext": 0.12457850202918053,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 6291456
+      },
+      "cuda_ntt_batched": {
+        "device_ms_per_plaintext": 0.24477200210094452,
+        "raw_h2d_encode_ms_per_plaintext": 0.2643975019454956,
+        "ntt_ms_per_plaintext": 0.1438559964299202,
+        "prepare_fft_rns_ms_per_plaintext": 0.10054650157690048,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 6291456
+      },
+      "tensor_ntt_individual": {
+        "device_ms_per_plaintext": 4.505266427993774,
+        "raw_h2d_encode_ms_per_plaintext": 4.527255535125732,
+        "ntt_ms_per_plaintext": 4.380157470703125,
+        "prepare_fft_rns_ms_per_plaintext": 0.12490300089120865,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 6291456
+      },
+      "tensor_ntt_batched": {
+        "device_ms_per_plaintext": 1.9587424993515015,
+        "raw_h2d_encode_ms_per_plaintext": 1.9804440140724182,
+        "ntt_ms_per_plaintext": 1.8655200004577637,
+        "prepare_fft_rns_ms_per_plaintext": 0.09338250011205673,
+        "max_input_error": 3.033409079478133e-10,
+        "cpu_ntt_residue_differences": 6291456
+      },
+      "cuda_batch_speedup": 1.0517971985412968
+    }
+  ]
+}

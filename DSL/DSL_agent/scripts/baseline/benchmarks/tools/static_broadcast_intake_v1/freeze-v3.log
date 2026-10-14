@@ -1,0 +1,14 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"context": "expand_as__arithmetic", "status": "capture_reference_passed", "api_calls": 0}
+{"context": "expand_as__transpose_alias", "status": "capture_reference_passed", "api_calls": 0}
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/freeze-v3.py", line 95, in <module>
+    sources.append(entry);write(folder/"qualification.json",entry);boundary()
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_intake_v1/freeze-v3.py", line 33, in boundary
+    require(size<=32*1024**3 and size-baseline<=8*1024**2 and shutil.disk_usage(WORK).free>=4*1024**3,"broadcast_preparation_space")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: broadcast_preparation_space

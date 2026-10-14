@@ -1,0 +1,185 @@
+{
+  "original": {
+    "constants": {
+      "bias": [
+        -0.0012699898522269965,
+        -0.09829810917966551
+      ],
+      "weight": [
+        [
+          [
+            [
+              -0.12050156153136651,
+              0.2788930850284819
+            ],
+            [
+              -0.052556607529403776,
+              0.16773476615475436
+            ]
+          ],
+          [
+            [
+              0.1603105397037734,
+              -0.251024488015498
+            ],
+            [
+              -0.28342436565447576,
+              -0.1680849547372129
+            ]
+          ]
+        ]
+      ]
+    },
+    "format": "poseidon-operator-graph-v4",
+    "id": "transpose_2d_6",
+    "inputs": [
+      {
+        "name": "x",
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "attrs": {
+          "dilation": [
+            2,
+            2
+          ],
+          "groups": 1,
+          "output_padding": [
+            1,
+            1
+          ],
+          "output_size": null,
+          "padding": [
+            3,
+            3
+          ],
+          "stride": [
+            2,
+            2
+          ]
+        },
+        "id": "transposed",
+        "inputs": [
+          "x",
+          "weight",
+          "bias"
+        ],
+        "op": "conv_transpose2d",
+        "outputs": [
+          "y"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "value": "y"
+      }
+    ]
+  },
+  "decomposition": {
+    "format": "poseidon-decomposition-binding-v4",
+    "registry_version": "operator-decomposition-v4+spatial-v3",
+    "original_sha256": "a2f1ae901d5adf0035752f26509406cda498d55e26f20dac195c52db4fb9b529",
+    "lowered_sha256": "3713519886fd2274bb06559b4bad0486c1a9e12a6dedde07c0d137ef9316d571",
+    "source_map": {
+      "generated_1": "transposed",
+      "generated_5": "transposed",
+      "generated_7": "transposed"
+    },
+    "implementation_sources": {
+      "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+      "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233",
+      "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+      "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+      "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+      "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+      "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+      "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee"
+    },
+    "implementation_sha256": "8bf420508c1adbb00ca9567b690e8ef28e56027b753ca58d56b68c6428cc19eb",
+    "required_capabilities": [
+      "ckks_add_multiply_rotate"
+    ],
+    "approximation_profiles": {},
+    "normalization": {
+      "version": "static-spatial-decomposition-v3",
+      "matrix_policy": "static-tensor-matmul-v1",
+      "matrix_entries": [],
+      "arithmetic_entries": [],
+      "spatial_entries": [
+        {
+          "origin": "transposed",
+          "operator": "conv_transpose2d",
+          "input_shape": [
+            1,
+            1,
+            4,
+            4
+          ],
+          "output_shape": [
+            1,
+            2,
+            4,
+            4
+          ],
+          "original_weight_sha256": "b761e2a402700ba370de079bb4fa7f796d7122c5ee3309f8355465a4b4b16d5f",
+          "transformed_weight_sha256": "361dda97688f2923963417efe326fe2dfd175636aa0780f5ab61406f6e767ac2",
+          "matrix_elements": 512,
+          "axis_binding": "exact_public_linear_map",
+          "ignored_output_size_leading": null,
+          "runtime_validated": false,
+          "core_node_ids": [
+            "generated_1",
+            "generated_5",
+            "generated_7"
+          ]
+        }
+      ],
+      "scalar_carrier_shape": [
+        1
+      ],
+      "public_constants_sha256": "38aed353ec6700073b6ee1be846715eb813f49f0b31d4db0bc56b9cdd7799bd8"
+    },
+    "no_dsl_answer": true,
+    "resource_profile": {
+      "name": "general-tensors-v1",
+      "input_elements": 4096,
+      "output_elements": 4096,
+      "tensor_elements": 65536,
+      "original_nodes": 1024,
+      "expanded_nodes": 4096,
+      "constants": 1024,
+      "constant_elements": 1000000,
+      "total_constant_elements": 1000000,
+      "json_bytes": 33554432,
+      "axis_size": 65536,
+      "inputs": 4,
+      "outputs": 4,
+      "rank": 32,
+      "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871"
+    },
+    "runtime_layout_validated": false,
+    "binding_sha256": "3190baa6c4c3c73975d19d9fe36a144ba03febe12b35ba5b808e3d2bed1d2e0d"
+  },
+  "reference_report": {
+    "schema": 1,
+    "mode": "offline_model_import",
+    "original_sha256": "a2f1ae901d5adf0035752f26509406cda498d55e26f20dac195c52db4fb9b529",
+    "model_sha256": "3713519886fd2274bb06559b4bad0486c1a9e12a6dedde07c0d137ef9316d571",
+    "probes": 16,
+    "reference_status": "passed",
+    "max_decomposition_error": 1.1102230246251565e-16,
+    "approximation_accuracy_certified": false,
+    "encrypted_execution": false,
+    "agent_generated": false,
+    "paid_calls": 0
+  }
+}

@@ -1,0 +1,8 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %a : [#users=1] = get_attr[target=a]
+    %b : [#users=1] = get_attr[target=b]
+    %sub : [#users=1] = call_method[target=sub](args = (%a, %b), kwargs = {alpha: 0.5})
+    %transpose : [#users=1] = call_method[target=transpose](args = (%sub, 0, 1), kwargs = {})
+    %mul : [#users=1] = call_function[target=operator.mul](args = (%x, %transpose), kwargs = {})
+    return mul

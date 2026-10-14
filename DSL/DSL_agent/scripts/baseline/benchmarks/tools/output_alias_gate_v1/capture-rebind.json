@@ -1,0 +1,12 @@
+{
+  "format": "poseidon-output-binding-capture-rebind-v1",
+  "reason": "old source-capture derivation identity changed after trusted Agent code update",
+  "original_capture_retained": true,
+  "original_prepare_failure_log_sha256": "890e33f7c5c6ed539ad248ae0cdeb30e916852e55e804dd1e3ba1d68640d536c",
+  "source_weights_graph_math_unchanged": true,
+  "new_bound_capture_calls": 6,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "http_attempts": 0,
+  "plan_binding": "f02fb6e55efae06a821144bdf86673e76b05b009c6f0c566d454c524a8e30ac3"
+}

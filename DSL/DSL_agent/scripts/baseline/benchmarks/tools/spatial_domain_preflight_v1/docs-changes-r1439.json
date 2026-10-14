@@ -1,0 +1,18 @@
+{
+  "docs/README.md": {
+    "after": "648c9f73ad17014f4d765c7e05dd0e373e5d1380a6128d53822912fc1d53240c",
+    "before": "83e066eb65bfe465d8aa23729145a980daa072a745d1ff0f8c25dbdbd62de09a"
+  },
+  "docs/baseline/application-agent-component-v1.md": {
+    "after": "a75e7984b0ad9a0579182470636ab4c652b86fdbda1e8ec4198cdc29e164138f",
+    "before": "b777b409f043b4c4693fca862c00808d0af5e02d169c9e029bc6d70fb3532b69"
+  },
+  "docs/baseline/mac-migration-handoff.md": {
+    "after": "1ced77bc7b495e9eefe99827d311297b4e8baea3d7f6b1dfe6a714abc5586069",
+    "before": "ce111796641a82f7c94709a0327726c00b83edda38d0578fbe3fed8e90b68466"
+  },
+  "docs/baseline/operator-decomposition-and-python.md": {
+    "after": "1fd0650ee7ad8953975206388e836ec4c47e6f843a86e885da7c2fa244f02531",
+    "before": "3c13c9db697889683a6642fec0768ede0a8d71f6e495d69b0c1000b00e598e80"
+  }
+}

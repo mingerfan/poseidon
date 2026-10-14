@@ -1,0 +1,11 @@
+{
+  "poseidon_dsl_commit": "f986b5010b730493269daa7c21e668196c967fa3",
+  "dacapo_commit": "06bdd08b83676351186f6982b79921994298e51a",
+  "python_frontend_adapter": "Removed unused torch import and torch.Tensor conversion; NumPy Expr/Plain calls unchanged. Native compiler binaries unchanged.",
+  "original_expr_sha256": "e7b19c43dc3d6674e6a1a975a04e133e2db37a5280f062eed99ebacdd787ea16",
+  "adapted_expr_sha256": "b4353c2a03d2ba5a9c07d30c05c74449ca69db48fd32c4769abd3eaa09983365",
+  "binaries": {
+    "hecate-opt": "0740e0c66c9383647b49d3ca8718abdf79abb15c8667d46420ec192855db8cb9",
+    "libHecateFrontend.so": "5c2652555645c2994dbc5a103ce67c9495e1f3d0ea73798a85bef1a8f034a377"
+  }
+}

@@ -1,0 +1,7 @@
+test_three_contexts_match_independent_rows_and_reject_missing_window (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_rank_three_keeps_nonreduced_coordinates (test_suffix_stage_guidance.SuffixStageTests) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.083s
+
+OK

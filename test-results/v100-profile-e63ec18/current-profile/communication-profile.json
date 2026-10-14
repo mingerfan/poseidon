@@ -1,0 +1,21 @@
+{
+  "format_version": 1,
+  "coefficient_bytes": 4,
+  "links": {
+    "host_device": {
+      "startup_latency_us": 8,
+      "max_rate_bytes_per_us": 12000,
+      "saturation_bytes": 1048576
+    },
+    "intra_rank": {
+      "startup_latency_us": 5,
+      "max_rate_bytes_per_us": 16000,
+      "saturation_bytes": 524288
+    },
+    "inter_rank": {
+      "startup_latency_us": 20,
+      "max_rate_bytes_per_us": 3000,
+      "saturation_bytes": 4194304
+    }
+  }
+}

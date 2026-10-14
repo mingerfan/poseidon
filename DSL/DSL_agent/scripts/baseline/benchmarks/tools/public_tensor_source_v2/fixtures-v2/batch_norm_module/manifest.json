@@ -1,0 +1,86 @@
+{
+  "approximations": {
+    "defaults": {},
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [
+      "batch_norm_module"
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "8c135fa6a51814adac6245d50b5d61691c3b8c03fcb22de7cc1e9cefefe7e5bc"
+  },
+  "format": "poseidon-trusted-pytorch-v21",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        3
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ],
+  "weights": {
+    "bn.bias": {
+      "bytes": 152,
+      "dtype": "<f8",
+      "file": "state_0000.npy",
+      "sha256": "6b7042e87fd8099a3e3f3b9324460aedde0766b6c9e648f301d6d1ccda94ff33",
+      "shape": [
+        3
+      ]
+    },
+    "bn.num_batches_tracked": {
+      "bytes": 136,
+      "dtype": "<i8",
+      "file": "state_0001.npy",
+      "sha256": "bf829c4710025ea559002e4a00d3d062c0ff73f046ff4419e374d3656ce1c1c3",
+      "shape": []
+    },
+    "bn.running_mean": {
+      "bytes": 152,
+      "dtype": "<f8",
+      "file": "state_0002.npy",
+      "sha256": "ba82b2eb49376d09b1775ce8104ac5c27d29f287c724fc4f241d0fcefdb43ff1",
+      "shape": [
+        3
+      ]
+    },
+    "bn.running_var": {
+      "bytes": 152,
+      "dtype": "<f8",
+      "file": "state_0003.npy",
+      "sha256": "d7569f8743f9c9809518f4ccf6fff235bc051dfae15751dfca2a6b0a8611844c",
+      "shape": [
+        3
+      ]
+    },
+    "bn.weight": {
+      "bytes": 152,
+      "dtype": "<f8",
+      "file": "state_0004.npy",
+      "sha256": "defd9a248e91a251fd7d41e8bf80f2d0b6fb75ca411d1af3782b0838209db100",
+      "shape": [
+        3
+      ]
+    },
+    "std": {
+      "bytes": 152,
+      "dtype": "<f8",
+      "file": "state_0005.npy",
+      "sha256": "64a0b9dca7e39d749bccb2bdc13262779f9d35b17c6df1c454f7b242a3e0541b",
+      "shape": [
+        3
+      ]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "api_calls": 0,
+  "binding": "1652cc27ba1451d5ad3d5dfba2a75f2726b775e2fb7cef4386b13dc5b1508121",
+  "compiler_calls": 0,
+  "core_decomposition_contexts": 6,
+  "cuda": null,
+  "encrypted_calls": 0,
+  "format": "poseidon-tensor-gather-draft-plaintext-v1",
+  "log_sha256": "4253723e64456c9ebc31ea010802823fdbc24bfc28106a9d0fdf387e834a40bc",
+  "mathematical_and_pinned_torch_contexts": 6,
+  "numpy": "1.25.2",
+  "production_active": false,
+  "python": "3.10.14 (main, Mar 19 2024, 21:46:16) [GCC 13.2.0]",
+  "returncode": 0,
+  "seconds": 0.5699669959722087,
+  "source_capture_validated": false,
+  "sources": {
+    "pinned_tests-r1.py": "d7c969fac4e1dc6460ba9eeae5934042f4791c3685e49508b16f89f61c901a32",
+    "pinned_tests.py": "fe374d047cb63966a4878cb2b44bd7bd0e30bb25be6d451854bd93cb56f1866a",
+    "tensor_gather_plan.py": "dd7d45f9a6b08c113d75f1e2b196e5ea0c5807dc41b7648ec3fc844873501ea5",
+    "test_pinned.py": "4aa7a06c7f7b36a438f2e45cfcdcc5390936b6821b93e54e865c74610e8c88a9",
+    "test_plan.py": "beba5cbff5412488be8d0dc53430cb47da3f74f1f99b332add6237e18dab589a"
+  },
+  "status": "passed",
+  "tests": 27,
+  "torch": "2.0.1"
+}

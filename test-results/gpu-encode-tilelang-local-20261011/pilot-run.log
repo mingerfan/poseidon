@@ -1,0 +1,30 @@
+q8-b1-run1
+q32-b8-run1
+q8-b8-run1
+q32-b32-run1
+q8-b32-run1
+Traceback (most recent call last):
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_gpu_encode.py", line 80, in <module>
+    if __name__ == "__main__":
+        ^^^^^^
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_gpu_encode.py", line 43, in main
+    with (args.output / f"{name}.log").open("w") as log:
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 2179, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1279, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 2078, in _wait
+    time.sleep(delay)
+    ~~~~~~~~~~^^^^^^^
+KeyboardInterrupt

@@ -1,0 +1,39 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v2",
+  "id": "public_dot_0",
+  "inputs": [
+    {
+      "name": "left",
+      "shape": [
+        3
+      ]
+    },
+    {
+      "name": "right",
+      "shape": [
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "dot",
+      "inputs": [
+        "left",
+        "right"
+      ],
+      "op": "dot",
+      "outputs": [
+        "scalar"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "dot",
+      "value": "scalar"
+    }
+  ]
+}

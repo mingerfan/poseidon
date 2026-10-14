@@ -1,0 +1,324 @@
+# GPU CKKS Encode benchmark
+
+## Lossless plaintext compression experiment
+
+`poseidon_gpu_plaintext_compression_bench` is another optional target under
+`POSEIDON_BUILD_GPU_ENCODE_BENCH`. It does not change production kernels or
+runtime/compiler interfaces. It compares precomputed uint32 NTT upload,
+30-bit NTT packing, exact NTT replication groups, cached FP64 FFT coefficients,
+and packed signed integer coefficients. Integer coefficients are scaled and
+rounded on CPU during setup, so that cache is specific to its scale. Packed
+integers are unpacked and expanded into RNS with CUDA, then transformed using
+CUDA four-step or optional TileLang Tensor NTT. This is **not** Tensor Core
+entropy decompression. Every mode must reproduce every CPU Encode NTT residue.
+For real-slot inputs the benchmark also verifies exact integer antisymmetry
+`a[N-i] = -a[i]` and `a[N/2] = 0` before enabling a half-coefficient payload.
+Its CUDA decoder mirrors signs before RNS expansion. Complex-slot inputs and
+integer coefficients whose CPU rounding breaks this identity cannot use that
+format without additional correction data.
+
+```sh
+cmake --build build-runtime-gpu-api-release --target poseidon_gpu_plaintext_compression_bench -j4
+OMP_NUM_THREADS=1 build-runtime-gpu-api-release/bin/poseidon_gpu_plaintext_compression_bench \
+  8 1 40 30 20261012 report.json /tmp/poseidon-compression-corpus
+python scripts/benchmark_plaintext_compression.py --manifest report.json --output cpu-codecs.json
+```
+
+Arguments are Q limbs, batch, scale_log2, repeats, seed, report, and dump
+directory (`-` disables binary dumps). Synthetic patterns are Gaussian dense
+weights (sigma=0.02), 1024-slot repetition, a random 896-slot prefix with zero
+tail, and scalar 0.125. They are not pretrained Qwen weights. GPU storage is
+uint32, CPU storage is uint64; report both when interpreting codec ratios.
+The CPU script uses system Zstd levels 1/3/9 and LZ4 through ctypes, checking
+exact round trips. It measures CPU codec speeds, not GPU speeds.
+
+The optional `scripts/benchmark_nvcomp_plaintext.py` measures GPU LZ4/Zstd
+decoding with nvCOMP and PyTorch. Install its dependencies in an isolated
+environment. It precomputes nvCOMP-native 64 KiB chunks on GPU, caches decode
+configuration, reuses output buffers, and separately measures device decode
+and pinned H2D + decode. It does not test CPU-stream interoperability. Event
+times include Python/API submission gaps. `--batch 8` repeats a one-plaintext
+corpus eight times, rather than using independent model weights. All codec
+outputs are checked byte-for-byte. No codec dependency is needed by Poseidon
+or the C++ compression experiment.
+Repeated CUDA Graph replay with nvCOMP 5.3.0.16 triggered SIGSEGV in the
+isolated Python experiment, so that timing mode is not exposed. Formal timings
+use explicit async API submission and cached wrapped output. Preserve their
+Python/API dispatch scope when comparing against C++ materialization; use a
+CUDA kernel trace separately to inspect the library's actual device work.
+
+All timings exclude CPU preprocessing, compression, tables, allocation and
+configuration setup. Decode/RNS/NTT and compressed upload are timed. Each
+mode warms for at least 100 ms by default; `POSEIDON_COMPRESSION_WARMUP_MS=0`
+is for correctness smoke checks. Output format metadata is excluded from
+C++ payload sizes; packed buffers include a uint64 guard word. Decoded NTT
+buffers still occupy their original size. No concurrent operator-interference
+or full-model speedup is measured by these experiments.
+
+Local measurements and source references are in
+[`test-results/plaintext-compression-local-20261011/research.json`](../../../../test-results/plaintext-compression-local-20261011/research.json).
+For the dense real sigma=0.02, scale=2^40 corpus, the verified half-integer
+payload is about 120 KiB instead of 2 MiB/Q8 or 8 MiB/Q32. Whole-buffer Zstd
+and LZ4 do not reduce the dense uint32 NTT data. Periodic1024 slot input has
+32-fold exact NTT replication; this is a property of that corpus, not a Qwen
+compression guarantee. CUDA materialization is faster than the current
+Tensor implementation on this GPU, while both reduce transfer volume.
+
+A separate check found exact mirror symmetry in the **complete NTT results**
+of all eight dumped Q8/Q32 batch-one real-input cases: `P[i] = P[N-1-i]`
+within each limb in Poseidon's bit-reversed order. Integer antisymmetry implies
+`a(X^-1) = a(X)` modulo `X^N+1`, so inverse NTT roots have equal evaluations.
+Storing the first N/2 uint32 residues per limb would reduce a dense fully
+encoded plaintext from 2 MiB to 1 MiB/Q8, or 8 MiB to 4 MiB/Q32. A future
+`multiply_plain` consumer could read index `i < N/2 ? i : N-1-i` directly,
+without a separate decoder, RNS expansion or NTT. Address calculation still
+uses ordinary instructions; its performance and interference are unmeasured.
+The current plaintext view/evaluator requires a full layout, so this consumer
+is a proposal, **not implemented**. Require an exact symmetry check before
+enabling it; complex or asymmetrically rounded inputs may need a fallback.
+This is mathematical layout compression even though generic byte codecs did
+not compress the same dense NTT buffer. Reproduce the corpus check with:
+
+```sh
+python test-results/plaintext-compression-local-20261011/verify-ntt-mirror.py \
+  --manifest test-results/plaintext-compression-local-20261011/q8-b1-run1.json \
+  --manifest test-results/plaintext-compression-local-20261011/q32-b1-run1.json \
+  --output test-results/plaintext-compression-local-20261011/ntt-mirror-verification.json
+```
+
+The check requires the original ignored binary dumps; its saved JSON includes
+payload hashes and exact mismatch counts, not GPU timing claims.
+
+This is an experiment, not a runtime Encode implementation. It encodes real
+full-slot inputs on GPU: slot permutation, double-precision cuFFT, negacyclic
+twist/scaling/rounding, exact RNS expansion, and forward NTT. CUDA and Tensor
+variants share the FFT and RNS kernels. The Tensor variant uses existing INT8
+Tensor Core TAM kernels for eligible NTT stages; remaining stages use CUDA
+cores. It does **not** measure a Tensor Core FFT or reduced-precision encoding.
+
+Supported benchmark geometry: N=65536, one GPU, one Q-only level with 30-bit
+primes, 1–64 limbs, 1–64 independent plaintexts, scale_log2=20–60. Rounded
+coefficient magnitudes must be below 2^64; unsupported and non-finite inputs
+are errors. The setup uses no encryption keys and sec_level_type::none: these
+are arithmetic measurements, not a secure application parameter selection.
+
+Build through the existing GPU-enabled Poseidon configuration:
+
+```sh
+cmake -S . -B build-runtime-gpu-api-release -DPOSEIDON_BUILD_GPU_ENCODE_BENCH=ON
+cmake --build build-runtime-gpu-api-release --target poseidon_gpu_encode_bench -j4
+OMP_NUM_THREADS=1 build-runtime-gpu-api-release/bin/poseidon_gpu_encode_bench \
+  8 1 40 5 30 report.json
+```
+
+Arguments: Q limb count, batch count, scale_log2, warmups, repetitions, report.
+The benchmark supports the CUDA path on V100; its Tensor path requires SM 7.5+.
+An RMM pool with 64 MiB initial size is the default, matching the runtime's
+allocation approach. `POSEIDON_GPU_ENCODE_POOL_MB=0` uses direct allocation for
+an explicit allocator-overhead comparison. The runner exposes `--pool-mb`.
+
+`individual` submits one FFT/RNS expansion per plaintext and one NTT per
+plaintext. `batched` uses one batched FFT and folds all plaintexts into the
+permutation, RNS and NTT grids. Individual preparation for the group precedes
+individual NTT submission; both run on the same stream.
+
+CUDA NTT uses the existing two-phase N=65536 four-step algorithm, extended with
+a batch grid. Tensor NTT uses fusion=4 and existing integer TAM kernels. Both
+write contiguous [batch][limb][N] uint32 residues. cuFFT computes the negative
+sign DFT followed by exp(-pi*i*k/N); together they implement the CKKS inverse
+embedding in the current slot order. cuFFT is unnormalized, so scale/N is
+applied explicitly (see [cuFFT conventions](https://docs.nvidia.com/cuda/cufft/index.html#type-definitions-for-transform-direction)).
+
+Timing separates input-already-on-GPU and pinned raw H2D + Encode. CUDA events
+report transfer, FFT/RNS preparation, NTT and total GPU timeline; wall timing
+includes submission and final event synchronization. GPU error materialization
+is outside the timings. Context/table construction, cuFFT plans and persistent
+buffers are setup. Existing Tensor NTT scratch allocation and release remain
+inside its measured path; allocation overhead is **not** silently removed.
+Median, p95, min/max and samples are saved. CPU comparison measures Encode only,
+with a warmed output allocation and prebuilt slot vectors, without upload.
+For nonzero warmup counts each GPU measurement also warms for at least 100 ms
+of CUDA-event time. Mode order is shuffled using `POSEIDON_GPU_ENCODE_ORDER_SEED`
+(default 20261011); the runner changes the seed for each configuration/process.
+Canonical CUDA/CPU validation happens before timed modes. Samples retain their
+measurement order. This reduces ordering/clock-ramp effects without locking
+GPU clocks. Event times still include GPU waiting for host submission.
+
+Every canonical GPU plaintext is compared with CPU Encode at residue level.
+CPU decode checks the first/last plaintext and every plaintext whose FFT
+rounding differs from CPU. Other GPU variants must exactly match the canonical
+GPU residues for the whole batch, so their decode validation is reused. Differences
+from CPU rounding are reported; FFT operation order is not required to be
+bit-identical to CPU. Inputs include negative/zero/larger values and differ
+across the batch. GPU non-finite and coefficient-overflow rejection is checked
+after measurements. Decoder validation and all output downloads are untimed.
+
+## Optional TileLang NTT experiment
+
+The original source was found at
+`../experiments/tile_lang_int32/{kernels.py,tensorcore_ntt.py}` relative to the
+repository, with an offline source copy at
+`/home/xs/Data/windows-sh/tilelang-int32-source/`. That experiment used one
+fixed prime and natural output order. `tilelang_ntt.py` adapts its kernels to
+the benchmark's actual RNS primes, multiple plaintexts, and Poseidon's
+bit-reversed output. It uses the existing negacyclic roots and fusion=4 TAM
+matrices; no additional twist or output reorder is necessary.
+
+Enable explicitly using a Python environment with TileLang **0.1.14**:
+
+```sh
+cmake -S . -B build-runtime-gpu-api-release \
+  -DPOSEIDON_BUILD_GPU_ENCODE_BENCH=ON \
+  -DPOSEIDON_GPU_ENCODE_TILELANG_PYTHON=/path/to/venv/bin/python \
+  -DPOSEIDON_GPU_ENCODE_TILELANG_ARCH=89
+cmake --build build-runtime-gpu-api-release --target poseidon_gpu_encode_bench -j4
+```
+
+The generator emits CUDA and a launcher at build time. Python/TileLang are
+not loaded at runtime. The MMA translation unit is separate from RMM to avoid
+mixing toolkit and vendored CUDA C++ headers. Disable by setting the Python
+cache option to an empty string. Other build configurations remain unchanged.
+The benchmark rejects GPUs older than the configured TileLang architecture.
+
+Two extra backends, each with individual/batched submission, are measured:
+
+- `tilelang_cuda_ntt`: eight kernels, each fusing two DIF stages.
+- `tilelang_tensor_ntt`: three four-stage TAM kernels and two two-stage CUDA
+  tails. Each CTA packs four byte planes in shared memory and performs sixteen
+  UINT8 MMA products with INT32 accumulation. All limbs and plaintexts share
+  the launch grid. There is no global byte-plane scratch or per-limb host loop.
+
+The modulus is a runtime parameter. UINT64 Barrett reduction uses
+`floor(2^64/q)` and multiply-high, with one conditional correction for q<2^31.
+Each byte-pair dot product is at most `16*255*255`; the sum of sixteen products
+weighted by `256^(a+b) mod q` is below 2^55, so integer reconstruction is exact.
+The primes, ratios, byte weights and stage matrices are prepared outside timing.
+TileLang uses no temporary allocations during NTT. Existing Poseidon Tensor
+NTT retains its internal scratch costs; this is a comparison of complete
+implementations, not an isolation of the hardware's arithmetic throughput.
+
+Before timing, both TileLang NTT backends must exactly match CUDA four-step
+on every coefficient for inputs including 0, 1, q-1, q-2 and independent random
+residues across all limbs and plaintexts. The full Encode checks then require
+both individual and batched TileLang modes to match canonical GPU Encode.
+`scripts/benchmark_gpu_encode.py` automatically summarizes the enabled backends.
+
+## Compute/Encode interference
+
+`poseidon_gpu_encode_contention_bench` measures actual `GpuEvaluator` add,
+multiply_plain, multiply, rescale, relinearize and rotate calls, alone and
+with a continuously active GPU Encode worker. Main computation uses CUDA
+four-step NTT. Background modes are CUDA full Encode and, when enabled,
+TileLang Tensor NTT full Encode; both include the same FP64 FFT/RNS. Input
+upload is selectable. Parameters are N=65536, 30-bit Q primes, four 30-bit P
+primes for HYBRID keys, scale=2^40. Only direct rotate-by-one keys are built.
+
+```sh
+OMP_NUM_THREADS=1 build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  8 1 30 4 1 contention.json
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-contention-new --runs 3 --repeat 30 --burst 4
+```
+
+Arguments: Q limb count, encode batch, samples, operator calls per sample,
+raw H2D (0/1), report. Two host threads use distinct CUDA per-thread streams
+on the same GPU with default priority. FFT plans and Encode buffers are
+created in the encoding thread. Input/output buffers are disjoint and
+parameter/key tables are immutable; only the RMM pool is shared. Encode
+keeps one batch in flight and synchronizes after each batch, without a
+sleep or throughput limit. This tests sustained demand, not a particular
+compiler schedule or a finite prefetch window.
+
+Both workers warm for >=100 ms GPU event time. Per operator, paired alone
+baselines bracket the background tests; background order is shuffled.
+Slowdown is concurrent operator median divided by the average of the two
+baseline medians. CUDA event timing includes actual API submission gaps and
+internal allocation; wall timing is also saved. The worker counts plaintexts
+completed during the operator measurement window, giving observed Encode
+supply per operator call. Window-boundary uncertainty is one batch.
+Worker batch-latency statistics include operator warmup and measurement;
+the production count/rate is restricted to the measurement window.
+
+Every operator output must match CPU metadata and all RNS coefficients
+before and after concurrent tests. The worker's complete batch must match
+canonical CUDA Encode after each background test. Tensor NTT is validated
+on edge/random inputs, including the Q-prefix of Q+P parameter tables.
+Keys, transfers of operator operands, and parameter setup are untimed;
+internal evaluator allocations/scratch remain timed. This does not measure
+bootstrapping or establish a Qwen-level speedup. Separate streams permit
+overlap but still share CUDA cores, registers, cache and memory bandwidth;
+the measured slowdown determines whether spare Tensor Core arithmetic can
+be used economically for this workload.
+
+The runner's `--demand-only` option tests relinearize/rotate with a rate-limited
+TileLang Tensor worker. Its target is one encoded plaintext per operator at
+the measured standalone operator **mean** latency. The worker's batch period
+is `batch * baseline_mean_ms`; it sleeps on the host after each completed
+Encode batch when needed. It warms without a limit before the main operator
+warmup, then applies the limit throughout operator warmup and measurement.
+This is a controlled demand model, not the actual Qwen plaintext schedule.
+Mean slowdown and p95 are saved alongside the median so intermittent batch
+bursts are not hidden. The operator/Encode supply counters remain measured
+inside the operator's wall-time window, with one-batch boundary uncertainty.
+The independent operator inputs do not wait for these encoded plaintexts.
+Supply below the assumed demand indicates a potential stall in a real
+consumer; a low operator slowdown alone does not prove a viable pipeline.
+
+```sh
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-demand-new --runs 3 --repeat 30 --burst 4 \
+  --demand-only
+```
+
+## Cached CPU FFT / GPU Encode tail
+
+The contention runner's `--compare-cpu-fft` adds cached CPU inverse-embedding
+inputs to the same process and paired operator baselines. The CPU uses
+Poseidon's double-precision DWT handler and gen=5 slot map to prepare normalized,
+unscaled/unrounded real coefficients once, before measurements. It retains
+only `[batch][N]` FP64 coefficients (512 KiB/plaintext at N=65536), rather than
+complex FFT workspace or the complete RNS plaintext. Roots/workspace are
+transient. The raw full-slot FP64 input is 256 KiB/plaintext. Both source buffers
+remain allocated in this comparison so allocation/setup differences are untimed.
+
+At runtime the cached path uploads those real coefficients, then performs one
+CUDA scaling/rounding/RNS kernel and the same selected NTT backend. `--raw-h2d 1`
+includes the actual source upload in **both** modes: raw slots for full GPU
+Encode and twice as many bytes for the CPU FFT cache. With `--raw-h2d 0` inputs
+are GPU-resident. Pinned upload buffers are prepared in advance. CPU preparation
+time is recorded separately, including transient table/workspace allocation;
+it is a setup measurement, not a repeated/warmed CPU FFT benchmark.
+
+Continuous mode compares full/cached inputs with both CUDA and TileLang Tensor
+NTT. Demand-only mode compares the two inputs with TileLang Tensor NTT at the
+same one-plaintext/operator target period. Both modes retain the observed
+production counters, mean/median/p95 operator timings, and one-batch boundary
+uncertainty. Every report also measures standalone full/cached Encode (>=100 ms
+GPU warmup, 30 samples) outside foreground contention. The runner changes
+`POSEIDON_GPU_ENCODE_ORDER_SEED` between processes; standalone and per-operator
+background mode order are shuffled, and the seed is saved in each report.
+
+Every plaintext from the CPU-precomputed path must exactly match CPU Encode
+RNS residues at scale=2^40 and pass CPU decode. Full GPU Encode is decoded and
+its CPU residue differences are recorded; cuFFT and CPU FFT can round
+differently. Each NTT backend/background batch must exactly match the canonical
+CUDA output for **its own** input path. Non-finite/overflowing cached
+coefficients must be rejected. These are static-weight preprocessing tests;
+they do not include runtime CPU FFT for dynamic activations or file I/O/cache
+misses. The production prefetch runtime is not changed.
+
+```sh
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-cpu-fft-continuous-new \
+  --runs 3 --repeat 30 --burst 4 --compare-cpu-fft
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-cpu-fft-demand-new \
+  --runs 3 --repeat 30 --burst 4 --compare-cpu-fft --demand-only
+```
+
+For direct binary invocation, set `POSEIDON_GPU_ENCODE_COMPARE_CPU_FFT=1`;
+`POSEIDON_GPU_ENCODE_DEMAND_ONLY=1` additionally selects demand-only mode.

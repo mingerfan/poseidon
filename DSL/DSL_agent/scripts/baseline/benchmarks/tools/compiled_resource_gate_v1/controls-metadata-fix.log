@@ -1,0 +1,26 @@
+test_bound_plan_hash_and_artifact_gate_cannot_be_bypassed (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_checked_bundle_length_is_used (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_custom_analysis_cannot_expand_execution_limit (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_exact_boundary_and_unknown_peak (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_io_failure_remains_service_environment_not_candidate (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_known_over_limit_records_analysis_and_rejects_without_execution (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_native_file_fresh_check_is_stable_and_tamper_rejected (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_precheck_symlink_and_invalid_policy_are_integrity_errors (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_second_artifact_audit_detects_changed_gate (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_source_policy_and_backend_identity_drift (test_compiled_execution_precheck.BoundArtifactControls) ... ok
+test_explicit_compile_grade_keeps_original_contract (test_compiled_execution_precheck.CandidateAdapterControls) ... ok
+test_integrity_rejection_does_not_trigger_candidate_repair (test_compiled_execution_precheck.CandidateAdapterControls) ... ok
+test_resource_rejection_preserves_real_stage_facts (test_compiled_execution_precheck.CandidateAdapterControls) ... ok
+test_central_execute_blocks_before_native_runner (test_compiled_execution_precheck.NativeExecutionControls) ... ok
+test_checked_return_includes_lower_bound_not_peak_claim (test_compiled_execution_precheck.NativeExecutionControls) ... ok
+test_precheck_mutation_and_private_key_executor_are_rejected (test_compiled_execution_precheck.NativeExecutionControls) ... ok
+test_ordered_package_tree_is_preserved_v12_through_v15 (test_compiled_execution_precheck.OutputProvenanceControls) ... /home/lhohy/Code/Poseidon/scripts/baseline/model_weight_package.py:91: DeprecationWarning: invalid escape sequence '\.'
+  type(item["file"]) is str and re.fullmatch("[A-Za-z0-9_-]+\.npy",item["file"]) and
+ok
+test_binding_and_exact_integer_context_are_required (test_compiled_execution_precheck.TypedResourceControls) ... ok
+test_external_input_location_is_public_candidate (test_compiled_execution_precheck.TypedResourceControls) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.062s
+
+OK

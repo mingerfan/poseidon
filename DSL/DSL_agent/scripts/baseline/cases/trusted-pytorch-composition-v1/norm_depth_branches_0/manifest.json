@@ -1,0 +1,100 @@
+{
+  "approximations": {
+    "defaults": {
+      "rsqrt": {
+        "domain": [
+          0.5,
+          1.0
+        ],
+        "iterations": 1,
+        "method": "newton"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "models.make_model",
+  "factory": {
+    "args": [
+      "norm_depth_branches",
+      0
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "models.py": "22df0312f7ebeaf3fd111950d6d15723d7aab044d743445d19c96b6aab8ae3da"
+  },
+  "format": "poseidon-trusted-pytorch-v7",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        4
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ],
+  "weights": {
+    "head.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "state_0000.npy",
+      "sha256": "c28d48480de1c23d09695348f3ae4b08ac1b24558dfce9bb5055e7abe300ead4",
+      "shape": [
+        2
+      ]
+    },
+    "head.weight": {
+      "bytes": 192,
+      "dtype": "<f8",
+      "file": "state_0001.npy",
+      "sha256": "316f7a7248e5b74202a6b23adc0aaad5fc636209eea614633f913c6f67b75c5e",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    "layers.0.bias": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "state_0002.npy",
+      "sha256": "9a80ec35c9ecb0bdb1c41d97c3b51291fd82762c37ab3b014e24536714d63bef",
+      "shape": [
+        4
+      ]
+    },
+    "layers.0.weight": {
+      "bytes": 256,
+      "dtype": "<f8",
+      "file": "state_0003.npy",
+      "sha256": "7a82c2876fffc97b4f5a922f4252c5c9130991f5851672a3fa5c6a97901bf00c",
+      "shape": [
+        4,
+        4
+      ]
+    },
+    "norm.bias": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "state_0004.npy",
+      "sha256": "98a07afef9d31e0c1b5ca28ca96d56aad928a0a5a0fd1a07074fc49fec7d4cec",
+      "shape": [
+        4
+      ]
+    },
+    "norm.weight": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "state_0005.npy",
+      "sha256": "6600f5668648027456cd8bbf54ef0025b17f4844a7c36058fbd6aafe28c23600",
+      "shape": [
+        4
+      ]
+    }
+  }
+}

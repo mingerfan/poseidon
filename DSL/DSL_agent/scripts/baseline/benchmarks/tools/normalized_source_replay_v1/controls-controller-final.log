@@ -1,0 +1,40 @@
+test_blocked_is_not_passed (test_replay_scope.ReplayScope) ... ok
+test_duplicate_receipt (test_replay_scope.ReplayScope) ... ok
+test_no_budget_extension (test_replay_scope.ReplayScope) ... ok
+test_no_changed_source (test_replay_scope.ReplayScope) ... ok
+test_no_cross_source_cache (test_replay_scope.ReplayScope) ... ok
+test_no_http (test_replay_scope.ReplayScope) ... ok
+test_no_human_substitution (test_replay_scope.ReplayScope) ... ok
+test_no_missing_source (test_replay_scope.ReplayScope) ... ok
+test_no_new_agent_attribution (test_replay_scope.ReplayScope) ... ok
+test_no_new_generation (test_replay_scope.ReplayScope) ... ok
+test_no_tolerance_change (test_replay_scope.ReplayScope) ... ok
+test_not_run_is_not_passed (test_replay_scope.ReplayScope) ... ok
+test_original_scope (test_replay_scope.ReplayScope) ... ok
+test_changed_controller (test_replay.ReplayBoundary) ... ok
+test_expired_deadline (test_replay.ReplayBoundary) ... ok
+test_free_space_reserve (test_replay.ReplayBoundary) ... ok
+test_global_storage_ceiling (test_replay.ReplayBoundary) ... ok
+test_new_batch_ceiling (test_replay.ReplayBoundary) ... ok
+test_original_boundary (test_replay.ReplayBoundary) ... ok
+test_duplicate_context (test_planning.ReplayPlanning) ... ok
+test_human_origin_cannot_be_agent (test_planning.ReplayPlanning) ... ok
+test_missing_context (test_planning.ReplayPlanning) ... ok
+test_original_binding_required (test_planning.ReplayPlanning) ... ok
+test_overlapping_context (test_planning.ReplayPlanning) ... ok
+test_pending_is_not_passed (test_planning.ReplayPlanning) ... ok
+test_twenty_five_exact_aliases (test_planning.ReplayPlanning) ... ok
+test_wrong_group_request (test_planning.ReplayPlanning) ... ok
+test_wrong_math_signature (test_planning.ReplayPlanning) ... ok
+test_changed_request_refused (test_exact_source.ReplayControls) ... ok
+test_exact_source_without_transport_or_new_generation (test_exact_source.ReplayControls) ... ok
+test_missing_response_field_refused (test_exact_source.ReplayControls) ... ok
+test_modified_candidate_refused (test_exact_source.ReplayControls) ... ok
+test_repeat_injection_refused (test_exact_source.ReplayControls) ... ok
+test_tampered_receipt_refused (test_exact_source.ReplayControls) ... ok
+test_wrong_generation_identity_refused (test_exact_source.ReplayControls) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.138s
+
+OK

@@ -1,0 +1,23 @@
+test_control_feedback_is_fixed_and_does_not_echo (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_native_constructor_and_control_are_scoped (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_native_contract_resolution (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_native_feedback_uses_same_scoped_rules (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_no_model_id_or_family_dispatch (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_no_request_private_fields_copied (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_plain_formals_are_not_static_integers (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_planning_unknown_and_resources_preserved (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_public_contract_resolution (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_public_explanations_are_preserved (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_public_feedback_preserves_existing_path (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_regular_and_alias_layouts_choose_separate_existing_bases (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_regular_v14_is_supported_without_output_alias (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_request_and_legacy_context_not_mutated (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_route_clarification_is_not_added_to_unrelated_binding (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_tensor_route_semantics_has_complete_mean_normalization (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_unknown_and_null_profiles_rejected (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+test_wrong_inherited_version_rejected (test_unified_contract_scope_guidance.ContractScopeDraftTests) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.004s
+
+OK

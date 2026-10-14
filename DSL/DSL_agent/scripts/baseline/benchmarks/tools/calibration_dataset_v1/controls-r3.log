@@ -1,0 +1,49 @@
+test_array_content_change_invalidates_a_new_collector (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_batches_and_cached_frames_are_detached (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_cached_receipt_resume_and_old_grade_are_kept (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_duplicate_and_wrong_part_are_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_empty_and_partial_never_claim_complete_or_accuracy (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_evidence_tampering_is_rejected_even_when_parsing_still_works (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_frame_report_and_input_hash_forgery_are_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_plan_and_input_tampering_are_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_receipt_budget_preserves_the_recorded_prefix (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_role_and_unknown_fields_are_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_task_or_implementation_drift_is_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_trust_and_budget_bounds_are_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_unequal_batches_merge_population_moments (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_wrong_dtype_and_declaration_binding_are_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_wrong_receipt_binding_is_rejected (test_task_calibration_dataset.CalibrationDatasetTests) ... ok
+test_domain_status_cannot_hide_observed_excess (test_source_calibration.CalibrationReportTests) ... ok
+test_implementation_selector_and_runtime_mismatch_are_rejected (test_source_calibration.CalibrationReportTests) ... ok
+test_modified_reference_or_fhe_claim_is_rejected (test_source_calibration.CalibrationReportTests) ... ok
+test_original_real_report_protocol_is_valid (test_source_calibration.CalibrationReportTests) ... ok
+test_output_hash_count_and_type_are_bound (test_source_calibration.CalibrationReportTests) ... ok
+test_unbounded_counts_and_dtype_are_rejected (test_source_calibration.CalibrationReportTests) ... ok
+test_clone_isolated_from_later_inplace_changes (test_source_calibration.ObserverTests) ... ok
+test_event_budget_and_cleanup_on_failure (test_source_calibration.ObserverTests) ... ok
+test_existing_hooks_are_restored (test_source_calibration.ObserverTests) ... ok
+test_float32_and_float64_input_precision_and_output_unchanged (test_source_calibration.ObserverTests) ... ok
+test_keyword_input_and_root_selection (test_source_calibration.ObserverTests) ... ok
+test_layer_norm_variance_matches_native_dtype (test_source_calibration.ObserverTests) ... ok
+test_missing_and_unused_selector_rejected (test_source_calibration.ObserverTests) ... ok
+test_outside_domain_is_observed_without_altering_model (test_source_calibration.ObserverTests) ... ok
+test_projection_dtype_nonfinite_and_tensor_budget_rejected (test_source_calibration.ObserverTests) ... ok
+test_reused_module_records_each_invocation (test_source_calibration.ObserverTests) ... ok
+test_rms_projection_is_explicit (test_source_calibration.ObserverTests) ... ok
+test_stats_are_weighted_by_values (test_source_calibration.ObserverTests) ... ok
+test_boolean_argument_epsilon_and_domain_rejected (test_source_calibration.SelectionTests) ... ok
+test_duplicate_ids_targets_and_budget_rejected (test_source_calibration.SelectionTests) ... ok
+test_nonfinite_and_invalid_domain_rejected (test_source_calibration.SelectionTests) ... ok
+test_path_traversal_dynamic_selector_and_unknown_projection_rejected (test_source_calibration.SelectionTests) ... ok
+test_role_and_unknown_fields_are_rejected (test_source_calibration.SelectionTests) ... ok
+test_selector_detached_and_exact_shape (test_source_calibration.SelectionTests) ... ok
+test_explicit_trust_is_required (test_task_source_calibration.TaskCalibrationTests) ... ok
+test_input_source_and_package_binding_rejections_do_not_run (test_task_source_calibration.TaskCalibrationTests) ... ok
+test_nonterminal_and_cancelled_do_not_call_source (test_task_source_calibration.TaskCalibrationTests) ... ok
+test_selection_detached_and_original_grade_kept (test_task_source_calibration.TaskCalibrationTests) ... ok
+test_test_role_and_callback_fields_are_rejected (test_task_source_calibration.TaskCalibrationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 0.761s
+
+OK

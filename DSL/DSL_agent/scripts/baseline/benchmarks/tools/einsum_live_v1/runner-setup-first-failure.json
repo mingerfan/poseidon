@@ -1,0 +1,9 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-runner-setup-failure-v1",
+  "partial_manifest_preserved": true,
+  "provider_calls": 0,
+  "reason": "tool setup omitted json import before writing manifest",
+  "source_captures": 0
+}

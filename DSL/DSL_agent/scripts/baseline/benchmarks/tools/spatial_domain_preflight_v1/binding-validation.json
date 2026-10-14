@@ -1,0 +1,69 @@
+{
+  "backend_unchanged": true,
+  "binding": "7aa53d248dea3cefa34e8e8c8e629cf15af39283238b9a20bcd630ada7197add",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-spatial-domain-binding-validation-v1",
+  "provider_calls": 0,
+  "retained_source_captures_relabelled": false,
+  "retained_source_cases": [
+    {
+      "case": "square_helper",
+      "provenance_digest": "51da92a138d593f8fbd5b66ca2cf5b0518f9efa427996aa0c7cf0b59f742b94d",
+      "request_id": "52bd931839765e4b486f7b3336ee43b49229c90391ac7ae6309f8109b9df732b",
+      "status": "retained_source_and_reference_revalidated"
+    },
+    {
+      "case": "nested_keyword_broadcast",
+      "provenance_digest": "7a2c124892f70f92fee861aaaef21e4e890a58ea4383c3564ebd5c3a1429bad0",
+      "request_id": "48dc2e42bab7ac6ee7290121e6c7455a21e991038edaa2c6dbe7f58ca225faff",
+      "status": "retained_source_and_reference_revalidated"
+    },
+    {
+      "case": "reexport_linear",
+      "provenance_digest": "5052765ea11ae63a3d0011294eb7210f5f3800883a054d433be787c6a5d96f3c",
+      "request_id": "c02ffb368cd94ee706d24c1964545dcdcd3f00fe169a1120fc96c039a0ab4415",
+      "status": "retained_source_and_reference_revalidated"
+    }
+  ],
+  "sdk_after": "438cf30898f5b3a055c3bc60c37e0923a7425677a6d7011eec02edc0125ce525",
+  "sdk_before": "05fcafb594be96bfcbed5fafbf21b818b74d261b97c507352e390bd83b79029b",
+  "source_capture_calls": 0,
+  "stage_differences": {
+    "compilation": {
+      "after": "15bae14a95db4911582e5e7cbc92841d8f4bc94ab4ad649a74b76110fe143239",
+      "before": "1edf5be405bde2fc55974c978a19ec460544f982a0f05add4cab8d00bbe1a63a",
+      "changed": [
+        "execution_input_domain.py"
+      ]
+    },
+    "execution": {
+      "after": "828a4890243eec901ef515a9b99bd0ad03473fe177e0afc41fa5704fcbc141be",
+      "before": "3ed2e507098ebe112fc730c50ee4af9ccc2b9e9d7a320192762a4d61649e245e",
+      "changed": [
+        "execution_input_domain.py"
+      ]
+    },
+    "generation": {
+      "after": "86befffceccd5ac2f51aa283df6dc95528afbc088f84d3589115881a98e0bfe3",
+      "before": "ce933ce2dd50a894e6c3c77fabee16d2e925743aba0c680417813d6adfe2ea15",
+      "changed": [
+        "execution_input_domain.py"
+      ]
+    },
+    "validation": {
+      "after": "07b2bed1464ded0df0c00d0a6514ffb321e7a2e965a6452ab497e23ae83d1fbd",
+      "before": "c6096a19a86eb5fcbed5d565b887df660b3d42f529f2bb27dbce1e3da1fd6cd3",
+      "changed": [
+        "execution_input_domain.py"
+      ]
+    }
+  },
+  "status": "passed",
+  "superseded_unstarted_plan": {
+    "binding": "0e006471870ec8c2f89c3c90b29bb717d7d853f6b497a8e41179772b34bafb9c",
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-source-package-validation-plan-r1438.json",
+    "reason": "Agent execution-input checker changed; new execution/validation identity required",
+    "sha256": "6ee5f957a9e607c583e9fea0ebb64f65a6c0b620f23abf3e78db50e92f959ac3"
+  }
+}

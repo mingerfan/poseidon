@@ -1,0 +1,113 @@
+{
+  "format": "poseidon-full-provenance-dag-capture-analysis-v1",
+  "source_plan_binding": "71115c663d1963d56c7ecaa95b0ca37cc7c01f05ee90abe8bc6cc47828e7bad0",
+  "cases": [
+    {
+      "full_provenance_fields": [
+        "original",
+        "decomposition",
+        "reference_report",
+        "trusted_pytorch"
+      ],
+      "logical_bytes": 5018295,
+      "wire_bytes": 178632,
+      "ordered_sha256": "7109b71a7f557c699b03732be5730fcc47053d6b045498a81c16ec9334741079",
+      "canonical_sha256": "999d78755836000d41ae6980cee87e8e466bb131644f2fe4e514256619670257",
+      "packet_binding": "d52eab4b1d3e58f400d6de994d25a4e8aede3c465c7bad39faab53bf696432a4",
+      "exact_roundtrip": true,
+      "manifest_source_weight_hashes_checked": true,
+      "trusted_npy_decoding_checked": false,
+      "trusted_capture_semantics_checked": false,
+      "production_active": false,
+      "production_source_status": "blocked by unchanged provenance intake gate",
+      "provider_calls": 0,
+      "compiler_calls": 0,
+      "encrypted_calls": 0,
+      "case": "wide_tail_linear",
+      "captured_part_files": {
+        "decomposition": {
+          "bytes": 2578188,
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/wide_tail_linear/decomposition.json",
+          "sha256": "d236a2ac852d297ff8b3eef42a4d62c5694e9262041b2f48aba9fae113cd5a3e"
+        },
+        "original": {
+          "bytes": 71312,
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/wide_tail_linear/original.json",
+          "sha256": "ddab2661917c1ec426cc4a0565adf42964880a373d231817fb5fc9b4bf4667e9"
+        },
+        "reference_report": {
+          "bytes": 2578074,
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/wide_tail_linear/reference-report.json",
+          "sha256": "95373d32133ff13428a9692128ae5fa424bc3aa3423c7ebf17f973e95af5aae3"
+        }
+      },
+      "source_manifest_sha256": "bb3da5489b457cb6b5a7a4c55e87fd396292f551aabad95a743578027d6c1473",
+      "packet_file": "scripts/baseline/benchmarks/tools/generic_provenance_dag_v1/wide_tail_linear-full-provenance-draft.json",
+      "packet_file_sha256": "ae9f74305b25eb2ae7906037dd55bccdab08f2db1df1c3bfd4e10b26e937456c"
+    },
+    {
+      "full_provenance_fields": [
+        "original",
+        "decomposition",
+        "reference_report",
+        "trusted_pytorch"
+      ],
+      "logical_bytes": 13829670,
+      "wire_bytes": 381818,
+      "ordered_sha256": "189c7dd65afb2180bef65c8f769236130fd25700d4e499bda1533aa309e0e460",
+      "canonical_sha256": "40c2b4af2a03dff7ea2e20dff8c6e3f870c2b324636084b0038a4945f539e192",
+      "packet_binding": "c36e393c9c5bbb8ea9a24d49ade0598a06e2fc069255fb68aca78520eea61573",
+      "exact_roundtrip": true,
+      "manifest_source_weight_hashes_checked": true,
+      "trusted_npy_decoding_checked": false,
+      "trusted_capture_semantics_checked": false,
+      "production_active": false,
+      "production_source_status": "blocked by unchanged provenance intake gate",
+      "provider_calls": 0,
+      "compiler_calls": 0,
+      "encrypted_calls": 0,
+      "case": "weights_linear_10k",
+      "captured_part_files": {
+        "decomposition": {
+          "bytes": 7081354,
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/weights_linear_10k/decomposition.json",
+          "sha256": "7a33b9fe5b2a5e99b83e1ea4e60438e472e13a144fbab80bb16bbb839453394c"
+        },
+        "original": {
+          "bytes": 219638,
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/weights_linear_10k/original.json",
+          "sha256": "b4ca99e550a3548d84a56de82adef9bfc77908c8a36205ed6bcf97b9471fb9f4"
+        },
+        "reference_report": {
+          "bytes": 7081558,
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generic-capacity-capture-r1497/weights_linear_10k/reference-report.json",
+          "sha256": "c8e7ede806402446c178bccf8954fb504fd5d8751135111df51b56a5d67ee2be"
+        }
+      },
+      "source_manifest_sha256": "92b53d2c2eeff77847d964e9c3a34222769382e828d8ae9fd2c28aaea984f130",
+      "packet_file": "scripts/baseline/benchmarks/tools/generic_provenance_dag_v1/weights_linear_10k-full-provenance-draft.json",
+      "packet_file_sha256": "6cfda4f8e2a54abd9ae473dbcf03f8d3852c3eaead6e976bc482d45283feec2e"
+    }
+  ],
+  "static_tests_passed": 34,
+  "failed": 0,
+  "skipped": 0,
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "production_active": false,
+  "production_wire_and_logical_budget_unchanged": true,
+  "draft_limits": {
+    "part_read_bytes": 8388608,
+    "expanded_work_bytes": 16777216,
+    "wire_bytes": 4194304
+  },
+  "tools": {
+    "codec.py": "1c81b0fa35288031aca9067627cd0ec33fdf1e9e1afbfa87f5bd179042fde3de",
+    "test_codec.py": "38774b2bbebd4b048dd770e80f940e577c1571862a4625829f9029c28d800924",
+    "full_capture.py": "948bf8a58b174d4d80ef04649fc798417a98a2c795253036479a558fdf4f5c3a",
+    "test_full_capture.py": "51b35f4d8c9a518bb17a3a6c88475c2984027eed92cc49075e1c5b4450e2d3c7"
+  },
+  "original_evidence_rewritten": false,
+  "binding": "25da86f461542b60c77514fe4124d088f980bc97a6d6767debc45f5fe30c931a"
+}

@@ -1,0 +1,97 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "resource_profile": "resnet20-v1",
+  "id": "wide_multi_io_1024",
+  "inputs": [
+    {
+      "name": "image",
+      "shape": [
+        1,
+        3,
+        32,
+        32
+      ]
+    },
+    {
+      "name": "aux",
+      "shape": [
+        2,
+        256
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "image_mean",
+      "op": "mean",
+      "inputs": [
+        "image"
+      ],
+      "outputs": [
+        "a"
+      ],
+      "attrs": {
+        "axes": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "keepdims": false
+      }
+    },
+    {
+      "id": "aux_square",
+      "op": "square",
+      "inputs": [
+        "aux"
+      ],
+      "outputs": [
+        "b"
+      ],
+      "attrs": {}
+    },
+    {
+      "id": "aux_mean",
+      "op": "mean",
+      "inputs": [
+        "b"
+      ],
+      "outputs": [
+        "c"
+      ],
+      "attrs": {
+        "axes": [
+          0,
+          1
+        ],
+        "keepdims": false
+      }
+    },
+    {
+      "id": "combined",
+      "op": "concat",
+      "inputs": [
+        "a",
+        "c"
+      ],
+      "outputs": [
+        "v"
+      ],
+      "attrs": {
+        "axis": 0
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "name": "summary",
+      "value": "v"
+    },
+    {
+      "name": "squared_aux",
+      "value": "b"
+    }
+  ],
+  "constants": {}
+}

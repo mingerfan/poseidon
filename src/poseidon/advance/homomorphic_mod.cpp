@@ -80,6 +80,37 @@ EvalModPoly::EvalModPoly(const PoseidonContext &context, SineType type, double s
     }
 }
 
+void EvalModPoly::refit_discrete_cosine_fixed_degree(uint32_t degree)
+{
+    if (type_ != CosDiscrete)
+    {
+        throw std::invalid_argument(
+            "fixed-degree cosine refit requires CosDiscrete EvalMod");
+    }
+    if (degree > static_cast<uint32_t>(std::numeric_limits<int>::max()))
+    {
+        throw std::invalid_argument(
+            "fixed-degree cosine refit degree is too large");
+    }
+
+    const auto total_k = static_cast<int>(std::llround(k_ * sc_fac_));
+    auto coefficients = util::ApproximateCosFixedDegree(
+        total_k,
+        static_cast<int>(degree),
+        static_cast<int>(double_angle_));
+    for (auto &coefficient : coefficients)
+    {
+        coefficient *= complex<double>(sqrt_2pi_, 0.0);
+    }
+
+    sine_poly_.data() = std::move(coefficients);
+    sine_poly_.lead() = true;
+    sine_poly_.a() = -k_;
+    sine_poly_.b() = k_;
+    sine_poly_.basis_type() = Chebyshev;
+    sine_poly_.max_degree() = static_cast<int>(degree);
+}
+
 int optimal_split(int log_degree)
 {
     int log_split = log_degree >> 1;

@@ -1,0 +1,263 @@
+{
+  "backend_parameters_dependencies_unchanged": true,
+  "binding": "edece7f6f7a43bd274364dad661a0f5df800de53033ee340945e4426ec96ca16",
+  "branch": "lhy-agent-dsl",
+  "calls": {
+    "compiler": 0,
+    "encrypted": 0,
+    "provider": 0,
+    "successful_source_captures": 3,
+    "worker_launch_failures": 2
+  },
+  "capture": {
+    "cases": [
+      {
+        "artifacts": {
+          "capture-input.json": "0f5202dd9fb4ce61bc70b9858c623ef0e6be561c1c93f79c2de66fff4a57066b",
+          "capture.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "decomposition.json": "389d940bff00bb150b5a9a5d4e31000922bc277ac475fb0ce38363fdd1c27521",
+          "fx-input-source.txt": "d31f6720e987cf82eabff6aaed077e651bb6526e8309a7209898a218e4c879f5",
+          "fx-public-normalized.txt": "81bf44ea2a7ae01a1579540b0f5943313f98ae776142c0c1448035298bd0151e",
+          "model.json": "32d27fb34c5f65cb15d35addbe18d787bd2a390a5e89503242053f4305eadb57",
+          "original.json": "cdf7e411bf4476d4a69996d0e7bb5b31a99f5751086b3f0bb45645c53defe8f6",
+          "reference-report.json": "ca2ea0fca5e3ec0e45e2c3b8f9dd8470a1a8c49547ddb8bdc9e5d3c072301013"
+        },
+        "bytes": 970752,
+        "case": "square_helper",
+        "decomposition_max_absolute_error": 0.0,
+        "groups": 16,
+        "reference_binding": "5efc232bd55aa88e3c0efeeb1b47e6c49e58d8e73b09b7af06ae8f80dbbd5904",
+        "reference_max_absolute_error": 0.0,
+        "source_files": 3,
+        "source_format": "poseidon-trusted-pytorch-v29",
+        "values": 64,
+        "weights": 0
+      },
+      {
+        "artifacts": {
+          "capture-input.json": "2da0ee714411df0b66a982bac576047c1aef461ee0bd647a1a4831f3b0b63129",
+          "capture.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "decomposition.json": "0f0ece4fe687113d1b5ce2ca9ab9a6043fb9da13d532ba1cb57cf26df23bdeec",
+          "fx-input-source.txt": "45b106c281443c83b7b9505020d47885701537619d9c1e290f69860bbac74b82",
+          "fx-public-normalized.txt": "afeb58ee654fa0283a139acbdcb3d130e23a581354e81db21b19b3d70c5d86bc",
+          "model.json": "10daa451c8b82e4af2b7a556ec360c410e28a432cdffb51c284c647e8fd4c71c",
+          "original.json": "66d26d31324b1dbf46fcf38c09d02fba76caec5e1387d83fcaf6ce073f18a54b",
+          "reference-report.json": "0003b98f49d37aee156eba746765307782cefe75daaf9d182578b0fbdf0227a4"
+        },
+        "bytes": 1196032,
+        "case": "nested_keyword_broadcast",
+        "decomposition_max_absolute_error": 0.0,
+        "groups": 16,
+        "reference_binding": "7f38838a53f113e810536a4f3c47392cba0bec35e55e5534146de1fc382a65d9",
+        "reference_max_absolute_error": 0.0,
+        "source_files": 4,
+        "source_format": "poseidon-trusted-pytorch-v29",
+        "values": 96,
+        "weights": 0
+      },
+      {
+        "artifacts": {
+          "capture-input.json": "9c21119855f6f063b94d4b97e0c614b7b7eed83279f06968dacaf0d8d4d1f3c9",
+          "capture.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "decomposition.json": "49e2a231d3c3108b5ff78d9d1c2fba930bb64743903ee9aa14797f594ee806df",
+          "fx-input-source.txt": "8479e9175a69c1d0d3307ced472845901b9db8c30a34d0fb2cdcbe53db7f7354",
+          "fx-public-normalized.txt": "053cde60b633ee4f79fad22e045e925c15163419c1ae113fc75dfc4f1cc6d357",
+          "model.json": "d56eaf4ceb5eb0240a6721db9f91f71a3f8be17d103ae4d5cc9b432951904722",
+          "original.json": "ce45e4136c2affbc6b76ee1865991b133d1709f4e99460d4f33bdca27103586d",
+          "reference-report.json": "d50b049f6fb847c367e0c7644c55274d47e1e1029b7f4a6d3bb85015fac457fd"
+        },
+        "bytes": 958464,
+        "case": "reexport_linear",
+        "decomposition_max_absolute_error": 5.551115123125783e-17,
+        "groups": 16,
+        "reference_binding": "7736808bbb88333ff74f130769ff45c95b2213a79b59fe292b97fb91aeb767c8",
+        "reference_max_absolute_error": 5.551115123125783e-17,
+        "source_files": 2,
+        "source_format": "poseidon-trusted-pytorch-v29",
+        "values": 64,
+        "weights": 2
+      }
+    ],
+    "failed": 0,
+    "groups": 48,
+    "max_reference_absolute_error": 5.551115123125783e-17,
+    "not_run": 0,
+    "passed": 3,
+    "skipped": 0,
+    "values": 224
+  },
+  "cli_controls": {
+    "failed": 0,
+    "passed": 3,
+    "skipped": 0
+  },
+  "controls": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 301,
+    "skipped": 0,
+    "unique_test_ids": 301
+  },
+  "evidence": {
+    "capture-plan-v4.json": "b08eaa418feecfea2e061b2a9c93995a2e609a7bbd8826d462318f4c97f5be45",
+    "cli-controls.json": "c6bd5a5d697edfd230a3de6e46ca2a516c8dba48d04b51bd3f8b430cbde1f7b4",
+    "controls-corrected.json": "bccd8970c00ae405c54ca020b2b9514c0763aa6b393cdc61953a61e9314cb602",
+    "controls-corrected.log": "d09af7ad5c646a6834fb3ef689c6f0f7340e460c1388b1c9ddb287e843a3af85",
+    "identity-after-controls.json": "b014032cea6b97664ce99142d0741b65e525d5a23c90a3101e25ca459ed37922",
+    "identity-before.json": "837229aa01f991b789f19ee701476094f3464b5a629d17b294d65f90907733a0",
+    "prepared-requests.json": "4ea19804e4a80eea256aa78b32a52bed63bda096b86a16a5a70253986364db80",
+    "provenance-controls.json": "f4b2dc4923e7ccdbf72d55cd1030a2ddac87a771c0a61ee6d98c60717588ae83"
+  },
+  "format": "poseidon-source-package-intake-audit-v1",
+  "git_diff_check": "passed",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "history": {
+    "failed_capture_launches": [
+      {
+        "failure_layer": "development_launcher",
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-package-capture-v1/report.json",
+        "sha256": "121c6c6326d70c4249a326658e85e21077841439d7b826218f5af611b5761d43",
+        "worker_started": false
+      },
+      {
+        "failure_layer": "development_launcher",
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-package-capture-v3/report.json",
+        "sha256": "8666c4c179b453da3ea7b36adfbfac978ab100a1cb31c7e04f3dd8b24a582e9c",
+        "worker_started": false
+      }
+    ],
+    "initial_controls": {
+      "errors": 7,
+      "failed": 6,
+      "passed": 287
+    },
+    "initial_controls_preserved": true,
+    "old_encrypted_qualifications_not_relabelled": true,
+    "old_request_files_unchanged": 6,
+    "old_request_ids_unchanged": 3
+  },
+  "no_live_owner": true,
+  "prepared_requests": {
+    "binding": "00814d6b7c5b47a75890fb1e5cbde28472b59c9f08f2bbff17ded3960ad4f1ed",
+    "count": 3
+  },
+  "provenance_controls": {
+    "failed": 0,
+    "passed": 3,
+    "skipped": 0
+  },
+  "resources": {
+    "capture_bytes": 3149824,
+    "global_limit_bytes": 34359738368,
+    "remaining_bytes": 2052096,
+    "results_bytes": 34357686272
+  },
+  "sdk_after": "05fcafb594be96bfcbed5fafbf21b818b74d261b97c507352e390bd83b79029b",
+  "sdk_before": "65e3d2514d448221fb61a1d410a812d2bd1908f483db892c63595b2a3ad0a7b2",
+  "source_changes": {
+    "scripts/baseline/application_capabilities.py": "b22cac876db94d4a364976a5d172e0a91955ddef5b2b99e58396ab901350b586",
+    "scripts/baseline/application_model_source.py": "c9f2c6cf79c1e9f9c1737717f675f2cba03b5ca632e212db87ce41fc7ba6b960",
+    "scripts/baseline/candidate_bundle.py": "324d075ba0cf10b95b9aac9f0b3403fba3a1b530ab252a66d9c2199b1871ee70",
+    "scripts/baseline/pytorch_model_intake.py": "9357641e4ea767ea55288d6c397c0449b62749df99243fbc10661d7a1d3fd1cf",
+    "scripts/baseline/pytorch_ordered_contract.py": "8b2855067be37cee2363e607a3d2e1d8a401ae72fb953ebf1504972de35f8ef7",
+    "scripts/baseline/pytorch_ordered_intake.py": "d786d4f4b2345b126d794281b597d1df8dc71c98c5b74328d461cccc5db8d12a",
+    "scripts/baseline/pytorch_public_expression_capture.py": "43de49a6e15a5a13055ff83f5ecee224992764d0049929fa6c5c9d7da69f8bd1",
+    "scripts/baseline/pytorch_source_package.py": "7770903c802de32ba909939545bac2bbb28aeac97b2ed2df8ec958ebc93d35cd",
+    "scripts/baseline/pytorch_source_package_policy.py": "aea22f1abbac2707257a6d86f936cace610c9d97516c4b649eb6232fae8ebdda",
+    "scripts/baseline/pytorch_spatial_policy.py": "f99552d03e96d3fdb052f6941516eebdc8b27b97e79723b15b74accf03951aa9",
+    "scripts/baseline/pytorch_static_broadcast.py": "fa43eb710694bc5c5ff9f5277e2d3b9c6c04ef4dc5674eac01ee45023d2e5989",
+    "scripts/baseline/test_application_source_versions.py": "fdeca16192672964f26fa84873fe1b0cf5cefc7ab76e9ba9e6239f50df05e510",
+    "scripts/baseline/test_pytorch_source_package.py": "796d2cd57367c8a349c91e4b23cf96ce56e32b6d8c7fe46220fcc34ee11382f4",
+    "scripts/baseline/test_pytorch_source_package_intake.py": "003aab017362184e5a3a36cff95a11711ea9a0c988b642a5236f27bbd13bbba9",
+    "scripts/prepare_pytorch_source.py": "cf312c3c580b212a37424a2a3418ae13435e9c35dab3f84177ea0be0c93f97b2"
+  },
+  "source_package": {
+    "agent_status": "unverified",
+    "bytes": 65536,
+    "compiler_status": "unverified",
+    "encrypted_status": "unverified",
+    "factory_entry": "package.module.factory",
+    "files": 8,
+    "input_status": "registered",
+    "packages": "regular packages with listed __init__.py",
+    "path_depth": 8,
+    "paths": "explicit relative module paths",
+    "policy": "poseidon-pytorch-explicit-source-package-v1",
+    "version": "poseidon-trusted-pytorch-v29"
+  },
+  "stage_differences": {
+    "compilation": {
+      "after": "1edf5be405bde2fc55974c978a19ec460544f982a0f05add4cab8d00bbe1a63a",
+      "before": "6b909d9f8c2313107726c995811b627b2a653be3292b8f259ea043bb3bbcb231",
+      "changed": [
+        "application_capabilities.py",
+        "application_model_source.py",
+        "candidate_bundle.py",
+        "pytorch_model_intake.py",
+        "pytorch_ordered_contract.py",
+        "pytorch_ordered_intake.py",
+        "pytorch_public_expression_capture.py",
+        "pytorch_source_package.py",
+        "pytorch_source_package_policy.py",
+        "pytorch_spatial_policy.py",
+        "pytorch_static_broadcast.py"
+      ]
+    },
+    "execution": {
+      "after": "3ed2e507098ebe112fc730c50ee4af9ccc2b9e9d7a320192762a4d61649e245e",
+      "before": "21dcf79f2c699304a47fd7ee5ba3bc61be21d2d89b0c8d36d1b57ebe08581416",
+      "changed": [
+        "application_capabilities.py",
+        "application_model_source.py",
+        "candidate_bundle.py",
+        "pytorch_model_intake.py",
+        "pytorch_ordered_contract.py",
+        "pytorch_ordered_intake.py",
+        "pytorch_public_expression_capture.py",
+        "pytorch_source_package.py",
+        "pytorch_source_package_policy.py",
+        "pytorch_spatial_policy.py",
+        "pytorch_static_broadcast.py"
+      ]
+    },
+    "generation": {
+      "after": "ce933ce2dd50a894e6c3c77fabee16d2e925743aba0c680417813d6adfe2ea15",
+      "before": "648dd6f96c82993f70e634d43446494509232049649cb6aa8a731ec2da6be52f",
+      "changed": [
+        "application_capabilities.py",
+        "application_model_source.py",
+        "candidate_bundle.py",
+        "pytorch_model_intake.py",
+        "pytorch_ordered_contract.py",
+        "pytorch_ordered_intake.py",
+        "pytorch_public_expression_capture.py",
+        "pytorch_source_package.py",
+        "pytorch_source_package_policy.py",
+        "pytorch_spatial_policy.py",
+        "pytorch_static_broadcast.py"
+      ]
+    },
+    "validation": {
+      "after": "c6096a19a86eb5fcbed5d565b887df660b3d42f529f2bb27dbce1e3da1fd6cd3",
+      "before": "a5676aec52682c8e27ecff01995574aa8c1a25ef7c93afc41ffd8032a983204c",
+      "changed": [
+        "application_capabilities.py",
+        "application_model_source.py",
+        "candidate_bundle.py",
+        "pytorch_model_intake.py",
+        "pytorch_ordered_contract.py",
+        "pytorch_ordered_intake.py",
+        "pytorch_public_expression_capture.py",
+        "pytorch_source_package.py",
+        "pytorch_source_package_policy.py",
+        "pytorch_spatial_policy.py",
+        "pytorch_static_broadcast.py"
+      ]
+    }
+  },
+  "status": "passed",
+  "versions": {
+    "DEFAULT_FORMAT": "poseidon-trusted-pytorch-v18",
+    "LATEST_FORMAT": "poseidon-trusted-pytorch-v28"
+  }
+}

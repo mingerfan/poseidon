@@ -1,0 +1,83 @@
+test_argument_item_capacity (test_public_flow.Controls) ... ok
+test_boolean_dtype_spellings (test_public_flow.Controls) ... ok
+test_chain_and_original_source_immutable (test_public_flow.Controls) ... ok
+test_derived_payload_and_record_binding (test_public_flow.Controls) ... ok
+test_device_move_is_rejected (test_public_flow.Controls) ... ok
+test_encrypted_graph_is_unchanged (test_public_flow.Controls) ... ok
+test_five_partitions_three_distinct_contexts (test_public_flow.Controls) ... FAIL
+test_inventory_dependency_and_op_tamper (test_public_flow.Controls) ... ok
+test_keyword_and_method_aliases (test_public_flow.Controls) ... ok
+test_materialized_name_collision (test_public_flow.Controls) ... ok
+test_mutation_and_unregistered_public_compute_rejected (test_public_flow.Controls) ... ok
+test_named_output_and_declaration_order (test_public_flow.Controls) ... ok
+test_original_unused_weights_preserved (test_public_flow.Controls) ... ok
+test_public_dynamic_metadata_rejected (test_public_flow.Controls) ... ok
+test_recursive_argument_capacity (test_public_flow.Controls) ... ok
+test_repeated_folding_deterministic (test_public_flow.Controls) ... ok
+test_type_guard_before_array_attribute_access (test_public_flow.Controls) ... ok
+test_undeclared_attribute_rejected (test_public_flow.Controls) ... ok
+test_unused_public_transform_is_retained_in_proof_and_removed_from_fx (test_public_flow.Controls) ... ok
+test_wrong_profile_rejected (test_public_flow.Controls) ... ok
+test_wrong_source_inventory_even_when_self_rehashed (test_public_flow.Controls) ... ok
+test_wrong_state_authority (test_public_flow.Controls) ... ok
+
+======================================================================
+ERROR: test_five_partitions_three_distinct_contexts (test_public_flow.Controls) (operation='permute', context=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 57, in test_five_partitions_three_distinct_contexts
+    model=Model(operation,context);source,raw,result,record=prepare(model)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 41, in prepare
+    source=capture(module);raw=_arrays(source);state=state_identity(raw,resource_profile=PROFILE)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 36, in capture
+    traced=torch.fx.GraphModule(module,tracer.trace(module))
+  File "/home/lhohy/poseidon-work/platforms/aarch64-linux/venvs/hecate-2.0.1-cpu/lib/python3.10/site-packages/torch/fx/_symbolic_trace.py", line 778, in trace
+    (self.create_arg(fn(*args)),),
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 21, in forward
+    elif self.operation=="permute":p=p.permute(*tuple(reversed(range(p.ndim))))
+TypeError: 'Attribute' object cannot be interpreted as an integer
+
+======================================================================
+ERROR: test_five_partitions_three_distinct_contexts (test_public_flow.Controls) (operation='permute', context=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 57, in test_five_partitions_three_distinct_contexts
+    model=Model(operation,context);source,raw,result,record=prepare(model)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 41, in prepare
+    source=capture(module);raw=_arrays(source);state=state_identity(raw,resource_profile=PROFILE)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 36, in capture
+    traced=torch.fx.GraphModule(module,tracer.trace(module))
+  File "/home/lhohy/poseidon-work/platforms/aarch64-linux/venvs/hecate-2.0.1-cpu/lib/python3.10/site-packages/torch/fx/_symbolic_trace.py", line 778, in trace
+    (self.create_arg(fn(*args)),),
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 21, in forward
+    elif self.operation=="permute":p=p.permute(*tuple(reversed(range(p.ndim))))
+TypeError: 'Attribute' object cannot be interpreted as an integer
+
+======================================================================
+ERROR: test_five_partitions_three_distinct_contexts (test_public_flow.Controls) (operation='permute', context=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 57, in test_five_partitions_three_distinct_contexts
+    model=Model(operation,context);source,raw,result,record=prepare(model)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 41, in prepare
+    source=capture(module);raw=_arrays(source);state=state_identity(raw,resource_profile=PROFILE)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 36, in capture
+    traced=torch.fx.GraphModule(module,tracer.trace(module))
+  File "/home/lhohy/poseidon-work/platforms/aarch64-linux/venvs/hecate-2.0.1-cpu/lib/python3.10/site-packages/torch/fx/_symbolic_trace.py", line 778, in trace
+    (self.create_arg(fn(*args)),),
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 21, in forward
+    elif self.operation=="permute":p=p.permute(*tuple(reversed(range(p.ndim))))
+TypeError: 'Attribute' object cannot be interpreted as an integer
+
+======================================================================
+FAIL: test_five_partitions_three_distinct_contexts (test_public_flow.Controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/test_public_flow.py", line 73, in test_five_partitions_three_distinct_contexts
+    self.assertEqual(len(set(signatures)),3)
+AssertionError: 0 != 3
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.065s
+
+FAILED (failures=1, errors=3)

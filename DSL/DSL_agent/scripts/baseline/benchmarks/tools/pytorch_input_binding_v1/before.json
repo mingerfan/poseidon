@@ -1,0 +1,17 @@
+{
+  "scripts/baseline/pytorch_ordered_contract.py": "07ae1a3a4919c4b69f11a7cca33e98e0f5527ec6205bfb8c3d3a80514a839e1a",
+  "scripts/baseline/pytorch_ordered_intake.py": "80fa4707988d941ae2318ab0f028c4f48c36223070a9e143c842fdde1ea0df9f",
+  "scripts/baseline/pytorch_model_intake.py": "77e82673d4db613df6ef33dd4c6b1fda587f3161196246c4f48f48773a8e1aec",
+  "scripts/baseline/pytorch_static_trace.py": "262cab772a63996560b28194c55aefb0b4d84469af744d9b5ac608d7a9bbf8fc",
+  "scripts/baseline/pytorch_public_expression_capture.py": "84cfbe1442e7ba565fe3065832356b5c3cf77b1c94c23c72f21b17a103e86f1c",
+  "scripts/baseline/candidate_bundle.py": "d35fba2f4bade08bd92f2430e72814bb2a2c0b0c2821f4e006c1b911681c5ce8",
+  "scripts/baseline/application_capabilities.py": "95659ee8bf41caf15d1c10b7f554cf225df6893d3b84966eb5e38a7e74711d67",
+  "scripts/prepare_pytorch_source.py": "9c48099d7b858747018b0b07c4ceb51bf23989ded5991ef5f80fec00f91ea806",
+  "docs/baseline/operator-decomposition-and-python.md": "bca8c36204a35ecf878ed09e46128b86a2848a608f3c41cc5d62bd6e14c4d284",
+  "docs/baseline/mac-migration-handoff.md": "80d0807c07df740a24d973cacacfb0647abfd6ca1cf21e1e51f4198be197a02a",
+  "scripts/README.md": "5c02798bfca322fdd2ac8f6fad25df35567976eb20897c2ce84d120ef302afb1",
+  "docs/baseline/agent-public-arithmetic-live-acceptance-r1388.json": "2363d1d6d3e461d261d6ad23771ac755b893b86f16e692742d960e2d1fcdfde7",
+  "docs/baseline/agent-public-arithmetic-live-acceptance-r1388.md": "9dcf49bcd17de3f80730ab6ce22a88c433f2a2c18c482f20d5a7ec270fb0d4eb",
+  "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+  "src/poseidon/tools/dacapo/python-wheels.lock.json": "d43706d93372b6895e44f017a82b531ec9ab5fa7f0a8bed4e3774ed58d0ced46"
+}

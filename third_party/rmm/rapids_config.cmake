@@ -25,9 +25,10 @@ else()
       "Could not determine RAPIDS version. Contents of VERSION file:\n${_rapids_version_formatted}")
 endif()
 
-set(_poseidon_rapids_cmake_dir "${CMAKE_CURRENT_LIST_DIR}/../rapids-cmake")
+set(_poseidon_third_party_dir "${CMAKE_CURRENT_LIST_DIR}/..")
+set(_poseidon_rapids_cmake_dir "${_poseidon_third_party_dir}/rapids-cmake")
 if(EXISTS "${_poseidon_rapids_cmake_dir}/rapids-cmake/rapids-cmake.cmake")
-  set(CPM_SOURCE_CACHE "${CMAKE_CURRENT_LIST_DIR}/../cpm" CACHE PATH
+  set(CPM_SOURCE_CACHE "${_poseidon_third_party_dir}/cpm" CACHE PATH
       "Bundled CPM cache for offline RAPIDS/RMM configuration" FORCE)
   set(CPM_DOWNLOAD_LOCATION "${CPM_SOURCE_CACHE}/cpm/CPM_0.40.0.cmake" CACHE FILEPATH
       "Bundled CPM.cmake file for offline RAPIDS/RMM configuration" FORCE)
@@ -42,4 +43,27 @@ else()
       "Bundled rapids-cmake was not found at ${_poseidon_rapids_cmake_dir}. "
       "Offline builds require third_party/rapids-cmake next to third_party/rmm.")
 endif()
+
+set(CPM_CCCL_SOURCE "${_poseidon_third_party_dir}/cccl")
+set(CPM_fmt_SOURCE "${_poseidon_third_party_dir}/fmt")
+set(CPM_spdlog_SOURCE "${_poseidon_third_party_dir}/spdlog")
+set(CPM_nvtx3_SOURCE "${_poseidon_third_party_dir}/nvtx")
+set(FETCHCONTENT_FULLY_DISCONNECTED ON)
+
+foreach(_poseidon_dependency IN ITEMS cccl fmt spdlog)
+  if(NOT EXISTS "${_poseidon_third_party_dir}/${_poseidon_dependency}/CMakeLists.txt")
+    message(
+      FATAL_ERROR
+        "Bundled ${_poseidon_dependency} source was not found under "
+        "${_poseidon_third_party_dir}.")
+  endif()
+endforeach()
+if(NOT EXISTS "${CPM_nvtx3_SOURCE}/c/CMakeLists.txt")
+  message(
+    FATAL_ERROR
+      "Bundled nvtx source was not found under ${_poseidon_third_party_dir}.")
+endif()
+
+unset(_poseidon_dependency)
 unset(_poseidon_rapids_cmake_dir)
+unset(_poseidon_third_party_dir)

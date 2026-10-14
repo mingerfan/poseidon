@@ -1,0 +1,28 @@
+{
+  "binding": "04b1fce964271aad0c842c4ae96f56879cba8ae07ef2ce988b8bca12d5f95d36",
+  "compiler_calls": 0,
+  "draft_files": {
+    "capture_adapter.py": "ad524739cbc59f3724b3431a9b181b33f7e6d7e28f0a226e87df15d9ce159e77",
+    "controls_static.py": "973a0518127b493ea1647452f569fe741a7c9292e93b61a4eea21929120deef3",
+    "public_boolean_arithmetic.py": "cb28c29e699ed73c6b35fa15380411a45698ba3d7966ea1db441b2b3054e64e9",
+    "public_state_binding.py": "e51ed98c3932ab732cedc4d74d058d05b4fd08c6ea190f81bec45d31e2c4d8e7",
+    "public_tensor_division.py": "7d2e3d10df6770c87fe3acb536c7384bd9e44c5818f12180f5a3090d0e922b8f",
+    "sandbox.py": "8f4bf151238732c53864e62e7e7ea6105241e59682ca7c5e4934dce399bc1fa9",
+    "staged_static_trace.py": "b8419374a861a15391d79be5b17c88f6e39b150fc8e5a22a781abe26e59173d4",
+    "test_boolean_arithmetic.py": "1ce815eff65634a5d1b541f3c34ca871b4b35390d9e1fe06cb401f8d6eb24af0"
+  },
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-public-boolean-controls-v1",
+  "network_configuration_changes": 0,
+  "new_source_captures": 0,
+  "passed": 30,
+  "previous_evidence_unchanged": true,
+  "production_activation": false,
+  "provider_calls": 0,
+  "seconds": 0.01682568199976231,
+  "skipped": 0,
+  "status": "passed",
+  "tests_run": 30
+}

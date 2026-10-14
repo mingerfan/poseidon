@@ -1,0 +1,12 @@
+{
+  "tests": 21,
+  "failed": 5,
+  "errors": 2,
+  "skipped": 0,
+  "stage": "initial",
+  "causes": [
+    "response identity correction was treated as duplicate",
+    "test fixture used x0 instead of legacy x ABI",
+    "system Python did not include existing locked NumPy path"
+  ]
+}

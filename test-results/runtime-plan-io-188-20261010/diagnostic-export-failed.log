@@ -1,0 +1,14 @@
+/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-unit-plaintext/gpu-plans/gpu4/qwen24.mlir:27:11: error: RuntimePlan Encode requires a DenseElementsAttr; legacy .cst indices are not supported
+    %19 = "ckks.encode"() <{payload = dense_resource<__elided__> : tensor<128xf64>}> {dist.device = -1 : i64, dist.logical_id = 5 : i64, dist.rank = 0 : i64, runtime.value_id = 5 : i64} : () -> tensor<1x!ckks.poly<1 * 40 * 27>>
+          ^
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 301.3613 seconds
+
+  ----Wall Time----  ----Name----
+  204.1967 ( 67.8%)  Parser
+   90.4961 ( 30.0%)  'func.func' Pipeline
+   90.4960 ( 30.0%)    EmitRuntimePlan
+    5.1303 (  1.7%)  Rest
+  301.3613 (100.0%)  Total

@@ -1,0 +1,18 @@
+{
+  "host": "HPU-001",
+  "system": "Linux-6.8.0-106-generic-x86_64-with-glibc2.35",
+  "logical_cpus": 48,
+  "cpu": "Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz",
+  "memory": {
+    "MemTotal": "792479112 kB",
+    "MemAvailable": "710056340 kB",
+    "SwapTotal": "2097148 kB",
+    "SwapFree": "2097148 kB"
+  },
+  "disk_free_bytes": 3856644403200,
+  "experiment_root": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1",
+  "weights": "synthetic reproducible fixture; no pretrained checkpoint",
+  "scope": "two-token one-decoder-block prefill; plus actual-size component probes",
+  "encrypted_runtime_execution_tested": false,
+  "full_24layer_compilation_tested": false
+}

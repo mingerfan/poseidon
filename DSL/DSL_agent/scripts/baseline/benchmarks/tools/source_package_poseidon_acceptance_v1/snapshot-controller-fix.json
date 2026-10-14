@@ -1,0 +1,16 @@
+{
+  "after_sha256": "6694c11520555e5122b63d5aba906d4f1202e52b5b8bdec0c4b6915d42518f8b",
+  "backend_modified": false,
+  "before_sha256": "ff548796b05aacdde28edbefd2c760da3af07d4c473c49c3d9115ce7d5be8a47",
+  "binding": "a6f9f211ce79d071d745d062bf7e86cd017cf4962b44ea5d59c78a13c6763f84",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "failure_layer": "source_task_integrity",
+  "format": "poseidon-agent-source-package-controller-fix-v1",
+  "new_tests": 13,
+  "old_flat_branch_preserved": true,
+  "original_failure": "agent-source-package-offline-r1444",
+  "provider_calls": 0,
+  "selected_source_contract": "poseidon-trusted-pytorch-v29",
+  "source": "scripts/baseline/application_model_source.py"
+}

@@ -494,6 +494,7 @@ __global__ void multiply_plain_caccumulate_two_components_4_kernel(
     const GpuWord *plaintext1,
     const GpuWord *plaintext2,
     const GpuWord *plaintext3,
+    const GpuWord *constant_plaintext,
     const GpuWord *q_primes,
     const GpuWide *q_modulus_constants,
     std::size_t limb_count,
@@ -533,7 +534,50 @@ __global__ void multiply_plain_caccumulate_two_components_4_kernel(
     add_plain_product_if_present(
         value, source3, plaintext3, tid, modulus, barrett_ratio);
 
+    // A polynomial leaf has at most one constant coefficient.  Folding it
+    // into the first CAccum launch avoids materializing a second ciphertext
+    // merely to preserve c1 while adding the constant to c0.
+    if (!second_component && constant_plaintext != nullptr)
+    {
+        GpuWide sum = static_cast<GpuWide>(value) +
+                      static_cast<GpuWide>(constant_plaintext[tid]);
+        if (sum >= modulus)
+        {
+            sum -= modulus;
+        }
+        value = static_cast<GpuWord>(sum);
+    }
+
     destination[tid] = value;
+}
+
+template <bool ProductCorrection>
+__global__ void double_sub_plain_two_components_kernel(
+    GpuWord *dst0, GpuWord *dst1,
+    const GpuWord *src0, const GpuWord *src1, const GpuWord *plain,
+    const GpuWord *correction0, const GpuWord *correction1,
+    const GpuWord *moduli, const GpuWide *barrett,
+    std::size_t limbs, std::size_t degree)
+{
+    const std::size_t index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index >= limbs * degree) return;
+    const bool second = blockIdx.y != 0;
+    const GpuWord modulus = moduli[index / degree];
+    const GpuWord *source = second ? src1 : src0;
+    GpuWide doubled = GpuWide(source[index]) * 2;
+    if (doubled >= modulus) doubled -= modulus;
+    GpuWord subtrahend = 0;
+    if constexpr (ProductCorrection)
+    {
+        const auto *correction = second ? correction1 : correction0;
+        subtrahend = barrett_reduce_u64_u32(
+            GpuWide(correction[index]) * plain[index], modulus, barrett[index / degree]);
+    }
+    else if (!second) subtrahend = plain[index];
+    // Widen before adding q: the application's q primes approach 2^32.
+    const GpuWord result = static_cast<GpuWord>(
+        doubled >= subtrahend ? doubled - subtrahend : doubled + modulus - subtrahend);
+    (second ? dst1 : dst0)[index] = result;
 }
 
 __global__ void multiply_outer_components_kernel(
@@ -1600,6 +1644,7 @@ void launch_multiply_plain_caccumulate_two_components_4(
     const GpuConstPolyShardView *ciphertexts1,
     const GpuConstPolyShardView *plaintexts,
     std::size_t term_count,
+    const GpuConstPolyShardView *constant_plaintext,
     bool accumulate,
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
@@ -1649,6 +1694,10 @@ void launch_multiply_plain_caccumulate_two_components_4(
         validate_source(ciphertexts1[i], "ciphertext1");
         validate_source(plaintexts[i], "plaintext");
     }
+    if (constant_plaintext != nullptr)
+    {
+        validate_source(*constant_plaintext, "constant plaintext");
+    }
 
     if (destination0.limb_begin < parameter_shard.limb_begin)
     {
@@ -1696,6 +1745,7 @@ void launch_multiply_plain_caccumulate_two_components_4(
         ptr_or_null(plaintexts, 1),
         ptr_or_null(plaintexts, 2),
         ptr_or_null(plaintexts, 3),
+        constant_plaintext != nullptr ? constant_plaintext->ptr : nullptr,
         parameter_shard.q_primes.data() + modulus_offset,
         parameter_shard.q_modulus_constants.data() + modulus_offset,
         destination0.limb_count,
@@ -1705,6 +1755,45 @@ void launch_multiply_plain_caccumulate_two_components_4(
         cudaGetLastError(),
         "launch_multiply_plain_caccumulate_two_components_4 kernel launch");
     (void)degree;
+}
+
+void launch_double_sub_plain_two_components(
+    const GpuPolyShardView &dst0, const GpuPolyShardView &dst1,
+    const GpuConstPolyShardView &src0, const GpuConstPolyShardView &src1,
+    const GpuConstPolyShardView &plain,
+    const GpuConstPolyShardView *correction0,
+    const GpuConstPolyShardView *correction1,
+    const GpuParameterShard &parameters)
+{
+    const auto matches = [&](const auto &s) {
+        return s.ptr && s.device_id == dst0.device_id &&
+            s.limb_begin == dst0.limb_begin && s.limb_count == dst0.limb_count &&
+            s.coeff_begin == dst0.coeff_begin && s.coeff_count == dst0.coeff_count;
+    };
+    if (!dst0.ptr || !dst0.limb_count || !dst0.coeff_count ||
+        !matches(dst1) || !matches(src0) || !matches(src1) || !matches(plain) ||
+        bool(correction0) != bool(correction1) ||
+        (correction0 && (!matches(*correction0) || !matches(*correction1))) ||
+        parameters.device_id != dst0.device_id || dst0.limb_begin < parameters.limb_begin)
+        throw std::invalid_argument("double_sub_plain: shard mismatch");
+    const auto offset = dst0.limb_begin - parameters.limb_begin;
+    if (offset + dst0.limb_count > parameters.q_primes.size() ||
+        offset + dst0.limb_count > parameters.q_modulus_constants.size())
+        throw std::invalid_argument("double_sub_plain: parameter range mismatch");
+    gpu_check_cuda(cudaSetDevice(dst0.device_id), "double_sub_plain cudaSetDevice");
+    constexpr int block = 256;
+    const dim3 grid((dst0.limb_count * dst0.coeff_count + block - 1) / block, 2);
+    if (correction0)
+        double_sub_plain_two_components_kernel<true><<<grid, block>>>(
+            dst0.ptr, dst1.ptr, src0.ptr, src1.ptr, plain.ptr, correction0->ptr, correction1->ptr,
+            parameters.q_primes.data() + offset, parameters.q_modulus_constants.data() + offset,
+            dst0.limb_count, dst0.coeff_count);
+    else
+        double_sub_plain_two_components_kernel<false><<<grid, block>>>(
+            dst0.ptr, dst1.ptr, src0.ptr, src1.ptr, plain.ptr, nullptr, nullptr,
+            parameters.q_primes.data() + offset, parameters.q_modulus_constants.data() + offset,
+            dst0.limb_count, dst0.coeff_count);
+    gpu_check_cuda(cudaGetLastError(), "double_sub_plain kernel launch");
 }
 
 std::size_t validate_fused_ciphertext_product_shards(

@@ -1,0 +1,139 @@
+"""Versioned arithmetic admission and real owned FX normalization regressions."""
+import copy,json,unittest
+from pathlib import Path
+import numpy as np
+import torch
+from benchmark_graph import digest,samples,canonical
+from benchmark_math import evaluate as mathematical
+from benchmark_torch import evaluate as tensor_reference
+from operator_graph import decompose as prior_decompose
+from operator_arithmetic_graph import FORMAT,decompose,evaluate_reference
+from pytorch_arithmetic_normalization import normalize
+
+PROFILE="general-tensors-v1"
+ROOT=Path(__file__).resolve().parents[2]
+
+def model(op="add",kind="scalar",side="left"):
+    shapes={"scalar":[4],"tensor":[2,2],"broadcast":[2,2,2]}
+    constants={"scalar":.375,"tensor":[[.125,-.25],[.375,-.5]],"broadcast":[.125,-.25]}
+    return dict(format=FORMAT,id="arithmetic_"+op+"_"+kind+"_"+side,
+        inputs=[dict(name="x",shape=shapes[kind])],constants=dict(public=constants[kind]),
+        nodes=[dict(id="arithmetic",op=op,inputs=["public","x"] if side=="left" else ["x","public"],
+                    attrs={},outputs=["y"])],outputs=[dict(name="result",value="y")])
+
+class ArithmeticGraphTests(unittest.TestCase):
+    def test_eighteen_contexts_against_independent_arithmetic(self):
+        for op in ("add","subtract","multiply"):
+            for kind in ("scalar","tensor","broadcast"):
+                for side in ("left","right"):
+                    with self.subTest(op=op,kind=kind,side=side):
+                        original=model(op,kind,side);before=canonical(original)
+                        core,binding=decompose(original,resource_profile=PROFILE)
+                        self.assertEqual(before,canonical(original))
+                        self.assertEqual(binding["normalization"]["public_constants_sha256"],digest(original["constants"]))
+                        self.assertEqual(binding["original_sha256"],digest(original))
+                        for values in samples(core,16):
+                            public=np.asarray(original["constants"]["public"],dtype=np.float64)
+                            a,b=(public,values["x"]) if side=="left" else (values["x"],public)
+                            expected={"add":np.add,"subtract":np.subtract,"multiply":np.multiply}[op](a,b)
+                            for actual in (evaluate_reference(original,values)["result"],
+                                           mathematical(core,values)["result"],
+                                           tensor_reference(core,values)["result"]):
+                                np.testing.assert_allclose(actual,expected,atol=2e-12,rtol=2e-12)
+    def test_subtraction_origin_and_budget_are_real(self):
+        graph,binding=decompose(model("subtract"),resource_profile=PROFILE)
+        self.assertEqual([n["op"] for n in graph["nodes"]],["negate","add"])
+        self.assertEqual(set(binding["source_map"].values()),{"arithmetic"})
+        self.assertEqual(binding["normalization"]["arithmetic_entries"][0]["action"],"negate_cipher_then_add_public")
+    def test_legacy_versions_are_byte_equal(self):
+        files=sorted((ROOT/"scripts/baseline/cases/operator-matrix-v2").glob("*.json"))
+        self.assertEqual(sum(json.loads(p.read_text()).get("format")=="poseidon-operator-graph-v2" for p in files),36)
+        for path in files:
+            value=json.loads(path.read_text())
+            if value.get("format")!="poseidon-operator-graph-v2":continue
+            old=prior_decompose(value,resource_profile=PROFILE)
+            new=decompose(value,resource_profile=PROFILE)
+            self.assertEqual(canonical(old),canonical(new))
+    def test_old_v2_does_not_silently_gain_new_semantics(self):
+        original=model("subtract");original["format"]="poseidon-operator-graph-v2"
+        with self.assertRaisesRegex(ValueError,"First operand must be encrypted"):
+            decompose(original,resource_profile=PROFILE)
+    def test_public_only_is_rejected(self):
+        original=model();original["constants"]["other"]=.125
+        original["nodes"][0]["inputs"]=["public","other"]
+        with self.assertRaisesRegex(ValueError,"Arithmetic requires an encrypted operand"):
+            decompose(original,resource_profile=PROFILE)
+    def test_invalid_arity_attrs_and_refs_rejected(self):
+        for field,value in (("inputs",["public"]),("inputs",["public","missing"]),
+                            ("attrs",{"alpha":2})):
+            original=model();original["nodes"][0][field]=value
+            with self.assertRaises(ValueError):decompose(original,resource_profile=PROFILE)
+    def test_expanded_budget_is_not_relaxed(self):
+        original=model("subtract");previous="x";original["nodes"]=[]
+        for i in range(33):
+            output="v_"+str(i)
+            original["nodes"].append(dict(id="n_"+str(i),op="subtract",
+                 inputs=["public",previous],attrs={},outputs=[output]));previous=output
+        original["outputs"]=[dict(name="result",value=previous)]
+        with self.assertRaisesRegex(ValueError,"Expanded graph node budget"):decompose(original)
+    def test_two_cipher_inputs_and_multiple_outputs(self):
+        original=model();original["inputs"].append(dict(name="other",shape=[4]))
+        original["nodes"].append(dict(id="merge",op="add",inputs=["y","other"],attrs={},outputs=["fused"]))
+        original["outputs"]=[dict(name="first",value="y"),dict(name="second",value="fused")]
+        core,_=decompose(original,resource_profile=PROFILE)
+        for values in samples(core,16):
+            expected=evaluate_reference(original,values);actual=mathematical(core,values)
+            for name in expected:np.testing.assert_allclose(actual[name],expected[name],atol=2e-12,rtol=2e-12)
+    def test_weight_changes_change_binding(self):
+        original=model();_,a=decompose(original,resource_profile=PROFILE)
+        original["constants"]["public"]+=.125;_,b=decompose(original,resource_profile=PROFILE)
+        self.assertNotEqual(a["binding_sha256"],b["binding_sha256"])
+
+class FXArithmeticTests(unittest.TestCase):
+    def module(self,op,kind,side):
+        import importlib.util,hashlib
+        path=ROOT/"scripts/baseline/benchmarks/tools/fixtures/public-operand-role-v1"/("role_"+op+"_"+kind+"_"+side)
+        manifest=json.loads((path/"manifest.json").read_text())
+        raw=(path/"models.py").read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(),manifest["files"]["models.py"])
+        spec=importlib.util.spec_from_file_location("owned_arithmetic_fixture",path/"models.py")
+        imported=importlib.util.module_from_spec(spec);spec.loader.exec_module(imported)
+        module=imported.make_model(op,kind,side)
+        if kind=="tensor":
+            module.public.copy_(torch.tensor([[.125,-.25],[.375,-.5]],dtype=torch.float64))
+        return module
+    def test_twelve_owned_models_preserve_module_semantics(self):
+        from pytorch_model_capture import capture
+        for op in ("add","subtract","multiply"):
+            for kind in ("scalar","tensor"):
+                for side in ("left","right"):
+                    with self.subTest(op=op,kind=kind,side=side):
+                        raw=self.module(op,kind,side);traced=torch.fx.symbolic_trace(raw)
+                        normalized,record=normalize(traced,resource_profile=PROFILE)
+                        high,core,binding=capture(normalized,[dict(name="x",shape=[2,2])],["result"],
+                           resource_profile=PROFILE,dtype_policy="strict-float64-v1")
+                        self.assertTrue(record["source_graph_preserved"])
+                        self.assertTrue(record["public_state_preserved"])
+                        for values in samples(core,16):
+                            x=torch.from_numpy(values["x"])
+                            expected=raw(x).detach().numpy()
+                            np.testing.assert_allclose(normalized(x).detach().numpy(),expected,atol=2e-12,rtol=2e-12)
+                            np.testing.assert_allclose(mathematical(core,values)["result"],expected,atol=2e-12,rtol=2e-12)
+                            np.testing.assert_allclose(tensor_reference(core,values)["result"],expected,atol=2e-12,rtol=2e-12)
+    def test_cipher_cipher_method_and_alias(self):
+        class Module(torch.nn.Module):
+            def forward(self,x,y):return x.add(other=y)
+        traced=torch.fx.symbolic_trace(Module().eval())
+        normalized,record=normalize(traced,resource_profile=PROFILE)
+        x=torch.tensor([.125,-.25],dtype=torch.float64);y=x.square()
+        torch.testing.assert_close(normalized(x,y),x+y)
+        self.assertEqual(record["entries"][0]["input_kinds"],["cipher","cipher"])
+    def test_out_alpha_and_inplace_rejected(self):
+        class Alpha(torch.nn.Module):
+            def forward(self,x):return x.add(.125,alpha=2)
+        class Inplace(torch.nn.Module):
+            def forward(self,x):return x.add_(.125)
+        for module in (Alpha(),Inplace()):
+            with self.assertRaises(ValueError):normalize(torch.fx.symbolic_trace(module.eval()))
+    def test_fx_graph_required(self):
+        with self.assertRaisesRegex(ValueError,"GraphModule"):normalize(torch.nn.Linear(2,2))

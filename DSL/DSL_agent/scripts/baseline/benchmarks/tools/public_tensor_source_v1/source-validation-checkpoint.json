@@ -1,0 +1,11 @@
+{
+  "format": "poseidon-public-tensor-source-validation-checkpoint-v1",
+  "status": "source_capture_validated",
+  "report": "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-tensor-source-draft-r1352.json",
+  "report_sha256": "a0f05d32fde906afbee6bbb918677184b88a99051441dd5225761130af8dbff7",
+  "report_binding": "a5f434cc36688cfd4215f74ab4121269dfb96854750e19305db7d64daaf35368",
+  "production_activation": false,
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

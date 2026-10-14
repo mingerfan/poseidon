@@ -1,0 +1,26 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/gather_capability_backend_v1/prepare.py", line 27, in <module>
+    pv=load_model_provenance(q.RESULTS/"agent-tensor-gather-source-r1575/vector",previous["model"],max_bytes=4*1024**2)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 264, in load_model_provenance
+    check_provenance(value,model)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/candidate_bundle.py", line 54, in check_provenance
+    lowered,binding=capture_binding(value["original"],package["manifest"],resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_intake.py", line 195, in capture_binding
+    return selected(original,spec,resource_profile=resource_profile,capture_metadata=capture_metadata,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 523, in capture_binding
+    checked = check_capture_metadata(capture_metadata, original, spec, resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_ordered_contract.py", line 313, in check_capture_metadata
+    return selected(metadata,original,spec,resource_profile=resource_profile,
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 345, in check_capture_metadata
+    check_record(record,spec,expected_weight_arrays,expected_record_binding=record["binding"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_capture.py", line 294, in check_record
+    check_base(base,base_spec,effective,final,expected_record_binding=base["binding"],
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_arithmetic_capture.py", line 198, in check_record
+    require(lowered==record["lowered_graph"]and bound==record["base_binding"],"Derived graph and capture identity")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmark_graph.py", line 43, in require
+    raise ValueError(message)
+ValueError: Derived graph and capture identity

@@ -1,0 +1,308 @@
+[
+  {
+    "candidate_origin": "deterministic_rule_on_manual_equivalent_graph",
+    "case": "public_divisor_vector",
+    "division_plan": {
+      "approximation": "none",
+      "binding": "017a980c570f93f268497aebcf29fbd7ca46f616bbdc9cf81897716e70a41677",
+      "divisor_sha256": "91156c1c9f9dffb9adc6cd2154775e8a4084dc9e4c7153c4676576b9b51812fe",
+      "divisor_shape": [
+        3
+      ],
+      "elements": 3,
+      "format": "poseidon-public-tensor-division-plan-v1",
+      "inplace": false,
+      "input_shape": [
+        2,
+        3
+      ],
+      "operation": "multiply",
+      "reciprocal_sha256": "bffe6ad38d0173f91bd87965456a394f7ccce2b0b249b094a2c4150399603c58",
+      "resource_profile": "general-tensors-v1",
+      "result_shape": [
+        2,
+        3
+      ]
+    },
+    "divisor": [
+      0.5,
+      -2.0,
+      3.0
+    ],
+    "divisor_shape": [
+      3
+    ],
+    "mode": "divide",
+    "model": {
+      "constants": {
+        "coefficient": [
+          2.0,
+          -0.5,
+          0.3333333333333333
+        ]
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "public_divisor_vector",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            3
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "n0",
+          "inputs": [
+            "x",
+            "coefficient"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "scaled_x"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "out",
+          "value": "scaled_x"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "original_divisor_bytes_sha256": "91156c1c9f9dffb9adc6cd2154775e8a4084dc9e4c7153c4676576b9b51812fe",
+    "request_id": "7fb5355903810daee3c4b22598358ed1782cd53f0b339f984d733eb02e84e520",
+    "shape": [
+      2,
+      3
+    ],
+    "source_intake_activated": false
+  },
+  {
+    "candidate_origin": "deterministic_rule_on_manual_equivalent_graph",
+    "case": "public_divisor_channels",
+    "division_plan": {
+      "approximation": "none",
+      "binding": "b3e512d0edfe7ae4e6b5d4e506ac56079f396899ff567977148130245d5c93eb",
+      "divisor_sha256": "0b36ab0f27b0d9eee9a02c364c6c4a1b8a271a9c77bd3013f7a2e9d7c899816d",
+      "divisor_shape": [
+        1,
+        2,
+        1,
+        1
+      ],
+      "elements": 2,
+      "format": "poseidon-public-tensor-division-plan-v1",
+      "inplace": false,
+      "input_shape": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "operation": "multiply",
+      "reciprocal_sha256": "9c7723825ef6473c030fca1350d1236c687e985fa23ce4e751b98dc885fde41c",
+      "resource_profile": "general-tensors-v1",
+      "result_shape": [
+        1,
+        2,
+        2,
+        2
+      ]
+    },
+    "divisor": [
+      0.25,
+      -3.0
+    ],
+    "divisor_shape": [
+      1,
+      2,
+      1,
+      1
+    ],
+    "mode": "divide",
+    "model": {
+      "constants": {
+        "coefficient": [
+          [
+            [
+              [
+                4.0
+              ]
+            ],
+            [
+              [
+                -0.3333333333333333
+              ]
+            ]
+          ]
+        ]
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "public_divisor_channels",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            2,
+            2,
+            2
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "n0",
+          "inputs": [
+            "x",
+            "coefficient"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "scaled_x"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "out",
+          "value": "scaled_x"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "original_divisor_bytes_sha256": "0b36ab0f27b0d9eee9a02c364c6c4a1b8a271a9c77bd3013f7a2e9d7c899816d",
+    "request_id": "3fea8843e7361b561de14405c5d4c6d5c9a66618e825dfb0eb67f7a2074969ea",
+    "shape": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "source_intake_activated": false
+  },
+  {
+    "candidate_origin": "deterministic_rule_on_manual_equivalent_graph",
+    "case": "public_divisor_shared_outputs",
+    "division_plan": {
+      "approximation": "none",
+      "binding": "017a980c570f93f268497aebcf29fbd7ca46f616bbdc9cf81897716e70a41677",
+      "divisor_sha256": "91156c1c9f9dffb9adc6cd2154775e8a4084dc9e4c7153c4676576b9b51812fe",
+      "divisor_shape": [
+        3
+      ],
+      "elements": 3,
+      "format": "poseidon-public-tensor-division-plan-v1",
+      "inplace": false,
+      "input_shape": [
+        2,
+        3
+      ],
+      "operation": "multiply",
+      "reciprocal_sha256": "bffe6ad38d0173f91bd87965456a394f7ccce2b0b249b094a2c4150399603c58",
+      "resource_profile": "general-tensors-v1",
+      "result_shape": [
+        2,
+        3
+      ]
+    },
+    "divisor": [
+      0.5,
+      -2.0,
+      3.0
+    ],
+    "divisor_shape": [
+      3
+    ],
+    "mode": "dual_snapshot",
+    "model": {
+      "constants": {
+        "coefficient": [
+          2.0,
+          -0.5,
+          0.3333333333333333
+        ]
+      },
+      "format": "poseidon-model-graph-v2",
+      "id": "public_divisor_shared_outputs",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            3
+          ]
+        },
+        {
+          "name": "y",
+          "shape": [
+            2,
+            3
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "n0",
+          "inputs": [
+            "x",
+            "coefficient"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "scaled_x"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "n1",
+          "inputs": [
+            "y",
+            "coefficient"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "scaled_y"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "n2",
+          "inputs": [
+            "scaled_x",
+            "scaled_y"
+          ],
+          "op": "add",
+          "outputs": [
+            "combined"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "snapshot",
+          "value": "x"
+        },
+        {
+          "name": "out",
+          "value": "combined"
+        }
+      ],
+      "resource_profile": "general-tensors-v1"
+    },
+    "original_divisor_bytes_sha256": "91156c1c9f9dffb9adc6cd2154775e8a4084dc9e4c7153c4676576b9b51812fe",
+    "request_id": "827a7f7fbc5fe57add6440924f06a8cf154cdda2d367532f944f72b8a6bfa1c3",
+    "shape": [
+      2,
+      3
+    ],
+    "source_intake_activated": false
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "base_dacapo_commit": "06bdd08b83676351186f6982b79921994298e51a",
+  "working_tree_modified": true,
+  "compiler_sha256": "284856906d996a32f8c9209f6215c75458d844355e039617a82e51756b6db7c6",
+  "frontend_sha256": "6cb49745f348c8af30a24fc8cc08700666b12e5f1b44b7a65eb2309a1087d980",
+  "sources": {
+    "tools/frontend.cpp": "436c188bc7c73f9db78f5673afc440de878f004db6f2e5835d5449187644924b",
+    "tools/CMakeLists.txt": "55c635b2f7127ca185acef21d7c19b031869552eac77189fbb5dae27c469411c",
+    "python/hecate/hecate/expr.py": "2e45ebe6aa5631687c1ec7a84ae8096b4d5ac1f9262f9465b298dbf09d97f142",
+    "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "3c611acebd8fba06cf53c22a64408bbcc419430275b820667ce6f8fb40abb8c8",
+    "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "1afd105cf3085fb77322872e2f2b7b547d21aea7aba55442dba582101d9cb3c3",
+    "lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp": "1173c359f830d936eb1b60d2574d16442c1777bb72df7a7d04cd97831a118047",
+    "tools/optimizer.cpp": "6485604435fe1f946fcd3b21bb28fcd78f791dd7519baf7f9c92eb638b96ad43",
+    "test/runtime-plan/check-frontend-bytecode.py": "578db645dc752a6b84a706ad35ad2bee001565f8193e9f5142c1b6b2bf768fe5",
+    "test/runtime-plan/check-frontend-locations.py": "d78e1e75bdffd5bc803fb3c03cb86b74feaf0fd241b0971331686eddde605893",
+    "test/runtime-plan/check-greedy.py": "12929d2ca15c61846eb38e06724064577b4896c7e96b11fc853c11d644bd1f02"
+  },
+  "dsl_trace_sha256": "19f4f62712ead8b5fdbc59e427187a5e7a085e3a7479488ffaf1d65947512ee3",
+  "python_adapter": "Native NumPy C API unchanged; private server Python adapter removes unused Torch import/conversion and uses bytecode plus direct source-frame lookup.",
+  "compiler_strategy": "depth-dp",
+  "frontend_format": "lossless MLIR bytecode; all constants retained",
+  "full_scope": "2-token prefill, 24 decoder blocks, final RMSNorm, full 151936 vocabulary LM head, all 96 KV outputs",
+  "ctest_passed": 5,
+  "encrypted_runtime_executed": false
+}

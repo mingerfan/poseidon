@@ -36,5 +36,16 @@ void gen_nodes(const vector<int> &deg, double dev, int &totdeg, int k, int scnum
 
 vector<complex<double>> ApproximateCos(int k, int degree, double dev, int scnum);
 
+/**
+ * Build exactly degree+1 Chebyshev coefficients for the phase-shifted base
+ * cosine consumed by the existing double-angle EvalMod recurrence.
+ *
+ * Unlike ApproximateCos(), degree is the final polynomial degree rather than
+ * an internal interpolation budget. This is a fixed-degree interpolation
+ * helper for controlled experiments; it is not a minimax/Remez solver.
+ */
+vector<complex<double>> ApproximateCosFixedDegree(
+    int k, int degree, int scnum);
+
 }  // namespace util
 }  // namespace poseidon

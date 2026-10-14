@@ -1,0 +1,64 @@
+"""Component refusal/state controls; scripted backend, no FHE or API."""
+import copy,json,tempfile,unittest
+from pathlib import Path
+from application_component import Application
+from task_source_reference import TaskSourceReference
+from test_task_output_adapter import OutputBackend
+from test_application_component import Provider
+from test_model_output_contract import model
+from model_output_contract import OutputError
+class SourceTaskTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.backend=OutputBackend();self.app=Application(Path(self.temp.name)/"tasks",self.backend)
+        self.reference=TaskSourceReference(self.app)
+        self.output=Path(self.temp.name)/"evaluation"
+    def ready(self,level="numerical"):
+        task=self.app.submit(model(),validation_level=level)
+        result=self.app.run(task,Provider())
+        self.assertEqual(result["status"],"succeeded")
+        return task,result
+    def call(self,task,result=None,**kwargs):
+        return self.reference.reference(task,[dict(x=[.1,.2])],self.output,
+            expected_package_binding=kwargs.pop("binding",result["package"]["binding"] if result else "a"*64),
+            input_dtypes={"x":"float64"},**kwargs)
+    def test_explicit_trust_is_required(self):
+        task,result=self.ready()
+        out=self.call(task,result)
+        self.assertEqual(out["status"],"unsupported")
+        self.assertEqual(out["failure"]["code"],"source_reference_trust_required")
+        self.assertEqual(self.app.result(task),result);self.assertFalse(self.output.exists())
+    def test_json_model_does_not_invent_an_original_forward(self):
+        task,result=self.ready()
+        out=self.call(task,result,trust_local_code=True)
+        self.assertEqual(out["status"],"unsupported")
+        self.assertEqual(out["failure"]["code"],"source_reference_missing_source")
+        self.assertFalse(out["source_reference_evaluated"]);self.assertFalse(self.output.exists())
+    def test_pending_task_is_not_run(self):
+        task=self.app.submit(model());state=self.app.status(task)
+        out=self.call(task,trust_local_code=True)
+        self.assertEqual(out["status"],"pending");self.assertEqual(self.app.status(task),state)
+        self.assertFalse(self.output.exists())
+    def test_cancelled_task_remains_cancelled(self):
+        task=self.app.submit(model());self.app.cancel(task)
+        out=self.call(task,trust_local_code=True)
+        self.assertEqual(out["status"],"cancelled");self.assertEqual(self.app.status(task)["status"],"cancelled")
+        self.assertFalse(self.output.exists())
+    def test_wrong_package_binding_stops_before_source_access(self):
+        task,result=self.ready()
+        out=self.call(task,result,binding="f"*64,trust_local_code=True)
+        self.assertEqual(out["status"],"service_error")
+        self.assertEqual(out["failure"]["code"],"source_reference_binding_changed")
+        self.assertEqual(self.app.result(task),result);self.assertFalse(self.output.exists())
+    def test_compile_grade_and_normal_task_are_unchanged(self):
+        task,result=self.ready("compiled")
+        out=self.call(task,result,trust_local_code=True)
+        self.assertEqual(out["status"],"unsupported")
+        self.assertEqual(self.app.result(task),result)
+        self.assertEqual(result["acceptance"]["level"],"compiled")
+        self.assertEqual(self.backend.execute_calls,0)
+    def test_uses_existing_application_and_task_id_contract(self):
+        with self.assertRaises(OutputError):TaskSourceReference(object())
+        with self.assertRaises(OutputError):self.call("../private")
+        self.assertFalse(self.output.exists())
+if __name__=="__main__":unittest.main()

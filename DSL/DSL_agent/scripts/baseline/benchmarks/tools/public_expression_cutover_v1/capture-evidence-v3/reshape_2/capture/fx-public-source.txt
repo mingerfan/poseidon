@@ -1,0 +1,6 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %public : [#users=1] = get_attr[target=public]
+    %view : [#users=1] = call_method[target=view](args = (%public, 1, 2, 3), kwargs = {})
+    %truediv : [#users=1] = call_function[target=operator.truediv](args = (%x, %view), kwargs = {})
+    return truediv

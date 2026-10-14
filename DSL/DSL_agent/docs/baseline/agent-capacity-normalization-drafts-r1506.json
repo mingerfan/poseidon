@@ -1,0 +1,187 @@
+{
+  "format": "poseidon-capacity-normalization-draft-phase-v1",
+  "timestamp_utc": "2026-10-12T22:31:59Z",
+  "production_active": false,
+  "active_source_freeze": "71115c663d1963d56c7ecaa95b0ca37cc7c01f05ee90abe8bc6cc47828e7bad0",
+  "sdk": "faaf716d3a517ce594a93a5e030565f71af7e5d63263d61e78836f339e18d4df",
+  "owner": {
+    "pid": 834348,
+    "start": 21430129
+  },
+  "draft": {
+    "coordinate_tests_passed": 13,
+    "container_tests_passed": 22,
+    "complete_capture_guard_tests_passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "provider_calls": 0,
+    "compiler_calls": 0,
+    "encrypted_calls": 0
+  },
+  "view_analysis_binding": "ca366fedc4e28c7bd02f39e6404f37c1622c55981dd071214dcd9b52fd2e246c",
+  "full_capture_analysis_binding": "25da86f461542b60c77514fe4124d088f980bc97a6d6767debc45f5fe30c931a",
+  "tools": {
+    "scripts/baseline/benchmarks/tools/generic_view_normalization_v1/normalize.py": "50f87f132b22c61c867d26d534391fed544177b7ccd38b2e006025cb2bc05ba2",
+    "scripts/baseline/benchmarks/tools/generic_view_normalization_v1/test_static_views.py": "aab5e79be6df4e9e8bce9341bc8dfe8726ff48ef2f5a3c7f7ec2242d8eda7a49",
+    "scripts/baseline/benchmarks/tools/generic_view_normalization_v1/scope-analysis.json": "fe4ee6bdc15c78f0a7801ccdf02133bae64b4da489502a7981ec4fb761f83dd2",
+    "scripts/baseline/benchmarks/tools/generic_provenance_dag_v1/codec.py": "1c81b0fa35288031aca9067627cd0ec33fdf1e9e1afbfa87f5bd179042fde3de",
+    "scripts/baseline/benchmarks/tools/generic_provenance_dag_v1/test_codec.py": "38774b2bbebd4b048dd770e80f940e577c1571862a4625829f9029c28d800924",
+    "scripts/baseline/benchmarks/tools/generic_provenance_dag_v1/full_capture.py": "948bf8a58b174d4d80ef04649fc798417a98a2c795253036479a558fdf4f5c3a",
+    "scripts/baseline/benchmarks/tools/generic_provenance_dag_v1/test_full_capture.py": "51b35f4d8c9a518bb17a3a6c88475c2984027eed92cc49075e1c5b4450e2d3c7",
+    "scripts/baseline/benchmarks/tools/generic_provenance_dag_v1/full-capture-analysis.json": "36ea2126148781d8d834982156c28164b4eebe1cfada2f9eba72849243d9b49d"
+  },
+  "live_progress": {
+    "terminal": false,
+    "cases": [
+      {
+        "case": "rank_axis_8",
+        "status": "service_error",
+        "phase": "complete",
+        "generations": 1,
+        "http_attempts": 1,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "rank_linear_8",
+        "status": "service_error",
+        "phase": "complete",
+        "generations": 2,
+        "http_attempts": 2,
+        "compiled": 1,
+        "encrypted": 0
+      },
+      {
+        "case": "rank_permute_8",
+        "status": "succeeded",
+        "phase": "complete",
+        "generations": 1,
+        "http_attempts": 1,
+        "compiled": 1,
+        "encrypted": 1
+      },
+      {
+        "case": "rank_axis_16",
+        "status": "service_error",
+        "phase": "complete",
+        "generations": 1,
+        "http_attempts": 1,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "rank_linear_16",
+        "status": "budget_exhausted",
+        "phase": "complete",
+        "generations": 4,
+        "http_attempts": 4,
+        "compiled": 3,
+        "encrypted": 2
+      },
+      {
+        "case": "rank_permute_16",
+        "status": "succeeded",
+        "phase": "complete",
+        "generations": 3,
+        "http_attempts": 3,
+        "compiled": 2,
+        "encrypted": 2
+      },
+      {
+        "case": "rank_axis_32",
+        "status": "running",
+        "phase": "generating",
+        "generations": 3,
+        "http_attempts": 3,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "rank_linear_32",
+        "status": "not_run",
+        "phase": null,
+        "generations": null,
+        "http_attempts": null,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "rank_permute_32",
+        "status": "not_run",
+        "phase": null,
+        "generations": null,
+        "http_attempts": null,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "wide_square_reduce",
+        "status": "not_run",
+        "phase": null,
+        "generations": null,
+        "http_attempts": null,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "wide_concat_reduce",
+        "status": "not_run",
+        "phase": null,
+        "generations": null,
+        "http_attempts": null,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "wide_tail_linear",
+        "status": "not_run",
+        "phase": null,
+        "generations": null,
+        "http_attempts": null,
+        "compiled": 0,
+        "encrypted": 0
+      },
+      {
+        "case": "weights_linear_10k",
+        "status": "not_run",
+        "phase": null,
+        "generations": null,
+        "http_attempts": null,
+        "compiled": 0,
+        "encrypted": 0
+      }
+    ],
+    "passed": [
+      "rank_permute_8",
+      "rank_permute_16"
+    ],
+    "failed": [
+      "rank_axis_8",
+      "rank_linear_8",
+      "rank_axis_16",
+      "rank_linear_16"
+    ],
+    "unfinished": 7,
+    "generations": 15,
+    "http_attempts": 15,
+    "calls_resolved": false,
+    "compiler_confirmed_from_validation": 7,
+    "encrypted_confirmed_from_validation": 5,
+    "independently_recomputed_numeric_after_terminal": false
+  },
+  "next_steps": [
+    "Resolve current batch and audit mixed terminal results and ledgers.",
+    "Select an explicit versioned normalization policy; preserve unmodified source and pre-normalization graph.",
+    "Compare complete original and normalized models using independent mathematics and trusted PyTorch.",
+    "Validate complete provenance against existing trusted source, NPY and capture checkers.",
+    "Keep current wire and production working limits; if bounded expansion is necessary, obtain approval before activation.",
+    "Freeze a new identity and exercise affected source intake, Poseidon CPU, package reuse and real Agent cases."
+  ],
+  "backend_changes": [],
+  "network_changes": [],
+  "dependency_changes": [],
+  "parameter_changes": [],
+  "git_actions": [],
+  "original_evidence_rewritten": false,
+  "binding": "d1b1e53574dc4226deededd5bb4e0faee20488ce2abdb46ba3496787d800030c"
+}

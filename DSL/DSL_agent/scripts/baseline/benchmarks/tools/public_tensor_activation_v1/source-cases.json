@@ -1,0 +1,44 @@
+[
+  {
+    "case": "bool_multiply",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/bool_multiply/manifest.json",
+    "original_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/bool_multiply/manifest.json",
+    "original_format": "poseidon-trusted-pytorch-v21",
+    "source_and_weights_unchanged": true
+  },
+  {
+    "case": "mask_index_residual",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/mask_index_residual/manifest.json",
+    "original_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/mask_index_residual/manifest.json",
+    "original_format": "poseidon-trusted-pytorch-v21",
+    "source_and_weights_unchanged": true
+  },
+  {
+    "case": "method_channel_mask",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/method_channel_mask/manifest.json",
+    "original_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_source_v3/fixtures/method_channel_mask/manifest.json",
+    "original_format": "poseidon-trusted-pytorch-v21",
+    "source_and_weights_unchanged": true
+  },
+  {
+    "case": "float32_batch_norm",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/float32_batch_norm/manifest.json",
+    "original_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/float32_batch_norm/manifest.json",
+    "original_format": "poseidon-trusted-pytorch-v21",
+    "source_and_weights_unchanged": true
+  },
+  {
+    "case": "divided_gelu_linear",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/divided_gelu_linear/manifest.json",
+    "original_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/divided_gelu_linear/manifest.json",
+    "original_format": "poseidon-trusted-pytorch-v21",
+    "source_and_weights_unchanged": true
+  },
+  {
+    "case": "float32_vector",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_activation_v1/fixtures/float32_vector/manifest.json",
+    "original_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/float32_vector/manifest.json",
+    "original_format": "poseidon-trusted-pytorch-v21",
+    "source_and_weights_unchanged": true
+  }
+]

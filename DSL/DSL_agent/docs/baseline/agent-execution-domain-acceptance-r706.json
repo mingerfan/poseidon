@@ -1,0 +1,411 @@
+{
+  "active_processes": [],
+  "agent_generated": false,
+  "application_accuracy_certified": false,
+  "backend_changes": 0,
+  "branch": "lhy-agent-dsl",
+  "budget": {
+    "artifact_bytes": 37906026,
+    "artifact_directories": [
+      "poseidon-program-execution-3twguvh1",
+      "poseidon-package-replay-w0mi7ouh",
+      "agent-domain-offline-r700",
+      "candidate-replay-vm7bqpst",
+      "agent-capacity-split-offline-r705",
+      "poseidon-program-execution-iodg3jgu",
+      "poseidon-program-execution-1jf8g3uu",
+      "candidate-replay-qofo2d89",
+      "candidate-replay-9r3pk7_0",
+      "poseidon-program-execution-ab2fqvyb",
+      "agent-domain-offline-r703",
+      "poseidon-program-execution-38uzq6af",
+      "candidate-replay-krfrpaoh",
+      "agent-domain-preflight-r696",
+      "poseidon-package-replay-o8ej0rdo",
+      "candidate-replay-8oi003pl",
+      "candidate-replay-3_uwsbg7",
+      "agent-domain-offline-r698",
+      "agent-domain-offline-r697",
+      "poseidon-package-replay-x_5dqjs1",
+      "candidate-replay-4iyuasxi",
+      "candidate-replay-e8fh4kak"
+    ],
+    "cumulative_seconds": 2945.9665806318776,
+    "free_bytes": 49830088704,
+    "global_bytes": 24013840627,
+    "max_seconds": 3600
+  },
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "current_binding": "6365448a2d0d7df15d6441030335effecd49f6dc301f8cbdf4a2d6ebc825fca2",
+  "date": "2026-10-04",
+  "developer_setup_failures": {
+    "diagnostic_unused_import": "ImportError: validate_source; no compiler or encrypted execution",
+    "split_driver_import": "ModuleNotFoundError: check_pytorch_sources; corrected tools search path before batch started"
+  },
+  "documentation_checks": {
+    "diff_whitespace": "passed",
+    "relative_links": "passed",
+    "source_boundary": "passed"
+  },
+  "documentation_files": [
+    "scripts/README.md",
+    "docs/README.md",
+    "docs/baseline/application-agent-component-v1.md",
+    "docs/baseline/operator-decomposition-and-python.md",
+    "docs/baseline/mac-migration-handoff.md",
+    "docs/baseline/agent-execution-domain-acceptance-r706.md"
+  ],
+  "downloads": 0,
+  "format": "poseidon-agent-execution-domain-acceptance-v1",
+  "frozen_agent_files": 636,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_failures_retained": [
+    {
+      "layer": "delivery_test",
+      "reason": "domain result field missing; corrected and tested",
+      "revision": "r697"
+    },
+    {
+      "layer": "rule_lowering",
+      "reason": "multi-result split unsupported; Agent-owned lowering extended",
+      "revision": "r698"
+    },
+    {
+      "layer": "compiler",
+      "reason": "Earth cumulative scale 750 > 720",
+      "revision": "r700"
+    },
+    {
+      "layer": "compiler",
+      "reason": "Earth cumulative scale 735 > 720; still failed",
+      "revision": "r703"
+    },
+    {
+      "layer": "test_expectation",
+      "reason": "contiguous large split became a valid view; retained positive and added inner-axis budget refusal",
+      "revision": "r702"
+    }
+  ],
+  "http_attempts": 0,
+  "installs": 0,
+  "local_changes": 453,
+  "local_changes_after_documents": 455,
+  "paid_calls": 0,
+  "parameter_changes": 0,
+  "pending": [
+    "Attention capacity baseline compiler rejection under fixed w45",
+    "Static shape public loops",
+    "Direct scalar source outputs",
+    "Per-node/module approximation selectors",
+    "Public weight constant deduplication",
+    "Application/developer coupling and dependency-cache scope",
+    "New functionality live Agent evaluation under new approved scope",
+    "Native CPU bootstrap",
+    "CUDA hardware acceptance",
+    "x86 native execution",
+    "Clean installation",
+    "Full ResNet20"
+  ],
+  "protected": {
+    "protected_backend": {
+      "changed": [],
+      "checked": 465
+    },
+    "references": {
+      "changed": [],
+      "checked": 5
+    }
+  },
+  "prs": 0,
+  "pushes": 0,
+  "records": {
+    "agent-domain-offline-r698": {
+      "binding": "cc21e006afe37a220721bcab9fee7000f8ce57696f9d4286821616547daea217",
+      "plan_sha256": "81bb396efc21ecf382bde0f3a37ce9186dd123cbd8e629d10e8a95b139957ede",
+      "report_sha256": "98826d0c592d45f9af7ca3d2e970974b4388e84ad26688b7fc1bc476510e6f08",
+      "seconds": 1483.735666145978,
+      "status": "stopped"
+    },
+    "agent-domain-offline-r703": {
+      "binding": "6365448a2d0d7df15d6441030335effecd49f6dc301f8cbdf4a2d6ebc825fca2",
+      "plan_sha256": "c65888c3c44185cb3cbda485515b7948226dc54bb3ca4d099e7470c1774b024e",
+      "report_sha256": "2a42417e33e45769d2ef91ed79ef7a0ce7b5a562bec5fd19b64a7ccfcb7d8395",
+      "seconds": 189.37090254301438,
+      "status": "complete"
+    }
+  },
+  "reference_changes": 0,
+  "rows": [
+    {
+      "cache": "reused",
+      "candidate_sha256": "49698517fef7636d4b0d8f59045239fd46294f52305c71771aa4b3fec1a1c895",
+      "evidence_binding": "cc21e006afe37a220721bcab9fee7000f8ce57696f9d4286821616547daea217",
+      "id": "layer_0",
+      "model_sha256": "3e540d57b4649db8cff1c58f6438fc0508e43defe27d1388ce84d7266b583544",
+      "new_inputs": 3,
+      "package_binding": "fb88119459609b931681c5e192c3481946ab19ea5d2b6198d2d856154fe38170",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.284346573677161e-07,
+        "numerically_validated": true
+      },
+      "rejection": {
+        "code": "approximation_domain_rejected",
+        "context": {
+          "declared_domains": {
+            "approximation": [
+              1,
+              5
+            ]
+          },
+          "sample_index": 0
+        },
+        "format": "poseidon-execution-input-diagnostic-v1",
+        "layer": "input",
+        "location": {
+          "id": "fx_layer",
+          "index": 0,
+          "kind": "model_node",
+          "operator": "layer_norm"
+        },
+        "retry_policy": "supply_inputs_in_declared_domain"
+      },
+      "reload": "passed",
+      "repetitions": 2,
+      "request_id": "ed9c2469e866ff329768a661ef8972c5877468cffd8c49db4d9509944b52b8e9",
+      "status": "passed"
+    },
+    {
+      "cache": "reused",
+      "candidate_sha256": "886c5a651f4e2c0eec0d4fe211604e2705168780fa4c531cc9554fce41c074d6",
+      "evidence_binding": "cc21e006afe37a220721bcab9fee7000f8ce57696f9d4286821616547daea217",
+      "id": "group_1",
+      "model_sha256": "83e65d62faefe270268a1aa77d14ecb5ae5a5aafc9a5f43bd357620a2e9b4937",
+      "new_inputs": 3,
+      "package_binding": "81e8a1bbfc0f0b74c13284fece7393f686f64085d3aedfd1c36b49705f09d8c6",
+      "qualification": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 32,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.7885188219324277e-08,
+        "numerically_validated": true
+      },
+      "rejection": {
+        "code": "approximation_domain_rejected",
+        "context": {
+          "declared_domains": {
+            "approximation": [
+              1,
+              5
+            ]
+          },
+          "sample_index": 0
+        },
+        "format": "poseidon-execution-input-diagnostic-v1",
+        "layer": "input",
+        "location": {
+          "id": "fx_layer",
+          "index": 0,
+          "kind": "model_node",
+          "operator": "group_norm"
+        },
+        "retry_policy": "supply_inputs_in_declared_domain"
+      },
+      "reload": "passed",
+      "repetitions": 2,
+      "request_id": "212ac831f7c9b75c9745f00f751c21bd89f1dfe59fcc545db30ffffb811ace74",
+      "status": "passed"
+    },
+    {
+      "candidate_sha256": "161ac8ac10fdab83695b65bb1e06876d2f22496499b813d4ed21217d78386b33",
+      "compiled": false,
+      "compiler_diagnosis": {
+        "backend": "poseidon_cpu",
+        "code": "earth_mul_constraints_rejected",
+        "compiler_accumulated_scale": 735,
+        "compiler_budget": 720,
+        "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+        "compiler_rescaling_factor": 60,
+        "compiler_upper_consumed_level": 12,
+        "evidence_kind": "interpretation_of_untrusted_compiler_log",
+        "failed_conditions": [
+          "compiler_accumulated_scale_budget"
+        ],
+        "format": "fixed-earth-mul-diagnosis-v2",
+        "level_semantics": "Earth consumed levels; not RuntimePlan/Poseidon zero-based data-modulus index",
+        "operands": [
+          {
+            "consumed_level": 11,
+            "kind": "ci",
+            "scale": 75,
+            "tensor_length": 1
+          },
+          {
+            "consumed_level": 11,
+            "kind": "pl",
+            "scale": 45,
+            "tensor_length": 1
+          }
+        ],
+        "proves_all_equivalent_programs_impossible": false,
+        "runtime_capacity_checked": false,
+        "seal_capacity_checked": false
+      },
+      "encrypted_execution": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8oi003pl",
+      "evidence_binding": "6365448a2d0d7df15d6441030335effecd49f6dc301f8cbdf4a2d6ebc825fca2",
+      "failure": {
+        "code": "backend_rejected",
+        "context": {},
+        "format": "poseidon-diagnostic-v2",
+        "layer": "compiler",
+        "location": null,
+        "owner": "candidate_or_backend",
+        "reason_code": "compiler_rejected",
+        "repeat_key_available": false,
+        "retry_policy": "diagnose"
+      },
+      "id": "attention_decode",
+      "model_sha256": "77f26d8aee78d644544242d7e3e712fc0f5c5ef780d8e1b06740d7ba6c18be60",
+      "request_id": "f93f5c6e82faf177e05c66ffd6a3367347531332cae4172167fcb18f4a7b2c6d",
+      "static_checked": true,
+      "status": "failed",
+      "traced": true
+    }
+  ],
+  "source": "rule_baseline",
+  "split": {
+    "binding": "751771a55711f456d3985db54390ee280463575bbdf21589d056dfd8477c7e5d",
+    "failed": 0,
+    "metrics": {
+      "compared_values": 108,
+      "input_groups": 12,
+      "maximum_absolute_error": 3.189088633170911e-07,
+      "package_files_checked": 54
+    },
+    "not_run": 0,
+    "passed": 3,
+    "plan_sha256": "a128df80c103d23e6f49b082144075ec841d8f2e0e19b17fad834f3c4fc9c232",
+    "planned": 3,
+    "report_sha256": "59b64d84570fa50851ef1410e060b43a5a4f8f721dbab0ad4e9731eb7c08df53",
+    "rows": [
+      {
+        "acceptance": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 36,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 3.189088633170911e-07,
+          "numerically_validated": true
+        },
+        "axis": 0,
+        "candidate_sha256": "8fab9aa8d442787d324c4e8d3cd7621327da39f6a11ec7e64276911955202063",
+        "id": "split_0",
+        "package_binding": "c00c48d763f84c4c5db2e1219c7f9ad906362a99b7674c7adee0190712b62a94",
+        "request_id": "39923a28d6473e2b27220cdfb25f9a4d4a857a397f926955782a5818a85fe853",
+        "shape": [
+          9
+        ],
+        "status": "passed"
+      },
+      {
+        "acceptance": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 24,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 1.6557415882800797e-08,
+          "numerically_validated": true
+        },
+        "axis": 1,
+        "candidate_sha256": "ae2d1cfacb3d598d35a7dfaaac239aaec40dbae7c83632a96852848afdc4d9b2",
+        "id": "split_1",
+        "package_binding": "9283d39dc2a630270b721fa7d0c066029c413152647c29656a9aae63fe23d920",
+        "request_id": "67beb30e5402e96a0d759306be45431973f1380f9f78736bdcbb2a89ca412d50",
+        "shape": [
+          2,
+          3
+        ],
+        "status": "passed"
+      },
+      {
+        "acceptance": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 48,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 1.361245543785028e-07,
+          "numerically_validated": true
+        },
+        "axis": -2,
+        "candidate_sha256": "dde16f8179d8c2a659af5d7aa4b283f6afbf3992d4f68497a784ab21c94e3fd0",
+        "id": "split_2",
+        "package_binding": "21997f24ce37ffbd8e3dfe344e836f34bff29ceac1bef03088a6a874de1532f1",
+        "request_id": "ab89c8ee949a3c84931336579c2b8074ecd98b83d91f9d3dc5bd81443efb7f34",
+        "shape": [
+          1,
+          2,
+          3,
+          2
+        ],
+        "status": "passed"
+      }
+    ],
+    "seconds": 600.5789619510178
+  },
+  "statistics": {
+    "cache_reuses": 2,
+    "compared_values": 140,
+    "domain_app_rejections": 2,
+    "domain_cli_rejections": 2,
+    "encrypted_input_groups": 28,
+    "failed": 1,
+    "maximum_absolute_error": 2.2433151759129792e-07,
+    "not_run": 0,
+    "package_files_checked": 53,
+    "passed": 2,
+    "planned": 3
+  },
+  "status": "partial",
+  "totals": {
+    "compared_values": 248,
+    "compiled_and_numerical_models": 5,
+    "compiler_failures": 1,
+    "encrypted_input_groups": 40,
+    "maximum_absolute_error": 3.189088633170911e-07,
+    "package_files_checked": 107
+  },
+  "unit": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 172,
+    "prior_failed_expectations": [
+      "test_capacity_split_lowering.CapacitySplitTests.test_large_fallback_retains_existing_source_and_work_limits"
+    ],
+    "reports": [
+      "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-domain-preflight-r696/tests-split-r702.json",
+      "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-domain-preflight-r696/tests-split-boundary-r703.json"
+    ],
+    "skipped": 0
+  }
+}

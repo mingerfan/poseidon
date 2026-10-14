@@ -1,0 +1,5 @@
+"""Explicit v36 source envelope; inherits v35 logical tensor computation."""
+SOURCE_FORMAT="poseidon-trusted-pytorch-v36"
+PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v36"
+REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v36"
+POLICY="poseidon-ordered-provenance-transport-v1"

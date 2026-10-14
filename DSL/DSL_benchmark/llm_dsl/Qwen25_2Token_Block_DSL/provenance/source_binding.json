@@ -1,0 +1,14 @@
+{
+  "source_sha256": {
+    "ops.py": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+    "qwen_layers.py": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+    "qwen_model.py": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+    "qwen_nonlinear.py": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760"
+  },
+  "historical_evidence_sha256": "b3f76271ece97084e9d504c8c34ae903ad7dbc0060d612877b24afc2915d9620",
+  "historical_remote_job": "/home/gy/qwen-ckks/experiments/fullsize_1789998599039624068",
+  "frozen_profiles_from": "server final fixture summary",
+  "reference_target_from": "local same-source/seed diagnostic original-function reference",
+  "new_handoff_glue": "trace_qwen_block.py and qwen2token/block.py; validate with NumPy, GPU pending",
+  "original_tools": "archival reference only; original relative paths are not a runnable handoff layout"
+}

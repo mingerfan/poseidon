@@ -1,0 +1,26 @@
+{
+  "api_calls": 0,
+  "binding": "bfe5ee2133feff3fab57a4f6c56ba47e957c8977fc02022df0d39dd30b8bc1be",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-shallow-packing-controls-v1",
+  "log_sha256": "003c9e849c2cf82dcf61eddbfeaf2384099faea043ebc1302844da4ed0fd518a",
+  "modules": [
+    "test_capacity_broadcast_runs",
+    "test_capacity_layout_costs",
+    "test_capacity_shallow_packing",
+    "test_capacity_static_index_packing",
+    "test_capacity_binding_storage",
+    "test_unified_mixed_layout",
+    "test_poseidon_sandbox_policy",
+    "test_poseidon_backend_identity"
+  ],
+  "passed": 91,
+  "sdk": "9d39e4cc05ed74b60800bfcdc68243a936fb3650d310718fe28e72febea980c2",
+  "seconds": 17.457905054092407,
+  "skipped": 0,
+  "source_unchanged": true,
+  "tests": 91
+}

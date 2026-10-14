@@ -1,0 +1,12 @@
+{
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "before": {
+    "operator_arithmetic_graph.py": "5b7ff6be62709d8c33a39d4b5cac0a01c77a9b07cd50d9bcd703af6297dd2066",
+    "application_capabilities.py": "4da2311b2f815f6a01fd1915721b54ca3b29d8cd1e5d7c8300dd98fb28772ed7"
+  },
+  "preceding_live_batch": "r1392 closed; r1393 retained",
+  "active_backend_processes": [],
+  "backend_changes": false,
+  "api_calls": 0
+}

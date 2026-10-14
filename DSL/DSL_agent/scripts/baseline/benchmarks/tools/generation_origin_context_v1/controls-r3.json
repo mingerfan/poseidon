@@ -1,0 +1,1 @@
+{"api_calls":0,"binding":"aa3ec406551fdc212877c28b85c575f96a56035e6da97800c19bbd460622e1bf","compiler_calls":0,"encrypted_calls":0,"errors":0,"failed":0,"format":"poseidon-generation-origin-controls-v1","passed":62,"run":62,"skipped":0,"tested_modules":["test_generation_model_origin","test_model_decomposition","test_application_model_source"]}

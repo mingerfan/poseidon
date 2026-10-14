@@ -1,0 +1,17 @@
+{
+  "format": "poseidon-structured-input-live-ready-v1",
+  "proposal_binding": "300f7f4d74f414858a5c837b83a16f052f16a53c40609eade8c739cfa0098f93",
+  "proposal_sha256": "8de8d5c1e7ef3ac9569fa0465802dbc1f09ff787b24053bd660b7e71fb6f9da8",
+  "runner_manifest_sha256": "d6e629bb890676947082f9f1e39f02e9e1486a00235085e8813c779d1ca70461",
+  "unpaid_tests": {
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "log_sha256": "6855e29832ee137ecd02255cfde56580ae9f5dc9c7cce555a2353fe2f1c2a801"
+  },
+  "readonly_plan_sha256": "981477d9e91f1ecac0880c74789a2b411f70748fcbd0cfeec5fbfd75b4c6e394",
+  "live_authorization_present": false,
+  "paid_calls": 0,
+  "http_attempts": 0,
+  "binding": "5844735d2071861fc2fab841ff8bd13d566ac62c21a08f8f181239598083f165"
+}

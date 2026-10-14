@@ -1,0 +1,14 @@
+{
+  "status": "service_error",
+  "failure": {
+    "code": "source_reference_context_rejected",
+    "layer": "source_reference",
+    "retry_policy": "never_automatic"
+  },
+  "new_assessments": 1,
+  "source_forward_calls": 0,
+  "encrypted_calls": 0,
+  "reason": "Missing parent for fresh native-source part directory",
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-dataset-io-acceptance-v1",
+  "state_binding": "35324e596f4c6f61104de8e575081e46d8227b5d46e5ec3bf5bb7c16b56f9030"
+}

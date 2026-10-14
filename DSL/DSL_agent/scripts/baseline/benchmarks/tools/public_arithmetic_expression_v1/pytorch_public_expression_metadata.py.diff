@@ -1,0 +1,68 @@
+--- /home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_arithmetic_expression_v1/before/pytorch_public_expression_metadata.py	2026-10-11 06:20:15.883347086 +0000
++++ /home/lhohy/Code/Poseidon/scripts/baseline/pytorch_public_expression_metadata.py	2026-10-11 06:22:00.397067734 +0000
+@@ -2,7 +2,8 @@
+ from dataclasses import dataclass
+ from benchmark_graph import require
+ from model_resources import resolve
+-from pytorch_public_value_ops import POLICY,checked_policy,checked_array,materialize,plan
++from pytorch_public_value_ops import POLICY,ARITHMETIC_POLICY,checked_policy,checked_array,materialize,plan
++from pytorch_public_arithmetic_values import METHODS as ARITHMETIC_METHODS,plan as arithmetic_plan
+ from pytorch_public_expression_flow import _arrays,state_identity,METHODS
+ 
+ @dataclass(frozen=True)
+@@ -27,6 +28,12 @@
+                         torch.unsqueeze:"torch.unsqueeze",torch.squeeze:"torch.squeeze",
+                         torch.flatten:"torch.flatten",operator.getitem:"operator.getitem",
+                         builtins.getattr:"builtins.getattr"}
++        self.arithmetic_functions={operator.add:"operator.add",operator.sub:"operator.sub",
++            operator.mul:"operator.mul",operator.truediv:"operator.truediv",operator.neg:"operator.neg",
++            torch.add:"torch.add",torch.sub:"torch.sub",torch.subtract:"torch.subtract",
++            torch.mul:"torch.mul",torch.multiply:"torch.multiply",torch.div:"torch.div",
++            torch.divide:"torch.divide",torch.true_divide:"torch.true_divide",
++            torch.neg:"torch.neg",torch.negative:"torch.negative"}
+     def references(self,value):
+         from torch.fx import Proxy
+         if isinstance(value,Proxy):return [value]
+@@ -57,19 +64,32 @@
+         if stable is not None and first_public:
+             require(all(p.node in self.values for p in references),"public_expression_dynamic_metadata")
+         if not references or any(p.node not in self.values for p in references):return None
+-        require(stable is not None,"public_expression_operation_not_registered")
+-        bound_args=list(args);bound_kwargs=dict(kwargs)
+-        if kind=="call_function"and stable.startswith("torch.")and not bound_args:
+-            require("input"in bound_kwargs,"public_expression_input")
+-            bound_args=[bound_kwargs.pop("input")]
+-        require(bound_args and isinstance(bound_args[0],Proxy)and
+-                all(p.node is bound_args[0].node for p in references),"public_expression_dynamic_metadata")
+-        parent=self.values[bound_args[0].node]
+-        logical,physical,proof=plan(parent.logical,kind,stable,self.static(tuple(bound_args)),
+-                                    self.static(bound_kwargs),resource_profile=self.profile,policy=self.policy)
++        arithmetic_target=(target if kind=="call_method"and type(target)is str and target in ARITHMETIC_METHODS
++            else self.arithmetic_functions.get(target)if kind=="call_function"else None)
++        arithmetic=self.policy==ARITHMETIC_POLICY and arithmetic_target is not None
++        require(stable is not None or arithmetic,"public_expression_operation_not_registered")
++        if arithmetic:
++            def public_operand(value):
++                return (value.node.name,self.values[value.node].logical)if isinstance(value,Proxy)and value.node in self.values else None
++            logical,physical,proof=arithmetic_plan(kind,arithmetic_target,args,kwargs,
++                resolve_value=public_operand,resource_profile=self.profile)
++        else:
++            bound_args=list(args);bound_kwargs=dict(kwargs)
++            if kind=="call_function"and stable.startswith("torch.")and not bound_args:
++                require("input"in bound_kwargs,"public_expression_input")
++                bound_args=[bound_kwargs.pop("input")]
++            require(bound_args and isinstance(bound_args[0],Proxy)and
++                    all(p.node is bound_args[0].node for p in references),"public_expression_dynamic_metadata")
++            parent=self.values[bound_args[0].node]
++            logical,physical,proof=plan(parent.logical,kind,stable,self.static(tuple(bound_args)),
++                                        self.static(bound_kwargs),resource_profile=self.profile,policy=self.policy)
+         require(self.derived_count<self.limits.constants and
+                 self.derived_elements+physical.size<=self.limits.total_constant_elements,
+                 "public_expression_derived_capacity")
++        if self.policy==ARITHMETIC_POLICY:
++            require(len(self.original)+self.derived_count<self.limits.constants and
++                sum(v.size for v in self.original.values())+self.derived_elements+physical.size<=self.limits.total_constant_elements,
++                "public_expression_total_state_capacity")
+         return Selection(logical,physical,proof)
+     def commit(self,node,selected):
+         if selected is None:return

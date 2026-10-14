@@ -1,0 +1,78 @@
+--- a/scripts/baseline/candidate_check_diagnostic.py
++++ b/scripts/baseline/candidate_check_diagnostic.py
+@@ -8,6 +8,8 @@
+     "native_signature_mismatch": "c/p signature mismatch",
+     "expanded_work_budget": "Unified candidate work budget",
+     "native_reserved_binding": "Native loops cannot overwrite reserved bindings",
++    "native_control_flow_not_enabled": "Unsupported native loop syntax",
++    "native_public_syntax": "Unsupported native loop syntax",
+ }
+ 
+ class CandidateCheckError(ValueError):
+--- a/scripts/baseline/application_diagnostics.py
++++ b/scripts/baseline/application_diagnostics.py
+@@ -20,6 +20,8 @@
+     "entry_missing": ("static_check", "Define exactly one top-level function named golden."),
+     "source_size": ("static_check", "Candidate source exceeds the fixed source byte limit."),
+     "contract_rejected": ("static_check", "Candidate violates the fixed DSL contract."),
++    "native_control_flow_not_enabled": ("static_check", "This request does not enable Python conditional statements, conditional expressions, comparisons or while loops in DSL construction. Use the admitted static range and Expr forms. Ciphertext and plaintext Expr values are not public Python booleans."),
++    "native_public_syntax": ("static_check", "The syntax at this location is outside the supplied native construction contract. Use its admitted static range loops, calls, containers and Expr operations; comprehensions and additional Python operators require an explicitly supported contract."),
+     "native_reserved_binding": ("static_check", "Keep public constants, declared function/helper names, zero_ct and hc/np/object/range bindings unchanged. Assign each intermediate expression to a fresh local name."),
+     "rotation_step_not_allowed": ("static_check", "The rotation literal at this location is outside the permitted request rotation set. Use only admitted steps; compose several admitted rotations when required."),
+     "undefined_value": ("static_check", "The name at this source location is not bound. Use function parameters, earlier local assignments or approved public_constants names; model.constants names are not implicit DSL globals."),
+@@ -94,7 +96,9 @@
+     context = {} if context is None else context
+     static_fields = {"native_signature_mismatch": {"expected", "actual"},
+                      "expanded_work_budget": {"observed", "limit"},
+-                     "native_reserved_binding": set()}
++                     "native_reserved_binding": set(),
++                     "native_control_flow_not_enabled": set(),
++                     "native_public_syntax": set()}
+     if reason in static_fields and (
+             type(context) is not dict or set(context) != static_fields[reason] or
+             type(location) is not dict or location.get("kind") != "source"):
+--- a/scripts/baseline/native_public_loops.py
++++ b/scripts/baseline/native_public_loops.py
+@@ -7,6 +7,7 @@
+ import ast
+ import copy
+ import hashlib
++from collections import deque
+ from function_construction import INTEGER_OPS
+ from hecate_contract import IDENTIFIER,rotation_literal
+ from seal_artifact_gate import require
+@@ -17,6 +18,16 @@
+ MAX_RANGE=128
+ MAX_NODES=4096
+ MAX_INTEGER=1048576
++
++def _located_nodes(tree):
++    """Keep ast.walk order and a location for operator nodes without positions."""
++    pending = deque([(tree, None)])
++    while pending:
++        node, nearest = pending.popleft()
++        if type(getattr(node, "lineno", None)) is int and type(getattr(node, "col_offset", None)) is int:
++            nearest = node
++        yield node, nearest
++        pending.extend((child, nearest) for child in ast.iter_child_nodes(node))
+ 
+ def expand(tree, constants, *, scalar_augmented=False, upstream_helpers=False, upstream_request=None):
+     require(type(upstream_helpers) is bool,'Invalid upstream capability flag')
+@@ -35,8 +46,15 @@
+              ast.keyword,ast.BinOp,ast.UnaryOp,ast.Add,ast.Sub,ast.Mult,ast.FloorDiv,
+              ast.Mod,ast.USub,ast.UAdd}
+     if scalar_augmented: allowed.add(ast.AugAssign)
+-    for node in ast.walk(tree):
+-        require(type(node) in allowed,'Unsupported native loop syntax')
++    for node, location in _located_nodes(tree):
++        if type(node) not in allowed:
++            # A manually supplied AST without source positions retains the old rejection.
++            if location is None:
++                require(False, 'Unsupported native loop syntax')
++            reason = ("native_control_flow_not_enabled"
++                      if type(node) in (ast.If, ast.IfExp, ast.While, ast.Compare, ast.BoolOp)
++                      else "native_public_syntax")
++            raise CandidateCheckError(reason, location)
+         if type(node) is ast.Call:
+             if type(node.func) is ast.Name:
+                 require(node.func.id in declared|trusted|{'range'} and not node.keywords,

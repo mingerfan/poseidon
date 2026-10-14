@@ -1,0 +1,125 @@
+--- frozen-original
++++ continuation
+@@ -13,6 +13,7 @@
+ from hecate_python_env import ROOT, WORK, VENV, enter_nix
+ TOOL=Path(__file__).resolve().parent
+ PROPOSAL=ROOT/"docs/baseline/agent-public-arithmetic-offline-proposal-r1385.json"
++CONTINUATION=ROOT/"docs/baseline/agent-public-arithmetic-offline-continuation-r1385.json"
+ AUTH=ROOT/"docs/baseline/agent-public-arithmetic-offline-authorization-r1385.json"
+ 
+ def read(path):return json.loads(Path(path).read_text())
+@@ -44,6 +45,18 @@
+         if "historical_task_metadata" in case:
+             require(sha(case["historical_task_metadata"])==case["historical_task_metadata_sha256"],
+                     "control_historical_metadata_changed")
++    continuation=read(CONTINUATION)
++    require(continuation["binding"]==digest({k:v for k,v in continuation.items() if k!="binding"}),"control_continuation_binding")
++    require(continuation["proposal_binding"]==plan["binding"]
++            and sha(continuation["parent_report"])==continuation["parent_report_sha256"]
++            and sha(Path(__file__))==continuation["driver_sha256"],"control_continuation_identity")
++    prior=read(continuation["parent_report"])
++    require(prior["binding"]==continuation["parent_report_binding"]
++            and prior["status"]=="failed" and prior["compiler_reserved"]==prior["encrypted_reserved"]==1
++            and len(prior["rows"])==1 and prior["rows"][0]["case"]==plan["cases"][0]["case"]
++            and prior["rows"][0]["application_result"]["status"]=="succeeded",
++            "control_resume_exact_first_qualification")
++    require(prior["sdk_identity"]==actual["manifest_sha256"],"control_resume_same_sdk")
+     return actual
+ 
+ def inside():
+@@ -59,18 +72,25 @@
+     authorization=read(AUTH)
+     require(authorization["proposal_binding"]==plan["binding"]
+             and authorization.get("approved") is True,"control_human_authorization")
+-    output=Path(plan["output"])
++    continuation=read(CONTINUATION)
++    prior=read(continuation["parent_report"])
++    output=Path(continuation["output"])
+     require(not output.exists(),"control_preserve_existing_output")
+     output.mkdir(mode=0o700)
+-    started=time.monotonic();global_before=measure(WORK/"results")
++    started=time.monotonic()
++    elapsed_before=time.time()-continuation["original_launch_epoch"]
++    require(elapsed_before>=0,"control_launch_clock")
++    global_before=continuation["conservative_global_before_bytes"]
+     scope=plan["scope"];rows=[]
+     report=dict(format="poseidon-closed-public-arithmetic-offline-report-v1",
+         proposal_binding=plan["binding"],sdk_identity=plan["sdk_identity"],
+         rows=rows,provider_calls=0,http_attempts=0,agent_generated=False,
+-        candidate_origin=plan["candidate_origin"],compiler_reserved=0,encrypted_reserved=0,
++        candidate_origin=plan["candidate_origin"],compiler_reserved=prior["compiler_reserved"],encrypted_reserved=prior["encrypted_reserved"],
++        continuation_binding=continuation["binding"],parent_report_binding=prior["binding"],
++        prior_calls_reused=True,
+         compiler_confirmed=0,encrypted_confirmed=0,status="running")
+     def save():
+-        report["seconds"]=time.monotonic()-started
++        report["seconds"]=elapsed_before+time.monotonic()-started
+         report["passed"]=sum(r["status"]=="passed" for r in rows)
+         report["failed"]=sum(r["status"]=="failed" for r in rows)
+         report["not_run"]=len(plan["cases"])-len(rows)
+@@ -80,7 +100,7 @@
+     def boundary(*_):
+         # Baseline physical/logical measurements include all fresh qualification
+         # and package execution directories outside the host task store.
+-        if time.monotonic()-started>=scope["wall_seconds"]:raise TimeoutError("control_wall_budget")
++        if elapsed_before+time.monotonic()-started>=scope["wall_seconds"]:raise TimeoutError("control_wall_budget")
+         current=measure(WORK/"results")
+         require(current-global_before<=scope["new_bytes"],"control_new_artifact_budget")
+         require(current<=scope["global_bytes"],"control_global_artifact_budget")
+@@ -94,17 +114,22 @@
+                                 encrypted_execution=False,package_reloaded=False)
+             rows.append(row);save()
+             folder=output/case["case"];folder.mkdir()
+-            app=application(WorkerContext.capture(folder/"tasks"))
+             source=dict(format="poseidon-model-source-request-v1",kind="trusted_pytorch",
+                         manifest=case["source_manifest"],trust_local_code=True)
+-            task=app.submit_source(source,resource_profile=case["resource_profile"],
+-                options=plan["options"],admission_policy="structured-v1",
+-                operational_limits=plan["request_operational_limits"],
+-                limits=plan["generation_limits"])
++            if case["case"]==plan["cases"][0]["case"]:
++                app=application(WorkerContext.capture(Path(plan["output"])/case["case"]/"tasks"))
++                task=prior["rows"][0]["task_id"]
++                row["qualification_reused_without_recompile"]=True
++            else:
++                app=application(WorkerContext.capture(folder/"tasks"))
++                task=app.submit_source(source,resource_profile=case["resource_profile"],
++                    options=plan["options"],admission_policy="structured-v1",
++                    operational_limits=plan["request_operational_limits"],
++                    limits=plan["generation_limits"])
++                status=app.prepare_source(task)
++                require(status["status"]=="queued" and status["intake"]["reference_verified"] is True,
++                        "control_source_admission")
+             row["task_id"]=task
+-            status=app.prepare_source(task)
+-            require(status["status"]=="queued" and status["intake"]["reference_verified"] is True,
+-                    "control_source_admission")
+             meta=app._checked_task_metadata(task);request=meta["request"]
+             expected=read(case["request"])
+             require(request==expected and request["request_id"]==case["request_id"],"control_unchanged_request")
+@@ -118,8 +143,12 @@
+                 def generate(self,actual,feedback=None):
+                     require(actual==expected and feedback==[],"control_one_frozen_candidate")
+                     return json.dumps(dict(schema=1,request_id=actual["request_id"],hecate_source=candidate_source))
+-            report["compiler_reserved"]+=1;report["encrypted_reserved"]+=1;save();boundary()
+-            qualified=app.run(task,FrozenRule());write(folder/"qualification.json",qualified)
++            if case["case"]==plan["cases"][0]["case"]:
++                qualified=prior["rows"][0]["application_result"]
++            else:
++                report["compiler_reserved"]+=1;report["encrypted_reserved"]+=1;save();boundary()
++                qualified=app.run(task,FrozenRule())
++            write(folder/"qualification.json",qualified)
+             if (app._dir(task)/"validation-0.json").exists():
+                 observed=app._load(app._dir(task)/"validation-0.json")
+                 row["observed_stages"]=observed.get("observed_stages",{})
+@@ -145,7 +174,9 @@
+                     and qualified["operational_usage"]["hard_filesystem_quota"] is False,"control_qualification_monitor")
+             program=app._dir(task)/"program";manifest=check_bundle(program)
+             require(manifest["validation"]["level"]=="numerical"
+-                    and manifest.get("model_source")=="included","control_source_bundle")
++                    and manifest.get("model_provenance")=="included"
++                    and manifest.get("origin",{}).get("model_source",{}).get("file")=="artifacts/model-source.json"
++                    and "artifacts/model-source.json" in manifest["files"],"control_source_bundle")
+             frozen={name:sha(program/name) for name in manifest["files"]}
+             row.update(package_reloaded=True,package=str(program),package_binding=manifest["binding"])
+             row["reuse"]={}

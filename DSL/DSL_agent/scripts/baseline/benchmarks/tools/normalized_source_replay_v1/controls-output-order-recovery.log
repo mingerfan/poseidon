@@ -1,0 +1,11 @@
+test_canonical_json_preserves_declared_tensor_order (test_saved_outputs.OutputOrder) ... ok
+test_duplicate_declaration_is_rejected (test_saved_outputs.OutputOrder) ... ok
+test_extra_key_is_rejected (test_saved_outputs.OutputOrder) ... ok
+test_missing_key_is_rejected (test_saved_outputs.OutputOrder) ... ok
+test_named_list_none_tree_is_restored (test_saved_outputs.OutputOrder) ... ok
+test_wrong_key_is_rejected (test_saved_outputs.OutputOrder) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.000s
+
+OK

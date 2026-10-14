@@ -1,0 +1,257 @@
+{
+  "spec_format_version": 2,
+  "spec_id": "poseidon-agent-cpu-v1",
+  "version": 1,
+  "status": "imported",
+  "target_id": "poseidon-ckks-cpu",
+  "rescale_mode": "eager",
+  "noise_unit": "dacapo-legacy-estimator",
+  "provenance": {
+    "kind": "agent-profile-adaptation",
+    "repository": "https://github.com/mingerfan/poseidon",
+    "revision": "7588e48093631eaf8385506e3db058e7ca3cfe7e+runtime-plan-r232",
+    "path": "scripts/baseline/poseidon-compiler-profile-v1.json",
+    "source_sha256": "sha256:acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037"
+  },
+  "context": {
+    "context_id": "poseidon-agent-n15-q13-p1-tc128-v1",
+    "poly_degree": 32768,
+    "rns_moduli_log2": [
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60
+    ],
+    "max_modulus_log2": 60,
+    "default_scale_log2": 45
+  },
+  "levels": {
+    "lower_bound": 0,
+    "upper_bound": 12
+  },
+  "operators": {
+    "add_cc": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        85,
+        204,
+        250,
+        339,
+        421,
+        531,
+        615,
+        723,
+        827,
+        1021,
+        1093,
+        1251
+      ],
+      "noise_by_level": null
+    },
+    "add_cp": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        50,
+        98,
+        153,
+        209,
+        269,
+        335,
+        409,
+        472,
+        561,
+        638,
+        709,
+        800
+      ],
+      "noise_by_level": null
+    },
+    "sub_cc": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "sub_cp": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "mul_cc": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        4363,
+        9172,
+        15658,
+        23517,
+        33974,
+        43235,
+        56611,
+        68785,
+        85137,
+        101308,
+        119907,
+        137953
+      ],
+      "noise_by_level": [
+        0,
+        912420980.422666,
+        1626939697.436701,
+        2841237898.166427,
+        5216678287.872595,
+        4656426194.539523,
+        6498252289.502644,
+        4454104710.442873,
+        4809761973.565252,
+        4954123191.02746,
+        7101044074.407553,
+        8247373646.850708,
+        6977441673.353531
+      ]
+    },
+    "mul_cp": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        211,
+        421,
+        642,
+        853,
+        1120,
+        1260,
+        1509,
+        1726,
+        2031,
+        2270,
+        2518,
+        2918
+      ],
+      "noise_by_level": null
+    },
+    "negate": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "rotate": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        3828,
+        7966,
+        13584,
+        20933,
+        28832,
+        40137,
+        51080,
+        64134,
+        78216,
+        94012,
+        110653,
+        131245
+      ],
+      "noise_by_level": [
+        0,
+        1243767652.125024,
+        3053517076.303607,
+        4202768329.642825,
+        5839542263.660615,
+        6982415435.517867,
+        9066416705.357107,
+        10703926878.339247,
+        13029700700.035797,
+        14563337546.892847,
+        15257531833.98208,
+        17555923920.67855,
+        18115173373.49996
+      ]
+    },
+    "rescale": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1926,
+        3119,
+        4525,
+        5706,
+        6901,
+        8198,
+        9570,
+        10781,
+        12339,
+        13339,
+        14488,
+        17418
+      ],
+      "noise_by_level": [
+        0,
+        29041012.461168,
+        28989829.196367,
+        30513059.012577,
+        29249886.451856,
+        29939898.437991,
+        30011344.885873,
+        29425438.800167,
+        29278080.626328,
+        29791926.468794,
+        29763853.483675,
+        29026441.533765,
+        29574204.309626
+      ],
+      "max_levels_per_op": 1
+    },
+    "mod_switch": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        48,
+        86,
+        156,
+        208,
+        286,
+        315,
+        391,
+        457,
+        536,
+        622,
+        717,
+        895
+      ],
+      "noise_by_level": null
+    },
+    "relinearize": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "noise_by_level": null
+    },
+    "boot": {
+      "supported": false
+    }
+  },
+  "boot_profiles": []
+}

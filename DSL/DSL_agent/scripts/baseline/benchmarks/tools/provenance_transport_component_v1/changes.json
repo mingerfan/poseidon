@@ -1,0 +1,92 @@
+[
+  {
+    "file": "application_capabilities.py",
+    "before_sha256": "a1125dbb969c9bd1dc9a8adc5923d2771a0ea9c2ea1f51db596a0089d6251f68",
+    "proposed_sha256": "f049f26e02c17988e2d711e041886fded90e134f8cc6f917a3c9205cb03bbbb7"
+  },
+  {
+    "file": "application_component.py",
+    "before_sha256": "42e99f2074ea092d1d9640106d010b9d6ff315adc9cc459638b01c25ecb9b420",
+    "proposed_sha256": "fc7a2fadc0444691cf9ce313712c9e62231209094ab96d847ff917ce6d095d5f"
+  },
+  {
+    "file": "application_model_source.py",
+    "before_sha256": "098aa5aad22cc4797169866c0f73f4903624edf65850181fe831c32f014b66a4",
+    "proposed_sha256": "ae026bdffebe63c47332afcb6fb41ec95d12fdb5fa4581d259190ff760318b43"
+  },
+  {
+    "file": "candidate_bundle.py",
+    "before_sha256": "ebe40f8817f97dcb22d1e6b85332a225af8ae2ab0d8826cf1f4a89c4575e289b",
+    "proposed_sha256": "d6d34a1a456a5d5a768f762afc5c686d2b21645083402f56769e8de793fabd09"
+  },
+  {
+    "file": "model_source_provenance.py",
+    "before_sha256": "0e60ca19343bada2f7ca46ba39863a5f207aef91853c6b9e0219a48fd51f489e",
+    "proposed_sha256": "b4f3c23102ecb24fa3eb9ae76e517c0e0bbce65d94351eb07f535d3d81fdadda"
+  },
+  {
+    "file": "program_execution.py",
+    "before_sha256": "4d8acaab4a8b367166bfdb0f730a3c3b4d5f8eb4b1064b6084763d73f86173a8",
+    "proposed_sha256": "ac0b8bc4d90f9cdcde8b848c76052c5963b39e3376354355f9f48b0014cc17f1"
+  },
+  {
+    "file": "provenance_json_transport.py",
+    "before_sha256": null,
+    "proposed_sha256": "6b4f9585537f18e9d1302709fadc7af99016cee4e228d3708b690ee7bf0072ca"
+  },
+  {
+    "file": "pytorch_logical_view_source.py",
+    "before_sha256": "a3ff1a3ffda27bc481b216e92d1834e17dde429447b7462fe3fad8b122b01e3a",
+    "proposed_sha256": "d21162df3afd48836eb03d1ff9644d639512d94c59fbe33c1e086e8fc0975619"
+  },
+  {
+    "file": "pytorch_model_intake.py",
+    "before_sha256": "9e94694deb0a5b0df85d10401a5364f26b34225b59b6df4b76aedb8e8bbcff42",
+    "proposed_sha256": "e7d2f39c485e2c88c8a165cabd55f0b838f909220311722b074077281ee60a72"
+  },
+  {
+    "file": "pytorch_ordered_contract.py",
+    "before_sha256": "a0b57bc886913ddbfa957b590d925d8ea530673edc5150d4dbf2f269b2fac913",
+    "proposed_sha256": "c7d1bb7e7b0a9411c6a16b22539a10c482448c97b4915f9da33f8b083188b196"
+  },
+  {
+    "file": "pytorch_ordered_intake.py",
+    "before_sha256": "fcac185cd0683ea0463e61ed586534ece2a0dd540330c7c8ce52b1d6801aab50",
+    "proposed_sha256": "4a398ec8dc7637c006d758f21e88bf6ed6afdd298447141d9e185987c30fead0"
+  },
+  {
+    "file": "pytorch_provenance_transport_source.py",
+    "before_sha256": null,
+    "proposed_sha256": "c76280c33148a81c4c2d8069b0e22278ff54b195f5486e8481b86b22715ab699"
+  },
+  {
+    "file": "pytorch_public_expression_capture.py",
+    "before_sha256": "dcbf1c26a5277a0d5d90d6f747905000d60ada7f5737c77ada521d9f129cac52",
+    "proposed_sha256": "7b0e994bb967e02b58c6c7133fd28a5390a5ce6ac77dff942e4ea294e19ea216"
+  },
+  {
+    "file": "pytorch_source_package_policy.py",
+    "before_sha256": "4b99f0b09782a60c03ee08dd2eb8aca9e4601b3d1c0094d7532d0d166027862c",
+    "proposed_sha256": "6b3dca01cca85fb7e6b76a3902ddf4ff3ae429f849f000a2b7f7fe4083d82afb"
+  },
+  {
+    "file": "pytorch_spatial_policy.py",
+    "before_sha256": "4a1c637ee08eba4afcd6013c75aac30479666d8a57e4f63795394ddfd09a4cb0",
+    "proposed_sha256": "50cfb105b2cd055640acdec9236cb692a004f08edc93b9cf755e80f66277132c"
+  },
+  {
+    "file": "pytorch_static_broadcast.py",
+    "before_sha256": "212e0acd7c39f9b655e986aa24ce5d29a22dc16eb5cb28d742b04a5013e26756",
+    "proposed_sha256": "ef528d99d047e05ec313c6f51b2df96f64187e69c66771707b19f56f46a0dfb7"
+  },
+  {
+    "file": "pytorch_static_tensor_transforms.py",
+    "before_sha256": "71376ccd1bb1d20810ef072e07230b023cf81da2768129a9a022645d45e439c5",
+    "proposed_sha256": "1cb809a7bef73208b8fa9abfe265a8980c0ac3f80036d0c643d6bd4ebb1e3143"
+  },
+  {
+    "file": "test_provenance_json_transport.py",
+    "before_sha256": null,
+    "proposed_sha256": "f53f4e75b14417dad0d8f5e0fc2aed4414fae86f8a0e70f6e9386b5ff2a63ef0"
+  }
+]

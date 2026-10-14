@@ -1,0 +1,15 @@
+{
+  "binding": "a727709fe02ebdb54659d06b7803e930ac0819793b207e281f5e746ed74334e9",
+  "format": "poseidon-structured-input-live-runner-v1",
+  "proposal_binding": "300f7f4d74f414858a5c837b83a16f052f16a53c40609eade8c739cfa0098f93",
+  "proposal_sha256": "8de8d5c1e7ef3ac9569fa0465802dbc1f09ff787b24053bd660b7e71fb6f9da8",
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/structured_input_live_v1/freeze.py": "31ded7c07ba1c549c96311ebe438b698e2a9726c2197ea83d6a11e979dede902",
+    "scripts/baseline/benchmarks/tools/structured_input_live_v1/package_checks.py": "214422189debd8f8a0f92fc37da5c5aa99634d551aadc7f6b35420edd2ef32fa",
+    "scripts/baseline/benchmarks/tools/structured_input_live_v1/run.py": "b9372ef1f263ab42a43d00c87b894dc38294dd9adab2c9fb5e32eb125d85eb64",
+    "scripts/baseline/benchmarks/tools/structured_input_live_v1/scope.py": "0bda9358db42926b21676b856b273d576b0ea66696c16ef6f073857552fc4359",
+    "scripts/baseline/benchmarks/tools/structured_input_live_v1/test_package_calls.py": "524cdb1dda798ee876165cc12cfc5f80253362a0920a49f751d7b322ed20a677",
+    "scripts/baseline/benchmarks/tools/structured_input_live_v1/test_run.py": "e9333ba0520e5a809f5bc8034ad68d4fbc76aa78eb2688a5734427ab5287a6b9",
+    "scripts/baseline/benchmarks/tools/structured_input_live_v1/test_scope.py": "0d19fa2ab137cd95857b5e2593da46b9bedc59c7dfe22013e882b0ba7ce22668"
+  }
+}

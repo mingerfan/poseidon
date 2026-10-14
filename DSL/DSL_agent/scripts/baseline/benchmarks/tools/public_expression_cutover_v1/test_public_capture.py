@@ -1,0 +1,147 @@
+"""Authenticated whole-source capture, pure reload and retained contracts."""
+import copy,hashlib,json,base64,unittest
+from pathlib import Path
+import numpy as np
+from benchmark_graph import digest
+from fixture_model import build
+from pytorch_public_expression_flow import _arrays
+from pytorch_public_expression_capture import (
+    SOURCE_FORMAT,prepare,check_record,derived_arrays,wrapped_metadata,make_reference)
+from pytorch_weight_package import export_state,binding
+from pytorch_ordered_contract import capture_binding,check_reference,package_version,reference_version
+HERE=Path(__file__).resolve().parent
+OUT=HERE/"capture-evidence-v3";PROFILE="general-tensors-v1"
+COUNTERS=dict(models=0,reference_groups=0,compared_values=0,package_provenance_checks=0,pure_reloads=0)
+ROWS=[]
+
+def original_shape(module):
+    shape=list(module.public.shape);mode=module.operation;context=module.context
+    if mode=="reshape":return list(((2,3),(3,2),(1,2,3))[context])
+    if mode=="permute":return list(reversed(shape))
+    if mode=="slice":return shape[:-1]+[(shape[-1]+1)//2]
+    return shape
+
+def capture_case(name,operation="reshape",context=0,**options):
+    directory=OUT/name;directory.mkdir()
+    module=build(operation,context,**options)
+    model_root=directory/"model";model_root.mkdir()
+    weights=export_state(module,model_root,resource_profile=PROFILE)
+    raw=(HERE/"fixture_model.py").read_bytes();(model_root/"model.py").write_bytes(raw)
+    spec=dict(format=SOURCE_FORMAT,files={"model.py":hashlib.sha256(raw).hexdigest()},
+              entry="model.build",factory=dict(args=[operation,context],kwargs=options),
+              inputs=[dict(name="x",shape=original_shape(module))],
+              outputs=["y","saved"]if options.get("named")else["y"],
+              approximations=dict(format="poseidon-pytorch-approximations-v1",defaults={},modules=[],nodes=[]),dtype_policy="convert-float64-v1"if options.get("float32")else"strict-float64-v1",
+              weights=weights)
+    (model_root/"manifest.json").write_text(json.dumps(spec,allow_nan=False,sort_keys=True))
+    arrays=_arrays(module);loaded=binding(arrays,weights)
+    capture_root=directory/"capture";capture_root.mkdir()
+    record=prepare(module,spec,capture_root,expected_weight_binding=loaded,resource_profile=PROFILE)
+    check_record(record,spec,arrays,expected_record_binding=record["binding"],resource_profile=PROFILE)
+    final=derived_arrays(record,spec,arrays,resource_profile=PROFILE)
+    metadata=wrapped_metadata(record)
+    high=record["high_graph"]
+    lowered,bound=capture_binding(high,spec,resource_profile=PROFILE,capture_metadata=metadata,
+                                 expected_weight_binding=loaded,expected_weight_arrays=arrays)
+    report=make_reference(record,spec,metadata,resource_profile=PROFILE,expected_weight_arrays=arrays)
+    check_reference(report,high,lowered,spec,resource_profile=PROFILE,expected_weight_binding=loaded,
+                    expected_weight_arrays=arrays)
+    original={"format":package_version(spec),"manifest":spec,"files":{"model.py":raw.decode()},
+              "weight_files":{item["file"]:base64.b64encode((model_root/item["file"]).read_bytes()).decode()
+                              for item in weights.values()}}
+    provenance=dict(original=high,decomposition=bound,reference_report=report,trusted_pytorch=original)
+    from candidate_bundle import check_provenance
+    check_provenance(provenance,lowered)
+    for key,data in(("capture-record",record),("provenance",provenance),("model",lowered)):
+        (directory/(key+".json")).write_text(json.dumps(data,allow_nan=False,sort_keys=True))
+    COUNTERS["models"]+=1;COUNTERS["reference_groups"]+=record["original_reference"]["groups"]
+    COUNTERS["compared_values"]+=record["original_reference"]["compared_values"]
+    COUNTERS["package_provenance_checks"]+=1;COUNTERS["pure_reloads"]+=1
+    ROWS.append(dict(case=name,record_binding=record["binding"],model_binding=digest(lowered),
+                     reference_groups=record["original_reference"]["groups"],
+                     compared_values=record["original_reference"]["compared_values"],
+                     manifest_path=str(model_root/"manifest.json")))
+    return record,spec,arrays,final,provenance
+
+class Controls(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        OUT.mkdir()
+        cls.records={}
+        for op in("reshape","permute","slice","bool_cast","identity"):
+            for context in range(3):
+                name=f"{op}_{context}";cls.records[name]=capture_case(name,op,context)
+        cls.records["float32"]=capture_case("float32",float32=True)
+        cls.records["named"]=capture_case("named",named=True)
+        cls.records["unused"]=capture_case("unused",unused=True)
+    def failure(self,fn,code):
+        with self.assertRaisesRegex(ValueError,code):fn()
+    def test_eighteen_independent_reference_and_provenance_checks(self):
+        self.assertEqual(COUNTERS["models"],18)
+        self.assertEqual(COUNTERS["reference_groups"],288)
+        self.assertEqual(COUNTERS["package_provenance_checks"],18)
+        self.assertEqual(COUNTERS["pure_reloads"],18)
+    def test_version_and_retained_versions(self):
+        from pytorch_model_intake import ordered,SOURCE_FORMATS
+        self.assertTrue(ordered({"format":SOURCE_FORMAT}))
+        self.assertIn(SOURCE_FORMAT,SOURCE_FORMATS)
+        for v in(21,22,23):
+            spec={"format":f"poseidon-trusted-pytorch-v{v}"}
+            self.assertEqual(package_version(spec),f"poseidon-trusted-pytorch-provenance-v{v}")
+            self.assertEqual(reference_version(spec),f"poseidon-trusted-pytorch-reference-v{v}")
+    def test_raw_float32_bound_separately(self):
+        record,spec,arrays,_,_=self.records["float32"]
+        self.assertEqual(record["original_public_state"]["public"]["dtype"],"<f4")
+        self.assertEqual(record["normalized_source_state"]["public"]["dtype"],"<f8")
+        self.assertEqual(record["float_normalization"]["converted_names"],["public"])
+    def test_named_tree_and_none_preserved(self):
+        record,_,_,_,provenance=self.records["named"]
+        tree=provenance["reference_report"]["capture_metadata"]["output_structure"]
+        self.assertEqual([i["key"]for i in tree["items"]],["primary","saved"])
+        self.assertEqual(tree["items"][1]["value"]["items"][1],dict(kind="none"))
+    def test_unused_original_public_state_bound(self):
+        record,_,_,_,_=self.records["unused"]
+        self.assertIn("unused",record["original_public_state"])
+        self.assertIn("unused",record["unreferenced_state_names"])
+        self.assertNotIn("unused",record["internal_manifest"]["weights"])
+    def test_out_of_range_public_weights_remain_rejected(self):
+        import torch
+        module=build("reshape",0,unused=True)
+        module.unused.copy_(torch.arange(6000,dtype=torch.float64))
+        root=OUT/"invalid-weight-bound";root.mkdir()
+        self.failure(lambda:export_state(module,root,resource_profile=PROFILE),"State floating values")
+    def test_record_binding_tamper(self):
+        record,spec,arrays,_,_=self.records["reshape_0"];bad=copy.deepcopy(record)
+        bad["original_reference"]["groups"]=1
+        self.failure(lambda:check_record(bad,spec,arrays,expected_record_binding=record["binding"],
+                                        resource_profile=PROFILE),"external capture authority")
+    def test_rehashed_derived_weight_tamper_rejected(self):
+        record,spec,arrays,_,_=self.records["reshape_0"];bad=copy.deepcopy(record)
+        first=next(iter(bad["internal_manifest"]["weights"].values()));first["sha256"]="0"*64
+        bad["binding"]=digest({k:v for k,v in bad.items()if k!="binding"})
+        self.failure(lambda:check_record(bad,spec,arrays,expected_record_binding=bad["binding"],
+                                        resource_profile=PROFILE),"derived NPY declarations")
+    def test_actual_original_payload_change_rejected(self):
+        record,spec,arrays,_,_=self.records["reshape_0"];bad={k:v.copy()for k,v in arrays.items()}
+        bad["public"].reshape(-1)[0]=123
+        self.failure(lambda:check_record(record,spec,bad,expected_record_binding=record["binding"],
+                                        resource_profile=PROFILE),"Original expression state changed")
+    def test_missing_payload_rejected(self):
+        record,spec,arrays,_,_=self.records["reshape_0"]
+        self.failure(lambda:derived_arrays(record,spec,{},resource_profile=PROFILE),
+                     "Original expression public arrays required")
+    def test_no_provider_compiler_or_encrypted_success_claim(self):
+        for record,_,_,_,provenance in self.records.values():
+            self.assertEqual((record["provider_calls"],record["compiler_calls"],record["encrypted_calls"]),(0,0,0))
+            report=provenance["reference_report"]
+            self.assertFalse(report["encrypted_execution"]);self.assertFalse(report["agent_generated"])
+            self.assertFalse(report["runtime_layout_validated"]);self.assertEqual(report["paid_calls"],0)
+    def test_public_plan_rehash_cannot_change_math(self):
+        record,spec,arrays,_,_=self.records["reshape_0"];bad=copy.deepcopy(record)
+        flow=bad["public_expression_flow"];flow["entries"][0]["plan"]["attributes"]["shape"]=[3,2]
+        flow["binding"]=digest({k:v for k,v in flow.items()if k!="binding"})
+        bad["binding"]=digest({k:v for k,v in bad.items()if k!="binding"})
+        self.failure(lambda:check_record(bad,spec,arrays,expected_record_binding=bad["binding"],
+                                        resource_profile=PROFILE),"public_expression_record_changed")
+
+if __name__=="__main__":unittest.main()

@@ -1,0 +1,1 @@
+{"constants":{},"format":"poseidon-model-graph-v2","id":"capacity_pool2d_stream_0","inputs":[{"name":"x","shape":[1,2,17,17]}],"nodes":[{"attrs":{"count_include_pad":false,"kernel":[2,2],"padding":[0,0],"stride":[2,2]},"id":"pool","inputs":["x"],"op":"avg_pool2d","outputs":["p"]}],"outputs":[{"name":"result","value":"p"}],"resource_profile":"medium-v1"}

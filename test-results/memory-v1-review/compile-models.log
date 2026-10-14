@@ -1,0 +1,9 @@
+1gpu baseline peaks MiB [65.1875, 227.0625] reuse 0 release 0
+1gpu release peaks MiB [2.6875, 88.34375] reuse 0 release 618
+1gpu reuse peaks MiB [2.6875, 88.34375] reuse 2 release 616
+4gpu baseline peaks MiB [65.1875, 96.21875, 82.78125, 79.875, 82.8125] reuse 0 release 0
+4gpu release peaks MiB [2.6875, 16.0625, 14.3125, 13.65625, 18.15625] reuse 0 release 836
+4gpu reuse peaks MiB [2.6875, 16.0625, 14.3125, 13.65625, 18.15625] reuse 2 release 834
+2x2 baseline peaks MiB [65.1875, 96.21875, 82.78125, 0.0, 79.875, 82.8125] reuse 0 release 0
+2x2 release peaks MiB [2.6875, 16.0625, 14.3125, 0.0, 13.65625, 18.15625] reuse 0 release 836
+2x2 reuse peaks MiB [2.6875, 16.0625, 14.3125, 0.0, 13.65625, 18.15625] reuse 2 release 834

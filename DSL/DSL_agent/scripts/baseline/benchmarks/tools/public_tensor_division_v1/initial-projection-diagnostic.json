@@ -1,0 +1,56 @@
+{
+  "actual_length": 5,
+  "entries_match": true,
+  "error": "Public division complete graph projection",
+  "expected_length": 5,
+  "first_differences": [
+    {
+      "actual": {
+        "args": {
+          "items": [
+            {
+              "kind": "fx_value",
+              "name": "truediv"
+            }
+          ],
+          "kind": "tuple"
+        },
+        "kwargs": {
+          "items": [],
+          "kind": "dict"
+        },
+        "name": "output",
+        "op": "output",
+        "target": "output",
+        "tensor": null
+      },
+      "expected": {
+        "args": {
+          "items": [
+            {
+              "kind": "fx_value",
+              "name": "truediv"
+            }
+          ],
+          "kind": "tuple"
+        },
+        "kwargs": {
+          "items": [],
+          "kind": "dict"
+        },
+        "name": "output",
+        "op": "output",
+        "target": "output",
+        "tensor": {
+          "dtype": "float64",
+          "policy": "signature-static-ordered-alias-staging-v1",
+          "shape": [
+            2,
+            3
+          ]
+        }
+      },
+      "index": 4
+    }
+  ]
+}

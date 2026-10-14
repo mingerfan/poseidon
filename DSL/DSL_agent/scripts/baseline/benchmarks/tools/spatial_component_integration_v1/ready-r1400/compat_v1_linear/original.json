@@ -1,0 +1,53 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "compat_v1_linear",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {
+    "w": [
+      [
+        0.3,
+        -0.2,
+        0.1,
+        0.4
+      ],
+      [
+        -0.1,
+        0.2,
+        0.5,
+        -0.25
+      ]
+    ],
+    "b": [
+      0.01,
+      -0.03
+    ]
+  },
+  "nodes": [
+    {
+      "id": "linear",
+      "op": "linear",
+      "inputs": [
+        "x",
+        "w",
+        "b"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

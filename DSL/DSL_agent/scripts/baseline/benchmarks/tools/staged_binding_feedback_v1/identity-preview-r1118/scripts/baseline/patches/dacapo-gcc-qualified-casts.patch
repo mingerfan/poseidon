@@ -1,0 +1,29 @@
+--- a/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
++++ b/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
+@@ -17,5 +17,5 @@
+   values.emplace_back(0, nullptr);
+   edges.push_back(0);
+-  auto &&func = dyn_cast<mlir::func::FuncOp>(_op);
++  auto &&func = llvm::dyn_cast<mlir::func::FuncOp>(_op);
+   auto &&bb = func.getBody().getBlocks().front();
+   for (auto iter = bb.begin(); iter != bb.end(); ++iter) {
+@@ -51,3 +51,3 @@
+-    if (auto sop = dyn_cast<hecate::earth::HEScaleOpInterface>(op)) {
++    if (auto sop = llvm::dyn_cast<hecate::earth::HEScaleOpInterface>(op)) {
+       if (!sop.isCipher())
+         return;
+@@ -308,4 +308,4 @@
+   for (auto user : getValue().getUsers()) {
+-    if (auto sop = dyn_cast<hecate::earth::HEScaleOpInterface>(user)) {
++    if (auto sop = llvm::dyn_cast<hecate::earth::HEScaleOpInterface>(user)) {
+       auto useOpid = hecate::getIntegerAttr("opid", sop->getResult(0));
+       if (useOpid <= thresholdOpid) {
+--- a/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp
++++ b/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp
+@@ -273,5 +273,5 @@
+     if (auto &&res = kv.first.dyn_cast<mlir::OpResult>()) {
+       if (auto &&sop =
+-              dyn_cast<earth::HEScaleOpInterface>(res.getDefiningOp())) {
++              llvm::dyn_cast<earth::HEScaleOpInterface>(res.getDefiningOp())) {
+         if (sop.isNoisy()) {
+           noisyMap[kv.second] = true;

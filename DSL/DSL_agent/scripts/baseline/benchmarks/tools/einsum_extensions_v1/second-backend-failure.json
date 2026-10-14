@@ -1,0 +1,18 @@
+{
+  "already_passed_cases_not_repeated": true,
+  "cases": [
+    "diagonal_batch",
+    "diagonal_matrix_fusion",
+    "diagonal_vector",
+    "trace_batch",
+    "trace_scalar",
+    "trace_scalar_factor"
+  ],
+  "correction": "select existing capacity-public-tensors-v9 through the normal options",
+  "format": "poseidon-einsum-extension-routing-gap-v1",
+  "original_deadline_preserved": true,
+  "prior_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-einsum-extension-backend-v2/report.json",
+  "production_sources_unchanged": true,
+  "provider_calls": 0,
+  "reason": "default public packing v8 has no slice/permute static binding; existing index v9 is required"
+}

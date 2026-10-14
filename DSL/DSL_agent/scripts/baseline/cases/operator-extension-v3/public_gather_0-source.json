@@ -1,0 +1,39 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "public_gather_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "operation",
+      "op": "public_gather",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 0,
+        "indices": [
+          3,
+          0,
+          3
+        ]
+      },
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

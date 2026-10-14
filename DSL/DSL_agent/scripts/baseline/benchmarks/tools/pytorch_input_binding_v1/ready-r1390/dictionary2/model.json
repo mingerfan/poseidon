@@ -1,0 +1,193 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "id": "static_alias_source",
+  "inputs": [
+    {
+      "name": "y",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {
+    "public_7": [
+      [
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "reshape",
+      "inputs": [
+        "y"
+      ],
+      "attrs": {
+        "shape": [
+          4
+        ]
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "reshape",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "shape": [
+          4
+        ]
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "reshape",
+      "inputs": [
+        "generated_2"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "reshape",
+      "inputs": [
+        "generated_0"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "add",
+      "inputs": [
+        "generated_4",
+        "generated_6"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "id": "generated_11",
+      "op": "reshape",
+      "inputs": [
+        "generated_8"
+      ],
+      "attrs": {
+        "shape": [
+          4
+        ]
+      },
+      "outputs": [
+        "generated_10"
+      ]
+    },
+    {
+      "id": "generated_13",
+      "op": "reshape",
+      "inputs": [
+        "generated_10"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "outputs": [
+        "generated_12"
+      ]
+    },
+    {
+      "id": "generated_15",
+      "op": "multiply",
+      "inputs": [
+        "generated_12",
+        "public_7"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_14"
+      ]
+    },
+    {
+      "id": "generated_17",
+      "op": "reshape",
+      "inputs": [
+        "generated_14"
+      ],
+      "attrs": {
+        "shape": [
+          4
+        ]
+      },
+      "outputs": [
+        "generated_16"
+      ]
+    },
+    {
+      "id": "generated_19",
+      "op": "reshape",
+      "inputs": [
+        "generated_16"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "outputs": [
+        "generated_18"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "masked",
+      "value": "generated_18"
+    },
+    {
+      "name": "skip",
+      "value": "generated_4"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

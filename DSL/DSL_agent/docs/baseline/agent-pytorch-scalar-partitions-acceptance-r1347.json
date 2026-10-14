@@ -1,0 +1,118 @@
+{
+  "artifact_bytes": {
+    "all_results": 27976294131,
+    "new": 56308501
+  },
+  "binding": "10a879fcf4d67d5bb5b2595fdad74b05d96e794293c2d22417d514e412faf32f",
+  "commit": false,
+  "confirmed": {
+    "backend": "poseidon_cpu_ckks_runtime",
+    "backend_libraries_changed": false,
+    "branch": "lhy-agent-dsl",
+    "candidate_origin": "deterministic_rule_baseline",
+    "checkout": "/home/lhohy/Code/Poseidon",
+    "cli_v20_metadata_matches_fixtures": 8,
+    "compared_values": 160,
+    "compilations": 8,
+    "default_manifest_format": "poseidon-trusted-pytorch-v18",
+    "encrypted_calls": 16,
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "historical_request_files_preserved": 2,
+    "input_groups": 64,
+    "mathematical_reference_changed": false,
+    "maximum_absolute_error": 8.912422788664998e-08,
+    "new_agent_generation": false,
+    "offline_seconds": 563.7036468530023,
+    "package_reload_new_input_cases": 8,
+    "paid_api_calls": 0,
+    "parameters_changed": false,
+    "protected_sources_checked": 654,
+    "reuse_compiler_calls": 0,
+    "reuse_generator_calls": 0,
+    "sdk_identity": "26505d8c3650845db95f9bf19e21a99d4109984ea5b02a410bfc48c404953e71",
+    "source_captures": 8,
+    "source_contract": "poseidon-trusted-pytorch-v20",
+    "stage_sources": {
+      "compilation": 626,
+      "execution": 626,
+      "generation": 632,
+      "validation": 626
+    },
+    "tests": {
+      "compatibility": 186,
+      "errors": 0,
+      "failed": 0,
+      "metadata_cli": 59,
+      "new_semantic": 39,
+      "skipped": 0,
+      "total_distinct": 284
+    },
+    "tolerance": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "date": "2026-10-09T23:52:39.050731+00:00",
+  "downloads": 0,
+  "evidence": {
+    "audit": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/final-audit.json",
+    "audit_sha256": "2e9a9d5148763493afebc2736a4fa8f3405b26ad502003582e58c1d64691187a",
+    "backend_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-scalar-partition-v20-source-acceptance-v1/report.json",
+    "backend_report_binding": "6958c2a7aaa28fc962f6b1ff7c9c259087b276b85e9cb634667a83d4b9260f6c",
+    "backend_report_sha256": "34bccff8843627c3f1c3aab856b5b3e4620b21682b93d1a57d44ba90ad6c4ff1",
+    "cli_controls": "scripts/baseline/benchmarks/tools/source_manifest_v1/controls-v20-compatibility.json",
+    "cli_metadata": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1/cli-v20-metadata-check.json",
+    "controls": {
+      "compatibility": "f7c1ceaabd830fc67db19b7ca453872a3d739275984060608eef97fee66d894e",
+      "finalnew": "ba3e3925b9b679b28fe8055a11309d38347e3cd2caf2bba27fffab5d3109bb4f"
+    },
+    "plan_binding": "060ce9d6f35d663a8a78375e9b20bb400a256e10b8efba9cf1c995e79146dd4b"
+  },
+  "evidence_based_inference": [
+    "Rank-one unbind reaches the existing scalar alias and basic-index lowering.",
+    "Static subset, negative and repeated tuple ports already worked through eager static enumeration; they are compatibility checks.",
+    "Registered public view roles and identity scalar output nodes suffice without backend changes."
+  ],
+  "format": "poseidon-pytorch-scalar-partitions-acceptance-v1",
+  "historical_pending_paid_plan": {
+    "path": "docs/baseline/agent-einsum-live-proposal-r1341.json",
+    "sha256": "b70cf2d9d94fc6dc07c94beca32cda515f0dab1674424a8e97a11dc173b5f484",
+    "status": "superseded_pending",
+    "used_for_calls": false
+  },
+  "installations": 0,
+  "local_source_changes": [
+    "application_capabilities.py",
+    "pytorch_alias_composition.py",
+    "pytorch_arithmetic_normalization.py",
+    "pytorch_model_intake.py",
+    "pytorch_ordered_capture.py",
+    "pytorch_ordered_contract.py",
+    "pytorch_ordered_intake.py",
+    "pytorch_partition_normalization.py",
+    "pytorch_static_trace.py",
+    "source_precision_reference.py"
+  ],
+  "new_modules": [
+    "test_pytorch_scalar_partitions.py"
+  ],
+  "next_command": "python3 -B scripts/prepare_pytorch_source.py --help",
+  "preserved_initial_diagnostics": [
+    "controls-newtests.json: 35 tests with two errors",
+    "controls-fixes.json: 35 tests with one public slice role error",
+    "public-view-diagnostic.json: exact registered slice/reshape stream",
+    "Preparation helpers had literal/signature/tuple-return mistakes; no backend work was launched by them."
+  ],
+  "push": false,
+  "status": "passed",
+  "tools": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/scalar_partition_v1",
+  "unverified": [
+    "New v19/v20 real-Agent generation and repair",
+    "All ranks, shapes and dtype combinations",
+    "Large-model capacity and original-model application accuracy",
+    "CPU bootstrap",
+    "Continuous ciphertext partition handoff",
+    "CUDA hardware",
+    "Full ResNet20"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "format": "poseidon-source-live-rebound-approval-v2",
+  "approved": true,
+  "proposal_binding": "fadf85332f2ee938ff16c61adda89461edefd27403c6ad928af5588fd6de84b0",
+  "proposal_sha256": "d81042c67d0cfe427c1f8f813297702bee94de5f46236329b3d5f534d711bcc3",
+  "tool_hashes": {
+    "scripts/baseline/benchmarks/tools/source_live_rebind_v2/finalize.py": "2196e838e4ab99f1e0ad0732482a1665e4b8d0e32242416b0a9ad11fe62c47e6",
+    "scripts/baseline/benchmarks/tools/source_live_rebind_v2/prepare.py": "353e0924b467ca557fbcec680b41252576b79e679de2c2f7212d63c5852095f9",
+    "scripts/baseline/benchmarks/tools/source_live_rebind_v2/run.py": "84a83e0aa44ad77aca37178136768aaa83cb9cc9fd734b1541b11160cdd32b47",
+    "scripts/baseline/benchmarks/tools/source_live_rebind_v2/scope.py": "0a52da3200b1e001d96d769b7ac7f4d58e7c37f7de0ff2179aa5ec4db5199ac7",
+    "scripts/baseline/benchmarks/tools/source_live_rebind_v2/test_run.py": "32e1553261f7bbbb33f483398a28ae78481f7dc4def1ae64134b3fc19ba6a192",
+    "scripts/baseline/benchmarks/tools/source_live_rebind_v2/test_scope.py": "8679de3369e0c914d53179624ef31eaeb2885a815d45d3b0a2c5d5b08ddaf8c6",
+    "scripts/baseline/benchmarks/tools/staged_component_cutover_v1/post_cutover_acceptance.py": "1e5210372e1b7ffe2d03d5075d509a43e372c53daf249d85409c62a956bd11f1"
+  },
+  "authorization": "human_explicit_case_budget_approval"
+}

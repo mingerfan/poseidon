@@ -1,0 +1,92 @@
+{
+  "constants": {
+    "b1": [
+      0.1,
+      -0.1
+    ],
+    "b2": [
+      0.01,
+      0.02
+    ],
+    "w1": [
+      [
+        0.2,
+        -0.1,
+        0.1,
+        0.3
+      ],
+      [
+        -0.2,
+        0.2,
+        0.1,
+        0.1
+      ]
+    ],
+    "w2": [
+      [
+        0.3,
+        -0.2
+      ],
+      [
+        0.1,
+        0.4
+      ]
+    ]
+  },
+  "format": "poseidon-model-graph-v1",
+  "id": "decomposed_mlp",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "generated_1",
+      "inputs": [
+        "x",
+        "w1",
+        "b1"
+      ],
+      "op": "linear",
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_3",
+      "inputs": [
+        "generated_0",
+        "generated_0"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_5",
+      "inputs": [
+        "generated_2",
+        "w2",
+        "b2"
+      ],
+      "op": "linear",
+      "outputs": [
+        "generated_4"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_4"
+    }
+  ]
+}

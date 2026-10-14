@@ -1,0 +1,602 @@
+{
+  "branch": "lhy-agent-dsl",
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "format": "poseidon-pytorch-functional-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "history_preserved": [
+    {
+      "id": "r667",
+      "scope": "read-only unsupported-input reproductions"
+    },
+    {
+      "id": "r668",
+      "scope": "initial 14 tests: two errors; FX immutable list and pinned Torch float correction"
+    },
+    {
+      "id": "r669",
+      "scope": "pre-fix source snapshots"
+    },
+    {
+      "id": "r670",
+      "scope": "97 passing tests; overlapping intermediate scope"
+    },
+    {
+      "id": "r635",
+      "scope": "unexecuted old source binding retained; superseded for future execution"
+    }
+  ],
+  "offline": {
+    "actual_agent_generations": 0,
+    "binding": "0c1e402e8cfd2163f51b9721c0116ce4d5157e123c03630f056d11f3b1b7b83a",
+    "cache_reused": 3,
+    "failed": 0,
+    "maximum_absolute_error": 3.0301137352873937e-07,
+    "new_input_groups": 18,
+    "new_input_values": 84,
+    "not_run": 0,
+    "paid_calls": 0,
+    "passed": 9,
+    "planned": 9,
+    "qualification_groups": 36,
+    "qualification_values": 152,
+    "reload_groups": 12,
+    "reload_values": 56,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-functional-offline-r673/report.json",
+    "rows": [
+      {
+        "agent_generated": false,
+        "cache_reuse": null,
+        "candidate_sha256": "119d83cf52aba483ecdc8ba8f2ec0bafd6ceb537404e06a2282e5129a285de55",
+        "id": "layer_0",
+        "input_shapes": [
+          [
+            1,
+            4
+          ]
+        ],
+        "model_sha256": "a996094392f898da1f8ac4c291e4b5e2474761d66efc5e23c34abcc088b3f3b4",
+        "new_input_runs": [],
+        "package_binding": "5362e69b4b510ab1668f5bd93081f5eae95ef9b618cd7914e6b674006ac1952a",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 16,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 2.298018539348412e-08,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 5.551115123125783e-17,
+          "max_original_function_approximation_error": 0.2249618675234475,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16
+        },
+        "request_id": "d90d024ce343bfb3e14e3792e7fc6d8d130cfe3cdf54eccaa4c1397c609ffb50",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": {
+          "generations": 0,
+          "http_attempts": 0,
+          "reused": true,
+          "status": "succeeded"
+        },
+        "candidate_sha256": "f029546b28771d5f48f6dd39575a2e63318a2cc7252d4a796720e095b5c0d270",
+        "id": "layer_1",
+        "input_shapes": [
+          [
+            2,
+            2
+          ]
+        ],
+        "model_sha256": "a5fa29733c7d634e588212d9ebdef5c541529418aaf7dff9e69a6495a4cd65e6",
+        "new_input_runs": [
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 12,
+              "cosine_similarity": 0.9999999999999459,
+              "mae": 2.9605037179126353e-08,
+              "max_absolute_error": 1.1685938816619057e-07,
+              "max_nonzero_reference_relative_error": 9.09572096968236e-07,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 0
+          },
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 12,
+              "cosine_similarity": 0.9999999999999978,
+              "mae": 6.666288377213392e-09,
+              "max_absolute_error": 2.534340276527658e-08,
+              "max_nonzero_reference_relative_error": 1.903375306442082e-07,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 1
+          }
+        ],
+        "package_binding": "cf3b1eff90c3de03d0b1e52019852e10bb001d48225d1c056045b9bce115704b",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 16,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 6.20236252357742e-08,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 1.1102230246251565e-16,
+          "max_original_function_approximation_error": 0.11289933532426377,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16
+        },
+        "reload": {
+          "atol": 1e-05,
+          "compared_values": 16,
+          "cosine_similarity": 0.9999999999999988,
+          "mae": 9.948129220567481e-09,
+          "max_absolute_error": 3.949499029209935e-08,
+          "max_nonzero_reference_relative_error": 3.159599223367948e-07,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "request_id": "5d36f8eb8b5b991acd521be33a5958e1e5c0665048841a365db71107f90b3e25",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": null,
+        "candidate_sha256": "b56cd3ba331b909d82750144ff4bf77f4084238818da4722b40e91769dd8edf0",
+        "id": "layer_2",
+        "input_shapes": [
+          [
+            1,
+            2,
+            2
+          ]
+        ],
+        "model_sha256": "356925385f42516ea616e1ff2a0f48d7e2279aa2206a4abf8c97dc2b0315261e",
+        "new_input_runs": [],
+        "package_binding": "a258baeb30e2c9789c23f115b9a48afc8d85367bc808c5372dbb7a86fcffdc8b",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 16,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 5.2080405273431424e-09,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 5.551115123125783e-17,
+          "max_original_function_approximation_error": 0.14997457834896505,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16
+        },
+        "request_id": "2b685db53105a73131d13941a60825e86dde3ad116ff5508a8a097872098811d",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": null,
+        "candidate_sha256": "119d83cf52aba483ecdc8ba8f2ec0bafd6ceb537404e06a2282e5129a285de55",
+        "id": "group_0",
+        "input_shapes": [
+          [
+            1,
+            2,
+            2
+          ]
+        ],
+        "model_sha256": "a8bbea5b16081ec020001ba8f997baeee4647f600b6a2de460c60c00e53e6431",
+        "new_input_runs": [],
+        "package_binding": "fe1b46f286bd949472b730682abf587908c0268016c7bb58a7256b31141d5d9b",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 16,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 2.1276574621598056e-08,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 5.551115123125783e-17,
+          "max_original_function_approximation_error": 0.2249618675234475,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16
+        },
+        "request_id": "d7246439e29fb98430c88aa6449f8fd2ccd16ec102ad5a010054c624f95ef238",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": {
+          "generations": 0,
+          "http_attempts": 0,
+          "reused": true,
+          "status": "succeeded"
+        },
+        "candidate_sha256": "37411cd7211f830906e9084c15f2f82cb36550f9cef048685890eaa4ba142526",
+        "id": "group_1",
+        "input_shapes": [
+          [
+            1,
+            2,
+            2,
+            2
+          ]
+        ],
+        "model_sha256": "d53f32a07963dc921cf31ac77b4496b52a990e88ece4e281a4b6552363c615a4",
+        "new_input_runs": [
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 24,
+              "cosine_similarity": 0.9999999999999976,
+              "mae": 3.907004023728153e-09,
+              "max_absolute_error": 2.779601096514206e-08,
+              "max_nonzero_reference_relative_error": 2.0658868964739573e-07,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 0
+          },
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 24,
+              "cosine_similarity": 0.9999999999999977,
+              "mae": 4.638565877430369e-09,
+              "max_absolute_error": 2.478706559450039e-08,
+              "max_nonzero_reference_relative_error": 4.6702984050680863e-07,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 1
+          }
+        ],
+        "package_binding": "28f80779696cd30c0aa5bc023ae20567afa92b81652fcb8c435730f63242f183",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 32,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 7.509693616958302e-09,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 2.7755575615628914e-17,
+          "max_original_function_approximation_error": 0.12824394441676162,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16
+        },
+        "reload": {
+          "atol": 1e-05,
+          "compared_values": 32,
+          "cosine_similarity": 0.9999999999999998,
+          "mae": 2.8416717998602705e-09,
+          "max_absolute_error": 9.428459735172368e-09,
+          "max_nonzero_reference_relative_error": 1.3751615868251577e-07,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "request_id": "7e19fc1923a7c40ea5f67e642572ed19725c3eb74a3d39a1aad258cc8c7e5fc1",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": null,
+        "candidate_sha256": "9a777f4fd0a0f8f5b995fcbeae55020635ac006b862917881ecf5a29b6284ee4",
+        "id": "group_2",
+        "input_shapes": [
+          [
+            2,
+            2,
+            2
+          ]
+        ],
+        "model_sha256": "4960e9b2ba3af10056b776ca742817235916a4bdad47c035f9f6fa229f05b483",
+        "new_input_runs": [],
+        "package_binding": "08eeae45423f2f5d0d2a49e0879b1483f8b1214d30e83a504aef31f0ba09214b",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 32,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 2.3827715097943095e-07,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 1.1102230246251565e-16,
+          "max_original_function_approximation_error": 0.1490404027074823,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16
+        },
+        "request_id": "607652d25459bcad60866b60fbc942bc7ee9992b56ea3a86fd20f589bad55d3c",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": null,
+        "candidate_sha256": "52dbfeaaf90a41bf009f5db22ae9fdacc8a3930e0d95c47ae5dab374c4740415",
+        "id": "variance_0",
+        "input_shapes": [
+          [
+            2,
+            3
+          ]
+        ],
+        "model_sha256": "638aad0a3e66039b7fd4ce1f1035be8b793c0998defb7d0c336613b6885d9dad",
+        "new_input_runs": [],
+        "package_binding": "5278f0e8f1fe0e482ebab5a7f1517ac9a784741567f6066043543b4055c8eca3",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 8,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 6.65129191723679e-08,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 5.551115123125783e-17,
+          "max_original_module_error": 5.551115123125783e-17,
+          "probes": 16
+        },
+        "request_id": "8003f85108bb7d0d01ca11257d240fd97b2e651508d46d16bda5d457d844ddbe",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": {
+          "generations": 0,
+          "http_attempts": 0,
+          "reused": true,
+          "status": "succeeded"
+        },
+        "candidate_sha256": "633662d12c0f28b6fc8422d494174455fa385a818db30c8e35d42a768e9e6431",
+        "id": "variance_1",
+        "input_shapes": [
+          [
+            2,
+            2,
+            2
+          ]
+        ],
+        "model_sha256": "4e2b5bed352534545362df930faa1e181d8bca50a7b36b103f7c0f35c2f0a8ea",
+        "new_input_runs": [
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 6,
+              "cosine_similarity": 0.9999999999999036,
+              "mae": 4.086024504076219e-08,
+              "max_absolute_error": 6.721712467877561e-08,
+              "max_nonzero_reference_relative_error": 5.039105734884564e-06,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 0
+          },
+          {
+            "agent_calls": 0,
+            "comparison": {
+              "atol": 1e-05,
+              "compared_values": 6,
+              "cosine_similarity": 0.9999999999997238,
+              "mae": 6.46361860790733e-08,
+              "max_absolute_error": 1.1742762783678584e-07,
+              "max_nonzero_reference_relative_error": 8.53654670046807e-06,
+              "passed": true,
+              "rtol": 0.0001
+            },
+            "compiler_calls": 0,
+            "repetition": 1
+          }
+        ],
+        "package_binding": "35e33ef311239a85d7632909cb0202568114797fce2290c754523d54bc045f71",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 8,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 3.0301137352873937e-07,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 2.7755575615628914e-17,
+          "max_original_module_error": 2.7755575615628914e-17,
+          "probes": 16
+        },
+        "reload": {
+          "atol": 1e-05,
+          "compared_values": 8,
+          "cosine_similarity": 0.9999999999999905,
+          "mae": 5.167230209056976e-08,
+          "max_absolute_error": 1.5680078098807118e-07,
+          "max_nonzero_reference_relative_error": 6.676559570100442e-07,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "request_id": "3e56c4a47ef2a5ec381d19d84d6036ea65f0b997644077ea1f07f8cb1c6b7e1b",
+        "source": "rule baseline",
+        "status": "passed"
+      },
+      {
+        "agent_generated": false,
+        "cache_reuse": null,
+        "candidate_sha256": "0aa82445572236516af92d33b319f9b9b150eb55ab06a178fd9d35585698e19d",
+        "id": "variance_2",
+        "input_shapes": [
+          [
+            2,
+            2
+          ]
+        ],
+        "model_sha256": "802cc0977ba2b21aeda8396df023db4569c5d21a6f419f49d628d1a0c826e375",
+        "new_input_runs": [],
+        "package_binding": "7dc495bf6488fc1716e0abc755133b65003398339fd532697e6f654170842035",
+        "qualification": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 8,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 4.133203879153058e-08,
+          "numerically_validated": true
+        },
+        "reference": {
+          "approximation_accuracy_certified": false,
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 5.551115123125783e-17,
+          "max_original_module_error": 5.551115123125783e-17,
+          "probes": 16
+        },
+        "request_id": "e26386b0996080ea7a5dfd26e3a87f012f023fa8b4736da56a7be7fa7e555a29",
+        "source": "rule baseline",
+        "status": "passed"
+      }
+    ],
+    "rule_candidates": 9,
+    "seconds": 2564.4896909579984,
+    "sha256": "e4d12937a3b96b6a253666fedb6f50fbe7ba6e629dbdcdddcb5e93bb6ed88231",
+    "skipped": 0,
+    "total_compared_values": 292,
+    "total_execution_groups": 66,
+    "unique_inputs": 45
+  },
+  "pending_paid": {
+    "binding": "c089b9c4ce2d49e8c7ed7b8ff23218c91c10d5245779f889f26f6072b109d982",
+    "cases": 15,
+    "max_generations": 60,
+    "max_http_attempts": 240,
+    "paid_calls": 0,
+    "proposal": "docs/baseline/agent-pytorch-functional-live-proposal-r675.json",
+    "replaced_binding": "d3377af18686f84d36e58a5b24b36407bf1513273c86cb8543d04d44627d7623",
+    "replaced_unexecuted_proposal": "docs/baseline/agent-pytorch-state-live-proposal-r635.json",
+    "status": "awaiting_new_approval"
+  },
+  "platform": "aarch64-linux",
+  "remaining": [
+    "new functional/external-state real Agent acceptance",
+    "module/functional input parity and additional source idioms",
+    "per-node approximation selection, input-domain and application-accuracy handling",
+    "compiled peak-memory and larger layout estimates",
+    "request-scoped path injection",
+    "ciphertext-preserving partition",
+    "bootstrap",
+    "CUDA hardware acceptance",
+    "x86 native acceptance",
+    "clean-machine installation",
+    "end-to-end larger model acceptance"
+  ],
+  "request_compatibility": {
+    "checked": 20,
+    "fresh_external_state_captures": 6,
+    "matched": 20,
+    "old_paid_scope_completed": true,
+    "reference_probes_per_state_capture": 16,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-request-compatibility-r674.json",
+    "retained_old_models": 14,
+    "sha256": "6d917a6246d9fc93336e044f7f4d2b424eef3c8a4cd93b188a87b05eb30af7b6"
+  },
+  "source_hashes": {
+    "scripts/baseline/application_capabilities.py": "e1e3cd2325eec0310a4af68dac26dbd0b8e11591395563e0bd68b36f89810a25",
+    "scripts/baseline/benchmarks/tools/check_pytorch_sources.py": "2caa58cbc3801ac89fd9a8092a4caa9c6cc8e75219a67125c7651ade4068c3da",
+    "scripts/baseline/cases/trusted-pytorch-state-v3/cases.json": "57c2eca6b200ec429808036c954e6525b7b644918fcb34b67c883d4a168549e6",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/cases.json": "91e6fd505b26ad9ffedc07279964161dca2011df78599624388e21fc57f9cc5a",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/group_0.json": "a0de0640727a7f52df42ef11d1dcbb47b2aa21303b8b54c78a66ffef57a6453b",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/group_1.json": "7543935366dbdada66a8d83639abba8408714195a914a9c41708b75954906357",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/group_2.json": "29da6888714e8f2affdc7505fe6aa1849fc4b80e63aca5de6d510ac6e28aeb60",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/layer_0.json": "46078b3f5ae3712909e2bb54fb87e2efbb2857728709fdbcf8fca4abdc8877ee",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/layer_1.json": "78d4a384a21d467a2cd072f428cade900c2a2d6c27e6f4e41e98dbdad9378855",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/layer_2.json": "127c20c5a8a6a5c8e1c765675019976d6964a6213e6f53cf91519dee0f4b919a",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/models.py": "4766608372a7a9adb91f59eeb9f75bfd7264a57ebf1c0acbe408cca4bb955b43",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/variance_0.json": "85939804e4562c8e40e8381942056cdbd479a2115430f4f73f82ba9bdefb0b13",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/variance_1.json": "de928f76aee362508a8724e0b5391096e34ffbb3ea1fc874d141d2bec66d88cf",
+    "scripts/baseline/cases/trusted_pytorch_functional_v1/variance_2.json": "2490448ddb729c4ed630448e3ed25dc02476bc346bd074cb162c5f782af221f4",
+    "scripts/baseline/pytorch_model_capture.py": "d2f46b80c56a68e5ac2eec1082ce8679224f5d4cc30b6e07f50dbd90a299009d",
+    "scripts/baseline/test_pytorch_functional_capture.py": "ce8ad08c20fadc2c6ae183d1dc2ee97741ef1918178b8995ce41d17cf5b6abf3"
+  },
+  "static_tests": {
+    "errors": 0,
+    "failed": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-compatibility-r671.log",
+    "passed": 254,
+    "planned": 254,
+    "sha256": "2fa6ac6669b66edfe78cd66c4cf4d8c2b632846912d3b51d53bcc9767ca01bc7",
+    "skipped": 0
+  },
+  "status": "scoped_acceptance_complete",
+  "unchanged": {
+    "atol": 1e-05,
+    "backend_changed": [],
+    "backend_source_files_checked": 545,
+    "commit": false,
+    "new_downloads": 0,
+    "new_installs": 0,
+    "paid_calls": 0,
+    "parameters_changed": false,
+    "pr": false,
+    "push": false,
+    "reference_changed": [],
+    "reference_files_checked": 5,
+    "rtol": 0.0001,
+    "sdk_rebuilds": 0
+  }
+}

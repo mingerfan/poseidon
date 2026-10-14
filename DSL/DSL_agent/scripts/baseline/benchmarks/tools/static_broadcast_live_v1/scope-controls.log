@@ -1,0 +1,9 @@
+test_frozen_scope (test_scope.ScopeTests) ... ok
+test_limits_and_authorization (test_scope.ScopeTests) ... ok
+test_rebound_changes_rejected (test_scope.ScopeTests) ... ok
+test_source_format_remains_explicit (test_scope.ScopeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.240s
+
+OK

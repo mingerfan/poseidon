@@ -1,0 +1,199 @@
+{
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-original-mha-static-feedback-replay-v1",
+  "original_responses_modified": false,
+  "provider_calls": 0,
+  "rows": [
+    {
+      "candidate_source_sha256": "65299ab1453464648824078de2ceffcb72a7114c88eadf52fa8e87f2651a6f20",
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "compiler_calls": 0,
+      "diagnostic": {
+        "code": "candidate_contract_rejected",
+        "context": {
+          "limit": 1024,
+          "observed": 2455
+        },
+        "format": "poseidon-diagnostic-v2",
+        "layer": "static_check",
+        "location": {
+          "column": 0,
+          "kind": "source",
+          "line": 26
+        },
+        "owner": "candidate",
+        "reason_code": "expanded_work_budget",
+        "repeat_key_available": false,
+        "retry_policy": "repair_within_budget"
+      },
+      "encrypted_calls": 0,
+      "provider_calls": 0,
+      "public_feedback": {
+        "category": "candidate",
+        "diagnostic": "The expanded golden work exceeds the fixed 1024-unit budget. Every helper call and public loop iteration contributes to the expanded count. Share already computed intermediate values and remove duplicated computations while preserving the supplied model. Location: {\"column\": 0, \"kind\": \"source\", \"line\": 26} Constraints: {\"limit\": 1024, \"observed\": 2455}\nBinding and shape guidance:\nOnly names in public_constants or the explicitly admitted public-weight interface are bound DSL globals. Names under model.constants are logical graph references, not implicit Python variables. Respect the actual bound scalar/vector contents and the exact logical-to-public scalar matches; p-number order has no semantic role. A single-lane packing mask or a masked reduction coefficient is not an all-lane gain, zero bias or replicated scalar. A logical public tensor still needs its declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication.\nReduce the declared logical axes and elements. For periodic packing, admitted rotations can form a sum without extracting every scalar first. A sum valid only in slot zero is not a replicated ciphertext scalar. Exclude padded tails and unrelated rows; object reshape/transpose does not rotate or replicate encrypted slots.\nA one-element encrypted tensor must occupy every required destination slot before a lane-wise broadcast. Distinguish replicated scalars, valid prefixes and padding. Equal object-array shapes do not establish equal ciphertext layouts. Preserve each named output binding.\nA reduction produces exactly the declared reduced shape. Intermediate slot representation is your choice, but every later broadcast must use that same representation. A prefix scalar and a replicated scalar differ. Broadcast every declared dimension, including row/channel axes and across ciphertext chunks; exclude padding. Sum and mean differ by the full logical reduction count. Final outputs follow the frozen named C-order bindings.",
+        "layer": "static_check",
+        "status": "failed"
+      },
+      "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+      "response": "response-0.json",
+      "status": "rejected"
+    },
+    {
+      "candidate_source_sha256": "0f9712242e02053f62507218553dba828566c993b4a677074d73db363aa0633b",
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "compiler_calls": 0,
+      "diagnostic": {
+        "code": "candidate_contract_rejected",
+        "context": {
+          "limit": 1024,
+          "observed": 1913
+        },
+        "format": "poseidon-diagnostic-v2",
+        "layer": "static_check",
+        "location": {
+          "column": 0,
+          "kind": "source",
+          "line": 54
+        },
+        "owner": "candidate",
+        "reason_code": "expanded_work_budget",
+        "repeat_key_available": false,
+        "retry_policy": "repair_within_budget"
+      },
+      "encrypted_calls": 0,
+      "provider_calls": 0,
+      "public_feedback": {
+        "category": "candidate",
+        "diagnostic": "The expanded golden work exceeds the fixed 1024-unit budget. Every helper call and public loop iteration contributes to the expanded count. Share already computed intermediate values and remove duplicated computations while preserving the supplied model. Location: {\"column\": 0, \"kind\": \"source\", \"line\": 54} Constraints: {\"limit\": 1024, \"observed\": 1913}\nBinding and shape guidance:\nOnly names in public_constants or the explicitly admitted public-weight interface are bound DSL globals. Names under model.constants are logical graph references, not implicit Python variables. Respect the actual bound scalar/vector contents and the exact logical-to-public scalar matches; p-number order has no semantic role. A single-lane packing mask or a masked reduction coefficient is not an all-lane gain, zero bias or replicated scalar. A logical public tensor still needs its declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication.\nReduce the declared logical axes and elements. For periodic packing, admitted rotations can form a sum without extracting every scalar first. A sum valid only in slot zero is not a replicated ciphertext scalar. Exclude padded tails and unrelated rows; object reshape/transpose does not rotate or replicate encrypted slots.\nA one-element encrypted tensor must occupy every required destination slot before a lane-wise broadcast. Distinguish replicated scalars, valid prefixes and padding. Equal object-array shapes do not establish equal ciphertext layouts. Preserve each named output binding.\nA reduction produces exactly the declared reduced shape. Intermediate slot representation is your choice, but every later broadcast must use that same representation. A prefix scalar and a replicated scalar differ. Broadcast every declared dimension, including row/channel axes and across ciphertext chunks; exclude padding. Sum and mean differ by the full logical reduction count. Final outputs follow the frozen named C-order bindings.",
+        "layer": "static_check",
+        "status": "failed"
+      },
+      "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+      "response": "response-1.json",
+      "status": "rejected"
+    },
+    {
+      "candidate_source_sha256": "88880faa3b38ea4636d887da1f958d4c91a1a2339a00ef7f57898257ed296ce5",
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "compiler_calls": 0,
+      "diagnostic": {
+        "code": "candidate_contract_rejected",
+        "context": {
+          "actual": 4,
+          "expected": 3
+        },
+        "format": "poseidon-diagnostic-v2",
+        "layer": "static_check",
+        "location": {
+          "column": 9,
+          "kind": "source",
+          "line": 25
+        },
+        "owner": "candidate",
+        "reason_code": "native_signature_mismatch",
+        "repeat_key_available": false,
+        "retry_policy": "repair_within_budget"
+      },
+      "encrypted_calls": 0,
+      "provider_calls": 0,
+      "public_feedback": {
+        "category": "candidate",
+        "diagnostic": "hc.func requires comma-separated c/p fields, exactly one per positional parameter; for example, @hc.func(\"c,c,p\") for three parameters. Compact strings such as \"ccp\" and other type tags are invalid. Location: {\"column\": 9, \"kind\": \"source\", \"line\": 25} Constraints: {\"actual\": 4, \"expected\": 3}\nBinding and shape guidance:\nOnly names in public_constants or the explicitly admitted public-weight interface are bound DSL globals. Names under model.constants are logical graph references, not implicit Python variables. Respect the actual bound scalar/vector contents and the exact logical-to-public scalar matches; p-number order has no semantic role. A single-lane packing mask or a masked reduction coefficient is not an all-lane gain, zero bias or replicated scalar. A logical public tensor still needs its declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication.\nReduce the declared logical axes and elements. For periodic packing, admitted rotations can form a sum without extracting every scalar first. A sum valid only in slot zero is not a replicated ciphertext scalar. Exclude padded tails and unrelated rows; object reshape/transpose does not rotate or replicate encrypted slots.\nA one-element encrypted tensor must occupy every required destination slot before a lane-wise broadcast. Distinguish replicated scalars, valid prefixes and padding. Equal object-array shapes do not establish equal ciphertext layouts. Preserve each named output binding.\nA reduction produces exactly the declared reduced shape. Intermediate slot representation is your choice, but every later broadcast must use that same representation. A prefix scalar and a replicated scalar differ. Broadcast every declared dimension, including row/channel axes and across ciphertext chunks; exclude padding. Sum and mean differ by the full logical reduction count. Final outputs follow the frozen named C-order bindings.",
+        "layer": "static_check",
+        "status": "failed"
+      },
+      "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+      "response": "response-2.json",
+      "status": "rejected"
+    },
+    {
+      "candidate_source_sha256": "1fcbd0d3f844aa96cba8f0e18f506a9ef625314f21c9f5d4055d1541ea89a180",
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "compiler_calls": 0,
+      "diagnostic": {
+        "code": "candidate_contract_rejected",
+        "context": {
+          "actual": 4,
+          "expected": 2
+        },
+        "format": "poseidon-diagnostic-v2",
+        "layer": "static_check",
+        "location": {
+          "column": 9,
+          "kind": "source",
+          "line": 20
+        },
+        "owner": "candidate",
+        "reason_code": "native_signature_mismatch",
+        "repeat_key_available": false,
+        "retry_policy": "repair_within_budget"
+      },
+      "encrypted_calls": 0,
+      "provider_calls": 0,
+      "public_feedback": {
+        "category": "candidate",
+        "diagnostic": "hc.func requires comma-separated c/p fields, exactly one per positional parameter; for example, @hc.func(\"c,c,p\") for three parameters. Compact strings such as \"ccp\" and other type tags are invalid. Location: {\"column\": 9, \"kind\": \"source\", \"line\": 20} Constraints: {\"actual\": 4, \"expected\": 2}\nBinding and shape guidance:\nOnly names in public_constants or the explicitly admitted public-weight interface are bound DSL globals. Names under model.constants are logical graph references, not implicit Python variables. Respect the actual bound scalar/vector contents and the exact logical-to-public scalar matches; p-number order has no semantic role. A single-lane packing mask or a masked reduction coefficient is not an all-lane gain, zero bias or replicated scalar. A logical public tensor still needs its declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication.\nReduce the declared logical axes and elements. For periodic packing, admitted rotations can form a sum without extracting every scalar first. A sum valid only in slot zero is not a replicated ciphertext scalar. Exclude padded tails and unrelated rows; object reshape/transpose does not rotate or replicate encrypted slots.\nA one-element encrypted tensor must occupy every required destination slot before a lane-wise broadcast. Distinguish replicated scalars, valid prefixes and padding. Equal object-array shapes do not establish equal ciphertext layouts. Preserve each named output binding.\nA reduction produces exactly the declared reduced shape. Intermediate slot representation is your choice, but every later broadcast must use that same representation. A prefix scalar and a replicated scalar differ. Broadcast every declared dimension, including row/channel axes and across ciphertext chunks; exclude padding. Sum and mean differ by the full logical reduction count. Final outputs follow the frozen named C-order bindings.",
+        "layer": "static_check",
+        "status": "failed"
+      },
+      "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+      "response": "response-3.json",
+      "status": "rejected"
+    },
+    {
+      "candidate_source_sha256": "62254a5cb41b41529c0db9236487d64e96d16575fcc50b9c03c0c8e5409a2ec9",
+      "case": "linear_into_separate_cross_none__declared_shallow_v1",
+      "compiler_calls": 0,
+      "diagnostic": {
+        "code": "candidate_contract_rejected",
+        "context": {
+          "limit": 1024,
+          "observed": 1721
+        },
+        "format": "poseidon-diagnostic-v2",
+        "layer": "static_check",
+        "location": {
+          "column": 0,
+          "kind": "source",
+          "line": 39
+        },
+        "owner": "candidate",
+        "reason_code": "expanded_work_budget",
+        "repeat_key_available": false,
+        "retry_policy": "repair_within_budget"
+      },
+      "encrypted_calls": 0,
+      "provider_calls": 0,
+      "public_feedback": {
+        "category": "candidate",
+        "diagnostic": "The expanded golden work exceeds the fixed 1024-unit budget. Every helper call and public loop iteration contributes to the expanded count. Share already computed intermediate values and remove duplicated computations while preserving the supplied model. Location: {\"column\": 0, \"kind\": \"source\", \"line\": 39} Constraints: {\"limit\": 1024, \"observed\": 1721}\nBinding and shape guidance:\nOnly names in public_constants or the explicitly admitted public-weight interface are bound DSL globals. Names under model.constants are logical graph references, not implicit Python variables. Respect the actual bound scalar/vector contents and the exact logical-to-public scalar matches; p-number order has no semantic role. A single-lane packing mask or a masked reduction coefficient is not an all-lane gain, zero bias or replicated scalar. A logical public tensor still needs its declared coordinate mapping; a uniform tensor does not turn matmul into scalar multiplication.\nReduce the declared logical axes and elements. For periodic packing, admitted rotations can form a sum without extracting every scalar first. A sum valid only in slot zero is not a replicated ciphertext scalar. Exclude padded tails and unrelated rows; object reshape/transpose does not rotate or replicate encrypted slots.\nA one-element encrypted tensor must occupy every required destination slot before a lane-wise broadcast. Distinguish replicated scalars, valid prefixes and padding. Equal object-array shapes do not establish equal ciphertext layouts. Preserve each named output binding.\nA reduction produces exactly the declared reduced shape. Intermediate slot representation is your choice, but every later broadcast must use that same representation. A prefix scalar and a replicated scalar differ. Broadcast every declared dimension, including row/channel axes and across ciphertext chunks; exclude padding. Sum and mean differ by the full logical reduction count. Final outputs follow the frozen named C-order bindings.",
+        "layer": "static_check",
+        "status": "failed"
+      },
+      "request_id": "5eebc4fccd6b1f0ece4bd65989daed863475c982ffbf3acaf53fd349c4eb9a54",
+      "response": "response-0.json",
+      "status": "rejected"
+    },
+    {
+      "candidate_source_sha256": "3ecceda66bfee43dd4b0953cf6b77513d8cd9bf6534aa950074e2ec2b5bdd833",
+      "case": "boolean_padding_residual__declared_shallow_v1",
+      "compiler_calls": 0,
+      "encrypted_calls": 0,
+      "provider_calls": 0,
+      "request_id": "99454249e5c1db4897572708e9676cd2a04f0e6798e2832891486fd052961cf9",
+      "response": "response-0.json",
+      "status": "static_accepted_not_executed"
+    },
+    {
+      "candidate_source_sha256": "292bff0b21f31c77036cd063c8e641df458058b9599cba4d5096b3fce98077da",
+      "case": "boolean_padding_residual__declared_shallow_v1",
+      "compiler_calls": 0,
+      "encrypted_calls": 0,
+      "provider_calls": 0,
+      "request_id": "99454249e5c1db4897572708e9676cd2a04f0e6798e2832891486fd052961cf9",
+      "response": "response-1.json",
+      "status": "static_accepted_not_executed"
+    }
+  ]
+}

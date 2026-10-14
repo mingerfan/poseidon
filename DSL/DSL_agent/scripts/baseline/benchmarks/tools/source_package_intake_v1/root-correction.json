@@ -1,0 +1,12 @@
+{
+  "initial_errors": 7,
+  "initial_failed": 6,
+  "initial_passed": 287,
+  "initial_skipped": 0,
+  "initial_tests": 300,
+  "layer": "source-package contract",
+  "models_or_references_changed": false,
+  "reason": "Only .py SDK files have importable module roots. JSON rule inventories keep their full SDK hashes.",
+  "root_safety_gate_preserved": true,
+  "sdk_json_hashes_removed": false
+}

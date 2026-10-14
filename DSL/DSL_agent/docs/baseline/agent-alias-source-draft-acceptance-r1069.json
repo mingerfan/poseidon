@@ -1,0 +1,2431 @@
+{
+  "additional_layout_crosschecks": {
+    "attempted": 96,
+    "native_admitted": 80,
+    "native_rejected": 16
+  },
+  "additional_rank_boundary_checks": {
+    "native_and_lowered_mathematical_comparison": "passed",
+    "physical_capacity_status": "unverified",
+    "probes_per_rank": 1,
+    "ranks": [
+      4,
+      32
+    ]
+  },
+  "agent_generation": 0,
+  "alias_semantics": {
+    "clone_independent_storage": true,
+    "partial_writeback": "existing public_gather and concat",
+    "prior_immutable_values_preserved": true,
+    "public_weights_immutable": true,
+    "reshape_copy_distinguished": true,
+    "shared_aliases_read_current_version": true,
+    "source_order_preserved": true,
+    "view_stride_compatibility_checked": true
+  },
+  "audit": {
+    "binding": "cf51eac2f03d2366bf195ccdf954b850c8185bdbd5741ed5b6b574b9e5ab8fd4",
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-alias-source-draft-r1068/report.json",
+    "sha256": "d4776c716c35028f16127176b2b664596aaf3c0d95de91cb60ac665375cd5af1"
+  },
+  "backend_modified": false,
+  "binding": "a05e36a4b88d5c5ebdee505b45a398adbf213d47e26c32b874ba7c983901200b",
+  "checkout": {
+    "branch": "lhy-agent-dsl",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "path": "/home/lhohy/Code/Poseidon",
+    "platform": "aarch64-linux"
+  },
+  "commit": false,
+  "compiler_calls": 0,
+  "decryption": 0,
+  "download": 0,
+  "encrypted_execution": 0,
+  "existing_reference_modified": false,
+  "explicit_approximation_required": true,
+  "format": "poseidon-alias-source-draft-acceptance-v1",
+  "frozen_benchmark_modified": false,
+  "handoff_before_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-alias-source-draft-review-r1069/handoff-before.md",
+  "handoff_before_sha256": "b4c1c44b69bbfa186bba9b775e06d617a031b9b85ad3b66958209948df555e34",
+  "hecate_tracing": 0,
+  "http_attempts": 0,
+  "independent_reference": "separate NumPy storage/array interpreter; no normalization or DSL converter calls",
+  "initial_failure": {
+    "common_root": "fixed Torch FX immutable_list rejected by exact tuple/list admission",
+    "original_evidence_preserved": true,
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-alias-source-draft-r1065/units-result.json",
+    "sha256": "515c89bc0d44929e3a42af97d046ff6f95b8d38c6678a11017d53fc6d451d849",
+    "units": {
+      "errors": 2,
+      "failed": 0,
+      "run": 30,
+      "skipped": 0
+    }
+  },
+  "installation": 0,
+  "limits": {
+    "agent": "unverified",
+    "compile": "unverified",
+    "encrypted": "unverified",
+    "high_rank_unit_checks": [
+      4,
+      32
+    ],
+    "input_storage": "separate contiguous CPU float64 logical inputs",
+    "layout_crosscheck_ranks": [
+      2,
+      3
+    ],
+    "logical_profile": "general-tensors-v1",
+    "major_context_input_ranks": [
+      1,
+      2
+    ],
+    "physical_layout": "unverified",
+    "rejects": [
+      "mutating public state",
+      "partially overlapping arithmetic operands",
+      "repeated mutation destinations",
+      "incompatible view",
+      "unregistered source or dynamic index",
+      "resource overflow",
+      "channels-last or unregistered memory formats",
+      "copy_/resize_/set_/as_strided"
+    ]
+  },
+  "mathematical_contexts": 24,
+  "mathematical_max_errors": {
+    "approximation": 0.11859375,
+    "decomposition": 5.551115123125783e-17,
+    "fixture": 0.0,
+    "original": 0.0,
+    "torch": 5.551115123125783e-17
+  },
+  "new_unique_benchmark_models_claimed": 0,
+  "numerical_threshold_modified": false,
+  "old_schema_and_source_interface_preserved": true,
+  "original_function_accuracy_certified": false,
+  "output_values": 6304,
+  "paid_calls": 0,
+  "parameters_modified": false,
+  "pending_backend_scope": {
+    "approved_receipt_present": false,
+    "backend_output_present": false,
+    "binding": "ed3ffa719754bf75978d127e793c6c357516396e5302c3721ad40a08032f631d",
+    "cases": 151,
+    "files_checked": 5952,
+    "mismatches": [],
+    "package_reuse_cases": 25,
+    "proposal": "docs/baseline/agent-common-pytorch-offline-proposal-r1042.json",
+    "scope": {
+      "api_calls": 0,
+      "artifact_bytes": 4294967296,
+      "backend_changes": 0,
+      "candidate_seconds": 180,
+      "compile_jobs": 2,
+      "downloads": 0,
+      "encrypted_concurrency": 1,
+      "global_bytes": 34359738368,
+      "installs": 0,
+      "link_jobs": 1,
+      "max_shard_cases": 48,
+      "parameter_changes": 0,
+      "reserve_bytes": 4294967296,
+      "shards_sequential": true,
+      "wall_seconds": 7200
+    },
+    "status": "awaiting_explicit_offline_authorization"
+  },
+  "preservation": {
+    "protected-backend.json": {
+      "checked": 648,
+      "mismatches": []
+    },
+    "protected-current-history.json": {
+      "checked": 14,
+      "mismatches": []
+    },
+    "protected-history.json": {
+      "checked": 6,
+      "mismatches": []
+    },
+    "protected-new-history.json": {
+      "checked": 6,
+      "mismatches": []
+    },
+    "protected-references.json": {
+      "checked": 6,
+      "mismatches": []
+    }
+  },
+  "previous_drafts": {
+    "agent-gelu-source-draft-acceptance-r1060.json": {
+      "binding": "c6182f3b8b06c55ae643f5ee0f1127e5893e16370409f41455ca6b1f3883bf95",
+      "source_mismatches": []
+    },
+    "agent-mha-source-draft-acceptance-r1064.json": {
+      "binding": "d4024bfd049f6c8f59c399c83ccd12b843ea8c28adf47d04a254c67a92f9b0dc",
+      "source_mismatches": []
+    },
+    "agent-static-source-ops-draft-acceptance-r1057.json": {
+      "binding": "2cbcf2e2dc84498acea16d7d3faab81fd84fa5a9b034a9399dddff5afcf2ee1a",
+      "source_mismatches": []
+    }
+  },
+  "production_intake_integrated": false,
+  "production_source_capture": 0,
+  "pull_request": false,
+  "push": false,
+  "readme": {
+    "path": "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/README.md",
+    "sha256": "0ea391fb237afffcefda97ec41fe1b339fe22b09cad02c72f1b52f9b920c10bd"
+  },
+  "reference_groups": 384,
+  "remaining_work": [
+    "explicit production intake integration",
+    "isolated trusted capture and input mutation/reference isolation",
+    "structured input feedback and output schema propagation",
+    "physical layout and backend execution",
+    "bounded real Agent acceptance",
+    "capacity",
+    "bootstrap",
+    "ciphertext handoff",
+    "application accuracy",
+    "ResNet20",
+    "CUDA"
+  ],
+  "report_markdown_sha256": "719ccb425a2c5b91bed115dc7aa359591f2c0ab6fa0fe8d7186a0607a79f4a0a",
+  "revision": "r1069",
+  "rows": [
+    {
+      "alias_events": [
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 0,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        }
+      ],
+      "configuration": {
+        "id": "relu_method_base",
+        "kind": "relu",
+        "pattern": "base",
+        "style": "method"
+      },
+      "expanded_nodes": 7,
+      "fx_binding": "623d7996ac0682c7a8dda92b9066ee418bfc4d9055a79fa4b49cdbfd9a7dd64f",
+      "id": "relu_method_base",
+      "maximum_errors": {
+        "approximation": 0.06937499999999999,
+        "decomposition": 1.3877787807814457e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 1.3877787807814457e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 7,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "cc3c6b4145fb003588fe75a3000cc8a8e1a9ac3f74c634d57e3a4366800010be",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "a95d252060d36cf6c9a5e9b7e965499f3a1e36412dbde56ef8034f075283f27a",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_3",
+          "source_position": 0
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 1,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_5",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_11",
+          "output_storage": "storage_29",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "relu_method_shared",
+        "kind": "relu",
+        "pattern": "shared",
+        "style": "method"
+      },
+      "expanded_nodes": 13,
+      "fx_binding": "74862ad4628809fa3f76407203c8cae2eb5096aebc833157505f43f0da5addf6",
+      "id": "relu_method_shared",
+      "maximum_errors": {
+        "approximation": 0.06937500000000002,
+        "decomposition": 5.551115123125783e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 5.551115123125783e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 13,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 288,
+      "plan_binding": "504048fbd28f7f0079d2b77791b4b968e8cd9d7e37d069e759b35f3b948fd818",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "c99dbe4553f1ea24d6590c6cf01f1606a7710805cd871a152fb1da49485128b5",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "transpose_alias",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_5",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            3,
+            1,
+            4,
+            2,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "relu_method_view",
+        "kind": "relu",
+        "pattern": "view",
+        "style": "method"
+      },
+      "expanded_nodes": 33,
+      "fx_binding": "e66fb6d424d5aa75546f764f66fcba675105e6640ea332a43b5f38515ba96d8f",
+      "id": "relu_method_view",
+      "maximum_errors": {
+        "approximation": 0.06937499999999999,
+        "decomposition": 1.3877787807814457e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 1.3877787807814457e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 15,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 384,
+      "plan_binding": "d03df9023e4392df4fae3b0c22c59e078bd48190fb3f81d30b34797ab30c94a9",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "f2fbb3a737e35f4fb8bacbecbf7247ce1dec9fd1bbf035c72f24b26e5c77e954",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 0,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        }
+      ],
+      "configuration": {
+        "id": "relu_functional_base",
+        "kind": "relu",
+        "pattern": "base",
+        "style": "functional"
+      },
+      "expanded_nodes": 7,
+      "fx_binding": "29c033d48fbc775b4faf35ea50e46baaa58f6c0527af5ebc32dd73885af98176",
+      "id": "relu_functional_base",
+      "maximum_errors": {
+        "approximation": 0.06937499999999999,
+        "decomposition": 1.3877787807814457e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 1.3877787807814457e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 7,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "cc3c6b4145fb003588fe75a3000cc8a8e1a9ac3f74c634d57e3a4366800010be",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "a95d252060d36cf6c9a5e9b7e965499f3a1e36412dbde56ef8034f075283f27a",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_3",
+          "source_position": 0
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 1,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_5",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_11",
+          "output_storage": "storage_29",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "relu_functional_shared",
+        "kind": "relu",
+        "pattern": "shared",
+        "style": "functional"
+      },
+      "expanded_nodes": 13,
+      "fx_binding": "8613b097b6c0e2d3d8800f15c15c6d2f78d394e1d36f71ecb124b8f33eb0001c",
+      "id": "relu_functional_shared",
+      "maximum_errors": {
+        "approximation": 0.06937500000000002,
+        "decomposition": 5.551115123125783e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 5.551115123125783e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 13,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 288,
+      "plan_binding": "504048fbd28f7f0079d2b77791b4b968e8cd9d7e37d069e759b35f3b948fd818",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "c99dbe4553f1ea24d6590c6cf01f1606a7710805cd871a152fb1da49485128b5",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "transpose_alias",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_5",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            3,
+            1,
+            4,
+            2,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "relu_functional_view",
+        "kind": "relu",
+        "pattern": "view",
+        "style": "functional"
+      },
+      "expanded_nodes": 33,
+      "fx_binding": "589f90e1856e71ad978afe02cd652403a42fad42d39788b9be1b520dcdeeab89",
+      "id": "relu_functional_view",
+      "maximum_errors": {
+        "approximation": 0.06937499999999999,
+        "decomposition": 1.3877787807814457e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 1.3877787807814457e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 15,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 384,
+      "plan_binding": "d03df9023e4392df4fae3b0c22c59e078bd48190fb3f81d30b34797ab30c94a9",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "f2fbb3a737e35f4fb8bacbecbf7247ce1dec9fd1bbf035c72f24b26e5c77e954",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 0,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        }
+      ],
+      "configuration": {
+        "id": "relu_module_base",
+        "kind": "relu",
+        "pattern": "base",
+        "style": "module"
+      },
+      "expanded_nodes": 7,
+      "fx_binding": "5b30f8f927c334bf0623d19e06ea37b422b45c9e0febb999ef70806b69d09380",
+      "id": "relu_module_base",
+      "maximum_errors": {
+        "approximation": 0.06937499999999999,
+        "decomposition": 1.3877787807814457e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 1.3877787807814457e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 7,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "cc3c6b4145fb003588fe75a3000cc8a8e1a9ac3f74c634d57e3a4366800010be",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "a95d252060d36cf6c9a5e9b7e965499f3a1e36412dbde56ef8034f075283f27a",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_3",
+          "source_position": 0
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 1,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_5",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_11",
+          "output_storage": "storage_29",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "relu_module_shared",
+        "kind": "relu",
+        "pattern": "shared",
+        "style": "module"
+      },
+      "expanded_nodes": 13,
+      "fx_binding": "49c1cb7cd38bae78f09f85633526fd375547104e5337909d75456b750b354ca9",
+      "id": "relu_module_shared",
+      "maximum_errors": {
+        "approximation": 0.06937500000000002,
+        "decomposition": 5.551115123125783e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 5.551115123125783e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 13,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 288,
+      "plan_binding": "504048fbd28f7f0079d2b77791b4b968e8cd9d7e37d069e759b35f3b948fd818",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "c99dbe4553f1ea24d6590c6cf01f1606a7710805cd871a152fb1da49485128b5",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "transpose_alias",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "arithmetic_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_5",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            3,
+            1,
+            4,
+            2,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "relu_module_view",
+        "kind": "relu",
+        "pattern": "view",
+        "style": "module"
+      },
+      "expanded_nodes": 33,
+      "fx_binding": "767f3e8634a3ac8c8bc0f19bd37bbaf7eabac9a01c5e5eef260fdebca82cc2a3",
+      "id": "relu_module_view",
+      "maximum_errors": {
+        "approximation": 0.06937499999999999,
+        "decomposition": 1.3877787807814457e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 1.3877787807814457e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 15,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 384,
+      "plan_binding": "d03df9023e4392df4fae3b0c22c59e078bd48190fb3f81d30b34797ab30c94a9",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "f2fbb3a737e35f4fb8bacbecbf7247ce1dec9fd1bbf035c72f24b26e5c77e954",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 0,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_3",
+          "source_position": 0
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_add_base",
+        "kind": "arithmetic",
+        "operation": "add",
+        "pattern": "base"
+      },
+      "expanded_nodes": 7,
+      "fx_binding": "0d6ac58aad9c88e07fc9571f1ccc8ab36db4768094d1eda45b12fe0fd68b244e",
+      "id": "arithmetic_add_base",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 7,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "dc134a493eb1a7092a199790cea4d9a300a25427486f8c6c915e263f8b4e72aa",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "cb01f60bc6cd4db19fedd121b87954d1f6e89982ad80d08884e3b2e95b8fd9bb",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "square_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            1,
+            2,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_add_partial",
+        "kind": "arithmetic",
+        "operation": "add",
+        "pattern": "partial"
+      },
+      "expanded_nodes": 35,
+      "fx_binding": "9b71aec4e8c5b46b71b759e5586c6834bca31171de16f09b2458e7c3459db3fb",
+      "id": "arithmetic_add_partial",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 21,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 320,
+      "plan_binding": "68c8c754e8dbb222119dd0361ad891c6ff4418450c80e1b11750c6f4d84e7ef8",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "423d9e4e441a90cb3ec7c382af07ae26252251c0e7e07d8260a0fb8856146581",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_4",
+          "rule": "square_value",
+          "shape": [
+            4
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 3,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2
+          ],
+          "source_id": "source_8",
+          "source_position": 3
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_add_disjoint",
+        "kind": "arithmetic",
+        "operation": "add",
+        "pattern": "disjoint"
+      },
+      "expanded_nodes": 20,
+      "fx_binding": "46c4f27273d2e83cfd88bbfb0a20e932202f54859be11e906e48128edf450a8e",
+      "id": "arithmetic_add_disjoint",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 8,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "9a5b5c2b89997c7218dc08180433e4227a925b56ea62a9f26f612a9a61ab1426",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "afce8c6288b3d5272cd1c749b61f82d72928b75582690df5236d812c1de32e52",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 0,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_3",
+          "source_position": 0
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_sub_base",
+        "kind": "arithmetic",
+        "operation": "sub",
+        "pattern": "base"
+      },
+      "expanded_nodes": 7,
+      "fx_binding": "a0c2ffb17641aa278127d668642552e0602c8ee5687484bebaa103990a61ee76",
+      "id": "arithmetic_sub_base",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 7,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "90663bdbc37dc5849a30cc630bf543113b3f84896d4b6b4481e999276db86e55",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "170763e761f34d396481d1fd9235c5635baabc1f9241bcf2af98412f056d9ace",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "square_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            1,
+            2,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_sub_partial",
+        "kind": "arithmetic",
+        "operation": "sub",
+        "pattern": "partial"
+      },
+      "expanded_nodes": 35,
+      "fx_binding": "b18bc89213e355051d02626174dbc018e2d0947a1d20541a0e64b0b4ea3bb472",
+      "id": "arithmetic_sub_partial",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 21,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 320,
+      "plan_binding": "0c7227cc4fa76072987c890308b2abd076b38e845a0d098f2ab9379b601e6539",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "6a6c52d57649fd836bf74fc3d17cee2e1291ed91482ea389da98d9a0d80cd0ff",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_4",
+          "rule": "square_value",
+          "shape": [
+            4
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 3,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2
+          ],
+          "source_id": "source_8",
+          "source_position": 3
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_sub_disjoint",
+        "kind": "arithmetic",
+        "operation": "sub",
+        "pattern": "disjoint"
+      },
+      "expanded_nodes": 20,
+      "fx_binding": "159dbe127ba703e86025c79ba3bcfbf5fc6cd6293bd47e39fdde77d81933d395",
+      "id": "arithmetic_sub_disjoint",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 8,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "7af26be9381a13765479671e3f6663227d41b34d79f12e6270cafa1fc4939818",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "b570bf6ae0ac41adc71e8bd280b446b30c8930d1588e8bb2a2124900d8a361fd",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 0,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_3",
+          "source_position": 0
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_mul_base",
+        "kind": "arithmetic",
+        "operation": "mul",
+        "pattern": "base"
+      },
+      "expanded_nodes": 7,
+      "fx_binding": "f7d1b7a1c5a96a11a13759686eba2f135ad15cc43fb242d3fa784034194da2f8",
+      "id": "arithmetic_mul_base",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 7,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "efe8eaa0b94c3ef9e73175c9615b958e312223b4d1d73107f155d310b6ea8467",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "869767f6d737f13847992c6a3a757e257f9454a16fcc7ce96f66aa8a2edb241a",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_11",
+          "rule": "square_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            1,
+            2,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_mul_partial",
+        "kind": "arithmetic",
+        "operation": "mul",
+        "pattern": "partial"
+      },
+      "expanded_nodes": 32,
+      "fx_binding": "91592769c8e5bb69bd18e59f0694f2993726b4ca654c55919d5d135eba5f8c54",
+      "id": "arithmetic_mul_partial",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 18,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 320,
+      "plan_binding": "b8496de8c5376fae99d1b098a2566382ed9b3d26f2e6c901dd177ef2b9297d1a",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "b6287f8f9a465834984ad78bb7d082fd916e571b2d9b8bde85759bb6fa1657ad",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_4",
+          "rule": "square_value",
+          "shape": [
+            4
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 3,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2
+          ],
+          "source_id": "source_8",
+          "source_position": 3
+        }
+      ],
+      "configuration": {
+        "id": "arithmetic_mul_disjoint",
+        "kind": "arithmetic",
+        "operation": "mul",
+        "pattern": "disjoint"
+      },
+      "expanded_nodes": 20,
+      "fx_binding": "6a55ee079b4411ea77c3549cbc78e7d29b04c56182e3dce758bb8a84087002eb",
+      "id": "arithmetic_mul_disjoint",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 8,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "905bc9c8f6f09904079ffc586ff6b08ecd71f8fc791a1d9d9cec7d1a2d84d32d",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "5214c9a90661a7112b48e6a9255e153279c550fa2d1e19b68a037d8fa838e918",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "transpose_alias",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_14",
+          "rule": "clone_preserve_dense_layout",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_14",
+          "output_storage": "storage_14",
+          "rule": "transpose_alias",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 3,
+          "storage": "storage_14",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_14",
+          "output_storage": "storage_14",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_9",
+          "source_position": 3
+        }
+      ],
+      "configuration": {
+        "id": "clone_dense_transpose",
+        "kind": "clone"
+      },
+      "expanded_nodes": 32,
+      "fx_binding": "cfcd2349588f92e3af3732cf140642b7e1410a8fb338238f5adecd655c45bc30",
+      "id": "clone_dense_transpose",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 14,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_3"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 384,
+      "plan_binding": "1a069e73a831f4e77ba99b1d403ed99d92e0c426aea4893d9140bf2c4beb7e2b",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "b4f150290884ae6234d8f44b63ffe4172e7727e7b9e1281b40d6aa792dbf211c",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "transpose_alias",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_12",
+          "rule": "reshape_copy",
+          "shape": [
+            6
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_12",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_12",
+          "output_storage": "storage_12",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            6
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "reshape_noncontiguous_copy",
+        "kind": "reshape_copy"
+      },
+      "expanded_nodes": 12,
+      "fx_binding": "021d0998ae8d53de09e4b20c65132104a67c8c998306938d0140a3f7b934563a",
+      "id": "reshape_noncontiguous_copy",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 6,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 288,
+      "plan_binding": "4c37b0fa1846d86ea12e6e7dc54d43633c30009f8aa52e415c862e719031357a",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "d566e24612b361eadd0c6816bcd19c1fd36babbc1a84ff09285658996882da80",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "reshape_alias",
+          "shape": [
+            6
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 1,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            6
+          ],
+          "source_id": "source_5",
+          "source_position": 1
+        }
+      ],
+      "configuration": {
+        "id": "reshape_contiguous_view",
+        "kind": "reshape_view"
+      },
+      "expanded_nodes": 3,
+      "fx_binding": "0717b6981c45a436ea7fbd7c8ed0306f61840f5ab16736a9bb0bec9943a1c281",
+      "id": "reshape_contiguous_view",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 3,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "58076bb7689215af8698a1e307b43584bfb640a465bc627846c7ce85128af890",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "6c411b5f2334b24ead2c51c568ac56893bc34eb79ce0a0b1bb579e0dd10280d2",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "contiguous_alias",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "transpose_alias",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_12",
+          "rule": "contiguous_copy",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_6",
+          "source_position": 2
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 3,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_9",
+          "source_position": 3
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 4,
+          "storage": "storage_12",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_12",
+          "output_storage": "storage_12",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            3,
+            2
+          ],
+          "source_id": "source_12",
+          "source_position": 4
+        }
+      ],
+      "configuration": {
+        "id": "contiguous_alias_and_copy",
+        "kind": "contiguous"
+      },
+      "expanded_nodes": 22,
+      "fx_binding": "1b6048cc935403f5db2cc1d040b424d4e1f5c05ed6f21cba87e4e53b73ad8b70",
+      "id": "contiguous_alias_and_copy",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 16,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 288,
+      "plan_binding": "715bad1310563af62728ad7851ea2a25d0ea793dd7a3e5af0cdb6b7ed94943d3",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "a7f54089066897a6cc66ba75ee47c79dcf93b734b70be7232ae5a45a403b4201",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_12",
+          "rule": "square_value",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        },
+        {
+          "new_version": 2,
+          "previous_version": 1,
+          "rule": "mutation_ssa",
+          "source_position": 3,
+          "storage": "storage_1",
+          "written_indices": [
+            1,
+            2,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_10",
+          "source_position": 3
+        },
+        {
+          "new_version": 3,
+          "previous_version": 2,
+          "rule": "mutation_ssa",
+          "source_position": 4,
+          "storage": "storage_1",
+          "written_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "relu_mutation",
+          "shape": [
+            2,
+            3
+          ],
+          "source_id": "source_12",
+          "source_position": 4
+        }
+      ],
+      "configuration": {
+        "id": "repeated_mutation_and_prior_value",
+        "kind": "repeated"
+      },
+      "expanded_nodes": 39,
+      "fx_binding": "dd652393a74a023b76226fa30f5e82698b3701b8553de2320c238f7244a50c23",
+      "id": "repeated_mutation_and_prior_value",
+      "maximum_errors": {
+        "approximation": 0.11859375,
+        "decomposition": 2.7755575615628914e-17,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 2.7755575615628914e-17
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 25,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 256,
+      "plan_binding": "c4b492c505d0ceb38b5859c83030ead9351c71ef594e347a16f102cba6d6b30b",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "03662f1983fb089cea3c16c1583f5ecde3212a067eaad01d651a1db4b58aaae5",
+      "status": "math_passed"
+    },
+    {
+      "alias_events": [
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2,
+            1
+          ],
+          "source_id": "source_2",
+          "source_position": 0
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "slice_alias",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_4",
+          "source_position": 1
+        },
+        {
+          "new_version": 1,
+          "previous_version": 0,
+          "rule": "mutation_ssa",
+          "source_position": 2,
+          "storage": "storage_1",
+          "written_indices": [
+            1,
+            2,
+            4,
+            5
+          ]
+        },
+        {
+          "input_storage": "storage_1",
+          "output_storage": "storage_1",
+          "rule": "arithmetic_mutation",
+          "shape": [
+            2,
+            2
+          ],
+          "source_id": "source_7",
+          "source_position": 2
+        }
+      ],
+      "configuration": {
+        "id": "split_view_writeback",
+        "kind": "split"
+      },
+      "expanded_nodes": 30,
+      "fx_binding": "237099a4deeaea2ad3ddd2d933477d9ff2b9e350610b3f3f4a588f343cc98527",
+      "id": "split_view_writeback",
+      "maximum_errors": {
+        "approximation": 0.0,
+        "decomposition": 0.0,
+        "fixture": 0.0,
+        "original": 0.0,
+        "torch": 0.0
+      },
+      "original_function_accuracy_certified": false,
+      "original_nodes": 14,
+      "output_schema": {
+        "items": [
+          {
+            "kind": "tensor",
+            "name": "output_0"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_1"
+          },
+          {
+            "kind": "tensor",
+            "name": "output_2"
+          }
+        ],
+        "kind": "tuple"
+      },
+      "output_values": 192,
+      "plan_binding": "aa47767719796771c55cf2b94c440804b3e994286154f0d411771429c471287c",
+      "production_intake_integrated": false,
+      "reference_groups": 16,
+      "source_request_sha256": "67cbca79e6975391b51736403a88214d32207621113e13965ee129d48d3f1a2d",
+      "status": "math_passed"
+    }
+  ],
+  "runtime": {
+    "cuda": null,
+    "hip": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "source_hashes": {
+    "scripts/baseline/benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "scripts/baseline/benchmark_math.py": "e9bd86a4d7ea1b836efc96119d1f58aa607618a69c1572d865146d8f2bc30e70",
+    "scripts/baseline/benchmark_torch.py": "4f96357dc570e3471a7a4fdeaf841ee8687882c132b9ea8a409ba710e2f55436",
+    "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/alias_source_plan.py": "f40ddf6d00dbf565c6e055f744dfad37dd913d34dec5932eca8304a6afe03557",
+    "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/alias_source_reference.py": "7ef26323092525b42d86a7ae25d2bd677b4178ed68df61090fce16b3c5fbac61",
+    "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/audit.py": "dace37ae914b0dd2c953467e673566b32a8482b273ab2c83d3531774fcb47ab9",
+    "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/fixtures.py": "33d10c54526d3f78616993576ca77bb1c240a223eb9ca5844a2a5d228e93b5b0",
+    "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/fx_alias_source_plan.py": "2baf71cafe1b93720c15057af0a7d132bd55692e2e83b733604c2eef53b6bae9",
+    "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/test_alias_source_plan.py": "f2ba2fb6ba6203b608c2fd7688e0dd7171c970e8cfae1bd52f4444cec047a6ed",
+    "scripts/baseline/model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "scripts/baseline/model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+    "scripts/baseline/platform_config.py": "ed6272b5055a7d558e037cc0cada79be955c8c8c8d63fa5314086d0c6142c2f8"
+  },
+  "source_snapshot": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/math-verified-r1068",
+  "status": "draft_math_validated",
+  "tolerance": {
+    "ckks": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    },
+    "plaintext": {
+      "atol": 1e-12,
+      "rtol": 1e-12
+    }
+  },
+  "trusted_local_fixture_fx_captures": 24,
+  "units": {
+    "errors": 0,
+    "failed": 0,
+    "run": 34,
+    "skipped": 0
+  },
+  "x86_configuration_preserved": true
+}

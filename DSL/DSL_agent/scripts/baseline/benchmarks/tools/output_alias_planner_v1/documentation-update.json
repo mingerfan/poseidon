@@ -1,0 +1,22 @@
+{
+  "docs/baseline/agent-current-contract.md": {
+    "after": "7205d580a7a3b50d90f88ab6c091ab0b9958e3a732f0e623e2322c5605e505ab",
+    "before": "bd9fbb5ef1720dcee073bc9fc76d92ab4258109d0dee777d6eb6454b51d915fa"
+  },
+  "docs/baseline/application-agent-component-v1.md": {
+    "after": "a11d0f84d59f1636081722a8246fc4183ca4e1e6f393afe7f84c3802250a11f4",
+    "before": "62f93af0772b21d9b6f02fb6f68dc52867b7b517249c285db49dc5bc32871fcf"
+  },
+  "docs/baseline/mac-migration-handoff.md": {
+    "after": "fbf5b6c59330d5cc8d80d42f4beb9e6c3080407b4a3b6d8f14d649c091dd0c67",
+    "before": "fc30abdf19ee133cb38f305000032a2467e3392ccab821065fb22d718bcead8e"
+  },
+  "docs/baseline/supported-inputs-models-configurations.md": {
+    "after": "5dc339c7676b4c4b797e92f952907d5121fa741aafc100fd7f38fd74ef0a4ccb",
+    "before": "4d0f21973dcb9a70280ef7aacc98ff5a28e4edf1e7d66039591b1647e767232b"
+  },
+  "scripts/README.md": {
+    "after": "e9a6e9f3f770258690ab16d33bb3e2195e9f095b4eb60889d467c42e3ed23863",
+    "before": "a86ee64076a7af9f911606819f817074462686c8d42d8ab57be67c1bf182ef23"
+  }
+}

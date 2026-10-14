@@ -27,94 +27,42 @@ set(CPM_LOCAL_PACKAGES_ONLY ON CACHE BOOL
     "Require CPM dependencies to be available locally" FORCE)
 set(CPM_DOWNLOAD_ALL OFF CACHE BOOL "" FORCE)
 
-add_subdirectory("${POSEIDON_ROOT}" "${CMAKE_BINARY_DIR}/poseidon_build")
-
+# Share the exact GPU library used by the Runtime adapter.
 if(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
+    # CUDA must be enabled in the common parent of the library and test targets.
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-    if(NOT CMAKE_CUDA_ARCHITECTURES)
-        set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
-            "CUDA architectures for GPU bootstrapping tests" FORCE)
-    endif()
-
-    find_package(CUDAToolkit REQUIRED)
-
-    set(POSEIDON_THIRD_PARTY_DIR "${POSEIDON_ROOT}/third_party" CACHE PATH
-        "Path to bundled third-party dependencies")
-    set(POSEIDON_BUNDLED_RMM_DIR "${POSEIDON_THIRD_PARTY_DIR}/rmm" CACHE PATH
-        "Path to bundled RMM source")
-
-    if(EXISTS "${POSEIDON_BUNDLED_RMM_DIR}/CMakeLists.txt")
-        message(STATUS "RMM: using bundled source at ${POSEIDON_BUNDLED_RMM_DIR}")
-        set(CPM_SOURCE_CACHE "${POSEIDON_THIRD_PARTY_DIR}/cpm" CACHE PATH
-            "Bundled CPM cache for offline RAPIDS/RMM configuration" FORCE)
-        set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
-        set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
-        set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-        set(RMM_NVTX OFF CACHE BOOL "" FORCE)
-        set(USE_NVTX OFF CACHE BOOL "" FORCE)
-        set(RMM_LOGGING_LEVEL "OFF" CACHE STRING "" FORCE)
-        set(FMT_INSTALL OFF CACHE BOOL "" FORCE)
-        set(SPDLOG_INSTALL OFF CACHE BOOL "" FORCE)
-        set(SPDLOG_FMT_EXTERNAL_HO ON CACHE BOOL "" FORCE)
-        add_subdirectory(
-            "${POSEIDON_BUNDLED_RMM_DIR}"
-            "${CMAKE_BINARY_DIR}/third_party/rmm"
-            EXCLUDE_FROM_ALL)
-    else()
-        message(FATAL_ERROR
-            "Bundled RMM was not found at ${POSEIDON_BUNDLED_RMM_DIR}. "
-            "For offline builds, copy RMM and its vendored dependencies into "
-            "${POSEIDON_THIRD_PARTY_DIR}; otherwise install RMM and adjust this CMake file.")
-    endif()
-
-    set(POSEIDON_GPU_DATA_STRUCT_SOURCES
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ciphertext.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_key.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_parameter.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_plaintext.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_uploader.cpp"
-    )
-
-    set(POSEIDON_GPU_OPERATOR_SOURCES
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_evaluator.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_double_hoist.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_elementwise_handler.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_keyswitch_handler.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_modswitch_handler.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ntt_handler.cpp"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_tensor_core_gemm.cu"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_double_hoist_kernels.cu"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_keyswitch_kernels.cu"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_ntt_kernels.cu"
-        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_rescale_kernels.cu"
-    )
-
-    add_executable(test_gpu_bootstrap_modraise
-        test_gpu_bootstrap_modraise.cpp
-        ${POSEIDON_GPU_DATA_STRUCT_SOURCES}
-        ${POSEIDON_GPU_OPERATOR_SOURCES}
-    )
-
-    target_link_libraries(test_gpu_bootstrap_modraise
-        PRIVATE
-            poseidon_shared
-            CUDA::cudart
-            rmm::rmm
-    )
-    target_compile_options(test_gpu_bootstrap_modraise
-        PRIVATE
-            $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
-    )
-    set_target_properties(test_gpu_bootstrap_modraise PROPERTIES
-        CUDA_ARCHITECTURES 70)
-
-    add_test(
-        NAME test_gpu_bootstrap_modraise
-        COMMAND test_gpu_bootstrap_modraise
-    )
-    set_tests_properties(test_gpu_bootstrap_modraise
-        PROPERTIES SKIP_RETURN_CODE 77)
 endif()
+set(POSEIDON_BUILD_GPU ${POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS}
+    CACHE BOOL "Build the standalone Poseidon GPU library" FORCE)
+if(POSEIDON_BUILD_RESNET20_S2C_FIRST AND NOT POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
+    message(FATAL_ERROR "S2C-first ResNet20 requires GPU support")
+endif()
+add_subdirectory("${POSEIDON_ROOT}" "${CMAKE_BINARY_DIR}/poseidon_build")
+
+if(NOT TARGET test_homomorphic_dft_repack)
+    add_executable(test_homomorphic_dft_repack test_homomorphic_dft_repack.cpp)
+    target_link_libraries(test_homomorphic_dft_repack PRIVATE poseidon_shared)
+    add_test(NAME test_homomorphic_dft_repack COMMAND test_homomorphic_dft_repack)
+endif()
+
+if(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
+    add_executable(test_gpu_bootstrap_modraise test_gpu_bootstrap_modraise.cpp)
+    target_link_libraries(test_gpu_bootstrap_modraise PRIVATE poseidon::gpu)
+    add_test(NAME test_gpu_bootstrap_modraise COMMAND test_gpu_bootstrap_modraise)
+    set_tests_properties(test_gpu_bootstrap_modraise PROPERTIES SKIP_RETURN_CODE 77)
+endif()
+
+# CPU arithmetic check, independent of optional CUDA tests.
+add_executable(test_portable_borrow test_portable_borrow.cpp)
+target_include_directories(test_portable_borrow PRIVATE
+    "${POSEIDON_ROOT}/src" "${CMAKE_BINARY_DIR}/poseidon_build")
+enable_testing()
+add_test(NAME test_portable_borrow COMMAND test_portable_borrow)
+
+add_executable(test_bootstrap_parameter_budget test_bootstrap_parameter_budget.cpp)
+target_include_directories(test_bootstrap_parameter_budget PRIVATE
+    "${POSEIDON_ROOT}/src" "${CMAKE_BINARY_DIR}/poseidon_build")
+target_link_libraries(test_bootstrap_parameter_budget PRIVATE poseidon_shared gmpxx gmp)
+add_test(NAME test_bootstrap_parameter_budget COMMAND test_bootstrap_parameter_budget)

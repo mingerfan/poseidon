@@ -1,0 +1,10 @@
+{
+  "api_calls": 0,
+  "compiled": false,
+  "controlled_cleanup_completed": true,
+  "detached_owned_child_remained_running": true,
+  "encrypted_execution": false,
+  "format": "poseidon-assessment-supervision-reproduction-v1",
+  "parent_stopped": true,
+  "source_sha256": "48ff840ac4173e5ea629fd95fa6d6d5df577965bcbaefe599504748ef56a9d99"
+}

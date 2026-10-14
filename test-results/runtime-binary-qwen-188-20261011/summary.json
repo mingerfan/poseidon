@@ -1,0 +1,15 @@
+{
+  "values": 11064667,
+  "instructions": 22149239,
+  "json_bytes": 8756201335,
+  "binary_bytes": 1469778349,
+  "json_load_seconds": 278.42350654,
+  "binary_load_seconds": 22.147437489,
+  "load_speedup": 12.571364370179845,
+  "parse_build_speedup": 17.846733007483458,
+  "json_load_verify_seconds": 312.003028599,
+  "binary_load_verify_seconds": 54.42692181300001,
+  "all_fields_equal": true,
+  "blob_payloads_read": 0,
+  "load_verify_speedup": 5.73251284853073
+}

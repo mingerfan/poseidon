@@ -1,0 +1,95 @@
+{
+  "binding": "a900177f39ddb4b87b1513c78a6209c6df1036367e0d5058f281c435ee6fb6f2",
+  "branch": "lhy-agent-dsl",
+  "commits": 0,
+  "current_continuation": {
+    "calls_resolved": true,
+    "failed": 1,
+    "generations": 11,
+    "http_attempts": 11,
+    "passed": 6,
+    "plan_binding": "4485b8a8ab368837763a86f3931fccdff021be904dafc00b73163e68bcd76883",
+    "report_sha256": "2b5b9e45c86980182bb286e9347d17eab2d6d091ef24b7591d7e708bd5071532"
+  },
+  "downloads": 0,
+  "existing_backend_libraries_unchanged": true,
+  "failed_case": {
+    "case": "linear_into_separate_cross_none__declared_shallow_v1",
+    "code": "transport_invalid_stream",
+    "compiled": false,
+    "encrypted_execution": false,
+    "layer": "provider",
+    "model_unsupported_not_concluded": true
+  },
+  "format": "poseidon-source-recovery-checkpoint-v2",
+  "git_status": {
+    "entries": 1069,
+    "tracked": 66,
+    "untracked": 1003
+  },
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "installation": 0,
+  "models_reference_threshold_unchanged": true,
+  "network_configuration_changes": 0,
+  "new_success_scope": [
+    "real_agent",
+    "compiled",
+    "poseidon_cpu_encrypted_execution",
+    "decrypted_numerical_comparison",
+    "package_reload",
+    "new_inputs",
+    "repeat",
+    "cache"
+  ],
+  "next_action": "Integrate the explicitly versioned source feature at a safe boundary, then qualify representative Poseidon execution and packages; new feature Agent calls require a separate frozen approval.",
+  "observed_wall": 1791630485.6833985,
+  "original_36_cases": {
+    "all_calls_resolved": false,
+    "cumulative_generations": 45,
+    "cumulative_http_attempts": 46,
+    "interrupted": 1,
+    "not_run": 0,
+    "passed": 33,
+    "provider_failed": 2
+  },
+  "parked_unknown_calls": [
+    {
+      "case": "einsum_public_weight",
+      "index": 1,
+      "status": "unknown"
+    },
+    {
+      "case": "scalar_shared_power_division",
+      "index": 0,
+      "status": "unknown"
+    }
+  ],
+  "production_python_verified": 669,
+  "public_mask_source": {
+    "compiler_calls": 0,
+    "controls_passed": 40,
+    "current_source_format": "draft-v4",
+    "effective_state_separately_bound": true,
+    "encrypted_calls": 0,
+    "errors": 0,
+    "failed": 0,
+    "full_original_state_separately_bound": true,
+    "metrics": {
+      "max_original_torch_vs_independent_ideal": 1.1102230246251565e-16,
+      "max_original_vs_normalized_torch": 1.1102230246251565e-16,
+      "max_reference_tolerance_ratio": 7.328879201324506e-05
+    },
+    "original_failed_cases_preserved": true,
+    "previous_v2_captures_data_revalidated": 16,
+    "production_activation": false,
+    "provider_calls": 0,
+    "record_binding": "9f0a4b5f9acb78d6bf07bb6ef5fc0cdd52513f13fa508e1d79efb340b5ed1d34",
+    "report_sha256": "acea93debd415b34e34182050e013625432dd7e5cf200cf5763594bc5e79fb97",
+    "skipped": 0,
+    "source_capture_passed": 3,
+    "source_groups": 48,
+    "source_values": 448
+  },
+  "pushes": 0,
+  "unknown_calls_retried": false
+}

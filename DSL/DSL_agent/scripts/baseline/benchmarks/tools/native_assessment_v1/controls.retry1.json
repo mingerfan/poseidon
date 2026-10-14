@@ -1,0 +1,26 @@
+{
+  "format": "poseidon-native-assessment-controls-v1",
+  "status": "failed",
+  "tests": {
+    "run": 47,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "elapsed_seconds": 20.77029283400043,
+  "source_forward_executed": false,
+  "encrypted_execution": false,
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "backend_outputs": "Injected control fixtures; actual native/FHE acceptance has a separate report",
+  "files": {
+    "scripts/baseline/task_numerical_assessment.py": "4f41ffc7d8d57c3a8361a1048d6c92b406c981f6e35a13e70d4c94557ba9eb90",
+    "scripts/baseline/test_task_numerical_assessment.py": "d6bcd7692e0e90c9b5025c333604011f3d86c46297b436f5a2f4fb378a31732d",
+    "scripts/baseline/test_task_native_assessment.py": "bada885733da88afa6dba48d03fd8628ee94cd2d95ca877d6cfee4aa4b5ba84d",
+    "scripts/baseline/task_source_reference.py": "200546ff376362e5b39eebd218239a80dcb73fa8662978feb0d052b0a58b330a",
+    "scripts/baseline/test_task_source_reference.py": "916da64d069e97e1a8538960240af78691ae31b658d1b50fb778e74807168d24",
+    "scripts/baseline/source_precision_reference.py": "5a1476afd47931c22591768be3a1b64bcbbb30ba97c4e54253c59fa0fe4db68d",
+    "scripts/baseline/benchmarks/tools/native_assessment_v1/controls_retry1.py": "abed45de3d968db9e2bc3fba8560f632fbb533a64bf87a4af34e9c975fc61e39"
+  },
+  "binding": "1efda5aac99c91a7c41b76ffe2862ed1426ba111a9a2a203edf5ec36a10abae3"
+}

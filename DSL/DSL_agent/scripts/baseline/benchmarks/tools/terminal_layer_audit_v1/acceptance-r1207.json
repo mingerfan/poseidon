@@ -1,0 +1,15 @@
+{
+  "compilations": 0,
+  "encrypted_executions": 0,
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-terminal-audit-tests-v1",
+  "passed": 8,
+  "provider_calls": 0,
+  "skipped": 0,
+  "source_hashes": {
+    "audit.py": "606f41c8552a0eecf65d9b6702e9c96789c6633decab0d1909694feed3d729dd",
+    "test_audit.py": "ee783c042a6f6607f54c967cd84d7db2aec7b844b64e45ff6404e65aa277e1d7"
+  },
+  "tests": 8
+}

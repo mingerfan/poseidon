@@ -1,0 +1,1547 @@
+{
+  "approximation_profiles": {},
+  "binding_sha256": "bfda5f4009b7dc9afbd5b1eedf67b005047880ee517c83bc562472720aa96632",
+  "format": "poseidon-decomposition-binding-v4",
+  "implementation_sha256": "8bf420508c1adbb00ca9567b690e8ef28e56027b753ca58d56b68c6428cc19eb",
+  "implementation_sources": {
+    "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+    "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+    "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+    "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+    "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+    "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+    "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+    "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+  },
+  "lowered_sha256": "01cec0dba72432ee6eb59101e6511372136ba8579846811b9c806f56d33451d1",
+  "no_dsl_answer": true,
+  "normalization": {
+    "arithmetic_entries": [],
+    "matrix_entries": [],
+    "matrix_policy": "static-tensor-matmul-v1",
+    "public_constants_sha256": "9219174d196e751aa7ac2a3c7bd505f886caee3003fd6638b4896e952806b683",
+    "scalar_carrier_shape": [
+      1
+    ],
+    "spatial_entries": [
+      {
+        "core_node_ids": [
+          "generated_6"
+        ],
+        "input_shape": [
+          1,
+          1,
+          3
+        ],
+        "matrix_elements": 15,
+        "nearest_vectorized_path": false,
+        "operator": "resize",
+        "origin": "node_10",
+        "output_shape": [
+          1,
+          1,
+          5
+        ],
+        "runtime_validated": false,
+        "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+      }
+    ],
+    "version": "static-spatial-decomposition-v3"
+  },
+  "original_sha256": "2754e09bddd19af4a36457d9d5ae71bbc05473ccb45030e04fd4095df70f9cbc",
+  "pytorch_capture": {
+    "constant_dtypes": {},
+    "dtype_policy": "strict-float64-v1",
+    "graph_sha256": "2754e09bddd19af4a36457d9d5ae71bbc05473ccb45030e04fd4095df70f9cbc",
+    "index_capture": {
+      "entries": [],
+      "graph_sha256": "05b2b5788b55b5024269a6c1d44ed33b7fa24382b761258791a706f14ff56b1e",
+      "version": "poseidon-pytorch-static-index-v1"
+    },
+    "input_dtype": "float64",
+    "ordered_alias_capture": {
+      "binding": "6deaf7f61a44e88b5bb49bb16f20b8e345e777d9cd2bb761f42897b1d01c8dd5",
+      "capture_adapter": {
+        "arithmetic": {
+          "binding_sha256": "86d7af24b1cc853ac946e6afb3390a509d6156ad8943cc337becebdcd0390fe8",
+          "capture_name_map": {
+            "add_": "add_",
+            "clone": "clone",
+            "output": "output",
+            "up": "up",
+            "view": "view",
+            "x": "x"
+          },
+          "captured_graph_sha256": "05b2b5788b55b5024269a6c1d44ed33b7fa24382b761258791a706f14ff56b1e",
+          "entries": [],
+          "existing_capture_rules_retained": true,
+          "format": "poseidon-fx-public-arithmetic-v1",
+          "fx_inputs": [
+            "x"
+          ],
+          "normalized_fx_sha256": "e6c0dbd56b1d0d98cd0f60594a977dccd7a2744457aff388ac89a3e05b8a7857",
+          "normalized_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %up : [#users=3] = call_module[target=up](args = (%x,), kwargs = {})\n    %clone : [#users=1] = call_method[target=clone](args = (%up,), kwargs = {})\n    %view : [#users=1] = call_method[target=view](args = (%up, 1, -1), kwargs = {})\n    %add_ : [#users=0] = call_method[target=add_](args = (%view, 0.125), kwargs = {})\n    return (clone, up)",
+          "public_attributes": {},
+          "public_state_preserved": true,
+          "requires_trusted_capture_worker": true,
+          "resource_profile": "general-tensors-v1",
+          "source_fx_sha256": "e6c0dbd56b1d0d98cd0f60594a977dccd7a2744457aff388ac89a3e05b8a7857",
+          "source_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %up : [#users=3] = call_module[target=up](args = (%x,), kwargs = {})\n    %clone : [#users=1] = call_method[target=clone](args = (%up,), kwargs = {})\n    %view : [#users=1] = call_method[target=view](args = (%up, 1, -1), kwargs = {})\n    %add_ : [#users=0] = call_method[target=add_](args = (%view, 0.125), kwargs = {})\n    return (clone, up)",
+          "source_graph_preserved": true,
+          "split_aliases": {}
+        },
+        "binding": "5a461a68a5a13c3e5099a1365fa22cf889ffbbb71dee83786bb2e9fc824d36ad",
+        "compiler_validated": false,
+        "encrypted_execution_validated": false,
+        "format": "poseidon-trusted-spatial-capture-draft-v1",
+        "graph_sha256": "2754e09bddd19af4a36457d9d5ae71bbc05473ccb45030e04fd4095df70f9cbc",
+        "implementation": {
+          "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+          "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+          "pytorch_alias_capture_bridge.py": "20de8bdf93f2af7db38e9ec4da12a3681d077d04ab8aab557045758069cbd901",
+          "pytorch_alias_composition.py": "f2a91924eb30aa938053cb2a2b3dcdbf4c88063c72f13d813f124b88be3d6077",
+          "pytorch_arithmetic_normalization.py": "f34f292232f469a65e813d0621509f47019b15ff32b76e23fdc4ee6c370451ca",
+          "pytorch_model_capture.py": "b85222f47b08184693d4ca53a8d4ed163e09b2343f7ef694a3c7621bf3a48a7d",
+          "pytorch_ordered_capture.py": "8f444c51e827ac97f1f84bd0a30ff2b578dbf3d749129f97f44ea124d9db1ade",
+          "pytorch_spatial_source.py": "19e67ed8986ad320b2779d307d79f5f2882f627d582de2e9e85434ab38086e03",
+          "pytorch_static_trace.py": "b68b30d10c43ca96f1d8580b273be9740b6aa37d9a16d4fb0528eecdbc12e0cd"
+        },
+        "independent_reference_required": true,
+        "normalized_fx_sha256": "e6c0dbd56b1d0d98cd0f60594a977dccd7a2744457aff388ac89a3e05b8a7857",
+        "normalized_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %up : [#users=3] = call_module[target=up](args = (%x,), kwargs = {})\n    %clone : [#users=1] = call_method[target=clone](args = (%up,), kwargs = {})\n    %view : [#users=1] = call_method[target=view](args = (%up, 1, -1), kwargs = {})\n    %add_ : [#users=0] = call_method[target=add_](args = (%view, 0.125), kwargs = {})\n    return (clone, up)",
+        "production_intake_integrated": false,
+        "reference_inputs": "separate clones for every execution",
+        "resource_profile": "general-tensors-v1",
+        "source_fx_sha256": "e6c0dbd56b1d0d98cd0f60594a977dccd7a2744457aff388ac89a3e05b8a7857",
+        "source_fx_text": "graph():\n    %x : [#users=1] = placeholder[target=x]\n    %up : [#users=3] = call_module[target=up](args = (%x,), kwargs = {})\n    %clone : [#users=1] = call_method[target=clone](args = (%up,), kwargs = {})\n    %view : [#users=1] = call_method[target=view](args = (%up, 1, -1), kwargs = {})\n    %add_ : [#users=0] = call_method[target=add_](args = (%view, 0.125), kwargs = {})\n    return (clone, up)",
+        "source_state_dtypes": {
+          "project.bias": "float64",
+          "project.weight": "float64"
+        },
+        "spatial_source_policy": "poseidon-pytorch-static-spatial-v1"
+      },
+      "capture_emission_constant_dtypes": {},
+      "capture_emission_state_constant_sources": {},
+      "capture_emissions": {
+        "constants": {
+          "weight_0": 0.125
+        },
+        "format": "poseidon-operator-graph-v4",
+        "id": "pytorch_model",
+        "inputs": [
+          {
+            "name": "x",
+            "shape": [
+              1,
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "align_corners": false,
+              "antialias": false,
+              "mode": "linear",
+              "recompute_scale_factor": null,
+              "scale_factor": null,
+              "size": [
+                5
+              ]
+            },
+            "id": "fx_up",
+            "inputs": [
+              "x"
+            ],
+            "op": "resize",
+            "outputs": [
+              "value_up"
+            ]
+          },
+          {
+            "attrs": {
+              "training": false
+            },
+            "id": "fx_clone",
+            "inputs": [
+              "value_up"
+            ],
+            "op": "dropout",
+            "outputs": [
+              "value_clone"
+            ]
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                5
+              ]
+            },
+            "id": "fx_view",
+            "inputs": [
+              "value_up"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "value_view"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "fx_add_",
+            "inputs": [
+              "value_view",
+              "weight_0"
+            ],
+            "op": "add",
+            "outputs": [
+              "value_add_"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "before",
+            "value": "value_clone"
+          },
+          {
+            "name": "after",
+            "value": "value_up"
+          }
+        ]
+      },
+      "capture_emissions_sha256": "05b2b5788b55b5024269a6c1d44ed33b7fa24382b761258791a706f14ff56b1e",
+      "capture_public_constant_views": {},
+      "capture_source_origins": {
+        "fx_add_": {
+          "action": null,
+          "fx_kind": "call_method",
+          "fx_node": "add_",
+          "mutation_other": "weight_0",
+          "mutation_target": "value_view",
+          "operation": "add"
+        },
+        "fx_clone": {
+          "action": "clone",
+          "fx_kind": "call_method",
+          "fx_node": "clone",
+          "operation": "dropout"
+        },
+        "fx_up": {
+          "action": null,
+          "fx_kind": "call_module",
+          "fx_node": "up",
+          "operation": "resize"
+        },
+        "fx_view": {
+          "action": "view",
+          "fx_kind": "call_method",
+          "fx_node": "view",
+          "operation": "reshape"
+        }
+      },
+      "compiler_validated": false,
+      "constant_dtypes": {},
+      "derived_state_constant_sources": {},
+      "encrypted_execution_validated": false,
+      "format": "poseidon-pytorch-ordered-alias-capture-staging-v2",
+      "implementation": {
+        "pytorch_alias_capture_bridge.py": "20de8bdf93f2af7db38e9ec4da12a3681d077d04ab8aab557045758069cbd901",
+        "pytorch_alias_composition.py": "f2a91924eb30aa938053cb2a2b3dcdbf4c88063c72f13d813f124b88be3d6077",
+        "pytorch_model_capture.py": "b85222f47b08184693d4ca53a8d4ed163e09b2343f7ef694a3c7621bf3a48a7d"
+      },
+      "input_storage_assumption": "separate contiguous CPU float64 inputs",
+      "normalization": {
+        "agent_status": "unverified",
+        "binding": "ff3dee4bb4a38dcf351224e68e51cf1aa138625a07499d66322e089a17c91cce",
+        "compiler_status": "unverified",
+        "decomposition": {
+          "approximation_profiles": {},
+          "binding_sha256": "7754d9bfc7e9bd2b8083101300be1f4e229bf563404c170cefe22271b162cd8f",
+          "format": "poseidon-decomposition-binding-v4",
+          "implementation_sha256": "8bf420508c1adbb00ca9567b690e8ef28e56027b753ca58d56b68c6428cc19eb",
+          "implementation_sources": {
+            "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+            "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+            "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+            "operator_arithmetic_graph.py": "7abfa6b4ce7cb77b187a3881493579e8a9f3ef505353560bcfcdfb78a3f5c668",
+            "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+            "operator_spatial_graph.py": "fddf993be9135cd4e92147a2346471508ee17de9161d3596c2183bdfd53ae221",
+            "operator_spatial_reference.py": "32b06a05472a8c3999b5fa775b6a129df21afa02e5bc706defe4ae9c799f98ee",
+            "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+          },
+          "lowered_sha256": "01cec0dba72432ee6eb59101e6511372136ba8579846811b9c806f56d33451d1",
+          "no_dsl_answer": true,
+          "normalization": {
+            "arithmetic_entries": [],
+            "matrix_entries": [],
+            "matrix_policy": "static-tensor-matmul-v1",
+            "public_constants_sha256": "9219174d196e751aa7ac2a3c7bd505f886caee3003fd6638b4896e952806b683",
+            "scalar_carrier_shape": [
+              1
+            ],
+            "spatial_entries": [
+              {
+                "core_node_ids": [
+                  "generated_6"
+                ],
+                "input_shape": [
+                  1,
+                  1,
+                  3
+                ],
+                "matrix_elements": 15,
+                "nearest_vectorized_path": false,
+                "operator": "resize",
+                "origin": "node_10",
+                "output_shape": [
+                  1,
+                  1,
+                  5
+                ],
+                "runtime_validated": false,
+                "semantics": "Torch 2.0.1 CPU Float64 contiguous interpolate"
+              }
+            ],
+            "version": "static-spatial-decomposition-v3"
+          },
+          "original_sha256": "2754e09bddd19af4a36457d9d5ae71bbc05473ccb45030e04fd4095df70f9cbc",
+          "registry_version": "operator-decomposition-v4+spatial-v3",
+          "required_capabilities": [
+            "ckks_add_multiply_rotate"
+          ],
+          "resource_profile": {
+            "axis_size": 65536,
+            "constant_elements": 1000000,
+            "constants": 1024,
+            "expanded_nodes": 4096,
+            "input_elements": 4096,
+            "inputs": 4,
+            "json_bytes": 33554432,
+            "name": "general-tensors-v1",
+            "original_nodes": 1024,
+            "output_elements": 4096,
+            "outputs": 4,
+            "rank": 32,
+            "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+            "tensor_elements": 65536,
+            "total_constant_elements": 1000000
+          },
+          "runtime_layout_validated": false,
+          "source_map": {
+            "generated_1": "node_3",
+            "generated_10": "node_15",
+            "generated_12": "node_17",
+            "generated_14": "node_20",
+            "generated_16": "node_22",
+            "generated_18": "node_25",
+            "generated_20": "node_27",
+            "generated_22": "node_29",
+            "generated_24": "node_31",
+            "generated_26": "node_33",
+            "generated_3": "node_7",
+            "generated_6": "node_10",
+            "generated_8": "node_13"
+          }
+        },
+        "encrypted_status": "unverified",
+        "events": [
+          {
+            "input_storage": "storage_1",
+            "output_storage": "storage_11",
+            "rule": "registered_value:resize",
+            "shape": [
+              1,
+              1,
+              5
+            ],
+            "source_id": "fx_up",
+            "source_position": 0
+          },
+          {
+            "input_storage": "storage_11",
+            "output_storage": "storage_18",
+            "rule": "clone_preserve_dense_layout",
+            "shape": [
+              1,
+              1,
+              5
+            ],
+            "source_id": "fx_clone",
+            "source_position": 1
+          },
+          {
+            "input_storage": "storage_11",
+            "output_storage": "storage_11",
+            "rule": "view_alias",
+            "shape": [
+              1,
+              5
+            ],
+            "source_id": "fx_view",
+            "source_position": 2
+          },
+          {
+            "input_storage": "storage_11",
+            "output_storage": "storage_23",
+            "rule": "arithmetic_value",
+            "shape": [
+              1,
+              5
+            ],
+            "source_id": "fx_add_",
+            "source_position": 3
+          },
+          {
+            "new_version": 1,
+            "previous_version": 0,
+            "rule": "mutation_ssa",
+            "source_position": 4,
+            "storage": "storage_11",
+            "written_indices": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "input_storage": "storage_11",
+            "output_storage": "storage_11",
+            "rule": "assign_mutation",
+            "shape": [
+              1,
+              5
+            ],
+            "source_id": "capture_alias_2",
+            "source_position": 4
+          }
+        ],
+        "format": "poseidon-alias-capture-normalization-v5",
+        "implementation": {
+          "benchmark_graph.py": "be9db090333f3df1257cca714a861f9aa776f7b0a077987bf0ca1f3925b54f89",
+          "benchmark_math.py": "e9bd86a4d7ea1b836efc96119d1f58aa607618a69c1572d865146d8f2bc30e70",
+          "model_decomposition.py": "7cf65b7cae19650b5f9953476567b6d3f44df1f0e49a0cd7ab1a21650b0ba567",
+          "model_resources.py": "834958ade427af3e50ea5d5f99f42e09f601631dcafcdf08635bf7496e199afb",
+          "operator_graph.py": "b35b27ccbefd29135c0c29f071f8b4dbdbc91704e40276b9ace90ebf63d091dc",
+          "operator_reference.py": "5562899476baa4a7862c85375e42c6a38eed33e5fe06f04fda6b779d4ca9378a",
+          "pytorch_alias_composition.py": "f2a91924eb30aa938053cb2a2b3dcdbf4c88063c72f13d813f124b88be3d6077",
+          "pytorch_matrix_plan.py": "aa188c088291eaec02a06ae1aa60ead76871eb8b468c4df04c297a9dfc6fc233"
+        },
+        "input_storage_assumption": "separate contiguous CPU float64 logical inputs",
+        "lowered_graph": {
+          "constants": {
+            "generated_4": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.6000000000000001,
+                0.3999999999999999,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.3999999999999999,
+                0.6000000000000001
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "public_4": 0.125
+          },
+          "format": "poseidon-model-graph-v2",
+          "id": "static_alias_source",
+          "inputs": [
+            {
+              "name": "x",
+              "shape": [
+                1,
+                1,
+                3
+              ]
+            }
+          ],
+          "nodes": [
+            {
+              "attrs": {
+                "shape": [
+                  3
+                ]
+              },
+              "id": "generated_1",
+              "inputs": [
+                "x"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_0"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  3
+                ]
+              },
+              "id": "generated_3",
+              "inputs": [
+                "generated_0"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_2"
+              ]
+            },
+            {
+              "attrs": {},
+              "id": "generated_6",
+              "inputs": [
+                "generated_2",
+                "generated_4"
+              ],
+              "op": "linear",
+              "outputs": [
+                "generated_5"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "generated_8",
+              "inputs": [
+                "generated_5"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_7"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  5
+                ]
+              },
+              "id": "generated_10",
+              "inputs": [
+                "generated_7"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_9"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "generated_12",
+              "inputs": [
+                "generated_9"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_11"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  5
+                ]
+              },
+              "id": "generated_14",
+              "inputs": [
+                "generated_7"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_13"
+              ]
+            },
+            {
+              "attrs": {},
+              "id": "generated_16",
+              "inputs": [
+                "generated_13",
+                "public_4"
+              ],
+              "op": "add",
+              "outputs": [
+                "generated_15"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "generated_18",
+              "inputs": [
+                "generated_15"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_17"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  5
+                ]
+              },
+              "id": "generated_20",
+              "inputs": [
+                "generated_17"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_19"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "generated_22",
+              "inputs": [
+                "generated_19"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_21"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  5
+                ]
+              },
+              "id": "generated_24",
+              "inputs": [
+                "generated_11"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_23"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  5
+                ]
+              },
+              "id": "generated_26",
+              "inputs": [
+                "generated_21"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "generated_25"
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "name": "before",
+              "value": "generated_23"
+            },
+            {
+              "name": "after",
+              "value": "generated_25"
+            }
+          ],
+          "resource_profile": "general-tensors-v1"
+        },
+        "lowered_node_origins": {
+          "generated_1": {
+            "phase": "input_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "generated_10": {
+            "phase": "source_operation",
+            "source_id": "fx_clone",
+            "source_position": 1
+          },
+          "generated_12": {
+            "phase": "source_operation",
+            "source_id": "fx_clone",
+            "source_position": 1
+          },
+          "generated_14": {
+            "phase": "source_operation",
+            "source_id": "fx_add_",
+            "source_position": 3
+          },
+          "generated_16": {
+            "phase": "source_operation",
+            "source_id": "fx_add_",
+            "source_position": 3
+          },
+          "generated_18": {
+            "phase": "source_operation",
+            "source_id": "fx_add_",
+            "source_position": 3
+          },
+          "generated_20": {
+            "phase": "source_operation",
+            "source_id": "capture_alias_2",
+            "source_position": 4
+          },
+          "generated_22": {
+            "phase": "source_operation",
+            "source_id": "capture_alias_2",
+            "source_position": 4
+          },
+          "generated_24": {
+            "phase": "output_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "generated_26": {
+            "phase": "output_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "generated_3": {
+            "phase": "source_operation",
+            "source_id": "fx_up",
+            "source_position": 0
+          },
+          "generated_6": {
+            "phase": "source_operation",
+            "source_id": "fx_up",
+            "source_position": 0
+          },
+          "generated_8": {
+            "phase": "source_operation",
+            "source_id": "fx_up",
+            "source_position": 0
+          }
+        },
+        "mathematical_graph": {
+          "constants": {
+            "public_4": 0.125
+          },
+          "format": "poseidon-operator-graph-v4",
+          "id": "static_alias_source",
+          "inputs": [
+            {
+              "name": "x",
+              "shape": [
+                1,
+                1,
+                3
+              ]
+            }
+          ],
+          "nodes": [
+            {
+              "attrs": {
+                "shape": [
+                  3
+                ]
+              },
+              "id": "node_3",
+              "inputs": [
+                "x"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_2"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  3
+                ]
+              },
+              "id": "node_7",
+              "inputs": [
+                "tensor_2"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_6"
+              ]
+            },
+            {
+              "attrs": {
+                "align_corners": false,
+                "antialias": false,
+                "mode": "linear",
+                "recompute_scale_factor": null,
+                "scale_factor": null,
+                "size": [
+                  5
+                ]
+              },
+              "id": "node_10",
+              "inputs": [
+                "tensor_6"
+              ],
+              "op": "resize",
+              "outputs": [
+                "tensor_9"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "node_13",
+              "inputs": [
+                "tensor_9"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_12"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  5
+                ]
+              },
+              "id": "node_15",
+              "inputs": [
+                "tensor_12"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_14"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "node_17",
+              "inputs": [
+                "tensor_14"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_16"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  5
+                ]
+              },
+              "id": "node_20",
+              "inputs": [
+                "tensor_12"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_19"
+              ]
+            },
+            {
+              "attrs": {},
+              "id": "node_22",
+              "inputs": [
+                "tensor_19",
+                "public_4"
+              ],
+              "op": "add",
+              "outputs": [
+                "tensor_21"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "node_25",
+              "inputs": [
+                "tensor_21"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_24"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  5
+                ]
+              },
+              "id": "node_27",
+              "inputs": [
+                "tensor_24"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_26"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  5
+                ]
+              },
+              "id": "node_29",
+              "inputs": [
+                "tensor_26"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_28"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  5
+                ]
+              },
+              "id": "node_31",
+              "inputs": [
+                "tensor_16"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_30"
+              ]
+            },
+            {
+              "attrs": {
+                "shape": [
+                  1,
+                  1,
+                  5
+                ]
+              },
+              "id": "node_33",
+              "inputs": [
+                "tensor_28"
+              ],
+              "op": "reshape",
+              "outputs": [
+                "tensor_32"
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "name": "before",
+              "value": "tensor_30"
+            },
+            {
+              "name": "after",
+              "value": "tensor_32"
+            }
+          ]
+        },
+        "mathematical_node_origins": {
+          "node_10": {
+            "phase": "source_operation",
+            "source_id": "fx_up",
+            "source_position": 0
+          },
+          "node_13": {
+            "phase": "source_operation",
+            "source_id": "fx_up",
+            "source_position": 0
+          },
+          "node_15": {
+            "phase": "source_operation",
+            "source_id": "fx_clone",
+            "source_position": 1
+          },
+          "node_17": {
+            "phase": "source_operation",
+            "source_id": "fx_clone",
+            "source_position": 1
+          },
+          "node_20": {
+            "phase": "source_operation",
+            "source_id": "fx_add_",
+            "source_position": 3
+          },
+          "node_22": {
+            "phase": "source_operation",
+            "source_id": "fx_add_",
+            "source_position": 3
+          },
+          "node_25": {
+            "phase": "source_operation",
+            "source_id": "fx_add_",
+            "source_position": 3
+          },
+          "node_27": {
+            "phase": "source_operation",
+            "source_id": "capture_alias_2",
+            "source_position": 4
+          },
+          "node_29": {
+            "phase": "source_operation",
+            "source_id": "capture_alias_2",
+            "source_position": 4
+          },
+          "node_3": {
+            "phase": "input_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "node_31": {
+            "phase": "output_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "node_33": {
+            "phase": "output_binding",
+            "source_id": null,
+            "source_position": -1
+          },
+          "node_7": {
+            "phase": "source_operation",
+            "source_id": "fx_up",
+            "source_position": 0
+          }
+        },
+        "original_function_accuracy_certified": false,
+        "physical_layout_status": "unverified",
+        "production_intake_integrated": false,
+        "public_constant_sources": {
+          "public_4": {
+            "full_identity": true,
+            "result_shape": [],
+            "source": "weight_0",
+            "source_shape": []
+          }
+        },
+        "registered_value_operators": [
+          "adaptive_avg_pool",
+          "add",
+          "avg_pool1d",
+          "avg_pool2d",
+          "batch_norm",
+          "concat",
+          "conv1d",
+          "conv2d",
+          "conv_transpose1d",
+          "conv_transpose2d",
+          "dot",
+          "exp",
+          "gelu",
+          "global_avg_pool",
+          "group_norm",
+          "instance_norm",
+          "layer_norm",
+          "leaky_relu",
+          "linear",
+          "log",
+          "logsoftmax",
+          "matmul",
+          "max",
+          "max_pool1d",
+          "max_pool2d",
+          "maximum",
+          "mean",
+          "min",
+          "minimum",
+          "multiply",
+          "negate",
+          "padding",
+          "polynomial",
+          "power",
+          "prelu",
+          "public_gather",
+          "reciprocal",
+          "relu",
+          "resize",
+          "rms_norm",
+          "rope",
+          "rotate",
+          "rsqrt",
+          "sigmoid",
+          "silu",
+          "softmax",
+          "sqrt",
+          "square",
+          "stack",
+          "subtract",
+          "sum",
+          "tanh",
+          "variance"
+        ],
+        "resource_profile": {
+          "axis_size": 65536,
+          "constant_elements": 1000000,
+          "constants": 1024,
+          "expanded_nodes": 4096,
+          "input_elements": 4096,
+          "inputs": 4,
+          "json_bytes": 33554432,
+          "name": "general-tensors-v1",
+          "original_nodes": 1024,
+          "output_elements": 4096,
+          "outputs": 4,
+          "rank": 32,
+          "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+          "tensor_elements": 65536,
+          "total_constant_elements": 1000000
+        },
+        "source_request": {
+          "approximations": {},
+          "resource_profile": "general-tensors-v1",
+          "source": {
+            "constants": {
+              "weight_0": 0.125
+            },
+            "format": "poseidon-ordered-tensor-source-v4",
+            "inputs": [
+              {
+                "name": "x",
+                "shape": [
+                  1,
+                  1,
+                  3
+                ]
+              }
+            ],
+            "nodes": [
+              {
+                "attrs": {
+                  "operator": "resize",
+                  "parameters": {
+                    "align_corners": false,
+                    "antialias": false,
+                    "mode": "linear",
+                    "recompute_scale_factor": null,
+                    "scale_factor": null,
+                    "size": [
+                      5
+                    ]
+                  }
+                },
+                "id": "fx_up",
+                "inputs": [
+                  "x"
+                ],
+                "op": "registered",
+                "output": "value_up"
+              },
+              {
+                "attrs": {},
+                "id": "fx_clone",
+                "inputs": [
+                  "value_up"
+                ],
+                "op": "clone",
+                "output": "value_clone"
+              },
+              {
+                "attrs": {
+                  "shape": [
+                    1,
+                    5
+                  ]
+                },
+                "id": "fx_view",
+                "inputs": [
+                  "value_up"
+                ],
+                "op": "view",
+                "output": "value_view"
+              },
+              {
+                "attrs": {
+                  "alpha": 1,
+                  "inplace": false
+                },
+                "id": "fx_add_",
+                "inputs": [
+                  "value_view",
+                  "weight_0"
+                ],
+                "op": "add",
+                "output": "capture_alias_1"
+              },
+              {
+                "attrs": {},
+                "id": "capture_alias_2",
+                "inputs": [
+                  "value_view",
+                  "capture_alias_1",
+                  "weight_0"
+                ],
+                "op": "assign",
+                "output": "value_add_"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "before",
+                "value": "value_clone"
+              },
+              {
+                "name": "after",
+                "value": "value_up"
+              }
+            ]
+          },
+          "spatial_source_policy": "poseidon-pytorch-static-spatial-v1"
+        },
+        "source_request_sha256": "da2a621bf55924f1a497d41739ee320e81b44841d5ffe068e9861a847ec27935",
+        "source_value_descriptions": {
+          "capture_alias_1": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              5
+            ]
+          },
+          "value_add_": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              5
+            ]
+          },
+          "value_clone": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              1,
+              5
+            ]
+          },
+          "value_up": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              1,
+              5
+            ]
+          },
+          "value_view": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              5
+            ]
+          },
+          "weight_0": {
+            "kind": "plain",
+            "shape": []
+          },
+          "x": {
+            "kind": "cipher",
+            "shape": [
+              1,
+              1,
+              3
+            ]
+          }
+        }
+      },
+      "paid_calls": 0,
+      "physical_layout_validated": false,
+      "production_intake_integrated": false,
+      "source_capture_policy": {
+        "common_call_rules": "poseidon-fx-common-calls-v1",
+        "indexing_policy": "poseidon-pytorch-static-index-v1",
+        "input_signature_sha256": "ba2dc3da4eec8ae741117a2e88583882e2e5d9e6cc8aa3197146ab93ea361b93",
+        "max_fx_compute_nodes": 1024,
+        "scalar_outputs": "rank_zero_tree_v1",
+        "shape_sources": "declared_signature_and_registered_meta_rules",
+        "tensor_metadata_record": "registered-signature-shapes-v1",
+        "version": "signature-static-ordered-alias-staging-v1"
+      },
+      "source_graph": {
+        "constants": {
+          "weight_0": 0.125
+        },
+        "format": "poseidon-ordered-tensor-source-v4",
+        "inputs": [
+          {
+            "name": "x",
+            "shape": [
+              1,
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "operator": "resize",
+              "parameters": {
+                "align_corners": false,
+                "antialias": false,
+                "mode": "linear",
+                "recompute_scale_factor": null,
+                "scale_factor": null,
+                "size": [
+                  5
+                ]
+              }
+            },
+            "id": "fx_up",
+            "inputs": [
+              "x"
+            ],
+            "op": "registered",
+            "output": "value_up"
+          },
+          {
+            "attrs": {},
+            "id": "fx_clone",
+            "inputs": [
+              "value_up"
+            ],
+            "op": "clone",
+            "output": "value_clone"
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                5
+              ]
+            },
+            "id": "fx_view",
+            "inputs": [
+              "value_up"
+            ],
+            "op": "view",
+            "output": "value_view"
+          },
+          {
+            "attrs": {
+              "alpha": 1,
+              "inplace": false
+            },
+            "id": "fx_add_",
+            "inputs": [
+              "value_view",
+              "weight_0"
+            ],
+            "op": "add",
+            "output": "capture_alias_1"
+          },
+          {
+            "attrs": {},
+            "id": "capture_alias_2",
+            "inputs": [
+              "value_view",
+              "capture_alias_1",
+              "weight_0"
+            ],
+            "op": "assign",
+            "output": "value_add_"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "before",
+            "value": "value_clone"
+          },
+          {
+            "name": "after",
+            "value": "value_up"
+          }
+        ]
+      },
+      "source_graph_sha256": "91c01cc1c1e17d2d49083af5dbaa03e8017b7550ddca6e2589037ab6343e2ad7",
+      "source_node_origins": {
+        "capture_alias_2": {
+          "action": null,
+          "fx_kind": "call_method",
+          "fx_node": "add_",
+          "mutation_other": "weight_0",
+          "mutation_target": "value_view",
+          "operation": "add"
+        },
+        "fx_add_": {
+          "action": null,
+          "fx_kind": "call_method",
+          "fx_node": "add_",
+          "mutation_other": "weight_0",
+          "mutation_target": "value_view",
+          "operation": "add"
+        },
+        "fx_clone": {
+          "action": "clone",
+          "fx_kind": "call_method",
+          "fx_node": "clone",
+          "operation": "dropout"
+        },
+        "fx_up": {
+          "action": null,
+          "fx_kind": "call_module",
+          "fx_node": "up",
+          "operation": "resize"
+        },
+        "fx_view": {
+          "action": "view",
+          "fx_kind": "call_method",
+          "fx_node": "view",
+          "operation": "reshape"
+        }
+      },
+      "state_constant_sources": {}
+    },
+    "output_structure": {
+      "items": [
+        {
+          "kind": "tensor",
+          "name": "before"
+        },
+        {
+          "kind": "tensor",
+          "name": "after"
+        }
+      ],
+      "kind": "tuple"
+    },
+    "registered_emission_policy": {
+      "indexing_policy": "poseidon-pytorch-static-index-v1",
+      "input_signature_sha256": "ba2dc3da4eec8ae741117a2e88583882e2e5d9e6cc8aa3197146ab93ea361b93",
+      "max_fx_compute_nodes": 1024,
+      "scalar_outputs": "rank_zero_tree_v1",
+      "shape_sources": "declared_signature_and_registered_meta_rules",
+      "version": "signature-static-index-v1"
+    },
+    "source_precision_execution_compared": false,
+    "source_state_dtypes": {
+      "project.bias": "float64",
+      "project.weight": "float64"
+    },
+    "spatial_source_capture": {
+      "entries": [
+        {
+          "attributes": {
+            "align_corners": false,
+            "antialias": false,
+            "mode": "linear",
+            "recompute_scale_factor": null,
+            "scale_factor": null,
+            "size": [
+              5
+            ]
+          },
+          "fixed_semantics": "Torch 2.0.1 CPU Float64 contiguous",
+          "fx_node": "up",
+          "input_shape": [
+            1,
+            1,
+            3
+          ],
+          "operator": "resize",
+          "output_shape": [
+            1,
+            1,
+            5
+          ],
+          "source": "module:Upsample"
+        }
+      ],
+      "graph_format": "poseidon-operator-graph-v4",
+      "original_function_accuracy_certified": false,
+      "version": "poseidon-pytorch-static-spatial-v1"
+    },
+    "state_constant_sources": {},
+    "torch_version": "2.0.1",
+    "training": false,
+    "trusted_code": true
+  },
+  "registry_version": "operator-decomposition-v4+spatial-v3",
+  "required_capabilities": [
+    "ckks_add_multiply_rotate"
+  ],
+  "resource_profile": {
+    "axis_size": 65536,
+    "constant_elements": 1000000,
+    "constants": 1024,
+    "expanded_nodes": 4096,
+    "input_elements": 4096,
+    "inputs": 4,
+    "json_bytes": 33554432,
+    "name": "general-tensors-v1",
+    "original_nodes": 1024,
+    "output_elements": 4096,
+    "outputs": 4,
+    "rank": 32,
+    "sha256": "c4c738c036c566c0b1291f1472fe03f1b0754a157f444bce4f54f850f300b871",
+    "tensor_elements": 65536,
+    "total_constant_elements": 1000000
+  },
+  "runtime_layout_validated": false,
+  "source_map": {
+    "generated_1": "node_3",
+    "generated_10": "node_15",
+    "generated_12": "node_17",
+    "generated_14": "node_20",
+    "generated_16": "node_22",
+    "generated_18": "node_25",
+    "generated_20": "node_27",
+    "generated_22": "node_29",
+    "generated_24": "node_31",
+    "generated_26": "node_33",
+    "generated_3": "node_7",
+    "generated_6": "node_10",
+    "generated_8": "node_13"
+  }
+}

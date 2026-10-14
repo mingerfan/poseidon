@@ -1,0 +1,221 @@
+{
+  "actual_owner_absent": true,
+  "authorization_closed": true,
+  "automatic_replay_allowed": false,
+  "billing_amount_known": false,
+  "binding": "1a615bb82c71b8a22bc2d06f192c0a732a06ac13fb4346c60dee0d20c4e97f97",
+  "calls_resolved": false,
+  "compiler_calls": 0,
+  "decryptions": 0,
+  "encrypted_calls": 0,
+  "failed": 1,
+  "format": "poseidon-mha-tensor-axis-live-postmortem-v1",
+  "frozen_sources_verified_before_changes": true,
+  "generations": 5,
+  "guest_reboot_after_batch_start": true,
+  "http_attempts": 8,
+  "interrupted": 1,
+  "new_paid_calls_after_recovery": 0,
+  "not_started": 0,
+  "numerical_checks": 0,
+  "original_running_report_preserved": true,
+  "original_running_report_sha256": "e2dbefa54a5c8503cd793d9e117ad1af710d46ec57f6377ced6aa996bc74e15a",
+  "packages_delivered": 0,
+  "passed": 0,
+  "plan_binding": "56dc71e80814a8e9e9788cd13923a68359ff2bbce0dc79e9e332810b17b71d81",
+  "planned": 2,
+  "proposal_binding": "475391a7ef31efef047900e89fe39db9bbc70d63ea63a900e1e88c0f82ae2d1f",
+  "received_usage": [
+    {
+      "completion_tokens": 63647,
+      "prompt_tokens": 42524,
+      "total_tokens": 106171
+    },
+    {
+      "completion_tokens": 97293,
+      "prompt_tokens": 44636,
+      "total_tokens": 141929
+    },
+    {
+      "completion_tokens": 44641,
+      "prompt_tokens": 46777,
+      "total_tokens": 91418
+    },
+    {
+      "completion_tokens": 98380,
+      "prompt_tokens": 49120,
+      "total_tokens": 147500
+    }
+  ],
+  "resources_and_parameters_changed": false,
+  "rows": [
+    {
+      "call_outcomes": [
+        {
+          "index": 0,
+          "status": "response_received"
+        },
+        {
+          "index": 1,
+          "status": "response_received"
+        },
+        {
+          "index": 2,
+          "status": "response_received"
+        },
+        {
+          "index": 3,
+          "status": "response_received"
+        }
+      ],
+      "candidate_hashes": [
+        {
+          "response_sha256": "0ed5bd412b47de7cd74dcaf72d3ede48683c1c6269fc1dc1bd5b6cbe0fbab257",
+          "round": 0,
+          "source_sha256": "ec00b81fcc89bc1751708002f6ea13df6defe749765092694f86f18963256bbf"
+        },
+        {
+          "response_sha256": "9721b0cf6522d6ca06fa429788815ab56085f67617c45ff995896bbcf23b6360",
+          "round": 1,
+          "source_sha256": "7a3f7ea68bf26d8f975d916c71b7773e7ae430c809f5d10605c8ec95d4b8d093"
+        },
+        {
+          "response_sha256": "9f2b42ab4106d09b4401fab0d38b724c0d8d019a5feca2c0a7c6982a98142563",
+          "round": 2,
+          "source_sha256": "9cc09496dc652e8d47c8709642b0a7d3fc8104d1e69fe3fd95331d24fa2724ae"
+        },
+        {
+          "response_sha256": "df8ad961648ec3f78fa53e349ee3001fdc50c6f910d52f82f692d1c46a6e2231",
+          "round": 3,
+          "source_sha256": "7b6a159b1aeb4971ed8b403a8cb8bd8e306122b6642a2fbda143718e17c170c1"
+        }
+      ],
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "failure": {
+        "code": "candidate_contract_rejected",
+        "context": {},
+        "format": "poseidon-diagnostic-v2",
+        "layer": "static_check",
+        "location": {
+          "column": 45,
+          "kind": "source",
+          "line": 23
+        },
+        "owner": "candidate",
+        "reason_code": "rotation_step_not_allowed",
+        "repeat_key_available": false,
+        "retry_policy": "repair_within_budget"
+      },
+      "generations": 4,
+      "http_attempts": 4,
+      "recovered": false,
+      "state_before_sha256": "99d02a61ea53f3cb6c3b9ca7377db15b1c5b67313bb37443de1a6b72c65f790e",
+      "status": "failed",
+      "task": "a2f5ba0de3954fd3b3e8106aae6d6a07",
+      "temp_states": [],
+      "terminal_task_status": "budget_exhausted",
+      "transport_receipt_sha256": "8197ab9360b6ae427e1bc329360570ae76c581e30c9ea5ea468046b7a18731a6",
+      "unknown_reserved_http_indices": [],
+      "validation": [
+        {
+          "context": {
+            "limit": 1024,
+            "observed": 2766
+          },
+          "layer": "static_check",
+          "location": {
+            "column": 0,
+            "kind": "source",
+            "line": 42
+          },
+          "reason_code": "expanded_work_budget",
+          "record_sha256": "fd4fe4a51eef32540bdb0b3a469f7435d4b761f076c5d8c0724bc50e7df3077c",
+          "round": 0,
+          "status": "failed"
+        },
+        {
+          "context": {},
+          "layer": "static_check",
+          "location": null,
+          "reason_code": "contract_rejected",
+          "record_sha256": "5586793ef2e7b65f513dbd714f88b139141a79f956255755ad30d613c868cc28",
+          "round": 1,
+          "status": "failed"
+        },
+        {
+          "context": {
+            "limit": 1024,
+            "observed": 3205
+          },
+          "layer": "static_check",
+          "location": {
+            "column": 0,
+            "kind": "source",
+            "line": 10
+          },
+          "reason_code": "expanded_work_budget",
+          "record_sha256": "928d587695e3c13eaac8e9af770837ac1cfcf958d51f81fee248a59aff107499",
+          "round": 2,
+          "status": "failed"
+        },
+        {
+          "context": {},
+          "layer": "static_check",
+          "location": {
+            "column": 45,
+            "kind": "source",
+            "line": 23
+          },
+          "reason_code": "rotation_step_not_allowed",
+          "record_sha256": "61d300d3f506ba82115675ec36b5132d2b40abbb8dce48ad355e5c5193f360b5",
+          "round": 3,
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "call_outcomes": [
+        {
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "index": 2,
+          "status": "failed"
+        }
+      ],
+      "candidate_hashes": [],
+      "case": "linear_into_separate_cross_none__declared_shallow_v1",
+      "failure": {
+        "code": "interrupted_outcome_unknown",
+        "layer": "worker"
+      },
+      "generations": 1,
+      "http_attempts": 4,
+      "recovered": true,
+      "state_after_sha256": "5b77075afa12e67294c084eb2e67a6d8151991a7fcb9e956f141dbc4b3a226bd",
+      "state_before_sha256": "c8d013af7e6c056fbab82c93e98e55ca4ad5f3425e3ccb04c6d70cdce868a5ae",
+      "status": "interrupted",
+      "task": "3823b488c4a140ebb34827277c064aa1",
+      "temp_states": [
+        {
+          "path": "state.json.586255ba14204ee1aa94581a24de67d8.tmp",
+          "sha256": "5d4f6b851018dd1780b11194eeef2cf6ce40fdff3de93907c42a2ca10c64779a"
+        }
+      ],
+      "terminal_task_status": "service_error",
+      "transport_receipt_sha256": "0568a4e109a3968a586c78e0679698e07a23343cc93dc2aecd84b7eba164b4fe",
+      "unknown_reserved_http_indices": [
+        3
+      ],
+      "validation": []
+    }
+  ],
+  "source_stage_identity_binding": "2aae78b4b2ed9068a98afb910e4bfdb1350a4dea5eec935469937ad16ae777e7",
+  "status": "stopped_interrupted",
+  "unknown_http_attempts": 1
+}

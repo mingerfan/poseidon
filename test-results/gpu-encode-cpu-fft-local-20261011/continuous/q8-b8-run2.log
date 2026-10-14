@@ -1,0 +1,26 @@
+setting up operands and direct rotation/relinearization keys
+measuring add + cuda_encode
+measuring add + cpu_fft_cuda_encode
+measuring add + tilelang_tensor_encode
+measuring add + cpu_fft_tilelang_tensor_encode
+measuring multiply_plain + cuda_encode
+measuring multiply_plain + tilelang_tensor_encode
+measuring multiply_plain + cpu_fft_cuda_encode
+measuring multiply_plain + cpu_fft_tilelang_tensor_encode
+measuring multiply + tilelang_tensor_encode
+measuring multiply + cpu_fft_cuda_encode
+measuring multiply + cuda_encode
+measuring multiply + cpu_fft_tilelang_tensor_encode
+measuring rescale + cpu_fft_cuda_encode
+measuring rescale + cuda_encode
+measuring rescale + cpu_fft_tilelang_tensor_encode
+measuring rescale + tilelang_tensor_encode
+measuring relinearize + cuda_encode
+measuring relinearize + cpu_fft_cuda_encode
+measuring relinearize + cpu_fft_tilelang_tensor_encode
+measuring relinearize + tilelang_tensor_encode
+measuring rotate + cpu_fft_tilelang_tensor_encode
+measuring rotate + cpu_fft_cuda_encode
+measuring rotate + tilelang_tensor_encode
+measuring rotate + cuda_encode
+report: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/gpu-encode-cpu-fft-local-20261011/continuous/q8-b8-run2.json

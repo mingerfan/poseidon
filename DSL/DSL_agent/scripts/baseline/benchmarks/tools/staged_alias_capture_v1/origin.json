@@ -1,0 +1,11 @@
+{
+  "backend_changes": false,
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "format": "poseidon-alias-capture-staging-origin-v1",
+  "paid_calls": 0,
+  "production_integrated": false,
+  "source_hashes": {
+    "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/targets/pytorch_alias_composition.py": "752669c57ef0f8ef3bcc6726b13b73fe8d67cd647a4edca8b6162c4bf11db559",
+    "scripts/baseline/pytorch_model_capture.py": "a8b28753c7d6fc89ee82580924edd7e9321dbab570dd01d6bf3aaaadbe3c1ca2"
+  }
+}

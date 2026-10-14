@@ -1,0 +1,18 @@
+{
+  "current_gate": {
+    "applied": false,
+    "binding": "0623167de71327bb1d2ec15a2d0563b74ee1c5bd1d35acf61f072027e2521c1b",
+    "status": "waiting_for_current_batch"
+  },
+  "errors": 0,
+  "failed": 0,
+  "format": "poseidon-source-cutover-guard-tests-v2",
+  "provider_calls": 0,
+  "skipped": 0,
+  "source_applied": false,
+  "source_hashes": {
+    "guarded_apply.py": "aaa82e93c37e2c322daea3dee9e2d9792abe3c4da3fcf6beb6a410082ee7f507",
+    "test_cutover.py": "29bca02d221a8d69d3b9b32758bcf6445f55fa6434571ec577c45169f69515c5"
+  },
+  "tests": 20
+}

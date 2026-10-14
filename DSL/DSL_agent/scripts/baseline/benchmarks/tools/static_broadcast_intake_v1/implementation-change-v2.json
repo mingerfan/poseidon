@@ -1,0 +1,39 @@
+{
+  "time_ns": 1791755782057015750,
+  "files": {
+    "scripts/baseline/pytorch_spatial_policy.py": {
+      "before": "a6ab3292485f673efe9cec3d481d4c16a1c57f53265729b4480defde047d2cd1",
+      "after": "94607561e7d727a6e7ff60eb9fa8e247911f3e4a14191f306fc59c2fb020739a"
+    },
+    "scripts/baseline/pytorch_static_trace.py": {
+      "before": "b68b30d10c43ca96f1d8580b273be9740b6aa37d9a16d4fb0528eecdbc12e0cd",
+      "after": "bc6a2f97cc32e342fa09c557ff358cd64a42e63cf7218b157e9d9a9f09167dcc"
+    },
+    "scripts/baseline/pytorch_public_expression_capture.py": {
+      "before": "d3d53831f8bc55aa8365a9f7683a9566c0c8500bf8a41621d4bbefc4dd797184",
+      "after": "2b71e1608892c5b9cd3cdd9a248fc3422cfb27830e5de8360d02ee0122264800"
+    },
+    "scripts/baseline/pytorch_ordered_contract.py": {
+      "before": "28a86623f394dcddc942558cbfc2bb49fe43c8afccf9aaa574a2d5232b70a554",
+      "after": "550f4ad2fd043bbd3c0db9cb06ba9858d0a85532ca85d4a2c8f72e93108a2ec6"
+    },
+    "scripts/baseline/pytorch_model_intake.py": {
+      "before": "b93d7683e2adf2c06070aae809c58c9f7ce8fbb5d03cf8165e8a672147692e4e",
+      "after": "9224908a9b958d081d1828eb5f2a5ed4685e5c1c2ed936f04b8b313cefb8d260"
+    },
+    "scripts/baseline/pytorch_ordered_intake.py": {
+      "before": "173455497d95026b71c03396079e03c39c8565e5fed611bbe4effefd488f27a4",
+      "after": "05a89ddf37675c99ab62eb6ebfdd775cd7080c9a4060fee687570315370e743e"
+    },
+    "scripts/baseline/pytorch_static_broadcast.py": {
+      "before": null,
+      "after": "6c3d28d7d9e855e168f5cbf86735547708e8d438a6f9544eccf19526555b71b6"
+    },
+    "scripts/baseline/candidate_bundle.py": {
+      "before": "fa84f02de75f631ff2e0113e6f0c1e181421575f80e0a24e76d040e2ddd1b603",
+      "after": "000da80547a208763de6f0cea3e19eec5ba33f8ab77d390b4dce457b2870f0a7"
+    }
+  },
+  "branch": "lhy-agent-dsl",
+  "backend_modified": false
+}

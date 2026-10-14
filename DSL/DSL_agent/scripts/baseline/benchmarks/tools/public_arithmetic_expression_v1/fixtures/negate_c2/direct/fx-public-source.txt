@@ -1,0 +1,7 @@
+graph():
+    %x : [#users=1] = placeholder[target=x]
+    %a : [#users=1] = get_attr[target=a]
+    %negative : [#users=1] = call_function[target=torch.negative](args = (), kwargs = {input: %a})
+    %transpose : [#users=1] = call_method[target=transpose](args = (%negative, 0, 1), kwargs = {})
+    %linear : [#users=1] = call_function[target=torch._C._nn.linear](args = (%x, %transpose), kwargs = {})
+    return linear

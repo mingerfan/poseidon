@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_continuation_v1/continue.py", line 96, in <module>
+    if __name__=="__main__":raise SystemExit(main())
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_continuation_v1/continue.py", line 92, in main
+    try:return watch()
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_continuation_v1/continue.py", line 75, in watch
+    report=read(pathlib.Path(plan["retest_root"])/"report.json")
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_continuation_v1/continue.py", line 9, in read
+    def read(path):return scope.read(path)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_live_v1/scope.py", line 37, in read
+    def read(p):return decode(Path(p).read_bytes())
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-retest-v1/report.json'

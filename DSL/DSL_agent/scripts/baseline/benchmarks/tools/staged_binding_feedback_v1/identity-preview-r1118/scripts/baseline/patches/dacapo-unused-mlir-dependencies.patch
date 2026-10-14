@@ -1,0 +1,93 @@
+--- a/lib/Conversion/CKKSCommon/CMakeLists.txt
++++ b/lib/Conversion/CKKSCommon/CMakeLists.txt
+@@ -8,6 +8,5 @@
+   LINK_LIBS PUBLIC
+   EarthDialect
+   CKKSDialect
+-  MLIRLLVMCommonConversion
+   MLIRTransforms
+   )
+--- a/lib/Conversion/CKKSToCKKS/CMakeLists.txt
++++ b/lib/Conversion/CKKSToCKKS/CMakeLists.txt
+@@ -11,6 +11,5 @@
+   LINK_LIBS PUBLIC
+   EarthDialect
+   CKKSDialect
+-  MLIRLLVMCommonConversion
+   MLIRTransforms
+   )
+--- a/lib/Conversion/EarthToCKKS/CMakeLists.txt
++++ b/lib/Conversion/EarthToCKKS/CMakeLists.txt
+@@ -10,6 +10,6 @@
+   LINK_LIBS PUBLIC
++  HecateCKKSCommonConversion
+   EarthDialect
+   CKKSDialect
+-  MLIRLLVMCommonConversion
+   MLIRTransforms
+   )
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -31,7 +31,6 @@
+   )
+ 
+ target_link_libraries(hecate-opt
+-  MLIREmitCDialect
+   MLIROptLib
+   EarthDialect
+   CKKSDialect
+--- a/tools/optimizer.cpp
++++ b/tools/optimizer.cpp
+@@ -1,8 +1,8 @@
+ 
+ #include "mlir/Bytecode/BytecodeWriter.h"
+-#include "mlir/Dialect/LLVMIR/LLVMAttrs.h"
+-#include "mlir/Dialect/LLVMIR/LLVMDialect.h"
+-#include "mlir/Dialect/SCF/IR/SCF.h"
++#include "mlir/Dialect/Func/IR/FuncOps.h"
++#include "mlir/Dialect/Tensor/IR/Tensor.h"
++#include "mlir/Transforms/Passes.h"
+ #include "mlir/IR/AsmState.h"
+ #include "mlir/IR/Attributes.h"
+ #include "mlir/IR/BuiltinOps.h"
+@@ -10,8 +10,6 @@
+ #include "mlir/IR/Dialect.h"
+ #include "mlir/IR/Location.h"
+ #include "mlir/IR/MLIRContext.h"
+-#include "mlir/InitAllDialects.h"
+-#include "mlir/InitAllPasses.h"
+ #include "mlir/Parser/Parser.h"
+ #include "mlir/Pass/Pass.h"
+ #include "mlir/Pass/PassManager.h"
+--- a/tools/frontend.cpp
++++ b/tools/frontend.cpp
+@@ -5,17 +5,12 @@
+ #include <limits>
+ #include <memory>
+ 
+-#include "mlir/Conversion/LLVMCommon/ConversionTarget.h"
+-#include "mlir/Dialect/Bufferization/Transforms/Passes.h"
+ #include "mlir/Parser/Parser.h"
+ #include "mlir/Tools/mlir-opt/MlirOptMain.h"
+ #include "llvm/Support/SourceMgr.h"
+-#include <llvm/Bitcode/BitcodeWriter.h>
+-#include <llvm/Support/TargetSelect.h>
+ #include <llvm/Support/raw_ostream.h>
+ #include <mlir/Dialect/Func/IR/FuncOps.h>
+ #include <mlir/Dialect/Tensor/IR/Tensor.h>
+-#include <mlir/Dialect/Tensor/Transforms/Passes.h>
+ #include <mlir/IR/Builders.h>
+ #include <mlir/IR/MLIRContext.h>
+ #include <mlir/IR/IRMapping.h>
+--- a/lib/Dialect/Earth/Transforms/CodeSegmentation.cpp
++++ b/lib/Dialect/Earth/Transforms/CodeSegmentation.cpp
+@@ -7,8 +7,6 @@
+ #include "hecate/Support/Support.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+-#include "mlir/Dialect/Func/Transforms/Passes.h"
+-#include "mlir/Dialect/LLVMIR/LLVMDialect.h"
+-#include "mlir/Dialect/SCF/IR/SCF.h"
+ #include "mlir/IR/Builders.h"
+ #include "mlir/IR/BuiltinAttributes.h"
++#include "mlir/IR/PatternMatch.h"
+ #include "mlir/Pass/PassManager.h"

@@ -1,0 +1,15 @@
+{
+  "format": "poseidon-pytorch-offline-cases-v1",
+  "cases": [
+    {
+      "id": "module_linear",
+      "manifest": "scripts/baseline/cases/pytorch_form_audit_v1/module_linear.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      },
+      "exercise_reuse": false
+    }
+  ]
+}

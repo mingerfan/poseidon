@@ -1,0 +1,134 @@
+[
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/repeat_0/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1450/repeat_0",
+    "name": "repeat_0",
+    "operator": "repeat"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/repeat_1/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1450/repeat_1",
+    "name": "repeat_1",
+    "operator": "repeat"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/repeat_2/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1450/repeat_2",
+    "name": "repeat_2",
+    "operator": "repeat"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/tile_0/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1450/tile_0",
+    "name": "tile_0",
+    "operator": "tile"
+  },
+  {
+    "fixture_correction": "Declare unchanged public buffers in complete weight inventory",
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases-v2/tile_1/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/tile_1",
+    "name": "tile_1",
+    "operator": "tile",
+    "previous_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/tile_1/manifest.json"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/tile_2/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/tile_2",
+    "name": "tile_2",
+    "operator": "tile"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/interleave_0/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/interleave_0",
+    "name": "interleave_0",
+    "operator": "repeat_interleave"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/interleave_1/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/interleave_1",
+    "name": "interleave_1",
+    "operator": "repeat_interleave"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/interleave_2/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/interleave_2",
+    "name": "interleave_2",
+    "operator": "repeat_interleave"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/flip_0/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/flip_0",
+    "name": "flip_0",
+    "operator": "flip"
+  },
+  {
+    "fixture_correction": "Declare unchanged public buffers in complete weight inventory",
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases-v2/flip_1/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/flip_1",
+    "name": "flip_1",
+    "operator": "flip",
+    "previous_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/flip_1/manifest.json"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/flip_2/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/flip_2",
+    "name": "flip_2",
+    "operator": "flip"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/roll_0/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/roll_0",
+    "name": "roll_0",
+    "operator": "roll"
+  },
+  {
+    "fixture_correction": "Declare unchanged public buffers in complete weight inventory",
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases-v2/roll_1/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/roll_1",
+    "name": "roll_1",
+    "operator": "roll",
+    "previous_manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/roll_1/manifest.json"
+  },
+  {
+    "kind": "new_source_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_tensor_transforms_v1/cases/roll_2/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/roll_2",
+    "name": "roll_2",
+    "operator": "roll"
+  },
+  {
+    "kind": "old_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_package_intake_v1/cases/square_helper/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/compat_v29_square_helper",
+    "name": "compat_v29_square_helper",
+    "operator": null
+  },
+  {
+    "kind": "old_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_package_intake_v1/cases/nested_keyword_broadcast/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/compat_v29_nested_keyword_broadcast",
+    "name": "compat_v29_nested_keyword_broadcast",
+    "operator": null
+  },
+  {
+    "kind": "old_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_package_intake_v1/cases/reexport_linear/manifest.json",
+    "model_import": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-transforms-capture-r1451/compat_v29_reexport_linear",
+    "name": "compat_v29_reexport_linear",
+    "operator": null
+  }
+]

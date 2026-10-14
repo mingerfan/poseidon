@@ -1,0 +1,23 @@
+{
+  "branch": "lhy-agent-dsl",
+  "compiler_calls": 0,
+  "documentation_sha256": {
+    "docs/README.md": "1f1d62aa9aed80a4128918c1b974e58d5ea2628e6edfdde1bba2cf5e3d374a10",
+    "docs/baseline/agent-pytorch-exact-arithmetic-acceptance-r1348.json": "7e425070e86e5ae9c1ea4d8d7656c39785f8e0e67baecf913e58eb6f20776e72",
+    "docs/baseline/agent-pytorch-exact-arithmetic-acceptance-r1348.md": "9886f99e90746183e469c8394c93170a99ac6454e626c576be7c1f43730d7015",
+    "docs/baseline/mac-migration-handoff.md": "b668c5b833519f855ec4bf928b5662748461f535fe9ea0f4509da2bc11e631f5",
+    "docs/baseline/operator-decomposition-and-python.md": "604990b4f47ef7a8c7c31234eb5b4578fe8fdcc4e7872a252aa9280c136f6907",
+    "docs/baseline/supported-inputs-models-configurations.md": "05c76f5304f9c6d9150191ff35a2ee09188b2116965f8ead9a1c1b39898bd606",
+    "scripts/README.md": "58b36dd3e471ffd669c4c6a8693267b35e5ba3092cdb2344991c1376a2a9e164"
+  },
+  "encrypted_calls": 0,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "original_fhe_report_bindings": [
+    "498289c122e65cbe8701262ed79d7c89661e7ef2c133c5a3a038a8b4f0147765",
+    "a0c53359c66e13c997943df2de895c8f4724d35a3b43a6c7ade8bd9740261f34",
+    "3d3bfe287a84210075d1b3d0675d92c2421729c5bc3152eb26a2fcdbfcf3174f"
+  ],
+  "provider_calls": 0,
+  "source_audit_binding": "521d0247c676245198fb389927c496f363be84a6d6a9ace84e2ba6feb6844fcb",
+  "status": "passed"
+}

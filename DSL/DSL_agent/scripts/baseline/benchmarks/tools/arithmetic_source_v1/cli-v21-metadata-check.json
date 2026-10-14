@@ -1,0 +1,60 @@
+{
+  "checked_fixtures": [
+    {
+      "case": "tensor_square_division",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "47bc5247e49c1b148be7e289ae901dfd6bbf6fbc5a2a3316fdcdd6e1ef69e7a4"
+    },
+    {
+      "case": "linear_fourth_power_division",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "e8b7aba311ba7d9c1cfdcef82f3328abf8cb397a10d67eda2ac4ebe324f67b8e"
+    },
+    {
+      "case": "scalar_shared_power_division",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "1eb38c91ef43cae6c7df5b60990ff3166a2c0ab9f0d1267454f0090a300a6156"
+    },
+    {
+      "case": "snapshot_fourth_power_division",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "3e0fdff8aa4150e5ded6f97b86645283559d98789fea68c44b556468f6bb942c"
+    },
+    {
+      "case": "diagonal_square_division",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "bdffc4177baa0fcfe00850f47976fbdac671f0c5cf7cf5459a95b0d68cbf1e5a"
+    },
+    {
+      "case": "public_buffer_division_square",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "d940782708a0813f72d4ad9003895dafc41fa5b481c13c5c89628a0497638b73"
+    },
+    {
+      "case": "method_power_shape_division",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "4e81d987f63ff459e4eeb219602831babb025e07c5ecd24239dc0b92b87a408e"
+    },
+    {
+      "case": "multi_input_power_division",
+      "format": "poseidon-trusted-pytorch-v21",
+      "manifest_sha256": "0e62f9818f4cad3d200d5fa1e047c6a65385683bf594f02bd580a77f0e18c35a"
+    },
+    {
+      "case": "scalar_shared_write",
+      "format": "poseidon-trusted-pytorch-v20",
+      "manifest_sha256": "4b53cda4aca564e2587e818b784d01b651b6476b2fdf8bcfe4e7d778c432f4df"
+    },
+    {
+      "case": "legacy_mlp",
+      "format": "poseidon-trusted-pytorch-v18",
+      "manifest_sha256": "efeb0e7c41819e0cbd2fa0364c0e65b3ebadc61af3ae394d2a8194f398c210ce"
+    }
+  ],
+  "compiler_calls": 0,
+  "default_source_format": "poseidon-trusted-pytorch-v18",
+  "encrypted_calls": 0,
+  "provider_calls": 0,
+  "source_executed": false,
+  "status": "passed"
+}

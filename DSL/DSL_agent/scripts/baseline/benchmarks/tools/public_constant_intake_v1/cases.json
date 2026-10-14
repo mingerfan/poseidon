@@ -1,0 +1,128 @@
+[
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/zeros_like_0/manifest.json",
+    "name": "zeros_like_0",
+    "operator": "zeros_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/zeros_like_1/manifest.json",
+    "name": "zeros_like_1",
+    "operator": "zeros_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/zeros_like_2/manifest.json",
+    "name": "zeros_like_2",
+    "operator": "zeros_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/ones_like_0/manifest.json",
+    "name": "ones_like_0",
+    "operator": "ones_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/ones_like_1/manifest.json",
+    "name": "ones_like_1",
+    "operator": "ones_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/ones_like_2/manifest.json",
+    "name": "ones_like_2",
+    "operator": "ones_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/full_like_0/manifest.json",
+    "name": "full_like_0",
+    "operator": "full_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/full_like_1/manifest.json",
+    "name": "full_like_1",
+    "operator": "full_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/full_like_2/manifest.json",
+    "name": "full_like_2",
+    "operator": "full_like"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_zeros_0/manifest.json",
+    "name": "new_zeros_0",
+    "operator": "new_zeros"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_zeros_1/manifest.json",
+    "name": "new_zeros_1",
+    "operator": "new_zeros"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_zeros_2/manifest.json",
+    "name": "new_zeros_2",
+    "operator": "new_zeros"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_ones_0/manifest.json",
+    "name": "new_ones_0",
+    "operator": "new_ones"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_ones_1/manifest.json",
+    "name": "new_ones_1",
+    "operator": "new_ones"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_ones_2/manifest.json",
+    "name": "new_ones_2",
+    "operator": "new_ones"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_full_0/manifest.json",
+    "name": "new_full_0",
+    "operator": "new_full"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_full_1/manifest.json",
+    "name": "new_full_1",
+    "operator": "new_full"
+  },
+  {
+    "kind": "new_public_constructor_context",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_constant_intake_v1/cases/new_full_2/manifest.json",
+    "name": "new_full_2",
+    "operator": "new_full"
+  },
+  {
+    "kind": "legacy_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_transform_intake_v1/cases-v2/public_repeat_1/manifest.json",
+    "name": "compat_v31_public_repeat_1",
+    "operator": "repeat"
+  },
+  {
+    "kind": "legacy_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_transform_intake_v1/cases-v2/public_tile_2/manifest.json",
+    "name": "compat_v31_public_tile_2",
+    "operator": "tile"
+  },
+  {
+    "kind": "legacy_source_compatibility",
+    "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_tensor_transform_intake_v1/cases-v2/public_roll_2/manifest.json",
+    "name": "compat_v31_public_roll_2",
+    "operator": "roll"
+  }
+]

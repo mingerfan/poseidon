@@ -1,0 +1,283 @@
+{
+  "audit_binding": "2cdcdb8a7e5e22f8c5bea6a45680344043ca530c68bc441a48c2157f48c9b393",
+  "audit_result": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-fused-matrix-request-audit-r1276/report.json",
+  "audit_sha256": "9c0f9914fad462e4dff0453896226c79eea18859de08be2fb756cee321474435",
+  "backend_changes": 0,
+  "branch": "lhy-agent-dsl",
+  "compiler_calls": 0,
+  "context_bytes": {
+    "limit": 131072,
+    "max": 68203,
+    "min": 41301
+  },
+  "contexts": [
+    {
+      "admission": "accepted_pending_validation",
+      "case": "addmm_public_right",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 47275,
+      "input_ciphertexts": 5,
+      "model_sha256": "231775b2730f27b7ebf17879c5c4fb8b78a40b2dfdc96c89c4ca51bd8824732a",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 5,
+      "period": 4,
+      "provenance_sha256": "f9270c683413d04b87549da3061dd932a12586f3da447c2b964b545df4d3f848",
+      "request_id": "23c0084c210b7c23aa50026f18c58ef369d21e8e3105608f62494879afc0bded",
+      "trusted_request_bytes": 43797
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "baddbmm_public_right",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 67380,
+      "input_ciphertexts": 7,
+      "model_sha256": "c6a3b85e4f1258156b04d7b0ab7a1f51f40ab7535cce360d1a1432bfb5f12457",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 7,
+      "period": 4,
+      "provenance_sha256": "ed4bcf1ea90f778013b7fe610403cb8025059570d4e15f731ae4d55030c8e4af",
+      "request_id": "25d0460897c0d3377d01cf341e9f6cfadd42cd2e1c1ead9d61cbe8baf264ca32",
+      "trusted_request_bytes": 63151
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "addbmm_public_right",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 68203,
+      "input_ciphertexts": 7,
+      "model_sha256": "4e7309ac566c1da5af04b8c27da5398d7060416e9d8f2a8f4af125cca7451055",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 7,
+      "period": 4,
+      "provenance_sha256": "7d044350d5acea3a3d5aecdad7ff9a6c20b3b4886df671ada48b4b105d69938d",
+      "request_id": "6725c9cf5a620ce03d0a980c7190b2e10eeb0d68a6c6d4ec530cf0567289de0b",
+      "trusted_request_bytes": 63974
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "addbmm_cipher",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 43178,
+      "input_ciphertexts": 7,
+      "model_sha256": "0a1ec99803f81b42128e5ef30dfcc3878a32589295703dd5cadbe4c1c32e6a8b",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 7,
+      "period": 4,
+      "provenance_sha256": "929a5e0d741e807b764915df60092d839aca4fb7d319f289e4b2800e8aa58a91",
+      "request_id": "79197ade0d0b4187d2ef4491572efa09e35f725a54b218803c75b4b41e7b8700",
+      "trusted_request_bytes": 40852
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "addbmm_public_bias",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 43956,
+      "input_ciphertexts": 7,
+      "model_sha256": "5dab3c0176d3c7eac819a620bbfa6a135f839fae454c6438b34e0629a89c9468",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 7,
+      "period": 4,
+      "provenance_sha256": "67df66d32151bb2ecf7dd9d4eb04ac9537764b1bf32c94ae555352c07aa609d4",
+      "request_id": "01d1dfbc40d59e15c8c1fb71c558be9fb6b45e4f6f294c8f302bbad8c45c1962",
+      "trusted_request_bytes": 41377
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "addmm_cipher",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 41301,
+      "input_ciphertexts": 5,
+      "model_sha256": "5e3bfd29078cc52a0e1c80529366823f33d0125942caccf21addaf60c2035ab2",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 5,
+      "period": 4,
+      "provenance_sha256": "f048e97f269f2adc5012a06a78a70dd55fa261305d565d573fc9e7f0c551ca23",
+      "request_id": "837769ae0252a68fe54d16c330a1606ba8f92ccd281265d950e8c7eeff4c6503",
+      "trusted_request_bytes": 38975
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "addmm_public_bias",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 42079,
+      "input_ciphertexts": 5,
+      "model_sha256": "cb532fe8cb67619a4a90977404181bf1bb9c15e68980443330581debbabe6bac",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 5,
+      "period": 4,
+      "provenance_sha256": "4edc100ab8429b9c992bf8c41704196a8956889847afbc75de56dca8d03dfa1b",
+      "request_id": "b166d149a7245ace97758e7c629494de2c6719395a50a3f3975fc79e6888169b",
+      "trusted_request_bytes": 39500
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "baddbmm_cipher",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 42442,
+      "input_ciphertexts": 7,
+      "model_sha256": "9577c9bc0d876867f45ee4f0fddfb4b2e47b176edea69af7a551b5e5ff01019a",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 8,
+      "period": 4,
+      "provenance_sha256": "f2af1d9c329539ca1c390c7c727a1e5d9500cf1de5f7f2c92aeb6afad4097e98",
+      "request_id": "d67d6273a233c42abd8b0d626f1d76f6fba69702d67019a67afe147cf32548f2",
+      "trusted_request_bytes": 40116
+    },
+    {
+      "admission": "accepted_pending_validation",
+      "case": "baddbmm_public_bias",
+      "execution_readiness": "unknown",
+      "generation_context_bytes": 43323,
+      "input_ciphertexts": 7,
+      "model_sha256": "bdb590be7177b5ce29dbfcb35113aac85518ac6839ced47b7732a10acb36257b",
+      "named_outputs": [
+        "result",
+        "current",
+        "previous"
+      ],
+      "output_ciphertexts": 8,
+      "period": 4,
+      "provenance_sha256": "7775dddf41f2d88b79cb1f056f802eca41d22496946e4c6193977b4bbdf21290",
+      "request_id": "42cb2b7965d302cde6524b6ac03c287284214160b5fc490ef82b9cdcc0522415",
+      "trusted_request_bytes": 40744
+    }
+  ],
+  "current_test_methods": {
+    "method_body_sha256": {
+      "test_context_corruption_and_private_fields_are_rejected": "df01cddf4ccde8c2907be24c2ad86bbd79fc1ba2f359666ba3cd412ac2242004",
+      "test_no_source_reimport_provider_or_compiler": "dd32c98a05dd5f0089414e0c44ce92ccf49965249b67553c76642dcc87150357",
+      "test_preflight_does_not_promote_binding_to_executable_success": "1559910d1133311c96bc29bdacfa20f3a32d8e785b098c81cb8be8df61feb6b4",
+      "test_public_context_contains_descriptors_and_keeps_private_evidence_local": "f52d80a396bc6c211ad740358ce447859384c229eaf98f2d41251a99cad2dd0e",
+      "test_source_revalidation_and_request_identity_are_deterministic": "0b22ff82cd86fb20c7dea39868a9b478139be756c3e8fec1d8e208a5aa7125c2",
+      "test_weight_content_change_creates_new_request_binding": "8e2dc10bfa1c695c23695d191a07ba5a324631d74f44658e41fe583f8ca07465"
+    },
+    "methods": {
+      "test_context_corruption_and_private_fields_are_rejected": [
+        "agent-fused-matrix-requests-r1274"
+      ],
+      "test_no_source_reimport_provider_or_compiler": [
+        "agent-fused-matrix-requests-r1274"
+      ],
+      "test_preflight_does_not_promote_binding_to_executable_success": [
+        "agent-fused-matrix-requests-r1274"
+      ],
+      "test_public_context_contains_descriptors_and_keeps_private_evidence_local": [
+        "agent-fused-matrix-requests-r1275"
+      ],
+      "test_source_revalidation_and_request_identity_are_deterministic": [
+        "agent-fused-matrix-requests-r1274"
+      ],
+      "test_weight_content_change_creates_new_request_binding": [
+        "agent-fused-matrix-requests-r1274"
+      ]
+    },
+    "single_green_full_run": false,
+    "successful": 6
+  },
+  "downloads": 0,
+  "encrypted_executions": 0,
+  "format": "poseidon-fused-matrix-request-progress-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "identity_scopes": {
+    "compiler_execution": "declared Poseidon w45; not executed in this batch",
+    "generation": "fresh descriptor requests with deterministic reconstruction",
+    "source": "retained r1268 source and fixed weights",
+    "validation": "source/reference bindings rechecked"
+  },
+  "installations": 0,
+  "next_action": "Complete the already proposed common-call Poseidon scope after human authorization; then qualify combined source contracts and generation requests at the backend boundary.",
+  "numerical_tolerance_changes": 0,
+  "paid_api_calls": 0,
+  "pending": {
+    "offline": "r1263",
+    "paid": "r1232"
+  },
+  "production_applied": false,
+  "raw_runs": [
+    {
+      "errors": 0,
+      "failed": 9,
+      "run": "agent-fused-matrix-requests-r1274",
+      "seconds": 48.72671159694437,
+      "skipped": 0,
+      "status": "failed",
+      "tests": 6
+    },
+    {
+      "errors": 0,
+      "failed": 0,
+      "run": "agent-fused-matrix-requests-r1275",
+      "seconds": 1.4041939859744161,
+      "skipped": 0,
+      "status": "passed",
+      "tests": 1
+    }
+  ],
+  "recorded_at": "2026-10-07T13:54:59.941781+00:00",
+  "reference_changes": 0,
+  "resources": {
+    "generation_context_bytes_max": 131072,
+    "source_address_space_bytes": 4294967296,
+    "source_cpu_seconds": 150,
+    "source_wall_seconds": 120
+  },
+  "retained_failure": {
+    "affected_rerun": "agent-fused-matrix-requests-r1275",
+    "correction": "Verify the exact trusted response schema, exclude only that schema from payload checks",
+    "failed_subtests": 9,
+    "layer": "test_assertion",
+    "production_code_changed": false,
+    "reason": "The trusted response_schema properties declare the name hecate_source, not candidate source content",
+    "run": "agent-fused-matrix-requests-r1274",
+    "source_adapter_changed": false
+  },
+  "security_parameter_changes": 0,
+  "source_acceptance_binding": "75fad1285ce2cfab6eda17fd561029b5c9bfaf24f5880feae9e09ac55abd8a35",
+  "source_format": "poseidon-trusted-pytorch-v14",
+  "source_models": 9,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "stage": "staged_generation_context_verified",
+  "statuses": {
+    "compiled_program_package": "not_run",
+    "compiler": "not_run",
+    "layout": "bound_static_io_plan",
+    "new_agent_generation": "not_run",
+    "physical_execution": "unverified",
+    "poseidon_encrypted": "not_run",
+    "privacy": "verified_staging",
+    "request_preparation": "verified_staging",
+    "source": "verified_staging"
+  }
+}

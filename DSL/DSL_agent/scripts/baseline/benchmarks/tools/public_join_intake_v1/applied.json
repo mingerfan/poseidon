@@ -1,0 +1,52 @@
+{
+  "api_calls": 0,
+  "backend_core_changed": false,
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "existing": [
+    "application_capabilities.py",
+    "candidate_bundle.py",
+    "pytorch_model_intake.py",
+    "pytorch_ordered_contract.py",
+    "pytorch_ordered_intake.py",
+    "pytorch_public_expression_capture.py",
+    "pytorch_public_expression_flow.py",
+    "pytorch_public_expression_metadata.py",
+    "pytorch_public_value_ops.py",
+    "pytorch_source_package_policy.py",
+    "pytorch_spatial_policy.py",
+    "pytorch_static_broadcast.py",
+    "pytorch_static_tensor_transforms.py",
+    "pytorch_static_trace.py"
+  ],
+  "files": {
+    "application_capabilities.py": "1cda9ac679eb6d4b65193bd514859664dab2c6bedf7f9ebdeb6e3dc5309c52b3",
+    "candidate_bundle.py": "1dc25d52df7965f783e40046659bf198783626c93f1f1e95df85ed667d830c93",
+    "pytorch_model_intake.py": "f769b6949d40c710f238d35ba0fe10bff85424c10e16cac7285d62a863aa5fcb",
+    "pytorch_ordered_contract.py": "9d31c5b7f8d67d019be5241f4e066f7e01c4179dbda84a4c98cdfbc99849ef09",
+    "pytorch_ordered_intake.py": "93fea879b7e2d2784b3a94d7f8753e91b940bc2700d47d7e592b38150ca07078",
+    "pytorch_public_expression_capture.py": "667b2ce5a52e9597cab0af51a3032d64169fc5982a7d5a6271820c279d63171e",
+    "pytorch_public_expression_flow.py": "0a75a78c6589c3ed5eb82ef9028bc48c46e719304862137719de04f8cb2b4804",
+    "pytorch_public_expression_metadata.py": "5a54a4a9e2030c6a994f143c9f3393d5ad1d04668410f654114ed462d594d6cf",
+    "pytorch_public_join_normalization.py": "9213720c07802c9bcad7d5bedce0d921e91b7849e89b11ad1a3f64e9fa3cffc2",
+    "pytorch_public_join_source.py": "299d3bcce74a62b5b724fdfb9262ad9eaf27cbb50299f09e748119744d9978f6",
+    "pytorch_public_join_values.py": "0f8170022e8ab5b54f1e1418611e6429d787ec83fac55c7aaa270babc035d0c4",
+    "pytorch_public_value_ops.py": "5c760a20306368eb7ca35dbe5f9bddf28b3591af60ecccf7c0500066c16ea0b7",
+    "pytorch_source_package_policy.py": "f3f769292184da298fab1a49be3d04463b9fd76318094965da8b5af8be9119b4",
+    "pytorch_spatial_policy.py": "7ee9fe1c969287418ab00e07b1841e9bd7cc4782b9a1b0354199bda5a31f3a2c",
+    "pytorch_static_broadcast.py": "bff0b608f580094147994ed2d98cabc56904682375d377c8495e6470d7ebed58",
+    "pytorch_static_tensor_transforms.py": "bed197241566ad0a3157b73e5efcf7dee78776bc1000f238cb4dbbca510adf83",
+    "pytorch_static_trace.py": "5db2f1df6e9e46012dff887c70eaf25b53f0783c39c5403cfb15b053b236f8c6"
+  },
+  "format": "poseidon-public-join-local-application-v1",
+  "git_actions": [],
+  "network_changed": false,
+  "new": [
+    "pytorch_public_join_normalization.py",
+    "pytorch_public_join_source.py",
+    "pytorch_public_join_values.py"
+  ],
+  "parameters_changed": false,
+  "safe_boundary": true,
+  "source_freeze_before": false
+}

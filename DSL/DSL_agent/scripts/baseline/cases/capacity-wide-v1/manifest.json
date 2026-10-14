@@ -1,0 +1,25 @@
+{
+  "format": "poseidon-wide-capacity-cases-v1",
+  "cases": [
+    {
+      "file": "wide_tail_512.json",
+      "period": 512
+    },
+    {
+      "file": "wide_multi_io_1024.json",
+      "period": 1024
+    },
+    {
+      "file": "wide_slice_tail_2048.json",
+      "period": 2048
+    },
+    {
+      "file": "wide_slice_sum_4096.json",
+      "period": 4096
+    },
+    {
+      "file": "wide_elementwise_4096.json",
+      "period": 4096
+    }
+  ]
+}

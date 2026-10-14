@@ -1,0 +1,26 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "where_0", "status": "passed", "seconds": 3.687510026007658, "bytes": 1609728, "budget_stop": null}
+{"case": "where_1", "status": "passed", "seconds": 3.6731375440140255, "bytes": 2211840, "budget_stop": null}
+{"case": "where_2", "status": "passed", "seconds": 2.064462230016943, "bytes": 2002944, "budget_stop": null}
+{"case": "tensor_where_0", "status": "passed", "seconds": 1.9197510260273702, "bytes": 1609728, "budget_stop": null}
+{"case": "tensor_where_1", "status": "passed", "seconds": 2.1460075759969186, "bytes": 2236416, "budget_stop": null}
+{"case": "tensor_where_2", "status": "passed", "seconds": 2.068591062008636, "bytes": 2007040, "budget_stop": null}
+{"case": "masked_fill_0", "status": "passed", "seconds": 1.9036739090224728, "bytes": 1609728, "budget_stop": null}
+{"case": "masked_fill_1", "status": "passed", "seconds": 3.7060813670104835, "bytes": 2347008, "budget_stop": null}
+{"case": "masked_fill_2", "status": "passed", "seconds": 2.0562434640014544, "bytes": 1990656, "budget_stop": null}
+{"case": "masked_fill__0", "status": "passed", "seconds": 1.9279506409948226, "bytes": 1695744, "budget_stop": null}
+{"case": "masked_fill__1", "status": "passed", "seconds": 2.08175943599781, "bytes": 2256896, "budget_stop": null}
+{"case": "masked_fill__2", "status": "passed", "seconds": 2.062980996008264, "bytes": 1994752, "budget_stop": null}
+{"case": "public_where_0", "status": "passed", "seconds": 1.9174036780023016, "bytes": 1318912, "budget_stop": null}
+{"case": "public_where_1", "status": "passed", "seconds": 2.0621204180060886, "bytes": 2007040, "budget_stop": null}
+{"case": "public_where_2", "status": "passed", "seconds": 1.9776043180027045, "bytes": 1675264, "budget_stop": null}
+{"case": "public_fill_0", "status": "passed", "seconds": 1.9138523940055165, "bytes": 1318912, "budget_stop": null}
+{"case": "public_fill_1", "status": "passed", "seconds": 2.0590201369777787, "bytes": 2019328, "budget_stop": null}
+{"case": "public_fill_2", "status": "passed", "seconds": 1.9805466449761298, "bytes": 1675264, "budget_stop": null}
+{"case": "compat_v32_zeros_like_1", "status": "passed", "seconds": 2.0559700049925596, "bytes": 1925120, "budget_stop": null}
+{"case": "compat_v32_new_full_2", "status": "passed", "seconds": 1.920766580995405, "bytes": 1499136, "budget_stop": null}
+{"case": "compat_v32_full_like_0", "status": "passed", "seconds": 1.9117996010172646, "bytes": 1212416, "budget_stop": null}
+{"passed": 21, "failed": 0, "not_run": 0, "source_capture_calls": 21, "results_bytes": 38318080, "global_result_bytes": 36279341056}

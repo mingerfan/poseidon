@@ -1,0 +1,9 @@
+{
+  "reason": "finite reference status field is status, not passed",
+  "old_tool_sha256": "6e18630eacfb15d55278b16cb074ebd0097ffab9e3a842a780545a6e51d801fc",
+  "old_log_sha256": "fc32c032e79ab5f9c1c22af1bed4fdf89c12002396c8f6ace6425054aa3df737",
+  "source_or_reference_changed": false,
+  "api_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0
+}

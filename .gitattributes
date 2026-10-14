@@ -1,0 +1,4 @@
+# Preserve the delivered DSL sources and historical experiment snapshots.
+llm_dsl/** -text -whitespace
+test-results/qwen-dacapo-188-20261010/** -text -whitespace
+test-results/qwen24-dacapo-188-20261010/** -text -whitespace

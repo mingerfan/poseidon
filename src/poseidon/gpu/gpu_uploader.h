@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <limits>
+#include <optional>
 #include <vector>
 
 namespace poseidon
@@ -26,6 +27,22 @@ class Polynomial;
 
 namespace gpu
 {
+
+/**
+ * @brief Explicit setup policy for a generated GPU EvalMod plan.
+ *
+ * Unset fields retain the legacy environment-controlled behavior. Runtime
+ * profile builders set every field so an artifact is independent of process
+ * environment.
+ */
+struct GpuEvalModUploadOptions
+{
+    std::optional<bool> dynamic_rescale;
+    std::optional<std::uint32_t> polynomial_log_split;
+    std::optional<bool> flat_bsgs_b8;
+    std::optional<bool> virtual_degree_bound;
+    std::optional<bool> lead_leaf_resplit;
+};
 
 /**
  * @brief CPU/GPU conversion helper.
@@ -118,7 +135,8 @@ public:
         const LinearMatrixGroup &src,
         const PoseidonContext &context,
         int device_id,
-        std::uint32_t rescale_count = 1);
+        std::uint32_t rescale_count = 1,
+        bool compress_plaintexts = false);
 
     /**
      * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
@@ -148,7 +166,9 @@ public:
         double polynomial_output_scale_override =
             std::numeric_limits<double>::quiet_NaN(),
         bool fuse_leaf_terms_before_rescale = true,
-        double input_scale = 0.0);
+        double input_scale = 0.0,
+        bool metadata_only = false,
+        const GpuEvalModUploadOptions &options = {});
 
     /**
      * @brief Upload CPU relinearization keys to GPU.
@@ -161,6 +181,18 @@ public:
         int device_id);
 
     /**
+     * @brief Upload relinearization keys and validate a runtime Q-prefix view.
+     *
+     * The owning allocation keeps the full [Q_storage | P] layout required by
+     * the optimized key-switch path. Runtime operations select q_count through
+     * a zero-copy view instead of compacting the key allocation.
+     */
+    static GpuRelinKeysData upload_relin_keys(
+        const RelinKeys &src,
+        int device_id,
+        std::size_t q_count);
+
+    /**
      * @brief Upload CPU Galois keys to GPU.
      *
      * - Preserve Galois element to key mapping;
@@ -169,6 +201,20 @@ public:
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
         int device_id);
+
+    static GpuGaloisKeysData upload_galois_keys(
+        const GaloisKeys &src,
+        int device_id,
+        std::size_t q_count);
+
+    /**
+     * @brief Upload only the requested rotations and validate a Q-prefix view.
+     */
+    static GpuGaloisKeysData upload_galois_keys(
+        const GaloisKeys &src,
+        int device_id,
+        std::size_t q_count,
+        const std::vector<std::uint32_t> &galois_elts);
 
     /**
      * Upload and inverse-pre-rotate every non-empty Galois key. Runtime

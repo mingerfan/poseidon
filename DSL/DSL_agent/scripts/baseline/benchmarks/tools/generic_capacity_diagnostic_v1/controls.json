@@ -1,0 +1,15 @@
+{
+  "format": "poseidon-native-static-diagnostic-controls-v1",
+  "timestamp_utc": "2026-10-12T22:48:04Z",
+  "production_active": false,
+  "source_plan_binding": "71115c663d1963d56c7ecaa95b0ca37cc7c01f05ee90abe8bc6cc47828e7bad0",
+  "draft_binding": "4a4b7af2909118a816710969d905cfc25145578e45a88a955d838146d3da3c7f",
+  "exit_code": 1,
+  "log_sha256": "bfd6ba9ddb5624a4b9a639fb9057e176aed5a3277f83bfeeaa21459fb30f64d0",
+  "provider_calls": 0,
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "test_sha256": "93fc3677cb54b17c3ca04dc5483861d9deab8426fe2336cb3f461e49fbb2479f",
+  "unchanged_array_feedback": true,
+  "binding": "7fe603baa27e933ced06bdb8206010a0c3a3e23063636a16be97e450d3168413"
+}

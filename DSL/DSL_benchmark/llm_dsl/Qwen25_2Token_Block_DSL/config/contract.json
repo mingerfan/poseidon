@@ -1,0 +1,27 @@
+{
+  "positions": [
+    7,
+    8
+  ],
+  "seq_len": 2,
+  "slots": 32768,
+  "hidden": 896,
+  "ffn": 4864,
+  "input_count": 2,
+  "input_prefix": 896,
+  "output_count": 1,
+  "output_prefix": 1792,
+  "output_kind": "concatenated block hidden states; not logits",
+  "zero_output_tail": true,
+  "input_tail_probe": [
+    0.3,
+    -0.2
+  ],
+  "synthetic_seed": 20260922,
+  "weights_encrypted": false,
+  "modes": [
+    "prefill",
+    "decode-pair"
+  ],
+  "max_abs_error": 0.001
+}

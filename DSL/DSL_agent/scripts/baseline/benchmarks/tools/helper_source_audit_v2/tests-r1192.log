@@ -1,0 +1,16 @@
+test_decorators_and_function_defaults_rejected (test_helper_math.HelperMathTests) ... ok
+test_direct_and_indirect_recursion_rejected (test_helper_math.HelperMathTests) ... ok
+test_dynamic_control_flow_rejected (test_helper_math.HelperMathTests) ... ok
+test_function_locals_do_not_leak_between_calls (test_helper_math.HelperMathTests) ... ok
+test_helper_reads_global_instead_of_callers_shadow (test_helper_math.HelperMathTests) ... ok
+test_legacy_straight_arithmetic_retains_same_values (test_helper_math.HelperMathTests) ... ok
+test_nested_helpers_and_rotation_have_independent_expected_values (test_helper_math.HelperMathTests) ... ok
+test_public_vector_mask_and_positive_negative_rotation (test_helper_math.HelperMathTests) ... ok
+test_shape_and_nonfinite_values_rejected (test_helper_math.HelperMathTests) ... ok
+test_unknown_call_and_arbitrary_method_rejected (test_helper_math.HelperMathTests) ... ok
+test_wrong_arity_and_kwargs_rejected (test_helper_math.HelperMathTests) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.001s
+
+OK

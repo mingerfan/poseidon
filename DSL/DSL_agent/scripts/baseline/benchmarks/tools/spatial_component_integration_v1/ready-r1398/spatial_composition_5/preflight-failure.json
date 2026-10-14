@@ -1,0 +1,7 @@
+{
+  "period": 256,
+  "status": "blocked",
+  "layer": "rule_preflight",
+  "type": "ValueError",
+  "message": "Unified constant registry budget"
+}

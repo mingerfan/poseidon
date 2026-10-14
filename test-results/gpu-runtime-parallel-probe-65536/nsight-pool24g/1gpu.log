@@ -1,0 +1,10 @@
+WARNING: GPU initialization took too long. Please run the NVIDIA persistence daemon.
+For more information, visit the following page:
+https://docs.nvidia.com/deploy/driver-persistence/index.html#persistence-daemon
+
+FAIL boots=0 transfers=1 rotation_key_policy=binary rotations=1 key_seconds=5.22382 runtime_seconds=2.98487 initialization_seconds=1.02932 online_execution_seconds=2.98487 boot_seconds=0 python_max_abs=8.91269e+14 max_imaginary=5.70829e+09
+report=/home/xuming/test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g/1gpu.json
+Generating '/tmp/nsys-report-a100.qdstrm'
+[1/1] [0%                          ] 1gpu.nsys-rep[1/1] [0%                          ] 1gpu.nsys-rep[1/1] [6%                          ] 1gpu.nsys-rep[1/1] [12%                         ] 1gpu.nsys-rep[1/1] [6%                          ] 1gpu.nsys-rep[1/1] [7%                          ] 1gpu.nsys-rep[1/1] [8%                          ] 1gpu.nsys-rep[1/1] [6%                          ] 1gpu.nsys-rep[1/1] [5%                          ] 1gpu.nsys-rep[1/1] [6%                          ] 1gpu.nsys-rep[1/1] [10%                         ] 1gpu.nsys-rep[1/1] [14%                         ] 1gpu.nsys-rep[1/1] [==18%                       ] 1gpu.nsys-rep[1/1] [===24%                      ] 1gpu.nsys-rep[1/1] [=====31%                    ] 1gpu.nsys-rep[1/1] [=======37%                  ] 1gpu.nsys-rep[1/1] [=========43%                ] 1gpu.nsys-rep[1/1] [===========50%              ] 1gpu.nsys-rep[1/1] [============56%             ] 1gpu.nsys-rep[1/1] [==============63%           ] 1gpu.nsys-rep[1/1] [================69%         ] 1gpu.nsys-rep[1/1] [==================78%       ] 1gpu.nsys-rep[1/1] [========================100%] 1gpu.nsys-rep[1/1] [========================100%] 1gpu.nsys-rep
+Generated:
+    /home/xuming/test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g/1gpu.nsys-rep

@@ -1,0 +1,96 @@
+{
+  "backend_changes": 0,
+  "branch": "lhy-agent-dsl",
+  "compiler_calls": 0,
+  "control_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-fused-integration-tests-r1281/report.json",
+  "control_report_sha256": "35118f95729bac43bda596bc7fe49a87a74559ffb37945f18790bfcedcf82483",
+  "control_test_binding": "7d97157e1ec8d1ceb65c2b4f202dbf09f115dd13929cadbca11d7d3abc0e12c0",
+  "downloads": 0,
+  "encrypted_executions": 0,
+  "format": "poseidon-common-fused-integration-permissions-progress-v1",
+  "guard": {
+    "activation_supported": false,
+    "active_processes": [],
+    "backend_acceptance": "not_run",
+    "branch": "lhy-agent-dsl",
+    "combined_sources": 706,
+    "compiler_calls": 0,
+    "encrypted_executions": 0,
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "new_files": [
+      "pytorch_common_constant_provenance.py",
+      "pytorch_fused_matrix_normalization.py"
+    ],
+    "originals_retained": 8,
+    "plan_binding": "1f2f80e9da4db0731f77954e79428e36de3407c305b0fbb3b9bd68735e5ff433",
+    "production_applied": false,
+    "provider_calls": 0,
+    "request_acceptance": true,
+    "source_acceptance": true,
+    "status": "awaiting_backend_qualification",
+    "targets": 10
+  },
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "installations": 0,
+  "integration_binding": "1f2f80e9da4db0731f77954e79428e36de3407c305b0fbb3b9bd68735e5ff433",
+  "next_boundary": "The pending r1263 finite offline CPU scope requires human authorization; no native or API process is currently live.",
+  "numerical_tolerance_changes": 0,
+  "original_source_preservation": {
+    "bytes": "verified",
+    "cause": "Snapshot files inherited directory umask; three originals were 0644 and snapshots were 0664",
+    "correction": "Restore original snapshot permissions and bind original/recovery/target modes in the guard",
+    "files": 8,
+    "finding": "agent-common-fused-permission-audit-r1280",
+    "permission_modes": "verified",
+    "previous_control_result": "agent-common-fused-integration-tests-r1278"
+  },
+  "paid_api_calls": 0,
+  "pending_scopes": {
+    "mutations_would_require_new_binding": true,
+    "offline_r1263": "pending_human_approval",
+    "paid_r1232": "pending_human_approval"
+  },
+  "production_applied": false,
+  "recorded_at": "2026-10-07T14:23:08.388377+00:00",
+  "reference_changes": 0,
+  "remaining_requirements": [
+    "Combined source activation and representative genuine frontend/compiler/Poseidon numerical qualification",
+    "Compiled package reload and execution on new inputs",
+    "Live Agent assessment under separately approved exact scope",
+    "Remaining operator, capacity, approximation/bootstrap, whole-model and CUDA milestones from the original plan"
+  ],
+  "root": "/home/lhohy/Code/Poseidon",
+  "security_parameter_changes": 0,
+  "source_acceptance": {
+    "fused_matrix_request_acceptance_v1": {
+      "binding": "2cdcdb8a7e5e22f8c5bea6a45680344043ca530c68bc441a48c2157f48c9b393",
+      "path": "scripts/baseline/benchmarks/tools/fused_matrix_request_acceptance_v1/acceptance.json",
+      "sha256": "9c0f9914fad462e4dff0453896226c79eea18859de08be2fb756cee321474435"
+    },
+    "fused_matrix_source_draft_v1": {
+      "binding": "75fad1285ce2cfab6eda17fd561029b5c9bfaf24f5880feae9e09ac55abd8a35",
+      "path": "scripts/baseline/benchmarks/tools/fused_matrix_source_draft_v1/acceptance.json",
+      "sha256": "be42af07a5376fe7f153cd86ce09cc72a94198ec6a046f74e9d1c39085545d40"
+    }
+  },
+  "stage": "prepared_pending_backend_qualification",
+  "target_inventory": {
+    "existing": 8,
+    "new": 2,
+    "original_production": 704,
+    "proposed_combined": 706,
+    "total": 10
+  },
+  "tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 26,
+    "python": [
+      3,
+      10,
+      12
+    ],
+    "seconds": 0.9641920459689572,
+    "skipped": 0
+  }
+}

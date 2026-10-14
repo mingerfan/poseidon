@@ -1,0 +1,14 @@
+test_context_is_not_added_to_models_without_suffix_strategy (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_feedback_uses_only_public_window_rules (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_forged_annotations_are_rejected (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_original_failure_has_explicit_complete_stage_and_normalization (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_prior_versions_keep_identical_request_bytes_and_reconstruction (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_rank_three_keeps_nonreduced_coordinates (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_three_contexts_match_independent_rows_and_reject_missing_window (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_trusted_module_is_readonly_registered_in_both_candidate_sandboxes (test_suffix_stage_guidance.SuffixStageTests) ... ok
+test_wrong_public_geometry_and_operation_rejected (test_suffix_stage_guidance.SuffixStageTests) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.340s
+
+OK

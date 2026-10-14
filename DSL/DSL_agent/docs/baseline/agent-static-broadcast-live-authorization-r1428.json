@@ -1,0 +1,41 @@
+{
+  "approved": true,
+  "authorization": "human_explicit_current_plan_test_approval",
+  "binding": "7cd755c94fe254b14cc385fb0f987cd2f30ae910825d29724c86d1de9ec7450f",
+  "bounds": {
+    "api_concurrency": 1,
+    "batch_wall_seconds": 43200,
+    "case_wall_seconds": 14400,
+    "compiler_jobs": 2,
+    "encrypted_concurrency": 1,
+    "global_result_bytes": 34359738368,
+    "link_jobs": 1,
+    "max_compiler_calls": 12,
+    "max_encrypted_calls": 18,
+    "max_generations": 12,
+    "max_http_attempts": 48,
+    "minimum_free_bytes": 4294967296,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "new_batch_bytes": 100663296
+  },
+  "cases": [
+    "expand_as__arithmetic",
+    "expand_as__transpose_alias",
+    "expand_as__scalar_linear"
+  ],
+  "format": "poseidon-public-arithmetic-human-authorization-v1",
+  "human_message": "\u76ee\u524d\u6267\u884c\u7684\u8ba1\u5212\u5185\u540e\u7eed\u6240\u6709\u7684\u79bb\u7ebf\u548c\u771f\u5b9e\u6d4b\u8bd5\u5168\u90e8\u6279\u51c6\u540c\u610f",
+  "proposal_binding": "cecd9ba0273880891ae02bbe5cf29c67755d5b656f5cdfd25cb16df59817580a",
+  "proposal_sha256": "997420b7679ac663816eb19dd296bd82bf5db060516adbad0226f6ce23d2266e",
+  "provider": {
+    "max_tokens": 384000,
+    "model": "deepseek-flash",
+    "name": "deepseek",
+    "reasoning_effort": "high",
+    "stream": true,
+    "timeout_seconds": 1200,
+    "transport_retries": 3
+  },
+  "question_item_id": "direct_user_current_plan_test_authorization"
+}

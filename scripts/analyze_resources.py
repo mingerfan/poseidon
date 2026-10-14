@@ -1,0 +1,1 @@
+../DSL/DSL_agent/scripts/analyze_resources.py

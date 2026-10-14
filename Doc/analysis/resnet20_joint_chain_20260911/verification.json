@@ -1,0 +1,1027 @@
+{
+  "status": "PASS_SCALE_LEDGER",
+  "full_q": 50,
+  "bootstrap_out": 31,
+  "relu_in_q": 31,
+  "relu_in_logscale": 40,
+  "relu_drop": 22,
+  "relu_out": 9,
+  "conv_out": 6,
+  "s2c_out": 2,
+  "min_relu_plain_logscale": 40.03079684115245,
+  "min_eval_coefficient_logscale": 47.048597333626354,
+  "min_effective_eval_coefficient_logscale": 43.790860759795436,
+  "maximum_intermediate_logscale": 179.76504214780743,
+  "minimum_capacity_headroom_bits": 4.9998296178779995,
+  "checked_states": 168,
+  "events": [
+    {
+      "label": "S2C.0.product",
+      "q": 6,
+      "scale": 85,
+      "headroom_bits": 106.92797783404703
+    },
+    {
+      "label": "S2C.0.rescale",
+      "q": 5,
+      "scale": 53.010295066380905,
+      "headroom_bits": 106.92797783404703
+    },
+    {
+      "label": "S2C.1.product",
+      "q": 5,
+      "scale": 98.0102950663809,
+      "headroom_bits": 61.92797783404703
+    },
+    {
+      "label": "S2C.1.rescale",
+      "q": 4,
+      "scale": 66.0215216335352,
+      "headroom_bits": 61.92797783404703
+    },
+    {
+      "label": "S2C.2.product",
+      "q": 4,
+      "scale": 111.0215216335352,
+      "headroom_bits": 16.927977834047027
+    },
+    {
+      "label": "S2C.2.rescale",
+      "q": 2,
+      "scale": 47.0453506537212,
+      "headroom_bits": 16.927977834047027
+    },
+    {
+      "label": "prepare.integer_and_moddrop",
+      "q": 2,
+      "scale": 58.97349886989023,
+      "headroom_bits": 4.9998296178779995
+    },
+    {
+      "label": "C2S.0.product",
+      "q": 50,
+      "scale": 89.97349886989022,
+      "headroom_bits": 1454.242231823526
+    },
+    {
+      "label": "C2S.0.rescale",
+      "q": 49,
+      "scale": 60.02130364858712,
+      "headroom_bits": 1454.242231823526
+    },
+    {
+      "label": "C2S.1.product",
+      "q": 49,
+      "scale": 105.0213036485872,
+      "headroom_bits": 1409.2422318235258
+    },
+    {
+      "label": "C2S.1.rescale",
+      "q": 48,
+      "scale": 73.02593396444053,
+      "headroom_bits": 1409.2422318235258
+    },
+    {
+      "label": "C2S.2.product",
+      "q": 48,
+      "scale": 118.02593396444061,
+      "headroom_bits": 1364.2422318235258
+    },
+    {
+      "label": "C2S.2.rescale",
+      "q": 46,
+      "scale": 54.035945568761946,
+      "headroom_bits": 1364.2422318235258
+    },
+    {
+      "label": "Eval.T2.product",
+      "q": 46,
+      "scale": 108.07189113752389,
+      "headroom_bits": 1310.2062862547639
+    },
+    {
+      "label": "Eval.T2",
+      "q": 44,
+      "scale": 45.07722801035317,
+      "headroom_bits": 1310.2062862547639
+    },
+    {
+      "label": "Eval.T3.product",
+      "q": 44,
+      "scale": 99.1131735791151,
+      "headroom_bits": 1256.170340686002
+    },
+    {
+      "label": "Eval.T3",
+      "q": 43,
+      "scale": 67.11908536759127,
+      "headroom_bits": 1256.170340686002
+    },
+    {
+      "label": "Eval.T4.product",
+      "q": 44,
+      "scale": 90.1544560207063,
+      "headroom_bits": 1265.1290582444108
+    },
+    {
+      "label": "Eval.T4",
+      "q": 43,
+      "scale": 58.160367809182475,
+      "headroom_bits": 1265.1290582444108
+    },
+    {
+      "label": "Eval.T5.product",
+      "q": 43,
+      "scale": 112.19631337794449,
+      "headroom_bits": 1211.0931126756486
+    },
+    {
+      "label": "Eval.T5",
+      "q": 41,
+      "scale": 50.19763457166182,
+      "headroom_bits": 1211.0931126756486
+    },
+    {
+      "label": "Eval.T6.product",
+      "q": 43,
+      "scale": 134.23817073518268,
+      "headroom_bits": 1189.0512553184105
+    },
+    {
+      "label": "Eval.T6",
+      "q": 41,
+      "scale": 72.23949192890001,
+      "headroom_bits": 1189.0512553184105
+    },
+    {
+      "label": "Eval.T7.product",
+      "q": 43,
+      "scale": 125.2794531767739,
+      "headroom_bits": 1198.0099728768193
+    },
+    {
+      "label": "Eval.T7",
+      "q": 41,
+      "scale": 63.28077437049123,
+      "headroom_bits": 1198.0099728768193
+    },
+    {
+      "label": "Eval.T8.product",
+      "q": 43,
+      "scale": 116.3207356183651,
+      "headroom_bits": 1206.9686904352282
+    },
+    {
+      "label": "Eval.T8",
+      "q": 41,
+      "scale": 54.32205681208244,
+      "headroom_bits": 1206.9686904352282
+    },
+    {
+      "label": "Eval.T16.product",
+      "q": 41,
+      "scale": 108.64411362416493,
+      "headroom_bits": 1152.6466336231456
+    },
+    {
+      "label": "Eval.T16",
+      "q": 39,
+      "scale": 45.65249425371056,
+      "headroom_bits": 1152.6466336231456
+    },
+    {
+      "label": "Eval.T32.product",
+      "q": 39,
+      "scale": 91.30498850742129,
+      "headroom_bits": 1106.9941393694348
+    },
+    {
+      "label": "Eval.T32",
+      "q": 38,
+      "scale": 59.31200592800451,
+      "headroom_bits": 1106.9941393694348
+    },
+    {
+      "label": "Eval.leaf0",
+      "q": 41,
+      "scale": 104.63356831891606,
+      "headroom_bits": 1156.6571789283944
+    },
+    {
+      "label": "Eval.leaf1",
+      "q": 40,
+      "scale": 127.95765182089822,
+      "headroom_bits": 1102.3351221163118
+    },
+    {
+      "label": "Eval.leaf2",
+      "q": 40,
+      "scale": 119.2880892625264,
+      "headroom_bits": 1111.0046846746836
+    },
+    {
+      "label": "Eval.leaf3",
+      "q": 39,
+      "scale": 141.61650001425488,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.leaf4",
+      "q": 40,
+      "scale": 132.94760093682032,
+      "headroom_bits": 1097.3451730003899
+    },
+    {
+      "label": "Eval.leaf5",
+      "q": 38,
+      "scale": 123.28302910913206,
+      "headroom_bits": 1043.0231161883073
+    },
+    {
+      "label": "Eval.leaf6",
+      "q": 39,
+      "scale": 146.60644913017697,
+      "headroom_bits": 1051.6926787466791
+    },
+    {
+      "label": "Eval.leaf7",
+      "q": 37,
+      "scale": 137.93887334299345,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.quotient",
+      "q": 39,
+      "scale": 41.64194894846169,
+      "headroom_bits": 1156.6571789283944
+    },
+    {
+      "label": "Eval.combine_product",
+      "q": 39,
+      "scale": 95.96400576054424,
+      "headroom_bits": 1102.3351221163118
+    },
+    {
+      "label": "Eval.remainder",
+      "q": 39,
+      "scale": 95.96400576054425,
+      "headroom_bits": 1102.3351221163118
+    },
+    {
+      "label": "Eval.combine8",
+      "q": 39,
+      "scale": 95.96400576054424,
+      "headroom_bits": 1102.3351221163118
+    },
+    {
+      "label": "Eval.quotient",
+      "q": 38,
+      "scale": 55.301460622755656,
+      "headroom_bits": 1111.0046846746836
+    },
+    {
+      "label": "Eval.combine_product",
+      "q": 38,
+      "scale": 109.62351743483815,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.remainder",
+      "q": 38,
+      "scale": 109.6235174348381,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.combine9",
+      "q": 38,
+      "scale": 109.62351743483815,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.quotient",
+      "q": 38,
+      "scale": 63.971023181127464,
+      "headroom_bits": 1102.3351221163118
+    },
+    {
+      "label": "Eval.combine_product",
+      "q": 38,
+      "scale": 109.62351743483815,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.remainder",
+      "q": 38,
+      "scale": 109.62351743483815,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.combine10",
+      "q": 38,
+      "scale": 109.62351743483815,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.quotient",
+      "q": 37,
+      "scale": 37.96432227720027,
+      "headroom_bits": 1097.3451730003899
+    },
+    {
+      "label": "Eval.combine_product",
+      "q": 37,
+      "scale": 92.28637908928279,
+      "headroom_bits": 1043.0231161883073
+    },
+    {
+      "label": "Eval.remainder",
+      "q": 37,
+      "scale": 92.28637908928275,
+      "headroom_bits": 1043.0231161883073
+    },
+    {
+      "label": "Eval.combine11",
+      "q": 37,
+      "scale": 92.28637908928279,
+      "headroom_bits": 1043.0231161883073
+    },
+    {
+      "label": "Eval.quotient",
+      "q": 36,
+      "scale": 51.624099429328425,
+      "headroom_bits": 1051.6926787466791
+    },
+    {
+      "label": "Eval.combine_product",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.remainder",
+      "q": 36,
+      "scale": 105.94615624141099,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.combine12",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.quotient",
+      "q": 36,
+      "scale": 60.29366198770033,
+      "headroom_bits": 1043.0231161883073
+    },
+    {
+      "label": "Eval.combine_product",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.remainder",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.combine13",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.quotient",
+      "q": 36,
+      "scale": 46.63415031340638,
+      "headroom_bits": 1056.6826278626013
+    },
+    {
+      "label": "Eval.combine_product",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.remainder",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.combine14",
+      "q": 36,
+      "scale": 105.94615624141107,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "Eval.final_polynomial_rescale",
+      "q": 34,
+      "scale": 45.00000000000006,
+      "headroom_bits": 997.3706219345966
+    },
+    {
+      "label": "DA0.square",
+      "q": 34,
+      "scale": 90.00000000000011,
+      "headroom_bits": 952.3706219345964
+    },
+    {
+      "label": "DA0.rescale",
+      "q": 33,
+      "scale": 58.007504167269985,
+      "headroom_bits": 952.3706219345964
+    },
+    {
+      "label": "DA1.square",
+      "q": 33,
+      "scale": 116.01500833453997,
+      "headroom_bits": 894.3631177673265
+    },
+    {
+      "label": "DA1.rescale",
+      "q": 31,
+      "scale": 53.03094629532393,
+      "headroom_bits": 894.3631177673265
+    },
+    {
+      "label": "Eval.coefficient_compensated_output_scale",
+      "q": 31,
+      "scale": 40,
+      "headroom_bits": 907.3940640626504
+    },
+    {
+      "label": "ReLU0.T2.product",
+      "q": 31,
+      "scale": 80,
+      "headroom_bits": 867.3940640626504
+    },
+    {
+      "label": "ReLU0.T2",
+      "q": 30,
+      "scale": 50.00035226212765,
+      "headroom_bits": 867.3940640626504
+    },
+    {
+      "label": "ReLU0.T4.product",
+      "q": 30,
+      "scale": 100.00070452425538,
+      "headroom_bits": 817.3937118005226
+    },
+    {
+      "label": "ReLU0.T4",
+      "q": 28,
+      "scale": 40.007757738523736,
+      "headroom_bits": 817.3937118005226
+    },
+    {
+      "label": "ReLU0.T3.product",
+      "q": 30,
+      "scale": 90.00035226212769,
+      "headroom_bits": 827.3940640626504
+    },
+    {
+      "label": "ReLU0.T3",
+      "q": 29,
+      "scale": 60.00334924550843,
+      "headroom_bits": 827.3940640626504
+    },
+    {
+      "label": "ReLU0.T8.product",
+      "q": 28,
+      "scale": 80.01551547704763,
+      "headroom_bits": 777.3859540619987
+    },
+    {
+      "label": "ReLU0.T8",
+      "q": 27,
+      "scale": 50.022931131691266,
+      "headroom_bits": 777.3859540619987
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 27,
+      "scale": 100.07665910453503,
+      "headroom_bits": 727.332226089155
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 25,
+      "scale": 40.09999999999994,
+      "headroom_bits": 727.332226089155
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 28,
+      "scale": 80.04631231820008,
+      "headroom_bits": 777.3551572208463
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 27,
+      "scale": 50.05372797284372,
+      "headroom_bits": 777.3551572208463
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 30,
+      "scale": 100.03150136540783,
+      "headroom_bits": 817.3629149593702
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 28,
+      "scale": 40.03855457967619,
+      "headroom_bits": 817.3629149593702
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 31,
+      "scale": 80.03079684115245,
+      "headroom_bits": 867.363267221498
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 30,
+      "scale": 50.0311491032801,
+      "headroom_bits": 867.363267221498
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 31,
+      "scale": 130.03114910328014,
+      "headroom_bits": 817.3629149593703
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 30,
+      "scale": 100.03150136540779,
+      "headroom_bits": 817.3629149593703
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 29,
+      "scale": 110.04225608731244,
+      "headroom_bits": 777.3551572208463
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 28,
+      "scale": 80.04631231820005,
+      "headroom_bits": 777.3551572208463
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 28,
+      "scale": 130.06924344989136,
+      "headroom_bits": 727.332226089155
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 27,
+      "scale": 100.076659104535,
+      "headroom_bits": 727.332226089155
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 29,
+      "scale": 120.0574294804799,
+      "headroom_bits": 767.3399838276789
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 28,
+      "scale": 90.06148571136751,
+      "headroom_bits": 767.3399838276789
+    },
+    {
+      "label": "ReLU0.node.product",
+      "q": 29,
+      "scale": 160.06518721900372,
+      "headroom_bits": 727.332226089155
+    },
+    {
+      "label": "ReLU0.node",
+      "q": 28,
+      "scale": 130.06924344989133,
+      "headroom_bits": 727.332226089155
+    },
+    {
+      "label": "ReLU1.T2.product",
+      "q": 25,
+      "scale": 80.2,
+      "headroom_bits": 687.2322260891549
+    },
+    {
+      "label": "ReLU1.T2",
+      "q": 24,
+      "scale": 50.214691701386826,
+      "headroom_bits": 687.2322260891549
+    },
+    {
+      "label": "ReLU1.T4.product",
+      "q": 24,
+      "scale": 100.42938340277357,
+      "headroom_bits": 637.0175343877681
+    },
+    {
+      "label": "ReLU1.T4",
+      "q": 22,
+      "scale": 40.46215005988137,
+      "headroom_bits": 637.0175343877681
+    },
+    {
+      "label": "ReLU1.T3.product",
+      "q": 24,
+      "scale": 90.31469170138678,
+      "headroom_bits": 647.132226089155
+    },
+    {
+      "label": "ReLU1.T3",
+      "q": 23,
+      "scale": 60.329917239982024,
+      "headroom_bits": 647.132226089155
+    },
+    {
+      "label": "ReLU1.T8.product",
+      "q": 22,
+      "scale": 80.9243001197629,
+      "headroom_bits": 596.5553843278867
+    },
+    {
+      "label": "ReLU1.T8",
+      "q": 21,
+      "scale": 50.947735994982,
+      "headroom_bits": 596.5553843278867
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 21,
+      "scale": 103.95115836641571,
+      "headroom_bits": 543.5519619564529
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 19,
+      "scale": 44.0,
+      "headroom_bits": 543.5519619564529
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 22,
+      "scale": 82.97998649621474,
+      "headroom_bits": 594.4996979514349
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 21,
+      "scale": 53.00342237143383,
+      "headroom_bits": 594.4996979514349
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 24,
+      "scale": 102.4850697792254,
+      "headroom_bits": 634.9618480113163
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 22,
+      "scale": 42.5178364363332,
+      "headroom_bits": 634.9618480113163
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 25,
+      "scale": 82.25568637645185,
+      "headroom_bits": 685.1765397127031
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 24,
+      "scale": 52.27037807783867,
+      "headroom_bits": 685.1765397127031
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 25,
+      "scale": 132.4703780778386,
+      "headroom_bits": 634.9618480113163
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 24,
+      "scale": 102.48506977922543,
+      "headroom_bits": 634.9618480113163
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 23,
+      "scale": 112.96244537770212,
+      "headroom_bits": 594.4996979514349
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 22,
+      "scale": 82.97998649621468,
+      "headroom_bits": 594.4996979514349
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 22,
+      "scale": 133.92772249119668,
+      "headroom_bits": 543.5519619564529
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 21,
+      "scale": 103.95115836641577,
+      "headroom_bits": 543.5519619564529
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 23,
+      "scale": 123.44803131280264,
+      "headroom_bits": 584.0141120163344
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 22,
+      "scale": 93.4655724313152,
+      "headroom_bits": 584.0141120163344
+    },
+    {
+      "label": "ReLU1.node.product",
+      "q": 23,
+      "scale": 163.91018137268406,
+      "headroom_bits": 543.5519619564529
+    },
+    {
+      "label": "ReLU1.node",
+      "q": 22,
+      "scale": 133.92772249119662,
+      "headroom_bits": 543.5519619564529
+    },
+    {
+      "label": "ReLU2.T2.product",
+      "q": 19,
+      "scale": 88,
+      "headroom_bits": 499.55196195645294
+    },
+    {
+      "label": "ReLU2.T2",
+      "q": 18,
+      "scale": 58.026481993927746,
+      "headroom_bits": 499.55196195645294
+    },
+    {
+      "label": "ReLU2.T4.product",
+      "q": 18,
+      "scale": 116.05296398785555,
+      "headroom_bits": 441.52547996252514
+    },
+    {
+      "label": "ReLU2.T4",
+      "q": 16,
+      "scale": 56.108799926644906,
+      "headroom_bits": 441.52547996252514
+    },
+    {
+      "label": "ReLU2.T3.product",
+      "q": 18,
+      "scale": 102.02648199392777,
+      "headroom_bits": 455.55196195645294
+    },
+    {
+      "label": "ReLU2.T3",
+      "q": 16,
+      "scale": 42.08231793271713,
+      "headroom_bits": 455.55196195645294
+    },
+    {
+      "label": "ReLU2.T8.product",
+      "q": 16,
+      "scale": 112.2175998532897,
+      "headroom_bits": 385.41668003588035
+    },
+    {
+      "label": "ReLU2.T8",
+      "q": 14,
+      "scale": 52.280988508024905,
+      "headroom_bits": 385.41668003588035
+    },
+    {
+      "label": "ReLU2.T5.product",
+      "q": 16,
+      "scale": 100.10879992664485,
+      "headroom_bits": 397.5254799625252
+    },
+    {
+      "label": "ReLU2.T5",
+      "q": 15,
+      "scale": 70.13869403466094,
+      "headroom_bits": 397.5254799625252
+    },
+    {
+      "label": "ReLU2.T7.product",
+      "q": 16,
+      "scale": 98.19111785936192,
+      "headroom_bits": 399.44316202980815
+    },
+    {
+      "label": "ReLU2.T7",
+      "q": 15,
+      "scale": 68.22101196737802,
+      "headroom_bits": 399.44316202980815
+    },
+    {
+      "label": "ReLU2.T16.product",
+      "q": 14,
+      "scale": 104.5619770160497,
+      "headroom_bits": 333.13569152785556
+    },
+    {
+      "label": "ReLU2.T16",
+      "q": 12,
+      "scale": 44.63456270862372,
+      "headroom_bits": 333.13569152785556
+    },
+    {
+      "label": "ReLU2.node.product",
+      "q": 12,
+      "scale": 89.87112238710051,
+      "headroom_bits": 287.89913184937876
+    },
+    {
+      "label": "ReLU2.node",
+      "q": 12,
+      "scale": 89.87112238710051,
+      "headroom_bits": 287.89913184937876
+    },
+    {
+      "label": "ReLU2.node.product",
+      "q": 14,
+      "scale": 105.16397398590277,
+      "headroom_bits": 332.5336945580025
+    },
+    {
+      "label": "ReLU2.node",
+      "q": 12,
+      "scale": 45.236559678476794,
+      "headroom_bits": 332.5336945580025
+    },
+    {
+      "label": "ReLU2.node.product",
+      "q": 16,
+      "scale": 112.81959682314272,
+      "headroom_bits": 384.8146830660273
+    },
+    {
+      "label": "ReLU2.node",
+      "q": 14,
+      "scale": 52.882985477877924,
+      "headroom_bits": 384.8146830660273
+    },
+    {
+      "label": "ReLU2.node.product",
+      "q": 15,
+      "scale": 135.13047943918366,
+      "headroom_bits": 332.5336945580025
+    },
+    {
+      "label": "ReLU2.node",
+      "q": 14,
+      "scale": 105.16397398590277,
+      "headroom_bits": 332.5336945580025
+    },
+    {
+      "label": "ReLU2.node.product",
+      "q": 14,
+      "scale": 149.79853669452655,
+      "headroom_bits": 287.8991318493787
+    },
+    {
+      "label": "ReLU2.node",
+      "q": 12,
+      "scale": 89.87112238710057,
+      "headroom_bits": 287.8991318493787
+    },
+    {
+      "label": "ReLU2.node.product",
+      "q": 15,
+      "scale": 127.48405363978259,
+      "headroom_bits": 340.18012035740355
+    },
+    {
+      "label": "ReLU2.node",
+      "q": 14,
+      "scale": 97.5175481865017,
+      "headroom_bits": 340.18012035740355
+    },
+    {
+      "label": "ReLU2.node.product",
+      "q": 15,
+      "scale": 179.76504214780743,
+      "headroom_bits": 287.8991318493787
+    },
+    {
+      "label": "ReLU2.node",
+      "q": 14,
+      "scale": 149.79853669452655,
+      "headroom_bits": 287.8991318493787
+    },
+    {
+      "label": "ReLU.multiply_original_x.product",
+      "q": 12,
+      "scale": 129.8711223871005,
+      "headroom_bits": 247.89913184937876
+    },
+    {
+      "label": "ReLU.multiply_original_x",
+      "q": 9,
+      "scale": 39.99999999999994,
+      "headroom_bits": 247.89913184937876
+    },
+    {
+      "label": "Conv.weight_mac",
+      "q": 9,
+      "scale": 71.99072445913839,
+      "headroom_bits": 215.9084073902403
+    },
+    {
+      "label": "Conv.support_mac",
+      "q": 9,
+      "scale": 103.9810943824169,
+      "headroom_bits": 183.9180374669618
+    },
+    {
+      "label": "Conv.rescale_weight",
+      "q": 8,
+      "scale": 71.99036992327854,
+      "headroom_bits": 183.9180374669618
+    },
+    {
+      "label": "Conv.rescale_support",
+      "q": 7,
+      "scale": 40.00000000000003,
+      "headroom_bits": 183.9180374669618
+    },
+    {
+      "label": "Conv.selector_mac",
+      "q": 7,
+      "scale": 71.9900596329148,
+      "headroom_bits": 151.92797783404706
+    },
+    {
+      "label": "Conv.rescale_selector",
+      "q": 6,
+      "scale": 39.999999999999986,
+      "headroom_bits": 151.92797783404706
+    },
+    {
+      "label": "S2C.0.product",
+      "q": 6,
+      "scale": 85,
+      "headroom_bits": 106.92797783404703
+    },
+    {
+      "label": "S2C.0.rescale",
+      "q": 5,
+      "scale": 53.010295066380905,
+      "headroom_bits": 106.92797783404703
+    },
+    {
+      "label": "S2C.1.product",
+      "q": 5,
+      "scale": 98.0102950663809,
+      "headroom_bits": 61.92797783404703
+    },
+    {
+      "label": "S2C.1.rescale",
+      "q": 4,
+      "scale": 66.0215216335352,
+      "headroom_bits": 61.92797783404703
+    },
+    {
+      "label": "S2C.2.product",
+      "q": 4,
+      "scale": 111.0215216335352,
+      "headroom_bits": 16.927977834047027
+    },
+    {
+      "label": "S2C.2.rescale",
+      "q": 2,
+      "scale": 47.0453506537212,
+      "headroom_bits": 16.927977834047027
+    },
+    {
+      "label": "prepare.integer_and_moddrop",
+      "q": 2,
+      "scale": 58.97349886989023,
+      "headroom_bits": 4.9998296178779995
+    }
+  ]
+}

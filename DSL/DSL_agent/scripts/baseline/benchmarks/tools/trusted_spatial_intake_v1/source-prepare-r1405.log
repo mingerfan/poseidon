@@ -1,0 +1,23 @@
+Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
+Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
+Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
+Python tracing packages and out-of-source Hecate imports are a separate gate.
+{"case": "resize_1_nearest_0", "preflight_status": "passed", "period": 4}
+{"case": "resize_1_nearest_exact_1", "preflight_status": "passed", "period": 4}
+{"case": "resize_1_linear_0", "preflight_status": "passed", "period": 4}
+{"case": "resize_2_nearest_1", "preflight_status": "passed", "period": 4}
+{"case": "resize_2_nearest_exact_0", "preflight_status": "passed", "period": 4}
+{"case": "resize_2_bilinear_2", "preflight_status": "passed", "period": 4}
+{"case": "transpose_1_0", "preflight_status": "passed", "period": 4}
+{"case": "transpose_1_1", "preflight_status": "passed", "period": 4}
+{"case": "transpose_2_0", "preflight_status": "passed", "period": 4}
+{"case": "transpose_2_1", "preflight_status": "passed", "period": 4}
+{"case": "composition_0", "preflight_status": "passed", "period": 4}
+{"case": "composition_2", "preflight_status": "passed", "period": 4}
+{"case": "structured_dict", "preflight_status": "passed", "period": 4}
+{"case": "nested_keywords", "preflight_status": "passed", "period": 4}
+{"case": "float32_public_weight", "preflight_status": "passed", "period": 4}
+{"case": "compat_v26_keywords0", "preflight_status": "passed", "period": 4}
+{"case": "compat_v26_nested0", "preflight_status": "passed", "period": 4}
+{"case": "compat_v1_linear", "preflight_status": "passed", "period": 4}
+{"cases": 18, "preflight_passed": 18, "blocked": 0, "repeat_packages": ["float32_public_weight", "nested_keywords", "structured_dict"], "sdk": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6", "binding": "c563ee93d44018613d6ee4affc315414efacbace38a77fb5e81a60e2e9f7e592", "seconds": 146.4541793570097, "compiler_calls": 0, "encrypted_calls": 0, "provider_calls": 0}

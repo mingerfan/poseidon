@@ -1,0 +1,199 @@
+test_changed_source_weight_or_manifest_rejected_before_worker (test_source_precision_reference.SourcePrecisionTests) ... ok
+test_exact_float64_and_no_input_rounding (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_existing_output_directory_is_preserved (test_source_precision_reference.SourcePrecisionTests) ... ok
+test_factory_parameters_and_multifile_helper (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_float32_linear_preserves_source_weight_and_input_precision (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_gelu_tanh_executes_source_variant (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_host_marker_cannot_be_read_in_sandbox (test_source_precision_reference.SourcePrecisionTests) ... FAIL
+test_input_alias_mutation_uses_owned_storage (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_invalid_samples_dtypes_and_output_binding_rejected (test_source_precision_reference.SourcePrecisionTests) ... ok
+test_nested_dictionary_tuple_list_and_none (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_no_model_import_or_worker_without_trust (test_source_precision_reference.SourcePrecisionTests) ... ok
+test_output_structure_mismatch_is_rejected (test_source_precision_reference.SourcePrecisionTests) ... FAIL
+test_public_state_mutation_is_rejected (test_source_precision_reference.SourcePrecisionTests) ... FAIL
+test_random_forward_is_rejected (test_source_precision_reference.SourcePrecisionTests) ... FAIL
+test_registered_integer_and_boolean_buffers_preserve_dtype (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_scalar_output_abi (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_sixteen_samples_and_report_protocol_rejections (test_source_precision_reference.SourcePrecisionTests) ... ERROR
+test_source_dtype_mismatch_is_explicit_failure (test_source_precision_reference.SourcePrecisionTests) ... FAIL
+test_timeout_is_controlled_and_old_limits_unchanged (test_source_precision_reference.SourcePrecisionTests) ... ok
+
+======================================================================
+ERROR: test_exact_float64_and_no_input_rounding (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 72, in test_exact_float64_and_no_input_rounding
+    r=self.evaluate(self.fixture())
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_factory_parameters_and_multifile_helper (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 100, in test_factory_parameters_and_multifile_helper
+    r=self.evaluate(f);np.testing.assert_array_equal(r["outputs"][0]["out"],np.array([-.13,.3])*2+.375)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_float32_linear_preserves_source_weight_and_input_precision (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 60, in test_float32_linear_preserves_source_weight_and_input_precision
+    report=run(path,graph,samples,self.root/"evaluation",expected_manifest_sha256=digest(spec),
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_gelu_tanh_executes_source_variant (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 77, in test_gelu_tanh_executes_source_variant
+    r=self.evaluate(self.fixture("return torch.nn.functional.gelu(x, approximate='tanh')"),
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_input_alias_mutation_uses_owned_storage (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 113, in test_input_alias_mutation_uses_owned_storage
+    r=self.evaluate(self.fixture("x.mul_(2)\nreturn x*x"),samples)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_nested_dictionary_tuple_list_and_none (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 90, in test_nested_dictionary_tuple_list_and_none
+    r=self.evaluate(f)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_registered_integer_and_boolean_buffers_preserve_dtype (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 108, in test_registered_integer_and_boolean_buffers_preserve_dtype
+    r=self.evaluate(f)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_scalar_output_abi (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 96, in test_scalar_output_abi
+    r=self.evaluate(f,[dict(x=[.3])]);self.assertEqual(r["outputs"][0]["sum"],[.3])
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+ERROR: test_sixteen_samples_and_report_protocol_rejections (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 194, in test_sixteen_samples_and_report_protocol_rejections
+    r=self.evaluate(self.fixture(),[dict(x=[.1,.2])]*16)
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 43, in evaluate
+    report=run(path,graph,samples or [dict(x=[-.13,.3])],self.root/"evaluation",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/source_precision_reference.py", line 176, in run
+    raise SourceReferenceError(item["code"]) from None
+source_precision_reference.SourceReferenceError: source_reference_input_rejected
+
+======================================================================
+FAIL: test_host_marker_cannot_be_read_in_sandbox (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 131, in test_host_marker_cannot_be_read_in_sandbox
+    self.rejected("source_reference_forward_rejected",lambda:self.evaluate(f))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 49, in rejected
+    self.assertEqual(caught.exception.code,code)
+AssertionError: 'source_reference_input_rejected' != 'source_reference_forward_rejected'
+- source_reference_input_rejected
+?                  ^^^^^
++ source_reference_forward_rejected
+?                  ^^^^^^^
+
+
+======================================================================
+FAIL: test_output_structure_mismatch_is_rejected (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 135, in test_output_structure_mismatch_is_rejected
+    self.rejected("source_reference_output_structure",lambda:self.evaluate(f))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 49, in rejected
+    self.assertEqual(caught.exception.code,code)
+AssertionError: 'source_reference_input_rejected' != 'source_reference_output_structure'
+- source_reference_input_rejected
++ source_reference_output_structure
+
+
+======================================================================
+FAIL: test_public_state_mutation_is_rejected (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 123, in test_public_state_mutation_is_rejected
+    self.rejected("source_reference_state_mutation",lambda:self.evaluate(f))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 49, in rejected
+    self.assertEqual(caught.exception.code,code)
+AssertionError: 'source_reference_input_rejected' != 'source_reference_state_mutation'
+- source_reference_input_rejected
++ source_reference_state_mutation
+
+
+======================================================================
+FAIL: test_random_forward_is_rejected (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 117, in test_random_forward_is_rejected
+    self.rejected("source_reference_random_forward",
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 49, in rejected
+    self.assertEqual(caught.exception.code,code)
+AssertionError: 'source_reference_input_rejected' != 'source_reference_random_forward'
+- source_reference_input_rejected
++ source_reference_random_forward
+
+
+======================================================================
+FAIL: test_source_dtype_mismatch_is_explicit_failure (test_source_precision_reference.SourcePrecisionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 127, in test_source_dtype_mismatch_is_explicit_failure
+    self.rejected("source_reference_forward_rejected",lambda:self.evaluate(f))
+  File "/home/lhohy/Code/Poseidon/scripts/baseline/test_source_precision_reference.py", line 49, in rejected
+    self.assertEqual(caught.exception.code,code)
+AssertionError: 'source_reference_input_rejected' != 'source_reference_forward_rejected'
+- source_reference_input_rejected
+?                  ^^^^^
++ source_reference_forward_rejected
+?                  ^^^^^^^
+
+
+----------------------------------------------------------------------
+Ran 19 tests in 29.971s
+
+FAILED (failures=5, errors=9)

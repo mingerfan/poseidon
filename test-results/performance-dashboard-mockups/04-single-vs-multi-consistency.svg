@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="930" viewBox="0 0 1600 930">
+  <defs>
+    <style>
+      text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; fill: #172033; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 16px; fill: #687386; }
+      .cardtitle { font-size: 14px; fill: #667387; }
+      .cardvalue { font-size: 25px; font-weight: 750; }
+      .th { font-size: 13px; font-weight: 700; fill: #526074; }
+      .row { font-size: 14px; font-weight: 650; }
+      .small { font-size: 13px; fill: #586579; }
+      .cell { font-size: 15px; font-weight: 750; }
+    </style>
+    <filter id="shadow" x="-10%" y="-20%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.12"/></filter>
+  </defs>
+  <rect width="1600" height="930" fill="#f7f9fc"/>
+  <text x="70" y="62" class="title">示意图 4｜1GPU / 4GPU 一致性与性能退化</text>
+  <text x="70" y="94" class="subtitle">先做工作量 PASS/FAIL，再只展示耗时 Top-N 或异常 kernel@level；完整结果放 CSV</text>
+
+  <!-- Cards -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="130" width="340" height="125" rx="16" fill="white"/>
+    <rect x="430" y="130" width="340" height="125" rx="16" fill="white"/>
+    <rect x="790" y="130" width="340" height="125" rx="16" fill="white"/>
+    <rect x="1150" y="130" width="380" height="125" rx="16" fill="white"/>
+  </g>
+  <text x="95" y="166" class="cardtitle">逻辑算子 type + level</text><text x="95" y="214" class="cardvalue" fill="#17836f">PASS</text><text x="190" y="214" class="small">数量与 level 指纹一致</text>
+  <text x="455" y="166" class="cardtitle">CUDA kernel signature + level</text><text x="455" y="214" class="cardvalue" fill="#17836f">PASS</text><text x="550" y="214" class="small">launch 配置一致</text>
+  <text x="815" y="166" class="cardtitle">Kernel 总数</text><text x="815" y="214" class="cardvalue">5099 = 5099</text><text x="1015" y="214" class="small">1GPU / 4GPU</text>
+  <text x="1175" y="166" class="cardtitle">本表观察重点</text><text x="1175" y="205" font-size="17" font-weight="700">计算退化是否只发生在 P2P 重叠时？</text><text x="1175" y="231" font-size="17" font-weight="700">Launch 尾延迟是否显著变差？</text>
+
+  <!-- Table -->
+  <rect x="70" y="285" width="1460" height="500" rx="18" fill="white" filter="url(#shadow)"/>
+  <rect x="95" y="310" width="1410" height="62" rx="10" fill="#edf2f7"/>
+  <text x="115" y="346" class="th">Kernel @ Level</text>
+  <text x="540" y="336" text-anchor="middle" class="th">数量</text><text x="540" y="356" text-anchor="middle" class="small">1GPU / 4GPU</text>
+  <text x="755" y="336" text-anchor="middle" class="th">GPU计算 4G/1G</text><text x="755" y="356" text-anchor="middle" class="small">无 P2P 重叠</text>
+  <text x="985" y="336" text-anchor="middle" class="th">GPU计算 4G/1G</text><text x="985" y="356" text-anchor="middle" class="small">有 P2P 重叠</text>
+  <text x="1200" y="336" text-anchor="middle" class="th">Launch P50</text><text x="1200" y="356" text-anchor="middle" class="small">4GPU / 1GPU</text>
+  <text x="1400" y="336" text-anchor="middle" class="th">Launch P95</text><text x="1400" y="356" text-anchor="middle" class="small">4GPU / 1GPU</text>
+
+  <!-- Row backgrounds -->
+  <g>
+    <rect x="95" y="385" width="1410" height="62" rx="8" fill="#fafbfd"/>
+    <rect x="95" y="455" width="1410" height="62" rx="8" fill="#f6f8fb"/>
+    <rect x="95" y="525" width="1410" height="62" rx="8" fill="#fafbfd"/>
+    <rect x="95" y="595" width="1410" height="62" rx="8" fill="#f6f8fb"/>
+    <rect x="95" y="665" width="1410" height="62" rx="8" fill="#fafbfd"/>
+  </g>
+  <!-- row labels -->
+  <text x="115" y="423" class="row">inverse_fourstep @ L8</text><text x="540" y="423" text-anchor="middle" class="row">96 / 96</text>
+  <text x="115" y="493" class="row">apply_galois @ L8</text><text x="540" y="493" text-anchor="middle" class="row">128 / 128</text>
+  <text x="115" y="563" class="row">dyadic_product @ L7</text><text x="540" y="563" text-anchor="middle" class="row">288 / 288</text>
+  <text x="115" y="633" class="row">fused_ntt @ L6</text><text x="540" y="633" text-anchor="middle" class="row">144 / 144</text>
+  <text x="115" y="703" class="row">keyswitch_phase @ L5</text><text x="540" y="703" text-anchor="middle" class="row">64 / 64</text>
+
+  <!-- Heat cells row 1 -->
+  <rect x="680" y="397" width="150" height="38" rx="8" fill="#d8f3e8"/><text x="755" y="422" text-anchor="middle" class="cell" fill="#146b58">1.02×</text>
+  <rect x="910" y="397" width="150" height="38" rx="8" fill="#ffe7bd"/><text x="985" y="422" text-anchor="middle" class="cell" fill="#8d510c">1.44×</text>
+  <rect x="1125" y="397" width="150" height="38" rx="8" fill="#ffe0ad"/><text x="1200" y="422" text-anchor="middle" class="cell" fill="#8d510c">1.55×</text>
+  <rect x="1325" y="397" width="150" height="38" rx="8" fill="#ffc4bd"/><text x="1400" y="422" text-anchor="middle" class="cell" fill="#a42e22">2.35×</text>
+  <!-- row 2 -->
+  <rect x="680" y="467" width="150" height="38" rx="8" fill="#d8f3e8"/><text x="755" y="492" text-anchor="middle" class="cell" fill="#146b58">1.07×</text>
+  <rect x="910" y="467" width="150" height="38" rx="8" fill="#ffb9b0"/><text x="985" y="492" text-anchor="middle" class="cell" fill="#a42e22">2.81×</text>
+  <rect x="1125" y="467" width="150" height="38" rx="8" fill="#ffe7bd"/><text x="1200" y="492" text-anchor="middle" class="cell" fill="#8d510c">1.46×</text>
+  <rect x="1325" y="467" width="150" height="38" rx="8" fill="#f8a79c"/><text x="1400" y="492" text-anchor="middle" class="cell" fill="#8d2117">3.12×</text>
+  <!-- row 3 -->
+  <rect x="680" y="537" width="150" height="38" rx="8" fill="#d8f3e8"/><text x="755" y="562" text-anchor="middle" class="cell" fill="#146b58">0.98×</text>
+  <rect x="910" y="537" width="150" height="38" rx="8" fill="#f8a79c"/><text x="985" y="562" text-anchor="middle" class="cell" fill="#8d2117">3.23×</text>
+  <rect x="1125" y="537" width="150" height="38" rx="8" fill="#fff0cf"/><text x="1200" y="562" text-anchor="middle" class="cell" fill="#8d510c">1.31×</text>
+  <rect x="1325" y="537" width="150" height="38" rx="8" fill="#ffd1ca"/><text x="1400" y="562" text-anchor="middle" class="cell" fill="#a42e22">1.92×</text>
+  <!-- row 4 -->
+  <rect x="680" y="607" width="150" height="38" rx="8" fill="#d8f3e8"/><text x="755" y="632" text-anchor="middle" class="cell" fill="#146b58">1.05×</text>
+  <rect x="910" y="607" width="150" height="38" rx="8" fill="#ffc7bf"/><text x="985" y="632" text-anchor="middle" class="cell" fill="#a42e22">2.31×</text>
+  <rect x="1125" y="607" width="150" height="38" rx="8" fill="#ffdda5"/><text x="1200" y="632" text-anchor="middle" class="cell" fill="#8d510c">1.61×</text>
+  <rect x="1325" y="607" width="150" height="38" rx="8" fill="#ffbdb4"/><text x="1400" y="632" text-anchor="middle" class="cell" fill="#a42e22">2.48×</text>
+  <!-- row 5 -->
+  <rect x="680" y="677" width="150" height="38" rx="8" fill="#d8f3e8"/><text x="755" y="702" text-anchor="middle" class="cell" fill="#146b58">1.04×</text>
+  <rect x="910" y="677" width="150" height="38" rx="8" fill="#ffd8a0"/><text x="985" y="702" text-anchor="middle" class="cell" fill="#8d510c">1.72×</text>
+  <rect x="1125" y="677" width="150" height="38" rx="8" fill="#ffebc6"/><text x="1200" y="702" text-anchor="middle" class="cell" fill="#8d510c">1.39×</text>
+  <rect x="1325" y="677" width="150" height="38" rx="8" fill="#ffc9c1"/><text x="1400" y="702" text-anchor="middle" class="cell" fill="#a42e22">2.15×</text>
+
+  <g transform="translate(95,815)">
+    <rect x="0" y="0" width="26" height="18" rx="4" fill="#d8f3e8"/><text x="36" y="14" class="small">接近 1GPU</text>
+    <rect x="160" y="0" width="26" height="18" rx="4" fill="#ffe7bd"/><text x="196" y="14" class="small">轻度退化</text>
+    <rect x="320" y="0" width="26" height="18" rx="4" fill="#ffc4bd"/><text x="356" y="14" class="small">明显退化</text>
+    <text x="1410" y="14" text-anchor="end" class="small">数值为布局示意；5099/5099 来自当前 trace 的已确认总数</text>
+  </g>
+  <text x="1515" y="890" text-anchor="end" class="small">示意数据，仅用于确认图形表达方式</text>
+</svg>

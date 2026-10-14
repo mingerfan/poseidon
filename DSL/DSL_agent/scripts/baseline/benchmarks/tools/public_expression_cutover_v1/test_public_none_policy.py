@@ -1,0 +1,32 @@
+"""Optional native-precision output compatibility uses the actual isolated worker."""
+import unittest
+from benchmark_graph import digest
+from pytorch_ordered_contract import allows_none_output
+import test_source_precision_reference as precision_controls
+from source_precision_reference import run,SourceReferenceError
+COUNTERS=dict(actual_source_precision_workers=0)
+class NoneControls(unittest.TestCase):
+    def test_explicit_source_none_policy(self):
+        for version in range(12,24):
+            self.assertEqual(allows_none_output(dict(format=f"poseidon-trusted-pytorch-v{version}")),version>=16)
+        self.assertFalse(allows_none_output(dict(format="poseidon-trusted-pytorch-v24")))
+    def test_v22_and_v23_native_worker_preserve_none_dictionary(self):
+        for version in(22,23):
+            helper=precision_controls.SourcePrecisionTests("test_exact_float64_and_no_input_rounding");helper.setUp()
+            try:
+                tree=dict(kind="dict",items=[dict(key="primary",value=dict(kind="tensor",name="out")),
+                                           dict(key="unused",value=dict(kind="none"))])
+                fixture=helper.fixture("return {'primary': x*x, 'unused': None}",
+                                        version=f"poseidon-trusted-pytorch-v{version}",tree=tree)
+                report=helper.evaluate(fixture)
+                self.assertEqual(report["output_structure"],tree)
+                self.assertFalse(report["encrypted_execution"])
+                COUNTERS["actual_source_precision_workers"]+=1
+            finally:helper.tearDown()
+    def test_none_remains_rejected_before_v16(self):
+        helper=precision_controls.SourcePrecisionTests("test_exact_float64_and_no_input_rounding");helper.setUp()
+        try:
+            tree=dict(kind="tuple",items=[dict(kind="tensor",name="out"),dict(kind="none")])
+            fixture=helper.fixture("return (x*x, None)",version="poseidon-trusted-pytorch-v15",tree=tree)
+            with self.assertRaises(SourceReferenceError):helper.evaluate(fixture)
+        finally:helper.tearDown()

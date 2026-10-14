@@ -1,0 +1,146 @@
+{
+  "approximations": {
+    "defaults": {
+      "exp": {
+        "degree": 6,
+        "domain": [
+          -0.5,
+          0.5
+        ],
+        "method": "taylor"
+      },
+      "reciprocal": {
+        "domain": [
+          0.5,
+          8.0
+        ],
+        "iterations": 8,
+        "method": "goldschmidt"
+      }
+    },
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "bafde82d62bdf79c84288500787a67980cd66c1e222c80b43dd2897afecd57a5"
+  },
+  "format": "poseidon-trusted-pytorch-v16",
+  "inputs": [
+    {
+      "name": "q",
+      "shape": [
+        2,
+        1,
+        2
+      ]
+    },
+    {
+      "name": "k",
+      "shape": [
+        2,
+        1,
+        2
+      ]
+    },
+    {
+      "name": "v",
+      "shape": [
+        2,
+        1,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "result",
+    "weights"
+  ],
+  "weights": {
+    "attention.bias_k": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "weight_000.npy",
+      "sha256": "8ad5fa196bdc4e2de1de110bf1d50d5c2750234ab852153513c728ab4c2fa289",
+      "shape": [
+        1,
+        1,
+        2
+      ]
+    },
+    "attention.bias_v": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "weight_001.npy",
+      "sha256": "9a32d512e9929f6b23e59866ad443f092f356882cd471390b4323247bb5e9d2d",
+      "shape": [
+        1,
+        1,
+        2
+      ]
+    },
+    "attention.in_proj_bias": {
+      "bytes": 176,
+      "dtype": "<f8",
+      "file": "weight_002.npy",
+      "sha256": "275fd1fe1cafd01ad12a022a718a427504ef57855d775365c20ff600bb5c3ad7",
+      "shape": [
+        6
+      ]
+    },
+    "attention.in_proj_weight": {
+      "bytes": 224,
+      "dtype": "<f8",
+      "file": "weight_003.npy",
+      "sha256": "1ab73ef0070465328b87d42887af59452f615d94b0b7034058d236b5fbb7d41b",
+      "shape": [
+        6,
+        2
+      ]
+    },
+    "attention.out_proj.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "weight_004.npy",
+      "sha256": "0850b33a3aff9cb05466321cb56e4ebb0b8afd8c821fc53589ba3bb9cf06894b",
+      "shape": [
+        2
+      ]
+    },
+    "attention.out_proj.weight": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "weight_005.npy",
+      "sha256": "2e019824967609992d4c71e307ae7cd8a300fcf85fa123356e17e62cd5107f53",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    "post.bias": {
+      "bytes": 144,
+      "dtype": "<f8",
+      "file": "weight_006.npy",
+      "sha256": "8441b0b52c5a593ad3b85e1765beed63f8b29ba0b33f8cc11979fe95c0c69b64",
+      "shape": [
+        2
+      ]
+    },
+    "post.weight": {
+      "bytes": 160,
+      "dtype": "<f8",
+      "file": "weight_007.npy",
+      "sha256": "fa4a8adeeb83993e45e53408074920ed83fc1ac3f9d33879033cdb3430975979",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  }
+}

@@ -1,0 +1,203 @@
+[
+  {
+    "case": "vector_function",
+    "divisors": [
+      0.5,
+      -2,
+      3
+    ],
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v1/fixtures/vector_function/manifest.json",
+    "manifest_sha256": "6597b51fa03394cb43b2df9f62003fc3775cc1206f7755db6515cd8c7581b5d1",
+    "outputs": [
+      "out"
+    ],
+    "shape": [
+      2,
+      3
+    ],
+    "std_shape": [
+      3
+    ]
+  },
+  {
+    "case": "channel_method",
+    "divisors": [
+      0.25,
+      -3
+    ],
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v1/fixtures/channel_method/manifest.json",
+    "manifest_sha256": "308df67440e22be671569386590b1a732ef90fa7c06632b35460eddb34bb164c",
+    "outputs": [
+      "out"
+    ],
+    "shape": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "std_shape": [
+      1,
+      2,
+      1,
+      1
+    ]
+  },
+  {
+    "case": "inplace_snapshot",
+    "divisors": [
+      0.5,
+      -2,
+      3
+    ],
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v1/fixtures/inplace_snapshot/manifest.json",
+    "manifest_sha256": "a5e31501294e9a99e8723ddcac77664cdf13d49bbf80b8837dcf7aaec5fc0ff4",
+    "outputs": [
+      "snapshot",
+      "out"
+    ],
+    "shape": [
+      2,
+      3
+    ],
+    "std_shape": [
+      3
+    ]
+  },
+  {
+    "case": "mixed_scalar_power",
+    "divisors": [
+      0.5,
+      -2,
+      3
+    ],
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v1/fixtures/mixed_scalar_power/manifest.json",
+    "manifest_sha256": "95b13c0fb1516966344c7fe4b462b61d625a6c1a093e60cdb696aa4356992890",
+    "outputs": [
+      "out"
+    ],
+    "shape": [
+      2,
+      3
+    ],
+    "std_shape": [
+      3
+    ]
+  },
+  {
+    "case": "dual_fusion",
+    "divisors": [
+      0.5,
+      -2,
+      3
+    ],
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v1/fixtures/dual_fusion/manifest.json",
+    "manifest_sha256": "54a7011adba16480b3576ad20541a3e7055b6d746c809c855668ea1c7e053e61",
+    "outputs": [
+      "out"
+    ],
+    "shape": [
+      2,
+      3
+    ],
+    "std_shape": [
+      3
+    ]
+  },
+  {
+    "case": "dense_projection",
+    "divisors": [
+      0.5,
+      -2,
+      3,
+      0.75,
+      1.2,
+      -4
+    ],
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v1/fixtures/dense_projection/manifest.json",
+    "manifest_sha256": "d8efd29d77239eb019621a0800567d29387dc92a99a4d4d312168a7f79520292",
+    "outputs": [
+      "out"
+    ],
+    "shape": [
+      2,
+      3
+    ],
+    "std_shape": [
+      2,
+      3
+    ]
+  },
+  {
+    "case": "batch_norm_module",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/batch_norm_module/manifest.json",
+    "manifest_sha256": "cc738edcae05fba662d77c8e5d357b2f1b62acbdbce5331531021616facddb7f",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "batch_norm_function",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/batch_norm_function/manifest.json",
+    "manifest_sha256": "85d9cc7365a12a544125a650e6e07c0cc2e3538ad04849142329ad84e10bb9d9",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "index_select_function",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/index_select_function/manifest.json",
+    "manifest_sha256": "d3ae692d11a263db420fecf90ad2e503249d7e9f100fbe130f51680e4e77f39a",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "index_method_nested",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/index_method_nested/manifest.json",
+    "manifest_sha256": "c235761dec47b587126e659112ca06da26a280d0cf83897025569c4a640de2fc",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "bool_multiply",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/bool_multiply/manifest.json",
+    "manifest_sha256": "70087d9c8ebb7505ed0620744dd1952cbadba875d3230e633f9b71f4ff133bad",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "mask_index_residual",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/mask_index_residual/manifest.json",
+    "manifest_sha256": "874ab342b25c3735a23b172100029ad51c26728182a9faac4303fcfb269634e0",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "divided_relu_residual",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/divided_relu_residual/manifest.json",
+    "manifest_sha256": "c4511ca4dfabaed39c5f4fc20cb18ede49bb6de8dbcd14c7cbf152435f1eb6b4",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "divided_gelu_linear",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/divided_gelu_linear/manifest.json",
+    "manifest_sha256": "6f2fb6e3db0d1f677486a1b97b136e6debd3e896a8545c6b1cc800518a618fec",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "divided_sigmoid_tuple",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/divided_sigmoid_tuple/manifest.json",
+    "manifest_sha256": "1b7e6705229f3ff06c26a982f255cdb538739e873469dcf92c53b52c51dfc2cc",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "float32_vector",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/float32_vector/manifest.json",
+    "manifest_sha256": "b9e63ec6e84d3639eb07851775096b35e9b3acb87af2bc408a5728da192cca06",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "float32_batch_norm",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/float32_batch_norm/manifest.json",
+    "manifest_sha256": "8f4ee4ff82b9acf8ca17af92bc6917e80b1638fb8671bbde3c813fe0651389c4",
+    "purpose": "mixed-public-state source compatibility"
+  },
+  {
+    "case": "float32_gelu_projection",
+    "manifest": "scripts/baseline/benchmarks/tools/public_tensor_source_v2/fixtures-v2/float32_gelu_projection/manifest.json",
+    "manifest_sha256": "54824895badb8072fd171937be0f4d6102655c1fb3b17aa16ba998267caf0ff9",
+    "purpose": "mixed-public-state source compatibility"
+  }
+]
