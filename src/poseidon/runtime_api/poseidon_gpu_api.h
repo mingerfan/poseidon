@@ -280,6 +280,7 @@ private:
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;
+    std::optional<int> waterline_rescale_workspace_levels_;
     std::vector<std::uint64_t> waterline_allocator_capacity_;
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
     std::unique_ptr<communication::NcclMpiTransport> nccl_transport_;

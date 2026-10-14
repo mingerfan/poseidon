@@ -1,0 +1,39 @@
+{
+  "scope": "One CPU-only streaming read of closed failed PID153204 runtime CSV; no GPU work or production change",
+  "started_at": "2026-10-14T18:21:02.279304+08:00",
+  "old_model_pid": 153204,
+  "old_model_pid_absent_before_launch": true,
+  "old_model_exit_code": 1,
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "python3",
+    "/home/xuming/poseidon-waterline-20261013/summarize-api-trace-20261014.py",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model.trace.rank0.csv"
+  ],
+  "stdout": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/closed-failed-api-summary-model153204-20261014.json",
+  "summarizer_sha256": "fc374d5c92bdaad5d9fec06007cbbeefc4926bd4ae49684fc39d4b5bfe33aa51",
+  "trace_before": {
+    "bytes": 1255233727,
+    "mtime_ns": 1791970711007073363,
+    "ctime_ns": 1791970711007073363,
+    "inode": 219104076
+  },
+  "complete": true,
+  "returncode": 0,
+  "elapsed_seconds": 154.54224064713344,
+  "finished_at": "2026-10-14T18:23:36.821896+08:00",
+  "stderr": "",
+  "trace_after": {
+    "bytes": 1255233727,
+    "mtime_ns": 1791970711007073363,
+    "ctime_ns": 1791970711007073363,
+    "inode": 219104076
+  },
+  "output_sha256": "687fb9e7fd12848d4e61ba609a0eb4094c63e8cdf1e42a3bca806f09bc4d49e0",
+  "trace_sha256": "efd7b630afa4aec65cf6ea929b269a9b3aac9e3ea9bf857d44b64d7582bb4261",
+  "trace_bytes": 1255233727,
+  "input_unchanged_during_summary": true,
+  "rows": 32664726
+}

@@ -1,0 +1,107 @@
+{
+  "scope": "Local RTX4060 single-GPU API regression for validated-plan Rescale workspace. No SSH, new full model run, GPU benchmark or additional negative-control run. Existing lazy normalization and HEFT unchanged.",
+  "build_command": [
+    "cmake",
+    "--build",
+    "build-waterline-qwen-agent",
+    "--target",
+    "poseidon_runtime_gpu_api_tests",
+    "-j2"
+  ],
+  "run_command": [
+    "env",
+    "CUDA_VISIBLE_DEVICES=0",
+    "OMP_NUM_THREADS=1",
+    "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB=512",
+    "build-waterline-qwen-agent/bin/poseidon_runtime_gpu_api_tests"
+  ],
+  "working_directory": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon",
+  "exit_status": 0,
+  "test_groups_passed": 24,
+  "build_log": "actual-rescale-workspace-api-build.log",
+  "test_log": "actual-rescale-workspace-api-tests.log",
+  "context": {
+    "poly_degree": 4096,
+    "q_count": 10,
+    "q_prime_bits": 30,
+    "p_count": 2,
+    "p_prime_bits": 30,
+    "rescale_input_components": 3,
+    "rescale_input_scale_log2": 160,
+    "rescale_output_scale_log2": 40,
+    "complex_slots_checked_per_case": 2048,
+    "dense_oracle": "independent slots[i] * slots[i], CPU-created MulCC product encrypted without supplying a secret key to the Rescale API",
+    "dense_absolute_tolerance": 0.0001
+  },
+  "assertions_passed": {
+    "preflight_without_plan_validation_rejects_workspace_query": true,
+    "same_actual_drop5_plan_has_identical_workspace_at_capability8_and50": true,
+    "mixed_plan_with_actual_drop5_and6_uses_larger_whole_plan_max6_for_both_consumers": true,
+    "actual_three_component_cumulative_gpu_allocations_excluding_final_output_fit_workspace_for_drop5_and6": true,
+    "all_complex_slots_match_dense_square_for_both_cases": true,
+    "revalidation_from_max6_to_max5_restores_original_smaller_budget": true,
+    "invalid_revalidation_after_first_valid_rescale_clears_previous_published_maximum": true,
+    "workspace_query_after_rejected_validation_is_rejected": true,
+    "successful_validation_after_rejection_restores_correct_budget": true
+  },
+  "allocation_measurements": [
+    {
+      "capability_max_drop": 50,
+      "actual_drop": 5,
+      "plan_max_drop": 6,
+      "components": 3,
+      "cumulative_temporary_allocation_bytes": 1966080,
+      "workspace_bound_bytes": 3604480,
+      "actual_allocation_total_excludes_separately_charged_final_output": true
+    },
+    {
+      "capability_max_drop": 50,
+      "actual_drop": 6,
+      "plan_max_drop": 6,
+      "components": 3,
+      "cumulative_temporary_allocation_bytes": 2211840,
+      "workspace_bound_bytes": 3604480,
+      "actual_allocation_total_excludes_separately_charged_final_output": true
+    }
+  ],
+  "static_upper_bound": {
+    "symbols": "d=one operation level gap; g=maximum validated d over the entire plan; k=native_drop_count; m=0/1 for integer prescale allocation; b=1 iff k<d for final ModSwitch allocation; A=N*Qfull*sizeof(GpuWord)",
+    "conditions": [
+      "1 <= k <= d <= g, since the normalizer searches only count=1..drop_count",
+      "q-only ciphertexts have at most three components, enforced by Waterline validation; all intermediate Q <= Qfull",
+      "one prescale ciphertext, k native result ciphertexts, at most one extra ModSwitch result",
+      "final output is moved out and removed from temporaries; its Value resource credit is counted separately",
+      "temporary ciphertext count=m+k+b-1 <= d <= g: if k=d then m+d-1<=d; if k<d then m+k<=k+1<=d",
+      "therefore transient ciphertext bytes <= 3*g*A; unchanged conservative query (4+3*g)*A retains 4*A additional allowance",
+      "native Rescale scratch consists of N q_last words plus two N*(Q-1) correction buffers, reused across components and levels; existing retained workspace reserve accounts for it separately",
+      "input Value residency, final output Value residency, fixed tables/keys and completed-work reclamation remain separate; this tightening does not reduce Qfull, the supported component bound, or OperatorSpec capability limit"
+    ],
+    "source_locations": [
+      "src/poseidon/runtime_api/poseidon_gpu_api.cpp::validate_waterline_resources",
+      "src/poseidon/runtime_api/poseidon_gpu_api.cpp::instruction_workspace",
+      "src/poseidon/runtime_api/poseidon_gpu_api.cpp::compute Rescale",
+      "src/poseidon/gpu/gpu_modswitch_handler.cpp::ensure_rescale_scratch",
+      "src/poseidon/runtime_api/rescale_normalization.h::make_rescale_normalization"
+    ]
+  },
+  "sha256": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.h": "af575c6157a7ea632d3deeb4a74a5d0806b9fa0ef2fd975243891f656ad856eb",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "9a74df35a4175c12b86bc3ea012b8dbc5a015c50078d77f41c2e7191658fe99c",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "6b5bbee1a05cd567c7ff5a7246666cbe3d95b718bd625ca6ac5e379751982234",
+    "src/poseidon/runtime_api/rescale_normalization.h": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+    "build-waterline-qwen-agent/libposeidon_runtime_gpu_api.a": "76a1d8b147f10a16ab18dd54d837806ee4a5da1c0b24139b2d50b697a362f1ca",
+    "build-waterline-qwen-agent/libposeidon_gpu.a": "460b25239c752f9a48d8c8b8487e3672396e1bd76cfeef533e9264d40c93a7ff",
+    "build-waterline-qwen-agent/bin/poseidon_runtime_gpu_api_tests": "fe13a1c628dc4b56cd91748b1bb73e754a55e94097010711e5719d651f24fd06"
+  },
+  "object_freshness": {
+    "api_object": "build-waterline-qwen-agent/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o",
+    "api_object_mtime_utc": "2026-10-14T10:22:45.070767+00:00",
+    "cpp_mtime_utc": "2026-10-14T10:22:33.000195+00:00",
+    "header_mtime_utc": "2026-10-14T10:22:13.608882+00:00",
+    "api_object_newer_than_cpp_and_header": true,
+    "tests_object": "build-waterline-qwen-agent/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/__/tests/runtime_api/poseidon_gpu_api_test.cpp.o",
+    "tests_object_mtime_utc": "2026-10-14T10:26:25.043564+00:00",
+    "tests_source_mtime_utc": "2026-10-14T10:25:55.134184+00:00",
+    "tests_object_newer_than_source": true
+  }
+}

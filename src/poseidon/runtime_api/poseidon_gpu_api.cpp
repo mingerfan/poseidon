@@ -1601,6 +1601,7 @@ fhegpu::ResourceUsage PoseidonGpuApi::value_resources(const fhegpu::ValueDesc &d
 
 void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &plan)
 {
+    waterline_rescale_workspace_levels_.reset();
     if(!plan.waterline)throw std::invalid_argument("Waterline resource validation requires configuration");
     const auto &config=*plan.waterline;
     for(const auto &device:devices_) {
@@ -1620,6 +1621,7 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
     waterline_allocator_capacity_.resize(devices_.size());
     std::vector<bool> keyswitch(devices_.size()),rescale(devices_.size());
     std::vector<bool> gpu_prepare(devices_.size());
+    int rescale_workspace_levels=0;
     for(const auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(const auto &instruction:*phase) {
         if(const auto *op=std::get_if<fhegpu::PreparePlaintextOp>(&instruction.body)) {
             if(config.backend!=fhegpu::PrepareBackend::Cpu) {
@@ -1649,6 +1651,7 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
                     context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>((*input)->level)));
                 make_rescale_normalization(active->parms().q(),exact_scale((*input)->scale_log2),
                     static_cast<std::size_t>(gap),exact_scale(attrs.target_scale_log2));
+                rescale_workspace_levels=std::max(rescale_workspace_levels,gap);
             }
         }
     }
@@ -1706,6 +1709,9 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
         if(capacity>config.device_capacity_bytes.at(d) || outside+(64ULL<<20)>config.device_capacity_bytes.at(d)-capacity)
             throw std::runtime_error("Waterline managed pool cap plus outside GPU memory exceed M; configure POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB");
     }
+    waterline_rescale_workspace_levels_=rescale_workspace_levels;
+    std::cerr<<"waterline rescale workspace plan_max_drop="<<rescale_workspace_levels
+             <<" capability_max_drop="<<max_rescale_levels_per_op_.value_or(0)<<'\n';
 }
 
 std::vector<std::uint64_t> PoseidonGpuApi::waterline_allocator_capacity() const
@@ -1768,8 +1774,12 @@ fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instru
             case fhegpu::ComputeKind::Negate:case fhegpu::ComputeKind::MulCP:break;
             case fhegpu::ComputeKind::MulCC:bytes=n*q*4*8;break;
             case fhegpu::ComputeKind::Rescale:
-                if(!max_rescale_levels_per_op_)throw std::runtime_error("Waterline Rescale bound needs completed preflight");
-                bytes=n*q*4*(4+3*std::uint64_t(*max_rescale_levels_per_op_));break;
+                if(!waterline_rescale_workspace_levels_ || *waterline_rescale_workspace_levels_<=0)
+                    throw std::runtime_error("Waterline Rescale bound needs completed plan validation");
+                // At most one prescale plus the actual level drops can retain
+                // intermediate ciphertexts. Keep full Q and three components,
+                // but do not charge the OperatorSpec capability limit per op.
+                bytes=n*q*4*(4+3*std::uint64_t(*waterline_rescale_workspace_levels_));break;
             case fhegpu::ComputeKind::ModSwitch:bytes=n*q*4*8;break;
             case fhegpu::ComputeKind::Rotate:case fhegpu::ComputeKind::Relinearize:
                 // Conservative bound on HYBRID digit expansion, accumulation,

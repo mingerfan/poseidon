@@ -1,0 +1,203 @@
+{
+  "scope": "Final plan-max-drop Rescale resource bound checks on 188Server; no complete model result. Single GPU uses physical1, multi uses all0,1,2,3. Qfull bound, math and HEFT unchanged.",
+  "stage_exit": 0,
+  "checks_exit": 0,
+  "source_sha256": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "9a74df35a4175c12b86bc3ea012b8dbc5a015c50078d77f41c2e7191658fe99c",
+    "src/poseidon/runtime_api/poseidon_gpu_api.h": "af575c6157a7ea632d3deeb4a74a5d0806b9fa0ef2fd975243891f656ad856eb",
+    "src/poseidon/runtime_api/poseidon_cpu_api.cpp": "7c28ff9e1b744546f32303845b37374c85248e3c2177330562f6c2b48ede35c4",
+    "src/poseidon/runtime_api/rescale_normalization.h": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "6b5bbee1a05cd567c7ff5a7246666cbe3d95b718bd625ca6ac5e379751982234",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp": "2df303eeef2d1d3fb86dca2c59b3b6a68b8da42268f75065d8a081d23e2efbe3",
+    "third_party/ckks-runtime/runtime/runtime.hpp": "7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a"
+  },
+  "build_status": "188-plan-bound-build.status",
+  "suites": {
+    "cpu-api": {
+      "test_groups_passed": 9,
+      "exit": 0
+    },
+    "gpu-api-single": {
+      "test_groups_passed": 24,
+      "exit": 0
+    },
+    "gpu-scalar": {
+      "cases": 16,
+      "RNS_words": 974848,
+      "exit": 0
+    },
+    "real_prepare_failure": {
+      "consumer_calls": 0,
+      "real_allocation_calls": 2,
+      "allocator_failures": 1,
+      "automatic_drain_calls": 1,
+      "dynamic_live_after_failed_run": 0,
+      "pinned_live_after_failed_run": 0,
+      "same_runtime_explicit_repaired_run": true,
+      "complex_slots_checked": 2048,
+      "max_abs_error": 4.70654e-08
+    }
+  },
+  "pressure": {
+    "single": [
+      {
+        "backend": "cpu",
+        "devices": 1,
+        "max_abs_complex_error": 1.09518e-06,
+        "runtime_ms": 637.15,
+        "forward_ms": 132.277,
+        "pinned_live_bytes": 0
+      },
+      {
+        "backend": "gpu",
+        "devices": 1,
+        "max_abs_complex_error": 1.09518e-06,
+        "runtime_ms": 523.128,
+        "forward_ms": 33.8413,
+        "pinned_live_bytes": 0
+      },
+      {
+        "backend": "auto",
+        "devices": 1,
+        "max_abs_complex_error": 1.09518e-06,
+        "runtime_ms": 639.158,
+        "forward_ms": 132.877,
+        "pinned_live_bytes": 0
+      }
+    ],
+    "single_peers_completed_before_slow_gpu0": [
+      0,
+      0,
+      0
+    ],
+    "all": [
+      {
+        "backend": "cpu",
+        "devices": 4,
+        "max_abs_complex_error": 8.82335e-07,
+        "runtime_ms": 2538.83,
+        "forward_ms": 594.974,
+        "pinned_live_bytes": 0
+      },
+      {
+        "backend": "gpu",
+        "devices": 4,
+        "max_abs_complex_error": 8.82335e-07,
+        "runtime_ms": 2209.87,
+        "forward_ms": 226.348,
+        "pinned_live_bytes": 0
+      },
+      {
+        "backend": "auto",
+        "devices": 4,
+        "max_abs_complex_error": 8.82335e-07,
+        "runtime_ms": 2302.5,
+        "forward_ms": 333.895,
+        "pinned_live_bytes": 0
+      }
+    ],
+    "all_peers_completed_before_slow_gpu0": [
+      3,
+      3,
+      3
+    ],
+    "host-staged": [
+      {
+        "backend": "cpu",
+        "devices": 4,
+        "max_abs_complex_error": 1.03696e-06,
+        "runtime_ms": 3136.13,
+        "forward_ms": 1039.88,
+        "pinned_live_bytes": 0
+      },
+      {
+        "backend": "gpu",
+        "devices": 4,
+        "max_abs_complex_error": 1.03696e-06,
+        "runtime_ms": 2815.98,
+        "forward_ms": 790.049,
+        "pinned_live_bytes": 0
+      },
+      {
+        "backend": "auto",
+        "devices": 4,
+        "max_abs_complex_error": 1.03696e-06,
+        "runtime_ms": 2951.93,
+        "forward_ms": 874.964,
+        "pinned_live_bytes": 0
+      }
+    ],
+    "host-staged_peers_completed_before_slow_gpu0": [
+      3,
+      3,
+      3
+    ]
+  },
+  "q_proj": {
+    "cpu": {
+      "passed": true,
+      "complex_slots": 8192,
+      "max_abs_error": 9.907332731984297e-10,
+      "preparation_measurements": {
+        "cpu_encode_ms": 16835.328009,
+        "cpu_plain_h2d_bytes": 1343815680,
+        "cpu_prepare_calls": 1025,
+        "transport_h2d_bytes": 1350369280,
+        "transport_h2d_calls": 1026,
+        "transport_h2d_ms": 125.701664,
+        "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+      }
+    },
+    "gpu": {
+      "passed": true,
+      "complex_slots": 8192,
+      "max_abs_error": 9.909530973573055e-10,
+      "preparation_measurements": {
+        "cpu_encode_ms": 0.0,
+        "cpu_plain_h2d_bytes": 0,
+        "cpu_prepare_calls": 0,
+        "transport_h2d_bytes": 6553600,
+        "transport_h2d_calls": 1,
+        "transport_h2d_ms": 0.561888,
+        "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+      }
+    },
+    "auto": {
+      "passed": true,
+      "complex_slots": 8192,
+      "max_abs_error": 9.907328291092199e-10,
+      "preparation_measurements": {
+        "cpu_encode_ms": 6185.446517,
+        "cpu_plain_h2d_bytes": 473497600,
+        "cpu_prepare_calls": 361,
+        "transport_h2d_bytes": 480051200,
+        "transport_h2d_calls": 362,
+        "transport_h2d_ms": 45.16304,
+        "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+      }
+    }
+  },
+  "evidence_files_sha256": {
+    "188-plan-bound-build-verification.log": "f4ccb58e59aed12d64eddbba57e5628c6eb550432776d013d8f8f92f9e0c1e71",
+    "188-plan-bound-build.log": "fbc536fcecd2769bd431516399e7966e2bacf0de518fbf79b1469ec01341853f",
+    "188-plan-bound-build.status": "bccc5914f22c4c8fa41b746b1f881269b04560034652ae35e1c1f04c33263be0",
+    "188-plan-bound-cpu-api.log": "791f430f23c04bae34d3133cd3d14b72b61fba9d394d509af2d2ca51feb1fb0d",
+    "188-plan-bound-devices-after.csv": "a3538ad22f4d34957b6ad953e9f81f5185d2f4760cc4daa28d8c09d10e813644",
+    "188-plan-bound-devices-before.csv": "5f7859c204799c7220af3cbb521e17afd70cd8a192f3033d0fdb559340ea60ae",
+    "188-plan-bound-exit-status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "188-plan-bound-gpu-api-single.log": "11cb8dec8fa75119f13c31b23b530b394f67d922acee8f004d8598b6b0c2beca",
+    "188-plan-bound-gpu-prepare-oom-single.log": "bd0729754b1c5775c66c77f61b489e5e05e1dfb22a816291d95c97af83937bd9",
+    "188-plan-bound-gpu-scalar-single.log": "7de5babf53a4869bec494d51be41d52e85db7847454748cff7ff0441292d7461",
+    "188-plan-bound-q-proj-auto-report.json": "7b3561c03785b2f9c35c6d073fc3e6b911e84473fce249a17f5924d3ecb9ab21",
+    "188-plan-bound-q-proj-auto.log": "962727d08eda945f964ba5933fc4993c5286099c03d21207d06942ec463a53fa",
+    "188-plan-bound-q-proj-cpu-report.json": "b6c3b71c14778b9366b507e1db73e9f39d08709c38e17edb06d13b25e82e4efe",
+    "188-plan-bound-q-proj-cpu.log": "384936b4520f80103766d6734e1e8b5c61668b8353514c7e56461cec199d3a49",
+    "188-plan-bound-q-proj-gpu-report.json": "efbfae13c0703ab9b14b5ef26895d0b5d31f6ef15ddaf2079e57071b36154fb0",
+    "188-plan-bound-q-proj-gpu.log": "763d3eb58dd75515ceaee0a4d94daa1d7834d49b2d446d48ddd070cf00679248",
+    "188-plan-bound-stage-exit-status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "188-plan-bound-stage-supervisor.log": "1ef9f00056b43949535692f6ac444f4cd23b54cc06761d528e44d0a1bb37c80b",
+    "188-plan-bound-waterline-all.log": "ba0820eae0303cc3638832505854d70dbdbc6ccb4f5be12b5cb7022855a33766",
+    "188-plan-bound-waterline-host-staged.log": "fd010ee0b8237228f08293b30923c6d151a73f0c3e7624d3a69d26666d0bd249",
+    "188-plan-bound-waterline-single.log": "8795a18c783180becedcf010c16fd8557a03be34139bb4b9df7bd73d3161e1fa"
+  }
+}

@@ -752,6 +752,108 @@ void test_is_ready_reclaims_completed_temporaries(
     api.drain();
 }
 
+void test_rescale_workspace_uses_validated_plan(
+    poseidon::PoseidonContext &context,poseidon::KeyGenerator &key_generator,
+    const fhegpu::LoadedOperatorSpec &original_spec,const RmmPoolScope &pool)
+{
+    auto spec=original_spec;
+    spec.spec.operators.at(fhegpu::ComputeKind::Rescale).max_levels_per_op=50;
+    const auto degree=context.parameters_literal()->degree();
+    const int level=static_cast<int>(context.parameters_literal()->q().size()-1);
+    const auto make_plan=[&](bool include_six) {
+        fhegpu::RuntimePlan plan;plan.format_version=4;plan.target=make_target(spec);
+        plan.values.push_back({0,fhegpu::ValueKind::Ciphertext,host_place(),kContextId,level,160,true,3});
+        plan.values.push_back({1,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level,160,true,3});
+        plan.external_inputs={0};
+        plan.initialization.push_back({0,fhegpu::CommAction{0,fhegpu::CommKind::Transfer,
+            fhegpu::CommHint::PointToPoint,{0},{1},{host_place()},{device_place()},
+            {fhegpu::ValueKind::Ciphertext}}});
+        for(int drops:{5,6}) {
+            if(drops==6 && !include_six)continue;
+            const auto id=static_cast<fhegpu::ValueId>(plan.values.size());
+            plan.values.push_back({id,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level-drops,40,true,3});
+            plan.execution.push_back({id-1,fhegpu::ComputeOp{fhegpu::ComputeKind::Rescale,{1},id,
+                device_place(),fhegpu::RescaleAttrs{level-drops,40}}});
+            plan.final_outputs.push_back(id);
+        }
+        fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Cpu;
+        config.device_capacity_bytes={4ULL<<30};config.device_reserve_bytes={2ULL<<30};
+        config.device_fractions={.5};config.host_budget_bytes=64ULL<<20;
+        config.pinned_budget_bytes=16ULL<<20;config.raw_budget_bytes=8ULL<<20;plan.waterline=config;
+        fhegpu::PlanVerifier::verify(plan,spec,false);
+        return plan;
+    };
+    auto five=make_plan(false),six=make_plan(true);
+    PoseidonGpuApi api(kContextId,context,kDeviceId);
+    api.preflight(kPlanSha,false,five.target,spec.spec,{});
+    require_rejected([&]{(void)api.instruction_workspace(five.execution.front());},"completed plan validation");
+    api.validate_waterline_resources(five);
+    const auto five_bytes=api.instruction_workspace(five.execution.front()).front.at(0);
+    {
+        // The same legal five-drop graph with an independently lower supported
+        // maximum must receive the same budget, rather than charging capability.
+        PoseidonGpuApi smaller_capability(kContextId,context,kDeviceId);
+        smaller_capability.preflight(kPlanSha,false,make_target(original_spec),original_spec.spec,{});
+        smaller_capability.validate_waterline_resources(five);
+        require(smaller_capability.instruction_workspace(five.execution.front()).front.at(0)==five_bytes,
+                "Rescale workspace follows capability maximum instead of the validated graph");
+    }
+    api.validate_waterline_resources(six);
+    const auto six_bytes=api.instruction_workspace(six.execution.front()).front.at(0);
+    require(six_bytes>five_bytes &&
+                api.instruction_workspace(six.execution.back()).front.at(0)==six_bytes,
+            "whole-plan six-drop maximum did not enlarge the workspace for both Rescale consumers");
+
+    poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context,public_key);
+    poseidon::Decryptor decryptor(context,key_generator.secret_key());
+    poseidon::CKKSEncoder encoder(context);poseidon::EvaluatorCkksSoftware evaluator(context);
+    std::vector<double> slots(degree/2);
+    for(std::size_t i=0;i<slots.size();++i)slots[i]=.125*std::sin(i*.017);
+    poseidon::Plaintext plain;encoder.encode(slots,std::ldexp(1.,80),plain);
+    poseidon::Ciphertext cipher,product;encryptor.encrypt(plain,cipher);
+    evaluator.multiply(cipher,cipher,product);
+    require(product.size()==3 && product.scale()==std::ldexp(1.,160),
+            "Rescale workspace fixture did not exercise all three supported components");
+    auto input=transfer_value(api,183,PoseidonGpuValue::from_host_ciphertext(std::move(product)),
+        fhegpu::ValueKind::Ciphertext,host_place(),device_place());
+    {auto warm=api.compute(std::get<fhegpu::ComputeOp>(six.execution.front().body),{input});api.drain();}
+    for(const auto &instruction:six.execution) {
+        const auto &op=std::get<fhegpu::ComputeOp>(instruction.body);
+        const auto before=pool.total_allocated_bytes();
+        auto output=api.compute(op,{input});
+        const auto allocated=pool.total_allocated_bytes()-before;
+        const auto output_bytes=output.device_ciphertext().fields_.front().size()*sizeof(poseidon::gpu::GpuWord);
+        const auto bound=api.instruction_workspace(instruction).front.at(0);
+        // Cumulative actual GPU allocations, excluding the separately charged
+        // output, upper-bound live temporary storage without mirroring its formula.
+        require(allocated>=output_bytes && allocated-output_bytes<=bound,
+                "validated Rescale workspace does not cover actual three-component GPU allocations");
+        api.drain();poseidon::Ciphertext host;
+        poseidon::gpu::GpuUploader::download_ciphertext(output.device_ciphertext(),host,context);
+        poseidon::Plaintext decoded;decryptor.decrypt(host,decoded);
+        std::vector<std::complex<double>> actual;encoder.decode(decoded,actual);
+        require(actual.size()==slots.size(),"Rescale workspace changed slot count");
+        for(std::size_t i=0;i<slots.size();++i)
+            require(std::abs(actual[i]-slots[i]*slots[i])<1e-4,"Rescale workspace case differs from independent dense square");
+        std::cout<<"RESCALE_PLAN_WORKSPACE capability=50 actual_drop="
+                 <<level-std::get<fhegpu::RescaleAttrs>(op.attrs).target_level
+                 <<" plan_max_drop=6 components=3 transient_allocation_total="<<allocated-output_bytes
+                 <<" workspace_bound="<<bound<<'\n';
+    }
+    api.validate_waterline_resources(five);
+    require(api.instruction_workspace(five.execution.front()).front.at(0)==five_bytes,
+            "smaller revalidated Rescale graph retained a stale larger workspace maximum");
+    auto invalid=six;
+    std::get<fhegpu::RescaleAttrs>(std::get<fhegpu::ComputeOp>(invalid.execution.back().body).attrs).target_level=level;
+    require_rejected([&]{api.validate_waterline_resources(invalid);},"level range is unsupported");
+    require_rejected([&]{(void)api.instruction_workspace(five.execution.front());},"completed plan validation");
+    api.validate_waterline_resources(five);
+    require(api.instruction_workspace(five.execution.front()).front.at(0)==five_bytes,
+            "successful validation after a rejected plan did not restore the correct Rescale budget");
+    api.drain();
+}
+
 void test_transfer_staging_cleanup()
 {
     namespace comm = poseidon::runtime_api::communication;
@@ -2856,6 +2958,9 @@ int main()
                  [&] { test_async_memory_cleanup(context, key_generator, rmm_pool); });
         run_test("is_ready settles completed Rescale and GPU Prepare storage",[&] {
             test_is_ready_reclaims_completed_temporaries(context,key_generator,loaded_spec,rmm_pool);
+        });
+        run_test("Rescale workspace follows the validated graph and covers actual GPU allocations",[&] {
+            test_rescale_workspace_uses_validated_plan(context,key_generator,loaded_spec,rmm_pool);
         });
         run_test("completed transfer releases pinned staging", test_transfer_staging_cleanup);
         run_test("Runtime drains work outside final output dependencies",

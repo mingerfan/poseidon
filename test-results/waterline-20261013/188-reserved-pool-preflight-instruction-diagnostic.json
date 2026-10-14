@@ -1,0 +1,59 @@
+{
+  "plan": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+  "plan_bytes": 1185203847,
+  "plan_id": "3104",
+  "method": "Bounded binary-tail ordinal-pattern search, exact instruction decode plus next-ordinal validation; fixed35-byte value table exact-ID-checked binary search. No trace/IR full scan or plan materialization.",
+  "ordinal_search_start": 916768391,
+  "ordinal_search_window_bytes": 268435456,
+  "instruction": {
+    "ordinal": 16616582,
+    "binary_offset": 1069945452,
+    "compute_kind": "Rescale",
+    "inputs": [
+      10437777
+    ],
+    "output": 4932668,
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 3,
+    "physical_gpu": 0,
+    "attribute_tag": 2,
+    "attributes": [
+      9,
+      40
+    ],
+    "reuse_input": null
+  },
+  "descriptors": {
+    "10437777": {
+      "id": 10437777,
+      "kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "logical_gpu": 3,
+      "physical_gpu": 0,
+      "context_string_index": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "binary_value_record_index": 9155634,
+      "binary_offset": 390608018
+    },
+    "4932668": {
+      "id": 4932668,
+      "kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "logical_gpu": 3,
+      "physical_gpu": 0,
+      "context_string_index": 0,
+      "level": 9,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "binary_value_record_index": 3954386,
+      "binary_offset": 208564338
+    }
+  }
+}

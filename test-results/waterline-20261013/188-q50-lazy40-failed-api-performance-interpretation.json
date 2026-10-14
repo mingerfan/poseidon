@@ -1,0 +1,168 @@
+{
+  "scope": "Performance evidence for the closed failed original lazy40 full run PID153204 only; not a complete numerical result and not the new reserved-pool/bound run.",
+  "binding": {
+    "summarizer_sha256": "fc374d5c92bdaad5d9fec06007cbbeefc4926bd4ae49684fc39d4b5bfe33aa51",
+    "trace_sha256": "efd7b630afa4aec65cf6ea929b269a9b3aac9e3ea9bf857d44b64d7582bb4261",
+    "trace_bytes": 1255233727,
+    "input_unchanged_during_read": true,
+    "old_pid_absent_before_summary": true,
+    "old_run_exit_code": 1,
+    "summary_exit_code": 0,
+    "summary_cpu_nice": 10,
+    "summary_read_passes": 1,
+    "summary_elapsed_seconds": 154.54224064713344,
+    "summary_local": "188-q50-lazy40-failed-api-trace-summary.json",
+    "summary_sha256": "687fb9e7fd12848d4e61ba609a0eb4094c63e8cdf1e42a3bca806f09bc4d49e0",
+    "command_local": "188-q50-lazy40-failed-api-trace-command.json",
+    "command_sha256": "49ef67886c39af28ed487e25e621bdae4142fcc83898cfa8a8661f724f5ef1ee"
+  },
+  "recorded_trace_facts": {
+    "rows": 32664726,
+    "timed_api_samples": 9374756,
+    "untimed_admit_release_rows": 23289970,
+    "top_accumulated_host_api_statistics": [
+      {
+        "event": "comm_post",
+        "op": "Transfer",
+        "count": 2866987,
+        "host_api_sum_seconds": 2226.868488234,
+        "host_api_mean_ms": 0.7767277941037054,
+        "host_api_max_ms": 1938.514263
+      },
+      {
+        "event": "compute",
+        "op": "Boot",
+        "count": 13275,
+        "host_api_sum_seconds": 1994.778341166,
+        "host_api_mean_ms": 150.26578841175143,
+        "host_api_max_ms": 450.4838
+      },
+      {
+        "event": "compute",
+        "op": "Rescale",
+        "count": 1307698,
+        "host_api_sum_seconds": 1812.520582481,
+        "host_api_mean_ms": 1.386039117962251,
+        "host_api_max_ms": 669.753069
+      },
+      {
+        "event": "prepare_gpu",
+        "op": "PreparePlaintext",
+        "count": 1181618,
+        "host_api_sum_seconds": 730.902392882,
+        "host_api_mean_ms": 0.6185606455571937,
+        "host_api_max_ms": 671.793262
+      },
+      {
+        "event": "compute",
+        "op": "MulCP",
+        "count": 1327359,
+        "host_api_sum_seconds": 362.788968226,
+        "host_api_mean_ms": 0.27331638857761914,
+        "host_api_max_ms": 365.780814
+      },
+      {
+        "event": "compute",
+        "op": "AddCC",
+        "count": 1268624,
+        "host_api_sum_seconds": 232.347588209,
+        "host_api_mean_ms": 0.18314929262649926,
+        "host_api_max_ms": 590.50533
+      },
+      {
+        "event": "bundle_read",
+        "op": "Read",
+        "count": 1181561,
+        "host_api_sum_seconds": 203.180798205,
+        "host_api_mean_ms": 0.17195963492786237,
+        "host_api_max_ms": 23.75573
+      },
+      {
+        "event": "compute",
+        "op": "Rotate",
+        "count": 83690,
+        "host_api_sum_seconds": 103.486612374,
+        "host_api_mean_ms": 1.2365469276377108,
+        "host_api_max_ms": 107.001623
+      }
+    ],
+    "partial_forward_event_counts": {
+      "scope": "Static operation counts versus recorded host API returns, not GPU completion percentages or progress.",
+      "static_count_source": "188-full-qwen-heft-audit-canonical-summary.json",
+      "static_count_source_sha256": "ef6c3939357e40efa1d5e7355c5ea7a5ef644f64de187e85addfe14495b65236",
+      "HostBoot": {
+        "recorded_returns": 13275,
+        "static_plan_operations": 13275
+      },
+      "Rescale": {
+        "recorded_returns": 1307698,
+        "static_plan_operations": 1551651
+      },
+      "PreparePlaintext": {
+        "recorded_returns": 1181618,
+        "static_plan_operations": 1419183
+      },
+      "interpretation": "All13275 HostBoot API returns are present, while Rescale and Prepare returns are fewer than the static plan operations. This remains a failed partial forward; its aggregate timings are not complete-model statistics."
+    }
+  },
+  "external_process_time": {
+    "source": "188-q50-lazy40-failed-model.log",
+    "source_sha256": "56057e311c52cde1818ca0a111cd2caf114859bed083ce6e8d53d49b687fa304",
+    "wall_seconds": 8959,
+    "user_cpu_seconds": 8130.93,
+    "system_cpu_seconds": 1233.24,
+    "average_cpu_core_equivalents": 1.0452249134948097,
+    "voluntary_context_switches": 79992359,
+    "involuntary_context_switches": 16017,
+    "scope": "External /usr/bin/time from failed process, not an allocation of wall time across ops or GPUs."
+  },
+  "existing_thread_window": {
+    "source": "188-q50-lazy40-thread-cpu-snapshot-1.json",
+    "source_sha256": "e6e8d9630ed9dc39def5a7e509e30a67fa287ab0660233f5c7be4b3415d6ed84",
+    "window_seconds": 10.011644253972918,
+    "method": "/proc thread utime+stime ticks over 10 seconds; CPU attribution only, no stack profiler",
+    "sum_thread_cpu_percent_during_window": 52.83847353945652,
+    "highest_cpu_thread": {
+      "tid": 153918,
+      "name": "poseidon_runtim",
+      "cpu_percent": 28.96627093845443,
+      "voluntary_ctxt_switches_delta": 114,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    "main_thread": {
+      "tid": 153204,
+      "name": "poseidon_runtim",
+      "cpu_percent": 8.789764974427552,
+      "voluntary_ctxt_switches_delta": 60780,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    "main_voluntary_context_switches_per_second": 6070.930853928483,
+    "syscall_identity_or_stack_available": false,
+    "scope": "One10.0116-second /proc CPU/context-switch window, not the whole run or proof of futex, polling, I/O, GPU-idle, or a named-function bottleneck."
+  },
+  "trace_instrumentation_fact": {
+    "writer": "third_party/ckks-runtime/runtime/runtime.hpp",
+    "writer_sha256": "7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a",
+    "per_event_behavior": "trace_event holds a shared trace mutex, writes a CSV row, then flushes the stream. API duration is measured before the event is logged.",
+    "recorded_row_flush_calls_excluding_header": 32664726,
+    "inference": "At32.7million rows, trace logging, locking and scheduling are additional host work not represented by the per-API duration field.",
+    "quantified_wall_contribution_available": false,
+    "limitation": "No trace-disabled control or syscall/stack profile was collected; flush API calls are not a measured OS write-syscall count."
+  },
+  "interpretation": [
+    "The trace demonstrates millions of returned host API calls. Transfer post, Host-assisted decrypt-reencrypt refresh, and Rescale have the largest accumulated API durations among these records.",
+    "Host Boot has13275 recorded API returns with a mean150.266ms; its arithmetic uses the Host secret key. This is elapsed host API duration, including any waits or scheduling delays inside the call, not native GPU bootstrap or CPU-cycle timing.",
+    "The failed run consumed8130.93user CPU seconds plus1233.24system CPU seconds over8959wall seconds, about1.045CPU cores on average. This cannot identify which operation limited the GPU critical path.",
+    "The thread window shows frequent voluntary switching and uneven CPU use during one short interval. It contains no syscall identities or stacks, so it cannot support a named syscall or function attribution."
+  ],
+  "limits": [
+    "Host API durations can overlap across workers or nest; accumulated sums are neither wall-clock percentages nor an additive decomposition of runtime.",
+    "These are not CUDA kernel durations. Asynchronous API return is not proof that every corresponding GPU kernel or transfer has completed.",
+    "The CSV has no worker/device columns or start/end timestamps, so it does not establish per-GPU cost, overlap intervals, or the critical path.",
+    "admit/release have no timing samples; the trace row count, ordinals and bytes are not a completion percentage or remaining-time forecast.",
+    "The process ended with RMM OOM and no full-model numerical acceptance. Its final counts cannot be used as a successful full-forward benchmark.",
+    "No new reserved-pool/full-run performance claim follows from this old binary and failed input trace."
+  ],
+  "full_model_numeric_pass": false,
+  "collector_started_gpu_work_modified_production_or_committed": false
+}

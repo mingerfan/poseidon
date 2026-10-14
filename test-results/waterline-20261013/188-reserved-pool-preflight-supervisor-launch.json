@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-10-14T18:06:45.813773+08:00",
+  "mask": "1,2,3,0",
+  "logical_to_physical_gpu": [
+    1,
+    2,
+    3,
+    0
+  ],
+  "same_heft_logical_plan": true,
+  "all_four_physical_gpus": true,
+  "reason": "logical GPU3 has the lowest fixed-key and compiled single-group footprint; physical GPU0 is shared. No graph/HEFT placement or lazy40 change.",
+  "source_sha256": "9cc4827c0c24522f0e0916da3b3898726bd1ba4351379ad58ab6d20eb71dc23b",
+  "runner_sha256": "449cf933773dd8ad6cea0ab73984da34930158bd72f82012d9b4365965e30ea0",
+  "acceptance_helper_sha256": "a7ae521c8248991220064f89ef1a3c45d1d7ff138ccb1459cf38e583d316723e",
+  "supervisor_script": "/home/xuming/poseidon-waterline-20261013/reserved-pool-update-20261014/run-full-reserved.sh",
+  "supervisor_script_sha256": "51008243192e001f63908affff6286e8d031d8a654f78c658f236f941ec158a5",
+  "exit_status_path": "/home/xuming/poseidon-waterline-20261013/logs/reserved-pool-full-20261014.exit-status",
+  "passed": false,
+  "numerical_model_validation": false,
+  "command": [
+    "/home/xuming/.local/bin/tmux",
+    "new-session",
+    "-d",
+    "-s",
+    "poseidon-q50-reserved-full",
+    "bash /home/xuming/poseidon-waterline-20261013/reserved-pool-update-20261014/run-full-reserved.sh > /home/xuming/poseidon-waterline-20261013/logs/reserved-pool-full-20261014.supervisor.log 2>&1"
+  ]
+}

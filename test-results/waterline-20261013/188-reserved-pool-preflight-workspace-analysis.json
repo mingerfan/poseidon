@@ -1,0 +1,151 @@
+{
+  "scope": "Read-only diagnosis of the failed9cc4827 reserved-pool preflight. Proposed resource-bound refinements are arithmetic/static-code analysis only, not implemented, GPU-tested, or proof that the entire baseline will fit.",
+  "instruction": {
+    "ordinal": 16616582,
+    "binary_offset": 1069945452,
+    "compute_kind": "Rescale",
+    "inputs": [
+      10437777
+    ],
+    "output": 4932668,
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 3,
+    "physical_gpu": 0,
+    "attribute_tag": 2,
+    "attributes": [
+      9,
+      40
+    ],
+    "reuse_input": null
+  },
+  "input_descriptor": {
+    "id": 10437777,
+    "kind": "Ciphertext",
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 3,
+    "physical_gpu": 0,
+    "context_string_index": 0,
+    "level": 14,
+    "scale_log2": 160,
+    "ntt": true,
+    "components": 2,
+    "binary_value_record_index": 9155634,
+    "binary_offset": 390608018
+  },
+  "output_descriptor": {
+    "id": 4932668,
+    "kind": "Ciphertext",
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 3,
+    "physical_gpu": 0,
+    "context_string_index": 0,
+    "level": 9,
+    "scale_log2": 40,
+    "ntt": true,
+    "components": 2,
+    "binary_value_record_index": 3954386,
+    "binary_offset": 208564338
+  },
+  "context": {
+    "N": 16384,
+    "full_Q": 50,
+    "P": 8,
+    "active_input_Q": 15,
+    "output_Q": 10,
+    "actual_level_gap": 5
+  },
+  "current_workspace": {
+    "formula": "N * full_Q * sizeof(GpuWord=4) * (4 + 3 * OperatorSpec.max_levels_per_op)",
+    "operator_capability_max_levels_per_op": 50,
+    "bytes": 504627200,
+    "MiB": 481.25,
+    "charge_device": "logical3, physical0",
+    "included_in_failed_front_bytes": 7214202880,
+    "allocator_capacity_bytes": 7088232352,
+    "capacity_deficit_bytes": 125970528,
+    "front_bytes_excluding_this_workspace": 6709575680
+  },
+  "candidate_drop_only_same_full_Q": {
+    "formula": "N * full_Q * 4 * (4 + 3 * validated_actual_plan_max_drop)",
+    "bytes": 62259200,
+    "reduction_bytes": 442368000,
+    "front_at_this_instruction_if_other_charges_unchanged": 6771834880,
+    "headroom_at_this_instruction_bytes": 316397472,
+    "implementation_status": "Proposed plan: record validated actual plan maximum drop during validate; retain full_Q50, same API, numerical helper and formula coefficients. Collector did not implement or test the change; numeric_review independently audits allocations.",
+    "validated_actual_plan_max_drop": 5,
+    "plan_max_drop_evidence": {
+      "file": "q50-scale40-rescale-shapes.json",
+      "sha256": "b0e7973f5287366b9e42609e990a308dc9aea58e43ad2d6c23f28bb82611d474",
+      "parsed_rescales": 1551651,
+      "distinct_shapes": 8,
+      "all_shapes_actual_drop": 5
+    }
+  },
+  "static_bound_reasoning": [
+    "The instruction is Rescale, not Rotate/Relinearize. Actual attrs are target_level9,target_scale_log2=40; input level14 gives drop5.",
+    "max_rescale_levels_per_op_ is copied from the OperatorSpec capability50; it is not the actual plan maximum or actual executed loop count.",
+    "Normalization native_drop_count is at most actual drop. Execution allocates at most one prescale ciphertext, native_drop_count rescale ciphertexts, and one final ModSwitch only if native_drop_count<drop.",
+    "After the final output is charged separately by value_resources, the number of retained intermediate ciphertexts is at most actual drop, including the prescale case.",
+    "validate_waterline_resources limits ciphertexts to at most3 components. Keeping the original3*drop coefficient and full_Q50 therefore preserves the existing full-context intermediate-buffer bound while replacing only an impossible per-operation loop count.",
+    "GpuEvaluator rescale/multiply_scalar/drop_modulus destinations use source or target actual Q. rescale scratch is N words plus two N*destination_Q arrays, reused across components and retained in the handler.",
+    "The existing fixed reserve already includes retained rescale caches; the original4 additive workspace coefficient is left intact in the drop-only candidate calculation.",
+    "This local calculation cannot identify the next full-plan resource peak. It does not authorize lowering physical pool capacity guards, changing helpers, tolerances, profiles, HEFT, or starting a new run."
+  ],
+  "source_locations": {
+    "api_workspace": "src/poseidon/runtime_api/poseidon_gpu_api.cpp:1753",
+    "api_actual_rescale": "src/poseidon/runtime_api/poseidon_gpu_api.cpp:2198",
+    "api_operator_cap_assignment": "src/poseidon/runtime_api/poseidon_gpu_api.cpp:3112",
+    "scratch": "src/poseidon/gpu/gpu_modswitch_handler.cpp:556",
+    "level_to_Q": "src/poseidon/crt_context.cpp:67"
+  },
+  "bindings": {
+    "operator_spec": {
+      "remote_path": "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json",
+      "sha256": "e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d",
+      "rescale_max_levels_per_op": 50
+    },
+    "sources": {
+      "src/poseidon/runtime_api/poseidon_gpu_api.cpp": {
+        "remote_path": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp",
+        "bytes": 149060,
+        "sha256": "9cc4827c0c24522f0e0916da3b3898726bd1ba4351379ad58ab6d20eb71dc23b",
+        "local_sha256_at_analysis": "9cc4827c0c24522f0e0916da3b3898726bd1ba4351379ad58ab6d20eb71dc23b",
+        "matches_local_at_analysis": true
+      },
+      "src/poseidon/runtime_api/rescale_normalization.h": {
+        "remote_path": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h",
+        "bytes": 2452,
+        "sha256": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+        "local_sha256_at_analysis": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+        "matches_local_at_analysis": true
+      },
+      "src/poseidon/gpu/gpu_evaluator.cpp": {
+        "remote_path": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/gpu/gpu_evaluator.cpp",
+        "bytes": 307472,
+        "sha256": "8ea1d72a02e69bfb5a9d1de4fb23d3ae60214bc348ff09469a176cf778871d73",
+        "local_sha256_at_analysis": "8ea1d72a02e69bfb5a9d1de4fb23d3ae60214bc348ff09469a176cf778871d73",
+        "matches_local_at_analysis": true
+      },
+      "src/poseidon/gpu/gpu_modswitch_handler.cpp": {
+        "remote_path": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/gpu/gpu_modswitch_handler.cpp",
+        "bytes": 39823,
+        "sha256": "bb537ffa9dbfebbcf92ac695116b1cabb69a92ee938006db4148aea7ac53e863",
+        "local_sha256_at_analysis": "bb537ffa9dbfebbcf92ac695116b1cabb69a92ee938006db4148aea7ac53e863",
+        "matches_local_at_analysis": true
+      },
+      "src/poseidon/crt_context.cpp": {
+        "remote_path": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/crt_context.cpp",
+        "bytes": 18573,
+        "sha256": "fa97b58c96b5a00f9fa5e58b4a9499e762c8af1b8fffb91f7015caa1881f9c39",
+        "local_sha256_at_analysis": "fa97b58c96b5a00f9fa5e58b4a9499e762c8af1b8fffb91f7015caa1881f9c39",
+        "matches_local_at_analysis": true
+      }
+    }
+  },
+  "complete_preflight_or_full_model_numeric_pass": false,
+  "collector_changed_code_profiles_remote_files_or_started_gpu_work": false,
+  "active_Q_tightening": "Explicitly deferred by root. Keep full_Q=50; active_Q15 is descriptor evidence only."
+}

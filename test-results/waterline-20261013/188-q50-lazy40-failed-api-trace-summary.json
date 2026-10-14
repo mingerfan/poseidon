@@ -1,0 +1,456 @@
+{
+  "schema_version": 1,
+  "input": {
+    "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model.trace.rank0.csv",
+    "sha256": "efd7b630afa4aec65cf6ea929b269a9b3aac9e3ea9bf857d44b64d7582bb4261",
+    "bytes": 1255233727,
+    "unchanged_during_read": true,
+    "before": {
+      "device": 2066,
+      "inode": 219104076,
+      "bytes": 1255233727,
+      "mtime_ns": 1791970711007073363,
+      "ctime_ns": 1791970711007073363
+    },
+    "after": {
+      "device": 2066,
+      "inode": 219104076,
+      "bytes": 1255233727,
+      "mtime_ns": 1791970711007073363,
+      "ctime_ns": 1791970711007073363
+    }
+  },
+  "format_source": "third_party/ckks-runtime/runtime/runtime.hpp: Runtime::open_trace/trace_event",
+  "header": [
+    "rank",
+    "event",
+    "id",
+    "ordinal",
+    "consumer_ordinal",
+    "op",
+    "duration_ns"
+  ],
+  "notes": [
+    "Host API durations in nanoseconds; these are not CUDA kernel durations.",
+    "Calls across workers and nested calls can overlap. Sums are not wall-clock allocations or fractions.",
+    "Rows and durations do not measure GPU completion, run completion, progress, or remaining time.",
+    "The caller must supply a closed trace from a finished run; unchanged during this read does not prove completion.",
+    "admit/release are untimed bookkeeping events, including their current zero placeholders. Empty durations are also untimed.",
+    "count includes all rows; measured_count excludes untimed rows. Timing statistics use measured_count only; no samples gives null.",
+    "event, op, and event/op tables regroup the same rows and must not be added together."
+  ],
+  "ranks": [
+    0
+  ],
+  "totals": {
+    "count": 32664726,
+    "measured_count": 9374756,
+    "untimed_count": 23289970,
+    "sum_ns": 7720885604351,
+    "mean_ns": 823582.5662396973,
+    "min_ns": 2042,
+    "max_ns": 1938514263
+  },
+  "by_event": [
+    {
+      "event": "admit",
+      "count": 15144137,
+      "measured_count": 0,
+      "untimed_count": 15144137,
+      "sum_ns": null,
+      "mean_ns": null,
+      "min_ns": null,
+      "max_ns": null
+    },
+    {
+      "event": "bundle_read",
+      "count": 1181561,
+      "measured_count": 1181561,
+      "untimed_count": 0,
+      "sum_ns": 203180798205,
+      "mean_ns": 171959.63492786238,
+      "min_ns": 21072,
+      "max_ns": 23755730
+    },
+    {
+      "event": "comm_post",
+      "count": 2866987,
+      "measured_count": 2866987,
+      "untimed_count": 0,
+      "sum_ns": 2226868488234,
+      "mean_ns": 776727.7941037054,
+      "min_ns": 38118,
+      "max_ns": 1938514263
+    },
+    {
+      "event": "comm_wait",
+      "count": 13280,
+      "measured_count": 13280,
+      "untimed_count": 0,
+      "sum_ns": 19347379828,
+      "mean_ns": 1456881.0111445782,
+      "min_ns": 2042,
+      "max_ns": 930548476
+    },
+    {
+      "event": "compute",
+      "count": 4131310,
+      "measured_count": 4131310,
+      "untimed_count": 0,
+      "sum_ns": 4540586545202,
+      "mean_ns": 1099067.0139016437,
+      "min_ns": 22052,
+      "max_ns": 669753069
+    },
+    {
+      "event": "prepare_gpu",
+      "count": 1181618,
+      "measured_count": 1181618,
+      "untimed_count": 0,
+      "sum_ns": 730902392882,
+      "mean_ns": 618560.6455571937,
+      "min_ns": 166299,
+      "max_ns": 671793262
+    },
+    {
+      "event": "release",
+      "count": 8145833,
+      "measured_count": 0,
+      "untimed_count": 8145833,
+      "sum_ns": null,
+      "mean_ns": null,
+      "min_ns": null,
+      "max_ns": null
+    }
+  ],
+  "by_op": [
+    {
+      "op": "AddCC",
+      "count": 1268624,
+      "measured_count": 1268624,
+      "untimed_count": 0,
+      "sum_ns": 232347588209,
+      "mean_ns": 183149.29262649926,
+      "min_ns": 25640,
+      "max_ns": 590505330
+    },
+    {
+      "op": "AddCP",
+      "count": 22315,
+      "measured_count": 22315,
+      "untimed_count": 0,
+      "sum_ns": 2942910612,
+      "mean_ns": 131880.37696616625,
+      "min_ns": 22052,
+      "max_ns": 387989642
+    },
+    {
+      "op": "Boot",
+      "count": 13275,
+      "measured_count": 13275,
+      "untimed_count": 0,
+      "sum_ns": 1994778341166,
+      "mean_ns": 150265788.41175142,
+      "min_ns": 109867378,
+      "max_ns": 450483800
+    },
+    {
+      "op": "CompleteGroup",
+      "count": 15144137,
+      "measured_count": 0,
+      "untimed_count": 15144137,
+      "sum_ns": null,
+      "mean_ns": null,
+      "min_ns": null,
+      "max_ns": null
+    },
+    {
+      "op": "ModSwitch",
+      "count": 22214,
+      "measured_count": 22214,
+      "untimed_count": 0,
+      "sum_ns": 5361910320,
+      "mean_ns": 241375.27325110292,
+      "min_ns": 45152,
+      "max_ns": 62715842
+    },
+    {
+      "op": "MulCC",
+      "count": 42942,
+      "measured_count": 42942,
+      "untimed_count": 0,
+      "sum_ns": 9771052572,
+      "mean_ns": 227540.6961017186,
+      "min_ns": 30715,
+      "max_ns": 121645457
+    },
+    {
+      "op": "MulCP",
+      "count": 1327359,
+      "measured_count": 1327359,
+      "untimed_count": 0,
+      "sum_ns": 362788968226,
+      "mean_ns": 273316.38857761916,
+      "min_ns": 31618,
+      "max_ns": 365780814
+    },
+    {
+      "op": "Negate",
+      "count": 251,
+      "measured_count": 251,
+      "untimed_count": 0,
+      "sum_ns": 37453400,
+      "mean_ns": 149216.73306772907,
+      "min_ns": 32982,
+      "max_ns": 2525454
+    },
+    {
+      "op": "PreparePlaintext",
+      "count": 1181618,
+      "measured_count": 1181618,
+      "untimed_count": 0,
+      "sum_ns": 730902392882,
+      "mean_ns": 618560.6455571937,
+      "min_ns": 166299,
+      "max_ns": 671793262
+    },
+    {
+      "op": "Read",
+      "count": 1181561,
+      "measured_count": 1181561,
+      "untimed_count": 0,
+      "sum_ns": 203180798205,
+      "mean_ns": 171959.63492786238,
+      "min_ns": 21072,
+      "max_ns": 23755730
+    },
+    {
+      "op": "Release",
+      "count": 8145833,
+      "measured_count": 0,
+      "untimed_count": 8145833,
+      "sum_ns": null,
+      "mean_ns": null,
+      "min_ns": null,
+      "max_ns": null
+    },
+    {
+      "op": "Relinearize",
+      "count": 42942,
+      "measured_count": 42942,
+      "untimed_count": 0,
+      "sum_ns": 16551125842,
+      "mean_ns": 385429.7853383634,
+      "min_ns": 105802,
+      "max_ns": 14334789
+    },
+    {
+      "op": "Rescale",
+      "count": 1307698,
+      "measured_count": 1307698,
+      "untimed_count": 0,
+      "sum_ns": 1812520582481,
+      "mean_ns": 1386039.1179622512,
+      "min_ns": 332773,
+      "max_ns": 669753069
+    },
+    {
+      "op": "Rotate",
+      "count": 83690,
+      "measured_count": 83690,
+      "untimed_count": 0,
+      "sum_ns": 103486612374,
+      "mean_ns": 1236546.9276377107,
+      "min_ns": 226125,
+      "max_ns": 107001623
+    },
+    {
+      "op": "Transfer",
+      "count": 2880267,
+      "measured_count": 2880267,
+      "untimed_count": 0,
+      "sum_ns": 2246215868062,
+      "mean_ns": 779863.7654293856,
+      "min_ns": 2042,
+      "max_ns": 1938514263
+    }
+  ],
+  "by_event_op": [
+    {
+      "event": "admit",
+      "op": "CompleteGroup",
+      "count": 15144137,
+      "measured_count": 0,
+      "untimed_count": 15144137,
+      "sum_ns": null,
+      "mean_ns": null,
+      "min_ns": null,
+      "max_ns": null
+    },
+    {
+      "event": "bundle_read",
+      "op": "Read",
+      "count": 1181561,
+      "measured_count": 1181561,
+      "untimed_count": 0,
+      "sum_ns": 203180798205,
+      "mean_ns": 171959.63492786238,
+      "min_ns": 21072,
+      "max_ns": 23755730
+    },
+    {
+      "event": "comm_post",
+      "op": "Transfer",
+      "count": 2866987,
+      "measured_count": 2866987,
+      "untimed_count": 0,
+      "sum_ns": 2226868488234,
+      "mean_ns": 776727.7941037054,
+      "min_ns": 38118,
+      "max_ns": 1938514263
+    },
+    {
+      "event": "comm_wait",
+      "op": "Transfer",
+      "count": 13280,
+      "measured_count": 13280,
+      "untimed_count": 0,
+      "sum_ns": 19347379828,
+      "mean_ns": 1456881.0111445782,
+      "min_ns": 2042,
+      "max_ns": 930548476
+    },
+    {
+      "event": "compute",
+      "op": "AddCC",
+      "count": 1268624,
+      "measured_count": 1268624,
+      "untimed_count": 0,
+      "sum_ns": 232347588209,
+      "mean_ns": 183149.29262649926,
+      "min_ns": 25640,
+      "max_ns": 590505330
+    },
+    {
+      "event": "compute",
+      "op": "AddCP",
+      "count": 22315,
+      "measured_count": 22315,
+      "untimed_count": 0,
+      "sum_ns": 2942910612,
+      "mean_ns": 131880.37696616625,
+      "min_ns": 22052,
+      "max_ns": 387989642
+    },
+    {
+      "event": "compute",
+      "op": "Boot",
+      "count": 13275,
+      "measured_count": 13275,
+      "untimed_count": 0,
+      "sum_ns": 1994778341166,
+      "mean_ns": 150265788.41175142,
+      "min_ns": 109867378,
+      "max_ns": 450483800
+    },
+    {
+      "event": "compute",
+      "op": "ModSwitch",
+      "count": 22214,
+      "measured_count": 22214,
+      "untimed_count": 0,
+      "sum_ns": 5361910320,
+      "mean_ns": 241375.27325110292,
+      "min_ns": 45152,
+      "max_ns": 62715842
+    },
+    {
+      "event": "compute",
+      "op": "MulCC",
+      "count": 42942,
+      "measured_count": 42942,
+      "untimed_count": 0,
+      "sum_ns": 9771052572,
+      "mean_ns": 227540.6961017186,
+      "min_ns": 30715,
+      "max_ns": 121645457
+    },
+    {
+      "event": "compute",
+      "op": "MulCP",
+      "count": 1327359,
+      "measured_count": 1327359,
+      "untimed_count": 0,
+      "sum_ns": 362788968226,
+      "mean_ns": 273316.38857761916,
+      "min_ns": 31618,
+      "max_ns": 365780814
+    },
+    {
+      "event": "compute",
+      "op": "Negate",
+      "count": 251,
+      "measured_count": 251,
+      "untimed_count": 0,
+      "sum_ns": 37453400,
+      "mean_ns": 149216.73306772907,
+      "min_ns": 32982,
+      "max_ns": 2525454
+    },
+    {
+      "event": "compute",
+      "op": "Relinearize",
+      "count": 42942,
+      "measured_count": 42942,
+      "untimed_count": 0,
+      "sum_ns": 16551125842,
+      "mean_ns": 385429.7853383634,
+      "min_ns": 105802,
+      "max_ns": 14334789
+    },
+    {
+      "event": "compute",
+      "op": "Rescale",
+      "count": 1307698,
+      "measured_count": 1307698,
+      "untimed_count": 0,
+      "sum_ns": 1812520582481,
+      "mean_ns": 1386039.1179622512,
+      "min_ns": 332773,
+      "max_ns": 669753069
+    },
+    {
+      "event": "compute",
+      "op": "Rotate",
+      "count": 83690,
+      "measured_count": 83690,
+      "untimed_count": 0,
+      "sum_ns": 103486612374,
+      "mean_ns": 1236546.9276377107,
+      "min_ns": 226125,
+      "max_ns": 107001623
+    },
+    {
+      "event": "prepare_gpu",
+      "op": "PreparePlaintext",
+      "count": 1181618,
+      "measured_count": 1181618,
+      "untimed_count": 0,
+      "sum_ns": 730902392882,
+      "mean_ns": 618560.6455571937,
+      "min_ns": 166299,
+      "max_ns": 671793262
+    },
+    {
+      "event": "release",
+      "op": "Release",
+      "count": 8145833,
+      "measured_count": 0,
+      "untimed_count": 8145833,
+      "sum_ns": null,
+      "mean_ns": null,
+      "min_ns": null,
+      "max_ns": null
+    }
+  ]
+}

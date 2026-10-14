@@ -14,4 +14,10 @@
 
 [真实GPU Prepare故障测试](reserved-ready-oom-test.log)仍在第二次实际RMM分配注入异常：消费者0次、无换后端/隐式重试、自动drain一次、动态GPU及pinned归零，同runtime显式再跑2048复数槽通过。其initial从64调整到128MiB，以先覆盖固定分配与64MiB余量；原64MiB在188已被新预检拒绝，见 [首次检查](188-reserved-pool-initial-oom-fixture-rejected.log)，不能把该拒绝当成完成故障注入。
 
-188新版[完整检查exit0](188-reserved-pool-stage-exit-status)，CPU9/GPU API23/scalar16、真实Prepare故障、三压力配置及q_proj三后端均通过，[build绑定](188-reserved-pool-build.status)。两份四卡压力的每后端均3个peer实际先于慢GPU0完成，HostStaged每后端20/20 posts观察到pinned；front/plain及pinned收尾归零。q_proj Auto实际361份CPU、664份GPU Prepare。新完整前向已启动但尚无数值结果，局部通过不能替代。物理预留池与实际活跃对象峰值必须分别报告；预留也不能消除池内全部碎片或替代正确的workspace上界。
+188新版[完整检查exit0](188-reserved-pool-stage-exit-status)，CPU9/GPU API23/scalar16、真实Prepare故障、三压力配置及q_proj三后端均通过，[build绑定](188-reserved-pool-build.status)。两份四卡压力的每后端均3个peer实际先于慢GPU0完成，HostStaged每后端20/20 posts观察到pinned；front/plain及pinned收尾归零。q_proj Auto实际361份CPU、664份GPU Prepare。新完整尝试在预检被拒绝，尚未执行计算：物理GPU0的graph capacity为7,088,232,352B；#16616582 Rescale完整组为7,214,202,880B，差125,970,528B，见 [报告](188-reserved-pool-preflight-model-report.json)。其workspace误按能力上限drop50计504,627,200B，而图中实际最大drop5。保持Qfull50与最多3分量，按已验证计划maxdrop计62,259,200B可严格覆盖临时密文；详见 [静态分配核对](188-reserved-pool-preflight-workspace-analysis.json)。新上界尚待真实重验；不能据单条算术推断整图可行或数值通过。物理预留池与实际活跃对象峰值必须分别报告；预留也不能消除池内全部碎片或替代正确的workspace上界。
+
+当前实现将能力检查与工作区计费分开：`max_rescale_levels_per_op_`仍限制支持范围；Waterline验证逐条核对输入level、目标level及normalizer成功后，统计本计划最大实际gap，全部预检成功才发布该值。每次验证先清空旧值，失败后禁止工作区查询。Q仍取完整context，没有缩小Q或修改任何Rescale执行。
+
+设gap为g、实际原生Rescale次数为k（1≤k≤g）：最多一次预乘、k次原生除模，以及k<g时一次ModSwitch；最后结果由value单独计费并移出临时列表。排除最终输出，临时CT数量≤g；每份≤3个分量、Q≤Qfull，因此`3g·N·Qfull·4`覆盖全部临时CT。沿用`(4+3g)·N·Qfull·4`还保留额外余量；native scratch由原有retained固定reserve另计。这是按实际分配收紧上界，不是改变lazy数学或任意减少预算。
+
+该实际plan上界已通过 [本地24/24](actual-rescale-workspace-api-validation.json) 和 [188完整复查](188-plan-bound-checks-summary.json)。两地均以真实三分量密文执行drop5/drop6，累计临时分配1,966,080B/2,211,840B低于mixed图3,604,480B工作区；全部2048复数槽独立平方对照通过。能力8/50相同图额度相等，mixed图实际6会增大，重验小图收紧、失败验证清空再恢复均验证。188三配置压力、scalar及真实Prepare故障、q_proj三后端均通过；整图容量和数值仍待新完整运行。

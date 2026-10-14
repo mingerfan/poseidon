@@ -1,0 +1,7 @@
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 93%] Built target poseidon_gpu
+[ 98%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/__/tests/runtime_api/poseidon_gpu_api_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_api_tests
+[100%] Built target poseidon_runtime_gpu_api_tests
