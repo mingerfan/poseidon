@@ -1,0 +1,85 @@
+{
+  "pid": 153204,
+  "samples": 756,
+  "source_file": "188-q50-lazy40-failed-model-memory.jsonl",
+  "sampling_is_not_allocator_peak_instrumentation": true,
+  "host_VmHWM_peak_bytes": 34421383168,
+  "host_VmRSS_peak_bytes": 34421383168,
+  "gpu_per_process_sampled_peaks_by_logical_device": {
+    "0": {
+      "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "bytes": 10202644480,
+      "MiB": 9730.0,
+      "timestamp": "2026-10-14T17:38:32.799480+08:00"
+    },
+    "1": {
+      "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "bytes": 11125391360,
+      "MiB": 10610.0,
+      "timestamp": "2026-10-14T17:38:32.799480+08:00"
+    },
+    "2": {
+      "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+      "bytes": 20891828224,
+      "MiB": 19924.0,
+      "timestamp": "2026-10-14T17:37:47.283096+08:00"
+    },
+    "3": {
+      "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+      "bytes": 20891828224,
+      "MiB": 19924.0,
+      "timestamp": "2026-10-14T17:38:10.037319+08:00"
+    }
+  },
+  "last_three_samples": [
+    {
+      "timestamp": "2026-10-14T17:38:44.148453+08:00",
+      "elapsed_seconds": 8931.430443321355,
+      "pid": 153204,
+      "host": {
+        "VmHWM_bytes": 34413907968,
+        "VmRSS_bytes": 28988801024
+      },
+      "gpu_process_bytes": {
+        "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509": 10202644480,
+        "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5": 11125391360,
+        "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6": 20891828224,
+        "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2": 20891828224
+      }
+    },
+    {
+      "timestamp": "2026-10-14T17:38:55.385967+08:00",
+      "elapsed_seconds": 8942.668026318308,
+      "pid": 153204,
+      "host": {
+        "VmHWM_bytes": 34413907968,
+        "VmRSS_bytes": 28980477952
+      },
+      "gpu_process_bytes": {
+        "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509": 10202644480,
+        "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5": 11125391360,
+        "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6": 20891828224,
+        "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2": 20891828224
+      }
+    },
+    {
+      "timestamp": "2026-10-14T17:39:06.706725+08:00",
+      "elapsed_seconds": 8953.988717149943,
+      "pid": 153204,
+      "host": {
+        "VmHWM_bytes": 34413907968,
+        "VmRSS_bytes": 28828798976
+      },
+      "gpu_process_bytes": {
+        "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509": 10202644480,
+        "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5": 11125391360,
+        "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6": 20891828224,
+        "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2": 20891828224
+      }
+    }
+  ],
+  "report_passed": false,
+  "report_stage": "execute_complete_plan",
+  "full_model_ckks_validated": false,
+  "error": "fatal runtime error: reason=std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded plan_id=3104 plan_source_sha256= local_rank=0 api=PoseidonGpuApi"
+}

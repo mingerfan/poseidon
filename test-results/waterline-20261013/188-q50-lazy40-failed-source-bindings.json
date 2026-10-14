@@ -1,0 +1,192 @@
+{
+  "files": {
+    "model.log": {
+      "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model.log",
+      "stat": {
+        "bytes": 3963,
+        "mtime_ns": 1791970751972075126,
+        "ctime_ns": 1791970751972075126,
+        "inode": 219104073
+      },
+      "sha256": "56057e311c52cde1818ca0a111cd2caf114859bed083ce6e8d53d49b687fa304"
+    },
+    "model-report.json": {
+      "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model-report.json",
+      "stat": {
+        "bytes": 9274,
+        "mtime_ns": 1791970750038075043,
+        "ctime_ns": 1791970750038075043,
+        "inode": 219108159
+      },
+      "sha256": "1f3976bda1d616833206fba0d013ba113ff4e0db223642223e66b05b1cddb720"
+    },
+    "model.exit-status": {
+      "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model.exit-status",
+      "stat": {
+        "bytes": 2,
+        "mtime_ns": 1791970751973075126,
+        "ctime_ns": 1791970751973075126,
+        "inode": 219108160
+      },
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "model-memory.jsonl": {
+      "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model-memory.jsonl",
+      "stat": {
+        "bytes": 313999,
+        "mtime_ns": 1791970746705074899,
+        "ctime_ns": 1791970746705074899,
+        "inode": 219104075
+      },
+      "sha256": "e970d667fac242b3c9f16b028a71309c5fd82a8788d75b55fc45474498799061"
+    },
+    "devices-before.csv": {
+      "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/devices-before.csv",
+      "stat": {
+        "bytes": 358,
+        "mtime_ns": 1791961792644689594,
+        "ctime_ns": 1791961792644689594,
+        "inode": 219104069
+      },
+      "sha256": "ce431cf40e00140e32e5ec2ce724189dc794b71670305d99d4625812432efe5e"
+    },
+    "devices-after.csv": {
+      "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/devices-after.csv",
+      "stat": {
+        "bytes": 354,
+        "mtime_ns": 1791970758142075391,
+        "ctime_ns": 1791970758142075391,
+        "inode": 219108161
+      },
+      "sha256": "983e190b5c59f9bfc24f25b46a183ab4fd547f1edd2f53caccd9603ee016935f"
+    },
+    "executed-runner.json": {
+      "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/executed-runner.json",
+      "stat": {
+        "bytes": 342,
+        "mtime_ns": 1791970407956060322,
+        "ctime_ns": 1791970407956060322,
+        "inode": 219108158
+      },
+      "sha256": "89190a7a31190bbb9e75f6d0a7f1eaab121796197d542c632d228f263a1f48bb"
+    }
+  },
+  "trace": {
+    "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model.trace.rank0.csv",
+    "stat": {
+      "bytes": 1255233727,
+      "mtime_ns": 1791970711007073363,
+      "ctime_ns": 1791970711007073363,
+      "inode": 219104076
+    },
+    "full_trace_hashed_or_scanned": false,
+    "tail_window_bytes_read": 32768,
+    "rows": 30,
+    "local_tail_sha256": "7b5a27d9030fdf64c1313914b9640e846002f0a907e0e2339c76fb032c1b176a"
+  },
+  "directory_inventory": {
+    "devices-after.csv": {
+      "bytes": 354,
+      "mtime_ns": 1791970758142075391,
+      "ctime_ns": 1791970758142075391,
+      "inode": 219108161
+    },
+    "devices-before.csv": {
+      "bytes": 358,
+      "mtime_ns": 1791961792644689594,
+      "ctime_ns": 1791961792644689594,
+      "inode": 219104069
+    },
+    "executed-runner": {
+      "bytes": 9238552,
+      "mtime_ns": 1791970407913060321,
+      "ctime_ns": 1791970407955060322,
+      "inode": 219108157
+    },
+    "executed-runner.json": {
+      "bytes": 342,
+      "mtime_ns": 1791970407956060322,
+      "ctime_ns": 1791970407956060322,
+      "inode": 219108158
+    },
+    "model-memory.jsonl": {
+      "bytes": 313999,
+      "mtime_ns": 1791970746705074899,
+      "ctime_ns": 1791970746705074899,
+      "inode": 219104075
+    },
+    "model-monitor.log": {
+      "bytes": 0,
+      "mtime_ns": 1791961792660689595,
+      "ctime_ns": 1791961792660689595,
+      "inode": 219104074
+    },
+    "model-report.json": {
+      "bytes": 9274,
+      "mtime_ns": 1791970750038075043,
+      "ctime_ns": 1791970750038075043,
+      "inode": 219108159
+    },
+    "model.exit-status": {
+      "bytes": 2,
+      "mtime_ns": 1791970751973075126,
+      "ctime_ns": 1791970751973075126,
+      "inode": 219108160
+    },
+    "model.log": {
+      "bytes": 3963,
+      "mtime_ns": 1791970751972075126,
+      "ctime_ns": 1791970751972075126,
+      "inode": 219104073
+    },
+    "model.trace.rank0.csv": {
+      "bytes": 1255233727,
+      "mtime_ns": 1791970711007073363,
+      "ctime_ns": 1791970711007073363,
+      "inode": 219104076
+    },
+    "partial-api-trace-20261014-1.json": {
+      "bytes": 1914,
+      "mtime_ns": 1791962417089716465,
+      "ctime_ns": 1791962417089716465,
+      "inode": 219104077
+    },
+    "partial-api-trace-20261014-2.json": {
+      "bytes": 2885,
+      "mtime_ns": 1791965968600869291,
+      "ctime_ns": 1791965968600869291,
+      "inode": 219108156
+    },
+    "reused-pressure-source.txt": {
+      "bytes": 77,
+      "mtime_ns": 1791961791265689535,
+      "ctime_ns": 1791961791265689535,
+      "inode": 219104068
+    },
+    "thread-cpu-snapshot-20261014-1.json": {
+      "bytes": 2979,
+      "mtime_ns": 1791965402041844911,
+      "ctime_ns": 1791965402041844911,
+      "inode": 219108155
+    },
+    "waterline-all.log": {
+      "bytes": 16244,
+      "mtime_ns": 1791961624741682369,
+      "ctime_ns": 1791961792654689595,
+      "inode": 219104071
+    },
+    "waterline-host-staged.log": {
+      "bytes": 16286,
+      "mtime_ns": 1791961679627684731,
+      "ctime_ns": 1791961792656689595,
+      "inode": 219104072
+    },
+    "waterline-single.log": {
+      "bytes": 8287,
+      "mtime_ns": 1791961569902680009,
+      "ctime_ns": 1791961792651689594,
+      "inode": 219104070
+    }
+  },
+  "remote_access": "read-only; existing SSH ControlPath; only named small files and final 32768 trace bytes plus header read"
+}

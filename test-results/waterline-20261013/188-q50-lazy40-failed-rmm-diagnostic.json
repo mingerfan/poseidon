@@ -1,0 +1,166 @@
+{
+  "remote_rmm_git_sha": "a723a986e1ac48c5ece16f099c7b47dcd2274e6a",
+  "source_files": {
+    "/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp": {
+      "bytes": 19836,
+      "sha256": "f7c673f9bd6cec2a51c8f3f2cc7132f72f1b7658a833c1da1f983126a9da69a9",
+      "lines_245_276": [
+        {
+          "line": 245,
+          "text": "  /**"
+        },
+        {
+          "line": 246,
+          "text": "   * @brief Try to expand the pool by allocating a block of at least `min_size` bytes from"
+        },
+        {
+          "line": 247,
+          "text": "   * upstream"
+        },
+        {
+          "line": 248,
+          "text": "   *"
+        },
+        {
+          "line": 249,
+          "text": "   * Attempts to allocate `try_size` bytes from upstream. If it fails, it iteratively reduces the"
+        },
+        {
+          "line": 250,
+          "text": "   * attempted size by half until `min_size`, returning the allocated block once it succeeds."
+        },
+        {
+          "line": 251,
+          "text": "   *"
+        },
+        {
+          "line": 252,
+          "text": "   * @throws rmm::bad_alloc if `min_size` bytes cannot be allocated from upstream or maximum pool"
+        },
+        {
+          "line": 253,
+          "text": "   * size is exceeded."
+        },
+        {
+          "line": 254,
+          "text": "   *"
+        },
+        {
+          "line": 255,
+          "text": "   * @param try_size The initial requested size to try allocating."
+        },
+        {
+          "line": 256,
+          "text": "   * @param min_size The minimum requested size to try allocating."
+        },
+        {
+          "line": 257,
+          "text": "   * @param stream The stream on which the memory is to be used."
+        },
+        {
+          "line": 258,
+          "text": "   * @return block_type a block of at least `min_size` bytes"
+        },
+        {
+          "line": 259,
+          "text": "   */"
+        },
+        {
+          "line": 260,
+          "text": "  block_type try_to_expand(std::size_t try_size, std::size_t min_size, cuda_stream_view stream)"
+        },
+        {
+          "line": 261,
+          "text": "  {"
+        },
+        {
+          "line": 262,
+          "text": "    while (try_size >= min_size) {"
+        },
+        {
+          "line": 263,
+          "text": "      auto block = block_from_upstream(try_size, stream);"
+        },
+        {
+          "line": 264,
+          "text": "      if (block.has_value()) {"
+        },
+        {
+          "line": 265,
+          "text": "        current_pool_size_ += block.value().size();"
+        },
+        {
+          "line": 266,
+          "text": "        return block.value();"
+        },
+        {
+          "line": 267,
+          "text": "      }"
+        },
+        {
+          "line": 268,
+          "text": "      if (try_size == min_size) {"
+        },
+        {
+          "line": 269,
+          "text": "        break;  // only try `size` once"
+        },
+        {
+          "line": 270,
+          "text": "      }"
+        },
+        {
+          "line": 271,
+          "text": "      try_size = std::max(min_size, try_size / 2);"
+        },
+        {
+          "line": 272,
+          "text": "    }"
+        },
+        {
+          "line": 273,
+          "text": "    RMM_LOG_ERROR(\"[A][Stream %s][Upstream %zuB][FAILURE maximum pool size exceeded]\","
+        },
+        {
+          "line": 274,
+          "text": "                  rmm::detail::format_stream(stream),"
+        },
+        {
+          "line": 275,
+          "text": "                  min_size);"
+        },
+        {
+          "line": 276,
+          "text": "    RMM_FAIL(\"Maximum pool size exceeded\", rmm::out_of_memory);"
+        }
+      ]
+    },
+    "/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/detail/stream_ordered_memory_resource.hpp": {
+      "bytes": 19245,
+      "sha256": "6ee4c56df5765ec9e164e8ae6e32a98d790756feafb4874ef504923d435854be"
+    },
+    "/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/detail/coalescing_free_list.hpp": {
+      "bytes": 9160,
+      "sha256": "cd6fb5559f2269cac68fc3a9dc95fa821d3ead640d4e47bd735d2bd0fa3a9a9a"
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/runtime.hpp": {
+      "bytes": 90119,
+      "sha256": "7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a"
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp": {
+      "bytes": 145590,
+      "sha256": "a917c9b7aa2f16c9fe33aba62a19118aecd7ab67047bdac65ad46bfe3fceca70"
+    }
+  },
+  "rmm_log": {
+    "path": "/home/xuming/poseidon-waterline-20261013/rmm_log.txt",
+    "bytes": 181,
+    "sha256": "f59012298c00908d726b031db599e35c1d2e5fc88d723599ff68ae5759c45634",
+    "content": "[153917][17:38:31:008549][info  ] ----- RMM LOG BEGIN [PTDS DISABLED] -----\n[153917][17:38:31:008701][error ] [A][Stream 0x2][Upstream 1966080B][FAILURE maximum pool size exceeded]\n",
+    "contains_explicit_device": false,
+    "contains_reserved_or_block_statistics": false,
+    "complete_file_copied": true
+  },
+  "run_directory_rmm_log_exists": false,
+  "interpretation": "Error text alone does not distinguish cap exhaustion, unavailable upstream memory, or fragmentation. TID is a host thread and is not a device ID; source worker can allocate transfer output on another GPU."
+}

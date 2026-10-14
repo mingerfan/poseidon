@@ -1,0 +1,957 @@
+{
+  "plan": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+  "plan_bytes": 1185203847,
+  "plan_id": "3104",
+  "wire_format_version": 1,
+  "plan_format_version": 4,
+  "method": "Read metadata/string lengths, exact-ID-checked binary search of fixed 35-byte value records; bounded final 256MiB ordinal anchor search, then decode 31 consecutive records requiring sequential ordinals. No full trace scan or plan materialization.",
+  "value_table_offset": 70160828,
+  "value_table_count": 9710483,
+  "ordinal_search_start": 916768391,
+  "ordinal_search_window_bytes": 268435456,
+  "anchor_offset": 1067709839,
+  "decoded_instructions": [
+    {
+      "ordinal": 16563295,
+      "binary_offset": 1067709839,
+      "tag": 2,
+      "op": "Comm",
+      "id": 4286168,
+      "kind": 0,
+      "hint": 1,
+      "inputs": [
+        6144184
+      ],
+      "outputs": [
+        10438810
+      ],
+      "sources": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 3
+        }
+      ],
+      "output_types": [
+        1
+      ]
+    },
+    {
+      "ordinal": 16563296,
+      "binary_offset": 1067709933,
+      "tag": 3,
+      "op": "Release",
+      "value": 6144184
+    },
+    {
+      "ordinal": 16563297,
+      "binary_offset": 1067709950,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        10305868,
+        7569790
+      ],
+      "output": 6144437,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 3
+      }
+    },
+    {
+      "ordinal": 16563298,
+      "binary_offset": 1067710003,
+      "tag": 3,
+      "op": "Release",
+      "value": 7569790
+    },
+    {
+      "ordinal": 16563299,
+      "binary_offset": 1067710020,
+      "tag": 2,
+      "op": "Comm",
+      "id": 4286169,
+      "kind": 0,
+      "hint": 1,
+      "inputs": [
+        6144437
+      ],
+      "outputs": [
+        10438811
+      ],
+      "sources": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 3
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 0
+        }
+      ],
+      "output_types": [
+        1
+      ]
+    },
+    {
+      "ordinal": 16563300,
+      "binary_offset": 1067710114,
+      "tag": 3,
+      "op": "Release",
+      "value": 6144437
+    },
+    {
+      "ordinal": 16563301,
+      "binary_offset": 1067710131,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        10305550,
+        7569979
+      ],
+      "output": 6145196,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 2
+      }
+    },
+    {
+      "ordinal": 16563302,
+      "binary_offset": 1067710184,
+      "tag": 3,
+      "op": "Release",
+      "value": 7569979
+    },
+    {
+      "ordinal": 16563303,
+      "binary_offset": 1067710201,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        10305356,
+        7570042
+      ],
+      "output": 6145449,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 1
+      }
+    },
+    {
+      "ordinal": 16563304,
+      "binary_offset": 1067710254,
+      "tag": 3,
+      "op": "Release",
+      "value": 7570042
+    },
+    {
+      "ordinal": 16563305,
+      "binary_offset": 1067710271,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        4930721,
+        7570167
+      ],
+      "output": 6145952,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 0
+      }
+    },
+    {
+      "ordinal": 16563306,
+      "binary_offset": 1067710324,
+      "tag": 3,
+      "op": "Release",
+      "value": 7570167
+    },
+    {
+      "ordinal": 16563307,
+      "binary_offset": 1067710341,
+      "tag": 2,
+      "op": "Comm",
+      "id": 4286170,
+      "kind": 0,
+      "hint": 1,
+      "inputs": [
+        6145952
+      ],
+      "outputs": [
+        10438812
+      ],
+      "sources": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 3
+        }
+      ],
+      "output_types": [
+        1
+      ]
+    },
+    {
+      "ordinal": 16563308,
+      "binary_offset": 1067710435,
+      "tag": 3,
+      "op": "Release",
+      "value": 6145952
+    },
+    {
+      "ordinal": 16563309,
+      "binary_offset": 1067710452,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        10305354,
+        7570168
+      ],
+      "output": 6145955,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 3
+      }
+    },
+    {
+      "ordinal": 16563310,
+      "binary_offset": 1067710505,
+      "tag": 3,
+      "op": "Release",
+      "value": 7570168
+    },
+    {
+      "ordinal": 16563311,
+      "binary_offset": 1067710522,
+      "tag": 2,
+      "op": "Comm",
+      "id": 4286171,
+      "kind": 0,
+      "hint": 1,
+      "inputs": [
+        6145955
+      ],
+      "outputs": [
+        10438813
+      ],
+      "sources": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 3
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 0
+        }
+      ],
+      "output_types": [
+        1
+      ]
+    },
+    {
+      "ordinal": 16563312,
+      "binary_offset": 1067710616,
+      "tag": 3,
+      "op": "Release",
+      "value": 6145955
+    },
+    {
+      "ordinal": 16563313,
+      "binary_offset": 1067710633,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        10327796,
+        7570440
+      ],
+      "output": 6147047,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 2
+      }
+    },
+    {
+      "ordinal": 16563314,
+      "binary_offset": 1067710686,
+      "tag": 3,
+      "op": "Release",
+      "value": 7570440
+    },
+    {
+      "ordinal": 16563315,
+      "binary_offset": 1067710703,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        10327795,
+        7570504
+      ],
+      "output": 6147303,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 1
+      }
+    },
+    {
+      "ordinal": 16563316,
+      "binary_offset": 1067710756,
+      "tag": 3,
+      "op": "Release",
+      "value": 7570504
+    },
+    {
+      "ordinal": 16563317,
+      "binary_offset": 1067710773,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        10324759,
+        7570630
+      ],
+      "output": 6147809,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 0
+      }
+    },
+    {
+      "ordinal": 16563318,
+      "binary_offset": 1067710826,
+      "tag": 3,
+      "op": "Release",
+      "value": 7570630
+    },
+    {
+      "ordinal": 16563319,
+      "binary_offset": 1067710843,
+      "tag": 2,
+      "op": "Comm",
+      "id": 4286172,
+      "kind": 0,
+      "hint": 1,
+      "inputs": [
+        6147809
+      ],
+      "outputs": [
+        10438814
+      ],
+      "sources": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 3
+        }
+      ],
+      "output_types": [
+        1
+      ]
+    },
+    {
+      "ordinal": 16563320,
+      "binary_offset": 1067710937,
+      "tag": 3,
+      "op": "Release",
+      "value": 6147809
+    },
+    {
+      "ordinal": 16563321,
+      "binary_offset": 1067710954,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        4930731,
+        7571008
+      ],
+      "output": 6149326,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 3
+      }
+    },
+    {
+      "ordinal": 16563322,
+      "binary_offset": 1067711007,
+      "tag": 3,
+      "op": "Release",
+      "value": 7571008
+    },
+    {
+      "ordinal": 16563323,
+      "binary_offset": 1067711024,
+      "tag": 2,
+      "op": "Comm",
+      "id": 4286173,
+      "kind": 0,
+      "hint": 1,
+      "inputs": [
+        6149326
+      ],
+      "outputs": [
+        10438815
+      ],
+      "sources": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 3
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 0
+        }
+      ],
+      "output_types": [
+        1
+      ]
+    },
+    {
+      "ordinal": 16563324,
+      "binary_offset": 1067711118,
+      "tag": 3,
+      "op": "Release",
+      "value": 6149326
+    },
+    {
+      "ordinal": 16563325,
+      "binary_offset": 1067711135,
+      "tag": 1,
+      "op": "MulCP",
+      "inputs": [
+        4930729,
+        7571134
+      ],
+      "output": 6149832,
+      "place": {
+        "kind": "Device",
+        "rank": 0,
+        "device": 2
+      }
+    }
+  ],
+  "value_descriptions": {
+    "4930721": {
+      "id": 4930721,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 3952909,
+      "binary_offset": 208512643
+    },
+    "4930729": {
+      "id": 4930729,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 3952917,
+      "binary_offset": 208512923
+    },
+    "4930731": {
+      "id": 4930731,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 3952919,
+      "binary_offset": 208512993
+    },
+    "6144184": {
+      "id": 6144184,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4864143,
+      "binary_offset": 240405833
+    },
+    "6144437": {
+      "id": 6144437,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4864333,
+      "binary_offset": 240412483
+    },
+    "6145196": {
+      "id": 6145196,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4864903,
+      "binary_offset": 240432433
+    },
+    "6145449": {
+      "id": 6145449,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 1,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4865093,
+      "binary_offset": 240439083
+    },
+    "6145952": {
+      "id": 6145952,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4865471,
+      "binary_offset": 240452313
+    },
+    "6145955": {
+      "id": 6145955,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4865473,
+      "binary_offset": 240452383
+    },
+    "6147047": {
+      "id": 6147047,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4866293,
+      "binary_offset": 240481083
+    },
+    "6147303": {
+      "id": 6147303,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 1,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4866485,
+      "binary_offset": 240487803
+    },
+    "6147809": {
+      "id": 6147809,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4866865,
+      "binary_offset": 240501103
+    },
+    "6149326": {
+      "id": 6149326,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4868004,
+      "binary_offset": 240540968
+    },
+    "6149832": {
+      "id": 6149832,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 4868384,
+      "binary_offset": 240554268
+    },
+    "7569790": {
+      "id": 7569790,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6287647,
+      "binary_offset": 290228473
+    },
+    "7569979": {
+      "id": 7569979,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6287836,
+      "binary_offset": 290235088
+    },
+    "7570042": {
+      "id": 7570042,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 1,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6287899,
+      "binary_offset": 290237293
+    },
+    "7570167": {
+      "id": 7570167,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6288024,
+      "binary_offset": 290241668
+    },
+    "7570168": {
+      "id": 7570168,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6288025,
+      "binary_offset": 290241703
+    },
+    "7570440": {
+      "id": 7570440,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6288297,
+      "binary_offset": 290251223
+    },
+    "7570504": {
+      "id": 7570504,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 1,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6288361,
+      "binary_offset": 290253463
+    },
+    "7570630": {
+      "id": 7570630,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6288487,
+      "binary_offset": 290257873
+    },
+    "7571008": {
+      "id": 7571008,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6288865,
+      "binary_offset": 290271103
+    },
+    "7571134": {
+      "id": 7571134,
+      "value_kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "value_record_index": 6288991,
+      "binary_offset": 290275513
+    },
+    "10305354": {
+      "id": 10305354,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9023211,
+      "binary_offset": 385973213
+    },
+    "10305356": {
+      "id": 10305356,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 1,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9023213,
+      "binary_offset": 385973283
+    },
+    "10305550": {
+      "id": 10305550,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9023407,
+      "binary_offset": 385980073
+    },
+    "10305868": {
+      "id": 10305868,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9023725,
+      "binary_offset": 385991203
+    },
+    "10324759": {
+      "id": 10324759,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9042616,
+      "binary_offset": 386652388
+    },
+    "10327795": {
+      "id": 10327795,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 1,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9045652,
+      "binary_offset": 386758648
+    },
+    "10327796": {
+      "id": 10327796,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 2,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9045653,
+      "binary_offset": 386758683
+    },
+    "10438810": {
+      "id": 10438810,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9156667,
+      "binary_offset": 390644173
+    },
+    "10438811": {
+      "id": 10438811,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9156668,
+      "binary_offset": 390644208
+    },
+    "10438812": {
+      "id": 10438812,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9156669,
+      "binary_offset": 390644243
+    },
+    "10438813": {
+      "id": 10438813,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9156670,
+      "binary_offset": 390644278
+    },
+    "10438814": {
+      "id": 10438814,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 3,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9156671,
+      "binary_offset": 390644313
+    },
+    "10438815": {
+      "id": 10438815,
+      "value_kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "device": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "value_record_index": 9156672,
+      "binary_offset": 390644348
+    }
+  },
+  "trace_or_api_return_is_not_gpu_completion": true,
+  "failure_operation_and_device_not_asserted_from_csv_alone": true
+}

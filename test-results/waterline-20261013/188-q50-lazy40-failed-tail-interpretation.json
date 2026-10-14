@@ -1,0 +1,121 @@
+{
+  "scope": "Diagnostic from final 30 CSV rows, exact binary layout lookup, small RMM error log and source structure; not completed GPU work or numerical output validation.",
+  "facts": {
+    "last_compute_api_return": {
+      "ordinal": 16563315,
+      "op": "MulCP",
+      "value_id": 6147303,
+      "logical_gpu": 1,
+      "descriptor": {
+        "id": 6147303,
+        "value_kind": "Ciphertext",
+        "place_kind": "Device",
+        "rank": 0,
+        "device": 1,
+        "level": 14,
+        "scale_log2": 160,
+        "ntt": true,
+        "components": 2,
+        "value_record_index": 4866485,
+        "binary_offset": 240487803
+      }
+    },
+    "last_admitted_group": {
+      "ordinal": 16563319,
+      "binary_offset": 1067710843,
+      "tag": 2,
+      "op": "Comm",
+      "id": 4286172,
+      "kind": 0,
+      "hint": 1,
+      "inputs": [
+        6147809
+      ],
+      "outputs": [
+        10438814
+      ],
+      "sources": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "Device",
+          "rank": 0,
+          "device": 3
+        }
+      ],
+      "output_types": [
+        1
+      ]
+    },
+    "admitted_but_no_return_row_after_admission_in_saved_tail": [
+      {
+        "ordinal": 16563311,
+        "op": "Transfer",
+        "source_gpu": 3,
+        "destination_gpu": 0,
+        "output": 10438813,
+        "missing_event": "comm_post"
+      },
+      {
+        "ordinal": 16563317,
+        "op": "MulCP",
+        "gpu": 0,
+        "output": 6147809,
+        "missing_event": "compute"
+      }
+    ],
+    "gpu3_last_returned_work": {
+      "compute_ordinal": 16563309,
+      "release_ordinal": 16563310,
+      "next_gpu3_source_worker_task": 16563311
+    },
+    "rmm": {
+      "host_tid": 153917,
+      "timestamp": "17:38:31:008701",
+      "stream": "0x2",
+      "minimum_upstream_allocation_bytes": 1966080,
+      "explicit_device_available": false,
+      "allocator_reserved_or_block_statistics_available": false
+    },
+    "transfer_16563311_destination_ct_payload_bytes": 1966080,
+    "physical_device_mapping": "CUDA_VISIBLE_DEVICES=0,1,2,3; logical indices match physical indices in this run"
+  },
+  "structural_inference": {
+    "hypothesis": "Transfer ordinal16563311 allocated its ciphertext receive output on GPU0 and encountered the RMM failure.",
+    "support": [
+      "Historical thread snapshot lists contiguous runtime worker TIDs153914..153922; serial worker creation would map TID153917 to foreground worker3.",
+      "D2D communication follows the source worker. That worker allocates its output on the destination GPU before comm_post is emitted.",
+      "GPU3 MulCP16563309 and Release16563310 returned; the next GPU3-source task is Transfer16563311 to GPU0, admitted but without comm_post after admission.",
+      "The destination ciphertext level14, components2, N16384, 32-bit limbs requires1966080B, exactly the RMM minimum request."
+    ],
+    "limits": [
+      "No saved explicit OS TID-to-worker/device mapping exists in the collected evidence.",
+      "The RMM error records no destination device or allocation stack. The error message alone does not distinguish a fixed cap, failed upstream cuda allocation, or fragmentation.",
+      "The small tail cannot reconstruct every in-flight group. API return is not GPU completion."
+    ],
+    "direct_device_or_failure_operation_proof": false
+  },
+  "evidence_files": [
+    "188-q50-lazy40-failed-trace-tail30.csv",
+    "188-q50-lazy40-failed-plan-tail-diagnostic.json",
+    "188-q50-lazy40-failed-rmm-diagnostic.json",
+    "188-q50-lazy40-failed-rmm-log.txt",
+    "188-q50-lazy40-failed-model.log",
+    "188-q50-lazy40-failed-model-report.json"
+  ],
+  "historical_thread_snapshot": "188-q50-lazy40-thread-cpu-snapshot-1.json",
+  "read_limits": {
+    "trace_tail_window_bytes": 32768,
+    "trace_rows_saved": 30,
+    "full_trace_scanned_or_hashed": false,
+    "diagnostic_ir_tail_attempt_bytes": 33554432,
+    "diagnostic_ir_tail_matches": 0,
+    "binary_ordinal_search_window_bytes": 268435456,
+    "gpu_work_or_remote_file_changes": false
+  }
+}

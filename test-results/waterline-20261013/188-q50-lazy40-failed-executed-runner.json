@@ -1,0 +1,7 @@
+{
+  "path": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/executed-runner",
+  "sha256": "36ae2fb6854c731795e2845a644a7f8d5f5cdf4ce61f3cf5cf0a8923aa4e4ab6",
+  "bytes": 9238552,
+  "source": "/proc/153204/exe",
+  "scope": "frozen executed binary for reproducibility; kept on server, not committed to Git"
+}

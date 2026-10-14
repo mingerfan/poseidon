@@ -1,6 +1,6 @@
 # Waterline 实现与 188Server 验证
 
-状态核对于 **2026-10-14（北京时间）**。已推送 Poseidon 数学修复 `3d4cff66`、Host读取计费修复 `579012ad`，ckks-runtime `369bdc5`（相对 `f29775a` 仅追加测试）、DaCapo `6e75be2`（生产编译器与 `d5ed984` 相同）。**完整 Qwen3-0.6B 数值验收尚未完成。** 新预乘 API 已通过本地及 188 小图回归；原 Q50/逻辑 scale40 四卡 GPU-only 前向 PID153204 已实际提交计算，仍在运行，无完整 decoded 或独立检查通过报告，见 [只读采样](188-prescale-readonly-monitor-20261014.jsonl)。
+状态核对于 **2026-10-14（北京时间）**。已推送 Poseidon 数学修复 `3d4cff66`、Host读取计费修复 `579012ad`，ckks-runtime `369bdc5`（相对 `f29775a` 仅追加测试）、DaCapo `6e75be2`（生产编译器与 `d5ed984` 相同）。**完整 Qwen3-0.6B 数值验收尚未完成。** 新预乘 API 已通过本地及 188 小图回归；原 Q50/逻辑 scale40 四卡 GPU-only 前向 PID153204 在2:29:19后因RMM分配失败退出1，未产生完整decoded或数值通过报告，见 [失败报告](188-q50-lazy40-failed-model-report.json)、[日志](188-q50-lazy40-failed-model.log)及 [事实/推断范围](188-q50-lazy40-failed-tail-interpretation.json)。正在修正物理池预留与完成回收，不把该次失败归为lazy数学错误。
 
 Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备水位、共享 Host/pinned/raw 预算和事件回收，复用统一执行器的前台计算与通信。自动静态分批和批末 Fence 已替换；显式 Encode/Transfer/Fence、drain、按需读取、Release/reuse 保留，见 [清理清单](cleanup.tsv)。
 
@@ -47,7 +47,7 @@ Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备�
 
 额外修复了GPU缓存路径的Host读取额度：非resident packed读取会同时持有原始字节和decoded double数组，动态Host须保持`N*8`，已存活的pinned缓存另计固定`N*4`。旧公式每次读取少计`N*4`（N16384时64KiB）。本地 [新版API 21/21](gpu-packed-host-budget-tests.log) 通过；真实packed暖缓存、公开Ledger/API边界的紧预算拒绝、足额预算编码全部2048复数槽通过，旧公式隔离负控确实错误接受紧预算并失败，见 [绑定与范围](gpu-packed-host-budget-result.json)。这条专门边界未执行完整Runtime结构，不能扩大为该结构的端到端反例。当前188完整模型仍使用修复前的Host计费公式和已验证的预乘数学路径；此修正不改Rescale、编码或HEFT，后续资源结论须单列差额，不能把运行中旧二进制当作新公式的验证。
 
-同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。 完整模型结束后使用 [压力脚本](check-packed-host-pressure-188.sh)复查新API的单卡/全部卡/HostStaged配置；该步骤目前尚未执行。旧运行的Host差额须从最终共享账本检查，方法与限制见 [回溯上界](packed-host-retrospective-bound.md)，不能用report的单次读取峰值替代。
+同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。 [压力脚本](check-packed-host-pressure-188.sh)原安排在模型成功结束后复查新API；模型失败后该监督未启动压力。物理池修正后的复测须另用新的构建和日志。旧运行的Host差额须从最终共享账本检查，方法与限制见 [回溯上界](packed-host-retrospective-bound.md)，不能用report的单次读取峰值替代。
 
 ## 完整模型 HEFT 保持审计
 
@@ -74,7 +74,7 @@ runner 与 [独立检查器](../../scripts/qwen3_dsl/validate_decoded.py)须核�
 | 原 Q50/逻辑40 四卡编译 | exit0，30:00.36、RSS137245980KiB；19401319 指令、9710483 值、binary1185203847B、bundle61298262016B：[命令](q50-all-command.json)、[日志](q50-all-compile.log)、[状态](q50-all-status.json)；新 API 复用此计划 |
 | Q50 单卡容量 | instruction #5350733 基线拒绝，required26843807744B 超过扣 reserve 后26843545600B **262144B**，exit1：[命令](q50-single-command.json)、[日志](q50-single-compile.log)、[状态](q50-single-status.json)。仅证明此配置/基线不可行 |
 | 后乘 API 的 Q50 GPU-only | PID147482，Rescale 预检失败、exit1、70.05s；trace 仅54B header，无计算提交/decoded，report passed=false：[报告](188-q50-scale40-preflight-model-report.json)、[日志](188-q50-scale40-preflight-model.log)、[退出码](188-q50-scale40-preflight-model.exit-status) |
-| 新预乘 API 的原 Q50 GPU-only | PID153204 已进入真实计算，当前未完成，暂无完整数值结论；CPU-only/Auto 完整验收也未完成，不以小图或编译成功补足 |
+| 新预乘 API 的原 Q50 GPU-only | PID153204 实际前向2:29:19后RMM分配失败、exit1，未有完整数值结果；CPU-only/Auto 完整验收也未完成，不以小图或编译成功补足 |
 
 [Q50 编译容量摘要](q50-compile-and-capacity-summary.json)仅汇总同一逻辑40计划的编译/容量；其 `historical_hold` 是当时外部占卡快照，**不是当前阻塞状态**。[Waterline 报告](q50-all-qwen3._hecate_qwen3_0_6b.waterline.json)的四卡单组对象/workspace 峰值为 8401649664 / 8391819264 / 8415412224 / 8138522624B，这是编译基线，不是运行峰值。旧 scanner 漏 Prepare tag5、旧 spec schema 失败均已修复，原失败日志保留。
 

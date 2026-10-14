@@ -1,0 +1,87 @@
+{
+  "timestamp": "2026-10-14T17:29:37.320375+08:00",
+  "pid": 153204,
+  "uid": 1012,
+  "proc_starttime_ticks": "243389890",
+  "argv": [
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+    "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-runner-bsgs-q50.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model-report.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model-decoded.json",
+    "--bundle",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.bundle",
+    "--backend",
+    "gpu",
+    "--trace",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-prescale-gpu-20261014/model.trace"
+  ],
+  "launch_environment": {
+    "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+    "OMP_NUM_THREADS": "1",
+    "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB": null,
+    "POSEIDON_GPU_RAW_PINNED_CACHE": null,
+    "POSEIDON_RUNTIME_BUNDLE_RAW_CACHE_BYTES": null
+  },
+  "environment_scope": "Selected initial environment from /proc; runtime may set pool caps after launch, so final report/log is authoritative for resulting caps.",
+  "executable": {
+    "path": "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e",
+    "sha256": "36ae2fb6854c731795e2845a644a7f8d5f5cdf4ce61f3cf5cf0a8923aa4e4ab6",
+    "bytes": 9238552,
+    "inode": 30815513,
+    "mtime_ns": 1791961319898669251
+  },
+  "inputs": {
+    "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json": {
+      "sha256": "e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d",
+      "bytes": 10295,
+      "inode": 30814532,
+      "mtime_ns": 1791961092033659446
+    },
+    "/home/xuming/poseidon-waterline-20261013/profiles/compiler-profile.json": {
+      "sha256": "4ca708b21ccc953ffd5818f83814d871e27690f0fbff656908f803e91d239df3",
+      "bytes": 1453,
+      "inode": 30814531,
+      "mtime_ns": 1791961092033659446
+    },
+    "/home/xuming/poseidon-waterline-20261013/profiles/communication-profile.json": {
+      "sha256": "a7abb07495f547e19b9722b7753cadc34a2447a861ff616aa7c55f76162d1fcc",
+      "bytes": 1363,
+      "inode": 30814533,
+      "mtime_ns": 1791961092032659446
+    },
+    "/home/xuming/poseidon-waterline-20261013/qwen3-runner-bsgs-q50.json": {
+      "sha256": "dcd347b8c663c21baea4d3e2529d5265cf6c842403a04b1cc23c1b50cc00b859",
+      "bytes": 5300275,
+      "inode": 218190749,
+      "mtime_ns": 1791902182319124482
+    },
+    "/home/xuming/poseidon-waterline-20261013/logs/latest-build.status": {
+      "sha256": "9e8169aa2450e4c291177d4d54c31f0c9c0656d918ef1a8ca8476bf147b318dd",
+      "bytes": 1380,
+      "inode": 218190731,
+      "mtime_ns": 1791961320169669263
+    },
+    "/home/xuming/poseidon-waterline-20261013/run-188-acceptance.sh": {
+      "sha256": "d6df7165e6870fdf855d05bc72e898a38ee7cdc311f25e5587b33fe1bee8e076",
+      "bytes": 4247,
+      "inode": 218190729,
+      "mtime_ns": 1791961264526666868
+    },
+    "/home/xuming/poseidon-waterline-20261013/prescale-composite-and-full-188.sh": {
+      "sha256": "1ebbcc5656dfcc5e2b3ab47181d0e2c936d53e8364b520303ae216257ff70832",
+      "bytes": 1603,
+      "inode": 218190772,
+      "mtime_ns": 1791961532593678404
+    }
+  },
+  "plan_stat_only": {
+    "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+    "bytes": 1185203847,
+    "inode": 219103946,
+    "mtime_ns": 1791903803228194232
+  },
+  "plan_sha_binding": "188-full-qwen-heft-audit-runtime-plan-binding.json; verify its original stat matches this proc input before using the existing SHA256",
+  "plan_sha256_from_unchanged_audited_input": "9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813"
+}
