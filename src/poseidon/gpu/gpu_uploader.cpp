@@ -2082,9 +2082,10 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 .rescale_count;
         };
 
-    Polynomial sine_for_parity = sine_polynomial;
-    auto [is_odd_polynomial, is_even_polynomial] =
-        is_odd_or_even_polynomial(sine_for_parity);
+    // The CPU polynomial now records active coefficient parities; both flags
+    // set means a general polynomial rather than a pure odd/even polynomial.
+    const bool is_even_polynomial =
+        sine_polynomial.is_even() && !sine_polynomial.is_odd();
     const auto &full_q_moduli =
         crt_context->first_context_data()->coeff_modulus();
 
@@ -2388,7 +2389,7 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 output_q_count =
                     std::min(product_q_count, remainder_q_count);
                 output_scale = product_scale;
-                if (!util::are_approximate<double>(
+                if (!util::is_approximate<double>(
                         product_scale,
                         remainder_scale_after))
                 {
@@ -2414,7 +2415,7 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                     combine.product_aligned_scale = product_scale;
                     combine.remainder_aligned_scale = remainder_scale_after;
                     if (remainder.valid &&
-                        !util::are_approximate<double>(
+                        !util::is_approximate<double>(
                             product_scale,
                             remainder_scale_after))
                     {

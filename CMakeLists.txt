@@ -213,6 +213,23 @@ if(POSEIDON_USE_SPDLOG)
         poseidon_fetch_thirdparty_content(ExternalSpdlog)
     else()
         find_package(spdlog REQUIRED)
+        # RMM also uses these packages from a child directory and requires
+        # global imported targets. Promote them where find_package created them.
+        foreach(_logging_target IN ITEMS
+                spdlog::spdlog spdlog::spdlog_header_only
+                fmt::fmt fmt::fmt-header-only)
+            if(TARGET ${_logging_target})
+                get_target_property(_logging_imported ${_logging_target} IMPORTED)
+                get_target_property(_logging_alias ${_logging_target} ALIASED_TARGET)
+                if(_logging_imported AND NOT _logging_alias)
+                    set_target_properties(${_logging_target}
+                        PROPERTIES IMPORTED_GLOBAL TRUE)
+                endif()
+            endif()
+        endforeach()
+        unset(_logging_target)
+        unset(_logging_imported)
+        unset(_logging_alias)
     endif()
 endif()
 
