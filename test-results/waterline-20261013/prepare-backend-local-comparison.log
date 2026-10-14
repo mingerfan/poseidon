@@ -1,0 +1,19 @@
+PASS repeat=0 window=1 backend=cpu forward_ms=1104.646 wait_ms=4.364 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=5.74029494e-05
+PASS repeat=0 window=8 backend=cpu forward_ms=938.784 wait_ms=3.532 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=8.4178343e-05
+PASS repeat=0 window=1 backend=gpu forward_ms=845.881 wait_ms=10.701 cpu_prepare=0 gpu_prepare=47 slots=49152 max_abs=8.54919071e-05
+PASS repeat=0 window=8 backend=gpu forward_ms=663.661 wait_ms=9.820 cpu_prepare=0 gpu_prepare=47 slots=49152 max_abs=9.3825692e-05
+PASS repeat=0 window=1 backend=auto forward_ms=1101.293 wait_ms=4.383 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=6.1389562e-05
+PASS repeat=0 window=8 backend=auto forward_ms=744.683 wait_ms=2.347 cpu_prepare=21 gpu_prepare=26 slots=49152 max_abs=4.53380494e-05
+PASS repeat=1 window=8 backend=cpu forward_ms=1173.358 wait_ms=3.962 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=8.12229671e-05
+PASS repeat=1 window=1 backend=gpu forward_ms=691.691 wait_ms=10.624 cpu_prepare=0 gpu_prepare=47 slots=49152 max_abs=5.45736985e-05
+PASS repeat=1 window=8 backend=gpu forward_ms=655.817 wait_ms=8.658 cpu_prepare=0 gpu_prepare=47 slots=49152 max_abs=4.07582219e-05
+PASS repeat=1 window=1 backend=auto forward_ms=1115.137 wait_ms=4.834 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=5.21273464e-05
+PASS repeat=1 window=8 backend=auto forward_ms=733.376 wait_ms=2.582 cpu_prepare=21 gpu_prepare=26 slots=49152 max_abs=5.43662452e-05
+PASS repeat=1 window=1 backend=cpu forward_ms=1106.309 wait_ms=4.067 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=7.45707364e-05
+PASS repeat=2 window=1 backend=gpu forward_ms=705.559 wait_ms=8.583 cpu_prepare=0 gpu_prepare=47 slots=49152 max_abs=8.64611607e-05
+PASS repeat=2 window=8 backend=gpu forward_ms=685.462 wait_ms=8.968 cpu_prepare=0 gpu_prepare=47 slots=49152 max_abs=6.37186147e-05
+PASS repeat=2 window=1 backend=auto forward_ms=1136.203 wait_ms=4.748 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=8.01679519e-05
+PASS repeat=2 window=8 backend=auto forward_ms=968.833 wait_ms=1.640 cpu_prepare=21 gpu_prepare=26 slots=49152 max_abs=0.000156392983
+PASS repeat=2 window=1 backend=cpu forward_ms=1110.049 wait_ms=4.716 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=7.41658312e-05
+PASS repeat=2 window=8 backend=cpu forward_ms=963.227 wait_ms=4.631 cpu_prepare=47 gpu_prepare=0 slots=49152 max_abs=9.88214968e-05
+ALL_CONFIGURATIONS_PASSED {"w1-cpu": {"median": 1106.309228, "minimum": 1104.645974, "maximum": 1110.049452}, "w8-cpu": {"median": 963.227245, "minimum": 938.783743, "maximum": 1173.357653}, "w1-gpu": {"median": 705.558786, "minimum": 691.691081, "maximum": 845.880698}, "w8-gpu": {"median": 663.661464, "minimum": 655.816829, "maximum": 685.461862}, "w1-auto": {"median": 1115.137115, "minimum": 1101.292744, "maximum": 1136.202622}, "w8-auto": {"median": 744.682862, "minimum": 733.376485, "maximum": 968.832956}}

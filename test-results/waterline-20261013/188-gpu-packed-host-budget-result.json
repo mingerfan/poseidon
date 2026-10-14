@@ -1,0 +1,678 @@
+{
+  "scope": "isolated updated API/tests against existing 188 libraries; API/Ledger boundary, not same-structure full Runtime boundary",
+  "base": "/home/xuming/poseidon-waterline-20261013",
+  "output": "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014",
+  "started_at": "2026-10-14T16:20:14.598883+08:00",
+  "shared_inputs_before": {
+    "/home/xuming/poseidon-waterline-20261013/build/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/flags.make": {
+      "sha256": "sha256:5e46dd71789041fc0adf6bbbd97b897b9f9ee48ec3b4f7f7bec5902ba5bc8641",
+      "bytes": 1957,
+      "mtime_ns": 1791876685854027335,
+      "inode": 30813804
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/flags.make": {
+      "sha256": "sha256:a468e48187fc0ab3d6a50c950302e0a24d18ce4267242e7fa6481c0716ad1ee3",
+      "bytes": 1402,
+      "mtime_ns": 1791876685862027336,
+      "inode": 30813841
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/link.txt": {
+      "sha256": "sha256:29b2c9b0b07976af02891c2d79366b98a1ca675f36ad99bb2f9a0169817687e1",
+      "bytes": 809,
+      "mtime_ns": 1791876685862027336,
+      "inode": 30813845
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp": {
+      "sha256": "sha256:a917c9b7aa2f16c9fe33aba62a19118aecd7ab67047bdac65ad46bfe3fceca70",
+      "bytes": 145590,
+      "mtime_ns": 1791961264508666868,
+      "inode": 231362437
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": {
+      "sha256": "sha256:71e168d251b9122cbad738d70714ada18325a86bca0ec177f6b062ff58d60783",
+      "bytes": 134441,
+      "mtime_ns": 1791902138012122576,
+      "inode": 231428768
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.h": {
+      "sha256": "sha256:077ac8b38a019ebfd08c060516288112a2938e1bd5117d93d058abd5f0cfc76a",
+      "bytes": 12027,
+      "mtime_ns": 1791895697000000000,
+      "inode": 231362440
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/gpu_plaintext_encoder.h": {
+      "sha256": "sha256:941eeb81228f213ef2d0ae1657a0bbe1411e7c90d1e7979fe27ec55b069f9d2b",
+      "bytes": 1738,
+      "mtime_ns": 1791883897664337669,
+      "inode": 231363375
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h": {
+      "sha256": "sha256:7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+      "bytes": 2452,
+      "mtime_ns": 1791961264520666868,
+      "inode": 231363377
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/runtime.hpp": {
+      "sha256": "sha256:7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a",
+      "bytes": 90119,
+      "mtime_ns": 1791903626876186644,
+      "inode": 241375473
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/plaintext_bundle.cpp": {
+      "sha256": "sha256:915744e48e6e2240ccc932bf0beed0adad57dd13966b529bdf64b7d29c2c5a8c",
+      "bytes": 12718,
+      "mtime_ns": 1791883898325337698,
+      "inode": 241389534
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/utils/sha256.hpp": {
+      "sha256": "sha256:8b43305085168682e227f9a9adb410a4e9387c2452ea4f5a6d79a7a157e65634",
+      "bytes": 645,
+      "mtime_ns": 1791883898325337698,
+      "inode": 241389531
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libposeidon_gpu.a": {
+      "sha256": "sha256:b6cf1edb1ad931407aaf72c1410ef5ed3d4fead719a25e6f9436bc13baa6bf6b",
+      "bytes": 10460650,
+      "mtime_ns": 1791902179255124350,
+      "inode": 218583866
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libposeidon_runtime_gpu_api.a": {
+      "sha256": "sha256:71a851b2ab1272e0626feefaa8d533ce678394f2bc814f3a82d522959c217cfc",
+      "bytes": 2411400,
+      "mtime_ns": 1791961317946669167,
+      "inode": 218583862
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libposeidon_shared.so": {
+      "sha256": "sha256:43103df50b2510fd95d6635a964e5bedb685c51aa924400543cd664a346ffd20",
+      "bytes": 1717208,
+      "mtime_ns": 1791883921409338691,
+      "inode": 218583865
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libruntime_core.a": {
+      "sha256": "sha256:6685e2c535f6e7ee3235887feab3e234057d94f1cd2ea60e20fe60e69a8ab616",
+      "bytes": 793008,
+      "mtime_ns": 1791883908786338148,
+      "inode": 218583864
+    },
+    "/usr/lib/x86_64-linux-gnu/libdl.a": {
+      "sha256": "sha256:f0a17a43c74d2fe5474fa2fd29c8f14799e777d7d75a2cc4d11c20a6e7b161c5",
+      "bytes": 8,
+      "mtime_ns": 1769761256000000000,
+      "inode": 242492803
+    },
+    "/usr/lib/x86_64-linux-gnu/libgmp.so.10.4.1": {
+      "sha256": "sha256:4dc20a901c6951e678e216e959da2534bcef7053e6efdf1492509baf142282b0",
+      "bytes": 526896,
+      "mtime_ns": 1642417005000000000,
+      "inode": 242500988
+    },
+    "/usr/lib/x86_64-linux-gnu/libgmpxx.so.4.6.1": {
+      "sha256": "sha256:3a431ebd52829a89cf59337e3d8449e33b680142276eb94665eaaa8ac24c2edf",
+      "bytes": 31232,
+      "mtime_ns": 1642417005000000000,
+      "inode": 242484285
+    },
+    "/usr/lib/x86_64-linux-gnu/libpthread.a": {
+      "sha256": "sha256:f0a17a43c74d2fe5474fa2fd29c8f14799e777d7d75a2cc4d11c20a6e7b161c5",
+      "bytes": 8,
+      "mtime_ns": 1769761256000000000,
+      "inode": 242492817
+    },
+    "/usr/lib/x86_64-linux-gnu/librt.a": {
+      "sha256": "sha256:f0a17a43c74d2fe5474fa2fd29c8f14799e777d7d75a2cc4d11c20a6e7b161c5",
+      "bytes": 8,
+      "mtime_ns": 1769761256000000000,
+      "inode": 242492821
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudadevrt.a": {
+      "sha256": "sha256:bce1633d17355360e5d933840baad9311b2954a10900f84542877295ad046f0f",
+      "bytes": 1653530,
+      "mtime_ns": 1726128466934960204,
+      "inode": 242688946
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140": {
+      "sha256": "sha256:b5a066d723c4fe945d418f4130d23cf3d57f6bc0dd65bd6ddcf4c3412f12927c",
+      "bytes": 683360,
+      "mtime_ns": 1726128494233930884,
+      "inode": 242689226
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart_static.a": {
+      "sha256": "sha256:10ac50aeb5c1fdf4c0331a24d38675fab86224992c7e7d4dbbb6b334942c64de",
+      "bytes": 1379326,
+      "mtime_ns": 1726128466920960220,
+      "inode": 242688945
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcufft.so.11.0.8.103": {
+      "sha256": "sha256:dc18b53e2b435be59ca0f6c9ce48a1eefe6d91444d0720cae7356ec2e03ac9ba",
+      "bytes": 178387496,
+      "mtime_ns": 1726128501587923070,
+      "inode": 242689242
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_api_tests": {
+      "sha256": "sha256:720b6bbb9e01fe56f9d3c556f12f018c827e53c14c2b3250c5668b2450349f5d",
+      "bytes": 9842296,
+      "mtime_ns": 1791961318296669182,
+      "inode": 30813803
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e": {
+      "sha256": "sha256:36ae2fb6854c731795e2845a644a7f8d5f5cdf4ce61f3cf5cf0a8923aa4e4ab6",
+      "bytes": 9238552,
+      "mtime_ns": 1791961319898669251,
+      "inode": 30815513
+    },
+    "/home/xuming/poseidon-waterline-20261013/logs/latest-build.status": {
+      "sha256": "sha256:9e8169aa2450e4c291177d4d54c31f0c9c0656d918ef1a8ca8476bf147b318dd",
+      "bytes": 1380,
+      "mtime_ns": 1791961320169669263,
+      "inode": 218190731
+    }
+  },
+  "private_inputs_before": {
+    "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api.cpp": {
+      "sha256": "sha256:6c0eb3f2979a5a1af150c1b38b342a85d9c92c9e9cc8a3412d597416b852586d",
+      "bytes": 145863,
+      "mtime_ns": 1791965995602870453,
+      "inode": 229642076
+    },
+    "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api_test.cpp": {
+      "sha256": "sha256:d0eea37498e6a84dc08d8068e1faecc24544b94f34ecfe4261ce2092e35e625f",
+      "bytes": 142318,
+      "mtime_ns": 1791965995825870463,
+      "inode": 229642081
+    },
+    "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/check-packed-host-budget-188.py": {
+      "sha256": "sha256:b0a8c9ad9b131b831e5691a4aad1f3b00fb929587c1e00916c18a628f565f0a0",
+      "bytes": 12905,
+      "mtime_ns": 1791965995979870469,
+      "inode": 229642084
+    }
+  },
+  "commands": {
+    "compile_api": [
+      "/usr/bin/c++",
+      "-DFMT_HEADER_ONLY=1",
+      "-DLIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE",
+      "-DSPDLOG_FMT_EXTERNAL",
+      "-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA",
+      "-DTHRUST_DISABLE_ABI_NAMESPACE",
+      "-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP",
+      "-DTHRUST_IGNORE_ABI_NAMESPACE_ERROR",
+      "-I/home/xuming/poseidon-waterline-20261013/build",
+      "-I/home/xuming/poseidon-waterline-20261013/src/src",
+      "-I/home/xuming/deps/rmm-v24.12.01/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cccl/thrust/thrust/cmake/../..",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cccl/libcudacxx/lib/cmake/libcudacxx/../../../include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cccl/cub/cub/cmake/../..",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/spdlog/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/fmt/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cpm/nvtx3/72787e0a62f981a1041689c3aa467492b6b367e9/c/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/third_party",
+      "-isystem",
+      "/usr/local/cuda/targets/x86_64-linux/include",
+      "-fopenmp",
+      "-O3",
+      "-DNDEBUG",
+      "-O3",
+      "-DNDEBUG",
+      "-fPIC",
+      "-pthread",
+      "-std=gnu++20",
+      "-fPIC",
+      "-I/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api",
+      "-MD",
+      "-MF",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/api.d",
+      "-c",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api.cpp",
+      "-o",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api.o"
+    ],
+    "compile_tests": [
+      "/usr/bin/c++",
+      "-DFMT_HEADER_ONLY=1",
+      "-DLIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE",
+      "-DSPDLOG_FMT_EXTERNAL",
+      "-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA",
+      "-DTHRUST_DISABLE_ABI_NAMESPACE",
+      "-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP",
+      "-DTHRUST_IGNORE_ABI_NAMESPACE_ERROR",
+      "-I/home/xuming/poseidon-waterline-20261013/build",
+      "-I/home/xuming/poseidon-waterline-20261013/src/src",
+      "-I/home/xuming/deps/rmm-v24.12.01/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cccl/thrust/thrust/cmake/../..",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cccl/libcudacxx/lib/cmake/libcudacxx/../../../include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cccl/cub/cub/cmake/../..",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/spdlog/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/fmt/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/cpm/nvtx3/72787e0a62f981a1041689c3aa467492b6b367e9/c/include",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime",
+      "-I/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/third_party",
+      "-isystem",
+      "/usr/local/cuda/targets/x86_64-linux/include",
+      "-fopenmp",
+      "-O3",
+      "-DNDEBUG",
+      "-O3",
+      "-DNDEBUG",
+      "-fPIC",
+      "-pthread",
+      "-std=gnu++20",
+      "-fPIE",
+      "-MD",
+      "-MF",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/tests.d",
+      "-c",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api_test.cpp",
+      "-o",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api_test.o"
+    ],
+    "link": [
+      "/usr/bin/c++",
+      "-fopenmp",
+      "-O3",
+      "-DNDEBUG",
+      "-O3",
+      "-DNDEBUG",
+      "-fPIC",
+      "-pthread",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api_test.o",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api.o",
+      "-o",
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api_tests",
+      "-L/usr/local/cuda-12.2/targets/x86_64-linux/lib/stubs",
+      "-L/usr/local/cuda-12.2/targets/x86_64-linux/lib",
+      "-Wl,-rpath,/home/xuming/poseidon-waterline-20261013/build:/usr/local/cuda-12.2/targets/x86_64-linux/lib",
+      "/home/xuming/poseidon-waterline-20261013/build/libposeidon_runtime_gpu_api.a",
+      "/home/xuming/poseidon-waterline-20261013/build/libposeidon_gpu.a",
+      "/home/xuming/poseidon-waterline-20261013/build/libposeidon_shared.so",
+      "/usr/lib/x86_64-linux-gnu/libgmpxx.so.4.6.1",
+      "/usr/lib/x86_64-linux-gnu/libgmp.so.10.4.1",
+      "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140",
+      "/usr/lib/x86_64-linux-gnu/librt.a",
+      "-ldl",
+      "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcufft.so.11.0.8.103",
+      "/home/xuming/poseidon-waterline-20261013/build/libruntime_core.a",
+      "-lcudadevrt",
+      "-lcudart_static",
+      "-lrt",
+      "-lpthread",
+      "-ldl",
+      "-Wl,-Map=/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/link.map"
+    ],
+    "run": [
+      "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api_tests"
+    ],
+    "cwd": "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014",
+    "environment_overrides": {
+      "CUDA_VISIBLE_DEVICES": "1",
+      "OMP_NUM_THREADS": "1",
+      "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB": "2560",
+      "TMPDIR": "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/tmp"
+    },
+    "removed_environment_keys": [],
+    "library_resolution": [
+      {
+        "command": [
+          "/usr/bin/c++",
+          "-print-file-name=libdl.so"
+        ],
+        "stdout": "libdl.so"
+      },
+      {
+        "command": [
+          "/usr/bin/c++",
+          "-print-file-name=libdl.a"
+        ],
+        "stdout": "/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/libdl.a"
+      },
+      {
+        "command": [
+          "/usr/bin/c++",
+          "-print-file-name=libpthread.so"
+        ],
+        "stdout": "libpthread.so"
+      },
+      {
+        "command": [
+          "/usr/bin/c++",
+          "-print-file-name=libpthread.a"
+        ],
+        "stdout": "/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/libpthread.a"
+      },
+      {
+        "command": [
+          "/usr/bin/c++",
+          "-print-file-name=librt.so"
+        ],
+        "stdout": "librt.so"
+      },
+      {
+        "command": [
+          "/usr/bin/c++",
+          "-print-file-name=librt.a"
+        ],
+        "stdout": "/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/librt.a"
+      }
+    ]
+  },
+  "complete": true,
+  "passed": true,
+  "stage": "complete",
+  "server_workspace_outputs_replaced": false,
+  "elapsed_seconds": 115.99753945181146,
+  "binary": {
+    "sha256": "sha256:6161710e2489cd933d9d2ef076523d2fd77e25485c88c7ec5c17680b9440c5fd",
+    "bytes": 9864552,
+    "mtime_ns": 1791966104949875158,
+    "inode": 229642138
+  },
+  "old_api_cpp_archive_member_extracted": false,
+  "devices_before": {
+    "command": [
+      "nvidia-smi",
+      "-i",
+      "1",
+      "-q",
+      "-x"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/devices-before.xml",
+    "physical_gpu_index": 1,
+    "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+    "pci_bus_id": "00000000:06:00.0",
+    "ecc_mode": {
+      "current_ecc": "Enabled",
+      "pending_ecc": "Enabled"
+    },
+    "ecc_counters": {
+      "ecc_errors/volatile/single_bit/device_memory": "0",
+      "ecc_errors/volatile/single_bit/register_file": "0",
+      "ecc_errors/volatile/single_bit/l1_cache": "0",
+      "ecc_errors/volatile/single_bit/l2_cache": "0",
+      "ecc_errors/volatile/single_bit/texture_memory": "N/A",
+      "ecc_errors/volatile/single_bit/texture_shm": "N/A",
+      "ecc_errors/volatile/single_bit/cbu": "N/A",
+      "ecc_errors/volatile/single_bit/total": "0",
+      "ecc_errors/volatile/double_bit/device_memory": "0",
+      "ecc_errors/volatile/double_bit/register_file": "0",
+      "ecc_errors/volatile/double_bit/l1_cache": "0",
+      "ecc_errors/volatile/double_bit/l2_cache": "0",
+      "ecc_errors/volatile/double_bit/texture_memory": "N/A",
+      "ecc_errors/volatile/double_bit/texture_shm": "N/A",
+      "ecc_errors/volatile/double_bit/cbu": "0",
+      "ecc_errors/volatile/double_bit/total": "0",
+      "ecc_errors/aggregate/single_bit/device_memory": "0",
+      "ecc_errors/aggregate/single_bit/register_file": "0",
+      "ecc_errors/aggregate/single_bit/l1_cache": "0",
+      "ecc_errors/aggregate/single_bit/l2_cache": "0",
+      "ecc_errors/aggregate/single_bit/texture_memory": "N/A",
+      "ecc_errors/aggregate/single_bit/texture_shm": "N/A",
+      "ecc_errors/aggregate/single_bit/cbu": "N/A",
+      "ecc_errors/aggregate/single_bit/total": "0",
+      "ecc_errors/aggregate/double_bit/device_memory": "0",
+      "ecc_errors/aggregate/double_bit/register_file": "0",
+      "ecc_errors/aggregate/double_bit/l1_cache": "0",
+      "ecc_errors/aggregate/double_bit/l2_cache": "0",
+      "ecc_errors/aggregate/double_bit/texture_memory": "N/A",
+      "ecc_errors/aggregate/double_bit/texture_shm": "N/A",
+      "ecc_errors/aggregate/double_bit/cbu": "0",
+      "ecc_errors/aggregate/double_bit/total": "0"
+    }
+  },
+  "test_exit_code": 0,
+  "api_test_count": 21,
+  "test_evidence_lines": [
+    "GPU_PACKED_PREPARE_HOST_BOUND N=4096 fixed_host=16384 dynamic_host=32768 tight_budget=40960 complete_budget=49152 warm_cache_live=16384 tight_admitted=0",
+    "GPU_PACKED_PREPARE_HOST_BOUND positive_budget=49152 resident_bytes=0 packed_reads=2 second_read_with_cache=true allocations=1 frees=1 slots_checked=2048 max_abs_including_imaginary=6.3145e-17 scope=API_Ledger_boundary_not_full_Runtime",
+    "GPU_RAW_PINNED_CACHE devices=1 sequential_prepares_per_device=10 allocations=1 frees=1 fixed_host=16384 fixed_pinned=16384 pinned_live=0 max_abs_including_imaginary=1.26179e-16 overlap_rejected=true ready_reconfigure_requires_drain=true",
+    "21 Poseidon GPU Runtime Api tests passed"
+  ],
+  "test_log": {
+    "sha256": "sha256:c223421f7355b750a0a452e066dea6f3823a02d9ee5f19016d39ff456c1c9563",
+    "bytes": 7905,
+    "mtime_ns": 1791966126788876098,
+    "inode": 229642108
+  },
+  "numerical_and_boundary_passed": true,
+  "devices_after": {
+    "command": [
+      "nvidia-smi",
+      "-i",
+      "1",
+      "-q",
+      "-x"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/devices-after.xml",
+    "physical_gpu_index": 1,
+    "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+    "pci_bus_id": "00000000:06:00.0",
+    "ecc_mode": {
+      "current_ecc": "Enabled",
+      "pending_ecc": "Enabled"
+    },
+    "ecc_counters": {
+      "ecc_errors/volatile/single_bit/device_memory": "0",
+      "ecc_errors/volatile/single_bit/register_file": "0",
+      "ecc_errors/volatile/single_bit/l1_cache": "0",
+      "ecc_errors/volatile/single_bit/l2_cache": "0",
+      "ecc_errors/volatile/single_bit/texture_memory": "N/A",
+      "ecc_errors/volatile/single_bit/texture_shm": "N/A",
+      "ecc_errors/volatile/single_bit/cbu": "N/A",
+      "ecc_errors/volatile/single_bit/total": "0",
+      "ecc_errors/volatile/double_bit/device_memory": "0",
+      "ecc_errors/volatile/double_bit/register_file": "0",
+      "ecc_errors/volatile/double_bit/l1_cache": "0",
+      "ecc_errors/volatile/double_bit/l2_cache": "0",
+      "ecc_errors/volatile/double_bit/texture_memory": "N/A",
+      "ecc_errors/volatile/double_bit/texture_shm": "N/A",
+      "ecc_errors/volatile/double_bit/cbu": "0",
+      "ecc_errors/volatile/double_bit/total": "0",
+      "ecc_errors/aggregate/single_bit/device_memory": "0",
+      "ecc_errors/aggregate/single_bit/register_file": "0",
+      "ecc_errors/aggregate/single_bit/l1_cache": "0",
+      "ecc_errors/aggregate/single_bit/l2_cache": "0",
+      "ecc_errors/aggregate/single_bit/texture_memory": "N/A",
+      "ecc_errors/aggregate/single_bit/texture_shm": "N/A",
+      "ecc_errors/aggregate/single_bit/cbu": "N/A",
+      "ecc_errors/aggregate/single_bit/total": "0",
+      "ecc_errors/aggregate/double_bit/device_memory": "0",
+      "ecc_errors/aggregate/double_bit/register_file": "0",
+      "ecc_errors/aggregate/double_bit/l1_cache": "0",
+      "ecc_errors/aggregate/double_bit/l2_cache": "0",
+      "ecc_errors/aggregate/double_bit/texture_memory": "N/A",
+      "ecc_errors/aggregate/double_bit/texture_shm": "N/A",
+      "ecc_errors/aggregate/double_bit/cbu": "0",
+      "ecc_errors/aggregate/double_bit/total": "0"
+    }
+  },
+  "shared_inputs_after": {
+    "/home/xuming/poseidon-waterline-20261013/build/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/flags.make": {
+      "sha256": "sha256:5e46dd71789041fc0adf6bbbd97b897b9f9ee48ec3b4f7f7bec5902ba5bc8641",
+      "bytes": 1957,
+      "mtime_ns": 1791876685854027335,
+      "inode": 30813804
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/flags.make": {
+      "sha256": "sha256:a468e48187fc0ab3d6a50c950302e0a24d18ce4267242e7fa6481c0716ad1ee3",
+      "bytes": 1402,
+      "mtime_ns": 1791876685862027336,
+      "inode": 30813841
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/link.txt": {
+      "sha256": "sha256:29b2c9b0b07976af02891c2d79366b98a1ca675f36ad99bb2f9a0169817687e1",
+      "bytes": 809,
+      "mtime_ns": 1791876685862027336,
+      "inode": 30813845
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp": {
+      "sha256": "sha256:a917c9b7aa2f16c9fe33aba62a19118aecd7ab67047bdac65ad46bfe3fceca70",
+      "bytes": 145590,
+      "mtime_ns": 1791961264508666868,
+      "inode": 231362437
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": {
+      "sha256": "sha256:71e168d251b9122cbad738d70714ada18325a86bca0ec177f6b062ff58d60783",
+      "bytes": 134441,
+      "mtime_ns": 1791902138012122576,
+      "inode": 231428768
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.h": {
+      "sha256": "sha256:077ac8b38a019ebfd08c060516288112a2938e1bd5117d93d058abd5f0cfc76a",
+      "bytes": 12027,
+      "mtime_ns": 1791895697000000000,
+      "inode": 231362440
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/gpu_plaintext_encoder.h": {
+      "sha256": "sha256:941eeb81228f213ef2d0ae1657a0bbe1411e7c90d1e7979fe27ec55b069f9d2b",
+      "bytes": 1738,
+      "mtime_ns": 1791883897664337669,
+      "inode": 231363375
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h": {
+      "sha256": "sha256:7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+      "bytes": 2452,
+      "mtime_ns": 1791961264520666868,
+      "inode": 231363377
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/runtime.hpp": {
+      "sha256": "sha256:7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a",
+      "bytes": 90119,
+      "mtime_ns": 1791903626876186644,
+      "inode": 241375473
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/plaintext_bundle.cpp": {
+      "sha256": "sha256:915744e48e6e2240ccc932bf0beed0adad57dd13966b529bdf64b7d29c2c5a8c",
+      "bytes": 12718,
+      "mtime_ns": 1791883898325337698,
+      "inode": 241389534
+    },
+    "/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/utils/sha256.hpp": {
+      "sha256": "sha256:8b43305085168682e227f9a9adb410a4e9387c2452ea4f5a6d79a7a157e65634",
+      "bytes": 645,
+      "mtime_ns": 1791883898325337698,
+      "inode": 241389531
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libposeidon_gpu.a": {
+      "sha256": "sha256:b6cf1edb1ad931407aaf72c1410ef5ed3d4fead719a25e6f9436bc13baa6bf6b",
+      "bytes": 10460650,
+      "mtime_ns": 1791902179255124350,
+      "inode": 218583866
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libposeidon_runtime_gpu_api.a": {
+      "sha256": "sha256:71a851b2ab1272e0626feefaa8d533ce678394f2bc814f3a82d522959c217cfc",
+      "bytes": 2411400,
+      "mtime_ns": 1791961317946669167,
+      "inode": 218583862
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libposeidon_shared.so": {
+      "sha256": "sha256:43103df50b2510fd95d6635a964e5bedb685c51aa924400543cd664a346ffd20",
+      "bytes": 1717208,
+      "mtime_ns": 1791883921409338691,
+      "inode": 218583865
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/libruntime_core.a": {
+      "sha256": "sha256:6685e2c535f6e7ee3235887feab3e234057d94f1cd2ea60e20fe60e69a8ab616",
+      "bytes": 793008,
+      "mtime_ns": 1791883908786338148,
+      "inode": 218583864
+    },
+    "/usr/lib/x86_64-linux-gnu/libdl.a": {
+      "sha256": "sha256:f0a17a43c74d2fe5474fa2fd29c8f14799e777d7d75a2cc4d11c20a6e7b161c5",
+      "bytes": 8,
+      "mtime_ns": 1769761256000000000,
+      "inode": 242492803
+    },
+    "/usr/lib/x86_64-linux-gnu/libgmp.so.10.4.1": {
+      "sha256": "sha256:4dc20a901c6951e678e216e959da2534bcef7053e6efdf1492509baf142282b0",
+      "bytes": 526896,
+      "mtime_ns": 1642417005000000000,
+      "inode": 242500988
+    },
+    "/usr/lib/x86_64-linux-gnu/libgmpxx.so.4.6.1": {
+      "sha256": "sha256:3a431ebd52829a89cf59337e3d8449e33b680142276eb94665eaaa8ac24c2edf",
+      "bytes": 31232,
+      "mtime_ns": 1642417005000000000,
+      "inode": 242484285
+    },
+    "/usr/lib/x86_64-linux-gnu/libpthread.a": {
+      "sha256": "sha256:f0a17a43c74d2fe5474fa2fd29c8f14799e777d7d75a2cc4d11c20a6e7b161c5",
+      "bytes": 8,
+      "mtime_ns": 1769761256000000000,
+      "inode": 242492817
+    },
+    "/usr/lib/x86_64-linux-gnu/librt.a": {
+      "sha256": "sha256:f0a17a43c74d2fe5474fa2fd29c8f14799e777d7d75a2cc4d11c20a6e7b161c5",
+      "bytes": 8,
+      "mtime_ns": 1769761256000000000,
+      "inode": 242492821
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudadevrt.a": {
+      "sha256": "sha256:bce1633d17355360e5d933840baad9311b2954a10900f84542877295ad046f0f",
+      "bytes": 1653530,
+      "mtime_ns": 1726128466934960204,
+      "inode": 242688946
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140": {
+      "sha256": "sha256:b5a066d723c4fe945d418f4130d23cf3d57f6bc0dd65bd6ddcf4c3412f12927c",
+      "bytes": 683360,
+      "mtime_ns": 1726128494233930884,
+      "inode": 242689226
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart_static.a": {
+      "sha256": "sha256:10ac50aeb5c1fdf4c0331a24d38675fab86224992c7e7d4dbbb6b334942c64de",
+      "bytes": 1379326,
+      "mtime_ns": 1726128466920960220,
+      "inode": 242688945
+    },
+    "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcufft.so.11.0.8.103": {
+      "sha256": "sha256:dc18b53e2b435be59ca0f6c9ce48a1eefe6d91444d0720cae7356ec2e03ac9ba",
+      "bytes": 178387496,
+      "mtime_ns": 1726128501587923070,
+      "inode": 242689242
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_api_tests": {
+      "sha256": "sha256:720b6bbb9e01fe56f9d3c556f12f018c827e53c14c2b3250c5668b2450349f5d",
+      "bytes": 9842296,
+      "mtime_ns": 1791961318296669182,
+      "inode": 30813803
+    },
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e": {
+      "sha256": "sha256:36ae2fb6854c731795e2845a644a7f8d5f5cdf4ce61f3cf5cf0a8923aa4e4ab6",
+      "bytes": 9238552,
+      "mtime_ns": 1791961319898669251,
+      "inode": 30815513
+    },
+    "/home/xuming/poseidon-waterline-20261013/logs/latest-build.status": {
+      "sha256": "sha256:9e8169aa2450e4c291177d4d54c31f0c9c0656d918ef1a8ca8476bf147b318dd",
+      "bytes": 1380,
+      "mtime_ns": 1791961320169669263,
+      "inode": 218190731
+    }
+  },
+  "private_inputs_after": {
+    "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api.cpp": {
+      "sha256": "sha256:6c0eb3f2979a5a1af150c1b38b342a85d9c92c9e9cc8a3412d597416b852586d",
+      "bytes": 145863,
+      "mtime_ns": 1791965995602870453,
+      "inode": 229642076
+    },
+    "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/poseidon_gpu_api_test.cpp": {
+      "sha256": "sha256:d0eea37498e6a84dc08d8068e1faecc24544b94f34ecfe4261ce2092e35e625f",
+      "bytes": 142318,
+      "mtime_ns": 1791965995825870463,
+      "inode": 229642081
+    },
+    "/home/xuming/poseidon-waterline-20261013/host-read-budget-isolated-20261014/check-packed-host-budget-188.py": {
+      "sha256": "sha256:b0a8c9ad9b131b831e5691a4aad1f3b00fb929587c1e00916c18a628f565f0a0",
+      "bytes": 12905,
+      "mtime_ns": 1791965995979870469,
+      "inode": 229642084
+    }
+  },
+  "shared_inputs_unchanged": true,
+  "error": null
+}

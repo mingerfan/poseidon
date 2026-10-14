@@ -1,6 +1,6 @@
 # Waterline 实现与 188Server 验证
 
-状态核对于 **2026-10-14（北京时间）**。已推送 Poseidon `3d4cff66`、ckks-runtime `369bdc5`（相对 `f29775a` 仅追加测试）、DaCapo `6e75be2`（生产编译器与 `d5ed984` 相同）。**完整 Qwen3-0.6B 数值验收尚未完成。** 新预乘 API 已通过本地及 188 小图回归；原 Q50/逻辑 scale40 四卡 GPU-only 前向 PID153204 已实际提交计算，仍在运行，无完整 decoded 或独立检查通过报告，见 [只读采样](188-prescale-readonly-monitor-20261014.jsonl)。
+状态核对于 **2026-10-14（北京时间）**。已推送 Poseidon 数学修复 `3d4cff66`、Host读取计费修复 `579012ad`，ckks-runtime `369bdc5`（相对 `f29775a` 仅追加测试）、DaCapo `6e75be2`（生产编译器与 `d5ed984` 相同）。**完整 Qwen3-0.6B 数值验收尚未完成。** 新预乘 API 已通过本地及 188 小图回归；原 Q50/逻辑 scale40 四卡 GPU-only 前向 PID153204 已实际提交计算，仍在运行，无完整 decoded 或独立检查通过报告，见 [只读采样](188-prescale-readonly-monitor-20261014.jsonl)。
 
 Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备水位、共享 Host/pinned/raw 预算和事件回收，复用统一执行器的前台计算与通信。自动静态分批和批末 Fence 已替换；显式 Encode/Transfer/Fence、drain、按需读取、Release/reuse 保留，见 [清理清单](cleanup.tsv)。
 
@@ -47,6 +47,8 @@ Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备�
 
 额外修复了GPU缓存路径的Host读取额度：非resident packed读取会同时持有原始字节和decoded double数组，动态Host须保持`N*8`，已存活的pinned缓存另计固定`N*4`。旧公式每次读取少计`N*4`（N16384时64KiB）。本地 [新版API 21/21](gpu-packed-host-budget-tests.log) 通过；真实packed暖缓存、公开Ledger/API边界的紧预算拒绝、足额预算编码全部2048复数槽通过，旧公式隔离负控确实错误接受紧预算并失败，见 [绑定与范围](gpu-packed-host-budget-result.json)。这条专门边界未执行完整Runtime结构，不能扩大为该结构的端到端反例。当前188完整模型仍使用修复前的Host计费公式和已验证的预乘数学路径；此修正不改Rescale、编码或HEFT，后续资源结论须单列差额，不能把运行中旧二进制当作新公式的验证。
 
+同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。
+
 ## 完整 Qwen 目标与执行边界
 
 正式模型为 `Qwen/Qwen3-0.6B`，revision `c1899de289a04d12100db370d81485cdf75e47ca`，权重 SHA256 `f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b`。已核验 311 个 BF16 张量、751632384 个存储参数（含重复 tied LM head；去重 596049920）。模型完整 28 层、hidden1024、FFN3072、16 Q heads、8 KV heads、head dim128、vocab151936；Q/K norm 在 RoPE 前，无 attention bias，共享 embedding/LM head。历史 24 层合成模型不能替代此目标。
@@ -69,6 +71,15 @@ runner 与 [独立检查器](../../scripts/qwen3_dsl/validate_decoded.py)须核�
 [Q50 编译容量摘要](q50-compile-and-capacity-summary.json)仅汇总同一逻辑40计划的编译/容量；其 `historical_hold` 是当时外部占卡快照，**不是当前阻塞状态**。[Waterline 报告](q50-all-qwen3._hecate_qwen3_0_6b.waterline.json)的四卡单组对象/workspace 峰值为 8401649664 / 8391819264 / 8415412224 / 8138522624B，这是编译基线，不是运行峰值。旧 scanner 漏 Prepare tag5、旧 spec schema 失败均已修复，原失败日志保留。
 
 ## 局部调度诊断
+
+同一已编译lazy40合成组合图的窗口1/8 × CPU/GPU/Auto，每配置3次轮转，共18次无trace运行及884736个复数槽独立检查均通过，最大误差`1.56393e-4`，见 [比较脚本](prepare-backend-local-comparison.py)、[完整指标与绑定](prepare-backend-local-comparison-result.json)、[日志](prepare-backend-local-comparison.log)。前向中位数（ms）如下；窗口1仍是Waterline单组窗口，并非旧eager或绝对无预取。
+
+| 窗口 | CPU | GPU | Auto |
+| --- | --- | --- | --- |
+| 1 | 1106.31 | 705.56 | 1115.14 |
+| 8 | 963.23 | 663.66 | 744.68 |
+
+窗口8的Auto每次实际选择21份CPU、26份GPU准备，窗口1为47份CPU。窗口8等待中位数CPU/GPU/Auto为3.96/8.97/2.35ms，等待更少未等于端到端最快。重复存在波动，不能推及四卡/完整模型；该比较使用已有预乘数学runner `81f8cf10…`、足量2GiB Host预算，未使用新Host边界公式，不作为该修复的验证。输入、全部小bundle、runner及可用build绑定前后均一致，详细重复报告留build目录。
 
 本地 RTX4060 上，在同一图中将窗口从8改到32/64，中位数约改善2–3%，重复范围重叠，未建立可靠收益，见 [窗口扫描](lookahead-local-sweep-result.json)。隔离 q_proj 的私有 runner 仅修改无进展时的等待语句，100µs/10µs/yield 前向中位数为2733.7/2171.7/1830.6ms，8192槽均通过；Nsight 显示 kernel种类、grid及次数不变、GPU空隙减少，同时 yield 的事件查询和CPU成本增加，见 [诊断](dispatcher-poll-local-diagnostic.json) 与 [原始日志](dispatcher-poll-local-diagnostic.log)。这些是合成单卡图的结果，不能换算完整模型加速率；生产保持100µs，188当前运行未替换。
 
