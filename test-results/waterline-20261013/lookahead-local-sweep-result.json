@@ -1,0 +1,489 @@
+{
+  "passed": true,
+  "scope": "Local RTX4060 GPU0 only, two existing synthetic encrypted small graphs; server PID153204 untouched. No production compiler/runtime change.",
+  "conclusion": "No robust lookahead speedup established. Median gains of roughly 2-3% overlap run-to-run ranges; do not infer full-model/four-GPU benefit or change the currently running plan.",
+  "candidate_configuration": null,
+  "measurement_limits": [
+    "Three untraced repeats per window, rotated order; extra trace runs excluded from performance statistics.",
+    "The production-primitives composite has 5 Host decrypt/re-encrypt Boots and tests lazy scale40; the existing no-Boot q_proj smoke is scale120 and is only a dispatch/configuration workload, not proof of production BSGS/full-Qwen performance.",
+    "API submission times, consumer waits and admission bursts do not measure scheduler CPU time or simultaneous active groups.",
+    "Single-GPU results cannot determine whether a larger global window would feed four GPUs better."
+  ],
+  "verified_scheduler_behavior": [
+    {
+      "fact": "Groups are keyed by ordinal for every non-preparation task; Release, Compute and Comm count. Prepare producers do not have separate active-group tickets.",
+      "source": "third_party/ckks-runtime/runtime/runtime.hpp:1377"
+    },
+    {
+      "fact": "The lookahead cap is rank-global. A ticket retires only when its tasks have completed; increasing the cap does not increase worker count.",
+      "source": "third_party/ckks-runtime/runtime/runtime.hpp:1531"
+    },
+    {
+      "fact": "Each worker has one busy task; an output must pass API is_ready before the scheduler clears busy and dispatches another task.",
+      "source": "third_party/ckks-runtime/runtime/runtime.hpp:1520"
+    },
+    {
+      "fact": "GPU Prepare is dispatched only when the foreground worker is idle and no admitted ready foreground task is pending.",
+      "source": "third_party/ckks-runtime/runtime/runtime.hpp:1616"
+    },
+    {
+      "fact": "An iteration with no progress sleeps for 100 microseconds. This is a possible latency mechanism, not a measured attribution of the server CPU bottleneck.",
+      "source": "third_party/ckks-runtime/runtime/runtime.hpp:1641"
+    },
+    {
+      "fact": "Runtime trace flushes every event. Trace runs are therefore separated from timing repetitions.",
+      "source": "third_party/ckks-runtime/runtime/runtime.hpp:341"
+    }
+  ],
+  "workloads": [
+    {
+      "scope": "local one-GPU encrypted lookahead sweep; no full-model or multi-GPU performance claim",
+      "source_plan": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/scale40-prescale-composite-regression-v6/scale40/optimized._hecate_composite_scale_regression.runtime-plan.json",
+      "source_plan_sha256": "sha256:94ca91206f414621a1684ee61484ff699ed91277298abfe098e34c9befe6e9b7",
+      "fixture_sha256": "sha256:b9db4e17c0d27ee2a303bd5c0f86b1f6394c442a34c09d7e5fa22a1a31cbd74c",
+      "operator_spec_sha256": "sha256:2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "runner_sha256": "sha256:81f8cf10fd2e614462333398a9e110a85e0a8f1a4092f8f84d3c335b6727959c",
+      "script_sha256": "sha256:9d526d4b6502e1cfaaba2c01a88cf9330c5d19b9d5611fd1867273f2bad6127c",
+      "only_mutation": "waterline.lookahead_groups",
+      "unchanged_plan_sha256": "sha256:3d4c212cc2adf7f58eb2358bf144e0f90201d1862f094987ec88a05d116bca0b",
+      "backend": "gpu",
+      "cuda_visible_devices": "0",
+      "repeats": 3,
+      "plan_instruction_counts": {
+        "transfer": 11,
+        "release": 220,
+        "prepare_plaintext": 47,
+        "compute": 178
+      },
+      "statistics": {
+        "8": {
+          "runtime_ms_median": 676.946932,
+          "runtime_ms_min": 666.189582,
+          "runtime_ms_max": 688.593936,
+          "online_ms_median": 522.484742,
+          "host_boot_ms_median": 280.190854,
+          "consumer_wait_ms_median": 10.130065,
+          "gpu_encode_ms_median": 15.781869
+        },
+        "32": {
+          "runtime_ms_median": 660.567455,
+          "runtime_ms_min": 659.758059,
+          "runtime_ms_max": 676.178835,
+          "online_ms_median": 507.766736,
+          "host_boot_ms_median": 275.391234,
+          "consumer_wait_ms_median": 8.376749,
+          "gpu_encode_ms_median": 16.054215
+        },
+        "64": {
+          "runtime_ms_median": 655.626697,
+          "runtime_ms_min": 654.215067,
+          "runtime_ms_max": 697.990317,
+          "online_ms_median": 503.527293,
+          "host_boot_ms_median": 273.324464,
+          "consumer_wait_ms_median": 9.261292,
+          "gpu_encode_ms_median": 16.935082
+        }
+      },
+      "artifacts": "build-waterline-sync/lookahead-local-sweep-v1",
+      "passed": true,
+      "traced_runs_excluded_from_timing_summary": true,
+      "raw_forward_times_ms": {
+        "8": [
+          676.946932,
+          666.189582,
+          688.593936
+        ],
+        "32": [
+          676.178835,
+          660.567455,
+          659.758059
+        ],
+        "64": [
+          655.626697,
+          697.990317,
+          654.215067
+        ]
+      },
+      "all_slot_numeric": {
+        "untraced_runs": 9,
+        "traced_runs": 3,
+        "slots_per_run": 49152,
+        "max_abs_error": 0.00011545164994042345,
+        "max_imaginary": 0.0001518925920596447,
+        "fixed_atol": 0.001,
+        "fixed_rtol": 0.0001,
+        "all_passed": true
+      },
+      "trace_evidence": [
+        {
+          "window": 8,
+          "runtime_ms": 677.863186,
+          "trace": {
+            "events": {
+              "admit": 409,
+              "release": 220,
+              "comm_post": 11,
+              "comm_wait": 11,
+              "compute": 178,
+              "bundle_read": 32,
+              "prepare_gpu": 47
+            },
+            "admitted_instruction_kinds": {
+              "transfer": 11,
+              "release": 220,
+              "compute": 178
+            },
+            "max_consecutive_admit_events": 6,
+            "caution": "admit bursts are trace ordering, not a measured active-group peak or GPU overlap"
+          },
+          "gpu_encode_calls": 47,
+          "consumer_wait_calls": 42
+        },
+        {
+          "window": 32,
+          "runtime_ms": 654.833467,
+          "trace": {
+            "events": {
+              "admit": 409,
+              "release": 220,
+              "comm_post": 11,
+              "comm_wait": 11,
+              "compute": 178,
+              "bundle_read": 32,
+              "prepare_gpu": 47
+            },
+            "admitted_instruction_kinds": {
+              "transfer": 11,
+              "release": 220,
+              "compute": 178
+            },
+            "max_consecutive_admit_events": 13,
+            "caution": "admit bursts are trace ordering, not a measured active-group peak or GPU overlap"
+          },
+          "gpu_encode_calls": 47,
+          "consumer_wait_calls": 36
+        },
+        {
+          "window": 64,
+          "runtime_ms": 721.319804,
+          "trace": {
+            "events": {
+              "admit": 409,
+              "release": 220,
+              "comm_post": 11,
+              "comm_wait": 11,
+              "compute": 178,
+              "bundle_read": 32,
+              "prepare_gpu": 47
+            },
+            "admitted_instruction_kinds": {
+              "transfer": 11,
+              "release": 220,
+              "compute": 178
+            },
+            "max_consecutive_admit_events": 22,
+            "caution": "admit bursts are trace ordering, not a measured active-group peak or GPU overlap"
+          },
+          "gpu_encode_calls": 47,
+          "consumer_wait_calls": 33
+        }
+      ],
+      "median_compute_submission_including_boot_ms": {
+        "8": 303.847311,
+        "32": 301.393068,
+        "64": 297.764898
+      }
+    },
+    {
+      "scope": "local one-GPU encrypted lookahead sweep; no full-model or multi-GPU performance claim",
+      "source_plan": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/qwen3-q50-rescale-candidate/q_proj/optimized._hecate_cyclic_linear_smoke.runtime-plan.json",
+      "source_plan_sha256": "sha256:3ba8585109116a8334ccf6ca97851e0d7ee9bb0325da5e8d3a5b10d94d3e3870",
+      "fixture_sha256": "sha256:001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "operator_spec_sha256": "sha256:516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "runner_sha256": "sha256:81f8cf10fd2e614462333398a9e110a85e0a8f1a4092f8f84d3c335b6727959c",
+      "script_sha256": "sha256:9d526d4b6502e1cfaaba2c01a88cf9330c5d19b9d5611fd1867273f2bad6127c",
+      "only_mutation": "waterline.lookahead_groups",
+      "unchanged_plan_sha256": "sha256:bdee038f304f1fdf40d6ad7686b2ddc1c73a41dbce735b6dad8533fcd3fe8cac",
+      "backend": "gpu",
+      "cuda_visible_devices": "0",
+      "repeats": 3,
+      "plan_instruction_counts": {
+        "transfer": 1,
+        "release": 4169,
+        "prepare_plaintext": 1025,
+        "compute": 3158
+      },
+      "statistics": {
+        "8": {
+          "runtime_ms_median": 2771.685328,
+          "runtime_ms_min": 2719.220116,
+          "runtime_ms_max": 2899.238049,
+          "online_ms_median": 2640.121002,
+          "host_boot_ms_median": 0.0,
+          "consumer_wait_ms_median": 101.381048,
+          "gpu_encode_ms_median": 209.986518
+        },
+        "32": {
+          "runtime_ms_median": 2708.868721,
+          "runtime_ms_min": 2676.370406,
+          "runtime_ms_max": 2933.672011,
+          "online_ms_median": 2580.814047,
+          "host_boot_ms_median": 0.0,
+          "consumer_wait_ms_median": 110.884544,
+          "gpu_encode_ms_median": 210.437749
+        },
+        "64": {
+          "runtime_ms_median": 2706.546339,
+          "runtime_ms_min": 2687.798484,
+          "runtime_ms_max": 2724.634131,
+          "online_ms_median": 2576.820099,
+          "host_boot_ms_median": 0.0,
+          "consumer_wait_ms_median": 106.186939,
+          "gpu_encode_ms_median": 210.08129
+        }
+      },
+      "artifacts": "build-waterline-sync/lookahead-local-qproj-sweep-v1",
+      "passed": true,
+      "traced_runs_excluded_from_timing_summary": true,
+      "raw_forward_times_ms": {
+        "8": [
+          2771.685328,
+          2899.238049,
+          2719.220116
+        ],
+        "32": [
+          2933.672011,
+          2676.370406,
+          2708.868721
+        ],
+        "64": [
+          2724.634131,
+          2706.546339,
+          2687.798484
+        ]
+      },
+      "all_slot_numeric": {
+        "untraced_runs": 9,
+        "traced_runs": 3,
+        "slots_per_run": 8192,
+        "max_abs_error": 9.909881804048837e-10,
+        "max_imaginary": 7.517188948479519e-13,
+        "fixed_atol": 0.001,
+        "fixed_rtol": 0.0001,
+        "all_passed": true
+      },
+      "trace_evidence": [
+        {
+          "window": 8,
+          "runtime_ms": 2759.93666,
+          "trace": {
+            "events": {
+              "admit": 7328,
+              "release": 4169,
+              "comm_post": 1,
+              "comm_wait": 1,
+              "compute": 3158,
+              "bundle_read": 1025,
+              "prepare_gpu": 1025
+            },
+            "admitted_instruction_kinds": {
+              "transfer": 1,
+              "release": 4169,
+              "compute": 3158
+            },
+            "max_consecutive_admit_events": 8,
+            "caution": "admit bursts are trace ordering, not a measured active-group peak or GPU overlap"
+          },
+          "gpu_encode_calls": 1025,
+          "consumer_wait_calls": 973
+        },
+        {
+          "window": 32,
+          "runtime_ms": 2720.48673,
+          "trace": {
+            "events": {
+              "admit": 7328,
+              "release": 4169,
+              "comm_post": 1,
+              "comm_wait": 1,
+              "compute": 3158,
+              "bundle_read": 1025,
+              "prepare_gpu": 1025
+            },
+            "admitted_instruction_kinds": {
+              "transfer": 1,
+              "release": 4169,
+              "compute": 3158
+            },
+            "max_consecutive_admit_events": 21,
+            "caution": "admit bursts are trace ordering, not a measured active-group peak or GPU overlap"
+          },
+          "gpu_encode_calls": 1025,
+          "consumer_wait_calls": 995
+        },
+        {
+          "window": 64,
+          "runtime_ms": 2715.043262,
+          "trace": {
+            "events": {
+              "admit": 7328,
+              "release": 4169,
+              "comm_post": 1,
+              "comm_wait": 1,
+              "compute": 3158,
+              "bundle_read": 1025,
+              "prepare_gpu": 1025
+            },
+            "admitted_instruction_kinds": {
+              "transfer": 1,
+              "release": 4169,
+              "compute": 3158
+            },
+            "max_consecutive_admit_events": 28,
+            "caution": "admit bursts are trace ordering, not a measured active-group peak or GPU overlap"
+          },
+          "gpu_encode_calls": 1025,
+          "consumer_wait_calls": 995
+        }
+      ],
+      "median_compute_submission_including_boot_ms": {
+        "8": 238.947263,
+        "32": 240.004503,
+        "64": 235.97058
+      }
+    }
+  ],
+  "nsys_profile": {
+    "directory": "build-waterline-sync/lookahead-local-qproj-sweep-v1/nsys-w8-no-symbols",
+    "status": "Completed cuda-only profile with --resolve-symbols=false. Initial cuda+osrt attempt was stopped during symbol downloading using nsys shutdown --kill=none; no application was killed.",
+    "profiled_runner_passed": true,
+    "profiled_runtime_ms": 2820.634045,
+    "profiled_comparison": {
+      "bad_imaginary_slots": 0,
+      "bad_prefix_slots": 0,
+      "bad_real_slots": 0,
+      "bad_tail_slots": 0,
+      "finite_slots": 8192,
+      "max_abs_error": 9.909881804048837e-10,
+      "max_imaginary": 7.517188948479519e-13,
+      "max_relative_error_floor_atol": 4.1990614433939846e-10,
+      "max_tail_abs": 6.661338147750939e-16,
+      "nonfinite_slots": 0,
+      "passed": true,
+      "rms_error": 1.467750762612811e-10,
+      "slots_checked": 8192
+    },
+    "excluded_from_sweep_statistics": true,
+    "activity": {
+      "activity_envelope": "first kernel start to last kernel end; not exact runner forward boundaries",
+      "first_kernel_ns": 3831790679,
+      "last_kernel_ns": 6504742642,
+      "kernel_span_ms": 2672.951963,
+      "kernel_count": 92375,
+      "kernel_duration_sum_ms": 1276.031344,
+      "union_kernel_copy_memset_active_ms": 1320.975741,
+      "union_active_fraction": 0.49420107779168493,
+      "no_activity_gap_ms": 1351.976222,
+      "gap_bins": {
+        "0_to_50_us": {
+          "count": 112227,
+          "sum_ms": 86.770307
+        },
+        "50_to_100_us": {
+          "count": 59,
+          "sum_ms": 4.043949
+        },
+        "100_to_300_us": {
+          "count": 704,
+          "sum_ms": 175.750699
+        },
+        "300_to_1000_us": {
+          "count": 2399,
+          "sum_ms": 1054.009988
+        },
+        "1000_to_1e+09_us": {
+          "count": 20,
+          "sum_ms": 31.401279
+        }
+      },
+      "cuda_api_within_kernel_envelope": [
+        {
+          "name": "cudaLaunchKernel_ptsz_v7000",
+          "count": 90324,
+          "sum_ms": 228.038207
+        },
+        {
+          "name": "cudaMemcpyAsync_ptsz_v7000",
+          "count": 22776,
+          "sum_ms": 69.854375
+        },
+        {
+          "name": "cudaEventQuery_v3020",
+          "count": 30567,
+          "sum_ms": 17.423228
+        },
+        {
+          "name": "cudaEventRecord_v3020",
+          "count": 21119,
+          "sum_ms": 13.538698
+        },
+        {
+          "name": "cuLibraryLoadData",
+          "count": 4,
+          "sum_ms": 11.270406
+        },
+        {
+          "name": "cudaEventRecord_ptsz_v7000",
+          "count": 3073,
+          "sum_ms": 10.514561
+        },
+        {
+          "name": "cuKernelGetName",
+          "count": 90324,
+          "sum_ms": 8.46286
+        },
+        {
+          "name": "cudaStreamWaitEvent_v3020",
+          "count": 13993,
+          "sum_ms": 7.529987
+        },
+        {
+          "name": "cuLaunchKernel",
+          "count": 2050,
+          "sum_ms": 5.566328
+        },
+        {
+          "name": "cudaEventDestroy_v3020",
+          "count": 8992,
+          "sum_ms": 3.397304
+        },
+        {
+          "name": "cudaEventCreateWithFlags_v3020",
+          "count": 7254,
+          "sum_ms": 2.817309
+        },
+        {
+          "name": "cudaMemsetAsync_v3020",
+          "count": 227,
+          "sum_ms": 0.923286
+        }
+      ]
+    },
+    "artifacts": [
+      "capture.nsys-rep",
+      "capture.sqlite",
+      "activity-summary.json",
+      "stats_cuda_api_sum.csv",
+      "stats_cuda_gpu_kern_sum.csv",
+      "stats_cuda_gpu_mem_time_sum.csv",
+      "command.json"
+    ],
+    "scope_note": "GPU activity envelope and summed CUDA API times are measured. Scheduler CPU stacks, worker queue wakeup latency and actual active-group peaks are not measured."
+  },
+  "performance_interpretation": {
+    "lookahead": "No reliable benefit established by 8/32/64 sweeps. Keep current server configuration unchanged.",
+    "dispatch_lead": "Measured GPU gaps of hundreds of microseconds are consistent with the existing one-ready-task-per-worker scheduler, separate Release tasks and 100us no-progress polling. This is an inference from source plus GPU timeline, not a measured CPU stack attribution.",
+    "event_query": "30,567 queries within the first-to-last-kernel envelope total 17.42ms, so the API call cost itself does not explain the 1.352s no-GPU-activity gaps.",
+    "next_local_investigation_if_needed": "Measure sleep/wakeup and Release retirement overhead inside the existing executor before proposing a production change. No second executor or live server setting change is justified by this sweep."
+  }
+}

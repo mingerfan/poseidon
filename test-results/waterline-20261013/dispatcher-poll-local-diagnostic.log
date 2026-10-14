@@ -1,0 +1,17 @@
+built variant=100us
+built variant=10us
+built variant=yield
+PASS repeat=0 variant=100us runtime_ms=2918.038
+PASS repeat=0 variant=10us runtime_ms=2157.069
+PASS repeat=0 variant=yield runtime_ms=1830.552
+PASS repeat=1 variant=10us runtime_ms=2171.683
+PASS repeat=1 variant=yield runtime_ms=1856.536
+PASS repeat=1 variant=100us runtime_ms=2699.513
+PASS repeat=2 variant=yield runtime_ms=1816.152
+PASS repeat=2 variant=100us runtime_ms=2733.707
+PASS repeat=2 variant=10us runtime_ms=2187.655
+{"100us": {"runtime_ms_median": 2733.706869, "runtime_ms_min": 2699.512839, "runtime_ms_max": 2918.037709, "online_ms_median": 2604.971448, "compute_submission_ms_median": 250.463443, "consumer_wait_ms_median": 108.705058}, "10us": {"runtime_ms_median": 2171.682916, "runtime_ms_min": 2157.069145, "runtime_ms_max": 2187.654912, "online_ms_median": 2043.165937, "compute_submission_ms_median": 234.106323, "consumer_wait_ms_median": 118.936876}, "yield": {"runtime_ms_median": 1830.552409, "runtime_ms_min": 1816.152285, "runtime_ms_max": 1856.536124, "online_ms_median": 1700.560896, "compute_submission_ms_median": 205.266916, "consumer_wait_ms_median": 165.44036}}
+
+PASS 100us user=4.021732s system=2.121202s wall=8.331219s forward=2725.089ms
+PASS 10us user=4.101133s system=0.350307s wall=5.915220s forward=2163.925ms
+PASS yield user=5.521232s system=0.677329s wall=5.744598s forward=1844.895ms

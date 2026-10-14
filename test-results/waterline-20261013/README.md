@@ -66,6 +66,30 @@ runner 与 [独立检查器](../../scripts/qwen3_dsl/validate_decoded.py)须核�
 
 [Q50 编译容量摘要](q50-compile-and-capacity-summary.json)仅汇总同一逻辑40计划的编译/容量；其 `historical_hold` 是当时外部占卡快照，**不是当前阻塞状态**。[Waterline 报告](q50-all-qwen3._hecate_qwen3_0_6b.waterline.json)的四卡单组对象/workspace 峰值为 8401649664 / 8391819264 / 8415412224 / 8138522624B，这是编译基线，不是运行峰值。旧 scanner 漏 Prepare tag5、旧 spec schema 失败均已修复，原失败日志保留。
 
+## 局部调度诊断
+
+本地 RTX4060 上，在同一图中将窗口从8改到32/64，中位数约改善2–3%，重复范围重叠，未建立可靠收益，见 [窗口扫描](lookahead-local-sweep-result.json)。隔离 q_proj 的私有 runner 仅修改无进展时的等待语句，100µs/10µs/yield 前向中位数为2733.7/2171.7/1830.6ms，8192槽均通过；Nsight 显示 kernel种类、grid及次数不变、GPU空隙减少，同时 yield 的事件查询和CPU成本增加，见 [诊断](dispatcher-poll-local-diagnostic.json) 与 [原始日志](dispatcher-poll-local-diagnostic.log)。这些是合成单卡图的结果，不能换算完整模型加速率；生产保持100µs，188当前运行未替换。
+
+复现前须完成现有API/runner和DaCapo构建。私有runner脚本读取 **Unix Makefiles** 生成的 `flags.make/link.txt`，不支持直接套用Ninja目录。组合图可由 [公开生成脚本](lazy-rescale-composite-regression.py) 创建；q_proj 使用188工作目录的 `q50-small-regression.tar`，SHA256为 `a57d207fe11dc50d088be0a7427b660d928e535e462c9189ac3c58a80290c192`，69,130,240B，解包后包含 `q_proj/` 与 `profiles/`。它是scale120合成cyclic诊断图，不是生产lazy40模型；大产物留服务器，需显式提供已有输入，不能从空checkout直接运行历史build路径。
+
+```sh
+python test-results/waterline-20261013/lazy-rescale-composite-regression.py \
+  --output build-lazy-diag-fresh --backends gpu
+python test-results/waterline-20261013/lookahead-local-sweep.py \
+  --source-directory build-lazy-diag-fresh/scale40 --output build-lookahead-fresh
+mkdir build-q50-small-fresh
+tar -xf /path/to/q50-small-regression.tar -C build-q50-small-fresh
+python test-results/waterline-20261013/lookahead-local-sweep.py \
+  --source-directory build-q50-small-fresh/q_proj --output build-q50-lookahead-fresh
+python test-results/waterline-20261013/poll-private-runner-sweep.py \
+  --source-command build-q50-lookahead-fresh/repeat-0-w8/command.json \
+  --output build-poll-private-fresh
+python test-results/waterline-20261013/poll-private-runner-cpu-cost.py \
+  --sweep-output build-poll-private-fresh
+```
+
+私有runner、生成计划、decoded和Nsight大文件留在build目录；仓库仅保留脚本及小型诊断摘要。[资源绘图脚本](plot-model-resources.py)从完整PID采样生成独立PNG及带输入hash的摘要，缺失Host指标不会补成0；当前运行中的预览不作为最终测量。
+
 ## 保留的组件与历史证据
 
 - **pinned 缓存与 Auto 开销**：旧 trace 的 Prepare/Host Boot 提交分布见 [快照](188-bsgs-auto-pre-supersede-trace-stats.json)。同二进制 N16384/Q40/P8/scale120 组件对照中，10 次 GPU Prepare 的 pinned 分配由 10 次降至 1 次，提交均值 1.025306→0.219797ms、回收 0.417778→0.012027ms，Encode event 0.272096→0.270313ms，drain 后 pinned live 均为0：[对照](hotpath-pinned-cache-comparison.md)、[绑定](hotpath-cache-188-current-provenance.txt)、[Nsight 范围](hotpath-components-profile-validation.md)。这是组件改善，不是完整模型加速率；固定缓存计入整段 Host/pinned 预算，真实 Ready 前禁止覆写。

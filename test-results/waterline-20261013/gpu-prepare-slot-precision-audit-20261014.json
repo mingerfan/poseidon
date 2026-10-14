@@ -1,0 +1,62 @@
+{
+  "scope": "Read-only audit of FP32 plaintext-slot quantization concern; not CKKS numerical validation.",
+  "local_time_utc": "2026-10-14T07:41:20.804417+00:00",
+  "root_revision": "dabee742daeafd87fc40c9a4c8be27efe175bc72",
+  "model_pid": 153204,
+  "findings": {
+    "api_slot_type": "std::vector<double> copied to pinned double* without float cast",
+    "gpu_encoder_slot_type": "submit(double const*, double, ...); DeviceVector<double> raw(degree/2)",
+    "permutation_type": "const double* -> double2",
+    "fft_type": "CUFFT_Z2Z, double2",
+    "raw_copy_bytes": "degree * 4 == (degree / 2 real slots) * sizeof(double)",
+    "N16384_raw_real_slots": 8192,
+    "N16384_raw_copy_bytes": 65536,
+    "frontend_plain_type": "numpy.float64 -> ctypes.POINTER(ctypes.c_double) -> frontend createConstant(double*)",
+    "bundle_reader_type": "little-endian IEEE binary64 slots -> std::vector<double>",
+    "bf16_checkpoint_storage": "BF16 converted exactly to FP32 weight storage; later promotion to FP64 does not add a new BF16 weight error",
+    "float_occurrences_in_encoder": "cudaEventElapsedTime milliseconds only; timing, not slot data"
+  },
+  "server_encoder_source_sha256": "1e376e8a17a6c7ffdbe96e9c5fa236af6768b84f67e8a6dd11e485453fb0f59c",
+  "same_encoder_sha256_at_revisions": [
+    "0b1b8f51",
+    "dabee742daeafd87fc40c9a4c8be27efe175bc72"
+  ],
+  "running_binary_sha256": "36ae2fb6854c731795e2845a644a7f8d5f5cdf4ce61f3cf5cf0a8923aa4e4ab6",
+  "running_binary_symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)",
+  "source_sha256": {
+    "src/poseidon/runtime_api/gpu_plaintext_encoder.cu": "1e376e8a17a6c7ffdbe96e9c5fa236af6768b84f67e8a6dd11e485453fb0f59c",
+    "src/poseidon/runtime_api/gpu_plaintext_encoder.h": "941eeb81228f213ef2d0ae1657a0bbe1411e7c90d1e7979fe27ec55b069f9d2b",
+    "third_party/ckks-runtime/runtime/plaintext_bundle.cpp": "915744e48e6e2240ccc932bf0beed0adad57dd13966b529bdf64b7d29c2c5a8c",
+    "third_party/ckks-runtime/third_party/dacapo/python/hecate/hecate/expr.py": "2e45ebe6aa5631687c1ec7a84ae8096b4d5ac1f9262f9465b298dbf09d97f142",
+    "third_party/ckks-runtime/third_party/dacapo/tools/frontend.cpp": "436c188bc7c73f9db78f5673afc440de878f004db6f2e5835d5449187644924b",
+    "scripts/qwen3_dsl/qwen3/kernels/qwen_layers.py": "a20fa7659919c84c76981a9daf880651e22f7c88507be9af8bdba2c54597bd27",
+    "scripts/qwen3_dsl/qwen3/kernels/qwen_nonlinear.py": "ebe177d7f4732450ee1c0bbe097dfaeb82598a4860ad2d02f098a05e1dbcc84f",
+    "scripts/qwen3_dsl/qwen3/reference.py": "9fdce11792d8e164fef3ecf469c516df02d48c1a6234b89bf921d7af708d1b03"
+  },
+  "fp32_constant_quantization_simulation": {
+    "performed": false,
+    "reason": "The hypothesized FP32 slot narrowing is absent from the actual production source and running binary. An FP32-rounded reference would model an artificial path rather than this run."
+  },
+  "tolerance_assessment": "No extra FP32 Prepare constant-quantization error applies to this run. FP64 FFT/RNS/CKKS arithmetic and nonlinear cancellation still require the existing full checker at atol=0.001 and rtol=0.0001; this audit does not prove that tolerance.",
+  "full_run_end_snapshot": {
+    "remote_time": "2026-10-14T15:36:21.555681+08:00",
+    "pid": 153204,
+    "process_alive": true,
+    "trace_bytes": 185612102,
+    "trace_tail": [
+      "0,compute,1026338,3701280,,Rescale,935281",
+      "0,admit,0,3701291,,CompleteGroup,0",
+      "0,release,1026337,3701281,,Release,0",
+      "0,admit,0,3701292,,CompleteGroup,0"
+    ],
+    "model_exit": null,
+    "runner_report_exists": false,
+    "checker_report_exists": false,
+    "model_log_tail": [
+      "waterline physical GPU2 pool_reserved=8439037952 pool_cap=32682016768 initial_outside_used=323747840 outside_pool_growth=8290304 allocator_graph_capacity=30350366624",
+      "waterline stream GPU3 foreground_priority=-5 prepare_priority=0",
+      "waterline fixed GPU3 persistent_bytes=2073176160 retained_workspace_bound=84934656 reserve_required=2225219680 reserve_configured=6442450944",
+      "waterline physical GPU3 pool_reserved=8439037952 pool_cap=32682016768 initial_outside_used=323747840 outside_pool_growth=8290304 allocator_graph_capacity=30456797088"
+    ]
+  }
+}

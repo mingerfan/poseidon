@@ -1,0 +1,322 @@
+{
+  "experimental_private_only": true,
+  "production_behavior": "Unchanged 100us polling. Current full-model server run untouched; no production patch, restart, push or alternative executor introduced.",
+  "scope": "Local GPU0 existing synthetic Q50/P8 scale120 projection smoke, exact same lookahead8 plan, GPU-only plaintext preparation. Not a full-Qwen latency result.",
+  "artifacts": "build-waterline-sync/poll-private-runner-sweep-v1",
+  "source_bindings": {
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp": "sha256:7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp": "sha256:077180ac98048bcbf433f1bd6df6ce62b07b243ea7d74c79ebc25143546a4f83",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/lookahead-local-qproj-sweep-v1/lookahead-8.runtime-plan.json": "sha256:21d9531a2c778e64911e3618e8accb882c8a98bb83af3b3dee0cd8ed4b7b95c2",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/qwen3-q50-rescale-candidate/profiles/operator-spec.json": "sha256:516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/qwen3-q50-rescale-candidate/q_proj/fixture.json": "sha256:001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_runtime_gpu_api.a": "sha256:276646c29d8ca77fbc1ef0ee634b30279f4d9a4b31e8a673230d7f5b3978c0bc",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_plan_json.a": "sha256:314cf72274af211866a5ed06bc2c1215d7e59afb3e9fc6a5e780f231490b677b",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_gpu.a": "sha256:9a936f1c119d08e0ff4f4b322d3fdbd4d76293a943d52150905c6f127d99bd3f",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_shared.so": "sha256:d21625ce20553434c3be1ee793408f8cba480e369932dd5646c3d43c33d137ab",
+    "/usr/lib/libgmpxx.so": "sha256:cd0f1e88085ab9e0011a668ca08c7d2f5e994da45261845513b48d0af1569bc5",
+    "/usr/lib/libgmp.so": "sha256:0e263305fd34434c80b9af2ea34fc6131887418d8301e913b3220953dc9a6e49",
+    "/opt/cuda/targets/x86_64-linux/lib/libcudart.so": "sha256:7fb00519a24512bf677b59e87921e5c05aac8246ceb6a57435c0d9dfeef364f6",
+    "/usr/lib/librt.a": "sha256:f0a17a43c74d2fe5474fa2fd29c8f14799e777d7d75a2cc4d11c20a6e7b161c5",
+    "/opt/cuda/targets/x86_64-linux/lib/libcufft.so": "sha256:4bedea83377d8b44c071921b79d3526a6de5f718644fe6a0c67c81ee791c2856",
+    "/usr/lib/libmpi.so": "sha256:f1be63515285658275123c22874814daae4592ff4282c0d6625f266697e65b47",
+    "/usr/lib/libnccl.so": "sha256:1573c76455f1b1b99ba402635c3c920a71be9f8249d7d9fa54cba4b8d2cf22b7",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_core.a": "sha256:6c4d084c45728105ac9bd3ed63bcfd2b85462ebeb7510dc5b7f3335450f3d5bd"
+  },
+  "private_variants": {
+    "100us": {
+      "statement": "std::this_thread::sleep_for(std::chrono::microseconds(100));",
+      "header_sha256": "sha256:7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a",
+      "source_sha256": "sha256:6482e4198d02693846479515d52ae7ae926a770c9e483761635ca7288ce6c5a2",
+      "binary_sha256": "sha256:319dbdfa25bd65eb4307b66a6f9250e70eeb42fa0ac0d2bc448016e47ef72945",
+      "exact_runtime_diff": "",
+      "binary": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/poll-private-runner-sweep-v1/100us/runner"
+    },
+    "10us": {
+      "statement": "std::this_thread::sleep_for(std::chrono::microseconds(10));",
+      "header_sha256": "sha256:b3dad56b45632496c72c6ad6791635989d55e55cad870c262c21df88b8c082f2",
+      "source_sha256": "sha256:1a05d306831b11a776b9a78f8ac6ced63691752c7201d4914f6047bdfb7c5fff",
+      "binary_sha256": "sha256:4b11b2ee5bfddf7a61d0f514660ade16d2a04ea441391d7a96da6af36a015825",
+      "exact_runtime_diff": "--- production/runtime.hpp\n+++ private/10us/runtime.hpp\n@@ -1638,7 +1638,7 @@\n                         if(next!=groups.end())throw std::runtime_error(\"Waterline cannot advance at instruction #\"+std::to_string(next->first)+ (waterline_?waterline_->describe(ResourceUsage(devices)):\"\"));\n                         throw std::runtime_error(\"executor has no runnable producer: dependency/order invariant violated\");\n                     }\n-                    std::this_thread::sleep_for(std::chrono::microseconds(100));\n+                    std::this_thread::sleep_for(std::chrono::microseconds(10));\n                 }\n             }\n             stop_workers();if(issuer.joinable())issuer.join();\n",
+      "binary": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/poll-private-runner-sweep-v1/10us/runner"
+    },
+    "yield": {
+      "statement": "std::this_thread::yield();",
+      "header_sha256": "sha256:18ed0b16a7122b83c0886c1895f9e93af3f5a1950ed160c1d901998b1ef5c98a",
+      "source_sha256": "sha256:a139a31afb15efbdd55dacb4ece0cdaace74e8c93383b4bd8c8d3721737ba9e7",
+      "binary_sha256": "sha256:1f16c06f05c9baa3cb5442ecf218ee14820c253eebf71104f445d4835cee94c2",
+      "exact_runtime_diff": "--- production/runtime.hpp\n+++ private/yield/runtime.hpp\n@@ -1638,7 +1638,7 @@\n                         if(next!=groups.end())throw std::runtime_error(\"Waterline cannot advance at instruction #\"+std::to_string(next->first)+ (waterline_?waterline_->describe(ResourceUsage(devices)):\"\"));\n                         throw std::runtime_error(\"executor has no runnable producer: dependency/order invariant violated\");\n                     }\n-                    std::this_thread::sleep_for(std::chrono::microseconds(100));\n+                    std::this_thread::yield();\n                 }\n             }\n             stop_workers();if(issuer.joinable())issuer.join();\n",
+      "binary": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/poll-private-runner-sweep-v1/yield/runner"
+    }
+  },
+  "reproduce_private_sweep": [
+    "python",
+    "test-results/waterline-20261013/poll-private-runner-sweep.py",
+    "--output",
+    "build-waterline-sync/poll-private-runner-sweep-fresh"
+  ],
+  "reproduce_cpu_cost": [
+    "python",
+    "test-results/waterline-20261013/poll-private-runner-cpu-cost.py",
+    "--sweep-output",
+    "build-waterline-sync/poll-private-runner-sweep-fresh"
+  ],
+  "script_sha256": "sha256:6da43f0f8b2669c3d5744e9d0367854d1bc39e26074c2c27db7b577ea70b7a9e",
+  "cpu_cost_script_sha256": "sha256:a0c18477e1a6543796af5f1eb67398757f78cac277242d90e7b0361ca58f4bbc",
+  "only_header_change": "Single no-progress wait statement at runtime.hpp:1641. Private runner cpp changes only its runtime/runtime.hpp include to an absolute private header. Original CMake target flags and existing libraries reused.",
+  "statistics_three_rotated_untraced_repeats": {
+    "100us": {
+      "runtime_ms_median": 2733.706869,
+      "runtime_ms_min": 2699.512839,
+      "runtime_ms_max": 2918.037709,
+      "online_ms_median": 2604.971448,
+      "compute_submission_ms_median": 250.463443,
+      "consumer_wait_ms_median": 108.705058
+    },
+    "10us": {
+      "runtime_ms_median": 2171.682916,
+      "runtime_ms_min": 2157.069145,
+      "runtime_ms_max": 2187.654912,
+      "online_ms_median": 2043.165937,
+      "compute_submission_ms_median": 234.106323,
+      "consumer_wait_ms_median": 118.936876
+    },
+    "yield": {
+      "runtime_ms_median": 1830.552409,
+      "runtime_ms_min": 1816.152285,
+      "runtime_ms_max": 1856.536124,
+      "online_ms_median": 1700.560896,
+      "compute_submission_ms_median": 205.266916,
+      "consumer_wait_ms_median": 165.44036
+    }
+  },
+  "raw_forward_times_ms": {
+    "100us": [
+      2918.037709,
+      2699.512839,
+      2733.706869
+    ],
+    "10us": [
+      2157.069145,
+      2171.682916,
+      2187.654912
+    ],
+    "yield": [
+      1830.552409,
+      1856.536124,
+      1816.152285
+    ]
+  },
+  "forward_median_improvement_fraction": {
+    "100us": 0.0,
+    "10us": 0.20559042352832446,
+    "yield": 0.3303772142659821
+  },
+  "numeric_validation": {
+    "repeated_runs": 9,
+    "extra_cpu_cost_runs": 3,
+    "slots_per_run": 8192,
+    "all_passed": true,
+    "max_abs_error_repeated_runs": 9.909881804048837e-10,
+    "fixed_atol": 0.001,
+    "fixed_rtol": 0.0001,
+    "gpu_encode_calls_each_run": 1025,
+    "compute_calls_each_run": 3158
+  },
+  "cpu_cost": {
+    "scope": "Whole child process CPU cost, including context/key generation, input encryption, forward and validation; not forward-only CPU time",
+    "source_summary_sha256": "sha256:d0a0d7c35946fdb8f1ed1df6e1dabb19b4e92d400b570d1e392e8b90050f36b1",
+    "script_sha256": "sha256:a0c18477e1a6543796af5f1eb67398757f78cac277242d90e7b0361ca58f4bbc",
+    "samples": [
+      {
+        "variant": "100us",
+        "user_cpu_seconds": 4.021732,
+        "system_cpu_seconds": 2.121202,
+        "total_cpu_seconds": 6.142934,
+        "process_wall_seconds": 8.331219171006524,
+        "average_process_cpu_cores": 0.737339142556473,
+        "forward_runtime_ms": 2725.088852,
+        "passed": true,
+        "comparison": {
+          "bad_imaginary_slots": 0,
+          "bad_prefix_slots": 0,
+          "bad_real_slots": 0,
+          "bad_tail_slots": 0,
+          "finite_slots": 8192,
+          "max_abs_error": 9.909881804048837e-10,
+          "max_imaginary": 7.517188948479519e-13,
+          "max_relative_error_floor_atol": 4.1990614433939846e-10,
+          "max_tail_abs": 6.661338147750939e-16,
+          "nonfinite_slots": 0,
+          "passed": true,
+          "rms_error": 1.467750762612811e-10,
+          "slots_checked": 8192
+        }
+      },
+      {
+        "variant": "10us",
+        "user_cpu_seconds": 4.101132999999999,
+        "system_cpu_seconds": 0.35030700000000037,
+        "total_cpu_seconds": 4.45144,
+        "process_wall_seconds": 5.91521959000238,
+        "average_process_cpu_cores": 0.7525401098420099,
+        "forward_runtime_ms": 2163.924817,
+        "passed": true,
+        "comparison": {
+          "bad_imaginary_slots": 0,
+          "bad_prefix_slots": 0,
+          "bad_real_slots": 0,
+          "bad_tail_slots": 0,
+          "finite_slots": 8192,
+          "max_abs_error": 9.909881804048837e-10,
+          "max_imaginary": 7.517188948479519e-13,
+          "max_relative_error_floor_atol": 4.1990614433939846e-10,
+          "max_tail_abs": 6.661338147750939e-16,
+          "nonfinite_slots": 0,
+          "passed": true,
+          "rms_error": 1.467750762612811e-10,
+          "slots_checked": 8192
+        }
+      },
+      {
+        "variant": "yield",
+        "user_cpu_seconds": 5.521232000000001,
+        "system_cpu_seconds": 0.6773289999999998,
+        "total_cpu_seconds": 6.1985610000000015,
+        "process_wall_seconds": 5.744598177996522,
+        "average_process_cpu_cores": 1.0790242951617206,
+        "forward_runtime_ms": 1844.895422,
+        "passed": true,
+        "comparison": {
+          "bad_imaginary_slots": 0,
+          "bad_prefix_slots": 0,
+          "bad_real_slots": 0,
+          "bad_tail_slots": 0,
+          "finite_slots": 8192,
+          "max_abs_error": 9.909881804048837e-10,
+          "max_imaginary": 7.517188948479519e-13,
+          "max_relative_error_floor_atol": 4.1990614433939846e-10,
+          "max_tail_abs": 6.661338147750939e-16,
+          "nonfinite_slots": 0,
+          "passed": true,
+          "rms_error": 1.467750762612811e-10,
+          "slots_checked": 8192
+        }
+      }
+    ],
+    "passed": true
+  },
+  "cpu_cost_interpretation": "One extra untraced run per variant; whole-process CPU includes key generation/context/input encryption/validation. The 100us sample had extra outside-forward system/wall time, so these process totals are not a clean forward-only attribution. Yield consumed more user CPU than 10us in this sample.",
+  "nsys_profiles": {
+    "100us_existing": {
+      "artifacts": "build-waterline-sync/lookahead-local-qproj-sweep-v1/nsys-w8-no-symbols",
+      "profiled_runtime_ms": 2820.634045,
+      "activity_envelope": "first kernel start to last kernel end; not exact runner forward boundaries",
+      "kernel_span_ms": 2672.951963,
+      "kernel_count": 92375,
+      "kernel_duration_sum_ms": 1276.031344,
+      "kernel_name_geometry_instance_histogram_sha256": "sha256:632d5df4ebd01ad9b556d88144c58866086326ee9da02e60129cd4291c35d5f6",
+      "union_kernel_copy_memset_active_ms": 1320.975741,
+      "union_active_fraction": 0.49420107779168493,
+      "no_activity_gap_ms": 1351.976222,
+      "gap_bins": {
+        "0_to_50_us": {
+          "count": 112227,
+          "sum_ms": 86.770307
+        },
+        "50_to_100_us": {
+          "count": 59,
+          "sum_ms": 4.043949
+        },
+        "100_to_300_us": {
+          "count": 704,
+          "sum_ms": 175.750699
+        },
+        "300_to_1000_us": {
+          "count": 2399,
+          "sum_ms": 1054.009988
+        },
+        "1000_to_1e+09_us": {
+          "count": 20,
+          "sum_ms": 31.401279
+        }
+      },
+      "selected_cuda_apis_within_kernel_envelope": [
+        {
+          "name": "cudaLaunchKernel_ptsz_v7000",
+          "count": 90324,
+          "sum_ms": 228.038207
+        },
+        {
+          "name": "cudaMemcpyAsync_ptsz_v7000",
+          "count": 22776,
+          "sum_ms": 69.854375
+        },
+        {
+          "name": "cudaEventQuery_v3020",
+          "count": 30567,
+          "sum_ms": 17.423228
+        }
+      ]
+    },
+    "yield_private": {
+      "artifacts": "build-waterline-sync/poll-private-runner-sweep-v1/nsys-yield",
+      "profiled_runtime_ms": 1949.727045,
+      "activity_envelope": "first kernel start to last kernel end; not exact runner forward boundaries",
+      "kernel_span_ms": 1802.100137,
+      "kernel_count": 92375,
+      "kernel_duration_sum_ms": 1303.234156,
+      "kernel_name_geometry_instance_histogram_sha256": "sha256:632d5df4ebd01ad9b556d88144c58866086326ee9da02e60129cd4291c35d5f6",
+      "union_kernel_copy_memset_active_ms": 1349.067397,
+      "union_active_fraction": 0.7486084537154664,
+      "no_activity_gap_ms": 453.03274,
+      "gap_bins": {
+        "0_to_50_us": {
+          "count": 114296,
+          "sum_ms": 145.551118
+        },
+        "50_to_100_us": {
+          "count": 77,
+          "sum_ms": 4.604184
+        },
+        "100_to_300_us": {
+          "count": 796,
+          "sum_ms": 193.425336
+        },
+        "300_to_1000_us": {
+          "count": 238,
+          "sum_ms": 96.607453
+        },
+        "1000_to_1e+09_us": {
+          "count": 2,
+          "sum_ms": 12.844649
+        }
+      },
+      "selected_cuda_apis_within_kernel_envelope": [
+        {
+          "name": "cudaEventQuery_v3020",
+          "count": 1021551,
+          "sum_ms": 412.771844
+        },
+        {
+          "name": "cudaLaunchKernel_ptsz_v7000",
+          "count": 90324,
+          "sum_ms": 226.581789
+        },
+        {
+          "name": "cudaMemcpyAsync_ptsz_v7000",
+          "count": 22776,
+          "sum_ms": 71.016729
+        }
+      ]
+    }
+  },
+  "nsys_histogram_binding": {
+    "same": true,
+    "definition": "SHA256 of sorted aggregate (kernel demangled name, gridXYZ, blockXYZ, dynamic/static shared memory, instance count). Timestamp/duration/pointer values excluded. Both captures contain 92,375 kernels.",
+    "baseline_scope": "100us profile reused from the preceding unchanged shared-runner diagnostic; the nine untraced poll comparisons use newly built private100us/10us/yield runners. Both profiles use cuda-only, no CPU sampling, no symbols resolution, identical plan/fixture/backend.",
+    "private_yield_profile_passed": true
+  },
+  "conclusion": "In this local plan, changing only the no-progress wait reduced median forward time by 20.6% (10us) and 33.0% (yield), with non-overlapping observed ranges and unchanged all-slot correctness. The yield profile shows smaller GPU idle gaps and substantially more event polling. This does not establish full-model/four-GPU benefit or CPU-Prepare/HostBoot behavior.",
+  "decision": "Keep delivered production100us and the currently running full-model execution unchanged in this phase. These private results are diagnosis/candidate evidence only.",
+  "shared_inputs_unchanged": true
+}

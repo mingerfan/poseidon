@@ -1,0 +1,31 @@
+workload=lookahead-local-sweep-v1
+PASS window=8 label=repeat-0-w8 runtime_ms=676.947
+PASS window=32 label=repeat-0-w32 runtime_ms=676.179
+PASS window=64 label=repeat-0-w64 runtime_ms=655.627
+PASS window=32 label=repeat-1-w32 runtime_ms=660.567
+PASS window=64 label=repeat-1-w64 runtime_ms=697.990
+PASS window=8 label=repeat-1-w8 runtime_ms=666.190
+PASS window=64 label=repeat-2-w64 runtime_ms=654.215
+PASS window=8 label=repeat-2-w8 runtime_ms=688.594
+PASS window=32 label=repeat-2-w32 runtime_ms=659.758
+PASS window=8 label=trace-w8 runtime_ms=677.863
+PASS window=32 label=trace-w32 runtime_ms=654.833
+PASS window=64 label=trace-w64 runtime_ms=721.320
+{"8": {"runtime_ms_median": 676.946932, "runtime_ms_min": 666.189582, "runtime_ms_max": 688.593936, "online_ms_median": 522.484742, "host_boot_ms_median": 280.190854, "consumer_wait_ms_median": 10.130065, "gpu_encode_ms_median": 15.781869}, "32": {"runtime_ms_median": 660.567455, "runtime_ms_min": 659.758059, "runtime_ms_max": 676.178835, "online_ms_median": 507.766736, "host_boot_ms_median": 275.391234, "consumer_wait_ms_median": 8.376749, "gpu_encode_ms_median": 16.054215}, "64": {"runtime_ms_median": 655.626697, "runtime_ms_min": 654.215067, "runtime_ms_max": 697.990317, "online_ms_median": 503.527293, "host_boot_ms_median": 273.324464, "consumer_wait_ms_median": 9.261292, "gpu_encode_ms_median": 16.935082}}
+
+workload=lookahead-local-qproj-sweep-v1
+PASS window=8 label=repeat-0-w8 runtime_ms=2771.685
+PASS window=32 label=repeat-0-w32 runtime_ms=2933.672
+PASS window=64 label=repeat-0-w64 runtime_ms=2724.634
+PASS window=32 label=repeat-1-w32 runtime_ms=2676.370
+PASS window=64 label=repeat-1-w64 runtime_ms=2706.546
+PASS window=8 label=repeat-1-w8 runtime_ms=2899.238
+PASS window=64 label=repeat-2-w64 runtime_ms=2687.798
+PASS window=8 label=repeat-2-w8 runtime_ms=2719.220
+PASS window=32 label=repeat-2-w32 runtime_ms=2708.869
+PASS window=8 label=trace-w8 runtime_ms=2759.937
+PASS window=32 label=trace-w32 runtime_ms=2720.487
+PASS window=64 label=trace-w64 runtime_ms=2715.043
+{"8": {"runtime_ms_median": 2771.685328, "runtime_ms_min": 2719.220116, "runtime_ms_max": 2899.238049, "online_ms_median": 2640.121002, "host_boot_ms_median": 0.0, "consumer_wait_ms_median": 101.381048, "gpu_encode_ms_median": 209.986518}, "32": {"runtime_ms_median": 2708.868721, "runtime_ms_min": 2676.370406, "runtime_ms_max": 2933.672011, "online_ms_median": 2580.814047, "host_boot_ms_median": 0.0, "consumer_wait_ms_median": 110.884544, "gpu_encode_ms_median": 210.437749}, "64": {"runtime_ms_median": 2706.546339, "runtime_ms_min": 2687.798484, "runtime_ms_max": 2724.634131, "online_ms_median": 2576.820099, "host_boot_ms_median": 0.0, "consumer_wait_ms_median": 106.186939, "gpu_encode_ms_median": 210.08129}}
+
+nsys_profile_passed=true runtime_ms=2820.634045 union_gpu_active_fraction=0.49420107779168493 gap_ms=1351.976222
