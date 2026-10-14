@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-10-14T18:31:01.760587+08:00",
+  "poseidon_source_commit": "00a65df7",
+  "mask": "1,2,3,0",
+  "logical_to_physical_gpu": [
+    1,
+    2,
+    3,
+    0
+  ],
+  "all_four_physical_gpus": true,
+  "backend": "gpu",
+  "same_heft_logical_plan": true,
+  "lazy_scale_log2": 40,
+  "initial_and_maximum_pool_env": "explicitly unset, default real reservation from current available memory",
+  "source_sha256": "9a74df35a4175c12b86bc3ea012b8dbc5a015c50078d77f41c2e7191658fe99c",
+  "header_sha256": "af575c6157a7ea632d3deeb4a74a5d0806b9fa0ef2fd975243891f656ad856eb",
+  "runner_sha256": "bdfb748336b242796a3bed03421a035a4f9d010d4203d0b235b7e96147a04e0e",
+  "frozen_executed_runner": "/home/xuming/poseidon-waterline-20261013/rescale-plan-bound-update-20261014/executed-runner",
+  "acceptance_helper_sha256": "a7ae521c8248991220064f89ef1a3c45d1d7ff138ccb1459cf38e583d316723e",
+  "supervisor_script": "/home/xuming/poseidon-waterline-20261013/rescale-plan-bound-update-20261014/run-full-plan-bound-188.sh",
+  "supervisor_script_sha256": "690b714a57afa9c24cb6c221b59e44e2b55b0477214aafeb5fec870f33945f88",
+  "command": [
+    "/home/xuming/.local/bin/tmux",
+    "new-session",
+    "-d",
+    "-s",
+    "poseidon-q50-plan-bound-full",
+    "bash /home/xuming/poseidon-waterline-20261013/rescale-plan-bound-update-20261014/run-full-plan-bound-188.sh > /home/xuming/poseidon-waterline-20261013/logs/rescale-plan-bound-full-20261014.supervisor.log 2>&1"
+  ],
+  "status": "launched",
+  "numerical_acceptance_complete": false
+}

@@ -1,0 +1,43 @@
+{
+  "scope": "CPU-only private copy getter versus const-reference getter on one real Q50/P8 context map",
+  "compile_and_link": [
+    "/usr/bin/c++",
+    "-std=c++20",
+    "-O3",
+    "-DNDEBUG",
+    "-fopenmp",
+    "-pthread",
+    "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src",
+    "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/context-level-map-benchmark.cpp",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent/libposeidon_shared.so",
+    "-Wl,-rpath,/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent",
+    "-lgmpxx",
+    "-lgmp",
+    "-o",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-context-level-map-agent/context-level-map-benchmark"
+  ],
+  "working_directory": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon",
+  "compiler_version": "c++ (GCC) 16.2.1 20260810",
+  "source_sha256": "sha256:2d3f75eccc23bb11ed9369ff29502f45e108635e011586e0b611885da2afd410",
+  "shared_library": {
+    "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent/libposeidon_shared.so",
+    "sha256": "sha256:d21625ce20553434c3be1ee793408f8cba480e369932dd5646c3d43c33d137ab"
+  },
+  "compile_returncode": 0,
+  "run": [
+    "/usr/bin/taskset",
+    "-c",
+    "0",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-context-level-map-agent/context-level-map-benchmark",
+    "1000000",
+    "1729"
+  ],
+  "run_working_directory": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-context-level-map-agent",
+  "run_environment_overrides": {
+    "OMP_NUM_THREADS": "1"
+  },
+  "cpu_affinity": [
+    0
+  ]
+}

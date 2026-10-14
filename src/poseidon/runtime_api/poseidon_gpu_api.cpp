@@ -1774,12 +1774,21 @@ fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instru
             case fhegpu::ComputeKind::Negate:case fhegpu::ComputeKind::MulCP:break;
             case fhegpu::ComputeKind::MulCC:bytes=n*q*4*8;break;
             case fhegpu::ComputeKind::Rescale:
+            {
                 if(!waterline_rescale_workspace_levels_ || *waterline_rescale_workspace_levels_<=0)
                     throw std::runtime_error("Waterline Rescale bound needs completed plan validation");
+                const auto target_level=std::get<fhegpu::RescaleAttrs>(op->attrs).target_level;
+                if(target_level<0)throw std::invalid_argument("Waterline Rescale target level is negative");
+                // ContextData::level() == q.size()-1. Every validated input
+                // level is target+gap with gap <= the plan maximum, so this
+                // bounds its Q prefix without retaining a descriptor cache.
+                const auto source_q_bound=std::min<std::uint64_t>(q,
+                    std::uint64_t(target_level)+std::uint64_t(*waterline_rescale_workspace_levels_)+1);
                 // At most one prescale plus the actual level drops can retain
-                // intermediate ciphertexts. Keep full Q and three components,
-                // but do not charge the OperatorSpec capability limit per op.
-                bytes=n*q*4*(4+3*std::uint64_t(*waterline_rescale_workspace_levels_));break;
+                // intermediate ciphertexts, each with at most three components.
+                // Retained scratch stays in the separate full-Q fixed reserve.
+                bytes=n*source_q_bound*4*(4+3*std::uint64_t(*waterline_rescale_workspace_levels_));break;
+            }
             case fhegpu::ComputeKind::ModSwitch:bytes=n*q*4*8;break;
             case fhegpu::ComputeKind::Rotate:case fhegpu::ComputeKind::Relinearize:
                 // Conservative bound on HYBRID digit expansion, accumulation,

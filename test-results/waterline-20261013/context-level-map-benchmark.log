@@ -1,0 +1,10 @@
+{"event":"context","poly_degree":16384,"q_count":50,"p_count":8,"scale_log2":40,"map_entries":51,"bucket_count":59,"queried_levels":50,"seed":1729,"context_and_snapshot_ms":351.04329799999999,"map_checksum":10632891562565674715,"model_performance_claim":false}
+{"event":"timing","mode":"copy","repeat":0,"lookups":1000000,"milliseconds":461.345776,"checksum":18441804621232425779,"allocation_counting_enabled":false}
+{"event":"timing","mode":"reference","repeat":0,"lookups":1000000,"milliseconds":3.1661450000000002,"checksum":18441804621232425779,"allocation_counting_enabled":false}
+{"event":"timing","mode":"reference","repeat":1,"lookups":1000000,"milliseconds":3.154766,"checksum":18441804621232425779,"allocation_counting_enabled":false}
+{"event":"timing","mode":"copy","repeat":1,"lookups":1000000,"milliseconds":450.41396400000002,"checksum":18441804621232425779,"allocation_counting_enabled":false}
+{"event":"timing","mode":"copy","repeat":2,"lookups":1000000,"milliseconds":444.16166399999997,"checksum":18441804621232425779,"allocation_counting_enabled":false}
+{"event":"timing","mode":"reference","repeat":2,"lookups":1000000,"milliseconds":3.1619760000000001,"checksum":18441804621232425779,"allocation_counting_enabled":false}
+{"event":"allocation_count","mode":"copy","lookups":1000000,"new_calls":52000000,"requested_allocation_bytes":2920000000,"checksum":18441804621232425779,"scope":"separate counted pass; C++ new requested totals, not live/RSS peak"}
+{"event":"allocation_count","mode":"reference","lookups":1000000,"new_calls":0,"requested_allocation_bytes":0,"checksum":18441804621232425779,"scope":"separate counted pass; C++ new requested totals, not live/RSS peak"}
+{"event":"complete","passed":true,"full_model_measured":false}

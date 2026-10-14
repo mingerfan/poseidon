@@ -1,0 +1,141 @@
+{
+  "scope": "Final frozen local single-GPU level-aware Rescale workspace regression; no SSH, full-model acceptance, multi-GPU run or negative-control build. Only the API test source and these new level-aware evidence files were edited by this agent.",
+  "final_source_sha256": "962f909e152d705e8e3a68e190437bc6b0eb09abe6099b5ec0470711ad46962c",
+  "evidence_binding": "Build and test logs contain the final successful rebuild/run after restoring the original direct top-level max6-to-max5 revalidation assertion. Earlier draft level-aware logs were replaced before this JSON was created; actual-rescale-workspace-api-* evidence was untouched.",
+  "working_directory": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon",
+  "build_command": [
+    "cmake",
+    "--build",
+    "build-waterline-qwen-agent",
+    "--target",
+    "poseidon_runtime_gpu_api_tests",
+    "-j2"
+  ],
+  "run_command": [
+    "env",
+    "CUDA_VISIBLE_DEVICES=0",
+    "OMP_NUM_THREADS=1",
+    "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB=512",
+    "build-waterline-qwen-agent/bin/poseidon_runtime_gpu_api_tests"
+  ],
+  "build_exit_status": 0,
+  "test_exit_status": 0,
+  "test_groups_passed": 24,
+  "skips": [
+    "two-GPU RuntimePlan requires two CUDA devices"
+  ],
+  "build_log": "level-aware-rescale-api-build.log",
+  "test_log": "level-aware-rescale-api-tests.log",
+  "context": {
+    "poly_degree": 4096,
+    "q_full": 10,
+    "q_prime_bits": 30,
+    "p_count": 2,
+    "components": 3,
+    "input_scale_log2": 160,
+    "output_scale_log2": 40,
+    "complex_slots_per_case": 2048,
+    "dense_oracle": "independent slots[i]*slots[i], using a CPU MulCC product of encrypted input",
+    "absolute_tolerance": 0.0001
+  },
+  "assertions_passed": {
+    "workspace_query_before_completed_plan_validation_rejected": true,
+    "same_five_drop_graph_has_equal_workspace_at_capabilities8_and50": true,
+    "mixed_actual_drop5_and6_plan_has_larger_max6_workspace_than_single_max5_plan": true,
+    "mixed_first_target4_plus_maxgap6_clamps_to_Qfull10_and_matches_second_target3_bound": true,
+    "negative_target_workspace_query_rejected": true,
+    "actual_three_component_GPU_allocations_minus_final_output_fit_each_queried_bound": true,
+    "all2048_complex_slots_match_dense_square_for_each_actual_case": true,
+    "direct_top_level_revalidation_from_max6_to_max5_restores_original_budget": true,
+    "lower_input_level7_Q8_five_drop_graph_has_smaller_workspace_than_top_level9_Q10_five_drop_graph": true,
+    "real_GPU_ModSwitch_drops_two_Q_primes_preserves_scale160_and_matches_low_plan_input_descriptor": true,
+    "top_level_budget_restored_after_low_level_plan_revalidation": true,
+    "failed_revalidation_after_first_valid_rescale_clears_published_bound": true,
+    "workspace_after_failed_revalidation_rejected_and_successful_revalidation_restores_budget": true
+  },
+  "allocation_measurements_from_final_log": [
+    {
+      "capability": 50,
+      "input_level": 9,
+      "input_q": 10,
+      "actual_drop": 5,
+      "plan_max_drop": 6,
+      "components": 3,
+      "transient_allocation_total": 1966080,
+      "output_allocation": 245760,
+      "workspace_bound": 3604480,
+      "slots": 2048,
+      "max_abs_error": 6.10878e-11
+    },
+    {
+      "capability": 50,
+      "input_level": 9,
+      "input_q": 10,
+      "actual_drop": 6,
+      "plan_max_drop": 6,
+      "components": 3,
+      "transient_allocation_total": 2211840,
+      "output_allocation": 196608,
+      "workspace_bound": 3604480,
+      "slots": 2048,
+      "max_abs_error": 6.10878e-11
+    },
+    {
+      "capability": 50,
+      "input_level": 7,
+      "input_q": 8,
+      "actual_drop": 5,
+      "plan_max_drop": 5,
+      "components": 3,
+      "transient_allocation_total": 1474560,
+      "output_allocation": 147456,
+      "workspace_bound": 2490368,
+      "slots": 2048,
+      "max_abs_error": 5.93641e-11
+    }
+  ],
+  "allocation_measurement_semantics": "Cumulative actual GPU allocation bytes during compute, excluding the separately charged final output. Persistent Rescale scratch is warmed first and remains separately covered by the unchanged full-Q fixed reserve. This count bounds live transient allocations without using the query formula as its oracle.",
+  "static_upper_bound": {
+    "source_Q_bound": "Qb=min(Qfull,target_level+g+1), with negative target rejected before unsigned addition; ContextData::level()==q.size()-1 and Q-prefix chain is monotonic.",
+    "symbols": "d=operation level gap; g=max validated plan gap; k=native_drop_count; m=0/1 integer prescale allocation; b=1 iff k<d for final ModSwitch allocation; A=N*Qb*sizeof(GpuWord).",
+    "proof": [
+      "Each validated Rescale input_level=target_level+d<=target_level+g; its input Q and every intermediate Q are <=Qb.",
+      "Normalizer guarantees 1<=k<=d<=g. Temporary CT count=m+k+b-1<=d: final result is moved out and charged once as the output Value.",
+      "Validation bounds components<=3, so retained transient CT allocation<=3*g*A. The query retains the larger (4+3*g)*A allowance.",
+      "Native Rescale scratch caches can retain previous high-level allocations; full-Q retained workspace reserve is unchanged and is not reduced by Qb. Input/output Value resources, tables, keys and completed-work lifetime accounting remain separate.",
+      "This per-operation source-Q inference applies to the current fully validated plan and does not infer support for arbitrary unvalidated instructions."
+    ],
+    "source_locations": [
+      "src/poseidon/crt_context.h:72",
+      "src/poseidon/crt_context.cpp:67",
+      "src/poseidon/runtime_api/poseidon_gpu_api.cpp::validate_waterline_resources",
+      "src/poseidon/runtime_api/poseidon_gpu_api.cpp::instruction_workspace",
+      "src/poseidon/runtime_api/poseidon_gpu_api.cpp::compute Rescale",
+      "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:755"
+    ]
+  },
+  "sha256": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.h": "af575c6157a7ea632d3deeb4a74a5d0806b9fa0ef2fd975243891f656ad856eb",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "af90f47096fd338a95d17d48850f549eb271e7725e2c2e1e82e86475b259d2bd",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "962f909e152d705e8e3a68e190437bc6b0eb09abe6099b5ec0470711ad46962c",
+    "src/poseidon/runtime_api/rescale_normalization.h": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+    "src/poseidon/crt_context.h": "33c352aad400cbe537fff1924fe6d244dff06da405087dfae492e791d8f5c166",
+    "src/poseidon/crt_context.cpp": "fa97b58c96b5a00f9fa5e58b4a9499e762c8af1b8fffb91f7015caa1881f9c39",
+    "build-waterline-qwen-agent/libposeidon_runtime_gpu_api.a": "d6993461f63fbbbf2fc9e3df9986136768148a6629a6353816dbcf96fb184d22",
+    "build-waterline-qwen-agent/libposeidon_gpu.a": "460b25239c752f9a48d8c8b8487e3672396e1bd76cfeef533e9264d40c93a7ff",
+    "build-waterline-qwen-agent/bin/poseidon_runtime_gpu_api_tests": "22a607f5c2aabe48ccf016d5f3b152fa8fb95c2ac75829186b63e80d8927f268",
+    "test-results/waterline-20261013/level-aware-rescale-api-build.log": "4f11e34e3ba45327e09e49b2e785bd239af36baacbac2b11d489d0079370ce29",
+    "test-results/waterline-20261013/level-aware-rescale-api-tests.log": "62999c6a160b45ef7fca901cdb64878245ed5238dadcb5bed6b05d9b757d7fce"
+  },
+  "object_freshness": {
+    "api_object": "build-waterline-qwen-agent/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o",
+    "api_object_mtime_utc": "2026-10-14T10:45:47.894035+00:00",
+    "api_cpp_mtime_utc": "2026-10-14T10:44:22.550678+00:00",
+    "api_header_mtime_utc": "2026-10-14T10:22:13.608882+00:00",
+    "api_object_newer_than_cpp_and_header": true,
+    "tests_object": "build-waterline-qwen-agent/src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/__/tests/runtime_api/poseidon_gpu_api_test.cpp.o",
+    "tests_object_mtime_utc": "2026-10-14T10:47:57.903965+00:00",
+    "tests_source_mtime_utc": "2026-10-14T10:47:27.670542+00:00",
+    "tests_object_newer_than_source": true
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-10-14T18:32:48.203834+08:00",
+  "shared_server_not_exclusive_benchmark": true,
+  "processes": [
+    {
+      "gpu_uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "pid": 148819,
+      "owner": "songxingnuo",
+      "uid": 1016,
+      "gpu_memory_MiB": 22734,
+      "is_current_model": false,
+      "owner_ps_display": "songxin+"
+    },
+    {
+      "gpu_uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "pid": 185043,
+      "owner": "xuming",
+      "uid": 1012,
+      "gpu_memory_MiB": 9194,
+      "is_current_model": true,
+      "owner_ps_display": "xuming"
+    },
+    {
+      "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "pid": 183493,
+      "owner": "hanshubin",
+      "uid": 1020,
+      "gpu_memory_MiB": 20278,
+      "is_current_model": false,
+      "owner_ps_display": "hanshub+"
+    },
+    {
+      "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "pid": 185043,
+      "owner": "xuming",
+      "uid": 1012,
+      "gpu_memory_MiB": 11650,
+      "is_current_model": true,
+      "owner_ps_display": "xuming"
+    },
+    {
+      "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+      "pid": 185043,
+      "owner": "xuming",
+      "uid": 1012,
+      "gpu_memory_MiB": 31480,
+      "is_current_model": true,
+      "owner_ps_display": "xuming"
+    },
+    {
+      "gpu_uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+      "pid": 185043,
+      "owner": "xuming",
+      "uid": 1012,
+      "gpu_memory_MiB": 31480,
+      "is_current_model": true,
+      "owner_ps_display": "xuming"
+    }
+  ],
+  "no_other_user_process_killed": true
+}

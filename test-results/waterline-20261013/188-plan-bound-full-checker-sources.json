@@ -1,0 +1,11 @@
+{
+  "checker_source_sha256": {
+    "validate_decoded.py": "40eef47169079857b3ad03f23072d28be7618ea589ba13cfd43f2be5264a9412",
+    "export_runner_fixture.py": "da8863680b0f233c44a2fcfdc65b5704c41eca64010e773785b4a54403301fa7",
+    "prepare_checkpoint.py": "4cd1de29cfc0bef9aa7f3cf1c9e91f567511c3f1263991bb07ddc117e5402b61",
+    "qwen3/weights.py": "f4760ecb44a4fb2b6e3e164c4708650253552b65a81ae33a63d0087347466229",
+    "qwen3/spec.py": "11ac55f393c1b427b00ecd4ae15ae92051b47ee9ec433dca2b272d563cc6500d"
+  },
+  "source_directory": "/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs",
+  "scope": "Independent-checker source and imported local dependencies before model completion; no numerical result"
+}

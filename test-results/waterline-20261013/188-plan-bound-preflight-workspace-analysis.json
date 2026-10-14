@@ -1,0 +1,169 @@
+{
+  "scope": "Read-only evidence and bounded diagnosis for failed actual-plan-bound version00a65df7/PID185043. No source or budget changed by collector; candidates below are not implemented or tested, and do not establish full-plan fit.",
+  "model_exit_code": 1,
+  "supervisor_exit_code": 1,
+  "online_compute_trace_rows": 0,
+  "trace_bytes": 54,
+  "instruction": {
+    "ordinal": 17049920,
+    "binary_offset": 1087889213,
+    "compute_kind": "Rescale",
+    "inputs": [
+      10520167
+    ],
+    "output": 4932447,
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 3,
+    "physical_gpu": 0,
+    "attribute_tag": 2,
+    "attributes": [
+      9,
+      40
+    ],
+    "reuse_input": null
+  },
+  "input_descriptor": {
+    "id": 10520167,
+    "kind": "Ciphertext",
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 3,
+    "physical_gpu": 0,
+    "context_string_index": 0,
+    "level": 14,
+    "scale_log2": 160,
+    "ntt": true,
+    "components": 2,
+    "binary_value_record_index": 9238024,
+    "binary_offset": 393491668
+  },
+  "output_descriptor": {
+    "id": 4932447,
+    "kind": "Ciphertext",
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 3,
+    "physical_gpu": 0,
+    "context_string_index": 0,
+    "level": 9,
+    "scale_log2": 40,
+    "ntt": true,
+    "components": 2,
+    "binary_value_record_index": 3954220,
+    "binary_offset": 208558528
+  },
+  "current_bound": {
+    "N": 16384,
+    "full_Q": 50,
+    "validated_plan_max_drop": 5,
+    "OperatorSpec_capability_max_drop": 50,
+    "formula": "N * full_Q * 4 * (4 + 3 * validated_plan_max_drop)",
+    "workspace_bytes": 62259200,
+    "workspace_MiB": 59.375,
+    "front_including_workspace_bytes": 7095582720,
+    "front_excluding_workspace_bytes": 7033323520,
+    "allocator_capacity_bytes": 7088232352,
+    "deficit_bytes": 7350368,
+    "pool_reserved_and_cap_bytes": 9313452032,
+    "logical_gpu": 3,
+    "physical_gpu": 0
+  },
+  "candidate_target_and_validated_gap_bound": {
+    "status": "Proposed by parent, not implemented or tested by collector; independent numeric_review pending.",
+    "argument": "source_level = target_level + actual_gap <= target_level + validated_plan_max_gap. If ContextData::level equals Q_count-1, source_Q <= min(full_Q,target_level+validated_plan_max_gap+1).",
+    "Q_bound": 15,
+    "formula": "N * Q_bound * 4 * (4 + 3 * validated_plan_max_drop)",
+    "preserved_coefficients_and_component_upper_bound": true,
+    "workspace_bytes": 18677760,
+    "reduction_bytes": 43581440,
+    "front_if_other_charges_unchanged_bytes": 7052001280,
+    "headroom_at_this_instruction_bytes": 36231072,
+    "required_review": [
+      "ContextData::level and Q-count relation across every supported context/level",
+      "Actual scalar/rescale/ModSwitch allocation shapes and retained caches",
+      "No metadata/bound reuse across failed plan validation",
+      "Complete baseline revalidation after implementation; future peaks may differ"
+    ]
+  },
+  "component_observation_alternative": {
+    "status": "Not implemented or required for the parent preferred candidate. This single input has2components; no whole-plan component maximum was inferred from the bounded lookup.",
+    "argument": "After separately charging final output, at most actual_drop ciphertext intermediates remain; scalar/nativeRescale/ModSwitch preserve source components.",
+    "candidate_workspace_for_this2component_drop5_bytes": 45875200,
+    "reduction_bytes": 16384000,
+    "headroom_at_this_instruction_bytes": 9033632,
+    "whole_plan_requirement": "Any plan-wide product bound must be computed from every validated Rescale input; a single instruction is not sufficient."
+  },
+  "allocation_scope_facts": [
+    "The operation is Rescale, not Rotate/Relinearize. It is NTT2-component input level14/scale160 to level9/scale40, with no reuse.",
+    "Normalization native_drop_count<=actual_drop. Execution performs at most one prescale allocation, native_drop_count rescale allocations, and one final ModSwitch only when native_drop_count<actual_drop.",
+    "Final output has its own value_resources charge. Excluding that output, no more than actual_drop intermediate ciphertexts are retained.",
+    "GpuEvaluator scalar multiplication, native Rescale and ModSwitch preserve component count and allocate current or reduced Q shapes. Rescale scratch is retained and included in the existing fixed-reserve model.",
+    "Both candidate arithmetic calculations retain the original additive4 coefficient. No cache reserve, physical allocator guard, tolerance, helper, profile, HEFT placement or budget is lowered."
+  ],
+  "source_bindings": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp",
+      "bytes": 149789,
+      "sha256": "9a74df35a4175c12b86bc3ea012b8dbc5a015c50078d77f41c2e7191658fe99c",
+      "local_sha256_at_collection": "9a74df35a4175c12b86bc3ea012b8dbc5a015c50078d77f41c2e7191658fe99c",
+      "matches_local_at_collection": true
+    },
+    "src/poseidon/runtime_api/rescale_normalization.h": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h",
+      "bytes": 2452,
+      "sha256": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+      "local_sha256_at_collection": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+      "matches_local_at_collection": true
+    },
+    "src/poseidon/gpu/gpu_evaluator.cpp": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/gpu/gpu_evaluator.cpp",
+      "bytes": 307472,
+      "sha256": "8ea1d72a02e69bfb5a9d1de4fb23d3ae60214bc348ff09469a176cf778871d73",
+      "local_sha256_at_collection": "8ea1d72a02e69bfb5a9d1de4fb23d3ae60214bc348ff09469a176cf778871d73",
+      "matches_local_at_collection": true
+    },
+    "src/poseidon/gpu/gpu_modswitch_handler.cpp": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/gpu/gpu_modswitch_handler.cpp",
+      "bytes": 39823,
+      "sha256": "bb537ffa9dbfebbcf92ac695116b1cabb69a92ee938006db4148aea7ac53e863",
+      "local_sha256_at_collection": "bb537ffa9dbfebbcf92ac695116b1cabb69a92ee938006db4148aea7ac53e863",
+      "matches_local_at_collection": true
+    }
+  },
+  "prior_crt_context_binding": {
+    "source": {
+      "remote_path": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/crt_context.cpp",
+      "bytes": 18573,
+      "sha256": "fa97b58c96b5a00f9fa5e58b4a9499e762c8af1b8fffb91f7015caa1881f9c39",
+      "local_sha256_at_analysis": "fa97b58c96b5a00f9fa5e58b4a9499e762c8af1b8fffb91f7015caa1881f9c39",
+      "matches_local_at_analysis": true
+    },
+    "evidence_file": "188-reserved-pool-preflight-workspace-analysis.json",
+    "evidence_file_sha256": "96ee17357cf78dfae6827db06e5868109c9fd7ac0646d35fb8f7ec3106aa757b"
+  },
+  "existing_parent_launch_live_sharing_checker_bindings": {
+    "188-plan-bound-full-launch.json": {
+      "bytes": 1522,
+      "sha256": "12962e81a121ea5489f38771f361540fc508020874c3de0a8e9dcacccbf854de"
+    },
+    "188-plan-bound-full-live-binding.json": {
+      "bytes": 1745,
+      "sha256": "535af72374b929c0918768e51738dd42ba8bbc96658e72fdc9ed64d2e9096fff"
+    },
+    "188-plan-bound-full-sharing.json": {
+      "bytes": 1605,
+      "sha256": "daf37a2811ccfd67cf3c3237aed141a4eaf6c0c7473719f5e5a999bbc2156d4f"
+    },
+    "188-plan-bound-full-checker-sources.json": {
+      "bytes": 708,
+      "sha256": "3affa4b9b0108d6b0cd041ad4995463a9c6d3f5144d50047536aacfa815b0d81"
+    }
+  },
+  "limitations": [
+    "The bounded decoder inspected this instruction and exact input/output records only; it did not rescan the full plan or trace.",
+    "Headroom calculations apply only to this rejected group with other ledger charges fixed. No whole-model fit or numerical pass has been demonstrated.",
+    "External-memory guard provenance is being reviewed by the parent and is not changed by this diagnosis."
+  ],
+  "collector_changed_source_remote_files_ran_gpu_or_committed": false
+}

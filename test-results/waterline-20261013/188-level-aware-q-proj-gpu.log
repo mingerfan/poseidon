@@ -1,0 +1,38 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=gpu host_boot_instructions=0
+KEYS ready rotation_basis=13 key_generation_ms=7392.335731
+GPU_POOL maximum_mb=6592 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6912212992 maximum_bytes=6912212992
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=1487808608 retained_workspace_bound=41418752 reserve_required=1596336224 reserve_configured=3221225472
+waterline physical GPU0 pool_reserved=6912212992 pool_cap=6912212992 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=5315876768
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+waterline GPU0 front_peak=4293918720 plain_peak=14155776 remaining_front=1966080 remaining_plain=0
+waterline shared host_peak=32833536 pinned_peak=9895936 raw_peak=524288
+FORWARD complete runtime_ms=4501.067285
+PASS output=0 name=q_proj max_abs=9.90953e-10 max_relative=4.18661e-10 max_imaginary=7.12217e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=9.90953e-10 max_relative=4.18661e-10 max_imaginary=7.12217e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q-proj-gpu-report.json decoded=/home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q-proj-gpu-decoded.json
+	Command being timed: "env CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=1 /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e /home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q50-small-regression/q_proj/optimized._hecate_cyclic_linear_smoke.runtime-plan.json /home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q50-small-regression/profiles/operator-spec.json /home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q50-small-regression/q_proj/fixture.json /home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q-proj-gpu-report.json /home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q-proj-gpu-decoded.json --bundle /home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014/q50-small-regression/q_proj/optimized._hecate_cyclic_linear_smoke.bundle --backend gpu"
+	User time (seconds): 14.04
+	System time (seconds): 2.64
+	Percent of CPU this job got: 92%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2389076
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 673299
+	Voluntary context switches: 37628
+	Involuntary context switches: 51
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 752
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

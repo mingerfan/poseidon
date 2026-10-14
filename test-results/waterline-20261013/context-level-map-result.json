@@ -1,0 +1,160 @@
+{
+  "scope": "CPU-only one-million dynamic lookups on a snapshot of an actual N16384/Q50/P8 CrtContext map; private getters differ by return type only",
+  "recorded_at": "2026-10-14T18:47:13.500741+08:00",
+  "passed": true,
+  "returncode": 0,
+  "full_model_measured": false,
+  "model_oom_cause_established": false,
+  "context": {
+    "event": "context",
+    "poly_degree": 16384,
+    "q_count": 50,
+    "p_count": 8,
+    "scale_log2": 40,
+    "map_entries": 51,
+    "bucket_count": 59,
+    "queried_levels": 50,
+    "seed": 1729,
+    "context_and_snapshot_ms": 351.043298,
+    "map_checksum": 10632891562565674715,
+    "model_performance_claim": false
+  },
+  "lookups_per_pass": 1000000,
+  "timings": {
+    "copy": [
+      {
+        "event": "timing",
+        "mode": "copy",
+        "repeat": 0,
+        "lookups": 1000000,
+        "milliseconds": 461.345776,
+        "checksum": 18441804621232425779,
+        "allocation_counting_enabled": false
+      },
+      {
+        "event": "timing",
+        "mode": "copy",
+        "repeat": 1,
+        "lookups": 1000000,
+        "milliseconds": 450.413964,
+        "checksum": 18441804621232425779,
+        "allocation_counting_enabled": false
+      },
+      {
+        "event": "timing",
+        "mode": "copy",
+        "repeat": 2,
+        "lookups": 1000000,
+        "milliseconds": 444.161664,
+        "checksum": 18441804621232425779,
+        "allocation_counting_enabled": false
+      }
+    ],
+    "reference": [
+      {
+        "event": "timing",
+        "mode": "reference",
+        "repeat": 0,
+        "lookups": 1000000,
+        "milliseconds": 3.166145,
+        "checksum": 18441804621232425779,
+        "allocation_counting_enabled": false
+      },
+      {
+        "event": "timing",
+        "mode": "reference",
+        "repeat": 1,
+        "lookups": 1000000,
+        "milliseconds": 3.154766,
+        "checksum": 18441804621232425779,
+        "allocation_counting_enabled": false
+      },
+      {
+        "event": "timing",
+        "mode": "reference",
+        "repeat": 2,
+        "lookups": 1000000,
+        "milliseconds": 3.161976,
+        "checksum": 18441804621232425779,
+        "allocation_counting_enabled": false
+      }
+    ]
+  },
+  "timing_summary": {
+    "copy": {
+      "median_ms": 450.413964,
+      "min_ms": 444.161664,
+      "max_ms": 461.345776
+    },
+    "reference": {
+      "median_ms": 3.161976,
+      "min_ms": 3.154766,
+      "max_ms": 3.166145
+    }
+  },
+  "allocation_counts": {
+    "copy": {
+      "event": "allocation_count",
+      "mode": "copy",
+      "lookups": 1000000,
+      "new_calls": 52000000,
+      "requested_allocation_bytes": 2920000000,
+      "checksum": 18441804621232425779,
+      "scope": "separate counted pass; C++ new requested totals, not live/RSS peak"
+    },
+    "reference": {
+      "event": "allocation_count",
+      "mode": "reference",
+      "lookups": 1000000,
+      "new_calls": 0,
+      "requested_allocation_bytes": 0,
+      "checksum": 18441804621232425779,
+      "scope": "separate counted pass; C++ new requested totals, not live/RSS peak"
+    }
+  },
+  "timing_ratio_copy_over_reference": 142.44699010998187,
+  "wall_seconds_including_context_and_counted_passes": 2.192331040998397,
+  "cpu_model": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+  "cpu_affinity": [
+    0
+  ],
+  "run_command": [
+    "/usr/bin/taskset",
+    "-c",
+    "0",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-context-level-map-agent/context-level-map-benchmark",
+    "1000000",
+    "1729"
+  ],
+  "inputs": {
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/context-level-map-benchmark.cpp": {
+      "bytes": 7561,
+      "sha256": "sha256:2d3f75eccc23bb11ed9369ff29502f45e108635e011586e0b611885da2afd410"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-context-level-map-agent/context-level-map-benchmark": {
+      "bytes": 45320,
+      "sha256": "sha256:220a37f617087f47f907c52a9777cfeabb50cc43615edf75e3cdedcd17395e96"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent/libposeidon_shared.so": {
+      "bytes": 1830808,
+      "sha256": "sha256:d21625ce20553434c3be1ee793408f8cba480e369932dd5646c3d43c33d137ab"
+    }
+  },
+  "source_identity": {
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/crt_context.h": "sha256:33c352aad400cbe537fff1924fe6d244dff06da405087dfae492e791d8f5c166",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/crt_context.cpp": "sha256:fa97b58c96b5a00f9fa5e58b4a9499e762c8af1b8fffb91f7015caa1881f9c39",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/poseidon_context.h": "sha256:8f37cd55938765bb134b6f5d115c964fe4a5013c270dc6fca6f3351a3a3af9cf"
+  },
+  "log": {
+    "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/context-level-map-benchmark.log",
+    "sha256": "sha256:bd5cf5632e572785a660f1d9754cbb28c0f29b20fcd1be74a9e90920a62db495"
+  },
+  "commands_file": "context-level-map-commands.json",
+  "limitations": [
+    "Timings are local CPU microbenchmark results, not model savings or OOM attribution.",
+    "Allocation counters run in separate untimed passes; totals are C++ new requests, not live/RSS peaks.",
+    "Timed passes disable counting but retain the replacement new fast-path check.",
+    "Actual context construction, one snapshot copy, input generation and warmup are excluded from lookup timings.",
+    "Production headers and binaries are unchanged by this benchmark; existing CPU shared library is linked."
+  ]
+}

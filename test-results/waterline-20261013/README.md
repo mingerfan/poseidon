@@ -147,3 +147,11 @@ POSEIDON_188_WORKSPACE="$base" POSEIDON_RESCALE_CHECK_LABEL=rescale-prescale-fre
 `consumer_wait_ms`只记录foreground CUDA stream对所有CT/Plain输入事件的等待区间，不含Prepare发布value前的CPU、队列或准入等待，也不独立归因为明文。启动填充计入cold/运行总时间，未独立单列；`initialization_ms`不等于填充耗时。未据这些指标声称准备完全隐藏或完整模型加速。
 
 Rescale工作区计费现使用完整已验证plan的实际最大降层数，保留Qfull和三分量上界；支持能力50不再当作每次执行50层。本地 [24/24及实际三分量分配](actual-rescale-workspace-api-validation.json)、188 [同版完整检查](188-plan-bound-checks-summary.json)通过，源API为`9a74df35…`，runner为`bdfb7483…`。新图/重复或失败验证会重新发布或清除该最大值；数学与HEFT不变。完整模型仍须重新预检并完成数值对照。
+
+包含以上修正的完整GPU-only复跑于188时间18:31启动，PID185043，源提交`00a65df7`、runner `bdfb7483…`；[启动记录](188-plan-bound-full-launch.json)与 [实际进程绑定](188-plan-bound-full-live-binding.json)核对同一原计划、argv、物理四卡映射和binary。该次随后在#17049920 Rescale预检退出，差7,350,368B，零compute；[报告](188-plan-bound-preflight-model-report.json)、[层级上界诊断](188-plan-bound-preflight-workspace-analysis.json)。正在按已验证target+maxgap的Q前缀上界继续修正，不以启动成功当作验收。
+
+最新分层上界已通过 [本地24/24](level-aware-rescale-api-validation.json)及 [188最终同版检查](188-level-aware-checks-summary.json)：Rescale临时Q按target+已验证最大gap推导，固定scratch仍按完整Q预留，详见 [分配证明与边界](pool-reservation-and-ready-validation.md)。源API `af90f470…`、测试 `962f909e…`、188 runner `c261b9a5…`。此前`00a65df7`及两次预检失败分别保留原始绑定，均没有完整数值结果。
+
+在188保留SSH长连接后，可用最新源码执行 [构建脚本](build-188.sh)和新的`POSEIDON_RESCALE_CHECK_LABEL`运行 [回归脚本](check-rescale-188.sh)。完整运行继续使用 [同一验收入口](run-188-acceptance.sh)：设置`POSEIDON_QWEN_CUDA_VISIBLE_DEVICES=1,2,3,0 POSEIDON_QWEN_BACKEND=gpu`及全新的`POSEIDON_ACCEPTANCE_LABEL`；仅在`latest-build.status`完全一致时，用`POSEIDON_VERIFIED_PRESSURE_DIR`指向成功的`logs/level-aware-rescale-final-checks-20261014`。不设置旧initial/max pool环境变量，保持模型及既定容差；入口会核对261输出并运行独立检查器。
+
+另核对了level map复制这一可疑开销：[局部CPU审计](context-level-map-audit.md)。本地每百万次按值查找约450ms，const引用约3ms；未测其在完整模型中的次数或墙钟贡献，不能解释约149分钟慢跑或声称模型收益。本阶段不改这一公开getter、不引入私有缓存，继续完整模型验收。

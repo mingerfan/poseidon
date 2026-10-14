@@ -1,0 +1,50 @@
+[  7%] Built target ckks_runtime_core
+[ 94%] Built target poseidon_shared
+[ 98%] Built target poseidon_runtime_cpu_api
+[100%] Built target poseidon_runtime_cpu_api_tests
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 93%] Built target poseidon_gpu
+[ 98%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/__/tests/runtime_api/poseidon_gpu_api_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_api_tests
+[100%] Built target poseidon_runtime_gpu_api_tests
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 93%] Built target poseidon_gpu
+[ 98%] Built target poseidon_runtime_gpu_api
+[100%] Built target poseidon_runtime_gpu_scalar_tests
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 93%] Built target poseidon_gpu
+[ 98%] Built target poseidon_runtime_gpu_api
+[100%] Built target poseidon_runtime_gpu_prepare_oom_tests
+[  5%] Built target ckks_runtime_core
+[  8%] Built target ckks_runtime_plan_json
+[ 73%] Built target poseidon_shared
+[ 92%] Built target poseidon_gpu
+[ 97%] Built target poseidon_runtime_gpu_api
+[100%] Built target poseidon_runtime_gpu_qwen_e2e
+	Command being timed: "/home/xuming/poseidon-tools/cmake/cmake/data/bin/cmake --build /home/xuming/poseidon-waterline-20261013/build --target poseidon_runtime_cpu_api_tests poseidon_runtime_gpu_api_tests poseidon_runtime_gpu_scalar_tests poseidon_runtime_gpu_prepare_oom_tests poseidon_runtime_gpu_qwen_e2e -j12"
+	User time (seconds): 58.96
+	System time (seconds): 2.38
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:01.22
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1774804
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 604240
+	Voluntary context switches: 573
+	Involuntary context switches: 138
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 60224
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
