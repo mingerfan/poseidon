@@ -1,0 +1,110 @@
+BASELINE profile=q50-fixed45 dataset=grid N=65536 Q=50 P=25 global_dnum=2 secret_hamming_weight=192 degree=59 DA=2 arcsine_degree=0 output_fold=false c2s_log_scale=45 linear_mode=double_hoist metadata_only=1
+BOOTSTRAP_BRANCH mode=generic_complex active_log_slots=15 evalmod_calls=2 output_real_projection=false
+Q_PRIMES 4255252481 4255645697 4258922497 4260364289 4261675009 4264427521 4265476097 4266393601 4267442177 1040842753 1042415617 1043464193 1045430273 1048707073 1049100289 1051721729 1052508161 1053818881 1054212097 1055260673 1056178177 1056440321 1060765697 1062469633 1062862849 1064697857 1065484289 1068236801 1070727169 1071513601 1073479681 2135162881 4272291841 4272685057 1040056321 2135818241 4273340417 2142502913 4274126849 4276092929 2144468993 2146041857 2146959361 4277403649 4279369729 2147352577 4280025089 4280156161 4281204737 1038745601
+P_PRIMES 4293918721 4291952641 4289462273 4288806913 4286709761 4286054401 4284874753 4284088321 4283301889 4271505409 4271374337 4269015041 4253024257 4252631041 4252106753 4251844609 4247388161 4245553153 4245422081 4243980289 4241883137 4241620993 4241489921 4240310273 4240048129
+CONTRACT preparation_target_log_scale=59 c2s_log_scale=45 periods_per_integer=1
+PLAN C2S stage=1 q_in=50 q_out=49 output_log_scale=60.04780477869699
+PLAN C2S stage=2 q_in=49 q_out=48 output_log_scale=73.05243509455039
+PLAN C2S stage=3 q_in=48 q_out=46 output_log_scale=54.06244669887172
+PLAN EvalMod q_in=46 q_out=31 output_log_scale=53.03094629532367 effective_degree=58
+STRICT_NATIVE_PLAN_PROBE PASS inputs=27 boots=18 raw_ops=27410 constants=1897 encodes=2739 rescale_groups=834 encoder_levels_checked=21 gpu_executed=false native_arithmetic_template_compiled=true
+RESULT metadata=PASS keys_generated=false gpu_executed=false
+STRICT_DSL_PREFLIGHT PASS actions=13420 inputs=27 boots=18
+BASELINE profile=q50-fixed45 dataset=grid N=65536 Q=50 P=25 global_dnum=2 secret_hamming_weight=192 degree=59 DA=2 arcsine_degree=0 output_fold=false c2s_log_scale=45 linear_mode=double_hoist metadata_only=0
+BOOTSTRAP_BRANCH mode=lcdnn_s2c_first_real active_log_slots=15 evalmod_calls=2 output_real_projection=true
+Q_PRIMES 4255252481 4255645697 4258922497 4260364289 4261675009 4264427521 4265476097 4266393601 4267442177 1040842753 1042415617 1043464193 1045430273 1048707073 1049100289 1051721729 1052508161 1053818881 1054212097 1055260673 1056178177 1056440321 1060765697 1062469633 1062862849 1064697857 1065484289 1068236801 1070727169 1071513601 1073479681 2135162881 4272291841 4272685057 1040056321 2135818241 4273340417 2142502913 4274126849 4276092929 2144468993 2146041857 2146959361 4277403649 4279369729 2147352577 4280025089 4280156161 4281204737 1038745601
+P_PRIMES 4293918721 4291952641 4289462273 4288806913 4286709761 4286054401 4284874753 4284088321 4283301889 4271505409 4271374337 4269015041 4253024257 4252631041 4252106753 4251844609 4247388161 4245553153 4245422081 4243980289 4241883137 4241620993 4241489921 4240310273 4240048129
+CONTRACT preparation_target_log_scale=59 c2s_log_scale=45 periods_per_integer=1
+PLAN C2S stage=1 q_in=50 q_out=49 output_log_scale=60.04780477869699
+PLAN C2S stage=2 q_in=49 q_out=48 output_log_scale=73.05243509455039
+PLAN C2S stage=3 q_in=48 q_out=46 output_log_scale=54.06244669887172
+PLAN EvalMod q_in=46 q_out=31 output_log_scale=53.03094629532367 effective_degree=58
+MEMORY pool_cap_GiB=26 pool_initial_GiB=0 startup_free_GiB=31.4378662109375
+SECRET h=192 positive=96 negative=96 source=OS_random nonzero=true
+PUBLIC_KEYS count=21 host_cache_hit=0 double_hoist=0
+PHASE bootstrap_existing_ciphertext q=6 log_scale=39.99999999998415 no_reencryption=true
+PHASE baseline_matrices mode=lcdnn_s2c_first_real log_slots=15
+BOOTSTRAP_OFFLINE_CACHE matrices=miss
+PHASE baseline_keys rotations=39 estimated_gpu_GiB=2.8564453125
+PUBLIC_KEYS count=39 host_cache_hit=0 double_hoist=0
+PHASE baseline_S2C_no_hoist
+BOOTSTRAP_GPU_TIMING stage=S2C elapsed_ms=46.054493 excludes_offline_setup=true
+CHECK baseline_S2C_vs_plain_DFT q=2 log_scale=47.04535065370532 max_abs=2.883668804730718e-05 rms=8.653169629025635e-06 max_imag=60.3471695175576 reference_max_abs=75.2563171534678
+BOOTSTRAP_GPU_TIMING stage=prepare elapsed_ms=0.275619 excludes_offline_setup=true
+PREPARE multiplier=3969 actual_log_scale=58.99991050070516
+CHECK baseline_prepare_preserves_value q=2 log_scale=58.99991050070516 max_abs=1.293207299340885e-14 rms=9.50456112204606e-16 max_imag=60.3471695175576 reference_max_abs=75.25630754868834
+CONTRACT small_signal_gain=0.9999379657403213 output_gain_compensation=false
+BOOTSTRAP_GPU_TIMING stage=ModRaise elapsed_ms=0.664701 excludes_offline_setup=true
+PHASE baseline_C2S_no_hoist branch=real_plus_imag
+BOOTSTRAP_GPU_TIMING stage=C2S elapsed_ms=225.11782 excludes_offline_setup=true
+CHECK baseline_C2S_real_vs_plain_DFT q=46 log_scale=54.06244669887172 max_abs=1.351617560361807e-08 rms=3.277321033800884e-09 max_imag=1.537258994163764e-10 reference_max_abs=0.6400166834389647
+CHECK baseline_C2S_imag_vs_plain_DFT q=46 log_scale=54.06244669887172 max_abs=1.298555672208602e-08 rms=3.24766446930149e-09 max_imag=1.959973096642918e-10 reference_max_abs=0.6400000000097428
+DOMAIN max_abs=0.640016683388739 outside=0
+ORACLE baseline_ideal_sine_vs_input max_abs=1.346311489844206e-05 rms=2.787073863532984e-06
+ORACLE baseline_degree59_vs_sine max_abs=8.396429840002342e-08 rms=3.817293487114908e-08
+ORACLE baseline_degree59_vs_input max_abs=1.34537444187923e-05 rms=2.787192627068926e-06
+PHASE baseline_original_EvalMod_no_fold
+BOOTSTRAP_GPU_TIMING stage=EvalMod_real elapsed_ms=82.84983099999999 excludes_offline_setup=true
+BOOTSTRAP_GPU_TIMING stage=EvalMod_imag elapsed_ms=82.708243 excludes_offline_setup=true
+PUBLIC_KEYS count=1 host_cache_hit=0 double_hoist=0
+BOOTSTRAP_GPU_TIMING stage=recombine_project_real elapsed_ms=3.477911 excludes_offline_setup=true
+REAL_PROJECTION evalmod_calls=2 conjugations=1 q_consumed=0 multiplier_before_add=16
+BOOTSTRAP_GPU_TIMING total_stages_ms=441.148618 includes=S2C,prepare,ModRaise,C2S,EvalMod_real,EvalMod_imag,recombine excludes_offline_setup=true excludes_reference_checks=true
+CHECK baseline_final_vs_original_input q=31 log_scale=53.03094629532367 max_abs=1.340280828189951e-05 rms=2.800287030743507e-06 max_imag=3.141572701876685e-10 reference_max_abs=0.09009958634432372
+CHECK baseline_final_vs_decrypted_input q=31 log_scale=53.03094629532367 max_abs=1.340280828189951e-05 rms=2.800287030743507e-06 max_imag=3.141572701876685e-10 reference_max_abs=0.09009958634432372
+CHECK baseline_final_vs_degree59_plain q=31 log_scale=53.03094629532367 max_abs=4.064344143201547e-06 rms=2.571402899803583e-07 max_imag=3.141572701876685e-10 reference_max_abs=0.09009057396125932
+BASELINE_RESULT legacy_tolerance_0_002=PASS strict_target_1e_4=PASS max_abs=1.340280828189951e-05 arithmetic_max=4.064344143201547e-06 q=31 log_scale=53.03094629532367 no_reencryption=true full_network_tested=false output_fold=false
+PHASE same_C2S_folded_EvalMod no_reencryption=true
+PUBLIC_KEYS count=1 host_cache_hit=1 double_hoist=1
+FOLD_REAL_PROJECTION evalmod_calls=2 conjugations=1 q_consumed=0 multiplier_before_add=16
+CHECK fold_before_scale_reconciliation q=31 log_scale=53.03094629532367 max_abs=3.033286552991154e-09 rms=2.256435317135965e-10 max_imag=3.145922848001435e-10 reference_max_abs=1.076399895702454e-05
+CHECK fold40_vs_same_C2S_native q=31 log_scale=40 max_abs=2.782785720577752e-05 rms=1.891309689160632e-06 max_imag=2.633017674436637e-06 reference_max_abs=0.09009033409988047
+CHECK fold40_vs_bootstrap_polynomial q=31 log_scale=40 max_abs=2.538745383002639e-05 rms=1.888550469382663e-06 max_imag=2.633017674436637e-06 reference_max_abs=0.09009057396125932
+CHECK fold40_vs_original_input q=31 log_scale=40 max_abs=2.644255915755501e-05 rms=3.362096245610464e-06 max_imag=2.633017674436637e-06 reference_max_abs=0.09009958634432372
+FOLD_RESULT integration=PASS differential_max=2.782785720577752e-05 arithmetic_max=2.538745383002639e-05 restore_max=2.644255915755501e-05 q=31 log_scale=40 extra_Q=0
+STRICT_DSL_BOOTSTRAP count=1 q_in=6 q_out=31 log_scale=40 mode=native_baseline_fold
+PUBLIC_KEYS count=21 host_cache_hit=1 double_hoist=0
+PHASE bootstrap_existing_ciphertext q=6 log_scale=39.99999999998415 no_reencryption=true
+PHASE baseline_matrices mode=lcdnn_s2c_first_real log_slots=15
+BOOTSTRAP_OFFLINE_CACHE matrices=hit
+PHASE baseline_keys rotations=39 estimated_gpu_GiB=2.8564453125
+PUBLIC_KEYS count=39 host_cache_hit=1 double_hoist=0
+PHASE baseline_S2C_no_hoist
+BOOTSTRAP_GPU_TIMING stage=S2C elapsed_ms=41.136354 excludes_offline_setup=true
+CHECK baseline_S2C_vs_plain_DFT q=2 log_scale=47.04535065370532 max_abs=2.929620326295884e-05 rms=8.659205747041087e-06 max_imag=131.7801708189864 reference_max_abs=185.1222160051971
+BOOTSTRAP_GPU_TIMING stage=prepare elapsed_ms=0.114539 excludes_offline_setup=true
+PREPARE multiplier=3969 actual_log_scale=58.99991050070516
+CHECK baseline_prepare_preserves_value q=2 log_scale=58.99991050070516 max_abs=5.684341886080801e-14 rms=1.159797038554877e-15 max_imag=131.7801708189864 reference_max_abs=185.1222042564783
+CONTRACT small_signal_gain=0.9999379657403213 output_gain_compensation=false
+BOOTSTRAP_GPU_TIMING stage=ModRaise elapsed_ms=0.500755 excludes_offline_setup=true
+PHASE baseline_C2S_no_hoist branch=real_plus_imag
+BOOTSTRAP_GPU_TIMING stage=C2S elapsed_ms=212.44742 excludes_offline_setup=true
+CHECK baseline_C2S_real_vs_plain_DFT q=46 log_scale=54.06244669887172 max_abs=1.443078360247758e-08 rms=3.27376814658708e-09 max_imag=1.539400928018029e-10 reference_max_abs=0.6400000000011229
+CHECK baseline_C2S_imag_vs_plain_DFT q=46 log_scale=54.06244669887172 max_abs=1.371028146638243e-08 rms=3.268718214780492e-09 max_imag=1.959598480698787e-10 reference_max_abs=0.6799999998513913
+DOMAIN max_abs=0.6799999964771788 outside=0
+ORACLE baseline_ideal_sine_vs_input max_abs=3.348562860306606e-05 rms=2.890794982014943e-06
+ORACLE baseline_degree59_vs_sine max_abs=8.425339784519533e-08 rms=3.80477635180342e-08
+ORACLE baseline_degree59_vs_input max_abs=3.351018966140533e-05 rms=2.890717291104612e-06
+PHASE baseline_original_EvalMod_no_fold
+BOOTSTRAP_GPU_TIMING stage=EvalMod_real elapsed_ms=82.737652 excludes_offline_setup=true
+BOOTSTRAP_GPU_TIMING stage=EvalMod_imag elapsed_ms=80.90984 excludes_offline_setup=true
+PUBLIC_KEYS count=1 host_cache_hit=1 double_hoist=0
+BOOTSTRAP_GPU_TIMING stage=recombine_project_real elapsed_ms=3.47391 excludes_offline_setup=true
+REAL_PROJECTION evalmod_calls=2 conjugations=1 q_consumed=0 multiplier_before_add=16
+BOOTSTRAP_GPU_TIMING total_stages_ms=421.3204699999999 includes=S2C,prepare,ModRaise,C2S,EvalMod_real,EvalMod_imag,recombine excludes_offline_setup=true excludes_reference_checks=true
+CHECK baseline_final_vs_original_input q=31 log_scale=53.03094629532367 max_abs=3.327796886920553e-05 rms=2.903570423618657e-06 max_imag=3.138588763777702e-10 reference_max_abs=0.1522660909927623
+CHECK baseline_final_vs_decrypted_input q=31 log_scale=53.03094629532367 max_abs=3.327796886920553e-05 rms=2.903570423618657e-06 max_imag=3.138588763777702e-10 reference_max_abs=0.1522660909927623
+CHECK baseline_final_vs_degree59_plain q=31 log_scale=53.03094629532367 max_abs=3.030228556085333e-06 rms=2.601641275143034e-07 max_imag=3.138588763777702e-10 reference_max_abs=0.1522325808594977
+BASELINE_RESULT legacy_tolerance_0_002=PASS strict_target_1e_4=PASS max_abs=3.327796886920553e-05 arithmetic_max=3.030228556085333e-06 q=31 log_scale=53.03094629532367 no_reencryption=true full_network_tested=false output_fold=false
+PHASE same_C2S_folded_EvalMod no_reencryption=true
+PUBLIC_KEYS count=1 host_cache_hit=1 double_hoist=1
+FOLD_REAL_PROJECTION evalmod_calls=2 conjugations=1 q_consumed=0 multiplier_before_add=16
+CHECK fold_before_scale_reconciliation q=31 log_scale=53.03094629532367 max_abs=2.641860614896484e-09 rms=2.25117393258605e-10 max_imag=3.142024592866173e-10 reference_max_abs=1.81887102007079e-05
+CHECK fold40_vs_same_C2S_native q=31 log_scale=40 max_abs=2.396314932000346e-05 rms=1.885597624660446e-06 max_imag=2.629754983271601e-06 reference_max_abs=0.1522328130806843
+CHECK fold40_vs_bootstrap_polynomial q=31 log_scale=40 max_abs=2.211136772419948e-05 rms=1.884146890788644e-06 max_imag=2.629754983271601e-06 reference_max_abs=0.1522325808594977
+CHECK fold40_vs_original_input q=31 log_scale=40 max_abs=3.258281094848548e-05 rms=3.455536866064214e-06 max_imag=2.629754983271601e-06 reference_max_abs=0.1522660909927623
+FOLD_RESULT integration=PASS differential_max=2.396314932000346e-05 arithmetic_max=2.211136772419948e-05 restore_max=3.258281094848548e-05 q=31 log_scale=40 extra_Q=0
+STRICT_DSL_BOOTSTRAP count=2 q_in=6 q_out=31 log_scale=40 mode=native_baseline_fold
+PUBLIC_KEYS count=21 host_cache_hit=1 double_hoist=0
+STRICT_DSL_EXECUTION ops=1800 bootstrap_calls=2 exact_plain=337 exact_mul=81 exact_accumulate=226
+DSL_TRUNCATED ops=1800 bootstrap_calls=2

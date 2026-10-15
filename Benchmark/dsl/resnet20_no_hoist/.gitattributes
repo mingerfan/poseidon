@@ -1,0 +1,3 @@
+# Preserve the hashed sources, generated artifacts and historical logs verbatim.
+# CRLF and original snapshot whitespace are intentional evidence bytes.
+* -text -whitespace
