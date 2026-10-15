@@ -1,5 +1,35 @@
 See [Poseidon Doc](https://poseidon-hpu.readthedocs.io/en/latest/) for details.
 
+## CPU hoisted rotations
+
+The CPU CKKS evaluator supports sharing one HYBRID decomposition across several
+rotations of the same size-2, Q-basis NTT ciphertext:
+
+```cpp
+poseidon::CpuHoistWorkspace workspace;
+std::vector<poseidon::Ciphertext> outputs;
+evaluator->rotate_many_hoisted(input, {1, 2, -1, 0}, galois_keys, workspace, outputs);
+```
+
+Outputs follow the requested step order; zero copies the input. Direct rotation
+keys share the decomposition. Missing direct keys use the existing NAF rotation
+path, and BV/GHS contexts use ordinary rotations. Retain the workspace to reuse
+its allocations; every call recomputes digits for its input, and concurrent
+calls need separate workspaces. `workspace.last_counts` reports the staged and
+fallback operation counts. Both ordinary and streamed CPU BSGS matrix transforms
+use this interface for baby rotations. This implements single hoisting; the
+CPU path still materializes each rotated ciphertext in Q before plaintext MACs.
+
+CPU regression tests can be enabled independently of the CUDA Runtime API:
+
+```bash
+cmake -S . -B build-cpu -DPOSEIDON_BUILD_CPU_TESTS=ON -DPOSEIDON_BUILD_EXAMPLES=OFF
+cmake --build build-cpu --target poseidon_cpu_hoist_tests
+ctest --test-dir build-cpu -R poseidon_cpu_hoist_tests --output-on-failure
+# Optional ordinary/hoisted rotation microbenchmark (after the regressions):
+OMP_NUM_THREADS=1 build-cpu/bin/poseidon_cpu_hoist_tests --benchmark
+```
+
 ## Bundled CKKS Runtime
 
 Poseidon pins CKKS Runtime as a submodule. Runtime pins the compatible modified

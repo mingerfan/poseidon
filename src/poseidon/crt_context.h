@@ -133,7 +133,7 @@ public:
         uint32_t total_coeff_modulus_bit_count_ = 0;
         util::Pointer<std::uint64_t> total_coeff_modulus_;
         vector<Modulus> modulus_{};
-        bool using_fast_plain_lift_;
+        bool using_fast_plain_lift_ = false;
         std::uint64_t plain_upper_half_threshold_ = 0;
         std::uint64_t coeff_modulus_mod_plain_modulus_ = 0;
         util::Pointer<std::uint64_t> upper_half_threshold_;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "keys.h"
+#include "cpu_hoist.h"
 #include "kswitchkeys.h"
 #include "poseidon/basics/util/polyarithsmallmod.h"
 #include <algorithm>
@@ -61,6 +62,13 @@ public:
                     Ciphertext &destination) const;
     void rotate(const Ciphertext &encrypted, Ciphertext &destination, int steps,
                 const GaloisKeys &galois_keys) const;
+    // Output order follows steps. Zero is an identity rotation. The default
+    // implementation preserves ordinary rotation behavior for BV/GHS.
+    virtual void rotate_many_hoisted(const Ciphertext &encrypted,
+                                     const std::vector<int> &steps,
+                                     const GaloisKeys &galois_keys,
+                                     CpuHoistWorkspace &workspace,
+                                     std::vector<Ciphertext> &destination) const;
     void conjugate(const Ciphertext &encrypted, const GaloisKeys &galois_keys,
                    Ciphertext &destination) const;
     void relinearize(const Ciphertext &encrypted, Ciphertext &destination,

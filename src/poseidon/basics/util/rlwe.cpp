@@ -52,7 +52,7 @@ void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
 
     RandomToStandardAdapter engine(prng);
     uniform_int_distribution<uint64_t> dist(0, 2);
-    uniform_int_distribution<size_t> dist_deg(0, coeff_count);
+    uniform_int_distribution<size_t> dist_deg(0, coeff_count - 1);
 
     unordered_map<size_t, uint64_t> index_map;
     while (hamming_weight != 0)

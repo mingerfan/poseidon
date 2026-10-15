@@ -173,11 +173,21 @@ void EvaluatorCkksBase::multiply_by_diag_matrix_bsgs(const Ciphertext &ciph,
         bsgs_index(plain_mat.plain_vec, 1 << plain_mat.log_slots, plain_mat.n1);
     map<int, Ciphertext> rot_ciph;
     Ciphertext result_tmp;
+    std::vector<int> baby_steps;
     for (auto j : rotn2)
     {
         if (j != 0)
         {
-            rotate(ciph, rot_ciph[j], j, rot_key);
+            baby_steps.push_back(j);
+        }
+    }
+    {
+        CpuHoistWorkspace workspace;
+        std::vector<Ciphertext> babies;
+        rotate_many_hoisted(ciph, baby_steps, rot_key, workspace, babies);
+        for (std::size_t i = 0; i < baby_steps.size(); ++i)
+        {
+            rot_ciph.emplace(baby_steps[i], std::move(babies[i]));
         }
     }
 
@@ -222,11 +232,21 @@ void EvaluatorCkksBase::multiply_by_diag_matrix_bsgs_with_mutex(
 {
     map<int, Ciphertext> rot_ciph;
     Ciphertext ciph_inner_sum, ciph_inner, result_tmp;
+    std::vector<int> baby_steps;
     for (auto j : ref3)
     {
         if (j != 0)
         {
-            rotate(ciph, rot_ciph[j], j, rot_key);
+            baby_steps.push_back(j);
+        }
+    }
+    {
+        CpuHoistWorkspace workspace;
+        std::vector<Ciphertext> babies;
+        rotate_many_hoisted(ciph, baby_steps, rot_key, workspace, babies);
+        for (std::size_t i = 0; i < baby_steps.size(); ++i)
+        {
+            rot_ciph.emplace(baby_steps[i], std::move(babies[i]));
         }
     }
 
@@ -2060,6 +2080,33 @@ void EvaluatorCkksBase::rotate(const Ciphertext &ciph, Ciphertext &result, int s
                                const GaloisKeys &galois_keys) const
 {
     kswitch_->rotate(ciph, result, step, galois_keys);
+}
+
+void EvaluatorCkksBase::rotate_many_hoisted(
+    const Ciphertext &ciph, const std::vector<int> &steps, const GaloisKeys &galois_keys,
+    CpuHoistWorkspace &workspace, std::vector<Ciphertext> &results) const
+{
+    if (context_.using_hardware())
+    {
+        workspace.last_counts = {};
+        std::vector<Ciphertext> batch(steps.size());
+        for (std::size_t i = 0; i < steps.size(); ++i)
+        {
+            if (steps[i] == 0) batch[i] = ciph;
+            else
+            {
+                rotate(ciph, batch[i], steps[i], galois_keys);
+                ++workspace.last_counts.fallback_rotation_count;
+            }
+        }
+        results = std::move(batch);
+        return;
+    }
+    if (!kswitch_)
+    {
+        throw std::invalid_argument("rotate_many_hoisted requires a key-switching context");
+    }
+    kswitch_->rotate_many_hoisted(ciph, steps, galois_keys, workspace, results);
 }
 
 void EvaluatorCkksBase::rotate_row(const Ciphertext &ciph, Ciphertext &result, int step,

@@ -328,6 +328,15 @@ if(POSEIDON_USE_SPDLOG)
     endif()
 endif()
 
+option(POSEIDON_BUILD_CPU_TESTS "Build CPU regression tests" OFF)
+if(POSEIDON_BUILD_CPU_TESTS)
+    enable_testing()
+    add_executable(poseidon_cpu_hoist_tests
+        src/poseidon/tests/hoist/test_cpu_hoist.cpp)
+    target_link_libraries(poseidon_cpu_hoist_tests PRIVATE poseidon_shared)
+    add_test(NAME poseidon_cpu_hoist_tests COMMAND poseidon_cpu_hoist_tests)
+endif()
+
 # [option] POSEIDON_BUILD_CKKS_RUNTIME_API (default: OFF)
 option(POSEIDON_BUILD_CKKS_RUNTIME_API
     "Build the optional CKKS Runtime CPU/GPU Api integration" OFF)
