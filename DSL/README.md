@@ -16,3 +16,8 @@ DSL/
 - [DSL_agent](DSL_agent)：预留 DSL 生成 agent 的文件目录。
 
 进入各交付包目录后，原有相对路径命令仍可使用。引用仓库根目录旧路径的命令，请将 `llm_dsl/` 改为 `DSL/DSL_benchmark/llm_dsl/`。
+
+## ResNet DSL (hsb)
+
+- [ResNet20](resnet20_no_hoist/README.md)
+- [ResNet18 / ResNet50](resnet_imagenet_no_hoist/README.md)

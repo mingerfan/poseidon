@@ -1,0 +1,1 @@
+{"status": "PASS", "scope": "literal lowering vs real compiler bytecode audit; not native GPU acceptance", "raw_operations": 27410, "input_count": 27, "bootstrap_count": 18, "f64_encodes": 2739, "hevm_sha256": "36b9b6f2e66d85b84cd7ca988a04c50a37635689f7f86a8f6710ba384bf221cd", "runtime_gate": "PENDING native multi-rescale coalescing, scale reconcile and 27-input binding"}

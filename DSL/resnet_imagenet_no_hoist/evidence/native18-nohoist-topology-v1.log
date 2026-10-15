@@ -1,0 +1,13 @@
+Poseidon GPU ResNet18
+N=65536 slots=32768 Q=50 P=25 dnum=2
+application_scale=2^40 evalmod_scale=2^45 bootstrap_output_scale=2^40 bootstrap_Q=50
+application_q=36 logical_application_levels=17
+blocks=8 bootstrap_points=16
+layer1.0 input_channels=64 output_channels=64 stride=1 projection=0
+layer1.1 input_channels=64 output_channels=64 stride=1 projection=0
+layer2.0 input_channels=64 output_channels=128 stride=2 projection=1
+layer2.1 input_channels=128 output_channels=128 stride=1 projection=0
+layer3.0 input_channels=128 output_channels=256 stride=2 projection=1
+layer3.1 input_channels=256 output_channels=256 stride=1 projection=0
+layer4.0 input_channels=256 output_channels=512 stride=2 projection=1
+layer4.1 input_channels=512 output_channels=512 stride=1 projection=0
