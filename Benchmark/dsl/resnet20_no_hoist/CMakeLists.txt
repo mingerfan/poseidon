@@ -40,3 +40,8 @@ target_compile_definitions(resnet20_dsl PRIVATE
 target_compile_options(resnet20_dsl PRIVATE -O1 -UNDEBUG -ffunction-sections -fdata-sections)
 target_link_options(resnet20_dsl PRIVATE -Wl,--gc-sections)
 set_target_properties(resnet20_dsl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+# Optional ImageNet baseline targets reuse this exact GPU core configuration.
+if(DEFINED POSEIDON_IMAGENET_TARGETS_FILE)
+    include("${POSEIDON_IMAGENET_TARGETS_FILE}")
+endif()

@@ -1,0 +1,4 @@
+*.log -text
+*.patch -text
+*.gz -text
+*.sh text eol=lf

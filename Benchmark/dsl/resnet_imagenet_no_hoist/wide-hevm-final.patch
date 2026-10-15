@@ -1,0 +1,277 @@
+--- a/include/hecate/Support/HEVMHeader.h
++++ b/include/hecate/Support/HEVMHeader.h
+@@ -27,6 +27,14 @@
+   /* uint64_t res_level[res_length]; */
+   /* uint64_t res_dst[res_length]; */
+ };
++// Compiler-side instruction; retain full signed attributes until checked output.
++struct HEVMInstruction {
++  int64_t opcode = 0, dst = 0, lhs = 0, rhs = 0;
++};
++// Opt-in file magic 0x48455632; header/config unchanged, instructions 16 bytes.
++struct HEVMWideOperation {
++  uint32_t opcode, dst, lhs, rhs;
++};
+ struct HEVMOperation {
+   uint16_t opcode;
+   uint16_t dst;
+--- a/include/hecate/Dialect/CKKS/IR/PolyTypeInterface.td
++++ b/include/hecate/Dialect/CKKS/IR/PolyTypeInterface.td
+@@ -53,7 +53,7 @@
+     InterfaceMethod<
+       /*desc=*/[{Get a number of polynomials in a given type.
+       }],
+-    /*retType=*/"HEVMOperation",
++    /*retType=*/"HEVMInstruction",
+     /*methodName=*/"getHEVMOperation",
+     /*args=*/(ins "llvm::DenseMap<mlir::Value, int64_t>":$plainMap, "llvm::DenseMap<mlir::Value, int64_t>":$cipherMap)
+       >
+--- a/include/hecate/Dialect/CKKS/IR/CKKSOps.td
++++ b/include/hecate/Dialect/CKKS/IR/CKKSOps.td
+@@ -66,8 +66,8 @@
+     bool $cppClass::isCompatibleReturnTypes(::mlir::TypeRange lhs, ::mlir::TypeRange rhs){
+       return rhs.back().dyn_cast<PolyTypeInterface>().getNumPoly() == 1;
+     }
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 0;
+       op.dst = plainMap[getDst()];
+       op.lhs = getValue();
+@@ -88,8 +88,8 @@
+ def RotateCOp : CKKS_Op<"rotatec", [SameOperandsAndResultType]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$src, DenseI64ArrayAttr:$offset);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 1;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getSrc()];
+@@ -101,8 +101,8 @@
+ def NegateCOp : CKKS_Op<"negatec", [SameOperandsAndResultType]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$src);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 2;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getSrc()];
+@@ -117,8 +117,8 @@
+ def RescaleCOp : CKKS_Op<"rescalec", [SameOperandsAndResultShape]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$src);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 3;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getSrc()];
+@@ -130,8 +130,8 @@
+ def ModswitchCOp : CKKS_Op<"modswitchc", [SameOperandsAndResultShape]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$src, I64Attr:$downFactor);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 4;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getSrc()];
+@@ -143,8 +143,8 @@
+ def UpscaleCOp : CKKS_Op<"upscalec", [SameOperandsAndResultType]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$src, I64Attr:$upFactor);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 5;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getSrc()];
+@@ -157,8 +157,8 @@
+ def BootstrapCOp : CKKS_Op<"bootstrapc", [SameOperandsAndResultShape]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$src, I64Attr:$level);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 10;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getSrc()];
+@@ -173,8 +173,8 @@
+ def AddCCOp: CKKS_Op<"addcc", [Commutative, SameOperandsAndResultType]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$lhs, PolyTensor:$rhs);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 6;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getLhs()];
+@@ -186,8 +186,8 @@
+ def AddCPOp: CKKS_Op<"addcp", [Commutative, SameOperandsAndResultShape]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$lhs, PolyTensor:$rhs);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 7;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getLhs()];
+@@ -199,8 +199,8 @@
+ def MulCCOp: CKKS_Op<"mulcc", [Commutative, SameOperandsAndResultType]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$lhs, PolyTensor:$rhs);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 8;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getLhs()];
+@@ -212,8 +212,8 @@
+ def MulCPOp: CKKS_Op<"mulcp", [Commutative, SameOperandsAndResultShape]> {
+   let arguments = (ins PolyTensor:$dst, PolyTensor:$lhs, PolyTensor:$rhs);
+   code extraClassDefinition = arithClassDefinition # [{
+-    HEVMOperation $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
+-      HEVMOperation op;
++    HEVMInstruction $cppClass::getHEVMOperation (llvm::DenseMap<mlir::Value, int64_t> plainMap, llvm::DenseMap<mlir::Value, int64_t> cipherMap){
++      HEVMInstruction op;
+       op.opcode = 9;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getLhs()];
+--- a/include/hecate/Dialect/CKKS/IR/NativeBootstrapOps.td
++++ b/include/hecate/Dialect/CKKS/IR/NativeBootstrapOps.td
+@@ -16,10 +16,10 @@
+       types.push_back(op.getDst().getType());
+       return ::mlir::success();
+     }
+-    HEVMOperation $cppClass::getHEVMOperation(
++    HEVMInstruction $cppClass::getHEVMOperation(
+         llvm::DenseMap<mlir::Value, int64_t> plainMap,
+         llvm::DenseMap<mlir::Value, int64_t> cipherMap) {
+-      HEVMOperation op;
++      HEVMInstruction op;
+       op.opcode = }] # opcode # [{;
+       op.dst = cipherMap[getDst()];
+       op.lhs = cipherMap[getSrc()];
+@@ -41,7 +41,7 @@
+     [{dst.getNumPoly()==src.getNumPoly() && dst.getLevel()==src.getLevel() && op.getScaleAttr().getValueAsDouble()>0.0 && op.getScaleAttr().getValueAsDouble()<=1.7976931348623157e308}]>;
+ def MultiplyScalarCOp : NativeUnary<"multiplyscalarc", 14,
+     (ins PolyTensor:$dst, PolyTensor:$src, I64Attr:$multiplier), [{getMultiplier()}],
+-    [{dst.getNumPoly()==src.getNumPoly() && dst.getLevel()==src.getLevel() && op.getMultiplier()>=0 && op.getMultiplier()<=65535}]>;
++    [{dst.getNumPoly()==src.getNumPoly() && dst.getLevel()==src.getLevel() && op.getMultiplier()>=0 && op.getMultiplier()<=4294967295LL}]>;
+ def RelinearizeCOp : NativeUnary<"relinearizec", 16,
+     (ins PolyTensor:$dst, PolyTensor:$src), [{0}],
+     [{dst.getNumPoly()==2 && src.getNumPoly()==3 && dst.getLevel()==src.getLevel()}]>;
+@@ -67,10 +67,10 @@
+       types.push_back(op.getDst().getType());
+       return ::mlir::success();
+     }
+-    HEVMOperation $cppClass::getHEVMOperation(
++    HEVMInstruction $cppClass::getHEVMOperation(
+         llvm::DenseMap<mlir::Value, int64_t> plainMap,
+         llvm::DenseMap<mlir::Value, int64_t> cipherMap) {
+-      HEVMOperation op; op.opcode=15; op.dst=cipherMap[getDst()];
++      HEVMInstruction op; op.opcode=15; op.dst=cipherMap[getDst()];
+       op.lhs=cipherMap[getLhs()]; op.rhs=cipherMap[getRhs()]; return op;
+     }
+   }];
+--- a/lib/Dialect/CKKS/Transforms/EmitHEVM.cpp
++++ b/lib/Dialect/CKKS/Transforms/EmitHEVM.cpp
+@@ -40,11 +40,12 @@
+ 
+     config_body.config_body_length = sizeof(ConfigBody);
+     SmallVector<uint64_t, 4> config_body_ints;
+-    SmallVector<HEVMOperation, 4> insts;
++    SmallVector<HEVMInstruction, 4> insts;
+     // Only explicitly annotated physical schedules get a scale sidecar.
+     std::vector<std::array<uint64_t, 4>> native_scales;
+     bool invalid_native_scale = false;
+     std::vector<std::array<uint64_t, 3>> primitive_params, bootstrap_groups;
++    const bool wide = func->hasAttr("poseidon.hevm_wide");
+     const bool expanded = func->hasAttr("poseidon.expanded_bootstraps");
+ 
+     int64_t cipher_registers = 0;
+@@ -62,7 +63,7 @@
+     func.walk([&](mlir::Operation *op) {
+       if (auto alloc = dyn_cast<mlir::tensor::EmptyOp>(op)) {
+         auto tt = alloc.getType().dyn_cast<hecate::ckks::PolyTypeInterface>();
+-        HEVMOperation heops;
++        HEVMInstruction heops;
+         heops.opcode = -1;
+         insts.push_back(heops);
+ 
+@@ -72,7 +73,7 @@
+           cipher_register_file.insert({alloc, cipher_registers++});
+         }
+       } else if (auto ops = dyn_cast<hecate::ckks::HEVMOpInterface>(op)) {
+-        HEVMOperation heops =
++        HEVMInstruction heops =
+             ops.getHEVMOperation(plain_register_file, cipher_register_file);
+         if (auto scaleOp = dyn_cast<hecate::ckks::ScaleSetCOp>(op)) {
+           double value = scaleOp.getScaleAttr().getValueAsDouble();
+@@ -106,7 +107,7 @@
+           plain_register_file.insert({op->getResult(0), heops.dst});
+         }
+       }
+-      else if (expanded && !isa<func::FuncOp, func::ReturnOp>(op)) {
++      else if ((expanded || wide) && !isa<func::FuncOp, func::ReturnOp>(op)) {
+         op->emitError("expanded bootstrap program contains unsupported operation; refusing to drop it");
+         invalid_native_scale = true;
+       }
+@@ -151,12 +152,35 @@
+ 
+     printpath = std::string(printpath) + "." + func.getName().str() + ".hevm";
+ 
++    // Validate before opening any artifact: never silently truncate indices.
++    const int64_t maxField = wide ? 4294967295LL : 65535;
++    for (const auto &inst : insts) {
++      if (inst.opcode == -1) continue;
++      const int64_t minRhs = inst.opcode == 1 ? (wide ? -2147483648LL : -32768) : 0;
++      if (inst.opcode < 0 || inst.opcode > maxField || inst.dst < 0 ||
++          inst.dst > maxField || inst.lhs < 0 || inst.lhs > maxField ||
++          inst.rhs < minRhs || inst.rhs > maxField) {
++        func.emitError("HEVM field overflow; use poseidon.hevm_wide for 32-bit instructions");
++        signalPassFailure(); return;
++      }
++    }
++    header.magic_number = wide ? 0x48455632 : 0x4845564D;
+     std::ofstream of(printpath, std::ios::binary);
+     of.write((char *)&header, sizeof(HEVMHeader));
+     of.write((char *)&config_body, sizeof(ConfigBody));
+     of.write((char *)config_body_ints.data(),
+              config_body_ints.size() * sizeof(uint64_t));
+-    of.write((char *)insts.data(), insts.size() * sizeof(HEVMOperation));
++    for (const auto &inst : insts) {
++      if (wide) {
++        HEVMWideOperation packed{uint32_t(inst.opcode), uint32_t(inst.dst),
++                                 uint32_t(inst.lhs), uint32_t(inst.rhs)};
++        of.write(reinterpret_cast<const char *>(&packed), sizeof(packed));
++      } else {
++        HEVMOperation packed{uint16_t(inst.opcode), uint16_t(inst.dst),
++                             uint16_t(inst.lhs), uint16_t(inst.rhs)};
++        of.write(reinterpret_cast<const char *>(&packed), sizeof(packed));
++      }
++    }
+     of.close();
+     if (!native_scales.empty()) {
+       // FNV binds metadata to these exact emitted bytes (integrity, not security).
+@@ -183,7 +207,7 @@
+   }
+ 
+   void writeExpandedMetadata(const std::string &path,
+-      llvm::ArrayRef<HEVMOperation> insts,
++      llvm::ArrayRef<HEVMInstruction> insts,
+       const std::vector<std::array<uint64_t, 3>> &rows,
+       const char *suffix, const char *magic) {
+     if (rows.empty()) return;

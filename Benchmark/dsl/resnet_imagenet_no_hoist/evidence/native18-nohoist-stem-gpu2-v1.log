@@ -1,0 +1,51 @@
+{"command": ["/home/hanshubin/no-hoist-dsl-work/publish-stage-20261015/Benchmark/dsl/resnet20_no_hoist/build/bin/resnet18_native_nohoist", "--infer", "0", "0"], "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6", "pool_gib": 26, "scope": "native baseline, not DSL equivalence"}
+Poseidon GPU ResNet18
+N=65536 slots=32768 Q=50 P=25 dnum=2
+application_scale=2^40 evalmod_scale=2^45 bootstrap_output_scale=2^40 bootstrap_Q=50
+application_q=36 logical_application_levels=17
+blocks=8 bootstrap_points=16
+[GPU ResNet18] generating inference evaluation keys
+[GPU ResNet18] stem.conv1_bn1 elapsed_ms=48893
+[GPU ResNet18] stem.conv1_bn1 shape=112x112x64 k=1 packs=32 q=31..31 log2_scale=40..40
+[GPU ResNet18] stem.conv1_bn1 max_abs_error=1.1134e-06
+[GPU ResNet18] ReLU pack 1/32
+[GPU ResNet18] ReLU pack 2/32
+[GPU ResNet18] ReLU pack 3/32
+[GPU ResNet18] ReLU pack 4/32
+[GPU ResNet18] ReLU pack 5/32
+[GPU ResNet18] ReLU pack 6/32
+[GPU ResNet18] ReLU pack 7/32
+[GPU ResNet18] ReLU pack 8/32
+[GPU ResNet18] ReLU pack 9/32
+[GPU ResNet18] ReLU pack 10/32
+[GPU ResNet18] ReLU pack 11/32
+[GPU ResNet18] ReLU pack 12/32
+[GPU ResNet18] ReLU pack 13/32
+[GPU ResNet18] ReLU pack 14/32
+[GPU ResNet18] ReLU pack 15/32
+[GPU ResNet18] ReLU pack 16/32
+[GPU ResNet18] ReLU pack 17/32
+[GPU ResNet18] ReLU pack 18/32
+[GPU ResNet18] ReLU pack 19/32
+[GPU ResNet18] ReLU pack 20/32
+[GPU ResNet18] ReLU pack 21/32
+[GPU ResNet18] ReLU pack 22/32
+[GPU ResNet18] ReLU pack 23/32
+[GPU ResNet18] ReLU pack 24/32
+[GPU ResNet18] ReLU pack 25/32
+[GPU ResNet18] ReLU pack 26/32
+[GPU ResNet18] ReLU pack 27/32
+[GPU ResNet18] ReLU pack 28/32
+[GPU ResNet18] ReLU pack 29/32
+[GPU ResNet18] ReLU pack 30/32
+[GPU ResNet18] ReLU pack 31/32
+[GPU ResNet18] ReLU pack 32/32
+[GPU ResNet18] stem.relu elapsed_ms=5808
+[GPU ResNet18] stem.avgpool elapsed_ms=11146
+[GPU ResNet18] stem.avgpool shape=56x56x64 k=2 packs=8 q=8..8 log2_scale=40..40
+[GPU ResNet18] stem.relu_avgpool max_abs_error=1.05025e-06
+[GPU ResNet18] staged run stopped after 0 basic block(s)
+GPU ResNet18 result image=0 completed_blocks=0 true_label=65 predicted_label=-1
+[GPU ResNet18] inference_total_elapsed_ms=121664 inference_total_elapsed_seconds=121.664 inference_total_elapsed_hours=0.0337956 inference_total_elapsed_hms=0h2m1.664s
+
+NATIVE_BASELINE_PROCESS_EXIT code=0
