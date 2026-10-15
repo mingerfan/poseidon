@@ -76,3 +76,9 @@ it is not a standalone patch for upstream Hecate. A wide runtime reader and full
 ResNet50 ideal-slot CPU replay has now completed: prediction62 matches the original
 oracle, max logits error1.38439e-8, RMS1.74969e-9. ResNet18 native GPU stem also
 completed normally, max reported error1.05025e-6. First-block GPU test is pending.
+
+ResNet18 first residual block native no-hoist staged run passed through both
+activation points, eight tensor packs each. Measured act1 bootstrap max difference
+3.88831e-4; act2 bootstrap 2.18732e-3; act2 ReLU 2.17575e-3, with resulting
+output Q9/scale40. These are measured trace values, not newly imposed acceptance
+thresholds. Full eight-block native run is underway separately.
