@@ -40,3 +40,21 @@ target_compile_definitions(resnet20_dsl PRIVATE
 target_compile_options(resnet20_dsl PRIVATE -O1 -UNDEBUG -ffunction-sections -fdata-sections)
 target_link_options(resnet20_dsl PRIVATE -Wl,--gc-sections)
 set_target_properties(resnet20_dsl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+option(POSEIDON_BUILD_BOOTSTRAP_PLAN_EXPORT "Build CPU-only native bootstrap setup exporter" OFF)
+if(POSEIDON_BUILD_BOOTSTRAP_PLAN_EXPORT)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    set(export_uploader "${CMAKE_CURRENT_BINARY_DIR}/gpu_uploader_export.cpp")
+    add_custom_command(OUTPUT "${export_uploader}"
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_LIST_DIR}/tools/prepare_bootstrap_plan_export.py"
+                "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_uploader.cpp" "${export_uploader}"
+        DEPENDS "${CMAKE_CURRENT_LIST_DIR}/tools/prepare_bootstrap_plan_export.py"
+                "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_uploader.cpp"
+        VERBATIM)
+    add_executable(resnet20_bootstrap_plan_export runtime/main_export_native_bootstrap_plan.cpp "${export_uploader}")
+    target_link_libraries(resnet20_bootstrap_plan_export PRIVATE poseidon::gpu ${dsl_cupti} ${CMAKE_DL_LIBS})
+    target_include_directories(resnet20_bootstrap_plan_export PRIVATE "${app}" "${native}/Doc/analysis/resnet20_joint_chain_20260911")
+    target_compile_options(resnet20_bootstrap_plan_export PRIVATE -O1 -UNDEBUG -ffunction-sections -fdata-sections)
+    target_link_options(resnet20_bootstrap_plan_export PRIVATE -Wl,--gc-sections)
+    set_target_properties(resnet20_bootstrap_plan_export PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+endif()

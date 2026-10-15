@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "scope": "real compiler structural expansion, NOT native bootstrap semantics/GPU acceptance",
+  "boundaries": 18,
+  "opaque_bootstrap_opcodes": 0,
+  "synthetic_primitives_per_group": 8,
+  "negative_tests": 6,
+  "gpu_executed": false,
+  "native_template_complete": false
+}
