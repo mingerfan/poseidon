@@ -82,3 +82,11 @@ activation points, eight tensor packs each. Measured act1 bootstrap max differen
 3.88831e-4; act2 bootstrap 2.18732e-3; act2 ReLU 2.17575e-3, with resulting
 output Q9/scale40. These are measured trace values, not newly imposed acceptance
 thresholds. Full eight-block native run is underway separately.
+
+For a full inference call `tools/run_native_nohoist.py BIN_DIR NEW_LOG --gpu 2 --model
+18` or `--model 50`; omit `--blocks` to run all blocks. `--blocks N` is only for
+staged diagnosis. ResNet18's native first-block run completed with both bootstrap
+positions, two ReLUs, output Q9/scale40 and process exit0. See
+`evidence/native18-nohoist-block1-gpu2-v1.log`. The full eight-block ResNet18
+native no-hoist baseline has started on GPU2; its log is retained on the
+experiment server until completion.

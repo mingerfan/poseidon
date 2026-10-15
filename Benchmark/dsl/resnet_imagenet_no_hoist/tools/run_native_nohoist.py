@@ -25,14 +25,17 @@ def main():
     parser.add_argument('log', type=Path)
     parser.add_argument('--gpu', type=int, choices=(1, 2, 3), required=True)
     parser.add_argument('--model', choices=('bootstrap', '18', '50'), required=True)
-    parser.add_argument('--blocks', type=int, choices=range(17), default=0)
+    parser.add_argument('--blocks', type=int, choices=range(17),
+                        help='optional staged prefix; omit to run the full network')
     args = parser.parse_args()
-    if args.model == '18' and args.blocks > 8:
+    if args.model == '18' and args.blocks is not None and args.blocks > 8:
         parser.error('ResNet18 has only 8 blocks')
     binary = args.bin_dir / ('imagenet_nohoist_bootstrap_probe' if args.model == 'bootstrap'
                              else f'resnet{args.model}_native_nohoist')
     command = [str(binary), '--run'] if args.model == 'bootstrap' else [
-        str(binary), '--infer', '0', str(args.blocks)]
+        str(binary), '--infer', '0']
+    if args.model != 'bootstrap' and args.blocks is not None:
+        command.append(str(args.blocks))
     if not binary.is_file():
         raise FileNotFoundError(binary)
     env = os.environ.copy()
