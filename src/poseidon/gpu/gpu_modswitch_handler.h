@@ -28,6 +28,17 @@ public:
     explicit GpuModSwitchHandler(const GpuParameterData &params);
     ~GpuModSwitchHandler();
 
+    std::size_t retained_workspace_bytes(
+        const rmm::mr::device_memory_resource *resource = nullptr) const
+    {
+        return rescale_scratch_.q_last.allocated_bytes(resource) +
+               rescale_scratch_.correction.allocated_bytes(resource) +
+               rescale_scratch_.correction_ntt.allocated_bytes(resource) +
+               rescale_scratch_.dropped_two.allocated_bytes(resource) +
+               rescale_scratch_.dropped_many.allocated_bytes(resource) +
+               rescale_scratch_.centered_remainder.allocated_bytes(resource);
+    }
+
     /**
      * @brief GPU rescale from source level to destination level.
      */

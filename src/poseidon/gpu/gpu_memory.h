@@ -234,6 +234,15 @@ public:
         return size_;
     }
 
+    // A failed allocate may have recorded its requested size without obtaining
+    // storage. Only live storage contributes to an allocator's byte counter.
+    std::size_t allocated_bytes(
+        const rmm::mr::device_memory_resource *resource = nullptr) const
+    {
+        return ptr_ != nullptr && (resource == nullptr || resource_ == resource)
+                   ? bytes_ : 0;
+    }
+
     bool empty() const
     {
         return size_ == 0;

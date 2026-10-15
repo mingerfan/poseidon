@@ -4612,7 +4612,8 @@ void launch_forward_tensor_tam_stage(
             shape,
             batch_count,
             modulus,
-            barrett_ratio);
+            barrett_ratio,
+            gpu_execution_stream());
 
         unpack_forward_tam_batched_gemm_output_kernel<<<
             unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(
@@ -4730,7 +4731,8 @@ void launch_inverse_tensor_tam_stage(
             shape,
             batch_count,
             modulus,
-            barrett_ratio);
+            barrett_ratio,
+            gpu_execution_stream());
 
         unpack_inverse_tam_batched_gemm_output_kernel<<<
             unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(
@@ -4853,7 +4855,8 @@ void launch_forward_tensor_fp64_tam_stage(
             shape,
             batch_count,
             modulus,
-            barrett_ratio);
+            barrett_ratio,
+            gpu_execution_stream());
 
         unpack_forward_tam_batched_gemm_output_kernel<<<
             unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(
@@ -4975,7 +4978,8 @@ void launch_inverse_tensor_fp64_tam_stage(
             shape,
             batch_count,
             modulus,
-            barrett_ratio);
+            barrett_ratio,
+            gpu_execution_stream());
 
         unpack_inverse_tam_batched_gemm_output_kernel<<<
             unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(

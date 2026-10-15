@@ -175,6 +175,14 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
         COMMAND poseidon_runtime_gpu_scalar_tests
     )
 
+    add_executable(poseidon_gpu_ntt_stream_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_ntt_stream_test.cpp
+    )
+    target_link_libraries(poseidon_gpu_ntt_stream_tests PRIVATE poseidon::gpu)
+    add_test(NAME poseidon_gpu_ntt_stream_tests COMMAND poseidon_gpu_ntt_stream_tests)
+    set_tests_properties(poseidon_gpu_ntt_stream_tests
+        PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 30)
+
     add_executable(poseidon_runtime_gpu_prepare_oom_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp
     )

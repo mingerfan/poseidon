@@ -359,6 +359,20 @@ class GpuEvaluator
 public:
     explicit GpuEvaluator(const GpuParameterData &params);
 
+    struct RetainedWorkspaceBytes
+    {
+        std::size_t rescale;
+        std::size_t relinearize;
+    };
+
+    // Query between executions, when this evaluator is not allocating scratch.
+    RetainedWorkspaceBytes retained_workspace_bytes(
+        const rmm::mr::device_memory_resource *resource = nullptr) const
+    {
+        return {modswitch_handler_.retained_workspace_bytes(resource),
+                keyswitch_handler_.retained_workspace_bytes(resource)};
+    }
+
     void add(
         const GpuCiphertextData &left_ciphertext,
         const GpuCiphertextData &right_ciphertext,

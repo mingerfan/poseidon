@@ -485,6 +485,145 @@ PoseidonGpuValue transfer_value(PoseidonGpuApi &api, fhegpu::TransferId id,
     return std::move(*outputs.front());
 }
 
+void test_waterline_retained_cache_accounting(
+    poseidon::PoseidonContext &context, poseidon::KeyGenerator &key_generator,
+    const fhegpu::LoadedOperatorSpec &spec, std::shared_ptr<const poseidon::RelinKeys> relin_keys)
+{
+    struct RestoreEnvironment {
+        std::vector<std::pair<std::string,std::optional<std::string>>> values;
+        RestoreEnvironment() {
+            for(const auto *name:{"POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB",
+                                  "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB",
+                                  "POSEIDON_KEYSWITCH_PERSISTENT_RELIN"}) {
+                const auto *value=std::getenv(name);
+                values.emplace_back(name,value?std::optional<std::string>(value):std::nullopt);
+            }
+        }
+        ~RestoreEnvironment() {
+            for(const auto &[name,value]:values) {
+                if(value)setenv(name.c_str(),value->c_str(),1);
+                else unsetenv(name.c_str());
+            }
+        }
+    } restore;
+    setenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB","256",1);
+    unsetenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB");
+    setenv("POSEIDON_KEYSWITCH_PERSISTENT_RELIN","1",1);
+    const auto degree=context.parameters_literal()->degree();
+    const int level=static_cast<int>(context.parameters_literal()->q().size()-1);
+    PoseidonGpuApi api(kContextId,context,kDeviceId,std::move(relin_keys));
+    fhegpu::PlanRequirements requirements;
+    requirements.keys={{fhegpu::KeyKind::Relin,device_place(),std::nullopt,level}};
+    api.preflight(kPlanSha,false,make_target(spec),spec.spec,requirements);
+
+    // Failed allocations have a requested size but no live storage. Also check
+    // allocator filtering before relying on it to subtract this API's caches.
+    auto *pool_resource=rmm::mr::get_current_device_resource();
+    rmm::mr::limiting_resource_adaptor<rmm::mr::device_memory_resource> rejecting(pool_resource,0);
+    poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> failed;
+    rmm::mr::set_current_device_resource(&rejecting);
+    bool rejected=false;
+    try { failed.allocate(16,kDeviceId); }
+    catch(const std::bad_alloc &) { rejected=true; }
+    catch(...) { rmm::mr::set_current_device_resource(pool_resource);throw; }
+    rmm::mr::set_current_device_resource(pool_resource);
+    require(rejected && failed.data()==nullptr && failed.allocated_bytes()==0 &&
+                failed.allocated_bytes(&rejecting)==0,
+            "failed allocation was counted as retained GPU storage");
+    {
+        poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> live(16,kDeviceId);
+        require(live.allocated_bytes()==64 && live.allocated_bytes(pool_resource)==64 &&
+                    live.allocated_bytes(&rejecting)==0,
+                "retained storage query ignored its allocator");
+    }
+
+    fhegpu::RuntimePlan plan;plan.format_version=4;plan.target=make_target(spec);
+    plan.values={{0,fhegpu::ValueKind::Ciphertext,host_place(),kContextId,level,160,true,3},
+                 {1,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level,160,true,3},
+                 {2,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level-5,40,true,3},
+                 {3,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level,160,true,2}};
+    plan.external_inputs={0};plan.final_outputs={2,3};
+    plan.initialization={{0,transfer_action(0,fhegpu::ValueKind::Ciphertext,host_place(),device_place())}};
+    const fhegpu::ComputeOp rescale{fhegpu::ComputeKind::Rescale,{1},2,device_place(),fhegpu::RescaleAttrs{level-5,40}};
+    const fhegpu::ComputeOp relin{fhegpu::ComputeKind::Relinearize,{1},3,device_place(),{}};
+    plan.execution={{1,rescale},{2,relin}};
+    fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Cpu;
+    config.device_capacity_bytes={1ULL<<30};config.device_reserve_bytes={128ULL<<20};
+    config.device_fractions={.5};config.host_budget_bytes=64ULL<<20;
+    config.pinned_budget_bytes=16ULL<<20;config.raw_budget_bytes=8ULL<<20;plan.waterline=config;
+    fhegpu::PlanVerifier::verify(plan,spec,false);
+    api.validate_waterline_resources(plan);
+    const auto cold=api.waterline_measurements().devices.at(0);
+    const auto cold_capacity=api.waterline_allocator_capacity().at(0);
+
+    poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context,public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Plaintext plain;encoder.encode(std::vector<double>(degree/2,.125),std::ldexp(1.,80),plain);
+    poseidon::Ciphertext cipher,product;encryptor.encrypt(plain,cipher);
+    poseidon::EvaluatorCkksSoftware evaluator(context);evaluator.multiply(cipher,cipher,product);
+    std::uint64_t rescale_cache=0,relin_cache=0;
+    for(int iteration=0;iteration<2;++iteration) {
+        {
+            auto input=transfer_value(api,190+iteration,PoseidonGpuValue::from_host_ciphertext(product),
+                fhegpu::ValueKind::Ciphertext,host_place(),device_place());
+            {
+                auto output=api.compute(rescale,{input});api.drain();
+            }
+            api.drain();
+            const auto after_rescale=api.waterline_measurements().devices.at(0).allocated_live;
+            {
+                auto output=api.compute(relin,{input});api.drain();
+            }
+            api.drain();
+            if(iteration==0) {
+                relin_cache=api.waterline_measurements().devices.at(0).allocated_live-after_rescale;
+                rescale_cache=after_rescale-cold.allocated_live-api.value_resources(plan.values.at(1)).front.at(0);
+                require(rescale_cache>0 && relin_cache>0,"cache accounting test did not warm both evaluator caches");
+            }
+        }
+        api.drain();api.validate_waterline_resources(plan);
+        require(api.waterline_allocator_capacity().at(0)==cold_capacity,
+                "warmed evaluator caches were charged twice on repeated plan validation");
+        fhegpu::ResourceUsage boundary(1);boundary.front[0]=cold_capacity;
+        fhegpu::WaterlineLedger ledger(config,api.waterline_allocator_capacity());
+        require(ledger.fits(boundary),"warming evaluator caches changed complete-group admission");
+        {
+            auto held=poseidon::gpu::GpuPlaintextData::allocate_single_device(degree,level+1,kDeviceId);
+            const auto held_bytes=degree*(level+1)*sizeof(poseidon::gpu::GpuWord);
+            api.validate_waterline_resources(plan);
+            require(api.waterline_allocator_capacity().at(0)==cold_capacity-held_bytes,
+                    "caller-held GPU storage disappeared into the retained cache reserve");
+            fhegpu::WaterlineLedger with_held(config,api.waterline_allocator_capacity());
+            require(!with_held.fits(boundary),"complete-group admission ignored caller-held GPU storage");
+        }
+    }
+    api.validate_waterline_resources(plan);
+    {
+        // Another API shares this physical pool, but its allocations are not
+        // part of the current evaluator's cache reserve.
+        const auto before=api.waterline_measurements().devices.at(0).allocated_live;
+        PoseidonGpuApi other(kContextId,context,kDeviceId);
+        const auto other_bytes=api.waterline_measurements().devices.at(0).allocated_live-before;
+        api.validate_waterline_resources(plan);
+        require(other_bytes>0 && api.waterline_allocator_capacity().at(0)==cold_capacity-other_bytes,
+                "cache accounting discarded another API's live pool allocations");
+    }
+    auto no_work=plan;no_work.values.clear();no_work.external_inputs.clear();no_work.final_outputs.clear();
+    no_work.initialization.clear();no_work.execution.clear();
+    api.validate_waterline_resources(no_work);
+    const auto warm=api.waterline_measurements().devices.at(0);
+    require(api.waterline_allocator_capacity().at(0)==warm.pool_reserved-warm.allocated_live-(64ULL<<20),
+            "a plan omitting cached operations miscounted their existing storage");
+    no_work.waterline->device_reserve_bytes={cold.allocated_live+(64ULL<<20)};
+    require_rejected([&]{api.validate_waterline_resources(no_work);},"exceed reserve");
+    api.validate_waterline_resources(plan);
+    require(api.waterline_allocator_capacity().at(0)==cold_capacity,
+            "failed revalidation changed the restored cache budget");
+    std::cout<<"WATERLINE_CACHE rescale_bytes="<<rescale_cache<<" relin_bytes="<<relin_cache
+             <<" cold_capacity="<<cold_capacity<<" warm_capacity="<<api.waterline_allocator_capacity().at(0)<<'\n';
+}
+
 void test_transfer_posts_completion_event(
     const poseidon::PoseidonContext &context,
     poseidon::KeyGenerator &key_generator)
@@ -2964,6 +3103,9 @@ int main()
         }
         run_test("Waterline counts only physically reserved pool capacity",[&] {
             test_waterline_reserved_pool_capacity(context,loaded_spec);
+        });
+        run_test("Waterline counts warmed evaluator caches once across runs",[&] {
+            test_waterline_retained_cache_accounting(context,key_generator,loaded_spec,relin_keys);
         });
         RmmPoolScope rmm_pool(kDeviceId);
         run_test("GPU cached packed-read complete Host budget negative/positive boundary",[&] {

@@ -1677,9 +1677,11 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
         fhegpu::ResourceUsage::add(persistent,key_bytes(device.relin_keys.get()));
         fhegpu::ResourceUsage::add(persistent,key_bytes(device.galois_keys.get()));
         if(device.plaintext_encoder)fhegpu::ResourceUsage::add(persistent,device.plaintext_encoder->persistent_bytes());
-        // Bounds for retained relinearize and rescale caches. They remain in
-        // the reserve after per-instruction transient credit is returned.
-        const auto retained=(keyswitch[d]?n*4*(12*q+8*p):0)+(rescale[d]?n*4*(12*q+32):0);
+        // Reserve each cache's current storage plus its possible future growth.
+        // A later plan can omit an operation while its warmed cache still lives.
+        const auto cached=device.evaluator->retained_workspace_bytes();
+        const auto retained=std::max<std::uint64_t>(cached.relinearize,keyswitch[d]?n*4*(12*q+8*p):0)+
+                            std::max<std::uint64_t>(cached.rescale,rescale[d]?n*4*(12*q+32):0);
         const std::uint64_t reserve_required=persistent+retained+(64ULL<<20);
         std::cerr<<"waterline fixed GPU"<<d<<" persistent_bytes="<<persistent<<" retained_workspace_bound="<<retained
                  <<" reserve_required="<<reserve_required<<" reserve_configured="<<config.device_reserve_bytes.at(d)<<'\n';
@@ -1698,9 +1700,14 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
         const auto initial_outside=device.memory_pool->initial_external_bytes();
         const auto outside=global_outside>initial_outside?global_outside-initial_outside:0;
         const auto capacity=device.memory_pool->capacity_bytes();
-        // Fixed RMM allocations and retained caches cannot be spent again as
-        // graph credit. Alignment/fragmentation stays in the explicit margin.
-        const auto fixed_pool=std::max(persistent,std::uint64_t(device.memory_pool->bytes_counter().value))+retained+(64ULL<<20);
+        // The live counter already includes warmed evaluator caches. Remove
+        // only this evaluator's storage from this pool before adding its cache
+        // reserve; caller-held values and other users of the pool stay charged.
+        const auto pooled_cached=device.evaluator->retained_workspace_bytes(device.memory_pool->resource());
+        const auto cached_in_pool=pooled_cached.rescale+pooled_cached.relinearize;
+        const auto live=device.memory_pool->bytes_counter().value;
+        if(cached_in_pool>live)throw std::logic_error("Waterline cached workspace exceeds pool live bytes");
+        const auto fixed_pool=std::max(persistent,std::uint64_t(live-cached_in_pool))+retained+(64ULL<<20);
         if(fixed_pool>=pool_reserved)throw std::runtime_error("Waterline reserved pool below fixed allocation reserve");
         waterline_allocator_capacity_[d]=pool_reserved-fixed_pool;
         std::cerr<<"waterline physical GPU"<<d<<" pool_reserved="<<pool_reserved<<" pool_cap="<<capacity

@@ -2210,6 +2210,22 @@ GpuKeySwitchHandler::GpuKeySwitchHandler(const GpuParameterData &params)
 
 GpuKeySwitchHandler::~GpuKeySwitchHandler() = default;
 
+std::size_t GpuKeySwitchHandler::retained_workspace_bytes(
+    const rmm::mr::device_memory_resource *resource) const
+{
+    const auto &scratch = persistent_workspace_->relinearize;
+    std::size_t bytes = 0;
+    for (const auto *buffer : {
+             &scratch.c2_intt, &scratch.modup_q, &scratch.modup_p,
+             &scratch.accum_q0, &scratch.accum_q1, &scratch.accum_p0, &scratch.accum_p1,
+             &scratch.fourstep_q0, &scratch.fourstep_q1,
+             &scratch.fourstep_p0, &scratch.fourstep_p1,
+             &scratch.relin_rescale_dropped_ntt, &scratch.relin_rescale_dropped_coeff,
+             &scratch.relin_rescale_correction, &scratch.relin_rescale_correction_ntt})
+        bytes += buffer->allocated_bytes(resource);
+    return bytes;
+}
+
 void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
     const GpuConstRNSPolyView &switch_poly_ntt,
     const GpuLevelInfo &level_info,

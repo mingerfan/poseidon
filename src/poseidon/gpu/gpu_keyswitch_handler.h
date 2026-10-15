@@ -30,6 +30,9 @@ public:
     explicit GpuKeySwitchHandler(const GpuParameterData &params);
     ~GpuKeySwitchHandler();
 
+    std::size_t retained_workspace_bytes(
+        const rmm::mr::device_memory_resource *resource = nullptr) const;
+
     GpuKeySwitchHandler(const GpuKeySwitchHandler &) = delete;
     GpuKeySwitchHandler &operator=(const GpuKeySwitchHandler &) = delete;
 
