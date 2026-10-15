@@ -1,4 +1,4 @@
 *.log -text
-*.patch -text
+*.patch -text -whitespace
 *.gz -text
 *.sh text eol=lf
