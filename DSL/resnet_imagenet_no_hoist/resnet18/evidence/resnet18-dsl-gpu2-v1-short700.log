@@ -1,0 +1,8 @@
+{"command": ["/home/hanshubin/no-hoist-dsl-work/publish-stage-20261015/Benchmark/dsl/resnet20_no_hoist/build/bin/imagenet_dsl", "18", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/compiled-resnet18-v6.native_resnet18.hevm", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/dsl-lowering18-v6.native_constants.jsonl", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-native-inputs-v1.jsonl", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-native-cpu-trace-v5.jsonl.zlib", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-dsl-gpu2-v1-short700-report.json", "700"], "gpu": 2, "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6", "binary_sha256": "f7391a51450a00191b4663b6b0a6e8dfbd3009c242bef6d8ae4f137bfab2daef", "hevm_sha256": "e9f6a906d490766134e810d4f16224f05a9f0c7c7f7ebdf67037595d5c84b4df", "pool_gib": 26, "N": 65536, "Q": 50, "P": 25, "no_hoist": true}
+IMAGENET_DSL_PREFLIGHT PASS model=18 inputs=148 outputs=1000 raw_ops=1709296 actions=854648 boots=60 first_boot_action=90990 keys_generated=false gpu_executed=false
+IMAGENET_DSL_PREFLIGHT PASS model=18 inputs=148 outputs=1000 raw_ops=1709296 actions=854648 boots=60 first_boot_action=90990 keys_generated=false gpu_executed=false
+[GPU bootstrap] DFT rotation steps=39 missing powers=none
+S2C_FIRST_BOOTSTRAP_READY linear_mode=no_hoist pool_GiB=26 q=50 p=25 native_q=31 native_log_scale=53.0309 alpha=0.00011948 output_q=31 output_log_scale=40
+IMAGENET_DSL_TRUNCATED PASS actions=700 boots=0 exact_vector=0 exact_scalar=0 exact_product=0 gpu_executed=true
+
+DSL_PROCESS_EXIT code=0

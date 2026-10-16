@@ -1,0 +1,7 @@
+{
+  "native_header_sha256": "84be3b609e20ae7565a4499c07f1822a870cff09bd4fad8b9c1337d39677cbdc",
+  "native_cpp_sha256": "22397ae1f3287674e2ae653760eb6e27734004c803329bc7cd4d168e9d689bfd",
+  "scope": "isolated DSL dispatch additions; native methods copied unchanged",
+  "pool_gib": 26,
+  "bootstrap": "original ImageNet native no-hoist bootstrap API"
+}

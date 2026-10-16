@@ -1,0 +1,501 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- The CUDA compiler identification is NVIDIA 12.2.140
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: /usr/local/cuda/bin/nvcc - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- CROSS_COMPILE_ARRCH64: OFF
+-- Found GMP: /usr/include/x86_64-linux-gnu  
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- Found CUDAToolkit: /usr/local/cuda/include (found version "12.2.140") 
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- Found Git: /usr/bin/git (found version "2.34.1") 
+-- CPM: Adding package fmt@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../fmt)
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- CPM: Adding package spdlog@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../spdlog)
+-- Build spdlog: 1.14.1
+-- Build type: Release
+-- Generating install
+-- CPM: Adding package CCCL@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../cccl)
+-- Found libcudacxx: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/cccl/libcudacxx/lib/cmake/libcudacxx/libcudacxx-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0") 
+-- Found Thrust: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/cccl/thrust/thrust/cmake/thrust-config.cmake (found suitable exact version "2.5.0.0") 
+-- Found CUB: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/cccl/cub/cub/cmake/cub-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0") 
+-- Found CCCL: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/cccl/lib/cmake/cccl/cccl-config.cmake (found version "2.5.0.0") 
+-- CPM: Adding package nvtx3@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../nvtx)
+-- Configuring done (5.2s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/build/gpu-v2
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- CPM: Adding package fmt@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../fmt)
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- CPM: Adding package spdlog@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../spdlog)
+-- Build spdlog: 1.14.1
+-- Build type: Release
+-- Generating install
+-- CPM: Adding package CCCL@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../cccl)
+-- CPM: Adding package nvtx3@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../nvtx)
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/build/gpu-v2
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- CPM: Adding package fmt@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../fmt)
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- CPM: Adding package spdlog@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../spdlog)
+-- Build spdlog: 1.14.1
+-- Build type: Release
+-- Generating install
+-- CPM: Adding package CCCL@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../cccl)
+-- CPM: Adding package nvtx3@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../nvtx)
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/build/gpu-v2
+[  0%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/batchencoder.cpp.o
+[  1%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/ciphertext.cpp.o
+[  2%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/ckks_encoder.cpp.o
+[  4%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/crt_context.cpp.o
+[  4%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/decryptor.cpp.o
+[  5%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/encryptor.cpp.o
+[  6%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/keygenerator.cpp.o
+[  8%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/parameters_literal.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/keygenerator.cpp:12:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[  8%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/plaintext.cpp.o
+[  9%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/poseidon_context.cpp.o
+[ 11%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/rns_poly.cpp.o
+[ 12%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/advance/bootstrapper.cpp.o
+[ 12%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_dft.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/bootstrapper.h:5,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/bootstrapper.cpp:1:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 13%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_linear_transform.cpp.o
+[ 15%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_mod.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.cpp:1:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 16%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/advance/polynomial_evaluation.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.cpp:1:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 16%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/chebyshev_interpolation.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/util/chebyshev_interpolation.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/util/chebyshev_interpolation.cpp:1:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 18%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/cosine_approx.cpp.o
+[ 19%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_base.cpp.o
+[ 20%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bfv_base.cpp.o
+[ 20%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bgv_base.cpp.o
+[ 22%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_ckks_base.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/evaluator_ckks_base.cpp:1:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 23%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bfv_software.cpp.o
+[ 25%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bgv_software.cpp.o
+[ 25%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_ckks_software.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/software/evaluator_ckks_software.cpp:1:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 26%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/factory/poseidon_factory.cpp.o
+[ 27%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/key/galoiskeys.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/factory/poseidon_factory.cpp:1:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 29%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_base.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/key/keyswitch_base.cpp:2:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 29%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_bv.cpp.o
+[ 30%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_ghs.cpp.o
+[ 31%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_hybrid.cpp.o
+[ 33%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/key/kswitchkeys.cpp.o
+[ 33%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/memorymanager.cpp.o
+[ 34%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/modulus.cpp.o
+[ 36%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/randomgen.cpp.o
+[ 37%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/serialization.cpp.o
+[ 37%] Building C object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2b.c.o
+[ 38%] Building C object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2xb.c.o
+[ 40%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/clipnormal.cpp.o
+[ 41%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/common.cpp.o
+[ 41%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/croots.cpp.o
+[ 43%] Building C object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/fips202.c.o
+[ 44%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/galois.cpp.o
+[ 45%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/globals.cpp.o
+[ 45%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/hash.cpp.o
+[ 47%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/iterator.cpp.o
+[ 48%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/mempool.cpp.o
+[ 48%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ntt.cpp.o
+[ 50%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/numth.cpp.o
+[ 51%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/polyarithsmallmod.cpp.o
+[ 52%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rlwe.cpp.o
+[ 52%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rns.cpp.o
+[ 54%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/scalingvariant.cpp.o
+[ 55%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/streambuf.cpp.o
+[ 56%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarith.cpp.o
+[ 56%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithmod.cpp.o
+[ 58%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithsmallmod.cpp.o
+[ 59%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintcore.cpp.o
+[ 61%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ztools.cpp.o
+[ 61%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/util/debug.cpp.o
+[ 62%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/util/fft.cpp.o
+[ 63%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/util/matrix_operation.cpp.o
+[ 65%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/util/precision.cpp.o
+[ 65%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/util/random_sample.cpp.o
+[ 66%] Building CXX object poseidon_build/CMakeFiles/poseidon_shared.dir/src/poseidon/util/rns_tool_qp.cpp.o
+[ 68%] Linking CXX shared library libposeidon_shared.so
+[ 68%] Built target poseidon_shared
+[ 68%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_bootstrap_profile.cpp.o
+[ 69%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ciphertext.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/gpu/gpu_bootstrap_profile.cpp:4:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 70%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_double_hoist.cpp.o
+[ 72%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_key.cpp.o
+[ 72%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_memory.cpp.o
+[ 73%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_parameter.cpp.o
+[ 75%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_plaintext.cpp.o
+[ 76%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_uploader.cpp.o
+[ 76%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_evaluator.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/gpu/gpu_uploader.cpp:6:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 77%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_elementwise_handler.cpp.o
+[ 79%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_keyswitch_handler.cpp.o
+[ 80%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_modswitch_handler.cpp.o
+[ 80%] Building CXX object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ntt_handler.cpp.o
+[ 81%] Building CUDA object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_tensor_core_gemm.cu.o
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/gpu/gpu_tensor_core_gemm.cu(293): warning #177-D: variable "poseidon::gpu::<unnamed>::kTensorCoreTileElementsPerLane" was declared but never referenced
+  constexpr int kTensorCoreTileElementsPerLane =
+                ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/gpu/gpu_tensor_core_gemm.cu(296): warning #177-D: function "poseidon::gpu::<unnamed>::build_u32_segment_pow2_factors" was declared but never referenced
+                            void build_u32_segment_pow2_factors(
+                                 ^
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/gpu/gpu_tensor_core_gemm.cu(312): warning #177-D: function "poseidon::gpu::<unnamed>::lazy_add_u64_mod_term" was declared but never referenced
+                            void lazy_add_u64_mod_term(
+                                 ^
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/gpu/gpu_tensor_core_gemm.cu(343): warning #177-D: function "poseidon::gpu::<unnamed>::build_u32_segment_pow2_factors_barrett" was declared but never referenced
+                            void build_u32_segment_pow2_factors_barrett(
+                                 ^
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/gpu/gpu_tensor_core_gemm.cu(362): warning #177-D: function "poseidon::gpu::<unnamed>::lazy_add_u64_mod_term_barrett" was declared but never referenced
+                            void lazy_add_u64_mod_term_barrett(
+                                 ^
+
+[ 83%] Building CUDA object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_double_hoist_kernels.cu.o
+[ 84%] Building CUDA object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_elementwise_kernels.cu.o
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 84%] Building CUDA object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_keyswitch_kernels.cu.o
+[ 86%] Building CUDA object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_ntt_kernels.cu.o
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 87%] Building CUDA object poseidon_build/src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_rescale_kernels.cu.o
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 88%] Linking CXX static library ../../../libposeidon_gpu.a
+[ 88%] Built target poseidon_gpu
+[ 88%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/main_native18_logits.cpp.o
+[ 90%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/gpu_resnet18_inference.cpp.o
+[ 91%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/resnet18_topology.cpp.o
+[ 93%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/resnet18_weights.cpp.o
+[ 93%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/gpu_config.cpp.o
+[ 94%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/gpu_ckks_runtime.cpp.o
+[ 95%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/gpu_multiplexed_tensor.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/gpu_ckks_runtime.cpp:5:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 97%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/gpu_relu_s2c_first.cpp.o
+[ 97%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/resnet50_config.cpp.o
+[ 98%] Building CXX object CMakeFiles/resnet18_native.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/gpu_activity_timing.cpp.o
+[100%] Linking CXX executable bin/resnet18_native
+[100%] Built target resnet18_native
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- CPM: Adding package fmt@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../fmt)
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- CPM: Adding package spdlog@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../spdlog)
+-- Build spdlog: 1.14.1
+-- Build type: Release
+-- Generating install
+-- CPM: Adding package CCCL@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../cccl)
+-- CPM: Adding package nvtx3@ (/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/third_party/rmm/../nvtx)
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/build/gpu-v2
+[ 72%] Built target poseidon_shared
+[ 94%] Built target poseidon_gpu
+[ 95%] Building CXX object CMakeFiles/resnet18_dsl.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/main_imagenet_dsl.cpp.o
+[ 95%] Building CXX object CMakeFiles/resnet18_dsl.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/dsl/gpu_ckks_runtime.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/dsl/gpu_ckks_runtime.cpp:5:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 97%] Building CXX object CMakeFiles/resnet18_dsl.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/resnet50_config.cpp.o
+[ 98%] Building CXX object CMakeFiles/resnet18_dsl.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet50_gpu/gpu_activity_timing.cpp.o
+[100%] Linking CXX executable bin/resnet18_dsl
+[100%] Built target resnet18_dsl
+[ 68%] Built target poseidon_shared
+[ 88%] Built target poseidon_gpu
+[ 90%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/gpu_resnet18_inference.cpp.o
+[ 90%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/main_shared_cipher18.cpp.o
+[ 91%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/resnet18_topology.cpp.o
+[ 93%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/resnet18_weights.cpp.o
+[ 94%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/native_snapshot/benchmark/resnet18_gpu/gpu_config.cpp.o
+[ 94%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/same_cipher/gpu_ckks_runtime.cpp.o
+[ 95%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/same_cipher/gpu_multiplexed_tensor.cpp.o
+In file included from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/same_cipher/gpu_ckks_runtime.cpp:7:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-check-root-v1/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 97%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/same_cipher/gpu_relu_s2c_first.cpp.o
+[ 98%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/same_cipher/resnet50_config.cpp.o
+[ 98%] Building CXX object CMakeFiles/resnet18_same_cipher.dir/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-publish-package-v1/runtime/same_cipher/gpu_activity_timing.cpp.o
+[100%] Linking CXX executable bin/resnet18_same_cipher
+[100%] Built target resnet18_same_cipher

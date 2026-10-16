@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "date": "2026-10-16",
+  "scope": "packaged rebuild and GPU prefix rechecks; full GPU and common-ciphertext evidence are the preserved frozen-source runs",
+  "backend_source_files_matched": 237,
+  "real_compiler_hevm_and_two_sidecars_byte_equal": true,
+  "regenerated_trace_sha256": "d30093e2870d7b9c98041a9ae8a685980ccc5e07d09848e4ac975142fe74a75d",
+  "regenerated_payload_sha256": "68f22882da69ea1bbd39e986632390da05b1f02fc0c5ac608d10db435213a7c1",
+  "metadata_preflight": true,
+  "gpu_prefixes": {
+    "700": {
+      "actions": 700,
+      "boots": 0,
+      "exact_vector": 0,
+      "exact_scalar": 0,
+      "exact_product": 0
+    },
+    "95990": {
+      "actions": 95990,
+      "boots": 8,
+      "exact_vector": 1,
+      "exact_scalar": 1,
+      "exact_product": 1
+    }
+  },
+  "rebuilt_binary_sha256": {
+    "resnet18_native": "17a86beb57e60857437c0e5cf508ef83fb77b747d21a6061e136efdf3dce3428",
+    "resnet18_dsl": "2d76065d2c7603cb2d92377be9d37b3d09cd8a845627f276f92ddb2150e73f12",
+    "resnet18_same_cipher": "7c9937e3ede71a9f51bcf00db7b5b015c98abc17acba205e519db4f9fde5691e"
+  }
+}

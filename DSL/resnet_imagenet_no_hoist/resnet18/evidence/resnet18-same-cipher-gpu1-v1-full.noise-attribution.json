@@ -1,0 +1,34 @@
+{
+  "bit_exact_final_ciphertexts": true,
+  "dsl_prediction": 65,
+  "dsl_rns_outputs": 1000,
+  "first_bad_class": 18446744073709551615,
+  "first_bad_word": 18446744073709551615,
+  "first_input_encrypt_decrypt_max_error": 7.846606489003705e-07,
+  "first_input_encrypt_decrypt_rms_error": 1.1224551728523922e-07,
+  "input_ciphertexts": 147,
+  "max_logit_error": 0.0,
+  "metadata_mismatch_classes": 0,
+  "native_prediction": 65,
+  "native_rns_outputs": 1000,
+  "rms_logit_error": 0.0,
+  "rns_mismatch_classes": 0,
+  "rns_mismatch_words": 0,
+  "same_context_and_keys": true,
+  "same_input_ciphertexts": true,
+  "scope": "full-network same-context/key/input-ciphertext control; all 1000 final ciphertexts compared word-for-word before decrypt",
+  "status": "PASS",
+  "independent_native_repeat_delta": {
+    "max": 0.013476976225392345,
+    "rms": 0.0041134618433086466
+  },
+  "previous_independent_dsl_native_delta": {
+    "max": 0.005010604173461886,
+    "rms": 0.0017419935604740112
+  },
+  "repeated_native_prediction": 65,
+  "prior_native_prediction": 65,
+  "verdict": "This full-image control eliminates native-vs-DSL execution differences when input ciphertexts and keys are fixed. Nonzero independent-run deltas are consistent with stochastic encryption/key noise propagated through CKKS arithmetic and bootstrap; no population variance estimate is asserted.",
+  "hevm_sha256": "e9f6a906d490766134e810d4f16224f05a9f0c7c7f7ebdf67037595d5c84b4df",
+  "binary_sha256": "0d73fe1b542299b2f9fa122b61386a6d50f018e1d9f409f575b49431a1df5e30"
+}

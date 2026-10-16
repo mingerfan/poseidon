@@ -1,0 +1,111 @@
+{"command": ["/home/hanshubin/no-hoist-dsl-work/publish-stage-20261015/Benchmark/dsl/resnet20_no_hoist/build/bin/imagenet_dsl", "18", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/compiled-resnet18-v6.native_resnet18.hevm", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/dsl-lowering18-v6.native_constants.jsonl", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-native-inputs-v1.jsonl", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-native-cpu-trace-v5.jsonl.zlib", "/home/hanshubin/no-hoist-dsl-work/resnet18-50-alignment-v1/resnet18-dsl-gpu2-v1-bootstrap-prefix-report.json", "95990"], "gpu": 2, "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6", "binary_sha256": "f7391a51450a00191b4663b6b0a6e8dfbd3009c242bef6d8ae4f137bfab2daef", "hevm_sha256": "e9f6a906d490766134e810d4f16224f05a9f0c7c7f7ebdf67037595d5c84b4df", "pool_gib": 26, "N": 65536, "Q": 50, "P": 25, "no_hoist": true}
+IMAGENET_DSL_PREFLIGHT PASS model=18 inputs=148 outputs=1000 raw_ops=1709296 actions=854648 boots=60 first_boot_action=90990 keys_generated=false gpu_executed=false
+IMAGENET_DSL_PREFLIGHT PASS model=18 inputs=148 outputs=1000 raw_ops=1709296 actions=854648 boots=60 first_boot_action=90990 keys_generated=false gpu_executed=false
+[GPU bootstrap] DFT rotation steps=39 missing powers=none
+S2C_FIRST_BOOTSTRAP_READY linear_mode=no_hoist pool_GiB=26 q=50 p=25 native_q=31 native_log_scale=53.0309 alpha=0.00011948 output_q=31 output_log_scale=40
+DSL_PROGRESS actions=1000 boots=0
+DSL_PROGRESS actions=2000 boots=0
+DSL_PROGRESS actions=3000 boots=0
+DSL_PROGRESS actions=4000 boots=0
+DSL_PROGRESS actions=5000 boots=0
+DSL_PROGRESS actions=6000 boots=0
+DSL_PROGRESS actions=7000 boots=0
+DSL_PROGRESS actions=8000 boots=0
+DSL_PROGRESS actions=9000 boots=0
+DSL_PROGRESS actions=10000 boots=0
+DSL_PROGRESS actions=11000 boots=0
+DSL_PROGRESS actions=12000 boots=0
+DSL_PROGRESS actions=13000 boots=0
+DSL_PROGRESS actions=14000 boots=0
+DSL_PROGRESS actions=15000 boots=0
+DSL_PROGRESS actions=16000 boots=0
+DSL_PROGRESS actions=17000 boots=0
+DSL_PROGRESS actions=18000 boots=0
+DSL_PROGRESS actions=19000 boots=0
+DSL_PROGRESS actions=20000 boots=0
+DSL_PROGRESS actions=21000 boots=0
+DSL_PROGRESS actions=22000 boots=0
+DSL_PROGRESS actions=23000 boots=0
+DSL_PROGRESS actions=24000 boots=0
+DSL_PROGRESS actions=25000 boots=0
+DSL_PROGRESS actions=26000 boots=0
+DSL_PROGRESS actions=27000 boots=0
+DSL_PROGRESS actions=28000 boots=0
+DSL_PROGRESS actions=29000 boots=0
+DSL_PROGRESS actions=30000 boots=0
+DSL_PROGRESS actions=31000 boots=0
+DSL_PROGRESS actions=32000 boots=0
+DSL_PROGRESS actions=33000 boots=0
+DSL_PROGRESS actions=34000 boots=0
+DSL_PROGRESS actions=35000 boots=0
+DSL_PROGRESS actions=36000 boots=0
+DSL_PROGRESS actions=37000 boots=0
+DSL_PROGRESS actions=38000 boots=0
+DSL_PROGRESS actions=39000 boots=0
+DSL_PROGRESS actions=40000 boots=0
+DSL_PROGRESS actions=41000 boots=0
+DSL_PROGRESS actions=42000 boots=0
+DSL_PROGRESS actions=43000 boots=0
+DSL_PROGRESS actions=44000 boots=0
+DSL_PROGRESS actions=45000 boots=0
+DSL_PROGRESS actions=46000 boots=0
+DSL_PROGRESS actions=47000 boots=0
+DSL_PROGRESS actions=48000 boots=0
+DSL_PROGRESS actions=49000 boots=0
+DSL_PROGRESS actions=50000 boots=0
+DSL_PROGRESS actions=51000 boots=0
+DSL_PROGRESS actions=52000 boots=0
+DSL_PROGRESS actions=53000 boots=0
+DSL_PROGRESS actions=54000 boots=0
+DSL_PROGRESS actions=55000 boots=0
+DSL_PROGRESS actions=56000 boots=0
+DSL_PROGRESS actions=57000 boots=0
+DSL_PROGRESS actions=58000 boots=0
+DSL_PROGRESS actions=59000 boots=0
+DSL_PROGRESS actions=60000 boots=0
+DSL_PROGRESS actions=61000 boots=0
+DSL_PROGRESS actions=62000 boots=0
+DSL_PROGRESS actions=63000 boots=0
+DSL_PROGRESS actions=64000 boots=0
+DSL_PROGRESS actions=65000 boots=0
+DSL_PROGRESS actions=66000 boots=0
+DSL_PROGRESS actions=67000 boots=0
+DSL_PROGRESS actions=68000 boots=0
+DSL_PROGRESS actions=69000 boots=0
+DSL_PROGRESS actions=70000 boots=0
+DSL_PROGRESS actions=71000 boots=0
+DSL_PROGRESS actions=72000 boots=0
+DSL_PROGRESS actions=73000 boots=0
+DSL_PROGRESS actions=74000 boots=0
+DSL_PROGRESS actions=75000 boots=0
+DSL_PROGRESS actions=76000 boots=0
+DSL_PROGRESS actions=77000 boots=0
+DSL_PROGRESS actions=78000 boots=0
+DSL_PROGRESS actions=79000 boots=0
+DSL_PROGRESS actions=80000 boots=0
+DSL_PROGRESS actions=81000 boots=0
+DSL_PROGRESS actions=82000 boots=0
+DSL_PROGRESS actions=83000 boots=0
+DSL_PROGRESS actions=84000 boots=0
+DSL_PROGRESS actions=85000 boots=0
+DSL_PROGRESS actions=86000 boots=0
+DSL_PROGRESS actions=87000 boots=0
+DSL_PROGRESS actions=88000 boots=0
+DSL_PROGRESS actions=89000 boots=0
+DSL_PROGRESS actions=90000 boots=0
+DSL_NATIVE_BOOTSTRAP call=1 action=90990 q=31 logscale=40
+DSL_NATIVE_BOOTSTRAP call=2 action=90992 q=31 logscale=40
+DSL_NATIVE_BOOTSTRAP call=3 action=90994 q=31 logscale=40
+DSL_NATIVE_BOOTSTRAP call=4 action=90996 q=31 logscale=40
+DSL_NATIVE_BOOTSTRAP call=5 action=90998 q=31 logscale=40
+DSL_NATIVE_BOOTSTRAP call=6 action=91000 q=31 logscale=40
+DSL_PROGRESS actions=91000 boots=6
+DSL_NATIVE_BOOTSTRAP call=7 action=91002 q=31 logscale=40
+DSL_NATIVE_BOOTSTRAP call=8 action=91004 q=31 logscale=40
+DSL_PROGRESS actions=92000 boots=8
+DSL_PROGRESS actions=93000 boots=8
+DSL_PROGRESS actions=94000 boots=8
+DSL_PROGRESS actions=95000 boots=8
+IMAGENET_DSL_TRUNCATED PASS actions=95990 boots=8 exact_vector=1 exact_scalar=1 exact_product=1 gpu_executed=true
+
+DSL_PROCESS_EXIT code=0

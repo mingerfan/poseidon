@@ -1,0 +1,11 @@
+{
+  "model": 18,
+  "pool_gib": 26,
+  "hevm_sha256": "e9f6a906d490766134e810d4f16224f05a9f0c7c7f7ebdf67037595d5c84b4df",
+  "binary_sha256": "0d73fe1b542299b2f9fa122b61386a6d50f018e1d9f409f575b49431a1df5e30",
+  "native_inference_sha256": "2ccc2067531939143c0b29152e211139420b8a4d72cdd90342257bf164bca730",
+  "shared_runtime_sha256": "aaec36d0d75005f3504c6349f9d725721ad43b97f7d217d91b189f6cba363a84",
+  "compiled_replay_sha256": "a35e962c360744fab8780dbcd6521481ab76a68e6984818818ad550e63bf24e0",
+  "input_cache": "147 original host Ciphertexts retained by call position and reuploaded bit-exactly; replay checks plaintext/order hash; ONE reuses original native cache",
+  "final_comparison": "all 1000 Q4 ciphertexts, every RNS word and metadata, before decrypt"
+}

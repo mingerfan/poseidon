@@ -1,0 +1,79 @@
+{
+  "resnet18": {
+    "execution_and_evidence": "PASS",
+    "model": 18,
+    "image": 0,
+    "label": 65,
+    "dsl_prediction": 65,
+    "native_prediction": 65,
+    "classification_matches": true,
+    "sample_correct": true,
+    "independent_encryption_logit_delta": {
+      "max": 0.005010604173461886,
+      "rms": 0.0017419935604740106
+    },
+    "logical_bootstrap_positions": 16,
+    "pack_bootstrap_calls": 60,
+    "dsl_seconds": 2384.907701611,
+    "native_seconds": 2332.309708309,
+    "dsl_ranking": {
+      "top5": [
+        65,
+        68,
+        111,
+        66,
+        62
+      ],
+      "top1_margin": 0.3109249516955419
+    },
+    "native_ranking": {
+      "top5": [
+        65,
+        68,
+        111,
+        66,
+        62
+      ],
+      "top1_margin": 0.31268801724552375
+    },
+    "artifacts_sha256": {
+      "resnet18-dsl-gpu2-v1-full-report.json": "6ddf2ed42a2ef84a24603b43208ce2f73d75f76c0cb18396dee263a45ac37f2c",
+      "resnet18-dsl-gpu2-v1-native-logits.json": "c8c3f83d6eafdd71f0a2e984f499c7fb41ca6d81f2067f5df68553dea0a78018"
+    },
+    "hevm_sha256": "e9f6a906d490766134e810d4f16224f05a9f0c7c7f7ebdf67037595d5c84b4df",
+    "binary_sha256": "f7391a51450a00191b4663b6b0a6e8dfbd3009c242bef6d8ae4f137bfab2daef"
+  },
+  "resnet18_same_cipher_control": {
+    "control": "PASS",
+    "scope": "full ResNet18 image0, fixed context/keys/original input ciphertexts",
+    "same_cipher_logit_delta": {
+      "max": 0.0,
+      "rms": 0.0
+    },
+    "bit_exact_final_ciphertexts": 1000,
+    "rns_words_compared": 524288000,
+    "independent_native_repeat_delta": {
+      "max": 0.013476976225392345,
+      "rms": 0.0041134618433086466
+    },
+    "previous_independent_dsl_native_delta": {
+      "max": 0.005010604173461886,
+      "rms": 0.0017419935604740112
+    },
+    "initial_first_input_noise_max": 7.846606489003705e-07,
+    "initial_first_input_noise_rms": 1.1224551728523922e-07,
+    "prediction_native": 65,
+    "prediction_dsl": 65,
+    "label": 65,
+    "evidence_sha256": {
+      "provenance.json": "93e42d60da696c89d86bf5f28ed61479e642d5e7f7a5bbe384514776a4df2d26",
+      "resnet18-same-cipher-gpu1-v1-full.capture-audit.json": "e8e99ed052a50497dd485fbdab8cc7c760f077af86be72250774adf125b5a329",
+      "resnet18-same-cipher-gpu1-v1-full.dsl.json": "b613dd692d83db3ad4036281b65bf86984a41c72bf10dc0aed0290e5e1027b33",
+      "resnet18-same-cipher-gpu1-v1-full.native.json": "20917b68125f2a86ecb6d3ea6008f76e87405125fd077689b96f3f06d5272b16",
+      "resnet18-same-cipher-gpu1-v1-full.noise-attribution.json": "6e32f9b1675eebba31f9f9636006aa3bb5eac067348f63d8a14205dd5d30c916",
+      "resnet18-same-cipher-gpu1-v1-full.paired.json": "17f71ec5fd66a7291a151306a0e841573689f804f9c28a44ba5584b010626201",
+      "resnet18-same-cipher-gpu1-v1-probe.paired.json": "74b0cb914e12096aa49730a0bc54a582008374175e0f3812b7f6cf13c7c477ca",
+      "resnet18-same-cipher-gpu1-v1.provenance.json": "93e42d60da696c89d86bf5f28ed61479e642d5e7f7a5bbe384514776a4df2d26"
+    }
+  }
+}

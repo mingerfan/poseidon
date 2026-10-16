@@ -1,0 +1,18 @@
+{
+  "bit_exact_final_ciphertexts": true,
+  "dsl_rns_outputs": 1,
+  "first_bad_class": 18446744073709551615,
+  "first_bad_word": 18446744073709551615,
+  "first_input_encrypt_decrypt_max_error": 8.027397196707677e-07,
+  "first_input_encrypt_decrypt_rms_error": 1.1088120225135947e-07,
+  "input_ciphertexts": 1,
+  "max_decoded_complex_error": 0.0,
+  "metadata_mismatch_classes": 0,
+  "native_rns_outputs": 1,
+  "rns_mismatch_classes": 0,
+  "rns_mismatch_words": 0,
+  "same_context_and_keys": true,
+  "same_input_ciphertexts": true,
+  "scope": "controlled small probe: same input/ONE, scalar/vector native calls and original bootstrap; not full-network evidence",
+  "status": "PASS"
+}

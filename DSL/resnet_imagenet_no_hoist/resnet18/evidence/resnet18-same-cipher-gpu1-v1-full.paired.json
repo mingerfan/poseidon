@@ -1,0 +1,21 @@
+{
+  "bit_exact_final_ciphertexts": true,
+  "dsl_prediction": 65,
+  "dsl_rns_outputs": 1000,
+  "first_bad_class": 18446744073709551615,
+  "first_bad_word": 18446744073709551615,
+  "first_input_encrypt_decrypt_max_error": 7.846606489003705e-07,
+  "first_input_encrypt_decrypt_rms_error": 1.1224551728523922e-07,
+  "input_ciphertexts": 147,
+  "max_logit_error": 0.0,
+  "metadata_mismatch_classes": 0,
+  "native_prediction": 65,
+  "native_rns_outputs": 1000,
+  "rms_logit_error": 0.0,
+  "rns_mismatch_classes": 0,
+  "rns_mismatch_words": 0,
+  "same_context_and_keys": true,
+  "same_input_ciphertexts": true,
+  "scope": "full-network same-context/key/input-ciphertext control; all 1000 final ciphertexts compared word-for-word before decrypt",
+  "status": "PASS"
+}

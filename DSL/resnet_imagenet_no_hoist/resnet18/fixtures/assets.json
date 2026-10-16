@@ -1,0 +1,33 @@
+{
+  "gzip_assets": [
+    {
+      "compressed": "source/resnet18.mlir.gz",
+      "unpacked": "resnet18.mlir",
+      "bytes": 205205754,
+      "sha256": "d048237ad7abbbd5486d12db67f9937fe145392d4eb8d5b4ff726da0f531038b"
+    },
+    {
+      "compressed": "source/resnet18.trace_map.jsonl.gz",
+      "unpacked": "resnet18.native_trace_map.jsonl",
+      "bytes": 253090134,
+      "sha256": "abdc6a225ac21409901e07730631ed7a02b29579f8da09961736d072aa4db355"
+    },
+    {
+      "compressed": "source/resnet18.native_trace.jsonl.gz",
+      "unpacked": "resnet18.native_trace.jsonl",
+      "bytes": 163309254,
+      "sha256": "d30093e2870d7b9c98041a9ae8a685980ccc5e07d09848e4ac975142fe74a75d"
+    },
+    {
+      "compressed": "fixtures/resnet18.constants.jsonl.gz",
+      "unpacked": "resnet18.native_constants.jsonl",
+      "bytes": 22261835,
+      "sha256": "0c095fe6cb8c82dbd2f5cdae7baee16d118457d60edc2c92c3ac9336f4c149ac"
+    }
+  ],
+  "generated_payload": {
+    "name": "resnet18.payload.zlib",
+    "bytes": 328198447,
+    "sha256": "68f22882da69ea1bbd39e986632390da05b1f02fc0c5ac608d10db435213a7c1"
+  }
+}
