@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 package=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-repo=${1:-$(cd -- "$package/../../.." && pwd)}
+repo=${1:-$(cd -- "$package/../.." && pwd)}
 build=${2:-"$package/build/gpu"}
 if [[ -z ${CUDACXX:-} && -x /usr/local/cuda/bin/nvcc ]]; then export CUDACXX=/usr/local/cuda/bin/nvcc; fi
 cmake -S "$repo/DSL/resnet20_no_hoist" -B "$build" \

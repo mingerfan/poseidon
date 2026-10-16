@@ -30,7 +30,7 @@
 在仓库根目录运行。Python3用于包检查，CPU重放另需NumPy；构建需要Linux、C++20、CMake≥3.26.4、CUDA及本仓库GPU依赖。测试机器为V10032GiB（CUDA架构70）。
 
 ```bash
-P=DSL/resnet_imagenet_no_hoist/resnet18
+P=DSL/resnet18_no_hoist
 python3 "$P/tools/check_package.py"
 python3 "$P/tools/prepare_assets.py" --payload
 CUDAARCHS=70 bash "$P/tools/build.sh"

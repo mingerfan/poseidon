@@ -20,4 +20,4 @@ DSL/
 ## ResNet DSL (hsb)
 
 - [ResNet20](resnet20_no_hoist/README.md)
-- [ResNet18 / ResNet50](resnet_imagenet_no_hoist/README.md)
+- [ResNet18](resnet18_no_hoist/README.md)

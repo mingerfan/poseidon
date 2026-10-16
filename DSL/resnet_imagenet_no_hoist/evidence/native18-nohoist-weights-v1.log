@@ -1,6 +1,0 @@
-Poseidon GPU ResNet18
-N=65536 slots=32768 Q=50 P=25 dnum=2
-application_scale=2^40 evalmod_scale=2^45 bootstrap_output_scale=2^40 bootstrap_Q=50
-application_q=36 logical_application_levels=17
-blocks=8 bootstrap_points=16
-weights_check conv=17 bn=17 downsample=3 fc=512000 image_values=150528 label0=65

@@ -1,1 +1,0 @@
-PASS real compiler: legacy bytes unchanged; wide 65536/uint32 max exact; register65536 and negative rotation exact; legacy and uint32 overflow rejected before artifact creation; legacy_sha256=b8788d4ec34e1cd1c7c15404a08a3fa30786330ee0f1dc393063f85779d87061

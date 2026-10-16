@@ -1,3 +1,0 @@
-[GPU bootstrap] DFT rotation steps=39 missing powers=none
-S2C_FIRST_BOOTSTRAP_READY linear_mode=no_hoist pool_GiB=26 q=50 p=25 native_q=31 native_log_scale=53.030946295323673 alpha=0.00011947974670083979 output_q=31 output_log_scale=40
-NATIVE_NOHOIST_BOOTSTRAP_COMPLETE q_in=6 q_out=31 log_scale=40 encoding_max_error=8.7584434711740489e-07 bootstrap_max_error=3.7631347601360665e-05 max_imag=8.9860935506173192e-06 gpu_executed=true scope=single_bootstrap_not_full_network_or_DSL
