@@ -48,7 +48,7 @@
 
 manifest 条目固定为 48 字节：32 字节 content 摘要、8 字节 offset、8 字节长度。读回仍建立与 JSON 相同 key/value 类型的哈希索引，并检查重复内容、范围、重叠和覆盖；已知条数允许提前 reserve。少量根元数据保留 JSON，以复用现有检查，不属于主要开销。
 
-这是用于判断是否值得工程化的原型，完整编码和限制见 ckks-runtime 的 [实验说明](../../third_party/ckks-runtime/docs/experiments/binary-plan-io.md)。没有将 C++ struct/variant 内存直接写入文件，没有新增序列化依赖。
+这是用于判断是否值得工程化的原型，实验编码和限制可从对应提交的 Git 历史查询；当前正式格式见 ckks-runtime 的 [二进制规范](../../third_party/ckks-runtime/docs/runtime-plan/binary.md)。没有将 C++ struct/variant 内存直接写入文件，没有新增序列化依赖。
 
 ## 正确性与边界
 

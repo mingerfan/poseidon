@@ -272,7 +272,7 @@ GPU 每个数 4 字节，Host 每个数 8 字节。
 
 **第 1 至 7 步均已实现，已完成本地及 188Server 验证，等待整体审阅。** 第 1 步的计划结构、
 V1/V2 解析、打印和 Verifier 保持不变。协议、Schema 和 CPU/GPU 三次原位链
-样例见 [`RuntimePlan V2`](../third_party/ckks-runtime/docs/runtime-plan/v2/specification.md)。
+样例见 [`RuntimePlan V2`](../third_party/ckks-runtime/docs/runtime-plan/README.md)。
 
 第 2 步已完成的改动：
 

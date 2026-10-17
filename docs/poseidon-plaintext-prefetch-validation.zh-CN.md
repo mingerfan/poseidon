@@ -2,7 +2,7 @@
 
 已实现 V3、Fence、按需 bundle 读取、分批编译，以及本机 GPU worker 配合串行 CPU worker 的执行路径。默认仍为 eager，V1/V2 的限制保持不变。首版只支持一个 rank；完整模型的编译、实际显存是否足够、最终数值是否正确，必须分别判断。
 
-代码入口和协议见 [RuntimePlan V3](../third_party/ckks-runtime/docs/runtime-plan/v3/README.md)，测试原始记录见 [188Server 测试目录](../test-results/plaintext-streaming-188/README.md)。
+代码入口和协议见 [RuntimePlan V3](../third_party/ckks-runtime/docs/runtime-plan/README.md)，测试原始记录见 [188Server 测试目录](../test-results/plaintext-streaming-188/README.md)。
 
 ## 编译和执行方式
 

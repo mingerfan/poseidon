@@ -42,7 +42,7 @@
 - [Poseidon CPU API 及 2/4 rank MPI 测试](cpu-api-ctest.log)：3 个 CTest 入口全部通过。
 - [真实 GPU MLP](gpu-mlp.json)与[日志](gpu-mlp.log)：本地 RTX 4060 Laptop GPU，编译器直接生成的 binary V3 和 binary manifest，16 MiB raw 预算，现有 fixture/mock 容差内；122 次 transfer，零 Boot，最终最大误差约 0.524794。输入来自既有校准 MLP，与本轮完整 Qwen 的 metadata benchmark 分开。
 
-编译器在首次导出常量时仍计算 content ID，用于去重；这没有增加一次验证性 payload 扫描。binary 加载不重算指令、manifest 或 payload 的整文件摘要。OperatorSpec 保留小文件摘要；MPI 只比较小 metadata 的身份摘要，不保证逐指令字节相等。格式说明见 [RuntimePlan binary V1](../../third_party/ckks-runtime/docs/runtime-plan/binary-v1.md)。
+编译器在首次导出常量时仍计算 content ID，用于去重；这没有增加一次验证性 payload 扫描。binary 加载不重算指令、manifest 或 payload 的整文件摘要。OperatorSpec 保留小文件摘要；MPI 只比较小 metadata 的身份摘要，不保证逐指令字节相等。格式说明见 [RuntimePlan binary V1](../../third_party/ckks-runtime/docs/runtime-plan/binary.md)。
 
 ## 使用
 

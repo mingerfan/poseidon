@@ -2,13 +2,13 @@
 
 2026-10-10。面向 DaCapo 导出器、ckks-runtime 读取器和 Poseidon 执行入口的后续实现方案。
 
-正式二进制模式已接入：编译器默认 binary，需要查看指令时显式 JSON；runtime 整文件读入后默认 4 线程构建。完整 Qwen 三项加载中位数 15.35 秒，8 线程 14.74 秒；加上全部 14.70 GB raw 权重驻留，一次测试 25.70 秒。详见[正式入口验收](../test-results/runtime-binary-production-188-20261011/README.md)和[容器格式](../third_party/ckks-runtime/docs/runtime-plan/binary-v1.md)。本轮按用户要求取消 binary 路径的整文件和 payload 哈希扫描；下文早期方案的 SHA 要求仅描述原 JSON 路径。
+正式二进制模式已接入：编译器默认 binary，需要查看指令时显式 JSON；runtime 整文件读入后默认 4 线程构建。完整 Qwen 三项加载中位数 15.35 秒，8 线程 14.74 秒；加上全部 14.70 GB raw 权重驻留，一次测试 25.70 秒。详见[正式入口验收](../test-results/runtime-binary-production-188-20261011/README.md)和[容器格式](../third_party/ckks-runtime/docs/runtime-plan/binary.md)。本轮按用户要求取消 binary 路径的整文件和 payload 哈希扫描；下文早期方案的 SHA 要求仅描述原 JSON 路径。
 
 实施状态：阶段 A–C 已实现，采用严格单遍 SAX、逐记录 typed plan 构建、增量 SHA-256、紧凑流式导出、manifest 写流和 staging 发布。代码、测试、完整 V2/V3 元数据测量及四卡 Qwen 导出证据见 [I/O 优化验收记录](../test-results/runtime-plan-io-188-20261010/README.md)。元数据加载峰值已低于 16 GiB；180 秒时间目标仍需继续优化。阶段 D 的 bundle pack 已实现并支持显式预算下的 raw 内存驻留，见[pack 验收记录](../test-results/runtime-bundle-pack-188-20261011/README.md)；压缩入口和阶段 E 的二进制容器继续按下述条件推进。
 
 原始四卡 JSON 的 31.03 MB/s 是端到端加载速度：读取 1.82 秒，解析与 typed plan 构建 213.89 秒，增量 SHA-256 55.88 秒，总计 271.59 秒。CPU 解析和对象分配是主要瓶颈；该数字不表示磁盘带宽。合并权重文件不会消除 JSON 的解析时间，后续应减少逐记录临时 DOM、字段查找与分配，或采用阶段 E 的二进制计划。
 
-pack 将 784,750 个 `.bin` 合并为一个 `data.bin`，以 content ID、offset 和长度索引。默认保持一个文件句柄按范围读取；显式设置 `BundleReadOptions.resident_byte_limit` 后顺序预载整个 raw pack，后续从不可变内存范围取数据。新导出默认 pack，旧布局可通过 `--runtime-plan-bundle-format=files` 保留；已有产物可用合并工具转换，无需重跑编译器。存储协议、兼容条件和工具用法见[明文数据包存储 V2](../third_party/ckks-runtime/docs/runtime-plan/v2/plaintext-bundle.md)。
+pack 将 784,750 个 `.bin` 合并为一个 `data.bin`，以 content ID、offset 和长度索引。默认保持一个文件句柄按范围读取；显式设置 `BundleReadOptions.resident_byte_limit` 后顺序预载整个 raw pack，后续从不可变内存范围取数据。新导出默认 pack，旧布局可通过 `--runtime-plan-format=json --runtime-plan-bundle-format=files` 保留；已有产物可用合并工具转换，无需重跑编译器。存储协议、兼容条件和工具用法见[明文数据包存储 V2](../third_party/ckks-runtime/docs/runtime-plan/plaintext-bundle.md)。
 
 阶段 E 已完成独立二进制小实验，尚未切换生产入口。188Server 上约 40 万条 V3 MLP 指令及描述符的加载中位数由 4.031 秒降至 0.398 秒，计入同一 PlanVerifier 后为 4.502 秒与 0.897 秒；真实 784,750 项 manifest 由 3.460 秒降至 0.825 秒。三次交替测量保留元数据 SHA-256，不读取权重 blob。计划样本是独立 MLP 计算图的复制，不能将约 10.1 倍加载倍率外推为完整 Qwen 或推理加速。编码、正确性与工程化边界见[二进制实验记录](../test-results/runtime-binary-io-20261011/README.md)。
 
@@ -36,7 +36,7 @@ Poseidon CPU/GPU MLP 执行入口可设置 `POSEIDON_RUNTIME_BUNDLE_RESIDENT_BYT
 | bundle 原始载荷 | 14,701,969,408 字节 | 14,701,969,408 字节 |
 | bundle blob 数量 | 784,750 | 784,750 |
 
-每份 bundle manifest 为 103,078,905 字节。文件大小采用十进制 GB/MB，内存采用 GiB。EmitRuntimePlan 占编译时间约 43%，其中包含常量转换、去重、哈希及文件写入，不能全部归因于 JSON 序列化。编译证据见 [Qwen 单位明文优化记录](../llm_dsl/Qwen25_24Layer_DSL/verification/unit_plaintext_optimization.json)和[编译结果目录](../test-results/qwen24-dacapo-188-20261010/unit-plaintext/summary.json)。
+每份 bundle manifest 为 103,078,905 字节。文件大小采用十进制 GB/MB，内存采用 GiB。EmitRuntimePlan 占编译时间约 43%，其中包含常量转换、去重、哈希及文件写入，不能全部归因于 JSON 序列化。编译证据见[编译结果目录](../test-results/qwen24-dacapo-188-20261010/unit-plaintext/summary.json)；原 `llm_dsl/Qwen25_24Layer_DSL/verification/unit_plaintext_optimization.json` 记录需从对应版本查询。
 
 ### 读取复杂度
 
