@@ -1,8 +1,0 @@
-{
-  "scope": "verbatim native fold-prefix extraction; no GPU execution",
-  "source_sha256": "4abbded619838cdf2464a962f1e54bf763496706955a7e099c1ad8b5f39dba62",
-  "prefix_sha256": "606a1664565a072dc4a00a06fc476c17dde7915d6e9c261b606ebf09d5bd8f58",
-  "prefix_lines": 39,
-  "arithmetic_prefix_verbatim": true,
-  "excludes_native_relu": true
-}

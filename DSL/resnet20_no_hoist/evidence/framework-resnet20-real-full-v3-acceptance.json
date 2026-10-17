@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scope": "model-level Python -> full Dacapo -> RuntimePlan -> SequentialRuntime -> Poseidon Native NoHoistBsgs",
+  "image": 0,
+  "label": 3,
+  "prediction": 3,
+  "reference_prediction": 3,
+  "classification_correct": true,
+  "clear_plan_max_error": 0,
+  "native_boot_calls": 466,
+  "compute_calls": 16222,
+  "max_logit_error": 0.06999352187590024,
+  "rms_logit_error": 0.03890168834121847,
+  "max_imaginary": 3.9892700148298886e-05,
+  "online_seconds": 612.1893679560001,
+  "plan_sha256": "sha256:a59e320420010dc88e309ddbe223e39ea3a15c1029482948f0b60c999cf7ad80",
+  "operator_spec_sha256": "sha256:009bca1844fd0a46b1ef4fa906290cdb7ddee0d90bec636b12d7bb3bf71d936f",
+  "report_sha256": "sha256:cef72a0703a19a6a1d7e018b566b92c885cd676aa8295cc7fc838976b27cae68",
+  "native_real_projection": true,
+  "limitations": [
+    "single image, not dataset accuracy",
+    "no same-cipher native-vs-DSL comparison",
+    "reported CKKS errors are nonzero",
+    "E2E internal limits are not user-specified acceptance targets"
+  ]
+}

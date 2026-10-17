@@ -1,0 +1,13 @@
+diff --git a/include/hecate/Support/Support.h b/include/hecate/Support/Support.h
+index 7a74746..bc8f94a 100644
+--- a/include/hecate/Support/Support.h
++++ b/include/hecate/Support/Support.h
+@@ -8,6 +8,8 @@
+ 
+ namespace hecate {
+ 
++using llvm::dyn_cast;
++
+ inline llvm::SmallVector<int, 4> naf(int value) {
+   llvm::SmallVector<int, 4> res;
+ 

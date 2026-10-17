@@ -1,3 +1,4 @@
-# Preserve the hashed sources, generated artifacts and historical logs verbatim.
-# CRLF and original snapshot whitespace are intentional evidence bytes.
-* -text -whitespace
+# Preserve tested source, profile and evidence hashes on every platform.
+* -text whitespace=cr-at-eol
+# Unified diffs contain required context-prefix spaces on otherwise empty lines.
+patches/*.patch -whitespace

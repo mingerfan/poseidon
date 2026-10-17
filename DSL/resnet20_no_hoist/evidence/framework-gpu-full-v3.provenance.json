@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/build-runtime-v2/poseidon/bin/poseidon_runtime_gpu_mlp_e2e",
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/compiled-framework-v4/resnet20.optimized._hecate_ResNet20.runtime-plan.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/profiles-native-v4/operator-spec.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/compiled-framework-v4/resnet20.optimized._hecate_ResNet20.bundle",
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/frontend-fixture-v2.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/compiled-clear-v4.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/framework-gpu-full-v3.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/profiles-native-v4/native-config.json"
+  ],
+  "binary_sha256": "e163f692cb904a46531881fd6dce6492fd2f4c0b732a36bf3c0810ba90e3f854",
+  "gpu_uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+  "scope": "model-level Python frontend through full Dacapo/RuntimePlan/SequentialRuntime/Poseidon; not old HEVM replay"
+}

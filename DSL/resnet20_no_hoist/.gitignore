@@ -1,4 +1,2 @@
-build*/
 __pycache__/
-*.pyc
-*.partial
+work/

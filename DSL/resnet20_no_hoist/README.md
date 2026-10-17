@@ -1,134 +1,212 @@
-# ResNet20 ReLU：原生 no-hoist 流程的 DSL benchmark
+# ResNet20：模型级 Python DSL / Native no-hoist
 
-将现有 native ReLU ResNet20 的物理执行计划转换为显式 **CKKS DSL**，经真实
-`hecate-opt` 编译为 HEVM，再调用原生 Poseidon GPU primitive 执行。这里不是旧的
-SiLU 模型，也不是自动规划成56次自举的版本。
+入口是 **[ResNet20.py](ResNet20.py)**，参考当前 framework 的 `MLP.py` 写法。
+它直接描述模型计算，读取原生 `resnet20_new` 的全部116个文本参数，使用原
+ReLU d13 多项式近似、边界归一化40、Option-A残差、平均池化和原分类头。
+不是 SiLU，也不是精确的 `max(0,x)`。
 
-## 已完成的验证
+实际执行流程：
 
-同一 image0（真实类别3）、`resnet20_new` 权重、d13 ReLU 多项式：
-
-| 项目 | 保存的全量结果 |
-|---|---:|
-| DSL / native / 明文预测 | 3 / 3 / 3 |
-| DSL 对明文最大 logits 绝对误差 | 0.012577189250295051 |
-| native 对明文最大 logits 绝对误差 | 0.007694642024733245 |
-| DSL 对 native 加密输出最大差 | 0.006714839973868791 |
-| 原生自举位置 / 次数 | 9个block的act1、act2 / 18次 |
-| 完整执行 action | 13,420 |
-| 实际 GPU RNS exact 检查 | 4,785项全部通过 |
-
-当前是**单样本功能验收**，不是测试集准确率或统计精度等价证明。两次加密使用
-独立随机密钥/随机性，最终 logits 不要求逐bit相同；0.1不是本实验的用户验收阈值。
-全部原baseline/fold必需门禁通过。原生可选`strict_target_1e_4`日志并非必需验收条件。
-
-输入为27个原生stem布局（每个32768 slots、Q32/scale40），stem输出Q31；19次ReLU，
-其中stem不自举，9个残差block各两次自举。Q50/P25、N65536、no-hoist、26GiB pool。
-ReLU按原`rescale_many`/x2，Conv按原sequential rescale；plaintext scale使用原生
-source、ratio、`exp2(pre)/source`表达式，禁止套用旧51-bit补偿。
-
-实际矩阵路径在日志中是`baseline_S2C_no_hoist`和`baseline_C2S_no_hoist`。
-fold实数投影的单个conjugation key storage仍会打印`double_hoist=1`，原native也一样；
-这不表示矩阵阶段采用DoubleHoist BSGS。保留原计算和真实日志，不能以删日志代替验证。
-
-`--unsafe-*`沿用原native入口：本实验参数没有生产安全性认证，不把正确性实验作为安全参数证明。
-
-## 目录
-
-交付前还在干净的仓库`dsl`基线上独立构建了本目录，完整CPU loader/21层encoder
-和13,420 action元数据门禁通过。重新编译MLIR生成的HEVM SHA与原全量产物一致；
-实际常量/27输入的CPU重放误差为1.3343e-14。新构建的700步GPU短测通过273项
-RNS exact检查；1800步GPU短测通过644项检查及2次原生no-hoist自举/fold门禁。
-`evidence/packaged-*`为这次打包复测，原全量日志保留原文件名；
-新构建短测不代表又完成了一次全量GPU测试。
-
-- `source/`：完整显式CKKS MLIR、原生连接图和逐指令lowering manifest。
-- `artifacts/`：真实compiler输出HEVM及FNV绑定的f64 scale、native编码规则、rescale分组。
-- `fixtures/`：无损gzip常量/27输入、原生合同、解压后的大小与SHA256。
-- `runtime/`：单GPU执行入口、动态scale/分组/生命周期调度、CPU单元检查。
-- `runtime/native_snapshot/`：测试时原native算术/诊断代码快照。只复用原生API，不修改仓库公共行为。
-- `compiler/`：真实EmitHEVM的opt-in native-scales补丁、blb5配置和重新编译脚本。
-- `evidence/`：原native和DSL全量/短测日志、逐类别数值对比、编译审计和包装测试记录。
-
-source graph是数学/物理计划描述；HEVM由真实compiler生成，不由Python伪造。
-raw HEVM有27,410条指令，包含alloc和lowering展开；恢复native rescale groups后有13,420个action。
-自举18次不是18条完整网络指令，也不是56次自动规划结果。
-
-## 无GPU的包检查
-
-```bash
-python3 DSL/resnet20_no_hoist/tools/check_package.py
-# 加上3组C++ parser/metadata/拒绝坏输入检查；仅需C++20编译器，不启动CUDA设备
-python3 DSL/resnet20_no_hoist/tools/check_package.py --cpp
-python3 DSL/resnet20_no_hoist/tools/prepare_assets.py
+```text
+ResNet20.py → Hecate/Earth → 完整 Dacapo 规划 → RuntimePlan
+            → 正常 SequentialRuntime → Poseidon GPU / Native NoHoistBsgs
 ```
 
-常量gzip约4.9MiB，解压488,914,000 bytes；27输入解压7,077,888 bytes。
-解压程序验证原始SHA，遇到不匹配已有文件会停止，不覆盖。默认放到本目录被忽略的`build/assets/`。
+前端不读取 native 物理 trace，不手工指定 bootstrap、rescale 或密文层级。
+编译器自行规划本次466次自举，不强制复刻旧原生18次物理计划。
+自举是真正的同态 Native no-hoist，不使用 Host 解密再加密刷新。
 
-可选NumPy CPU语义重放，bootstrap按理想恒等，不代表加密精度：
+本目录已替换旧 trace→CKKS MLIR→HEVM 包，删除其执行器、sidecar、native源码
+快照和生成产物。旧版本可从 Git 历史查阅；其他模型目录不属于本次更新范围。
 
-```bash
-p=DSL/resnet20_no_hoist
-python3 "$p/tools/replay_strict_compiled_hevm.py" \
-  "$p/artifacts/strict-native-v1.strict_native_resnet20.hevm" \
-  "$p/build/assets/strict-native-v1" "$p/evidence/native_full_20261014.log" \
-  "$p/build/compiled-cpu-replay.json"
-```
+## 已验证结果
 
-## 构建、元数据检查和GPU复现
+| 项目 | 本次结果 |
+|---|---|
+| 前端 FP64 vs 原生独立 C++ CPU oracle | 最大误差 `1.509903313490213e-14` |
+| 编译计划正常明文 Runtime vs Python | 最大误差 `0` |
+| 完整加密 GPU 运行 | `exit0`，`passed=true` |
+| 样本 | image0，label3；CPU/GPU均预测3 |
+| Compute / Native no-hoist Boot | 16222 / 466 |
+| logits 最大误差 / RMS | `0.06999352187590024` / `0.03890168834121847` |
+| 最大虚部 | `3.9892700148298886e-05` |
+| 在线运行时间 | `612.189` 秒 |
 
-要求Linux、C++20、CMake>=3.26.4、CUDA/CUPTI，以及本仓库的离线GPU/RMM依赖。
-这是独立opt-in目标，不改变默认CPU/runtime工程。默认CUDA架构70，其他卡可设置
-`CUDA_ARCHITECTURES`，默认构建并行度2。
+这是单样本验证，不是测试集准确率，也没有证明本路线与原生同密文逐位一致。
+报告中的 E2E 内部数值门限不是用户指定的验收标准。加密随机性会使复测数值波动。
 
-```bash
-p=DSL/resnet20_no_hoist
-bash "$p/build.sh"
-bash "$p/run.sh" metadata
-# 以下GPU编号只是示例，脚本会拒绝占用中的卡或不足28GiB空闲的卡。
-bash "$p/run.sh" short 2 > "$p/build/short700.log" 2>&1
-bash "$p/run.sh" boot-smoke 2 > "$p/build/short1800.log" 2>&1
-bash "$p/run.sh" full 2 > "$p/build/full.log" 2>&1
-```
+最终 Native 配置：N65536、Q50（混合28..32bit）、P25、H192、context scale51、
+EvalMod scale52、完整有效degree58（generation59）、`NoHoistBsgs=4`，同态实数投影。
+Boot输出physical level21/scale52；前端输入scale40由计划规定。它保留模型计算语义，
+不声称复刻旧native的所有加密参数或物理计划。GPU验证使用V100 32GiB、pool26GiB。
 
-先检查每份日志和退出状态再执行下一步。700action在首次自举713之前，正常应显示
-`DSL_TRUNCATED ops=700 bootstrap_calls=0`；1800action需完成2次自举和原fold门禁。
-full需`ops=13420 bootstrap_calls=18`，所有RNS exact和原bootstrap/fold门禁通过。
-不要把metadata模式、CPU700截断或未经过自举的700短测当作完整加密验证。
+## 文件
 
-运行脚本显式禁用`POSEIDON_RESCALE_META_BITS`、`POSEIDON_RESCALE_MODEL_BITS`、
-`POSEIDON_DSL_SCALE_SHIFT`，固定pool26GiB及2GiB headroom。实际加密和key setup仅在
-`--unsafe-accuracy-only`中启动。程序带observer和RNS下载，不作为online性能基准。
+- `ResNet20.py`：前端；复用 framework 现有 Hecate/poly 模型计算助手。
+- `check_semantics.py`：同一前端的槽计算、独立CHW方程和native CPU参考对照。
+- `generate_profiles.py`：从通过的Native组件日志生成编译/运行能力配置。
+- `profiles/`：本次实测匹配的三份配置；算子延迟仍是框架估算值。
+- `patches/`：本次验证所需的少量框架修复及精确基础版本/源文件SHA。
+- `build-support/`：复用正常runtime测试入口的CMake构建入口。
+- `fixtures/`：本次image0的输入/packed slots与原生CPU参考；不是模型权重副本。
+- `evidence/`：原始数值报告、组件日志、语义报告和压缩后的真实RuntimePlan。
+- `verify_result.py`：标准库独立复核交付文件SHA、计划、自举类型及报告数值。
 
-`POSEIDON_TRIDENT_RESNET20_ROOT`可指向相同的既存模型资产根，默认使用仓库
-`bench/resnet20_s2c_first/support/data/resnet20`；资产来源及许可边界沿用
-`bench/resnet20_s2c_first/support/PROVENANCE.md`，本包不新增模型许可声明。
+不上传二进制、557MiB的Earth bytecode或大型plaintext bundle；这些应从 `.py`
+经框架重新生成。压缩的RuntimePlan仅供审计；运行需要本地重新编译生成的bundle。
 
-`build_validated_runtime.sh`仅用于复用原验证树的同版本kernel-object缓存：
-设置`POSEIDON_VALIDATED_ROOT`后构建，不可用它混合任意版本的对象与头文件。
-正常新checkout使用上述CMake源码构建。
+## 1. 准备匹配的 framework
 
-## 重新编译DSL
-
-已有产物可直接运行，不必重新生成。重新编译必须使用支持`poseidon_native_scale:f64`
-的真实Hecate编译器；`compiler/EmitHEVM.native-scales.patch`保留了本实验的opt-in改动。
-在相符Dacapo版本先`git apply --check`，再应用/构建，不能对不匹配版本盲目覆盖。
+以下命令在Linux Bash执行，Python需NumPy、Torch、einops（依赖沿用Dacapo）。
+需要匹配的LLVM/MLIR18工具链、CMake≥3.26.4、CUDA及GMP；本次实际LLVM18.1.2、
+CUDA12.2、sm70。先进入本目录，然后设置绝对路径：
 
 ```bash
-HECATE_OPT=/path/to/hecate-opt bash DSL/resnet20_no_hoist/compiler/compile.sh
+set -euo pipefail
+export PKG="$PWD"
+export WORK="/absolute/path/to/new-resnet20-work"
+mkdir -p "$WORK"
+git clone --branch framework https://github.com/mingerfan/poseidon.git "$WORK/framework"
+export FRAMEWORK="$WORK/framework"
+git -C "$FRAMEWORK" checkout --detach 6dc8cbfb65e3311271563000f6f5dce92d0324a8
+git -C "$FRAMEWORK" submodule update --init --recursive third_party/ckks-runtime
+export RUNTIME="$FRAMEWORK/third_party/ckks-runtime"
+export HECATE="$RUNTIME/third_party/dacapo"
+test "$(git -C "$RUNTIME" rev-parse HEAD)" = 0d3ba226b0329932ca9aed4a8eaa1797f5893965
+test "$(git -C "$HECATE" rev-parse HEAD)" = 6e75be29a52b69bc56404fc07e44465fe8971d29
+git -C "$FRAMEWORK" apply --check "$PKG/patches/poseidon-framework.patch"
+git -C "$RUNTIME" apply --check "$PKG/patches/runtime-packed-input.patch"
+git -C "$HECATE" apply --check "$PKG/patches/dacapo-llvm18.patch"
+git -C "$FRAMEWORK" apply "$PKG/patches/poseidon-framework.patch"
+git -C "$RUNTIME" apply "$PKG/patches/runtime-packed-input.patch"
+git -C "$HECATE" apply "$PKG/patches/dacapo-llvm18.patch"
 ```
 
-该脚本重新emit HEVM并逐条核对原manifest。不要使用默认`--dacapo`自动placement删除
-原18次bootstrap。新编译产物必须重新审计后才能配合sidecars运行。
+子模块URL沿用上游SSH配置，需要相应Git访问权限；仅有HTTPS权限时可在本次
+clone中设置对应HTTPS URL后初始化，不必修改全局Git配置。
 
-## 日志与SHA
+补丁保留实际通过的源码：secret sampler边界/初始化/拒绝采样修复、Native Boot
+输出系数归一化、测试入口的完整余弦/实数配置和packed输入支持，以及LLVM18
+`dyn_cast`作用域修复。没有修改Dacapo规划算法，也没有引入自定义HEVM执行循环。
+`patches/revisions.json`列出全部改动文件，SHA与实际服务器构建源码相符。
 
-保存的原full HEVM SHA256：
-`36b9b6f2e66d85b84cd7ca988a04c50a37635689f7f86a8f6710ba384bf221cd`。
+## 2. 构建当前框架和正常runtime入口
 
-保存的原DSL full日志SHA256：
-`d49b0c50c6e3a713148b79285027181ae9af36a939451fa1b8fdaee37304fa98`。
+设置已有LLVM/MLIR安装目录；Dacapo自己的Nix环境也可使用，见其README。
 
-`manifest.sha256.json`覆盖包内不可变源/产物/证据；包检查重新读取原日志计算差值，
-而不是只相信结果摘要。重新运行因密钥随机性可能有小幅误差变化，应另存新日志。
+```bash
+export LLVM_DIR="/absolute/path/to/llvm18/lib/cmake/llvm"
+export MLIR_DIR="/absolute/path/to/llvm18/lib/cmake/mlir"
+export HECATE_BUILD="$WORK/build-dacapo"
+cmake -S "$HECATE" -B "$HECATE_BUILD" -DCMAKE_BUILD_TYPE=Release \
+  -DLLVM_DIR="$LLVM_DIR" -DMLIR_DIR="$MLIR_DIR" -DBUILD_TESTING=ON
+cmake --build "$HECATE_BUILD" --target hecate-opt HecateFrontend -j2
+ctest --test-dir "$HECATE_BUILD" --output-on-failure
+export PYTHONPATH="$HECATE/python/hecate:$HECATE/python/poly${PYTHONPATH:+:$PYTHONPATH}"
+
+export CUDACXX=/usr/local/cuda/bin/nvcc
+export BUILD="$WORK/build-runtime"
+cmake -S "$PKG/build-support" -B "$BUILD" \
+  -DPOSEIDON_SOURCE="$FRAMEWORK" -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CUDA_ARCHITECTURES=70 -DPOSEIDON_BUILD_DEPS=OFF \
+  -DPOSEIDON_USE_ZLIB=OFF -DPOSEIDON_USE_ZSTD=OFF -DPOSEIDON_USE_MSGSL=OFF \
+  -DPOSEIDON_USE_INTEL_HEXL=OFF -DPOSEIDON_USE_OPENMP=OFF \
+  -DPOSEIDON_BUILD_EXAMPLES=OFF -DPOSEIDON_BUILD_CKKS_RUNTIME_API=ON \
+  -DPOSEIDON_BUILD_CKKS_RUNTIME_TESTS=ON -DPOSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS=ON \
+  -DCKKS_RUNTIME_BUILD_TESTS=OFF -DCKKS_RUNTIME_BUILD_EXPERIMENTS=ON
+cmake --build "$BUILD" --target poseidon_runtime_gpu_bootstrap_e2e \
+  poseidon_runtime_gpu_mlp_e2e dacapo_mlp_vec_e2e -j2
+export BIN="$BUILD/poseidon/bin"
+```
+
+CUDA/CUPTI若没有自动找到，按本机CUDA路径补充
+`-DCUDA_cupti_LIBRARY=.../extras/CUPTI/lib64/libcupti.so` 和
+`-DCUDAToolkit_CUPTI_INCLUDE_DIR=.../extras/CUPTI/include`。
+构建入口只复用RMM已提供的spdlog头文件，没有另一份模型执行器。
+
+## 3. 检查语义并从Python导出Earth
+
+权重、d13、image0已在上述固定framework提交中，直接使用，不需要另下载checkpoint。
+
+```bash
+export DATA="$FRAMEWORK/bench/resnet20_s2c_first/support/data/resnet20"
+export WEIGHTS="$DATA/pretrained_parameters/resnet20_new"
+export D13="$DATA/relu_param/d13.txt"
+python "$PKG/check_semantics.py" --weights "$WEIGHTS" --relu-coefficients "$D13" \
+  --images "$DATA/testFile/test_values.txt" \
+  --native-oracle "$PKG/fixtures/native-cpu-reference.json" \
+  --report "$WORK/semantics.json" --runtime-fixture "$WORK/fixture.json"
+python "$PKG/ResNet20.py" --weights "$WEIGHTS" --relu-coefficients "$D13" \
+  --output "$WORK/traced" --bytecode
+```
+
+输出目录/报告文件需尚不存在。必须使用包含真实常量的 `ResNet20.mlirbc`；
+不能把省略常量的inspect MLIR拿去编译。完整bytecode约557MiB。
+
+## 4. Native组件、完整Dacapo规划、正常明文Runtime
+
+先通过 `nvidia-smi` 选择无人占用且空闲≥28GiB的GPU，下面以GPU3为例。
+先清除本shell继承的 `POSEIDON_*`，再显式设置本次配置，避免旧实验override。
+
+```bash
+for name in ${!POSEIDON_@}; do unset "$name"; done
+export CUDA_VISIBLE_DEVICES=3
+export POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB=26624
+export POSEIDON_RUNTIME_BOOTSTRAP_DEGREE=65536
+export POSEIDON_RUNTIME_BOOTSTRAP_LINEAR_MODE=no_hoist
+export POSEIDON_RUNTIME_BOOTSTRAP_FULL_COSINE=1
+export POSEIDON_RUNTIME_BOOTSTRAP_MODEL_PROFILE=1
+export POSEIDON_RUNTIME_BOOTSTRAP_REAL_PROFILE=1
+export POSEIDON_RUNTIME_BOOTSTRAP_DIAGNOSTICS=1
+if "$BIN/poseidon_runtime_gpu_bootstrap_e2e" > "$WORK/native-probe.log" 2>&1; then
+  echo NATIVE_NOHOIST_PROBE_EXIT=0 >> "$WORK/native-probe.log"
+else
+  echo 'Native component failed; stop before compilation/model execution.' >&2
+  exit 1
+fi
+python "$PKG/generate_profiles.py" --runtime-root "$RUNTIME" \
+  --native-probe-log "$WORK/native-probe.log" \
+  --compiler-profile-template "$HECATE/profiled_HEAAN_GPU.json" --output "$WORK/profiles"
+
+python "$RUNTIME/integrations/dacapo/generate_model_artifacts.py" resnet20 \
+  --operator-spec "$WORK/profiles/operator-spec.json" \
+  --compiler-profile "$WORK/profiles/compiler-profile.json" \
+  --traced-mlir "$WORK/traced/ResNet20.mlirbc" \
+  --hecate-opt "$HECATE_BUILD/bin/hecate-opt" --hecate-build "$HECATE_BUILD" \
+  --boot-placement depth-dp --waterline 40 --lazy-rescale-level-factor 3 \
+  --device-counts 1 --runtime-plan-memory --runtime-plan-memory-report \
+  --inline-payload-max-bytes 0 --plan-format json --output-dir "$WORK/compiled"
+export PLAN="$WORK/compiled/resnet20.optimized._hecate_ResNet20.runtime-plan.json"
+export BUNDLE="${PLAN%.runtime-plan.json}.bundle"
+"$BIN/dacapo_mlp_vec_e2e" "$PLAN" "$WORK/profiles/operator-spec.json" "$BUNDLE" \
+  "$WORK/fixture.json" "$WORK/clear.json" "$WORK/clear.diff.log"
+```
+
+每一步成功后再执行下一步。明文Runtime中的Boot是理想恒等，不能代替加密验证。
+
+## 5. 全量加密运行与历史结果复核
+
+确认GPU仍空闲后，清除组件阶段环境，只留下模型运行所需配置：
+
+```bash
+for name in ${!POSEIDON_@}; do unset "$name"; done
+export CUDA_VISIBLE_DEVICES=3
+export POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB=26624
+export POSEIDON_RUNTIME_ROTATION_KEY_POLICY=binary
+export POSEIDON_RUNTIME_TRACE="$WORK/full.trace.csv"
+"$BIN/poseidon_runtime_gpu_mlp_e2e" "$PLAN" "$WORK/profiles/operator-spec.json" \
+  "$BUNDLE" "$WORK/fixture.json" "$WORK/clear.json" "$WORK/full.json" \
+  "$WORK/profiles/native-config.json" > "$WORK/full.log" 2>&1
+```
+
+该入口仍是framework现有的MLP通用E2E runner，经正常SequentialRuntime执行
+编译后的ResNet20；不能省略最后的Native配置参数，否则不能作为本次no-hoist验证。
+
+仅复核本次已保存的历史结果不需要GPU或第三方Python库：
+
+```bash
+python "$PKG/verify_result.py"
+```
+
+原始日志/provenance保留当时服务器路径，路径是历史记录，不是运行脚本依赖。
+审计会解压真实plan、核验SHA/全部466个Native Boot，独立重算logits误差与分类。

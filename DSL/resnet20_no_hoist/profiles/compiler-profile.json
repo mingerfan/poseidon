@@ -1,0 +1,92 @@
+{
+  "bootstrapLevelLowerBound": 1,
+  "bootstrapLevelUpperBound": 6,
+  "latencyTable": {
+    "earth.add_double": [
+      1,
+      25,
+      35,
+      44,
+      54,
+      63,
+      73
+    ],
+    "earth.add_single": [
+      1,
+      23,
+      31,
+      39,
+      47,
+      56,
+      63
+    ],
+    "earth.bootstrap_single": [
+      1,
+      1,
+      1,
+      1,
+      294928,
+      306306,
+      321777
+    ],
+    "earth.modswitch_single": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "earth.mul_double": [
+      1,
+      755,
+      840,
+      921,
+      1017,
+      1130,
+      1240
+    ],
+    "earth.mul_single": [
+      1,
+      20,
+      29,
+      39,
+      45,
+      55,
+      62
+    ],
+    "earth.negate_single": [
+      1,
+      25,
+      30,
+      37,
+      42,
+      49,
+      56
+    ],
+    "earth.rescale_single": [
+      1,
+      154,
+      183,
+      227,
+      283,
+      331,
+      382
+    ],
+    "earth.rotate_single": [
+      1,
+      745,
+      805,
+      874,
+      958,
+      1049,
+      1150
+    ]
+  },
+  "levelLowerBound": 0,
+  "levelUpperBound": 6,
+  "polynomialDegree": 65536,
+  "rescalingFactor": 52,
+  "runtime": "HEAAN-HEVM"
+}

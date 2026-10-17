@@ -1,0 +1,29 @@
+{
+  "compared_lines": 1,
+  "final_slots_sha256": "8eecf1f76f16c25054d149dd17c4f2ad9bb3cd21dd72c0282cde16e5c3f13fb4",
+  "format_version": 1,
+  "input_encoding": "frontend-packed-slots",
+  "instruction_mismatches": 0,
+  "model": "resnet20",
+  "model_sha256": "af7bbf59eec3b748a464abd95b45f8a8493aa4fcfd90b308a6b01690ad759d42",
+  "output": [
+    -6.606964289872403,
+    2.3473489890440358,
+    1.8511820890930986,
+    22.45786668323259,
+    -5.851935676691774,
+    5.613843153806358,
+    -3.4807083062027386,
+    -7.606758672632609,
+    -2.0131181348360907,
+    -6.706661525567593
+  ],
+  "output_finite": true,
+  "passed": true,
+  "plan_sha256": "sha256:a59e320420010dc88e309ddbe223e39ea3a15c1029482948f0b60c999cf7ad80",
+  "python_max_abs_diff": 0.0,
+  "python_tolerance": 1e-09,
+  "python_within_tolerance": true,
+  "require_python_match": true,
+  "seed": 0
+}
