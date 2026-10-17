@@ -1,0 +1,15 @@
+# Reproducible build, setup and transfer output stays local. Test logs,
+# reports, source fingerprints and reproduction scripts remain versioned.
+/*build*.log
+/*configure*.log
+# Referenced by compiler-integer-rescale-review.md.
+!/compiler-integer-rescale-build.log
+/checkpoint-*.log
+/server-*.log
+/*source-sync.log
+/*-transfer.log
+/ssh-reconnect-diagnostic.log
+
+# Continuous process/memory sampling; final diagnostic reports are retained.
+/188-read-only-monitor.jsonl
+/188-q50-scale40-preflight-model-memory.jsonl

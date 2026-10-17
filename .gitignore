@@ -7,6 +7,8 @@ build*/
 !/third_party/cpm/cpm/**
 .clangd
 .claude/
+.codex/
+.ruff_cache/
 compile_commands.json
 stubs/
 __pycache__/
@@ -20,6 +22,9 @@ __pycache__/
 /test-results/**/*.sqlite-wal
 /test-results/**/*.ncu-rep
 /test-results/**/*.qdrep
+
+# Local process IDs are not reproducible validation evidence.
+/test-results/**/*.pid
 
 thirdparty
 .venv-qwen/
