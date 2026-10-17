@@ -1077,7 +1077,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     double double_angle_base_override,
     double polynomial_output_scale_override,
     bool fuse_leaf_terms_before_rescale,
-    double input_scale)
+    double input_scale,
+    bool metadata_only)
 {
     const auto &context = encoder.context();
     const auto crt_context = context.crt_context();
@@ -1161,6 +1162,19 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         [&](std::complex<double> value,
             std::size_t q_count,
             double scale) -> GpuPlaintextData {
+            // Planning uses the same level/scale DAG without allocating
+            // coefficient payloads. Execution keeps the default upload path.
+            if (metadata_only)
+            {
+                GpuPlaintextData result;
+                result.meta.parms_id = parms_id_for_q_count(q_count);
+                result.meta.scale = scale;
+                result.meta.is_ntt_form = true;
+                result.meta.degree =
+                    std::size_t{1} << context.parameters_literal()->log_n();
+                result.meta.q_count = q_count;
+                return result;
+            }
             Plaintext plaintext;
             try
             {

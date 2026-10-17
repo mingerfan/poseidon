@@ -111,3 +111,10 @@ target_compile_definitions(poseidon_gpu_resnet18 PRIVATE
     POSEIDON_RESNET20_RELU_FIXTURE="${POSEIDON_ROOT}/Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt")
 set_target_properties(poseidon_gpu_resnet18 PROPERTIES
     CUDA_ARCHITECTURES "${POSEIDON_GPU_CUDA_ARCHITECTURES}")
+
+# CPU-only regression for the sparse-secret sampler used by this benchmark.
+add_executable(resnet18_secret_sampler_regression EXCLUDE_FROM_ALL
+    tests/secret_sampler_regression.cpp)
+target_include_directories(resnet18_secret_sampler_regression PRIVATE
+    "${POSEIDON_ROOT}/src" "${CMAKE_BINARY_DIR}/poseidon_build")
+target_link_libraries(resnet18_secret_sampler_regression PRIVATE poseidon_shared)

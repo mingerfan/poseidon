@@ -1,0 +1,52 @@
+{
+  "status": "PASS",
+  "scope": "native ResNet18, original average pooling and double-hoist; single image",
+  "tested_base_commit": "943515e4e9a3e6010b295892ad7fcb4edb5db274",
+  "tested_binary_sha256": "304b85717c28ccee991c0f06f9f0a4f9957d7efa6e47263af520ab707715530f",
+  "tested_full_log_sha256": "08038a585e01f5113f571fe19aafef04662e819015dcb3e33ad0aaaad7dd019b",
+  "gates": {
+    "weights": {
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "be5b06fcdd38e615fa540a42f1c9030d3756bbae331215140b0920cb090ee7dc"
+    },
+    "smoke": {
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "6d8a4ef8a3ac22ac367d1d724733913800850008cac4a2975b10b818cbb886bb"
+    },
+    "relu": {
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "67e3c36851bde445d6d165e5fabb6e1f1b612bc6079994e666e88586c02262f7"
+    },
+    "stem": {
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "9ee4ea6f37fc55c3f2d4119d761c6ebf606aae253838147788ba497866f7bb65"
+    },
+    "bootstrap-prefix": {
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "710b516cd1341b13150f2a6ed1276637c97398c66ed141fb33d76617383f3583"
+    },
+    "full": {
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "08038a585e01f5113f571fe19aafef04662e819015dcb3e33ad0aaaad7dd019b"
+    }
+  },
+  "image": 0,
+  "label": 65,
+  "cpu_prediction": 65,
+  "gpu_prediction": 65,
+  "max_logit_error": 0.0133694,
+  "bootstrap_pack_calls": 60,
+  "published_source_sha256": {
+    "src/poseidon/basics/util/rlwe.cpp": "694d4714c58b22370174523c877510aaee09a3c1cd25ee3e21e5f3f65737c326",
+    "src/poseidon/gpu/gpu_uploader.cpp": "833dfd0850cb6a15ac7c6b1ea29085ba33bbaf51a9c9243d4441e324a9af6e53",
+    "src/poseidon/gpu/gpu_uploader.h": "17312e4b436e47bdc353aac9566e416d9f2cf71d82990d7182baa33b4767ee62"
+  },
+  "excluded_unrelated_fixture_change": "benchmark/resnet50_gpu/main.cpp; not used to build the ResNet18 executable",
+  "shared_moddown_experiment_included": false
+}

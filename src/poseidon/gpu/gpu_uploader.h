@@ -130,6 +130,8 @@ public:
      * expected_output_parms_id records the output level observed from the CPU
      * high-precision evaluator; the GPU finishes with a parallel Q-prefix
      * drop when its static plan naturally retains more limbs.
+     * metadata_only retains the same level/scale plan but omits plaintext
+     * encoding and upload. Such a plan is for inspection, not execution.
      */
     static GpuBootstrapData::EvalModData upload_eval_mod_high_precision(
         const EvalModPoly &eval_mod_poly,
@@ -148,7 +150,8 @@ public:
         double polynomial_output_scale_override =
             std::numeric_limits<double>::quiet_NaN(),
         bool fuse_leaf_terms_before_rescale = true,
-        double input_scale = 0.0);
+        double input_scale = 0.0,
+        bool metadata_only = false);
 
     /**
      * @brief Upload CPU relinearization keys to GPU.

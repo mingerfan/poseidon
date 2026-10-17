@@ -1,5 +1,33 @@
 # Poseidon GPU ResNet18
 
+## Validated fixes (2026-10-17)
+
+The current ResNet18 build requires the shared uploader's `metadata_only`
+argument, defaulting to `false` for existing callers. The sparse-secret sampler
+now initializes its destination, samples indices only in `[0,N-1]`, and writes
+coefficients only when a new position is accepted. Model weights, average
+pooling, ReLU, double-hoist and verification limits are unchanged.
+
+The repaired build passed weights, smoke, ReLU, stem, bootstrap-prefix and full
+GPU validation on image0: CPU/GPU/label `65/65/65`, all eight blocks completed,
+60 bootstrap pack calls, maximum logit error `0.0133694`, exit0. This is a
+single-image result, not dataset accuracy or bitwise equivalence. The historical
+measurements below use older configurations; the current result uses
+N65536/Q50/P25, application scale40, EvalMod scale45.
+
+The source/binary/log hashes and check results are recorded in
+[validation/20261017-native-result.json](validation/20261017-native-result.json).
+The ResNet50 experimental ModDown correction is not part of this change.
+
+A CPU-only sampler regression uses poisoned output buffers and guard values,
+checking 64 trials for bounds, exact Hamming weight and consistent RNS signs:
+
+```bash
+cmake --build benchmark/resnet18_gpu/build --target resnet18_secret_sampler_regression -j2
+benchmark/resnet18_gpu/build/resnet18_secret_sampler_regression 10
+benchmark/resnet18_gpu/build/resnet18_secret_sampler_regression 16
+```
+
 This benchmark implements the Trident ImageNet ResNet18 polynomial network on
 one NVIDIA GPU. It uses the Trident `2/2/2/2` BasicBlock topology, pretrained
 weights and CHW inputs. CPU work is limited to setup, plaintext encoding,
