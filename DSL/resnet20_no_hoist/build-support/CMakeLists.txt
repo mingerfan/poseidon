@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.26.4)
+project(ResNet20FrameworkValidation LANGUAGES C CXX CUDA)
+set(CMAKE_CXX_STANDARD 20)
+set(POSEIDON_SOURCE "" CACHE PATH "Pinned framework checkout with the included patches")
+if(NOT EXISTS "${POSEIDON_SOURCE}/CMakeLists.txt")
+    message(FATAL_ERROR "Set POSEIDON_SOURCE to the framework checkout")
+endif()
+set(POSEIDON_USE_SPDLOG OFF CACHE BOOL "" FORCE)
+add_subdirectory("${POSEIDON_SOURCE}" poseidon)
+# Use the logging headers already supplied by the bundled RMM dependency.
+target_link_libraries(poseidon_shared PUBLIC spdlog::spdlog_header_only)
