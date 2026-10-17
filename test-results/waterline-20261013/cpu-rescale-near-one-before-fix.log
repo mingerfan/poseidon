@@ -1,0 +1,2 @@
+q=1125899906424833 native_scale=1125899907260415 ratio=0.99999999962892705 relative_error_multiplier1=3.7107295014493502e-10
+rejected: Rescale target lacks modulus/precision space for integer scale normalization

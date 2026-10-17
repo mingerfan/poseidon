@@ -1,0 +1,10 @@
+[PASS] internal RMM pool lifetime
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=5854700 retained_workspace_bound=0 reserve_required=72963564 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline GPU0 front_peak=1376256 plain_peak=114688 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+WATERLINE measurements cumulative_cpu_calls=1 cpu_encode_ms=0.792915 cpu_plain_h2d_bytes=114688 transport_h2d_bytes=344064 transport_h2d_ms=0.071232
+WATERLINE measurements GPU0 allocated_peak=0 allocated_live=0 pool_reserved=0 pool_cap=0 gpu_encode_calls=0 gpu_encode_ms=0 gpu_raw_h2d_bytes=0 gpu_raw_h2d_ms=0
+Waterline diagnostic max=19 outputs=1 peer_computes_during_gpu0_delay=0
+[FAIL] Waterline plaintext consumer numerical mismatch

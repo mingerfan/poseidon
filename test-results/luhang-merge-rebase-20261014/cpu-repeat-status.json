@@ -1,0 +1,32 @@
+[
+  {
+    "threads": "1",
+    "repeat": 0,
+    "exit_code": 0
+  },
+  {
+    "threads": "1",
+    "repeat": 1,
+    "exit_code": 0
+  },
+  {
+    "threads": "1",
+    "repeat": 2,
+    "exit_code": 0
+  },
+  {
+    "threads": "4",
+    "repeat": 0,
+    "exit_code": 0
+  },
+  {
+    "threads": "4",
+    "repeat": 1,
+    "exit_code": 0
+  },
+  {
+    "threads": "4",
+    "repeat": 2,
+    "exit_code": 0
+  }
+]

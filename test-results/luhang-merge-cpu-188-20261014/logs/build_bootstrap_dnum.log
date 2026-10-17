@@ -1,0 +1,11 @@
+COMMAND: ["c++", "-std=c++20", "-O3", "-DNDEBUG", "-fopenmp", "-pthread", "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/src", "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu", "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/deps/msgsl-src/include", "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/deps/spdlog-1.17.0/include", "/home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_bootstrap_dnum.cpp", "-L/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu", "-lposeidon_shared", "-lgmpxx", "-lgmp", "-Wl,-rpath,/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu", "-o", "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_dnum"]
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_bootstrap_dnum.cpp:35:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

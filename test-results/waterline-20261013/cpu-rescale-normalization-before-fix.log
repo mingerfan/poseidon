@@ -1,0 +1,2 @@
+CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=5 slots_checked=2048 max_complex_error=0.150378
+[FAIL] normalized Rescale differs from independent dense arithmetic

@@ -1,0 +1,60 @@
+{
+  "original": {
+    "expected_acceptance": true,
+    "accepted": true,
+    "error": null,
+    "first_mismatch": null
+  },
+  "ssa_renamed": {
+    "expected_acceptance": true,
+    "accepted": true,
+    "error": null,
+    "first_mismatch": null
+  },
+  "device": {
+    "expected_acceptance": false,
+    "accepted": false,
+    "error": null,
+    "first_mismatch": {
+      "record": 6,
+      "expected": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+      "actual": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 1 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+    }
+  },
+  "parameter": {
+    "expected_acceptance": false,
+    "accepted": false,
+    "error": null,
+    "first_mismatch": {
+      "record": 6,
+      "expected": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+      "actual": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 4>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+    }
+  },
+  "type": {
+    "expected_acceptance": false,
+    "accepted": false,
+    "error": null,
+    "first_mismatch": {
+      "record": 6,
+      "expected": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+      "actual": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 41 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+    }
+  },
+  "relative_transfer_order": {
+    "expected_acceptance": false,
+    "accepted": false,
+    "error": null,
+    "first_mismatch": {
+      "record": 2,
+      "expected": "[\"ct_operation\",[\"initialization\",\"t:0\",\"dist.transfer\",[\"v:0\"],\"<{destination_device = 0 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 0 : i64}> {dist.device = 0 : i64, dist.rank = 0 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+      "actual": "[\"ct_operation\",[\"initialization\",\"t:1\",\"dist.transfer\",[\"v:0\"],\"<{destination_device = 1 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 1 : i64}> {dist.device = 1 : i64, dist.rank = 0 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+    }
+  },
+  "missing_before": {
+    "expected_acceptance": false,
+    "accepted": false,
+    "error": "after dump has no completed independent before dump",
+    "first_mismatch": null
+  }
+}

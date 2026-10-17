@@ -1,0 +1,11 @@
+SCOPE real GPU key backing/Rotate/Relin parameter regression; not full Qwen/model execution; sec_level_type=none, N=16384 Q=40x30 P=8x30 scale=40
+PASS single key backing relin_bytes=31457280 galois_one_bytes=31457280 galois_two_bytes=62914560 active_levels=7,23,39 stored_q=40 p_count=8 decomposition_blocks=5
+PASS Relinearize q=8 slots_checked=8192 max_abs_error=0
+PASS composite Rotate q=8 slots_checked=8192 max_abs_error=0
+PASS reuse Rotate q=8 slots_checked=8192 max_abs_error=0
+PASS Relinearize q=24 slots_checked=8192 max_abs_error=0
+PASS composite Rotate q=24 slots_checked=8192 max_abs_error=0
+PASS reuse Rotate q=24 slots_checked=8192 max_abs_error=0
+PASS Relinearize q=40 slots_checked=8192 max_abs_error=0
+PASS composite Rotate q=40 slots_checked=8192 max_abs_error=0
+PASS reuse Rotate q=40 slots_checked=8192 max_abs_error=0

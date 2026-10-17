@@ -1,0 +1,12 @@
+PASS 16 dense max_abs= 9.50350909079134e-14 tail= 0.0 rotations= 14
+PASS 16 short_last_head max_abs= 9.237055564881302e-14 tail= 0.0 rotations= 14
+PASS 16 zero_final_heads max_abs= 1.3322676295501878e-15 tail= 0.0 rotations= 14
+PASS 16 wide_head_scales max_abs= 1.3322676295501878e-15 tail= 0.0 rotations= 14
+PASS 8 dense max_abs= 5.5067062021407764e-14 tail= 0.0 rotations= 14
+PASS 8 short_last_head max_abs= 6.661338147750939e-14 tail= 0.0 rotations= 14
+PASS 8 zero_final_heads max_abs= 8.881784197001252e-16 tail= 0.0 rotations= 14
+PASS 8 wide_head_scales max_abs= 8.881784197001252e-16 tail= 0.0 rotations= 14
+PASS negative unequal-profile
+PASS negative missing-profile
+PASS negative wrong-gain
+PASS negative wrong-head-count

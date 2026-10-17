@@ -1,0 +1,182 @@
+{
+  "result": "passed",
+  "server": "188Server / HPU-001",
+  "server_workspace": "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb",
+  "poseidon_commit": "6dc8cbfb65e3311271563000f6f5dce92d0324a8",
+  "runtime_commit": "0d3ba226b0329932ca9aed4a8eaa1797f5893965",
+  "cuda_architecture": 70,
+  "local_compilation_executed": false,
+  "source_fingerprints_verified": 13,
+  "fp64_tensor": {
+    "status": "skipped",
+    "reason": "User requested skipping: four V100 SM70 devices do not support this FP64 Tensor path."
+  },
+  "devices_before": [
+    {
+      "index": "0",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    },
+    {
+      "index": "1",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    },
+    {
+      "index": "2",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    },
+    {
+      "index": "3",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    }
+  ],
+  "devices_after": [
+    {
+      "index": "0",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    },
+    {
+      "index": "1",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    },
+    {
+      "index": "2",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    },
+    {
+      "index": "3",
+      "name": "Tesla V100-SXM2-32GB",
+      "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+      "memory.total [MiB]": "32768 MiB",
+      "memory.used [MiB]": "0 MiB",
+      "ecc.errors.uncorrected.volatile.total": "0"
+    }
+  ],
+  "tests": [
+    {
+      "case": "gpu-api-four",
+      "exit_status": 0,
+      "log": "logs/gpu-api-four.log",
+      "api_test_groups": 27
+    },
+    {
+      "case": "waterline-four",
+      "exit_status": 0,
+      "log": "logs/waterline-four.log",
+      "poly_degree": 65536,
+      "q_count": 32,
+      "scale_log2": 40,
+      "slots_per_output": 32768,
+      "outputs": 4,
+      "tolerance": 0.0001,
+      "backends": [
+        {
+          "backend": "cpu",
+          "devices": 4,
+          "max_abs_error": 1.24894e-06,
+          "runtime_ms": 2639.9,
+          "forward_ms": 600.207,
+          "pinned_live_bytes_after": 0
+        },
+        {
+          "backend": "gpu",
+          "devices": 4,
+          "max_abs_error": 1.24894e-06,
+          "runtime_ms": 2165.69,
+          "forward_ms": 230.527,
+          "pinned_live_bytes_after": 0
+        },
+        {
+          "backend": "auto",
+          "devices": 4,
+          "max_abs_error": 1.24894e-06,
+          "runtime_ms": 2255.29,
+          "forward_ms": 324.509,
+          "pinned_live_bytes_after": 0
+        }
+      ]
+    },
+    {
+      "case": "waterline-four-host-staged",
+      "exit_status": 0,
+      "log": "logs/waterline-four-host-staged.log",
+      "poly_degree": 65536,
+      "q_count": 32,
+      "scale_log2": 40,
+      "slots_per_output": 32768,
+      "outputs": 4,
+      "tolerance": 0.0001,
+      "backends": [
+        {
+          "backend": "cpu",
+          "devices": 4,
+          "max_abs_error": 9.27893e-07,
+          "runtime_ms": 2903.18,
+          "forward_ms": 981.817,
+          "pinned_live_bytes_after": 0
+        },
+        {
+          "backend": "gpu",
+          "devices": 4,
+          "max_abs_error": 9.27893e-07,
+          "runtime_ms": 2644.77,
+          "forward_ms": 702.251,
+          "pinned_live_bytes_after": 0
+        },
+        {
+          "backend": "auto",
+          "devices": 4,
+          "max_abs_error": 9.27893e-07,
+          "runtime_ms": 2718.4,
+          "forward_ms": 787.679,
+          "pinned_live_bytes_after": 0
+        }
+      ],
+      "host_staged_ring_posts_per_backend": [
+        20,
+        20,
+        20
+      ]
+    },
+    {
+      "case": "gpu-api-reordered",
+      "exit_status": 0,
+      "log": "logs/gpu-api-reordered.log",
+      "api_test_groups": 27
+    },
+    {
+      "case": "gpu-prepare-oom",
+      "exit_status": 0,
+      "log": "logs/gpu-prepare-oom.log",
+      "failure_cleanup_and_explicit_same_runtime_restart": true
+    }
+  ],
+  "maximum_four_gpu_waterline_absolute_error": 1.24894e-06
+}

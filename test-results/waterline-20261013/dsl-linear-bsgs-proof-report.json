@@ -1,0 +1,546 @@
+{
+  "passed": true,
+  "scope": "FP64 NumPy BSGS indexing proof; not native CKKS",
+  "slots": 8192,
+  "baby_steps": [
+    32,
+    64
+  ],
+  "cases": [
+    {
+      "name": "q_proj",
+      "shape": [
+        2048,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 6.217248937900877e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "q_proj",
+      "shape": [
+        2048,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 5.329070518200751e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "k_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 5.329070518200751e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "k_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 7.549516567451064e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "v_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 4.884981308350689e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "v_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 4.107825191113079e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "o_proj",
+      "shape": [
+        1024,
+        2048
+      ],
+      "case": "dense",
+      "max_abs": 1.021405182655144e-14,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "o_proj",
+      "shape": [
+        1024,
+        2048
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 1.0658141036401503e-14,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "gate_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 9.103828801926284e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 158,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "gate_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 8.881784197001252e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 158,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "up_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 6.8833827526759706e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 158,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "up_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 6.217248937900877e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 158,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "dense",
+      "max_abs": 1.021405182655144e-14,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 158,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 9.992007221626409e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 158,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 32,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "q_proj",
+      "shape": [
+        2048,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 6.661338147750939e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 110,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "q_proj",
+      "shape": [
+        2048,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 6.217248937900877e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 110,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "k_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 5.329070518200751e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "k_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 5.329070518200751e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "v_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 9.769962616701378e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "v_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 7.549516567451064e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 2046
+    },
+    {
+      "name": "o_proj",
+      "shape": [
+        1024,
+        2048
+      ],
+      "case": "dense",
+      "max_abs": 9.325873406851315e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 110,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "o_proj",
+      "shape": [
+        1024,
+        2048
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 8.43769498715119e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 110,
+        "mul_cp": 3071,
+        "mul_cc": 0,
+        "adds": 3070
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 3070
+    },
+    {
+      "name": "gate_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 6.217248937900877e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "gate_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 6.661338147750939e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "up_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "dense",
+      "max_abs": 7.105427357601002e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "up_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 5.773159728050814e-15,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "dense",
+      "max_abs": 1.199040866595169e-14,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 4094
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "short_logical_tail",
+      "max_abs": 1.2878587085651816e-14,
+      "output_tail_abs": 0.0,
+      "physical_input_tail_contamination": 0.0,
+      "operations": {
+        "rotations": 126,
+        "mul_cp": 4095,
+        "mul_cc": 0,
+        "adds": 4094
+      },
+      "baby_step_size": 64,
+      "old_diagonal_rotations": 4094
+    }
+  ],
+  "max_abs": 1.2878587085651816e-14,
+  "small_bias_cases": 14,
+  "full_model_ckks_validated": false
+}

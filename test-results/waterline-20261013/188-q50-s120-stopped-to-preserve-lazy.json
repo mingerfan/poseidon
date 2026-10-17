@@ -1,0 +1,27 @@
+{
+  "time": 1791961074.2911184,
+  "status": "terminated_incomplete",
+  "reason": "preserve production logical40 lazy rescale; scale120 compile changes graph semantics",
+  "members": [
+    {
+      "pid": 148417,
+      "uid": 1012,
+      "command": "bash -c /opt/conda/bin/python /home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/compile_plans.py --workspace /home/xuming/poseidon-waterline-20261013 --devices 4 1 > /home/xuming/poseidon-waterline-20261013/logs/q50-s120-compile-supervisor.log 2>&1; printf \"%s\\n\" $? > /home/xuming/poseidon-waterline-20261013/logs/q50-s120-compile-exit-status "
+    },
+    {
+      "pid": 148419,
+      "uid": 1012,
+      "command": "/opt/conda/bin/python /home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/compile_plans.py --workspace /home/xuming/poseidon-waterline-20261013 --devices 4 1 "
+    },
+    {
+      "pid": 148420,
+      "uid": 1012,
+      "command": "/usr/bin/time -v /home/xuming/poseidon-waterline-20261013/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-waterline-20261013/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu /home/xuming/poseidon-waterline-20261013/toolchain/bin/hecate-opt --dacapo --boot-placement=depth-dp --ckks-config=/home/xuming/poseidon-waterline-20261013/profiles/compiler-profile.json --waterline=120 --mlir-timing --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 --runtime-plan-id=3104 --runtime-plan-target-id=poseidon-ckks-gpu --runtime-plan-capability-version=1 --runtime-plan-operator-spec-id=poseidon-ckks-gpu-16384-q50-s120-estimated-v1 --runtime-plan-operator-spec-version=1 --runtime-plan-operator-spec-sha256=sha256:d5a521748f8f8bd0dfa1bfcc9c393aab6c4bb9c5b0e6bb52694a8907d7012f4f --runtime-plan-context-id=poseidon-ckks-gpu-16384-q50-s120-estimated --runtime-plan-ntt=true --runtime-plan-boot-profile=poseidon-gpu-host-boot-v1 --runtime-plan-boot-implementation=decrypt_reencrypt --runtime-plan-inline-payload-max-bytes=4096 --runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-levels-per-logical-level=5 --runtime-plan-device-count=4 --runtime-plan-device-counts=4 --runtime-plan-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-communication-profile-path=/home/xuming/poseidon-waterline-20261013/profiles/communication-profile.json --runtime-plan-memory=true --runtime-plan-memory-reuse=true --runtime-plan-memory-report=true --runtime-plan-plaintext-schedule=waterline --runtime-plan-prepare-backend=auto --runtime-plan-gpu-budget-bytes=33285996544 --runtime-plan-reserve-bytes=6442450944 --runtime-plan-workspace-bytes-per-op=1073741824 --runtime-plan-host-budget-bytes=68719476736 --runtime-plan-pinned-budget-bytes=1073741824 --runtime-plan-raw-budget-bytes=67108864 --runtime-plan-waterline-fraction=0.5 --runtime-plan-lookahead-groups=8 --runtime-plan-format=binary --runtime-plan-bundle-format=pack --runtime-plan-report-io=true /home/xuming/poseidon-waterline-20261013/qwen3-traced-bsgs/trace_qwen3.mlirbc -o /home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-s120/gpu4/qwen3.mlir "
+    },
+    {
+      "pid": 148421,
+      "uid": 1012,
+      "command": "/home/xuming/poseidon-waterline-20261013/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-waterline-20261013/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu /home/xuming/poseidon-waterline-20261013/toolchain/bin/hecate-opt --dacapo --boot-placement=depth-dp --ckks-config=/home/xuming/poseidon-waterline-20261013/profiles/compiler-profile.json --waterline=120 --mlir-timing --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 --runtime-plan-id=3104 --runtime-plan-target-id=poseidon-ckks-gpu --runtime-plan-capability-version=1 --runtime-plan-operator-spec-id=poseidon-ckks-gpu-16384-q50-s120-estimated-v1 --runtime-plan-operator-spec-version=1 --runtime-plan-operator-spec-sha256=sha256:d5a521748f8f8bd0dfa1bfcc9c393aab6c4bb9c5b0e6bb52694a8907d7012f4f --runtime-plan-context-id=poseidon-ckks-gpu-16384-q50-s120-estimated --runtime-plan-ntt=true --runtime-plan-boot-profile=poseidon-gpu-host-boot-v1 --runtime-plan-boot-implementation=decrypt_reencrypt --runtime-plan-inline-payload-max-bytes=4096 --runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-levels-per-logical-level=5 --runtime-plan-device-count=4 --runtime-plan-device-counts=4 --runtime-plan-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-communication-profile-path=/home/xuming/poseidon-waterline-20261013/profiles/communication-profile.json --runtime-plan-memory=true --runtime-plan-memory-reuse=true --runtime-plan-memory-report=true --runtime-plan-plaintext-schedule=waterline --runtime-plan-prepare-backend=auto --runtime-plan-gpu-budget-bytes=33285996544 --runtime-plan-reserve-bytes=6442450944 --runtime-plan-workspace-bytes-per-op=1073741824 --runtime-plan-host-budget-bytes=68719476736 --runtime-plan-pinned-budget-bytes=1073741824 --runtime-plan-raw-budget-bytes=67108864 --runtime-plan-waterline-fraction=0.5 --runtime-plan-lookahead-groups=8 --runtime-plan-format=binary --runtime-plan-bundle-format=pack --runtime-plan-report-io=true /home/xuming/poseidon-waterline-20261013/qwen3-traced-bsgs/trace_qwen3.mlirbc -o /home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-s120/gpu4/qwen3.mlir "
+    }
+  ]
+}

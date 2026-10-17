@@ -1,0 +1,14 @@
+SCOPE real GPU Q50/P8 key backing/Rotate/Relin parameter regression; not full Qwen/model execution; sec_level_type=none, N=16384 Q=50x30 P=8x30 input_scale=40 product_scale=80 no_Rescale=true
+PASS single key backing relin_bytes=53215232 galois_one_bytes=53215232 galois_two_bytes=106430464 total_three_keys_bytes=159645696 active_levels=4,24,49 active_q=5,25,50 stored_q=50 p_count=8 decomposition_blocks=7 no_duplicate_backing=true
+PASS Relinearize q=5 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS Rotate q=5 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS composite Rotate q=5 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS reuse Rotate q=5 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS Relinearize q=25 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS Rotate q=25 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS composite Rotate q=25 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS reuse Rotate q=25 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS Relinearize q=50 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS Rotate q=50 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS composite Rotate q=50 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0
+PASS reuse Rotate q=50 slots_checked=8192 native_scale=1.20893e+24 max_abs_error=0

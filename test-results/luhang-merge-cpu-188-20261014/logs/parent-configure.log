@@ -1,0 +1,102 @@
+CMake Warning (dev) at /usr/share/cmake-3.22/Modules/GNUInstallDirs.cmake:239 (message):
+  Unable to determine default CMAKE_INSTALL_LIBDIR directory because no
+  target architecture is known.  Please enable at least one language before
+  including GNUInstallDirs.
+Call Stack (most recent call first):
+  CMakeLists.txt:8 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- CROSS_COMPILE_ARRCH64: OFF
+-- The CXX compiler identification is GNU 11.4.0
+-- The C compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found GMP: /usr/include/x86_64-linux-gnu  
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: ON
+-- POSEIDON_USE_ZLIB: ON
+-- ZLIB: download ...
+CMake Deprecation Warning at /home/xuming/poseidon-luhang-merge-cpu-20261014/parent-deps/zlib-src/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 2.8.12 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of off64_t
+-- Check size of off64_t - done
+-- Looking for fseeko
+-- Looking for fseeko - found
+-- Looking for unistd.h
+-- Looking for unistd.h - found
+-- Renaming
+--     /home/xuming/poseidon-luhang-merge-cpu-20261014/parent-deps/zlib-src/zconf.h
+-- to 'zconf.h.included' because this file is included with zlib
+-- but CMake generates it automatically in the build directory.
+-- POSEIDON_USE_ZSTD: ON
+-- Zstandard: download ...
+-- ZSTD VERSION: 1.5.2
+-- Performing Test CXX_FLAG_STD_CPLUSPLUS11
+-- Performing Test CXX_FLAG_STD_CPLUSPLUS11 - Success
+-- Performing Test C_FLAG_STD_C99
+-- Performing Test C_FLAG_STD_C99 - Success
+-- Performing Test C_FLAG_WALL
+-- Performing Test C_FLAG_WALL - Success
+-- Performing Test CXX_FLAG_WALL
+-- Performing Test CXX_FLAG_WALL - Success
+-- Performing Test C_FLAG_WEXTRA
+-- Performing Test C_FLAG_WEXTRA - Success
+-- Performing Test CXX_FLAG_WEXTRA
+-- Performing Test CXX_FLAG_WEXTRA - Success
+-- Performing Test C_FLAG_WUNDEF
+-- Performing Test C_FLAG_WUNDEF - Success
+-- Performing Test CXX_FLAG_WUNDEF
+-- Performing Test CXX_FLAG_WUNDEF - Success
+-- Performing Test C_FLAG_WSHADOW
+-- Performing Test C_FLAG_WSHADOW - Success
+-- Performing Test CXX_FLAG_WSHADOW
+-- Performing Test CXX_FLAG_WSHADOW - Success
+-- Performing Test C_FLAG_WCAST_ALIGN
+-- Performing Test C_FLAG_WCAST_ALIGN - Success
+-- Performing Test CXX_FLAG_WCAST_ALIGN
+-- Performing Test CXX_FLAG_WCAST_ALIGN - Success
+-- Performing Test C_FLAG_WCAST_QUAL
+-- Performing Test C_FLAG_WCAST_QUAL - Success
+-- Performing Test CXX_FLAG_WCAST_QUAL
+-- Performing Test CXX_FLAG_WCAST_QUAL - Success
+-- Performing Test C_FLAG_WSTRICT_PROTOTYPES
+-- Performing Test C_FLAG_WSTRICT_PROTOTYPES - Success
+-- CMAKE_INSTALL_PREFIX: /usr/local
+-- CMAKE_INSTALL_LIBDIR: lib
+-- ZSTD_LEGACY_SUPPORT not defined!
+-- ZSTD_MULTITHREAD_SUPPORT is disabled
+-- The ASM compiler identification is GNU
+-- Found assembler: /usr/bin/cc
+-- POSEIDON_USE_MSGSL: ON
+-- Microsoft GSL: download ...
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/xuming/poseidon-luhang-merge-cpu-20261014/build-parent-cpu

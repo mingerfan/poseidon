@@ -1,0 +1,43 @@
+PASS shape {"name": "q_proj", "shape": [2048, 1024], "case": "dense", "implementation": "cyclic", "max_abs": 6.217248937900877e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "q_proj", "shape": [2048, 1024], "case": "short_logical_tail", "implementation": "cyclic", "max_abs": 4.884981308350689e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "k_proj", "shape": [1024, 1024], "case": "dense", "implementation": "cyclic", "max_abs": 4.884981308350689e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "k_proj", "shape": [1024, 1024], "case": "short_logical_tail", "implementation": "cyclic", "max_abs": 6.661338147750939e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "v_proj", "shape": [1024, 1024], "case": "dense", "implementation": "cyclic", "max_abs": 4.884981308350689e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "v_proj", "shape": [1024, 1024], "case": "short_logical_tail", "implementation": "cyclic", "max_abs": 4.218847493575595e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "o_proj", "shape": [1024, 2048], "case": "dense", "implementation": "cyclic", "max_abs": 1.0658141036401503e-14, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 2049, "rotations": 96, "adds": 2049}, "relative_cp_depth": 2}
+PASS shape {"name": "o_proj", "shape": [1024, 2048], "case": "short_logical_tail", "implementation": "cyclic", "max_abs": 1.0658141036401503e-14, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 2049, "rotations": 96, "adds": 2049}, "relative_cp_depth": 2}
+PASS shape {"name": "gate_proj", "shape": [3072, 1024], "case": "dense", "implementation": "cyclic", "max_abs": 8.43769498715119e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "gate_proj", "shape": [3072, 1024], "case": "short_logical_tail", "implementation": "cyclic", "max_abs": 8.43769498715119e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "up_proj", "shape": [3072, 1024], "case": "dense", "implementation": "cyclic", "max_abs": 6.661338147750939e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "up_proj", "shape": [3072, 1024], "case": "short_logical_tail", "implementation": "cyclic", "max_abs": 6.661338147750939e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 1025, "rotations": 81, "adds": 1026}, "relative_cp_depth": 2}
+PASS shape {"name": "down_proj", "shape": [1024, 3072], "case": "dense", "implementation": "cyclic", "max_abs": 9.769962616701378e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 4096, "rotations": 127, "adds": 4095}, "relative_cp_depth": 2}
+PASS shape {"name": "down_proj", "shape": [1024, 3072], "case": "dense", "implementation": "packed_down", "max_abs": 9.547918011776346e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 2048, "rotations": 96, "adds": 2048}, "relative_cp_depth": 2}
+PASS shape {"name": "down_proj", "shape": [1024, 3072], "case": "short_logical_tail", "implementation": "cyclic", "max_abs": 9.547918011776346e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 4096, "rotations": 127, "adds": 4095}, "relative_cp_depth": 2}
+PASS shape {"name": "down_proj", "shape": [1024, 3072], "case": "short_logical_tail", "implementation": "packed_down", "max_abs": 9.769962616701378e-15, "output_tail_abs": 0.0, "dirty_input_contamination": 0.0, "operations": {"mul_cp": 2048, "rotations": 96, "adds": 2048}, "relative_cp_depth": 2}
+PASS small bias 1x1 max_abs=0.0
+PASS small bias 2x1 max_abs=0.0
+PASS small bias 1x2 max_abs=0.0
+PASS small bias 3x5 max_abs=0.0
+PASS small bias 17x9 max_abs=1.7763568394002505e-15
+PASS small bias 70x35 max_abs=8.881784197001252e-15
+PASS small bias 129x71 max_abs=1.0658141036401503e-14
+PASS full LM rows 0:8192 8 output slices max_abs=7.5495165674510645e-15
+PASS full LM rows 8192:16384 8 output slices max_abs=7.9936057773011271e-15
+PASS full LM rows 16384:24576 8 output slices max_abs=1.1990408665951691e-14
+PASS full LM rows 24576:32768 8 output slices max_abs=7.5495165674510645e-15
+PASS full LM rows 32768:40960 8 output slices max_abs=8.8817841970012523e-15
+PASS full LM rows 40960:49152 8 output slices max_abs=7.1054273576010019e-15
+PASS full LM rows 49152:57344 8 output slices max_abs=1.021405182655144e-14
+PASS full LM rows 57344:65536 8 output slices max_abs=7.1054273576010019e-15
+PASS full LM rows 65536:73728 8 output slices max_abs=8.8817841970012523e-15
+PASS full LM rows 73728:81920 8 output slices max_abs=7.1054273576010019e-15
+PASS full LM rows 81920:90112 8 output slices max_abs=9.1038288019262836e-15
+PASS full LM rows 90112:98304 8 output slices max_abs=7.9936057773011271e-15
+PASS full LM rows 98304:106496 8 output slices max_abs=1.0658141036401503e-14
+PASS full LM rows 106496:114688 8 output slices max_abs=6.6613381477509392e-15
+PASS full LM rows 114688:122880 8 output slices max_abs=7.9936057773011271e-15
+PASS full LM rows 122880:131072 8 output slices max_abs=8.4376949871511897e-15
+PASS full LM rows 131072:139264 8 output slices max_abs=1.021405182655144e-14
+PASS full LM rows 139264:147456 8 output slices max_abs=7.9936057773011271e-15
+PASS full LM rows 147456:151936 5 output slices max_abs=7.7715611723760958e-15
+PASS complexity {"mul_cp": 1565539, "rotations": 58012, "adds": 1564998} -> {"mul_cp": 536038, "rotations": 35047, "adds": 536152}

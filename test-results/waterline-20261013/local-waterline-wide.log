@@ -1,0 +1,17 @@
+[PASS] internal RMM pool lifetime
+PASS complete GPU Encode wide constant scale=40 coefficient_bits=61
+PASS complete GPU Encode wide constant scale=60 coefficient_bits=81
+PASS complete GPU Encode wide constant scale=80 coefficient_bits=101
+PASS complete GPU Encode wide constant scale=120 coefficient_bits=141
+waterline GPU0 front_peak=100663296 plain_peak=8388608 remaining_front=0 remaining_plain=0
+waterline shared host_peak=117440512 pinned_peak=25165824 raw_peak=524288
+Waterline diagnostic max=1.07764e-06 slot0=(3.5,-1.20988e-07) slot1=(-7,1.94734e-07)
+WATERLINE backend=0 devices=1 max_abs_error=1.07764e-06 cold_ms=318.434 forward_ms=93.7737 pinned_live=0
+waterline GPU0 front_peak=100663296 plain_peak=19136512 remaining_front=0 remaining_plain=0
+waterline shared host_peak=117440512 pinned_peak=25165824 raw_peak=524288
+Waterline diagnostic max=1.07764e-06 slot0=(3.5,-1.20988e-07) slot1=(-7,1.94734e-07)
+WATERLINE backend=1 devices=1 max_abs_error=1.07764e-06 cold_ms=239.678 forward_ms=25.1445 pinned_live=0
+waterline GPU0 front_peak=100663296 plain_peak=8388608 remaining_front=0 remaining_plain=0
+waterline shared host_peak=117440512 pinned_peak=25165824 raw_peak=524288
+Waterline diagnostic max=1.07764e-06 slot0=(3.5,-1.20988e-07) slot1=(-7,1.94734e-07)
+WATERLINE backend=2 devices=1 max_abs_error=1.07764e-06 cold_ms=485.589 forward_ms=104.26 pinned_live=0

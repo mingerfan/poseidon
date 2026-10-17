@@ -1,0 +1,1 @@
+[PASS] GPU uint64 scalar: cases=16 checked_RNS_words=974848 decoded_complex_slots=2048 max_normalized_error=1.04083e-16 alias=true PTDS_blocked_nondefault_completed=true max_scalar=18446744073709551615

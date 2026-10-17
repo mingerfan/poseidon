@@ -1,0 +1,27 @@
+COMMAND: ["/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_cmp"]
+=== CKKS bootstrap old/new comparison (4 variants) ===
+common: {CKKS, 15, 14, 40, 1, 0}, q = 20 x 51, p = 1 x 60, N = 2^15, slots = 2^14
+        encode 2^40 (= parameters.scale()), median of 3 runs
+old: EvalModPoly sf = 2^51, ratio = 2^7, double_angle = 3, k = 25, sine_degree = 59/30/22
+new: BootstrapConfig boundary_k = 25, ratio = 2^5, double_angle = 2, scaling_log = 51, output_ratio = 32, project_real = false
+input ciphertext: level = 19, scale = 2^40.00
+
+[new/59 #1] time 50.91 s | level 19 -> 5 (consumed 14) | out scale 2^51.00 | max err 5.213e-06 | rmse 3.168e-06 | prec(rmse) 18.27 bits | prec(max) 17.55 bits
+[new/59 #2] time 51.76 s | level 19 -> 5 (consumed 14) | out scale 2^51.00 | max err 5.213e-06 | rmse 3.168e-06 | prec(rmse) 18.27 bits | prec(max) 17.55 bits
+[new/59 #3] time 50.04 s | level 19 -> 5 (consumed 14) | out scale 2^51.00 | max err 5.213e-06 | rmse 3.168e-06 | prec(rmse) 18.27 bits | prec(max) 17.55 bits
+[old/59 #1] time 33.47 s | level 19 -> 4 (consumed 15) | out scale 2^40.00 | max err 1.886e-06 | rmse 2.639e-07 | prec(rmse) 21.85 bits | prec(max) 19.02 bits
+[old/59 #2] time 33.91 s | level 19 -> 4 (consumed 15) | out scale 2^40.00 | max err 1.886e-06 | rmse 2.639e-07 | prec(rmse) 21.85 bits | prec(max) 19.02 bits
+[old/59 #3] time 32.97 s | level 19 -> 4 (consumed 15) | out scale 2^40.00 | max err 1.886e-06 | rmse 2.639e-07 | prec(rmse) 21.85 bits | prec(max) 19.02 bits
+[old/30 #1] time 33.48 s | level 19 -> 5 (consumed 14) | out scale 2^40.00 | max err 2.112e-06 | rmse 1.361e-07 | prec(rmse) 22.81 bits | prec(max) 18.85 bits
+[old/30 #2] time 33.48 s | level 19 -> 5 (consumed 14) | out scale 2^40.00 | max err 2.112e-06 | rmse 1.361e-07 | prec(rmse) 22.81 bits | prec(max) 18.85 bits
+[old/30 #3] time 32.17 s | level 19 -> 5 (consumed 14) | out scale 2^40.00 | max err 2.112e-06 | rmse 1.361e-07 | prec(rmse) 22.81 bits | prec(max) 18.85 bits
+[old/22 #1] time 30.34 s | level 19 -> 5 (consumed 14) | out scale 2^40.00 | max err 3.124e-05 | rmse 3.257e-07 | prec(rmse) 21.55 bits | prec(max) 14.97 bits
+[old/22 #2] time 31.62 s | level 19 -> 5 (consumed 14) | out scale 2^40.00 | max err 3.124e-05 | rmse 3.257e-07 | prec(rmse) 21.55 bits | prec(max) 14.97 bits
+[old/22 #3] time 30.57 s | level 19 -> 5 (consumed 14) | out scale 2^40.00 | max err 3.124e-05 | rmse 3.257e-07 | prec(rmse) 21.55 bits | prec(max) 14.97 bits
+
+=== summary (median of 3 runs) ===
+variant              time [s] used levels    max abs error         rmse  prec(rmse)   prec(max)
+new/59 (heap)           50.91          14        5.213e-06    3.168e-06     18.27 b     17.55 b
+old/59                  33.47          15        1.886e-06    2.639e-07     21.85 b     19.02 b
+old/30                  33.48          14        2.112e-06    1.361e-07     22.81 b     18.85 b
+old/22                  30.57          14        3.124e-05    3.257e-07     21.55 b     14.97 b

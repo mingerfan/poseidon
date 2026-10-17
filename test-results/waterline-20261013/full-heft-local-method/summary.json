@@ -1,0 +1,79 @@
+{
+  "passed": true,
+  "method": "one invocation immediate pre/post plan-plaintext-waterline IR; stable logical IDs, transfer IDs and original RuntimePlan transfer layout; exact ordered ciphertext operation/descriptor records",
+  "scope": "foreground CT computation/transfers, parameters, operands/results, rank/device, types/scales/levels, HEFT schedule attrs, argument/return signatures and phase-relative order; excludes plaintext preparation/lifetime and newly attached runtime.value_id metadata",
+  "snapshots": {
+    "before": {
+      "function": "heft_waterline",
+      "counts": {
+        "ct_values": 103,
+        "all_ops": 112,
+        "ct_transfer": 37,
+        "dist.transfer": 37,
+        "ct_compute": 65,
+        "ckks.rotatec": 16,
+        "ckks.addcp": 32,
+        "ckks.addcc": 15,
+        "ckks.bootstrapc": 1,
+        "ckks.negatec": 1,
+        "returns": 1
+      },
+      "device_operation_counts": {
+        "(0, 0)": 25,
+        "(0, 1)": 29,
+        "(0, 2)": 25,
+        "(0, 3)": 21,
+        "(0, -1)": 2
+      },
+      "hashes": {
+        "foreground": "fa7f74af16e25fcafba926b72826daccd45272b034c4a6035c0dfb6977bcc43c",
+        "initialization": "e2c2c1515247c67e189eb8ff01b34252f84b264f6f9b4d7a62da5ff5037f9ef1",
+        "execution": "11ed8f257a685da24ce315c0298878008df5ea223b180c82ad7be6fc9a9cc814",
+        "ct_descriptors": "0db2fd83b0d6ef568a08a641163d7c3e5e3de495b7537352b626557f3b2cf556"
+      },
+      "records": 104,
+      "max_logical_id": 67,
+      "ir_bytes": 32341,
+      "ir_sha256": "1657b2ba8e1bd98e05fbd22a5054b72578fdb8ebca362c8e83a6281fce9cf175",
+      "first_mismatch": null
+    },
+    "after": {
+      "function": "heft_waterline",
+      "counts": {
+        "ct_values": 103,
+        "all_ops": 110,
+        "ct_transfer": 37,
+        "dist.transfer": 37,
+        "prepare": 8,
+        "ct_compute": 65,
+        "ckks.rotatec": 16,
+        "ckks.addcp": 32,
+        "ckks.addcc": 15,
+        "ckks.bootstrapc": 1,
+        "ckks.negatec": 1,
+        "returns": 1
+      },
+      "device_operation_counts": {
+        "(0, 0)": 25,
+        "(0, 1)": 29,
+        "(0, 2)": 25,
+        "(0, 3)": 21,
+        "(0, -1)": 2
+      },
+      "hashes": {
+        "foreground": "fa7f74af16e25fcafba926b72826daccd45272b034c4a6035c0dfb6977bcc43c",
+        "initialization": "e2c2c1515247c67e189eb8ff01b34252f84b264f6f9b4d7a62da5ff5037f9ef1",
+        "execution": "11ed8f257a685da24ce315c0298878008df5ea223b180c82ad7be6fc9a9cc814",
+        "ct_descriptors": "0db2fd83b0d6ef568a08a641163d7c3e5e3de495b7537352b626557f3b2cf556"
+      },
+      "records": 104,
+      "max_logical_id": 67,
+      "ir_bytes": 34374,
+      "ir_sha256": "52370d6324f1e2adc6ad75a27350f88bc5aa8bb15049fc324a5a4e389364d54f",
+      "first_mismatch": null
+    }
+  },
+  "spool_has_unmatched_before_records": false,
+  "dump_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/full-heft-local-method/pass-dumps.log",
+  "scan_seconds": 0.004136824994930066
+}

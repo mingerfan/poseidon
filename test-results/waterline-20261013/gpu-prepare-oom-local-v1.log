@@ -1,0 +1,2 @@
+fatal runtime error: reason=plan verification failed: external input must be placed on Host (IO-2) plan_id=491 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+[FAIL] real CUDA GPU Prepare allocation failure: fatal runtime error: reason=plan verification failed: external input must be placed on Host (IO-2) plan_id=491 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi

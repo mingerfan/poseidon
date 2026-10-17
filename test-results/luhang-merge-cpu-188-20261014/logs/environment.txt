@@ -1,0 +1,12 @@
+2026-10-14T15:24:12+08:00
+HPU-001
+ 15:24:12 up 28 days,  4:19,  1 user,  load average: 2.42, 2.70, 2.47
+               total        used        free      shared  buff/cache   available
+Mem:           755Gi       101Gi        69Gi       107Mi       584Gi       648Gi
+Swap:          2.0Gi          0B       2.0Gi
+pid 155437's current affinity list: 0-2,4
+eb124553b0729194478bfe791f1361ee49eb4132 feat: 从luhang/poseidon main分支合并到mingerfan/poseidon poseidon分支
+gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
+cmake version 3.22.1
+a9349d8fc8ac8ea96d4ddbaed628e2d8df903cfe46a53ed09082d1b031175470  /home/xuming/luhang-merge-cpu-188-20261014.bundle
+d8862955c6d74e5846b3f580b1605d2428b11d97a410d86e2fb13e857cd3a744  /home/xuming/luhang-merge-spdlog-v1.17.0.tar.gz

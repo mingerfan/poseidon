@@ -1,0 +1,155 @@
+{
+  "test": "NumPy Expr/Plain arithmetic-only substitute, not native CKKS execution",
+  "passed": true,
+  "max_abs": 9.50350909079134e-14,
+  "results": [
+    {
+      "heads": 16,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "dense",
+      "profile": "ChebyshevApproximation",
+      "max_abs": 9.50350909079134e-14,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 3.552713678800501e-15,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 104,
+        "mul_cc": 21,
+        "adds": 106
+      },
+      "old_operations": {
+        "rotations": 270,
+        "mul_cp": 1440,
+        "mul_cc": 336,
+        "adds": 1727
+      }
+    },
+    {
+      "heads": 16,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "short_last_head",
+      "profile": "ChebyshevApproximation",
+      "max_abs": 9.237055564881302e-14,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 3.552713678800501e-15,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 104,
+        "mul_cc": 21,
+        "adds": 106
+      },
+      "old_operations": null
+    },
+    {
+      "heads": 16,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "zero_final_heads",
+      "profile": "InverseSqrtApproximation",
+      "max_abs": 1.3322676295501878e-15,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 4.884981308350689e-15,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 76,
+        "mul_cc": 86,
+        "adds": 71
+      },
+      "old_operations": null
+    },
+    {
+      "heads": 16,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "wide_head_scales",
+      "profile": "InverseSqrtApproximation",
+      "max_abs": 1.3322676295501878e-15,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 2.2737367544323206e-13,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 88,
+        "mul_cc": 104,
+        "adds": 83
+      },
+      "old_operations": null
+    },
+    {
+      "heads": 8,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "dense",
+      "profile": "ChebyshevApproximation",
+      "max_abs": 5.5067062021407764e-14,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 5.329070518200751e-15,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 104,
+        "mul_cc": 21,
+        "adds": 106
+      },
+      "old_operations": {
+        "rotations": 134,
+        "mul_cp": 720,
+        "mul_cc": 168,
+        "adds": 863
+      }
+    },
+    {
+      "heads": 8,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "short_last_head",
+      "profile": "ChebyshevApproximation",
+      "max_abs": 6.661338147750939e-14,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 7.105427357601002e-15,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 104,
+        "mul_cc": 21,
+        "adds": 106
+      },
+      "old_operations": null
+    },
+    {
+      "heads": 8,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "zero_final_heads",
+      "profile": "InverseSqrtApproximation",
+      "max_abs": 8.881784197001252e-16,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 3.552713678800501e-15,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 76,
+        "mul_cc": 86,
+        "adds": 71
+      },
+      "old_operations": null
+    },
+    {
+      "heads": 8,
+      "head_dim": 128,
+      "slots": 32768,
+      "case": "wide_head_scales",
+      "profile": "InverseSqrtApproximation",
+      "max_abs": 8.881784197001252e-16,
+      "tail_abs": 0.0,
+      "block_sum_max_abs": 5.684341886080802e-14,
+      "new_operations": {
+        "rotations": 14,
+        "mul_cp": 88,
+        "mul_cc": 104,
+        "adds": 83
+      },
+      "old_operations": null
+    }
+  ],
+  "negative_cases": 4,
+  "rotation_convention": "rotate(s)[i] = input[(i+s) % slots]"
+}

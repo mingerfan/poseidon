@@ -1,0 +1,46 @@
+{
+  "AddCP": {
+    "consumer_wait_nanoseconds": 80127998,
+    "max_abs_including_imaginary": 4.293722344606683e-08,
+    "slots_checked": 2048,
+    "submit_ms": 0.046222
+  },
+  "AddCP_reuse": {
+    "consumer_wait_nanoseconds": 80137214,
+    "max_abs_including_imaginary": 4.293722344606683e-08,
+    "slots_checked": 2048,
+    "submit_ms": 0.033502
+  },
+  "Negate_with_same_stream_followup": {
+    "consumer_wait_nanoseconds": 80180221,
+    "max_abs_including_imaginary": 4.295421483674851e-08,
+    "slots_checked": 2048,
+    "submit_ms": 0.017901
+  },
+  "Relinearize": {
+    "consumer_wait_nanoseconds": 80319488,
+    "max_abs_including_imaginary": 2.0203439483000345e-08,
+    "slots_checked": 2048,
+    "submit_ms": 0.187958
+  },
+  "Rescale": {
+    "consumer_wait_nanoseconds": 80202751,
+    "max_abs_including_imaginary": 2.020513109439199e-08,
+    "slots_checked": 2048,
+    "submit_ms": 0.072163
+  },
+  "Rotate": {
+    "consumer_wait_nanoseconds": 80326850,
+    "max_abs_including_imaginary": 3.176828134998644e-07,
+    "slots_checked": 2048,
+    "submit_ms": 0.245601
+  },
+  "already_ready_input_not_counted": true,
+  "consumer_wait_calls": 6,
+  "consumer_wait_nanoseconds": 481294522,
+  "delay_semantics": "80ms host gate in a CUDA low stream followed by actual GPU producer kernels",
+  "measurement_scope": "CUDA foreground dependency waiting; CPU scheduling delay is excluded",
+  "passed": true,
+  "same_actual_stream_skip_preserved": true,
+  "scope": "synthetic GPU dependency measurement; not a model test"
+}

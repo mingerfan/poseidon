@@ -1,0 +1,6 @@
+[INFO] output size=2 scale=3.51844e+13 q_count=11
+[INFO] sample[0] expected=(0.03125,0.015625) actual=(-4.59485,-12004.1) error=12004.1
+[INFO] sample[1] expected=(0.0625,0.03125) actual=(-4.5875,-2400.8) error=2400.84
+[INFO] sample[2] expected=(0.09375,0.046875) actual=(-4.58014,-480.136) error=480.206
+[INFO] sample[3] expected=(0.125,0.0625) actual=(-4.57279,-95.944) error=96.1214
+[FAIL] Runtime native bootstrap error exceeds tolerance: 12004.071718

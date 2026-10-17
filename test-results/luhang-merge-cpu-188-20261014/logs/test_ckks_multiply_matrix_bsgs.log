@@ -1,0 +1,34 @@
+COMMAND: ["/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_multiply_matrix_bsgs"]
+                  /\
+                 /__\
+          /|      ||      |\
+         /_|      ||      |_\
+         | |     /  \     | |
+        |__|____|____|____|__|
+        \____________________/ 
+                 |  | 
+                 |  | 
+                 |  | 
+                 |__| 
+                 /  \
+                 \__/ 
+
+POSEIDON SOFTWARE VERSION:1.0.0
+
+Matrix Mul BSGS TIME : 23991479 microseconds
+expect value[0] : 0.0886609736 + 0.7199756913 I 
+result value[0] : 0.0883424295 + 0.7200162901 I 
+expect value[1] : 0.3559087142 + 0.2683352148 I 
+result value[1] : 0.3559250512 + 0.2682911685 I 
+expect value[2] : 0.2168374159 + 0.3624573378 I 
+result value[2] : 0.2168448455 + 0.3624557001 I 
+expect value[3] : 0.8896591486 + 0.1113516614 I 
+result value[3] : 0.8896691232 + 0.1113393523 I 
+expect value[4] : 0.7223188858 + 0.8347138637 I 
+result value[4] : 0.7223180179 + 0.8346984776 I 
+expect value[5] : 0.8556955499 + 0.4641199391 I 
+result value[5] : 0.8556821227 + 0.4641120037 I 
+expect value[6] : 0.5434542214 + 0.1989491880 I 
+result value[6] : 0.5434586129 + 0.1989484383 I 
+expect value[7] : 0.1250761128 + 0.4276626483 I 
+result value[7] : 0.1250764321 + 0.4276629668 I 

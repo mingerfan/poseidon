@@ -1,0 +1,1 @@
+[FAIL] GPU uint64 scalar: wide scalar RNS word mismatch scalar=0 component=1 limb=6 coeff=2880 source=698449110 q=1073651713 expected=0 actual=698449110

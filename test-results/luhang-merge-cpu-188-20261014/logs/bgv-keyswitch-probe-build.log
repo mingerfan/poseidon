@@ -1,0 +1,13 @@
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/bgv_keyswitch_probe.cpp:4:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

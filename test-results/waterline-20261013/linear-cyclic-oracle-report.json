@@ -1,0 +1,1975 @@
+{
+  "passed": true,
+  "scope": "Independent FP64 physical-slot prototype vs dense NumPy; full model dimensions with synthetic weights; not CKKS or full-model execution",
+  "production_dsl_modified": false,
+  "fhe_validated": false,
+  "gpu_speedup_claimed": false,
+  "slots": 8192,
+  "full_model_interface": {
+    "layers": 28,
+    "inputs": 2,
+    "outputs": 261,
+    "logits": 151936,
+    "logit_ciphertexts": 149,
+    "kv_ciphertexts": 112
+  },
+  "current_production_lm_counts": [
+    {
+      "output_size": 1024,
+      "measured": {
+        "rotations": 94,
+        "mul_cp": 2047,
+        "mul_cc": 0,
+        "adds": 2046
+      }
+    },
+    {
+      "output_size": 384,
+      "measured": {
+        "rotations": 84,
+        "mul_cp": 1407,
+        "mul_cc": 0,
+        "adds": 1406
+      }
+    }
+  ],
+  "shape_cases": [
+    {
+      "name": "q_proj",
+      "shape": [
+        2048,
+        1024
+      ],
+      "case": "dense",
+      "implementation": "cyclic",
+      "max_abs": 6.217248937900877e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "q_proj",
+      "shape": [
+        2048,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "implementation": "cyclic",
+      "max_abs": 4.884981308350689e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "k_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "dense",
+      "implementation": "cyclic",
+      "max_abs": 4.884981308350689e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "k_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "implementation": "cyclic",
+      "max_abs": 6.661338147750939e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "v_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "dense",
+      "implementation": "cyclic",
+      "max_abs": 4.884981308350689e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "v_proj",
+      "shape": [
+        1024,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "implementation": "cyclic",
+      "max_abs": 4.218847493575595e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "o_proj",
+      "shape": [
+        1024,
+        2048
+      ],
+      "case": "dense",
+      "implementation": "cyclic",
+      "max_abs": 1.0658141036401503e-14,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 2049,
+        "rotations": 96,
+        "adds": 2049
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "o_proj",
+      "shape": [
+        1024,
+        2048
+      ],
+      "case": "short_logical_tail",
+      "implementation": "cyclic",
+      "max_abs": 1.0658141036401503e-14,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 2049,
+        "rotations": 96,
+        "adds": 2049
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "gate_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "dense",
+      "implementation": "cyclic",
+      "max_abs": 8.43769498715119e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "gate_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "implementation": "cyclic",
+      "max_abs": 8.43769498715119e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "up_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "dense",
+      "implementation": "cyclic",
+      "max_abs": 6.661338147750939e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "up_proj",
+      "shape": [
+        3072,
+        1024
+      ],
+      "case": "short_logical_tail",
+      "implementation": "cyclic",
+      "max_abs": 6.661338147750939e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 1025,
+        "rotations": 81,
+        "adds": 1026
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "dense",
+      "implementation": "cyclic",
+      "max_abs": 9.769962616701378e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 4096,
+        "rotations": 127,
+        "adds": 4095
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "dense",
+      "implementation": "packed_down",
+      "max_abs": 9.547918011776346e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 2048,
+        "rotations": 96,
+        "adds": 2048
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "short_logical_tail",
+      "implementation": "cyclic",
+      "max_abs": 9.547918011776346e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 4096,
+        "rotations": 127,
+        "adds": 4095
+      },
+      "relative_cp_depth": 2
+    },
+    {
+      "name": "down_proj",
+      "shape": [
+        1024,
+        3072
+      ],
+      "case": "short_logical_tail",
+      "implementation": "packed_down",
+      "max_abs": 9.769962616701378e-15,
+      "output_tail_abs": 0.0,
+      "dirty_input_contamination": 0.0,
+      "operations": {
+        "mul_cp": 2048,
+        "rotations": 96,
+        "adds": 2048
+      },
+      "relative_cp_depth": 2
+    }
+  ],
+  "small_bias_cases": 7,
+  "full_lm": {
+    "vocabulary": 151936,
+    "hidden": 1024,
+    "wide_blocks": 19,
+    "output_ciphertexts": 149,
+    "final_prefix_size": 384,
+    "max_abs": 1.199040866595169e-14,
+    "operations": {
+      "mul_cp": 19606,
+      "rotations": 1615,
+      "adds": 19440
+    },
+    "relative_cp_depth": 3,
+    "replication_operations": {
+      "mul_cp": 1,
+      "rotations": 3,
+      "adds": 3
+    },
+    "blocks": [
+      {
+        "begin": 0,
+        "size": 8192,
+        "wide_max_abs": 7.549516567451064e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 0,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 1024,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 2048,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 3072,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 4096,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 5120,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 6144,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 7168,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 8192,
+        "size": 8192,
+        "wide_max_abs": 7.993605777301127e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 8192,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 9216,
+            "size": 1024,
+            "max_abs": 5.995204332975845e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 10240,
+            "size": 1024,
+            "max_abs": 6.8833827526759706e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 11264,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 12288,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 13312,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 14336,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 15360,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 16384,
+        "size": 8192,
+        "wide_max_abs": 1.199040866595169e-14,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 16384,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 17408,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 18432,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 19456,
+            "size": 1024,
+            "max_abs": 1.199040866595169e-14,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 20480,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 21504,
+            "size": 1024,
+            "max_abs": 8.215650382226158e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 22528,
+            "size": 1024,
+            "max_abs": 8.43769498715119e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 23552,
+            "size": 1024,
+            "max_abs": 5.551115123125783e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 24576,
+        "size": 8192,
+        "wide_max_abs": 7.549516567451064e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 24576,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 25600,
+            "size": 1024,
+            "max_abs": 6.439293542825908e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 26624,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 27648,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 28672,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 29696,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 30720,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 31744,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 32768,
+        "size": 8192,
+        "wide_max_abs": 8.881784197001252e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 32768,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 33792,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 34816,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 35840,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 36864,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 37888,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 38912,
+            "size": 1024,
+            "max_abs": 8.881784197001252e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 39936,
+            "size": 1024,
+            "max_abs": 6.8833827526759706e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 40960,
+        "size": 8192,
+        "wide_max_abs": 7.105427357601002e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 40960,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 41984,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 43008,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 44032,
+            "size": 1024,
+            "max_abs": 5.10702591327572e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 45056,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 46080,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 47104,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 48128,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 49152,
+        "size": 8192,
+        "wide_max_abs": 1.021405182655144e-14,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 49152,
+            "size": 1024,
+            "max_abs": 1.021405182655144e-14,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 50176,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 51200,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 52224,
+            "size": 1024,
+            "max_abs": 9.325873406851315e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 53248,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 54272,
+            "size": 1024,
+            "max_abs": 8.43769498715119e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 55296,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 56320,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 57344,
+        "size": 8192,
+        "wide_max_abs": 7.105427357601002e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 57344,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 58368,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 59392,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 60416,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 61440,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 62464,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 63488,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 64512,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 65536,
+        "size": 8192,
+        "wide_max_abs": 8.881784197001252e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 65536,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 66560,
+            "size": 1024,
+            "max_abs": 5.551115123125783e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 67584,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 68608,
+            "size": 1024,
+            "max_abs": 5.551115123125783e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 69632,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 70656,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 71680,
+            "size": 1024,
+            "max_abs": 8.881784197001252e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 72704,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 73728,
+        "size": 8192,
+        "wide_max_abs": 7.105427357601002e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 73728,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 74752,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 75776,
+            "size": 1024,
+            "max_abs": 6.8833827526759706e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 76800,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 77824,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 78848,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 79872,
+            "size": 1024,
+            "max_abs": 5.995204332975845e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 80896,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 81920,
+        "size": 8192,
+        "wide_max_abs": 9.103828801926284e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 81920,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 82944,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 83968,
+            "size": 1024,
+            "max_abs": 9.103828801926284e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 84992,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 86016,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 87040,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 88064,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 89088,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 90112,
+        "size": 8192,
+        "wide_max_abs": 7.993605777301127e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 90112,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 91136,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 92160,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 93184,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 94208,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 95232,
+            "size": 1024,
+            "max_abs": 4.6629367034256575e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 96256,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 97280,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 98304,
+        "size": 8192,
+        "wide_max_abs": 1.0658141036401503e-14,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 98304,
+            "size": 1024,
+            "max_abs": 1.0658141036401503e-14,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 99328,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 100352,
+            "size": 1024,
+            "max_abs": 9.325873406851315e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 101376,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 102400,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 103424,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 104448,
+            "size": 1024,
+            "max_abs": 5.551115123125783e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 105472,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 106496,
+        "size": 8192,
+        "wide_max_abs": 6.661338147750939e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 106496,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 107520,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 108544,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 109568,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 110592,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 111616,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 112640,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 113664,
+            "size": 1024,
+            "max_abs": 4.6629367034256575e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 114688,
+        "size": 8192,
+        "wide_max_abs": 7.993605777301127e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 114688,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 115712,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 116736,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 117760,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 118784,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 119808,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 120832,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 121856,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 122880,
+        "size": 8192,
+        "wide_max_abs": 8.43769498715119e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 122880,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 123904,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 124928,
+            "size": 1024,
+            "max_abs": 6.8833827526759706e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 125952,
+            "size": 1024,
+            "max_abs": 4.440892098500626e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 126976,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 128000,
+            "size": 1024,
+            "max_abs": 6.217248937900877e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 129024,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 130048,
+            "size": 1024,
+            "max_abs": 8.43769498715119e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 131072,
+        "size": 8192,
+        "wide_max_abs": 1.021405182655144e-14,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 131072,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 132096,
+            "size": 1024,
+            "max_abs": 9.769962616701378e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 133120,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 134144,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 135168,
+            "size": 1024,
+            "max_abs": 1.021405182655144e-14,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 136192,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 137216,
+            "size": 1024,
+            "max_abs": 7.105427357601002e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 138240,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 139264,
+        "size": 8192,
+        "wide_max_abs": 7.993605777301127e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 8,
+          "rotations": 7,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 139264,
+            "size": 1024,
+            "max_abs": 4.884981308350689e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 140288,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 141312,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 142336,
+            "size": 1024,
+            "max_abs": 5.773159728050814e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 143360,
+            "size": 1024,
+            "max_abs": 7.993605777301127e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 144384,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 145408,
+            "size": 1024,
+            "max_abs": 7.549516567451064e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 146432,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      },
+      {
+        "begin": 147456,
+        "size": 4480,
+        "wide_max_abs": 7.771561172376096e-15,
+        "projection_operations": {
+          "mul_cp": 1024,
+          "rotations": 78,
+          "adds": 1023
+        },
+        "extraction_operations": {
+          "mul_cp": 5,
+          "rotations": 4,
+          "adds": 0
+        },
+        "slices": [
+          {
+            "begin": 147456,
+            "size": 1024,
+            "max_abs": 5.329070518200751e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 148480,
+            "size": 1024,
+            "max_abs": 4.9960036108132044e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 149504,
+            "size": 1024,
+            "max_abs": 7.771561172376096e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 150528,
+            "size": 1024,
+            "max_abs": 6.661338147750939e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          },
+          {
+            "begin": 151552,
+            "size": 384,
+            "max_abs": 4.440892098500626e-15,
+            "output_tail_abs": 0.0,
+            "relative_cp_depth": 3
+          }
+        ]
+      }
+    ]
+  },
+  "complexity": {
+    "per_matrix": [
+      {
+        "name": "q_proj",
+        "output_size": 2048,
+        "input_size": 1024,
+        "operations": {
+          "mul_cp": 3071,
+          "rotations": 110,
+          "adds": 3070,
+          "relative_cp_depth": 1
+        },
+        "cyclic": {
+          "name": "q_proj",
+          "shape": [
+            2048,
+            1024
+          ],
+          "case": "dense",
+          "implementation": "cyclic",
+          "max_abs": 6.217248937900877e-15,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 1025,
+            "rotations": 81,
+            "adds": 1026
+          },
+          "relative_cp_depth": 2
+        }
+      },
+      {
+        "name": "k_proj",
+        "output_size": 1024,
+        "input_size": 1024,
+        "operations": {
+          "mul_cp": 2047,
+          "rotations": 94,
+          "adds": 2046,
+          "relative_cp_depth": 1
+        },
+        "cyclic": {
+          "name": "k_proj",
+          "shape": [
+            1024,
+            1024
+          ],
+          "case": "dense",
+          "implementation": "cyclic",
+          "max_abs": 4.884981308350689e-15,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 1025,
+            "rotations": 81,
+            "adds": 1026
+          },
+          "relative_cp_depth": 2
+        }
+      },
+      {
+        "name": "v_proj",
+        "output_size": 1024,
+        "input_size": 1024,
+        "operations": {
+          "mul_cp": 2047,
+          "rotations": 94,
+          "adds": 2046,
+          "relative_cp_depth": 1
+        },
+        "cyclic": {
+          "name": "v_proj",
+          "shape": [
+            1024,
+            1024
+          ],
+          "case": "dense",
+          "implementation": "cyclic",
+          "max_abs": 4.884981308350689e-15,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 1025,
+            "rotations": 81,
+            "adds": 1026
+          },
+          "relative_cp_depth": 2
+        }
+      },
+      {
+        "name": "o_proj",
+        "output_size": 1024,
+        "input_size": 2048,
+        "operations": {
+          "mul_cp": 3071,
+          "rotations": 110,
+          "adds": 3070,
+          "relative_cp_depth": 1
+        },
+        "cyclic": {
+          "name": "o_proj",
+          "shape": [
+            1024,
+            2048
+          ],
+          "case": "dense",
+          "implementation": "cyclic",
+          "max_abs": 1.0658141036401503e-14,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 2049,
+            "rotations": 96,
+            "adds": 2049
+          },
+          "relative_cp_depth": 2
+        }
+      },
+      {
+        "name": "gate_proj",
+        "output_size": 3072,
+        "input_size": 1024,
+        "operations": {
+          "mul_cp": 4095,
+          "rotations": 126,
+          "adds": 4094,
+          "relative_cp_depth": 1
+        },
+        "cyclic": {
+          "name": "gate_proj",
+          "shape": [
+            3072,
+            1024
+          ],
+          "case": "dense",
+          "implementation": "cyclic",
+          "max_abs": 8.43769498715119e-15,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 1025,
+            "rotations": 81,
+            "adds": 1026
+          },
+          "relative_cp_depth": 2
+        }
+      },
+      {
+        "name": "up_proj",
+        "output_size": 3072,
+        "input_size": 1024,
+        "operations": {
+          "mul_cp": 4095,
+          "rotations": 126,
+          "adds": 4094,
+          "relative_cp_depth": 1
+        },
+        "cyclic": {
+          "name": "up_proj",
+          "shape": [
+            3072,
+            1024
+          ],
+          "case": "dense",
+          "implementation": "cyclic",
+          "max_abs": 6.661338147750939e-15,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 1025,
+            "rotations": 81,
+            "adds": 1026
+          },
+          "relative_cp_depth": 2
+        }
+      },
+      {
+        "name": "down_proj",
+        "output_size": 1024,
+        "input_size": 3072,
+        "operations": {
+          "mul_cp": 4095,
+          "rotations": 126,
+          "adds": 4094,
+          "relative_cp_depth": 1
+        },
+        "cyclic": {
+          "name": "down_proj",
+          "shape": [
+            1024,
+            3072
+          ],
+          "case": "dense",
+          "implementation": "cyclic",
+          "max_abs": 9.769962616701378e-15,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 4096,
+            "rotations": 127,
+            "adds": 4095
+          },
+          "relative_cp_depth": 2
+        },
+        "packed_down": {
+          "name": "down_proj",
+          "shape": [
+            1024,
+            3072
+          ],
+          "case": "dense",
+          "implementation": "packed_down",
+          "max_abs": 9.547918011776346e-15,
+          "output_tail_abs": 0.0,
+          "dirty_input_contamination": 0.0,
+          "operations": {
+            "mul_cp": 2048,
+            "rotations": 96,
+            "adds": 2048
+          },
+          "relative_cp_depth": 2
+        }
+      }
+    ],
+    "current_lm": {
+      "mul_cp": 304363,
+      "rotations": 13996,
+      "adds": 304214
+    },
+    "current_linear_total": {
+      "mul_cp": 1565539,
+      "rotations": 58012,
+      "adds": 1564998
+    },
+    "full_lm_wide_without_cyclic": {
+      "mul_cp": 171522,
+      "rotations": 3986,
+      "adds": 171354
+    },
+    "prototype_cyclic_linear_total": {
+      "mul_cp": 650726,
+      "rotations": 36783,
+      "adds": 650784
+    },
+    "prototype_with_packed_down_linear_total": {
+      "mul_cp": 536038,
+      "rotations": 35047,
+      "adds": 536152
+    },
+    "invocation_count": "56 per transformer matrix: 28 full layers times 2 tokens; one complete LM head",
+    "production_prepare_count_not_cp_count": 1418689,
+    "production_total_groups_not_linear_count": 8273326
+  },
+  "limits": [
+    "Input prefix masks and output extraction add CP/rescale depth; existing compiler may add more Boot.",
+    "One CP depth is one plaintext multiplication stage, not a measured compiler schedule; 120-bit logical rescale usually drops four 30-bit Q primes.",
+    "Current normalization already emits prefix-zero masks, but this prototype deliberately proves generic dirty-tail safety instead of assuming or rewriting that contract.",
+    "Preparation count differs from source MulCP count due to CSE/sharing, placement, type/scale choices and other operators.",
+    "19 wider LM temporaries do not replace the final 149 ciphertexts; their retained lifetime and all extraction outputs need real resource validation.",
+    "No HEFT, placement algorithm, runtime scheduler, production DSL, pretrained weights or interface is changed by this oracle."
+  ]
+}

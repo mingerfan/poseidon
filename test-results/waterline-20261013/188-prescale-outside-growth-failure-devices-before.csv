@@ -1,0 +1,5 @@
+index, uuid, memory.total [MiB], memory.used [MiB], ecc.errors.uncorrected.volatile.total
+0, GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 32768 MiB, 15112 MiB, 0
+1, GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 32768 MiB, 2 MiB, 0
+2, GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 32768 MiB, 2 MiB, 0
+3, GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 32768 MiB, 2 MiB, 0

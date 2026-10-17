@@ -1,0 +1,107 @@
+COMMAND: ["/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_bgv_basic"]
+                  /\
+                 /__\
+          /|      ||      |\
+         /_|      ||      |_\
+         | |     /  \     | |
+        |__|____|____|____|__|
+        \____________________/ 
+                 |  | 
+                 |  | 
+                 |  | 
+                 |__| 
+                 /  \
+                 \__/ 
+
+POSEIDON SOFTWARE VERSION:1.0.0
+
+
++-------------------------------------+
+|         Example: ADD in bgv         |
++-------------------------------------+
+TIME : 353 microseconds
+source_data[0] : 66
+result_data[0] : 66
+source_data[1] : 35
+result_data[1] : 35
+source_data[2] : 25
+result_data[2] : 25
+
++-------------------------------------+
+|         Example: SUB in bgv         |
++-------------------------------------+
+TIME : 430 microseconds
+source_data[0] : 55
+result_data[0] : 55
+source_data[1] : 2
+result_data[1] : 2
+source_data[2] : 3
+result_data[2] : 3
+
++-------------------------------------------+
+|         Example: ADD_PLAIN in bgv         |
++-------------------------------------------+
+TIME : 3642 microseconds
+source_data[0] : 66
+result_data[0] : 66
+source_data[1] : 35
+result_data[1] : 35
+source_data[2] : 25
+result_data[2] : 25
+
++------------------------------------------------+
+|         Example: MULTIPLY_PLAIN in bgv         |
++------------------------------------------------+
+TIME : 4733 microseconds
+source_data[0] : 3630
+result_data[0] : 3630
+source_data[1] : 70
+result_data[1] : 70
+source_data[2] : 75
+result_data[2] : 75
+
++---------------------------------------------------------+
+|         Example: ROTATE_COL / ROTATE_COL in bgv         |
++---------------------------------------------------------+
+TIME : 40524 microseconds
+source_data[0] : 3630
+result_data[0] : 0
+source_data[1] : 70
+result_data[1] : 0
+source_data[2] : 75
+result_data[2] : 0
+
++---------------------------------------------------------+
+|         Example: ROTATE_ROW / ROTATE_ROW in bgv         |
++---------------------------------------------------------+
+TIME : 35557 microseconds
+source_data[0] : 3630
+result_data[0] : 70
+source_data[1] : 70
+result_data[1] : 75
+source_data[2] : 75
+result_data[2] : 0
+
++----------------------------------------------+
+|         Example: drop_modulus in bgv         |
++----------------------------------------------+
+Before drop_modulus level : 7
+After drop_modulus level : 6
+TIME : 9668 microseconds
+source_data[0] : 3630
+result_data[0] : 3630
+source_data[1] : 70
+result_data[1] : 70
+source_data[2] : 75
+result_data[2] : 75
+
++------------------------------------------------+
+|         Example: multiply_relin in bgv         |
++------------------------------------------------+
+TIME : 42255 microseconds
+source_data[0] : 121
+result_data[0] : 121
+source_data[1] : 1089
+result_data[1] : 1089
+source_data[2] : 484
+result_data[2] : 484

@@ -1,0 +1,32 @@
+START build
+START test_bfv_basic
+FAIL test_bfv_basic 3.789 25209.0 ['printed numerical mismatch']
+START test_bfv_mult_matrix
+PASS test_bfv_mult_matrix 40.882 0.0 []
+START test_bgv_basic
+FAIL test_bgv_basic 3.84 3630.0 ['printed numerical mismatch']
+START test_bgv_load
+PASS test_bgv_load 0.033 0.0 []
+START test_ckks_basic
+PASS test_ckks_basic 23.975 2.1478864017038385e-07 []
+START test_ckks_basic_discontinuous
+PASS test_ckks_basic_discontinuous 23.772 5.888650102492721e-08 []
+START test_ckks_multiply_matrix_bsgs
+PASS test_ckks_multiply_matrix_bsgs 69.978 0.0003211208591889439 []
+START test_ckks_multiply_matrix_bsgs_multi_thread
+FAIL test_ckks_multiply_matrix_bsgs_multi_thread 0.166 None ['nonzero exit', 'failure or nonfinite marker in output', 'no printed numerical pairs']
+START test_ckks_slot_to_coeff
+PASS test_ckks_slot_to_coeff 20.907 7.049350860507566e-05 []
+START test_ckks_heartstudy
+PASS test_ckks_heartstudy 1.98  []
+START test_ckks_hybrid_decomp_count
+FAIL test_ckks_hybrid_decomp_count 128.946  ['nonzero exit', 'failure or nonfinite marker in output', 'missing success marker']
+START test_ckks_bootstrap_cf_real_algebra
+PASS test_ckks_bootstrap_cf_real_algebra 0.033  []
+START test_ckks_bootstrap_cf_real_default
+PASS test_ckks_bootstrap_cf_real_default 66.637  []
+START test_ckks_bootstrap_cf_real_inplace_rounds
+PASS test_ckks_bootstrap_cf_real_inplace_rounds 26.493  []
+START test_ckks_bootstrap_all
+FAIL test_ckks_bootstrap_all 201.272 508.38994214541356 ['printed numerical mismatch']
+START test_ckks_bootstrap_cmp

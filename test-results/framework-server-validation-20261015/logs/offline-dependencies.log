@@ -1,0 +1,165 @@
+-- CMake version: 3.31.6
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- Configuring done (0.5s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/fmt-build
+[ 33%] Building CXX object CMakeFiles/fmt.dir/src/format.cc.o
+[ 66%] Building CXX object CMakeFiles/fmt.dir/src/os.cc.o
+[100%] Linking CXX static library libfmt.a
+[100%] Built target fmt
+Install the project...
+-- Install configuration: "Release"
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/libfmt.a
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/args.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/base.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/chrono.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/color.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/compile.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/core.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/format.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/format-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/os.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/ostream.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/printf.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/ranges.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/std.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/fmt/xchar.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/fmt/fmt-config.cmake
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/fmt/fmt-config-version.cmake
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/fmt/fmt-targets.cmake
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/fmt/fmt-targets-release.cmake
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/pkgconfig/fmt.pc
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Build spdlog: 1.14.1
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Build type: Release
+-- Generating install
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/spdlog-build
+[ 14%] Building CXX object CMakeFiles/spdlog.dir/src/spdlog.cpp.o
+[ 28%] Building CXX object CMakeFiles/spdlog.dir/src/file_sinks.cpp.o
+[ 57%] Building CXX object CMakeFiles/spdlog.dir/src/stdout_sinks.cpp.o
+[ 57%] Building CXX object CMakeFiles/spdlog.dir/src/color_sinks.cpp.o
+[ 71%] Building CXX object CMakeFiles/spdlog.dir/src/async.cpp.o
+[ 85%] Building CXX object CMakeFiles/spdlog.dir/src/cfg.cpp.o
+[100%] Linking CXX static library libspdlog.a
+[100%] Built target spdlog
+Install the project...
+-- Install configuration: "Release"
+-- Up-to-date: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/logger-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/logger.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/pattern_formatter-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/tweakme.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fwd.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/xchar.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/ranges.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/std.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/ostr.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/compile.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/chrono.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/bin_to_hex.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/fmt/fmt.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/cfg
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/cfg/helpers-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/cfg/helpers.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/cfg/argv.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/cfg/env.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/spdlog-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/spdlog.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/null_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/ostream_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/qt_sinks.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/ringbuffer_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/sink-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/wincolor_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/stdout_color_sinks.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/tcp_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/udp_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/ansicolor_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/win_eventlog_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/android_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/dist_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/stdout_sinks-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/basic_file_sink-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/syslog_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/systemd_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/hourly_file_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/rotating_file_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/wincolor_sink-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/rotating_file_sink-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/base_sink-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/stdout_sinks.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/basic_file_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/dup_filter_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/daily_file_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/ansicolor_sink-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/msvc_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/callback_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/base_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/mongo_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/kafka_sink.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/sinks/stdout_color_sinks-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/async.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/async_logger.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/circular_q.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/synchronous_factory.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/null_mutex.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/tcp_client-windows.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/backtracer.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/mpmc_blocking_q.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/log_msg_buffer.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/log_msg.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/thread_pool-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/udp_client.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/os-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/log_msg-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/os.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/file_helper-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/windows_include.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/registry.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/tcp_client.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/console_globals.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/periodic_worker-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/log_msg_buffer-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/periodic_worker.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/backtracer-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/thread_pool.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/udp_client-windows.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/registry-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/fmt_helper.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/details/file_helper.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/stopwatch.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/pattern_formatter.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/common.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/version.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/mdc.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/formatter.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/async_logger-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/include/spdlog/common-inl.h
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/libspdlog.a
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/pkgconfig/spdlog.pc
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/spdlog/spdlogConfigTargets.cmake
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/spdlog/spdlogConfigTargets-release.cmake
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/spdlog/spdlogConfig.cmake
+-- Installing: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/deps/install/lib/cmake/spdlog/spdlogConfigVersion.cmake

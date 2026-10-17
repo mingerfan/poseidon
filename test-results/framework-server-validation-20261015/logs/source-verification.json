@@ -1,0 +1,20 @@
+{
+  "poseidon_commit": "6dc8cbfb65e3311271563000f6f5dce92d0324a8",
+  "runtime_commit": "0d3ba226b0329932ca9aed4a8eaa1797f5893965",
+  "all_match": true,
+  "files": {
+    "CMakeLists.txt": true,
+    "src/poseidon/gpu/CMakeLists.txt": true,
+    "src/poseidon/gpu/gpu_memory.h": true,
+    "src/poseidon/gpu/gpu_evaluator.h": true,
+    "src/poseidon/gpu/gpu_modswitch_handler.h": true,
+    "src/poseidon/gpu/gpu_keyswitch_handler.h": true,
+    "src/poseidon/gpu/gpu_keyswitch_handler.cpp": true,
+    "src/poseidon/gpu/kernels/gpu_ntt_kernels.cu": true,
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": true,
+    "src/poseidon/runtime_api/CMakeLists.txt": true,
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": true,
+    "src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp": true,
+    "third_party/ckks-runtime/runtime/runtime.hpp": true
+  }
+}

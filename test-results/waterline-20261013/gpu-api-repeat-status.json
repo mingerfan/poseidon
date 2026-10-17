@@ -1,0 +1,52 @@
+[
+  {
+    "repeat": 0,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-00.log"
+  },
+  {
+    "repeat": 1,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-01.log"
+  },
+  {
+    "repeat": 2,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-02.log"
+  },
+  {
+    "repeat": 3,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-03.log"
+  },
+  {
+    "repeat": 4,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-04.log"
+  },
+  {
+    "repeat": 5,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-05.log"
+  },
+  {
+    "repeat": 6,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-06.log"
+  },
+  {
+    "repeat": 7,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-07.log"
+  },
+  {
+    "repeat": 8,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-08.log"
+  },
+  {
+    "repeat": 9,
+    "returncode": 0,
+    "log": "test-results/waterline-20261013/gpu-api-repeat-09.log"
+  }
+]

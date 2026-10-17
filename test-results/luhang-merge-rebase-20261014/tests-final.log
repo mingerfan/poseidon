@@ -1,0 +1,31 @@
+Test project /tmp/poseidon-runtime-rebase-20261014-202623/build-validation
+    Start  9: poseidon_runtime_cpu_api_tests
+1/5 Test  #9: poseidon_runtime_cpu_api_tests ...........***Failed    0.01 sec
+[PASS] single-process Host AddCP
+[FAIL] unexpected decrypt_reencrypt Boot result
+
+    Start 10: poseidon_runtime_gpu_api_tests
+2/5 Test #10: poseidon_runtime_gpu_api_tests ...........   Passed   15.07 sec
+    Start 11: poseidon_runtime_gpu_scalar_tests
+3/5 Test #11: poseidon_runtime_gpu_scalar_tests ........   Passed    0.29 sec
+    Start 12: poseidon_runtime_gpu_prepare_oom_tests
+4/5 Test #12: poseidon_runtime_gpu_prepare_oom_tests ...   Passed    0.34 sec
+    Start 13: poseidon_runtime_gpu_bootstrap_e2e
+5/5 Test #13: poseidon_runtime_gpu_bootstrap_e2e .......***Failed    2.89 sec
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=7345844992 maximum_bytes=7345844992
+[INFO] output size=2 scale=3.51844e+13 q_count=11
+[INFO] sample[0] expected=(0.03125,0.015625) actual=(-4.59485,-12004.1) error=12004.1
+[INFO] sample[1] expected=(0.0625,0.03125) actual=(-4.5875,-2400.8) error=2400.84
+[INFO] sample[2] expected=(0.09375,0.046875) actual=(-4.58014,-480.136) error=480.206
+[INFO] sample[3] expected=(0.125,0.0625) actual=(-4.57279,-95.9441) error=96.1214
+[FAIL] Runtime native bootstrap error exceeds tolerance: 12004.071724
+
+
+60% tests passed, 2 tests failed out of 5
+
+Total Test time (real) =  18.60 sec
+
+The following tests FAILED:
+	  9 - poseidon_runtime_cpu_api_tests (Failed)
+	 13 - poseidon_runtime_gpu_bootstrap_e2e (Failed)
+Errors while running CTest

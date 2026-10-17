@@ -1,0 +1,26 @@
+COMMAND: ["/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_bfv_mult_matrix"]
+                  /\
+                 /__\
+          /|      ||      |\
+         /_|      ||      |_\
+         | |     /  \     | |
+        |__|____|____|____|__|
+        \____________________/ 
+                 |  | 
+                 |  | 
+                 |  | 
+                 |__| 
+                 /  \
+                 \__/ 
+
+POSEIDON SOFTWARE VERSION:1.0.0
+
+MULT MATRIX : 27674912 microseconds
+soft vec[0]   : 0  
+result vec[0] : 0  
+soft vec[1]   : 31358  
+result vec[1] : 31358  
+soft vec[2]   : 60589  
+result vec[2] : 60589  
+soft vec[3]   : 23459  
+result vec[3] : 23459  

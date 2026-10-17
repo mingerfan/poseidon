@@ -1,0 +1,25 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-core
+    Start 1: runtime_waterline_tests
+1/7 Test #1: runtime_waterline_tests ..........***Failed    0.00 sec
+plan verification failed: external input must be placed on Host (IO-2)
+
+    Start 2: pack_plaintext_bundle_tests
+2/7 Test #2: pack_plaintext_bundle_tests ......   Passed    0.29 sec
+    Start 3: runtime_tests
+3/7 Test #3: runtime_tests ....................   Passed    0.09 sec
+    Start 4: runtime_plan_json_tests
+4/7 Test #4: runtime_plan_json_tests ..........   Passed    0.33 sec
+    Start 5: runtime_plan_memory_tests
+5/7 Test #5: runtime_plan_memory_tests ........   Passed    0.11 sec
+    Start 6: runtime_release_tests
+6/7 Test #6: runtime_release_tests ............   Passed   32.99 sec
+    Start 7: thread_trace_tests
+7/7 Test #7: thread_trace_tests ...............   Passed    0.01 sec
+
+86% tests passed, 1 tests failed out of 7
+
+Total Test time (real) =  33.82 sec
+
+The following tests FAILED:
+	  1 - runtime_waterline_tests (Failed)
+Errors while running CTest

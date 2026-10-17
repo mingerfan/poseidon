@@ -1,0 +1,22 @@
+{
+  "hotpath-cache-local-current-baseline": {
+    "passed": true,
+    "started_utc": "2026-10-13T13:17:22Z",
+    "finished_utc": "2026-10-13T13:17:26Z",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "selected_physical_gpu": 0,
+    "external_full_model": false,
+    "source_sha256": "2e005b1ce40b464d5ea21dd73bef2050ef6df29a6cfa50be6e84ee76e55408c1",
+    "binary_sha256": "8f5a772b3ed6f3b2fe52f7b4bb2c5d4b8992a941dfb11fcc4403896d5d811d60"
+  },
+  "hotpath-cache-local-current-cached": {
+    "passed": true,
+    "started_utc": "2026-10-13T13:18:50Z",
+    "finished_utc": "2026-10-13T13:18:54Z",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "selected_physical_gpu": 0,
+    "external_full_model": false,
+    "source_sha256": "2e005b1ce40b464d5ea21dd73bef2050ef6df29a6cfa50be6e84ee76e55408c1",
+    "binary_sha256": "8f5a772b3ed6f3b2fe52f7b4bb2c5d4b8992a941dfb11fcc4403896d5d811d60"
+  }
+}

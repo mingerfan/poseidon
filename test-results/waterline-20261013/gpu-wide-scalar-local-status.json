@@ -1,0 +1,45 @@
+{
+  "scope": "Local RTX4060 one visible GPU, primitive uint64 modular scalar; no model, no Rescale API, original ciphertext native scale unchanged. Maximum managed pool512MiB initial64MiB.",
+  "passed": true,
+  "positive_log": "gpu-wide-scalar-local-ready-both-defaults.log",
+  "compiler_link_commands": "gpu-wide-scalar-local-ready-both-defaults.commands.json",
+  "scalar_cases": 16,
+  "RNS_words_checked": 974848,
+  "complex_slots_per_case": 2048,
+  "max_normalized_decoded_error": 1.04083e-16,
+  "PTDS_blocked_nondefault_completed": true,
+  "source_and_binary_sha256": {
+    "src/poseidon/gpu/gpu_evaluator.cpp": "8ea1d72a02e69bfb5a9d1de4fb23d3ae60214bc348ff09469a176cf778871d73",
+    "src/poseidon/gpu/gpu_elementwise_handler.cpp": "2ef27bcdaf2657b9ab7bc70aacf4c93427e777c3969e039d742aff5517100020",
+    "src/poseidon/gpu/gpu_elementwise_handler.h": "3bde5fd7b88c3d61c5f84d7dcf0a651a2b38da95e910e6b5eda84529949571b4",
+    "src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu": "d70bc91aed66b0cb49f79dade7878e7633991df8d72a13ac4a6510c75644ead3",
+    "src/poseidon/gpu/kernels/gpu_elementwise_kernels.h": "e17f730fae2066dd49cea6fc4674e76e55fa16de2c58c11d895516222cc4191b",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_scalar_test.cpp": "fe63b02e67b15cc0b3c4718a9c94bab0e9fea2764f9f1125849b9c83db47f8fd",
+    "build-waterline-qwen-agent/poseidon_gpu_scalar_test": "3e2794a8cf9e8feb18bbf3ea5c04a6b8fdb5fc618c41a68285583e6f157b47ec",
+    "build-waterline-qwen-agent/libposeidon_gpu.a": "460b25239c752f9a48d8c8b8487e3672396e1bd76cfeef533e9264d40c93a7ff",
+    "build-waterline-qwen-agent/libposeidon_runtime_gpu_api.a": "ee88ef387d8bd03987319d5c5d22ed45ecb43fa10776e4a26b9f28dd2cad156f",
+    "build-waterline-qwen-agent/libposeidon_shared.so": "d21625ce20553434c3be1ee793408f8cba480e369932dd5646c3d43c33d137ab"
+  },
+  "earlier_failures_preserved": [
+    "gpu-wide-scalar-local.log",
+    "gpu-wide-scalar-local-diagnostic-01.log",
+    "gpu-wide-scalar-local-alias-fixed.log",
+    "gpu-wide-scalar-local-ready-input.log"
+  ],
+  "earlier_failure_scope": "Initial oracle failed; alias reallocation was corrected, then direct uploader input readiness explicitly established on both CUDA default streams. Do not report these initial races as uint64 Barrett arithmetic failures.",
+  "snapshot_paths": [
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-qwen-agent/wide-scalar-positive-snapshot/poseidon_gpu_scalar_test",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-qwen-agent/wide-scalar-positive-snapshot/libposeidon_shared.so"
+  ],
+  "alias_negative_control": {
+    "expected_exit_status": 1,
+    "actual_exit_status": 1,
+    "restored_old_alias_path_only": true,
+    "actual_RNS_mismatch": true,
+    "log": "gpu-wide-scalar-alias-negative-control.log",
+    "patch": "gpu-wide-scalar-alias-negative-control.patch",
+    "compiler_link_commands": "gpu-wide-scalar-alias-negative-control.commands.json",
+    "source_sha256": "8b7eaa52d06bb22d74d3045195ccfd8e51288ed34e32d78648aa1491d1aaafef",
+    "binary_sha256": "487927d627816e0507c87f257580d4a58c45be720df390a704ded98f5380efae"
+  }
+}

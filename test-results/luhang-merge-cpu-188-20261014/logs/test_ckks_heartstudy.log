@@ -1,0 +1,27 @@
+COMMAND: ["/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_heartstudy"]
+                  /\
+                 /__\
+          /|      ||      |\
+         /_|      ||      |_\
+         | |     /  \     | |
+        |__|____|____|____|__|
+        \____________________/ 
+                 |  | 
+                 |  | 
+                 |  | 
+                 |__| 
+                 /  \
+                 \__/ 
+
+POSEIDON SOFTWARE VERSION:1.0.0
+
+The default parameter: 
+age: 26
+systolic blood pressure: 100
+diastolic blood pressure: 70
+total cholesterol: 100
+weight(kg): 71
+height(kg): 180
+HeartStudy TIME: 558895 microseconds
+answer after FHE = 0.87896543 
+expected answer = 0.87642469 

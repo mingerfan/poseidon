@@ -1,0 +1,9 @@
+[PASS] internal RMM pool lifetime
+waterline GPU0 front_peak=1376256 plain_peak=114688 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+Waterline diagnostic max=4.24667e-05 slot0=(3.50001,6.07856e-06) slot1=(-7,4.3022e-06)
+WATERLINE backend=0 devices=1 max_abs_error=4.24667e-05 cold_ms=19.956 forward_ms=18.1293 pinned_live=0
+waterline GPU0 front_peak=1376256 plain_peak=311296 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+Waterline diagnostic max=15 slot0=(1.00001,6.07856e-06) slot1=(-2,4.3022e-06)
+[FAIL] Waterline plaintext consumer numerical mismatch

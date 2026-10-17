@@ -1,0 +1,8 @@
+[PASS] internal RMM pool lifetime
+PASS complete GPU Encode wide constant scale=40 coefficient_bits=61
+PASS complete GPU Encode wide constant scale=60 coefficient_bits=81
+PASS complete GPU Encode wide constant scale=80 coefficient_bits=101
+PASS complete GPU Encode wide constant scale=120 coefficient_bits=141
+fatal runtime error: reason=plan verification failed: external input must be placed on Host (IO-2) plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+CPU_PREPARE_HOST_BOUND N=4096 Q=7 old_bound=393216 complete_bound=507904 tight_budget=450560 cpu_prepare_calls_delta=0 rejection=fatal runtime error: reason=plan verification failed: external input must be placed on Host (IO-2) plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+[FAIL] CPU Prepare Host budget did not reject before work submission: fatal runtime error: reason=plan verification failed: external input must be placed on Host (IO-2) plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi

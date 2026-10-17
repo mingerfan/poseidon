@@ -1,0 +1,19 @@
+{
+  "poseidon_commit": "6dc8cbfb65e3311271563000f6f5dce92d0324a8",
+  "runtime_commit": "0d3ba226b0329932ca9aed4a8eaa1797f5893965",
+  "sha256": {
+    "CMakeLists.txt": "faa3e9996e05e1b64921f221bba6dc7a6f8dc3b9b1d415b4dd9edcd4cb4b5683",
+    "src/poseidon/gpu/CMakeLists.txt": "5560282df730901cf3743411d7a683e404fd1055fdda7181d230f3471dd4f6e1",
+    "src/poseidon/gpu/gpu_memory.h": "ab6350a39068b4bc27c86b130421eb33569a8d695110189c4f398bba911142ce",
+    "src/poseidon/gpu/gpu_evaluator.h": "64a45dbb6f9d0f5a7515837886c23d1de36bc524fa3655ced6950e177ed1a4f8",
+    "src/poseidon/gpu/gpu_modswitch_handler.h": "0e9800f60cf60dbc3a8b3879fbd81586dc7d4750ec3c1cd06e1329b88afe37ca",
+    "src/poseidon/gpu/gpu_keyswitch_handler.h": "718a051707e5d5a25248539797e0ee0b198b025e0c6d4a987f6af57e8ebfd5cb",
+    "src/poseidon/gpu/gpu_keyswitch_handler.cpp": "0644f893b0f1ebd8bb66b65d5ed01605bc8c5ce3625faa48df17437cee502b1b",
+    "src/poseidon/gpu/kernels/gpu_ntt_kernels.cu": "6c2aafc79726155f88427366753cdf3372f1e8ff5da10b3205884466b82ac5c7",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "72808df36250dcb6908623737af1aa05f657ab33841c96635e8dae779ec80f45",
+    "src/poseidon/runtime_api/CMakeLists.txt": "5175aecae7c90d216623af04caa92e8e00092cc4c6b237e8c96b9499224507c1",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "14156ec43a153a2f9128ce88f0dc8204e4617bcd7b28bcc27de1af727d62dcfd",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp": "2df303eeef2d1d3fb86dca2c59b3b6a68b8da42268f75065d8a081d23e2efbe3",
+    "third_party/ckks-runtime/runtime/runtime.hpp": "6a4d5d4352c46665576bead5da6aa1fa31bd645e1eabeba118046d3d981a3c3c"
+  }
+}

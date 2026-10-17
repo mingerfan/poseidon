@@ -1,0 +1,363 @@
+[  0%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/plan.cpp.o
+[  1%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/verifier.cpp.o
+[  2%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/thread_trace.cpp.o
+[  3%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/batchencoder.cpp.o
+[  5%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/ciphertext.cpp.o
+[  7%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/utils/sha256.cpp.o
+[  7%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/plaintext_bundle.cpp.o
+[  7%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/crt_context.cpp.o
+[  8%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/ckks_encoder.cpp.o
+[ 10%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/keygenerator.cpp.o
+[ 12%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/decryptor.cpp.o
+[ 12%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/encryptor.cpp.o
+[ 13%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/parameters_literal.cpp.o
+[ 13%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/plaintext.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/keygenerator.cpp:12:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 15%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/poseidon_context.cpp.o
+[ 16%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/rns_poly.cpp.o
+[ 17%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/bootstrapper.cpp.o
+[ 18%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_dft.cpp.o
+[ 18%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_linear_transform.cpp.o
+[ 20%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_mod.cpp.o
+[ 21%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/polynomial_evaluation.cpp.o
+[ 22%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/chebyshev_interpolation.cpp.o
+[ 24%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/cosine_approx.cpp.o
+[ 24%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_base.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.cpp:1:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.cpp:1:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/util/chebyshev_interpolation.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/util/chebyshev_interpolation.cpp:1:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 25%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bfv_base.cpp.o
+[ 26%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bgv_base.cpp.o
+[ 27%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_ckks_base.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/bootstrapper.h:5,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/bootstrapper.cpp:1:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 27%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bgv_software.cpp.o
+[ 29%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bfv_software.cpp.o
+[ 30%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_ckks_software.cpp.o
+[ 31%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/factory/poseidon_factory.cpp.o
+[ 32%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/galoiskeys.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.cpp:1:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 32%] Linking CXX static library ../libruntime_core.a
+[ 32%] Built target ckks_runtime_core
+[ 34%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_base.cpp.o
+[ 34%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_bv.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/software/evaluator_ckks_software.cpp:1:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 35%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_ghs.cpp.o
+[ 36%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_hybrid.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/factory/poseidon_factory.cpp:1:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 37%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/kswitchkeys.cpp.o
+[ 39%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/memorymanager.cpp.o
+[ 39%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/modulus.cpp.o
+[ 40%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/randomgen.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/key/keyswitch_base.cpp:2:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 41%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/serialization.cpp.o
+[ 43%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2b.c.o
+[ 44%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2xb.c.o
+[ 44%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/clipnormal.cpp.o
+[ 45%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/common.cpp.o
+[ 46%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/croots.cpp.o
+[ 48%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/fips202.c.o
+[ 49%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/galois.cpp.o
+[ 49%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/globals.cpp.o
+[ 50%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/hash.cpp.o
+[ 51%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/iterator.cpp.o
+[ 53%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/mempool.cpp.o
+[ 54%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/numth.cpp.o
+[ 54%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ntt.cpp.o
+[ 55%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/polyarithsmallmod.cpp.o
+[ 56%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rlwe.cpp.o
+[ 58%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rns.cpp.o
+[ 59%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/scalingvariant.cpp.o
+[ 59%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/streambuf.cpp.o
+[ 60%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarith.cpp.o
+[ 62%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithmod.cpp.o
+[ 63%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithsmallmod.cpp.o
+[ 64%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintcore.cpp.o
+[ 64%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ztools.cpp.o
+[ 65%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/debug.cpp.o
+[ 67%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/fft.cpp.o
+[ 68%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/matrix_operation.cpp.o
+[ 69%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/precision.cpp.o
+[ 69%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/random_sample.cpp.o
+[ 70%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/rns_tool_qp.cpp.o
+[ 72%] Linking CXX shared library libposeidon_shared.so
+[ 72%] Built target poseidon_shared
+[ 72%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_bootstrap_profile.cpp.o
+[ 73%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ciphertext.cpp.o
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_key.cpp.o
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_double_hoist.cpp.o
+[ 77%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_plaintext.cpp.o
+[ 78%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_memory.cpp.o
+[ 78%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_parameter.cpp.o
+[ 81%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_uploader.cpp.o
+[ 81%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_evaluator.cpp.o
+[ 82%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_elementwise_handler.cpp.o
+[ 83%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_modswitch_handler.cpp.o
+[ 83%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_keyswitch_handler.cpp.o
+[ 84%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ntt_handler.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_uploader.cpp:6:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_bootstrap_profile.cpp:4:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 86%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_tensor_core_gemm.cu.o
+[ 87%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_double_hoist_kernels.cu.o
+[ 87%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_elementwise_kernels.cu.o
+[ 88%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_keyswitch_kernels.cu.o
+[ 89%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_ntt_kernels.cu.o
+[ 91%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_rescale_kernels.cu.o
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(293): warning #177-D: variable "poseidon::gpu::<unnamed>::kTensorCoreTileElementsPerLane" was declared but never referenced
+  constexpr int kTensorCoreTileElementsPerLane =
+                ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(296): warning #177-D: function "poseidon::gpu::<unnamed>::build_u32_segment_pow2_factors" was declared but never referenced
+                            void build_u32_segment_pow2_factors(
+                                 ^
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(312): warning #177-D: function "poseidon::gpu::<unnamed>::lazy_add_u64_mod_term" was declared but never referenced
+                            void lazy_add_u64_mod_term(
+                                 ^
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(343): warning #177-D: function "poseidon::gpu::<unnamed>::build_u32_segment_pow2_factors_barrett" was declared but never referenced
+                            void build_u32_segment_pow2_factors_barrett(
+                                 ^
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(362): warning #177-D: function "poseidon::gpu::<unnamed>::lazy_add_u64_mod_term_barrett" was declared but never referenced
+                            void lazy_add_u64_mod_term_barrett(
+                                 ^
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 92%] Linking CXX static library ../../../libposeidon_gpu.a
+[ 92%] Built target poseidon_gpu
+[ 93%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o
+[ 94%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/communication/cuda_local_transfer.cpp.o
+[ 94%] Building CUDA object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/gpu_plaintext_encoder.cu.o
+[ 96%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/communication/gpu_object_copy.cpp.o
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 97%] Linking CXX static library ../../../libposeidon_runtime_gpu_api.a
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/__/tests/runtime_api/poseidon_gpu_api_test.cpp.o
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:4:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_api_tests
+[100%] Built target poseidon_runtime_gpu_api_tests
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 92%] Built target poseidon_gpu
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_prepare_oom_tests.dir/__/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_prepare_oom_tests
+[100%] Built target poseidon_runtime_gpu_prepare_oom_tests
+	Command being timed: "/home/xuming/poseidon-tools/cmake/cmake/data/bin/cmake --build /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build --target poseidon_runtime_gpu_api_tests poseidon_runtime_gpu_prepare_oom_tests -j12"
+	User time (seconds): 460.63
+	System time (seconds): 31.45
+	Percent of CPU this job got: 344%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:22.76
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1252132
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 4
+	Minor (reclaiming a frame) page faults: 9402480
+	Voluntary context switches: 2306
+	Involuntary context switches: 1165
+	Swaps: 0
+	File system inputs: 2120
+	File system outputs: 561544
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

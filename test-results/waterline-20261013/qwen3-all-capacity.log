@@ -1,0 +1,55 @@
+/home/xuming/poseidon-waterline-20261013/qwen3_dsl/qwen3/runtime.py:64:0: error: single-group baseline instruction #1419340 GPU3 front=28938600448 plain/workspace=7340032 capacity=28991029248 waterline=16642998272
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 512.0017 seconds
+
+  ----Wall Time----  ----Name----
+   24.9128 (  4.9%)  Parser
+   51.4569 ( 10.1%)  'func.func' Pipeline
+    5.3761 (  1.1%)    RemoveBootstrap
+   34.1183 (  6.7%)    GreedyBootstrapPlacement
+   11.9625 (  2.3%)    EarlyModswitch
+   28.8364 (  5.6%)  Canonicalizer
+   19.9827 (  3.9%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+   12.0007 (  2.3%)  CSE
+   14.9260 (  2.9%)  Canonicalizer
+  352.1056 ( 68.8%)  'func.func' Pipeline
+   27.6043 (  5.4%)    EarthToCKKSConversion
+    8.5634 (  1.7%)    UpscaleToMulcpConversion
+    8.3977 (  1.6%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+   11.7176 (  2.3%)    Canonicalizer
+    9.0530 (  1.8%)    MaterializePhysicalLevels
+  148.4212 ( 29.0%)    AssignPlacement
+   59.8293 ( 11.7%)    MaterializeCommunication
+   78.5189 ( 15.3%)    PlanPlaintextWaterline
+    7.1817 (  1.4%)  Rest
+  512.0017 (100.0%)  Total
+Depth-DP bootstrap boundaries: 3417
+Number of Bootstrapping: 76051
+Command exited with non-zero status 1
+	Command being timed: "/home/xuming/poseidon-waterline-20261013/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-waterline-20261013/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu /home/xuming/poseidon-waterline-20261013/toolchain/bin/hecate-opt --dacapo --boot-placement=depth-dp --ckks-config=/home/xuming/poseidon-waterline-20261013/profiles/compiler-profile.json --waterline=40 --mlir-timing --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 --runtime-plan-id=3104 --runtime-plan-target-id=poseidon-ckks-gpu --runtime-plan-capability-version=1 --runtime-plan-operator-spec-id=poseidon-ckks-gpu-65536-estimated-v1 --runtime-plan-operator-spec-version=1 --runtime-plan-operator-spec-sha256=sha256:1f12fb5f6a7228e7373ada0d96d5115d190533a887f801a6928ba4ae14c193ff --runtime-plan-context-id=poseidon-ckks-gpu-65536-estimated --runtime-plan-ntt=true --runtime-plan-boot-profile=poseidon-gpu-host-boot-v1 --runtime-plan-boot-implementation=decrypt_reencrypt --runtime-plan-inline-payload-max-bytes=4096 --runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-levels-per-logical-level=4 --runtime-plan-device-count=4 --runtime-plan-device-counts=4 --runtime-plan-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-communication-profile-path=/home/xuming/poseidon-waterline-20261013/profiles/communication-profile.json --runtime-plan-memory=true --runtime-plan-memory-reuse=true --runtime-plan-memory-report=true --runtime-plan-plaintext-schedule=waterline --runtime-plan-prepare-backend=auto --runtime-plan-gpu-budget-bytes=33285996544 --runtime-plan-reserve-bytes=4294967296 --runtime-plan-workspace-bytes-per-op=134217728 --runtime-plan-host-budget-bytes=68719476736 --runtime-plan-pinned-budget-bytes=1073741824 --runtime-plan-raw-budget-bytes=67108864 --runtime-plan-waterline-fraction=0.5 --runtime-plan-lookahead-groups=8 --runtime-plan-format=binary --runtime-plan-bundle-format=pack --runtime-plan-report-io=true /home/xuming/poseidon-waterline-20261013/qwen3-traced/trace_qwen3.mlirbc -o /home/xuming/poseidon-waterline-20261013/qwen3-plans/gpu4/qwen3.mlir"
+	User time (seconds): 471.74
+	System time (seconds): 45.08
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:36.90
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 39618184
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 19368620
+	Voluntary context switches: 135
+	Involuntary context switches: 1681
+	Swaps: 0
+	File system inputs: 96
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

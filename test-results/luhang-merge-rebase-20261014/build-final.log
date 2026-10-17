@@ -1,0 +1,254 @@
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: ON
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_MPI: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL: OFF
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- CPM: Adding package CCCL@ (/tmp/poseidon-runtime-rebase-20261014-202623/third_party/rmm/../cccl)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(CCCL) is deprecated, call
+  FetchContent_MakeAvailable(CCCL) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(CCCL) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/cccl.cmake:81 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:19 (rapids_cpm_cccl)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:23 (find_and_configure_cccl)
+  third_party/rmm/CMakeLists.txt:77 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- CPM: Adding package nvtx3@ (/tmp/poseidon-runtime-rebase-20261014-202623/third_party/rmm/../nvtx)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(nvtx3) is deprecated, call
+  FetchContent_MakeAvailable(nvtx3) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(nvtx3) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/nvtx3.cmake:75 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:19 (rapids_cpm_nvtx3)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:23 (find_and_configure_nvtx3)
+  third_party/rmm/CMakeLists.txt:78 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/poseidon-runtime-rebase-20261014-202623/build-validation
+[  7%] Built target ckks_runtime_core
+[ 94%] Built target poseidon_shared
+[ 96%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_cpu_api.dir/poseidon_cpu_api.cpp.o
+In file included from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/runtime_api/poseidon_cpu_api.cpp:7:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 98%] Linking CXX static library ../../../libposeidon_runtime_cpu_api.a
+[ 98%] Built target poseidon_runtime_cpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_cpu_api_tests.dir/__/tests/runtime_api/poseidon_cpu_api_test.cpp.o
+In file included from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/tests/runtime_api/poseidon_cpu_api_test.cpp:5:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_cpu_api_tests
+[100%] Built target poseidon_runtime_cpu_api_tests
+[  7%] Built target ckks_runtime_core
+[ 89%] Built target poseidon_shared
+[ 94%] Built target ckks_runtime_plan_json
+[ 98%] Built target poseidon_runtime_cpu_api
+[ 98%] Linking CXX executable ../../../bin/poseidon_runtime_cpu_mlp_e2e
+[100%] Built target poseidon_runtime_cpu_mlp_e2e
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_key.cpp.o
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ciphertext.cpp.o
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_bootstrap_profile.cpp.o
+[ 76%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_double_hoist.cpp.o
+In file included from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/gpu/gpu_bootstrap_profile.cpp:4:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 78%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_memory.cpp.o
+[ 78%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_parameter.cpp.o
+[ 79%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_plaintext.cpp.o
+[ 81%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_uploader.cpp.o
+[ 81%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_evaluator.cpp.o
+[ 82%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_elementwise_handler.cpp.o
+In file included from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/gpu/gpu_uploader.cpp:6:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 84%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_keyswitch_handler.cpp.o
+[ 85%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_modswitch_handler.cpp.o
+[ 85%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ntt_handler.cpp.o
+[ 86%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_double_hoist_kernels.cu.o
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 86%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_elementwise_kernels.cu.o
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 88%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_keyswitch_kernels.cu.o
+[ 89%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_ntt_kernels.cu.o
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 89%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_rescale_kernels.cu.o
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 91%] Linking CXX static library ../../../libposeidon_gpu.a
+[ 92%] Built target poseidon_gpu
+[ 94%] Building CUDA object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/gpu_plaintext_encoder.cu.o
+[ 95%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/communication/gpu_object_copy.cpp.o
+[ 97%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o
+[ 97%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/communication/cuda_local_transfer.cpp.o
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 98%] Linking CXX static library ../../../libposeidon_runtime_gpu_api.a
+[ 98%] Built target poseidon_runtime_gpu_api
+[100%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/__/tests/runtime_api/poseidon_gpu_api_test.cpp.o
+In file included from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:4:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/tmp/poseidon-runtime-rebase-20261014-202623/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_api_tests
+[100%] Built target poseidon_runtime_gpu_api_tests
+[  5%] Built target ckks_runtime_core
+[ 71%] Built target poseidon_shared
+[ 91%] Built target poseidon_gpu
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_scalar_tests.dir/__/tests/runtime_api/poseidon_gpu_scalar_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_scalar_tests
+[100%] Built target poseidon_runtime_gpu_scalar_tests
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 92%] Built target poseidon_gpu
+[ 98%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_prepare_oom_tests.dir/__/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_prepare_oom_tests
+[100%] Built target poseidon_runtime_gpu_prepare_oom_tests
+[  5%] Built target ckks_runtime_core
+[ 71%] Built target poseidon_shared
+[ 91%] Built target poseidon_gpu
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_bootstrap_e2e.dir/__/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_bootstrap_e2e
+[100%] Built target poseidon_runtime_gpu_bootstrap_e2e

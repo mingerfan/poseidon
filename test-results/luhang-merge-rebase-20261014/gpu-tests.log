@@ -1,0 +1,11 @@
+Test project /tmp/poseidon-runtime-rebase-20261014-202623/build-validation
+    Start 10: poseidon_runtime_gpu_api_tests
+1/3 Test #10: poseidon_runtime_gpu_api_tests ...........   Passed   15.10 sec
+    Start 11: poseidon_runtime_gpu_scalar_tests
+2/3 Test #11: poseidon_runtime_gpu_scalar_tests ........   Passed    0.35 sec
+    Start 12: poseidon_runtime_gpu_prepare_oom_tests
+3/3 Test #12: poseidon_runtime_gpu_prepare_oom_tests ...   Passed    0.38 sec
+
+100% tests passed out of 3
+
+Total Test time (real) =  15.83 sec

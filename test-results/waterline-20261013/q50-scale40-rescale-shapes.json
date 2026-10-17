@@ -1,0 +1,215 @@
+{
+  "kind": "failed_scale40_graph_static_rescale_inventory",
+  "complete_model_result": false,
+  "source": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3.mlir",
+  "source_bytes": 4127245139,
+  "source_mtime_ns": 1791903978096201757,
+  "source_sha256": "2f4c8cba8084af372ee1cec76a0b7087bcc3b42e7b50948cf47221d3290c3df3",
+  "source_unchanged_during_scan": true,
+  "generated_at": "2026-10-14T14:42:01.370812+08:00",
+  "scan_seconds": 40.53182240296155,
+  "field_order": [
+    "input_scale",
+    "input_level",
+    "output_scale",
+    "output_level"
+  ],
+  "interpretation": "scale and level are the final two integer fields in the MLIR !ckks.poly type; counts are static operation counts, not executed GPU completions",
+  "rescale_line_count": 1551651,
+  "parsed_count": 1551651,
+  "op_counts": {
+    "ckks.rescalec": 1551651
+  },
+  "unique_shape_count": 8,
+  "shapes": [
+    {
+      "input_scale": 160,
+      "input_level": 14,
+      "output_scale": 40,
+      "output_level": 9,
+      "count": 707628,
+      "example": {
+        "line": 1419358,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          14
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          9
+        ],
+        "text": "%1419270 = \"ckks.rescalec\"(%1419268) {dist.device = 0 : i64, dist.logical_id = 210 : i64, dist.rank = 0 : i64, dist.schedule_finish = 6288 : i64, dist.schedule_start = 6189 : i64, runtime.value_id = 210 : i64} : (tensor<1x!ckks.poly<2 * 160 * 14>>) -> tensor<1x!ckks.poly<2 * 40 * 9>>"
+      }
+    },
+    {
+      "input_scale": 160,
+      "input_level": 19,
+      "output_scale": 40,
+      "output_level": 14,
+      "count": 214312,
+      "example": {
+        "line": 1419514,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          19
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          14
+        ],
+        "text": "%1419357 = \"ckks.rescalec\"(%1419356) {dist.device = 0 : i64, dist.logical_id = 420 : i64, dist.rank = 0 : i64, dist.schedule_finish = 19107 : i64, dist.schedule_start = 19006 : i64, runtime.value_id = 420 : i64} : (tensor<1x!ckks.poly<2 * 160 * 19>>) -> tensor<1x!ckks.poly<2 * 40 * 14>>"
+      }
+    },
+    {
+      "input_scale": 160,
+      "input_level": 24,
+      "output_scale": 40,
+      "output_level": 19,
+      "count": 156856,
+      "example": {
+        "line": 1419341,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          24
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          19
+        ],
+        "text": "%1419262 = \"ckks.rescalec\"(%1419260) {dist.device = 0 : i64, dist.logical_id = 200 : i64, dist.rank = 0 : i64, dist.schedule_finish = 6139 : i64, dist.schedule_start = 6035 : i64, runtime.value_id = 200 : i64} : (tensor<1x!ckks.poly<2 * 160 * 24>>) -> tensor<1x!ckks.poly<2 * 40 * 19>>"
+      }
+    },
+    {
+      "input_scale": 160,
+      "input_level": 29,
+      "output_scale": 40,
+      "output_level": 24,
+      "count": 121202,
+      "example": {
+        "line": 1419228,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          29
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          24
+        ],
+        "text": "%1419206 = \"ckks.rescalec\"(%1419204) {dist.device = 0 : i64, dist.logical_id = 168 : i64, dist.rank = 0 : i64, dist.schedule_finish = 1295 : i64, dist.schedule_start = 1189 : i64, runtime.value_id = 168 : i64} : (tensor<1x!ckks.poly<2 * 160 * 29>>) -> tensor<1x!ckks.poly<2 * 40 * 24>>"
+      }
+    },
+    {
+      "input_scale": 160,
+      "input_level": 34,
+      "output_scale": 40,
+      "output_level": 29,
+      "count": 90333,
+      "example": {
+        "line": 1419220,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          34
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          29
+        ],
+        "text": "%1419202 = \"ckks.rescalec\"(%1419200) {dist.device = 0 : i64, dist.logical_id = 137 : i64, dist.rank = 0 : i64, dist.schedule_finish = 1181 : i64, dist.schedule_start = 1073 : i64, runtime.value_id = 137 : i64} : (tensor<1x!ckks.poly<2 * 160 * 34>>) -> tensor<1x!ckks.poly<2 * 40 * 29>>"
+      }
+    },
+    {
+      "input_scale": 160,
+      "input_level": 39,
+      "output_scale": 40,
+      "output_level": 34,
+      "count": 122623,
+      "example": {
+        "line": 1419419,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          39
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          34
+        ],
+        "text": "%1419304 = \"ckks.rescalec\"(%1419303) {dist.device = 0 : i64, dist.logical_id = 266 : i64, dist.rank = 0 : i64, dist.schedule_finish = 17892 : i64, dist.schedule_start = 17782 : i64, runtime.value_id = 266 : i64} : (tensor<1x!ckks.poly<2 * 160 * 39>>) -> tensor<1x!ckks.poly<2 * 40 * 34>>"
+      }
+    },
+    {
+      "input_scale": 160,
+      "input_level": 44,
+      "output_scale": 40,
+      "output_level": 39,
+      "count": 130240,
+      "example": {
+        "line": 1419401,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          44
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          39
+        ],
+        "text": "%1419293 = \"ckks.rescalec\"(%1419292) {dist.device = 0 : i64, dist.logical_id = 248 : i64, dist.rank = 0 : i64, dist.schedule_finish = 17774 : i64, dist.schedule_start = 17664 : i64, runtime.value_id = 248 : i64} : (tensor<1x!ckks.poly<2 * 160 * 44>>) -> tensor<1x!ckks.poly<2 * 40 * 39>>"
+      }
+    },
+    {
+      "input_scale": 160,
+      "input_level": 49,
+      "output_scale": 40,
+      "output_level": 44,
+      "count": 8457,
+      "example": {
+        "line": 1419384,
+        "op": "ckks.rescalec",
+        "input_poly_fields": [
+          2,
+          160,
+          49
+        ],
+        "output_poly_fields": [
+          2,
+          40,
+          44
+        ],
+        "text": "%1419283 = \"ckks.rescalec\"(%1419282) {dist.device = 0 : i64, dist.logical_id = 221 : i64, dist.rank = 0 : i64, dist.schedule_finish = 17266 : i64, dist.schedule_start = 17156 : i64, runtime.value_id = 221 : i64} : (tensor<1x!ckks.poly<2 * 160 * 49>>) -> tensor<1x!ckks.poly<2 * 40 * 44>>"
+      }
+    }
+  ],
+  "scale_pairs": [
+    {
+      "input_scale": 160,
+      "output_scale": 40,
+      "count": 1551651
+    }
+  ],
+  "focus_scale_pair_counts": {
+    "80_to_40": 0,
+    "120_to_40": 0
+  },
+  "unparsed_count": 0,
+  "unparsed_examples": []
+}

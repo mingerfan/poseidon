@@ -1,0 +1,7 @@
+CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=5 slots_checked=2048 max_complex_error=1.59146e-11
+CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=6 slots_checked=2048 max_complex_error=1.59146e-11
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.6348e-14
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.6348e-14
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.26323e-11
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.26323e-11
+[PASS] dense Rescale normalization and aligned AddCC/AddCP

@@ -1,0 +1,112 @@
+{
+  "pid": 153204,
+  "seconds": 10.011644253972918,
+  "method": "/proc thread utime+stime ticks over 10 seconds; CPU attribution only, no stack profiler",
+  "threads": [
+    {
+      "tid": 153918,
+      "name": "poseidon_runtim",
+      "cpu_percent": 28.96627093845443,
+      "voluntary_ctxt_switches_delta": 114,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153914,
+      "name": "poseidon_runtim",
+      "cpu_percent": 14.083600697662323,
+      "voluntary_ctxt_switches_delta": 3265,
+      "nonvoluntary_ctxt_switches_delta": 1
+    },
+    {
+      "tid": 153204,
+      "name": "poseidon_runtim",
+      "cpu_percent": 8.789764974427552,
+      "voluntary_ctxt_switches_delta": 60780,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153915,
+      "name": "poseidon_runtim",
+      "cpu_percent": 0.6991858502385553,
+      "voluntary_ctxt_switches_delta": 440,
+      "nonvoluntary_ctxt_switches_delta": 1
+    },
+    {
+      "tid": 153316,
+      "name": "cuda-EvtHandlr",
+      "cpu_percent": 0.09988369289122218,
+      "voluntary_ctxt_switches_delta": 99,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153317,
+      "name": "cuda-EvtHandlr",
+      "cpu_percent": 0.09988369289122218,
+      "voluntary_ctxt_switches_delta": 100,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153318,
+      "name": "cuda-EvtHandlr",
+      "cpu_percent": 0.09988369289122218,
+      "voluntary_ctxt_switches_delta": 100,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153299,
+      "name": "cuda-EvtHandlr",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 0,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153315,
+      "name": "cuda-EvtHandlr",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 100,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153916,
+      "name": "poseidon_runtim",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 0,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153917,
+      "name": "poseidon_runtim",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 0,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153919,
+      "name": "poseidon_runtim",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 0,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153920,
+      "name": "poseidon_runtim",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 0,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153921,
+      "name": "poseidon_runtim",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 0,
+      "nonvoluntary_ctxt_switches_delta": 0
+    },
+    {
+      "tid": 153922,
+      "name": "poseidon_runtim",
+      "cpu_percent": 0.0,
+      "voluntary_ctxt_switches_delta": 0,
+      "nonvoluntary_ctxt_switches_delta": 0
+    }
+  ]
+}

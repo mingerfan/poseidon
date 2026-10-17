@@ -1,0 +1,25 @@
+FAIL stage=load_artifacts unknown binary instruction tag
+Command exited with non-zero status 1
+	Command being timed: "env CUDA_VISIBLE_DEVICES=0,1,2,3 OMP_NUM_THREADS=1 /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e /home/xuming/poseidon-waterline-20261013/qwen3-plans-n16384/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin /home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json /home/xuming/poseidon-waterline-20261013/qwen3-runner-n16384.json /home/xuming/poseidon-waterline-20261013/logs/qwen3-full-gpu-n16384-report.json /home/xuming/poseidon-waterline-20261013/logs/qwen3-full-gpu-n16384-decoded.json --bundle /home/xuming/poseidon-waterline-20261013/qwen3-plans-n16384/gpu4/qwen3._hecate_qwen3_0_6b.bundle --backend gpu --trace /home/xuming/poseidon-waterline-20261013/logs/qwen3-full-gpu-n16384.trace"
+	User time (seconds): 1.36
+	System time (seconds): 3.15
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.52
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5534424
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1385697
+	Voluntary context switches: 1
+	Involuntary context switches: 11
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

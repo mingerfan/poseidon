@@ -1,0 +1,30 @@
+CASE q=3 p=1 key_switch_variant= repetition=0
+fresh mismatches=0 expected0=3 actual0=3
+multiply_without_relin mismatches=0 expected0=9 actual0=9
+multiply_relin mismatches=0 expected0=9 actual0=9
+rotate_roundtrip mismatches=0 expected0=3 actual0=3
+CASE q=3 p=1 key_switch_variant= repetition=1
+fresh mismatches=0 expected0=3 actual0=3
+multiply_without_relin mismatches=0 expected0=9 actual0=9
+multiply_relin mismatches=0 expected0=9 actual0=9
+rotate_roundtrip mismatches=0 expected0=3 actual0=3
+CASE q=3 p=1 key_switch_variant= repetition=2
+fresh mismatches=0 expected0=3 actual0=3
+multiply_without_relin mismatches=0 expected0=9 actual0=9
+multiply_relin mismatches=0 expected0=9 actual0=9
+rotate_roundtrip mismatches=0 expected0=3 actual0=3
+CASE q=3 p=2 key_switch_variant= repetition=0
+fresh mismatches=0 expected0=3 actual0=3
+multiply_without_relin mismatches=0 expected0=9 actual0=9
+multiply_relin mismatches=8192 expected0=9 actual0=43348
+rotate_roundtrip mismatches=8192 expected0=3 actual0=14871
+CASE q=3 p=2 key_switch_variant= repetition=1
+fresh mismatches=0 expected0=3 actual0=3
+multiply_without_relin mismatches=0 expected0=9 actual0=9
+multiply_relin mismatches=8192 expected0=9 actual0=997
+rotate_roundtrip mismatches=8192 expected0=3 actual0=11726
+CASE q=3 p=2 key_switch_variant= repetition=2
+fresh mismatches=0 expected0=3 actual0=3
+multiply_without_relin mismatches=0 expected0=9 actual0=9
+multiply_relin mismatches=8192 expected0=9 actual0=54463
+rotate_roundtrip mismatches=8192 expected0=3 actual0=35642

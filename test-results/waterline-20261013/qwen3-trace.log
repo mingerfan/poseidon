@@ -1,0 +1,24 @@
+../qwen3-traced/trace_qwen3.mlirbc
+	Command being timed: "/home/xuming/poseidon-waterline-20261013/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-waterline-20261013/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu /opt/conda/bin/python trace_qwen3.py --config ../qwen3-fixture/model.json --approximations ../qwen3-fixture/approximations.json --weights ../qwen3-fixture/weights --slots 32768 --bytecode --output-dir ../qwen3-traced"
+	User time (seconds): 658.47
+	System time (seconds): 23.45
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:21.69
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 16827188
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 8298111
+	Voluntary context switches: 15
+	Involuntary context switches: 2402
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 23835896
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

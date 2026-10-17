@@ -1,0 +1,42 @@
+QWEN inputs=1 outputs=6 devices=1 slots=8192 backend=auto host_boot_instructions=5
+BOOT semantics=Host decrypt-reencrypt uses_secret_key=true native_bootstrap=false
+KEYS ready rotation_basis=15 key_generation_ms=9339.068898
+GPU_POOL maximum_mb=6592 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=1647454304 retained_workspace_bound=84934656 reserve_required=1799497824 reserve_configured=3221225472
+waterline physical GPU0 pool_reserved=3123281920 pool_cap=6912212992 initial_outside_used=21586771968 outside_pool_growth=7766016 allocator_graph_capacity=5112715168
+waterline GPU0 front_peak=4292608000 plain_peak=20840448 remaining_front=11796480 remaining_plain=0
+waterline shared host_peak=172818432 pinned_peak=19726336 raw_peak=393216
+FORWARD complete runtime_ms=2178.683056
+PASS output=0 name=dense_bsgs_linear max_abs=4.65477e-11 max_relative=1.03811e-09 max_imaginary=2.61297e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=1 name=square max_abs=2.37038e-11 max_relative=4.41596e-10 max_imaginary=8.45457e-14 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=2 name=all_slots_reduction max_abs=1.10265e-10 max_relative=4.52793e-10 max_imaginary=1.72605e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=3 name=polynomial_mask max_abs=2.14253e-10 max_relative=7.27121e-10 max_imaginary=1.90193e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=4 name=polynomial_rms max_abs=2.09825e-10 max_relative=1.32883e-09 max_imaginary=3.74877e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=5 name=deep_polynomial_with_boot max_abs=8.51139e-13 max_relative=8.29227e-12 max_imaginary=2.59084e-17 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=6 slots=49152 max_abs=2.14253e-10 max_relative=1.32883e-09 max_imaginary=3.74877e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-waterline-20261013/logs/prescale-lazy40-composite/scale120-auto-report.json decoded=/home/xuming/poseidon-waterline-20261013/logs/prescale-lazy40-composite/scale120-auto-decoded.json
+	Command being timed: "env CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=1 /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e /home/xuming/poseidon-waterline-20261013/lazy-rescale-composite/scale120/optimized._hecate_composite_scale_regression.runtime-plan.json /home/xuming/poseidon-waterline-20261013/lazy-rescale-composite/scale120/operator-spec.json /home/xuming/poseidon-waterline-20261013/lazy-rescale-composite/scale120/fixture.json /home/xuming/poseidon-waterline-20261013/logs/prescale-lazy40-composite/scale120-auto-report.json /home/xuming/poseidon-waterline-20261013/logs/prescale-lazy40-composite/scale120-auto-decoded.json --bundle /home/xuming/poseidon-waterline-20261013/lazy-rescale-composite/scale120/optimized._hecate_composite_scale_regression.bundle --backend auto"
+	User time (seconds): 15.03
+	System time (seconds): 2.93
+	Percent of CPU this job got: 98%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.23
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2777992
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 877369
+	Voluntary context switches: 11018
+	Involuntary context switches: 36
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 4376
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

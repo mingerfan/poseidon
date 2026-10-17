@@ -1,0 +1,51 @@
+{
+  "commit": "eb124553b0729194478bfe791f1361ee49eb4132",
+  "matrix_init": {
+    "degree": 16384,
+    "q_bits": [
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      20,
+      30
+    ],
+    "p_bits": [
+      30
+    ],
+    "requested_20_bit_primes": 16,
+    "available_20_bit_ntt_primes": [
+      557057,
+      786433
+    ],
+    "same_parameter_line_in_integration_branch": true
+  },
+  "bgv_probe": {
+    "q_count": 3,
+    "q_bits": 45,
+    "p_counts": [
+      1,
+      2
+    ],
+    "p_bits": 45,
+    "plain_modulus": 65537,
+    "degree": 8192,
+    "repeats": 3,
+    "p1_all_stages_pass": true,
+    "p2_fresh_and_unrelinearized_multiply_pass": true,
+    "p2_relinearized_multiply_and_rotate_roundtrip_fail": true,
+    "parent_commit": "19d022428ab07b68c56ba20e32d60f317d836b7c",
+    "parent_reproduces_same_failure": true
+  }
+}

@@ -1,0 +1,7 @@
+Test project /tmp/poseidon-runtime-rebase-20261014-202623/build-validation
+    Start 9: poseidon_runtime_cpu_api_tests
+1/1 Test #9: poseidon_runtime_cpu_api_tests ...   Passed    3.74 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   3.74 sec

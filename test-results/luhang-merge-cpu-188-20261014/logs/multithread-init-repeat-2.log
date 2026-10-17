@@ -1,0 +1,18 @@
+                  /\
+                 /__\
+          /|      ||      |\
+         /_|      ||      |_\
+         | |     /  \     | |
+        |__|____|____|____|__|
+        \____________________/ 
+                 |  | 
+                 |  | 
+                 |  | 
+                 |__| 
+                 /  \
+                 \__/ 
+
+POSEIDON SOFTWARE VERSION:1.0.0
+
+terminate called after throwing an instance of 'poseidon::poseidon_logic_error'
+  what():  /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/basics/util/numth.cpp:309 failed to find enough qualifying primes

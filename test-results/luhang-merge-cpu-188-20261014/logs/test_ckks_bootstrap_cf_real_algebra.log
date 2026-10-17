@@ -1,0 +1,2 @@
+COMMAND: ["/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_cf_real", "--algebra-only"]
+# cleartext reconstruction max_error=2.22044604925e-15 independent_integer_wrap_error=2.06743622222e-10

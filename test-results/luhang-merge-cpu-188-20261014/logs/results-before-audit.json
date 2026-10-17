@@ -1,0 +1,309 @@
+{
+  "commit": "eb124553b0729194478bfe791f1361ee49eb4132",
+  "affinity": [
+    0,
+    1,
+    2,
+    4
+  ],
+  "nice": 15,
+  "started": "2026-10-14T15:26:11.148565+08:00",
+  "tests": [
+    {
+      "name": "test_bfv_basic",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_bfv_basic"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 3.789,
+      "log": "test_bfv_basic.log",
+      "printed_pairs": 30,
+      "max_printed_abs_error": 25209.0,
+      "printed_abs_tolerance": 0.0,
+      "failures": [
+        "printed numerical mismatch"
+      ],
+      "status": "fail"
+    },
+    {
+      "name": "test_bfv_mult_matrix",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_bfv_mult_matrix"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 40.882,
+      "log": "test_bfv_mult_matrix.log",
+      "printed_pairs": 4,
+      "max_printed_abs_error": 0.0,
+      "printed_abs_tolerance": 0.0,
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_bgv_basic",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_bgv_basic"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 3.84,
+      "log": "test_bgv_basic.log",
+      "printed_pairs": 24,
+      "max_printed_abs_error": 3630.0,
+      "printed_abs_tolerance": 0.0,
+      "failures": [
+        "printed numerical mismatch"
+      ],
+      "status": "fail"
+    },
+    {
+      "name": "test_bgv_load",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_bgv_load"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 0.033,
+      "log": "test_bgv_load.log",
+      "printed_pairs": 3,
+      "max_printed_abs_error": 0.0,
+      "printed_abs_tolerance": 0.0,
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_basic",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_basic"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 23.975,
+      "log": "test_ckks_basic.log",
+      "printed_pairs": 48,
+      "max_printed_abs_error": 2.1478864017038385e-07,
+      "printed_abs_tolerance": 0.001,
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_basic_discontinuous",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_basic_discontinuous"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 23.772,
+      "log": "test_ckks_basic_discontinuous.log",
+      "printed_pairs": 36,
+      "max_printed_abs_error": 5.888650102492721e-08,
+      "printed_abs_tolerance": 0.001,
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_multiply_matrix_bsgs",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_multiply_matrix_bsgs"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 69.978,
+      "log": "test_ckks_multiply_matrix_bsgs.log",
+      "printed_pairs": 8,
+      "max_printed_abs_error": 0.0003211208591889439,
+      "printed_abs_tolerance": 0.001,
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_multiply_matrix_bsgs_multi_thread",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_multiply_matrix_bsgs_multi_thread"
+      ],
+      "exit_code": -6,
+      "timeout": false,
+      "seconds": 0.166,
+      "log": "test_ckks_multiply_matrix_bsgs_multi_thread.log",
+      "printed_pairs": 0,
+      "max_printed_abs_error": null,
+      "printed_abs_tolerance": 0.001,
+      "failures": [
+        "nonzero exit",
+        "failure or nonfinite marker in output",
+        "no printed numerical pairs"
+      ],
+      "status": "fail"
+    },
+    {
+      "name": "test_ckks_slot_to_coeff",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_slot_to_coeff"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 20.907,
+      "log": "test_ckks_slot_to_coeff.log",
+      "printed_pairs": 8,
+      "max_printed_abs_error": 7.049350860507566e-05,
+      "printed_abs_tolerance": 0.001,
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_heartstudy",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_heartstudy"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 1.98,
+      "log": "test_ckks_heartstudy.log",
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_hybrid_decomp_count",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_hybrid_decomp_count"
+      ],
+      "exit_code": 1,
+      "timeout": false,
+      "seconds": 128.946,
+      "log": "test_ckks_hybrid_decomp_count.log",
+      "failures": [
+        "nonzero exit",
+        "failure or nonfinite marker in output",
+        "missing success marker"
+      ],
+      "status": "fail"
+    },
+    {
+      "name": "test_ckks_bootstrap_cf_real_algebra",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_cf_real",
+        "--algebra-only"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 0.033,
+      "log": "test_ckks_bootstrap_cf_real_algebra.log",
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_bootstrap_cf_real_default",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_cf_real"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 66.637,
+      "log": "test_ckks_bootstrap_cf_real_default.log",
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_bootstrap_cf_real_inplace_rounds",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_cf_real",
+        "--single-only",
+        "--in-place",
+        "--rounds",
+        "2",
+        "--distribution",
+        "random,edges"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 26.493,
+      "log": "test_ckks_bootstrap_cf_real_inplace_rounds.log",
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "name": "test_ckks_bootstrap_all",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap",
+        "--all"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 201.272,
+      "log": "test_ckks_bootstrap_all.log",
+      "printed_pairs": 10,
+      "max_printed_abs_error": 508.38994214541356,
+      "printed_abs_tolerance": 0.001,
+      "failures": [
+        "printed numerical mismatch"
+      ],
+      "status": "fail"
+    },
+    {
+      "name": "test_ckks_bootstrap_cmp",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_cmp"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 485.8,
+      "log": "test_ckks_bootstrap_cmp.log"
+    },
+    {
+      "name": "test_ckks_bootstrap_dnum_show-chains",
+      "command": [
+        "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_dnum",
+        "--show-chains"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "seconds": 11.137,
+      "log": "test_ckks_bootstrap_dnum_show-chains.log"
+    }
+  ],
+  "build": {
+    "name": "build",
+    "command": [
+      "cmake",
+      "--build",
+      "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu",
+      "--parallel",
+      "4"
+    ],
+    "exit_code": 0,
+    "timeout": false,
+    "seconds": 182.373,
+    "log": "build.log"
+  },
+  "extra_build": {
+    "name": "build_bootstrap_dnum",
+    "command": [
+      "c++",
+      "-std=c++20",
+      "-O3",
+      "-DNDEBUG",
+      "-fopenmp",
+      "-pthread",
+      "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/src",
+      "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu",
+      "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/deps/msgsl-src/include",
+      "-I/home/xuming/poseidon-luhang-merge-cpu-20261014/deps/spdlog-1.17.0/include",
+      "/home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_bootstrap_dnum.cpp",
+      "-L/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu",
+      "-lposeidon_shared",
+      "-lgmpxx",
+      "-lgmp",
+      "-Wl,-rpath,/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu",
+      "-o",
+      "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_dnum"
+    ],
+    "exit_code": 0,
+    "timeout": false,
+    "seconds": 16.472,
+    "log": "build_bootstrap_dnum.log"
+  },
+  "scope": "All 14 default CPU example executables; extra CF-real algebra/in-place checks; dnum source compilation and parameter-chain checks. The optional dnum timing sweeps are outside this correctness run.",
+  "finished": "2026-10-14T15:47:59.674910+08:00"
+}

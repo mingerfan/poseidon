@@ -1,0 +1,1 @@
+physical_visible=0,1,2,3; logical GPUs are assigned in this order

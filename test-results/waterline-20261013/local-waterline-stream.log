@@ -1,0 +1,13 @@
+[PASS] internal RMM pool lifetime
+waterline GPU0 front_peak=1376256 plain_peak=114688 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+Waterline diagnostic max=5.20059e-05 slot0=(3.5,-1.09953e-06) slot1=(-7,-1.30758e-06)
+WATERLINE backend=0 devices=1 max_abs_error=5.20059e-05 cold_ms=20.4716 forward_ms=18.7315 pinned_live=0
+waterline GPU0 front_peak=1376256 plain_peak=311296 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+Waterline diagnostic max=5.20059e-05 slot0=(3.5,-1.09953e-06) slot1=(-7,-1.30758e-06)
+WATERLINE backend=1 devices=1 max_abs_error=5.20059e-05 cold_ms=32.1659 forward_ms=30.5362 pinned_live=0
+waterline GPU0 front_peak=1376256 plain_peak=114688 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+Waterline diagnostic max=5.20059e-05 slot0=(3.5,-1.09953e-06) slot1=(-7,-1.30758e-06)
+WATERLINE backend=2 devices=1 max_abs_error=5.20059e-05 cold_ms=19.6786 forward_ms=17.8836 pinned_live=0

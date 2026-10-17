@@ -1,0 +1,9 @@
+COMMAND: ["/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu/bin/test_ckks_bootstrap_cf_real", "--single-only", "--in-place", "--rounds", "2", "--distribution", "random,edges"]
+# cleartext reconstruction max_error=2.22044604925e-15 independent_integer_wrap_error=2.06743622222e-10
+# N=8192 slots=4096 H=5 Q=20x51 P=60 input_bits=40 degree=22 requested_degree=22 DA=3 K=12 R=128 amplitude=1 max_tolerance=0.001 in_place=1 square_between=0 coefficient_profile=legacy-even compare_coefficients=0
+mode,distribution,repeat,round,input_level,output_level,used_levels,log2_scale,seconds,max_error,rmse,max_imag
+single,random,0,0,1,5,14,40,4.769310622,7.9583266106e-06,2.06223476075e-07,3.46685640482e-10
+single,random,0,1,1,5,14,40,4.493966955,1.58787738796e-05,3.55400599672e-07,3.29392251783e-10
+single,edges,0,0,1,5,14,40,4.53396944,0.000202347189595,0.000200777989391,3.35757229424e-10
+single,edges,0,1,1,5,14,40,4.558211537,0.000404801944904,0.000401434351109,3.18784484865e-10
+# PASS

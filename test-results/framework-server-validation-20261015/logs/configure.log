@@ -1,0 +1,66 @@
+CMake Warning (dev) at /home/xuming/poseidon-tools/cmake/cmake/data/share/cmake-3.31/Modules/GNUInstallDirs.cmake:253 (message):
+  Unable to determine default CMAKE_INSTALL_LIBDIR directory because no
+  target architecture is known.  Please enable at least one language before
+  including GNUInstallDirs.
+Call Stack (most recent call first):
+  CMakeLists.txt:8 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: ON
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_MPI: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL: OFF
+-- The CUDA compiler identification is NVIDIA 12.2.140 with host compiler GNU 11.4.0
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: /usr/local/cuda/bin/nvcc - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- Found CUDAToolkit: /usr/local/cuda/targets/x86_64-linux/include (found version "12.2.140")
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- Found Git: /usr/bin/git (found version "2.34.1")
+-- CPM: Adding package CCCL@ (/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/cccl)
+CMake Warning (dev) at /home/xuming/poseidon-tools/cmake/cmake/data/share/cmake-3.31/Modules/FetchContent.cmake:1953 (message):
+  Calling FetchContent_Populate(CCCL) is deprecated, call
+  FetchContent_MakeAvailable(CCCL) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(CCCL) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  /home/xuming/poseidon/build-runtime-gpu-rmm2412/_deps/rapids-cmake-src/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  /home/xuming/poseidon/build-runtime-gpu-rmm2412/_deps/rapids-cmake-src/rapids-cmake/cpm/cccl.cmake:81 (rapids_cpm_find)
+  /home/xuming/deps/rmm-v24.12.01/cmake/thirdparty/get_cccl.cmake:19 (rapids_cpm_cccl)
+  /home/xuming/deps/rmm-v24.12.01/cmake/thirdparty/get_cccl.cmake:23 (find_and_configure_cccl)
+  /home/xuming/deps/rmm-v24.12.01/CMakeLists.txt:77 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Found libcudacxx: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/cccl/libcudacxx/lib/cmake/libcudacxx/libcudacxx-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0")
+-- Found Thrust: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/cccl/thrust/thrust/cmake/thrust-config.cmake (found suitable exact version "2.5.0.0")
+-- Found CUB: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/cccl/cub/cub/cmake/cub-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0")
+-- Found CCCL: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/cccl/lib/cmake/cccl/cccl-config.cmake (found version "2.5.0.0")
+-- CPM: Adding package nvtx3@3.1.0 (v3.1.0 at /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/cpm/nvtx3/72787e0a62f981a1041689c3aa467492b6b367e9)
+-- Configuring done (5.6s)
+-- Generating done (0.2s)
+-- Build files have been written to: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build

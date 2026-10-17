@@ -1,0 +1,27 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-core
+    Start 1: pack_plaintext_bundle_tests
+1/6 Test #1: pack_plaintext_bundle_tests ......   Passed    0.37 sec
+    Start 2: runtime_tests
+2/6 Test #2: runtime_tests ....................   Passed    0.09 sec
+    Start 3: runtime_plan_json_tests
+3/6 Test #3: runtime_plan_json_tests ..........   Passed    0.49 sec
+    Start 4: runtime_plan_memory_tests
+4/6 Test #4: runtime_plan_memory_tests ........   Passed    0.12 sec
+    Start 5: runtime_release_tests
+5/6 Test #5: runtime_release_tests ............***Failed    0.04 sec
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+fatal runtime error: reason=Fence retained uploaded weight plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+[FAIL] wrong streaming failure
+
+    Start 6: thread_trace_tests
+6/6 Test #6: thread_trace_tests ...............   Passed    0.01 sec
+
+83% tests passed, 1 tests failed out of 6
+
+Total Test time (real) =   1.14 sec
+
+The following tests FAILED:
+	  5 - runtime_release_tests (Failed)
+Errors while running CTest

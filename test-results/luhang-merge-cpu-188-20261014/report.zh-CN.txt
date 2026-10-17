@@ -1,0 +1,65 @@
+188Server 上 poseidon-merge-from-luhang-repo 分支的 CPU 测试结果
+
+结论：Release CPU 编译通过；17 项检查中 14 项通过、3 项失败。本分支不能视为 CPU 测试全部通过。
+提交：eb124553b0729194478bfe791f1361ee49eb4132
+服务器：188Server / HPU-001，Intel Xeon E5-2650 v4 @ 2.20 GHz，48 个逻辑 CPU。
+独立目录：/home/xuming/poseidon-luhang-merge-cpu-20261014
+运行时间：2026-10-14T15:26:11.148565+08:00 至 2026-10-14T15:47:59.674910+08:00
+资源限制：CPU 亲和性 0,1,2,4；nice=15；ionice 空闲级；构建 -j4；OMP_NUM_THREADS=4。父提交对照构建 -j2，沿用同一亲和性。测试进程已结束。
+范围：默认 CMake 的全部 14 个 CPU 示例可执行文件；补充 CF-real 代数和原地两轮检查；未注册的 dnum 示例补充编译与 --show-chains。
+配置：Release，软件后端，POSEIDON_USE_OPENMP=OFF，GPU/CKKS Runtime API/硬件后端关闭。没有执行 GPU、Runtime API 或 dnum 的长时间性能扫描。
+代码状态：目标分支的受跟踪文件未修改。父提交使用独立源码快照和构建目录。
+依赖：zlib 1.3.1 / ZSTD 1.5.2 / Microsoft GSL 4.0.0，复用对应版本的源码副本；spdlog 使用分支指定 v1.17.0。未安装系统软件包。
+
+实际失败：
+1. test_ckks_multiply_matrix_bsgs_multi_thread：SIGABRT（返回码 -6）；初始化时报 failed to find enough qualifying primes。N=16384 要求 16 个 20 位 Q 素数，满足 q ≡ 1 mod 32768 的 20 位素数仅有 557057、786433 两个。尚未进入线程或矩阵运算。额外重复 3 次均 SIGABRT。该参数配置在合并前已存在。
+2. test_ckks_hybrid_decomp_count：返回 1。CKKS 的 32 组参数检查通过，BFV 的 15 组参数、30 个运算检查通过；BGV 在 dnum=2..16 的 15 组参数中，multiply_relin 和 rotate_row 往返共 30 个检查全部数值错误。
+   最小复现：BGV，N=8192，t=65537，Q=3x45 位，P=2x45 位。新鲜密文、未重线性化的乘法均正确；multiply_relin 和旋转往返出错，重复 3 次均复现。相同 Q、P=1 时所有步骤通过。合并前父提交 19d022428ab07b68c56ba20e32d60f317d836b7c 也复现同样错误，因此这是已有问题，不能归因于本次合并。
+3. test_ckks_bootstrap --all 的默认 legacy 示例：程序返回 0，但前 10 个输出槽位的最大复数绝对误差为 508.389942。该示例缺少结果断言。新路径自身的层数及数值断言通过。
+   参数不同的 bootstrap_cmp 对照中，new/59、old/59、old/30、old/22 每组 3 次均通过数值复核。这表明不能由默认 legacy 示例的失败推断所有 legacy Bootstrap 路径都失败；默认示例的具体数值异常原因尚未定位。
+
+通过项的主要数值证据：
+BFV/BGV 基础、序列化及 BFV 矩阵输出的已打印槽位按整数精确比较，通过。
+CKKS 基础打印结果最大绝对误差 2.1478864e-7；非连续参数基础示例 5.8886501e-8。
+CKKS BSGS 单线程矩阵打印结果最大绝对误差 3.2112086e-4；Slot-to-Coeff 示例 7.0493509e-5。
+HYBRID CKKS 全槽位检查中，观察到的最大绝对误差 0.000289232，低于示例自身的 2e-3 阈值。
+CF-real：6 种分布 x 单/双通路共 12 条结果记录，最大绝对误差 0.000407089197949，低于自身的 1e-3 阈值；原地两轮 random/edges 检查通过。
+新 14 层 Bootstrap：层数消耗 14，最大绝对误差 4.59342e-5，RMSE 1.36669e-5；低于示例自身阈值 2e-4 / 1e-4。
+Bootstrap 对照（每组 3 次）：new/59 最大误差 5.213e-6；old/59 1.886e-6；old/30 2.112e-6；old/22 3.124e-5。
+HeartStudy 的 FHE 输出与其实际执行的九阶 Taylor 多项式相差 4.32935e-9；与打印的精确 sigmoid 相差约 2.54e-3，来自多项式近似。
+
+逐项结果（时间包含初始化与退出；不作为可靠的性能比较）：
+PASS test_bfv_basic                                       exit=  0    3.789s
+PASS test_bfv_mult_matrix                                 exit=  0   40.882s
+PASS test_bgv_basic                                       exit=  0    3.840s
+PASS test_bgv_load                                        exit=  0    0.033s
+PASS test_ckks_basic                                      exit=  0   23.975s
+PASS test_ckks_basic_discontinuous                        exit=  0   23.772s
+PASS test_ckks_multiply_matrix_bsgs                       exit=  0   69.978s
+FAIL test_ckks_multiply_matrix_bsgs_multi_thread          exit= -6    0.166s
+PASS test_ckks_slot_to_coeff                              exit=  0   20.907s
+PASS test_ckks_heartstudy                                 exit=  0    1.980s
+FAIL test_ckks_hybrid_decomp_count                        exit=  1  128.946s
+PASS test_ckks_bootstrap_cf_real_algebra                  exit=  0    0.033s
+PASS test_ckks_bootstrap_cf_real_default                  exit=  0   66.637s
+PASS test_ckks_bootstrap_cf_real_inplace_rounds           exit=  0   26.493s
+FAIL test_ckks_bootstrap_all                              exit=  0  201.272s
+PASS test_ckks_bootstrap_cmp                              exit=  0  485.800s
+PASS test_ckks_bootstrap_dnum_show-chains                 exit=  0   11.137s
+
+判定与局限：
+基础示例多数不带断言，数值复核只覆盖其已打印槽位；CKKS 基础打印值阈值为 1e-3。HYBRID 矩阵使用示例的全槽位断言；CF-real 和新 Bootstrap 使用示例自身的误差与层数断言。
+BFV/BGV 旋转示例打印的 source_data 仍为旋转前数据，因此按行旋转/行交换和补零规则生成正确期望；原始 driver.log 中这两项误判已在最终 results.json 和 finish.log 中修正。
+编译警告：Polynomial::is_valid(int) 在 noexcept 函数中抛 std::out_of_range，编译器警告该路径会 terminate（polynomial_evaluation.h:70,76）。本次没有执行越界路径。
+
+复现与日志：
+服务器 logs/ 与本地 logs/ 文件一一对应；最终结果以 logs/results.json 与 logs/finish.log 为准。
+原始套件记录保留在 logs/driver.log、logs/results-before-audit.json。
+失败证据：logs/test_ckks_multiply_matrix_bsgs_multi_thread.log、logs/multithread-init-repeats.json、logs/test_ckks_hybrid_decomp_count.log、logs/bgv-keyswitch-probe.log、logs/parent-bgv-probe.log、logs/test_ckks_bootstrap_all.log。
+脚本：run_cpu_suite.py（重新运行默认套件），run_parent_probe.sh（父提交对照），bgv_keyswitch_probe.cpp（最小 BGV 复现）；diagnosis.json 记录配置与分类。
+低优先级复现命令示例：
+ssh 188Server
+cd /home/xuming/poseidon-luhang-merge-cpu-20261014
+nice -n 15 ionice -c 3 taskset -c 0,1,2,4 env OMP_NUM_THREADS=4 CUDA_VISIBLE_DEVICES= build-cpu/bin/bgv_keyswitch_probe
+nice -n 15 ionice -c 3 taskset -c 0,1,2,4 env OMP_NUM_THREADS=4 CUDA_VISIBLE_DEVICES= build-cpu/bin/test_ckks_hybrid_decomp_count
+nice -n 15 ionice -c 3 taskset -c 0,1,2,4 env OMP_NUM_THREADS=4 CUDA_VISIBLE_DEVICES= build-cpu/bin/test_ckks_bootstrap --all

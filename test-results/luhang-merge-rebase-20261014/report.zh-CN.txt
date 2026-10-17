@@ -1,0 +1,32 @@
+已合并 luhang 分支并完成 Runtime rebase，两个分支均已同步至 origin。
+
+poseidon: 71e89e594ea111668038bad4d2e75e96f1994366
+  合并提交 40332267：将 eb124553 合入当时最新的 origin/poseidon b24d95aa，保留两个 Qwen DSL 更新。
+  兼容提交 71e89e59：在根目录提升 spdlog/fmt imported target 可见性，避免 RMM 子目录配置失败；GPU Uploader 改用上游 is_approximate 名称和 Polynomial 奇偶标记，修复编译/链接失败。
+integration/runtime-gpu: d2f7584e97a6919fb191e55c3b2e4cb472fdf6fb
+  原 29 条提交已全部 rebase，未发生冲突；range-diff 显示 29 条补丁均相同。
+  原 Runtime HEAD: 1cfb7a8992fb1813525a8c832f7ccef8cc7dac94
+  CKKS Runtime submodule pin 保持 369bdc55a8e585442784d5a6001e6e9dd04ce6f6。
+
+远端同步：git push --atomic，两个分支均使用精确的 force-with-lease 版本校验；poseidon 快进，Runtime 更新 rebase 后历史。
+当前工作目录仍在 integration/runtime-gpu。
+未提交改动、原有 untracked 文件及嵌套 submodule 改动已恢复，逐文件核对 370 项内容与模式一致，staged/unstaged patch 也一致。
+备份分支：
+  backup/integration-runtime-gpu-before-luhang-rebase-20261014-202623
+  backup/poseidon-before-luhang-merge-20261014-202623
+额外备份与 WIP 核对清单：/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/.git/codex-backups/luhang-merge-rebase-20261014-202623
+
+验证：本地 Release / CUDA 13.4 / RTX 4060 Laptop 单 GPU，OpenMP 功能开关保持 OFF，数值测试设 OMP_NUM_THREADS=4。
+最终六个构建目标均成功：CPU API、CPU MLP E2E、GPU API、GPU scalar、GPU prepare OOM、GPU native bootstrap E2E。
+最终 CTest 五项检查：3 项通过、2 项失败（tests-final.log）；不能声称所有 Runtime 回归通过。
+  PASS GPU API、GPU scalar、GPU prepare OOM；前一轮这三项也全部通过。
+  CPU API：早先一轮通过，最终一轮在 decrypt_reencrypt Boot 中失败；之后 6 次复测（线程数 1 和 4，各 3 次）均通过。单次失败原因尚未定位。旧构建另外 5 次均通过，不能由这些样本断言该偶发失败来自本次合并或此前就已存在。
+  Native GPU Bootstrap：小参数 N=4096、默认 mixed-chain/profile 检查数值错误，最大误差约 12004.071724。
+    合并前保留的现有构建 build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_bootstrap_e2e 在相同配置下也失败，误差约 12004.071718，输出形态相同。
+    该旧二进制是既有构建，未重新从原 Runtime HEAD 构建；对照说明错误在合并前构建中已存在，不能当作严格的当前父提交对照。
+本次完成分支整合与必要的构建兼容修正，数值失败的修复仍需另外处理。
+
+验证目录（保留 detached HEAD 及已编译二进制，方便复现）：
+  /tmp/poseidon-runtime-rebase-20261014-202623
+日志存于本目录及上面的额外备份目录。
+之前的服务器 CPU 测试报告：../luhang-merge-cpu-188-20261014/report.zh-CN.txt。

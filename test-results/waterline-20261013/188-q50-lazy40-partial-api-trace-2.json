@@ -1,0 +1,98 @@
+{
+  "captured_at": "2026-10-14T16:19:28.601242+08:00",
+  "pid": 153204,
+  "prefix_bytes": 498445546,
+  "rows": 13152664,
+  "max_seen_ordinal": 7522095,
+  "scan_seconds": 48.17228206573054,
+  "events": {
+    "admit": 6102913,
+    "release": 3282259,
+    "comm_post": 1151773,
+    "comm_wait": 5608,
+    "compute": 1668873,
+    "bundle_read": 470592,
+    "prepare_gpu": 470646
+  },
+  "api_statistics": {
+    "comm_post:Transfer": {
+      "calls": 1151773,
+      "host_api_sum_ns": 1100674604083,
+      "max_host_api_ns": 1867168833,
+      "host_api_mean_ms": 0.955635011484902
+    },
+    "compute:ModSwitch": {
+      "calls": 9658,
+      "host_api_sum_ns": 2174438982,
+      "max_host_api_ns": 8430602,
+      "host_api_mean_ms": 0.2251438167322427
+    },
+    "compute:MulCC": {
+      "calls": 18664,
+      "host_api_sum_ns": 3592392026,
+      "max_host_api_ns": 37277341,
+      "host_api_mean_ms": 0.19247706954564936
+    },
+    "compute:Relinearize": {
+      "calls": 18664,
+      "host_api_sum_ns": 7059575323,
+      "max_host_api_ns": 14334789,
+      "host_api_mean_ms": 0.3782455702421775
+    },
+    "bundle_read:Read": {
+      "calls": 470592,
+      "host_api_sum_ns": 77981165670,
+      "max_host_api_ns": 10693182,
+      "host_api_mean_ms": 0.16570865137953897
+    },
+    "prepare_gpu:PreparePlaintext": {
+      "calls": 470646,
+      "host_api_sum_ns": 276544086623,
+      "max_host_api_ns": 590036723,
+      "host_api_mean_ms": 0.5875840581307394
+    },
+    "compute:MulCP": {
+      "calls": 531229,
+      "host_api_sum_ns": 134202154826,
+      "max_host_api_ns": 287017514,
+      "host_api_mean_ms": 0.2526258069984884
+    },
+    "compute:Rescale": {
+      "calls": 525591,
+      "host_api_sum_ns": 689641140436,
+      "max_host_api_ns": 669753069,
+      "host_api_mean_ms": 1.3121250942957547
+    },
+    "compute:Rotate": {
+      "calls": 36406,
+      "host_api_sum_ns": 42960113397,
+      "max_host_api_ns": 70790868,
+      "host_api_mean_ms": 1.180028385348569
+    },
+    "compute:AddCC": {
+      "calls": 513195,
+      "host_api_sum_ns": 87522475058,
+      "max_host_api_ns": 590505330,
+      "host_api_mean_ms": 0.17054428639795788
+    },
+    "compute:AddCP": {
+      "calls": 9758,
+      "host_api_sum_ns": 1500740560,
+      "max_host_api_ns": 387989642,
+      "host_api_mean_ms": 0.15379591719614677
+    },
+    "compute:Boot": {
+      "calls": 5601,
+      "host_api_sum_ns": 856033241894,
+      "max_host_api_ns": 433292723,
+      "host_api_mean_ms": 152.83578680485627
+    },
+    "compute:Negate": {
+      "calls": 107,
+      "host_api_sum_ns": 16016790,
+      "max_host_api_ns": 2525454,
+      "host_api_mean_ms": 0.1496896261682243
+    }
+  },
+  "scope": "Incomplete growing trace prefix; host API times across workers overlap, sums are not wall-time shares. Ordinals and call counts are not CUDA completion percentage or ETA. No final numerical output exists yet."
+}

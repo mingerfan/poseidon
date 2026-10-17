@@ -1,0 +1,12 @@
+reject value=63 error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64
+reject value=-64 error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64
+reject value=64x error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64
+reject value=64, error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64
+reject value=,64 error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64
+reject value=64,,64 error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64
+reject value=18446744073709551615 error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64
+reject value=64,64 error=POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB list must have one entry per visible CUDA ordinal
+reject value=7784 error=GPU pool cap exceeds free memory with 64 MiB setup headroom
+visible_cuda_devices=1 default_cap_bytes=7345785856 captured_initial_external_bytes=143589376 artificial_prepool_outside_bytes=33554432 initial_reserved_bytes=67108864 configured_cap_bytes=134217728
+PASS scalar/list parsing, invalid count/value/range rejection, free-64MiB limit, prepool baseline and pool statistics/lifetime
+LIMITATION valid multi-ordinal list selection requires server all-GPU run; local one visible CUDA device

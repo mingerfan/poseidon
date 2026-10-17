@@ -1,0 +1,60 @@
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: ON
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_MPI: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL: OFF
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- CPM: Adding package CCCL@ (/tmp/poseidon-runtime-rebase-20261014-202623/third_party/rmm/../cccl)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(CCCL) is deprecated, call
+  FetchContent_MakeAvailable(CCCL) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(CCCL) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/cccl.cmake:81 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:19 (rapids_cpm_cccl)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:23 (find_and_configure_cccl)
+  third_party/rmm/CMakeLists.txt:77 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- CPM: Adding package nvtx3@ (/tmp/poseidon-runtime-rebase-20261014-202623/third_party/rmm/../nvtx)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(nvtx3) is deprecated, call
+  FetchContent_MakeAvailable(nvtx3) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(nvtx3) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/nvtx3.cmake:75 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:19 (rapids_cpm_nvtx3)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:23 (find_and_configure_nvtx3)
+  third_party/rmm/CMakeLists.txt:78 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/poseidon-runtime-rebase-20261014-202623/build-validation

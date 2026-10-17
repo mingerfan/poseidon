@@ -1,0 +1,9 @@
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=8213996 retained_workspace_bound=0 reserve_required=75322860 reserve_configured=536870912
+waterline physical GPU0 pool_reserved=134217728 pool_cap=134217728 initial_outside_used=110034944 outside_pool_growth=0 allocator_graph_capacity=50680872
+PASS Negate_with_same_stream_followup submit_ms=0.017901 wait_ns=80180221 error=4.29542e-08
+PASS AddCP submit_ms=0.046222 wait_ns=80127998 error=4.29372e-08
+PASS AddCP_reuse submit_ms=0.033502 wait_ns=80137214 error=4.29372e-08
+PASS Rotate submit_ms=0.245601 wait_ns=80326850 error=3.17683e-07
+PASS Relinearize submit_ms=0.187958 wait_ns=80319488 error=2.02034e-08
+PASS Rescale submit_ms=0.072163 wait_ns=80202751 error=2.02051e-08

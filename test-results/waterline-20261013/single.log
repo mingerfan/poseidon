@@ -1,0 +1,36 @@
+[PASS] internal RMM pool lifetime
+waterline GPU0 front_peak=100663296 plain_peak=8388608 remaining_front=0 remaining_plain=0
+waterline shared host_peak=117440512 pinned_peak=25165824 raw_peak=524288
+Waterline diagnostic max=9.0847e-07 slot0=(3.5,-1.93694e-08) slot1=(-7,1.76431e-08)
+WATERLINE backend=0 devices=1 max_abs_error=9.0847e-07 cold_ms=669.673 forward_ms=162.96 pinned_live=0
+waterline GPU0 front_peak=100663296 plain_peak=19136512 remaining_front=0 remaining_plain=0
+waterline shared host_peak=117440512 pinned_peak=25165824 raw_peak=524288
+Waterline diagnostic max=9.0847e-07 slot0=(3.5,-1.93694e-08) slot1=(-7,1.76431e-08)
+WATERLINE backend=1 devices=1 max_abs_error=9.0847e-07 cold_ms=601.386 forward_ms=100.455 pinned_live=0
+waterline GPU0 front_peak=100663296 plain_peak=8388608 remaining_front=0 remaining_plain=0
+waterline shared host_peak=117440512 pinned_peak=25165824 raw_peak=524288
+Waterline diagnostic max=9.0847e-07 slot0=(3.5,-1.93694e-08) slot1=(-7,1.76431e-08)
+WATERLINE backend=2 devices=1 max_abs_error=9.0847e-07 cold_ms=649.165 forward_ms=143.609 pinned_live=0
+	Command being timed: "env CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=1 POSEIDON_WATERLINE_ONLY=1 POSEIDON_WATERLINE_LOG_N=16 POSEIDON_WATERLINE_Q_COUNT=32 POSEIDON_WATERLINE_SCALE=40 POSEIDON_RUNTIME_TRACE=/home/xuming/poseidon-waterline-20261013/logs/single.trace /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_api_tests"
+	User time (seconds): 18.64
+	System time (seconds): 4.00
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.18
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3511464
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 22
+	Minor (reclaiming a frame) page faults: 1273592
+	Voluntary context switches: 924
+	Involuntary context switches: 93
+	Swaps: 0
+	File system inputs: 21448
+	File system outputs: 32
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

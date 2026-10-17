@@ -1,0 +1,449 @@
+COMMAND: ["cmake", "--build", "/home/xuming/poseidon-luhang-merge-cpu-20261014/build-cpu", "--parallel", "4"]
+Scanning dependencies of target libzstd_static
+[  1%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/adler32.o
+[  2%] Building CXX object thirdparty/spdlog-build/CMakeFiles/spdlog.dir/src/spdlog.cpp.o
+[  2%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/compress.o
+[  2%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/debug.c.o
+[  3%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/entropy_common.c.o
+[  4%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/error_private.c.o
+[  4%] Building CXX object thirdparty/spdlog-build/CMakeFiles/spdlog.dir/src/stdout_sinks.cpp.o
+[  5%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/crc32.o
+[  5%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/fse_decompress.c.o
+[  6%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/deflate.o
+[  8%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/pool.c.o
+[  8%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/threading.c.o
+[  9%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/xxhash.c.o
+[  9%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/common/zstd_common.c.o
+[  9%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/gzclose.o
+[ 10%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/gzlib.o
+[ 11%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/fse_compress.c.o
+[ 11%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/gzread.o
+[ 12%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/gzwrite.o
+[ 13%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/hist.c.o
+[ 13%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/huf_compress.c.o
+[ 13%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/inflate.o
+[ 14%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/infback.o
+[ 16%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/inftrees.o
+[ 17%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_compress.c.o
+[ 17%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/inffast.o
+[ 18%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/trees.o
+[ 19%] Building CXX object thirdparty/spdlog-build/CMakeFiles/spdlog.dir/src/color_sinks.cpp.o
+[ 19%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/uncompr.o
+[ 20%] Building C object ../deps/zlib-build/CMakeFiles/zlibstatic.dir/zutil.o
+[ 21%] Linking C static library ../../build-cpu/libz.a
+[ 21%] Built target zlibstatic
+[ 22%] Building CXX object thirdparty/spdlog-build/CMakeFiles/spdlog.dir/src/file_sinks.cpp.o
+[ 22%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_compress_literals.c.o
+[ 24%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_compress_sequences.c.o
+[ 24%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_compress_superblock.c.o
+[ 25%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_double_fast.c.o
+[ 26%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_fast.c.o
+[ 26%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_lazy.c.o
+[ 26%] Building CXX object thirdparty/spdlog-build/CMakeFiles/spdlog.dir/src/async.cpp.o
+[ 27%] Building CXX object thirdparty/spdlog-build/CMakeFiles/spdlog.dir/src/cfg.cpp.o
+[ 27%] Building CXX object thirdparty/spdlog-build/CMakeFiles/spdlog.dir/src/bundled_fmtlib_format.cpp.o
+[ 28%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_ldm.c.o
+[ 28%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstd_opt.c.o
+[ 29%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/compress/zstdmt_compress.c.o
+[ 31%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/decompress/huf_decompress.c.o
+[ 31%] Building ASM object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/decompress/huf_decompress_amd64.S.o
+[ 32%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/decompress/zstd_ddict.c.o
+[ 32%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/decompress/zstd_decompress.c.o
+[ 33%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/decompress/zstd_decompress_block.c.o
+[ 33%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/dictBuilder/cover.c.o
+[ 34%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/dictBuilder/divsufsort.c.o
+[ 35%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/dictBuilder/fastcover.c.o
+[ 35%] Building C object ../deps/zstd-build/lib/CMakeFiles/libzstd_static.dir/__/__/__/lib/dictBuilder/zdict.c.o
+[ 36%] Linking CXX static library ../../libspdlog.a
+[ 36%] Built target spdlog
+[ 37%] Linking C static library ../../../build-cpu/libzstd.a
+[ 37%] Built target libzstd_static
+[ 39%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/ckks_encoder.cpp.o
+[ 39%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/ciphertext.cpp.o
+[ 39%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/crt_context.cpp.o
+[ 40%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/batchencoder.cpp.o
+[ 41%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/decryptor.cpp.o
+[ 42%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/encryptor.cpp.o
+[ 42%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/keygenerator.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/keygenerator.cpp:12:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 43%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/parameters_literal.cpp.o
+[ 43%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/plaintext.cpp.o
+[ 44%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/poseidon_context.cpp.o
+[ 44%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/rns_poly.cpp.o
+[ 45%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/bootstrapper.cpp.o
+[ 47%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_dft.cpp.o
+[ 47%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_linear_transform.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/bootstrapper.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/bootstrapper.cpp:1:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 48%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_mod.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.cpp:1:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 48%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/polynomial_evaluation.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.cpp:1:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 49%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/chebyshev_interpolation.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/util/chebyshev_interpolation.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/util/chebyshev_interpolation.cpp:1:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 49%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/cosine_approx.cpp.o
+[ 50%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_base.cpp.o
+[ 51%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bfv_base.cpp.o
+[ 51%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bgv_base.cpp.o
+[ 52%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_ckks_base.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.cpp:1:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 52%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bfv_software.cpp.o
+[ 54%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bgv_software.cpp.o
+[ 54%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_ckks_software.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.cpp:1:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 55%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/factory/poseidon_factory.cpp.o
+[ 56%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/galoiskeys.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.cpp:1:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 56%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_base.cpp.o
+[ 57%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_bv.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/key/keyswitch_base.cpp:2:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 57%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_ghs.cpp.o
+[ 58%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_hybrid.cpp.o
+[ 59%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/kswitchkeys.cpp.o
+[ 59%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/memorymanager.cpp.o
+[ 60%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/modulus.cpp.o
+[ 60%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/randomgen.cpp.o
+[ 62%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/serialization.cpp.o
+[ 62%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2b.c.o
+[ 63%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2xb.c.o
+[ 64%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/clipnormal.cpp.o
+[ 64%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/common.cpp.o
+[ 65%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/croots.cpp.o
+[ 65%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/fips202.c.o
+[ 66%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/galois.cpp.o
+[ 66%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/globals.cpp.o
+[ 67%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/hash.cpp.o
+[ 68%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/iterator.cpp.o
+[ 68%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/mempool.cpp.o
+[ 70%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ntt.cpp.o
+[ 70%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/numth.cpp.o
+[ 71%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/polyarithsmallmod.cpp.o
+[ 72%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rlwe.cpp.o
+[ 72%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rns.cpp.o
+[ 73%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/scalingvariant.cpp.o
+[ 73%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/streambuf.cpp.o
+[ 74%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarith.cpp.o
+[ 74%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithmod.cpp.o
+[ 75%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithsmallmod.cpp.o
+[ 77%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintcore.cpp.o
+[ 77%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ztools.cpp.o
+[ 78%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/debug.cpp.o
+[ 78%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/fft.cpp.o
+[ 79%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/matrix_operation.cpp.o
+[ 79%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/precision.cpp.o
+[ 80%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/random_sample.cpp.o
+[ 81%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/rns_tool_qp.cpp.o
+[ 81%] Linking CXX shared library libposeidon_shared.so
+[ 81%] Built target poseidon_shared
+[ 81%] Building CXX object examples/bfv/CMakeFiles/test_bfv_basic.dir/test_bfv_basic.cpp.o
+[ 82%] Building CXX object examples/bgv/CMakeFiles/test_bgv_basic.dir/test_bgv_basic.cpp.o
+[ 83%] Building CXX object examples/bgv/CMakeFiles/test_bgv_load.dir/test_bgv_load.cpp.o
+[ 85%] Building CXX object examples/bfv/CMakeFiles/test_bfv_mult_matrix.dir/test_bfv_mult_matrix.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/bfv/test_bfv_basic.cpp:4:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/bfv/test_bfv_mult_matrix.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/bgv/test_bgv_load.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/bgv/test_bgv_basic.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 85%] Linking CXX executable ../../bin/test_bgv_load
+[ 85%] Built target test_bgv_load
+[ 86%] Building CXX object examples/ckks/CMakeFiles/test_ckks_basic.dir/test_ckks_basic.cpp.o
+[ 87%] Linking CXX executable ../../bin/test_bfv_basic
+[ 87%] Built target test_bfv_basic
+[ 87%] Building CXX object examples/ckks/CMakeFiles/test_ckks_basic_discontinuous.dir/test_ckks_basic_discontinuous.cpp.o
+[ 87%] Linking CXX executable ../../bin/test_bgv_basic
+[ 87%] Built target test_bgv_basic
+[ 87%] Building CXX object examples/ckks/CMakeFiles/test_ckks_bootstrap.dir/test_ckks_bootstrap.cpp.o
+[ 87%] Linking CXX executable ../../bin/test_bfv_mult_matrix
+[ 87%] Built target test_bfv_mult_matrix
+[ 88%] Building CXX object examples/ckks/CMakeFiles/test_ckks_heartstudy.dir/test_ckks_heartstudy.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_basic.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_basic_discontinuous.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_bootstrap.cpp:4:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_heartstudy.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 89%] Linking CXX executable ../../bin/test_ckks_basic
+[ 89%] Built target test_ckks_basic
+[ 90%] Linking CXX executable ../../bin/test_ckks_basic_discontinuous
+[ 90%] Building CXX object examples/ckks/CMakeFiles/test_ckks_multiply_matrix_bsgs.dir/test_ckks_multiply_matrix_bsgs.cpp.o
+[ 90%] Built target test_ckks_basic_discontinuous
+[ 90%] Building CXX object examples/ckks/CMakeFiles/test_ckks_multiply_matrix_bsgs_multi_thread.dir/test_ckks_multiply_matrix_bsgs_multi_thread.cpp.o
+[ 91%] Linking CXX executable ../../bin/test_ckks_bootstrap
+[ 91%] Built target test_ckks_bootstrap
+[ 91%] Building CXX object examples/ckks/CMakeFiles/test_ckks_slot_to_coeff.dir/test_ckks_slot_to_coeff.cpp.o
+[ 91%] Linking CXX executable ../../bin/test_ckks_heartstudy
+[ 91%] Built target test_ckks_heartstudy
+[ 93%] Building CXX object examples/ckks/CMakeFiles/test_ckks_hybrid_decomp_count.dir/test_ckks_hybrid_decomp_count.cpp.o
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_multiply_matrix_bsgs.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_multiply_matrix_bsgs_multi_thread.cpp:3:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_slot_to_coeff.cpp:5:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_hybrid_decomp_count.cpp:4:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 94%] Linking CXX executable ../../bin/test_ckks_slot_to_coeff
+[ 94%] Built target test_ckks_slot_to_coeff
+[ 95%] Building CXX object examples/ckks/CMakeFiles/test_ckks_bootstrap_cmp.dir/test_ckks_bootstrap_cmp.cpp.o
+[ 96%] Linking CXX executable ../../bin/test_ckks_multiply_matrix_bsgs
+[ 96%] Built target test_ckks_multiply_matrix_bsgs
+[ 96%] Building CXX object examples/ckks/CMakeFiles/test_ckks_bootstrap_cf_real.dir/test_ckks_bootstrap_cf_real.cpp.o
+[ 97%] Linking CXX executable ../../bin/test_ckks_multiply_matrix_bsgs_multi_thread
+[ 97%] Built target test_ckks_multiply_matrix_bsgs_multi_thread
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_bootstrap_cmp.cpp:41:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 98%] Linking CXX executable ../../bin/test_ckks_hybrid_decomp_count
+[ 98%] Built target test_ckks_hybrid_decomp_count
+In file included from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-luhang-merge-cpu-20261014/examples/ckks/test_ckks_bootstrap_cf_real.cpp:6:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-luhang-merge-cpu-20261014/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 98%] Linking CXX executable ../../bin/test_ckks_bootstrap_cmp
+[ 98%] Built target test_ckks_bootstrap_cmp
+[100%] Linking CXX executable ../../bin/test_ckks_bootstrap_cf_real
+[100%] Built target test_ckks_bootstrap_cf_real
