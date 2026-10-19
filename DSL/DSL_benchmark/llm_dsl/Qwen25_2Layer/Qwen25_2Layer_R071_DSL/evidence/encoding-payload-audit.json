@@ -1,0 +1,10 @@
+{
+  "expected": {
+    "encode_calls": 6711,
+    "bundle_read_calls": 6690,
+    "bundle_read_bytes": 1748484096,
+    "raw_peak_bytes": 524288,
+    "bundle_resident_bytes": 0,
+    "boot_calls": 154
+  }
+}

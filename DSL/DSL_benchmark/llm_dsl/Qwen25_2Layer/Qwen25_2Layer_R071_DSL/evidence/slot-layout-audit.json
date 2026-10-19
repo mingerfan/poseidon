@@ -1,0 +1,210 @@
+{
+  "scope": "Static public-shape layout of CKKS-passed two-block two-token decode; not per-instruction profiling",
+  "source_hashes": {
+    "model/combined_runtime.py": "647db25fa91f73d13292aee5552bbe3f4547957a91f4c8e5f445692c1287e803",
+    "model/packed_attention.py": "5c411fa733154f65186e8bc76ff426b86ceae47af83bc9d3d33dcbe207aa1c6a",
+    "model/package/qwen24/runtime.py": "4ec579638b7d8412a185fb8289c39b37d65e790598b0667bea49d8ce4493e86a",
+    "model/package/qwen24/kernels/packed_linear.py": "ca6fe4d21455165c2d8c954e2d61a127ebed1a0f21937bcc0323db61334a227b",
+    "model/package/qwen24/kernels/packed_lm_head.py": "48ff6eb360542d6505b9a0a5226c63d6ee2fc32c109cf0db2459aff32de19f3d",
+    "model/package/qwen24/kernels/degree_rms_candidate.py": "b09333dabd4a0dcd9c5d6cd9a0443d003fb6c6c930505733459645e787287c03",
+    "model/package/qwen24/kernels/rms_affine_candidate.py": "589a7506df51d4388bb1d07976992862bdc444a131b9695f0ec22757dc16d53b",
+    "model/package/qwen24/kernels/qwen_layers.py": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75"
+  },
+  "plan_sha256": "f671cbd15f88ace2d0f97745fcfe8bb533d3fb3eccda2c1ab09d401cd986a4cf",
+  "slots": 32768,
+  "activation_layouts": [
+    {
+      "name": "输入、残差、RMSNorm输出",
+      "useful_slots": 896,
+      "percent": 2.734375
+    },
+    {
+      "name": "Q / Q的RoPE / Attention输出 / O投影输出",
+      "useful_slots": 896,
+      "percent": 2.734375
+    },
+    {
+      "name": "单token的K或V（各自一个密文）",
+      "useful_slots": 128,
+      "percent": 0.390625
+    },
+    {
+      "name": "MLP gate、up、SiLU及门控乘积（各自）",
+      "useful_slots": 4864,
+      "percent": 14.84375
+    },
+    {
+      "name": "MLP down输出",
+      "useful_slots": 896,
+      "percent": 2.734375
+    },
+    {
+      "name": "每层最终KV缓存（2 token，K/V合并）",
+      "useful_slots": 512,
+      "percent": 1.5625
+    }
+  ],
+  "linear_weight_batches": [
+    {
+      "name": "Q projection",
+      "period": 896,
+      "rows_per_plain": 36,
+      "batches": 25,
+      "in_size": 896,
+      "out_size": 896,
+      "slots": 32768,
+      "dense_stride": true,
+      "full_batch_useful_slots": 32256,
+      "full_batch_percent": 98.4375,
+      "last_batch_rows": 32,
+      "all_weight_batches_percent": 98.0,
+      "output_percent": 2.734375
+    },
+    {
+      "name": "K projection",
+      "period": 896,
+      "rows_per_plain": 36,
+      "batches": 4,
+      "in_size": 896,
+      "out_size": 128,
+      "slots": 32768,
+      "dense_stride": true,
+      "full_batch_useful_slots": 32256,
+      "full_batch_percent": 98.4375,
+      "last_batch_rows": 20,
+      "all_weight_batches_percent": 87.5,
+      "output_percent": 0.390625
+    },
+    {
+      "name": "V projection",
+      "period": 896,
+      "rows_per_plain": 36,
+      "batches": 4,
+      "in_size": 896,
+      "out_size": 128,
+      "slots": 32768,
+      "dense_stride": true,
+      "full_batch_useful_slots": 32256,
+      "full_batch_percent": 98.4375,
+      "last_batch_rows": 20,
+      "all_weight_batches_percent": 87.5,
+      "output_percent": 0.390625
+    },
+    {
+      "name": "O projection",
+      "period": 896,
+      "rows_per_plain": 36,
+      "batches": 25,
+      "in_size": 896,
+      "out_size": 896,
+      "slots": 32768,
+      "dense_stride": true,
+      "full_batch_useful_slots": 32256,
+      "full_batch_percent": 98.4375,
+      "last_batch_rows": 32,
+      "all_weight_batches_percent": 98.0,
+      "output_percent": 2.734375
+    },
+    {
+      "name": "gate projection",
+      "period": 896,
+      "rows_per_plain": 36,
+      "batches": 136,
+      "in_size": 896,
+      "out_size": 4864,
+      "slots": 32768,
+      "dense_stride": true,
+      "full_batch_useful_slots": 32256,
+      "full_batch_percent": 98.4375,
+      "last_batch_rows": 4,
+      "all_weight_batches_percent": 97.79411764705883,
+      "output_percent": 14.84375
+    },
+    {
+      "name": "up projection",
+      "period": 896,
+      "rows_per_plain": 36,
+      "batches": 136,
+      "in_size": 896,
+      "out_size": 4864,
+      "slots": 32768,
+      "dense_stride": true,
+      "full_batch_useful_slots": 32256,
+      "full_batch_percent": 98.4375,
+      "last_batch_rows": 4,
+      "all_weight_batches_percent": 97.79411764705883,
+      "output_percent": 14.84375
+    },
+    {
+      "name": "down projection",
+      "period": 4864,
+      "rows_per_plain": 6,
+      "batches": 150,
+      "in_size": 4864,
+      "out_size": 896,
+      "slots": 32768,
+      "dense_stride": true,
+      "full_batch_useful_slots": 29184,
+      "full_batch_percent": 89.0625,
+      "last_batch_rows": 2,
+      "all_weight_batches_percent": 88.66666666666667,
+      "output_percent": 2.734375
+    }
+  ],
+  "final_outputs": [
+    {
+      "name": "logits.0:32768",
+      "useful_slots": 32768,
+      "percent": 100.0
+    },
+    {
+      "name": "logits.32768:65536",
+      "useful_slots": 32768,
+      "percent": 100.0
+    },
+    {
+      "name": "logits.65536:98304",
+      "useful_slots": 32768,
+      "percent": 100.0
+    },
+    {
+      "name": "logits.98304:131072",
+      "useful_slots": 32768,
+      "percent": 100.0
+    },
+    {
+      "name": "logits.131072:151936",
+      "useful_slots": 20864,
+      "percent": 63.671875
+    },
+    {
+      "name": "layer_0.kv_cache",
+      "useful_slots": 512,
+      "percent": 1.5625
+    },
+    {
+      "name": "layer_1.kv_cache",
+      "useful_slots": 512,
+      "percent": 1.5625
+    }
+  ],
+  "attention_pair": {
+    "independent_head_scores": 14,
+    "independent_percent": 0.042724609375,
+    "repeated_score_slots": 896,
+    "repeated_percent": 2.734375,
+    "one_visible_key_skips_softmax": true
+  },
+  "rms_reduction": {
+    "independent_scalars": 1,
+    "broadcast_slots": 32768,
+    "independent_percent": 0.0030517578125,
+    "broadcast_percent": 100
+  },
+  "lm_head": {
+    "output_average_percent": 92.734375,
+    "padded_hidden_period": 1024,
+    "full_chunk_diagonal_mean_percent": 87.5
+  },
+  "model_computation_executed": false
+}

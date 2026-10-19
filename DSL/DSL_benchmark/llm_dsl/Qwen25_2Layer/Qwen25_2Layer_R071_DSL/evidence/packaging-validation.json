@@ -1,0 +1,206 @@
+{
+  "passed": true,
+  "package_hash_check": {
+    "passed": true,
+    "files": 81,
+    "frozen_hashes_verified": true,
+    "historical_cpu_ckks_passed": true,
+    "new_ckks_executed": false,
+    "gpu_validated": false
+  },
+  "entrypoint_help": {
+    "trace_071.py": true,
+    "compile_071.py": true,
+    "prepare_fixture_071.py": true,
+    "optimize_cpu_plan.py": true
+  },
+  "compile_command_validated": true,
+  "compiler_executed": false,
+  "full_model_executed": false,
+  "ckks_executed": false,
+  "gpu_executed": false,
+  "small_arithmetic": {
+    "passed": true,
+    "scope": "2 blocks, reduced dimensions, packed ABI arithmetic only",
+    "config": {
+      "num_layers": 2,
+      "hidden_size": 8,
+      "intermediate_size": 16,
+      "query_heads": 4,
+      "kv_heads": 2,
+      "head_dim": 2,
+      "vocab_size": 19,
+      "max_sequence_length": 512,
+      "rope_theta": 1000000.0,
+      "rms_norm_eps": 1e-06
+    },
+    "slots": 32,
+    "checks": [
+      {
+        "mode": "prefill",
+        "new_positions": [
+          0,
+          1
+        ],
+        "cached_positions": [],
+        "executed_blocks": 2,
+        "inputs": 2,
+        "outputs": 3,
+        "comparison": {
+          "passed": true,
+          "arrays": {
+            "logits": {
+              "max_abs_error": 5.242422441986694e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "keys": {
+              "max_abs_error": 5.4601012988708675e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "values": {
+              "max_abs_error": 5.318648671481796e-08,
+              "passed": true,
+              "imaginary_checked": false
+            }
+          },
+          "atol": 1e-05,
+          "rtol": 0.0,
+          "tail_checked": false,
+          "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+        },
+        "max_tail": 0.0,
+        "seconds": 0.31200000003445894
+      },
+      {
+        "mode": "decode-pair",
+        "new_positions": [
+          0,
+          1
+        ],
+        "cached_positions": [],
+        "executed_blocks": 4,
+        "inputs": 2,
+        "outputs": 3,
+        "comparison": {
+          "passed": true,
+          "arrays": {
+            "logits": {
+              "max_abs_error": 5.242422441986694e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "keys": {
+              "max_abs_error": 5.4601012988708675e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "values": {
+              "max_abs_error": 5.318648671481796e-08,
+              "passed": true,
+              "imaginary_checked": false
+            }
+          },
+          "atol": 1e-05,
+          "rtol": 0.0,
+          "tail_checked": false,
+          "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+        },
+        "max_tail": 0.0,
+        "seconds": 0.01600000000325963
+      },
+      {
+        "mode": "prefill",
+        "new_positions": [
+          0
+        ],
+        "cached_positions": [],
+        "executed_blocks": 2,
+        "inputs": 1,
+        "outputs": 3,
+        "comparison": {
+          "passed": true,
+          "arrays": {
+            "logits": {
+              "max_abs_error": 5.1864360889330996e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "keys": {
+              "max_abs_error": 4.3392078000192846e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "values": {
+              "max_abs_error": 3.8920389980323655e-08,
+              "passed": true,
+              "imaginary_checked": false
+            }
+          },
+          "atol": 1e-05,
+          "rtol": 0.0,
+          "tail_checked": false,
+          "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+        },
+        "max_tail": 0.0,
+        "seconds": 0.014999999955762178
+      },
+      {
+        "mode": "decode",
+        "new_positions": [
+          1
+        ],
+        "cached_positions": [
+          0
+        ],
+        "executed_blocks": 2,
+        "inputs": 3,
+        "outputs": 3,
+        "comparison": {
+          "passed": true,
+          "arrays": {
+            "logits": {
+              "max_abs_error": 5.242422441986694e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "keys": {
+              "max_abs_error": 5.4601012988708675e-08,
+              "passed": true,
+              "imaginary_checked": false
+            },
+            "values": {
+              "max_abs_error": 5.318648671481796e-08,
+              "passed": true,
+              "imaginary_checked": false
+            }
+          },
+          "atol": 1e-05,
+          "rtol": 0.0,
+          "tail_checked": false,
+          "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+        },
+        "max_tail": 0.0,
+        "seconds": 0.01600000000325963
+      }
+    ],
+    "differences": {
+      "pair": {
+        "logits": 0.0,
+        "keys": 0.0,
+        "values": 0.0
+      },
+      "external": {
+        "logits": 0.0,
+        "keys": 0.0,
+        "values": 0.0
+      }
+    },
+    "cache_immutable": true,
+    "native_trace": false,
+    "ckks": false,
+    "gpu": false,
+    "external_cache_level_handoff_verified": false
+  }
+}

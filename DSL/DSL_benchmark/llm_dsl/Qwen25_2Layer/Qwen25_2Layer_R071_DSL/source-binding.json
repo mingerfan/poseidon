@@ -1,0 +1,296 @@
+{
+  "round_id": "round_071_latest_parallel_full_ckks",
+  "model_round": "round_060_pair13_silu_integration",
+  "backend_round": "round_070_parallel_rotation_moddown",
+  "strategy": "degree10p2_pair13_silu_canonical_fold2",
+  "files": {
+    "frozen/model/bounded_cpu_encodes.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/bounded_cpu_encodes.py",
+      "sha256": "b7bbb09f09dc357681b2035505f8d1fcb2a205933d20760f0bad14ca9d0fcf2a"
+    },
+    "frozen/model/combined_runtime.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/combined_runtime.py",
+      "sha256": "647db25fa91f73d13292aee5552bbe3f4547957a91f4c8e5f445692c1287e803"
+    },
+    "frozen/model/defer_cpu_encodes.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/defer_cpu_encodes.py",
+      "sha256": "4e1336652827206067a484e1daf2b0a74a707ffd536665cd532d3cb2a5006511"
+    },
+    "frozen/model/packed_attention.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/packed_attention.py",
+      "sha256": "5c411fa733154f65186e8bc76ff426b86ceae47af83bc9d3d33dcbe207aa1c6a"
+    },
+    "frozen/model/trace_combined_model.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/trace_combined_model.py",
+      "sha256": "474f7e89af819352eaa1393520504b925c9113a10163f733ef0f36ab8270c042"
+    },
+    "frozen/model/package/check_outputs.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/check_outputs.py",
+      "sha256": "8470b5844676dc51d06f52a2de5e7ea3339ecaaef0ba6512428a81b2e5f16b5f"
+    },
+    "frozen/model/package/compile_qwen24.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/compile_qwen24.py",
+      "sha256": "9234b3d3015ff525f555da3262fb9b713eab824add3f85fab65ee49279df80a2"
+    },
+    "frozen/model/package/manifest.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/manifest.json",
+      "sha256": "0f3e0895aaab7cceec0a5cf87eeb0ffc87bb4b0cb49684665d1755eb7d2d71cb"
+    },
+    "frozen/model/package/prepare_fixture.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/prepare_fixture.py",
+      "sha256": "b7e8011c85687f4548483344278e9a6baba02679942d3cd5867c8fd0f0fd8902"
+    },
+    "frozen/model/package/prepare_inputs.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/prepare_inputs.py",
+      "sha256": "1761ad490108dab28d06bc3cb4bde43ccf99dd263fd929da76304c4b81bc011f"
+    },
+    "frozen/model/package/provenance.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/provenance.json",
+      "sha256": "dee07ae21cc8b3f1ad7272995296e975d6cf8498ce0ab167ba3fd4a98e8a4c81"
+    },
+    "frozen/model/package/README.md": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/README.md",
+      "sha256": "e3f73624f9c4da7a286d4e549277e67397b8013cca625bca515a414e2076e164"
+    },
+    "frozen/model/package/trace_qwen24.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/trace_qwen24.py",
+      "sha256": "0b6e1b80caea8b27c2299d74a19dd345d52eeb11eac1ad51ac5ca0ad5cf12431"
+    },
+    "frozen/model/package/unpack_outputs.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/unpack_outputs.py",
+      "sha256": "2ffc6b9b169b0e8a2e7b62129a5a36eb6285fd0b28ecfdc032b2c3b67671d306"
+    },
+    "frozen/model/package/verify_manifest.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/verify_manifest.py",
+      "sha256": "8b641de230f27e22d67610f989c03621e5468821b9639bd1d0cb790af7b58a10"
+    },
+    "frozen/model/package/config/approximations.provisional.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/config/approximations.provisional.json",
+      "sha256": "74ae65f46d9f28f5a0b6188241ce4d73e4b7215d933ca7ac2aa117b48de72d12"
+    },
+    "frozen/model/package/config/compiler-config.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/config/compiler-config.json",
+      "sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110"
+    },
+    "frozen/model/package/config/model.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/config/model.json",
+      "sha256": "dbdaf26d46a2639479308ec0d9fc1648697f5a42059350f68c0e04a6711d5359"
+    },
+    "frozen/model/package/config/operator-spec.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/config/operator-spec.json",
+      "sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b"
+    },
+    "frozen/model/package/config/weight_schema.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/config/weight_schema.json",
+      "sha256": "862292a9eaea7c69c0324287323c117545e1a281070cdb005c9313897f5a8023"
+    },
+    "frozen/model/package/qwen24/reference.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/reference.py",
+      "sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6"
+    },
+    "frozen/model/package/qwen24/runtime.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/runtime.py",
+      "sha256": "4ec579638b7d8412a185fb8289c39b37d65e790598b0667bea49d8ce4493e86a"
+    },
+    "frozen/model/package/qwen24/spec.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/spec.py",
+      "sha256": "629aa6f8fb88cff9fa64e7efa0bbb7e0c8a67fc1f82f2a78704880f81024a78b"
+    },
+    "frozen/model/package/qwen24/weights.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/weights.py",
+      "sha256": "d6b873646af1dcdacba200ed518ad0fb74f7daf2e463fc768ddb88b3aed46c53"
+    },
+    "frozen/model/package/qwen24/__init__.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/__init__.py",
+      "sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9"
+    },
+    "frozen/model/package/qwen24/kernels/expr.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/expr.py",
+      "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff"
+    },
+    "frozen/model/package/qwen24/kernels/ops.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/ops.py",
+      "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+    },
+    "frozen/model/package/qwen24/kernels/packed_linear.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/packed_linear.py",
+      "sha256": "ca6fe4d21455165c2d8c954e2d61a127ebed1a0f21937bcc0323db61334a227b"
+    },
+    "frozen/model/package/qwen24/kernels/packed_lm_head.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/packed_lm_head.py",
+      "sha256": "48ff6eb360542d6505b9a0a5226c63d6ee2fc32c109cf0db2459aff32de19f3d"
+    },
+    "frozen/model/package/qwen24/kernels/qwen_layers.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/qwen_layers.py",
+      "sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75"
+    },
+    "frozen/model/package/qwen24/kernels/qwen_model.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/qwen_model.py",
+      "sha256": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a"
+    },
+    "frozen/model/package/qwen24/kernels/qwen_nonlinear.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/qwen_nonlinear.py",
+      "sha256": "83b996cccd3cc263a2c9df6ed23c663c8f410064a9c0d38c858efeb968ca648e"
+    },
+    "frozen/model/package/qwen24/kernels/rms_affine_candidate.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/rms_affine_candidate.py",
+      "sha256": "589a7506df51d4388bb1d07976992862bdc444a131b9695f0ec22757dc16d53b"
+    },
+    "frozen/model/package/qwen24/kernels/rms_power_polynomial.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/rms_power_polynomial.py",
+      "sha256": "d22ae4b078d1077524e97d44754a953c71591820acd03043c515fef162a5267d"
+    },
+    "frozen/model/package/qwen24/kernels/zero_tail_contract.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/zero_tail_contract.py",
+      "sha256": "1f669f4152276487c3305e653953192ccd35d507da9cd338d23c84b2ba454f96"
+    },
+    "frozen/model/package/qwen24/kernels/__init__.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/__init__.py",
+      "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+    },
+    "frozen/model/package/verification/small-numpy-validation.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/verification/small-numpy-validation.json",
+      "sha256": "99fc3ce170f388a3389ea1621e69fdd74c7cfc58454b17fd50f781663f3f8431"
+    },
+    "frozen/model/package/verification/smoke_config.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/verification/smoke_config.json",
+      "sha256": "10b68ee94323bcc828f82ca0822f5f216bbfb6afd178394263680cb35ad92bc3"
+    },
+    "frozen/model/package/verification/source-check.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/verification/source-check.json",
+      "sha256": "58697391f64ce2c32d1de8515c6145c721b1eb5c3b8200884ea4ed3671833cdc"
+    },
+    "frozen/model/package/verification/validate_numpy.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/verification/validate_numpy.py",
+      "sha256": "4076e2f6b8c64cb841f56285597de21ea01c8cab2e7a9ad95d5add3f5a00df72"
+    },
+    "frozen/model/package/qwen24/kernels/packed_rms_batch.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/packed_rms_batch.py",
+      "sha256": "f24afff91791c99dc2dca052dbf08cd6324fb58a1d8405406e9bc16d34420b59"
+    },
+    "frozen/model/package/qwen24/kernels/prefill_rms_adapter.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/prefill_rms_adapter.py",
+      "sha256": "24b33172f9940c40f56d335f68fddced3320c5335194ff24c00abd19374940ca"
+    },
+    "frozen/model/package/qwen24/kernels/degree_rms_candidate.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/degree_rms_candidate.py",
+      "sha256": "b09333dabd4a0dcd9c5d6cd9a0443d003fb6c6c930505733459645e787287c03"
+    },
+    "frozen/model/package/qwen24/kernels/silu_parity_candidate.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/model/package/qwen24/kernels/silu_parity_candidate.py",
+      "sha256": "306b9400c72507a6747ec32a812278124b6e93d39b8157def30d6335c9e5958b"
+    },
+    "frozen/tools/reorder_runtime_plan.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/validation/reorder_runtime_plan.py",
+      "sha256": "4b2f83d44bd50b8ab225d59a51c890a36b31eb65786f286726c0b5bcbe9c1d9e"
+    },
+    "frozen/tools/native_probe.cpp": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/validation/native_probe.cpp",
+      "sha256": "54ed1657da70fbd07d4dd9be66f172108dd02a7c40bb70369708dcdc0f0fc9a2"
+    },
+    "frozen/tools/mock_probe.cpp": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/validation/mock_probe.cpp",
+      "sha256": "119ab1376f0c81191c5366862264cb0022dda0ab8f082123678e8bb6f3d28b62"
+    },
+    "frozen/tools/key_payload_stats.hpp": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/validation/key_payload_stats.hpp",
+      "sha256": "44f1ac4bfa3866ff9658d9e200fc5f66ee7c54a36db88a4f2fd3793c11ad3558"
+    },
+    "frozen/tools/validate_small_combined_model.py": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/validation/validate_small_combined_model.py",
+      "sha256": "eb96394690b2ab769d3197d234c11157562274d98ebf57fa0ceb2879be4fcb38"
+    },
+    "evidence/result.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/result.json",
+      "sha256": "58c472009eedd7fc78cb91accc087739f6c8bd8610eac31e728f9005edd3840a"
+    },
+    "evidence/completion-verification.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/completion-verification.json",
+      "sha256": "422f5c0a0a64b5507e307a6e5f0aa57828df43de94fb379430d1ab93ef543695"
+    },
+    "evidence/two-layer-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/two-layer-audit.json",
+      "sha256": "80e76e7e0fa912c33a6be481b7206d844fe8a496666aa72522b0454e1f1f12b1"
+    },
+    "evidence/source-bindings.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/source-bindings.json",
+      "sha256": "43af41d484eb79f6f0170e4ab66ab9a059dbdf765f9c571e453e973650ab9557"
+    },
+    "evidence/source-hashes.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/source-hashes.json",
+      "sha256": "ebf51dffc01da95f7e3bcc2c763b09d32b659e9e8174fb262eda069cf6928da8"
+    },
+    "evidence/fixture-report.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/fixture-report.json",
+      "sha256": "e321caeb2baba6881da636abf1ab6a7a6426a7963a95c08984905f4865fffec3"
+    },
+    "evidence/mock-result.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/mock-result.json",
+      "sha256": "4660780497c1ec28dff0b5783490ee5698af02a0baaa43857f2cbf015a2ae697"
+    },
+    "evidence/encoding-payload-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/encoding-payload-audit.json",
+      "sha256": "9a9494bd421061dec09e64c53ef45da5b1630440c0ab8e9faae374fd46befa01"
+    },
+    "evidence/slot-layout-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/slot-layout-audit.json",
+      "sha256": "b444dc2e815c881d379c9b126a6f3c95dccf87c31b0f2bbf31f9884895bc7ab9"
+    },
+    "evidence/SLOT_UTILIZATION_REPORT.md": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/SLOT_UTILIZATION_REPORT.md",
+      "sha256": "60e58e8e426ae3aa48b8dfedfd18d236e03a013a4627dbece36e6478ee1984bf"
+    },
+    "evidence/FINAL_ANALYSIS.md": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/FINAL_ANALYSIS.md",
+      "sha256": "91fb833060c559ba8b67232e4d488564ccbf6ae8e90f9db513371334ce5f6846"
+    },
+    "evidence/cpu-partition.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/cpu-partition.json",
+      "sha256": "03eda538f4175ba9f17253938f9c5f6faddf63a6ed2fa074f4d7b3a0132d96c0"
+    },
+    "evidence/original-source-manifest.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/source-manifest.json",
+      "sha256": "3aea62d971e08d8ff57d41893e8173dbfb7249dd7fc54e2704a09535fdab7bb5"
+    },
+    "cpu_backend_reference/patch_rns_ntt.py": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/validation/patch_rns_ntt.py",
+      "sha256": "9af6163f35b848e36d22c53e8491374a8c236cfc707311d02e32337674559004"
+    },
+    "cpu_backend_reference/patch_rns_poly.py": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/validation/patch_rns_poly.py",
+      "sha256": "2972338878215dd67dee347295e076536652dcbdf54622c04a846c8ef6ae7cb4"
+    },
+    "cpu_backend_reference/patch_rns_named_ops.py": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/validation/patch_rns_named_ops.py",
+      "sha256": "4c0c42dc0366ee1d74f2601da7599402f43e6311169e0beef2c84abad5c06d8e"
+    },
+    "cpu_backend_reference/patch_rescale_conversion.py": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/validation/patch_rescale_conversion.py",
+      "sha256": "9e4de59ebf514365eb9db54e2806e82dd7aac05f96148b11eea76d04a2b8da10"
+    },
+    "cpu_backend_reference/patch_rotation_moddown.py": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/validation/patch_rotation_moddown.py",
+      "sha256": "4dac4ccdc63d2a677ff6c22e04300a7c6ce93605a811330d7664d47e81da69cc"
+    },
+    "cpu_backend_reference/CMakeLists.txt": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/validation/CMakeLists.txt",
+      "sha256": "74a67b44437b92ac97011b4ed10fef39e3db5b74181294b24af4382526a824ec"
+    },
+    "cpu_backend_reference/bootstrap_parallel_bench.cpp": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/validation/bootstrap_parallel_bench.cpp",
+      "sha256": "cff767e63bd2793bfe99760e16ef7e0eb9c487707e4e740f1108702fdae4e936"
+    },
+    "cpu_backend_reference/evidence/backend-source-manifest.json": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/reports/backend-source-manifest.json",
+      "sha256": "87dfeb8912bdd4d99f1e6822c59010558c3e1c02abf7724505e9408bc7b0aa83"
+    },
+    "cpu_backend_reference/evidence/parallel-performance.json": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/reports/parallel-performance.json",
+      "sha256": "3d3222e9822d62965ba1e39312d0e9d04e8739970558b60a600c6d3a19114244"
+    },
+    "cpu_backend_reference/evidence/source-hashes.json": {
+      "source": "Qwen_Optimization_Rounds/round_070_parallel_rotation_moddown/reports/source-hashes.json",
+      "sha256": "2c7577ec4ce8dfdb9f9a2b6b8017bec817fba2a063b84e394868e4ef296c3493"
+    }
+  }
+}
