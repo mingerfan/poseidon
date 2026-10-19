@@ -13,7 +13,11 @@ def main():
     p.add_argument('--gpu-budget-bytes',type=int,default=31*2**30)
     p.add_argument('--reserve-bytes',type=int,default=6*2**30)
     p.add_argument('--workspace-bytes',type=int,default=1024*2**20)
-    a=p.parse_args();base=a.workspace.resolve();tool=base/'toolchain';profiles=base/'profiles'
+    p.add_argument('--lookahead-groups',type=int,default=128)
+    p.add_argument('--prepare-backend',choices=['cpu','gpu','auto'],default='auto')
+    a=p.parse_args()
+    if a.lookahead_groups<=0:p.error('--lookahead-groups must be positive')
+    base=a.workspace.resolve();tool=base/'toolchain';profiles=base/'profiles'
     source=a.source.resolve() if a.source else base/'qwen3-traced-bsgs/trace_qwen3.mlirbc'
     spec_path=profiles/'operator-spec.json';spec=json.loads(spec_path.read_text());boot=spec['boot_profiles'][0]
     scale=spec['context']['default_scale_log2']
@@ -36,12 +40,12 @@ def main():
           f'--runtime-plan-device-count={count}',f'--runtime-plan-device-counts={count}',
           f'--runtime-plan-operator-spec-path={spec_path}',f'--runtime-plan-communication-profile-path={profiles}/communication-profile.json',
           '--runtime-plan-memory=true','--runtime-plan-memory-reuse=true','--runtime-plan-memory-report=true',
-          '--runtime-plan-plaintext-schedule=waterline','--runtime-plan-prepare-backend=auto',
+          '--runtime-plan-plaintext-schedule=waterline',f'--runtime-plan-prepare-backend={a.prepare_backend}',
           f'--runtime-plan-gpu-budget-bytes={a.gpu_budget_bytes}',f'--runtime-plan-reserve-bytes={a.reserve_bytes}',
           f'--runtime-plan-workspace-bytes-per-op={a.workspace_bytes}',
           '--runtime-plan-host-budget-bytes=68719476736','--runtime-plan-pinned-budget-bytes=1073741824',
           '--runtime-plan-raw-budget-bytes=67108864','--runtime-plan-waterline-fraction=0.5',
-          '--runtime-plan-lookahead-groups=8','--runtime-plan-format=binary','--runtime-plan-bundle-format=pack',
+          f'--runtime-plan-lookahead-groups={a.lookahead_groups}','--runtime-plan-format=binary','--runtime-plan-bundle-format=pack',
           '--runtime-plan-report-io=true',str(source),'-o',str(out/'qwen3.mlir')]
         (out/'command.json').write_text(json.dumps(command,indent=2)+'\n')
         # Each full-model compile can exceed 130 GiB of Host memory. Finish one

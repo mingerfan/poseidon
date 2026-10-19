@@ -71,6 +71,10 @@ OPENBLAS_NUM_THREADS=4 /usr/bin/time -v \
 默认依次编译单卡、全部四卡；单次完整模型编译曾记录峰值 RSS 137225352 KiB，
 因此不同时启动两份编译。任一编译子进程失败，脚本最终返回非零。可用
 `--devices 4` 单独编译全部卡，并用 `--source` 复用同一完整 BSGS bytecode。
+水位计划默认使用 `--prepare-backend auto --lookahead-groups 128`；可显式指定
+`--prepare-backend cpu|gpu|auto` 和正整数前瞻组数。Auto 优先选择预算允许的 GPU
+编码；运行时仍同时遵守显存、Host、pinned 和 raw 字节预算。旧计划中保存的
+窗口和后端不会自动改变，需要重新编译才能采用新的默认窗口。
 
 当前 CKKS 数值配置是 N=16384、50 个 30-bit Q、8 个 30-bit P、默认 scale40。
 编译器从该 profile 取 `--waterline=40`，保持 lazy rescale 的触发时机；明文与
