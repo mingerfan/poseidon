@@ -1,0 +1,144 @@
+{
+  "passed": true,
+  "ckks": false,
+  "num_layers": 2,
+  "tokens": 2,
+  "weight_arrays": 27,
+  "weight_file_bytes": 1208383360,
+  "source_fixture": "/home/gy/qwen-ckks/experiments/qwen24_autoboot_1791946915070543600/fixture",
+  "source_weight_manifest_sha256": "18e5a55ecb264ac930aa21e41dddb95ebeb6f10bec2580105b6fa4eb439efe0b",
+  "subset_weight_manifest_sha256": "1603acf72a522ad0f52a20e3e6b824d720760eabf55049ce0759d72f3d065091",
+  "input_slots_sha256": "b99e6ede350166ec133be843f9333201bd85703d8c59f623d53e97eab9e1e88e",
+  "reference_sha256": "291deab89f1a7326fe8828b96c910593fe62c65ea03afb812e79f9d5189026fd",
+  "bounds": {
+    "layers": [
+      {
+        "layer": 0,
+        "pre_norm_variance": [
+          1.0000010001755513,
+          1.0000010031221065
+        ],
+        "post_norm_variance": [
+          0.9997819641946483,
+          0.9999111873696209
+        ],
+        "gate_abs_max": 0.1941474764732362,
+        "centered_score_abs_max": 0.0038053369387790353
+      },
+      {
+        "layer": 1,
+        "pre_norm_variance": [
+          0.9997754529926615,
+          0.9999117925148484
+        ],
+        "post_norm_variance": [
+          0.9998042378832027,
+          1.000046590741082
+        ],
+        "gate_abs_max": 0.19079028655105087,
+        "centered_score_abs_max": 0.003478400778942837
+      }
+    ],
+    "final_norm_variance": [
+      0.9998012888060211,
+      0.9998012888060211
+    ]
+  },
+  "signature": {
+    "format": "qwen25-2layer-dsl-packed-v2-experimental",
+    "config": {
+      "num_layers": 2,
+      "hidden_size": 896,
+      "intermediate_size": 4864,
+      "query_heads": 14,
+      "kv_heads": 2,
+      "head_dim": 64,
+      "vocab_size": 151936,
+      "max_sequence_length": 512,
+      "rope_theta": 1000000.0,
+      "rms_norm_eps": 1e-06
+    },
+    "mode": "decode-pair",
+    "function": "_hecate_qwen25_2layer",
+    "new_positions": [
+      0,
+      1
+    ],
+    "cached_positions": [],
+    "slots": 32768,
+    "logit_chunk_size": 32768,
+    "logit_ciphertexts": 5,
+    "inputs": [
+      {
+        "name": "embedding.position_0",
+        "prefix_size": 896,
+        "ciphertext": 0
+      },
+      {
+        "name": "embedding.position_1",
+        "prefix_size": 896,
+        "ciphertext": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "logits.0:32768",
+        "prefix_size": 32768,
+        "ciphertext": 0
+      },
+      {
+        "name": "logits.32768:65536",
+        "prefix_size": 32768,
+        "ciphertext": 1
+      },
+      {
+        "name": "logits.65536:98304",
+        "prefix_size": 32768,
+        "ciphertext": 2
+      },
+      {
+        "name": "logits.98304:131072",
+        "prefix_size": 32768,
+        "ciphertext": 3
+      },
+      {
+        "name": "logits.131072:151936",
+        "prefix_size": 20864,
+        "ciphertext": 4
+      },
+      {
+        "name": "layer_0.kv_cache",
+        "prefix_size": 512,
+        "layout": "K0,V0,K1,V1,...",
+        "positions": [
+          0,
+          1
+        ],
+        "ciphertext": 5
+      },
+      {
+        "name": "layer_1.kv_cache",
+        "prefix_size": 512,
+        "layout": "K0,V0,K1,V1,...",
+        "positions": [
+          0,
+          1
+        ],
+        "ciphertext": 6
+      }
+    ],
+    "output_tail": "zero; verify after actual encrypted execution",
+    "embedding": "client plaintext lookup, then encrypt; not encrypted token-ID lookup",
+    "output": "last-new-token raw logits plus both 2 layers of encrypted KV",
+    "bootstrap": "backend must schedule real refresh; not emitted explicitly by this DSL",
+    "native_compiled": false,
+    "full_model_ckks_validated": false,
+    "gpu_validated": false,
+    "optimization": {
+      "attention": "batched heads and visible keys",
+      "logits": "32768-slot chunks",
+      "kv": "one ciphertext per layer",
+      "encoded_plaintexts": "official eager compile; optional validated CPU V3 bounded Encode post-pass"
+    }
+  }
+}

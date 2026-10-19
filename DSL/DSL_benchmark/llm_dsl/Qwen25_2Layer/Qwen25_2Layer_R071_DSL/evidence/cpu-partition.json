@@ -1,0 +1,199 @@
+{
+  "allowed_cpus": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63
+  ],
+  "topology": [
+    {
+      "cpu": 32,
+      "package": 1,
+      "core": 0
+    },
+    {
+      "cpu": 33,
+      "package": 1,
+      "core": 1
+    },
+    {
+      "cpu": 34,
+      "package": 1,
+      "core": 2
+    },
+    {
+      "cpu": 35,
+      "package": 1,
+      "core": 3
+    },
+    {
+      "cpu": 36,
+      "package": 1,
+      "core": 4
+    },
+    {
+      "cpu": 37,
+      "package": 1,
+      "core": 5
+    },
+    {
+      "cpu": 38,
+      "package": 1,
+      "core": 6
+    },
+    {
+      "cpu": 39,
+      "package": 1,
+      "core": 7
+    },
+    {
+      "cpu": 40,
+      "package": 1,
+      "core": 8
+    },
+    {
+      "cpu": 41,
+      "package": 1,
+      "core": 9
+    },
+    {
+      "cpu": 42,
+      "package": 1,
+      "core": 10
+    },
+    {
+      "cpu": 43,
+      "package": 1,
+      "core": 11
+    },
+    {
+      "cpu": 44,
+      "package": 1,
+      "core": 12
+    },
+    {
+      "cpu": 45,
+      "package": 1,
+      "core": 13
+    },
+    {
+      "cpu": 46,
+      "package": 1,
+      "core": 14
+    },
+    {
+      "cpu": 47,
+      "package": 1,
+      "core": 15
+    },
+    {
+      "cpu": 48,
+      "package": 1,
+      "core": 16
+    },
+    {
+      "cpu": 49,
+      "package": 1,
+      "core": 17
+    },
+    {
+      "cpu": 50,
+      "package": 1,
+      "core": 18
+    },
+    {
+      "cpu": 51,
+      "package": 1,
+      "core": 19
+    },
+    {
+      "cpu": 52,
+      "package": 1,
+      "core": 20
+    },
+    {
+      "cpu": 53,
+      "package": 1,
+      "core": 21
+    },
+    {
+      "cpu": 54,
+      "package": 1,
+      "core": 22
+    },
+    {
+      "cpu": 55,
+      "package": 1,
+      "core": 23
+    },
+    {
+      "cpu": 56,
+      "package": 1,
+      "core": 24
+    },
+    {
+      "cpu": 57,
+      "package": 1,
+      "core": 25
+    },
+    {
+      "cpu": 58,
+      "package": 1,
+      "core": 26
+    },
+    {
+      "cpu": 59,
+      "package": 1,
+      "core": 27
+    },
+    {
+      "cpu": 60,
+      "package": 1,
+      "core": 28
+    },
+    {
+      "cpu": 61,
+      "package": 1,
+      "core": 29
+    },
+    {
+      "cpu": 62,
+      "package": 1,
+      "core": 30
+    },
+    {
+      "cpu": 63,
+      "package": 1,
+      "core": 31
+    }
+  ],
+  "scope": "Short benchmark on socket1 physical cores; full064 remains on socket0; old040 not exclusively pinned"
+}

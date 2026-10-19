@@ -1,0 +1,38 @@
+"""Explicit opt-in 2-layer model adapter; --plan does not execute a model."""
+import argparse
+import json
+from pathlib import Path
+import sys
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT/'package'))
+from qwen24 import spec
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--mode',choices=('prefill','decode','decode-pair'),default='decode-pair')
+    p.add_argument('--positions',type=int,nargs='+',default=[0,1])
+    p.add_argument('--cached-positions',type=int,nargs='+',default=[])
+    p.add_argument('--weights',type=Path)
+    p.add_argument('--output-dir',type=Path)
+    p.add_argument('--rms-degree-strategy',choices=('degree10p2_pair13', 'degree10p2_pair13_silu_canonical_fold2', 'degree10p2_pair13_silu_pre_fold2'),default='degree10p2_pair13')
+    p.add_argument('--plan',action='store_true')
+    a=p.parse_args()
+    # combined_runtime imports Hecate; signature can instead be inspected from
+    # the frozen interface.json without requiring a native frontend locally.
+    import hecate as hc
+    import combined_runtime as combined
+    sig=combined.signature(spec.config(),a.mode,a.positions,a.cached_positions)
+    if a.plan:
+        print(json.dumps(sig,indent=2));return
+    if a.weights is None or a.output_dir is None:
+        p.error('--weights and --output-dir required')
+    if a.output_dir.exists():
+        p.error('Use a new output directory')
+    model=combined.load_model(a.weights,rms_degree_strategy=a.rms_degree_strategy)
+    sig['optimization']['rms_degree_strategy']=a.rms_degree_strategy
+    combined.register(hc,model,sig)
+    a.output_dir.mkdir(parents=True)
+    print(hc.save(str(a.output_dir),str(a.output_dir),bytecode=True))
+    (a.output_dir/'signature.json').write_text(json.dumps(sig,indent=2))
+
+if __name__=='__main__':main()
