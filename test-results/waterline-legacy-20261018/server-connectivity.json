@@ -1,0 +1,32 @@
+[
+  {
+    "time": "2026-10-18T12:31:25.977476+00:00",
+    "command": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=10",
+      "188Server",
+      "true"
+    ],
+    "exit_code": 255,
+    "output": "nc: connection failed, SOCKSv5 error: Host unreachable\nConnection closed by UNKNOWN port 65535\n"
+  },
+  {
+    "time": "2026-10-18T12:31:30.986090+00:00",
+    "command": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ProxyCommand=none",
+      "-o",
+      "ConnectTimeout=5",
+      "188Server",
+      "true"
+    ],
+    "exit_code": 255,
+    "output": "Connection timed out during banner exchange\nConnection to 10.208.130.188 port 4000 timed out\n"
+  }
+]

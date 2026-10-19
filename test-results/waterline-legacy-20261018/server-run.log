@@ -1,0 +1,91 @@
+Connection to 10.208.130.188 4000 port [tcp/terabase] succeeded!
+server-mlp1-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=686.701851 online_ms=126.236189
+server-mlp1-r0-unfixed-eager
+eager repeat=0 exit=0 forward_ms=815.5852560000001 online_ms=254.476588
+server-mlp1-r0-unfixed-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=538.0282090000001 online_ms=352.566692
+server-mlp1-r0-current-eager
+eager repeat=0 exit=0 forward_ms=675.003885 online_ms=128.748152
+server-mlp1-r0-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=363.851608 online_ms=172.21121300000001
+server-mlp1-r1-unfixed-eager
+eager repeat=0 exit=0 forward_ms=793.296096 online_ms=240.34135700000002
+server-mlp1-r1-unfixed-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=547.579235 online_ms=366.33014900000006
+server-mlp1-r1-current-eager
+eager repeat=0 exit=0 forward_ms=687.339999 online_ms=128.647393
+server-mlp1-r1-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=372.653251 online_ms=182.76008000000002
+server-mlp1-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=673.4544010000001 online_ms=112.98700900000001
+server-mlp1-r2-unfixed-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=577.436924 online_ms=364.93327800000003
+server-mlp1-r2-current-eager
+eager repeat=0 exit=0 forward_ms=676.458913 online_ms=128.059358
+server-mlp1-r2-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=360.045402 online_ms=167.462302
+server-mlp1-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=674.8787960000001 online_ms=110.41598100000002
+server-mlp1-r2-unfixed-eager
+eager repeat=0 exit=0 forward_ms=800.562625 online_ms=239.256186
+server-mlp2-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=793.698448 online_ms=83.990115
+server-mlp2-r0-unfixed-eager
+eager repeat=0 exit=0 forward_ms=931.6149240000001 online_ms=192.29700000000003
+server-mlp2-r0-unfixed-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=537.669844 online_ms=259.884795
+server-mlp2-r0-current-eager
+eager repeat=0 exit=0 forward_ms=801.011444 online_ms=89.632164
+server-mlp2-r0-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=398.41621900000007 online_ms=118.47916000000001
+server-mlp2-r1-unfixed-eager
+eager repeat=0 exit=0 forward_ms=913.496489 online_ms=203.98424500000002
+server-mlp2-r1-unfixed-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=541.257112 online_ms=257.87081500000005
+server-mlp2-r1-current-eager
+eager repeat=0 exit=0 forward_ms=795.179953 online_ms=88.85182100000002
+server-mlp2-r1-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=409.441396 online_ms=124.01091400000001
+server-mlp2-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=784.7530270000001 online_ms=78.48431700000002
+server-mlp2-r2-unfixed-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=542.0809429999999 online_ms=258.081345
+server-mlp2-r2-current-eager
+eager repeat=0 exit=0 forward_ms=796.770773 online_ms=87.156198
+server-mlp2-r2-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=396.37199 online_ms=113.193724
+server-mlp2-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=789.5388089999999 online_ms=82.20708900000001
+server-mlp2-r2-unfixed-eager
+eager repeat=0 exit=0 forward_ms=917.3590960000001 online_ms=192.856604
+server-pressure-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=100859.060475 online_ms=267.295216
+server-pressure-r0-unfixed-eager
+eager repeat=0 exit=0 forward_ms=103494.134215 online_ms=3416.592314
+server-pressure-r0-unfixed-waterline
+wl-1024MiB-gpu-w512 repeat=0 exit=0 forward_ms=7632.925528 online_ms=7589.5776
+server-pressure-r0-current-eager
+eager repeat=0 exit=0 forward_ms=100706.302482 online_ms=671.128949
+server-pressure-r0-current-waterline
+wl-1024MiB-gpu-w512 repeat=0 exit=0 forward_ms=2226.934965 online_ms=2184.034686
+server-pressure-r1-unfixed-eager
+eager repeat=0 exit=0 forward_ms=103996.112737 online_ms=3443.889022
+server-pressure-r1-unfixed-waterline
+wl-1024MiB-gpu-w512 repeat=0 exit=0 forward_ms=7088.147107 online_ms=7044.566925
+server-pressure-r1-current-eager
+eager repeat=0 exit=0 forward_ms=101202.812486 online_ms=531.570114
+server-pressure-r1-current-waterline
+wl-1024MiB-gpu-w512 repeat=0 exit=0 forward_ms=2315.156144 online_ms=2271.291515
+server-pressure-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=100364.387061 online_ms=267.030294
+server-pressure-r2-unfixed-waterline
+wl-1024MiB-gpu-w512 repeat=0 exit=0 forward_ms=7386.940565 online_ms=7345.266485
+server-pressure-r2-current-eager
+eager repeat=0 exit=0 forward_ms=101245.402094 online_ms=542.065633
+server-pressure-r2-current-waterline
+wl-1024MiB-gpu-w512 repeat=0 exit=0 forward_ms=2450.771079 online_ms=2407.731173
+server-pressure-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=100491.740322 online_ms=267.983759
+server-pressure-r2-unfixed-eager
+eager repeat=0 exit=0 forward_ms=103940.116904 online_ms=3375.488914

@@ -1,0 +1,807 @@
+{
+  "scope": "Exact historical Runtime header and shared current GPU backend; not a whole-repository historical rebuild. Core configurations rotated; supplemental unfixed Waterline configurations measured in a separate rotating batch. Fresh process; identical compute instructions, spec, fixture and raw weights. Each configuration has 3 repeats. Online includes final synchronization/drain, excludes eager preparation; forward includes preparation. Key generation and input encryption are excluded.",
+  "verified_samples": 51,
+  "comparisons": [
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 97.32320100000001,
+        "min": 95.11414200000002,
+        "max": 124.025824,
+        "samples": [
+          124.025824,
+          95.11414200000002,
+          97.32320100000001
+        ]
+      },
+      "forward_ms": {
+        "median": 277.39358100000004,
+        "min": 275.626913,
+        "max": 297.126614,
+        "samples": [
+          297.126614,
+          277.39358100000004,
+          275.626913
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.5334070000000013,
+        "min": 1.4983080000000006,
+        "max": 1.5677079999999999,
+        "samples": [
+          1.5677079999999999,
+          1.5334070000000013,
+          1.4983080000000006
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 205.63478800000001,
+        "min": 205.260826,
+        "max": 206.00968900000004,
+        "samples": [
+          205.63478800000001,
+          205.260826,
+          206.00968900000004
+        ]
+      },
+      "forward_ms": {
+        "median": 384.842244,
+        "min": 378.35469600000005,
+        "max": 388.52837900000003,
+        "samples": [
+          388.52837900000003,
+          384.842244,
+          378.35469600000005
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.5008619999999997,
+        "min": 1.4895669999999996,
+        "max": 1.5742889999999998,
+        "samples": [
+          1.5742889999999998,
+          1.4895669999999996,
+          1.5008619999999997
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 107.97218500000001,
+        "min": 100.52244400000001,
+        "max": 111.84984200000001,
+        "samples": [
+          107.97218500000001,
+          111.84984200000001,
+          100.52244400000001
+        ]
+      },
+      "forward_ms": {
+        "median": 288.993469,
+        "min": 276.98944800000004,
+        "max": 296.095269,
+        "samples": [
+          288.993469,
+          296.095269,
+          276.98944800000004
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.7094639999999997,
+        "min": 1.5023070000000014,
+        "max": 1.7633889999999999,
+        "samples": [
+          1.7633889999999999,
+          1.7094639999999997,
+          1.5023070000000014
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 125.424759,
+        "min": 125.29383800000002,
+        "max": 127.69366900000001,
+        "samples": [
+          125.424759,
+          127.69366900000001,
+          125.29383800000002
+        ]
+      },
+      "forward_ms": {
+        "median": 165.72380900000002,
+        "min": 162.26350500000004,
+        "max": 180.38696099999999,
+        "samples": [
+          180.38696099999999,
+          165.72380900000002,
+          162.26350500000004
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.4102149999999996,
+        "min": 1.3965099999999984,
+        "max": 1.439448000000001,
+        "samples": [
+          1.439448000000001,
+          1.4102149999999996,
+          1.3965099999999984
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1178.400082,
+        "min": 1177.427087,
+        "max": 1206.828361,
+        "samples": [
+          1206.828361,
+          1177.427087,
+          1178.400082
+        ]
+      },
+      "forward_ms": {
+        "median": 6378.700259,
+        "min": 6356.946178,
+        "max": 6497.407901,
+        "samples": [
+          6497.407901,
+          6356.946178,
+          6378.700259
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 10.038576999999997,
+        "min": 9.999952000000008,
+        "max": 10.086819999999987,
+        "samples": [
+          10.038576999999997,
+          10.086819999999987,
+          9.999952000000008
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1175.80199,
+        "min": 1170.777699,
+        "max": 1187.059688,
+        "samples": [
+          1170.777699,
+          1187.059688,
+          1175.80199
+        ]
+      },
+      "forward_ms": {
+        "median": 6428.62972,
+        "min": 6340.899121,
+        "max": 6447.702011,
+        "samples": [
+          6340.899121,
+          6447.702011,
+          6428.62972
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 9.743383999999992,
+        "min": 9.631122999999997,
+        "max": 9.796905,
+        "samples": [
+          9.631122999999997,
+          9.796905,
+          9.743383999999992
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1181.942246,
+        "min": 1170.524208,
+        "max": 1200.157253,
+        "samples": [
+          1200.157253,
+          1181.942246,
+          1170.524208
+        ]
+      },
+      "forward_ms": {
+        "median": 6417.825715,
+        "min": 6312.710272,
+        "max": 6442.155657,
+        "samples": [
+          6312.710272,
+          6417.825715,
+          6442.155657
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 10.132885000000002,
+        "min": 10.055021999999997,
+        "max": 10.217509000000002,
+        "samples": [
+          10.055021999999997,
+          10.217509000000002,
+          10.132885000000002
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1287.684572,
+        "min": 1274.402647,
+        "max": 1303.81035,
+        "samples": [
+          1287.684572,
+          1274.402647,
+          1303.81035
+        ]
+      },
+      "forward_ms": {
+        "median": 1413.186422,
+        "min": 1399.782036,
+        "max": 1429.52485,
+        "samples": [
+          1413.186422,
+          1399.782036,
+          1429.52485
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.157158000000001,
+        "min": 5.140514999999999,
+        "max": 5.198491000000001,
+        "samples": [
+          5.140514999999999,
+          5.157158000000001,
+          5.198491000000001
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "variant": "current",
+      "case": "wl-64MiB-auto-w8",
+      "repeats": 3,
+      "online_ms": {
+        "median": 2691.817425,
+        "min": 2687.224217,
+        "max": 2701.064114,
+        "samples": [
+          2701.064114,
+          2687.224217,
+          2691.817425
+        ]
+      },
+      "forward_ms": {
+        "median": 2817.397555,
+        "min": 2815.318787,
+        "max": 2826.841745,
+        "samples": [
+          2826.841745,
+          2815.318787,
+          2817.397555
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 6.010382999999997,
+        "min": 6.005374999999994,
+        "max": 6.044250000000009,
+        "samples": [
+          6.044250000000009,
+          6.010382999999997,
+          6.005374999999994
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 102.343412,
+        "min": 102.318402,
+        "max": 102.748344,
+        "samples": [
+          102.748344,
+          102.318402,
+          102.343412
+        ]
+      },
+      "forward_ms": {
+        "median": 16030.192625,
+        "min": 15776.307252,
+        "max": 16089.306524,
+        "samples": [
+          16030.192625,
+          16089.306524,
+          15776.307252
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 17.219023000000018,
+        "min": 16.948405999999984,
+        "max": 17.269572999999998,
+        "samples": [
+          17.219023000000018,
+          17.269572999999998,
+          16.948405999999984
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 782.508721,
+        "min": 782.21912,
+        "max": 784.383458,
+        "samples": [
+          782.508721,
+          782.21912,
+          784.383458
+        ]
+      },
+      "forward_ms": {
+        "median": 16743.940816,
+        "min": 16657.847352,
+        "max": 16973.544543,
+        "samples": [
+          16743.940816,
+          16657.847352,
+          16973.544543
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 17.194878000000003,
+        "min": 17.133489,
+        "max": 17.446458000000028,
+        "samples": [
+          17.194878000000003,
+          17.133489,
+          17.446458000000028
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 103.785958,
+        "min": 103.502026,
+        "max": 107.476104,
+        "samples": [
+          103.502026,
+          103.785958,
+          107.476104
+        ]
+      },
+      "forward_ms": {
+        "median": 16013.178882,
+        "min": 15533.64175,
+        "max": 16756.136726,
+        "samples": [
+          15533.64175,
+          16013.178882,
+          16756.136726
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 17.194824000000025,
+        "min": 16.720031000000027,
+        "max": 17.932469000000005,
+        "samples": [
+          16.720031000000027,
+          17.194824000000025,
+          17.932469000000005
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-256MiB-gpu-w512",
+      "repeats": 3,
+      "online_ms": {
+        "median": 430.271195,
+        "min": 429.464942,
+        "max": 435.636358,
+        "samples": [
+          429.464942,
+          435.636358,
+          430.271195
+        ]
+      },
+      "forward_ms": {
+        "median": 435.501317,
+        "min": 434.630084,
+        "max": 440.698159,
+        "samples": [
+          434.630084,
+          440.698159,
+          435.501317
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.515526000000012,
+        "min": 1.5141820000000052,
+        "max": 1.516936000000019,
+        "samples": [
+          1.516936000000019,
+          1.515526000000012,
+          1.5141820000000052
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 247.799234,
+        "min": 243.41024800000002,
+        "max": 277.118619,
+        "samples": [
+          277.118619,
+          247.799234,
+          243.41024800000002
+        ]
+      },
+      "forward_ms": {
+        "median": 283.222664,
+        "min": 279.06094800000005,
+        "max": 312.525759,
+        "samples": [
+          312.525759,
+          283.222664,
+          279.06094800000005
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.393618,
+        "min": 1.3265200000000001,
+        "max": 1.4834340000000004,
+        "samples": [
+          1.393618,
+          1.3265200000000001,
+          1.4834340000000004
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 2452.295534,
+        "min": 2443.295647,
+        "max": 2536.25534,
+        "samples": [
+          2452.295534,
+          2443.295647,
+          2536.25534
+        ]
+      },
+      "forward_ms": {
+        "median": 2575.562925,
+        "min": 2567.052519,
+        "max": 2659.513039,
+        "samples": [
+          2575.562925,
+          2567.052519,
+          2659.513039
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 4.368603999999999,
+        "min": 4.260774000000001,
+        "max": 4.511425999999999,
+        "samples": [
+          4.368603999999999,
+          4.260774000000001,
+          4.511425999999999
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "variant": "unfixed",
+      "case": "wl-64MiB-auto-w8",
+      "repeats": 3,
+      "online_ms": {
+        "median": 3307.559022,
+        "min": 3292.87895,
+        "max": 3321.873763,
+        "samples": [
+          3292.87895,
+          3321.873763,
+          3307.559022
+        ]
+      },
+      "forward_ms": {
+        "median": 3430.450111,
+        "min": 3415.622819,
+        "max": 3445.138883,
+        "samples": [
+          3415.622819,
+          3445.138883,
+          3430.450111
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.870777,
+        "min": 5.855191999999996,
+        "max": 5.888560999999999,
+        "samples": [
+          5.870777,
+          5.888560999999999,
+          5.855191999999996
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-256MiB-gpu-w512",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1181.934766,
+        "min": 1179.437635,
+        "max": 1199.456319,
+        "samples": [
+          1199.456319,
+          1181.934766,
+          1179.437635
+        ]
+      },
+      "forward_ms": {
+        "median": 1187.064377,
+        "min": 1184.530957,
+        "max": 1204.454631,
+        "samples": [
+          1204.454631,
+          1187.064377,
+          1184.530957
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.5260899999999964,
+        "min": 1.5189670000000026,
+        "max": 1.5365110000000035,
+        "samples": [
+          1.5365110000000035,
+          1.5260899999999964,
+          1.5189670000000026
+        ]
+      }
+    }
+  ],
+  "identities": [
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/eager.json",
+      "plan_sha256": "ef83b3e747483fa831793ad1aed1623623f9eeae5e1129e1d93b98bc08bf290d",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/eager.json",
+      "plan_sha256": "ef83b3e747483fa831793ad1aed1623623f9eeae5e1129e1d93b98bc08bf290d",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/eager.json",
+      "plan_sha256": "ef83b3e747483fa831793ad1aed1623623f9eeae5e1129e1d93b98bc08bf290d",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "fd2c0b91f42a2116c73ee3a1f0f9ac02df395d8754b4ab1fa7f4f12ebc8b6f8a",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/wl-64MiB-auto-w8.json",
+      "plan_sha256": "3e2037174ad5f3ece5faa5e2dff7532e7f541f3049171fc5b7d356a4a374d12c",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+      "plan_sha256": "49b8b2a14b6cf17f2435637e2ed0004ab1da3312d5712f84ed2f11090fe12c97",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+      "plan_sha256": "49b8b2a14b6cf17f2435637e2ed0004ab1da3312d5712f84ed2f11090fe12c97",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+      "plan_sha256": "49b8b2a14b6cf17f2435637e2ed0004ab1da3312d5712f84ed2f11090fe12c97",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/wl-256MiB-gpu-w512.json",
+      "plan_sha256": "256ce756f6e3596ec3a3b9c0ea297fee1c484b48d3ba41c34ef10137cdd20d7c",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "fd2c0b91f42a2116c73ee3a1f0f9ac02df395d8754b4ab1fa7f4f12ebc8b6f8a",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/wl-64MiB-auto-w8.json",
+      "plan_sha256": "3e2037174ad5f3ece5faa5e2dff7532e7f541f3049171fc5b7d356a4a374d12c",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/wl-256MiB-gpu-w512.json",
+      "plan_sha256": "256ce756f6e3596ec3a3b9c0ea297fee1c484b48d3ba41c34ef10137cdd20d7c",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    }
+  ]
+}

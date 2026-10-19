@@ -1,0 +1,135 @@
+2026-10-18 内存管理与按需准备性能定位
+
+结论
+按需准备路径确有可复现的执行开销，不能只归因于水位设低或 PCIe 上传。
+本地因果对照中，只改变调度器无进展时的等待语句，就将同一子图完整前向
+从 2.565 秒降到 1.654 秒（减少 35.5%）；GPU kernel 的种类、数量和启动
+配置完全相同。CPU 明文编码也可能成为很大的瓶颈。调高水位不会自动解决
+逐操作完成等待和准备队列造成的空隙。
+
+速度表（单位：秒，均为每配置三次独立新进程的中位数）
+负载 | 预加载后执行 | GPU 按需执行，不同水位的中位数范围
+4060 MLP | 0.207 | 0.244–0.247
+V100 单卡 MLP | 0.247 | 0.355–0.371
+V100 双卡 MLP | 0.193 | 0.262–0.282
+4060 3.125 GiB 明文 | 0.783 | 1.151–1.216
+V100 12.5 GiB 明文 | 3.402 | 6.635–7.661
+4060 Qwen q_proj 合成子图 | 1.200 | 2.453–2.469
+
+表中“预加载后执行”从所有明文已经进入 GPU 后计时；“按需执行”包含
+运行中的明文编码和上传。压力负载及 q_proj 行使用与生产相同的二进制
+manifest 读取路径。二进制对照复用同一数据和密文计算的预加载执行基线；
+初始化清单格式只影响已经排除的准备阶段，没有重测另一套二进制 eager 初始化。
+所有计时最终都等待输出并 drain，包含实际完成，不是仅测提交。
+
+第一次前向与已驻留执行要分开看
+在完全相同的 JSON 清单路径中，4060 压力负载的完整 runtime.run：
+全加载 16.235 秒，GPU 水位 1.312–1.363 秒；V100 对应 116.957 秒和 11.456–12.069 秒。
+全加载先在 CPU 编码并上传所有明文，之后才开始上表中的执行，因此一次
+新进程前向可以更慢。若准备成本已经付过、内容长期驻留，应比较上表。
+完整 runtime.run 包含资源预检、初始化和在线执行；不含客户端输入加密、
+Host 密钥生成和输出解密验证。进程总墙钟另保存在各 summary.json 中。
+本次没有跨请求复用同一份 GPU 权重缓存，也没有清理 OS/驱动缓存，不能把
+“独立新进程”叫作“冷磁盘测试”。首次驱动/库初始化波动保留在 min/max 中。
+
+测了哪些水位
+- MLP：64 / 8 / 1 MiB，窗口固定 128；CPU 与 GPU Prepare 均做三次。
+- 4060 压力：4096 / 256 / 32 / 8 MiB，窗口固定 512；CPU/GPU 各三次。
+- V100 压力：16384 / 1024 / 64 / 8 MiB，窗口固定 512；GPU 各三次，
+  慢速 CPU Prepare 只在高水位做一次控制；预加载基线做三次。
+- q_proj：4096 / 64 / 16 MiB 的 GPU Prepare 各三次，64 MiB 的 CPU/Auto
+  对照另列；二进制版本还重复 GPU/Auto。等待策略对照另固定窗口为 8。
+水位数值是 plaintext 准入上限，不是 RMM 池容量；本地池固定 6 GiB，
+服务器压力池固定 24 GiB。高水位仍受窗口、依赖和准备 lane 调度限制，
+不等于主动将全部权重填满 GPU。
+
+编码、读取与传输
+4060 高水位 CPU Prepare：CPU 编码 15.046 秒，编码后明文 H2D 0.292 秒；
+同一 JSON 数据的 GPU Prepare：GPU 编码事件合计 0.293 秒，原始槽 H2D 0.010 秒。
+V100 12.5 GiB CPU 控制的在线执行为 118.153 秒。
+JSON 压力测试中，V100 权重读取/解码/逐块校验计时约 4.546 秒；换为
+生产二进制清单后，同一高水位该项中位数为 0.583 秒。两种清单的加载器
+校验路径不同，JSON 的逐块 SHA-256 成本不应归到完整 Qwen 的生产路径上。
+CPU/GPU 编码、传输和等待是累积计时，可能重叠，不能直接相加成墙钟占比。
+CPU Prepare 计数器不覆盖 eager 的显式 Encode；后者看 encode_submission_ms。
+
+没有观察到重复换入换出
+四个水位下，每次压力前向的 Prepare 次数固定：本地 1024，服务器 4096。
+GPU-only 的 CPU Prepare 次数均为零；原始数据读取/上传字节数也不随水位增加。
+降低水位改变了获准在途的额度，没有增加重新编码/加载次数；plaintext
+额度在每次结束后均回到零。
+4060 全加载活跃分配峰值 3.884 GiB，二进制按需高水位 0.766 GiB；V100 对应
+13.259 GiB 和 0.766 GiB。这里包含持久参数，指 allocator 活跃分配；
+nvidia-smi 仍会显示已经预留的 6/24 GiB 池，不能将 reserved 当作活跃数据。
+准入日志的 front/plain peak 还包含未实际分配的额度和工作区上界，与实测
+allocator 峰值分别保存。水位结果并非严格单调，V100 三轮还存在进程、时钟和
+调度波动，不能据此宣称某个水位对所有模型最优。
+
+调度等待的因果对照
+同一二进制权重、同一 GPU 后端、同一窗口 8，仅替换 runtime.hpp 的
+std::this_thread::sleep_for(std::chrono::microseconds(100))：
+100 us：完整前向 2.565 秒；10 us：2.010 秒；yield：1.654 秒。
+全部 9 次检查了 8192 个复数槽并通过，GPU Prepare 固定为 1025 次。
+Nsight 两次独立诊断（不计入上述中位数）均执行 92,375 个 kernel，
+名称及 grid/block 配置逐项计数相同。100 us/yield 的 kernel 时间并集为
+1.254 / 1.269 秒；首尾 kernel 窗口为 2.507 / 1.620 秒。
+无 kernel 活动的间隙从 1.254 秒降至 0.350 秒；这类间隙也可能包含复制引擎活动。
+yield 的 cudaEventQuery 调用数从 29,075 增至 977,206；整进程 CPU 消耗
+中位数从 4.331 CPU 秒升至 5.734 CPU 秒（增加 32.4%，包含初始化/验证）。
+因此 yield 是诊断证据，生产实现更适合研究条件通知、较短/自适应等待，
+以及允许同设备多个受预算约束的在途任务，而非直接改成无条件忙轮询。
+等待改动仅存在于 build 目录的私有诊断 runner。
+
+环境与边界
+本地 RTX 4060 Laptop 8 GiB / Ryzen AI 9 HX 370；188Server 为
+V100-SXM2-32GB / Xeon E5-2650 v4。均为 Release，OMP/OPENBLAS 线程数为 1。
+单卡用物理 GPU2，双卡单进程用 GPU2、GPU3；GPU0 的 CUDA 初始化实际报
+uncorrectable ECC，GPU1 有其他账号作业，均未用于有效性能对照。
+本地/服务器关键 Runtime、API、encoder、evaluator、NTT 等七份源文件 SHA-256
+一致；实际 runner 和各输入的 SHA-256 在 summary/provenance/bindings 中。
+MLP 使用现有 784→100→10 模型及同一组输入/权重，N8192/Q21/drop5，无 Boot。
+历史 Q17/drop4 已不满足当前整数 Rescale 精度检查，失败记录保留在 local-mlp；
+本次统一更新参数后再比较，输出相对独立参考的最大误差约 2e-6。
+压力负载为 N16384/Q50/P8、满槽随机权重的非零加权和，分别 1024/4096 份明文，
+GPU 编码后共 3.125/12.5 GiB，整个 eager 负载均实际放入 GPU 并成功运行。
+它不含 Rotate/Rescale/Boot；q_proj 则包含真实 Rotate/MulCP/Rescale 路径，
+但使用既有合成 cyclic 投影、逻辑 scale120，不是预训练完整 Qwen 的 scale40 前向。
+
+本次未完成完整预训练 Qwen 重跑，不能把子图加速率当作全模型保证。
+既有完整计划静态审计记录了 1,419,183 个 Prepare、4,870,497 个密文计算、
+3,420,801 个密文传输及 13,275 个 Host refresh。计划本身的规模、密文通信、
+Host refresh 及完整模型的长期存活对象仍需在健康四卡窗口单独剖析。
+目前已建立的证据支持优先检查调度完成通知/在途并发与 Prepare 后端；
+继续单独增大水位，不足以消除已测到的差距。
+
+验证与文件
+178 次无 profiler 对照及 2 次 profiler 运行均通过数值检查；具体计数见
+verification.json。MLP 检查十维参考输出，压力/q_proj 检查全部 8192 复数槽。
+comparison.json / measurements.txt：所有样本的中位数、min/max、累计计时和额度。
+binary-online.png：生产二进制读取路径的执行对照。
+dispatcher-wait.png：等待策略及相同 kernel 工作量的对照。
+foreground-bindings.json：同一拓扑各变体密文计算、设备、参数和顺序一致的 hash。
+各运行子目录保留命令、原始日志、报告及完整 decoded；大计划/权重和 nsys
+数据库保存在 build-waterline-benchmark-20261018。
+服务器原件：/home/xuming/poseidon-waterline-benchmark-20261018。
+
+复现入口
+本地先构建 build-runtime-gpu-api-release 的 poseidon_runtime_gpu_mlp_e2e、
+poseidon_runtime_gpu_qwen_e2e；服务器使用已核对的
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build。
+用新目录生成，脚本会对已有输出目录直接报错：
+
+python scripts/benchmark_waterline.py generate --kind pressure --count 1024 --output build-waterline-pressure-fresh --operator-spec test-results/waterline-benchmark-20261018/inputs/pressure-operator-spec.json --budgets 4096 256 32 8 --window 512
+python scripts/benchmark_waterline.py run --suite build-waterline-pressure-fresh --output build-waterline-results-fresh --build build-runtime-gpu-api-release --repeats 3
+python scripts/benchmark_waterline.py binary-copy --suite build-waterline-pressure-fresh --output build-waterline-pressure-binary-fresh
+python scripts/benchmark_waterline.py run --suite build-waterline-pressure-binary-fresh --output build-waterline-binary-results-fresh --build build-runtime-gpu-api-release --repeats 3 --cases wl-4096MiB-gpu-w512 wl-256MiB-gpu-w512 wl-32MiB-gpu-w512 wl-8MiB-gpu-w512
+
+服务器负载生成时改 count=4096、capacity-gib=28、reserve-gib=2、
+budgets=16384 1024 64 8；传入服务器后 run 使用 --cuda 2 --pool-mib 24576。
+MLP 生成使用 --kind mlp，单/双卡用 --devices 1/2，水位 64 8 1，window=128。
+q_proj 使用 --kind qproj --source-directory 指向保留的既有 q_proj 计划/fixture/bundle；
+它不是从空 checkout 自动生成的预训练模型。现有完整路径见各 command.json。
+私有等待 runner 的构建脚本：test-results/waterline-20261013/poll-private-runner-sweep.py。
+本次构建输入：build-waterline-benchmark-20261018/qproj/poll-command.json。
+二进制同图重复可用 benchmark_waterline.py poll-existing；Nsight 复现用本目录
+profile-poll.py --output 指定新的输出目录。所有配对结果要求相同 plan/数据与 GPU 后端。

@@ -1,0 +1,110 @@
+[ 35%] Built target ckks_runtime_core
+[ 41%] Building CXX object CMakeFiles/ckks_runtime_test_support.dir/testing/testing.cpp.o
+[ 64%] Built target ckks_runtime_plan_json
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.hpp:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.cpp:1:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In instantiation of ‘void fhegpu::SequentialRuntime<Api>::run_parallel_tasks(std::vector<std::vector<ParallelTask> >&, bool) [with Api = fhegpu::MockVecApi]’:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1336:13:   required from ‘void fhegpu::SequentialRuntime<Api>::execute_device_parallel_phases() [with Api = fhegpu::MockVecApi]’
+ 1336 |             run_parallel_tasks(baseline,true);
+      |             ^~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:225:17:   required from ‘fhegpu::RunArtifact<typename Api::Value> fhegpu::SequentialRuntime<Api>::run(const fhegpu::LoadedRuntimePlan&, const fhegpu::RuntimeResources&, const std::unordered_map<long unsigned int, typename Api::Value>&, fhegpu::DiffMode) [with Api = fhegpu::MockVecApi; typename Api::Value = fhegpu::VecValue]’
+  225 |                 execute_device_parallel_phases();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.cpp:266:106:   required from here
+  266 |                 artifacts[static_cast<std::size_t>(rank)] = runtimes[static_cast<std::size_t>(rank)]->run(
+      |                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+  267 |                     loaded, resources, rank == 0 ? rank0_inputs : empty, diff_mode);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                       
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1394:51: warning: missing initializer for member ‘fhegpu::SequentialRuntime<fhegpu::MockVecApi>::run_parallel_tasks(std::vector<std::vector<ParallelTask, std::allocator<ParallelTask> >, std::allocator<std::vector<ParallelTask, std::allocator<ParallelTask> > > >&, bool)::TaskState::completions’ [-Wmissing-field-initializers]
+ 1394 |             for(auto &t:queues[w]) tasks.push_back({std::move(t),w,false,false,false,ResourceUsage(devices)});
+      |                                    ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 70%] Linking CXX static library libruntime_test_support.a
+[ 88%] Built target ckks_runtime_test_support
+[ 94%] Building CXX object CMakeFiles/runtime_waterline_tests.dir/tests/runtime_waterline_tests.cpp.o
+[100%] Linking CXX executable runtime_waterline_tests
+[100%] Built target runtime_waterline_tests
+[ 35%] Built target ckks_runtime_core
+[ 58%] Built target ckks_runtime_plan_json
+[ 88%] Built target ckks_runtime_test_support
+[ 94%] Building CXX object CMakeFiles/runtime_tests.dir/tests/runtime_tests.cpp.o
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.hpp:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_tests.cpp:3:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In instantiation of ‘void fhegpu::SequentialRuntime<Api>::run_parallel_tasks(std::vector<std::vector<ParallelTask> >&, bool) [with Api = {anonymous}::test_mixed_posted_and_waited_outputs()::MixedApi]’:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1336:13:   required from ‘void fhegpu::SequentialRuntime<Api>::execute_device_parallel_phases() [with Api = {anonymous}::test_mixed_posted_and_waited_outputs()::MixedApi]’
+ 1336 |             run_parallel_tasks(baseline,true);
+      |             ^~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:225:17:   required from ‘fhegpu::RunArtifact<typename Api::Value> fhegpu::SequentialRuntime<Api>::run(const fhegpu::LoadedRuntimePlan&, const fhegpu::RuntimeResources&, const std::unordered_map<long unsigned int, typename Api::Value>&, fhegpu::DiffMode) [with Api = {anonymous}::test_mixed_posted_and_waited_outputs()::MixedApi; typename Api::Value = fhegpu::VecValue]’
+  225 |                 execute_device_parallel_phases();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_tests.cpp:691:36:   required from here
+  691 |         auto artifact = runtime.run({built.plan, "sha256:" + std::string(64, '0')},
+      |                         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  692 |                                     {built.operator_spec, std::nullopt, false},
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  693 |                                     {{0, cipher}, {1, plain}});
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1394:51: warning: missing initializer for member ‘fhegpu::SequentialRuntime<{anonymous}::test_mixed_posted_and_waited_outputs()::MixedApi>::run_parallel_tasks(std::vector<std::vector<ParallelTask, std::allocator<ParallelTask> >, std::allocator<std::vector<ParallelTask, std::allocator<ParallelTask> > > >&, bool)::TaskState::completions’ [-Wmissing-field-initializers]
+ 1394 |             for(auto &t:queues[w]) tasks.push_back({std::move(t),w,false,false,false,ResourceUsage(devices)});
+      |                                    ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In instantiation of ‘void fhegpu::SequentialRuntime<Api>::run_parallel_tasks(std::vector<std::vector<ParallelTask> >&, bool) [with Api = {anonymous}::ThreadCheckedIssuerApi<false>]’:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1336:13:   required from ‘void fhegpu::SequentialRuntime<Api>::execute_device_parallel_phases() [with Api = {anonymous}::ThreadCheckedIssuerApi<false>]’
+ 1336 |             run_parallel_tasks(baseline,true);
+      |             ^~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:225:17:   required from ‘fhegpu::RunArtifact<typename Api::Value> fhegpu::SequentialRuntime<Api>::run(const fhegpu::LoadedRuntimePlan&, const fhegpu::RuntimeResources&, const std::unordered_map<long unsigned int, typename Api::Value>&, fhegpu::DiffMode) [with Api = {anonymous}::ThreadCheckedIssuerApi<false>; typename Api::Value = fhegpu::VecValue]’
+  225 |                 execute_device_parallel_phases();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_tests.cpp:420:46:   required from ‘std::vector<fhegpu::RunArtifact<fhegpu::VecValue> > {anonymous}::run_thread_checked_cluster(const fhegpu::RuntimePlan&, const fhegpu::LoadedOperatorSpec&, const std::unordered_map<long unsigned int, fhegpu::VecValue>&) [with bool Background = false]’
+  420 |                 artifacts[rank] = runtime.run({plan, "sha256:" + std::string(64, '1')},
+      |                                   ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  421 |                     {spec, std::nullopt, false}, rank == 0 ? rank0_inputs :
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  422 |                     std::unordered_map<ValueId, VecValue>{});
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_tests.cpp:438:46:   required from here
+  438 |             run_thread_checked_cluster<false>(built.plan, built.operator_spec, inputs),
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1394:51: warning: missing initializer for member ‘fhegpu::SequentialRuntime<{anonymous}::ThreadCheckedIssuerApi<false> >::run_parallel_tasks(std::vector<std::vector<ParallelTask, std::allocator<ParallelTask> >, std::allocator<std::vector<ParallelTask, std::allocator<ParallelTask> > > >&, bool)::TaskState::completions’ [-Wmissing-field-initializers]
+ 1394 |             for(auto &t:queues[w]) tasks.push_back({std::move(t),w,false,false,false,ResourceUsage(devices)});
+      |                                    ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In instantiation of ‘void fhegpu::SequentialRuntime<Api>::run_parallel_tasks(std::vector<std::vector<ParallelTask> >&, bool) [with Api = {anonymous}::ThreadCheckedIssuerApi<true>]’:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1336:13:   required from ‘void fhegpu::SequentialRuntime<Api>::execute_device_parallel_phases() [with Api = {anonymous}::ThreadCheckedIssuerApi<true>]’
+ 1336 |             run_parallel_tasks(baseline,true);
+      |             ^~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:225:17:   required from ‘fhegpu::RunArtifact<typename Api::Value> fhegpu::SequentialRuntime<Api>::run(const fhegpu::LoadedRuntimePlan&, const fhegpu::RuntimeResources&, const std::unordered_map<long unsigned int, typename Api::Value>&, fhegpu::DiffMode) [with Api = {anonymous}::ThreadCheckedIssuerApi<true>; typename Api::Value = fhegpu::VecValue]’
+  225 |                 execute_device_parallel_phases();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_tests.cpp:420:46:   required from ‘std::vector<fhegpu::RunArtifact<fhegpu::VecValue> > {anonymous}::run_thread_checked_cluster(const fhegpu::RuntimePlan&, const fhegpu::LoadedOperatorSpec&, const std::unordered_map<long unsigned int, fhegpu::VecValue>&) [with bool Background = true]’
+  420 |                 artifacts[rank] = runtime.run({plan, "sha256:" + std::string(64, '1')},
+      |                                   ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  421 |                     {spec, std::nullopt, false}, rank == 0 ? rank0_inputs :
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  422 |                     std::unordered_map<ValueId, VecValue>{});
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_tests.cpp:439:45:   required from here
+  439 |             run_thread_checked_cluster<true>(built.plan, built.operator_spec, inputs)})
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1394:51: warning: missing initializer for member ‘fhegpu::SequentialRuntime<{anonymous}::ThreadCheckedIssuerApi<true> >::run_parallel_tasks(std::vector<std::vector<ParallelTask, std::allocator<ParallelTask> >, std::allocator<std::vector<ParallelTask, std::allocator<ParallelTask> > > >&, bool)::TaskState::completions’ [-Wmissing-field-initializers]
+ 1394 |             for(auto &t:queues[w]) tasks.push_back({std::move(t),w,false,false,false,ResourceUsage(devices)});
+      |                                    ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[100%] Linking CXX executable runtime_tests
+[100%] Built target runtime_tests
+[ 46%] Built target ckks_runtime_core
+[ 84%] Built target ckks_runtime_test_support
+[ 92%] Building CXX object CMakeFiles/runtime_release_tests.dir/tests/runtime_release_tests.cpp.o
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.hpp:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_release_tests.cpp:1:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In instantiation of ‘void fhegpu::SequentialRuntime<Api>::run_parallel_tasks(std::vector<std::vector<ParallelTask> >&, bool) [with Api = {anonymous}::TrackingApi]’:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1336:13:   required from ‘void fhegpu::SequentialRuntime<Api>::execute_device_parallel_phases() [with Api = {anonymous}::TrackingApi]’
+ 1336 |             run_parallel_tasks(baseline,true);
+      |             ^~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:225:17:   required from ‘fhegpu::RunArtifact<typename Api::Value> fhegpu::SequentialRuntime<Api>::run(const fhegpu::LoadedRuntimePlan&, const fhegpu::RuntimeResources&, const std::unordered_map<long unsigned int, typename Api::Value>&, fhegpu::DiffMode) [with Api = {anonymous}::TrackingApi; typename Api::Value = std::shared_ptr<fhegpu::VecValue>]’
+  225 |                 execute_device_parallel_phases();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_release_tests.cpp:188:26:   required from here
+  188 |         try { runtime.run({built.plan, "sha256:test"}, {built.operator_spec, {}, false}, {{1, input}}); }
+      |               ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1394:51: warning: missing initializer for member ‘fhegpu::SequentialRuntime<{anonymous}::TrackingApi>::run_parallel_tasks(std::vector<std::vector<ParallelTask, std::allocator<ParallelTask> >, std::allocator<std::vector<ParallelTask, std::allocator<ParallelTask> > > >&, bool)::TaskState::completions’ [-Wmissing-field-initializers]
+ 1394 |             for(auto &t:queues[w]) tasks.push_back({std::move(t),w,false,false,false,ResourceUsage(devices)});
+      |                                    ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[100%] Linking CXX executable runtime_release_tests
+[100%] Built target runtime_release_tests

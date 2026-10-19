@@ -1,0 +1,62 @@
+[
+  {
+    "variant": "legacy",
+    "command": [
+      "c++",
+      "-O3",
+      "-DNDEBUG",
+      "-std=c++20",
+      "-pthread",
+      "-fopenmp",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/include",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-cause-20261018/cpu-probe.cpp",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_plan_json.a",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_core.a",
+      "-o",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe"
+    ],
+    "header_sha256": "00d028e735578533bf2d561b7cc48ec485ff5ac620dfa8e9e9fedb5e5a1be5f2"
+  },
+  {
+    "variant": "current",
+    "command": [
+      "c++",
+      "-O3",
+      "-DNDEBUG",
+      "-std=c++20",
+      "-pthread",
+      "-fopenmp",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/include",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-cause-20261018/cpu-probe.cpp",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_plan_json.a",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_core.a",
+      "-o",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe"
+    ],
+    "header_sha256": "db09ac6ee97827a3f70c060e31a25a94b071dbe3f69858a69a68e81e9e5e00b2"
+  },
+  {
+    "variant": "prepared_direct",
+    "command": [
+      "c++",
+      "-O3",
+      "-DNDEBUG",
+      "-std=c++20",
+      "-pthread",
+      "-fopenmp",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/prepared_direct/include",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime",
+      "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-cause-20261018/cpu-probe.cpp",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_plan_json.a",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_core.a",
+      "-o",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/prepared_direct/probe"
+    ],
+    "header_sha256": "a3cd6145902fd034ed08eb049efbd52be5b28707b65d4885d63c7ca3515ab5a0"
+  }
+]

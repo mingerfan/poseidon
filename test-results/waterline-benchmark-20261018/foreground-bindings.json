@@ -1,0 +1,119 @@
+{
+  "mlp1-q21": {
+    "ciphertext_work_sha256": "28d6e68fe543fb0adc6001813ea73c1653be09fe61a797c11ceb2bb3a63f225f",
+    "all_variants_identical": true,
+    "plan_sha256": {
+      "eager": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "wl-64MiB-cpu-w128": "5ec930dc4fef7d41296feb3f03b412ea3bda272cb7a567c1ffbc61ed425351a8",
+      "wl-64MiB-gpu-w128": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "wl-8MiB-cpu-w128": "7e057f9772c877e3eee8fdfb11c7f55dde60605f96aac80aad4fbe324572c8af",
+      "wl-8MiB-gpu-w128": "156fe59f59d3ab7d4bcf84984f2050aaf46096533991640595c9c5179583ca05",
+      "wl-1MiB-cpu-w128": "897a67765e38fe4eb207f530ad320e2857d984e9b6d28d4cd36c617f9bab461f",
+      "wl-1MiB-gpu-w128": "a02af05b997b0e032f6f0011e6543dfed53d4c6d1d8109dc504d58f4e02b6416"
+    },
+    "plaintext_resident_bytes": 40337408,
+    "compute_calls": 375
+  },
+  "mlp2-q21-v5": {
+    "ciphertext_work_sha256": "00967ed675ee37d1b300a1f6dfbc36b1415377ef354ea4f933998707842f5752",
+    "all_variants_identical": true,
+    "plan_sha256": {
+      "eager": "7753c8414ccc3ba8124b4d7df7d735abdba05041bd0121910a9f72da5a81f024",
+      "wl-64MiB-cpu-w128": "158b0a6536ad68719e4d76a660d9531807d2f880a72a674c3c610892543b6d2a",
+      "wl-64MiB-gpu-w128": "4b1a30da121824575a1a427e15d80ecb6d00f30e539f38cb5546fb3f421196d3",
+      "wl-8MiB-cpu-w128": "a06a9c9020d681fd11aacbdae8353cacc3d78a3e7062d551db45d423e2eae8b2",
+      "wl-8MiB-gpu-w128": "bf16b991e4e1aa565c4dcb16322e72eb04b442ba1b7c0fe9a433f61c66c35285",
+      "wl-1MiB-cpu-w128": "8365f551d4c1cfa1335f9d78500521b666c00a002504f7879da5c3d53764581c",
+      "wl-1MiB-gpu-w128": "c71f9a11849702723a6cee4e3be45266219b39212fff0d5981c5cae300232b90"
+    },
+    "plaintext_resident_bytes": 40337408,
+    "compute_calls": 375
+  },
+  "pressure-local": {
+    "ciphertext_work_sha256": "2b1a192ef5da5433ea4e3a73da4007fa8aea44860d4f2e9410b7915c5f9f51f4",
+    "all_variants_identical": true,
+    "plan_sha256": {
+      "eager": "4934975a8072805aaeea1131ccad36a567b8b15302e785447b09556fa89cecb4",
+      "wl-4096MiB-cpu-w512": "93d3c20873aa4614d07d1234a60730d1f918de2a397ddfcbca1b16ec801c6272",
+      "wl-4096MiB-gpu-w512": "1552fdfdddd26be87e68180f6c0186194870b377a2229074ac68559b89a2ebcb",
+      "wl-256MiB-cpu-w512": "670408edbc0ae62384ae814600cd76bbadaf2b855d6219e99848de05475015fd",
+      "wl-256MiB-gpu-w512": "14a8b4602bdda1eaed4ff174d5f44df4123ce37c89e438ee2cbea5beaee8d40d",
+      "wl-32MiB-cpu-w512": "3ab17d1061c0ca88618084f8e28c77c755bd690299fc53c5b5986d5d5a2b7023",
+      "wl-32MiB-gpu-w512": "54cd580e4c8f03637b52812dda7e4f7de02d8208047a78f296da5a4d2793a285",
+      "wl-8MiB-cpu-w512": "87c2a6c6950728666688fb6326132b9e3c3d5539578771dbeb1935120f75b7f3",
+      "wl-8MiB-gpu-w512": "e20a67501fcf1cde77a84e3d3269941352c81be1429bad099e9098be8be7056f"
+    },
+    "plaintext_resident_bytes": 3355443200,
+    "compute_calls": 2047
+  },
+  "pressure-v100": {
+    "ciphertext_work_sha256": "53cb889fcb947b6cdc988d858e3fa78fcff66eab2f205e182f5c27909434eedf",
+    "all_variants_identical": true,
+    "plan_sha256": {
+      "eager": "1fa2a0ac9fb1f94f5f96533f00b4da3b5291f8d600d25910d9d8f2ba05f7524b",
+      "wl-16384MiB-cpu-w512": "5614e1f1188c272680e47f9375286bbb572fcbcab5a4b7dde591b97416f39d0b",
+      "wl-16384MiB-gpu-w512": "55d6e551182a665766dd74e7cc246d532a167e596db737be5b323cfdb397f6a2",
+      "wl-1024MiB-cpu-w512": "0d3d266d1ff9b323b7624358454db8f505223fb4a36bd3106100ae6596d99561",
+      "wl-1024MiB-gpu-w512": "0ef1e22c401755bfa3e7691a0faa9102f05bb1cd153d7dd4415c142162a94c88",
+      "wl-64MiB-cpu-w512": "117cb0393672457d2652a354712080eb9e58332c30231eab3dde518b9f78ac4b",
+      "wl-64MiB-gpu-w512": "bfe2d4cd1f572fa1b01d3e28774dce83114432b69992a9b5641c11ba0f46bd5f",
+      "wl-8MiB-cpu-w512": "799f5f1deb529d246a4d1a7a75b3e7daef7fc6b0074df2c6caa7bdf6cb550209",
+      "wl-8MiB-gpu-w512": "1fc4b645a40705729d755a751f1821418d48829871d9aeb419cdcce27ecd389d"
+    },
+    "plaintext_resident_bytes": 13421772800,
+    "compute_calls": 8191
+  },
+  "qproj": {
+    "ciphertext_work_sha256": "c007b1ccfc362b644a44309b36cdc24956070e09bb14bb3db38262879565e8a2",
+    "all_variants_identical": true,
+    "plan_sha256": {
+      "eager": "79433d1779f1951b2a7e3de4c271ba741abd69757c8d32a7898651b2936b09ea",
+      "wl-4096MiB-cpu-w128": "df5905fdb7c6df4dbcff8e65edb3a5e1a34d8e87c88055618b7accc4f9bc9a1f",
+      "wl-4096MiB-gpu-w128": "84738df2df082340408024146d296552ed097cf9b76677111c1b3566416abf16",
+      "wl-4096MiB-auto-w128": "6b77fcbde68a16a73a12aa7aa5ba74877ed321670c3bbd28b2c9ad988688c0c5",
+      "wl-64MiB-cpu-w128": "9aeadf817b072e6027255b0a595bf35fb7001fa579027d466224515ea6f39b6c",
+      "wl-64MiB-gpu-w128": "55501b6261e290cce7c3e758696c1e3460428c3ee36080eb9a9069bd788a3fcc",
+      "wl-64MiB-auto-w128": "fdfbc58e8c7fb70cdd57db575a56cdf2bb32715704a419be8c358ee0f2596908",
+      "wl-16MiB-cpu-w128": "08b49ca937b6dc83138c3e034dd991906e8e5cecd1107baf455219b6b80f0ffd",
+      "wl-16MiB-gpu-w128": "ae7a18377a66bb195810bb193be046c6c140f8cf687d9cca4bb32b7169d97d33",
+      "wl-16MiB-auto-w128": "b94a2dde4e486ead74aec21c26fa49cf4e193648fce0a64e012beb63f6ef746b"
+    },
+    "plaintext_resident_bytes": 1343815680,
+    "compute_calls": 3158
+  },
+  "pressure-local-binary": {
+    "ciphertext_work_sha256": "2b1a192ef5da5433ea4e3a73da4007fa8aea44860d4f2e9410b7915c5f9f51f4",
+    "all_variants_identical": true,
+    "plan_sha256": {
+      "eager": "49b8b2a14b6cf17f2435637e2ed0004ab1da3312d5712f84ed2f11090fe12c97",
+      "wl-4096MiB-cpu-w512": "ed7087b84afae0576ca0aed7ec05652a7a8d46ce68dba99e643dba6e88e0428c",
+      "wl-4096MiB-gpu-w512": "9ed61d523e4d7a58460e2ed75d13f532841aa796798e44aba8f5f12e7ff80465",
+      "wl-256MiB-cpu-w512": "a4f13e5351e697c21ad1bb5931225b1b02d7d8b60eb95c03c02dbccadd911d5b",
+      "wl-256MiB-gpu-w512": "256ce756f6e3596ec3a3b9c0ea297fee1c484b48d3ba41c34ef10137cdd20d7c",
+      "wl-32MiB-cpu-w512": "4a36435ef6076ba9f18c5d407baf65b5ea19ac9ca4c42406c1ce4aa6f14bff34",
+      "wl-32MiB-gpu-w512": "664bd89869179f5bb5c55f65af974ea3997a7929a4819c51860198191b878e01",
+      "wl-8MiB-cpu-w512": "5a236108070ef3ef712ca755492cd4a0eabb5fc2640b3eaf07b851d71554c4bc",
+      "wl-8MiB-gpu-w512": "7a77763f9f6b9a8be862448fc6e3943751fc7edbfd7fd3e9c35c92f580133b26"
+    },
+    "plaintext_resident_bytes": 3355443200,
+    "compute_calls": 2047
+  },
+  "qproj-binary": {
+    "ciphertext_work_sha256": "c007b1ccfc362b644a44309b36cdc24956070e09bb14bb3db38262879565e8a2",
+    "all_variants_identical": true,
+    "plan_sha256": {
+      "eager": "ef83b3e747483fa831793ad1aed1623623f9eeae5e1129e1d93b98bc08bf290d",
+      "wl-4096MiB-cpu-w128": "10d22d1e56f36800ab811f4a71f552c994e259220acd712f50d91e22b2654b10",
+      "wl-4096MiB-gpu-w128": "dcaba579a23973cca4e535029edfe5e173d6e3144246e25739444a288c18f741",
+      "wl-4096MiB-auto-w128": "ba3fa0556cee3e1a47832fdc424840a6052920be06fe92ebba26071419bf689d",
+      "wl-64MiB-cpu-w128": "4e517c20f631bfddeb219a967ea81653ae1ddaba17f8126452a9dcd4d81d650c",
+      "wl-64MiB-gpu-w128": "fd2c0b91f42a2116c73ee3a1f0f9ac02df395d8754b4ab1fa7f4f12ebc8b6f8a",
+      "wl-64MiB-auto-w128": "90e6608c9f0913c3024fcf4c9a38652116f08a2217a160258ba4ffdc3694756d",
+      "wl-16MiB-cpu-w128": "857717f0a2dc62ea83b4b0cca74d5d8b4bf91c967b3f81d1f6f0a487900d712d",
+      "wl-16MiB-gpu-w128": "50d6175341849f82eab31492d75d0b069aae5bfa90e0d74be916184d1676ba88",
+      "wl-16MiB-auto-w128": "5df17533548eb61c5af137efb493a624007878be29183ee4e8d1b35af0d0c7dc"
+    },
+    "plaintext_resident_bytes": 1343815680,
+    "compute_calls": 3158
+  }
+}

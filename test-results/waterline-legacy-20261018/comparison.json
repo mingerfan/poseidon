@@ -1,0 +1,1668 @@
+{
+  "scope": "Historical Runtime headers with the same current GPU backend on each host; not a full historical repository rebuild. Three fresh-process samples per configuration, except the final RTX 4060 MLP comparison uses a separate seven-repeat run. The initial three-repeat MLP samples are retained as pilot evidence and excluded from final MLP medians. Eager online excludes upfront preparation; Waterline online includes runtime preparation. All timings include final synchronization/drain. Keys and input encryption are excluded.",
+  "verified_samples_total": 131,
+  "timing_samples_used": 116,
+  "excluded_pilot_samples": 15,
+  "comparisons": [
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 7,
+      "online_ms": {
+        "median": 95.17313200000001,
+        "min": 93.396714,
+        "max": 125.31567900000002,
+        "samples": [
+          125.31567900000002,
+          93.396714,
+          96.662598,
+          95.379022,
+          94.338908,
+          93.95539600000001,
+          95.17313200000001
+        ]
+      },
+      "forward_ms": {
+        "median": 271.04402300000004,
+        "min": 267.291597,
+        "max": 298.19666800000005,
+        "samples": [
+          298.19666800000005,
+          267.291597,
+          273.99565600000005,
+          268.72579300000007,
+          268.932554,
+          271.04402300000004,
+          271.92835800000006
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.4930020000000006,
+        "min": 1.4817970000000003,
+        "max": 1.6776609999999987,
+        "samples": [
+          1.539354,
+          1.4936299999999996,
+          1.4866879999999982,
+          1.4823900000000023,
+          1.4817970000000003,
+          1.6776609999999987,
+          1.4930020000000006
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 7,
+      "online_ms": {
+        "median": 204.493412,
+        "min": 202.99261600000003,
+        "max": 206.09358000000003,
+        "samples": [
+          203.89655000000002,
+          202.99261600000003,
+          206.09358000000003,
+          204.493412,
+          204.834125,
+          205.21565600000002,
+          204.353212
+        ]
+      },
+      "forward_ms": {
+        "median": 379.83133200000003,
+        "min": 376.15730700000006,
+        "max": 388.08362700000004,
+        "samples": [
+          376.62820800000003,
+          376.86357000000004,
+          388.08362700000004,
+          376.15730700000006,
+          384.374412,
+          383.93796900000007,
+          379.83133200000003
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.491970000000002,
+        "min": 1.471699,
+        "max": 1.6860740000000005,
+        "samples": [
+          1.6795409999999995,
+          1.471699,
+          1.6860740000000005,
+          1.482762000000001,
+          1.4900579999999994,
+          1.491970000000002,
+          1.5544529999999988
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 7,
+      "online_ms": {
+        "median": 243.462587,
+        "min": 240.86831600000002,
+        "max": 245.43191400000003,
+        "samples": [
+          243.462587,
+          241.86965,
+          240.86831600000002,
+          244.32306,
+          245.43191400000003,
+          243.381956,
+          244.128489
+        ]
+      },
+      "forward_ms": {
+        "median": 278.89529699999997,
+        "min": 275.563392,
+        "max": 280.762284,
+        "samples": [
+          278.578705,
+          276.702267,
+          275.563392,
+          278.89529699999997,
+          279.96286100000003,
+          279.259748,
+          280.762284
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.3542249999999996,
+        "min": 1.319922,
+        "max": 1.5085270000000017,
+        "samples": [
+          1.319922,
+          1.5085270000000017,
+          1.381401000000002,
+          1.3542249999999996,
+          1.3650570000000002,
+          1.3453460000000028,
+          1.3399250000000027
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 7,
+      "online_ms": {
+        "median": 98.499655,
+        "min": 95.759804,
+        "max": 125.655031,
+        "samples": [
+          99.02449800000001,
+          96.647197,
+          95.759804,
+          125.655031,
+          98.499655,
+          99.04791800000001,
+          95.828794
+        ]
+      },
+      "forward_ms": {
+        "median": 279.061817,
+        "min": 266.986426,
+        "max": 365.356202,
+        "samples": [
+          280.673714,
+          271.714126,
+          266.986426,
+          365.356202,
+          274.343117,
+          280.754634,
+          279.061817
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.509294999999999,
+        "min": 1.4859970000000047,
+        "max": 2.094643999999999,
+        "samples": [
+          1.509294999999999,
+          1.4881340000000005,
+          1.6633790000000017,
+          2.094643999999999,
+          1.5076179999999955,
+          1.5171259999999975,
+          1.4859970000000047
+        ]
+      }
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 7,
+      "online_ms": {
+        "median": 124.213585,
+        "min": 122.952729,
+        "max": 135.14746900000003,
+        "samples": [
+          124.213585,
+          127.057745,
+          122.952729,
+          135.14746900000003,
+          123.615572,
+          123.935373,
+          130.32338900000002
+        ]
+      },
+      "forward_ms": {
+        "median": 159.43548299999998,
+        "min": 157.492334,
+        "max": 170.70699000000002,
+        "samples": [
+          159.43548299999998,
+          161.532321,
+          157.492334,
+          170.70699000000002,
+          158.615719,
+          158.90572,
+          165.04666600000002
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.3933810000000015,
+        "min": 1.3695169999999988,
+        "max": 1.5685860000000016,
+        "samples": [
+          1.3695169999999988,
+          1.3933810000000015,
+          1.3721309999999995,
+          1.4250400000000027,
+          1.5685860000000016,
+          1.4061710000000005,
+          1.3880910000000064
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1178.400082,
+        "min": 1177.427087,
+        "max": 1206.828361,
+        "samples": [
+          1206.828361,
+          1177.427087,
+          1178.400082
+        ]
+      },
+      "forward_ms": {
+        "median": 6378.700259,
+        "min": 6356.946178,
+        "max": 6497.407901,
+        "samples": [
+          6497.407901,
+          6356.946178,
+          6378.700259
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 10.038576999999997,
+        "min": 9.999952000000008,
+        "max": 10.086819999999987,
+        "samples": [
+          10.038576999999997,
+          10.086819999999987,
+          9.999952000000008
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1175.80199,
+        "min": 1170.777699,
+        "max": 1187.059688,
+        "samples": [
+          1170.777699,
+          1187.059688,
+          1175.80199
+        ]
+      },
+      "forward_ms": {
+        "median": 6428.62972,
+        "min": 6340.899121,
+        "max": 6447.702011,
+        "samples": [
+          6340.899121,
+          6447.702011,
+          6428.62972
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 9.743383999999992,
+        "min": 9.631122999999997,
+        "max": 9.796905,
+        "samples": [
+          9.631122999999997,
+          9.796905,
+          9.743383999999992
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 2452.295534,
+        "min": 2443.295647,
+        "max": 2536.25534,
+        "samples": [
+          2452.295534,
+          2443.295647,
+          2536.25534
+        ]
+      },
+      "forward_ms": {
+        "median": 2575.562925,
+        "min": 2567.052519,
+        "max": 2659.513039,
+        "samples": [
+          2575.562925,
+          2567.052519,
+          2659.513039
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 4.368603999999999,
+        "min": 4.260774000000001,
+        "max": 4.511425999999999,
+        "samples": [
+          4.368603999999999,
+          4.260774000000001,
+          4.511425999999999
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1181.942246,
+        "min": 1170.524208,
+        "max": 1200.157253,
+        "samples": [
+          1200.157253,
+          1181.942246,
+          1170.524208
+        ]
+      },
+      "forward_ms": {
+        "median": 6417.825715,
+        "min": 6312.710272,
+        "max": 6442.155657,
+        "samples": [
+          6312.710272,
+          6417.825715,
+          6442.155657
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 10.132885000000002,
+        "min": 10.055021999999997,
+        "max": 10.217509000000002,
+        "samples": [
+          10.055021999999997,
+          10.217509000000002,
+          10.132885000000002
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1287.684572,
+        "min": 1274.402647,
+        "max": 1303.81035,
+        "samples": [
+          1287.684572,
+          1274.402647,
+          1303.81035
+        ]
+      },
+      "forward_ms": {
+        "median": 1413.186422,
+        "min": 1399.782036,
+        "max": 1429.52485,
+        "samples": [
+          1413.186422,
+          1399.782036,
+          1429.52485
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.157158000000001,
+        "min": 5.140514999999999,
+        "max": 5.198491000000001,
+        "samples": [
+          5.140514999999999,
+          5.157158000000001,
+          5.198491000000001
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "variant": "unfixed",
+      "case": "wl-64MiB-auto-w8",
+      "repeats": 3,
+      "online_ms": {
+        "median": 3307.559022,
+        "min": 3292.87895,
+        "max": 3321.873763,
+        "samples": [
+          3292.87895,
+          3321.873763,
+          3307.559022
+        ]
+      },
+      "forward_ms": {
+        "median": 3430.450111,
+        "min": 3415.622819,
+        "max": 3445.138883,
+        "samples": [
+          3415.622819,
+          3445.138883,
+          3430.450111
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.870777,
+        "min": 5.855191999999996,
+        "max": 5.888560999999999,
+        "samples": [
+          5.870777,
+          5.888560999999999,
+          5.855191999999996
+        ]
+      }
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "variant": "current",
+      "case": "wl-64MiB-auto-w8",
+      "repeats": 3,
+      "online_ms": {
+        "median": 2691.817425,
+        "min": 2687.224217,
+        "max": 2701.064114,
+        "samples": [
+          2701.064114,
+          2687.224217,
+          2691.817425
+        ]
+      },
+      "forward_ms": {
+        "median": 2817.397555,
+        "min": 2815.318787,
+        "max": 2826.841745,
+        "samples": [
+          2826.841745,
+          2815.318787,
+          2817.397555
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 6.010382999999997,
+        "min": 6.005374999999994,
+        "max": 6.044250000000009,
+        "samples": [
+          6.044250000000009,
+          6.010382999999997,
+          6.005374999999994
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 102.343412,
+        "min": 102.318402,
+        "max": 102.748344,
+        "samples": [
+          102.748344,
+          102.318402,
+          102.343412
+        ]
+      },
+      "forward_ms": {
+        "median": 16030.192625,
+        "min": 15776.307252,
+        "max": 16089.306524,
+        "samples": [
+          16030.192625,
+          16089.306524,
+          15776.307252
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 17.219023000000018,
+        "min": 16.948405999999984,
+        "max": 17.269572999999998,
+        "samples": [
+          17.219023000000018,
+          17.269572999999998,
+          16.948405999999984
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 782.508721,
+        "min": 782.21912,
+        "max": 784.383458,
+        "samples": [
+          782.508721,
+          782.21912,
+          784.383458
+        ]
+      },
+      "forward_ms": {
+        "median": 16743.940816,
+        "min": 16657.847352,
+        "max": 16973.544543,
+        "samples": [
+          16743.940816,
+          16657.847352,
+          16973.544543
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 17.194878000000003,
+        "min": 17.133489,
+        "max": 17.446458000000028,
+        "samples": [
+          17.194878000000003,
+          17.133489,
+          17.446458000000028
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-256MiB-gpu-w512",
+      "repeats": 3,
+      "online_ms": {
+        "median": 1181.934766,
+        "min": 1179.437635,
+        "max": 1199.456319,
+        "samples": [
+          1199.456319,
+          1181.934766,
+          1179.437635
+        ]
+      },
+      "forward_ms": {
+        "median": 1187.064377,
+        "min": 1184.530957,
+        "max": 1204.454631,
+        "samples": [
+          1204.454631,
+          1187.064377,
+          1184.530957
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.5260899999999964,
+        "min": 1.5189670000000026,
+        "max": 1.5365110000000035,
+        "samples": [
+          1.5365110000000035,
+          1.5260899999999964,
+          1.5189670000000026
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 103.785958,
+        "min": 103.502026,
+        "max": 107.476104,
+        "samples": [
+          103.502026,
+          103.785958,
+          107.476104
+        ]
+      },
+      "forward_ms": {
+        "median": 16013.178882,
+        "min": 15533.64175,
+        "max": 16756.136726,
+        "samples": [
+          15533.64175,
+          16013.178882,
+          16756.136726
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 17.194824000000025,
+        "min": 16.720031000000027,
+        "max": 17.932469000000005,
+        "samples": [
+          16.720031000000027,
+          17.194824000000025,
+          17.932469000000005
+        ]
+      }
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-256MiB-gpu-w512",
+      "repeats": 3,
+      "online_ms": {
+        "median": 430.271195,
+        "min": 429.464942,
+        "max": 435.636358,
+        "samples": [
+          429.464942,
+          435.636358,
+          430.271195
+        ]
+      },
+      "forward_ms": {
+        "median": 435.501317,
+        "min": 434.630084,
+        "max": 440.698159,
+        "samples": [
+          434.630084,
+          440.698159,
+          435.501317
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 1.515526000000012,
+        "min": 1.5141820000000052,
+        "max": 1.516936000000019,
+        "samples": [
+          1.516936000000019,
+          1.515526000000012,
+          1.5141820000000052
+        ]
+      }
+    },
+    {
+      "group": "server-mlp1",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 112.98700900000001,
+        "min": 110.41598100000002,
+        "max": 126.236189,
+        "samples": [
+          126.236189,
+          112.98700900000001,
+          110.41598100000002
+        ]
+      },
+      "forward_ms": {
+        "median": 674.8787960000001,
+        "min": 673.4544010000001,
+        "max": 686.701851,
+        "samples": [
+          686.701851,
+          673.4544010000001,
+          674.8787960000001
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 4.853291000000002,
+        "min": 4.841875,
+        "max": 4.9152600000000035,
+        "samples": [
+          4.841875,
+          4.853291000000002,
+          4.9152600000000035
+        ]
+      }
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 240.34135700000002,
+        "min": 239.256186,
+        "max": 254.476588,
+        "samples": [
+          254.476588,
+          240.34135700000002,
+          239.256186
+        ]
+      },
+      "forward_ms": {
+        "median": 800.562625,
+        "min": 793.296096,
+        "max": 815.5852560000001,
+        "samples": [
+          815.5852560000001,
+          793.296096,
+          800.562625
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 4.874030000000012,
+        "min": 4.843003000000003,
+        "max": 4.905983000000003,
+        "samples": [
+          4.905983000000003,
+          4.843003000000003,
+          4.874030000000012
+        ]
+      }
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 364.93327800000003,
+        "min": 352.566692,
+        "max": 366.33014900000006,
+        "samples": [
+          352.566692,
+          366.33014900000006,
+          364.93327800000003
+        ]
+      },
+      "forward_ms": {
+        "median": 547.579235,
+        "min": 538.0282090000001,
+        "max": 577.436924,
+        "samples": [
+          538.0282090000001,
+          547.579235,
+          577.436924
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 4.599678999999998,
+        "min": 4.595831,
+        "max": 4.841160999999996,
+        "samples": [
+          4.599678999999998,
+          4.595831,
+          4.841160999999996
+        ]
+      }
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 128.647393,
+        "min": 128.059358,
+        "max": 128.748152,
+        "samples": [
+          128.748152,
+          128.647393,
+          128.059358
+        ]
+      },
+      "forward_ms": {
+        "median": 676.458913,
+        "min": 675.003885,
+        "max": 687.339999,
+        "samples": [
+          675.003885,
+          687.339999,
+          676.458913
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 4.823532999999998,
+        "min": 4.812515000000001,
+        "max": 4.8483249999999956,
+        "samples": [
+          4.823532999999998,
+          4.8483249999999956,
+          4.812515000000001
+        ]
+      }
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 172.21121300000001,
+        "min": 167.462302,
+        "max": 182.76008000000002,
+        "samples": [
+          172.21121300000001,
+          182.76008000000002,
+          167.462302
+        ]
+      },
+      "forward_ms": {
+        "median": 363.851608,
+        "min": 360.045402,
+        "max": 372.653251,
+        "samples": [
+          363.851608,
+          372.653251,
+          360.045402
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 4.625529,
+        "min": 4.606240999999997,
+        "max": 4.648409000000001,
+        "samples": [
+          4.625529,
+          4.648409000000001,
+          4.606240999999997
+        ]
+      }
+    },
+    {
+      "group": "server-mlp2",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 82.20708900000001,
+        "min": 78.48431700000002,
+        "max": 83.990115,
+        "samples": [
+          83.990115,
+          78.48431700000002,
+          82.20708900000001
+        ]
+      },
+      "forward_ms": {
+        "median": 789.5388089999999,
+        "min": 784.7530270000001,
+        "max": 793.698448,
+        "samples": [
+          793.698448,
+          784.7530270000001,
+          789.5388089999999
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.320993999999985,
+        "min": 5.303861000000005,
+        "max": 5.339608999999996,
+        "samples": [
+          5.339608999999996,
+          5.303861000000005,
+          5.320993999999985
+        ]
+      }
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 192.856604,
+        "min": 192.29700000000003,
+        "max": 203.98424500000002,
+        "samples": [
+          192.29700000000003,
+          203.98424500000002,
+          192.856604
+        ]
+      },
+      "forward_ms": {
+        "median": 917.3590960000001,
+        "min": 913.496489,
+        "max": 931.6149240000001,
+        "samples": [
+          931.6149240000001,
+          913.496489,
+          917.3590960000001
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.386967000000013,
+        "min": 5.378740999999998,
+        "max": 5.406551000000007,
+        "samples": [
+          5.406551000000007,
+          5.378740999999998,
+          5.386967000000013
+        ]
+      }
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 258.081345,
+        "min": 257.87081500000005,
+        "max": 259.884795,
+        "samples": [
+          259.884795,
+          257.87081500000005,
+          258.081345
+        ]
+      },
+      "forward_ms": {
+        "median": 541.257112,
+        "min": 537.669844,
+        "max": 542.0809429999999,
+        "samples": [
+          537.669844,
+          541.257112,
+          542.0809429999999
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.0840359999999905,
+        "min": 5.082638000000017,
+        "max": 5.126304999999995,
+        "samples": [
+          5.126304999999995,
+          5.0840359999999905,
+          5.082638000000017
+        ]
+      }
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 88.85182100000002,
+        "min": 87.156198,
+        "max": 89.632164,
+        "samples": [
+          89.632164,
+          88.85182100000002,
+          87.156198
+        ]
+      },
+      "forward_ms": {
+        "median": 796.770773,
+        "min": 795.179953,
+        "max": 801.011444,
+        "samples": [
+          801.011444,
+          795.179953,
+          796.770773
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.314414000000006,
+        "min": 5.301779999999994,
+        "max": 5.402157999999993,
+        "samples": [
+          5.402157999999993,
+          5.314414000000006,
+          5.301779999999994
+        ]
+      }
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-64MiB-gpu-w128",
+      "repeats": 3,
+      "online_ms": {
+        "median": 118.47916000000001,
+        "min": 113.193724,
+        "max": 124.01091400000001,
+        "samples": [
+          118.47916000000001,
+          124.01091400000001,
+          113.193724
+        ]
+      },
+      "forward_ms": {
+        "median": 398.41621900000007,
+        "min": 396.37199,
+        "max": 409.441396,
+        "samples": [
+          398.41621900000007,
+          409.441396,
+          396.37199
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 5.007137000000014,
+        "min": 4.989670000000004,
+        "max": 5.110846000000016,
+        "samples": [
+          5.110846000000016,
+          5.007137000000014,
+          4.989670000000004
+        ]
+      }
+    },
+    {
+      "group": "server-pressure",
+      "name": "legacy-eager",
+      "variant": "legacy",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 267.295216,
+        "min": 267.030294,
+        "max": 267.983759,
+        "samples": [
+          267.295216,
+          267.030294,
+          267.983759
+        ]
+      },
+      "forward_ms": {
+        "median": 100491.740322,
+        "min": 100364.387061,
+        "max": 100859.060475,
+        "samples": [
+          100859.060475,
+          100364.387061,
+          100491.740322
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 106.61077499999985,
+        "min": 106.5687079999999,
+        "max": 106.96620400000003,
+        "samples": [
+          106.96620400000003,
+          106.5687079999999,
+          106.61077499999985
+        ]
+      }
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-eager",
+      "variant": "unfixed",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 3416.592314,
+        "min": 3375.488914,
+        "max": 3443.889022,
+        "samples": [
+          3416.592314,
+          3443.889022,
+          3375.488914
+        ]
+      },
+      "forward_ms": {
+        "median": 103940.116904,
+        "min": 103494.134215,
+        "max": 103996.112737,
+        "samples": [
+          103494.134215,
+          103996.112737,
+          103940.116904
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 107.70728600000002,
+        "min": 107.17905900000004,
+        "max": 107.72549299999991,
+        "samples": [
+          107.17905900000004,
+          107.70728600000002,
+          107.72549299999991
+        ]
+      }
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-waterline",
+      "variant": "unfixed",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeats": 3,
+      "online_ms": {
+        "median": 7345.266485,
+        "min": 7044.566925,
+        "max": 7589.5776,
+        "samples": [
+          7589.5776,
+          7044.566925,
+          7345.266485
+        ]
+      },
+      "forward_ms": {
+        "median": 7386.940565,
+        "min": 7088.147107,
+        "max": 7632.925528,
+        "samples": [
+          7632.925528,
+          7088.147107,
+          7386.940565
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 11.394356000000073,
+        "min": 10.904598000000107,
+        "max": 11.413609999999949,
+        "samples": [
+          11.413609999999949,
+          10.904598000000107,
+          11.394356000000073
+        ]
+      }
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-eager",
+      "variant": "current",
+      "case": "eager",
+      "repeats": 3,
+      "online_ms": {
+        "median": 542.065633,
+        "min": 531.570114,
+        "max": 671.128949,
+        "samples": [
+          671.128949,
+          531.570114,
+          542.065633
+        ]
+      },
+      "forward_ms": {
+        "median": 101202.812486,
+        "min": 100706.302482,
+        "max": 101245.402094,
+        "samples": [
+          100706.302482,
+          101202.812486,
+          101245.402094
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 107.35825999999994,
+        "min": 107.01195700000001,
+        "max": 107.577418,
+        "samples": [
+          107.01195700000001,
+          107.35825999999994,
+          107.577418
+        ]
+      }
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-waterline",
+      "variant": "current",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeats": 3,
+      "online_ms": {
+        "median": 2271.291515,
+        "min": 2184.034686,
+        "max": 2407.731173,
+        "samples": [
+          2184.034686,
+          2271.291515,
+          2407.731173
+        ]
+      },
+      "forward_ms": {
+        "median": 2315.156144,
+        "min": 2226.934965,
+        "max": 2450.771079,
+        "samples": [
+          2226.934965,
+          2315.156144,
+          2450.771079
+        ]
+      },
+      "process_cpu_seconds": {
+        "median": 9.558858000000043,
+        "min": 9.497257999999988,
+        "max": 9.754210999999913,
+        "samples": [
+          9.497257999999988,
+          9.558858000000043,
+          9.754210999999913
+        ]
+      }
+    }
+  ],
+  "identities": [
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/eager.json",
+      "plan_sha256": "ef83b3e747483fa831793ad1aed1623623f9eeae5e1129e1d93b98bc08bf290d",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/eager.json",
+      "plan_sha256": "ef83b3e747483fa831793ad1aed1623623f9eeae5e1129e1d93b98bc08bf290d",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/eager.json",
+      "plan_sha256": "ef83b3e747483fa831793ad1aed1623623f9eeae5e1129e1d93b98bc08bf290d",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "fd2c0b91f42a2116c73ee3a1f0f9ac02df395d8754b4ab1fa7f4f12ebc8b6f8a",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/wl-64MiB-auto-w8.json",
+      "plan_sha256": "3e2037174ad5f3ece5faa5e2dff7532e7f541f3049171fc5b7d356a4a374d12c",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+      "plan_sha256": "49b8b2a14b6cf17f2435637e2ed0004ab1da3312d5712f84ed2f11090fe12c97",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+      "plan_sha256": "49b8b2a14b6cf17f2435637e2ed0004ab1da3312d5712f84ed2f11090fe12c97",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+      "plan_sha256": "49b8b2a14b6cf17f2435637e2ed0004ab1da3312d5712f84ed2f11090fe12c97",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/wl-256MiB-gpu-w512.json",
+      "plan_sha256": "256ce756f6e3596ec3a3b9c0ea297fee1c484b48d3ba41c34ef10137cdd20d7c",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "fd2c0b91f42a2116c73ee3a1f0f9ac02df395d8754b4ab1fa7f4f12ebc8b6f8a",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/wl-64MiB-auto-w8.json",
+      "plan_sha256": "3e2037174ad5f3ece5faa5e2dff7532e7f541f3049171fc5b7d356a4a374d12c",
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/wl-256MiB-gpu-w512.json",
+      "plan_sha256": "256ce756f6e3596ec3a3b9c0ea297fee1c484b48d3ba41c34ef10137cdd20d7c",
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "plan_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "server-mlp1",
+      "name": "legacy-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-waterline",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21/eager.json",
+      "plan_sha256": "e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-waterline",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "685ddcfddb42e5d1bee1139d5aea723109a6037c150444bf4969a3af456e75c2",
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    {
+      "group": "server-mlp2",
+      "name": "legacy-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/eager.json",
+      "plan_sha256": "7753c8414ccc3ba8124b4d7df7d735abdba05041bd0121910a9f72da5a81f024",
+      "compute_sha256": "af8a1548e4098b0b4875977891878d5b4d086d8bd179616552447992d863dca9",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "b2dd7d10df30b819a96410b9fdc901de799707c966f8e86089d539a0a2b13d7f"
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/eager.json",
+      "plan_sha256": "7753c8414ccc3ba8124b4d7df7d735abdba05041bd0121910a9f72da5a81f024",
+      "compute_sha256": "af8a1548e4098b0b4875977891878d5b4d086d8bd179616552447992d863dca9",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "b2dd7d10df30b819a96410b9fdc901de799707c966f8e86089d539a0a2b13d7f"
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-waterline",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "4b1a30da121824575a1a427e15d80ecb6d00f30e539f38cb5546fb3f421196d3",
+      "compute_sha256": "af8a1548e4098b0b4875977891878d5b4d086d8bd179616552447992d863dca9",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "b2dd7d10df30b819a96410b9fdc901de799707c966f8e86089d539a0a2b13d7f"
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/eager.json",
+      "plan_sha256": "7753c8414ccc3ba8124b4d7df7d735abdba05041bd0121910a9f72da5a81f024",
+      "compute_sha256": "af8a1548e4098b0b4875977891878d5b4d086d8bd179616552447992d863dca9",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "b2dd7d10df30b819a96410b9fdc901de799707c966f8e86089d539a0a2b13d7f"
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-waterline",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/wl-64MiB-gpu-w128.json",
+      "plan_sha256": "4b1a30da121824575a1a427e15d80ecb6d00f30e539f38cb5546fb3f421196d3",
+      "compute_sha256": "af8a1548e4098b0b4875977891878d5b4d086d8bd179616552447992d863dca9",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "b2dd7d10df30b819a96410b9fdc901de799707c966f8e86089d539a0a2b13d7f"
+    },
+    {
+      "group": "server-pressure",
+      "name": "legacy-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/eager.json",
+      "plan_sha256": "804ae6935ecd3d875b607483360859918868c64fcd649cc1830a271e2f4406c9",
+      "compute_sha256": "1cec333ca7ceb4031dc2e9b768c4b22dff506a6db733598cda3caa8bb4dc8f71",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "0c39c717ec29bf239e804691ac69b7739ea54fa7e578905efcb5c4b2ff5e2956",
+      "weights_sha256": "5ed0bd4080376596b81dbc40bd8a3738bead3de4032a59d503071b46b65b776c"
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/eager.json",
+      "plan_sha256": "804ae6935ecd3d875b607483360859918868c64fcd649cc1830a271e2f4406c9",
+      "compute_sha256": "1cec333ca7ceb4031dc2e9b768c4b22dff506a6db733598cda3caa8bb4dc8f71",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "0c39c717ec29bf239e804691ac69b7739ea54fa7e578905efcb5c4b2ff5e2956",
+      "weights_sha256": "5ed0bd4080376596b81dbc40bd8a3738bead3de4032a59d503071b46b65b776c"
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-waterline",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/wl-1024MiB-gpu-w512.json",
+      "plan_sha256": "30ee90a7ee75bcb3e23cb4cd1b68c996d54fae6d8b77363b310d5dfb72ceb9cb",
+      "compute_sha256": "1cec333ca7ceb4031dc2e9b768c4b22dff506a6db733598cda3caa8bb4dc8f71",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "0c39c717ec29bf239e804691ac69b7739ea54fa7e578905efcb5c4b2ff5e2956",
+      "weights_sha256": "5ed0bd4080376596b81dbc40bd8a3738bead3de4032a59d503071b46b65b776c"
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-eager",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/eager.json",
+      "plan_sha256": "804ae6935ecd3d875b607483360859918868c64fcd649cc1830a271e2f4406c9",
+      "compute_sha256": "1cec333ca7ceb4031dc2e9b768c4b22dff506a6db733598cda3caa8bb4dc8f71",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "0c39c717ec29bf239e804691ac69b7739ea54fa7e578905efcb5c4b2ff5e2956",
+      "weights_sha256": "5ed0bd4080376596b81dbc40bd8a3738bead3de4032a59d503071b46b65b776c"
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-waterline",
+      "plan_path": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/wl-1024MiB-gpu-w512.json",
+      "plan_sha256": "30ee90a7ee75bcb3e23cb4cd1b68c996d54fae6d8b77363b310d5dfb72ceb9cb",
+      "compute_sha256": "1cec333ca7ceb4031dc2e9b768c4b22dff506a6db733598cda3caa8bb4dc8f71",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "0c39c717ec29bf239e804691ac69b7739ea54fa7e578905efcb5c4b2ff5e2956",
+      "weights_sha256": "5ed0bd4080376596b81dbc40bd8a3738bead3de4032a59d503071b46b65b776c"
+    }
+  ],
+  "ratios": {
+    "local-mlp": {
+      "current_eager_over_legacy_eager": 1.0349523329756554,
+      "unfixed_eager_over_legacy_eager": 2.1486464478231104,
+      "current_waterline_over_legacy_eager": 1.3051328919174372,
+      "current_waterline_over_current_eager": 1.2610560412622764,
+      "waterline_speedup": 1.960031883791133
+    },
+    "local-qproj": {
+      "current_eager_over_legacy_eager": 1.0030059094989099,
+      "unfixed_eager_over_legacy_eager": 0.9977952377637392,
+      "current_waterline_over_legacy_eager": 1.092739716900325,
+      "current_waterline_over_current_eager": 1.0894648840566106,
+      "waterline_speedup": 1.9044225482884796
+    },
+    "local-pressure": {
+      "current_eager_over_legacy_eager": 1.0140951525047845,
+      "unfixed_eager_over_legacy_eager": 7.645911990895907,
+      "current_waterline_over_legacy_eager": 4.204190446572174,
+      "current_waterline_over_current_eager": 4.145755392073367,
+      "waterline_speedup": 2.746953037374487
+    },
+    "server-mlp1": {
+      "current_eager_over_legacy_eager": 1.1386034035116372,
+      "unfixed_eager_over_legacy_eager": 2.1271592117284914,
+      "current_waterline_over_legacy_eager": 1.5241682607953626,
+      "current_waterline_over_current_eager": 1.3386296370576278,
+      "waterline_speedup": 2.119102883271602
+    },
+    "server-mlp2": {
+      "current_eager_over_legacy_eager": 1.0808291849380534,
+      "unfixed_eager_over_legacy_eager": 2.3459850767857744,
+      "current_waterline_over_legacy_eager": 1.4412280186688036,
+      "current_waterline_over_current_eager": 1.333446615573585,
+      "waterline_speedup": 2.17828472956763
+    },
+    "server-pressure": {
+      "current_eager_over_legacy_eager": 2.027966086007316,
+      "unfixed_eager_over_legacy_eager": 12.782093017332567,
+      "current_waterline_over_legacy_eager": 8.497314501131962,
+      "current_waterline_over_current_eager": 4.190067358503799,
+      "waterline_speedup": 3.2339602541067918
+    }
+  }
+}

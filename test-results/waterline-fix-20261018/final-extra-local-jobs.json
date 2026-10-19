@@ -1,0 +1,43 @@
+[
+  {
+    "name": "local-qproj-w8-before",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-w8",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-qproj-w8-before",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/before",
+      "--repeats",
+      "3"
+    ]
+  },
+  {
+    "name": "local-qproj-w8-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-w8",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-qproj-w8-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3"
+    ]
+  },
+  {
+    "name": "nsys-final",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/profile.py",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/nsys-final"
+    ]
+  }
+]

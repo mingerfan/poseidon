@@ -1,0 +1,1055 @@
+{
+  "verified_unprofiled_samples": 131,
+  "samples": [
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": false
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-initial-comparison",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 3,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 4,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 5,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 6,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 3,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 4,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 5,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 6,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 3,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 4,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 5,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 6,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 3,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 4,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 5,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 6,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 3,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 4,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 5,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 6,
+      "passed": true,
+      "analysis": "local-mlp-repeated-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp1",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-mlp2",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    },
+    {
+      "group": "server-pressure",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true,
+      "analysis": "server-analysis",
+      "used_in_final_medians": true
+    }
+  ],
+  "profiled_validation_samples": 3,
+  "profile_evidence": "nsys-mlp.json"
+}

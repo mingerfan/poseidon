@@ -1,0 +1,28 @@
+[  5%] Built target ckks_runtime_core
+[ 70%] Built target poseidon_shared
+[ 72%] Built target ckks_runtime_plan_json
+[ 92%] Built target poseidon_gpu
+[ 98%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_qwen_e2e.dir/__/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_qwen_e2e
+[100%] Built target poseidon_runtime_gpu_qwen_e2e
+[  5%] Built target ckks_runtime_core
+[  8%] Built target ckks_runtime_plan_json
+[ 71%] Built target poseidon_shared
+[ 91%] Built target poseidon_gpu
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_mlp_e2e.dir/__/tests/runtime_api/poseidon_gpu_mlp_e2e_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_mlp_e2e
+[100%] Built target poseidon_runtime_gpu_mlp_e2e
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 92%] Built target poseidon_gpu
+[ 98%] Built target poseidon_runtime_gpu_api
+[100%] Built target poseidon_runtime_gpu_api_tests
+[  5%] Built target ckks_runtime_core
+[ 71%] Built target poseidon_shared
+[ 91%] Built target poseidon_gpu
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_prepare_oom_tests.dir/__/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_prepare_oom_tests
+[100%] Built target poseidon_runtime_gpu_prepare_oom_tests

@@ -1,0 +1,194 @@
+[
+  {
+    "name": "server-mlp1-before",
+    "command": [
+      "python",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21",
+      "--output",
+      "/home/xuming/poseidon-waterline-fix-20261018/server-mlp1-before",
+      "--build",
+      "/home/xuming/poseidon-waterline-fix-20261018/before",
+      "--cuda",
+      "2",
+      "--pool-mib",
+      "6144",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager",
+      "wl-64MiB-gpu-w128",
+      "wl-8MiB-gpu-w128",
+      "wl-1MiB-gpu-w128",
+      "wl-8MiB-cpu-w128"
+    ]
+  },
+  {
+    "name": "server-mlp2-before",
+    "command": [
+      "python",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5",
+      "--output",
+      "/home/xuming/poseidon-waterline-fix-20261018/server-mlp2-before",
+      "--build",
+      "/home/xuming/poseidon-waterline-fix-20261018/before",
+      "--cuda",
+      "2,3",
+      "--pool-mib",
+      "6144",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager",
+      "wl-64MiB-gpu-w128",
+      "wl-8MiB-gpu-w128",
+      "wl-1MiB-gpu-w128",
+      "wl-8MiB-cpu-w128"
+    ]
+  },
+  {
+    "name": "server-pressure-eager-before",
+    "command": [
+      "python",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary",
+      "--output",
+      "/home/xuming/poseidon-waterline-fix-20261018/server-pressure-eager-before",
+      "--build",
+      "/home/xuming/poseidon-waterline-fix-20261018/before",
+      "--cuda",
+      "2",
+      "--pool-mib",
+      "24576",
+      "--repeats",
+      "1",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager"
+    ]
+  },
+  {
+    "name": "server-mlp1-after",
+    "command": [
+      "python",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21",
+      "--output",
+      "/home/xuming/poseidon-waterline-fix-20261018/server-mlp1-after",
+      "--build",
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build",
+      "--cuda",
+      "2",
+      "--pool-mib",
+      "6144",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager",
+      "wl-64MiB-gpu-w128",
+      "wl-8MiB-gpu-w128",
+      "wl-1MiB-gpu-w128",
+      "wl-8MiB-cpu-w128"
+    ]
+  },
+  {
+    "name": "server-mlp2-after",
+    "command": [
+      "python",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5",
+      "--output",
+      "/home/xuming/poseidon-waterline-fix-20261018/server-mlp2-after",
+      "--build",
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build",
+      "--cuda",
+      "2,3",
+      "--pool-mib",
+      "6144",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager",
+      "wl-64MiB-gpu-w128",
+      "wl-8MiB-gpu-w128",
+      "wl-1MiB-gpu-w128",
+      "wl-8MiB-cpu-w128"
+    ]
+  },
+  {
+    "name": "server-pressure-eager-after",
+    "command": [
+      "python",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary",
+      "--output",
+      "/home/xuming/poseidon-waterline-fix-20261018/server-pressure-eager-after",
+      "--build",
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build",
+      "--cuda",
+      "2",
+      "--pool-mib",
+      "24576",
+      "--repeats",
+      "1",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager"
+    ]
+  },
+  {
+    "name": "server-gpu-api-tests-final",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build",
+      "-R",
+      "^poseidon_runtime_gpu_api_tests$",
+      "--output-on-failure"
+    ],
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "2,3",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  {
+    "name": "server-gpu-oom-tests-final",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build",
+      "-R",
+      "^poseidon_runtime_gpu_prepare_oom_tests$",
+      "--output-on-failure"
+    ],
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "2",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  }
+]

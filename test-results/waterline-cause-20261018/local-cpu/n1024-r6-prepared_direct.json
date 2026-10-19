@@ -1,0 +1,21 @@
+{
+  "variant": "prepared_direct",
+  "repeat": 6,
+  "command": [
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/prepared_direct/probe",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+    "1024"
+  ],
+  "compute_api_ms": 0.10574,
+  "compute_calls": 2047,
+  "execution_tasks": 5118,
+  "involuntary_context_switches": 0,
+  "main_collections": 1025,
+  "online_ms": 4.115484,
+  "passed": true,
+  "process_cpu_seconds": 0.006224,
+  "voluntary_context_switches": 1,
+  "weights": 1024,
+  "worker_collections": 3071
+}

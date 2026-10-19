@@ -1,0 +1,13 @@
+{
+  "local": {
+    "third_party/ckks-runtime/runtime/runtime.hpp": "db09ac6ee97827a3f70c060e31a25a94b071dbe3f69858a69a68e81e9e5e00b2",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "1562684cdc5fdf774f6f8880e7c847b15cb2f7d1b5bb4c5edb608c9d1abdff86",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "bc2bd55702c85d5a37f453e3c4668fcf719aef8eac8c66f0a896d4628c6587cb"
+  },
+  "server": {
+    "third_party/ckks-runtime/runtime/runtime.hpp": "db09ac6ee97827a3f70c060e31a25a94b071dbe3f69858a69a68e81e9e5e00b2",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "1562684cdc5fdf774f6f8880e7c847b15cb2f7d1b5bb4c5edb608c9d1abdff86",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "bc2bd55702c85d5a37f453e3c4668fcf719aef8eac8c66f0a896d4628c6587cb"
+  },
+  "match": true
+}

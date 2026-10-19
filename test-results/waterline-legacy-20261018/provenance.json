@@ -1,0 +1,33 @@
+{
+  "scope": "Exact Runtime header comparison, not whole historical repository. Current GPU backend, verifier, loader, runner, compiler flags and numerical fixes are shared by all variants.",
+  "root_head": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+  "legacy_runtime_revision": "f7e9115eaec22e44c8e12ff9f53528e421691688",
+  "unfixed_runtime_revision": "a7245b81e647e55974eb295da9f86d4066f390a3",
+  "headers": {
+    "legacy": "00d028e735578533bf2d561b7cc48ec485ff5ac620dfa8e9e9fedb5e5a1be5f2",
+    "unfixed": "6a4d5d4352c46665576bead5da6aa1fa31bd645e1eabeba118046d3d981a3c3c",
+    "current": "db09ac6ee97827a3f70c060e31a25a94b071dbe3f69858a69a68e81e9e5e00b2"
+  },
+  "history": [
+    {
+      "commit": "f7e9115eaec22e44c8e12ff9f53528e421691688",
+      "author_date": "2026-10-11T11:23:27+08:00",
+      "subject": "feat(io): load production binary plans with parallel construction"
+    },
+    {
+      "commit": "04819dd72916ac0fe647805046a4f972c2d54b40",
+      "author_date": "2026-10-13T15:11:20+08:00",
+      "subject": "Admit rolling complete Waterline groups in the existing device executor"
+    },
+    {
+      "commit": "f41b9307e3b8452e5a5eadba91dd7946676d775d",
+      "author_date": "2026-10-13T19:28:18+08:00",
+      "subject": "Wait 100 microseconds between executor progress polls"
+    },
+    {
+      "commit": "a7245b81e647e55974eb295da9f86d4066f390a3",
+      "author_date": "2026-10-17T11:38:05+08:00",
+      "subject": "Consolidate Runtime overview and maintained protocol references"
+    }
+  ]
+}

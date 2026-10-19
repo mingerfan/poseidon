@@ -1,0 +1,366 @@
+{
+  "scope": "CPU scalar-token control using the real Runtime. No CUDA, CKKS encoding, weight I/O or GPU event queries. Prepared-direct retains new metadata construction but bypasses per-task dispatcher handoffs. These are not FHE/GPU latency measurements.",
+  "verified_samples": 63,
+  "comparisons": [
+    {
+      "weights": 1024,
+      "variant": "legacy",
+      "repeats": 7,
+      "online_ms": {
+        "median": 1.84082,
+        "min": 1.715961,
+        "max": 2.046152
+      },
+      "compute_api_ms": {
+        "median": 0.089401,
+        "min": 0.07857,
+        "max": 0.11011
+      },
+      "main_collections": {
+        "median": 1025,
+        "min": 1025,
+        "max": 1025
+      },
+      "worker_collections": {
+        "median": 3071,
+        "min": 3071,
+        "max": 3071
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "involuntary_context_switches": {
+        "median": 1,
+        "min": 0,
+        "max": 2
+      },
+      "process_cpu_seconds": {
+        "median": 0.003839999999999999,
+        "min": 0.0035340000000000024,
+        "max": 0.004728000000000001
+      }
+    },
+    {
+      "weights": 1024,
+      "variant": "current",
+      "repeats": 7,
+      "online_ms": {
+        "median": 20.31472,
+        "min": 18.171578,
+        "max": 25.035959
+      },
+      "compute_api_ms": {
+        "median": 0.143701,
+        "min": 0.129191,
+        "max": 0.188
+      },
+      "main_collections": {
+        "median": 11262,
+        "min": 11262,
+        "max": 11264
+      },
+      "worker_collections": {
+        "median": 3071,
+        "min": 3071,
+        "max": 3071
+      },
+      "voluntary_context_switches": {
+        "median": 10255,
+        "min": 10246,
+        "max": 10272
+      },
+      "involuntary_context_switches": {
+        "median": 1,
+        "min": 0,
+        "max": 14
+      },
+      "process_cpu_seconds": {
+        "median": 0.022234999999999994,
+        "min": 0.020715999999999995,
+        "max": 0.026635
+      }
+    },
+    {
+      "weights": 1024,
+      "variant": "prepared_direct",
+      "repeats": 7,
+      "online_ms": {
+        "median": 4.020674,
+        "min": 3.828643,
+        "max": 4.136145
+      },
+      "compute_api_ms": {
+        "median": 0.09796,
+        "min": 0.089721,
+        "max": 0.11801
+      },
+      "main_collections": {
+        "median": 1025,
+        "min": 1025,
+        "max": 1025
+      },
+      "worker_collections": {
+        "median": 3071,
+        "min": 3071,
+        "max": 3071
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "involuntary_context_switches": {
+        "median": 0,
+        "min": 0,
+        "max": 4
+      },
+      "process_cpu_seconds": {
+        "median": 0.005901999999999998,
+        "min": 0.005777,
+        "max": 0.006224
+      }
+    },
+    {
+      "weights": 4096,
+      "variant": "legacy",
+      "repeats": 7,
+      "online_ms": {
+        "median": 7.229653,
+        "min": 6.241747,
+        "max": 7.814256
+      },
+      "compute_api_ms": {
+        "median": 0.372481,
+        "min": 0.257322,
+        "max": 0.421032
+      },
+      "main_collections": {
+        "median": 4097,
+        "min": 4097,
+        "max": 4097
+      },
+      "worker_collections": {
+        "median": 12287,
+        "min": 12287,
+        "max": 12287
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "involuntary_context_switches": {
+        "median": 1,
+        "min": 0,
+        "max": 5
+      },
+      "process_cpu_seconds": {
+        "median": 0.014189000000000002,
+        "min": 0.012765999999999998,
+        "max": 0.017207000000000004
+      }
+    },
+    {
+      "weights": 4096,
+      "variant": "current",
+      "repeats": 7,
+      "online_ms": {
+        "median": 91.226861,
+        "min": 63.321015,
+        "max": 110.088043
+      },
+      "compute_api_ms": {
+        "median": 0.635756,
+        "min": 0.459116,
+        "max": 1.066289
+      },
+      "main_collections": {
+        "median": 45054,
+        "min": 45052,
+        "max": 45054
+      },
+      "worker_collections": {
+        "median": 12287,
+        "min": 12287,
+        "max": 12287
+      },
+      "voluntary_context_switches": {
+        "median": 40982,
+        "min": 40961,
+        "max": 41009
+      },
+      "involuntary_context_switches": {
+        "median": 3,
+        "min": 1,
+        "max": 9
+      },
+      "process_cpu_seconds": {
+        "median": 0.104059,
+        "min": 0.07243800000000002,
+        "max": 0.121128
+      }
+    },
+    {
+      "weights": 4096,
+      "variant": "prepared_direct",
+      "repeats": 7,
+      "online_ms": {
+        "median": 14.826438,
+        "min": 14.086493,
+        "max": 15.847584
+      },
+      "compute_api_ms": {
+        "median": 0.487302,
+        "min": 0.371021,
+        "max": 0.527282
+      },
+      "main_collections": {
+        "median": 4097,
+        "min": 4097,
+        "max": 4097
+      },
+      "worker_collections": {
+        "median": 12287,
+        "min": 12287,
+        "max": 12287
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "involuntary_context_switches": {
+        "median": 1,
+        "min": 0,
+        "max": 3
+      },
+      "process_cpu_seconds": {
+        "median": 0.022338000000000004,
+        "min": 0.020446999999999993,
+        "max": 0.023101
+      }
+    },
+    {
+      "weights": 16384,
+      "variant": "legacy",
+      "repeats": 7,
+      "online_ms": {
+        "median": 36.130533,
+        "min": 32.348462,
+        "max": 38.602188
+      },
+      "compute_api_ms": {
+        "median": 1.691502,
+        "min": 1.373343,
+        "max": 1.785231
+      },
+      "main_collections": {
+        "median": 16385,
+        "min": 16385,
+        "max": 16385
+      },
+      "worker_collections": {
+        "median": 49151,
+        "min": 49151,
+        "max": 49151
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "involuntary_context_switches": {
+        "median": 5,
+        "min": 0,
+        "max": 23
+      },
+      "process_cpu_seconds": {
+        "median": 0.064019,
+        "min": 0.059999000000000004,
+        "max": 0.066059
+      }
+    },
+    {
+      "weights": 16384,
+      "variant": "current",
+      "repeats": 7,
+      "online_ms": {
+        "median": 302.715919,
+        "min": 283.092286,
+        "max": 338.820829
+      },
+      "compute_api_ms": {
+        "median": 2.19513,
+        "min": 2.043348,
+        "max": 2.663406
+      },
+      "main_collections": {
+        "median": 180221,
+        "min": 180219,
+        "max": 180229
+      },
+      "worker_collections": {
+        "median": 49151,
+        "min": 49151,
+        "max": 49151
+      },
+      "voluntary_context_switches": {
+        "median": 164027,
+        "min": 163968,
+        "max": 164376
+      },
+      "involuntary_context_switches": {
+        "median": 23,
+        "min": 7,
+        "max": 92
+      },
+      "process_cpu_seconds": {
+        "median": 0.320705,
+        "min": 0.30911500000000003,
+        "max": 0.36973399999999995
+      }
+    },
+    {
+      "weights": 16384,
+      "variant": "prepared_direct",
+      "repeats": 7,
+      "online_ms": {
+        "median": 72.600419,
+        "min": 70.643277,
+        "max": 84.292627
+      },
+      "compute_api_ms": {
+        "median": 2.007038,
+        "min": 1.86287,
+        "max": 2.31851
+      },
+      "main_collections": {
+        "median": 16385,
+        "min": 16385,
+        "max": 16385
+      },
+      "worker_collections": {
+        "median": 49151,
+        "min": 49151,
+        "max": 49151
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "involuntary_context_switches": {
+        "median": 3,
+        "min": 2,
+        "max": 16
+      },
+      "process_cpu_seconds": {
+        "median": 0.10091199999999997,
+        "min": 0.098898,
+        "max": 0.112571
+      }
+    }
+  ]
+}

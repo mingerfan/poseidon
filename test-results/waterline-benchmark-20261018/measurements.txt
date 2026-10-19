@@ -1,0 +1,96 @@
+Waterline performance measurements — 2026-10-18
+
+forward = runtime setup + plaintext preparation / initialization + online execution.
+online = execution after eager initialization, or execution including demand preparation for Waterline.
+Fresh process per sample; OS file cache was not flushed; keys/input encryption are outside forward.
+One rank; V100 single GPU uses physical 2, dual GPU uses physical 2 and 3.
+Physical V100 0 failed CUDA initialization with uncorrectable ECC; physical 1 had another user's job.
+MLP: Q21/drop5 uniformly used for current integer Rescale; model/weights unchanged.
+Pressure: N16384/Q50/P8, deterministic full-slot weighted sum, no Rotate/Boot/Rescale.
+q_proj: existing synthetic cyclic projection path; this is not a complete pretrained Qwen forward.
+GPU times and consumer waits are event sums, not disjoint parts of wall time.
+Allocator peaks include persistent state; admission credits include pending allocations and workspace bounds.
+Binary controls reuse the original eager online baseline: blob bytes and all ciphertext work are identical.
+Their complete-forward ratio uses the original JSON eager preparation baseline, not an independently rerun binary eager initialization.
+
+RTX 4060 / MLP
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+eager | 3 | 387.439 | 207.399 | 1.000 | — | —
+wl-64MiB-cpu-w128 | 3 | 306.167 | 272.670 | 1.315 | — | 8.250
+wl-64MiB-gpu-w128 | 3 | 280.932 | 244.991 | 1.181 | — | 19.750
+wl-8MiB-cpu-w128 | 3 | 375.528 | 342.180 | 1.650 | — | 7.906
+wl-8MiB-gpu-w128 | 3 | 281.987 | 246.769 | 1.190 | — | 7.969
+wl-1MiB-cpu-w128 | 3 | 339.545 | 303.989 | 1.466 | — | 0.938
+wl-1MiB-gpu-w128 | 3 | 284.014 | 244.201 | 1.177 | — | 0.875
+
+V100 / MLP / 1 GPU
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+eager | 3 | 909.713 | 247.406 | 1.000 | — | —
+wl-64MiB-cpu-w128 | 3 | 1073.493 | 870.343 | 3.518 | — | 8.250
+wl-64MiB-gpu-w128 | 3 | 560.832 | 355.412 | 1.437 | — | 19.750
+wl-8MiB-cpu-w128 | 3 | 1058.138 | 852.100 | 3.444 | — | 7.906
+wl-8MiB-gpu-w128 | 3 | 576.291 | 370.730 | 1.498 | — | 7.969
+wl-1MiB-cpu-w128 | 3 | 1217.340 | 1016.271 | 4.108 | — | 0.938
+wl-1MiB-gpu-w128 | 3 | 574.001 | 370.058 | 1.496 | — | 0.875
+
+V100 / MLP / 2 GPUs
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+eager | 3 | 1003.612 | 192.778 | 1.000 | — | —
+wl-64MiB-cpu-w128 | 3 | 1144.308 | 865.160 | 4.488 | — | 3.438
+wl-64MiB-gpu-w128 | 3 | 564.258 | 261.651 | 1.357 | — | 8.438
+wl-8MiB-cpu-w128 | 3 | 1028.418 | 755.270 | 3.918 | — | 3.438
+wl-8MiB-gpu-w128 | 3 | 565.080 | 266.270 | 1.381 | — | 7.938
+wl-1MiB-cpu-w128 | 3 | 1130.345 | 832.808 | 4.320 | — | 0.938
+wl-1MiB-gpu-w128 | 3 | 571.380 | 281.986 | 1.463 | — | 0.875
+
+RTX 4060 / 3.125 GiB weights
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+eager | 3 | 16235.015 | 783.176 | 1.000 | 3.884 | —
+wl-4096MiB-cpu-w512 | 3 | 17093.396 | 17090.655 | 21.822 | 0.765 | 325.000
+wl-4096MiB-gpu-w512 | 3 | 1312.214 | 1305.845 | 1.667 | 0.766 | 704.812
+wl-256MiB-cpu-w512 | 3 | 16946.179 | 16943.383 | 21.634 | 0.765 | 253.125
+wl-256MiB-gpu-w512 | 3 | 1362.716 | 1356.768 | 1.732 | 0.766 | 255.188
+wl-32MiB-cpu-w512 | 3 | 16719.573 | 16716.702 | 21.345 | 0.765 | 31.250
+wl-32MiB-gpu-w512 | 3 | 1361.843 | 1355.963 | 1.731 | 0.766 | 30.375
+wl-8MiB-cpu-w512 | 3 | 17090.885 | 17088.113 | 21.819 | 0.765 | 6.250
+wl-8MiB-gpu-w512 | 3 | 1358.181 | 1352.084 | 1.726 | 0.766 | 6.812
+
+V100 / 12.5 GiB weights
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+eager | 3 | 116956.764 | 3402.345 | 1.000 | 13.259 | —
+wl-16384MiB-cpu-w512 | 1 | 118184.063 | 118152.689 | 34.727 | 0.765 | 325.000
+wl-16384MiB-gpu-w512 | 3 | 11495.700 | 11440.009 | 3.362 | 0.766 | 704.812
+wl-1024MiB-gpu-w512 | 3 | 11455.710 | 11397.189 | 3.350 | 0.766 | 704.812
+wl-64MiB-gpu-w512 | 3 | 12069.151 | 12013.289 | 3.531 | 0.766 | 61.312
+wl-8MiB-gpu-w512 | 3 | 11811.710 | 11751.612 | 3.454 | 0.766 | 6.812
+
+RTX 4060 / synthetic Qwen q_proj
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+eager | 3 | 6447.675 | 1199.725 | 1.000 | 3.028 | —
+wl-4096MiB-gpu-w128 | 3 | 2770.535 | 2644.398 | 2.204 | 1.827 | 91.875
+wl-64MiB-cpu-w128 | 3 | 5510.845 | 5389.331 | 4.492 | 1.827 | 37.500
+wl-64MiB-gpu-w128 | 3 | 2763.387 | 2637.342 | 2.198 | 1.827 | 62.500
+wl-64MiB-auto-w128 | 3 | 2678.503 | 2553.926 | 2.129 | 1.831 | 63.875
+wl-16MiB-gpu-w128 | 3 | 2733.353 | 2609.342 | 2.175 | 1.827 | 15.312
+
+RTX 4060 / 3.125 GiB / binary manifest
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+wl-4096MiB-gpu-w512 | 3 | 1156.636 | 1151.313 | 1.470 | 0.766 | 704.812
+wl-256MiB-gpu-w512 | 3 | 1186.764 | 1181.224 | 1.508 | 0.766 | 255.188
+wl-32MiB-gpu-w512 | 3 | 1221.405 | 1216.140 | 1.553 | 0.766 | 30.375
+wl-8MiB-gpu-w512 | 3 | 1183.867 | 1178.799 | 1.505 | 0.766 | 6.812
+
+V100 / 12.5 GiB / binary manifest
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+wl-16384MiB-gpu-w512 | 3 | 7244.713 | 7203.325 | 2.117 | 0.766 | 704.812
+wl-1024MiB-gpu-w512 | 3 | 6677.939 | 6635.186 | 1.950 | 0.766 | 704.812
+wl-64MiB-gpu-w512 | 3 | 7704.494 | 7660.662 | 2.252 | 0.766 | 61.312
+wl-8MiB-gpu-w512 | 3 | 7564.807 | 7522.232 | 2.211 | 0.766 | 6.812
+
+RTX 4060 / synthetic q_proj / binary manifest
+case | n | forward ms | online ms | online/eager | allocated peak GiB | plain credit peak MiB
+wl-4096MiB-gpu-w128 | 3 | 2601.460 | 2469.135 | 2.058 | 1.827 | 91.875
+wl-64MiB-gpu-w128 | 3 | 2581.458 | 2455.662 | 2.047 | 1.827 | 62.500
+wl-64MiB-auto-w128 | 3 | 2548.105 | 2420.066 | 2.017 | 1.831 | 63.875
+wl-16MiB-gpu-w128 | 3 | 2579.885 | 2452.857 | 2.045 | 1.827 | 15.312
+

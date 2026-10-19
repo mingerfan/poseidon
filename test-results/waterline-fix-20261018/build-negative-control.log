@@ -1,0 +1,12 @@
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/negative-control/test.cpp:4:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

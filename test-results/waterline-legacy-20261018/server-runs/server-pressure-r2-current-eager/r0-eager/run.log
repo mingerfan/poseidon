@@ -1,0 +1,8 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=explicit host_boot_instructions=0
+KEYS ready rotation_basis=0 key_generation_ms=115.830114
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=25769803776 maximum_bytes=25769803776
+FORWARD begin
+FORWARD complete runtime_ms=101245.402094
+PASS output=0 name=weighted_sum max_abs=2.63091e-08 max_relative=1.01136e-05 max_imaginary=1.70335e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=2.63091e-08 max_relative=1.01136e-05 max_imaginary=1.70335e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-waterline-legacy-20261018/server-runs/server-pressure-r2-current-eager/r0-eager/report.json decoded=/home/xuming/poseidon-waterline-legacy-20261018/server-runs/server-pressure-r2-current-eager/r0-eager/decoded.json

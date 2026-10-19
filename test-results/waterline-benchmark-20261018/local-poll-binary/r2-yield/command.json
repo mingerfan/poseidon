@@ -1,0 +1,12 @@
+[
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-poll/yield/runner",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-benchmark-20261018/local-poll-binary/plan.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/operator-spec.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/fixture.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-benchmark-20261018/local-poll-binary/r2-yield/report.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-benchmark-20261018/local-poll-binary/r2-yield/decoded.json",
+  "--bundle",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary/bundle",
+  "--backend",
+  "gpu"
+]

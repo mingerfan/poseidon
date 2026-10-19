@@ -1,0 +1,7 @@
+local-qproj-after
+local-mlp-after
+local-pressure-after
+local-pressure-eager-after
+local-cpu-cost-after
+local-gpu-tests-final
+local-pipeline-negative-control

@@ -1,0 +1,192 @@
+[
+  {
+    "name": "local-mlp-before",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-mlp-before",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/before",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager",
+      "wl-64MiB-gpu-w128",
+      "wl-8MiB-gpu-w128",
+      "wl-1MiB-gpu-w128",
+      "wl-8MiB-cpu-w128"
+    ]
+  },
+  {
+    "name": "local-pressure-before",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-before",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/before",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "wl-4096MiB-gpu-w512",
+      "wl-256MiB-gpu-w512",
+      "wl-32MiB-gpu-w512",
+      "wl-8MiB-gpu-w512"
+    ]
+  },
+  {
+    "name": "local-pressure-eager-before",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-eager-before",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/before",
+      "--repeats",
+      "1",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager"
+    ]
+  },
+  {
+    "name": "local-cpu-cost-before",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-cpu-cost-before",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/before",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "wl-64MiB-gpu-w128"
+    ]
+  },
+  {
+    "name": "local-mlp-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-mlp-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager",
+      "wl-64MiB-gpu-w128",
+      "wl-8MiB-gpu-w128",
+      "wl-1MiB-gpu-w128",
+      "wl-8MiB-cpu-w128"
+    ]
+  },
+  {
+    "name": "local-pressure-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "wl-4096MiB-gpu-w512",
+      "wl-256MiB-gpu-w512",
+      "wl-32MiB-gpu-w512",
+      "wl-8MiB-gpu-w512"
+    ]
+  },
+  {
+    "name": "local-pressure-eager-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-eager-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "1",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager"
+    ]
+  },
+  {
+    "name": "local-cpu-cost-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-cpu-cost-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "wl-64MiB-gpu-w128"
+    ]
+  },
+  {
+    "name": "local-gpu-tests-final",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "-R",
+      "^(poseidon_runtime_gpu_api_tests|poseidon_runtime_gpu_prepare_oom_tests)$",
+      "--output-on-failure"
+    ],
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "0",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  }
+]

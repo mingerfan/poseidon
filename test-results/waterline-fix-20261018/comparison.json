@@ -1,0 +1,4334 @@
+{
+  "scope": "Fresh-process, unchanged plans, weights, ciphertext work and pool limits. Online excludes eager preparation; forward includes it. GPU 2/3 only on server. Pressure eager controls have one repeat; other comparisons have three.",
+  "comparisons": [
+    {
+      "group": "local-qproj",
+      "label": "RTX 4060 / q_proj, window 128",
+      "case": "eager",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1201.730279,
+          "min": 1179.161363,
+          "max": 1211.782388
+        },
+        "forward_ms": {
+          "median": 6550.73961,
+          "min": 6473.626955,
+          "max": 6559.767448
+        },
+        "process_wall_ms": {
+          "median": 10542.543564999505,
+          "min": 10383.695774002263,
+          "max": 10589.838170002622
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1208.301019,
+          "min": 1193.838254,
+          "max": 1236.742446
+        },
+        "forward_ms": {
+          "median": 6722.451953,
+          "min": 6428.075746,
+          "max": 6883.864649
+        },
+        "process_wall_ms": {
+          "median": 10785.28850499788,
+          "min": 10383.002189002582,
+          "max": 11288.80516099889
+        }
+      },
+      "online_speedup": 0.994562000779046,
+      "online_reduction_percent": -0.5467732747374665
+    },
+    {
+      "group": "local-qproj",
+      "label": "RTX 4060 / q_proj, window 128",
+      "case": "wl-4096MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2474.400998,
+          "min": 2461.851952,
+          "max": 2495.116221
+        },
+        "forward_ms": {
+          "median": 2598.418108,
+          "min": 2589.854024,
+          "max": 2628.952632
+        },
+        "process_wall_ms": {
+          "median": 6777.376680998714,
+          "min": 6628.061465999053,
+          "max": 7878.808315999777
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1343.363942,
+          "min": 1332.696886,
+          "max": 1387.370336
+        },
+        "forward_ms": {
+          "median": 1525.284446,
+          "min": 1468.047057,
+          "max": 1576.371888
+        },
+        "process_wall_ms": {
+          "median": 7227.891606999037,
+          "min": 5524.331320000783,
+          "max": 7629.9351419984305
+        }
+      },
+      "online_speedup": 1.8419438847793639,
+      "online_reduction_percent": 45.70952957561004
+    },
+    {
+      "group": "local-qproj",
+      "label": "RTX 4060 / q_proj, window 128",
+      "case": "wl-64MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2499.531991,
+          "min": 2451.997142,
+          "max": 2724.915403
+        },
+        "forward_ms": {
+          "median": 2625.271946,
+          "min": 2578.490705,
+          "max": 2865.087656
+        },
+        "process_wall_ms": {
+          "median": 6626.4419890030695,
+          "min": 6425.733427997329,
+          "max": 6928.7543520003965
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1331.133353,
+          "min": 1311.683545,
+          "max": 1361.299461
+        },
+        "forward_ms": {
+          "median": 1461.469537,
+          "min": 1436.710948,
+          "max": 1559.76589
+        },
+        "process_wall_ms": {
+          "median": 6225.768852997135,
+          "min": 5474.563535997731,
+          "max": 7629.499048998696
+        }
+      },
+      "online_speedup": 1.877747248513275,
+      "online_reduction_percent": 46.74469629542741
+    },
+    {
+      "group": "local-qproj",
+      "label": "RTX 4060 / q_proj, window 128",
+      "case": "wl-64MiB-auto-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2454.162573,
+          "min": 2452.768794,
+          "max": 2557.977803
+        },
+        "forward_ms": {
+          "median": 2592.300247,
+          "min": 2582.622123,
+          "max": 2736.296046
+        },
+        "process_wall_ms": {
+          "median": 6526.133489998756,
+          "min": 6477.527056998952,
+          "max": 8481.662592999783
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1347.718233,
+          "min": 1325.966341,
+          "max": 1364.787822
+        },
+        "forward_ms": {
+          "median": 1475.057213,
+          "min": 1458.301052,
+          "max": 1492.735007
+        },
+        "process_wall_ms": {
+          "median": 5474.423305000528,
+          "min": 5424.21165199994,
+          "max": 5526.233959997626
+        }
+      },
+      "online_speedup": 1.8209760118308054,
+      "online_reduction_percent": 45.08439465961981
+    },
+    {
+      "group": "local-qproj",
+      "label": "RTX 4060 / q_proj, window 128",
+      "case": "wl-16MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2459.693642,
+          "min": 2436.679129,
+          "max": 2491.205433
+        },
+        "forward_ms": {
+          "median": 2586.881058,
+          "min": 2561.9532,
+          "max": 2624.241051
+        },
+        "process_wall_ms": {
+          "median": 6527.596052001172,
+          "min": 6425.455540000257,
+          "max": 6626.710290001938
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1316.851163,
+          "min": 1294.885897,
+          "max": 1339.162429
+        },
+        "forward_ms": {
+          "median": 1446.383513,
+          "min": 1428.791023,
+          "max": 1481.581101
+        },
+        "process_wall_ms": {
+          "median": 5474.597915999766,
+          "min": 5374.99099300112,
+          "max": 5525.122015002125
+        }
+      },
+      "online_speedup": 1.8678600217783308,
+      "online_reduction_percent": 46.46279762185116
+    },
+    {
+      "group": "local-qproj-w8",
+      "label": "RTX 4060 / q_proj, GPU, window 8",
+      "case": "wl-64MiB-gpu-w8",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2459.31331,
+          "min": 2458.189119,
+          "max": 2464.441895
+        },
+        "forward_ms": {
+          "median": 2587.05581,
+          "min": 2585.175689,
+          "max": 2596.631459
+        },
+        "process_wall_ms": {
+          "median": 6676.197373999457,
+          "min": 6526.3321320016985,
+          "max": 6977.963676999934
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1467.553431,
+          "min": 1451.276951,
+          "max": 1575.209658
+        },
+        "forward_ms": {
+          "median": 1602.316684,
+          "min": 1575.591825,
+          "max": 1755.050083
+        },
+        "process_wall_ms": {
+          "median": 5574.673277998954,
+          "min": 5475.01454599842,
+          "max": 7478.237829000136
+        }
+      },
+      "online_speedup": 1.6757913259241326,
+      "online_reduction_percent": 40.326699122365994
+    },
+    {
+      "group": "local-qproj-auto-w8",
+      "label": "RTX 4060 / q_proj, Auto, window 8",
+      "case": "wl-64MiB-auto-w8",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 3375.096586,
+          "min": 3306.37542,
+          "max": 3531.216049
+        },
+        "forward_ms": {
+          "median": 3499.61419,
+          "min": 3430.259233,
+          "max": 3655.561854
+        },
+        "process_wall_ms": {
+          "median": 7277.737655000237,
+          "min": 7277.209208001295,
+          "max": 7478.023179002776
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2692.467893,
+          "min": 2686.322247,
+          "max": 2983.367568
+        },
+        "forward_ms": {
+          "median": 2816.481855,
+          "min": 2811.560335,
+          "max": 3106.696557
+        },
+        "process_wall_ms": {
+          "median": 6676.269956002216,
+          "min": 6628.85783800084,
+          "max": 6876.832139998442
+        }
+      },
+      "online_speedup": 1.2535327142710704,
+      "online_reduction_percent": 20.225456534534857
+    },
+    {
+      "group": "local-mlp",
+      "label": "RTX 4060 / MLP",
+      "case": "eager",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 207.160538,
+          "min": 205.042479,
+          "max": 226.177807
+        },
+        "forward_ms": {
+          "median": 390.62908100000004,
+          "min": 382.891997,
+          "max": 413.236096
+        },
+        "process_wall_ms": {
+          "median": 1917.8954409981088,
+          "min": 1717.095619002066,
+          "max": 1967.5587399979122
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 98.90383100000001,
+          "min": 98.409698,
+          "max": 100.600296
+        },
+        "forward_ms": {
+          "median": 278.968952,
+          "min": 271.629025,
+          "max": 280.765288
+        },
+        "process_wall_ms": {
+          "median": 1617.2182619993691,
+          "min": 1616.9338969993987,
+          "max": 1667.1860809983627
+        }
+      },
+      "online_speedup": 2.0945653561185105,
+      "online_reduction_percent": 52.25739807646184
+    },
+    {
+      "group": "local-mlp",
+      "label": "RTX 4060 / MLP",
+      "case": "wl-64MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 246.24092400000004,
+          "min": 246.07963700000002,
+          "max": 253.47796900000003
+        },
+        "forward_ms": {
+          "median": 285.44550300000003,
+          "min": 281.710571,
+          "max": 295.77859
+        },
+        "process_wall_ms": {
+          "median": 1667.2204839996994,
+          "min": 1616.7255809996277,
+          "max": 1667.7565240024705
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 127.28445900000001,
+          "min": 126.709697,
+          "max": 136.96376600000002
+        },
+        "forward_ms": {
+          "median": 163.440558,
+          "min": 163.169247,
+          "max": 189.97089000000003
+        },
+        "process_wall_ms": {
+          "median": 1717.004881997127,
+          "min": 1517.0027729982394,
+          "max": 2018.300817002455
+        }
+      },
+      "online_speedup": 1.9345717924605392,
+      "online_reduction_percent": 48.308974425388364
+    },
+    {
+      "group": "local-mlp",
+      "label": "RTX 4060 / MLP",
+      "case": "wl-8MiB-cpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 277.17895000000004,
+          "min": 275.602548,
+          "max": 307.582196
+        },
+        "forward_ms": {
+          "median": 314.00638000000004,
+          "min": 309.89839600000005,
+          "max": 343.18083000000007
+        },
+        "process_wall_ms": {
+          "median": 1667.9659529982018,
+          "min": 1666.9464519982284,
+          "max": 1917.8167569989455
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 267.072496,
+          "min": 259.620487,
+          "max": 267.414198
+        },
+        "forward_ms": {
+          "median": 302.712742,
+          "min": 294.63746299999997,
+          "max": 302.955275
+        },
+        "process_wall_ms": {
+          "median": 1667.6299650025612,
+          "min": 1617.4364959988452,
+          "max": 1717.6164830016205
+        }
+      },
+      "online_speedup": 1.0378416128630483,
+      "online_reduction_percent": 3.646183810134218
+    },
+    {
+      "group": "local-mlp",
+      "label": "RTX 4060 / MLP",
+      "case": "wl-8MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 247.68493100000003,
+          "min": 245.784185,
+          "max": 286.54327900000004
+        },
+        "forward_ms": {
+          "median": 284.864322,
+          "min": 283.28587799999997,
+          "max": 339.04064200000005
+        },
+        "process_wall_ms": {
+          "median": 1817.307796998648,
+          "min": 1667.1410970011493,
+          "max": 2269.479857000988
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 125.09357100000001,
+          "min": 123.94998600000001,
+          "max": 125.11889000000001
+        },
+        "forward_ms": {
+          "median": 161.209799,
+          "min": 160.429446,
+          "max": 162.08505300000002
+        },
+        "process_wall_ms": {
+          "median": 1516.8949280014203,
+          "min": 1516.6767600021558,
+          "max": 1517.4267969996436
+        }
+      },
+      "online_speedup": 1.9799972853920687,
+      "online_reduction_percent": 49.49488025171785
+    },
+    {
+      "group": "local-mlp",
+      "label": "RTX 4060 / MLP",
+      "case": "wl-1MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 248.35943400000002,
+          "min": 246.794959,
+          "max": 249.86597200000003
+        },
+        "forward_ms": {
+          "median": 291.46539800000005,
+          "min": 282.789354,
+          "max": 293.03825800000004
+        },
+        "process_wall_ms": {
+          "median": 1617.5915489984618,
+          "min": 1617.3627960015438,
+          "max": 1867.7927090029698
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 135.250019,
+          "min": 132.453509,
+          "max": 136.980907
+        },
+        "forward_ms": {
+          "median": 175.062162,
+          "min": 169.449831,
+          "max": 180.860135
+        },
+        "process_wall_ms": {
+          "median": 1566.7673190000642,
+          "min": 1566.7558560016914,
+          "max": 1767.3955130012473
+        }
+      },
+      "online_speedup": 1.8362986995218094,
+      "online_reduction_percent": 45.54262875313204
+    },
+    {
+      "group": "server-mlp1",
+      "label": "V100 / MLP, 1 GPU",
+      "case": "eager",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 252.050011,
+          "min": 237.22567600000002,
+          "max": 252.22440700000004
+        },
+        "forward_ms": {
+          "median": 926.3847270000001,
+          "min": 849.4710010000001,
+          "max": 951.1004210000001
+        },
+        "process_wall_ms": {
+          "median": 5830.7399789919145,
+          "min": 5829.638027003966,
+          "max": 5983.595150988549
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 133.905717,
+          "min": 132.04366000000002,
+          "max": 144.29157700000002
+        },
+        "forward_ms": {
+          "median": 810.612602,
+          "min": 789.7800860000001,
+          "max": 849.013155
+        },
+        "process_wall_ms": {
+          "median": 5631.051737989765,
+          "min": 5626.658988010604,
+          "max": 5731.168961967342
+        }
+      },
+      "online_speedup": 1.882294622267696,
+      "online_reduction_percent": 46.8733540344896
+    },
+    {
+      "group": "server-mlp1",
+      "label": "V100 / MLP, 1 GPU",
+      "case": "wl-64MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 349.12246000000005,
+          "min": 348.81785600000006,
+          "max": 354.32110900000004
+        },
+        "forward_ms": {
+          "median": 563.965638,
+          "min": 562.528012,
+          "max": 566.2491600000001
+        },
+        "process_wall_ms": {
+          "median": 5378.695536986925,
+          "min": 5330.39097499568,
+          "max": 5479.671610984951
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 166.765687,
+          "min": 166.66756800000002,
+          "max": 173.41974100000002
+        },
+        "forward_ms": {
+          "median": 368.90164400000003,
+          "min": 366.607506,
+          "max": 400.752696
+        },
+        "process_wall_ms": {
+          "median": 5280.006134009454,
+          "min": 5179.788377019577,
+          "max": 5329.674737004098
+        }
+      },
+      "online_speedup": 2.093490970957353,
+      "online_reduction_percent": 52.232896445562396
+    },
+    {
+      "group": "server-mlp1",
+      "label": "V100 / MLP, 1 GPU",
+      "case": "wl-8MiB-cpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 852.896195,
+          "min": 737.3644830000001,
+          "max": 1005.1303280000001
+        },
+        "forward_ms": {
+          "median": 1062.016229,
+          "min": 934.783504,
+          "max": 1209.5960510000002
+        },
+        "process_wall_ms": {
+          "median": 5931.0887070023455,
+          "min": 5780.14379699016,
+          "max": 6180.100746976677
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 920.963296,
+          "min": 885.7908900000001,
+          "max": 948.401794
+        },
+        "forward_ms": {
+          "median": 1101.743786,
+          "min": 1088.935797,
+          "max": 1124.141331
+        },
+        "process_wall_ms": {
+          "median": 5881.561582966242,
+          "min": 5880.741245986428,
+          "max": 5981.866256974172
+        }
+      },
+      "online_speedup": 0.9260914074473604,
+      "online_reduction_percent": -7.980701684335689
+    },
+    {
+      "group": "server-mlp1",
+      "label": "V100 / MLP, 1 GPU",
+      "case": "wl-8MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 367.77508000000006,
+          "min": 364.98440700000003,
+          "max": 372.51365000000004
+        },
+        "forward_ms": {
+          "median": 586.1303170000001,
+          "min": 570.1708,
+          "max": 586.8796470000001
+        },
+        "process_wall_ms": {
+          "median": 5478.940905013587,
+          "min": 5478.180792997591,
+          "max": 5479.606588021852
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 171.720387,
+          "min": 170.25312100000002,
+          "max": 173.229025
+        },
+        "forward_ms": {
+          "median": 376.524341,
+          "min": 373.37589800000006,
+          "max": 383.07793300000003
+        },
+        "process_wall_ms": {
+          "median": 5279.618083033711,
+          "min": 5229.968791012652,
+          "max": 5430.537375970744
+        }
+      },
+      "online_speedup": 2.1417088933068853,
+      "online_reduction_percent": 53.30831360297713
+    },
+    {
+      "group": "server-mlp1",
+      "label": "V100 / MLP, 1 GPU",
+      "case": "wl-1MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 362.707339,
+          "min": 355.685629,
+          "max": 372.03222000000005
+        },
+        "forward_ms": {
+          "median": 576.397166,
+          "min": 574.86614,
+          "max": 578.01036
+        },
+        "process_wall_ms": {
+          "median": 5330.76494501438,
+          "min": 5328.7030190113,
+          "max": 5378.986356023233
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 192.48920700000002,
+          "min": 191.519041,
+          "max": 206.79543900000002
+        },
+        "forward_ms": {
+          "median": 408.699426,
+          "min": 399.894026,
+          "max": 424.31652500000007
+        },
+        "process_wall_ms": {
+          "median": 5328.191025007982,
+          "min": 5279.5064999954775,
+          "max": 5428.8970999768935
+        }
+      },
+      "online_speedup": 1.8842996168611155,
+      "online_reduction_percent": 46.929883599625754
+    },
+    {
+      "group": "server-mlp2",
+      "label": "V100 / MLP, 2 GPUs",
+      "case": "eager",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 197.19093800000002,
+          "min": 190.946618,
+          "max": 199.359958
+        },
+        "forward_ms": {
+          "median": 1088.91254,
+          "min": 1087.469293,
+          "max": 1191.5657230000002
+        },
+        "process_wall_ms": {
+          "median": 6429.740186023992,
+          "min": 6331.7382340319455,
+          "max": 6482.879732968286
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 90.002283,
+          "min": 88.005852,
+          "max": 95.373991
+        },
+        "forward_ms": {
+          "median": 916.4890520000001,
+          "min": 904.2044050000001,
+          "max": 949.9236980000001
+        },
+        "process_wall_ms": {
+          "median": 6181.889529980253,
+          "min": 5981.28251102753,
+          "max": 6332.75808399776
+        }
+      },
+      "online_speedup": 2.1909548450009875,
+      "online_reduction_percent": 54.357799646959435
+    },
+    {
+      "group": "server-mlp2",
+      "label": "V100 / MLP, 2 GPUs",
+      "case": "wl-64MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 256.655547,
+          "min": 253.681686,
+          "max": 261.106603
+        },
+        "forward_ms": {
+          "median": 552.9678930000001,
+          "min": 537.899266,
+          "max": 561.8377730000001
+        },
+        "process_wall_ms": {
+          "median": 5829.164906986989,
+          "min": 5629.087575012818,
+          "max": 5979.248390998691
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 119.636928,
+          "min": 114.51826600000001,
+          "max": 144.457013
+        },
+        "forward_ms": {
+          "median": 423.97172400000005,
+          "min": 423.1978240000001,
+          "max": 424.459445
+        },
+        "process_wall_ms": {
+          "median": 5730.9888080344535,
+          "min": 5681.77982600173,
+          "max": 5731.279918982182
+        }
+      },
+      "online_speedup": 2.1452870053634276,
+      "online_reduction_percent": 53.38619040250083
+    },
+    {
+      "group": "server-mlp2",
+      "label": "V100 / MLP, 2 GPUs",
+      "case": "wl-8MiB-cpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 986.9300820000001,
+          "min": 818.117233,
+          "max": 1090.25316
+        },
+        "forward_ms": {
+          "median": 1294.780762,
+          "min": 1124.8766580000001,
+          "max": 1365.6577250000003
+        },
+        "process_wall_ms": {
+          "median": 6583.5327910026535,
+          "min": 6330.054341000505,
+          "max": 6780.651352019049
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 899.7757700000001,
+          "min": 741.529344,
+          "max": 1150.440447
+        },
+        "forward_ms": {
+          "median": 1171.507263,
+          "min": 1020.51826,
+          "max": 1452.412032
+        },
+        "process_wall_ms": {
+          "median": 6582.799346011598,
+          "min": 6131.755686015822,
+          "max": 6583.365358004812
+        }
+      },
+      "online_speedup": 1.0968622571376867,
+      "online_reduction_percent": 8.830849681203667
+    },
+    {
+      "group": "server-mlp2",
+      "label": "V100 / MLP, 2 GPUs",
+      "case": "wl-8MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 253.680095,
+          "min": 252.485577,
+          "max": 254.357661
+        },
+        "forward_ms": {
+          "median": 542.9675490000001,
+          "min": 536.1114540000001,
+          "max": 568.923764
+        },
+        "process_wall_ms": {
+          "median": 5829.821874969639,
+          "min": 5829.482909990475,
+          "max": 5929.403580026701
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 120.652804,
+          "min": 116.827817,
+          "max": 131.600934
+        },
+        "forward_ms": {
+          "median": 403.875177,
+          "min": 400.77681300000006,
+          "max": 414.42537200000004
+        },
+        "process_wall_ms": {
+          "median": 5631.026077957358,
+          "min": 5530.503209971357,
+          "max": 5780.784822010901
+        }
+      },
+      "online_speedup": 2.1025627800577267,
+      "online_reduction_percent": 52.43899447451721
+    },
+    {
+      "group": "server-mlp2",
+      "label": "V100 / MLP, 2 GPUs",
+      "case": "wl-1MiB-gpu-w128",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 280.604631,
+          "min": 277.124629,
+          "max": 290.440021
+        },
+        "forward_ms": {
+          "median": 571.401926,
+          "min": 562.807622,
+          "max": 573.583776
+        },
+        "process_wall_ms": {
+          "median": 5879.979092045687,
+          "min": 5678.555510996375,
+          "max": 5929.17523405049
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 153.93049,
+          "min": 144.955466,
+          "max": 167.254291
+        },
+        "forward_ms": {
+          "median": 439.696254,
+          "min": 437.57326000000006,
+          "max": 473.148213
+        },
+        "process_wall_ms": {
+          "median": 5580.806867044885,
+          "min": 5580.162155034486,
+          "max": 5630.246375978459
+        }
+      },
+      "online_speedup": 1.8229307981803995,
+      "online_reduction_percent": 45.14328240006844
+    },
+    {
+      "group": "local-pressure",
+      "label": "RTX 4060 / 3.125 GiB weights",
+      "case": "wl-4096MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1133.466117,
+          "min": 1133.124616,
+          "max": 1149.310678
+        },
+        "forward_ms": {
+          "median": 1138.880509,
+          "min": 1138.533257,
+          "max": 1154.707738
+        },
+        "process_wall_ms": {
+          "median": 2568.4412009977677,
+          "min": 2518.4632599994075,
+          "max": 2569.166730001598
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 466.540048,
+          "min": 462.167103,
+          "max": 469.702182
+        },
+        "forward_ms": {
+          "median": 472.01729,
+          "min": 467.459184,
+          "max": 475.066632
+        },
+        "process_wall_ms": {
+          "median": 1867.496751001454,
+          "min": 1867.4409880004532,
+          "max": 1867.59938799878
+        }
+      },
+      "online_speedup": 2.4295151549347804,
+      "online_reduction_percent": 58.839524093158225
+    },
+    {
+      "group": "local-pressure",
+      "label": "RTX 4060 / 3.125 GiB weights",
+      "case": "wl-256MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1176.570359,
+          "min": 1172.742843,
+          "max": 1194.781846
+        },
+        "forward_ms": {
+          "median": 1181.714219,
+          "min": 1177.899464,
+          "max": 1200.096107
+        },
+        "process_wall_ms": {
+          "median": 2569.1259170016565,
+          "min": 2569.0784489997895,
+          "max": 2618.852927000262
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 431.365593,
+          "min": 430.191221,
+          "max": 447.173585
+        },
+        "forward_ms": {
+          "median": 436.926075,
+          "min": 435.511831,
+          "max": 452.409165
+        },
+        "process_wall_ms": {
+          "median": 1867.6636080017488,
+          "min": 1867.6143269985914,
+          "max": 1917.848706998484
+        }
+      },
+      "online_speedup": 2.7275479966247564,
+      "online_reduction_percent": 63.33703380334775
+    },
+    {
+      "group": "local-pressure",
+      "label": "RTX 4060 / 3.125 GiB weights",
+      "case": "wl-32MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1185.288215,
+          "min": 1178.539733,
+          "max": 1186.620738
+        },
+        "forward_ms": {
+          "median": 1190.592197,
+          "min": 1183.669203,
+          "max": 1191.798829
+        },
+        "process_wall_ms": {
+          "median": 2618.5328179999487,
+          "min": 2570.062519000203,
+          "max": 2619.1086130020267
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 430.19772,
+          "min": 421.783747,
+          "max": 433.025721
+        },
+        "forward_ms": {
+          "median": 435.217709,
+          "min": 426.993548,
+          "max": 438.456412
+        },
+        "process_wall_ms": {
+          "median": 1867.4518029984029,
+          "min": 1817.3624179980834,
+          "max": 1867.5782259997504
+        }
+      },
+      "online_speedup": 2.755217333555371,
+      "online_reduction_percent": 63.70522253104491
+    },
+    {
+      "group": "local-pressure",
+      "label": "RTX 4060 / 3.125 GiB weights",
+      "case": "wl-8MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 1175.924057,
+          "min": 1174.429216,
+          "max": 1178.53903
+        },
+        "forward_ms": {
+          "median": 1181.347369,
+          "min": 1179.770818,
+          "max": 1183.768721
+        },
+        "process_wall_ms": {
+          "median": 2568.426248999458,
+          "min": 2568.2761739990383,
+          "max": 2619.2055360006634
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 518.417827,
+          "min": 458.160867,
+          "max": 522.972466
+        },
+        "forward_ms": {
+          "median": 523.605927,
+          "min": 463.445898,
+          "max": 528.292087
+        },
+        "process_wall_ms": {
+          "median": 1917.568996999762,
+          "min": 1917.3311030026525,
+          "max": 1917.6601309991383
+        }
+      },
+      "online_speedup": 2.2682940202980326,
+      "online_reduction_percent": 55.91400448745135
+    },
+    {
+      "group": "local-pressure",
+      "label": "RTX 4060 / 3.125 GiB weights",
+      "case": "eager",
+      "before": {
+        "repeats": 1,
+        "online_ms": {
+          "median": 782.742417,
+          "min": 782.742417,
+          "max": 782.742417
+        },
+        "forward_ms": {
+          "median": 16933.811256,
+          "min": 16933.811256,
+          "max": 16933.811256
+        },
+        "process_wall_ms": {
+          "median": 18350.2844930008,
+          "min": 18350.2844930008,
+          "max": 18350.2844930008
+        }
+      },
+      "after": {
+        "repeats": 1,
+        "online_ms": {
+          "median": 103.669527,
+          "min": 103.669527,
+          "max": 103.669527
+        },
+        "forward_ms": {
+          "median": 16755.258004,
+          "min": 16755.258004,
+          "max": 16755.258004
+        },
+        "process_wall_ms": {
+          "median": 18198.519942998246,
+          "min": 18198.519942998246,
+          "max": 18198.519942998246
+        }
+      },
+      "online_speedup": 7.550361612048254,
+      "online_reduction_percent": 86.75560123631323
+    },
+    {
+      "group": "server-pressure",
+      "label": "V100 / 12.5 GiB weights",
+      "case": "wl-16384MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 7548.323761,
+          "min": 6615.886288,
+          "max": 7576.305622
+        },
+        "forward_ms": {
+          "median": 7594.582187,
+          "min": 6662.241407,
+          "max": 7621.042579
+        },
+        "process_wall_ms": {
+          "median": 14353.981157008093,
+          "min": 13651.798357022926,
+          "max": 14448.113200021908
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2319.619416,
+          "min": 2311.230026,
+          "max": 2339.186527
+        },
+        "forward_ms": {
+          "median": 2363.512316,
+          "min": 2355.222899,
+          "max": 2384.518477
+        },
+        "process_wall_ms": {
+          "median": 9291.45147302188,
+          "min": 9191.011782037094,
+          "max": 9291.622014017776
+        }
+      },
+      "online_speedup": 3.2541216498422343,
+      "online_reduction_percent": 69.2697413433059
+    },
+    {
+      "group": "server-pressure",
+      "label": "V100 / 12.5 GiB weights",
+      "case": "wl-1024MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 7474.67854,
+          "min": 7034.254154,
+          "max": 7490.944799
+        },
+        "forward_ms": {
+          "median": 7519.525044,
+          "min": 7078.944256,
+          "max": 7536.229557
+        },
+        "process_wall_ms": {
+          "median": 14448.473414988257,
+          "min": 14000.679606047925,
+          "max": 14548.266347963363
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2295.999961,
+          "min": 2265.112254,
+          "max": 2300.353799
+        },
+        "forward_ms": {
+          "median": 2343.649161,
+          "min": 2309.229363,
+          "max": 2349.081842
+        },
+        "process_wall_ms": {
+          "median": 9140.53903403692,
+          "min": 9040.861477027647,
+          "max": 9240.527174959425
+        }
+      },
+      "online_speedup": 3.255522067493624,
+      "online_reduction_percent": 69.2829604816691
+    },
+    {
+      "group": "server-pressure",
+      "label": "V100 / 12.5 GiB weights",
+      "case": "wl-64MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 7814.330977,
+          "min": 7546.864798,
+          "max": 8048.384147
+        },
+        "forward_ms": {
+          "median": 7870.401212,
+          "min": 7594.659713,
+          "max": 8101.44663
+        },
+        "process_wall_ms": {
+          "median": 14800.524425983895,
+          "min": 14550.669871969149,
+          "max": 14902.392802992836
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2284.862172,
+          "min": 2263.482901,
+          "max": 2430.230766
+        },
+        "forward_ms": {
+          "median": 2326.740519,
+          "min": 2310.21676,
+          "max": 2472.796361
+        },
+        "process_wall_ms": {
+          "median": 9240.215394995175,
+          "min": 9040.465507016052,
+          "max": 9241.026828996837
+        }
+      },
+      "online_speedup": 3.4200447942817966,
+      "online_reduction_percent": 70.76061688806044
+    },
+    {
+      "group": "server-pressure",
+      "label": "V100 / 12.5 GiB weights",
+      "case": "wl-8MiB-gpu-w512",
+      "before": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 7712.843091,
+          "min": 7693.497552,
+          "max": 7975.100535
+        },
+        "forward_ms": {
+          "median": 7757.554966,
+          "min": 7739.618123,
+          "max": 8023.486917
+        },
+        "process_wall_ms": {
+          "median": 14701.74153096741,
+          "min": 14655.230387987103,
+          "max": 15102.540616993792
+        }
+      },
+      "after": {
+        "repeats": 3,
+        "online_ms": {
+          "median": 2985.519887,
+          "min": 2966.805807,
+          "max": 3005.936656
+        },
+        "forward_ms": {
+          "median": 3028.962432,
+          "min": 3009.705598,
+          "max": 3048.74792
+        },
+        "process_wall_ms": {
+          "median": 9792.424598010257,
+          "min": 9741.179612989072,
+          "max": 9993.293890962377
+        }
+      },
+      "online_speedup": 2.583417087450806,
+      "online_reduction_percent": 61.29157754442382
+    },
+    {
+      "group": "server-pressure",
+      "label": "V100 / 12.5 GiB weights",
+      "case": "eager",
+      "before": {
+        "repeats": 1,
+        "online_ms": {
+          "median": 3365.990639,
+          "min": 3365.990639,
+          "max": 3365.990639
+        },
+        "forward_ms": {
+          "median": 119796.390366,
+          "min": 119796.390366,
+          "max": 119796.390366
+        },
+        "process_wall_ms": {
+          "median": 126660.7771590352,
+          "min": 126660.7771590352,
+          "max": 126660.7771590352
+        }
+      },
+      "after": {
+        "repeats": 1,
+        "online_ms": {
+          "median": 646.756643,
+          "min": 646.756643,
+          "max": 646.756643
+        },
+        "forward_ms": {
+          "median": 116351.994018,
+          "min": 116351.994018,
+          "max": 116351.994018
+        },
+        "process_wall_ms": {
+          "median": 123297.78212198289,
+          "min": 123297.78212198289,
+          "max": 123297.78212198289
+        }
+      },
+      "online_speedup": 5.204416027930926,
+      "online_reduction_percent": 80.78554837597099
+    }
+  ],
+  "cpu_cost": {
+    "before": {
+      "process_cpu_seconds": [
+        4.468157,
+        4.428179,
+        4.480284000000001
+      ],
+      "online_ms": [
+        2452.931781,
+        2456.971517,
+        2455.866613
+      ],
+      "process_wall_ms": [
+        6576.376176999474,
+        6526.636981998308,
+        6576.602755001659
+      ],
+      "median_cpu_seconds": 4.468157
+    },
+    "after": {
+      "process_cpu_seconds": [
+        5.267517,
+        5.300612,
+        5.389467
+      ],
+      "online_ms": [
+        1296.603791,
+        1303.869766,
+        1329.140081
+      ],
+      "process_wall_ms": [
+        5474.751459001709,
+        5525.805556000705,
+        5625.137797000207
+      ],
+      "median_cpu_seconds": 5.300612
+    }
+  },
+  "window_8_gpu_cpu_seconds": {
+    "before": [
+      4.860785000000001,
+      4.529097999999999,
+      4.393406000000001
+    ],
+    "after": [
+      4.339434000000001,
+      4.379059000000001,
+      6.378834
+    ]
+  },
+  "default_auto_cpu_seconds": {
+    "before": [
+      6.107933,
+      5.9247700000000005,
+      5.856920000000001
+    ],
+    "after": [
+      5.944457,
+      5.9724260000000005,
+      6.260692999999999
+    ]
+  },
+  "verified_samples": 190,
+  "verification": [
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-4096MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "96337920",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "65536000",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-64MiB-auto-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-16MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "16056320",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-4096MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "96337920",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "65536000",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-64MiB-auto-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-16MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "16056320",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "65536000",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-64MiB-auto-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "67108864",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-16MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "16056320",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-qproj",
+      "variant": "before",
+      "case": "wl-4096MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "96337920",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-4096MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "89915392",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-64MiB-auto-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-16MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "16777216",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-4096MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "89915392",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-64MiB-auto-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-16MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "16777216",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-64MiB-auto-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "66977792",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-16MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "16777216",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-qproj",
+      "variant": "after",
+      "case": "wl-4096MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "89915392",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-w8",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w8",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "14155776",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-w8",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w8",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "14155776",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-w8",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w8",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "14155776",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-w8",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w8",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "12845056",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-w8",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w8",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "12845056",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-w8",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w8",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "14155776",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-auto-w8",
+      "variant": "before",
+      "case": "wl-64MiB-auto-w8",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "10944512",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-auto-w8",
+      "variant": "before",
+      "case": "wl-64MiB-auto-w8",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "10944512",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-auto-w8",
+      "variant": "before",
+      "case": "wl-64MiB-auto-w8",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "10944512",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-auto-w8",
+      "variant": "after",
+      "case": "wl-64MiB-auto-w8",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "10944512",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-auto-w8",
+      "variant": "after",
+      "case": "wl-64MiB-auto-w8",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "10944512",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-qproj-auto-w8",
+      "variant": "after",
+      "case": "wl-64MiB-auto-w8",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "4293918720",
+          "10944512",
+          "1966080",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "20709376",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8355840",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "917504",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "20709376",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8355840",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "917504",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8355840",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "917504",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-mlp",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "20709376",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "19464192",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8388608",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "950272",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "19464192",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8388608",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "950272",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8388608",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "950272",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-mlp",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "19464192",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "20709744",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8356080",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "917520",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "20709744",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8356080",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "917520",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8356080",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "917520",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "20709744",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "19464544",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8356064",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "950288",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "19464544",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8356064",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "950288",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8290304",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "8356064",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "5990711296",
+          "950288",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp1",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "6000082944",
+          "19464544",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1067712512",
+          "8847520",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645267456",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068433408",
+          "3604480",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645988352",
+          "3604480",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068040192",
+          "8323216",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "644546560",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "574226432",
+          "917520",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "286064640",
+          "884752",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068040192",
+          "8847520",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "644546560",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068433408",
+          "3604480",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645988352",
+          "3604480",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068040192",
+          "8323216",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "644546560",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "574226432",
+          "917520",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "286064640",
+          "884752",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068433408",
+          "3604480",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645988352",
+          "3604480",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068040192",
+          "8323216",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "644546560",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "574226432",
+          "917520",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "286064640",
+          "884752",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068040192",
+          "8847520",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645267456",
+          "7438464",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1137573888",
+          "7962768",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645267456",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068433408",
+          "3604480",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645988352",
+          "3604480",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1137573888",
+          "7962768",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "647430144",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "574226432",
+          "950288",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "286064640",
+          "950288",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1137573888",
+          "7962768",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645267456",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068433408",
+          "3604480",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645988352",
+          "3604480",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1137573888",
+          "7962768",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "647430144",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "574226432",
+          "950288",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "286064640",
+          "950288",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 1,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-8MiB-cpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1068433408",
+          "3604480",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "645988352",
+          "3604480",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1137573888",
+          "7962768",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "649592832",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "574226432",
+          "950288",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "283181056",
+          "950288",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 2,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-mlp2",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w128",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1137573888",
+          "7962768",
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "647430144",
+          "7078016",
+          "393216",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-4096MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-256MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "511180800",
+          "267583488",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-32MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "78643200",
+          "31850496",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-256MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "511180800",
+          "267583488",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-32MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "78643200",
+          "31850496",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-4096MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-32MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "78643200",
+          "31850496",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-4096MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "wl-256MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "511180800",
+          "267583488",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-4096MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "735772672",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-256MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "511180800",
+          "267583488",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-32MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "78643200",
+          "31850496",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-256MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "511180800",
+          "267583488",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-32MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "78643200",
+          "31850496",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-4096MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-32MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "78643200",
+          "31850496",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-4096MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "735772672",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "wl-256MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "511180800",
+          "267583488",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "local-pressure",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-16384MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "144179200",
+          "64290816",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "144179200",
+          "64290816",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-16384MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-64MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "144179200",
+          "64290816",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-16384MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "before",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-16384MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "144179200",
+          "64290816",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 0,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "144179200",
+          "64290816",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-16384MiB-gpu-w512",
+      "repeat": 1,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-64MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "144179200",
+          "64290816",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-8MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "39321600",
+          "7143424",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-16384MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "wl-1024MiB-gpu-w512",
+      "repeat": 2,
+      "passed": true,
+      "peaks": [
+        [
+          "0",
+          "1363148800",
+          "739049472",
+          "6553600",
+          "0"
+        ]
+      ]
+    },
+    {
+      "group": "server-pressure",
+      "variant": "after",
+      "case": "eager",
+      "repeat": 0,
+      "passed": true,
+      "peaks": []
+    }
+  ]
+}

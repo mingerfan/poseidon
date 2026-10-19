@@ -1,0 +1,12 @@
+wl-4096MiB-gpu-w512 repeat=0 exit=0 forward_ms=467.459184 online_ms=462.167103
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=435.511831 online_ms=430.191221
+wl-32MiB-gpu-w512 repeat=0 exit=0 forward_ms=438.456412 online_ms=433.025721
+wl-8MiB-gpu-w512 repeat=0 exit=0 forward_ms=528.292087 online_ms=522.972466
+wl-256MiB-gpu-w512 repeat=1 exit=0 forward_ms=452.409165 online_ms=447.173585
+wl-32MiB-gpu-w512 repeat=1 exit=0 forward_ms=426.993548 online_ms=421.783747
+wl-8MiB-gpu-w512 repeat=1 exit=0 forward_ms=463.445898 online_ms=458.160867
+wl-4096MiB-gpu-w512 repeat=1 exit=0 forward_ms=475.066632 online_ms=469.702182
+wl-32MiB-gpu-w512 repeat=2 exit=0 forward_ms=435.217709 online_ms=430.19772
+wl-8MiB-gpu-w512 repeat=2 exit=0 forward_ms=523.605927 online_ms=518.417827
+wl-4096MiB-gpu-w512 repeat=2 exit=0 forward_ms=472.01729 online_ms=466.540048
+wl-256MiB-gpu-w512 repeat=2 exit=0 forward_ms=436.926075 online_ms=431.365593

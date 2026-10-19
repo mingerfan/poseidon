@@ -1,0 +1,66 @@
+{
+  "suite": {
+    "kind": "mlp",
+    "devices": 1,
+    "capacity_gib": 7,
+    "reserve_gib": 1,
+    "window": 128,
+    "count": 1024,
+    "plaintext_resident_bytes": 33062912,
+    "source_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+    "cases": [
+      {
+        "name": "eager",
+        "plan": "eager.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-64MiB-cpu-w128",
+        "plan": "wl-64MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-64MiB-gpu-w128",
+        "plan": "wl-64MiB-gpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-8MiB-cpu-w128",
+        "plan": "wl-8MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-8MiB-gpu-w128",
+        "plan": "wl-8MiB-gpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-1MiB-cpu-w128",
+        "plan": "wl-1MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-1MiB-gpu-w128",
+        "plan": "wl-1MiB-gpu-w128.json",
+        "runner": "mlp"
+      }
+    ]
+  },
+  "cuda": "0",
+  "pool_mib": 6144,
+  "timing_scope": "Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
+  "runner_hashes": {
+    "mlp": "sha256:c41748fe05a21e69c23a507d3032a526cfda1c413fd4a459b0772cb69883c7e3"
+  },
+  "samples": [
+    {
+      "case": "eager",
+      "repeat": 0,
+      "exit_code": 1,
+      "passed": false,
+      "process_wall_ms": 1617.0474020000256,
+      "report": {}
+    }
+  ],
+  "statistics": {}
+}

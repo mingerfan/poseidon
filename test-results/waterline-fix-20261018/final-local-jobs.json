@@ -1,0 +1,135 @@
+[
+  {
+    "name": "local-qproj-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-qproj-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3",
+      "--cases",
+      "eager",
+      "wl-4096MiB-gpu-w128",
+      "wl-64MiB-gpu-w128",
+      "wl-16MiB-gpu-w128",
+      "wl-64MiB-auto-w128"
+    ]
+  },
+  {
+    "name": "local-mlp-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-mlp-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager",
+      "wl-64MiB-gpu-w128",
+      "wl-8MiB-gpu-w128",
+      "wl-1MiB-gpu-w128",
+      "wl-8MiB-cpu-w128"
+    ]
+  },
+  {
+    "name": "local-pressure-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "wl-4096MiB-gpu-w512",
+      "wl-256MiB-gpu-w512",
+      "wl-32MiB-gpu-w512",
+      "wl-8MiB-gpu-w512"
+    ]
+  },
+  {
+    "name": "local-pressure-eager-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-eager-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "1",
+      "--timeout",
+      "300",
+      "--cases",
+      "eager"
+    ]
+  },
+  {
+    "name": "local-cpu-cost-after",
+    "command": [
+      "python",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_waterline.py",
+      "run",
+      "--suite",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary",
+      "--output",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-cpu-cost-after",
+      "--build",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "--repeats",
+      "3",
+      "--timeout",
+      "300",
+      "--cases",
+      "wl-64MiB-gpu-w128"
+    ]
+  },
+  {
+    "name": "local-gpu-tests-final",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+      "-R",
+      "^(poseidon_runtime_gpu_api_tests|poseidon_runtime_gpu_prepare_oom_tests)$",
+      "--output-on-failure"
+    ],
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "0",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  {
+    "name": "local-pipeline-negative-control",
+    "command": [
+      "python",
+      "-c",
+      "import os,subprocess; p=subprocess.run(['/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/negative-control/runner'],env=dict(os.environ,CUDA_VISIBLE_DEVICES='0',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1'),stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True); print(p.stdout); assert p.returncode==1 and 'Waterline waited for the first GPU completion' in p.stdout, (p.returncode,p.stdout)"
+    ]
+  }
+]

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-cause-20261018/build-probes.py", line 59, in <module>
+    subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['c++', '-O3', '-DNDEBUG', '-std=c++20', '-pthread', '-fopenmp', '-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018/legacy/include', '-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime', '-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party', '/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-cause-20261018/cpu-probe.cpp', '/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_plan_json.a', '/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_core.a', '-o', '/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018/legacy/probe']' returned non-zero exit status 1.

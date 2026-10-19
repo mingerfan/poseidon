@@ -1,0 +1,15 @@
+eager repeat=0 exit=0 forward_ms=6883.864649 online_ms=1236.742446
+wl-4096MiB-gpu-w128 repeat=0 exit=0 forward_ms=1576.371888 online_ms=1387.370336
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1559.76589 online_ms=1361.299461
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1492.735007 online_ms=1364.787822
+wl-16MiB-gpu-w128 repeat=0 exit=0 forward_ms=1481.581101 online_ms=1339.162429
+wl-4096MiB-gpu-w128 repeat=1 exit=0 forward_ms=1525.284446 online_ms=1343.363942
+wl-64MiB-gpu-w128 repeat=1 exit=0 forward_ms=1461.469537 online_ms=1331.133353
+wl-64MiB-auto-w128 repeat=1 exit=0 forward_ms=1458.301052 online_ms=1325.966341
+wl-16MiB-gpu-w128 repeat=1 exit=0 forward_ms=1446.383513 online_ms=1316.851163
+eager repeat=1 exit=0 forward_ms=6428.075746 online_ms=1193.838254
+wl-64MiB-gpu-w128 repeat=2 exit=0 forward_ms=1436.710948 online_ms=1311.683545
+wl-64MiB-auto-w128 repeat=2 exit=0 forward_ms=1475.057213 online_ms=1347.718233
+wl-16MiB-gpu-w128 repeat=2 exit=0 forward_ms=1428.791023 online_ms=1294.885897
+eager repeat=2 exit=0 forward_ms=6722.451953 online_ms=1208.301019
+wl-4096MiB-gpu-w128 repeat=2 exit=0 forward_ms=1468.047057 online_ms=1332.696886

@@ -1,0 +1,17 @@
+Seconds, medians (min-max); 3 repeats each.
+workload | configuration | online | forward
+server-mlp1 | legacy-eager | 0.112987 (0.110416-0.126236) | 0.674879 (0.673454-0.686702)
+server-mlp1 | unfixed-eager | 0.240341 (0.239256-0.254477) | 0.800563 (0.793296-0.815585)
+server-mlp1 | unfixed-waterline | 0.364933 (0.352567-0.366330) | 0.547579 (0.538028-0.577437)
+server-mlp1 | current-eager | 0.128647 (0.128059-0.128748) | 0.676459 (0.675004-0.687340)
+server-mlp1 | current-waterline | 0.172211 (0.167462-0.182760) | 0.363852 (0.360045-0.372653)
+server-mlp2 | legacy-eager | 0.082207 (0.078484-0.083990) | 0.789539 (0.784753-0.793698)
+server-mlp2 | unfixed-eager | 0.192857 (0.192297-0.203984) | 0.917359 (0.913496-0.931615)
+server-mlp2 | unfixed-waterline | 0.258081 (0.257871-0.259885) | 0.541257 (0.537670-0.542081)
+server-mlp2 | current-eager | 0.088852 (0.087156-0.089632) | 0.796771 (0.795180-0.801011)
+server-mlp2 | current-waterline | 0.118479 (0.113194-0.124011) | 0.398416 (0.396372-0.409441)
+server-pressure | legacy-eager | 0.267295 (0.267030-0.267984) | 100.491740 (100.364387-100.859060)
+server-pressure | unfixed-eager | 3.416592 (3.375489-3.443889) | 103.940117 (103.494134-103.996113)
+server-pressure | unfixed-waterline | 7.345266 (7.044567-7.589578) | 7.386941 (7.088147-7.632926)
+server-pressure | current-eager | 0.542066 (0.531570-0.671129) | 101.202812 (100.706302-101.245402)
+server-pressure | current-waterline | 2.271292 (2.184035-2.407731) | 2.315156 (2.226935-2.450771)

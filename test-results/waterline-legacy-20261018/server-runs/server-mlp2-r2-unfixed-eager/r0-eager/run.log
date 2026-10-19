@@ -1,0 +1,4 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+GPU_POOL_RESERVE cuda_device=1 initial_bytes=6442450944 maximum_bytes=6442450944
+PASS boots=0 transfers=242 rotation_key_policy=binary rotations=14 key_seconds=2.58349 runtime_seconds=0.192857 initialization_seconds=0.438032 online_execution_seconds=0.192857 boot_seconds=0 python_max_abs=1.32601e-06 max_imaginary=2.06447e-06
+report=/home/xuming/poseidon-waterline-legacy-20261018/server-runs/server-mlp2-r2-unfixed-eager/r0-eager/report.json

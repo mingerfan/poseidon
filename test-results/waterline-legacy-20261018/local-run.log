@@ -1,0 +1,78 @@
+local-mlp-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=297.126614 online_ms=124.025824
+local-mlp-r0-unfixed-eager
+eager repeat=0 exit=0 forward_ms=388.52837900000003 online_ms=205.63478800000001
+local-mlp-r0-current-eager
+eager repeat=0 exit=0 forward_ms=288.993469 online_ms=107.97218500000001
+local-mlp-r0-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=180.38696099999999 online_ms=125.424759
+local-mlp-r1-unfixed-eager
+eager repeat=0 exit=0 forward_ms=384.842244 online_ms=205.260826
+local-mlp-r1-current-eager
+eager repeat=0 exit=0 forward_ms=296.095269 online_ms=111.84984200000001
+local-mlp-r1-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=165.72380900000002 online_ms=127.69366900000001
+local-mlp-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=277.39358100000004 online_ms=95.11414200000002
+local-mlp-r2-current-eager
+eager repeat=0 exit=0 forward_ms=276.98944800000004 online_ms=100.52244400000001
+local-mlp-r2-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=162.26350500000004 online_ms=125.29383800000002
+local-mlp-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=275.626913 online_ms=97.32320100000001
+local-mlp-r2-unfixed-eager
+eager repeat=0 exit=0 forward_ms=378.35469600000005 online_ms=206.00968900000004
+local-qproj-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=6497.407901 online_ms=1206.828361
+local-qproj-r0-unfixed-eager
+eager repeat=0 exit=0 forward_ms=6340.899121 online_ms=1170.777699
+local-qproj-r0-current-eager
+eager repeat=0 exit=0 forward_ms=6312.710272 online_ms=1200.157253
+local-qproj-r0-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1413.186422 online_ms=1287.684572
+local-qproj-r0-current-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2826.841745 online_ms=2701.064114
+local-qproj-r1-unfixed-eager
+eager repeat=0 exit=0 forward_ms=6447.702011 online_ms=1187.059688
+local-qproj-r1-current-eager
+eager repeat=0 exit=0 forward_ms=6417.825715 online_ms=1181.942246
+local-qproj-r1-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1399.782036 online_ms=1274.402647
+local-qproj-r1-current-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2815.318787 online_ms=2687.224217
+local-qproj-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=6356.946178 online_ms=1177.427087
+local-qproj-r2-current-eager
+eager repeat=0 exit=0 forward_ms=6442.155657 online_ms=1170.524208
+local-qproj-r2-current-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1429.52485 online_ms=1303.81035
+local-qproj-r2-current-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2817.397555 online_ms=2691.817425
+local-qproj-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=6378.700259 online_ms=1178.400082
+local-qproj-r2-unfixed-eager
+eager repeat=0 exit=0 forward_ms=6428.62972 online_ms=1175.80199
+local-pressure-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=16030.192625 online_ms=102.748344
+local-pressure-r0-unfixed-eager
+eager repeat=0 exit=0 forward_ms=16743.940816 online_ms=782.508721
+local-pressure-r0-current-eager
+eager repeat=0 exit=0 forward_ms=15533.64175 online_ms=103.502026
+local-pressure-r0-current-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=434.630084 online_ms=429.464942
+local-pressure-r1-unfixed-eager
+eager repeat=0 exit=0 forward_ms=16657.847352 online_ms=782.21912
+local-pressure-r1-current-eager
+eager repeat=0 exit=0 forward_ms=16013.178882 online_ms=103.785958
+local-pressure-r1-current-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=440.698159 online_ms=435.636358
+local-pressure-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=16089.306524 online_ms=102.318402
+local-pressure-r2-current-eager
+eager repeat=0 exit=0 forward_ms=16756.136726 online_ms=107.476104
+local-pressure-r2-current-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=435.501317 online_ms=430.271195
+local-pressure-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=15776.307252 online_ms=102.343412
+local-pressure-r2-unfixed-eager
+eager repeat=0 exit=0 forward_ms=16973.544543 online_ms=784.383458

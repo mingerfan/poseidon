@@ -1,0 +1,7 @@
+Seconds, medians (min-max); 7 repeats each.
+workload | configuration | online | forward
+local-mlp | legacy-eager | 0.095173 (0.093397-0.125316) | 0.271044 (0.267292-0.298197)
+local-mlp | unfixed-eager | 0.204493 (0.202993-0.206094) | 0.379831 (0.376157-0.388084)
+local-mlp | unfixed-waterline | 0.243463 (0.240868-0.245432) | 0.278895 (0.275563-0.280762)
+local-mlp | current-eager | 0.098500 (0.095760-0.125655) | 0.279062 (0.266986-0.365356)
+local-mlp | current-waterline | 0.124214 (0.122953-0.135147) | 0.159435 (0.157492-0.170707)

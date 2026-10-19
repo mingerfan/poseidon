@@ -1,0 +1,9 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=7347555328 maximum_bytes=7347555328
+[PASS] internal RMM pool lifetime
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+fatal runtime error: reason=Waterline waited for the first GPU completion before submitting its consumer plan_id=405 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+[FAIL] fatal runtime error: reason=Waterline waited for the first GPU completion before submitting its consumer plan_id=405 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+

@@ -1,0 +1,7 @@
+{
+  "error": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local/eager.json: runtime plan JSON error at $.plan_id: expected string",
+  "format_version": 1,
+  "main_entry_to_failure_ms": 29.207314,
+  "passed": false,
+  "stage": "load_artifacts"
+}

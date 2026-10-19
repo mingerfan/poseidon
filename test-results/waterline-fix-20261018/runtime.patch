@@ -1,0 +1,190 @@
+diff --git a/docs/runtime-plan/v4.md b/docs/runtime-plan/v4.md
+index 73d242e..3ee94a9 100644
+--- a/docs/runtime-plan/v4.md
++++ b/docs/runtime-plan/v4.md
+@@ -23,14 +23,23 @@ Dependencies come from existing ValueIds, producer records and operand lists.
+ A complete group reserves new preparation peaks, output storage, communication
+ staging and backend compute workspace together. Admission follows a topological
+ prefix. Release returns credit after the last submitted use actually completes.
+-Consumers wait on the result's real Ready dependency. The single CPU worker
+-runs ready Host work or admitted CPU preparations; it never owns a wait that
++Consumers use the result's real Ready dependency. Foreground workers can submit
++the next admitted operation as soon as the Api call returns; they do not wait
++for GPU completion between submissions. Completion tickets keep output storage,
++input-use counts and temporary credit until the actual Ready events finish.
++The lookahead and byte budgets bound admitted work, including submitted work.
++A released output cannot return storage credit while its producer is unfinished,
++even if it has no consumers. Host submissions notify the dispatcher immediately;
++timed waits for GPU events are used only when no further submission can advance.
++The single CPU worker runs ready Host work or admitted CPU preparations; it never owns a wait that
+ prevents a queued producer from running. GPU preparation has one active complete
+-Encode per device. Auto prefers an available CPU worker; a busy CPU permits GPU
+-selection on an idle target, while runnable foreground work has priority.
++Encode per device, retaining exclusive use of its staging buffer through Ready.
++Its independent lane can overlap foreground submissions and GPU execution.
++Auto prefers an available CPU worker; a busy CPU permits GPU
++selection when the target foreground submission worker is available.
+ Auto assigns a new group's CPU preparations only when the CPU lane is available.
+ If both the CPU and target foreground worker are busy, admission pauses until
+-completion permits a fresh backend choice. Already admitted groups, including
++a lane becomes available for a fresh backend choice. Already admitted groups, including
+ groups with multiple CPU preparations, continue. It does not
+ move an admitted preparation to another backend or change foreground order.
+ 
+diff --git a/runtime/runtime.hpp b/runtime/runtime.hpp
+index 95f3f4d..171834b 100644
+--- a/runtime/runtime.hpp
++++ b/runtime/runtime.hpp
+@@ -1465,9 +1465,19 @@ private:
+         std::vector<std::unique_ptr<Worker>> workers;
+         for(std::size_t i=0;i<queues.size()+devices;++i) workers.push_back(std::make_unique<Worker>());
+         std::vector<std::deque<std::size_t>> pending(workers.size());
++        struct Completion { std::size_t task; std::vector<Value> values; };
++        std::vector<std::deque<Completion>> completing(workers.size());
++        std::set<ValueId> producing;
+         std::deque<std::size_t> cpu_preparations;
+         for (std::size_t i=0;i<tasks.size();++i) if(!tasks[i].task.preparation)pending[tasks[i].worker].push_back(i);
+         std::vector<std::thread> threads;
++        std::mutex dispatcher_mutex;
++        std::condition_variable dispatcher_condition;
++        bool submission_changed = false;
++        const auto notify_dispatcher = [&] {
++            {std::lock_guard<std::mutex> lock(dispatcher_mutex);submission_changed = true;}
++            dispatcher_condition.notify_one();
++        };
+         const auto stop_workers=[&] {
+             for(auto &w:workers) {{std::lock_guard<std::mutex> lock(w->mutex);w->stop=true;}w->condition.notify_all();}
+             for(auto &thread:threads) if(thread.joinable())thread.join();
+@@ -1506,9 +1516,10 @@ private:
+                          if(output->completion) {worker.completions.push_back(std::move(*output->completion));output->completion.reset();}}
+                     }
+                     {std::unique_lock<std::mutex> lock(worker.mutex);worker.submitted.store(true);
++                     notify_dispatcher();
+                      worker.condition.wait(lock,[&]{return worker.stop || !worker.assigned.has_value() || *worker.assigned != i;});if(worker.stop)return;}
+                 }
+-            } catch(...) {record_parallel_failure(std::current_exception());worker.submitted.store(true);}
++            } catch(...) {record_parallel_failure(std::current_exception());worker.submitted.store(true);notify_dispatcher();}
+         });
+         // Only APIs that opt into a background issuer may communicate off the
+         // caller thread. MPI_THREAD_FUNNELED backends advance below, after
+@@ -1530,27 +1541,48 @@ private:
+         const auto retire=[&](const std::vector<ValueId> &ids) {
+             for(auto id:ids) {
+                 const auto it=waterline_storage_.find(id);
+-                if(it!=waterline_storage_.end() && waterline_released_[id] && !waterline_remaining_.at(id) && !external(id)) {
++                if(it!=waterline_storage_.end() && !producing.count(id) && waterline_released_[id] && !waterline_remaining_.at(id) && !external(id)) {
+                     waterline_->release(it->second);waterline_storage_.erase(it);
+                 }
+             }
+         };
++        const auto release_worker = [&](Worker &worker) {
++            {std::lock_guard<std::mutex> lock(worker.mutex);worker.assigned.reset();worker.busy=false;worker.submitted.store(false);}
++            worker.condition.notify_one();
++        };
+         try {
+             while(finished<tasks.size() ||
+                   (!detail::UsesBackgroundCommunicationIssuer<Api>::value &&
+                    next_coordinator_group<coordinator_groups_.size())) {
+                 if(parallel_failed_.load())std::rethrow_exception(parallel_failure_);
++                {std::lock_guard<std::mutex> lock(dispatcher_mutex);submission_changed=false;}
+                 bool progress=false;
+                 api_.collect_completed();
+-                for(auto &ptr:workers) {
+-                    auto &worker=*ptr;if(!worker.busy || !worker.submitted.load())continue;
++                for(std::size_t w=0;w<workers.size();++w) {
++                    auto &worker=*workers[w];if(!worker.busy || !worker.submitted.load())continue;
++                    const auto i=*worker.assigned;
++                    completing[w].push_back({i,std::move(worker.completions)});
++                    // The Api has retained the inputs and published Ready handles.
++                    // Foreground submission can continue while the GPU is running;
++                    // its completion ticket still owns all resource credit.
++                    // A preparation lane instead keeps its reusable staging buffer
++                    // exclusive until the actual upload/encode has completed.
++                    if(tasks[i].task.preparation)worker.submitted.store(false);
++                    else release_worker(worker);
++                    progress=true;
++                }
++                for(std::size_t w=0;w<completing.size();++w) {
++                  auto &queue=completing[w];
++                  while(!queue.empty()) {
++                    auto &completion=queue.front();
++                    auto &state=tasks[completion.task];auto &task=state.task;
+                     bool complete=true;
+                     if(waterline_) if constexpr(detail::HasWaterlineApi<Api>::value)
+-                        for(auto &v:worker.completions) if(!api_.is_ready(v))complete=false;
+-                    if(!complete)continue;
+-                    const auto i=*worker.assigned;auto &state=tasks[i];auto &task=state.task;
+-                    worker.completions.clear();state.completed=true;++finished;progress=true;
++                        for(auto &v:completion.values) if(!api_.is_ready(v))complete=false;
++                    if(!complete)break;
++                    completion.values.clear();state.completed=true;++finished;progress=true;
+                     if(waterline_) {
++                        for(auto id:task.outputs)producing.erase(id);
+                         if(task.preparation)waterline_->release(state.temporary);
+                         else {
+                             auto &ticket=tickets.at(task.instruction->ordinal);
+@@ -1562,9 +1594,11 @@ private:
+                             }
+                         }
+                         retire(task.inputs);
++                        retire(task.outputs);
+                     }
+-                    {std::lock_guard<std::mutex> lock(worker.mutex);worker.assigned.reset();worker.busy=false;worker.submitted.store(false);}
+-                    worker.condition.notify_all();
++                    if(task.preparation)release_worker(*workers[w]);
++                    queue.pop_front();
++                  }
+                 }
+                 while(next!=groups.end() && (!waterline_ || active_groups<plan_->waterline->lookahead_groups)) {
+                     const auto &indices=next->second;
+@@ -1623,11 +1657,12 @@ private:
+                         for(const auto &[pi,cost]:needed) {
+                             auto &state=tasks[pi];state.admitted=true;state.temporary=cost.peak;state.temporary-=cost.resident;
+                             const auto id=state.task.outputs.front();waterline_storage_.emplace(id,cost.resident);
++                            producing.insert(id);
+                             state.worker=state.task.backend==PrepareBackend::Cpu?cpu_worker:queues.size()+desc(id).place.index;
+                             if(state.task.backend==PrepareBackend::Cpu)cpu_preparations.push_back(pi);
+                             else pending[state.worker].push_back(pi);
+                         }
+-                        for(auto i:indices)for(auto id:tasks[i].task.outputs)waterline_storage_.emplace(id,storage(id));
++                        for(auto i:indices)for(auto id:tasks[i].task.outputs) {waterline_storage_.emplace(id,storage(id));producing.insert(id);}
+                         trace_event("admit",0,next->first,std::nullopt,"CompleteGroup",0);
+                     }
+                     for(auto i:indices)tasks[i].admitted=true;
+@@ -1639,16 +1674,7 @@ private:
+                     if(!pending[w].empty()) {
+                         const auto i=pending[w].front();const auto &state=tasks[i];
+                         if(state.admitted && ready(state.task.inputs)) {
+-                            bool allowed=true;
+-                            if(state.task.preparation && state.task.backend==PrepareBackend::Gpu) {
+-                                const auto d=static_cast<std::size_t>(desc(state.task.outputs.front()).place.index)%device_workers;
+-                                allowed=!workers[d]->busy;
+-                                if(!pending[d].empty()) {
+-                                    const auto &front=tasks[pending[d].front()];
+-                                    if(front.admitted && ready(front.task.inputs))allowed=false;
+-                                }
+-                            }
+-                            if(allowed) {selected=i;pending[w].pop_front();}
++                            selected=i;pending[w].pop_front();
+                         }
+                     }
+                     if(!selected && w==cpu_worker && !cpu_preparations.empty()) {
+@@ -1673,11 +1699,17 @@ private:
+                 }
+                 if(!progress) {
+                     bool in_flight=false;for(const auto &w:workers)in_flight|=w->busy;
++                    for(const auto &queue:completing)in_flight|=!queue.empty();
+                     if(!in_flight && (!detail::UsesBackgroundCommunicationIssuer<Api>::value || coordinator_groups_.empty())) {
+                         if(next!=groups.end())throw std::runtime_error("Waterline cannot advance at instruction #"+std::to_string(next->first)+ (waterline_?waterline_->describe(ResourceUsage(devices)):""));
+                         throw std::runtime_error("executor has no runnable producer: dependency/order invariant violated");
+                     }
+-                    std::this_thread::sleep_for(std::chrono::microseconds(100));
++                    // Host submissions wake the dispatcher immediately. Only
++                    // GPU completions (without a host notifier) need timed polls.
++                    std::unique_lock<std::mutex> lock(dispatcher_mutex);
++                    dispatcher_condition.wait_for(lock,std::chrono::microseconds(100),[&] {
++                        return submission_changed || parallel_failed_.load();
++                    });
+                 }
+             }
+             stop_workers();if(issuer.joinable())issuer.join();

@@ -1,0 +1,82 @@
+{
+  "suite": {
+    "kind": "pressure",
+    "devices": 1,
+    "capacity_gib": 7,
+    "reserve_gib": 1,
+    "window": 512,
+    "count": 1024,
+    "plaintext_resident_bytes": 3355443200,
+    "source_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+    "cases": [
+      {
+        "name": "eager",
+        "plan": "eager.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-4096MiB-cpu-w512",
+        "plan": "wl-4096MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-4096MiB-gpu-w512",
+        "plan": "wl-4096MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-256MiB-cpu-w512",
+        "plan": "wl-256MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-256MiB-gpu-w512",
+        "plan": "wl-256MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-32MiB-cpu-w512",
+        "plan": "wl-32MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-32MiB-gpu-w512",
+        "plan": "wl-32MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-8MiB-cpu-w512",
+        "plan": "wl-8MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-8MiB-gpu-w512",
+        "plan": "wl-8MiB-gpu-w512.json",
+        "runner": "qwen"
+      }
+    ]
+  },
+  "cuda": "0",
+  "pool_mib": 6144,
+  "timing_scope": "Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
+  "runner_hashes": {
+    "qwen": "sha256:8488272aef11f193c35d5d780b163ede6d7b04f94b0dc775633fbab466871dd8"
+  },
+  "samples": [
+    {
+      "case": "eager",
+      "repeat": 0,
+      "exit_code": 1,
+      "passed": false,
+      "process_wall_ms": 114.42402900138404,
+      "report": {
+        "error": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local/eager.json: runtime plan JSON error at $.plan_id: expected string",
+        "format_version": 1,
+        "main_entry_to_failure_ms": 29.207314,
+        "passed": false,
+        "stage": "load_artifacts"
+      }
+    }
+  ],
+  "statistics": {}
+}

@@ -1,0 +1,4 @@
+# Per-slot numeric dumps remain local; validation reports and failures are tracked.
+**/decoded.json
+# Generated input for the dispatcher polling probe.
+/local-poll-binary/plan.json

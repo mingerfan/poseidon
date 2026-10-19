@@ -1,0 +1,9 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=316829672 retained_workspace_bound=18087936 reserve_required=402026472 reserve_configured=1073741824
+waterline physical GPU0 pool_reserved=6442450944 pool_cap=6442450944 initial_outside_used=108068864 outside_pool_growth=8388608 allocator_graph_capacity=6040424472
+waterline rescale workspace plan_max_drop=5 capability_max_drop=5
+waterline GPU0 front_peak=6000082944 plain_peak=20709376 remaining_front=393216 remaining_plain=0
+waterline shared host_peak=6914048 pinned_peak=2097152 raw_peak=1507328
+PASS boots=0 transfers=1 rotation_key_policy=binary rotations=14 key_seconds=0.884043 runtime_seconds=0.24608 initialization_seconds=0.000275981 online_execution_seconds=0.24608 boot_seconds=0 python_max_abs=1.01185e-06 max_imaginary=4.94937e-07
+report=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-mlp-before/r1-wl-64MiB-gpu-w128/report.json

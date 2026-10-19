@@ -1,0 +1,10 @@
+[
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/before/bin/poseidon_runtime_gpu_qwen_e2e",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/wl-32MiB-gpu-w512.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/fixture.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-before/r1-wl-32MiB-gpu-w512/report.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-before/r1-wl-32MiB-gpu-w512/decoded.json",
+  "--bundle",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/bundle"
+]

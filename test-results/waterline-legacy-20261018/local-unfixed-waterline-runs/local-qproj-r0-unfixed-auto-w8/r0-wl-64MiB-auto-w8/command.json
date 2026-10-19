@@ -1,0 +1,10 @@
+[
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-legacy-20261018/unfixed/bin/poseidon_runtime_gpu_qwen_e2e",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/wl-64MiB-auto-w8.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/operator-spec.json",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/fixture.json",
+  "test-results/waterline-legacy-20261018/local-unfixed-waterline-runs/local-qproj-r0-unfixed-auto-w8/r0-wl-64MiB-auto-w8/report.json",
+  "test-results/waterline-legacy-20261018/local-unfixed-waterline-runs/local-qproj-r0-unfixed-auto-w8/r0-wl-64MiB-auto-w8/decoded.json",
+  "--bundle",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-auto-w8/bundle"
+]

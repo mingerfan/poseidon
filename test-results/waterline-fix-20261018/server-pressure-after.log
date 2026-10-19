@@ -1,0 +1,13 @@
+Connection to 10.208.130.188 4000 port [tcp/terabase] succeeded!
+wl-16384MiB-gpu-w512 repeat=0 exit=0 forward_ms=2285.950036 online_ms=2242.095812
+wl-1024MiB-gpu-w512 repeat=0 exit=0 forward_ms=2346.198562 online_ms=2286.835336
+wl-64MiB-gpu-w512 repeat=0 exit=0 forward_ms=2213.309162 online_ms=2171.509283
+wl-8MiB-gpu-w512 repeat=0 exit=0 forward_ms=3032.39195 online_ms=2988.59797
+wl-1024MiB-gpu-w512 repeat=1 exit=0 forward_ms=2204.200851 online_ms=2154.267938
+wl-64MiB-gpu-w512 repeat=1 exit=0 forward_ms=2230.655323 online_ms=2188.555828
+wl-8MiB-gpu-w512 repeat=1 exit=0 forward_ms=3139.671586 online_ms=3095.411655
+wl-16384MiB-gpu-w512 repeat=1 exit=0 forward_ms=2393.503839 online_ms=2348.563742
+wl-64MiB-gpu-w512 repeat=2 exit=0 forward_ms=2387.770442 online_ms=2344.801235
+wl-8MiB-gpu-w512 repeat=2 exit=0 forward_ms=3041.749927 online_ms=2997.325116
+wl-16384MiB-gpu-w512 repeat=2 exit=0 forward_ms=2363.544736 online_ms=2319.360499
+wl-1024MiB-gpu-w512 repeat=2 exit=0 forward_ms=2316.270868 online_ms=2271.601963

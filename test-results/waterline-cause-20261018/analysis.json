@@ -1,0 +1,682 @@
+{
+  "scope": "Historical GPU reports plus new local CPU-only Runtime controls. No production changes. No new V100 profile: SSH returned SOCKSv5 Host unreachable.",
+  "timing_caveats": [
+    "Historical comparison swaps exact Runtime headers only, keeping the current GPU backend; it is not a historical whole-repository rebuild.",
+    "Eager online excludes prior encoding/upload; Waterline online includes runtime preparation. Both include final output synchronization and drain.",
+    "Compute API is host wall time, not GPU kernel time. Its complement includes dispatch, Release, metadata and final GPU drain, not pure CPU or pure idle time.",
+    "CPU controls use scalar tokens and instant communication, with no CUDA or weight I/O. Their durations cannot be subtracted from V100 timings.",
+    "Context switch counts cover the full Runtime call (including initialization/setup), whereas online_ms covers online execution.",
+    "Prepared-direct preserves new metadata source construction and bypasses central per-task coordination. Its residual difference is not a clean metadata-only cost measurement.",
+    "GPU encoding/upload/consumer CUDA-event intervals include stream scheduling waits. They overlap other timings and cannot be summed into an exclusive wall-time breakdown.",
+    "Bundle reading includes validation, copying and conversion; OS file cache was not flushed. It is not pure physical disk time.",
+    "Nsight kernel span covers first-to-last kernel in the process, not Runtime online. Inter-kernel gaps can include copies; profiles are excluded from latency medians.",
+    "q_proj is synthetic proxy work, not a fresh full-Qwen measurement."
+  ],
+  "server_pressure_execution": {
+    "weights": 4096,
+    "arithmetic_tasks": 8191,
+    "release_tasks": 12287,
+    "total_tasks": 20478
+  },
+  "server_pressure_eager": {
+    "legacy": {
+      "sources": [
+        "test-results/waterline-legacy-20261018/server-runs/server-pressure-r0-legacy-eager/summary.json",
+        "test-results/waterline-legacy-20261018/server-runs/server-pressure-r1-legacy-eager/summary.json",
+        "test-results/waterline-legacy-20261018/server-runs/server-pressure-r2-legacy-eager/summary.json"
+      ],
+      "online_ms": {
+        "median": 267.295216,
+        "samples": [
+          267.295216,
+          267.030294,
+          267.983759
+        ]
+      },
+      "forward_ms": {
+        "median": 100491.740322,
+        "samples": [
+          100859.060475,
+          100364.387061,
+          100491.740322
+        ]
+      },
+      "initialization_ms": {
+        "median": 99854.658724,
+        "samples": [
+          100224.27313,
+          99719.86372,
+          99854.658724
+        ]
+      },
+      "compute_api_ms": {
+        "median": 149.278928,
+        "samples": [
+          143.491231,
+          152.95412,
+          149.278928
+        ]
+      },
+      "outside_compute_api_ms": {
+        "median": 118.70483100000001,
+        "samples": [
+          123.80398499999998,
+          114.07617400000004,
+          118.70483100000001
+        ]
+      }
+    },
+    "current": {
+      "sources": [
+        "test-results/waterline-legacy-20261018/server-runs/server-pressure-r0-current-eager/summary.json",
+        "test-results/waterline-legacy-20261018/server-runs/server-pressure-r1-current-eager/summary.json",
+        "test-results/waterline-legacy-20261018/server-runs/server-pressure-r2-current-eager/summary.json"
+      ],
+      "online_ms": {
+        "median": 542.065633,
+        "samples": [
+          671.128949,
+          531.570114,
+          542.065633
+        ]
+      },
+      "forward_ms": {
+        "median": 101202.812486,
+        "samples": [
+          100706.302482,
+          101202.812486,
+          101245.402094
+        ]
+      },
+      "initialization_ms": {
+        "median": 100299.876851,
+        "samples": [
+          99659.47009,
+          100299.876851,
+          100331.210249
+        ]
+      },
+      "compute_api_ms": {
+        "median": 179.432175,
+        "samples": [
+          196.352032,
+          172.994591,
+          179.432175
+        ]
+      },
+      "outside_compute_api_ms": {
+        "median": 362.633458,
+        "samples": [
+          474.776917,
+          358.575523,
+          362.633458
+        ]
+      }
+    }
+  },
+  "server_pressure_waterline": {
+    "sources": [
+      "test-results/waterline-legacy-20261018/server-runs/server-pressure-r0-current-waterline/summary.json",
+      "test-results/waterline-legacy-20261018/server-runs/server-pressure-r1-current-waterline/summary.json",
+      "test-results/waterline-legacy-20261018/server-runs/server-pressure-r2-current-waterline/summary.json"
+    ],
+    "online_ms": {
+      "median": 2271.291515,
+      "samples": [
+        2184.034686,
+        2271.291515,
+        2407.731173
+      ]
+    },
+    "forward_ms": {
+      "median": 2315.156144,
+      "samples": [
+        2226.934965,
+        2315.156144,
+        2450.771079
+      ]
+    },
+    "bundle_read_ms": {
+      "median": 465.838839,
+      "samples": [
+        429.851687,
+        465.838839,
+        520.561769
+      ]
+    },
+    "prepare_api_ms": {
+      "median": 913.221587,
+      "samples": [
+        822.045136,
+        913.221587,
+        950.697441
+      ]
+    },
+    "compute_api_ms": {
+      "median": 434.311243,
+      "samples": [
+        408.40691,
+        434.311243,
+        461.378016
+      ]
+    },
+    "gpu_encode_calls": {
+      "median": 4096,
+      "samples": [
+        4096,
+        4096,
+        4096
+      ]
+    },
+    "gpu_encode_ms": {
+      "median": 660.498381,
+      "samples": [
+        660.498381,
+        665.505172,
+        654.798257
+      ]
+    },
+    "gpu_raw_h2d_bytes": {
+      "median": 268435456,
+      "samples": [
+        268435456,
+        268435456,
+        268435456
+      ]
+    },
+    "gpu_raw_h2d_ms": {
+      "median": 62.449911,
+      "samples": [
+        60.35872,
+        62.449911,
+        62.634837
+      ]
+    },
+    "consumer_wait_ms": {
+      "median": 169.976136,
+      "samples": [
+        201.696756,
+        169.976136,
+        117.984791
+      ]
+    }
+  },
+  "local_cpu_control": {
+    "scope": "CPU scalar-token control using the real Runtime. No CUDA, CKKS encoding, weight I/O or GPU event queries. Prepared-direct retains new metadata construction but bypasses per-task dispatcher handoffs. These are not FHE/GPU latency measurements.",
+    "verified_samples": 63,
+    "comparisons": [
+      {
+        "weights": 1024,
+        "variant": "legacy",
+        "repeats": 7,
+        "online_ms": {
+          "median": 1.84082,
+          "min": 1.715961,
+          "max": 2.046152
+        },
+        "compute_api_ms": {
+          "median": 0.089401,
+          "min": 0.07857,
+          "max": 0.11011
+        },
+        "main_collections": {
+          "median": 1025,
+          "min": 1025,
+          "max": 1025
+        },
+        "worker_collections": {
+          "median": 3071,
+          "min": 3071,
+          "max": 3071
+        },
+        "voluntary_context_switches": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "involuntary_context_switches": {
+          "median": 1,
+          "min": 0,
+          "max": 2
+        },
+        "process_cpu_seconds": {
+          "median": 0.003839999999999999,
+          "min": 0.0035340000000000024,
+          "max": 0.004728000000000001
+        }
+      },
+      {
+        "weights": 1024,
+        "variant": "current",
+        "repeats": 7,
+        "online_ms": {
+          "median": 20.31472,
+          "min": 18.171578,
+          "max": 25.035959
+        },
+        "compute_api_ms": {
+          "median": 0.143701,
+          "min": 0.129191,
+          "max": 0.188
+        },
+        "main_collections": {
+          "median": 11262,
+          "min": 11262,
+          "max": 11264
+        },
+        "worker_collections": {
+          "median": 3071,
+          "min": 3071,
+          "max": 3071
+        },
+        "voluntary_context_switches": {
+          "median": 10255,
+          "min": 10246,
+          "max": 10272
+        },
+        "involuntary_context_switches": {
+          "median": 1,
+          "min": 0,
+          "max": 14
+        },
+        "process_cpu_seconds": {
+          "median": 0.022234999999999994,
+          "min": 0.020715999999999995,
+          "max": 0.026635
+        }
+      },
+      {
+        "weights": 1024,
+        "variant": "prepared_direct",
+        "repeats": 7,
+        "online_ms": {
+          "median": 4.020674,
+          "min": 3.828643,
+          "max": 4.136145
+        },
+        "compute_api_ms": {
+          "median": 0.09796,
+          "min": 0.089721,
+          "max": 0.11801
+        },
+        "main_collections": {
+          "median": 1025,
+          "min": 1025,
+          "max": 1025
+        },
+        "worker_collections": {
+          "median": 3071,
+          "min": 3071,
+          "max": 3071
+        },
+        "voluntary_context_switches": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "involuntary_context_switches": {
+          "median": 0,
+          "min": 0,
+          "max": 4
+        },
+        "process_cpu_seconds": {
+          "median": 0.005901999999999998,
+          "min": 0.005777,
+          "max": 0.006224
+        }
+      },
+      {
+        "weights": 4096,
+        "variant": "legacy",
+        "repeats": 7,
+        "online_ms": {
+          "median": 7.229653,
+          "min": 6.241747,
+          "max": 7.814256
+        },
+        "compute_api_ms": {
+          "median": 0.372481,
+          "min": 0.257322,
+          "max": 0.421032
+        },
+        "main_collections": {
+          "median": 4097,
+          "min": 4097,
+          "max": 4097
+        },
+        "worker_collections": {
+          "median": 12287,
+          "min": 12287,
+          "max": 12287
+        },
+        "voluntary_context_switches": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "involuntary_context_switches": {
+          "median": 1,
+          "min": 0,
+          "max": 5
+        },
+        "process_cpu_seconds": {
+          "median": 0.014189000000000002,
+          "min": 0.012765999999999998,
+          "max": 0.017207000000000004
+        }
+      },
+      {
+        "weights": 4096,
+        "variant": "current",
+        "repeats": 7,
+        "online_ms": {
+          "median": 91.226861,
+          "min": 63.321015,
+          "max": 110.088043
+        },
+        "compute_api_ms": {
+          "median": 0.635756,
+          "min": 0.459116,
+          "max": 1.066289
+        },
+        "main_collections": {
+          "median": 45054,
+          "min": 45052,
+          "max": 45054
+        },
+        "worker_collections": {
+          "median": 12287,
+          "min": 12287,
+          "max": 12287
+        },
+        "voluntary_context_switches": {
+          "median": 40982,
+          "min": 40961,
+          "max": 41009
+        },
+        "involuntary_context_switches": {
+          "median": 3,
+          "min": 1,
+          "max": 9
+        },
+        "process_cpu_seconds": {
+          "median": 0.104059,
+          "min": 0.07243800000000002,
+          "max": 0.121128
+        }
+      },
+      {
+        "weights": 4096,
+        "variant": "prepared_direct",
+        "repeats": 7,
+        "online_ms": {
+          "median": 14.826438,
+          "min": 14.086493,
+          "max": 15.847584
+        },
+        "compute_api_ms": {
+          "median": 0.487302,
+          "min": 0.371021,
+          "max": 0.527282
+        },
+        "main_collections": {
+          "median": 4097,
+          "min": 4097,
+          "max": 4097
+        },
+        "worker_collections": {
+          "median": 12287,
+          "min": 12287,
+          "max": 12287
+        },
+        "voluntary_context_switches": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "involuntary_context_switches": {
+          "median": 1,
+          "min": 0,
+          "max": 3
+        },
+        "process_cpu_seconds": {
+          "median": 0.022338000000000004,
+          "min": 0.020446999999999993,
+          "max": 0.023101
+        }
+      },
+      {
+        "weights": 16384,
+        "variant": "legacy",
+        "repeats": 7,
+        "online_ms": {
+          "median": 36.130533,
+          "min": 32.348462,
+          "max": 38.602188
+        },
+        "compute_api_ms": {
+          "median": 1.691502,
+          "min": 1.373343,
+          "max": 1.785231
+        },
+        "main_collections": {
+          "median": 16385,
+          "min": 16385,
+          "max": 16385
+        },
+        "worker_collections": {
+          "median": 49151,
+          "min": 49151,
+          "max": 49151
+        },
+        "voluntary_context_switches": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "involuntary_context_switches": {
+          "median": 5,
+          "min": 0,
+          "max": 23
+        },
+        "process_cpu_seconds": {
+          "median": 0.064019,
+          "min": 0.059999000000000004,
+          "max": 0.066059
+        }
+      },
+      {
+        "weights": 16384,
+        "variant": "current",
+        "repeats": 7,
+        "online_ms": {
+          "median": 302.715919,
+          "min": 283.092286,
+          "max": 338.820829
+        },
+        "compute_api_ms": {
+          "median": 2.19513,
+          "min": 2.043348,
+          "max": 2.663406
+        },
+        "main_collections": {
+          "median": 180221,
+          "min": 180219,
+          "max": 180229
+        },
+        "worker_collections": {
+          "median": 49151,
+          "min": 49151,
+          "max": 49151
+        },
+        "voluntary_context_switches": {
+          "median": 164027,
+          "min": 163968,
+          "max": 164376
+        },
+        "involuntary_context_switches": {
+          "median": 23,
+          "min": 7,
+          "max": 92
+        },
+        "process_cpu_seconds": {
+          "median": 0.320705,
+          "min": 0.30911500000000003,
+          "max": 0.36973399999999995
+        }
+      },
+      {
+        "weights": 16384,
+        "variant": "prepared_direct",
+        "repeats": 7,
+        "online_ms": {
+          "median": 72.600419,
+          "min": 70.643277,
+          "max": 84.292627
+        },
+        "compute_api_ms": {
+          "median": 2.007038,
+          "min": 1.86287,
+          "max": 2.31851
+        },
+        "main_collections": {
+          "median": 16385,
+          "min": 16385,
+          "max": 16385
+        },
+        "worker_collections": {
+          "median": 49151,
+          "min": 49151,
+          "max": 49151
+        },
+        "voluntary_context_switches": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "involuntary_context_switches": {
+          "median": 3,
+          "min": 2,
+          "max": 16
+        },
+        "process_cpu_seconds": {
+          "median": 0.10091199999999997,
+          "min": 0.098898,
+          "max": 0.112571
+        }
+      }
+    ]
+  },
+  "local_qproj_auto8": {
+    "sources": [
+      "test-results/waterline-legacy-20261018/local-runs/local-qproj-r0-current-auto-w8/summary.json",
+      "test-results/waterline-legacy-20261018/local-runs/local-qproj-r1-current-auto-w8/summary.json",
+      "test-results/waterline-legacy-20261018/local-runs/local-qproj-r2-current-auto-w8/summary.json"
+    ],
+    "online_ms": {
+      "median": 2691.817425,
+      "samples": [
+        2701.064114,
+        2687.224217,
+        2691.817425
+      ]
+    },
+    "cpu_prepare_calls": {
+      "median": 361,
+      "samples": [
+        361,
+        361,
+        361
+      ]
+    },
+    "cpu_encode_ms": {
+      "median": 1481.413986,
+      "samples": [
+        1474.932142,
+        1481.413986,
+        1484.918116
+      ]
+    },
+    "cpu_plain_h2d_bytes": {
+      "median": 473497600,
+      "samples": [
+        473497600,
+        473497600,
+        473497600
+      ]
+    }
+  },
+  "local_mlp_nsys": {
+    "scope": "Separate profiled MLP eager processes. Kernel span is first-to-last GPU kernel in the whole process, not Runtime online wall time. Excluded from latency medians.",
+    "profiles": {
+      "legacy": {
+        "passed": true,
+        "kernels": 16018,
+        "kernel_shape_sha256": "6ea5cfb3f8b9619afe3b97733f5e8d543a3c88c614c3dd8dd3c1399e586c3eda",
+        "kernel_union_ms": 104.903383,
+        "kernel_span_ms": 132.263895,
+        "no_kernel_between_first_last_ms": 27.360512,
+        "cuda_api_summary": [
+          {
+            "api": "cudaEventQuery_v3020",
+            "calls": 4992,
+            "cpu_api_ms": 2.048992
+          },
+          {
+            "api": "cudaLaunchKernel_ptsz_v7000",
+            "calls": 16018,
+            "cpu_api_ms": 94.665279
+          }
+        ]
+      },
+      "unfixed": {
+        "passed": true,
+        "kernels": 16018,
+        "kernel_shape_sha256": "6ea5cfb3f8b9619afe3b97733f5e8d543a3c88c614c3dd8dd3c1399e586c3eda",
+        "kernel_union_ms": 102.667699,
+        "kernel_span_ms": 236.698916,
+        "no_kernel_between_first_last_ms": 134.031217,
+        "cuda_api_summary": [
+          {
+            "api": "cudaEventQuery_v3020",
+            "calls": 6501,
+            "cpu_api_ms": 3.447775
+          },
+          {
+            "api": "cudaLaunchKernel_ptsz_v7000",
+            "calls": 16018,
+            "cpu_api_ms": 86.375833
+          }
+        ]
+      },
+      "current": {
+        "passed": true,
+        "kernels": 16018,
+        "kernel_shape_sha256": "6ea5cfb3f8b9619afe3b97733f5e8d543a3c88c614c3dd8dd3c1399e586c3eda",
+        "kernel_union_ms": 104.708687,
+        "kernel_span_ms": 134.133722,
+        "no_kernel_between_first_last_ms": 29.425035,
+        "cuda_api_summary": [
+          {
+            "api": "cudaEventQuery_v3020",
+            "calls": 9927,
+            "cpu_api_ms": 4.60988
+          },
+          {
+            "api": "cudaLaunchKernel_ptsz_v7000",
+            "calls": 16018,
+            "cpu_api_ms": 93.159407
+          }
+        ]
+      }
+    },
+    "same_kernel_shapes_and_counts": true
+  },
+  "source_sha256": {
+    "third_party/ckks-runtime/runtime/runtime.hpp": "db09ac6ee97827a3f70c060e31a25a94b071dbe3f69858a69a68e81e9e5e00b2",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "1562684cdc5fdf774f6f8880e7c847b15cb2f7d1b5bb4c5edb608c9d1abdff86",
+    "test-results/waterline-cause-20261018/cpu-probe.cpp": "9bb5a5e5de327119270ecbfbdaded5dbad92096ff5db25a79258a6eda6cbf2c3",
+    "test-results/waterline-cause-20261018/build-probes.py": "aa11e496b10969425aa121a7f1af122a4b474d78d4a289b19dcbe55340c481b4",
+    "test-results/waterline-cause-20261018/run-probes.py": "a3b08745f2f699219920c5e25f9f40bebd7d06179d709fcb8f171dd63f05e7a0"
+  }
+}

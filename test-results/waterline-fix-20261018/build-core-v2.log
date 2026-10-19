@@ -1,0 +1,19 @@
+[ 35%] Built target ckks_runtime_core
+[ 64%] Building CXX object CMakeFiles/ckks_runtime_test_support.dir/testing/testing.cpp.o
+[ 64%] Built target ckks_runtime_plan_json
+[ 70%] Linking CXX static library libruntime_test_support.a
+[ 88%] Built target ckks_runtime_test_support
+[ 94%] Building CXX object CMakeFiles/runtime_waterline_tests.dir/tests/runtime_waterline_tests.cpp.o
+[100%] Linking CXX executable runtime_waterline_tests
+[100%] Built target runtime_waterline_tests
+[ 35%] Built target ckks_runtime_core
+[ 58%] Built target ckks_runtime_plan_json
+[ 88%] Built target ckks_runtime_test_support
+[ 94%] Building CXX object CMakeFiles/runtime_tests.dir/tests/runtime_tests.cpp.o
+[100%] Linking CXX executable runtime_tests
+[100%] Built target runtime_tests
+[ 46%] Built target ckks_runtime_core
+[ 84%] Built target ckks_runtime_test_support
+[ 92%] Building CXX object CMakeFiles/runtime_release_tests.dir/tests/runtime_release_tests.cpp.o
+[100%] Linking CXX executable runtime_release_tests
+[100%] Built target runtime_release_tests

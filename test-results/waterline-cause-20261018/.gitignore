@@ -1,0 +1,2 @@
+# Per-slot numeric dumps remain local; validation reports and failures are tracked.
+**/decoded.json

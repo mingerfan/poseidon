@@ -1,0 +1,49 @@
+{
+  "local-mlp-q21": {
+    "passed": true,
+    "samples": 21
+  },
+  "server-mlp1-gpu2": {
+    "passed": true,
+    "samples": 21
+  },
+  "server-mlp2-gpu23": {
+    "passed": true,
+    "samples": 21
+  },
+  "local-pressure": {
+    "passed": true,
+    "samples": 27
+  },
+  "server-pressure-gpu2": {
+    "passed": true,
+    "samples": 16
+  },
+  "local-qproj": {
+    "passed": true,
+    "samples": 18
+  },
+  "local-pressure-binary": {
+    "passed": true,
+    "samples": 12
+  },
+  "server-pressure-binary-gpu2": {
+    "passed": true,
+    "samples": 12
+  },
+  "local-qproj-binary": {
+    "passed": true,
+    "samples": 12
+  },
+  "local-poll-binary": {
+    "passed": true,
+    "samples": 9
+  },
+  "local-poll-json": {
+    "passed": true,
+    "samples": 9
+  },
+  "total_unprofiled_comparison_runs": 178,
+  "profiled_checked_runs": 2,
+  "matching_key_source_files": 7
+}

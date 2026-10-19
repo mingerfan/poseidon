@@ -1,0 +1,248 @@
+diff --git a/src/poseidon/runtime_api/poseidon_gpu_api.cpp b/src/poseidon/runtime_api/poseidon_gpu_api.cpp
+index b7f4ee1d..f48ac290 100644
+--- a/src/poseidon/runtime_api/poseidon_gpu_api.cpp
++++ b/src/poseidon/runtime_api/poseidon_gpu_api.cpp
+@@ -29,6 +29,7 @@
+ #include <cstdlib>
+ #include <cstdint>
+ #include <cstring>
++#include <deque>
+ #include <limits>
+ #include <map>
+ #include <mutex>
+@@ -851,12 +852,15 @@ struct PoseidonGpuApi::DeviceState
+     int cuda_device_id = 0;
+     cudaStream_t foreground_stream=nullptr;
+     std::mutex consumer_wait_mutex;
+-    std::optional<std::pair<cudaEvent_t,cudaEvent_t>> consumer_wait_pending;
++    // Timing follows the same bounded submission window as foreground work.
++    // A single timing slot would force a completion barrier between consumers.
++    std::deque<std::pair<cudaEvent_t,cudaEvent_t>> consumer_wait_pending;
+     std::uint64_t consumer_wait_calls=0,consumer_wait_nanoseconds=0;
+     void collect_consumer_wait_locked() {
+-        if(!consumer_wait_pending)return;
++        if(consumer_wait_pending.empty())return;
+         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id),"consumer wait timing device");
+-        auto &events=*consumer_wait_pending;
++        while(!consumer_wait_pending.empty()) {
++        auto &events=consumer_wait_pending.front();
+         const auto status=cudaEventQuery(events.second);
+         if(status==cudaErrorNotReady)return;
+         gpu::gpu_check_cuda(status,"consumer wait timing query");
+@@ -869,7 +873,8 @@ struct PoseidonGpuApi::DeviceState
+         gpu::gpu_check_cuda(cudaEventDestroy(events.second),"consumer wait end destroy");events.second=nullptr;
+         fhegpu::ResourceUsage::add(consumer_wait_calls,1);
+         fhegpu::ResourceUsage::add(consumer_wait_nanoseconds,static_cast<std::uint64_t>(nanoseconds));
+-        consumer_wait_pending.reset();
++        consumer_wait_pending.pop_front();
++        }
+     }
+     void collect_consumer_wait() {
+         std::unique_lock<std::mutex> lock(consumer_wait_mutex,std::try_to_lock);
+@@ -878,9 +883,9 @@ struct PoseidonGpuApi::DeviceState
+     ~DeviceState() {
+         if(foreground_stream) {
+             (void)cudaSetDevice(cuda_device_id);(void)cudaStreamSynchronize(foreground_stream);
+-            if(consumer_wait_pending) {
+-                if(consumer_wait_pending->first)(void)cudaEventDestroy(consumer_wait_pending->first);
+-                if(consumer_wait_pending->second)(void)cudaEventDestroy(consumer_wait_pending->second);
++            for(auto &events:consumer_wait_pending) {
++                if(events.first)(void)cudaEventDestroy(events.first);
++                if(events.second)(void)cudaEventDestroy(events.second);
+             }
+             (void)cudaStreamDestroy(foreground_stream);
+         }
+@@ -1002,6 +1007,24 @@ public:
+         return waited_;
+     }
+ 
++    bool recorded_on_explicit_stream() const
++    {
++        return recorded_ && producer_stream_ != nullptr &&
++               producer_stream_ != cudaStreamPerThread && producer_stream_ != cudaStreamLegacy;
++    }
++
++    bool same_ordered_stream(const ReadyEvent &other) const
++    {
++        // Explicit CUDA streams execute in order. Retainers from one issuer
++        // are appended in that same order, so an unfinished event also keeps
++        // every following event on this lane unfinished. PTDS handles can
++        // denote different streams after a host thread exits; do not group them.
++        return recorded_on_explicit_stream() && other.recorded_on_explicit_stream() &&
++               cuda_device_id_ == other.cuda_device_id_ &&
++               producer_stream_ == other.producer_stream_ &&
++               producer_thread_ == other.producer_thread_;
++    }
++
+     void wait()
+     {
+         std::lock_guard<std::mutex> lock(wait_mutex_);
+@@ -1900,11 +1923,12 @@ bool PoseidonGpuApi::is_ready(Value &value)
+     ScopedCompletedReclamation reclamation;
+     std::unique_lock<std::mutex> lock(in_flight_mutex_,std::try_to_lock);
+     if(!lock.owns_lock())return false;
+-    // The executor returns temporary credit immediately after true. Reclaim
+-    // completed retainers first, including a Ready that completed after the
+-    // dispatcher's preceding collect_completed() query.
++    // The executor returns temporary credit immediately after true. Settle
++    // this event even if it completed after collect_completed() queried it.
++    // Unrelated events are reaped by collect_completed, without querying the
++    // entire submission window again for each individual completed ticket.
+     in_flight_work_.erase(std::remove_if(in_flight_work_.begin(),in_flight_work_.end(),
+-        [&](auto &work){return work.completion==completion || work.completion->collect_completed();}),in_flight_work_.end());
++        [&](auto &work){return work.completion==completion;}),in_flight_work_.end());
+     return true;
+ }
+ 
+@@ -1959,8 +1983,6 @@ void PoseidonGpuApi::wait_on_compute_inputs(
+     try {
+         if(measure) {
+             lock.lock();device.collect_consumer_wait_locked();
+-            if(device.consumer_wait_pending)
+-                throw std::logic_error("Waterline consumer wait slot is still pending; foreground submission must remain bounded");
+             gpu::gpu_check_cuda(cudaEventCreate(&events.first),"consumer wait start create");
+             gpu::gpu_check_cuda(cudaEventCreate(&events.second),"consumer wait end create");
+             gpu::gpu_check_cuda(cudaEventRecord(events.first,gpu::gpu_execution_stream()),"consumer wait start record");
+@@ -1970,7 +1992,7 @@ void PoseidonGpuApi::wait_on_compute_inputs(
+         });
+         if(measure) {
+             gpu::gpu_check_cuda(cudaEventRecord(events.second,gpu::gpu_execution_stream()),"consumer wait end record");
+-            device.consumer_wait_pending=events;
++            device.consumer_wait_pending.push_back(events);
+         }
+     } catch(...) {
+         if(events.first)(void)cudaEventDestroy(events.first);
+@@ -3458,10 +3480,17 @@ void PoseidonGpuApi::collect_completed()
+     ScopedCompletedReclamation reclamation;
+     {
+         std::unique_lock<std::mutex> lock(in_flight_mutex_, std::try_to_lock);
+-        if(lock.owns_lock())in_flight_work_.erase(
+-            std::remove_if(in_flight_work_.begin(), in_flight_work_.end(),
+-                           [](auto &work) { return work.completion->collect_completed(); }),
+-            in_flight_work_.end());
++        if(lock.owns_lock()) {
++            std::vector<std::shared_ptr<PoseidonGpuValue::ReadyEvent>> blocked_streams;
++            in_flight_work_.erase(
++                std::remove_if(in_flight_work_.begin(),in_flight_work_.end(),[&](auto &work) {
++                    for(const auto &blocked:blocked_streams)
++                        if(work.completion->same_ordered_stream(*blocked))return false;
++                    if(work.completion->collect_completed())return true;
++                    if(work.completion->recorded_on_explicit_stream())blocked_streams.push_back(work.completion);
++                    return false;
++                }),in_flight_work_.end());
++        }
+     }
+     for(auto &device:devices_) {
+         device->collect_consumer_wait();
+diff --git a/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp b/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp
+index 5c40e47d..b4f3bdf6 100644
+--- a/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp
++++ b/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp
+@@ -1640,6 +1640,98 @@ void test_runtime_drains_unreturned_work(
+             "Runtime retained intermediate objects between completed runs");
+ }
+ 
++void test_waterline_submission_pipeline(const poseidon::PoseidonContext &context,
++                                        poseidon::KeyGenerator &key_generator,
++                                        const fhegpu::LoadedOperatorSpec &spec)
++{
++    class GatedApi : public PoseidonGpuApi {
++    public:
++        using PoseidonGpuApi::PoseidonGpuApi;
++        CudaHostGate *gate = nullptr;
++        CudaGateWatchdog *watchdog = nullptr;
++        bool expect_bounded = false, pipelined = false, bounded = false;
++        std::atomic<int> submitted{0};
++        int polls = 0;
++        std::unique_ptr<GatedAllocationResource> gated_resource;
++        std::optional<Value> first;
++        Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs) {
++            auto *upstream=rmm::mr::get_current_device_resource();
++            if(submitted.load()==0) {
++                require(cudaSetDevice(kDeviceId)==cudaSuccess,"pipeline device selection failed");
++                gated_resource=std::make_unique<GatedAllocationResource>(upstream,*gate);
++                rmm::mr::set_current_device_resource(gated_resource.get());
++            } else if(!expect_bounded) {
++                require(first && !PoseidonGpuApi::is_ready(*first),
++                        "Waterline waited for the first GPU completion before submitting its consumer");
++                pipelined=watchdog->finish_post();
++            }
++            std::optional<Value> result;
++            try {result.emplace(PoseidonGpuApi::compute(op,inputs));}
++            catch(...) {rmm::mr::set_current_device_resource(upstream);throw;}
++            rmm::mr::set_current_device_resource(upstream);
++            if(submitted.load()==0)first=*result;
++            ++submitted;
++            return std::move(*result);
++        }
++        bool is_ready(Value &value) {
++            const bool ready=PoseidonGpuApi::is_ready(value);
++            if(expect_bounded && submitted.load()==1 && !ready && ++polls==16) {
++                bounded=submitted.load()==1 && watchdog->finish_post();
++            }
++            return ready;
++        }
++    };
++    poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
++    poseidon::Encryptor encryptor(context,public_key);
++    poseidon::Decryptor decryptor(context,key_generator.secret_key());
++    poseidon::CKKSEncoder encoder(context);
++    const std::vector<double> input{1,-2,3,-4};
++    poseidon::Plaintext plain;encoder.encode(input,std::ldexp(1.0,kDefaultScaleLog2),plain);
++    poseidon::Ciphertext cipher;encryptor.encrypt(plain,cipher);
++    fhegpu::RuntimePlan plan;plan.format_version=4;plan.plan_id=405;plan.target=make_target(spec);
++    for(std::size_t id=0;id<5;++id)
++        plan.values.push_back({id,fhegpu::ValueKind::Ciphertext,id==0 || id==4?host_place():device_place(),
++                               kContextId,static_cast<int>(cipher.level()),kDefaultScaleLog2,true,2});
++    plan.external_inputs={0};plan.final_outputs={4};
++    auto upload=transfer_action(405,fhegpu::ValueKind::Ciphertext,host_place(),device_place());
++    upload.inputs={0};upload.outputs={1};plan.initialization={{0,upload}};
++    plan.execution={{1,fhegpu::ComputeOp{fhegpu::ComputeKind::Negate,{1},2,device_place(),{}}},
++                    {2,fhegpu::ReleaseOp{1}},
++                    {3,fhegpu::ComputeOp{fhegpu::ComputeKind::Negate,{2},3,device_place(),{}}},
++                    {4,fhegpu::ReleaseOp{2}}};
++    auto download=transfer_action(406,fhegpu::ValueKind::Ciphertext,device_place(),host_place());
++    download.inputs={3};download.outputs={4};
++    plan.finalization={{5,download},{6,fhegpu::ReleaseOp{3}}};
++    fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Gpu;
++    config.device_capacity_bytes={4ULL<<30};config.device_reserve_bytes={2ULL<<30};
++    config.device_fractions={.1};config.host_budget_bytes=64ULL<<20;
++    config.pinned_budget_bytes=16ULL<<20;config.raw_budget_bytes=8ULL<<20;
++    for(int mode:{0,1,2}) {
++        GatedApi api(kContextId,context,kDeviceId);
++        config.lookahead_groups=mode==1?1:8;
++        config.device_reserve_bytes={2ULL<<30};
++        if(mode==2) {
++            // Two ciphertexts fit, but the next output cannot coexist with the
++            // unfinished producer and its input. Credit must follow completion.
++            const auto front=2*api.value_resources(plan.values[1]).front[0];
++            config.device_reserve_bytes={config.device_capacity_bytes[0]-front};
++        }
++        plan.waterline=config;
++        CudaHostGate gate;CudaGateWatchdog watchdog(gate);
++        api.gate=&gate;api.watchdog=&watchdog;api.expect_bounded=mode!=0;
++        fhegpu::SequentialRuntime<GatedApi> runtime(0,1,1,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
++        auto artifact=runtime.run({plan,kPlanSha},{spec,std::nullopt,false},
++            {{0,PoseidonGpuValue::from_host_ciphertext(cipher)}});
++        require(api.submitted==2 && (api.expect_bounded?api.bounded:api.pipelined),
++                "Waterline pipeline, completion-bounded lookahead or byte budget failed");
++        poseidon::Plaintext decoded;decryptor.decrypt(artifact.values.at(4).value.host_ciphertext(),decoded);
++        std::vector<std::complex<double>> slots;encoder.decode(decoded,slots);
++        for(std::size_t i=0;i<slots.size();++i)
++            require(std::abs(slots[i]-(i<input.size()?input[i]:0))<1e-4,
++                    "pipelined GPU dependency or Release changed the result");
++    }
++}
++
+ void test_runtime_release(const poseidon::PoseidonContext &context,
+                           poseidon::KeyGenerator &key_generator,
+                           const fhegpu::LoadedOperatorSpec &spec,
+@@ -3140,6 +3232,8 @@ int main()
+                      context, key_generator, loaded_spec, rmm_pool); });
+         run_test("Runtime Release during unfinished computation and transfer",
+                  [&] { test_runtime_release(context, key_generator, loaded_spec, rmm_pool); });
++        run_test("Waterline pipelines GPU submissions and retains window and byte credits through completion",
++                 [&] { test_waterline_submission_pipeline(context,key_generator,loaded_spec); });
+         run_test("online Encode/upload and explicit Fence in both execution modes",
+                  [&] { test_runtime_explicit_encode_fence(context, key_generator, loaded_spec); });
+         run_test("GPU AddCP/SubCP/Rotate reuse chains",

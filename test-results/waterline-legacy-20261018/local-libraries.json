@@ -1,0 +1,7 @@
+{
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_runtime_gpu_api.a": "06cc608860875412b438dc7107a480566243ec1051a8df49e0ecbcce3bb12b0c",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_core.a": "6c4d084c45728105ac9bd3ed63bcfd2b85462ebeb7510dc5b7f3335450f3d5bd",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_plan_json.a": "314cf72274af211866a5ed06bc2c1215d7e59afb3e9fc6a5e780f231490b677b",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_gpu.a": "81f29d0debd0ea9d25afbf71b98baf83b5cd7ec47dc87619b9e0f8e64e753466",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_shared.so": "99e0ad996a0199cc0adbce901386236b391a3fe7ff2231ec41cbd741222711e5"
+}

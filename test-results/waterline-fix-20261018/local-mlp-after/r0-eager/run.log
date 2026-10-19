@@ -1,0 +1,3 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=0.855477 runtime_seconds=0.0989038 initialization_seconds=0.134387 online_execution_seconds=0.0989038 boot_seconds=0 python_max_abs=6.73775e-07 max_imaginary=1.53701e-06
+report=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-mlp-after/r0-eager/report.json

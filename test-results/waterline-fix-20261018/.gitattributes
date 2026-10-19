@@ -1,0 +1,4 @@
+# Preserve verbatim diagnostic logs and unified-patch context.
+*.log -whitespace
+*.patch -whitespace
+*.txt whitespace=-blank-at-eof

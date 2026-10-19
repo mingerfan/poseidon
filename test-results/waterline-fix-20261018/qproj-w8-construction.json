@@ -1,0 +1,6 @@
+{
+  "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj-binary",
+  "destination": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/qproj-w8",
+  "change": "lookahead_groups 128 -> 8 only; unchanged ciphertext work, weights and binary manifest",
+  "plan_sha256": "ca7e11fd0b1bc8ba3ad4bc65710b918377f71c96f64067ab8c377cb82172c7ec"
+}

@@ -1,0 +1,21 @@
+{
+  "root_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+  "runtime_revision": "a7245b81e647e55974eb295da9f86d4066f390a3",
+  "source_sha256": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "72808df36250dcb6908623737af1aa05f657ab33841c96635e8dae779ec80f45",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp": "077180ac98048bcbf433f1bd6df6ce62b07b243ea7d74c79ebc25143546a4f83",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_mlp_e2e_test.cpp": "bd9d12ac2d92fa40f44bec870e638df33c5e0a94c01f39fc311b17e72f0188ce",
+    "third_party/ckks-runtime/runtime/runtime.hpp": "6a4d5d4352c46665576bead5da6aa1fa31bd645e1eabeba118046d3d981a3c3c",
+    "src/poseidon/ckks_encoder.cpp": "b26f6c094a68daae2b304a09e0c08e99955020ff13c2ec5f7dff5e6b2ab58696",
+    "src/poseidon/gpu/gpu_evaluator.cpp": "8ea1d72a02e69bfb5a9d1de4fb23d3ae60214bc348ff09469a176cf778871d73",
+    "src/poseidon/gpu/kernels/gpu_ntt_kernels.cu": "6c2aafc79726155f88427366753cdf3372f1e8ff5da10b3205884466b82ac5c7"
+  },
+  "build_artifact_sha256": {
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_shared.so": "99e0ad996a0199cc0adbce901386236b391a3fe7ff2231ec41cbd741222711e5",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_gpu.a": "81f29d0debd0ea9d25afbf71b98baf83b5cd7ec47dc87619b9e0f8e64e753466",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libposeidon_runtime_gpu_api.a": "adb31fffe87da7ff6173099481aa606d7fe443c62248e61acd766182e81c7472"
+  },
+  "host_cpu": "AMD Ryzen AI 9 HX 370",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 8 GiB",
+  "benchmark_context": "Release builds; single CPU preparation worker; OMP_NUM_THREADS=OPENBLAS_NUM_THREADS=1; fresh process per sample; OS/driver caches not cleared"
+}

@@ -1,0 +1,11 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=gpu host_boot_instructions=0
+KEYS ready rotation_basis=13 key_generation_ms=2864.351805
+GPU_POOL maximum_mb=6144 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=1487808608 retained_workspace_bound=41418752 reserve_required=1596336224 reserve_configured=3221225472
+waterline physical GPU0 pool_reserved=6442450944 pool_cap=6442450944 initial_outside_used=108068864 outside_pool_growth=8388608 allocator_graph_capacity=4846114720
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+fatal runtime error: reason=Waterline consumer wait slot is still pending; foreground submission must remain bounded plan_id=4200 plan_source_sha256=sha256:fd2c0b91f42a2116c73ee3a1f0f9ac02df395d8754b4ab1fa7f4f12ebc8b6f8a local_rank=0 api=PoseidonGpuApi
+FAIL stage=execute_complete_plan fatal runtime error: reason=Waterline consumer wait slot is still pending; foreground submission must remain bounded plan_id=4200 plan_source_sha256=sha256:fd2c0b91f42a2116c73ee3a1f0f9ac02df395d8754b4ab1fa7f4f12ebc8b6f8a local_rank=0 api=PoseidonGpuApi

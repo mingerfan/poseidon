@@ -1,0 +1,2340 @@
+{
+  "scope": "Separate profiled MLP eager processes. Kernel span is first-to-last GPU kernel in the whole process, not Runtime online wall time. Excluded from latency medians.",
+  "profiles": {
+    "legacy": {
+      "passed": true,
+      "kernels": 16018,
+      "kernel_shapes": [
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_two_poly_shards_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            384,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 23
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_two_poly_shards_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            704,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 102
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_galois_ntt_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned int, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 86
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_galois_ntt_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned int, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 650
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            224,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            288,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            320,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            224,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            288,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            320,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::dyadic_product_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 38
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::dyadic_product_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 200
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_apply_moddown_ntt_add_back_two_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            384,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_apply_moddown_ntt_add_back_two_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            704,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_row_tiled8_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "count": 129
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_row_tiled8_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            2,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "count": 1630
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_cross_component_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_outer_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            2,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_scalar_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned long, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            56,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            64,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            72,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            80,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            112,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            144,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            160,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<(int)2, (bool)0>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<(int)2, (bool)0>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            176,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            80,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 129
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            108,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1630
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            24,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 387
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            44,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 4890
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 978
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_q_two_components_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 172
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_q_two_components_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1304
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_kernel<(int)1>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            8,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 10
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            16,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 738
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            16,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 10
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            32,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 738
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            176,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        }
+      ],
+      "kernel_shape_sha256": "6ea5cfb3f8b9619afe3b97733f5e8d543a3c88c614c3dd8dd3c1399e586c3eda",
+      "kernel_union_ms": 104.903383,
+      "kernel_span_ms": 132.263895,
+      "no_kernel_between_first_last_ms": 27.360512,
+      "cuda_api_summary": [
+        {
+          "api": "cudaEventQuery_v3020",
+          "calls": 4992,
+          "cpu_api_ms": 2.048992
+        },
+        {
+          "api": "cudaLaunchKernel_ptsz_v7000",
+          "calls": 16018,
+          "cpu_api_ms": 94.665279
+        }
+      ]
+    },
+    "unfixed": {
+      "passed": true,
+      "kernels": 16018,
+      "kernel_shapes": [
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_two_poly_shards_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            384,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 23
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_two_poly_shards_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            704,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 102
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_galois_ntt_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned int, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 86
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_galois_ntt_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned int, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 650
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            224,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            288,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            320,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            224,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            288,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            320,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::dyadic_product_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 38
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::dyadic_product_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 200
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_apply_moddown_ntt_add_back_two_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            384,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_apply_moddown_ntt_add_back_two_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            704,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_row_tiled8_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "count": 129
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_row_tiled8_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            2,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "count": 1630
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_cross_component_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_outer_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            2,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_scalar_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned long, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            56,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            64,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            72,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            80,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            112,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            144,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            160,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<(int)2, (bool)0>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<(int)2, (bool)0>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            176,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            80,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 129
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            108,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1630
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            24,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 387
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            44,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 4890
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 978
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_q_two_components_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 172
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_q_two_components_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1304
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_kernel<(int)1>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            8,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 10
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            16,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 738
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            16,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 10
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            32,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 738
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            176,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        }
+      ],
+      "kernel_shape_sha256": "6ea5cfb3f8b9619afe3b97733f5e8d543a3c88c614c3dd8dd3c1399e586c3eda",
+      "kernel_union_ms": 102.667699,
+      "kernel_span_ms": 236.698916,
+      "no_kernel_between_first_last_ms": 134.031217,
+      "cuda_api_summary": [
+        {
+          "api": "cudaEventQuery_v3020",
+          "calls": 6501,
+          "cpu_api_ms": 3.447775
+        },
+        {
+          "api": "cudaLaunchKernel_ptsz_v7000",
+          "calls": 16018,
+          "cpu_api_ms": 86.375833
+        }
+      ]
+    },
+    "current": {
+      "passed": true,
+      "kernels": 16018,
+      "kernel_shapes": [
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_two_poly_shards_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            384,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 23
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::add_two_poly_shards_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            704,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 102
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_galois_ntt_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned int, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 86
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_galois_ntt_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned int, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 650
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            224,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            288,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::apply_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            320,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            224,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            256,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            288,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::build_q_last_rescale_correction_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            320,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::dyadic_product_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 38
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::dyadic_product_poly_shard_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 200
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_apply_moddown_ntt_add_back_two_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            384,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_apply_moddown_ntt_add_back_two_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            704,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_row_tiled8_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            1,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "count": 129
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_row_tiled8_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            2,
+            1
+          ],
+          "block": [
+            32,
+            8,
+            1
+          ],
+          "count": 1630
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_cross_component_kernel(unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_outer_components_kernel(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            2,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1
+        },
+        {
+          "name": "poseidon::gpu::kernel::<unnamed>::multiply_scalar_poly_shard_kernel(unsigned int *, const unsigned int *, unsigned long, const unsigned int *, const unsigned long *, unsigned long, unsigned long)",
+          "grid": [
+            352,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            56,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            64,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            72,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)6>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            80,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            112,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            128,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            144,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::forward_ntt_fourstep_phase_kernel<(int)7>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            160,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 2
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<(int)2, (bool)0>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<(int)2, (bool)0>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            176,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            80,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 129
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<(int)3>(unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int, unsigned long, unsigned long, bool)",
+          "grid": [
+            108,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1630
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            24,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 387
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            44,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 4890
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_modup_qp_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 978
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_q_two_components_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 172
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_forward_ntt_q_two_components_fused_stage_kernel<(int)3>(unsigned int *, unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 1304
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::hybrid_modup_qp_forward_ntt_first_stage_kernel<(int)1>(unsigned int *, unsigned int *, const unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned int)",
+          "grid": [
+            192,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            8,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 10
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            16,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 738
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            48,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)6, (bool)1>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            88,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            16,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 10
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            32,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 738
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            96,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 43
+        },
+        {
+          "name": "void poseidon::gpu::kernel::<unnamed>::inverse_ntt_fourstep_phase_kernel<(int)7, (bool)0>(unsigned int *, const unsigned int *, const unsigned long *, const unsigned int *, const unsigned int *, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+          "grid": [
+            176,
+            1,
+            1
+          ],
+          "block": [
+            256,
+            1,
+            1
+          ],
+          "count": 326
+        }
+      ],
+      "kernel_shape_sha256": "6ea5cfb3f8b9619afe3b97733f5e8d543a3c88c614c3dd8dd3c1399e586c3eda",
+      "kernel_union_ms": 104.708687,
+      "kernel_span_ms": 134.133722,
+      "no_kernel_between_first_last_ms": 29.425035,
+      "cuda_api_summary": [
+        {
+          "api": "cudaEventQuery_v3020",
+          "calls": 9927,
+          "cpu_api_ms": 4.60988
+        },
+        {
+          "api": "cudaLaunchKernel_ptsz_v7000",
+          "calls": 16018,
+          "cpu_api_ms": 93.159407
+        }
+      ]
+    }
+  },
+  "same_kernel_shapes_and_counts": true
+}

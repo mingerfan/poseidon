@@ -1,0 +1,21 @@
+{
+  "unprofiled_measurements": 190,
+  "all_measurements_passed": true,
+  "same_plan_spec_fixture_hashes": true,
+  "final_plain_credits_zero": true,
+  "observed_waterline_and_pool_peaks_within_limits": true,
+  "pinned_live_after_run_zero": true,
+  "no_repeated_plaintext_preparation": true,
+  "profiled_measurements": 2,
+  "same_kernel_shapes_and_counts": true,
+  "source_hashes_match_across_hosts": true,
+  "checks": {
+    "core-tests-final.log": "100% tests passed",
+    "core-waterline-repeat.log": "100% tests passed",
+    "local-gpu-tests-final.log": "100% tests passed",
+    "server-gpu-api-tests-final.log": "100% tests passed",
+    "server-gpu-oom-tests-final.log": "100% tests passed",
+    "local-pipeline-negative-control.log": "Waterline waited for the first GPU completion before submitting its consumer",
+    "local-gpu-detailed.log": "[PASS] Waterline pipelines GPU submissions and retains window and byte credits through completion"
+  }
+}

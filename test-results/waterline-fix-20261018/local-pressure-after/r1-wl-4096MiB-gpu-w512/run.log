@@ -1,0 +1,15 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=gpu host_boot_instructions=0
+KEYS ready rotation_basis=0 key_generation_ms=37.425303
+GPU_POOL maximum_mb=6144 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=796010592 retained_workspace_bound=0 reserve_required=863119456 reserve_configured=1073741824
+waterline physical GPU0 pool_reserved=6442450944 pool_cap=6442450944 initial_outside_used=108068864 outside_pool_growth=8388608 allocator_graph_capacity=5579331488
+waterline rescale workspace plan_max_drop=0 capability_max_drop=50
+waterline GPU0 front_peak=1363148800 plain_peak=739049472 remaining_front=6553600 remaining_plain=0
+waterline shared host_peak=46333952 pinned_peak=9895936 raw_peak=13500416
+FORWARD complete runtime_ms=475.066632
+PASS output=0 name=weighted_sum max_abs=1.67904e-08 max_relative=1.0075e-05 max_imaginary=1.72059e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=1.67904e-08 max_relative=1.0075e-05 max_imaginary=1.72059e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-after/r1-wl-4096MiB-gpu-w512/report.json decoded=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-fix-20261018/local-pressure-after/r1-wl-4096MiB-gpu-w512/decoded.json

@@ -1,0 +1,10 @@
+[
+  {
+    "name": "local-pipeline-negative-control",
+    "command": [
+      "python",
+      "-c",
+      "import os,subprocess; p=subprocess.run(['/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-fix-20261018/negative-control/runner'],env=dict(os.environ,CUDA_VISIBLE_DEVICES='0',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1'),stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True); print(p.stdout); assert p.returncode==1 and 'Waterline waited for the first GPU completion' in p.stdout, (p.returncode,p.stdout)"
+    ]
+  }
+]

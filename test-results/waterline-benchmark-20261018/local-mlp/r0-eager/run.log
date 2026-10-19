@@ -1,0 +1,3 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+fatal runtime error: reason=Rescale target lacks modulus/precision space for integer scale normalization plan_id=990 plan_source_sha256=sha256:4ae60e3fb716a4838a815cd52c62699dc7997a1755138718e4f7d5f6c5581de7 local_rank=0 api=PoseidonGpuApi
+FAIL fatal runtime error: reason=Rescale target lacks modulus/precision space for integer scale normalization plan_id=990 plan_source_sha256=sha256:4ae60e3fb716a4838a815cd52c62699dc7997a1755138718e4f7d5f6c5581de7 local_rank=0 api=PoseidonGpuApi

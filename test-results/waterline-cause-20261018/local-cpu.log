@@ -1,0 +1,9 @@
+1024 legacy {'median': 1.84082, 'min': 1.715961, 'max': 2.046152} switches {'median': 1, 'min': 1, 'max': 1}
+1024 current {'median': 20.31472, 'min': 18.171578, 'max': 25.035959} switches {'median': 10255, 'min': 10246, 'max': 10272}
+1024 prepared_direct {'median': 4.020674, 'min': 3.828643, 'max': 4.136145} switches {'median': 1, 'min': 1, 'max': 1}
+4096 legacy {'median': 7.229653, 'min': 6.241747, 'max': 7.814256} switches {'median': 1, 'min': 1, 'max': 1}
+4096 current {'median': 91.226861, 'min': 63.321015, 'max': 110.088043} switches {'median': 40982, 'min': 40961, 'max': 41009}
+4096 prepared_direct {'median': 14.826438, 'min': 14.086493, 'max': 15.847584} switches {'median': 1, 'min': 1, 'max': 1}
+16384 legacy {'median': 36.130533, 'min': 32.348462, 'max': 38.602188} switches {'median': 1, 'min': 1, 'max': 1}
+16384 current {'median': 302.715919, 'min': 283.092286, 'max': 338.820829} switches {'median': 164027, 'min': 163968, 'max': 164376}
+16384 prepared_direct {'median': 72.600419, 'min': 70.643277, 'max': 84.292627} switches {'median': 1, 'min': 1, 'max': 1}

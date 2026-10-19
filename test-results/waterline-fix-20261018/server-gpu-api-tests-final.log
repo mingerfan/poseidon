@@ -1,0 +1,8 @@
+Internal ctest changing into directory: /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build
+Test project /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build
+    Start 2: poseidon_runtime_gpu_api_tests
+1/1 Test #2: poseidon_runtime_gpu_api_tests ...   Passed   17.19 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =  17.20 sec

@@ -1,0 +1,152 @@
+[
+  {
+    "group": "server-mlp1",
+    "name": "legacy-eager",
+    "variant": "legacy",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/legacy",
+    "case": "eager",
+    "cuda": "2",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp1",
+    "name": "unfixed-eager",
+    "variant": "unfixed",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/unfixed",
+    "case": "eager",
+    "cuda": "2",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp1",
+    "name": "unfixed-waterline",
+    "variant": "unfixed",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/unfixed",
+    "case": "wl-64MiB-gpu-w128",
+    "cuda": "2",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp1",
+    "name": "current-eager",
+    "variant": "current",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/current",
+    "case": "eager",
+    "cuda": "2",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp1",
+    "name": "current-waterline",
+    "variant": "current",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/current",
+    "case": "wl-64MiB-gpu-w128",
+    "cuda": "2",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp2",
+    "name": "legacy-eager",
+    "variant": "legacy",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/legacy",
+    "case": "eager",
+    "cuda": "2,3",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp2",
+    "name": "unfixed-eager",
+    "variant": "unfixed",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/unfixed",
+    "case": "eager",
+    "cuda": "2,3",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp2",
+    "name": "unfixed-waterline",
+    "variant": "unfixed",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/unfixed",
+    "case": "wl-64MiB-gpu-w128",
+    "cuda": "2,3",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp2",
+    "name": "current-eager",
+    "variant": "current",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/current",
+    "case": "eager",
+    "cuda": "2,3",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-mlp2",
+    "name": "current-waterline",
+    "variant": "current",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/current",
+    "case": "wl-64MiB-gpu-w128",
+    "cuda": "2,3",
+    "pool_mib": 6144
+  },
+  {
+    "group": "server-pressure",
+    "name": "legacy-eager",
+    "variant": "legacy",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/legacy",
+    "case": "eager",
+    "cuda": "2",
+    "pool_mib": 24576
+  },
+  {
+    "group": "server-pressure",
+    "name": "unfixed-eager",
+    "variant": "unfixed",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/unfixed",
+    "case": "eager",
+    "cuda": "2",
+    "pool_mib": 24576
+  },
+  {
+    "group": "server-pressure",
+    "name": "unfixed-waterline",
+    "variant": "unfixed",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/unfixed",
+    "case": "wl-1024MiB-gpu-w512",
+    "cuda": "2",
+    "pool_mib": 24576
+  },
+  {
+    "group": "server-pressure",
+    "name": "current-eager",
+    "variant": "current",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/current",
+    "case": "eager",
+    "cuda": "2",
+    "pool_mib": 24576
+  },
+  {
+    "group": "server-pressure",
+    "name": "current-waterline",
+    "variant": "current",
+    "suite": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary",
+    "build": "/home/xuming/poseidon-waterline-legacy-20261018/build/current",
+    "case": "wl-1024MiB-gpu-w512",
+    "cuda": "2",
+    "pool_mib": 24576
+  }
+]

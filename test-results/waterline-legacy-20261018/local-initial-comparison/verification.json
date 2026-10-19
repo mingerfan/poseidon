@@ -1,0 +1,330 @@
+{
+  "samples": [
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "current-auto-w8",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "legacy-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-eager",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "current-waterline",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-mlp",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-qproj",
+      "name": "unfixed-auto-w8",
+      "repeat": 2,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 0,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 1,
+      "passed": true
+    },
+    {
+      "group": "local-pressure",
+      "name": "unfixed-waterline",
+      "repeat": 2,
+      "passed": true
+    }
+  ],
+  "identities": {
+    "local-mlp": {
+      "compute_sha256": "43773b780929ffed13e0f1b88107aff9af163070ebe5b8757d35f3a04aeaf514",
+      "spec_sha256": "13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+      "fixture_sha256": "4d310b4e23d7ca1483c56c1642cac10808dfb72f725c85a05ec326e66926738f",
+      "weights_sha256": "e6dceff22751b02acc6f446d3fc3c0e052f67ad25ff8da86c463122c19226b70"
+    },
+    "local-qproj": {
+      "compute_sha256": "0ec42fd0b8fe934888083ae306646c9f3ac9fca7e61dc6673d24195c5e755a50",
+      "spec_sha256": "516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+      "fixture_sha256": "001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+      "weights_sha256": "8416feab8d1a0deb1ec4131437ab8441ce8e16b728c3039d0dc199b8419dd0b5"
+    },
+    "local-pressure": {
+      "compute_sha256": "b40a4df7d4b75e05be7688024e9b4262459bb10cbfb835797c6f27388ffba601",
+      "spec_sha256": "2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+      "fixture_sha256": "cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+      "weights_sha256": "b34c8cadebff18511cbe236039471e4b40a4ffbcbf5a408a0501ace124840cd6"
+    }
+  }
+}
