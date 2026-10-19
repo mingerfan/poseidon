@@ -1640,6 +1640,98 @@ void test_runtime_drains_unreturned_work(
             "Runtime retained intermediate objects between completed runs");
 }
 
+void test_waterline_submission_pipeline(const poseidon::PoseidonContext &context,
+                                        poseidon::KeyGenerator &key_generator,
+                                        const fhegpu::LoadedOperatorSpec &spec)
+{
+    class GatedApi : public PoseidonGpuApi {
+    public:
+        using PoseidonGpuApi::PoseidonGpuApi;
+        CudaHostGate *gate = nullptr;
+        CudaGateWatchdog *watchdog = nullptr;
+        bool expect_bounded = false, pipelined = false, bounded = false;
+        std::atomic<int> submitted{0};
+        int polls = 0;
+        std::unique_ptr<GatedAllocationResource> gated_resource;
+        std::optional<Value> first;
+        Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs) {
+            auto *upstream=rmm::mr::get_current_device_resource();
+            if(submitted.load()==0) {
+                require(cudaSetDevice(kDeviceId)==cudaSuccess,"pipeline device selection failed");
+                gated_resource=std::make_unique<GatedAllocationResource>(upstream,*gate);
+                rmm::mr::set_current_device_resource(gated_resource.get());
+            } else if(!expect_bounded) {
+                require(first && !PoseidonGpuApi::is_ready(*first),
+                        "Waterline waited for the first GPU completion before submitting its consumer");
+                pipelined=watchdog->finish_post();
+            }
+            std::optional<Value> result;
+            try {result.emplace(PoseidonGpuApi::compute(op,inputs));}
+            catch(...) {rmm::mr::set_current_device_resource(upstream);throw;}
+            rmm::mr::set_current_device_resource(upstream);
+            if(submitted.load()==0)first=*result;
+            ++submitted;
+            return std::move(*result);
+        }
+        bool is_ready(Value &value) {
+            const bool ready=PoseidonGpuApi::is_ready(value);
+            if(expect_bounded && submitted.load()==1 && !ready && ++polls==16) {
+                bounded=submitted.load()==1 && watchdog->finish_post();
+            }
+            return ready;
+        }
+    };
+    poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context,public_key);
+    poseidon::Decryptor decryptor(context,key_generator.secret_key());
+    poseidon::CKKSEncoder encoder(context);
+    const std::vector<double> input{1,-2,3,-4};
+    poseidon::Plaintext plain;encoder.encode(input,std::ldexp(1.0,kDefaultScaleLog2),plain);
+    poseidon::Ciphertext cipher;encryptor.encrypt(plain,cipher);
+    fhegpu::RuntimePlan plan;plan.format_version=4;plan.plan_id=405;plan.target=make_target(spec);
+    for(std::size_t id=0;id<5;++id)
+        plan.values.push_back({id,fhegpu::ValueKind::Ciphertext,id==0 || id==4?host_place():device_place(),
+                               kContextId,static_cast<int>(cipher.level()),kDefaultScaleLog2,true,2});
+    plan.external_inputs={0};plan.final_outputs={4};
+    auto upload=transfer_action(405,fhegpu::ValueKind::Ciphertext,host_place(),device_place());
+    upload.inputs={0};upload.outputs={1};plan.initialization={{0,upload}};
+    plan.execution={{1,fhegpu::ComputeOp{fhegpu::ComputeKind::Negate,{1},2,device_place(),{}}},
+                    {2,fhegpu::ReleaseOp{1}},
+                    {3,fhegpu::ComputeOp{fhegpu::ComputeKind::Negate,{2},3,device_place(),{}}},
+                    {4,fhegpu::ReleaseOp{2}}};
+    auto download=transfer_action(406,fhegpu::ValueKind::Ciphertext,device_place(),host_place());
+    download.inputs={3};download.outputs={4};
+    plan.finalization={{5,download},{6,fhegpu::ReleaseOp{3}}};
+    fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Gpu;
+    config.device_capacity_bytes={4ULL<<30};config.device_reserve_bytes={2ULL<<30};
+    config.device_fractions={.1};config.host_budget_bytes=64ULL<<20;
+    config.pinned_budget_bytes=16ULL<<20;config.raw_budget_bytes=8ULL<<20;
+    for(int mode:{0,1,2}) {
+        GatedApi api(kContextId,context,kDeviceId);
+        config.lookahead_groups=mode==1?1:8;
+        config.device_reserve_bytes={2ULL<<30};
+        if(mode==2) {
+            // Two ciphertexts fit, but the next output cannot coexist with the
+            // unfinished producer and its input. Credit must follow completion.
+            const auto front=2*api.value_resources(plan.values[1]).front[0];
+            config.device_reserve_bytes={config.device_capacity_bytes[0]-front};
+        }
+        plan.waterline=config;
+        CudaHostGate gate;CudaGateWatchdog watchdog(gate);
+        api.gate=&gate;api.watchdog=&watchdog;api.expect_bounded=mode!=0;
+        fhegpu::SequentialRuntime<GatedApi> runtime(0,1,1,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
+        auto artifact=runtime.run({plan,kPlanSha},{spec,std::nullopt,false},
+            {{0,PoseidonGpuValue::from_host_ciphertext(cipher)}});
+        require(api.submitted==2 && (api.expect_bounded?api.bounded:api.pipelined),
+                "Waterline pipeline, completion-bounded lookahead or byte budget failed");
+        poseidon::Plaintext decoded;decryptor.decrypt(artifact.values.at(4).value.host_ciphertext(),decoded);
+        std::vector<std::complex<double>> slots;encoder.decode(decoded,slots);
+        for(std::size_t i=0;i<slots.size();++i)
+            require(std::abs(slots[i]-(i<input.size()?input[i]:0))<1e-4,
+                    "pipelined GPU dependency or Release changed the result");
+    }
+}
+
 void test_runtime_release(const poseidon::PoseidonContext &context,
                           poseidon::KeyGenerator &key_generator,
                           const fhegpu::LoadedOperatorSpec &spec,
@@ -2683,6 +2775,39 @@ void test_gpu_raw_pinned_cache(const poseidon::PoseidonContext &context,
         api.synchronize(pending);api.collect_completed();
         require_rejected([&]{api.validate_waterline_resources(cpu_plan);},"drain cached GPU Prepare");
     }
+    // Once synchronize has completed, concurrent observers must never make
+    // that result appear pending again when the next Prepare reuses staging.
+    {
+        std::mutex snapshot_mutex,failure_mutex;
+        std::optional<PoseidonGpuApi::Value> snapshot;
+        std::exception_ptr failure;
+        std::atomic<bool> stop{false};
+        const auto fail=[&] {
+            std::lock_guard<std::mutex> lock(failure_mutex);
+            if(!failure)failure=std::current_exception();
+            stop=true;
+        };
+        std::vector<std::thread> observers;
+        for(int i=0;i<2;++i)observers.emplace_back([&] {
+            try {
+                while(!stop.load()) {
+                    std::optional<PoseidonGpuApi::Value> current;
+                    {std::lock_guard<std::mutex> lock(snapshot_mutex);current=snapshot;}
+                    if(current)api.is_ready(*current);
+                    else std::this_thread::yield();
+                }
+            } catch(...) {fail();}
+        });
+        try {
+            for(int i=0;i<1024 && !stop.load();++i) {
+                auto value=api.prepare_plaintext_async(plan.values[0],slots,fhegpu::PrepareBackend::Gpu);
+                api.synchronize(value);
+                {std::lock_guard<std::mutex> lock(snapshot_mutex);snapshot=std::move(value);}
+            }
+        } catch(...) {fail();}
+        stop=true;for(auto &observer:observers)observer.join();
+        if(failure) {api.drain();std::rethrow_exception(failure);}
+    }
     api.drain();
     require(Pinned::free_calls()-frees==static_cast<std::size_t>(device_count) && Pinned::live_bytes()==0,
             "drain did not reclaim all cached GPU raw pinned buffers");
@@ -2693,7 +2818,7 @@ void test_gpu_raw_pinned_cache(const poseidon::PoseidonContext &context,
     std::cout<<"GPU_RAW_PINNED_CACHE devices="<<device_count<<" sequential_prepares_per_device=10"
              <<" allocations="<<Pinned::allocation_calls()-allocations<<" frees="<<Pinned::free_calls()-frees
              <<" fixed_host="<<fixed.host<<" fixed_pinned="<<fixed.pinned<<" pinned_live="<<Pinned::live_bytes()
-             <<" max_abs_including_imaginary="<<maximum<<" overlap_rejected=true ready_reconfigure_requires_drain=true\n";
+             <<" max_abs_including_imaginary="<<maximum<<" overlap_rejected=true completed_contention_prepares=1024 ready_reconfigure_requires_drain=true\n";
 }
 
 void test_gpu_packed_prepare_host_budget(const poseidon::PoseidonContext &context,
@@ -3140,6 +3265,8 @@ int main()
                      context, key_generator, loaded_spec, rmm_pool); });
         run_test("Runtime Release during unfinished computation and transfer",
                  [&] { test_runtime_release(context, key_generator, loaded_spec, rmm_pool); });
+        run_test("Waterline pipelines GPU submissions and retains window and byte credits through completion",
+                 [&] { test_waterline_submission_pipeline(context,key_generator,loaded_spec); });
         run_test("online Encode/upload and explicit Fence in both execution modes",
                  [&] { test_runtime_explicit_encode_fence(context, key_generator, loaded_spec); });
         run_test("GPU AddCP/SubCP/Rotate reuse chains",

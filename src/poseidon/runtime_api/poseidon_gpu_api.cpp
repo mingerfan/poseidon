@@ -29,6 +29,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <cstring>
+#include <deque>
 #include <limits>
 #include <map>
 #include <mutex>
@@ -851,12 +852,15 @@ struct PoseidonGpuApi::DeviceState
     int cuda_device_id = 0;
     cudaStream_t foreground_stream=nullptr;
     std::mutex consumer_wait_mutex;
-    std::optional<std::pair<cudaEvent_t,cudaEvent_t>> consumer_wait_pending;
+    // Timing follows the same bounded submission window as foreground work.
+    // A single timing slot would force a completion barrier between consumers.
+    std::deque<std::pair<cudaEvent_t,cudaEvent_t>> consumer_wait_pending;
     std::uint64_t consumer_wait_calls=0,consumer_wait_nanoseconds=0;
     void collect_consumer_wait_locked() {
-        if(!consumer_wait_pending)return;
+        if(consumer_wait_pending.empty())return;
         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id),"consumer wait timing device");
-        auto &events=*consumer_wait_pending;
+        while(!consumer_wait_pending.empty()) {
+        auto &events=consumer_wait_pending.front();
         const auto status=cudaEventQuery(events.second);
         if(status==cudaErrorNotReady)return;
         gpu::gpu_check_cuda(status,"consumer wait timing query");
@@ -869,7 +873,8 @@ struct PoseidonGpuApi::DeviceState
         gpu::gpu_check_cuda(cudaEventDestroy(events.second),"consumer wait end destroy");events.second=nullptr;
         fhegpu::ResourceUsage::add(consumer_wait_calls,1);
         fhegpu::ResourceUsage::add(consumer_wait_nanoseconds,static_cast<std::uint64_t>(nanoseconds));
-        consumer_wait_pending.reset();
+        consumer_wait_pending.pop_front();
+        }
     }
     void collect_consumer_wait() {
         std::unique_lock<std::mutex> lock(consumer_wait_mutex,std::try_to_lock);
@@ -878,9 +883,9 @@ struct PoseidonGpuApi::DeviceState
     ~DeviceState() {
         if(foreground_stream) {
             (void)cudaSetDevice(cuda_device_id);(void)cudaStreamSynchronize(foreground_stream);
-            if(consumer_wait_pending) {
-                if(consumer_wait_pending->first)(void)cudaEventDestroy(consumer_wait_pending->first);
-                if(consumer_wait_pending->second)(void)cudaEventDestroy(consumer_wait_pending->second);
+            for(auto &events:consumer_wait_pending) {
+                if(events.first)(void)cudaEventDestroy(events.first);
+                if(events.second)(void)cudaEventDestroy(events.second);
             }
             (void)cudaStreamDestroy(foreground_stream);
         }
@@ -972,8 +977,11 @@ public:
 
     bool collect_completed()
     {
+        // Completion is monotonic. A concurrent collector holding the mutex
+        // must not make an explicitly waited event appear unfinished again.
+        if (waited_.load(std::memory_order_acquire)) return true;
         std::unique_lock<std::mutex> lock(wait_mutex_, std::try_to_lock);
-        if (!lock.owns_lock()) return false;
+        if (!lock.owns_lock()) return waited_.load(std::memory_order_acquire);
         if (waited_)
         {
             return true;
@@ -1002,8 +1010,27 @@ public:
         return waited_;
     }
 
+    bool recorded_on_explicit_stream() const
+    {
+        return recorded_ && producer_stream_ != nullptr &&
+               producer_stream_ != cudaStreamPerThread && producer_stream_ != cudaStreamLegacy;
+    }
+
+    bool same_ordered_stream(const ReadyEvent &other) const
+    {
+        // Explicit CUDA streams execute in order. Retainers from one issuer
+        // are appended in that same order, so an unfinished event also keeps
+        // every following event on this lane unfinished. PTDS handles can
+        // denote different streams after a host thread exits; do not group them.
+        return recorded_on_explicit_stream() && other.recorded_on_explicit_stream() &&
+               cuda_device_id_ == other.cuda_device_id_ &&
+               producer_stream_ == other.producer_stream_ &&
+               producer_thread_ == other.producer_thread_;
+    }
+
     void wait()
     {
+        if (waited_.load(std::memory_order_acquire)) return;
         std::lock_guard<std::mutex> lock(wait_mutex_);
         if (waited_)
         {
@@ -1082,7 +1109,7 @@ private:
     int cuda_device_id_ = 0;
     cudaEvent_t event_ = nullptr;
     bool recorded_ = false;
-    bool waited_ = false;
+    std::atomic<bool> waited_{false};
     std::shared_ptr<communication::CudaTransferRequest> transfer_request_;
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
     std::shared_ptr<communication::NcclMpiTransport::Request> nccl_request_;
@@ -1900,11 +1927,12 @@ bool PoseidonGpuApi::is_ready(Value &value)
     ScopedCompletedReclamation reclamation;
     std::unique_lock<std::mutex> lock(in_flight_mutex_,std::try_to_lock);
     if(!lock.owns_lock())return false;
-    // The executor returns temporary credit immediately after true. Reclaim
-    // completed retainers first, including a Ready that completed after the
-    // dispatcher's preceding collect_completed() query.
+    // The executor returns temporary credit immediately after true. Settle
+    // this event even if it completed after collect_completed() queried it.
+    // Unrelated events are reaped by collect_completed, without querying the
+    // entire submission window again for each individual completed ticket.
     in_flight_work_.erase(std::remove_if(in_flight_work_.begin(),in_flight_work_.end(),
-        [&](auto &work){return work.completion==completion || work.completion->collect_completed();}),in_flight_work_.end());
+        [&](auto &work){return work.completion==completion;}),in_flight_work_.end());
     return true;
 }
 
@@ -1959,8 +1987,6 @@ void PoseidonGpuApi::wait_on_compute_inputs(
     try {
         if(measure) {
             lock.lock();device.collect_consumer_wait_locked();
-            if(device.consumer_wait_pending)
-                throw std::logic_error("Waterline consumer wait slot is still pending; foreground submission must remain bounded");
             gpu::gpu_check_cuda(cudaEventCreate(&events.first),"consumer wait start create");
             gpu::gpu_check_cuda(cudaEventCreate(&events.second),"consumer wait end create");
             gpu::gpu_check_cuda(cudaEventRecord(events.first,gpu::gpu_execution_stream()),"consumer wait start record");
@@ -1970,7 +1996,7 @@ void PoseidonGpuApi::wait_on_compute_inputs(
         });
         if(measure) {
             gpu::gpu_check_cuda(cudaEventRecord(events.second,gpu::gpu_execution_stream()),"consumer wait end record");
-            device.consumer_wait_pending=events;
+            device.consumer_wait_pending.push_back(events);
         }
     } catch(...) {
         if(events.first)(void)cudaEventDestroy(events.first);
@@ -3458,10 +3484,17 @@ void PoseidonGpuApi::collect_completed()
     ScopedCompletedReclamation reclamation;
     {
         std::unique_lock<std::mutex> lock(in_flight_mutex_, std::try_to_lock);
-        if(lock.owns_lock())in_flight_work_.erase(
-            std::remove_if(in_flight_work_.begin(), in_flight_work_.end(),
-                           [](auto &work) { return work.completion->collect_completed(); }),
-            in_flight_work_.end());
+        if(lock.owns_lock()) {
+            std::vector<std::shared_ptr<PoseidonGpuValue::ReadyEvent>> blocked_streams;
+            in_flight_work_.erase(
+                std::remove_if(in_flight_work_.begin(),in_flight_work_.end(),[&](auto &work) {
+                    for(const auto &blocked:blocked_streams)
+                        if(work.completion->same_ordered_stream(*blocked))return false;
+                    if(work.completion->collect_completed())return true;
+                    if(work.completion->recorded_on_explicit_stream())blocked_streams.push_back(work.completion);
+                    return false;
+                }),in_flight_work_.end());
+        }
     }
     for(auto &device:devices_) {
         device->collect_consumer_wait();
