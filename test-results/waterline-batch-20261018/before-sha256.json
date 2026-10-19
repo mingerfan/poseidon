@@ -1,0 +1,6 @@
+{
+  "third_party/ckks-runtime/runtime/runtime.hpp": "db09ac6ee97827a3f70c060e31a25a94b071dbe3f69858a69a68e81e9e5e00b2",
+  "third_party/ckks-runtime/docs/runtime-plan/v4.md": "c070475e0a6e80c24f5a7919db86170824e8bc3eb7db0687621f06c77350a412",
+  "third_party/ckks-runtime/tests/runtime_waterline_tests.cpp": "eca2fa622a2d405e6ec259800737cf7e1743754ad7ade414792265a0ed158aca",
+  "scripts/qwen3_dsl/compile_plans.py": "568c4b6f0e4ae213336c240576009353804e6b9b38811909808d97b17f3af196"
+}

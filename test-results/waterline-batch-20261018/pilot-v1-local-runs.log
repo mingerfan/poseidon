@@ -1,0 +1,77 @@
+local-mlp-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=298.482413 online_ms=125.043403
+local-mlp-r0-previous-eager
+eager repeat=0 exit=0 forward_ms=271.213956 online_ms=99.467031
+local-mlp-r0-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=162.99138000000002 online_ms=126.31962700000001
+local-mlp-r0-updated-eager
+eager repeat=0 exit=0 forward_ms=270.636654 online_ms=95.80608000000001
+local-mlp-r0-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=158.01015500000003 online_ms=122.00955400000001
+local-mlp-r0-updated-wl-8MiB-gpu-w128
+wl-8MiB-gpu-w128 repeat=0 exit=0 forward_ms=160.19198200000002 online_ms=124.530361
+local-mlp-r0-updated-wl-1MiB-gpu-w128
+wl-1MiB-gpu-w128 repeat=0 exit=0 forward_ms=164.53449300000003 online_ms=128.92066300000002
+local-mlp-r1-previous-eager
+eager repeat=0 exit=0 forward_ms=269.411008 online_ms=97.41818400000001
+local-mlp-r1-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=159.29533800000002 online_ms=123.188186
+local-mlp-r1-updated-eager
+eager repeat=0 exit=0 forward_ms=271.245313 online_ms=95.535639
+local-mlp-r1-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=159.32354700000002 online_ms=122.76095400000001
+local-mlp-r1-updated-wl-8MiB-gpu-w128
+wl-8MiB-gpu-w128 repeat=0 exit=0 forward_ms=161.122972 online_ms=125.07928100000001
+local-mlp-r1-updated-wl-1MiB-gpu-w128
+wl-1MiB-gpu-w128 repeat=0 exit=0 forward_ms=166.668877 online_ms=131.04363800000002
+local-mlp-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=277.302638 online_ms=95.993239
+local-mlp-r2-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=161.43926200000004 online_ms=125.56867100000002
+local-mlp-r2-updated-eager
+eager repeat=0 exit=0 forward_ms=273.856897 online_ms=94.356464
+local-mlp-r2-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=161.939513 online_ms=125.43139000000001
+local-mlp-r2-updated-wl-8MiB-gpu-w128
+wl-8MiB-gpu-w128 repeat=0 exit=0 forward_ms=162.15685399999998 online_ms=125.42576199999999
+local-mlp-r2-updated-wl-1MiB-gpu-w128
+wl-1MiB-gpu-w128 repeat=0 exit=0 forward_ms=166.173715 online_ms=129.064491
+local-mlp-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=270.17169500000006 online_ms=96.44964900000001
+local-mlp-r2-previous-eager
+eager repeat=0 exit=0 forward_ms=272.620671 online_ms=97.650563
+local-qproj-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=6373.506154 online_ms=1185.143128
+local-qproj-r0-previous-eager
+eager repeat=0 exit=0 forward_ms=6578.185789 online_ms=1190.414572
+local-qproj-r0-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1408.725509 online_ms=1277.690066
+local-qproj-r0-updated-eager
+eager repeat=0 exit=0 forward_ms=6372.098285 online_ms=1198.301036
+local-qproj-r0-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1412.723811 online_ms=1283.289095
+local-qproj-r0-previous-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2857.204303 online_ms=2730.837446
+local-qproj-r0-previous-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1591.170225 online_ms=1465.365271
+local-qproj-r0-previous-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1469.573225 online_ms=1338.830187
+local-qproj-r0-updated-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=1631.293269 online_ms=1502.059227
+local-qproj-r0-updated-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1632.018483 online_ms=1506.565981
+local-qproj-r0-updated-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1431.949641 online_ms=1305.012285
+local-qproj-r0-updated-wl-16MiB-gpu-w128
+wl-16MiB-gpu-w128 repeat=0 exit=0 forward_ms=1409.536813 online_ms=1282.713508
+local-qproj-r1-previous-eager
+eager repeat=0 exit=0 forward_ms=6430.878855 online_ms=1200.510865
+local-qproj-r1-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1410.697548 online_ms=1285.677269
+local-qproj-r1-updated-eager
+eager repeat=0 exit=0 forward_ms=6536.88146 online_ms=1209.393863
+local-qproj-r1-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1408.335155 online_ms=1284.278829
+local-qproj-r1-previous-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2820.234432 online_ms=2695.913357
+local-qproj-r1-previous-wl-64MiB-gpu-w8

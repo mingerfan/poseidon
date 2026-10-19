@@ -1,0 +1,72 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=7347555328 maximum_bytes=7347555328
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=268435456 maximum_bytes=268435456
+[PASS] internal RMM pool lifetime
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=0 allocator_graph_capacity=191337384
+waterline rescale workspace plan_max_drop=0 capability_max_drop=0
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=134217728 maximum_bytes=268435456
+WATERLINE_RESERVED_POOL explicit_initial=0 reserved=268435456 maximum=268435456 graph_capacity=191337384
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=134217728 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=0 allocator_graph_capacity=57119656
+waterline rescale workspace plan_max_drop=0 capability_max_drop=0
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=268435456 maximum_bytes=268435456
+WATERLINE_RESERVED_POOL explicit_initial=1 reserved=134217728 maximum=268435456 graph_capacity=57119656
+[PASS] Waterline counts only physically reserved pool capacity
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=0 allocator_graph_capacity=184652712
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=184652712
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=184488872
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=184652712
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=184488872
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=184652712
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=174663504
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=1064960 reserve_required=80129112 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=188306344
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=1064960 reserve_required=80129112 reserve_configured=79064152
+waterline fixed GPU0 persistent_bytes=11955288 retained_workspace_bound=4718592 reserve_required=83782744 reserve_configured=134217728
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=108068864 outside_pool_growth=2097152 allocator_graph_capacity=184652712
+waterline rescale workspace plan_max_drop=5 capability_max_drop=8
+WATERLINE_CACHE rescale_bytes=311296 relin_bytes=753664 cold_capacity=184652712 warm_capacity=184652712
+[PASS] Waterline counts warmed evaluator caches once across runs
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline rescale workspace plan_max_drop=0 capability_max_drop=0
+GPU_PACKED_PREPARE_HOST_BOUND N=4096 fixed_host=16384 dynamic_host=32768 tight_budget=40960 complete_budget=49152 warm_cache_live=16384 tight_admitted=0
+GPU_PACKED_PREPARE_HOST_BOUND positive_budget=49152 resident_bytes=0 packed_reads=2 second_read_with_cache=true allocations=1 frees=1 slots_checked=2048 max_abs_including_imaginary=6.3145e-17 scope=API_Ledger_boundary_not_full_Runtime
+[PASS] GPU cached packed-read complete Host budget negative/positive boundary
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #8 GPU0 front=655360 plain=163840 M=4294967296 reserve=2147483648 allocator_capacity=2147483648 Host=3276800 pinned=163840 raw=32768 plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+CPU_PREPARE_HOST_BOUND N=4096 Q=10 old_bound=491520 complete_bound=655360 prepare_host_resident=2621440 required_total=3276800 tight_budget=3194880 cpu_prepare_calls_delta=0 rejection=fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #8 GPU0 front=655360 plain=163840 M=4294967296 reserve=2147483648 allocator_capacity=2147483648 Host=3276800 pinned=163840 raw=32768 plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+waterline GPU0 front_peak=655360 plain_peak=163840 remaining_front=0 remaining_plain=0
+waterline shared host_peak=3276800 pinned_peak=491520 raw_peak=32768
+CPU_PREPARE_HOST_BOUND positive_budget=3276800 pinned_budget=491520 slots_checked=2048 max_abs_including_imaginary=1.94289e-16 retained_external_final_host=1310720 remaining_dynamic_front=0 remaining_plain=0 pinned_live=0
+[PASS] CPU Prepare complete Host budget negative/positive boundary
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline rescale workspace plan_max_drop=0 capability_max_drop=0
+[FAIL] cached GPU Prepare buffer is still in use

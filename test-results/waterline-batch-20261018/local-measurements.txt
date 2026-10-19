@@ -1,0 +1,40 @@
+All timings below are online medians in seconds (3 fresh processes per final configuration; 10 for five main RTX4060 MLP configurations).
+All columns were freshly measured with the same corrected GPU backend on each host.
+
+workload | original resident | previous resident | updated resident | earliest unfixed Waterline | previous Waterline | updated Waterline
+local-mlp | 0.096527 | 0.097716 | 0.095981 | 0.242451 | 0.124877 | 0.115918
+local-qproj | 1.189408 | 1.201550 | 1.192795 | 2.466150 | 1.305850 | 1.296850
+local-pressure | 0.102509 | 0.104092 | 0.102967 | 1.180230 | 0.466830 | 0.427890
+
+All final configurations (online median [min,max], seconds):
+local-mlp legacy-eager: 0.096527 [0.094726, 0.128445]
+local-mlp unfixed-waterline: 0.242451 [0.242051, 0.244407]
+local-mlp previous-eager: 0.097716 [0.097137, 0.099493]
+local-mlp previous-waterline: 0.124877 [0.124113, 0.160133]
+local-mlp updated-eager: 0.095981 [0.094427, 0.125626]
+local-mlp updated-waterline: 0.115918 [0.114001, 0.118027]
+local-mlp updated-wl-8MiB-gpu-w128: 0.117420 [0.117356, 0.118196]
+local-mlp updated-wl-1MiB-gpu-w128: 0.128922 [0.127740, 0.132910]
+local-qproj legacy-eager: 1.189408 [1.184720, 1.209857]
+local-qproj unfixed-waterline: 2.466150 [2.437989, 2.494549]
+local-qproj previous-eager: 1.201550 [1.200377, 1.202982]
+local-qproj previous-waterline: 1.305850 [1.279612, 1.311200]
+local-qproj updated-eager: 1.192795 [1.167689, 1.197304]
+local-qproj updated-waterline: 1.296850 [1.287873, 1.308202]
+local-qproj previous-wl-64MiB-auto-w8: 2.702017 [2.676054, 2.718242]
+local-qproj previous-wl-64MiB-gpu-w8: 1.465255 [1.442047, 1.470762]
+local-qproj previous-wl-64MiB-auto-w128: 1.352806 [1.341374, 1.353783]
+local-qproj updated-wl-64MiB-auto-w8: 1.421926 [1.408943, 1.441435]
+local-qproj updated-wl-64MiB-gpu-w8: 1.427806 [1.426735, 1.436233]
+local-qproj updated-wl-64MiB-auto-w128: 1.290088 [1.276965, 1.312175]
+local-qproj updated-wl-16MiB-gpu-w128: 1.298150 [1.293854, 1.298684]
+local-pressure legacy-eager: 0.102509 [0.102449, 0.102601]
+local-pressure unfixed-waterline: 1.180230 [1.177858, 1.201786]
+local-pressure previous-eager: 0.104092 [0.103829, 0.104147]
+local-pressure previous-waterline: 0.466830 [0.416017, 0.468478]
+local-pressure updated-eager: 0.102967 [0.102645, 0.105325]
+local-pressure updated-waterline: 0.427890 [0.425631, 0.428143]
+local-pressure updated-wl-4096MiB-gpu-w512: 0.436209 [0.435991, 0.436521]
+local-pressure updated-wl-32MiB-gpu-w512: 0.420968 [0.419991, 0.435865]
+local-pressure updated-wl-8MiB-gpu-w512: 0.473937 [0.472688, 0.535863]
+local-pressure previous-wl-8MiB-gpu-w512: 0.519442 [0.517155, 0.522269]

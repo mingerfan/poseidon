@@ -1,0 +1,407 @@
+{
+  "suite": {
+    "kind": "pressure",
+    "devices": 1,
+    "capacity_gib": 28,
+    "reserve_gib": 2,
+    "window": 512,
+    "count": 4096,
+    "plaintext_resident_bytes": 13421772800,
+    "source_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+    "cases": [
+      {
+        "name": "eager",
+        "plan": "eager.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-16384MiB-cpu-w512",
+        "plan": "wl-16384MiB-cpu-w512.json",
+        "runner": "qwen",
+        "repeat_count": 1
+      },
+      {
+        "name": "wl-16384MiB-gpu-w512",
+        "plan": "wl-16384MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-1024MiB-gpu-w512",
+        "plan": "wl-1024MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-64MiB-gpu-w512",
+        "plan": "wl-64MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-8MiB-gpu-w512",
+        "plan": "wl-8MiB-gpu-w512.json",
+        "runner": "qwen"
+      }
+    ],
+    "sampling_note": "Eager and four GPU waterlines: 3 runs each; slow CPU preparation control: 1 run. CPU waterline sensitivity is repeated on RTX4060.",
+    "manifest_comparison": {
+      "source_suite": "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100",
+      "only_change": "plaintext_bundle manifest_format and manifest file; raw weight bytes and ciphertext work unchanged",
+      "source_manifest_sha256": "sha256:b98dfbd8dc99877f5263390d8f5ca0b6e9597d5c96aef835f155ccfcc4f6b32d",
+      "binary_manifest_sha256": "sha256:87b1f09e6b29ecc84960cb1dc5a376b1f9aa2b73a5a0a2e8654b4b804b3238f8",
+      "data_sha256": "sha256:f39a877f6f908efdba7faf41feb975b059d0c167c764a993b9de301fce21371a"
+    }
+  },
+  "cuda": "2",
+  "pool_mib": 24576,
+  "timing_scope": "Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
+  "runner_hashes": {
+    "qwen": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d"
+  },
+  "samples": [
+    {
+      "case": "wl-16384MiB-gpu-w512",
+      "repeat": 0,
+      "exit_code": 0,
+      "passed": true,
+      "process_wall_ms": 8336.58263401594,
+      "process_cpu_seconds": 8.696643999999992,
+      "report": {
+        "actual_p_moduli": [
+          1071415297,
+          1071513601,
+          1072496641,
+          1072857089,
+          1073053697,
+          1073184769,
+          1073479681,
+          1073643521
+        ],
+        "actual_q_moduli": [
+          1053523969,
+          1053818881,
+          1054015489,
+          1054212097,
+          1054965761,
+          1055162369,
+          1055260673,
+          1056178177,
+          1056342017,
+          1056440321,
+          1056735233,
+          1057259521,
+          1057652737,
+          1058209793,
+          1059291137,
+          1059618817,
+          1059880961,
+          1060175873,
+          1060405249,
+          1060667393,
+          1060700161,
+          1060765697,
+          1061093377,
+          1061584897,
+          1061847041,
+          1062371329,
+          1062469633,
+          1062535169,
+          1062862849,
+          1063059457,
+          1063321601,
+          1063452673,
+          1063616513,
+          1064599553,
+          1064697857,
+          1065484289,
+          1065779201,
+          1065811969,
+          1066172417,
+          1066893313,
+          1067548673,
+          1067876353,
+          1068236801,
+          1068433409,
+          1068466177,
+          1068564481,
+          1069219841,
+          1070432257,
+          1070727169,
+          1071087617
+        ],
+        "boot_implementation": "none",
+        "comparison": {
+          "bad_imaginary_slots": 0,
+          "bad_prefix_slots": 0,
+          "bad_real_slots": 0,
+          "bad_tail_slots": 0,
+          "finite_slots": 8192,
+          "max_abs_error": 1.7397122811790844e-08,
+          "max_imaginary": 2.0018274738254345e-08,
+          "max_relative_error_floor_atol": 1.1385842490923903e-05,
+          "max_tail_abs": 0.0,
+          "nonfinite_slots": 0,
+          "passed": true,
+          "rms_error": 1.6237093658727944e-09,
+          "slots_checked": 8192
+        },
+        "context": {
+          "default_scale_log2": 40,
+          "p_moduli_bits": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "poly_degree": 16384,
+          "q_moduli_bits": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ]
+        },
+        "context_ms": 2657.675998,
+        "cuda_visible_devices": "2",
+        "decoded_path": "/home/xuming/poseidon-waterline-batch-20261018/server-runs/server-pressure-r0-updated-wl-16384MiB-gpu-w512/r0-wl-16384MiB-gpu-w512/decoded.json",
+        "device_measurements": [
+          {
+            "allocated_live_bytes": 802564192,
+            "allocated_peak_bytes": 2487756896,
+            "consumer_wait_calls": 4052,
+            "consumer_wait_ms": 299.514294,
+            "gpu_encode_calls": 4096,
+            "gpu_encode_ms": 677.241357,
+            "gpu_raw_h2d_bytes": 268435456,
+            "gpu_raw_h2d_ms": 54.382425,
+            "logical_device": 0,
+            "managed_pool": true,
+            "pool_capacity_bytes": 25769803776,
+            "pool_reserved_bytes": 25769803776
+          }
+        ],
+        "device_worker_count": 1,
+        "devices": [
+          {
+            "logical_device": 0,
+            "name": "Tesla V100-SXM2-32GB",
+            "pci_bus_id": "0000:07:00.0",
+            "total_global_bytes": 34079899648,
+            "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6"
+          }
+        ],
+        "execution_mode": "per_device_workers",
+        "fixture_sha256": "sha256:0c39c717ec29bf239e804691ac69b7739ea54fa7e578905efcb5c4b2ff5e2956",
+        "format_version": 1,
+        "gpu_api_setup_ms": 1576.982527,
+        "gpu_pool_cap": {
+          "environment": "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB",
+          "maximum_allowed_mb": [
+            28096
+          ],
+          "maximum_mb": [
+            24576
+          ],
+          "outside_pool_reserve_bytes": 603979776,
+          "source": "user_environment"
+        },
+        "host_boot_instructions": 0,
+        "host_max_rss_kib": 1047000,
+        "input_count": 1,
+        "input_encryption_ms": 146.861447,
+        "inputs": [
+          {
+            "level": 49,
+            "name": "input",
+            "prefix_size": 8192,
+            "scale_log2": 40,
+            "value_id": 0
+          }
+        ],
+        "key_generation_ms": 119.58803,
+        "load_artifacts_ms": 1460.155815,
+        "main_entry_to_all_outputs_ms": 8025.422465,
+        "main_entry_to_first_output_ms": 8021.521881,
+        "model": {
+          "complete_qwen": false,
+          "name": "weighted_sum_memory_pressure",
+          "synthetic_weights": true
+        },
+        "native_boot_instructions": 0,
+        "operator_spec_sha256": "sha256:2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+        "output_count": 1,
+        "output_validation_and_save_ms": 373.741484,
+        "outputs": [
+          {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 8192,
+            "level": 49,
+            "max_abs_error": 1.7397122811790844e-08,
+            "max_imaginary": 2.0018274738254345e-08,
+            "max_relative_error_floor_atol": 1.1385842490923903e-05,
+            "max_tail_abs": 0.0,
+            "name": "weighted_sum",
+            "nonfinite_slots": 0,
+            "passed": true,
+            "prefix_size": 8192,
+            "rms_error": 1.6237093658727944e-09,
+            "scale_log2": 80,
+            "slots_checked": 8192,
+            "value_id": 16384
+          }
+        ],
+        "passed": true,
+        "pinned_transfer_live_after_plan_bytes": 0,
+        "pinned_transfer_live_after_validation_bytes": 0,
+        "pinned_transfer_peak_after_plan_bytes": 6619136,
+        "pinned_transfer_peak_including_validation_bytes": 6619136,
+        "plan_source_sha256": "sha256:f17120ae5324949d425981e4fc5b6ea646a067c389f0688c2d04d0a1790c58e1",
+        "preparation_measurements": {
+          "cpu_encode_ms": 0.0,
+          "cpu_plain_h2d_bytes": 0,
+          "cpu_prepare_calls": 0,
+          "transport_h2d_bytes": 6553600,
+          "transport_h2d_calls": 1,
+          "transport_h2d_ms": 0.572096,
+          "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+        },
+        "rotation_key_basis": [],
+        "runtime_ms": 1690.162138,
+        "runtime_timing": {
+          "boot_calls": 0,
+          "bundle_read_bytes": 268435456,
+          "bundle_read_calls": 4096,
+          "bundle_read_ms": 298.757976,
+          "bundle_resident_bytes": 0,
+          "communication_post_calls": 1,
+          "communication_post_ms": 17.643388,
+          "communication_wait_calls": 1,
+          "communication_wait_ms": 0.012723,
+          "compute_calls": 8191,
+          "compute_submission_including_boot_ms": 496.184723,
+          "encode_calls": 4096,
+          "encode_submission_ms": 728.187036,
+          "fence_calls": 0,
+          "host_boot_ms": 0.0,
+          "initialization_ms": 0.381885,
+          "online_execution_ms": 1646.897989,
+          "raw_peak_bytes": 131072,
+          "setup_ms": 35.994677
+        },
+        "secret_key_assisted_refresh": false,
+        "security_level": "none; numerical validation context",
+        "slots_per_output": 8192,
+        "stage": "complete",
+        "time_scope": "steady-clock from main entry; dynamic-loader/process time requires external /usr/bin/time",
+        "tolerances": {
+          "atol": 0.001,
+          "rtol": 0.0001
+        },
+        "waterline": {
+          "backend": "gpu",
+          "device_capacity_bytes": [
+            30064771072
+          ],
+          "device_fractions": [
+            0.5714285714285714
+          ],
+          "device_reserve_bytes": [
+            2147483648
+          ],
+          "host_budget_bytes": 4294967296,
+          "lookahead_groups": 512,
+          "pinned_budget_bytes": 536870912,
+          "raw_budget_bytes": 134217728
+        }
+      },
+      "forward_ms": 1690.162138,
+      "online_ms": 1646.897989,
+      "init_ms": 0.381885,
+      "setup_ms": 35.994677
+    }
+  ],
+  "statistics": {
+    "wl-16384MiB-gpu-w512": {
+      "forward_ms": {
+        "median": 1690.162138,
+        "min": 1690.162138,
+        "max": 1690.162138
+      },
+      "online_ms": {
+        "median": 1646.897989,
+        "min": 1646.897989,
+        "max": 1646.897989
+      },
+      "init_ms": {
+        "median": 0.381885,
+        "min": 0.381885,
+        "max": 0.381885
+      },
+      "setup_ms": {
+        "median": 35.994677,
+        "min": 35.994677,
+        "max": 35.994677
+      },
+      "process_wall_ms": {
+        "median": 8336.58263401594,
+        "min": 8336.58263401594,
+        "max": 8336.58263401594
+      }
+    }
+  },
+  "selected_case_names": [
+    "wl-16384MiB-gpu-w512"
+  ],
+  "requested_repeats": 1
+}

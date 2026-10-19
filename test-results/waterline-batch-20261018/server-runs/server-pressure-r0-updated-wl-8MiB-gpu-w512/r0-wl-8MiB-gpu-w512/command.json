@@ -1,0 +1,10 @@
+[
+  "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/bin/poseidon_runtime_gpu_qwen_e2e",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/wl-8MiB-gpu-w512.json",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/operator-spec.json",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/fixture.json",
+  "/home/xuming/poseidon-waterline-batch-20261018/server-runs/server-pressure-r0-updated-wl-8MiB-gpu-w512/r0-wl-8MiB-gpu-w512/report.json",
+  "/home/xuming/poseidon-waterline-batch-20261018/server-runs/server-pressure-r0-updated-wl-8MiB-gpu-w512/r0-wl-8MiB-gpu-w512/decoded.json",
+  "--bundle",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/pressure-v100-binary/bundle"
+]

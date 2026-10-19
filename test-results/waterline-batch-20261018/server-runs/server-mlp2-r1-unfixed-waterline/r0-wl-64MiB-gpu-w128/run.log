@@ -1,0 +1,14 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+GPU_POOL_RESERVE cuda_device=1 initial_bytes=6442450944 maximum_bytes=6442450944
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=316829672 retained_workspace_bound=18087936 reserve_required=402026472 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=6442450944 pool_cap=6442450944 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=6040424472
+waterline stream GPU1 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU1 persistent_bytes=233926632 retained_workspace_bound=0 reserve_required=301035496 reserve_configured=2147483648
+waterline physical GPU1 pool_reserved=6442450944 pool_cap=6442450944 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=6141415448
+waterline rescale workspace plan_max_drop=5 capability_max_drop=5
+waterline GPU0 front_peak=1068040192 plain_peak=8847520 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=644546560 plain_peak=7078016 remaining_front=393216 remaining_plain=0
+waterline shared host_peak=89980928 pinned_peak=43417600 raw_peak=1114112
+PASS boots=0 transfers=121 rotation_key_policy=binary rotations=14 key_seconds=2.57026 runtime_seconds=0.256422 initialization_seconds=0.000718445 online_execution_seconds=0.256422 boot_seconds=0 python_max_abs=7.00209e-07 max_imaginary=8.40721e-07
+report=/home/xuming/poseidon-waterline-batch-20261018/server-runs/server-mlp2-r1-unfixed-waterline/r0-wl-64MiB-gpu-w128/report.json

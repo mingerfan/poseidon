@@ -1,0 +1,9 @@
+Keep verified local-mlp-r0-legacy-eager
+Keep verified local-mlp-r0-unfixed-waterline
+Keep verified local-mlp-r0-previous-eager
+Keep verified local-mlp-r0-previous-waterline
+Traceback (most recent call last):
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-batch-20261018/run-comparison.py", line 49, in <module>
+    assert not (archive/name).exists()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

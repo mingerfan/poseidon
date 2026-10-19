@@ -1,0 +1,8 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=explicit host_boot_instructions=0
+KEYS ready rotation_basis=13 key_generation_ms=2692.041715
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+FORWARD begin
+FORWARD complete runtime_ms=6527.612885
+PASS output=0 name=q_proj max_abs=9.90773e-10 max_relative=3.60425e-10 max_imaginary=7.91093e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=9.90773e-10 max_relative=3.60425e-10 max_imaginary=7.91093e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+report=test-results/waterline-batch-20261018/local-runs/local-qproj-r1-legacy-eager/r0-eager/report.json decoded=test-results/waterline-batch-20261018/local-runs/local-qproj-r1-legacy-eager/r0-eager/decoded.json

@@ -1,0 +1,5 @@
+[
+  "third_party/ckks-runtime/runtime/runtime.hpp",
+  "third_party/ckks-runtime/tests/runtime_waterline_tests.cpp",
+  "third_party/ckks-runtime/docs/runtime-plan/v4.md"
+]

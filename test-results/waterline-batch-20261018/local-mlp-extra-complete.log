@@ -1,0 +1,63 @@
+Keep verified local-mlp-r0-legacy-eager
+Keep verified local-mlp-r0-previous-eager
+Keep verified local-mlp-r0-previous-waterline
+Archived superseded local-mlp-r0-updated-eager
+local-mlp-r0-updated-eager
+eager repeat=0 exit=0 forward_ms=299.41058100000004 online_ms=125.62632900000001
+Archived superseded local-mlp-r0-updated-waterline
+local-mlp-r0-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=151.70009100000001 online_ms=116.093782
+Keep verified local-mlp-r1-previous-eager
+Keep verified local-mlp-r1-previous-waterline
+Archived superseded local-mlp-r1-updated-eager
+local-mlp-r1-updated-eager
+eager repeat=0 exit=0 forward_ms=270.63236700000004 online_ms=94.61726100000001
+Archived superseded local-mlp-r1-updated-waterline
+local-mlp-r1-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=152.342725 online_ms=116.254095
+Keep verified local-mlp-r1-legacy-eager
+Keep verified local-mlp-r2-previous-waterline
+Archived superseded local-mlp-r2-updated-eager
+local-mlp-r2-updated-eager
+eager repeat=0 exit=0 forward_ms=268.32954400000006 online_ms=95.942852
+Archived superseded local-mlp-r2-updated-waterline
+local-mlp-r2-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=150.88462900000002 online_ms=115.70795800000002
+Keep verified local-mlp-r2-legacy-eager
+Keep verified local-mlp-r2-previous-eager
+Archived superseded local-mlp-r3-updated-eager
+local-mlp-r3-updated-eager
+eager repeat=0 exit=0 forward_ms=268.76845000000003 online_ms=94.42702500000001
+Archived superseded local-mlp-r3-updated-waterline
+local-mlp-r3-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=151.872422 online_ms=115.741971
+Keep verified local-mlp-r3-legacy-eager
+Keep verified local-mlp-r3-previous-eager
+Keep verified local-mlp-r3-previous-waterline
+Archived superseded local-mlp-r4-updated-waterline
+local-mlp-r4-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=152.002783 online_ms=116.15034200000001
+Keep verified local-mlp-r4-legacy-eager
+Keep verified local-mlp-r4-previous-eager
+Keep verified local-mlp-r4-previous-waterline
+Archived superseded local-mlp-r4-updated-eager
+local-mlp-r4-updated-eager
+eager repeat=0 exit=0 forward_ms=270.312247 online_ms=95.264948
+Keep verified local-mlp-r5-legacy-eager
+Keep verified local-mlp-r5-previous-eager
+Keep verified local-mlp-r5-previous-waterline
+Archived superseded local-mlp-r5-updated-eager
+local-mlp-r5-updated-eager
+eager repeat=0 exit=0 forward_ms=268.34538100000003 online_ms=96.076659
+Archived superseded local-mlp-r5-updated-waterline
+local-mlp-r5-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=150.260679 online_ms=114.42889600000001
+Keep verified local-mlp-r6-previous-eager
+Keep verified local-mlp-r6-previous-waterline
+Archived superseded local-mlp-r6-updated-eager
+local-mlp-r6-updated-eager
+eager repeat=0 exit=0 forward_ms=274.922907 online_ms=97.720911
+Archived superseded local-mlp-r6-updated-waterline
+local-mlp-r6-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=150.58414100000002 online_ms=115.209588
+Keep verified local-mlp-r6-legacy-eager

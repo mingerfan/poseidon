@@ -1,0 +1,145 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-core
+    Start 1: runtime_binary_plan_tests
+1/8 Test #1: runtime_binary_plan_tests ........   Passed    0.14 sec
+    Start 2: runtime_waterline_tests
+2/8 Test #2: runtime_waterline_tests ..........***Failed    4.11 sec
+waterline GPU0 front_peak=600 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=600 pinned_peak=50 raw_peak=20
+PASS Host waiter leaves the single CPU worker available for required Prepare
+waterline GPU0 front_peak=500 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS one-plaintext waterline backend=0 resumes 20 consumers, oversized GPU candidate keeps legal CPU path
+waterline GPU0 front_peak=500 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS one-plaintext waterline backend=2 resumes 20 consumers, oversized GPU candidate keeps legal CPU path
+PASS V4 JSON/binary inline and bundle round trips, strict config and Prepare rejection
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=100 M=450 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+PASS later infeasible group rejects before initialization Encode/Transfer submission
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS Prepare crosses explicit Fence and unused Prepare finishes without submission
+waterline GPU0 front_peak=0 plain_peak=200 remaining_front=0 remaining_plain=200
+waterline shared host_peak=100 pinned_peak=50 raw_peak=20
+waterline GPU0 front_peak=0 plain_peak=250 remaining_front=0 remaining_plain=200
+waterline shared host_peak=100 pinned_peak=50 raw_peak=20
+waterline GPU0 front_peak=0 plain_peak=250 remaining_front=0 remaining_plain=200
+waterline shared host_peak=100 pinned_peak=50 raw_peak=20
+waterline GPU0 front_peak=500 plain_peak=100 remaining_front=400 remaining_plain=100
+waterline shared host_peak=300 pinned_peak=50 raw_peak=20
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #1 GPU0 front=0 plain=100 M=1000 reserve=0 Host=100 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #1 GPU0 front=0 plain=150 M=1000 reserve=0 Host=100 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+PASS returned Prepare demands share admission, survive Fence, and preflight full peaks
+fatal runtime error: reason=injected Prepare allocation failure at attempt 2 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS injected second Prepare failure backend=0 surfaces exact error, workers converge, explicit same-runtime restart completes
+fatal runtime error: reason=injected Prepare allocation failure at attempt 2 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS injected second Prepare failure backend=1 surfaces exact error, workers converge, explicit same-runtime restart completes
+PASS real lazy bundle read failure backend=0 before failing consumer, admitted work drained, owned source released, explicit repaired run succeeds
+fatal runtime error: reason=cannot open file: /tmp/ckks-waterline-bundle-failure-0-48411725568481/data/a084810e7c2a939ffa5af0a8540ded8acccd39d21be922c668a89bfaa4b98e9c.bin: No such file or directory plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=BundleFailurePrepareApi
+waterline GPU0 front_peak=500 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS real lazy bundle read failure backend=1 before failing consumer, admitted work drained, owned source released, explicit repaired run succeeds
+fatal runtime error: reason=cannot open file: /tmp/ckks-waterline-bundle-failure-1-48411845843648/data/a084810e7c2a939ffa5af0a8540ded8acccd39d21be922c668a89bfaa4b98e9c.bin: No such file or directory plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=BundleFailurePrepareApi
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS four logical GPUs, GPU1/2/3 complete before GPU0, shared Host limits Prepare concurrency to 2, temporary/device credits returned
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1200 pinned_peak=100 raw_peak=40
+PASS four logical GPUs, GPU1/2/3 complete before GPU0, shared pinned limits Prepare concurrency to 2, temporary/device credits returned
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1200 pinned_peak=100 raw_peak=40
+PASS executor shared Host head blocks later fitting groups atomically, completion resumes all four without Fence
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1000 pinned_peak=150 raw_peak=60
+PASS executor shared pinned head blocks later fitting groups atomically, completion resumes all four without Fence
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1000 pinned_peak=600 raw_peak=60
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=100 M=1000 reserve=0 allocator_capacity=550 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=500 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS allocator cap backend=0 rejects 550 before initialization, rolls at 600
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=150 M=1000 reserve=0 allocator_capacity=550 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS allocator cap backend=1 rejects 550 before initialization, rolls at 650
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=100 M=1000 reserve=0 allocator_capacity=550 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS allocator cap backend=2 rejects 550 before initialization, rolls at 650
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS empty allocator capacity leaves configured budgets unchanged, malformed table rejects
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #81 GPU0 front=200 plain=0 M=1000 reserve=0 Host=480 pinned=60 raw=0 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=380 pinned=110 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=480 pinned_peak=110 raw_peak=20
+PASS fixed Host/pinned buffers remain charged through rolling completions
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS ordinary CPU Encode and GPU Prepare share protected timing counters
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS rolling backend=0 cpu=20 gpu=0
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS rolling backend=1 cpu=0 gpu=20
+waterline GPU0 front_peak=800 plain_peak=300 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+Auto rolling test did not exercise both backends
+
+    Start 3: pack_plaintext_bundle_tests
+3/8 Test #3: pack_plaintext_bundle_tests ......   Passed    0.29 sec
+    Start 4: runtime_tests
+4/8 Test #4: runtime_tests ....................***Failed    0.09 sec
+[PASS] requirements and Vec operations
+[PASS] all compute metadata rules
+[PASS] inline Encode and Host compute
+fatal runtime error: reason=Api value metadata does not match ValueDesc 2 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi op_ordinal=0 op=Transfer transfer_id=100
+fatal runtime error: reason=Api value metadata does not match ValueDesc 1 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+[PASS] Device compute and full value validation
+[PASS] bundle reuse and rank-local files
+[PASS] Host and Device Boot paths
+fatal runtime error: reason=Api lacks required galois key at Device(rank=0,index=0) for rotation step 16383 at level 4 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Api lacks required capability: transfer plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=plan verification failed: OperatorSpec source SHA-256 mismatch plan_id=1 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+WARNING: rank 0 is running with skip_artifact_digest_checks=true; artifact digest comparisons are disabled
+WARNING: rank 0 is running with skip_artifact_digest_checks=true; artifact digest comparisons are disabled
+fatal runtime error: reason=plan verification failed: OperatorSpec id/version mismatch plan_id=1 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+[PASS] preflight and digest debug mode
+[PASS] Mock sync/async multi-rank matrix
+[PASS] multi-rank per-device workers
+[PASS] issuer thread contract and empty worker queues
+[FAIL] communication completion was waited before dependent compute was submitted
+
+    Start 5: runtime_plan_json_tests
+5/8 Test #5: runtime_plan_json_tests ..........   Passed    0.35 sec
+    Start 6: runtime_plan_memory_tests
+6/8 Test #6: runtime_plan_memory_tests ........   Passed    0.08 sec
+    Start 7: runtime_release_tests
+7/8 Test #7: runtime_release_tests ............   Passed    1.24 sec
+    Start 8: thread_trace_tests
+8/8 Test #8: thread_trace_tests ...............   Passed    0.01 sec
+
+75% tests passed, 2 tests failed out of 8
+
+Total Test time (real) =   6.31 sec
+
+The following tests FAILED:
+	  2 - runtime_waterline_tests (Failed)
+	  4 - runtime_tests (Failed)
+Errors while running CTest

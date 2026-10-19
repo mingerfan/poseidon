@@ -1,0 +1,10 @@
+{
+  "scope": "Final canonical binaries used by every final updated local benchmark. summarize.py verified each sample executable hash.",
+  "build": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release",
+  "binary_sha256": {
+    "mlp": "sha256:839f185bc3f8d46842d507308f24e0a7731577186a421cb5d3f091a61dd7ed60",
+    "qwen": "sha256:2b18e922b8f18820a29beaabd69d9a8be248ef74c2ca0fa573e3a92d4f141e13"
+  },
+  "verified_updated_samples": 59,
+  "runtime_sha256": "d10aff268babf762ed4ce5ef75c7482c4c12bba88fef5518210f09008055729c"
+}

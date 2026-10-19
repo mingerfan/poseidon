@@ -1,0 +1,16 @@
+[
+  "c++",
+  "-O3",
+  "-DNDEBUG",
+  "-std=c++20",
+  "-pthread",
+  "-fopenmp",
+  "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime",
+  "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime",
+  "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-cause-20261018/cpu-probe.cpp",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_plan_json.a",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/libruntime_core.a",
+  "-o",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-ready/cpu-control-complete/probe"
+]

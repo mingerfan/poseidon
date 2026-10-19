@@ -1,0 +1,9 @@
+[
+  "/home/xuming/poseidon-waterline-batch-20261018/build-ready/legacy/bin/poseidon_runtime_gpu_mlp_e2e",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/eager.json",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/operator-spec.json",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/bundle",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/fixture.json",
+  "/home/xuming/poseidon-waterline-benchmark-20261018/mlp2-q21-v5/mock.json",
+  "/home/xuming/poseidon-waterline-batch-20261018/server-runs/server-mlp2-r0-legacy-eager/r0-eager/report.json"
+]

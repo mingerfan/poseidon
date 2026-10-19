@@ -1,0 +1,208 @@
+{
+  "suite": {
+    "kind": "mlp",
+    "devices": 1,
+    "capacity_gib": 7,
+    "reserve_gib": 1,
+    "window": 128,
+    "count": 1024,
+    "plaintext_resident_bytes": 40337408,
+    "source_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+    "cases": [
+      {
+        "name": "eager",
+        "plan": "eager.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-64MiB-cpu-w128",
+        "plan": "wl-64MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-64MiB-gpu-w128",
+        "plan": "wl-64MiB-gpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-8MiB-cpu-w128",
+        "plan": "wl-8MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-8MiB-gpu-w128",
+        "plan": "wl-8MiB-gpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-1MiB-cpu-w128",
+        "plan": "wl-1MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-1MiB-gpu-w128",
+        "plan": "wl-1MiB-gpu-w128.json",
+        "runner": "mlp"
+      }
+    ]
+  },
+  "cuda": "0",
+  "pool_mib": 6144,
+  "timing_scope": "Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
+  "runner_hashes": {
+    "mlp": "sha256:99df8993811347fad43659828a03369f84162d48d0dd2f0fe354fa3050667892"
+  },
+  "samples": [
+    {
+      "case": "eager",
+      "repeat": 0,
+      "exit_code": 0,
+      "passed": true,
+      "process_wall_ms": 1566.9963950058445,
+      "process_cpu_seconds": 1.4971609999999966,
+      "report": {
+        "allow_no_boot": true,
+        "cuda_devices": [
+          0
+        ],
+        "device_worker_count": 1,
+        "device_workers": true,
+        "format_version": 1,
+        "input_level": 20,
+        "input_scale_log2": 40,
+        "key_generation_seconds": 0.842931908,
+        "logical_rotation_count": 111,
+        "max_imaginary": 1.248125345808601e-06,
+        "mock_comparison": {
+          "max_abs": 4.3280204664597477e-07,
+          "max_relative": 2.228764861787969e-07,
+          "rms": 2.920212540945591e-07,
+          "within_tolerance": true
+        },
+        "mock_output": [
+          26.50720364428741,
+          71.27703900936244,
+          -5.018099794983987,
+          18.86925463333062,
+          92.18425497178299,
+          19.321834645114627,
+          -30.237559456043098,
+          -1.6612091043653043,
+          -31.89641055719177,
+          19.189542574867446
+        ],
+        "model": "mlp",
+        "model_sha256": "sha256:581ec4e02ac454e49f0ec0fa29ee2b2f8e1ddf43f797e9c96a363d23bfa41de3",
+        "operator_spec_sha256": "sha256:13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+        "output_level": 5,
+        "output_scale_log2": 80,
+        "passed": true,
+        "plan_sha256": "sha256:e1f57a6f0556e86b28cb1b323a9145357d09a6efadc3fe451b77750aed1f4fee",
+        "poly_degree": 8192,
+        "poseidon_output": [
+          26.50720394119069,
+          71.27703874283654,
+          -5.018100217826804,
+          18.869254906431706,
+          92.18425522786711,
+          19.32183481659996,
+          -30.23755946557567,
+          -1.6612094746097523,
+          -31.896410989993818,
+          19.18954271881374
+        ],
+        "python_comparison": {
+          "max_abs": 4.328020253296927e-07,
+          "max_relative": 2.228764535646633e-07,
+          "rms": 2.9202124916352714e-07,
+          "within_tolerance": true
+        },
+        "python_output": [
+          26.507203644287394,
+          71.2770390093625,
+          -5.018099794983979,
+          18.86925463333058,
+          92.18425497178299,
+          19.321834645114635,
+          -30.237559456043147,
+          -1.6612091043653585,
+          -31.896410557191793,
+          19.18954257486757
+        ],
+        "q_modulus_count": 21,
+        "require_python_match": true,
+        "rotation_key_count": 14,
+        "rotation_key_policy": "binary",
+        "runtime_scope": "online_execution_only",
+        "runtime_seconds": 0.097197527,
+        "runtime_timing": {
+          "boot_calls": 0,
+          "boot_seconds": 0.0,
+          "bundle_read_bytes": 0,
+          "bundle_read_calls": 0,
+          "bundle_read_seconds": 0.0,
+          "bundle_resident_bytes": 0,
+          "bundle_resident_load_seconds": 0.0,
+          "communication_post_seconds": 0.031313365,
+          "communication_wait_seconds": 4.1360000000000004e-05,
+          "compute_calls": 375,
+          "compute_excluding_boot_seconds": 0.09375915800000001,
+          "compute_including_boot_seconds": 0.09375915800000001,
+          "encode_calls": 121,
+          "encode_seconds": 0.10681375600000001,
+          "fence_calls": 0,
+          "fence_seconds": 0.0,
+          "initialization_seconds": 0.138822322,
+          "online_execution_seconds": 0.097197527,
+          "raw_peak_bytes": 0,
+          "setup_seconds": 0.037704795
+        },
+        "seed": 20260717,
+        "tolerances": {
+          "absolute": 0.1,
+          "imaginary": 0.01,
+          "python_absolute": 0.1,
+          "relative": 0.006
+        },
+        "transfer_count": 122
+      },
+      "forward_ms": 273.724644,
+      "online_ms": 97.19752700000001,
+      "init_ms": 138.82232199999999,
+      "setup_ms": 37.704795
+    }
+  ],
+  "statistics": {
+    "eager": {
+      "forward_ms": {
+        "median": 273.724644,
+        "min": 273.724644,
+        "max": 273.724644
+      },
+      "online_ms": {
+        "median": 97.19752700000001,
+        "min": 97.19752700000001,
+        "max": 97.19752700000001
+      },
+      "init_ms": {
+        "median": 138.82232199999999,
+        "min": 138.82232199999999,
+        "max": 138.82232199999999
+      },
+      "setup_ms": {
+        "median": 37.704795,
+        "min": 37.704795,
+        "max": 37.704795
+      },
+      "process_wall_ms": {
+        "median": 1566.9963950058445,
+        "min": 1566.9963950058445,
+        "max": 1566.9963950058445
+      }
+    }
+  },
+  "selected_case_names": [
+    "eager"
+  ],
+  "requested_repeats": 1
+}

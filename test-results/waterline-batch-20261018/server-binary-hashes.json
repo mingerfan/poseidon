@@ -1,0 +1,18 @@
+{
+  "/home/xuming/poseidon-waterline-batch-20261018/build-ready/legacy": {
+    "qwen": "sha256:67239439493f84523fccb4a0e92645e034f8830479a4724f7e4375da9dfe0878",
+    "mlp": "sha256:a3156a4319aebfd1d760036dd1a9edef65301c3622707855e28de6ca61445068"
+  },
+  "/home/xuming/poseidon-waterline-batch-20261018/build-ready/unfixed": {
+    "qwen": "sha256:f5f7ec47c6aee6b1306367aca8fe818155011533f37910b99c3b511e7d880e3d",
+    "mlp": "sha256:4465c0b696e5793605182c1c1be3c0f979c482b43d5329a5a8e0cacc41440575"
+  },
+  "/home/xuming/poseidon-waterline-batch-20261018/build-ready/previous": {
+    "qwen": "sha256:f25fac736cef19290d2e6067cc8614c6bc5b7e12a50850659132c219520830e2",
+    "mlp": "sha256:a85f249a475fbf74ae3fb108cf579e4cc10517dd656e7f1d4f95f086595f459c"
+  },
+  "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build": {
+    "qwen": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d",
+    "mlp": "sha256:5c5ba3fcc2d40aeddb78ff98ad78dd289dcb27857110b0c41146c194619b453c"
+  }
+}

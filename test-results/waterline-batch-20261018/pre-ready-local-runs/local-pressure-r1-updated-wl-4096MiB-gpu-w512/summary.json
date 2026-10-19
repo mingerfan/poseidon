@@ -1,0 +1,420 @@
+{
+  "suite": {
+    "kind": "pressure",
+    "devices": 1,
+    "capacity_gib": 7,
+    "reserve_gib": 1,
+    "window": 512,
+    "count": 1024,
+    "plaintext_resident_bytes": 3355443200,
+    "source_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+    "cases": [
+      {
+        "name": "eager",
+        "plan": "eager.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-4096MiB-cpu-w512",
+        "plan": "wl-4096MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-4096MiB-gpu-w512",
+        "plan": "wl-4096MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-256MiB-cpu-w512",
+        "plan": "wl-256MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-256MiB-gpu-w512",
+        "plan": "wl-256MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-32MiB-cpu-w512",
+        "plan": "wl-32MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-32MiB-gpu-w512",
+        "plan": "wl-32MiB-gpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-8MiB-cpu-w512",
+        "plan": "wl-8MiB-cpu-w512.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-8MiB-gpu-w512",
+        "plan": "wl-8MiB-gpu-w512.json",
+        "runner": "qwen"
+      }
+    ],
+    "manifest_comparison": {
+      "source_suite": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local",
+      "only_change": "plaintext_bundle manifest_format and manifest file; raw weight bytes and ciphertext work unchanged",
+      "source_manifest_sha256": "sha256:83bef4022e593061646dee3df93dd6e65b6b609491c94128209c50c184c426eb",
+      "binary_manifest_sha256": "sha256:84713a3b11c47dc83fc0212c323540e2b0b263f074eb23ac6209e6416cedf508",
+      "data_sha256": "sha256:953e8a5106c8315114acd54da6d0148bf3de6f12137bd03204eb37575fead417"
+    }
+  },
+  "cuda": "0",
+  "pool_mib": 6144,
+  "timing_scope": "Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
+  "runner_hashes": {
+    "qwen": "sha256:af218da121c52fffc83a40655b3e809cf6d960a5abe502ffa34915eba8e4183a"
+  },
+  "samples": [
+    {
+      "case": "wl-4096MiB-gpu-w512",
+      "repeat": 0,
+      "exit_code": 0,
+      "passed": true,
+      "process_wall_ms": 1767.6262530003441,
+      "process_cpu_seconds": 1.7055659999999477,
+      "report": {
+        "actual_p_moduli": [
+          1071415297,
+          1071513601,
+          1072496641,
+          1072857089,
+          1073053697,
+          1073184769,
+          1073479681,
+          1073643521
+        ],
+        "actual_q_moduli": [
+          1053523969,
+          1053818881,
+          1054015489,
+          1054212097,
+          1054965761,
+          1055162369,
+          1055260673,
+          1056178177,
+          1056342017,
+          1056440321,
+          1056735233,
+          1057259521,
+          1057652737,
+          1058209793,
+          1059291137,
+          1059618817,
+          1059880961,
+          1060175873,
+          1060405249,
+          1060667393,
+          1060700161,
+          1060765697,
+          1061093377,
+          1061584897,
+          1061847041,
+          1062371329,
+          1062469633,
+          1062535169,
+          1062862849,
+          1063059457,
+          1063321601,
+          1063452673,
+          1063616513,
+          1064599553,
+          1064697857,
+          1065484289,
+          1065779201,
+          1065811969,
+          1066172417,
+          1066893313,
+          1067548673,
+          1067876353,
+          1068236801,
+          1068433409,
+          1068466177,
+          1068564481,
+          1069219841,
+          1070432257,
+          1070727169,
+          1071087617
+        ],
+        "boot_implementation": "none",
+        "comparison": {
+          "bad_imaginary_slots": 0,
+          "bad_prefix_slots": 0,
+          "bad_real_slots": 0,
+          "bad_tail_slots": 0,
+          "finite_slots": 8192,
+          "max_abs_error": 2.9115541257031946e-08,
+          "max_imaginary": 1.463004395303118e-08,
+          "max_relative_error_floor_atol": 1.2759580940501709e-05,
+          "max_tail_abs": 0.0,
+          "nonfinite_slots": 0,
+          "passed": true,
+          "rms_error": 1.6442014516266228e-09,
+          "slots_checked": 8192
+        },
+        "context": {
+          "default_scale_log2": 40,
+          "p_moduli_bits": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "poly_degree": 16384,
+          "q_moduli_bits": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ]
+        },
+        "context_ms": 356.614462,
+        "cuda_visible_devices": "0",
+        "decoded_path": "test-results/waterline-batch-20261018/local-runs/local-pressure-r1-updated-wl-4096MiB-gpu-w512/r0-wl-4096MiB-gpu-w512/decoded.json",
+        "device_measurements": [
+          {
+            "allocated_live_bytes": 802564192,
+            "allocated_peak_bytes": 2487429216,
+            "consumer_wait_calls": 1024,
+            "consumer_wait_ms": 266.405679,
+            "gpu_encode_calls": 1024,
+            "gpu_encode_ms": 329.143764,
+            "gpu_raw_h2d_bytes": 67108864,
+            "gpu_raw_h2d_ms": 10.612072,
+            "logical_device": 0,
+            "managed_pool": true,
+            "pool_capacity_bytes": 6442450944,
+            "pool_reserved_bytes": 6442450944
+          }
+        ],
+        "device_worker_count": 1,
+        "devices": [
+          {
+            "logical_device": 0,
+            "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+            "pci_bus_id": "0000:64:00.0",
+            "total_global_bytes": 8272019456,
+            "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+          }
+        ],
+        "execution_mode": "per_device_workers",
+        "fixture_sha256": "sha256:cc3d7ff2384c48e9ec11a83eece5578411dedcbacba3bd8cb67816db59f1ca15",
+        "format_version": 1,
+        "gpu_api_setup_ms": 416.577337,
+        "gpu_pool_cap": {
+          "environment": "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB",
+          "maximum_allowed_mb": [
+            6592
+          ],
+          "maximum_mb": [
+            6144
+          ],
+          "outside_pool_reserve_bytes": 603979776,
+          "source": "user_environment"
+        },
+        "host_boot_instructions": 0,
+        "host_max_rss_kib": 1166312,
+        "input_count": 1,
+        "input_encryption_ms": 55.340164,
+        "inputs": [
+          {
+            "level": 49,
+            "name": "input",
+            "prefix_size": 8192,
+            "scale_log2": 40,
+            "value_id": 0
+          }
+        ],
+        "key_generation_ms": 37.566161,
+        "load_artifacts_ms": 81.556828,
+        "main_entry_to_all_outputs_ms": 1483.379747,
+        "main_entry_to_first_output_ms": 1482.304104,
+        "model": {
+          "complete_qwen": false,
+          "name": "weighted_sum_memory_pressure",
+          "synthetic_weights": true
+        },
+        "native_boot_instructions": 0,
+        "operator_spec_sha256": "sha256:2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+        "output_count": 1,
+        "output_validation_and_save_ms": 128.526591,
+        "outputs": [
+          {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 8192,
+            "level": 49,
+            "max_abs_error": 2.9115541257031946e-08,
+            "max_imaginary": 1.463004395303118e-08,
+            "max_relative_error_floor_atol": 1.2759580940501709e-05,
+            "max_tail_abs": 0.0,
+            "name": "weighted_sum",
+            "nonfinite_slots": 0,
+            "passed": true,
+            "prefix_size": 8192,
+            "rms_error": 1.6442014516266228e-09,
+            "scale_log2": 80,
+            "slots_checked": 8192,
+            "value_id": 4096
+          }
+        ],
+        "passed": true,
+        "pinned_transfer_live_after_plan_bytes": 0,
+        "pinned_transfer_live_after_validation_bytes": 0,
+        "pinned_transfer_peak_after_plan_bytes": 6619136,
+        "pinned_transfer_peak_including_validation_bytes": 6619136,
+        "plan_source_sha256": "sha256:9ed61d523e4d7a58460e2ed75d13f532841aa796798e44aba8f5f12e7ff80465",
+        "preparation_measurements": {
+          "cpu_encode_ms": 0.0,
+          "cpu_plain_h2d_bytes": 0,
+          "cpu_prepare_calls": 0,
+          "transport_h2d_bytes": 6553600,
+          "transport_h2d_calls": 1,
+          "transport_h2d_ms": 0.510368,
+          "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+        },
+        "rotation_key_basis": [],
+        "runtime_ms": 407.060154,
+        "runtime_timing": {
+          "boot_calls": 0,
+          "bundle_read_bytes": 67108864,
+          "bundle_read_calls": 1024,
+          "bundle_read_ms": 18.656909,
+          "bundle_resident_bytes": 0,
+          "communication_post_calls": 1,
+          "communication_post_ms": 2.684676,
+          "communication_wait_calls": 1,
+          "communication_wait_ms": 0.00359,
+          "compute_calls": 2047,
+          "compute_submission_including_boot_ms": 20.499176,
+          "encode_calls": 1024,
+          "encode_submission_ms": 74.999477,
+          "fence_calls": 0,
+          "host_boot_ms": 0.0,
+          "initialization_ms": 0.25266,
+          "online_execution_ms": 401.783212,
+          "raw_peak_bytes": 131072,
+          "setup_ms": 4.644571
+        },
+        "secret_key_assisted_refresh": false,
+        "security_level": "none; numerical validation context",
+        "slots_per_output": 8192,
+        "stage": "complete",
+        "time_scope": "steady-clock from main entry; dynamic-loader/process time requires external /usr/bin/time",
+        "tolerances": {
+          "atol": 0.001,
+          "rtol": 0.0001
+        },
+        "waterline": {
+          "backend": "gpu",
+          "device_capacity_bytes": [
+            7516192768
+          ],
+          "device_fractions": [
+            0.5714285714285714
+          ],
+          "device_reserve_bytes": [
+            1073741824
+          ],
+          "host_budget_bytes": 4294967296,
+          "lookahead_groups": 512,
+          "pinned_budget_bytes": 536870912,
+          "raw_budget_bytes": 134217728
+        }
+      },
+      "forward_ms": 407.060154,
+      "online_ms": 401.783212,
+      "init_ms": 0.25266,
+      "setup_ms": 4.644571
+    }
+  ],
+  "statistics": {
+    "wl-4096MiB-gpu-w512": {
+      "forward_ms": {
+        "median": 407.060154,
+        "min": 407.060154,
+        "max": 407.060154
+      },
+      "online_ms": {
+        "median": 401.783212,
+        "min": 401.783212,
+        "max": 401.783212
+      },
+      "init_ms": {
+        "median": 0.25266,
+        "min": 0.25266,
+        "max": 0.25266
+      },
+      "setup_ms": {
+        "median": 4.644571,
+        "min": 4.644571,
+        "max": 4.644571
+      },
+      "process_wall_ms": {
+        "median": 1767.6262530003441,
+        "min": 1767.6262530003441,
+        "max": 1767.6262530003441
+      }
+    }
+  },
+  "selected_case_names": [
+    "wl-4096MiB-gpu-w512"
+  ],
+  "requested_repeats": 1
+}

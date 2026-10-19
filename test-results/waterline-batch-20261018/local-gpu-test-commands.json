@@ -1,0 +1,14 @@
+[
+  {
+    "command": [
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/updated/bin/poseidon_runtime_gpu_api_tests"
+    ],
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  {
+    "command": [
+      "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/updated/bin/poseidon_runtime_gpu_prepare_oom_tests"
+    ],
+    "CUDA_VISIBLE_DEVICES": "0"
+  }
+]

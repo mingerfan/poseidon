@@ -1,0 +1,6 @@
+# Per-slot numeric dumps remain local; validation reports and failures are tracked.
+**/decoded.json
+# Generated plans, transport bundles and local task state.
+/server-plans/
+/updated-source*.tar.gz
+/WORK-STATE.json

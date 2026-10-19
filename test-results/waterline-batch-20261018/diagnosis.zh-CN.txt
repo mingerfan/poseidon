@@ -1,0 +1,107 @@
+连续提交、GPU 优先编码与完成状态竞争修复：最终记录
+2026-10-19
+
+实现与原因
+全加载按设备连续执行原任务队列，绕过 Waterline 的排序、资源记账和中央逐项派发。CPU/GPU 数据依赖仍由 ValueId 及其 Ready 处理，通信 issuer 的线程约束、显式 Fence 和最终 drain 均保留。
+水位模式按完整组批准资源后，批量排入工作线程队列；前台线程不再每项等待主调度器确认。GPU 准备线程发布异步结果，读取下一份已批准权重时与当前编码重叠，只在复用 staging 前等待上份真实 Ready；批次末尾不立即等待。主调度器确认整批准备完成后才派发下一批，缓冲区仍保持互斥使用。完成票据、窗口和字节额度按实际完成回收。
+提前 Release 的未使用明文在异步准备发布时不会被重新保留；完成引用仍保护尚未结束的 GPU 工作，防止额度已经归还但显存仍被 Runtime 持有。
+Auto 优先选择支持且预算允许的 GPU 编码；临时压力等待已批准工作完成，不因为 CPU 线程空闲就选慢速 CPU 编码。只有 GPU 不支持或已批准工作完成后完整 GPU 组仍放不下，才考虑 CPU。CPU/GPU 显式选择保持不变，失败后不重试或切换后端。
+GPU 后端还修复了一个竞争：ReadyEvent 在已被 synchronize 确认完成后，查询仍可能因 try_lock 失败返回 false，导致缓存 staging 被误报为仍在使用。现在以单调原子完成标志保存事实；真正未完成的重叠准备仍明确报错。
+Qwen 编译脚本新增 --lookahead-groups 和 --prepare-backend，默认 Auto/128。旧计划保存的窗口不会自动变化；旧 Auto/8 计划运行时会采用新的 Auto 选择策略，但窗口仍为 8。
+
+统一 GPU 后端的在线执行对比（秒，中位数）
+负载 | 原版全加载 | 上次全加载 | 本次全加载 | 最初未修复水位 | 上次水位 | 本次水位
+RTX4060 MLP | 0.096527 | 0.097716 | 0.095981 | 0.242451 | 0.124877 | 0.115918
+RTX4060 q_proj 代理负载 | 1.189408 | 1.201550 | 1.192795 | 2.466150 | 1.305850 | 1.296850
+RTX4060 压力负载（3.125 GiB 编码权重） | 0.102509 | 0.104092 | 0.102967 | 1.180230 | 0.466830 | 0.427890
+V100 单卡 MLP | 0.113446 | 0.128800 | 0.113405 | 0.364366 | 0.167742 | 0.168526
+V100 双卡 MLP | 0.078919 | 0.087362 | 0.080693 | 0.256217 | 0.117702 | 0.107204
+V100 压力负载（12.5 GiB 编码权重） | 0.267634 | 0.620862 | 0.272365 | 7.470771 | 2.433198 | 1.673390
+
+原版指 f7e9115 Runtime 头文件；最初未修复水位指 a7245b8；上次指 db09ac6 修复；本次指 d10aff2。各版本链接同一修正后的 GPU 后端及相同数学 kernel 库；不是整个历史仓库的重新构建。
+本轮 57 个配置、206 次未加 profiler 的测量全部通过；主要 RTX4060 MLP 五项对照各 10 次，其他各 3 次，轮换顺序，每次新进程。仅新版实现变化时，保留未变化的原版及上次实现对照；旧新版样本按可执行文件哈希归档替换。全部最终版本样本保留。补测用于处理首组 MLP 的较大波动，不以首组中位数单独宣称加速。
+MLP 水位主要对照为 64 MiB/窗口128，另测 8/1 MiB；本地压力主要为256 MiB/窗口512，另测4096/32/8 MiB；V100 压力主要为1024 MiB/窗口512，另测16384/64/8 MiB。q_proj 为64 MiB/窗口128，另测窗口8和16 MiB水位。完整范围及每个配置的最小/最大值见 measurements.txt 和 comparison.json。
+全加载 online 不含提前编码/上传；水位 online 含运行时准备。两者都包含最终同步/排空，因此水位与驻留的比值不是纯调度成本。完整首次 forward 及其初始化也保存在 comparison.json；CPU 编码的全加载初始化非常慢，初始化主机上传墙钟还有波动，不能从在线比值推断首次运行的比值。
+
+q_proj 的 Auto 与窗口对照（秒）
+previous-wl-64MiB-auto-w8: 2.702017; CPU准备中位数=361; GPU准备中位数=664
+updated-wl-64MiB-auto-w8: 1.421926; CPU准备中位数=0; GPU准备中位数=1025
+previous-wl-64MiB-gpu-w8: 1.465255; CPU准备中位数=0; GPU准备中位数=1025
+updated-wl-64MiB-gpu-w8: 1.427806; CPU准备中位数=0; GPU准备中位数=1025
+previous-wl-64MiB-auto-w128: 1.352806; CPU准备中位数=109; GPU准备中位数=916
+updated-wl-64MiB-auto-w128: 1.290088; CPU准备中位数=0; GPU准备中位数=1025
+Auto/8 前后只改变实现；本次 Auto/8 与 Auto/128 保持 GPU 优先策略，用于观察窗口影响。它们比直接同时改变编码后端与窗口更有解释力。
+
+压力负载水位敏感性与极低水位例外（秒）
+RTX4060 压力负载（3.125 GiB 编码权重） 本次 4096MiB: 0.436209
+RTX4060 压力负载（3.125 GiB 编码权重） 本次 256MiB: 0.427890
+RTX4060 压力负载（3.125 GiB 编码权重） 本次 32MiB: 0.420968
+RTX4060 压力负载（3.125 GiB 编码权重） 本次 8MiB: 0.473937
+RTX4060 压力负载（3.125 GiB 编码权重） 8MiB 上次/本次: 0.519442 / 0.473937; 本次/上次=0.912
+V100 压力负载（12.5 GiB 编码权重） 本次 16384MiB: 1.665191
+V100 压力负载（12.5 GiB 编码权重） 本次 1024MiB: 1.673390
+V100 压力负载（12.5 GiB 编码权重） 本次 64MiB: 1.698493
+V100 压力负载（12.5 GiB 编码权重） 本次 8MiB: 4.346979
+V100 压力负载（12.5 GiB 编码权重） 8MiB 上次/本次: 3.729681 / 4.346979; 本次/上次=1.166
+另外限制整个进程只使用一个 CPU 插槽的逻辑核范围，交替重复前后各3次，共12次；未固定每个工作线程。该组仅用于诊断，不计入主表206次。
+CPU 0-11 previous: 3.274908 [3.032366, 3.563224]
+CPU 0-11 updated: 4.216261 [4.201852, 4.319567]
+CPU 12-23 previous: 3.848695 [3.816736, 3.887539]
+CPU 12-23 updated: 4.394140 [4.200503, 4.397020]
+8MiB 水位只能容纳极少量明文和准备临时空间；较大窗口无法突破字节额度。V100 在此预算下的回退尚未解决，不能宣称本次在所有水位都更快。将整个进程限制在两个 CPU 插槽分别运行后，回退都仍然存在；跨插槽迁移不能单独解释它。
+
+隔离反馈时机检查（各仅一次，不属于生产实现或主表）
+另外构建 foreground-progress（前台每项发布完成票据）和 all-progress（准备线程也逐项发布）两个头文件变体。它们不等待中央逐项确认，也不改变真实 Ready 回收约束。使用相同后端、计划与 CPU0-11，数值全部通过。
+8MiB foreground-progress: 4.124508 s
+8MiB all-progress: 3.983849 s
+8MiB updated: 4.253934 s
+64MiB foreground-progress: 1.653122 s
+64MiB all-progress: 1.365674 s
+64MiB updated: 1.721212 s
+8MiB 的票据反馈修改只带来小幅变化，未消除相对上次实现的回退，不能把批次反馈延迟当作完整原因。64MiB 的 all-progress 单次更快，但没有重复稳定性证据；这些变体仅归档，没有替换已经完整验证的 d10aff2 实现。以上6次不混入206次主测量。
+
+CPU 调度隔离（同样 20478 项任务，7 次，中位数）
+legacy: 7.151 ms; 主动上下文切换=1
+previous: 72.949 ms; 主动上下文切换=40999
+updated: 9.204 ms; 主动上下文切换=1
+CPU 对照使用真实 Runtime 与标量 token，没有 CUDA、CKKS 编码、权重文件读取或 GPU 事件查询。上下文切换计数包含整次 Runtime 调用，在线时间只包含执行阶段。不能拿这些数值直接分解 V100 的毫秒差距。
+
+独立 Nsight 检查（不计入速度中位数）
+previous-qproj: kernels=92375; kernel区间并集=1236.043 ms; 首末kernel跨度=1310.164 ms
+  cuLaunchKernel: calls=2050; 主机API墙钟=6.701 ms
+  cudaEventQuery_v3020: calls=86171; 主机API墙钟=51.403 ms
+  cudaEventSynchronize_v3020: calls=4; 主机API墙钟=0.138 ms
+  cudaLaunchKernel_ptsz_v7000: calls=90325; 主机API墙钟=662.478 ms
+updated-qproj: kernels=92375; kernel区间并集=1223.977 ms; 首末kernel跨度=1303.524 ms
+  cuLaunchKernel: calls=2050; 主机API墙钟=4.946 ms
+  cudaEventQuery_v3020: calls=39462; 主机API墙钟=20.216 ms
+  cudaEventSynchronize_v3020: calls=524; 主机API墙钟=209.653 ms
+  cudaLaunchKernel_ptsz_v7000: calls=90325; 主机API墙钟=753.642 ms
+updated-mlp: kernels=16018; kernel区间并集=104.692 ms; 首末kernel跨度=129.622 ms
+  cudaEventQuery_v3020: calls=4249; 主机API墙钟=1.813 ms
+  cudaEventSynchronize_v3020: calls=10; 主机API墙钟=0.548 ms
+  cudaLaunchKernel_ptsz_v7000: calls=16018; 主机API墙钟=94.119 ms
+q_proj 两版 kernel 名称、grid/block 和次数一致；本次 MLP 也与原版相同。kernel 跨度覆盖整个进程，不等于 Runtime online；kernel 之间可能还有 memcpy，不能全算 GPU 空闲。准备线程的 EventSynchronize 只等待自己的结果，可与前台执行重叠，其累计时间不能加到总墙钟上。
+
+正确性、内存与并发验证
+All outputs passed independent numerical validation.
+Plan/spec/fixture hashes match across variants of each exact case.
+Device ledger retains exactly returned/external ciphertexts and no plaintext credit; all byte peaks satisfy their individual budgets.
+Measured managed-pool peaks stay within the identical configured physical pool caps.
+Pressure/q_proj Prepare and bundle-read counts match each plaintext exactly once.
+All updated Auto cases used GPU preparation only; explicit backend choices were unchanged.
+No implicit Fence was introduced; pinned transfer live bytes returned to zero.
+Final source hashes match; live GPU library hashes match the snapshots shared by all Runtime versions. Superseded updated executable hashes are excluded.
+核心 CTest 8 项通过。真实 GPU 单卡26项、服务器双卡27项通过；另测双卡 HostStaged 的 CPU/GPU/Auto 水位环形依赖、共享预算、较慢GPU与 pinned 回收。两端真实 GPU OOM 注入与显式再次运行通过。
+三个负对照：旧逐项调度器未通过“工作线程无需每项确认”的新断言；首版准备线程未通过“准备队列无需每项确认”的新断言；旧 GPU 后端未通过双观察线程下连续 staging 复用测试。修复后对应测试通过。
+前期试跑及 Ready 竞争失败样本保存在 pilot-v1-*、pre-ready-*；失败没有被自动重试或转到 CPU，不计入最终中位数。V100 曾在大窗口真实负载复现同一 staging 误报，修复后另做同一大窗口烟测，再开始完整受控对比。
+
+环境与适用范围
+本地 RTX4060 Laptop 8 GiB；服务器 V100-SXM2 32 GiB，单卡物理2，双卡物理2/3。固定初始=最大物理池：本地及 MLP 6 GiB，V100 压力24 GiB。没有使用服务器 GPU0 或其他任务占用的 GPU1。
+q_proj 使用合成权重，是代理负载；未重跑完整四卡 Qwen。不能据此宣称完整 Qwen 已验证。所有最终配置均未固定 CPU 亲和性/GPU频率，也未清理 OS 文件缓存；范围和重复数在原始数据中保留。
+本地正式构建及服务器私有验证目录已更新并重编译；历史对照目标独立保留。测量时主仓库及 ckks-runtime 子模块的修改尚未提交；后续提交以 final-source-sha256.json 中的源码指纹对应本轮验证。
+
+复现入口
+relink-controls.py、run-comparison.py、local-jobs-final.json、server-jobs-final.json、local-mlp-extra-jobs.json。
+CPU: cpu-control.py；Nsight: profile.py；验证和汇总: summarize.py；图: plot.py。
+构建命令、头文件和库哈希见 build-waterline-batch-20261018-ready 及服务器 build-ready 的 commands.json/libraries.json；最终新版使用已验证的本地/服务器正式构建。源码哈希见 final-source-sha256.json。

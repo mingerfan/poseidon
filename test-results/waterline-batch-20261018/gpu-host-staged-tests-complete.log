@@ -1,0 +1,96 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=3690987520 maximum_bytes=3690987520
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=3690987520 maximum_bytes=3690987520
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=3690987520 maximum_bytes=3690987520
+[PASS] internal RMM pool lifetime
+PASS complete GPU Encode wide constant scale=40 coefficient_bits=61
+PASS complete GPU Encode wide constant scale=60 coefficient_bits=81
+PASS complete GPU Encode wide constant scale=80 coefficient_bits=101
+PASS complete GPU Encode wide constant scale=120 coefficient_bits=141
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613807528
+waterline rescale workspace plan_max_drop=0 capability_max_drop=0
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=3690987520 maximum_bytes=3690987520
+GPU_POOL_RESERVE cuda_device=1 initial_bytes=3690987520 maximum_bytes=3690987520
+GPU_PACKED_PREPARE_HOST_BOUND N=4096 fixed_host=16384 dynamic_host=32768 tight_budget=40960 complete_budget=49152 warm_cache_live=16384 tight_admitted=0
+GPU_PACKED_PREPARE_HOST_BOUND positive_budget=49152 resident_bytes=0 packed_reads=2 second_read_with_cache=true allocations=1 frees=1 slots_checked=2048 max_abs_including_imaginary=6.3145e-17 scope=API_Ledger_boundary_not_full_Runtime
+[PASS] GPU cached packed-read complete Host budget negative/positive boundary
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613807528
+waterline stream GPU1 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU1 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU1 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=3613807528
+waterline rescale workspace plan_max_drop=0 capability_max_drop=0
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613807528
+waterline fixed GPU1 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU1 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=3613807528
+waterline rescale workspace plan_max_drop=0 capability_max_drop=0
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=3690987520 maximum_bytes=3690987520
+GPU_RAW_PINNED_CACHE devices=2 sequential_prepares_per_device=10 allocations=2 frees=2 fixed_host=32768 fixed_pinned=32768 pinned_live=0 max_abs_including_imaginary=1.26179e-16 overlap_rejected=true completed_contention_prepares=1024 ready_reconfigure_requires_drain=true
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613889448
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #8 GPU0 front=655360 plain=163840 M=4294967296 reserve=2147483648 allocator_capacity=3613889448 Host=3276800 pinned=163840 raw=32768 plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+CPU_PREPARE_HOST_BOUND N=4096 Q=10 old_bound=491520 complete_bound=655360 prepare_host_resident=2621440 required_total=3276800 tight_budget=3194880 cpu_prepare_calls_delta=0 rejection=fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #8 GPU0 front=655360 plain=163840 M=4294967296 reserve=2147483648 allocator_capacity=3613889448 Host=3276800 pinned=163840 raw=32768 plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613889448
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+waterline GPU0 front_peak=655360 plain_peak=163840 remaining_front=0 remaining_plain=0
+waterline shared host_peak=3276800 pinned_peak=491520 raw_peak=32768
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=3690987520 maximum_bytes=3690987520
+GPU_POOL_RESERVE cuda_device=1 initial_bytes=3690987520 maximum_bytes=3690987520
+CPU_PREPARE_HOST_BOUND positive_budget=3276800 pinned_budget=491520 slots_checked=2048 max_abs_including_imaginary=2.09902e-16 retained_external_final_host=1310720 remaining_dynamic_front=0 remaining_plain=0 pinned_live=0
+[PASS] CPU Prepare complete Host budget negative/positive boundary
+WATERLINE mode=HostStaged backend=0 devices=2 host_budget=4915200 pinned_budget=983040 raw_budget=65536
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613889448
+waterline stream GPU1 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU1 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU1 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613889448
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+waterline GPU0 front_peak=1638400 plain_peak=163840 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=1310720 plain_peak=163840 remaining_front=0 remaining_plain=0
+waterline shared host_peak=3932160 pinned_peak=983040 raw_peak=65536
+WATERLINE measurements cumulative_cpu_calls=2 cpu_encode_ms=4.8143 cpu_plain_h2d_bytes=327680 transport_h2d_bytes=1474560 transport_h2d_ms=0.224864
+WATERLINE measurements GPU0 allocated_peak=11136088 allocated_live=9989208 pool_reserved=3690987520 pool_cap=3690987520 gpu_encode_calls=0 gpu_encode_ms=0 gpu_raw_h2d_bytes=0 consumer_wait_calls=0 consumer_wait_ms=0 gpu_raw_h2d_ms=0
+WATERLINE measurements GPU1 allocated_peak=11136088 allocated_live=9989208 pool_reserved=3690987520 pool_cap=3690987520 gpu_encode_calls=0 gpu_encode_ms=0 gpu_raw_h2d_bytes=0 consumer_wait_calls=0 consumer_wait_ms=0 gpu_raw_h2d_ms=0
+Waterline diagnostic max=2.05535e-15 outputs=2 peer_devices_completed_before_gpu0=1
+WATERLINE HostStaged posts=10 posts_observed_with_pinned=10 expected_posts=10
+WATERLINE backend=0 devices=2 max_abs_error=2.05535e-15 runtime_ms=136.52 forward_ms=122.509 pinned_live=0
+WATERLINE mode=HostStaged physical_pinned_peak_process=655360 pinned_budget=983040
+WATERLINE mode=HostStaged backend=1 devices=2 host_budget=4915200 pinned_budget=983040 raw_budget=65536
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613807528
+waterline fixed GPU1 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU1 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613807528
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+waterline GPU0 front_peak=983040 plain_peak=409616 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=983040 plain_peak=409616 remaining_front=0 remaining_plain=0
+waterline shared host_peak=2981888 pinned_peak=524288 raw_peak=65536
+WATERLINE measurements cumulative_cpu_calls=2 cpu_encode_ms=4.8143 cpu_plain_h2d_bytes=327680 transport_h2d_bytes=2129920 transport_h2d_ms=0.307072
+WATERLINE measurements GPU0 allocated_peak=11136088 allocated_live=10071128 pool_reserved=3690987520 pool_cap=3690987520 gpu_encode_calls=1 gpu_encode_ms=0.108543 gpu_raw_h2d_bytes=16384 consumer_wait_calls=3 consumer_wait_ms=0.016382 gpu_raw_h2d_ms=0.015359
+WATERLINE measurements GPU1 allocated_peak=11218008 allocated_live=10071128 pool_reserved=3690987520 pool_cap=3690987520 gpu_encode_calls=1 gpu_encode_ms=0.103231 gpu_raw_h2d_bytes=16384 consumer_wait_calls=0 consumer_wait_ms=0 gpu_raw_h2d_ms=0.026815
+Waterline diagnostic max=7.24131e-15 outputs=2 peer_devices_completed_before_gpu0=1
+WATERLINE HostStaged posts=10 posts_observed_with_pinned=10 expected_posts=10
+WATERLINE backend=1 devices=2 max_abs_error=7.24131e-15 runtime_ms=116.73 forward_ms=91.5726 pinned_live=0
+WATERLINE mode=HostStaged physical_pinned_peak_process=655360 pinned_budget=983040
+WATERLINE mode=HostStaged backend=2 devices=2 host_budget=4915200 pinned_budget=983040 raw_budget=65536
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613807528
+waterline fixed GPU1 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline physical GPU1 pool_reserved=3690987520 pool_cap=3690987520 initial_outside_used=330039296 outside_pool_growth=0 allocator_graph_capacity=3613807528
+waterline rescale workspace plan_max_drop=0 capability_max_drop=8
+waterline GPU0 front_peak=983040 plain_peak=409616 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=983040 plain_peak=409616 remaining_front=0 remaining_plain=0
+waterline shared host_peak=2981888 pinned_peak=524288 raw_peak=65536
+WATERLINE measurements cumulative_cpu_calls=2 cpu_encode_ms=4.8143 cpu_plain_h2d_bytes=327680 transport_h2d_bytes=2785280 transport_h2d_ms=0.408384
+WATERLINE measurements GPU0 allocated_peak=11136088 allocated_live=10071128 pool_reserved=3690987520 pool_cap=3690987520 gpu_encode_calls=2 gpu_encode_ms=0.380926 gpu_raw_h2d_bytes=32768 consumer_wait_calls=4 consumer_wait_ms=0.022526 gpu_raw_h2d_ms=0.044031
+WATERLINE measurements GPU1 allocated_peak=11218008 allocated_live=10071128 pool_reserved=3690987520 pool_cap=3690987520 gpu_encode_calls=2 gpu_encode_ms=0.237374 gpu_raw_h2d_bytes=32768 consumer_wait_calls=0 consumer_wait_ms=0 gpu_raw_h2d_ms=0.383167
+Waterline diagnostic max=7.24131e-15 outputs=2 peer_devices_completed_before_gpu0=1
+WATERLINE HostStaged posts=10 posts_observed_with_pinned=10 expected_posts=10
+WATERLINE backend=2 devices=2 max_abs_error=7.24131e-15 runtime_ms=121.458 forward_ms=93.7527 pinned_live=0
+WATERLINE mode=HostStaged physical_pinned_peak_process=655360 pinned_budget=983040

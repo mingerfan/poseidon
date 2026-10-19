@@ -1,0 +1,449 @@
+{
+  "suite": {
+    "kind": "qproj",
+    "devices": 1,
+    "capacity_gib": 7,
+    "reserve_gib": 3,
+    "window": 128,
+    "count": 1024,
+    "plaintext_resident_bytes": 1343815680,
+    "source_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+    "cases": [
+      {
+        "name": "eager",
+        "plan": "eager.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-4096MiB-cpu-w128",
+        "plan": "wl-4096MiB-cpu-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-4096MiB-gpu-w128",
+        "plan": "wl-4096MiB-gpu-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-4096MiB-auto-w128",
+        "plan": "wl-4096MiB-auto-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-64MiB-cpu-w128",
+        "plan": "wl-64MiB-cpu-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-64MiB-gpu-w128",
+        "plan": "wl-64MiB-gpu-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-64MiB-auto-w128",
+        "plan": "wl-64MiB-auto-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-16MiB-cpu-w128",
+        "plan": "wl-16MiB-cpu-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-16MiB-gpu-w128",
+        "plan": "wl-16MiB-gpu-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-16MiB-auto-w128",
+        "plan": "wl-16MiB-auto-w128.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-64MiB-auto-w8",
+        "plan": "wl-64MiB-auto-w8.json",
+        "runner": "qwen"
+      },
+      {
+        "name": "wl-64MiB-gpu-w8",
+        "plan": "wl-64MiB-gpu-w8.json",
+        "runner": "qwen"
+      }
+    ],
+    "manifest_comparison": {
+      "source_suite": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/qproj",
+      "only_change": "plaintext_bundle manifest_format and manifest file; raw weight bytes and ciphertext work unchanged",
+      "source_manifest_sha256": "sha256:b40a3596f6b77ed78cd8f7cc23a0f07e2614e89474f912991f552f287588b7b2",
+      "binary_manifest_sha256": "sha256:5a14d44576876469c486429537e16055ccbe32ed9eb382a9c256e4ae786a62f8",
+      "data_sha256": "sha256:4c253b7b7a8b1d5c18e0b7f2132e6c7db70c61ad21f1fc29757f1cd33f031cd3"
+    }
+  },
+  "cuda": "0",
+  "pool_mib": 6144,
+  "timing_scope": "Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
+  "runner_hashes": {
+    "qwen": "sha256:af218da121c52fffc83a40655b3e809cf6d960a5abe502ffa34915eba8e4183a"
+  },
+  "samples": [
+    {
+      "case": "wl-64MiB-auto-w8",
+      "repeat": 0,
+      "exit_code": 0,
+      "passed": true,
+      "process_wall_ms": 5626.193406998937,
+      "process_cpu_seconds": 4.6169879999999885,
+      "report": {
+        "actual_p_moduli": [
+          1071415297,
+          1071513601,
+          1072496641,
+          1072857089,
+          1073053697,
+          1073184769,
+          1073479681,
+          1073643521
+        ],
+        "actual_q_moduli": [
+          1053523969,
+          1053818881,
+          1054015489,
+          1054212097,
+          1054965761,
+          1055162369,
+          1055260673,
+          1056178177,
+          1056342017,
+          1056440321,
+          1056735233,
+          1057259521,
+          1057652737,
+          1058209793,
+          1059291137,
+          1059618817,
+          1059880961,
+          1060175873,
+          1060405249,
+          1060667393,
+          1060700161,
+          1060765697,
+          1061093377,
+          1061584897,
+          1061847041,
+          1062371329,
+          1062469633,
+          1062535169,
+          1062862849,
+          1063059457,
+          1063321601,
+          1063452673,
+          1063616513,
+          1064599553,
+          1064697857,
+          1065484289,
+          1065779201,
+          1065811969,
+          1066172417,
+          1066893313,
+          1067548673,
+          1067876353,
+          1068236801,
+          1068433409,
+          1068466177,
+          1068564481,
+          1069219841,
+          1070432257,
+          1070727169,
+          1071087617
+        ],
+        "boot_implementation": "none",
+        "comparison": {
+          "bad_imaginary_slots": 0,
+          "bad_prefix_slots": 0,
+          "bad_real_slots": 0,
+          "bad_tail_slots": 0,
+          "finite_slots": 8192,
+          "max_abs_error": 9.909881804048837e-10,
+          "max_imaginary": 7.517188948479519e-13,
+          "max_relative_error_floor_atol": 4.1990614433939846e-10,
+          "max_tail_abs": 6.661338147750939e-16,
+          "nonfinite_slots": 0,
+          "passed": true,
+          "rms_error": 1.467750762612811e-10,
+          "slots_checked": 8192
+        },
+        "context": {
+          "default_scale_log2": 120,
+          "p_moduli_bits": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "poly_degree": 16384,
+          "q_moduli_bits": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ]
+        },
+        "context_ms": 380.409994,
+        "cuda_visible_devices": "0",
+        "decoded_path": "test-results/waterline-batch-20261018/local-runs/local-qproj-r0-updated-wl-64MiB-auto-w8/r0-wl-64MiB-auto-w8/decoded.json",
+        "device_measurements": [
+          {
+            "allocated_live_bytes": 1492985952,
+            "allocated_peak_bytes": 2002856032,
+            "consumer_wait_calls": 1026,
+            "consumer_wait_ms": 135.942238,
+            "gpu_encode_calls": 1025,
+            "gpu_encode_ms": 261.45419,
+            "gpu_raw_h2d_bytes": 67174400,
+            "gpu_raw_h2d_ms": 9.783033,
+            "logical_device": 0,
+            "managed_pool": true,
+            "pool_capacity_bytes": 6442450944,
+            "pool_reserved_bytes": 6442450944
+          }
+        ],
+        "device_worker_count": 1,
+        "devices": [
+          {
+            "logical_device": 0,
+            "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+            "pci_bus_id": "0000:64:00.0",
+            "total_global_bytes": 8272019456,
+            "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+          }
+        ],
+        "execution_mode": "per_device_workers",
+        "fixture_sha256": "sha256:001761cb6713868c79b9c6b21f693738d9b62c0f7f715421488cb1c05e3b2790",
+        "format_version": 1,
+        "gpu_api_setup_ms": 482.726861,
+        "gpu_pool_cap": {
+          "environment": "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB",
+          "maximum_allowed_mb": [
+            6592
+          ],
+          "maximum_mb": [
+            6144
+          ],
+          "outside_pool_reserve_bytes": 603979776,
+          "source": "user_environment"
+        },
+        "host_boot_instructions": 0,
+        "host_max_rss_kib": 2524988,
+        "input_count": 1,
+        "input_encryption_ms": 53.812975,
+        "inputs": [
+          {
+            "level": 49,
+            "name": "dirty input",
+            "prefix_size": 8192,
+            "scale_log2": 120,
+            "value_id": 0
+          }
+        ],
+        "key_generation_ms": 2699.989341,
+        "load_artifacts_ms": 91.259839,
+        "main_entry_to_all_outputs_ms": 5329.275943,
+        "main_entry_to_first_output_ms": 5328.17732,
+        "model": {
+          "full_qwen": false,
+          "name": "isolated-q-proj-q50-integer-rescale-regression",
+          "synthetic_weights": true
+        },
+        "native_boot_instructions": 0,
+        "operator_spec_sha256": "sha256:516411501df6b27e0d30e0cf91ceac42bd89c12f93155e8ec486e7d4b52caba7",
+        "output_count": 1,
+        "output_validation_and_save_ms": 19.231728,
+        "outputs": [
+          {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 8192,
+            "level": 14,
+            "max_abs_error": 9.909881804048837e-10,
+            "max_imaginary": 7.517188948479519e-13,
+            "max_relative_error_floor_atol": 4.1990614433939846e-10,
+            "max_tail_abs": 6.661338147750939e-16,
+            "name": "q_proj",
+            "nonfinite_slots": 0,
+            "passed": true,
+            "prefix_size": 2048,
+            "rms_error": 1.467750762612811e-10,
+            "scale_log2": 120,
+            "slots_checked": 8192,
+            "value_id": 4183
+          }
+        ],
+        "passed": true,
+        "pinned_transfer_live_after_plan_bytes": 0,
+        "pinned_transfer_live_after_validation_bytes": 0,
+        "pinned_transfer_peak_after_plan_bytes": 6619136,
+        "pinned_transfer_peak_including_validation_bytes": 6619136,
+        "plan_source_sha256": "sha256:3e2037174ad5f3ece5faa5e2dff7532e7f541f3049171fc5b7d356a4a374d12c",
+        "preparation_measurements": {
+          "cpu_encode_ms": 0.0,
+          "cpu_plain_h2d_bytes": 0,
+          "cpu_prepare_calls": 0,
+          "transport_h2d_bytes": 6553600,
+          "transport_h2d_calls": 1,
+          "transport_h2d_ms": 0.513184,
+          "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+        },
+        "rotation_key_basis": [
+          -2048,
+          -1024,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          4096
+        ],
+        "runtime_ms": 1579.207499,
+        "runtime_timing": {
+          "boot_calls": 0,
+          "bundle_read_bytes": 67117056,
+          "bundle_read_calls": 1025,
+          "bundle_read_ms": 26.019156,
+          "bundle_resident_bytes": 0,
+          "communication_post_calls": 1,
+          "communication_post_ms": 2.812717,
+          "communication_wait_calls": 1,
+          "communication_wait_ms": 0.00298,
+          "compute_calls": 3158,
+          "compute_submission_including_boot_ms": 214.492677,
+          "encode_calls": 1025,
+          "encode_submission_ms": 95.306513,
+          "fence_calls": 0,
+          "host_boot_ms": 0.0,
+          "initialization_ms": 0.24793,
+          "online_execution_ms": 1449.015163,
+          "raw_peak_bytes": 131072,
+          "setup_ms": 129.288304
+        },
+        "secret_key_assisted_refresh": false,
+        "security_level": "none; numerical validation context",
+        "slots_per_output": 8192,
+        "stage": "complete",
+        "time_scope": "steady-clock from main entry; dynamic-loader/process time requires external /usr/bin/time",
+        "tolerances": {
+          "atol": 0.001,
+          "rtol": 0.0001
+        },
+        "waterline": {
+          "backend": "auto",
+          "device_capacity_bytes": [
+            7516192768
+          ],
+          "device_fractions": [
+            0.008928571428571428
+          ],
+          "device_reserve_bytes": [
+            3221225472
+          ],
+          "host_budget_bytes": 4294967296,
+          "lookahead_groups": 8,
+          "pinned_budget_bytes": 536870912,
+          "raw_budget_bytes": 134217728
+        }
+      },
+      "forward_ms": 1579.207499,
+      "online_ms": 1449.015163,
+      "init_ms": 0.24793,
+      "setup_ms": 129.288304
+    }
+  ],
+  "statistics": {
+    "wl-64MiB-auto-w8": {
+      "forward_ms": {
+        "median": 1579.207499,
+        "min": 1579.207499,
+        "max": 1579.207499
+      },
+      "online_ms": {
+        "median": 1449.015163,
+        "min": 1449.015163,
+        "max": 1449.015163
+      },
+      "init_ms": {
+        "median": 0.24793,
+        "min": 0.24793,
+        "max": 0.24793
+      },
+      "setup_ms": {
+        "median": 129.288304,
+        "min": 129.288304,
+        "max": 129.288304
+      },
+      "process_wall_ms": {
+        "median": 5626.193406998937,
+        "min": 5626.193406998937,
+        "max": 5626.193406998937
+      }
+    }
+  },
+  "selected_case_names": [
+    "wl-64MiB-auto-w8"
+  ],
+  "requested_repeats": 1
+}

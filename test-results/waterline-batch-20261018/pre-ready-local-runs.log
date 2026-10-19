@@ -1,0 +1,162 @@
+local-mlp-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=330.39700300000004 online_ms=126.30498300000001
+local-mlp-r0-previous-eager
+eager repeat=0 exit=0 forward_ms=281.055877 online_ms=97.03444800000001
+local-mlp-r0-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=166.66235500000002 online_ms=125.31757900000001
+local-mlp-r0-updated-eager
+eager repeat=0 exit=0 forward_ms=298.580032 online_ms=124.746108
+local-mlp-r0-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=156.439479 online_ms=119.063023
+local-mlp-r0-updated-wl-8MiB-gpu-w128
+wl-8MiB-gpu-w128 repeat=0 exit=0 forward_ms=210.49085600000004 online_ms=157.43854000000002
+local-mlp-r0-updated-wl-1MiB-gpu-w128
+wl-1MiB-gpu-w128 repeat=0 exit=0 forward_ms=168.77629 online_ms=131.759985
+local-mlp-r1-previous-eager
+eager repeat=0 exit=0 forward_ms=422.55204499999996 online_ms=130.32662200000001
+local-mlp-r1-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=161.365961 online_ms=124.30215700000001
+local-mlp-r1-updated-eager
+eager repeat=0 exit=0 forward_ms=267.105089 online_ms=94.840241
+local-mlp-r1-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=155.19164500000002 online_ms=119.08600200000001
+local-mlp-r1-updated-wl-8MiB-gpu-w128
+wl-8MiB-gpu-w128 repeat=0 exit=0 forward_ms=158.24792200000002 online_ms=120.612967
+local-mlp-r1-updated-wl-1MiB-gpu-w128
+wl-1MiB-gpu-w128 repeat=0 exit=0 forward_ms=167.52564500000003 online_ms=131.26542300000003
+local-mlp-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=273.734185 online_ms=99.050881
+local-mlp-r2-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=159.980866 online_ms=123.528233
+local-mlp-r2-updated-eager
+eager repeat=0 exit=0 forward_ms=272.54280200000005 online_ms=96.71579500000001
+local-mlp-r2-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=155.234574 online_ms=119.36363200000001
+local-mlp-r2-updated-wl-8MiB-gpu-w128
+wl-8MiB-gpu-w128 repeat=0 exit=0 forward_ms=155.681845 online_ms=119.277012
+local-mlp-r2-updated-wl-1MiB-gpu-w128
+wl-1MiB-gpu-w128 repeat=0 exit=0 forward_ms=169.880431 online_ms=133.5068
+local-mlp-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=273.724644 online_ms=97.19752700000001
+local-mlp-r2-previous-eager
+eager repeat=0 exit=0 forward_ms=400.18836400000004 online_ms=132.01933400000001
+local-qproj-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=6416.618985 online_ms=1178.508672
+local-qproj-r0-previous-eager
+eager repeat=0 exit=0 forward_ms=6488.448796 online_ms=1203.53939
+local-qproj-r0-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1465.664308 online_ms=1323.105108
+local-qproj-r0-updated-eager
+eager repeat=0 exit=0 forward_ms=6475.600868 online_ms=1206.91716
+local-qproj-r0-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1423.917004 online_ms=1293.654895
+local-qproj-r0-previous-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2862.106755 online_ms=2732.250878
+local-qproj-r0-previous-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1574.324874 online_ms=1443.641217
+local-qproj-r0-previous-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1482.591459 online_ms=1351.991681
+local-qproj-r0-updated-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=1579.207499 online_ms=1449.015163
+local-qproj-r0-updated-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1556.638918 online_ms=1425.878701
+local-qproj-r0-updated-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1507.428981 online_ms=1328.238172
+local-qproj-r0-updated-wl-16MiB-gpu-w128
+wl-16MiB-gpu-w128 repeat=0 exit=0 forward_ms=1440.51756 online_ms=1308.801452
+local-qproj-r1-previous-eager
+eager repeat=0 exit=0 forward_ms=6520.645576 online_ms=1190.16221
+local-qproj-r1-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1434.263666 online_ms=1300.992063
+local-qproj-r1-updated-eager
+eager repeat=0 exit=0 forward_ms=6501.606419 online_ms=1201.584381
+local-qproj-r1-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1446.417128 online_ms=1313.135385
+local-qproj-r1-previous-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2843.787726 online_ms=2713.272972
+local-qproj-r1-previous-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1582.259188 online_ms=1452.811338
+local-qproj-r1-previous-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1497.072713 online_ms=1363.103421
+local-qproj-r1-updated-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=1541.856972 online_ms=1415.964759
+local-qproj-r1-updated-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1572.148104 online_ms=1438.248593
+local-qproj-r1-updated-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1432.448675 online_ms=1307.685567
+local-qproj-r1-updated-wl-16MiB-gpu-w128
+wl-16MiB-gpu-w128 repeat=0 exit=0 forward_ms=1414.812369 online_ms=1284.608156
+local-qproj-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=6527.612885 online_ms=1181.344527
+local-qproj-r2-previous-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1437.937428 online_ms=1311.438587
+local-qproj-r2-updated-eager
+eager repeat=0 exit=0 forward_ms=6528.941405 online_ms=1178.709395
+local-qproj-r2-updated-waterline
+wl-64MiB-gpu-w128 repeat=0 exit=0 forward_ms=1434.964893 online_ms=1306.752408
+local-qproj-r2-previous-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=2879.963676 online_ms=2749.821807
+local-qproj-r2-previous-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1591.702313 online_ms=1459.878659
+local-qproj-r2-previous-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1459.984347 online_ms=1330.220107
+local-qproj-r2-updated-wl-64MiB-auto-w8
+wl-64MiB-auto-w8 repeat=0 exit=0 forward_ms=1538.922938 online_ms=1412.666928
+local-qproj-r2-updated-wl-64MiB-gpu-w8
+wl-64MiB-gpu-w8 repeat=0 exit=0 forward_ms=1537.534012 online_ms=1409.476508
+local-qproj-r2-updated-wl-64MiB-auto-w128
+wl-64MiB-auto-w128 repeat=0 exit=0 forward_ms=1432.032181 online_ms=1304.685359
+local-qproj-r2-updated-wl-16MiB-gpu-w128
+wl-16MiB-gpu-w128 repeat=0 exit=0 forward_ms=1418.122445 online_ms=1287.935256
+local-qproj-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=6458.35952 online_ms=1195.970897
+local-qproj-r2-previous-eager
+eager repeat=0 exit=0 forward_ms=6419.541384 online_ms=1196.511545
+local-pressure-r0-legacy-eager
+eager repeat=0 exit=0 forward_ms=16458.858179 online_ms=102.156229
+local-pressure-r0-previous-eager
+eager repeat=0 exit=0 forward_ms=16459.081671 online_ms=103.960933
+local-pressure-r0-previous-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=460.957992 online_ms=455.462189
+local-pressure-r0-updated-eager
+eager repeat=0 exit=0 forward_ms=16138.484986 online_ms=102.654089
+local-pressure-r0-updated-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=419.377009 online_ms=414.206236
+local-pressure-r0-updated-wl-4096MiB-gpu-w512
+wl-4096MiB-gpu-w512 repeat=0 exit=0 forward_ms=406.289937 online_ms=400.593613
+local-pressure-r0-updated-wl-32MiB-gpu-w512
+wl-32MiB-gpu-w512 repeat=0 exit=0 forward_ms=397.970396 online_ms=392.870153
+local-pressure-r0-updated-wl-8MiB-gpu-w512
+wl-8MiB-gpu-w512 repeat=0 exit=0 forward_ms=525.034244 online_ms=519.876212
+local-pressure-r1-previous-eager
+eager repeat=0 exit=0 forward_ms=15727.549079 online_ms=104.091882
+local-pressure-r1-previous-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=426.819274 online_ms=421.757741
+local-pressure-r1-updated-eager
+eager repeat=0 exit=0 forward_ms=16606.410523 online_ms=106.547847
+local-pressure-r1-updated-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=410.242112 online_ms=404.525208
+local-pressure-r1-updated-wl-4096MiB-gpu-w512
+wl-4096MiB-gpu-w512 repeat=0 exit=0 forward_ms=407.060154 online_ms=401.783212
+local-pressure-r1-updated-wl-32MiB-gpu-w512
+wl-32MiB-gpu-w512 repeat=0 exit=0 forward_ms=417.457949 online_ms=412.018986
+local-pressure-r1-updated-wl-8MiB-gpu-w512
+wl-8MiB-gpu-w512 repeat=0 exit=0 forward_ms=523.870536 online_ms=518.103652
+local-pressure-r1-legacy-eager
+eager repeat=0 exit=0 forward_ms=15573.332913 online_ms=102.136766
+local-pressure-r2-previous-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=419.768742 online_ms=414.68325
+local-pressure-r2-updated-eager
+eager repeat=0 exit=0 forward_ms=16140.302254 online_ms=102.622997
+local-pressure-r2-updated-waterline
+wl-256MiB-gpu-w512 repeat=0 exit=0 forward_ms=411.10218 online_ms=405.737998
+local-pressure-r2-updated-wl-4096MiB-gpu-w512
+wl-4096MiB-gpu-w512 repeat=0 exit=0 forward_ms=408.920414 online_ms=403.754221
+local-pressure-r2-updated-wl-32MiB-gpu-w512
+wl-32MiB-gpu-w512 repeat=0 exit=0 forward_ms=399.728143 online_ms=394.696451
+local-pressure-r2-updated-wl-8MiB-gpu-w512
+wl-8MiB-gpu-w512 repeat=0 exit=0 forward_ms=545.106202 online_ms=522.213807
+local-pressure-r2-legacy-eager
+eager repeat=0 exit=0 forward_ms=16283.716084 online_ms=101.985035
+local-pressure-r2-previous-eager
+eager repeat=0 exit=0 forward_ms=16348.05361 online_ms=103.990999

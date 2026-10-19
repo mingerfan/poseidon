@@ -1,0 +1,18 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=134217728 maximum_bytes=536870912
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=268435456
+waterline physical GPU0 pool_reserved=134217728 pool_cap=536870912 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=61172244
+waterline rescale workspace plan_max_drop=0 capability_max_drop=4
+waterline GPU0 front_peak=458752 plain_peak=311312 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1622016 pinned_peak=360448 raw_peak=32768
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=268435456
+waterline physical GPU0 pool_reserved=134217728 pool_cap=536870912 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=61172244
+waterline rescale workspace plan_max_drop=0 capability_max_drop=4
+fatal runtime error: reason=std::bad_alloc plan_id=491 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+OOM propagated=true gpu_attempts=1 cpu_attempts=0 consumer_calls=0 real_allocation_calls=2 allocator_failures=1 stream_gate_inflight=true run_waited_for_gate=true fixed_bytes=5936620 allocated_live_after_failed_run=5936620 injected_dynamic_live_after_failed_run=0 pinned_live_after_failed_run=0 automatic_drain_calls=1
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=268435456
+waterline physical GPU0 pool_reserved=134217728 pool_cap=536870912 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=61172244
+waterline rescale workspace plan_max_drop=0 capability_max_drop=4
+waterline GPU0 front_peak=458752 plain_peak=311312 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1622016 pinned_peak=360448 raw_peak=32768
+[PASS] real CUDA GPU Prepare allocation failure: propagated=true automatic_drain=true dynamic_live=0 pinned_live=0 implicit_retry=false cpu_fallback=false runtime_kept_alive=true explicit_same_runtime_next_run=true complex_slots=2048 max_abs_error=3.78552e-08

@@ -1,0 +1,533 @@
+{
+  "scope": "Local CPU-only scalar-token control; no CUDA, CKKS encoding, weight I/O or GPU event queries. Context switches cover the full Runtime call, while online_ms covers online execution. Not FHE/GPU latency.",
+  "verified_samples": 21,
+  "comparisons": [
+    {
+      "variant": "legacy",
+      "online_ms": {
+        "median": 7.037147,
+        "min": 6.969167,
+        "max": 8.3688
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 3
+      },
+      "involuntary_context_switches": {
+        "median": 5,
+        "min": 0,
+        "max": 11
+      },
+      "main_collections": {
+        "median": 4097,
+        "min": 4097,
+        "max": 4097
+      },
+      "worker_collections": {
+        "median": 12287,
+        "min": 12287,
+        "max": 12287
+      }
+    },
+    {
+      "variant": "previous",
+      "online_ms": {
+        "median": 66.130987,
+        "min": 58.712589,
+        "max": 113.260619
+      },
+      "voluntary_context_switches": {
+        "median": 41031,
+        "min": 40967,
+        "max": 41070
+      },
+      "involuntary_context_switches": {
+        "median": 16,
+        "min": 8,
+        "max": 21
+      },
+      "main_collections": {
+        "median": 45054,
+        "min": 45053,
+        "max": 45055
+      },
+      "worker_collections": {
+        "median": 12287,
+        "min": 12287,
+        "max": 12287
+      }
+    },
+    {
+      "variant": "updated",
+      "online_ms": {
+        "median": 8.443551,
+        "min": 6.650846,
+        "max": 9.064801
+      },
+      "voluntary_context_switches": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "involuntary_context_switches": {
+        "median": 4,
+        "min": 2,
+        "max": 7
+      },
+      "main_collections": {
+        "median": 4097,
+        "min": 4097,
+        "max": 4097
+      },
+      "worker_collections": {
+        "median": 12287,
+        "min": 12287,
+        "max": 12287
+      }
+    }
+  ],
+  "samples": [
+    {
+      "variant": "legacy",
+      "repeat": 0,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.32939,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 7,
+      "main_collections": 4097,
+      "online_ms": 7.537448,
+      "passed": true,
+      "process_cpu_seconds": 0.014953999999999999,
+      "voluntary_context_switches": 3,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "previous",
+      "repeat": 0,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.458932,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 15,
+      "main_collections": 45053,
+      "online_ms": 63.03203,
+      "passed": true,
+      "process_cpu_seconds": 0.07284399999999999,
+      "voluntary_context_switches": 41070,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "updated",
+      "repeat": 0,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/cpu-control/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.27961,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 3,
+      "main_collections": 4097,
+      "online_ms": 8.032239,
+      "passed": true,
+      "process_cpu_seconds": 0.015918000000000005,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "previous",
+      "repeat": 1,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.545691,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 20,
+      "main_collections": 45054,
+      "online_ms": 101.987163,
+      "passed": true,
+      "process_cpu_seconds": 0.11306599999999997,
+      "voluntary_context_switches": 40980,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "updated",
+      "repeat": 1,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/cpu-control/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.378511,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 4,
+      "main_collections": 4097,
+      "online_ms": 8.736721,
+      "passed": true,
+      "process_cpu_seconds": 0.015019000000000005,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "legacy",
+      "repeat": 1,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.342442,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 11,
+      "main_collections": 4097,
+      "online_ms": 7.037147,
+      "passed": true,
+      "process_cpu_seconds": 0.013146999999999999,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "updated",
+      "repeat": 2,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/cpu-control/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.225701,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 7,
+      "main_collections": 4097,
+      "online_ms": 6.650846,
+      "passed": true,
+      "process_cpu_seconds": 0.013786000000000003,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "legacy",
+      "repeat": 2,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.31987,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 5,
+      "main_collections": 4097,
+      "online_ms": 6.983406,
+      "passed": true,
+      "process_cpu_seconds": 0.014976999999999999,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "previous",
+      "repeat": 2,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.875714,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 12,
+      "main_collections": 45054,
+      "online_ms": 113.260619,
+      "passed": true,
+      "process_cpu_seconds": 0.11941999999999998,
+      "voluntary_context_switches": 40967,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "legacy",
+      "repeat": 3,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.42843,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 2,
+      "main_collections": 4097,
+      "online_ms": 7.992629,
+      "passed": true,
+      "process_cpu_seconds": 0.015733999999999998,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "previous",
+      "repeat": 3,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.498581,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 20,
+      "main_collections": 45055,
+      "online_ms": 66.130987,
+      "passed": true,
+      "process_cpu_seconds": 0.07544000000000001,
+      "voluntary_context_switches": 41049,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "updated",
+      "repeat": 3,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/cpu-control/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.326721,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 3,
+      "main_collections": 4097,
+      "online_ms": 8.51385,
+      "passed": true,
+      "process_cpu_seconds": 0.015559000000000003,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "previous",
+      "repeat": 4,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.541551,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 16,
+      "main_collections": 45053,
+      "online_ms": 74.717417,
+      "passed": true,
+      "process_cpu_seconds": 0.07936300000000002,
+      "voluntary_context_switches": 41009,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "updated",
+      "repeat": 4,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/cpu-control/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.283223,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 4,
+      "main_collections": 4097,
+      "online_ms": 7.228547,
+      "passed": true,
+      "process_cpu_seconds": 0.013503,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "legacy",
+      "repeat": 4,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.390201,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 6,
+      "main_collections": 4097,
+      "online_ms": 8.3688,
+      "passed": true,
+      "process_cpu_seconds": 0.016621000000000004,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "updated",
+      "repeat": 5,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/cpu-control/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.477882,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 7,
+      "main_collections": 4097,
+      "online_ms": 9.064801,
+      "passed": true,
+      "process_cpu_seconds": 0.016132,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "legacy",
+      "repeat": 5,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.359132,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 0,
+      "main_collections": 4097,
+      "online_ms": 6.969167,
+      "passed": true,
+      "process_cpu_seconds": 0.013973000000000001,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "previous",
+      "repeat": 5,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.441921,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 21,
+      "main_collections": 45054,
+      "online_ms": 65.558566,
+      "passed": true,
+      "process_cpu_seconds": 0.07088799999999999,
+      "voluntary_context_switches": 41070,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "legacy",
+      "repeat": 6,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/legacy/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.32749,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 2,
+      "main_collections": 4097,
+      "online_ms": 7.033246,
+      "passed": true,
+      "process_cpu_seconds": 0.013585,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "previous",
+      "repeat": 6,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cause-20261018-v3/current/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.426812,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 8,
+      "main_collections": 45054,
+      "online_ms": 58.712589,
+      "passed": true,
+      "process_cpu_seconds": 0.06907899999999999,
+      "voluntary_context_switches": 41031,
+      "weights": 4096,
+      "worker_collections": 12287
+    },
+    {
+      "variant": "updated",
+      "repeat": 6,
+      "command": [
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/cpu-control/probe",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/eager.json",
+        "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/pressure-local-binary/operator-spec.json",
+        "4096"
+      ],
+      "compute_api_ms": 0.3806,
+      "compute_calls": 8191,
+      "execution_tasks": 20478,
+      "involuntary_context_switches": 2,
+      "main_collections": 4097,
+      "online_ms": 8.443551,
+      "passed": true,
+      "process_cpu_seconds": 0.015491999999999997,
+      "voluntary_context_switches": 1,
+      "weights": 4096,
+      "worker_collections": 12287
+    }
+  ]
+}

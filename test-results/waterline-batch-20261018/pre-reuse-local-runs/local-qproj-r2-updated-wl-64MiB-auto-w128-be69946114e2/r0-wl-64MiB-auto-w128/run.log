@@ -1,0 +1,15 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=auto host_boot_instructions=0
+KEYS ready rotation_basis=13 key_generation_ms=2651.962589
+GPU_POOL maximum_mb=6144 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=1487808608 retained_workspace_bound=41418752 reserve_required=1596336224 reserve_configured=3221225472
+waterline physical GPU0 pool_reserved=6442450944 pool_cap=6442450944 initial_outside_used=108068864 outside_pool_growth=8388608 allocator_graph_capacity=4846114720
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+waterline GPU0 front_peak=4293918720 plain_peak=64225280 remaining_front=1966080 remaining_plain=0
+waterline shared host_peak=32964608 pinned_peak=9895936 raw_peak=2621440
+FORWARD complete runtime_ms=1433.939513
+PASS output=0 name=q_proj max_abs=9.90988e-10 max_relative=4.19906e-10 max_imaginary=7.51719e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=9.90988e-10 max_relative=4.19906e-10 max_imaginary=7.51719e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+report=test-results/waterline-batch-20261018/local-runs/local-qproj-r2-updated-wl-64MiB-auto-w128/r0-wl-64MiB-auto-w128/report.json decoded=test-results/waterline-batch-20261018/local-runs/local-qproj-r2-updated-wl-64MiB-auto-w128/r0-wl-64MiB-auto-w128/decoded.json

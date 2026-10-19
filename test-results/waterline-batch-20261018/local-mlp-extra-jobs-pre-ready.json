@@ -1,0 +1,47 @@
+[
+  {
+    "group": "local-mlp",
+    "name": "legacy-eager",
+    "suite": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-legacy-20261018/legacy",
+    "case": "eager",
+    "pool_mib": 6144,
+    "cuda": "0"
+  },
+  {
+    "group": "local-mlp",
+    "name": "previous-eager",
+    "suite": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-legacy-20261018/current",
+    "case": "eager",
+    "pool_mib": 6144,
+    "cuda": "0"
+  },
+  {
+    "group": "local-mlp",
+    "name": "previous-waterline",
+    "suite": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-legacy-20261018/current",
+    "case": "wl-64MiB-gpu-w128",
+    "pool_mib": 6144,
+    "cuda": "0"
+  },
+  {
+    "group": "local-mlp",
+    "name": "updated-eager",
+    "suite": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/updated",
+    "case": "eager",
+    "pool_mib": 6144,
+    "cuda": "0"
+  },
+  {
+    "group": "local-mlp",
+    "name": "updated-waterline",
+    "suite": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-benchmark-20261018/mlp1-q21",
+    "build": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-20261018-final/updated",
+    "case": "wl-64MiB-gpu-w128",
+    "pool_mib": 6144,
+    "cuda": "0"
+  }
+]

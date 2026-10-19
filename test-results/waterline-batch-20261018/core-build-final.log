@@ -1,0 +1,66 @@
+[ 20%] Built target ckks_runtime_core
+[ 34%] Built target ckks_runtime_plan_json
+[ 41%] Built target thread_trace_tests
+[ 44%] Building CXX object CMakeFiles/ckks_runtime_test_support.dir/testing/testing.cpp.o
+[ 51%] Built target runtime_binary_plan_tests
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.hpp:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.cpp:1:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In lambda function:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:30: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                              ^~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:99: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                                                                                                   ^~~~~~
+[ 55%] Linking CXX static library libruntime_test_support.a
+[ 65%] Built target ckks_runtime_test_support
+[ 82%] Building CXX object CMakeFiles/runtime_waterline_tests.dir/tests/runtime_waterline_tests.cpp.o
+[ 82%] Building CXX object CMakeFiles/runtime_release_tests.dir/tests/runtime_release_tests.cpp.o
+[ 82%] Building CXX object CMakeFiles/runtime_plan_memory_tests.dir/tests/runtime_plan_memory_tests.cpp.o
+[ 82%] Building CXX object CMakeFiles/runtime_tests.dir/tests/runtime_tests.cpp.o
+[ 82%] Building CXX object CMakeFiles/runtime_plan_json_tests.dir/tests/runtime_plan_json_tests.cpp.o
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.hpp:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_tests.cpp:3:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In lambda function:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:30: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                              ^~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:99: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                                                                                                   ^~~~~~
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_plan_memory_tests.cpp:4:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In lambda function:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:30: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                              ^~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:99: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                                                                                                   ^~~~~~
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.hpp:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_release_tests.cpp:1:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In lambda function:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:30: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                              ^~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:99: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                                                                                                   ^~~~~~
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/testing/testing.hpp:4,
+                 from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_plan_json_tests.cpp:8:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp: In lambda function:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:30: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                              ^~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/runtime/runtime.hpp:1577:99: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1577 |                              if(!can_clear(output->uses))output->value.emplace(std::move(result));output->defined=true;}
+      |                                                                                                   ^~~~~~
+[ 86%] Linking CXX executable runtime_release_tests
+[ 86%] Built target runtime_release_tests
+[ 89%] Linking CXX executable runtime_tests
+[ 89%] Built target runtime_tests
+[ 93%] Linking CXX executable runtime_plan_memory_tests
+[ 93%] Built target runtime_plan_memory_tests
+[ 96%] Linking CXX executable runtime_plan_json_tests
+[ 96%] Built target runtime_plan_json_tests
+[100%] Linking CXX executable runtime_waterline_tests
+[100%] Built target runtime_waterline_tests

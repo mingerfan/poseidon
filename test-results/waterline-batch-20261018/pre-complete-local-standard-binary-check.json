@@ -1,0 +1,12 @@
+{
+  "poseidon_runtime_gpu_mlp_e2e": {
+    "standard_sha256": "a4530e385e4e63d050b6e984a469c62871f590fffab61c49014d84d72e95a710",
+    "measured_sha256": "a4530e385e4e63d050b6e984a469c62871f590fffab61c49014d84d72e95a710",
+    "identical": true
+  },
+  "poseidon_runtime_gpu_qwen_e2e": {
+    "standard_sha256": "0e12770dde18a298232d773e22f98f5dc21114a2140160f156e903645f3f48a2",
+    "measured_sha256": "0e12770dde18a298232d773e22f98f5dc21114a2140160f156e903645f3f48a2",
+    "identical": true
+  }
+}

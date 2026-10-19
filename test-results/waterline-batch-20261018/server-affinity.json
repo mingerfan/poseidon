@@ -1,0 +1,120 @@
+{
+  "scope": "Auxiliary 8 MiB V100 comparison with the complete process restricted to one CPU socket. Does not pin individual workers, GPU clocks or OS cache. Excluded from main 206 samples.",
+  "verified_samples": 12,
+  "comparisons": [
+    {
+      "cpus": "0-11",
+      "variant": "previous",
+      "median_ms": 3274.907667,
+      "min_ms": 3032.365699,
+      "max_ms": 3563.22446
+    },
+    {
+      "cpus": "0-11",
+      "variant": "updated",
+      "median_ms": 4216.261165,
+      "min_ms": 4201.851804,
+      "max_ms": 4319.566973
+    },
+    {
+      "cpus": "12-23",
+      "variant": "previous",
+      "median_ms": 3848.695022,
+      "min_ms": 3816.735884,
+      "max_ms": 3887.538636
+    },
+    {
+      "cpus": "12-23",
+      "variant": "updated",
+      "median_ms": 4394.139845,
+      "min_ms": 4200.503438,
+      "max_ms": 4397.019858
+    }
+  ],
+  "samples": [
+    {
+      "cpus": "0-11",
+      "repeat": 0,
+      "variant": "previous",
+      "binary_sha256": "sha256:f25fac736cef19290d2e6067cc8614c6bc5b7e12a50850659132c219520830e2",
+      "online_ms": 3563.22446
+    },
+    {
+      "cpus": "0-11",
+      "repeat": 0,
+      "variant": "updated",
+      "binary_sha256": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d",
+      "online_ms": 4319.566973
+    },
+    {
+      "cpus": "0-11",
+      "repeat": 1,
+      "variant": "updated",
+      "binary_sha256": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d",
+      "online_ms": 4201.851804
+    },
+    {
+      "cpus": "0-11",
+      "repeat": 1,
+      "variant": "previous",
+      "binary_sha256": "sha256:f25fac736cef19290d2e6067cc8614c6bc5b7e12a50850659132c219520830e2",
+      "online_ms": 3032.365699
+    },
+    {
+      "cpus": "0-11",
+      "repeat": 2,
+      "variant": "previous",
+      "binary_sha256": "sha256:f25fac736cef19290d2e6067cc8614c6bc5b7e12a50850659132c219520830e2",
+      "online_ms": 3274.907667
+    },
+    {
+      "cpus": "0-11",
+      "repeat": 2,
+      "variant": "updated",
+      "binary_sha256": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d",
+      "online_ms": 4216.261165
+    },
+    {
+      "cpus": "12-23",
+      "repeat": 0,
+      "variant": "previous",
+      "binary_sha256": "sha256:f25fac736cef19290d2e6067cc8614c6bc5b7e12a50850659132c219520830e2",
+      "online_ms": 3816.735884
+    },
+    {
+      "cpus": "12-23",
+      "repeat": 0,
+      "variant": "updated",
+      "binary_sha256": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d",
+      "online_ms": 4200.503438
+    },
+    {
+      "cpus": "12-23",
+      "repeat": 1,
+      "variant": "updated",
+      "binary_sha256": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d",
+      "online_ms": 4397.019858
+    },
+    {
+      "cpus": "12-23",
+      "repeat": 1,
+      "variant": "previous",
+      "binary_sha256": "sha256:f25fac736cef19290d2e6067cc8614c6bc5b7e12a50850659132c219520830e2",
+      "online_ms": 3848.695022
+    },
+    {
+      "cpus": "12-23",
+      "repeat": 2,
+      "variant": "previous",
+      "binary_sha256": "sha256:f25fac736cef19290d2e6067cc8614c6bc5b7e12a50850659132c219520830e2",
+      "online_ms": 3887.538636
+    },
+    {
+      "cpus": "12-23",
+      "repeat": 2,
+      "variant": "updated",
+      "binary_sha256": "sha256:d51e534b658103669825e5964be9b6cf43eeedac1d7e54d0e6e720c91e230b2d",
+      "online_ms": 4394.139845
+    }
+  ]
+}

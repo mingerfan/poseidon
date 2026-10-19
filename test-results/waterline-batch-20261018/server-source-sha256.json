@@ -1,0 +1,9 @@
+{
+  "third_party/ckks-runtime/runtime/runtime.hpp": "d10aff268babf762ed4ce5ef75c7482c4c12bba88fef5518210f09008055729c",
+  "third_party/ckks-runtime/tests/runtime_waterline_tests.cpp": "8e9aa52120d3f009f3844c83fe5fb75571af21fb98a14832160daa09d5093bd6",
+  "third_party/ckks-runtime/docs/runtime-plan/v4.md": "ff4aa12ee184761d5ea3305ec5913171154371a041b5d7c4ad19de8ada5638f5",
+  "scripts/qwen3_dsl/compile_plans.py": "e826d0e5df730c8194ef258999d50cc9e92217eade442cf271323db0a4592c56",
+  "scripts/qwen3_dsl/README.md": "beae7a1a95ae9b10ebd7945cf3d9189035f711c5904c6722ff5a706c0dbf4308",
+  "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "a378ecba39578f6a4587ab679ea7d9a161701ae26a75c2906c46c433894f6a86",
+  "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "163636692fe379f4e04064b9cc4a3bfceba61e88ab73f03b2cefe6b7f59ba618"
+}

@@ -1,0 +1,209 @@
+{
+  "suite": {
+    "kind": "mlp",
+    "devices": 2,
+    "capacity_gib": 28,
+    "reserve_gib": 2,
+    "window": 128,
+    "count": 1024,
+    "plaintext_resident_bytes": 40337408,
+    "source_revision": "4917625a8a60c3dc3588e76c9dc095480ca45133",
+    "cases": [
+      {
+        "name": "eager",
+        "plan": "eager.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-64MiB-cpu-w128",
+        "plan": "wl-64MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-64MiB-gpu-w128",
+        "plan": "wl-64MiB-gpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-8MiB-cpu-w128",
+        "plan": "wl-8MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-8MiB-gpu-w128",
+        "plan": "wl-8MiB-gpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-1MiB-cpu-w128",
+        "plan": "wl-1MiB-cpu-w128.json",
+        "runner": "mlp"
+      },
+      {
+        "name": "wl-1MiB-gpu-w128",
+        "plan": "wl-1MiB-gpu-w128.json",
+        "runner": "mlp"
+      }
+    ]
+  },
+  "cuda": "2,3",
+  "pool_mib": 6144,
+  "timing_scope": "Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
+  "runner_hashes": {
+    "mlp": "sha256:5c5ba3fcc2d40aeddb78ff98ad78dd289dcb27857110b0c41146c194619b453c"
+  },
+  "samples": [
+    {
+      "case": "wl-1MiB-gpu-w128",
+      "repeat": 0,
+      "exit_code": 0,
+      "passed": true,
+      "process_wall_ms": 5380.134424020071,
+      "process_cpu_seconds": 5.075909000000003,
+      "report": {
+        "allow_no_boot": true,
+        "cuda_devices": [
+          0,
+          1
+        ],
+        "device_worker_count": 2,
+        "device_workers": true,
+        "format_version": 1,
+        "input_level": 20,
+        "input_scale_log2": 40,
+        "key_generation_seconds": 2.574506225,
+        "logical_rotation_count": 111,
+        "max_imaginary": 1.5848352605527644e-06,
+        "mock_comparison": {
+          "max_abs": 1.3123061002318082e-06,
+          "max_relative": 1.272412462471016e-07,
+          "rms": 5.469641127368969e-07,
+          "within_tolerance": true
+        },
+        "mock_output": [
+          26.50720364428741,
+          71.27703900936244,
+          -5.018099794983987,
+          18.86925463333062,
+          92.18425497178299,
+          19.321834645114627,
+          -30.237559456043098,
+          -1.6612091043653043,
+          -31.89641055719177,
+          19.189542574867446
+        ],
+        "model": "mlp",
+        "model_sha256": "sha256:581ec4e02ac454e49f0ec0fa29ee2b2f8e1ddf43f797e9c96a363d23bfa41de3",
+        "operator_spec_sha256": "sha256:13373a4386b28d19c2f1a9acd2b86a1bea6248472b4424b273f5cd8696167963",
+        "output_level": 5,
+        "output_scale_log2": 80,
+        "passed": true,
+        "plan_sha256": "sha256:c71f9a11849702723a6cee4e3be45266219b39212fff0d5981c5cae300232b90",
+        "poly_degree": 8192,
+        "poseidon_output": [
+          26.50720495659351,
+          71.2770387553615,
+          -5.018100026675258,
+          18.869254179063326,
+          92.18425498025658,
+          19.321835033010604,
+          -30.237559330088445,
+          -1.6612088929909876,
+          -31.896409705609337,
+          19.189542668262305
+        ],
+        "python_comparison": {
+          "max_abs": 1.3123061179953766e-06,
+          "max_relative": 1.272412788612238e-07,
+          "rms": 5.469641206622549e-07,
+          "within_tolerance": true
+        },
+        "python_output": [
+          26.507203644287394,
+          71.2770390093625,
+          -5.018099794983979,
+          18.86925463333058,
+          92.18425497178299,
+          19.321834645114635,
+          -30.237559456043147,
+          -1.6612091043653585,
+          -31.896410557191793,
+          19.18954257486757
+        ],
+        "q_modulus_count": 21,
+        "require_python_match": true,
+        "rotation_key_count": 14,
+        "rotation_key_policy": "binary",
+        "runtime_scope": "online_execution_only",
+        "runtime_seconds": 0.17576714400000001,
+        "runtime_timing": {
+          "boot_calls": 0,
+          "boot_seconds": 0.0,
+          "bundle_read_bytes": 1280000,
+          "bundle_read_calls": 100,
+          "bundle_read_seconds": 0.022822178000000002,
+          "bundle_resident_bytes": 0,
+          "bundle_resident_load_seconds": 0.0,
+          "communication_post_seconds": 0.014430439000000002,
+          "communication_wait_seconds": 0.000684521,
+          "compute_calls": 375,
+          "compute_excluding_boot_seconds": 0.185416454,
+          "compute_including_boot_seconds": 0.185416454,
+          "encode_calls": 121,
+          "encode_seconds": 0.050081469,
+          "fence_calls": 0,
+          "fence_seconds": 0.0,
+          "initialization_seconds": 0.000647175,
+          "online_execution_seconds": 0.17576714400000001,
+          "raw_peak_bytes": 25600,
+          "setup_seconds": 0.28285064600000004
+        },
+        "seed": 20260717,
+        "tolerances": {
+          "absolute": 0.1,
+          "imaginary": 0.01,
+          "python_absolute": 0.1,
+          "relative": 0.006
+        },
+        "transfer_count": 121
+      },
+      "forward_ms": 459.264965,
+      "online_ms": 175.767144,
+      "init_ms": 0.6471750000000001,
+      "setup_ms": 282.85064600000004
+    }
+  ],
+  "statistics": {
+    "wl-1MiB-gpu-w128": {
+      "forward_ms": {
+        "median": 459.264965,
+        "min": 459.264965,
+        "max": 459.264965
+      },
+      "online_ms": {
+        "median": 175.767144,
+        "min": 175.767144,
+        "max": 175.767144
+      },
+      "init_ms": {
+        "median": 0.6471750000000001,
+        "min": 0.6471750000000001,
+        "max": 0.6471750000000001
+      },
+      "setup_ms": {
+        "median": 282.85064600000004,
+        "min": 282.85064600000004,
+        "max": 282.85064600000004
+      },
+      "process_wall_ms": {
+        "median": 5380.134424020071,
+        "min": 5380.134424020071,
+        "max": 5380.134424020071
+      }
+    }
+  },
+  "selected_case_names": [
+    "wl-1MiB-gpu-w128"
+  ],
+  "requested_repeats": 1
+}

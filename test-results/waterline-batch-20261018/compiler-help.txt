@@ -1,0 +1,22 @@
+usage: compile_plans.py [-h] --workspace WORKSPACE
+                        [--devices {1,4} [{1,4} ...]] [--source SOURCE]
+                        [--output-name OUTPUT_NAME]
+                        [--gpu-budget-bytes GPU_BUDGET_BYTES]
+                        [--reserve-bytes RESERVE_BYTES]
+                        [--workspace-bytes WORKSPACE_BYTES]
+                        [--lookahead-groups LOOKAHEAD_GROUPS]
+                        [--prepare-backend {cpu,gpu,auto}]
+
+Compile the full pinned trace with unchanged HEFT for one or all four GPUs.
+
+options:
+  -h, --help            show this help message and exit
+  --workspace WORKSPACE
+  --devices {1,4} [{1,4} ...]
+  --source SOURCE
+  --output-name OUTPUT_NAME
+  --gpu-budget-bytes GPU_BUDGET_BYTES
+  --reserve-bytes RESERVE_BYTES
+  --workspace-bytes WORKSPACE_BYTES
+  --lookahead-groups LOOKAHEAD_GROUPS
+  --prepare-backend {cpu,gpu,auto}

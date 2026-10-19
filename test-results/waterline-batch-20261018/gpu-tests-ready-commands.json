@@ -1,0 +1,31 @@
+[
+  {
+    "name": "api",
+    "command": [
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/bin/poseidon_runtime_gpu_api_tests"
+    ],
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "2,3"
+    }
+  },
+  {
+    "name": "waterline-host-staged",
+    "command": [
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/bin/poseidon_runtime_gpu_api_tests"
+    ],
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "2,3",
+      "POSEIDON_WATERLINE_ONLY": "1",
+      "POSEIDON_WATERLINE_HOST_STAGED": "1"
+    }
+  },
+  {
+    "name": "oom",
+    "command": [
+      "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/bin/poseidon_runtime_gpu_prepare_oom_tests"
+    ],
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "2"
+    }
+  }
+]

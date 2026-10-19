@@ -1,0 +1,16 @@
+[
+  "c++",
+  "-O2",
+  "-std=c++17",
+  "-pthread",
+  "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-negative-20261018/prep/include",
+  "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime",
+  "-I/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party",
+  "-DCKKS_RUNTIME_SOURCE_DIR=\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime\"",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/runtime_waterline_tests.cpp",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-core/libruntime_test_support.a",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-core/libruntime_plan_json.a",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-core/libruntime_core.a",
+  "-o",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-batch-negative-20261018/prep/preparation-negative"
+]

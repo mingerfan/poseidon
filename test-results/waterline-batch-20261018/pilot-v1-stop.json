@@ -1,0 +1,6 @@
+{
+  "local_parent_pids": [
+    819914
+  ],
+  "reason": "Freeze v1 pilot before adding continuous preparation completion notifications; partial pilot timings excluded from final comparison."
+}

@@ -1,0 +1,3 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6442450944 maximum_bytes=6442450944
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=0.920641 runtime_seconds=0.0975361 initialization_seconds=0.142904 online_execution_seconds=0.0975361 boot_seconds=0 python_max_abs=6.16662e-07 max_imaginary=1.65153e-06
+report=test-results/waterline-batch-20261018/local-mlp-extra-runs/local-mlp-r3-updated-eager/r0-eager/report.json
