@@ -1,15 +1,15 @@
 {
   "format": "qwen24-r071-source-v1",
   "files": {
-    "MODEL_DATA_ANALYSIS.md": "4da2668c27fb29bc5ff644e141d8424417919402b19986e2088272a67b1250c5",
-    "README.md": "3e6c64f4b7fa2b65dbe996aaf8a00debe2d568ed694195fc474863bd6d8edaec",
+    "MODEL_DATA_ANALYSIS.md": "f922947c06cd7a6a58cad76721bdd7f56558e908247c767d6a4dc46058afe9ec",
+    "README.md": "8ecd52b3c492f37b9d1a343676b3673430860ca5c48734742fee10acb266c108",
     "compile_model.py": "cba82cf95ff3561d7ad3aef0d283be6f521e45fef0a0411cdceee3233ebfe340",
-    "evidence/model-data-analysis.json": "2817271d097edfdf21a07416d0c356035583ddddb348b9fce2701b25a38e3e7d",
+    "evidence/model-data-analysis.json": "8e63fa338b93d54ac022e937c2795a1cdf57dd1b168ba4b559272c8886ac080a",
     "evidence/parent_071/FINAL_ANALYSIS.md": "91fb833060c559ba8b67232e4d488564ccbf6ae8e90f9db513371334ce5f6846",
     "evidence/parent_071/completion-verification.json": "422f5c0a0a64b5507e307a6e5f0aa57828df43de94fb379430d1ab93ef543695",
     "evidence/parent_071/slot-layout-audit.json": "b444dc2e815c881d379c9b126a6f3c95dccf87c31b0f2bbf31f9884895bc7ab9",
     "evidence/validation.json": "a8172e0aacd3eaeb8af280a33601b4987b245e3b16b94541ecf233dcb45397ea",
-    "interfaces/decode_pair.json": "827fa656fb8fa54a067efef2f50f6f09148738721112a6014dd3837293084c36",
+    "interfaces/decode_pair.json": "a87cea91e93315cfa3487b7f3cbe53c59a3ea787abe61078203d8fee09e144e3",
     "interfaces/decode_second_token.json": "5c64e1b5754ee470e9f733819780b10a1ba469792eaa298f07a3d8786910eea4",
     "interfaces/prefill_1token.json": "68a7483b7512967f8705ae53f4e848fd06d4cbd931f6e2af504e51bc1e0e3223",
     "interfaces/prefill_2token.json": "e0009f78a538dfb400ece8c287449aeee09794fe754efcf649c36a0df25259a3",
@@ -60,6 +60,8 @@
     "source/tools/reorder_runtime_plan.py": "4b2f83d44bd50b8ab225d59a51c890a36b31eb65786f286726c0b5bcbe9c1d9e",
     "trace_model.py": "43fc039559653ef90ba25641bc3fc6cdbdb06c14df11e5c7b5ee184cbcc5e1b4",
     "validation/check_small_model.py": "9c3a2d76fd58101e5ec8b8b33c46bcf36748e442d3633357de3c40350a3f0e67",
-    "verify_package.py": "64b8a0a9a9fb495722c9cbf18d1f826fdcaa5be91cc3662d717fcfb9309d93e9"
+    "verify_package.py": "28549519e348c2e9dd0f862cc241fa4a248e006888f0bda16903089f0abcc6e2",
+    "COMPILED_LEVEL_DETAILS.md": "8c8075e1629bf842a713468d422742a9b8ab698feebbc90ee37bfc0ff3411350",
+    "evidence/compiled-analysis.json": "eccfdbf07c4ef7850ae0ee4da57e67a1e0d0fdda3d7f07b2c79f70cc367dc091"
   }
 }

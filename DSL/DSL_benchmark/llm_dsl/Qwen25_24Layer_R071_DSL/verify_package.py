@@ -16,7 +16,14 @@ def main():
         assert hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==b['files'][name]['source_sha256']
     pair=json.loads((ROOT/'interfaces/decode_pair.json').read_text('utf-8'))
     assert pair['config']['num_layers']==24 and len(pair['inputs'])==2 and len(pair['outputs'])==29
-    assert all(not pair[k] for k in ('native_compiled','full_model_ckks_validated','gpu_validated'))
+    assert not pair['full_model_ckks_validated'] and not pair['gpu_validated']
+    if pair['native_compiled']:
+        evidence=json.loads((ROOT/pair['compiled_evidence']).read_text('utf-8'))
+        assert evidence['complete'] and evidence['plan_verified'] and evidence['full_mock_passed']
+        assert not evidence['ckks_executed'] and evidence['blocks']==24 and evidence['tokens']==2
+        for name,sha in evidence['source_package_hashes'].items():
+            if name.startswith('source/'):
+                assert hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==sha,name
     print(json.dumps(dict(passed=True,files=len(m['files']),unchanged_kernels=len(b['unchanged_arithmetic_files']),
-        blocks=24,decode_pair_inputs=2,decode_pair_outputs=29,native_compiled=False,ckks_validated=False,gpu_validated=False)))
+        blocks=24,decode_pair_inputs=2,decode_pair_outputs=29,native_compiled=pair['native_compiled'],ckks_validated=False,gpu_validated=False)))
 if __name__=='__main__':main()

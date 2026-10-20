@@ -305,7 +305,7 @@
   "embedding": "client plaintext lookup, then encrypt; not encrypted token-ID lookup",
   "output": "last-new-token raw logits plus all 24 layers of encrypted KV",
   "bootstrap": "backend must schedule real refresh; not emitted explicitly by this DSL",
-  "native_compiled": false,
+  "native_compiled": true,
   "full_model_ckks_validated": false,
   "gpu_validated": false,
   "optimization": {
@@ -314,5 +314,6 @@
     "kv": "one ciphertext per layer",
     "encoded_plaintexts": "official eager compile; optional validated CPU V3 bounded Encode post-pass",
     "rms_degree_strategy": "degree10p2_pair13_silu_canonical_fold2"
-  }
+  },
+  "compiled_evidence": "evidence/compiled-analysis.json"
 }
