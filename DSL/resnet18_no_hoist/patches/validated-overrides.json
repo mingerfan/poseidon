@@ -1,0 +1,13 @@
+{
+  "note": "Exact model/compiler-driver/test/header bytes from the successful full GPU run; build-support replaces only existing target sources and include precedence",
+  "sources": {
+    "ResNet18.py": "29e66333c272d16dff5780f5398876b0648ef24158f9fb726495004310d07b3a",
+    "imagenet_layout.py": "e49e43195fc6e0d0c807b1418e039265d5c628b6c8b6d3f78c451d46129da59c",
+    "build-support/optimizer.cpp": "692515e0ad9da45e9f0d186b5152f4106d11f23263728fad01f4f672b6d1e223",
+    "build-support/dacapo_mlp_experiment.hpp": "a0b5916577cf30ed34100e5a91cc9957ae7a135ea09126e5988ac5d6aa565c2f",
+    "build-support/dacapo_mlp_vec_e2e.cpp": "a8b362922b1bbaed964d2dc0706209d365c3de183195fa2761ab7f1ad25f403a",
+    "build-support/poseidon_gpu_mlp_e2e_test.cpp": "ffbe2ab32e7f5dcad0efb2955ce9d11d827ddde4c54758e3afab85b56e43b625",
+    "build-support/component-probe.cpp": "7b86fe0f21050268921bf9106acae67dd740d15085820ada78e2f43bdd9b163a",
+    "build-support/include/runtime/runtime.hpp": "25150c0241d460349f36752d0e7e57ad4853f111372860f8759d860ccb953301"
+  }
+}

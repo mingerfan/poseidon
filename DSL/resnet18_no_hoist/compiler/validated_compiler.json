@@ -1,5 +1,0 @@
-{
-  "executable_sha256": "bf28a5f0e55b3fb572a72bc477a10f2db5631ddd7ae49f172ff2383d7d25b3ee",
-  "scope": "Actual Hecate source overlay used by the frozen artifact; requires matching Hecate/LLVM18 framework, not a standalone compiler",
-  "real_hevm_sha256": "e9f6a906d490766134e810d4f16224f05a9f0c7c7f7ebdf67037595d5c84b4df"
-}

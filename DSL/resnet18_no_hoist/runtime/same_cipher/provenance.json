@@ -1,9 +1,0 @@
-{
-  "scope": "isolated diagnostic: same native/compiled arithmetic, shared keys and captured input ciphertexts; no secret-key export",
-  "base_dsl_runtime_sha256": "1d43e1e7a7a7725edb0cb8529b2dd2f126b518123932fa1575865422f39abe08",
-  "compiled_frontend_sha256": "fa1115adbf44026874e6acdec0a7152508e69f0dd903fc068d974524d048f8db",
-  "native_inference_sha256": "286288900648ed2c271b4e9a24a1f63e811efb836ed7477e4d239b35ae3de9d2",
-  "input_cache": "147 original host Ciphertexts retained by call position and reuploaded bit-exactly; replay checks plaintext/order hash; ONE reuses original native cache",
-  "final_comparison": "all 1000 Q4 ciphertexts, every RNS word and metadata, before decrypt",
-  "pool_gib": 26
-}

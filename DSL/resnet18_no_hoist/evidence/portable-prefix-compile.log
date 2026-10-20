@@ -1,0 +1,13 @@
+["/opt/conda/envs/apollo/bin/python", "compile_model.py", "--runtime-root", "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/poseidon/third_party/ckks-runtime", "resnet18", "--operator-spec", "/home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/profiles/operator-spec.json", "--compiler-profile", "/home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/profiles/compiler-profile.json", "--traced-mlir", "/home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/traced-prefix/trace_prefix.mlirbc", "--hecate-opt", "/home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/compiler-build/hecate-opt", "--hecate-build", "/home/hanshubin/no-hoist-dsl-work/resnet20-framework-v1/build-make", "--boot-placement", "depth-dp", "--waterline", "40", "--lazy-rescale-level-factor", "3", "--device-counts", "1", "--runtime-plan-memory", "--runtime-plan-memory-report", "--inline-payload-max-bytes", "0", "--plan-format", "json", "--output-dir", "/home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/compiled-prefix"]
+Just-in-time plaintexts: 239
+runtime memory _hecate_ResNet18Stem rank=0 device=-1 peak=1.620000e+03 MiB
+runtime memory _hecate_ResNet18Stem rank=0 device=0 peak=7.381500e+03 MiB
+runtime memory _hecate_ResNet18Stem rank=0 device=-1 peak=1.360000e+02 MiB
+runtime memory _hecate_ResNet18Stem rank=0 device=0 peak=1.074000e+03 MiB
+Depth-DP bootstrap boundaries: 13
+Number of Bootstrapping: 49
+traced MLIR: /home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/traced-prefix/trace_prefix.mlirbc
+optimized MLIR: /home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/compiled-prefix/resnet18.optimized.mlir
+RuntimePlan: /home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/compiled-prefix/resnet18.optimized._hecate_ResNet18Stem.runtime-plan.json
+memory report: /home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/compiled-prefix/resnet18.optimized._hecate_ResNet18Stem.memory.json
+plaintext bundle: /home/hanshubin/no-hoist-dsl-work/resnet18-delivery-aligned-v1/compiled-prefix/resnet18.optimized._hecate_ResNet18Stem.bundle

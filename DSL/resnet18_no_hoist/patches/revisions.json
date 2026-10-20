@@ -1,0 +1,23 @@
+{
+  "poseidon-framework.patch": {
+    "base_commit": "6dc8cbfb65e3311271563000f6f5dce92d0324a8",
+    "patched_sources": {
+      "src/poseidon/basics/util/rlwe.cpp": "5aeda8bda90c636ecf442965cf8c9b8d925df5bcfbbdfdc8ca7415c4bbddcdaa",
+      "src/poseidon/gpu/gpu_bootstrap_profile.cpp": "618d6e6450a5495c4e7d5fec9733abbf6061f5437b03da85f251337dc561fe82",
+      "src/poseidon/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp": "f8337f3f8371f859183b77fd254863a1190c5bca3909377a9bedcd5c85389b18",
+      "src/poseidon/tests/runtime_api/poseidon_gpu_mlp_e2e_test.cpp": "7a557b7e9ba939cec38fcc3265c5dd320f3f96fa77f4726f7d3f7d8e5f47f2cf"
+    }
+  },
+  "runtime-packed-input.patch": {
+    "base_commit": "0d3ba226b0329932ca9aed4a8eaa1797f5893965",
+    "patched_sources": {
+      "experiments/dacapo_mlp_vec_e2e.cpp": "b4b356e4ee30ec3aac5ed20b7d56b8dfc5ed34fef59ebf0c1ab7048165b80a7c"
+    }
+  },
+  "dacapo-llvm18.patch": {
+    "base_commit": "6e75be29a52b69bc56404fc07e44465fe8971d29",
+    "patched_sources": {
+      "include/hecate/Support/Support.h": "75cecd963fad5708257ce57149633f49f0aa8e682a70d901c7d6f6db470f82ab"
+    }
+  }
+}

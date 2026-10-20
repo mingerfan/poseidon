@@ -1,0 +1,41 @@
+diff --git a/experiments/dacapo_mlp_vec_e2e.cpp b/experiments/dacapo_mlp_vec_e2e.cpp
+index 0bae566..8f6c3fa 100644
+--- a/experiments/dacapo_mlp_vec_e2e.cpp
++++ b/experiments/dacapo_mlp_vec_e2e.cpp
+@@ -87,8 +87,12 @@ int main(int argc, char **argv) {
+             read_numbers(fixture, "python_output", 10);
+ 
+         auto context = experiment::load_context(argv[1], argv[2], argv[3]);
++        const bool frontend_packed =
++            fixture.value("input_encoding", "legacy") == "frontend-packed-slots";
+         experiment::set_input(
+-            context, model == "resnet20"
++            context, frontend_packed
++                         ? read_numbers(fixture, "packed_input", context.slot_capacity)
++                         : model == "resnet20"
+                          ? experiment::pack_resnet20_input(input)
+                          : experiment::pack_mlp_input(input));
+ 
+@@ -130,18 +134,20 @@ int main(int argc, char **argv) {
+             python_output, summary.final_prefix);
+         report << "source=python_final max_abs_diff=" << python_max_abs << '\n';
+ 
+-        const double python_tolerance = model == "resnet20" ? 0.1 : 1e-9;
++        const double python_tolerance = model == "resnet20" && !frontend_packed ? 0.1 : 1e-9;
+         const bool python_within_tolerance =
+             python_max_abs <= python_tolerance;
+         const bool output_finite = std::all_of(
+             summary.final_prefix.begin(), summary.final_prefix.end(),
+             [](double value) { return std::isfinite(value); });
+         const bool passed = output_finite && summary.mismatch_lines == 0 &&
+-                            (model == "resnet20" || python_within_tolerance);
++                            ((model == "resnet20" && !frontend_packed) || python_within_tolerance);
+         Json result{
+             {"format_version", 1},
+             {"passed", passed},
+             {"model", model},
++            {"input_encoding", fixture.value("input_encoding", "legacy")},
++            {"require_python_match", frontend_packed || model != "resnet20"},
+             {"seed", fixture.at("seed")},
+             {"model_sha256", fixture.at("model_sha256")},
+             {"plan_sha256", context.loaded_plan.source_sha256},

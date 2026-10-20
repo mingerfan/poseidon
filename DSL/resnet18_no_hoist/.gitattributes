@@ -1,2 +1,2 @@
-# Source and evidence bytes are bound by SHA256; preserve them on every platform.
+# Preserve validated source and evidence bytes on every platform.
 * -text -whitespace

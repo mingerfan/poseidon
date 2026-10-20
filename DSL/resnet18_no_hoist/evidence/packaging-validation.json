@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "cmake_configured": true,
+  "all_three_test_entrances_rebuilt_against_existing_validated_libraries": true,
+  "portable_optimizer_built": true,
+  "portable_prefix_compile_and_clear": true,
+  "profiles_regenerated_identically": true,
+  "restored_all102_weights": true,
+  "new_full_clear_semantics_matches_original_fixture": true,
+  "new_full_gpu_run": false,
+  "scope": "Packaging, source/build checks, full FP64 semantics and fresh compiled prefix clear; historical full GPU evidence preserved",
+  "fresh_prefix_plan_sha256": "eeee2db49417d203c5f6d8ed20644271689e5b2aca7e7e13804cb9f6e0029769",
+  "original_prefix_plan_sha256": "eeee2db49417d203c5f6d8ed20644271689e5b2aca7e7e13804cb9f6e0029769",
+  "prefix_plan_byte_identical": true,
+  "base_patch_all6_source_hashes_match_successful_framework": true
+}
