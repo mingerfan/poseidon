@@ -1,0 +1,304 @@
+{
+  "parent": "Qwen25_2Layer_R071_DSL",
+  "parent_dsl_commit": "2415ceab649ca711459c5fd27b6052153277d6e8",
+  "parent_benchmark_commit": "bebdffa12f273240e8fdd754f3d0ce826730c203",
+  "files": {
+    "source/model/bounded_cpu_encodes.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/bounded_cpu_encodes.py",
+      "source_sha256": "b7bbb09f09dc357681b2035505f8d1fcb2a205933d20760f0bad14ca9d0fcf2a",
+      "delivered_sha256": "b7bbb09f09dc357681b2035505f8d1fcb2a205933d20760f0bad14ca9d0fcf2a",
+      "unchanged": true
+    },
+    "source/model/combined_runtime.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/combined_runtime.py",
+      "source_sha256": "647db25fa91f73d13292aee5552bbe3f4547957a91f4c8e5f445692c1287e803",
+      "delivered_sha256": "5d92082872c3556cecfd6c5ff2b70db17f9aa3ae7e8f1720b74c4ce83d409337",
+      "unchanged": false
+    },
+    "source/model/defer_cpu_encodes.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/defer_cpu_encodes.py",
+      "source_sha256": "4e1336652827206067a484e1daf2b0a74a707ffd536665cd532d3cb2a5006511",
+      "delivered_sha256": "4e1336652827206067a484e1daf2b0a74a707ffd536665cd532d3cb2a5006511",
+      "unchanged": true
+    },
+    "source/model/package/check_outputs.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/check_outputs.py",
+      "source_sha256": "8470b5844676dc51d06f52a2de5e7ea3339ecaaef0ba6512428a81b2e5f16b5f",
+      "delivered_sha256": "8470b5844676dc51d06f52a2de5e7ea3339ecaaef0ba6512428a81b2e5f16b5f",
+      "unchanged": true
+    },
+    "source/model/package/compile_qwen24.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/compile_qwen24.py",
+      "source_sha256": "9234b3d3015ff525f555da3262fb9b713eab824add3f85fab65ee49279df80a2",
+      "delivered_sha256": "9234b3d3015ff525f555da3262fb9b713eab824add3f85fab65ee49279df80a2",
+      "unchanged": true
+    },
+    "source/model/package/config/approximations.provisional.json": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/config/approximations.provisional.json",
+      "source_sha256": "74ae65f46d9f28f5a0b6188241ce4d73e4b7215d933ca7ac2aa117b48de72d12",
+      "delivered_sha256": "d3c8e3915697d4fde6536f86faf386a1534cbb6aa4a522a6b0fbcb0cb72f5342",
+      "unchanged": false
+    },
+    "source/model/package/config/compiler-config.json": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/config/compiler-config.json",
+      "source_sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110",
+      "delivered_sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110",
+      "unchanged": true
+    },
+    "source/model/package/config/model.json": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/config/model.json",
+      "source_sha256": "dbdaf26d46a2639479308ec0d9fc1648697f5a42059350f68c0e04a6711d5359",
+      "delivered_sha256": "75a88ca552e366dfc81a17fc6e92009475920bce91843ce3422e5d20d868d1a9",
+      "unchanged": false
+    },
+    "source/model/package/config/operator-spec.json": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/config/operator-spec.json",
+      "source_sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b",
+      "delivered_sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b",
+      "unchanged": true
+    },
+    "source/model/package/config/weight_schema.json": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/config/weight_schema.json",
+      "source_sha256": "862292a9eaea7c69c0324287323c117545e1a281070cdb005c9313897f5a8023",
+      "delivered_sha256": "eaecef66e973b66bb65adc21598c7145730c0681f2bdb9f0fdc37ec561deb79a",
+      "unchanged": false
+    },
+    "source/model/package/prepare_fixture.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/prepare_fixture.py",
+      "source_sha256": "b7e8011c85687f4548483344278e9a6baba02679942d3cd5867c8fd0f0fd8902",
+      "delivered_sha256": "4c9db905204fe1d0e60ed39d793c4883f84bad5cb5c747838f1585ecc8521dea",
+      "unchanged": false
+    },
+    "source/model/package/prepare_inputs.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/prepare_inputs.py",
+      "source_sha256": "1761ad490108dab28d06bc3cb4bde43ccf99dd263fd929da76304c4b81bc011f",
+      "delivered_sha256": "1761ad490108dab28d06bc3cb4bde43ccf99dd263fd929da76304c4b81bc011f",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/__init__.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/__init__.py",
+      "source_sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9",
+      "delivered_sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/__init__.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/__init__.py",
+      "source_sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1",
+      "delivered_sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/degree_rms_candidate.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/degree_rms_candidate.py",
+      "source_sha256": "b09333dabd4a0dcd9c5d6cd9a0443d003fb6c6c930505733459645e787287c03",
+      "delivered_sha256": "b09333dabd4a0dcd9c5d6cd9a0443d003fb6c6c930505733459645e787287c03",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/expr.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/expr.py",
+      "source_sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff",
+      "delivered_sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/ops.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/ops.py",
+      "source_sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+      "delivered_sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/packed_linear.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/packed_linear.py",
+      "source_sha256": "ca6fe4d21455165c2d8c954e2d61a127ebed1a0f21937bcc0323db61334a227b",
+      "delivered_sha256": "ca6fe4d21455165c2d8c954e2d61a127ebed1a0f21937bcc0323db61334a227b",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/packed_lm_head.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/packed_lm_head.py",
+      "source_sha256": "48ff6eb360542d6505b9a0a5226c63d6ee2fc32c109cf0db2459aff32de19f3d",
+      "delivered_sha256": "48ff6eb360542d6505b9a0a5226c63d6ee2fc32c109cf0db2459aff32de19f3d",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/packed_rms_batch.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/packed_rms_batch.py",
+      "source_sha256": "f24afff91791c99dc2dca052dbf08cd6324fb58a1d8405406e9bc16d34420b59",
+      "delivered_sha256": "f24afff91791c99dc2dca052dbf08cd6324fb58a1d8405406e9bc16d34420b59",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/prefill_rms_adapter.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/prefill_rms_adapter.py",
+      "source_sha256": "24b33172f9940c40f56d335f68fddced3320c5335194ff24c00abd19374940ca",
+      "delivered_sha256": "24b33172f9940c40f56d335f68fddced3320c5335194ff24c00abd19374940ca",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/qwen_layers.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/qwen_layers.py",
+      "source_sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+      "delivered_sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/qwen_model.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/qwen_model.py",
+      "source_sha256": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+      "delivered_sha256": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/qwen_nonlinear.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/qwen_nonlinear.py",
+      "source_sha256": "83b996cccd3cc263a2c9df6ed23c663c8f410064a9c0d38c858efeb968ca648e",
+      "delivered_sha256": "83b996cccd3cc263a2c9df6ed23c663c8f410064a9c0d38c858efeb968ca648e",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/rms_affine_candidate.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/rms_affine_candidate.py",
+      "source_sha256": "589a7506df51d4388bb1d07976992862bdc444a131b9695f0ec22757dc16d53b",
+      "delivered_sha256": "589a7506df51d4388bb1d07976992862bdc444a131b9695f0ec22757dc16d53b",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/rms_power_polynomial.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/rms_power_polynomial.py",
+      "source_sha256": "d22ae4b078d1077524e97d44754a953c71591820acd03043c515fef162a5267d",
+      "delivered_sha256": "d22ae4b078d1077524e97d44754a953c71591820acd03043c515fef162a5267d",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/silu_parity_candidate.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/silu_parity_candidate.py",
+      "source_sha256": "306b9400c72507a6747ec32a812278124b6e93d39b8157def30d6335c9e5958b",
+      "delivered_sha256": "306b9400c72507a6747ec32a812278124b6e93d39b8157def30d6335c9e5958b",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/kernels/zero_tail_contract.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/kernels/zero_tail_contract.py",
+      "source_sha256": "1f669f4152276487c3305e653953192ccd35d507da9cd338d23c84b2ba454f96",
+      "delivered_sha256": "1f669f4152276487c3305e653953192ccd35d507da9cd338d23c84b2ba454f96",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/reference.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/reference.py",
+      "source_sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6",
+      "delivered_sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6",
+      "unchanged": true
+    },
+    "source/model/package/qwen24/runtime.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/runtime.py",
+      "source_sha256": "4ec579638b7d8412a185fb8289c39b37d65e790598b0667bea49d8ce4493e86a",
+      "delivered_sha256": "212451da2ee21c7b1ba0fb40801b415a00e0dbd0e76f4b5038438849473c8567",
+      "unchanged": false
+    },
+    "source/model/package/qwen24/spec.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/spec.py",
+      "source_sha256": "629aa6f8fb88cff9fa64e7efa0bbb7e0c8a67fc1f82f2a78704880f81024a78b",
+      "delivered_sha256": "6346742ca01fd03da4eb1417ee58690eae0d34e24661b9dd16cde6a9a6068323",
+      "unchanged": false
+    },
+    "source/model/package/qwen24/weights.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/qwen24/weights.py",
+      "source_sha256": "d6b873646af1dcdacba200ed518ad0fb74f7daf2e463fc768ddb88b3aed46c53",
+      "delivered_sha256": "81b25633069767dd31cd7c88d431f75908afc9e277457f916aeb5afa16107754",
+      "unchanged": false
+    },
+    "source/model/package/trace_qwen24.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/trace_qwen24.py",
+      "source_sha256": "0b6e1b80caea8b27c2299d74a19dd345d52eeb11eac1ad51ac5ca0ad5cf12431",
+      "delivered_sha256": "0b6e1b80caea8b27c2299d74a19dd345d52eeb11eac1ad51ac5ca0ad5cf12431",
+      "unchanged": true
+    },
+    "source/model/package/unpack_outputs.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/unpack_outputs.py",
+      "source_sha256": "2ffc6b9b169b0e8a2e7b62129a5a36eb6285fd0b28ecfdc032b2c3b67671d306",
+      "delivered_sha256": "2ffc6b9b169b0e8a2e7b62129a5a36eb6285fd0b28ecfdc032b2c3b67671d306",
+      "unchanged": true
+    },
+    "source/model/package/verification/smoke_config.json": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/verification/smoke_config.json",
+      "source_sha256": "10b68ee94323bcc828f82ca0822f5f216bbfb6afd178394263680cb35ad92bc3",
+      "delivered_sha256": "095b78dd0c476e440c86f7b08419f6b4f3599fccaaff6c6412392f14e8b5f5c7",
+      "unchanged": false
+    },
+    "source/model/package/verification/validate_numpy.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/verification/validate_numpy.py",
+      "source_sha256": "4076e2f6b8c64cb841f56285597de21ea01c8cab2e7a9ad95d5add3f5a00df72",
+      "delivered_sha256": "4076e2f6b8c64cb841f56285597de21ea01c8cab2e7a9ad95d5add3f5a00df72",
+      "unchanged": true
+    },
+    "source/model/package/verify_manifest.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/package/verify_manifest.py",
+      "source_sha256": "8b641de230f27e22d67610f989c03621e5468821b9639bd1d0cb790af7b58a10",
+      "delivered_sha256": "8b641de230f27e22d67610f989c03621e5468821b9639bd1d0cb790af7b58a10",
+      "unchanged": true
+    },
+    "source/model/packed_attention.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/packed_attention.py",
+      "source_sha256": "5c411fa733154f65186e8bc76ff426b86ceae47af83bc9d3d33dcbe207aa1c6a",
+      "delivered_sha256": "5c411fa733154f65186e8bc76ff426b86ceae47af83bc9d3d33dcbe207aa1c6a",
+      "unchanged": true
+    },
+    "source/model/trace_combined_model.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/model/trace_combined_model.py",
+      "source_sha256": "474f7e89af819352eaa1393520504b925c9113a10163f733ef0f36ab8270c042",
+      "delivered_sha256": "75da6b1a571d208b81b3fce65218c252ffc4e367747cefe2aeb2c8feba677fbe",
+      "unchanged": false
+    },
+    "source/tools/reorder_runtime_plan.py": {
+      "source": "Qwen25_2Layer_R071_DSL/frozen/tools/reorder_runtime_plan.py",
+      "source_sha256": "4b2f83d44bd50b8ab225d59a51c890a36b31eb65786f286726c0b5bcbe9c1d9e",
+      "delivered_sha256": "4b2f83d44bd50b8ab225d59a51c890a36b31eb65786f286726c0b5bcbe9c1d9e",
+      "unchanged": true
+    },
+    "compile_model.py": {
+      "source": "Qwen25_2Layer_R071_DSL/compile_071.py",
+      "source_sha256": "b057edcf1defbb9e5398e66bd26103abf43348f0dba753ad4f70b8251d4939df",
+      "delivered_sha256": "cba82cf95ff3561d7ad3aef0d283be6f521e45fef0a0411cdceee3233ebfe340",
+      "unchanged": false
+    },
+    "optimize_cpu_plan.py": {
+      "source": "Qwen25_2Layer_R071_DSL/optimize_cpu_plan.py",
+      "source_sha256": "d51b699765cf1d8d91af4fda552a733a0f8764eebd847c7b76223de2bb7cea98",
+      "delivered_sha256": "07d8758dbc24828adedca370f53ee5406479a6ef65d777d67b229c9cbf64ba36",
+      "unchanged": false
+    },
+    "requirements.txt": {
+      "source": "Qwen25_2Layer_R071_DSL/requirements.txt",
+      "source_sha256": "d19b55fb549a8b6fd36e409ca79e413dbfddefba1bdcfe3ec13a809704c29186",
+      "delivered_sha256": "d19b55fb549a8b6fd36e409ca79e413dbfddefba1bdcfe3ec13a809704c29186",
+      "unchanged": true
+    },
+    "evidence/parent_071/completion-verification.json": {
+      "source": "Qwen25_2Layer_R071_DSL/evidence/completion-verification.json",
+      "source_sha256": "422f5c0a0a64b5507e307a6e5f0aa57828df43de94fb379430d1ab93ef543695",
+      "delivered_sha256": "422f5c0a0a64b5507e307a6e5f0aa57828df43de94fb379430d1ab93ef543695",
+      "unchanged": true
+    },
+    "evidence/parent_071/FINAL_ANALYSIS.md": {
+      "source": "Qwen25_2Layer_R071_DSL/evidence/FINAL_ANALYSIS.md",
+      "source_sha256": "91fb833060c559ba8b67232e4d488564ccbf6ae8e90f9db513371334ce5f6846",
+      "delivered_sha256": "91fb833060c559ba8b67232e4d488564ccbf6ae8e90f9db513371334ce5f6846",
+      "unchanged": true
+    },
+    "evidence/parent_071/slot-layout-audit.json": {
+      "source": "Qwen25_2Layer_R071_DSL/evidence/slot-layout-audit.json",
+      "source_sha256": "b444dc2e815c881d379c9b126a6f3c95dccf87c31b0f2bbf31f9884895bc7ab9",
+      "delivered_sha256": "b444dc2e815c881d379c9b126a6f3c95dccf87c31b0f2bbf31f9884895bc7ab9",
+      "unchanged": true
+    }
+  },
+  "unchanged_arithmetic_files": [
+    "source/model/bounded_cpu_encodes.py",
+    "source/model/defer_cpu_encodes.py",
+    "source/model/package/qwen24/kernels/__init__.py",
+    "source/model/package/qwen24/kernels/degree_rms_candidate.py",
+    "source/model/package/qwen24/kernels/expr.py",
+    "source/model/package/qwen24/kernels/ops.py",
+    "source/model/package/qwen24/kernels/packed_linear.py",
+    "source/model/package/qwen24/kernels/packed_lm_head.py",
+    "source/model/package/qwen24/kernels/packed_rms_batch.py",
+    "source/model/package/qwen24/kernels/prefill_rms_adapter.py",
+    "source/model/package/qwen24/kernels/qwen_layers.py",
+    "source/model/package/qwen24/kernels/qwen_model.py",
+    "source/model/package/qwen24/kernels/qwen_nonlinear.py",
+    "source/model/package/qwen24/kernels/rms_affine_candidate.py",
+    "source/model/package/qwen24/kernels/rms_power_polynomial.py",
+    "source/model/package/qwen24/kernels/silu_parity_candidate.py",
+    "source/model/package/qwen24/kernels/zero_tail_contract.py",
+    "source/model/packed_attention.py",
+    "source/tools/reorder_runtime_plan.py"
+  ]
+}

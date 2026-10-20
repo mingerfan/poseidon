@@ -4,6 +4,7 @@
 |---|---|
 | [Qwen25_2Layer](Qwen25_2Layer/README.md) | 两个 Decoder Block 的模型版本归档；当前已验证推荐版为 [071](Qwen25_2Layer/Qwen25_2Layer_R071_DSL/README.md) |
 | [Qwen25_2Token_Block_DSL](Qwen25_2Token_Block_DSL/README.md) | 单个 Block、两个 token 的历史测试包 |
+| [Qwen25_24Layer_R071_DSL](Qwen25_24Layer_R071_DSL/README.md) | 对应 071 两层优化方案的 24 层工程；小尺寸算术已检查，真实尺寸编译/CKKS/GPU 待验证 |
 | [Qwen25_24Layer_DSL](Qwen25_24Layer_DSL/README.md) | 24 层模型 DSL；验证状态以该包说明为准 |
 | [Qwen_Layer_DSL_Source](Qwen_Layer_DSL_Source/README.md) | Attention、RMSNorm 等独立子层源码 |
 
