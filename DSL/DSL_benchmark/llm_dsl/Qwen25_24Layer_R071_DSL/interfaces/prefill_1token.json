@@ -1,0 +1,288 @@
+{
+  "format": "qwen25-24layer-r071-packed-v1",
+  "config": {
+    "num_layers": 24,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "query_heads": 14,
+    "kv_heads": 2,
+    "head_dim": 64,
+    "vocab_size": 151936,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "mode": "prefill",
+  "function": "_hecate_qwen25_24layer",
+  "new_positions": [
+    0
+  ],
+  "cached_positions": [],
+  "slots": 32768,
+  "logit_chunk_size": 32768,
+  "logit_ciphertexts": 5,
+  "inputs": [
+    {
+      "name": "embedding.position_0",
+      "prefix_size": 896,
+      "ciphertext": 0
+    }
+  ],
+  "outputs": [
+    {
+      "name": "logits.0:32768",
+      "prefix_size": 32768,
+      "ciphertext": 0
+    },
+    {
+      "name": "logits.32768:65536",
+      "prefix_size": 32768,
+      "ciphertext": 1
+    },
+    {
+      "name": "logits.65536:98304",
+      "prefix_size": 32768,
+      "ciphertext": 2
+    },
+    {
+      "name": "logits.98304:131072",
+      "prefix_size": 32768,
+      "ciphertext": 3
+    },
+    {
+      "name": "logits.131072:151936",
+      "prefix_size": 20864,
+      "ciphertext": 4
+    },
+    {
+      "name": "layer_0.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 5
+    },
+    {
+      "name": "layer_1.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 6
+    },
+    {
+      "name": "layer_2.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 7
+    },
+    {
+      "name": "layer_3.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 8
+    },
+    {
+      "name": "layer_4.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 9
+    },
+    {
+      "name": "layer_5.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 10
+    },
+    {
+      "name": "layer_6.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 11
+    },
+    {
+      "name": "layer_7.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 12
+    },
+    {
+      "name": "layer_8.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 13
+    },
+    {
+      "name": "layer_9.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 14
+    },
+    {
+      "name": "layer_10.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 15
+    },
+    {
+      "name": "layer_11.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 16
+    },
+    {
+      "name": "layer_12.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 17
+    },
+    {
+      "name": "layer_13.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 18
+    },
+    {
+      "name": "layer_14.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 19
+    },
+    {
+      "name": "layer_15.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 20
+    },
+    {
+      "name": "layer_16.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 21
+    },
+    {
+      "name": "layer_17.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 22
+    },
+    {
+      "name": "layer_18.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 23
+    },
+    {
+      "name": "layer_19.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 24
+    },
+    {
+      "name": "layer_20.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 25
+    },
+    {
+      "name": "layer_21.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 26
+    },
+    {
+      "name": "layer_22.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 27
+    },
+    {
+      "name": "layer_23.kv_cache",
+      "prefix_size": 256,
+      "layout": "K0,V0,K1,V1,...",
+      "positions": [
+        0
+      ],
+      "ciphertext": 28
+    }
+  ],
+  "output_tail": "zero; verify after actual encrypted execution",
+  "embedding": "client plaintext lookup, then encrypt; not encrypted token-ID lookup",
+  "output": "last-new-token raw logits plus all 24 layers of encrypted KV",
+  "bootstrap": "backend must schedule real refresh; not emitted explicitly by this DSL",
+  "native_compiled": false,
+  "full_model_ckks_validated": false,
+  "gpu_validated": false,
+  "optimization": {
+    "attention": "batched heads and visible keys",
+    "logits": "32768-slot chunks",
+    "kv": "one ciphertext per layer",
+    "encoded_plaintexts": "official eager compile; optional validated CPU V3 bounded Encode post-pass",
+    "rms_degree_strategy": "degree10p2_pair13_silu_canonical_fold2"
+  }
+}

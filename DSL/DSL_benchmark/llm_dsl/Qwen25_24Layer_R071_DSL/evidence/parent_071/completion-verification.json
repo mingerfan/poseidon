@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "round_id": "round_071_latest_parallel_full_ckks",
+  "snapshot": "status-1792085432777760700.json",
+  "result_sha256": "58c472009eedd7fc78cb91accc087739f6c8bd8610eac31e728f9005edd3840a",
+  "boot_count": 154,
+  "outputs_checked": 7,
+  "threshold": 0.001,
+  "runtime_seconds": 8114.138710873,
+  "workflow_seconds": 8209.263402700424,
+  "peak_rss_bytes": 31125880832,
+  "max_abs_error": 0.0007017302524205855,
+  "max_imaginary": 0.000680512914212552,
+  "max_abs_tail": 0.0006578498935985204,
+  "plan_sha256": "f671cbd15f88ace2d0f97745fcfe8bb533d3fb3eccda2c1ab09d401cd986a4cf",
+  "model_processes_exited": true,
+  "scope": "Two real-width decoder blocks, two sequential decode tokens, synthetic weights; CPU only"
+}
