@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "baseline_scale52": {
+    "max_abs": 0.000365630779545989,
+    "rms": 0.00016307559308996445
+  },
+  "corrected_combined": {
+    "max_abs": 1.2492839268865574e-05,
+    "rms": 9.666982059080704e-06
+  },
+  "max_error_improvement": 29.267228343936782,
+  "rms_improvement": 16.869338547781723,
+  "metadata": {
+    "id": "poseidon-gpu-degree58-da3-full-cosine-scale60-ratio128-real",
+    "linear_mode": "4",
+    "evalmod_degree": "58",
+    "evalmod_log_scale": "60",
+    "project_real": "1",
+    "input_level_min": "1",
+    "input_level_max": "49",
+    "output_level": "15",
+    "output_scale_log2": "60"
+  },
+  "bootstrap_ratio": 128,
+  "degree": 58,
+  "model_unchanged": true,
+  "original_accuracy_gates_unchanged": true
+}

@@ -1,0 +1,28 @@
+{
+  "component": {
+    "ratio32_scale52": {
+      "mean_error": -0.0001544767695993425,
+      "standard_deviation": 5.225492049362366e-05,
+      "max_abs": 0.000365630779545989,
+      "rms": 0.00016307559308996445,
+      "input_sha256": "77f8cbd1100f2cd8e6f8f9aacc2c402c2b8472f9023958613dd6c33edd7634eb"
+    },
+    "ratio128_scale52": {
+      "mean_error": -1.0144536072509437e-05,
+      "standard_deviation": 0.00020704369242198047,
+      "max_abs": 0.0008245712494716617,
+      "rms": 0.00020729206975630878,
+      "input_sha256": "e648d6b0aa6302d43c27f994251a5452682cb715ab86925a0a515dc64681660a"
+    },
+    "ratio32_scale56": {
+      "mean_error": -0.00015447371576438027,
+      "standard_deviation": 1.3159156857810073e-05,
+      "max_abs": 0.0002078447139171602,
+      "rms": 0.00015503319732000287,
+      "input_sha256": "d95d33ee822d42ac7e14a8ededce6cd8e7823399780866bd0b645cd289930971"
+    }
+  },
+  "systematic_bias_improvement_ratio128": 15.227583449375999,
+  "noise_improvement_scale56": 3.97099305512191,
+  "correction": "Combine ratio128 with internal scale60; no model-logit fitting or accuracy-gate changes"
+}

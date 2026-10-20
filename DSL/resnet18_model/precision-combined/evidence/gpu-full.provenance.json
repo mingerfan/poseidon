@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/runtime-build/poseidon_runtime_gpu_mlp_e2e",
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/compiled-full/resnet18.optimized._hecate_ResNet18Frontend.runtime-plan.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/operator-spec.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/compiled-full/resnet18.optimized._hecate_ResNet18Frontend.bundle",
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/fixture-final.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/clear-full.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/gpu-full.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/native-config.json"
+  ],
+  "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+  "binary_sha256": "9c25ab32f9440bfdfb314c423c4d8e9d2154908fdaa07cafe02eb4a9feba8d2f",
+  "plan_sha256": "b2cd4c5a291cf4f8577593e6be4c9df546503e24844f0ce5b3897433ebbdf983",
+  "fixture_sha256": "2a0de33c0f741404dc8144ba3c20748f65e02eef6eeb67140e846fc8fddd25ae",
+  "clear_sha256": "2764a0ecc4dd5ab287784ab8ad11d729419aa1d2f4cd3db7a5945eac1fed3ee4",
+  "spec_sha256": "fa3c0463205cd8614208a8584619deeca98537e4a836e19fe95c260ebe37b697",
+  "native_config_sha256": "f8a04f172c85c424fee7f52ed0996fd7c01c0d202c7cbf41f77360d1bd711f83",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+    "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB": "31744",
+    "POSEIDON_RUNTIME_ROTATION_KEY_POLICY": "binary",
+    "POSEIDON_RUNTIME_TRACE": "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/gpu-full.trace.csv"
+  },
+  "correction": "EvalMod internal scale60; same model/N/Q/P/degree/ratio128; compiler plans level and scale; original gates"
+}

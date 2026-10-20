@@ -1,0 +1,17 @@
+{
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/compile_model.py": "4c3a3ab0542e0184bebdb8fb300f54f11e42aa6bc5e5fb0d820210974889de01",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/audit_combined.py": "ad5d34f8e670b1359c6598e4cea5dc7dbc00d0a37ac055328e9ed5202372f239",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/run_precision.py": "018fde4a0ef547a51985de533265ff6c106e750b3da0caf4e439fa7e67b49495",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/check_logical_graph.py": "094cf25ed4945a09068a09c981f8a1c4291bbc5e44baafab763dafaab950d787",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/probe_combined.py": "404322b128b7f8afd513dc84f042ef4f84de82dacc742123fef420121b22878e",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/prepare_combined.py": "e2c3c72df4fd817ad8cb85b5f689f3bf56e03209c7d741f10d102e2fa7f31064",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/generate_profiles.py": "47e153005b01b8889cae7abc7ef32d22f0edbb48600d5c800e1d5397e2e188a6",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/operator-spec.json": "fa3c0463205cd8614208a8584619deeca98537e4a836e19fe95c260ebe37b697",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/compiler-profile.json": "44aded2ee3d4b90cfb4e9251dd2e7ed33b834ac8dcfe869a6fa9c1684d42b201",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/native-config.json": "f8a04f172c85c424fee7f52ed0996fd7c01c0d202c7cbf41f77360d1bd711f83",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/runtime-support/poseidon_gpu_mlp_e2e_test.cpp": "ffbe2ab32e7f5dcad0efb2955ce9d11d827ddde4c54758e3afab85b56e43b625",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/ResNet18.py": "29e66333c272d16dff5780f5398876b0648ef24158f9fb726495004310d07b3a",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/imagenet_layout.py": "e49e43195fc6e0d0c807b1418e039265d5c628b6c8b6d3f78c451d46129da59c",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/runtime-support/include/runtime/runtime.hpp": "25150c0241d460349f36752d0e7e57ad4853f111372860f8759d860ccb953301",
+  "/home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/compiler-build/hecate-opt": "0a79efcee200c39af408d047f85c70db7f43bca2baf70a28bdcf042bd308bd38"
+}

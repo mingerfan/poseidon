@@ -1,0 +1,28 @@
+["/usr/bin/time", "-v", "stdbuf", "-oL", "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/runtime-build/poseidon_runtime_gpu_mlp_e2e", "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/compiled-full/resnet18.optimized._hecate_ResNet18Frontend.runtime-plan.json", "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/operator-spec.json", "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/compiled-full/resnet18.optimized._hecate_ResNet18Frontend.bundle", "/home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/fixture-final.json", "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/clear-full.json", "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/gpu-full.json", "/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/native-config.json"]
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=33285996544 maximum_bytes=33285996544
+NATIVE_BOOT_CONFIG linear_mode=4 profile=poseidon-gpu-degree58-da3-full-cosine-scale60-ratio128-real output_level=15
+PASS boots=4705 transfers=99303 rotation_key_policy=binary rotations=29 key_seconds=28.5058 runtime_seconds=11292.6 initialization_seconds=0.0950277 online_execution_seconds=11292.6 boot_seconds=5168.28 python_max_abs=0.00892845 max_imaginary=9.92738e-05
+report=/home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/gpu-full.json
+	Command being timed: "stdbuf -oL /home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/runtime-build/poseidon_runtime_gpu_mlp_e2e /home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/compiled-full/resnet18.optimized._hecate_ResNet18Frontend.runtime-plan.json /home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/operator-spec.json /home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/compiled-full/resnet18.optimized._hecate_ResNet18Frontend.bundle /home/hanshubin/no-hoist-dsl-work/resnet18-model-v2/fixture-final.json /home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/clear-full.json /home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/gpu-full.json /home/hanshubin/no-hoist-dsl-work/resnet18-precision-combined-v1/profiles-combined/native-config.json"
+	User time (seconds): 6867.51
+	System time (seconds): 2562.60
+	Percent of CPU this job got: 82%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:11:15
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 23770980
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 103209780
+	Voluntary context switches: 175073
+	Involuntary context switches: 27675
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 116792
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,2 @@
+# Preserve the exact validated bytes used by SHA provenance, including line endings.
+* -text

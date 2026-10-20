@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "scope": "single image0; corrected native bootstrap; compiled model DSL",
+  "evalmod_log_scale": 60,
+  "bootstrap_ratio": 128,
+  "model_unchanged": true,
+  "original_gates_unchanged": true,
+  "prediction": 65,
+  "label": 65,
+  "max_logit_error": 0.008928450882893735,
+  "rms_logit_error": 0.002623180777834832,
+  "baseline_max_error": 0.178400884020407,
+  "max_error_improvement": 19.981168778361113,
+  "max_imaginary": 9.927378136936084e-05,
+  "boot_count": 4705,
+  "online_seconds": 11292.586752818,
+  "plan_sha256": "b2cd4c5a291cf4f8577593e6be4c9df546503e24844f0ce5b3897433ebbdf983"
+}

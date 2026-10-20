@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "original_source_sha256": "30e19b6e31a6d9ff5ddb173f0403ef7fc54b60596917b7a4382a357414c436db",
+  "corrected_source_sha256": "ffbe2ab32e7f5dcad0efb2955ce9d11d827ddde4c54758e3afab85b56e43b625",
+  "only_change": "Read bootstrap_ratio from validated isolated configuration; accuracy checks and execution path unchanged"
+}

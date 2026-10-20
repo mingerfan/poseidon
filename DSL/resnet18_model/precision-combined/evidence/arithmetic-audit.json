@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "logical_model_unchanged": true,
+  "logical_output_sha256": [
+    "8bc3fe21a1c5938fcb260591e92232053cac91c3f099fef416e48f95df64933c"
+  ],
+  "old_operations": {
+    "mod_switch": 4173,
+    "rotate": 38722,
+    "mul_cp": 114739,
+    "rescale": 112501,
+    "add_cc": 134526,
+    "add_cp": 1112,
+    "boot": 2238,
+    "mul_cc": 2484,
+    "relinearize": 2484,
+    "negate": 368
+  },
+  "new_operations": {
+    "mod_switch": 4270,
+    "rotate": 38722,
+    "mul_cp": 119673,
+    "rescale": 114968,
+    "add_cc": 134526,
+    "add_cp": 1112,
+    "boot": 4705,
+    "mul_cc": 2484,
+    "relinearize": 2484,
+    "negate": 368
+  },
+  "ignored": "Native identity refresh, modulus/rescale/relinearize and multiply by literal all-ones; original GPU error gates remain mandatory"
+}
