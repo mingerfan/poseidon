@@ -1086,11 +1086,19 @@ void GpuCkksRuntime::initialize_bootstrap()
         CosDiscrete,
         working_scale,
         /*level_start=*/0,
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+        log_message_ratio + 4,
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
         log_message_ratio,
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
         impl_->config.double_angle,
         impl_->config.boundary_k,
         /*arcsine_degree=*/0,
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+        61);
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
         impl_->config.evalmod_degree);
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     const double c2s_scaling =
         eval_mod_poly.q_div() /
         (eval_mod_poly.k() * eval_mod_poly.sc_fac() * eval_mod_poly.q_diff());
@@ -1146,7 +1154,11 @@ void GpuCkksRuntime::initialize_bootstrap()
         /*fuse_leaf_terms_before_rescale=*/true,
         c2s_output_scale,
         /*metadata_only=*/true);
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+    if (native_evalmod.output_q_count < 31)
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     if (native_evalmod.output_q_count != 31)
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     {
         throw std::runtime_error(
             "S2C-first bootstrap requires a Q31 native EvalMod output");
@@ -1156,11 +1168,46 @@ void GpuCkksRuntime::initialize_bootstrap()
     const double application_scale = std::exp2(
         static_cast<double>(impl_->config.application_log_scale));
     const double alpha = application_scale / native_output_scale;
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+    if (!(alpha > 0.0) || !std::isfinite(alpha))
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     if (!(alpha > 0.0 && alpha < 1.0))
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     {
         throw std::runtime_error("S2C-first output-scale fold is invalid");
     }
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+    auto slot_to_coeff = make_dynamic_dft_group(
+        impl_->context,
+        impl_->encoder,
+        decode,
+        /*level_start=*/5,
+        /*scaling=*/1.0 / 16.0,
+        /*input_scale=*/application_scale,
+        /*minimum_scale=*/std::exp2(45.0),
+        1.0);
+
+    // Account for the actual integer preparation gain. Scaling the S2C
+    // values down by 16 reduces sine curvature; restore the amplitude in
+    // coefficients rather than amplifying a tiny rounded EvalMod result.
+    const double s2c_scale = planned_dft_output_scale(
+        impl_->context, application_scale, slot_to_coeff);
+    const double preparation_multiplier = std::round(preparation_target / s2c_scale);
+    if (!(preparation_multiplier >= 1.0) || !std::isfinite(preparation_multiplier))
+        throw std::runtime_error("invalid planned preparation multiplier");
+    const double preparation_correction = preparation_target /
+        (s2c_scale * preparation_multiplier);
+    const double folded_amplitude = alpha * 16.0 * preparation_correction;
+    const double seed = std::pow(folded_amplitude, 0.25);
+    std::cout << "NATIVE50_PRECISION_PROFILE approximation_degree=61 approximation_ratio=512"
+              << " input_attenuation=16 root_level_offset=0 final_extra_rescale=1 working_logscale=55 Q=57 P=29"
+              << " physical_output_logscale=" << std::log2(native_output_scale)
+              << " alpha=" << alpha << " preparation_correction=" << preparation_correction
+              << " application_output_q=31 application_output_logscale=40" << std::endl;
+
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     const double seed = std::pow(alpha, 0.25);
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     const double da_base = eval_mod_poly.sqrt_2pi() * seed;
     auto folded_coefficients = eval_mod_poly.sine_poly();
     for (auto &coefficient : folded_coefficients.data())
@@ -1183,6 +1230,8 @@ void GpuCkksRuntime::initialize_bootstrap()
         /*fuse_leaf_terms_before_rescale=*/true,
         c2s_output_scale,
         /*metadata_only=*/false);
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
 
     auto slot_to_coeff = make_dynamic_dft_group(
         impl_->context,
@@ -1193,6 +1242,7 @@ void GpuCkksRuntime::initialize_bootstrap()
         /*input_scale=*/application_scale,
         /*minimum_scale=*/working_scale,
         1.0);
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
 
     auto host_galois_keys = make_bootstrap_galois_keys(
         impl_->context, impl_->keygen, coeff_to_slot, slot_to_coeff);
@@ -1371,6 +1421,16 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::bootstrap(
     DeviceCiphertext folded;
     impl_->gpu_evaluator.add(half, conjugated, folded);
     folded.meta.scale *= impl_->s2c_first_alpha;
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+    // Remove only surplus modulus limbs; do not rescale or change decoded values.
+    if (folded.meta.q_count > 31) {
+        DeviceCiphertext application_output;
+        impl_->gpu_evaluator.drop_modulus(folded, application_output,
+            impl_->context.crt_context()->parms_id_map().at(30));
+        folded = std::move(application_output);
+    }
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     if (folded.meta.q_count != 31 ||
         std::abs(std::log2(folded.meta.scale) - 40.0) > 1.0e-9)
     {

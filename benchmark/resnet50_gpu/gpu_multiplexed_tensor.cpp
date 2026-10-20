@@ -1,4 +1,5 @@
 #include "gpu_multiplexed_tensor.h"
+#include "gpu_relu.h"
 
 #include <cmath>
 #include <cstdint>
@@ -1041,6 +1042,127 @@ GpuMultiplexedTensor average_pool2d_stride2(const GpuMultiplexedTensor &input,
     }
     return output;
 }
+
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+static GpuMultiplexedTensor gather_maxpool_patch(const GpuMultiplexedTensor &input, int patch_h, int patch_w,
+                                            const GpuCkksRuntime &runtime)
+{
+    input.validate();
+    if (input.h % 2 != 0 || input.w % 2 != 0)
+    {
+        throw std::invalid_argument(
+            "stride-2 average pool requires even spatial dimensions");
+    }
+    auto output =
+        make_shape(input.h / 2, input.w / 2, input.c, input.k * 2, input.slot_count);
+    if (output.page_size != input.page_size)
+    {
+        throw std::logic_error(
+            "stride-2 average pool must preserve multiplexed page size");
+    }
+
+    for (std::size_t output_pack = 0; output_pack < output.packs.size(); ++output_pack)
+    {
+        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> sum;
+        for (const int channel : channels_for_pack(output, output_pack))
+        {
+            const std::size_t input_pack = input.pack_index(channel);
+            for (int kh = patch_h; kh < patch_h + 1; ++kh)
+            {
+                for (int kw = patch_w; kw < patch_w + 1; ++kw)
+                {
+                    std::vector<double> mask(output.slot_count, 0.0);
+                    bool populated = false;
+                    long long rotation_step = 0;
+                    bool has_rotation = false;
+                    for (int oh = 0; oh < output.h; ++oh)
+                    {
+                        for (int ow = 0; ow < output.w; ++ow)
+                        {
+                            const int ih = oh * 2 + kh - 1;
+                            const int iw = ow * 2 + kw - 1;
+                            if (ih < 0 || ih >= input.h || iw < 0 || iw >= input.w)
+                            {
+                                continue;
+                            }
+                            const auto target = output.slot_index(channel, oh, ow);
+                            const auto source = input.slot_index(channel, ih, iw);
+                            mask[target] = 1.0;
+                            if (!has_rotation)
+                            {
+                                rotation_step = static_cast<long long>(source) -
+                                                static_cast<long long>(target);
+                                has_rotation = true;
+                            }
+                            populated = true;
+                        }
+                    }
+                    if (!populated)
+                    {
+                        continue;
+                    }
+                    const auto *source = &input.packs[input_pack];
+                    std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> rotated;
+                    if (rotation_step != 0)
+                    {
+                        rotated = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                            runtime.rotate_composed(*source, rotation_step));
+                        source = rotated.get();
+                    }
+                    auto term = runtime.multiply_plain_rescale(*source, mask);
+                    if (sum)
+                    {
+                        *sum = runtime.add(*sum, term);
+                    }
+                    else
+                    {
+                        sum = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                            std::move(term));
+                    }
+                }
+            }
+        }
+        if (!sum)
+        {
+            throw std::runtime_error("GPU average pool produced an empty output pack");
+        }
+        output.packs[output_pack] = std::move(*sum);
+    }
+    return output;
+}
+
+GpuMultiplexedTensor polynomial_max_pool2d_stride2(const GpuMultiplexedTensor &input,
+                                                const GpuCkksRuntime &runtime)
+{
+    // The center is valid everywhere. Invalid border candidates are excluded,
+    // matching maxpool's negative-infinity padding even for negative inputs.
+    auto output=gather_maxpool_patch(input,1,1,runtime);
+    for(int patch=0;patch<9;++patch){
+        if(patch==4)continue;
+        auto other=gather_maxpool_patch(input,patch/3,patch%3,runtime);
+        for(std::size_t pack=0;pack<output.packs.size();++pack){
+            std::vector<double> valid(output.slot_count,0.0);
+            for(int channel:channels_for_pack(output,pack))
+                for(int row=0;row<output.h;++row)for(int col=0;col<output.w;++col){
+                    int r=2*row+patch/3-1,c=2*col+patch%3-1;
+                    if(r>=0&&r<input.h&&c>=0&&c<input.w)
+                        valid[output.slot_index(channel,row,col)]=1.0;
+                }
+            auto difference=runtime.sub_aligned(other.packs[pack],output.packs[pack]);
+            auto low=runtime.drop_to_q_count(difference,6);
+            auto refreshed=runtime.bootstrap(low);
+            auto positive=polynomial_relu_maxpool(refreshed,runtime);
+            auto increment=runtime.multiply_plain_rescale(positive,valid);
+            output.packs[pack]=runtime.add_aligned(output.packs[pack],increment);
+            std::cout<<"[GPU ResNet50] stem.maxpool.compare"<<patch<<" bootstrap pack "
+                     <<pack+1<<'/'<<output.packs.size()<<" q="<<output.packs[pack].meta.q_count
+                     <<" log2_scale="<<std::log2(output.packs[pack].meta.scale)<<'\n';
+        }
+    }
+    return output;
+}
+
+#endif
 
 GpuMultiplexedTensor downsample_shortcut(const GpuMultiplexedTensor &input,
                                          const GpuCkksRuntime &runtime)

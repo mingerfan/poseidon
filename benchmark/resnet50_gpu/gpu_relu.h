@@ -26,4 +26,10 @@ double polynomial_relu_reference(
     double input,
     const GpuReluConfig &config = {});
 
+
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+GpuCkksRuntime::DeviceCiphertext polynomial_relu_maxpool(const GpuCkksRuntime::DeviceCiphertext &,const GpuCkksRuntime &);
+double polynomial_relu_maxpool_reference(double);
+#endif
+
 }  // namespace poseidon::benchmark::resnet50_gpu

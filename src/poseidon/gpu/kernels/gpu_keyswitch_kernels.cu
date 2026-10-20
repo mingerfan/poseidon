@@ -156,6 +156,37 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_contribution(
         q_modulus);
 }
 
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+
+// Center the CRT representative before dividing by P, matching BaseConverter::exact_convert_array.
+// This isolated experiment uses only the native ResNet50 P25 generic conversion path.
+template <bool SourcePreweighted>
+__device__ __forceinline__ void center_p_to_q(
+    GpuWord &sum0, GpuWord &sum1,
+    const GpuWord *p0, const GpuWord *p1,
+    const GpuWord *primes, const GpuWide *ratios,
+    const GpuWord *matrix, const GpuWord *inverse,
+    std::size_t nq, std::size_t np, std::size_t qi,
+    std::size_t coeff, std::size_t degree, GpuWord q, GpuWide ratio)
+{
+    double v0=0.0,v1=0.0;
+    for (std::size_t j=0;j<np;++j) {
+        const GpuWord pj=primes[nq+j];
+        GpuWord a=p0[j*degree+coeff],b=p1[j*degree+coeff];
+        if constexpr (!SourcePreweighted) {
+            a=mul_mod(a,inverse[j],pj,ratios[nq+j]);
+            b=mul_mod(b,inverse[j],pj,ratios[nq+j]);
+        }
+        v0+=__ddiv_rn(static_cast<double>(a),static_cast<double>(pj));
+        v1+=__ddiv_rn(static_cast<double>(b),static_cast<double>(pj));
+    }
+    const GpuWord product=mul_mod(matrix[qi*np],primes[nq],q,ratio);
+    sum0=sub_mod(sum0,mul_mod(static_cast<GpuWord>(v0+0.5),product,q,ratio),q);
+    sum1=sub_mod(sum1,mul_mod(static_cast<GpuWord>(v1+0.5),product,q,ratio),q);
+}
+
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
 template <bool SourcePreweighted>
 __device__ __forceinline__ void hybrid_convert_p_to_q_pair_contribution(
     GpuWord &left0,
@@ -305,6 +336,15 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_pair(
                 q_barrett);
         }
     }
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+    center_p_to_q<SourcePreweighted>(left0,left1,accum_p0,accum_p1,
+        rns_primes,rns_modulus_constants,moddown_p_to_q_matrix,p_inv_punctured,
+        base_q_size,base_p_size,q_limb,left_coeff,degree,q_modulus,q_barrett);
+    center_p_to_q<SourcePreweighted>(right0,right1,accum_p0,accum_p1,
+        rns_primes,rns_modulus_constants,moddown_p_to_q_matrix,p_inv_punctured,
+        base_q_size,base_p_size,q_limb,right_coeff,degree,q_modulus,q_barrett);
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
 }
 
 __global__ void apply_galois_ntt_poly_shard_kernel(
@@ -2449,6 +2489,12 @@ __global__ void hybrid_convert_p_to_q_two_components_kernel(
             q_barrett);
     }
 
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+    center_p_to_q<false>(sum0,sum1,accum_p0,accum_p1,
+        rns_primes,rns_modulus_constants,moddown_p_to_q_matrix,p_inv_punctured,
+        base_q_size,base_p_size,q_limb,coeff,degree,q_modulus,q_barrett);
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
     converted_q0[tid] = sum0;
     converted_q1[tid] = sum1;
 }

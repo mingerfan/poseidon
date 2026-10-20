@@ -254,7 +254,8 @@ void run_bootstrap_smoke(
     std::cout << "Initializing reusable GPU bootstrap data..." << std::endl;
     runtime.initialize_bootstrap();
     std::cout << "Executing full GPU bootstrap..." << std::endl;
-    auto refreshed = runtime.bootstrap(encrypted);
+    auto application_input = runtime.drop_to_q_count(encrypted, 6);
+    auto refreshed = runtime.bootstrap(application_input);
     const auto decoded = runtime.decrypt(refreshed);
     double max_error = 0.0;
     for (std::size_t index = 0; index < input.size(); ++index)

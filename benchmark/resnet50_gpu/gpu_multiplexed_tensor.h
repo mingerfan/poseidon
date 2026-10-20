@@ -63,6 +63,10 @@ GpuMultiplexedTensor residual_add(const GpuMultiplexedTensor &left,
 GpuMultiplexedTensor average_pool2d_stride2(const GpuMultiplexedTensor &input,
                                             const GpuCkksRuntime &runtime);
 
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+GpuMultiplexedTensor polynomial_max_pool2d_stride2(const GpuMultiplexedTensor &, const GpuCkksRuntime &);
+#endif
+
 // CIFAR ResNet Option-A shortcut: selects the even spatial coordinates and
 // doubles the channel count by padding equally with zero channels.
 GpuMultiplexedTensor downsample_shortcut(const GpuMultiplexedTensor &input,

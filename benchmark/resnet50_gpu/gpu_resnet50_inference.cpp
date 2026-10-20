@@ -336,41 +336,20 @@ std::vector<double> plain_stem_reference(
     return output;
 }
 
-std::vector<double> plain_stem_relu_pool(std::vector<double> stem)
+std::vector<double> plain_stem_relu_pool(std::vector<double> stem, bool exact_maxpool = false)
 {
-    constexpr int input_h = kImageHeight / 2;
-    constexpr int input_w = kImageWidth / 2;
-    constexpr int output_h = input_h / 2;
-    constexpr int output_w = input_w / 2;
-    for (double &value : stem)
-    {
-        value = polynomial_relu_reference(value);
-    }
-    std::vector<double> output(static_cast<std::size_t>(64 * output_h * output_w));
-    for (int channel = 0; channel < 64; ++channel)
-    {
-        for (int oh = 0; oh < output_h; ++oh)
-        {
-            for (int ow = 0; ow < output_w; ++ow)
-            {
-                double sum = 0.0;
-                for (int kh = 0; kh < 3; ++kh)
-                {
-                    for (int kw = 0; kw < 3; ++kw)
-                    {
-                        const int ih = oh * 2 + kh - 1;
-                        const int iw = ow * 2 + kw - 1;
-                        if (ih >= 0 && ih < input_h && iw >= 0 && iw < input_w)
-                        {
-                            sum += stem[(static_cast<std::size_t>(channel) * input_h + ih) *
-                                        input_w + iw];
-                        }
-                    }
-                }
-                output[(static_cast<std::size_t>(channel) * output_h + oh) * output_w + ow] =
-                    sum / 9.0;
-            }
+    for(double &v:stem)v=polynomial_relu_reference(v);
+    std::vector<double> output(64*56*56);
+    for(int channel=0;channel<64;++channel)for(int row=0;row<56;++row)for(int col=0;col<56;++col){
+        double current=stem[(channel*112+2*row)*112+2*col];
+        for(int patch=0;patch<9;++patch){
+            if(patch==4)continue;
+            int r=2*row+patch/3-1,c=2*col+patch%3-1;
+            if(r<0||r>=112||c<0||c>=112)continue;
+            double next=stem[(channel*112+r)*112+c];
+            current=exact_maxpool?std::max(current,next):current+polynomial_relu_maxpool_reference(next-current);
         }
+        output[(channel*56+row)*56+col]=current;
     }
     return output;
 }
@@ -634,21 +613,24 @@ GpuResNet50Result run_gpu_resnet50_impl(
     }
     tensor = stage_timer.run(
         "stem.relu", [&]() { return relu_tensor(tensor, runtime); });
-    tensor = stage_timer.run("stem.avgpool", [&]() {
-        return average_pool2d_stride2(tensor, runtime);
+    tensor = stage_timer.run("stem.maxpool", [&]() {
+        return polynomial_max_pool2d_stride2(tensor, runtime);
     });
     if (measure_staged_gpu_only)
     {
         runtime.clear_ciphertext_cache();
     }
-    log_tensor_state("stem.avgpool", tensor);
+    log_tensor_state("stem.maxpool", tensor);
     if (validate_intermediates)
     {
+        const auto exact_pool_reference = plain_stem_relu_pool(plain_stem, true);
         auto pooled_reference = plain_stem_relu_pool(std::move(plain_stem));
         plain_tensor = PlainTensor{56, 56, 64, std::move(pooled_reference)};
         verify_values(
-            "stem.relu_avgpool", plain_tensor->values,
+            "stem.relu_maxpool", plain_tensor->values,
             decrypt_multiplexed_chw(tensor, runtime), 2.0e-3);
+        verify_values("stem.relu_exact_maxpool", exact_pool_reference,
+            decrypt_multiplexed_chw(tensor, runtime), 2.0e-4);
     }
 
     for (std::size_t block_index = 0; block_index < max_blocks; ++block_index)
@@ -678,9 +660,32 @@ GpuResNet50Result run_gpu_resnet50_impl(
         });
         if (plain_branch)
         {
-            verify_values(
-                prefix + ".conv1_bn1", plain_branch->values,
-                decrypt_multiplexed_chw(branch, runtime), 2.0e-3);
+            // Offline observer only: never feed decrypted values to the encrypted graph.
+            const PlainTensor local_input{tensor.h, tensor.w, tensor.c,
+                decrypt_multiplexed_chw(tensor, runtime)};
+            const auto local_affine = folded_batch_norm(
+                weights.bn_bias[bn_index], weights.bn_running_mean[bn_index],
+                weights.bn_running_var[bn_index], weights.bn_weight[bn_index]);
+            const auto local_reference = plain_conv_bn(local_input, spec.bottleneck_channels,
+                1, 1, weights.conv_weight[conv_index], local_affine);
+            const auto actual = decrypt_multiplexed_chw(branch, runtime);
+            const auto max_error = [](const auto &a, const auto &b) {
+                if (a.size()!=b.size()) throw std::runtime_error("local diagnostic shape mismatch");
+                double maximum=0;
+                for (std::size_t i=0;i<a.size();++i) maximum=std::max(maximum,std::abs(a[i]-b[i]));
+                return maximum;
+            };
+            const double local_error=max_error(local_reference.values,actual);
+            const double propagated=max_error(local_reference.values,plain_branch->values);
+            const double total=max_error(plain_branch->values,actual);
+            std::cout << "NATIVE50_LOCAL_CONV stage=" << prefix << ".conv1_bn1"
+                      << " input_error=" << max_error(local_input.values,plain_tensor->values)
+                      << " local_operator_error=" << local_error
+                      << " propagated_input_error=" << propagated << " total_error=" << total
+                      << " q=" << branch.packs.front().meta.q_count
+                      << " log_scale=" << std::log2(branch.packs.front().meta.scale)
+                      << " observer_only=true" << std::endl;
+            verify_values(prefix + ".conv1_bn1", plain_branch->values, actual, 2.0e-3);
         }
         ++conv_index;
         ++bn_index;
@@ -905,16 +910,8 @@ GpuResNet50Result run_gpu_resnet50(
     std::size_t max_blocks)
 {
     GpuCkksRuntime runtime(config);
-    if (max_blocks == 0)
-    {
-        std::cout << "[GPU ResNet50] generating inference evaluation keys\n";
-        runtime.initialize_resnet50_evaluation_keys();
-    }
-    else
-    {
-        std::cout << "[GPU ResNet50] initializing shared inference/bootstrap keys\n";
-        runtime.initialize_bootstrap();
-    }
+    // The standard maxpool stem also needs comparison bootstrap keys.
+    runtime.initialize_bootstrap();
     return run_gpu_resnet50_impl(
         image_id, topology, weights, max_blocks, runtime,
         /*enable_validation=*/true, /*measure_gpu_only=*/false,
@@ -933,14 +930,8 @@ GpuResNet50Result run_gpu_resnet50_preloaded(
         throw std::invalid_argument("ResNet50 preloaded max_blocks exceeds topology");
     }
     GpuCkksRuntime runtime(config);
-    if (max_blocks == 0)
-    {
-        runtime.initialize_resnet50_evaluation_keys();
-    }
-    else
-    {
-        runtime.initialize_bootstrap();
-    }
+    // The standard maxpool stem also needs comparison bootstrap keys.
+    runtime.initialize_bootstrap();
     runtime.enable_full_device_cache();
     std::cout << "[GPU ResNet50] preparing device-resident input/model cache\n";
     const auto prepared_result = run_gpu_resnet50_impl(
@@ -986,14 +977,8 @@ GpuResNet50Result run_gpu_resnet50_staged_gpu_only(
         throw std::invalid_argument("ResNet50 staged max_blocks exceeds topology");
     }
     GpuCkksRuntime runtime(config);
-    if (max_blocks == 0)
-    {
-        runtime.initialize_resnet50_evaluation_keys();
-    }
-    else
-    {
-        runtime.initialize_bootstrap();
-    }
+    // The standard maxpool stem also needs comparison bootstrap keys.
+    runtime.initialize_bootstrap();
     runtime.enable_full_device_cache();
     std::cout << "[GPU ResNet50] starting layer-wise prepare/replay timing\n";
     std::unique_ptr<poseidon::benchmark::s2c_first::GpuActivityTiming> activity;

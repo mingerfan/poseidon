@@ -489,4 +489,48 @@ double polynomial_relu_reference(double input, const GpuReluConfig &)
     return static_cast<double>(input * (value + 0.5L));
 }
 
+
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+// Pool-specific refinement. The original neural ReLU above is unchanged.
+GpuCkksRuntime::DeviceCiphertext polynomial_relu_maxpool(
+    const GpuCkksRuntime::DeviceCiphertext &input,const GpuCkksRuntime &runtime)
+{
+    if(input.meta.q_count!=31||std::abs(std::log2(input.meta.scale)-40)>1e-8)
+        throw std::invalid_argument("maxpool comparator requires Q31/scale40");
+    auto current=runtime.drop_to_q_count(input,31);
+    for(const auto &stage:fixture().stages)current=evaluate_stage(runtime,stage,std::move(current));
+    // Sign stages finish above scale40. Normalize with a real plaintext
+    // product and the fixture's physical rescale span, never metadata relabeling.
+    long double modulus_product=1.0L;
+    for(int index=0;index<fixture().tail_drop;++index){
+        auto level=runtime.drop_to_q_count(current,current.meta.q_count-index);
+        modulus_product*=runtime.last_modulus_value(level);
+    }
+    const double normalization_scale=static_cast<double>(std::exp2(40.0L)*modulus_product/current.meta.scale);
+    if(normalization_scale<std::exp2(39.0))throw std::runtime_error("maxpool sign normalization lacks plaintext precision");
+    auto normalized=runtime.multiply_plain_scalar(current,1.0,normalization_scale);
+    current=runtime.rescale(normalized,fixture().tail_drop);
+    if(std::abs(std::log2(current.meta.scale)-40.0)>1e-8)throw std::runtime_error("maxpool sign normalization scale mismatch");
+    current=runtime.bootstrap(runtime.drop_to_q_count(current,6));
+    std::cout<<"[GPU ResNet50] stem.maxpool.sign_refresh bootstrap call"<<std::endl;
+    for(int step=0;step<4;++step){
+        auto square=runtime.square_relinearize_rescale(current);
+        auto cube=runtime.multiply_relinearize_rescale(square,current);
+        auto cubic=runtime.multiply_plain_scalar_rescale(cube,-2.0);
+        auto linear=runtime.multiply_plain_scalar_rescale(current,1.5);
+        current=runtime.add_aligned(linear,cubic);
+    }
+    auto shifted=runtime.add_plain_scalar(current,0.5);
+    return runtime.multiply_relinearize_rescale(input,shifted);
+}
+double polynomial_relu_maxpool_reference(double input)
+{
+    if(std::abs(input)>1.0)throw std::runtime_error("maxpool comparison outside normalized domain");
+    long double value=input;
+    for(const auto &stage:fixture().stages)value=evaluate_plain_node(*stage.tree,value);
+    for(int step=0;step<4;++step)value=1.5L*value-2.0L*value*value*value;
+    return static_cast<double>(input*(value+0.5L));
+}
+#endif
+
 }  // namespace poseidon::benchmark::resnet50_gpu

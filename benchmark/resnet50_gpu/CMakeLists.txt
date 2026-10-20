@@ -68,6 +68,7 @@ set(POSEIDON_GPU_SOURCES
 
 add_executable(poseidon_gpu_resnet50
     main.cpp
+    native50_centered_moddown.cpp
     gpu_ckks_runtime.cpp
     gpu_multiplexed_tensor.cpp
     gpu_resnet50_inference.cpp
@@ -101,6 +102,7 @@ target_compile_options(poseidon_gpu_resnet50 PRIVATE
     $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
 target_link_options(poseidon_gpu_resnet50 PRIVATE -Wl,--gc-sections)
 target_compile_definitions(poseidon_gpu_resnet50 PRIVATE
+    POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP=1
     FMT_HEADER_ONLY=1
     SPDLOG_FMT_EXTERNAL
     LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE

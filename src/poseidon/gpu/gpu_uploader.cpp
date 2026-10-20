@@ -2226,9 +2226,19 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         const double pre_rescale_scale =
             double_angle_input_scale * double_angle_input_scale;
         require_valid_scale(pre_rescale_scale, "double-angle pre-rescale scale");
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+        // Spend one final physical prime on actual rescaling, using the
+        // level recovered by the real polynomial root schedule above.
+        const std::uint32_t double_angle_rescale_count = (dynamic_rescale
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
         const std::uint32_t double_angle_rescale_count = dynamic_rescale
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
             ? choose_dynamic_rescale(output_q_count, pre_rescale_scale)
+#if defined(POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP)
+            : logical_rescale_count) + (i + 1 == double_angle_count ? 1 : 0);
+#else // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
             : logical_rescale_count;
+#endif // POSEIDON_GPU_NATIVE50_PRECISION_BOOTSTRAP
         if (output_q_count <= double_angle_rescale_count)
         {
             throw std::invalid_argument(
