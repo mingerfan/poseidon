@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-20",
+  "scope": "Static public configuration and schema; no full-width computation, compilation or CKKS executed",
+  "source_sha256": {
+    "source/model/package/config/weight_schema.json": "eaecef66e973b66bb65adc21598c7145730c0681f2bdb9f0fdc37ec561deb79a",
+    "source/model/package/config/compiler-config.json": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110",
+    "source/model/package/config/operator-spec.json": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b",
+    "evidence/validation.json": "a8172e0aacd3eaeb8af280a33601b4987b245e3b16b94541ecf233dcb45397ea",
+    "evidence/parent_071/slot-layout-audit.json": "b444dc2e815c881d379c9b126a6f3c95dccf87c31b0f2bbf31f9884895bc7ab9",
+    "evidence/parent_071/FINAL_ANALYSIS.md": "91fb833060c559ba8b67232e4d488564ccbf6ae8e90f9db513371334ce5f6846",
+    "interfaces/decode_pair.json": "827fa656fb8fa54a067efef2f50f6f09148738721112a6014dd3837293084c36",
+    "interfaces/decode_second_token.json": "5c64e1b5754ee470e9f733819780b10a1ba469792eaa298f07a3d8786910eea4",
+    "interfaces/prefill_1token.json": "68a7483b7512967f8705ae53f4e848fd06d4cbd931f6e2af504e51bc1e0e3223",
+    "interfaces/prefill_2token.json": "e0009f78a538dfb400ece8c287449aeee09794fe754efcf649c36a0df25259a3"
+  },
+  "weights": {
+    "named_tensors": 291,
+    "per_block_elements": 14912384,
+    "per_block_breakdown": {
+      "model_list.0.pre_Normal.weight": 896,
+      "model_list.0.post_Normal.weight": 896,
+      "model_list.0.attention.q_weight.weight": 802816,
+      "model_list.0.attention.q_weight.bias": 896,
+      "model_list.0.attention.k_weight.weight": 114688,
+      "model_list.0.attention.k_weight.bias": 128,
+      "model_list.0.attention.v_weight.weight": 114688,
+      "model_list.0.attention.v_weight.bias": 128,
+      "model_list.0.attention.o_weight.weight": 802816,
+      "model_list.0.mlplayer.gate_proj.weight": 4358144,
+      "model_list.0.mlplayer.up_proj.weight": 4358144,
+      "model_list.0.mlplayer.down_proj.weight": 4358144
+    },
+    "all_24_blocks_elements": 357897216,
+    "separately_stored_embedding_elements": 136134656,
+    "separately_stored_lm_head_elements": 136134656,
+    "final_rms_elements": 896,
+    "stored_elements": 630167424,
+    "hypothetical_tied_elements": 494032768,
+    "raw_fp32_bytes": 2520669696,
+    "hypothetical_tied_fp16_bytes": 988065536,
+    "note": "Current fixture stores embedding/head separately; tied count is an assumption, not a verified weight conversion."
+  },
+  "interfaces": {
+    "decode_pair": {
+      "inputs": 2,
+      "outputs": 29,
+      "useful_output_values": 164224
+    },
+    "decode_second_token": {
+      "inputs": 25,
+      "outputs": 29,
+      "useful_output_values": 164224
+    },
+    "prefill_1token": {
+      "inputs": 1,
+      "outputs": 29,
+      "useful_output_values": 158080
+    },
+    "prefill_2token": {
+      "inputs": 2,
+      "outputs": 29,
+      "useful_output_values": 164224
+    }
+  },
+  "arithmetic": {
+    "single_block_linear_mac": 14909440,
+    "pair_linear_mac_before_dce": 851787776,
+    "excludes": [
+      "QK/AV",
+      "nonlinear",
+      "RoPE",
+      "reductions",
+      "packing",
+      "CKKS operations"
+    ],
+    "actual_compiled_ops": null
+  },
+  "coefficient_capacity": [
+    {
+      "level": 1,
+      "plaintext_bytes": 1048576,
+      "two_component_ciphertext_bytes": 2097152,
+      "hypothetical_29_equal_level_outputs_bytes": 60817408
+    },
+    {
+      "level": 2,
+      "plaintext_bytes": 1572864,
+      "two_component_ciphertext_bytes": 3145728,
+      "hypothetical_29_equal_level_outputs_bytes": 91226112
+    },
+    {
+      "level": 3,
+      "plaintext_bytes": 2097152,
+      "two_component_ciphertext_bytes": 4194304,
+      "hypothetical_29_equal_level_outputs_bytes": 121634816
+    },
+    {
+      "level": 4,
+      "plaintext_bytes": 2621440,
+      "two_component_ciphertext_bytes": 5242880,
+      "hypothetical_29_equal_level_outputs_bytes": 152043520
+    },
+    {
+      "level": 5,
+      "plaintext_bytes": 3145728,
+      "two_component_ciphertext_bytes": 6291456,
+      "hypothetical_29_equal_level_outputs_bytes": 182452224
+    },
+    {
+      "level": 6,
+      "plaintext_bytes": 3670016,
+      "two_component_ciphertext_bytes": 7340032,
+      "hypothetical_29_equal_level_outputs_bytes": 212860928
+    },
+    {
+      "level": 7,
+      "plaintext_bytes": 4194304,
+      "two_component_ciphertext_bytes": 8388608,
+      "hypothetical_29_equal_level_outputs_bytes": 243269632
+    },
+    {
+      "level": 8,
+      "plaintext_bytes": 4718592,
+      "two_component_ciphertext_bytes": 9437184,
+      "hypothetical_29_equal_level_outputs_bytes": 273678336
+    }
+  ],
+  "level_contract": {
+    "application_lower": 1,
+    "application_upper": 8,
+    "boot_input": 1,
+    "boot_output": 5,
+    "scale_log2": 43,
+    "spec_status": "placeholder",
+    "actual_distribution": null
+  },
+  "actual_24layer_results": {
+    "native_compiled": false,
+    "full_width_arithmetic": false,
+    "ckks": false,
+    "gpu": false,
+    "boot_count": null,
+    "runtime_seconds": null,
+    "peak_rss_bytes": null,
+    "peak_vram_bytes": null,
+    "all_retained_ct_bytes": null,
+    "all_retained_pt_bytes": null
+  },
+  "validation_reference": "evidence/validation.json"
+}
