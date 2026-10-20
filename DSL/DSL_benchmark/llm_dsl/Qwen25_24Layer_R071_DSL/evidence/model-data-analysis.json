@@ -1,6 +1,6 @@
 {
   "date": "2026-10-20",
-  "scope": "Static public configuration and schema; no full-width computation, compilation or CKKS executed",
+  "scope": "Public configuration/schema plus actual full-width24-layer CPU compiler/Mock evidence; no CKKS or GPU",
   "source_sha256": {
     "source/model/package/config/weight_schema.json": "eaecef66e973b66bb65adc21598c7145730c0681f2bdb9f0fdc37ec561deb79a",
     "source/model/package/config/compiler-config.json": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110",
@@ -8,7 +8,7 @@
     "evidence/validation.json": "a8172e0aacd3eaeb8af280a33601b4987b245e3b16b94541ecf233dcb45397ea",
     "evidence/parent_071/slot-layout-audit.json": "b444dc2e815c881d379c9b126a6f3c95dccf87c31b0f2bbf31f9884895bc7ab9",
     "evidence/parent_071/FINAL_ANALYSIS.md": "91fb833060c559ba8b67232e4d488564ccbf6ae8e90f9db513371334ce5f6846",
-    "interfaces/decode_pair.json": "827fa656fb8fa54a067efef2f50f6f09148738721112a6014dd3837293084c36",
+    "interfaces/decode_pair.json": "a87cea91e93315cfa3487b7f3cbe53c59a3ea787abe61078203d8fee09e144e3",
     "interfaces/decode_second_token.json": "5c64e1b5754ee470e9f733819780b10a1ba469792eaa298f07a3d8786910eea4",
     "interfaces/prefill_1token.json": "68a7483b7512967f8705ae53f4e848fd06d4cbd931f6e2af504e51bc1e0e3223",
     "interfaces/prefill_2token.json": "e0009f78a538dfb400ece8c287449aeee09794fe754efcf649c36a0df25259a3"
@@ -73,7 +73,20 @@
       "packing",
       "CKKS operations"
     ],
-    "actual_compiled_ops": null
+    "actual_compiled_ops": {
+      "mod_switch": 2879,
+      "encode": 28937,
+      "mul_cp": 73365,
+      "release": 991921,
+      "rescale": 75087,
+      "mul_cc": 1722,
+      "relinearize": 1722,
+      "rotate": 399454,
+      "add_cc": 405218,
+      "add_cp": 1146,
+      "boot": 2370,
+      "negate": 48
+    }
   },
   "coefficient_capacity": [
     {
@@ -132,19 +145,130 @@
     "boot_output": 5,
     "scale_log2": 43,
     "spec_status": "placeholder",
-    "actual_distribution": null
+    "actual_distribution": {
+      "ciphertext:L5:c2": {
+        "count": 5691,
+        "coefficient_bytes": 35804676096
+      },
+      "plaintext:L4:c1": {
+        "count": 18575,
+        "coefficient_bytes": 48693248000
+      },
+      "plaintext:L1:c1": {
+        "count": 296,
+        "coefficient_bytes": 310378496
+      },
+      "plaintext:L2:c1": {
+        "count": 959,
+        "coefficient_bytes": 1508376576
+      },
+      "plaintext:L3:c1": {
+        "count": 6228,
+        "coefficient_bytes": 13061062656
+      },
+      "ciphertext:L4:c2": {
+        "count": 95796,
+        "coefficient_bytes": 502246932480
+      },
+      "ciphertext:L3:c2": {
+        "count": 523738,
+        "coefficient_bytes": 2196716388352
+      },
+      "ciphertext:L3:c3": {
+        "count": 579,
+        "coefficient_bytes": 3642753024
+      },
+      "ciphertext:L2:c2": {
+        "count": 265580,
+        "coefficient_bytes": 835442442240
+      },
+      "ciphertext:L1:c2": {
+        "count": 70486,
+        "coefficient_bytes": 147819855872
+      },
+      "ciphertext:L4:c3": {
+        "count": 329,
+        "coefficient_bytes": 2587361280
+      },
+      "plaintext:L5:c1": {
+        "count": 2879,
+        "coefficient_bytes": 9056550912
+      },
+      "ciphertext:L2:c3": {
+        "count": 746,
+        "coefficient_bytes": 3520069632
+      },
+      "ciphertext:L5:c3": {
+        "count": 68,
+        "coefficient_bytes": 641728512
+      }
+    }
   },
   "actual_24layer_results": {
-    "native_compiled": false,
-    "full_width_arithmetic": false,
+    "native_compiled": true,
+    "full_width_arithmetic": true,
     "ckks": false,
     "gpu": false,
-    "boot_count": null,
+    "boot_count": 2370,
     "runtime_seconds": null,
     "peak_rss_bytes": null,
     "peak_vram_bytes": null,
-    "all_retained_ct_bytes": null,
-    "all_retained_pt_bytes": null
+    "all_retained_ct_bytes": 3728422207488,
+    "all_retained_pt_bytes": 72629616640,
+    "release_peak_graph_coefficient_bytes": 609222656,
+    "note": "runtime_seconds/peak_rss_bytes refer to real CKKS inference and remain unmeasured; compile/Mock timings are separate"
   },
-  "validation_reference": "evidence/validation.json"
+  "validation_reference": "evidence/validation.json",
+  "compiled_evidence": "compiled-analysis.json",
+  "compiled_summary": {
+    "boots": 2370,
+    "totals": {
+      "ciphertext": {
+        "count": 963013,
+        "coefficient_bytes": 3728422207488
+      },
+      "plaintext": {
+        "count": 28937,
+        "coefficient_bytes": 72629616640
+      }
+    },
+    "release_peak_coefficient_bytes": 609222656,
+    "input_levels": [
+      5,
+      5
+    ],
+    "output_levels": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "real_ckks_peak_rss_bytes": null,
+    "gpu_peak_bytes": null
+  }
 }

@@ -2,7 +2,7 @@
 
 本工程从 **071 已上传两层包**扩展而来，保持 `degree10p2_pair13_silu_canonical_fold2` 非线性策略、Linear/LM head、Attention 打包和 CPU 内存优化算法。24 个 Block 使用独立权重和独立 KV，默认两个 token 顺序 decode。
 
-**这是 24 层源码交付版，不是 24 层完整 CKKS 已验证版。** 当前检查包括来源哈希、结构、入口和小尺寸 24 层四条算术路径；没有执行真实宽度 24 层编译或 CKKS/GPU 长测。071 的 154 次自举、2.254 小时及 28.988 GiB 内存均只属于原两层结果，不能套到这里。
+**这是 24 层源码交付版，不是 24 层完整 CKKS 已验证版。** 当前已完成来源哈希、小尺寸 24 层四路径、真实宽度 decode-pair 编译、PlanVerifier、DFS/cache64 分析和完整明文 Mock；没有执行 24 层 CKKS/GPU 长测。071 的 154 次自举、2.254 小时及 28.988 GiB 内存均只属于原两层结果，不能套到这里。
 
 完整数据说明见 [24 层模型数据分析](MODEL_DATA_ANALYSIS.md)：包含权重规模、接口/KV、slot 利用率、level 与自举合约、内存容量公式、历史结果和待测项；可复核数字见 [静态统计 JSON](evidence/model-data-analysis.json)。
 
@@ -28,7 +28,7 @@
 - 所有 `qwen24/kernels` 算术文件、`packed_attention.py`、DFS/明文缓存算法与 071 原字节一致；详见 `source-binding.json`。
 - 将模型检查和入口从 2 层扩展到 24 层；生成 291 个具名权重张量的 schema，24 个 profile 项、24 组独立权重和 KV。原两层 profile 完全相同，因此复制同一数值配置到 24 层；这不等于完成 24 层预训练模型校准。
 - 保留 RMS degree10p2、pair13 Softmax、canonical_fold2 SiLU、原 packed-row Linear 与全槽 LM head。
-- 保留官方 native Boot 编译合约、显式 Release、CPU DFS + 64 MiB Encode 根缓存；实际 24 层自举数量、level 分布和峰值须编译/运行后统计。
+- 保留官方 native Boot 编译合约、显式 Release、CPU DFS + 64 MiB Encode 根缓存；本次实际编译的自举数量、level 分布、全保留容量和图数据峰值见 MODEL_DATA_ANALYSIS.md；真实推理 RSS/显存仍须运行测试。
 - 此版本不采用后续 079/082 的 wide_baby16、078 主动池回收或 080 native_naf 候选。CPU 32 线程来自执行后端设置，不是 DSL 自身保证。
 
 ## 使用方法
@@ -47,7 +47,7 @@ python -B trace_model.py --weights /data/new-qwen24-fixture/weights --output-dir
 python -B compile_model.py --hecate-opt /path/to/hecate-opt --input /path/to/actual-traced.mlir --output-dir /data/new-qwen24-compiled
 ```
 
-`--mode` 支持 `decode-pair`（默认）、`prefill`（2 token）、`prefill-one` 和 `decode`（位置 1，已有位置 0 的缓存）。`--describe` 不导入 Hecate，不执行模型。完整尺寸 fixture 生成约 2.52 GB float32 合成权重，并做独立 dense 明文参考；请在服务器上显式执行，不能把它当作快速检查。NPY 目录或 NPZ 的具名权重格式见 `source/model/package/qwen24/weights.py` 和 `config/weight_schema.json`，不会自动转换 Hugging Face 权重。
+`--mode` 支持 `decode-pair`（默认）、`prefill`（2 token）、`prefill-one` 和 `decode`（位置 1，已有位置 0 的缓存）。`--describe` 不导入 Hecate，不执行模型。完整尺寸 fixture 生成约 2.52 GB float32 合成权重，并做独立 dense 明文参考；本次分析已在服务器执行，新测试仍须使用独立输出目录。NPY 目录或 NPZ 的具名权重格式见 `source/model/package/qwen24/weights.py` 和 `config/weight_schema.json`，不会自动转换 Hugging Face 权重。
 
 ## CPU 计划的内存优化
 
@@ -71,3 +71,7 @@ CPU 合约用真实 native Boot，L1→L5、scale43；需要已接通的 CPU 自
 ## 与已有 24 层包的关系
 
 本目录新增保存，原 `Qwen25_24Layer_DSL` 不覆盖。本版本是 **R071 的对应 24 层迁移**；另一个历史 24 层包的自举计数、测试中止情况和内存数字不作为本版本的结果。
+
+## 已补齐的真实编译数据
+
+默认 24 层、2 token decode-pair 的实际统计见 [MODEL_DATA_ANALYSIS.md](MODEL_DATA_ANALYSIS.md)、[逐 level 与自举明细](COMPILED_LEVEL_DETAILS.md) 和 [JSON](evidence/compiled-analysis.json)。接口中的 native_compiled 仅对这一已验证路径更新。诊断追踪只增加源码位置标签，原始算术内核未变。旧 ZIP 不含新增分析文件，请使用仓库目录。
