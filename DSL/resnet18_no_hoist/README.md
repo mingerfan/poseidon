@@ -1,4 +1,19 @@
-# ResNet18：已验收的 native no-hoist 与 DSL
+# ResNet18 no-hoist 统一交付包
+
+当前已验收的**模型级 Python DSL**、最终配置和验证材料统一放在
+[model_dsl/](model_dsl/README.md)，执行路线为完整 Dacapo → 正常 Runtime → Native NoHoistBsgs。
+4705 次 Bootstrap 的整网加密验证及最终独立审计通过，1000 个输出满足原精度门槛，
+最大误差0.00892845，预测65与标签一致；范围为 image0 单样本。
+
+验证当前模型级交付材料：
+
+```bash
+python3 DSL/resnet18_no_hoist/model_dsl/precision-combined/evidence/verify_release.py
+```
+
+本目录其余文件保留此前 native/HEVM 路线的历史交付与复现材料；以下说明对应该历史版本。
+
+## 历史 native / HEVM DSL
 
 本包使用 `gs/feat-application` 原版 ResNet18 算术与原 ImageNet 权重，把原物理计划显式转换为 CKKS DSL，经过真实 Hecate 编译器生成 HEVM，再调用 Poseidon GPU primitive。原版与 DSL 均 no-hoist；未替换为 ResNet50 修正实验。
 

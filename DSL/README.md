@@ -20,5 +20,4 @@ DSL/
 ## ResNet DSL (hsb)
 
 - [ResNet20](resnet20_no_hoist/README.md)
-- [ResNet18](resnet18_no_hoist/README.md)
-- [ResNet18 模型级 DSL](resnet18_model/README.md)：完整 Dacapo 编译、正常 Runtime 和 Native NoHoistBsgs GPU 整网验证及独立审计通过；范围为 image0 单样本，原精度门槛不变。
+- [ResNet18](resnet18_no_hoist/README.md)：统一交付目录。模型级 DSL 位于包内 `model_dsl/`，完整 Dacapo 编译、正常 Runtime 和 Native NoHoistBsgs GPU 整网验证及独立审计通过；范围为 image0 单样本，原精度门槛不变。
