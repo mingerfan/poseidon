@@ -79,9 +79,10 @@ OPENBLAS_NUM_THREADS=4 /usr/bin/time -v \
 当前 CKKS 数值配置是 N=16384、50 个 30-bit Q、8 个 30-bit P、默认 scale40。
 当前 OperatorSpec 只提供 `poseidon-gpu-degree58-da2-scale45`：GPU 原生 Boot，
 完整 degree58、两次 double-angle、内部与输出 scale45，输出物理 level22。
-此配置已通过独立 Boot 的固定消息测试；低 level、不同输入 scale 的编译链和完整
-Qwen 仍需分别验证。当前编译链在输入 scale 约40.14 时通过，但约50.35和60.37的
-输入仍出现数值失败，不能视为完整推理可用。runner 按原容差校验全部输出，失败返回非零。
+此配置已通过独立 Boot、低 level 不同输入 scale 的对照，以及重复 Boot 的编译链
+测试。native Boot 与普通计算使用同一设备计算流，避免共用工作区被并发改写；
+ModRaise 前先乘高精度整数、再 Rescale 到 q0，修正小缩放比的取整误差。
+完整 Qwen 仍需单独验证。runner 按原容差校验全部输出，失败返回非零。
 编译器从 profile 取 `--waterline=40`，等位宽 Q 的 `rescalingFactor=30`。
 普通乘法后，只要名义 `scale_log2 >= 70` 就立即插入一次 Rescale，逐个删除 Q，
 直到名义 scale 落入 `[40,70)`。不再先抬高 scale 并强制回到 40；每个逻辑
@@ -96,6 +97,10 @@ Boot 输入输出契约位于 `profiles/operator-spec.json` 的 `boot_profiles`�
 runner 中的 `GpuBootstrapProfileConfig` 构建；JSON 声明必须与构建出的结果一致，
 仅修改 JSON 的输出 scale 或 level 不会改变底层算法，不一致时直接报错。
 当前 runner 的 CKKS 上下文使用 `q0_level=1`，与独立通过的 scale45 配置一致。
+输入归一化需要 q0 上方至少一个 Q，builder 的最小输入 level 为2，当前 profile
+继续使用更保守的 level4。归一化使用原本会在降至 q0 时丢弃的一个输入 Q，
+不减少恢复后的 level22 或18个可用 Q。Boot 输入数值回归见
+[验证记录](../../test-results/native45-input-fix-20261021/results.zh-CN.txt)。
 
 当前 profile 使用 `rescale_mode=native` 并列出真实 `context.rns_moduli`。
 RuntimePlan V5 保存实际的浮点 `log2(scale)`；编译时按真实末端模数推导，

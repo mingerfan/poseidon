@@ -1,0 +1,52 @@
+Native scale45 Boot 输入修复（2026-10-21）
+
+测试服务器：188Server；本轮主要回归全部使用物理 GPU2（V100），UUID GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6。
+CUDA_VISIBLE_DEVICES 将它映射为逻辑 GPU0；日志里的 GPU0 是逻辑编号，未使用故障物理 GPU0。
+OMP_NUM_THREADS=1，GPU 池上限 12288 MiB。前期两项输入保留诊断在物理 GPU1 执行。
+主要上下文：N=16384、Q50/P8、全部30bit、q0_level=1；sec_level_type::none，仅验证数值。
+配置：完整 degree58，generation degree59，无截断，DA2，内部/输出 log2(scale)=45。
+
+修改
+1. native Boot 与普通计算使用同一设备计算流，并显式选择 CUDA device。
+   原先 Boot 在 PTDS 提交，普通运算在 foreground stream 提交，会并发使用 Evaluator 的 Rescale 等工作区。
+   输入保留会改变出错概率，但仅延长输入存活期不是修复。流修复单独消除了批量测试中的14个大误差输出。
+2. 在 ModRaise 前执行高精度归一化。以下 scale 都是实际比例，非 log2 值：
+   ModSwitch 到 q0 上方一个 Q；k = round(T * q_last / input_scale)；
+   先乘整数 k，实际 scale 同时乘 k；再 Rescale 一次到 q0，scale 除以真实 q_last。
+   T 为 profile 的 q0_over_message_ratio。保留计算得到的实际 scale，不直接覆盖为 T。
+   k 必须在 [1, 2^53]，需要 q0 上方至少一个 Q，否则直接报错。
+   原先 scale50.3477 时只乘 round(T/input_scale)=25，约0.58%的比例误差进入 Boot。
+   原先高 scale 输入先降 scale 再放大；现在把乘法放在 Rescale 前，保持输入精度。
+3. builder 的最小输入 level 从 q0_level 改为 q0_level+1（当前为2）。
+   active OperatorSpec 仍使用更保守的输入下界4，无需修改 profile JSON。
+   用于归一化的 Q 原本会在降到 q0 时丢弃；恢复后仍是 level22、scale45、2个分量。
+   工作下界4，Boot 恢复后可用预算仍为18个 Q。
+
+同一批12张独立计算图、24次 Boot、24个输出的逐步对照：
+  before: 7/24输出通过，最大实部误差 449.374237492，最大虚部 476.870865675
+  stream: 21/24输出通过，最大实部误差 0.00190915711653，最大虚部 0.000160210701991
+  normalized: 24/24输出通过，最大实部误差 3.19327447937e-06，最大虚部 0.000152945952426
+
+完整数值回归：46次 Boot，38个输出，311296个槽，全部通过。
+原容差固定为 atol=0.001、rtol=0.0001；检查实部、虚部及尾部，不使用秘密密钥参与刷新。
+  released-inputs-batch: 24 Boot；最大实部误差 3.19327447937e-06，最大虚部 0.000152945952426
+  direct-input-controls: 10 Boot；最大实部误差 0.000191581094702，最大虚部 0.00013292172674
+  greedy-depth50: 6 Boot；最大实部误差 5.53676734272e-06，最大虚部 0.000506864640216
+  depth-dp-depth50: 6 Boot；最大实部误差 9.39113866011e-06，最大虚部 0.000519844083488
+
+50层用例每条链经过3次 Boot；greedy 最终 level12，depth-dp 最终 level4，全部输出正确。
+直接加密对照覆盖完整/低 level，实际 log2(scale) 40、40.14、45.3、50.35、55.7、60.37、65.5、69.95，含8192槽密集输入。
+GPU API：28/28测试通过。新增归一化检查18组，覆盖最低输入level2、完整链、复数密集消息、乘法历史和不修改源密文；不足Q和超范围整数倍率被拒绝。
+独立 RuntimePlan 复数 Boot：通过，输出 level22/scale45，最大复数绝对误差0.000198391，容差收紧至0.001。
+独立测试入口已显式使用当前 degree58 配置。旧 degree22/DA3 混合Q对照仍失败，误差47786.0422，与20261020既有记录一致，不属于当前可选profile。
+
+提交与复现
+此前修改已按DaCapo 3批、Runtime 2批、Poseidon 4批提交并推送。
+本轮流修复独立提交为8d57bb9e；输入归一化、测试及记录作为下一批提交。
+compile/runner输入、命令、阶段report、完整日志及源码SHA256均保存在本目录；decoded全量数组保留在服务器，未入Git。
+prepare-chains.py生成50层长链；prepare-regression.py组合批量图；run-validation.py在服务器运行指定case；collect-summary.py汇总并断言契约和原容差。
+run-validation.py的runner-normalized是对应版本在服务器构建的poseidon_runtime_gpu_qwen_e2e副本。
+
+范围
+这些结果覆盖当前Boot与乘法链；不代表完整Qwen推理已经通过。
+残差加法近1倍率的精度补偿仍按用户要求暂缓；原optimized/PARS尚未适配，本轮未修改。

@@ -1531,6 +1531,96 @@ void test_application_gpu_extensions(
     exact(source, dropped);
 }
 
+void test_boot_input_normalization()
+{
+    using namespace poseidon::gpu;
+    poseidon::ParametersLiteral literal(
+        CKKS, 10, 9, 40, 0, 1, poseidon::Modulus(0), {}, {},
+        poseidon::sec_level_type::none);
+    literal.set_log_modulus(std::vector<std::uint32_t>(6, 30), {30});
+    poseidon::PoseidonContext context(literal);
+    poseidon::KeyGenerator keys(context);
+    poseidon::PublicKey public_key;
+    keys.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, keys.secret_key());
+    poseidon::CKKSEncoder encoder(context);
+    GpuParameterData parameters(context, kDeviceId);
+    GpuEvaluator evaluator(parameters);
+    std::vector<std::complex<double>> expected(literal.degree() / 2);
+    for (std::size_t i = 0; i < expected.size(); ++i)
+        expected[i] = {.25 * std::sin(.07 * i), .125 * std::cos(.11 * i)};
+    const auto &ids = context.crt_context()->parms_id_map();
+    const auto q0 = ids.at(1);
+    const double target = std::exp2(std::round(std::log2(context.crt_context()->q0() / 32.)));
+    const auto check = [&](const GpuCiphertextData &source, double factor) {
+        poseidon::Ciphertext before, after, normalized;
+        GpuUploader::download_ciphertext(source, before, context);
+        GpuCiphertextData output;
+        evaluator.bootstrap_prepare_modraise_input(source, output, q0, target);
+        GpuUploader::download_ciphertext(output, normalized, context);
+        GpuUploader::download_ciphertext(source, after, context);
+        const auto words = before.size() * before.poly_modulus_degree() * before.coeff_modulus_size();
+        require(before.parms_id() == after.parms_id() && before.scale() == after.scale() &&
+                    std::equal(before.data(), before.data() + words, after.data()),
+                "Boot input normalization modified its source");
+        require(output.meta.q_count == 2 && output.meta.parms_id == q0 &&
+                    output.meta.is_ntt_form && output.size() == source.size(),
+                "Boot input normalization did not reach q0");
+        require(std::abs(output.meta.scale / target - 1.) < 2e-5,
+                "Boot input normalization lost target-scale precision");
+        poseidon::Plaintext decrypted;
+        decryptor.decrypt(normalized, decrypted);
+        std::vector<std::complex<double>> actual;
+        encoder.decode(decrypted, actual);
+        double maximum = 0;
+        for (std::size_t i = 0; i < expected.size(); ++i)
+            maximum = std::max(maximum, std::abs(actual[i] - factor * expected[i]));
+        require(maximum < 1e-6, "Boot input normalization lost message precision");
+        std::cout << "BOOT_INPUT_NORMALIZATION input_level=" << before.level()
+                  << " input_log_scale=" << std::log2(before.scale())
+                  << " target_relative_error=" << std::abs(output.meta.scale / target - 1.)
+                  << " max_abs_error=" << maximum << '\n';
+    };
+    for (double log_scale : {40., 40.14416336611769, 45., 50.34771237783504,
+                            55.31, 60.37289450508031, 65.5, 69.95})
+        for (int level : {2, 5})
+        {
+            poseidon::Plaintext plain;
+            encoder.encode(expected, ids.at(level), std::exp2(log_scale), plain);
+            poseidon::Ciphertext cipher;
+            encryptor.encrypt(plain, cipher);
+            auto source = GpuUploader::upload_ciphertext(cipher, kDeviceId);
+            check(source, 1.);
+        }
+    poseidon::Plaintext plain;
+    encoder.encode(expected, ids.at(5), std::exp2(40.), plain);
+    poseidon::Ciphertext cipher;
+    encryptor.encrypt(plain, cipher);
+    auto source = GpuUploader::upload_ciphertext(cipher, kDeviceId);
+    double factor = 1.;
+    for (int i = 0; i < 2; ++i)
+    {
+        poseidon::Plaintext coefficient;
+        encoder.encode(1.01, source.meta.parms_id, std::exp2(40.), coefficient);
+        auto gpu_coefficient = GpuUploader::upload_plaintext(coefficient, kDeviceId);
+        GpuCiphertextData product, rescaled;
+        evaluator.multiply_plain(source, gpu_coefficient, product);
+        evaluator.rescale(product, rescaled);
+        source = std::move(rescaled);
+        factor *= 1.01;
+        check(source, factor);
+    }
+    GpuCiphertextData exhausted, output;
+    evaluator.drop_modulus(source, exhausted, q0);
+    require_rejected([&] {
+        evaluator.bootstrap_prepare_modraise_input(exhausted, output, q0, target);
+    }, "one q modulus above q0");
+    require_rejected([&] {
+        evaluator.bootstrap_prepare_modraise_input(source, output, q0, std::exp2(100.));
+    }, "exact integer range");
+}
+
 void test_host_decrypt_reencrypt_boot(
     PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
     const poseidon::PublicKey &public_key, const poseidon::SecretKey &secret_key,
@@ -3316,6 +3406,8 @@ int main()
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
         run_test("application Q-prefix, sparse levels and hoisted rotations",
                  [&] { test_application_gpu_extensions(context, key_generator, *galois_keys); });
+        run_test("Boot fractional-scale normalization preserves messages and input storage",
+                 test_boot_input_normalization);
         run_test("GPU transfer publishes completion events",
                  [&] {
                      test_transfer_posts_completion_event(context, key_generator);

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "full-exact-sparse",
+    "input_level": 49,
+    "input_scale_log2": 40.0
+  },
+  {
+    "name": "low-exact-sparse",
+    "input_level": 4,
+    "input_scale_log2": 40.0
+  },
+  {
+    "name": "mid-drift-sparse",
+    "input_level": 14,
+    "input_scale_log2": 40.14416336611769
+  },
+  {
+    "name": "low-high-scale-sparse",
+    "input_level": 4,
+    "input_scale_log2": 60.37289450508031
+  },
+  {
+    "name": "low-scale50-sparse",
+    "input_level": 5,
+    "input_scale_log2": 50.34771237783504
+  },
+  {
+    "name": "full-exact-dense",
+    "input_level": 49,
+    "input_scale_log2": 40.0
+  },
+  {
+    "name": "low-dense-scale45.3",
+    "input_level": 4,
+    "input_scale_log2": 45.3
+  },
+  {
+    "name": "low-dense-scale55.7",
+    "input_level": 4,
+    "input_scale_log2": 55.7
+  },
+  {
+    "name": "low-dense-scale65.5",
+    "input_level": 4,
+    "input_scale_log2": 65.5
+  },
+  {
+    "name": "low-dense-scale69.95",
+    "input_level": 4,
+    "input_scale_log2": 69.95
+  }
+]

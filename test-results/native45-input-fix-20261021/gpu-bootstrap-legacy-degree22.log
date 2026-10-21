@@ -1,0 +1,7 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=30380536576 maximum_bytes=30380536576
+[INFO] output size=2 scale=3.51844e+13 q_count=11
+[INFO] sample[0] expected=(0.03125,0.015625) actual=(-4.57278,-47786) error=47786
+[INFO] sample[1] expected=(0.0625,0.03125) actual=(-4.5654,-9557.2) error=9557.23
+[INFO] sample[2] expected=(0.09375,0.046875) actual=(-4.55805,-1911.43) error=1911.48
+[INFO] sample[3] expected=(0.125,0.0625) actual=(-4.55071,-382.255) error=382.346
+[FAIL] Runtime native bootstrap error exceeds tolerance: 47786.042232

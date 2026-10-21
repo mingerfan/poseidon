@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/xuming/poseidon-native45-input-fix-20261021/runner-stream",
+    "/home/xuming/poseidon-native45-input-fix-20261021/released-inputs-batch/result.chains.runtime-plan.json",
+    "/home/xuming/poseidon-native45-input-fix-20261021/released-inputs-batch/operator-spec.json",
+    "/home/xuming/poseidon-native45-input-fix-20261021/released-inputs-batch/fixture.json",
+    "/home/xuming/poseidon-native45-input-fix-20261021/released-inputs-batch/report-stream.json",
+    "/home/xuming/poseidon-native45-input-fix-20261021/released-inputs-batch/decoded-stream.json",
+    "--backend",
+    "gpu"
+  ],
+  "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+  "OMP_NUM_THREADS": 1,
+  "pool_mb": 12288
+}

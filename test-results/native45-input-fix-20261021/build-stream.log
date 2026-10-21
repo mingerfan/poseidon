@@ -1,0 +1,12 @@
+[  4%] Built target ckks_runtime_core
+[  9%] Built target ckks_runtime_plan_json
+[ 73%] Built target poseidon_shared
+[ 92%] Built target poseidon_gpu
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp' has modification time 349 s in the future
+[ 93%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o
+[ 95%] Linking CXX static library ../../../libposeidon_runtime_gpu_api.a
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_qwen_e2e.dir/__/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_qwen_e2e
+[100%] Built target poseidon_runtime_gpu_qwen_e2e

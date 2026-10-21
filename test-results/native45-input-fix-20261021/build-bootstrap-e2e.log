@@ -1,0 +1,42 @@
+[  5%] Built target ckks_runtime_core
+[ 73%] Built target poseidon_shared
+[ 73%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_bootstrap_profile.cpp.o
+[ 74%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_evaluator.cpp.o
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_uploader.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_uploader.cpp:6:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_bootstrap_profile.cpp:4:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 76%] Linking CXX static library ../../../libposeidon_gpu.a
+[ 93%] Built target poseidon_gpu
+[ 94%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o
+[ 96%] Linking CXX static library ../../../libposeidon_runtime_gpu_api.a
+[ 98%] Built target poseidon_runtime_gpu_api
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp' has modification time 322 s in the future
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_bootstrap_e2e.dir/__/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp.o
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp: In function ‘fhegpu::LoadedRuntimePlan {anonymous}::make_plan(const fhegpu::LoadedOperatorSpec&, const fhegpu::BootProfile&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp:182:40: warning: narrowing conversion of ‘(int)profile.fhegpu::BootProfile::output_scale_log2’ from ‘int’ to ‘double’ [-Wnarrowing]
+  182 |          profile.output_level, profile.output_scale_log2, true,
+      |                                ~~~~~~~~^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp:185:40: warning: narrowing conversion of ‘(int)profile.fhegpu::BootProfile::output_scale_log2’ from ‘int’ to ‘double’ [-Wnarrowing]
+  185 |          profile.output_level, profile.output_scale_log2, true,
+      |                                ~~~~~~~~^~~~~~~~~~~~~~~~~
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_bootstrap_e2e
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[100%] Built target poseidon_runtime_gpu_bootstrap_e2e

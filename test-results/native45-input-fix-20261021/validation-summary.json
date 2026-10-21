@@ -1,0 +1,336 @@
+{
+  "base_commit": "a2759448",
+  "stream_fix_commit": "8d57bb9e",
+  "server": "188Server",
+  "physical_gpu": 2,
+  "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+  "omp_num_threads": 1,
+  "pool_mb": 12288,
+  "security_level": "none; numerical validation only",
+  "profile_id": "poseidon-gpu-degree58-da2-scale45",
+  "output_level": 22,
+  "output_scale_log2": 45,
+  "builder_input_min": 2,
+  "declared_input_min": 4,
+  "available_output_q": 18,
+  "phases": [
+    {
+      "phase": "before",
+      "passed_outputs": 7,
+      "outputs": 24,
+      "comparison": {
+        "bad_imaginary_slots": 14,
+        "bad_prefix_slots": 17,
+        "bad_real_slots": 17,
+        "bad_tail_slots": 0,
+        "finite_slots": 196608,
+        "max_abs_error": 449.3742374915799,
+        "max_imaginary": 476.8708656752269,
+        "max_relative_error_floor_atol": 2946.2573715861026,
+        "max_tail_abs": 3.1750321950550914e-12,
+        "nonfinite_slots": 0,
+        "passed": false,
+        "rms_error": 2.404720828737898,
+        "slots_checked": 196608
+      }
+    },
+    {
+      "phase": "stream",
+      "passed_outputs": 21,
+      "outputs": 24,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 3,
+        "bad_real_slots": 3,
+        "bad_tail_slots": 0,
+        "finite_slots": 196608,
+        "max_abs_error": 0.0019091571165306132,
+        "max_imaginary": 0.00016021070199131538,
+        "max_relative_error_floor_atol": 0.005837468766542799,
+        "max_tail_abs": 3.139588426526627e-12,
+        "nonfinite_slots": 0,
+        "passed": false,
+        "rms_error": 8.325753254780294e-06,
+        "slots_checked": 196608
+      }
+    },
+    {
+      "phase": "normalized",
+      "passed_outputs": 24,
+      "outputs": 24,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 196608,
+        "max_abs_error": 3.1932744793683465e-06,
+        "max_imaginary": 0.0001529459524256944,
+        "max_relative_error_floor_atol": 2.0936243534684275e-05,
+        "max_tail_abs": 2.9821889696074598e-12,
+        "nonfinite_slots": 0,
+        "passed": true,
+        "rms_error": 2.236908204310962e-08,
+        "slots_checked": 196608
+      }
+    }
+  ],
+  "cases": [
+    {
+      "case": "released-inputs-batch",
+      "boots": 24,
+      "outputs": 24,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 196608,
+        "max_abs_error": 3.1932744793683465e-06,
+        "max_imaginary": 0.0001529459524256944,
+        "max_relative_error_floor_atol": 2.0936243534684275e-05,
+        "max_tail_abs": 2.9821889696074598e-12,
+        "nonfinite_slots": 0,
+        "passed": true,
+        "rms_error": 2.236908204310962e-08,
+        "slots_checked": 196608
+      },
+      "output_states": [
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        }
+      ]
+    },
+    {
+      "case": "direct-input-controls",
+      "boots": 10,
+      "outputs": 10,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 81920,
+        "max_abs_error": 0.0001915810947019092,
+        "max_imaginary": 0.00013292172674041682,
+        "max_relative_error_floor_atol": 0.03740422519310031,
+        "max_tail_abs": 3.7404225193100315e-05,
+        "nonfinite_slots": 0,
+        "passed": true,
+        "rms_error": 4.9283858698984344e-05,
+        "slots_checked": 81920
+      },
+      "output_states": [
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        },
+        {
+          "level": 22,
+          "scale_log2": 45.0
+        }
+      ]
+    },
+    {
+      "case": "greedy-depth50",
+      "boots": 6,
+      "outputs": 2,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 16384,
+        "max_abs_error": 5.5367673427175745e-06,
+        "max_imaginary": 0.0005068646402163511,
+        "max_relative_error_floor_atol": 1.660855120698226e-05,
+        "max_tail_abs": 1.0878273672983146e-17,
+        "nonfinite_slots": 0,
+        "passed": true,
+        "rms_error": 5.081952171403921e-08,
+        "slots_checked": 16384
+      },
+      "output_states": [
+        {
+          "level": 12,
+          "scale_log2": 65.18473282800682
+        },
+        {
+          "level": 12,
+          "scale_log2": 65.18473282800682
+        }
+      ]
+    },
+    {
+      "case": "depth-dp-depth50",
+      "boots": 6,
+      "outputs": 2,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 16384,
+        "max_abs_error": 9.391138660108656e-06,
+        "max_imaginary": 0.0005198440834875349,
+        "max_relative_error_floor_atol": 4.5681415307067374e-05,
+        "max_tail_abs": 5.551115123125783e-17,
+        "nonfinite_slots": 0,
+        "passed": true,
+        "rms_error": 9.173251893591327e-08,
+        "slots_checked": 16384
+      },
+      "output_states": [
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        }
+      ]
+    }
+  ],
+  "boot_calls": 46,
+  "output_count": 38,
+  "slots_checked": 311296,
+  "gpu_api_tests": 28,
+  "normalization_states": 18,
+  "independent_complex_bootstrap": "GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888\n[PASS] RuntimePlan native GPU bootstrap degree=16384 output_level=22 output_scale_log2=45 max_abs_error=0.000198391",
+  "source_sha256": {
+    "src/poseidon/gpu/gpu_evaluator.cpp": "1a74d16dbf673d925278f9675f656630e36c473f946c1834dd433eafeb3f78f8",
+    "src/poseidon/gpu/gpu_bootstrap_profile.cpp": "d8ff371da1c1b4c95703de6e68047ca9f0ea4f6ac009f6e042b27035413fe5fe",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "d42e21698b4f600466510281a7cc148db2f5f39621a63748c66ebca426097033"
+  },
+  "limits": [
+    "Residual addition precision compensation is deferred.",
+    "The original optimized/PARS path is not adapted.",
+    "These Boot and multiplication regressions are not complete Qwen validation."
+  ]
+}

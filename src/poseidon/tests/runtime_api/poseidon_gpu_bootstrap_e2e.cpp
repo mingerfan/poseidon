@@ -32,7 +32,7 @@ constexpr int kSkip = 77;
 constexpr int kCudaDevice = 0;
 constexpr int kLogScale = 40;
 constexpr std::uint32_t kQ0Level = 1;
-constexpr double kTolerance = 3.0e-3;
+constexpr double kTolerance = 1.0e-3;
 const std::string kContextId = "poseidon-runtime-native-bootstrap";
 const std::string kOperatorSpecSha =
     "sha256:2222222222222222222222222222222222222222222222222222222222222222";
@@ -64,14 +64,6 @@ int log2_degree(std::size_t degree)
     return result;
 }
 
-std::vector<std::uint32_t> mixed_bootstrap_q_chain()
-{
-    return {
-        32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
-        28, 28, 31, 31, 32, 32, 30, 31, 32, 31, 32,
-        32, 31, 31, 31, 32, 32, 31, 32, 32, 32, 30};
-}
-
 poseidon::PoseidonContext make_context(std::size_t degree)
 {
     const int log_n = log2_degree(degree);
@@ -87,8 +79,8 @@ poseidon::PoseidonContext make_context(std::size_t degree)
         {},
         poseidon::sec_level_type::none);
     parameters.set_log_modulus(
-        mixed_bootstrap_q_chain(),
-        std::vector<std::uint32_t>(9, 32));
+        std::vector<std::uint32_t>(50, 30),
+        std::vector<std::uint32_t>(8, 30));
     return poseidon::PoseidonContext(parameters);
 }
 
@@ -256,6 +248,12 @@ int main()
 
         PoseidonGpuApi api(kContextId, context, kCudaDevice);
         poseidon::gpu::GpuBootstrapProfileConfig profile_config;
+        profile_config.profile_id = "poseidon-gpu-degree58-da2-scale45";
+        profile_config.eval_mod_log_scale = 45;
+        profile_config.eval_mod_sine_degree = 58;
+        profile_config.eval_mod_generation_degree = 59;
+        profile_config.eval_mod_truncate_degree.reset();
+        profile_config.eval_mod_double_angle = 2;
         const char *linear_mode =
             std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_LINEAR_MODE");
         if (linear_mode != nullptr && std::string(linear_mode) == "classic")
@@ -265,6 +263,9 @@ int main()
         }
         auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(
             context, key_generator, kCudaDevice, profile_config);
+        if (profile.input_level_min != static_cast<int>(kQ0Level + 1) ||
+            profile.output_level != 22 || profile.output_scale_log2 != 45)
+            throw std::runtime_error("validated scale45 Boot contract changed");
         if (const char *raw =
                 std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_RATIO"))
         {

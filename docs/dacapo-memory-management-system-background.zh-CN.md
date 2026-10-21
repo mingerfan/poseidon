@@ -686,6 +686,8 @@ GpuBootstrapData 包含 GPU-resident matrix plaintext、QP 扩展对角线、Eva
 
 native Boot 在 RuntimePlan 中仍是一条 Compute；内部中间节点、密钥、matrix plaintext 和 workspace 都没有独立 Runtime ValueId。Shared-key overload 能使同一设备的多个 Boot profiles 共享不变 keys，而不是重复安装每份 key payload。
 
+native Boot 与普通计算使用同一设备计算流，避免两者同时改写 Evaluator 共用的 Rescale 等工作区。进入 ModRaise 前，先 ModSwitch 到 q0 上方一个 Q，乘以整数 `round(target_scale * q_last / input_scale)`，再 Rescale 到 q0；乘法在前，避免先降 scale 放大舍入噪声，也提高小缩放比的对齐精度。保留实际 scale，整数乘数须在 `[1, 2^53]`。这一步需要输入至少比 q0 多一个 Q，builder 的最小输入 level 因此为 `q0_level + 1`。归一化使用原本会在降至 q0 时丢弃的输入 Q；Boot 的恢复 level、输出 scale 和图上后续可用 Q 不变。
+
 另一方面，decrypt_reencrypt Boot 在 Host 解密/解码/重新编码/加密；数据进出 GPU 由显式 Transfer 描述。不能把 native Boot 与 Host 模拟 Boot 的临时量、密钥和传输需求视为同一路径。
 
 来源：`P/src/poseidon/gpu/gpu_bootstrap_profile.h:19`、`:51`、`:72`；`P/src/poseidon/gpu/gpu_evaluator.h:127`、`:265`；`P/src/poseidon/gpu/gpu_plaintext.h:106`；`P/src/poseidon/runtime_api/poseidon_gpu_api.cpp:704`、`:1213`、`:1375`。

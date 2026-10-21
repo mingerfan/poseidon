@@ -1,0 +1,368 @@
+{
+  "format_version": 1,
+  "model": {
+    "name": "native45 input-state regression; released inputs, repeated graphs"
+  },
+  "context": {
+    "poly_degree": 16384,
+    "q_moduli_bits": [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "p_moduli_bits": [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "default_scale_log2": 40
+  },
+  "tolerances": {
+    "atol": 0.001,
+    "rtol": 0.0001
+  },
+  "inputs": [
+    {
+      "name": "0-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "0-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "1-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "1-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "2-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "2-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "3-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "3-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "4-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "4-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "5-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "5-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "6-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "6-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "7-greedy-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "7-greedy-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "8-depth-dp-depth27-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "8-depth-dp-depth27-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "9-depth-dp-depth27-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "9-depth-dp-depth27-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "10-depth-dp-depth27-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "10-depth-dp-depth27-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "11-depth-dp-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "11-depth-dp-depth20-y",
+      "values": [
+        -0.125
+      ]
+    }
+  ],
+  "expected_outputs": [
+    {
+      "name": "0-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "0-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "1-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "1-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "2-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "2-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "3-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "3-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "4-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "4-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "5-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "5-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "6-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "6-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "7-greedy-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "7-greedy-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "8-depth-dp-depth27-out_x",
+      "values": [
+        0.3270522195292701
+      ]
+    },
+    {
+      "name": "8-depth-dp-depth27-out_y",
+      "values": [
+        -0.16352610976463505
+      ]
+    },
+    {
+      "name": "9-depth-dp-depth27-out_x",
+      "values": [
+        0.3270522195292701
+      ]
+    },
+    {
+      "name": "9-depth-dp-depth27-out_y",
+      "values": [
+        -0.16352610976463505
+      ]
+    },
+    {
+      "name": "10-depth-dp-depth27-out_x",
+      "values": [
+        0.3270522195292701
+      ]
+    },
+    {
+      "name": "10-depth-dp-depth27-out_y",
+      "values": [
+        -0.16352610976463505
+      ]
+    },
+    {
+      "name": "11-depth-dp-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "11-depth-dp-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    }
+  ]
+}

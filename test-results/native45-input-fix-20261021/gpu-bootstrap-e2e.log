@@ -1,0 +1,2 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888
+[PASS] RuntimePlan native GPU bootstrap degree=16384 output_level=22 output_scale_log2=45 max_abs_error=0.000198391

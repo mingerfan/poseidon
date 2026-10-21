@@ -2923,75 +2923,45 @@ void GpuEvaluator::bootstrap_prepare_modraise_input(
             "GpuEvaluator::bootstrap_prepare_modraise_input: invalid q0 level");
     }
 
-    const GpuCiphertextData *current = &source_ciphertext;
-    GpuCiphertextData scratch0;
-    GpuCiphertextData scratch1;
-
-    auto next_scratch = [&]() -> GpuCiphertextData &
-    {
-        return (current == &scratch0) ? scratch1 : scratch0;
-    };
-
-    while (current->meta.scale > std::pow(2.0, 54.0))
-    {
-        const auto &level_info = params_.get_level(current->meta.parms_id);
-        if (level_info.shards.empty() || level_info.shards.front().q_last == 0)
-        {
-            throw std::invalid_argument(
-                "GpuEvaluator::bootstrap_prepare_modraise_input: missing q_last parameter");
-        }
-        const double q_last = static_cast<double>(level_info.shards.front().q_last);
-        if (current->meta.scale / q_last <= 1.6e+07)
-        {
-            throw std::invalid_argument(
-                "GpuEvaluator::bootstrap_prepare_modraise_input: scale cannot be safely rescaled for bootstrap");
-        }
-
-        GpuCiphertextData &next = next_scratch();
-        rescale(*current, next);
-        current = &next;
-    }
-
-    if (current->meta.q_count < q0_level_info.q_count)
+    const std::size_t normalization_q_count = q0_level_info.q_count + 1;
+    if (source_ciphertext.meta.q_count < normalization_q_count)
     {
         throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_prepare_modraise_input: source is below q0 level");
+            "GpuEvaluator::bootstrap_prepare_modraise_input: input needs one q modulus above q0 for scale normalization");
     }
-
-    const std::size_t q0_plus_one_count = q0_level_info.q_count + 1;
-    if (current->meta.q_count > q0_plus_one_count)
+    const auto &normalization_level =
+        params_.get_level_by_q_count(normalization_q_count, 0);
+    if (normalization_level.shards.empty() ||
+        normalization_level.shards.front().q_last == 0)
     {
-        const auto &q0_plus_one_level =
-            params_.get_level_by_q_count(q0_plus_one_count, 0);
-        GpuCiphertextData &next = next_scratch();
-        drop_modulus(*current, next, q0_plus_one_level.parms_id);
-        current = &next;
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_prepare_modraise_input: missing q_last parameter");
     }
-
+    const double q_last =
+        static_cast<double>(normalization_level.shards.front().q_last);
+    // Multiply before rescaling: rounding target/scale alone loses precision
+    // when that ratio is small. The extra q gives the integer multiplier
+    // another modulus worth of precision without lowering the input scale.
     const double scale_multiplier_double =
-        std::round(q0_over_message_ratio / current->meta.scale);
-    if (!std::isfinite(scale_multiplier_double))
+        std::round(q0_over_message_ratio * q_last / source_ciphertext.meta.scale);
+    if (!std::isfinite(scale_multiplier_double) || scale_multiplier_double < 1.0 ||
+        scale_multiplier_double > std::ldexp(1.0, 53))
     {
         throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_prepare_modraise_input: invalid scale multiplier");
-    }
-    if (scale_multiplier_double > 1.0)
-    {
-        if (scale_multiplier_double >
-            static_cast<double>(std::numeric_limits<GpuWord>::max()))
-        {
-            throw std::invalid_argument(
-                "GpuEvaluator::bootstrap_prepare_modraise_input: scale multiplier exceeds GPU word size");
-        }
-        const auto scale_multiplier =
-            static_cast<std::uint64_t>(scale_multiplier_double);
-        GpuCiphertextData &next = next_scratch();
-        multiply_scalar(*current, scale_multiplier, next);
-        next.meta.scale = current->meta.scale * scale_multiplier_double;
-        current = &next;
+            "GpuEvaluator::bootstrap_prepare_modraise_input: scale multiplier is outside the exact integer range [1, 2^53]");
     }
 
-    drop_modulus(*current, destination_ciphertext, q0_level_info.parms_id);
+    const GpuCiphertextData *current = &source_ciphertext;
+    GpuCiphertextData dropped;
+    if (source_ciphertext.meta.q_count > normalization_q_count)
+    {
+        drop_modulus(source_ciphertext, dropped, normalization_level.parms_id);
+        current = &dropped;
+    }
+    GpuCiphertextData scaled;
+    multiply_scalar(*current, static_cast<std::uint64_t>(scale_multiplier_double), scaled);
+    scaled.meta.scale = current->meta.scale * scale_multiplier_double;
+    rescale(scaled, destination_ciphertext);
 }
 
 /* GpuEvaluator::multiply(...) -> 输出 3 component: d0, d1, d2 */

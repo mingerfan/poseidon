@@ -1,0 +1,24 @@
+QWEN inputs=10 outputs=10 devices=1 slots=8192 backend=gpu host_boot_instructions=0 native_boot_instructions=10
+KEYS ready rotation_basis=0 key_generation_ms=121.596295
+GPU_POOL maximum_mb=12288 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=3259906680 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=4485692024 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=12884901888 pool_cap=12884901888 initial_outside_used=323747840 outside_pool_growth=2097152 allocator_graph_capacity=8399209864
+waterline rescale workspace plan_max_drop=0 capability_max_drop=50
+waterline GPU0 front_peak=49938432 plain_peak=0 remaining_front=49938432 remaining_plain=0
+waterline shared host_peak=236191744 pinned_peak=98304000 raw_peak=0
+FORWARD complete runtime_ms=2055.239747
+PASS output=0 name=output-full-exact-sparse max_abs=3.69625e-05 max_relative=0.0369625 max_imaginary=0.000130063 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=1 name=output-low-exact-sparse max_abs=3.64646e-05 max_relative=0.0364646 max_imaginary=0.000130473 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=2 name=output-mid-drift-sparse max_abs=3.59543e-05 max_relative=0.0359543 max_imaginary=0.000130321 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=3 name=output-low-high-scale-sparse max_abs=3.74042e-05 max_relative=0.0374042 max_imaginary=0.000130991 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=4 name=output-low-scale50-sparse max_abs=3.65867e-05 max_relative=0.0365867 max_imaginary=0.000130446 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=5 name=output-full-exact-dense max_abs=0.000191581 max_relative=0.0061306 max_imaginary=0.00013228 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=6 name=output-low-dense-scale45.3 max_abs=3.60616e-05 max_relative=0.0266252 max_imaginary=0.000130422 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=7 name=output-low-dense-scale55.7 max_abs=3.68158e-05 max_relative=0.0264996 max_imaginary=0.000130966 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=8 name=output-low-dense-scale65.5 max_abs=3.64714e-05 max_relative=0.0272411 max_imaginary=0.000131883 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=9 name=output-low-dense-scale69.95 max_abs=3.90586e-05 max_relative=0.0278047 max_imaginary=0.000132922 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=10 slots=81920 max_abs=0.000191581 max_relative=0.0374042 max_imaginary=0.000132922 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-native45-input-fix-20261021/direct-input-controls/report-normalized.json decoded=/home/xuming/poseidon-native45-input-fix-20261021/direct-input-controls/decoded-normalized.json

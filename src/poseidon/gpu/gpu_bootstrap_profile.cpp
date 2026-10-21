@@ -278,7 +278,7 @@ void validate_config(
 
     const auto parameters = context.parameters_literal();
     if (!parameters || parameters->q().empty() || parameters->p().empty() ||
-        parameters->q0_level() >= parameters->q().size())
+        parameters->q0_level() + std::size_t{1} >= parameters->q().size())
     {
         throw std::invalid_argument(
             "GPU bootstrap context has an invalid Q/P modulus chain");
@@ -537,7 +537,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     GpuBootstrapProfile result;
     result.profile_id = config.profile_id;
     result.cuda_device_id = cuda_device_id;
-    result.input_level_min = static_cast<int>(q0_level);
+    result.input_level_min = static_cast<int>(q0_level + 1);
     result.input_level_max = static_cast<int>(full_q_count - 1);
     result.output_level = static_cast<int>(output_q_count - 1);
     result.output_scale_log2 = static_cast<int>(config.eval_mod_log_scale);

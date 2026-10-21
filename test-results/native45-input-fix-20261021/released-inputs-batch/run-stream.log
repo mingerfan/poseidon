@@ -1,0 +1,38 @@
+QWEN inputs=24 outputs=24 devices=1 slots=8192 backend=gpu host_boot_instructions=0 native_boot_instructions=24
+KEYS ready rotation_basis=0 key_generation_ms=130.025799
+GPU_POOL maximum_mb=12288 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=3260234360 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=4486019704 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=12884901888 pool_cap=12884901888 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=8398882184
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=526254080 plain_peak=35127296 remaining_front=36700160 remaining_plain=0
+waterline shared host_peak=616628224 pinned_peak=235995136 raw_peak=1835008
+FORWARD complete runtime_ms=2290.974055
+PASS output=0 name=0-greedy-depth20-out_x max_abs=2.54249e-06 max_relative=8.33474e-06 max_imaginary=0.000146658 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=1 name=0-greedy-depth20-out_y max_abs=1.34789e-06 max_relative=8.83727e-06 max_imaginary=0.000146551 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=2 name=1-greedy-depth20-out_x max_abs=3.53305e-06 max_relative=1.1582e-05 max_imaginary=0.000145326 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=3 name=1-greedy-depth20-out_y max_abs=3.4974e-06 max_relative=2.29302e-05 max_imaginary=0.000146764 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=4 name=2-greedy-depth20-out_x max_abs=2.95212e-06 max_relative=9.67758e-06 max_imaginary=0.000147511 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=5 name=2-greedy-depth20-out_y max_abs=2.94839e-06 max_relative=1.93307e-05 max_imaginary=0.000148651 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=6 name=3-greedy-depth20-out_x max_abs=2.99259e-06 max_relative=9.81025e-06 max_imaginary=0.000148372 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=7 name=3-greedy-depth20-out_y max_abs=3.02383e-06 max_relative=1.98253e-05 max_imaginary=0.000147033 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=8 name=4-greedy-depth20-out_x max_abs=2.07858e-06 max_relative=6.81396e-06 max_imaginary=0.000148677 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=9 name=4-greedy-depth20-out_y max_abs=6.79795e-06 max_relative=4.45698e-05 max_imaginary=0.000147404 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=10 name=5-greedy-depth20-out_x max_abs=2.82442e-06 max_relative=9.25895e-06 max_imaginary=0.00014727 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=11 name=5-greedy-depth20-out_y max_abs=2.46933e-06 max_relative=1.61898e-05 max_imaginary=0.000145766 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=12 name=6-greedy-depth20-out_x max_abs=1.5899e-06 max_relative=5.21199e-06 max_imaginary=0.000145833 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=13 name=6-greedy-depth20-out_y max_abs=3.09675e-06 max_relative=2.03034e-05 max_imaginary=0.000146916 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=14 name=7-greedy-depth20-out_x max_abs=3.14229e-06 max_relative=1.0301e-05 max_imaginary=0.00014535 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=15 name=7-greedy-depth20-out_y max_abs=2.56621e-06 max_relative=1.6825e-05 max_imaginary=0.00014578 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL output=16 name=8-depth-dp-depth27-out_x max_abs=0.00190852 max_relative=0.00583553 max_imaginary=0.000159141 bad_real=1 bad_imaginary=0 nonfinite=0
+PASS output=17 name=8-depth-dp-depth27-out_y max_abs=0.000949353 max_relative=0.00580552 max_imaginary=0.000158443 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL output=18 name=9-depth-dp-depth27-out_x max_abs=0.00190916 max_relative=0.00583747 max_imaginary=0.000159438 bad_real=1 bad_imaginary=0 nonfinite=0
+PASS output=19 name=9-depth-dp-depth27-out_y max_abs=0.000949871 max_relative=0.00580868 max_imaginary=0.000159872 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL output=20 name=10-depth-dp-depth27-out_x max_abs=0.00190742 max_relative=0.00583215 max_imaginary=0.000159435 bad_real=1 bad_imaginary=0 nonfinite=0
+PASS output=21 name=10-depth-dp-depth27-out_y max_abs=0.000948274 max_relative=0.00579891 max_imaginary=0.000160211 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=22 name=11-depth-dp-depth20-out_x max_abs=2.5787e-06 max_relative=8.45345e-06 max_imaginary=0.000156423 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=23 name=11-depth-dp-depth20-out_y max_abs=3.81711e-06 max_relative=2.50263e-05 max_imaginary=0.000159614 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL ALL_OUTPUTS count=24 slots=196608 max_abs=0.00190916 max_relative=0.00583747 max_imaginary=0.000160211 bad_real=3 bad_imaginary=0 nonfinite=0
+report=report-stream.json decoded=decoded-stream.json

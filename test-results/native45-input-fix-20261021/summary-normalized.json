@@ -1,0 +1,68 @@
+[
+  {
+    "case": "direct-input-controls",
+    "returncode": 0,
+    "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+    "comparison": {
+      "bad_imaginary_slots": 0,
+      "bad_prefix_slots": 0,
+      "bad_real_slots": 0,
+      "bad_tail_slots": 0,
+      "finite_slots": 81920,
+      "max_abs_error": 0.0001915810947019092,
+      "max_imaginary": 0.00013292172674041682,
+      "max_relative_error_floor_atol": 0.03740422519310031,
+      "max_tail_abs": 3.7404225193100315e-05,
+      "nonfinite_slots": 0,
+      "passed": true,
+      "rms_error": 4.9283858698984344e-05,
+      "slots_checked": 81920
+    },
+    "error": null,
+    "boot_count": 10
+  },
+  {
+    "case": "greedy-depth50",
+    "returncode": 0,
+    "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+    "comparison": {
+      "bad_imaginary_slots": 0,
+      "bad_prefix_slots": 0,
+      "bad_real_slots": 0,
+      "bad_tail_slots": 0,
+      "finite_slots": 16384,
+      "max_abs_error": 5.5367673427175745e-06,
+      "max_imaginary": 0.0005068646402163511,
+      "max_relative_error_floor_atol": 1.660855120698226e-05,
+      "max_tail_abs": 1.0878273672983146e-17,
+      "nonfinite_slots": 0,
+      "passed": true,
+      "rms_error": 5.081952171403921e-08,
+      "slots_checked": 16384
+    },
+    "error": null,
+    "boot_count": 6
+  },
+  {
+    "case": "depth-dp-depth50",
+    "returncode": 0,
+    "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+    "comparison": {
+      "bad_imaginary_slots": 0,
+      "bad_prefix_slots": 0,
+      "bad_real_slots": 0,
+      "bad_tail_slots": 0,
+      "finite_slots": 16384,
+      "max_abs_error": 9.391138660108656e-06,
+      "max_imaginary": 0.0005198440834875349,
+      "max_relative_error_floor_atol": 4.5681415307067374e-05,
+      "max_tail_abs": 5.551115123125783e-17,
+      "nonfinite_slots": 0,
+      "passed": true,
+      "rms_error": 9.173251893591327e-08,
+      "slots_checked": 16384
+    },
+    "error": null,
+    "boot_count": 6
+  }
+]

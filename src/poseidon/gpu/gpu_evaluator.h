@@ -553,11 +553,12 @@ public:
     /**
      * @brief Prepare a CKKS ciphertext for bootstrap ModRaise.
      *
-     * Mirrors the CPU bootstrap prefix up to the input of raise_modulus:
-     * - repeatedly uses ordinary rescale until scale <= 2^54;
-     * - drops to q0+1 if needed;
-     * - multiplies by round(q0_over_message_ratio / scale) when > 1;
-     * - drops to q0.
+     * Drops to one q modulus above q0, multiplies by the integer nearest to
+     * q0_over_message_ratio * q_last / input_scale, then rescales once to q0.
+     * Multiplication precedes Rescale to preserve the input precision. The
+     * actual resulting scale is retained; it approximates the target with
+     * relative error at most 0.5 / the unrounded multiplier.
+     * Requires one q above q0 and a multiplier in [1, 2^53].
      *
      * The result is still q-only and in the same NTT form as the input.
      * This function intentionally does not perform Q0 -> QL basis extension.
