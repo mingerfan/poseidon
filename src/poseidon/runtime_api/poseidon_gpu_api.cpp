@@ -2161,6 +2161,11 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         if (attrs.implementation == fhegpu::BootImplementation::Native)
         {
             auto &device = device_state(op.place, "Poseidon GPU native Boot");
+            gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+            // Boot and ordinary compute share Evaluator workspaces and must
+            // submit their kernels on the same ordered stream.
+            gpu::ScopedGpuExecutionStream foreground(
+                device.foreground_stream ? device.foreground_stream : gpu::gpu_execution_stream());
             if (inputs.size() != 1)
             {
                 throw std::invalid_argument(
