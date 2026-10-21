@@ -1,0 +1,93 @@
+[
+  {
+    "case": "optimized-depth20",
+    "compile_seconds": 3.621624768999027,
+    "boot_count": 2,
+    "boot_inputs": [
+      {
+        "level": 14,
+        "scale_log2": 40.14416336611769
+      },
+      {
+        "level": 14,
+        "scale_log2": 40.14416336611769
+      }
+    ],
+    "outputs": [
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      }
+    ]
+  },
+  {
+    "case": "optimized-depth27",
+    "compile_seconds": 7.8788564240003325,
+    "boot_count": 2,
+    "boot_inputs": [
+      {
+        "level": 5,
+        "scale_log2": 50.34771237783504
+      },
+      {
+        "level": 5,
+        "scale_log2": 50.34771237783504
+      }
+    ],
+    "outputs": [
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      }
+    ]
+  },
+  {
+    "case": "optimized-depth50",
+    "compile_seconds": 23.104401021999365,
+    "boot_count": 6,
+    "boot_inputs": [
+      {
+        "level": 12,
+        "scale_log2": 60.184732828006815
+      },
+      {
+        "level": 12,
+        "scale_log2": 60.184732828006815
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      }
+    ],
+    "outputs": [
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      }
+    ]
+  }
+]

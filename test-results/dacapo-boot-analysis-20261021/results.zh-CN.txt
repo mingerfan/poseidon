@@ -1,0 +1,71 @@
+DaCapo 原 Boot 分析路径适配（2026-10-21）
+
+实现范围
+optimized 保留原来的候选点、绕行判断、覆盖范围和延迟规划流程。
+分析与最终插入改用同一套阈值状态传播，不再调用旧 PARS 的强制 scale 对齐规则。
+等位宽示例：初始log2(scale)=40，Q位宽30；乘法后只要名义scale达到70就Rescale，逐个消耗Q，保留余下scale。
+加法仍乘编码1对齐scale，再用ModSwitch对齐level；本轮没有加入暂缓的加法精度补偿。
+逻辑level表示已消耗Q。剩余Q=配置预算−逻辑level；当前预算由输出level22与工作下界4得到18。
+Boot恢复逻辑level0、输出scale45，物理输出仍level22/scale45/2分量。输出45不跨70阈值，无额外图上Rescale。
+覆盖检查使用归一化后的结果及实际Q消耗，移除scale+level混合估算；返回值保留剩余Q。
+
+同时修正的规划问题
+1. 计划记录“边界、目标值”对，最终在对应边界刷新；保留早期消费者原来的输入。
+   同一个值可在不同边界多次Boot，后一次使用前一次刷新结果，不再按目标值全局去重。
+2. DP保留每个跨边界值的scale/Q状态。只有完全相同的状态才保留较便宜的一条路径。
+   不再仅按边界保留一个最低成本方案；不可行边直接被排除，搜索失败明确报错。
+3. 参数加入值编号和存活分析；已经消耗Q的输入可在边界0刷新。
+   候选点列表去重，小于等于当前候选宽度的完整前沿可正常刷新。
+4. 保留原始输入和分段前沿的张量形状，避免旧代码将它们构造成tensor<1x...>。
+5. Boot插入中间态先保留类型一致性，随后统一传播所选输出scale；契约不一致直接报错。
+
+入口和使用
+hecate-opt --dacapo --boot-placement=optimized --waterline=40 --bootstrap-scale=45 ...
+Qwen编译脚本新增 --boot-placement optimized，默认仍为depth-dp。
+父仓库artifact生成脚本接受native spec，自动使用一个逻辑Rescale对应一个物理Q，并传入所选Boot输出scale。
+native要求等位宽Q，且compiler profile的rescalingFactor匹配位宽；不修改用户指定的预算来绕过错误。
+实际原生算法与active OperatorSpec保持不变，仍为完整degree58、generation59、无截断、DA2、scale45。
+
+本地与服务器结构验证
+编译器CTest 16/16，Runtime CTest 8/8。
+完整图矩阵540组：495个合法计划，45次预期不可行拒绝。
+其中optimized 180组：165个合法计划、15次预期拒绝；188Server与本地summary完全相同。
+覆盖预算1/2/4/18、输出scale40/45/120、CP/CC、多次Rescale、不同深度加法、共享输入、耗尽输入、长寿命分支、死分支和随机DAG。
+逐节点回放按指定模数链检查level、浮点scale、理想明文语义和Boot数量；这种回放不代表CKKS编码精度验收。
+独立检查重复刷新同一值、正确的边界位置、8槽张量形状、错误边界和scale契约冲突。
+optimized的scale45契约在1卡和4卡计划上通过；这些检查只生成计划，不使用实际GPU。
+父仓库artifact生成脚本的三个算法均在本地和188Server通过native scale45编译检查；不匹配的因子被拒绝。
+
+188Server真实GPU验证
+物理GPU2，UUID GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6；未使用故障物理GPU0。日志中的逻辑GPU0由CUDA_VISIBLE_DEVICES映射到GPU2。
+N=16384、Q50/P8全30bit、q0_level=1，OMP_NUM_THREADS=1，GPU池12288MiB。
+20/27/50层的两路稀疏标量乘法链均在服务器重新编译，再组合为一个GPU计划执行。
+共10次原生Boot、6个输出、49152个槽，原容差atol=0.001、rtol=0.0001，全部通过。
+最大实部误差2.35635293877e-06；最大虚部0.000551770810971。
+50层每条链经过3次Boot。没有Host Boot，也没有秘密密钥辅助刷新。
+
+图上Q消耗对照（两路合计，Boot内部输入归一化不另记为图上Rescale）：
+  depth20 optimized: Boot=2, Rescale Q=52, ModSwitch Q=0, 输出level=[4, 4]
+  depth20 depth-dp: Boot=2, Rescale Q=52, ModSwitch Q=0, 输出level=[4, 4]
+  depth20 greedy: Boot=2, Rescale Q=52, ModSwitch Q=0, 输出level=[14, 14]
+  depth27 optimized: Boot=2, Rescale Q=70, ModSwitch Q=0, 输出level=[4, 4]
+  depth27 depth-dp: Boot=2, Rescale Q=70, ModSwitch Q=0, 输出level=[4, 4]
+  depth50 optimized: Boot=6, Rescale Q=128, ModSwitch Q=0, 输出level=[4, 4]
+  depth50 depth-dp: Boot=6, Rescale Q=128, ModSwitch Q=0, 输出level=[4, 4]
+  depth50 greedy: Boot=6, Rescale Q=128, ModSwitch Q=0, 输出level=[12, 12]
+
+这些乘法链中optimized与depth-dp的Boot和Q消耗一致，没有新增额外Rescale。
+greedy部分用例保留更多末端Q，是Boot切点不同；两者Rescale总数相同，不能只用末端level比较总开销。
+旧optimized在相同waterline40/rescalingFactor30配置下直接拒绝，因此没有同参数旧计划可做数值前后对照。
+
+编译成本
+本地20/27/50层约3.6/7.9/23.1秒；188Server约11.8/24.2/77.0秒。
+延迟规划仍使用现有compiler profile估算表，未重新标定GPU代价。optimized通常显著慢于depth-dp。
+现有compile_plans.py入口选择optimized，20层小图的单卡二进制计划成功生成并确认为V5；该二进制文件本轮仅验证编译，GPU执行使用上面的JSON批量计划。
+
+复现与边界
+check-threshold-graphs.py --strategies optimized --output-dir ... 可生成180组复现数据；默认同时检查三个算法，共540组。
+prepare-gpu.py在本地准备三个长链计划；run-server.py在服务器重新编译并执行组合GPU计划。
+命令、profile、MLIR、计划、报告和日志保存在本目录；graphs生成目录和完整decoded数组不入Git。
+以上是编译契约和数值回归；sec_level_type::none，不代表安全参数选择或完整Qwen数值验收。
+残差加法精度补偿及完整模型验证仍待后续。

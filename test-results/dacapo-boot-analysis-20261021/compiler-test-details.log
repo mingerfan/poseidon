@@ -1,0 +1,764 @@
+Start testing: Oct 21 22:11 CST
+----------------------------------------------------------
+15/16 Testing: DacapoOptimizedNativeScale45
+15/16 Test: DacapoOptimizedNativeScale45
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo" "--boot-scale" "45" "--strategy" "optimized"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoOptimizedNativeScale45" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Native Boot plans preserve level22/scale45 on 1 and 4 devices
+<end of output>
+Test time =   5.15 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoOptimizedNativeScale45" end time: Oct 21 22:11 CST
+"DacapoOptimizedNativeScale45" time elapsed: 00:00:05
+----------------------------------------------------------
+
+11/16 Testing: DacapoManualPrecompile
+11/16 Test: DacapoManualPrecompile
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-precompile.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoManualPrecompile" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Manual text/bytecode checkpoints match full Boot, placement, memory and Waterline pipelines
+<end of output>
+Test time =   0.47 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoManualPrecompile" end time: Oct 21 22:11 CST
+"DacapoManualPrecompile" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/16 Testing: DacapoOptimizedSchedule
+16/16 Test: DacapoOptimizedSchedule
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-optimized.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoOptimizedSchedule" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+DaCapo preserves boundary timing, repeated value refreshes, 8-slot shapes and scale45 contracts
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoOptimizedSchedule" end time: Oct 21 22:11 CST
+"DacapoOptimizedSchedule" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/16 Testing: DacapoNativeScale45
+3/16 Test: DacapoNativeScale45
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo" "--boot-scale" "45"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoNativeScale45" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Native Boot plans preserve level22/scale45 on 1 and 4 devices
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoNativeScale45" end time: Oct 21 22:11 CST
+"DacapoNativeScale45" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/16 Testing: DacapoRuntimeScale
+7/16 Test: DacapoRuntimeScale
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-runtime-scale.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoRuntimeScale" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+{"random_cases": 16, "old_plan_comparisons": false, "deep_chain_operations": 20000, "seconds": 0.7967811849994177}
+<end of output>
+Test time =   0.84 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoRuntimeScale" end time: Oct 21 22:11 CST
+"DacapoRuntimeScale" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/16 Testing: DacapoUnitPlaintext
+6/16 Test: DacapoUnitPlaintext
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-unit-plaintext.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoUnitPlaintext" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+13 unit plaintext cases passed: scale, masks, sharing, and decoded values
+<end of output>
+Test time =   0.39 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoUnitPlaintext" end time: Oct 21 22:11 CST
+"DacapoUnitPlaintext" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/16 Testing: DacapoPlaintextWaterline
+14/16 Test: DacapoPlaintextWaterline
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-waterline.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoPlaintextWaterline" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+PASS: Prepare V4, no automatic Fence/reencode, frontend places/order, single-group rejections
+PASS: degree8 CPU/Auto Host480 rejects, Host512 completes unchanged 200-consumer graph; GPU Host64 remains feasible
+PASS: actual HEFT on 4 GPUs, same placed IR eager/Waterline: 65 CT computes, 37 CT transfers, Host Boot, 8 shared Prepare outputs; places/parameters/IDs/order identical
+<end of output>
+Test time =   0.24 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoPlaintextWaterline" end time: Oct 21 22:11 CST
+"DacapoPlaintextWaterline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/16 Testing: DacapoGreedyBootstrap
+10/16 Test: DacapoGreedyBootstrap
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-greedy.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoGreedyBootstrap" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Lazy/depth-DP chains, residuals, shared inputs, fanout, and budget checks passed
+<end of output>
+Test time =   0.54 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoGreedyBootstrap" end time: Oct 21 22:11 CST
+"DacapoGreedyBootstrap" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/16 Testing: DacapoNativeScale40
+2/16 Test: DacapoNativeScale40
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoNativeScale40" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Native Boot plans preserve level27/scale40 on 1 and 4 devices
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoNativeScale40" end time: Oct 21 22:11 CST
+"DacapoNativeScale40" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/16 Testing: DacapoRuntimePlanIO
+5/16 Test: DacapoRuntimePlanIO
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-io.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoRuntimePlanIO" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+RuntimePlan I/O checks passed
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoRuntimePlanIO" end time: Oct 21 22:11 CST
+"DacapoRuntimePlanIO" time elapsed: 00:00:00
+----------------------------------------------------------
+
+1/16 Testing: DacapoThresholdGraphs
+1/16 Test: DacapoThresholdGraphs
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-threshold-graphs.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoThresholdGraphs" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+40-q1-greedy-cp-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-cp-double-rescale {'boots': 3, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-cp-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-cc-scale60 {'boots': 4, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-cc-scale60 {'boots': 4, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-cc-scale60 {'boots': 6, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-unequal-depth-residual {'boots': 4, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-unequal-depth-residual {'boots': 8, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+40-q1-optimized-unequal-depth-residual {'boots': 8, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-equal-nominal-residual {'boots': 3, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+40-q1-depth-dp-equal-nominal-residual {'boots': 5, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+40-q1-optimized-equal-nominal-residual {'boots': 5, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+40-q1-greedy-depth-zero-unary-fanout {'boots': 9, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-depth-zero-unary-fanout {'boots': 24, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-depth-zero-unary-fanout {'boots': 8, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-mixed-0 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+40-q1-depth-dp-mixed-0 {'boots': 14, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+40-q1-optimized-mixed-0 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+40-q1-greedy-mixed-1 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-depth-dp-mixed-1 {'boots': 18, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-optimized-mixed-1 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 0, 'double_rescales': 0}
+40-q1-greedy-mixed-2 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-depth-dp-mixed-2 {'boots': 15, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-optimized-mixed-2 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-greedy-mixed-3 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-depth-dp-mixed-3 {'boots': 14, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-optimized-mixed-3 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-greedy-mixed-4 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q1-depth-dp-mixed-4 {'boots': 16, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+40-q1-optimized-mixed-4 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+40-q1-greedy-mixed-5 {'boots': 8, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+40-q1-depth-dp-mixed-5 {'boots': 17, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+40-q1-optimized-mixed-5 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q2-greedy-cp-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-cp-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-cp-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-greedy-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-greedy-cc-scale60 {'boots': 2, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-cc-scale60 {'boots': 2, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-cc-scale60 {'boots': 2, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-greedy-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-greedy-unequal-depth-residual {'boots': 2, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-depth-dp-unequal-depth-residual {'boots': 3, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-optimized-unequal-depth-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-greedy-equal-nominal-residual {'boots': 1, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-depth-dp-equal-nominal-residual {'boots': 2, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-optimized-equal-nominal-residual {'boots': 1, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-greedy-depth-zero-unary-fanout {'boots': 5, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-depth-zero-unary-fanout {'boots': 12, 'rescale_q': 9, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-optimized-depth-zero-unary-fanout {'boots': 4, 'rescale_q': 9, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-greedy-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-greedy-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q2-greedy-mixed-0 {'boots': 4, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q2-depth-dp-mixed-0 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 6, 'double_rescales': 0}
+40-q2-optimized-mixed-0 {'boots': 3, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q2-greedy-mixed-1 {'boots': 4, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-depth-dp-mixed-1 {'boots': 8, 'rescale_q': 8, 'modswitch_q': 5, 'double_rescales': 0}
+40-q2-optimized-mixed-1 {'boots': 3, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-greedy-mixed-2 {'boots': 4, 'rescale_q': 8, 'modswitch_q': 5, 'double_rescales': 0}
+40-q2-depth-dp-mixed-2 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 5, 'double_rescales': 0}
+40-q2-optimized-mixed-2 {'boots': 3, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+40-q2-greedy-mixed-3 {'boots': 4, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+40-q2-depth-dp-mixed-3 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+40-q2-optimized-mixed-3 {'boots': 3, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q2-greedy-mixed-4 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+40-q2-depth-dp-mixed-4 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 6, 'double_rescales': 0}
+40-q2-optimized-mixed-4 {'boots': 4, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+40-q2-greedy-mixed-5 {'boots': 5, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+40-q2-depth-dp-mixed-5 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 7, 'double_rescales': 0}
+40-q2-optimized-mixed-5 {'boots': 3, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+40-q4-greedy-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-depth-dp-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-optimized-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-greedy-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-depth-dp-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-optimized-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-greedy-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-depth-dp-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-optimized-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-greedy-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-depth-dp-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-optimized-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-greedy-unequal-depth-residual {'boots': 1, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+40-q4-depth-dp-unequal-depth-residual {'boots': 2, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+40-q4-optimized-unequal-depth-residual {'boots': 1, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+40-q4-greedy-equal-nominal-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+40-q4-depth-dp-equal-nominal-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+40-q4-optimized-equal-nominal-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-greedy-depth-zero-unary-fanout {'boots': 2, 'rescale_q': 12, 'modswitch_q': 2, 'double_rescales': 3}
+40-q4-depth-dp-depth-zero-unary-fanout {'boots': 6, 'rescale_q': 12, 'modswitch_q': 2, 'double_rescales': 3}
+40-q4-optimized-depth-zero-unary-fanout {'boots': 2, 'rescale_q': 12, 'modswitch_q': 2, 'double_rescales': 3}
+40-q4-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-greedy-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-optimized-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-greedy-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-depth-dp-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-optimized-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+40-q4-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+40-q4-greedy-mixed-0 {'boots': 3, 'rescale_q': 11, 'modswitch_q': 4, 'double_rescales': 3}
+40-q4-depth-dp-mixed-0 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+40-q4-optimized-mixed-0 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+40-q4-greedy-mixed-1 {'boots': 3, 'rescale_q': 11, 'modswitch_q': 3, 'double_rescales': 3}
+40-q4-depth-dp-mixed-1 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+40-q4-optimized-mixed-1 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+40-q4-greedy-mixed-2 {'boots': 3, 'rescale_q': 11, 'modswitch_q': 3, 'double_rescales': 3}
+40-q4-depth-dp-mixed-2 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 5, 'double_rescales': 2}
+40-q4-optimized-mixed-2 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 5, 'double_rescales': 2}
+40-q4-greedy-mixed-3 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 3, 'double_rescales': 2}
+40-q4-depth-dp-mixed-3 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 5, 'double_rescales': 2}
+40-q4-optimized-mixed-3 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 3, 'double_rescales': 2}
+40-q4-greedy-mixed-4 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 10, 'double_rescales': 2}
+40-q4-depth-dp-mixed-4 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 10, 'double_rescales': 2}
+40-q4-optimized-mixed-4 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 6, 'double_rescales': 2}
+40-q4-greedy-mixed-5 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 7, 'double_rescales': 2}
+40-q4-depth-dp-mixed-5 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+40-q4-optimized-mixed-5 {'boots': 2, 'rescale_q': 11, 'modswitch_q': 5, 'double_rescales': 3}
+45-q1-greedy-cp-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-cp-double-rescale {'boots': 3, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-cp-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-cc-scale60 {'boots': 4, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-cc-scale60 {'boots': 4, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-cc-scale60 {'boots': 6, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-unequal-depth-residual {'boots': 4, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-unequal-depth-residual {'boots': 8, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+45-q1-optimized-unequal-depth-residual {'boots': 8, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-equal-nominal-residual {'boots': 3, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+45-q1-depth-dp-equal-nominal-residual {'boots': 5, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+45-q1-optimized-equal-nominal-residual {'boots': 5, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+45-q1-greedy-depth-zero-unary-fanout {'boots': 9, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-depth-zero-unary-fanout {'boots': 24, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-depth-zero-unary-fanout {'boots': 8, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-mixed-0 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+45-q1-depth-dp-mixed-0 {'boots': 14, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q1-optimized-mixed-0 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+45-q1-greedy-mixed-1 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-depth-dp-mixed-1 {'boots': 18, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-optimized-mixed-1 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 0, 'double_rescales': 0}
+45-q1-greedy-mixed-2 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-depth-dp-mixed-2 {'boots': 15, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-optimized-mixed-2 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-greedy-mixed-3 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-depth-dp-mixed-3 {'boots': 14, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-optimized-mixed-3 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-greedy-mixed-4 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q1-depth-dp-mixed-4 {'boots': 16, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q1-optimized-mixed-4 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+45-q1-greedy-mixed-5 {'boots': 8, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q1-depth-dp-mixed-5 {'boots': 17, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q1-optimized-mixed-5 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-greedy-cp-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-cp-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-cp-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-cc-double-rescale {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-cc-scale60 {'boots': 2, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-cc-scale60 {'boots': 2, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-cc-scale60 {'boots': 2, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-shared-square {'boots': 2, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-unequal-depth-residual {'boots': 3, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-depth-dp-unequal-depth-residual {'boots': 5, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-optimized-unequal-depth-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-greedy-equal-nominal-residual {'boots': 1, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-depth-dp-equal-nominal-residual {'boots': 2, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-optimized-equal-nominal-residual {'boots': 1, 'rescale_q': 4, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-greedy-depth-zero-unary-fanout {'boots': 5, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-depth-zero-unary-fanout {'boots': 12, 'rescale_q': 9, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-depth-zero-unary-fanout {'boots': 4, 'rescale_q': 9, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-exhausted-shared-input {'boots': 2, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q2-greedy-mixed-0 {'boots': 7, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-depth-dp-mixed-0 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q2-optimized-mixed-0 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-greedy-mixed-1 {'boots': 5, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-depth-dp-mixed-1 {'boots': 11, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-optimized-mixed-1 {'boots': 3, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-greedy-mixed-2 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q2-depth-dp-mixed-2 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q2-optimized-mixed-2 {'boots': 3, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+45-q2-greedy-mixed-3 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-depth-dp-mixed-3 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-optimized-mixed-3 {'boots': 4, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 0}
+45-q2-greedy-mixed-4 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+45-q2-depth-dp-mixed-4 {'boots': 9, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+45-q2-optimized-mixed-4 {'boots': 6, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+45-q2-greedy-mixed-5 {'boots': 5, 'rescale_q': 8, 'modswitch_q': 3, 'double_rescales': 0}
+45-q2-depth-dp-mixed-5 {'boots': 10, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 0}
+45-q2-optimized-mixed-5 {'boots': 5, 'rescale_q': 8, 'modswitch_q': 1, 'double_rescales': 0}
+45-q4-greedy-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-depth-dp-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-optimized-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-greedy-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-depth-dp-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-optimized-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-greedy-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-depth-dp-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-optimized-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-greedy-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-depth-dp-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-optimized-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-greedy-unequal-depth-residual {'boots': 1, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+45-q4-depth-dp-unequal-depth-residual {'boots': 2, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+45-q4-optimized-unequal-depth-residual {'boots': 1, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+45-q4-greedy-equal-nominal-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+45-q4-depth-dp-equal-nominal-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+45-q4-optimized-equal-nominal-residual {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-greedy-depth-zero-unary-fanout {'boots': 2, 'rescale_q': 12, 'modswitch_q': 2, 'double_rescales': 3}
+45-q4-depth-dp-depth-zero-unary-fanout {'boots': 6, 'rescale_q': 12, 'modswitch_q': 2, 'double_rescales': 3}
+45-q4-optimized-depth-zero-unary-fanout {'boots': 2, 'rescale_q': 12, 'modswitch_q': 2, 'double_rescales': 3}
+45-q4-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-greedy-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-optimized-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-greedy-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-depth-dp-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-optimized-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q4-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q4-greedy-mixed-0 {'boots': 3, 'rescale_q': 11, 'modswitch_q': 4, 'double_rescales': 3}
+45-q4-depth-dp-mixed-0 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+45-q4-optimized-mixed-0 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 6, 'double_rescales': 2}
+45-q4-greedy-mixed-1 {'boots': 3, 'rescale_q': 11, 'modswitch_q': 3, 'double_rescales': 3}
+45-q4-depth-dp-mixed-1 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+45-q4-optimized-mixed-1 {'boots': 2, 'rescale_q': 11, 'modswitch_q': 3, 'double_rescales': 3}
+45-q4-greedy-mixed-2 {'boots': 3, 'rescale_q': 11, 'modswitch_q': 3, 'double_rescales': 3}
+45-q4-depth-dp-mixed-2 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 5, 'double_rescales': 2}
+45-q4-optimized-mixed-2 {'boots': 2, 'rescale_q': 11, 'modswitch_q': 3, 'double_rescales': 3}
+45-q4-greedy-mixed-3 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 3, 'double_rescales': 2}
+45-q4-depth-dp-mixed-3 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 5, 'double_rescales': 2}
+45-q4-optimized-mixed-3 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 3, 'double_rescales': 2}
+45-q4-greedy-mixed-4 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 10, 'double_rescales': 2}
+45-q4-depth-dp-mixed-4 {'boots': 3, 'rescale_q': 10, 'modswitch_q': 10, 'double_rescales': 2}
+45-q4-optimized-mixed-4 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 6, 'double_rescales': 2}
+45-q4-greedy-mixed-5 {'boots': 2, 'rescale_q': 10, 'modswitch_q': 7, 'double_rescales': 2}
+45-q4-depth-dp-mixed-5 {'boots': 4, 'rescale_q': 10, 'modswitch_q': 8, 'double_rescales': 2}
+45-q4-optimized-mixed-5 {'boots': 2, 'rescale_q': 11, 'modswitch_q': 5, 'double_rescales': 3}
+45-q18-greedy-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-depth-dp-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-optimized-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-greedy-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-depth-dp-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-optimized-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-greedy-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-depth-dp-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-optimized-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-greedy-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-depth-dp-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-optimized-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-greedy-unequal-depth-residual {'boots': 0, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+45-q18-depth-dp-unequal-depth-residual {'boots': 0, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+45-q18-optimized-unequal-depth-residual {'boots': 0, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+45-q18-greedy-equal-nominal-residual {'boots': 0, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+45-q18-depth-dp-equal-nominal-residual {'boots': 0, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+45-q18-optimized-equal-nominal-residual {'boots': 0, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+45-q18-greedy-depth-zero-unary-fanout {'boots': 0, 'rescale_q': 12, 'modswitch_q': 10, 'double_rescales': 3}
+45-q18-depth-dp-depth-zero-unary-fanout {'boots': 0, 'rescale_q': 12, 'modswitch_q': 10, 'double_rescales': 3}
+45-q18-optimized-depth-zero-unary-fanout {'boots': 0, 'rescale_q': 12, 'modswitch_q': 10, 'double_rescales': 3}
+45-q18-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-greedy-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-optimized-exhausted-input {'boots': 1, 'rescale_q': 1, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-greedy-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-depth-dp-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-optimized-exhausted-shared-input {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 2, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 3, 'modswitch_q': 0, 'double_rescales': 1}
+45-q18-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+45-q18-greedy-mixed-0 {'boots': 0, 'rescale_q': 12, 'modswitch_q': 12, 'double_rescales': 4}
+45-q18-depth-dp-mixed-0 {'boots': 0, 'rescale_q': 12, 'modswitch_q': 12, 'double_rescales': 4}
+45-q18-optimized-mixed-0 {'boots': 0, 'rescale_q': 12, 'modswitch_q': 12, 'double_rescales': 4}
+45-q18-greedy-mixed-1 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 15, 'double_rescales': 3}
+45-q18-depth-dp-mixed-1 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 15, 'double_rescales': 3}
+45-q18-optimized-mixed-1 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 15, 'double_rescales': 3}
+45-q18-greedy-mixed-2 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 12, 'double_rescales': 3}
+45-q18-depth-dp-mixed-2 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 12, 'double_rescales': 3}
+45-q18-optimized-mixed-2 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 12, 'double_rescales': 3}
+45-q18-greedy-mixed-3 {'boots': 0, 'rescale_q': 12, 'modswitch_q': 13, 'double_rescales': 4}
+45-q18-depth-dp-mixed-3 {'boots': 0, 'rescale_q': 12, 'modswitch_q': 13, 'double_rescales': 4}
+45-q18-optimized-mixed-3 {'boots': 0, 'rescale_q': 12, 'modswitch_q': 13, 'double_rescales': 4}
+45-q18-greedy-mixed-4 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 14, 'double_rescales': 3}
+45-q18-depth-dp-mixed-4 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 14, 'double_rescales': 3}
+45-q18-optimized-mixed-4 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 14, 'double_rescales': 3}
+45-q18-greedy-mixed-5 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 16, 'double_rescales': 3}
+45-q18-depth-dp-mixed-5 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 16, 'double_rescales': 3}
+45-q18-optimized-mixed-5 {'boots': 0, 'rescale_q': 11, 'modswitch_q': 16, 'double_rescales': 3}
+120-q3-greedy-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q3-depth-dp-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q3-optimized-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q3-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q3-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q3-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q3-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q3-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q3-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q4-greedy-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-depth-dp-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-optimized-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-greedy-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-depth-dp-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-optimized-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-greedy-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-depth-dp-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-optimized-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-greedy-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-depth-dp-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-optimized-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q4-greedy-unequal-depth-residual {'boots': 1, 'rescale_q': 9, 'modswitch_q': 3, 'double_rescales': 3}
+120-q4-depth-dp-unequal-depth-residual {'boots': 2, 'rescale_q': 11, 'modswitch_q': 3, 'double_rescales': 4}
+120-q4-optimized-unequal-depth-residual {'boots': 1, 'rescale_q': 9, 'modswitch_q': 3, 'double_rescales': 3}
+120-q4-greedy-equal-nominal-residual {'boots': 1, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 3}
+120-q4-depth-dp-equal-nominal-residual {'boots': 1, 'rescale_q': 8, 'modswitch_q': 4, 'double_rescales': 3}
+120-q4-optimized-equal-nominal-residual {'boots': 1, 'rescale_q': 8, 'modswitch_q': 2, 'double_rescales': 3}
+120-q4-greedy-depth-zero-unary-fanout {'boots': 7, 'rescale_q': 30, 'modswitch_q': 0, 'double_rescales': 14}
+120-q4-depth-dp-depth-zero-unary-fanout {'boots': 18, 'rescale_q': 52, 'modswitch_q': 0, 'double_rescales': 25}
+120-q4-optimized-depth-zero-unary-fanout {'boots': 6, 'rescale_q': 28, 'modswitch_q': 2, 'double_rescales': 13}
+120-q4-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q4-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q4-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q4-greedy-exhausted-input {'boots': 1, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 2}
+120-q4-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 2}
+120-q4-optimized-exhausted-input {'boots': 1, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 2}
+120-q4-greedy-exhausted-shared-input {'boots': 2, 'rescale_q': 8, 'modswitch_q': 0, 'double_rescales': 4}
+120-q4-depth-dp-exhausted-shared-input {'boots': 2, 'rescale_q': 8, 'modswitch_q': 0, 'double_rescales': 4}
+120-q4-optimized-exhausted-shared-input {'boots': 2, 'rescale_q': 8, 'modswitch_q': 0, 'double_rescales': 4}
+120-q4-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 2}
+120-q4-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 2}
+120-q4-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 2}
+120-q4-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q4-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q4-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q4-greedy-mixed-0 {'boots': 6, 'rescale_q': 26, 'modswitch_q': 5, 'double_rescales': 12}
+120-q4-depth-dp-mixed-0 {'boots': 9, 'rescale_q': 32, 'modswitch_q': 7, 'double_rescales': 15}
+120-q4-optimized-mixed-0 {'boots': 5, 'rescale_q': 24, 'modswitch_q': 3, 'double_rescales': 11}
+120-q4-greedy-mixed-1 {'boots': 6, 'rescale_q': 26, 'modswitch_q': 4, 'double_rescales': 12}
+120-q4-depth-dp-mixed-1 {'boots': 11, 'rescale_q': 36, 'modswitch_q': 6, 'double_rescales': 17}
+120-q4-optimized-mixed-1 {'boots': 5, 'rescale_q': 24, 'modswitch_q': 4, 'double_rescales': 11}
+120-q4-greedy-mixed-2 {'boots': 6, 'rescale_q': 26, 'modswitch_q': 4, 'double_rescales': 12}
+120-q4-depth-dp-mixed-2 {'boots': 9, 'rescale_q': 32, 'modswitch_q': 4, 'double_rescales': 15}
+120-q4-optimized-mixed-2 {'boots': 5, 'rescale_q': 24, 'modswitch_q': 4, 'double_rescales': 11}
+120-q4-greedy-mixed-3 {'boots': 6, 'rescale_q': 26, 'modswitch_q': 6, 'double_rescales': 12}
+120-q4-depth-dp-mixed-3 {'boots': 9, 'rescale_q': 32, 'modswitch_q': 4, 'double_rescales': 15}
+120-q4-optimized-mixed-3 {'boots': 5, 'rescale_q': 24, 'modswitch_q': 2, 'double_rescales': 11}
+120-q4-greedy-mixed-4 {'boots': 6, 'rescale_q': 26, 'modswitch_q': 10, 'double_rescales': 12}
+120-q4-depth-dp-mixed-4 {'boots': 10, 'rescale_q': 34, 'modswitch_q': 8, 'double_rescales': 16}
+120-q4-optimized-mixed-4 {'boots': 5, 'rescale_q': 24, 'modswitch_q': 4, 'double_rescales': 11}
+120-q4-greedy-mixed-5 {'boots': 6, 'rescale_q': 26, 'modswitch_q': 9, 'double_rescales': 12}
+120-q4-depth-dp-mixed-5 {'boots': 11, 'rescale_q': 36, 'modswitch_q': 6, 'double_rescales': 17}
+120-q4-optimized-mixed-5 {'boots': 5, 'rescale_q': 24, 'modswitch_q': 5, 'double_rescales': 11}
+120-q6-greedy-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-depth-dp-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-optimized-cp-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-greedy-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-depth-dp-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-optimized-cc-double-rescale {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-greedy-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-depth-dp-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-optimized-cc-scale60 {'boots': 0, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-greedy-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-depth-dp-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-optimized-shared-square {'boots': 0, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 1}
+120-q6-greedy-unequal-depth-residual {'boots': 0, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+120-q6-depth-dp-unequal-depth-residual {'boots': 0, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+120-q6-optimized-unequal-depth-residual {'boots': 0, 'rescale_q': 6, 'modswitch_q': 3, 'double_rescales': 1}
+120-q6-greedy-equal-nominal-residual {'boots': 0, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+120-q6-depth-dp-equal-nominal-residual {'boots': 0, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+120-q6-optimized-equal-nominal-residual {'boots': 0, 'rescale_q': 5, 'modswitch_q': 4, 'double_rescales': 1}
+120-q6-greedy-depth-zero-unary-fanout {'boots': 3, 'rescale_q': 18, 'modswitch_q': 0, 'double_rescales': 6}
+120-q6-depth-dp-depth-zero-unary-fanout {'boots': 6, 'rescale_q': 25, 'modswitch_q': 2, 'double_rescales': 10}
+120-q6-optimized-depth-zero-unary-fanout {'boots': 2, 'rescale_q': 16, 'modswitch_q': 5, 'double_rescales': 5}
+120-q6-greedy-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q6-depth-dp-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q6-optimized-unary-only {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q6-greedy-exhausted-input {'boots': 1, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 2}
+120-q6-depth-dp-exhausted-input {'boots': 1, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 2}
+120-q6-optimized-exhausted-input {'boots': 1, 'rescale_q': 4, 'modswitch_q': 0, 'double_rescales': 2}
+120-q6-greedy-exhausted-shared-input {'boots': 1, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 3}
+120-q6-depth-dp-exhausted-shared-input {'boots': 1, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 3}
+120-q6-optimized-exhausted-shared-input {'boots': 1, 'rescale_q': 6, 'modswitch_q': 0, 'double_rescales': 3}
+120-q6-greedy-one-q-before-double-rescale {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 2}
+120-q6-depth-dp-one-q-before-double-rescale {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 2}
+120-q6-optimized-one-q-before-double-rescale {'boots': 1, 'rescale_q': 5, 'modswitch_q': 0, 'double_rescales': 2}
+120-q6-greedy-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q6-depth-dp-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q6-optimized-dead-branch {'boots': 0, 'rescale_q': 0, 'modswitch_q': 0, 'double_rescales': 0}
+120-q6-greedy-mixed-0 {'boots': 2, 'rescale_q': 16, 'modswitch_q': 9, 'double_rescales': 6}
+120-q6-depth-dp-mixed-0 {'boots': 3, 'rescale_q': 18, 'modswitch_q': 12, 'double_rescales': 7}
+120-q6-optimized-mixed-0 {'boots': 2, 'rescale_q': 16, 'modswitch_q': 5, 'double_rescales': 6}
+120-q6-greedy-mixed-1 {'boots': 2, 'rescale_q': 15, 'modswitch_q': 9, 'double_rescales': 5}
+120-q6-depth-dp-mixed-1 {'boots': 4, 'rescale_q': 20, 'modswitch_q': 11, 'double_rescales': 8}
+120-q6-optimized-mixed-1 {'boots': 2, 'rescale_q': 15, 'modswitch_q': 9, 'double_rescales': 5}
+120-q6-greedy-mixed-2 {'boots': 2, 'rescale_q': 15, 'modswitch_q': 9, 'double_rescales': 5}
+120-q6-depth-dp-mixed-2 {'boots': 3, 'rescale_q': 18, 'modswitch_q': 7, 'double_rescales': 7}
+120-q6-optimized-mixed-2 {'boots': 2, 'rescale_q': 15, 'modswitch_q': 6, 'double_rescales': 5}
+120-q6-greedy-mixed-3 {'boots': 2, 'rescale_q': 17, 'modswitch_q': 10, 'double_rescales': 7}
+120-q6-depth-dp-mixed-3 {'boots': 3, 'rescale_q': 19, 'modswitch_q': 10, 'double_rescales': 8}
+120-q6-optimized-mixed-3 {'boots': 2, 'rescale_q': 17, 'modswitch_q': 6, 'double_rescales': 7}
+120-q6-greedy-mixed-4 {'boots': 3, 'rescale_q': 18, 'modswitch_q': 9, 'double_rescales': 7}
+120-q6-depth-dp-mixed-4 {'boots': 4, 'rescale_q': 20, 'modswitch_q': 11, 'double_rescales': 8}
+120-q6-optimized-mixed-4 {'boots': 2, 'rescale_q': 15, 'modswitch_q': 6, 'double_rescales': 5}
+120-q6-greedy-mixed-5 {'boots': 4, 'rescale_q': 22, 'modswitch_q': 11, 'double_rescales': 10}
+120-q6-depth-dp-mixed-5 {'boots': 4, 'rescale_q': 21, 'modswitch_q': 14, 'double_rescales': 9}
+120-q6-optimized-mixed-5 {'boots': 2, 'rescale_q': 15, 'modswitch_q': 8, 'double_rescales': 5}
+540 threshold graph checks passed (495 plans; 45 expected rejections)
+<end of output>
+Test time =   8.51 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoThresholdGraphs" end time: Oct 21 22:11 CST
+"DacapoThresholdGraphs" time elapsed: 00:00:08
+----------------------------------------------------------
+
+12/16 Testing: DacapoRuntimePlanPipeline
+12/16 Test: DacapoRuntimePlanPipeline
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoRuntimePlanPipeline" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.35 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoRuntimePlanPipeline" end time: Oct 21 22:11 CST
+"DacapoRuntimePlanPipeline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/16 Testing: DacapoFrontendBytecode
+9/16 Test: DacapoFrontendBytecode
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-frontend-bytecode.py" "--frontend" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/lib/libHecateFrontend.so" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoFrontendBytecode" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Native frontend text/bytecode plans and prefix masks match
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoFrontendBytecode" end time: Oct 21 22:11 CST
+"DacapoFrontendBytecode" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/16 Testing: DacapoRuntimeMemory
+13/16 Test: DacapoRuntimeMemory
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-memory.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoRuntimeMemory" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+runtime memory memory_host rank=0 device=-1 peak=3.173828e-03 MiB
+runtime memory memory_host rank=0 device=-1 peak=1.708984e-03 MiB
+runtime memory memory_host rank=0 device=-1 peak=1.708984e-03 MiB
+runtime memory memory_devices rank=0 device=-1 peak=7.324219e-04 MiB
+runtime memory memory_devices rank=0 device=0 peak=6.103516e-04 MiB
+runtime memory memory_devices rank=1 device=-1 peak=0.000000e+00 MiB
+runtime memory memory_devices rank=1 device=0 peak=4.882812e-04 MiB
+runtime memory memory_levels rank=0 device=-1 peak=1.953125e-03 MiB
+runtime memory memory_final_fanout rank=0 device=-1 peak=2.441406e-03 MiB
+Runtime memory planner and hand-calculated estimates passed
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoRuntimeMemory" end time: Oct 21 22:11 CST
+"DacapoRuntimeMemory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/16 Testing: DacapoRuntimePlanBinary
+4/16 Test: DacapoRuntimePlanBinary
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-binary.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoRuntimePlanBinary" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Default binary export checks passed
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoRuntimePlanBinary" end time: Oct 21 22:11 CST
+"DacapoRuntimePlanBinary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/16 Testing: DacapoFrontendLocations
+8/16 Test: DacapoFrontendLocations
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-frontend-locations.py" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoFrontendLocations" start time: Oct 21 22:11 CST
+Output:
+----------------------------------------------------------
+Direct and nested frontend source locations match inspect.stack
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoFrontendLocations" end time: Oct 21 22:11 CST
+"DacapoFrontendLocations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 21 22:11 CST

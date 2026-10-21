@@ -1,0 +1,28 @@
+{
+  "config": {
+    "backend": "gpu",
+    "device_capacity_bytes": [
+      15032385536
+    ],
+    "device_fractions": [
+      0.5
+    ],
+    "device_reserve_bytes": [
+      6442450944
+    ],
+    "host_budget_bytes": 68719476736,
+    "lookahead_groups": 128,
+    "pinned_budget_bytes": 1073741824,
+    "raw_budget_bytes": 67108864
+  },
+  "groups": 96,
+  "host_peak": 12189696,
+  "pinned_peak": 65536,
+  "plain_peak": 7864320,
+  "prepare_count": 14,
+  "single_group_object_and_workspace_peak": [
+    0,
+    1090650112
+  ],
+  "workspace_upper_bound_per_op": 1073741824
+}

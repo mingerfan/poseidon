@@ -1,0 +1,4 @@
+{"case": "optimized-depth20", "compile_seconds": 11.796908891003113}
+{"case": "optimized-depth27", "compile_seconds": 24.179098812979646}
+{"case": "optimized-depth50", "compile_seconds": 77.0174443339929}
+{"passed": true, "comparison": {"bad_imaginary_slots": 0, "bad_prefix_slots": 0, "bad_real_slots": 0, "bad_tail_slots": 0, "finite_slots": 49152, "max_abs_error": 2.3563529387704563e-06, "max_imaginary": 0.0005517708109709873, "max_relative_error_floor_atol": 1.146203257153872e-05, "max_tail_abs": 2.7755575615628914e-17, "nonfinite_slots": 0, "passed": true, "rms_error": 1.3579453135111412e-08, "slots_checked": 49152}, "boot_count": 10}

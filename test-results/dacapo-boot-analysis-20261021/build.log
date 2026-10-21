@@ -1,0 +1,45 @@
+[1/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/BootstrapPlacement.cpp.o
+[2/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/WaterlineRescaling.cpp.o
+[3/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/Common.cpp.o
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/Common.cpp:39:31: warning: comparison of integers of different signs: 'uint64_t' (aka 'unsigned long') and 'int64_t' (aka 'long') [-Wsign-compare]
+   39 |         boot.getTargetScale() != bootstrapScale) {
+      |         ~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
+1 warning generated.
+[4/17] Building CXX object lib/Dialect/Earth/Analysis/CMakeFiles/obj.EarthAnalysis.dir/CandidateAnalysis.cpp.o
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp:28:17: warning: use of function template name with no prior declaration in function call with explicit template arguments is a C++20 extension [-Wc++20-extensions]
+   28 |   auto &&func = dyn_cast<mlir::func::FuncOp>(_op);
+      |                 ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp:60:20: warning: use of function template name with no prior declaration in function call with explicit template arguments is a C++20 extension [-Wc++20-extensions]
+   60 |     if (auto sop = dyn_cast<hecate::earth::HEScaleOpInterface>(op)) {
+      |                    ^
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp:147:41: warning: comparison of integers of different signs: 'size_t' (aka 'unsigned long') and 'int64_t' (aka 'long') [-Wsign-compare]
+  147 |   if (values[opid].getLiveOuts().size() <= setNum)
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp:157:46: warning: comparison of integers of different signs: 'size_t' (aka 'unsigned long') and 'int64_t' (aka 'long') [-Wsign-compare]
+  157 |   if (values[from].getValidLiveOuts().size() == setNum) {
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~~~
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp:333:20: warning: use of function template name with no prior declaration in function call with explicit template arguments is a C++20 extension [-Wc++20-extensions]
+  333 |     if (auto sop = dyn_cast<hecate::earth::HEScaleOpInterface>(user)) {
+      |                    ^
+In file included from /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp:1:
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/Analysis/CandidateAnalysis.h:41:20: warning: private field '_op' is not used [-Wunused-private-field]
+   41 |   mlir::Operation *_op;
+      |                    ^
+6 warnings generated.
+[5/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/GreedyBootstrapPlacement.cpp.o
+[6/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/CodeSegmentation.cpp.o
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/CodeSegmentation.cpp:43:12: warning: unused variable 'to' [-Wunused-variable]
+   43 |     auto &&to = cutted_edges.back();
+      |            ^~
+1 warning generated.
+[7/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/CoverageRecorder.cpp.o
+[8/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/DaCapoPlanner.cpp.o
+[9/17] Linking CXX static library lib/libEarthAnalysis.a
+[10/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/CandidateSelection.cpp.o
+[11/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/BypassDetection.cpp.o
+[12/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/ProactiveRescaling.cpp.o
+[13/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/SNRRescaling.cpp.o
+[14/17] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/ELASMExplorer.cpp.o
+[15/17] Linking CXX static library lib/libEarthTransforms.a
+[16/17] Building CXX object tools/CMakeFiles/hecate-opt.dir/optimizer.cpp.o
+[17/17] Linking CXX executable bin/hecate-opt

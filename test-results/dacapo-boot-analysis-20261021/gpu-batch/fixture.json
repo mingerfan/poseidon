@@ -1,0 +1,152 @@
+{
+  "format_version": 1,
+  "model": {
+    "name": "DaCapo optimized scale45; depth20, depth27, depth50"
+  },
+  "context": {
+    "poly_degree": 16384,
+    "q_moduli_bits": [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "p_moduli_bits": [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "default_scale_log2": 40
+  },
+  "tolerances": {
+    "atol": 0.001,
+    "rtol": 0.0001
+  },
+  "inputs": [
+    {
+      "name": "optimized-depth20-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "optimized-depth20-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "optimized-depth27-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "optimized-depth27-y",
+      "values": [
+        -0.125
+      ]
+    },
+    {
+      "name": "optimized-depth50-x",
+      "values": [
+        0.25
+      ]
+    },
+    {
+      "name": "optimized-depth50-y",
+      "values": [
+        -0.125
+      ]
+    }
+  ],
+  "expected_outputs": [
+    {
+      "name": "optimized-depth20-out_x",
+      "values": [
+        0.30504750998699176
+      ]
+    },
+    {
+      "name": "optimized-depth20-out_y",
+      "values": [
+        -0.15252375499349588
+      ]
+    },
+    {
+      "name": "optimized-depth27-out_x",
+      "values": [
+        0.3270522195292701
+      ]
+    },
+    {
+      "name": "optimized-depth27-out_y",
+      "values": [
+        -0.16352610976463505
+      ]
+    },
+    {
+      "name": "optimized-depth50-out_x",
+      "values": [
+        0.41115795546097067
+      ]
+    },
+    {
+      "name": "optimized-depth50-out_y",
+      "values": [
+        -0.20557897773048533
+      ]
+    }
+  ]
+}

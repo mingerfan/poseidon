@@ -1,0 +1,14 @@
+[
+  {
+    "case": "optimized-depth20",
+    "compile_seconds": 11.796908891003113
+  },
+  {
+    "case": "optimized-depth27",
+    "compile_seconds": 24.179098812979646
+  },
+  {
+    "case": "optimized-depth50",
+    "compile_seconds": 77.0174443339929
+  }
+]

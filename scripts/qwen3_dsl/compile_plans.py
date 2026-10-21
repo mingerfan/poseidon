@@ -15,6 +15,7 @@ def main():
     p.add_argument('--workspace-bytes',type=int,default=1024*2**20)
     p.add_argument('--lookahead-groups',type=int,default=128)
     p.add_argument('--prepare-backend',choices=['cpu','gpu','auto'],default='auto')
+    p.add_argument('--boot-placement',choices=['optimized','greedy','depth-dp'],default='depth-dp')
     p.add_argument('--boot-profile',default='poseidon-gpu-degree58-da2-scale45',
                    help='Native degree58/DA2 GPU Boot, output level22/scale45')
     a=p.parse_args()
@@ -46,7 +47,7 @@ def main():
         out=base/a.output_name/f'gpu{count}';out.mkdir(parents=True,exist_ok=False)
         compiler_path=out/'compiler-profile.json'
         compiler_path.write_text(json.dumps(compiler_profile,indent=2)+'\n')
-        command=prefix+['--dacapo','--boot-placement=depth-dp',f'--ckks-config={compiler_path}',
+        command=prefix+['--dacapo',f'--boot-placement={a.boot_placement}',f'--ckks-config={compiler_path}',
           f'--waterline={scale}','--mlir-timing','--mlir-print-op-on-diagnostic=false',
           '--mlir-elide-elementsattrs-if-larger=16',f'--runtime-plan-id={3100+count}',
           f'--runtime-plan-target-id={spec["target_id"]}','--runtime-plan-capability-version=1',

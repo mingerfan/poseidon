@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/xuming/poseidon-threshold-rescale-20261021/build/bin/poseidon_runtime_gpu_qwen_e2e",
+    "/home/xuming/poseidon-dacapo-boot-analysis-20261021/gpu-batch/result.chains.runtime-plan.json",
+    "/home/xuming/poseidon-dacapo-boot-analysis-20261021/gpu-batch/operator-spec.json",
+    "/home/xuming/poseidon-dacapo-boot-analysis-20261021/gpu-batch/fixture.json",
+    "/home/xuming/poseidon-dacapo-boot-analysis-20261021/gpu-batch/report.json",
+    "/home/xuming/poseidon-dacapo-boot-analysis-20261021/gpu-batch/decoded.json",
+    "--backend",
+    "gpu"
+  ],
+  "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+  "pool_mb": 12288,
+  "OMP_NUM_THREADS": 1
+}

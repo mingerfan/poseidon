@@ -1,0 +1,2 @@
+compile_started devices=1 pid=2620239
+{"devices": 1, "pid": 2620239, "elapsed_seconds": 15.013934283982962, "returncode": 0}

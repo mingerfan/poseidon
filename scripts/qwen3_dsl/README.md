@@ -109,8 +109,11 @@ runtime 直接执行原生除模并保留实际 scale，不再做整数校正或
 对齐比例会导致编码精度不足，当前服务器残差用例尚未通过。当前保留普通乘 1
 对齐策略；高精度补偿及其额外 Q 消耗暂缓处理，数值测试仍按原容差报告结果。
 不能把乘法链通过等同于完整模型数值验收。旧 `rescale_mode=lazy` 计划继续使用
-原来的整数校正契约，不能与新计划混用。原 optimized/PARS 路径尚未适配
-`waterline > rescalingFactor`，会明确报错；当前新策略使用 greedy 或 depth-dp。
+原来的整数校正契约，不能与新计划混用。`optimized` 已采用同一阈值规则：
+保留候选点、绕行判断和延迟规划，逐值跟踪 scale 和 Q 消耗；分析及最终插入
+使用相同的边界与 Boot 目标，同一值可以在不同边界多次刷新。
+`compile_plans.py --boot-placement optimized` 可选择该路径；脚本默认仍为 depth-dp。
+延迟规划继续使用 compiler profile 的算子估算表，通常比 depth-dp 编译更慢。
 默认每算子工作空间上界为 1024 MiB，覆盖 Q50 Rotate 的保守上界。
 原生 Boot 的矩阵、常量与密钥按实际分配计入固定 reserve，共享密钥只计一次。
 每设备每 profile 的临时空间另有独立硬上限：N=16384 时 1 GiB，按 N 线性增长；

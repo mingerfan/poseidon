@@ -1,0 +1,4 @@
+/graphs/*
+!/graphs/summary.json
+!/graphs/server-summary.json
+**/decoded*.json
