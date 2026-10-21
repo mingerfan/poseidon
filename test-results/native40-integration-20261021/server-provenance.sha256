@@ -1,0 +1,9 @@
+c3424ee3f23f81e4200728995bdffd974257da85489275a7c4ccfe1715478f7d  /home/xuming/poseidon-native40-integration-20261021/src/src/poseidon/gpu/gpu_memory.h
+ba6dd89b21db2752a1b880e05becb63dfc26e58aaea904113ff4a1c960729d55  /home/xuming/poseidon-native40-integration-20261021/src/src/poseidon/gpu/gpu_evaluator.h
+67fa99b84f12a72796b52f88fac1a12d5a674fa62f003645efe58e521acf4e20  /home/xuming/poseidon-native40-integration-20261021/src/src/poseidon/gpu/gpu_bootstrap_profile.cpp
+826de910356508dff09462dcff8d6b39769eb3335ad60bffa8ffcae69eeca74e  /home/xuming/poseidon-native40-integration-20261021/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp
+fe5d801e956c1100cfd7f8589178b97dec01ea68ad6817645798dafb056f854a  /home/xuming/poseidon-native40-integration-20261021/src/src/poseidon/runtime_api/poseidon_gpu_api.h
+d520720bc16ad3f55b635f0d61b9866934700b6f2918a0165be5b7f411b72174  /home/xuming/poseidon-native40-integration-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp
+2b092005330c3569b28dfd786a71a5baac42e4aa7ffb7085a23f8d6fa0154b01  /home/xuming/poseidon-native40-integration-20261021/build/bin/poseidon_runtime_gpu_qwen_e2e
+b8d19732a06c112b7b30a5c9f2e7287cf0df7de7c9bec76f4c599529a469792e  /home/xuming/poseidon-native40-integration-20261021/build/libposeidon_gpu.a
+427b75d1bcbbac948c385a66f4f246c7527400562b120b19932e768ca10fe5bf  /home/xuming/poseidon-native40-integration-20261021/build/libposeidon_shared.so

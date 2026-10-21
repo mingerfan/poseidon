@@ -1,0 +1,30 @@
+阈值 Rescale 修改与 188Server 验证
+
+测试使用物理 GPU 1，CUDA_VISIBLE_DEVICES=GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5；没有使用存在 ECC 错误的物理 GPU 0。
+参数沿用 N=16384、Q50/P8、30-bit、初始 scale40 的非安全工程测试配置。以下均为小图，不是完整 Qwen 验收。
+
+Q 开销为两条独立链的 Rescale + ModSwitch 删除 Q 总数，不含 Boot 内部操作；Boot 另计。
+用例 | 旧 Rescale Q / ModSwitch Q / Boot | 新 Rescale Q / ModSwitch Q / Boot
+9 次乘法 × 两链，native | 90 / 30 / 4 | 24 / 0 / 0
+40 次乘法 × 两链，native | 400 / 0 / 18 | 104 / 0 / 4
+40 次乘法 × 两链，Host | 440 / 10 / 8 | 110 / 0 / 2
+
+GPU 数值结果（固定 atol=0.001, rtol=0.0001，检查所有槽）：
+depth9-gpu1: PASS; max_abs_error=2.48816763304e-08; runtime_ms=110.308422
+depth40-gpu1: FAIL; max_abs_error=7.42741996916; runtime_ms=449.293695
+depth40-host-gpu1: PASS; max_abs_error=1.82119302972e-09; runtime_ms=2542.212441
+unequal-scale-add: PASS; max_abs_error=4.92558930091e-05; runtime_ms=28.891226
+equal-nominal-add: FAIL; max_abs_error=0.0105865362712; runtime_ms=28.265221
+precision-prototype: PASS; max_abs_error=4.29711569519e-07; runtime_ms=73.404420
+
+已实现：乘法按 s>=S0+30 逐 Q Rescale；保留残余 scale；depth-dp 按相同规则模拟 Q 消耗；Boot 输出 scale 独立；物理映射从 5 改为 1；V5 保存实际浮点 scale；native Rescale 保留真实 q 除法结果。
+已通过：本地编译器 12/12，runtime 8/8，CPU API 9/9；服务器 GPU API 27/27（单卡跳过需要双卡的用例）。
+尚未解决：真实 scale 比例接近 1 时，直接编码 1 对齐精度不足；native scale40 Boot 原有数值错误仍存在。
+precision-prototype 是手工构造的独立验证计划，在两侧各多做一次 Rescale，使加法输出 level 多降 1；不是生产编译器已实现的策略。
+用户已明确暂缓加法高精度补偿：保留普通编码 1 对齐，不增加补偿 Rescale/Q 消耗；精度失败仍如实记录，继续完成阈值 Rescale 和 level 开销验证。
+所有已有工作区修改均保留，没有提交 Git commit。
+
+主编译脚本收尾验证：
+compiler-script-final/gpu1: compile_returncode=0; GPU_passed=True; max_abs_error=8.38929556379e-09
+compiler-script-final/gpu4: compile_returncode=0; compile-only
+compiler-script-host-final/gpu1: compile_returncode=0; GPU_passed=True; max_abs_error=5.71178176978e-09

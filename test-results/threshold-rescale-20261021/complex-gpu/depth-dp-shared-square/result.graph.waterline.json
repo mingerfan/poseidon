@@ -1,0 +1,28 @@
+{
+  "config": {
+    "backend": "auto",
+    "device_capacity_bytes": [
+      15032385536
+    ],
+    "device_fractions": [
+      0.5
+    ],
+    "device_reserve_bytes": [
+      6442450944
+    ],
+    "host_budget_bytes": 8589934592,
+    "lookahead_groups": 128,
+    "pinned_budget_bytes": 1073741824,
+    "raw_budget_bytes": 67108864
+  },
+  "groups": 10,
+  "host_peak": 20840448,
+  "pinned_peak": 1835008,
+  "plain_peak": 1835008,
+  "prepare_count": 1,
+  "single_group_object_and_workspace_peak": [
+    0,
+    1082916864
+  ],
+  "workspace_upper_bound_per_op": 1073741824
+}

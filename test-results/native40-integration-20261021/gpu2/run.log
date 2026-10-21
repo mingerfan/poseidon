@@ -1,0 +1,21 @@
+QWEN inputs=2 outputs=2 devices=2 slots=8192 backend=auto host_boot_instructions=0 native_boot_instructions=4
+KEYS ready rotation_basis=0 key_generation_ms=121.651252
+GPU_POOL maximum_mb=31168,31168 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=32682016768 maximum_bytes=32682016768
+GPU_POOL_RESERVE cuda_device=1 initial_bytes=32682016768 maximum_bytes=32682016768
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=3296934520 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=4522719864 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=32682016768 pool_cap=32682016768 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=28159296904
+waterline stream GPU1 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU1 persistent_bytes=3296934520 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=4522719864 reserve_configured=6442450944
+waterline physical GPU1 pool_reserved=32682016768 pool_cap=32682016768 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=28159296904
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+waterline GPU0 front_peak=299827200 plain_peak=13107200 remaining_front=1048576 remaining_plain=0
+waterline GPU1 front_peak=299827200 plain_peak=13107200 remaining_front=1048576 remaining_plain=0
+waterline shared host_peak=54132736 pinned_peak=19791872 raw_peak=1048576
+FORWARD complete runtime_ms=252.376621
+FAIL output=0 name=out_x max_abs=207.09 max_relative=757.403 max_imaginary=5.44954 bad_real=1 bad_imaginary=1 nonfinite=0
+FAIL output=1 name=out_y max_abs=235.196 max_relative=1720.39 max_imaginary=0.0816938 bad_real=1 bad_imaginary=1 nonfinite=0
+FAIL ALL_OUTPUTS count=2 slots=16384 max_abs=235.196 max_relative=1720.39 max_imaginary=5.44954 bad_real=2 bad_imaginary=2 nonfinite=0
+report=/home/xuming/poseidon-native40-integration-20261021/gpu2/report.json decoded=/home/xuming/poseidon-native40-integration-20261021/gpu2/decoded.json

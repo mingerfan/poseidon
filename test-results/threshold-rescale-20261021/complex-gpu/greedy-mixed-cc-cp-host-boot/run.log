@@ -1,0 +1,16 @@
+QWEN inputs=2 outputs=1 devices=1 slots=8192 backend=gpu host_boot_instructions=1 native_boot_instructions=0
+BOOT semantics=Host decrypt-reencrypt uses_secret_key=true native_bootstrap=false
+KEYS ready rotation_basis=0 key_generation_ms=732.36682
+GPU_POOL maximum_mb=13760 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=14428405760 maximum_bytes=14428405760
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=849225824 retained_workspace_bound=84934656 native_workspace_capacity=0 reserve_required=1001269344 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=14428405760 pool_cap=14428405760 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=13427136416
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=7620591616 plain_peak=56098816 remaining_front=5242880 remaining_plain=0
+waterline shared host_peak=132972544 pinned_peak=19726336 raw_peak=1310720
+FORWARD complete runtime_ms=355.633885
+PASS output=0 name=output0 max_abs=8.75494e-09 max_relative=2.35211e-08 max_imaginary=4.34051e-09 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=8.75494e-09 max_relative=2.35211e-08 max_imaginary=4.34051e-09 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-threshold-rescale-20261021/complex-gpu/greedy-mixed-cc-cp-host-boot/report.json decoded=/home/xuming/poseidon-threshold-rescale-20261021/complex-gpu/greedy-mixed-cc-cp-host-boot/decoded.json

@@ -1,0 +1,1610 @@
+[
+  {
+    "case": "40-q1-greedy-cp-double-rescale",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-cp-double-rescale",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-cc-double-rescale",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-cc-double-rescale",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-cc-scale60",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-cc-scale60",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-unequal-depth-residual",
+    "minimum_depth_cut_boots": 8,
+    "boots": 4,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-unequal-depth-residual",
+    "minimum_depth_cut_boots": 8,
+    "boots": 8,
+    "rescale_q": 5,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-equal-nominal-residual",
+    "minimum_depth_cut_boots": 5,
+    "boots": 3,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-equal-nominal-residual",
+    "minimum_depth_cut_boots": 5,
+    "boots": 5,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 24,
+    "boots": 9,
+    "rescale_q": 9,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 24,
+    "boots": 24,
+    "rescale_q": 9,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-mixed-0",
+    "minimum_depth_cut_boots": 14,
+    "boots": 9,
+    "rescale_q": 8,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-mixed-0",
+    "minimum_depth_cut_boots": 14,
+    "boots": 14,
+    "rescale_q": 8,
+    "modswitch_q": 3,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-mixed-1",
+    "minimum_depth_cut_boots": 18,
+    "boots": 9,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-mixed-1",
+    "minimum_depth_cut_boots": 18,
+    "boots": 18,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-mixed-2",
+    "minimum_depth_cut_boots": 15,
+    "boots": 9,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-mixed-2",
+    "minimum_depth_cut_boots": 15,
+    "boots": 15,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-mixed-3",
+    "minimum_depth_cut_boots": 14,
+    "boots": 9,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-mixed-3",
+    "minimum_depth_cut_boots": 14,
+    "boots": 14,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-mixed-4",
+    "minimum_depth_cut_boots": 16,
+    "boots": 9,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-mixed-4",
+    "minimum_depth_cut_boots": 16,
+    "boots": 16,
+    "rescale_q": 8,
+    "modswitch_q": 3,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-greedy-mixed-5",
+    "minimum_depth_cut_boots": 17,
+    "boots": 8,
+    "rescale_q": 8,
+    "modswitch_q": 3,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-depth-dp-mixed-5",
+    "minimum_depth_cut_boots": 17,
+    "boots": 17,
+    "rescale_q": 8,
+    "modswitch_q": 3,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-cp-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-cp-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-cc-double-rescale",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-cc-double-rescale",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-cc-scale60",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-cc-scale60",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-unequal-depth-residual",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 5,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-unequal-depth-residual",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 5,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-equal-nominal-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-equal-nominal-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 12,
+    "boots": 5,
+    "rescale_q": 9,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 12,
+    "boots": 12,
+    "rescale_q": 9,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-mixed-0",
+    "minimum_depth_cut_boots": 6,
+    "boots": 4,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-mixed-0",
+    "minimum_depth_cut_boots": 6,
+    "boots": 6,
+    "rescale_q": 8,
+    "modswitch_q": 6,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-mixed-1",
+    "minimum_depth_cut_boots": 8,
+    "boots": 4,
+    "rescale_q": 8,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-mixed-1",
+    "minimum_depth_cut_boots": 8,
+    "boots": 8,
+    "rescale_q": 8,
+    "modswitch_q": 5,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-mixed-2",
+    "minimum_depth_cut_boots": 6,
+    "boots": 4,
+    "rescale_q": 8,
+    "modswitch_q": 5,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-mixed-2",
+    "minimum_depth_cut_boots": 6,
+    "boots": 6,
+    "rescale_q": 8,
+    "modswitch_q": 5,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-mixed-3",
+    "minimum_depth_cut_boots": 6,
+    "boots": 4,
+    "rescale_q": 8,
+    "modswitch_q": 4,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-mixed-3",
+    "minimum_depth_cut_boots": 6,
+    "boots": 6,
+    "rescale_q": 8,
+    "modswitch_q": 4,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-mixed-4",
+    "minimum_depth_cut_boots": 7,
+    "boots": 6,
+    "rescale_q": 8,
+    "modswitch_q": 4,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-mixed-4",
+    "minimum_depth_cut_boots": 7,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 6,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-greedy-mixed-5",
+    "minimum_depth_cut_boots": 7,
+    "boots": 5,
+    "rescale_q": 8,
+    "modswitch_q": 4,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-depth-dp-mixed-5",
+    "minimum_depth_cut_boots": 7,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 7,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-greedy-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-depth-dp-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-depth-dp-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-depth-dp-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-depth-dp-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-unequal-depth-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-depth-dp-unequal-depth-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-equal-nominal-residual",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 4,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-depth-dp-equal-nominal-residual",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 4,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 6,
+    "boots": 2,
+    "rescale_q": 12,
+    "modswitch_q": 2,
+    "double_rescales": 3
+  },
+  {
+    "case": "40-q4-depth-dp-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 6,
+    "boots": 6,
+    "rescale_q": 12,
+    "modswitch_q": 2,
+    "double_rescales": 3
+  },
+  {
+    "case": "40-q4-greedy-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-depth-dp-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-greedy-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-depth-dp-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-greedy-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-depth-dp-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-depth-dp-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-greedy-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-depth-dp-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-greedy-mixed-0",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 11,
+    "modswitch_q": 4,
+    "double_rescales": 3
+  },
+  {
+    "case": "40-q4-depth-dp-mixed-0",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 10,
+    "modswitch_q": 8,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-greedy-mixed-1",
+    "minimum_depth_cut_boots": 4,
+    "boots": 3,
+    "rescale_q": 11,
+    "modswitch_q": 3,
+    "double_rescales": 3
+  },
+  {
+    "case": "40-q4-depth-dp-mixed-1",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 10,
+    "modswitch_q": 8,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-greedy-mixed-2",
+    "minimum_depth_cut_boots": 4,
+    "boots": 3,
+    "rescale_q": 11,
+    "modswitch_q": 3,
+    "double_rescales": 3
+  },
+  {
+    "case": "40-q4-depth-dp-mixed-2",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 10,
+    "modswitch_q": 5,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-greedy-mixed-3",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 10,
+    "modswitch_q": 3,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-depth-dp-mixed-3",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 10,
+    "modswitch_q": 5,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-greedy-mixed-4",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 10,
+    "modswitch_q": 10,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-depth-dp-mixed-4",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 10,
+    "modswitch_q": 10,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-greedy-mixed-5",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 10,
+    "modswitch_q": 7,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-depth-dp-mixed-5",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 10,
+    "modswitch_q": 8,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q3-greedy-cp-double-rescale",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-cp-double-rescale",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q3-depth-dp-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q3-greedy-cc-scale60",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-cc-scale60",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-shared-square",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-shared-square",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-unequal-depth-residual",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-unequal-depth-residual",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-equal-nominal-residual",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-equal-nominal-residual",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-depth-zero-unary-fanout",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-depth-zero-unary-fanout",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q3-depth-dp-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q3-greedy-exhausted-input",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-exhausted-input",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-exhausted-shared-input",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-exhausted-shared-input",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-one-q-before-double-rescale",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-one-q-before-double-rescale",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q3-depth-dp-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q3-greedy-mixed-0",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-mixed-0",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-mixed-1",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-mixed-1",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-mixed-2",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-mixed-2",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-mixed-3",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-mixed-3",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-mixed-4",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-mixed-4",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-greedy-mixed-5",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-depth-dp-mixed-5",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q4-greedy-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-depth-dp-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-greedy-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-depth-dp-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-greedy-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-depth-dp-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-greedy-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-depth-dp-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-greedy-unequal-depth-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 9,
+    "modswitch_q": 3,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q4-depth-dp-unequal-depth-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 11,
+    "modswitch_q": 3,
+    "double_rescales": 4
+  },
+  {
+    "case": "120-q4-greedy-equal-nominal-residual",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 8,
+    "modswitch_q": 4,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q4-depth-dp-equal-nominal-residual",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 8,
+    "modswitch_q": 4,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q4-greedy-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 18,
+    "boots": 7,
+    "rescale_q": 30,
+    "modswitch_q": 0,
+    "double_rescales": 14
+  },
+  {
+    "case": "120-q4-depth-dp-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 18,
+    "boots": 18,
+    "rescale_q": 52,
+    "modswitch_q": 0,
+    "double_rescales": 25
+  },
+  {
+    "case": "120-q4-greedy-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q4-depth-dp-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q4-greedy-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q4-depth-dp-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q4-greedy-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 4
+  },
+  {
+    "case": "120-q4-depth-dp-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 4
+  },
+  {
+    "case": "120-q4-greedy-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q4-depth-dp-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q4-greedy-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q4-depth-dp-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q4-greedy-mixed-0",
+    "minimum_depth_cut_boots": 9,
+    "boots": 6,
+    "rescale_q": 26,
+    "modswitch_q": 5,
+    "double_rescales": 12
+  },
+  {
+    "case": "120-q4-depth-dp-mixed-0",
+    "minimum_depth_cut_boots": 9,
+    "boots": 9,
+    "rescale_q": 32,
+    "modswitch_q": 7,
+    "double_rescales": 15
+  },
+  {
+    "case": "120-q4-greedy-mixed-1",
+    "minimum_depth_cut_boots": 11,
+    "boots": 6,
+    "rescale_q": 26,
+    "modswitch_q": 4,
+    "double_rescales": 12
+  },
+  {
+    "case": "120-q4-depth-dp-mixed-1",
+    "minimum_depth_cut_boots": 11,
+    "boots": 11,
+    "rescale_q": 36,
+    "modswitch_q": 6,
+    "double_rescales": 17
+  },
+  {
+    "case": "120-q4-greedy-mixed-2",
+    "minimum_depth_cut_boots": 9,
+    "boots": 6,
+    "rescale_q": 26,
+    "modswitch_q": 4,
+    "double_rescales": 12
+  },
+  {
+    "case": "120-q4-depth-dp-mixed-2",
+    "minimum_depth_cut_boots": 9,
+    "boots": 9,
+    "rescale_q": 32,
+    "modswitch_q": 4,
+    "double_rescales": 15
+  },
+  {
+    "case": "120-q4-greedy-mixed-3",
+    "minimum_depth_cut_boots": 9,
+    "boots": 6,
+    "rescale_q": 26,
+    "modswitch_q": 6,
+    "double_rescales": 12
+  },
+  {
+    "case": "120-q4-depth-dp-mixed-3",
+    "minimum_depth_cut_boots": 9,
+    "boots": 9,
+    "rescale_q": 32,
+    "modswitch_q": 4,
+    "double_rescales": 15
+  },
+  {
+    "case": "120-q4-greedy-mixed-4",
+    "minimum_depth_cut_boots": 10,
+    "boots": 6,
+    "rescale_q": 26,
+    "modswitch_q": 10,
+    "double_rescales": 12
+  },
+  {
+    "case": "120-q4-depth-dp-mixed-4",
+    "minimum_depth_cut_boots": 10,
+    "boots": 10,
+    "rescale_q": 34,
+    "modswitch_q": 8,
+    "double_rescales": 16
+  },
+  {
+    "case": "120-q4-greedy-mixed-5",
+    "minimum_depth_cut_boots": 11,
+    "boots": 6,
+    "rescale_q": 26,
+    "modswitch_q": 9,
+    "double_rescales": 12
+  },
+  {
+    "case": "120-q4-depth-dp-mixed-5",
+    "minimum_depth_cut_boots": 11,
+    "boots": 11,
+    "rescale_q": 36,
+    "modswitch_q": 6,
+    "double_rescales": 17
+  },
+  {
+    "case": "120-q6-greedy-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-depth-dp-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-greedy-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-depth-dp-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-greedy-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-depth-dp-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-greedy-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-depth-dp-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-greedy-unequal-depth-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-depth-dp-unequal-depth-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-greedy-equal-nominal-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 5,
+    "modswitch_q": 4,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-depth-dp-equal-nominal-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 5,
+    "modswitch_q": 4,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-greedy-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 6,
+    "boots": 3,
+    "rescale_q": 18,
+    "modswitch_q": 0,
+    "double_rescales": 6
+  },
+  {
+    "case": "120-q6-depth-dp-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 6,
+    "boots": 6,
+    "rescale_q": 25,
+    "modswitch_q": 2,
+    "double_rescales": 10
+  },
+  {
+    "case": "120-q6-greedy-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q6-depth-dp-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q6-greedy-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q6-depth-dp-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q6-greedy-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q6-depth-dp-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q6-greedy-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q6-depth-dp-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q6-greedy-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q6-depth-dp-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q6-greedy-mixed-0",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 16,
+    "modswitch_q": 9,
+    "double_rescales": 6
+  },
+  {
+    "case": "120-q6-depth-dp-mixed-0",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 18,
+    "modswitch_q": 12,
+    "double_rescales": 7
+  },
+  {
+    "case": "120-q6-greedy-mixed-1",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 15,
+    "modswitch_q": 9,
+    "double_rescales": 5
+  },
+  {
+    "case": "120-q6-depth-dp-mixed-1",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 20,
+    "modswitch_q": 11,
+    "double_rescales": 8
+  },
+  {
+    "case": "120-q6-greedy-mixed-2",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 15,
+    "modswitch_q": 9,
+    "double_rescales": 5
+  },
+  {
+    "case": "120-q6-depth-dp-mixed-2",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 18,
+    "modswitch_q": 7,
+    "double_rescales": 7
+  },
+  {
+    "case": "120-q6-greedy-mixed-3",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 17,
+    "modswitch_q": 10,
+    "double_rescales": 7
+  },
+  {
+    "case": "120-q6-depth-dp-mixed-3",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 19,
+    "modswitch_q": 10,
+    "double_rescales": 8
+  },
+  {
+    "case": "120-q6-greedy-mixed-4",
+    "minimum_depth_cut_boots": 4,
+    "boots": 3,
+    "rescale_q": 18,
+    "modswitch_q": 9,
+    "double_rescales": 7
+  },
+  {
+    "case": "120-q6-depth-dp-mixed-4",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 20,
+    "modswitch_q": 11,
+    "double_rescales": 8
+  },
+  {
+    "case": "120-q6-greedy-mixed-5",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 22,
+    "modswitch_q": 11,
+    "double_rescales": 10
+  },
+  {
+    "case": "120-q6-depth-dp-mixed-5",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 21,
+    "modswitch_q": 14,
+    "double_rescales": 9
+  }
+]

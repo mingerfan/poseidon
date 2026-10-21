@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_qwen_e2e",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/native40-integration-20261021/gpu1/result.chains.runtime-plan.bin",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/native40-integration-20261021/gpu1/operator-spec.json",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/native40-integration-20261021/gpu1/fixture.json",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/native40-integration-20261021/gpu1/report.json",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/native40-integration-20261021/gpu1/decoded.json"
+  ],
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "OMP_NUM_THREADS": "1"
+  },
+  "binary_sha256": "8778ccaebee3e0d99afe9b53512e8d96af0c52c8855a23c6c2f06f19e8ee63cc",
+  "returncode": 1
+}

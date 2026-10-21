@@ -1,0 +1,210 @@
+[  5%] Built target ckks_runtime_core
+[ 72%] Built target poseidon_shared
+[ 92%] Built target poseidon_gpu
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp' has modification time 331 s in the future
+[ 93%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o
+[ 94%] Linking CXX static library ../../../libposeidon_runtime_gpu_api.a
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api_tests.dir/__/tests/runtime_api/poseidon_gpu_api_test.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:4:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘poseidon::runtime_api::PoseidonGpuValue {anonymous}::transfer_value(poseidon::runtime_api::PoseidonGpuApi&, fhegpu::TransferId, const poseidon::runtime_api::PoseidonGpuValue&, fhegpu::ValueKind, const fhegpu::Place&, const fhegpu::Place&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:482:50: warning: narrowing conversion of ‘scale_log2’ from ‘int’ to ‘double’ [-Wnarrowing]
+  482 |         1, kind, destination, kContextId, level, scale_log2, ntt, components};
+      |                                                  ^~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_transfer_posts_completion_event(const poseidon::PoseidonContext&, poseidon::KeyGenerator&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:651:16: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+  651 |         level, kDefaultScaleLog2, cipher.is_ntt_form(), components};
+      |                ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:703:16: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+  703 |         level, kDefaultScaleLog2, true, components};
+      |                ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_async_memory_cleanup(const poseidon::PoseidonContext&, poseidon::KeyGenerator&, const {anonymous}::RmmPoolScope&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:773:43: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+  773 |         static_cast<int>(cipher.level()), kDefaultScaleLog2,
+      |                                           ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘fhegpu::RuntimePlan {anonymous}::make_add_plain_plan(const fhegpu::LoadedOperatorSpec&, int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1068:69: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1068 |         {0, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1069:68: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1069 |         {1, fhegpu::ValueKind::Plaintext, host, kContextId, level, kDefaultScaleLog2, true, 1},
+      |                                                                    ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1070:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1070 |         {2, fhegpu::ValueKind::Ciphertext, device, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1071:70: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1071 |         {3, fhegpu::ValueKind::Plaintext, device, kContextId, level, kDefaultScaleLog2, true, 1},
+      |                                                                      ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1072:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1072 |         {4, fhegpu::ValueKind::Ciphertext, device, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1073:69: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1073 |         {5, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘fhegpu::RuntimePlan {anonymous}::make_add_cipher_plan(const fhegpu::LoadedOperatorSpec&, int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1111:69: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1111 |         {0, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1112:69: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1112 |         {1, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1113:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1113 |         {2, fhegpu::ValueKind::Ciphertext, device, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1114:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1114 |         {3, fhegpu::ValueKind::Ciphertext, device, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1115:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1115 |         {4, fhegpu::ValueKind::Ciphertext, device, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1116:69: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1116 |         {5, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘fhegpu::RuntimePlan {anonymous}::make_multiply_plain_plan(const fhegpu::LoadedOperatorSpec&, int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1154:69: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1154 |         {0, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1155:68: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1155 |         {1, fhegpu::ValueKind::Plaintext, host, kContextId, level, kDefaultScaleLog2, true, 1},
+      |                                                                    ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1156:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1156 |         {2, fhegpu::ValueKind::Ciphertext, device, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1157:70: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1157 |         {3, fhegpu::ValueKind::Plaintext, device, kContextId, level, kDefaultScaleLog2, true, 1},
+      |                                                                      ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1158:71: warning: narrowing conversion of ‘(int)output_scale_log2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1158 |         {4, fhegpu::ValueKind::Ciphertext, device, kContextId, level, output_scale_log2, true, 2},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1159:69: warning: narrowing conversion of ‘(int)output_scale_log2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1159 |         {5, fhegpu::ValueKind::Ciphertext, host, kContextId, level, output_scale_log2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘fhegpu::RuntimePlan {anonymous}::make_two_gpu_plan(const fhegpu::LoadedOperatorSpec&, int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1198:69: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1198 |         {0, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1199:68: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1199 |         {1, fhegpu::ValueKind::Plaintext, host, kContextId, level, kDefaultScaleLog2, true, 1},
+      |                                                                    ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1200:72: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1200 |         {2, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1201:72: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1201 |         {3, fhegpu::ValueKind::Ciphertext, device1, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1202:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1202 |         {4, fhegpu::ValueKind::Plaintext, device0, kContextId, level, kDefaultScaleLog2, true, 1},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1203:71: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1203 |         {5, fhegpu::ValueKind::Plaintext, device1, kContextId, level, kDefaultScaleLog2, true, 1},
+      |                                                                       ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1204:72: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1204 |         {6, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1205:72: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1205 |         {7, fhegpu::ValueKind::Ciphertext, device1, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1206:72: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1206 |         {8, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1207:72: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1207 |         {9, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1208:70: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1208 |         {10, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+      |                                                                      ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_host_decrypt_reencrypt_boot(poseidon::runtime_api::PoseidonGpuApi&, const poseidon::PoseidonContext&, const poseidon::PublicKey&, const poseidon::SecretKey&, const fhegpu::LoadedOperatorSpec&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1578:84: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1578 |         {50, fhegpu::ValueKind::Ciphertext, host_place(), kContextId, input_level, kDefaultScaleLog2, true, 2},
+      |                                                                                    ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1579:85: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1579 |         {51, fhegpu::ValueKind::Ciphertext, host_place(), kContextId, output_level, kDefaultScaleLog2, true, 2},
+      |                                                                                     ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1580:84: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1580 |         {52, fhegpu::ValueKind::Plaintext, host_place(), kContextId, output_level, kDefaultScaleLog2, true, 1}};
+      |                                                                                    ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1591:24: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1591 |          output_level, kDefaultScaleLog2, true, 2});
+      |                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_runtime_drains_unreturned_work(const poseidon::PoseidonContext&, poseidon::KeyGenerator&, const fhegpu::LoadedOperatorSpec&, const {anonymous}::RmmPoolScope&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1662:10: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1662 |          kDefaultScaleLog2, true, components},
+      |          ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1664:10: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1664 |          kDefaultScaleLog2, true, components},
+      |          ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1666:10: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1666 |          kDefaultScaleLog2, true, components}};
+      |          ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_waterline_submission_pipeline(const poseidon::PoseidonContext&, poseidon::KeyGenerator&, const fhegpu::LoadedOperatorSpec&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:1760:76: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 1760 |                                kContextId,static_cast<int>(cipher.level()),kDefaultScaleLog2,true,2});
+      |                                                                            ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_multiply_relinearize_rescale_rotate(poseidon::runtime_api::PoseidonGpuApi&, poseidon::PoseidonContext&, poseidon::KeyGenerator&, const poseidon::RelinKeys&, const poseidon::GaloisKeys&, const fhegpu::LoadedOperatorSpec&, const {anonymous}::RmmPoolScope&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:2383:41: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 2383 |                                         kDefaultScaleLog2};
+      |                                         ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_runtime_reuse(const poseidon::PoseidonContext&, poseidon::KeyGenerator&, const fhegpu::LoadedOperatorSpec&, const {anonymous}::RmmPoolScope&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:2536:51: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 2536 |                 static_cast<int>(cipher.level()), kDefaultScaleLog2, true, 1};
+      |                                                   ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_gpu_plaintext_wide_coefficients(const poseidon::PoseidonContext&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:2704:97: warning: narrowing conversion of ‘scale’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 2704 |         fhegpu::ValueDesc desc{999,fhegpu::ValueKind::Plaintext,device_place(),kContextId,level,scale,true,1};
+      |                                                                                                 ^~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_gpu_raw_pinned_cache(const poseidon::PoseidonContext&, const fhegpu::LoadedOperatorSpec&, int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:2788:126: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 2788 |         plan.values.push_back({static_cast<fhegpu::ValueId>(d),fhegpu::ValueKind::Plaintext,device_place(d),kContextId,level,kDefaultScaleLog2,true,1});
+      |                                                                                                                              ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_gpu_packed_prepare_host_budget(const poseidon::PoseidonContext&, const fhegpu::LoadedOperatorSpec&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:2935:82: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 2935 |     plan.values={{0,fhegpu::ValueKind::Plaintext,device_place(),kContextId,level,kDefaultScaleLog2,true,1}};
+      |                                                                                  ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In function ‘void {anonymous}::test_cpu_prepare_host_budget(const poseidon::PoseidonContext&, poseidon::KeyGenerator&, const fhegpu::LoadedOperatorSpec&)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:3021:72: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 3021 |         {0,fhegpu::ValueKind::Ciphertext,host_place(),kContextId,level,kDefaultScaleLog2,true,2},
+      |                                                                        ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:3022:74: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 3022 |         {1,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level,kDefaultScaleLog2,true,2},
+      |                                                                          ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:3023:73: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 3023 |         {2,fhegpu::ValueKind::Plaintext,device_place(),kContextId,level,kDefaultScaleLog2,true,1},
+      |                                                                         ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:3024:74: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 3024 |         {3,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level,kDefaultScaleLog2,true,2}};
+      |                                                                          ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:3029:94: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 3029 |         plan.values.push_back({id,fhegpu::ValueKind::Plaintext,host_place(),kContextId,level,kDefaultScaleLog2,true,1});
+      |                                                                                              ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:3032:91: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 3032 |     plan.values.push_back({10,fhegpu::ValueKind::Ciphertext,host_place(),kContextId,level,kDefaultScaleLog2,true,2});
+      |                                                                                           ^~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: In lambda function:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp:3123:96: warning: narrowing conversion of ‘{anonymous}::kDefaultScaleLog2’ from ‘int’ to ‘double’ [-Wnarrowing]
+ 3123 |         const auto id=plan.values.size();plan.values.push_back({id,kind,place,kContextId,level,kDefaultScaleLog2,true,kind==fhegpu::ValueKind::Plaintext?1:2});return id;
+      |                                                                                                ^~~~~~~~~~~~~~~~~
+Linking CXX executable ../../../bin/poseidon_runtime_gpu_api_tests
+Built target poseidon_runtime_gpu_api_tests
+[  4%] Built target ckks_runtime_core
+[  9%] Built target ckks_runtime_plan_json
+[ 73%] Built target poseidon_shared
+[ 92%] Built target poseidon_gpu
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp' has modification time 256 s in the future
+[ 93%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o
+[ 95%] Linking CXX static library ../../../libposeidon_runtime_gpu_api.a
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[ 97%] Built target poseidon_runtime_gpu_api
+[ 98%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_qwen_e2e
+[100%] Built target poseidon_runtime_gpu_qwen_e2e

@@ -1,0 +1,49 @@
+第 1 项：复杂图与 Q/Boot 预算验证（2026-10-21）
+
+本轮代码修复（GreedyBootstrapPlacement.cpp）：
+1. depth-dp 增加深度 0 切分候选。输入的可用 Q 已耗尽时，可以在第一次乘法之前先 Boot；此前会错误报告无可行方案。
+2. 规划前按逆序清理死操作，避免死分支抬高乘法深度并导致主分支反复 Boot。在仅有 1 个 Q 预算、含 10 次无用乘法的复现图中，额外 Boot 从 9 次降为 0 次。
+
+结构验证：
+本地编译器 CTest：13/13 通过。新增 DacapoThresholdGraphs 使用标准库，无新依赖。
+本地和 188Server：216/216 项结果相同；186 个合法计划，30 个预算不足的用例按预期报错。
+18 种图，greedy/depth-dp 两种策略；Boot 输出 scale40 的预算为 1/2/4 个 Q，Boot 输出 scale120 的预算为 3/4/6 个 Q。
+覆盖 CP/CC、50x50 和 60x60 scale、共享输入平方、不同深度残差、同名义 scale 的残差、深度零加法/一元操作、死分支、耗尽输入、两次连续 Rescale、6 个固定随机 DAG。
+使用独立的 Python 明文图和穷举切分检查：depth-dp 的 Boot 数达到其“深度切分并刷新所有跨层值”策略内的最小值；这不是任意选择单个值刷新的全局最优证明。
+逐条核对 RuntimePlan 的实际 q 除法、名义 scale 阈值、一次 Rescale 一个 Q、ModSwitch、分支 scale/level、Relinearize components、Boot 输入/输出契约、输出明文语义，以及规划日志和最终指令的 Boot 数一致。
+结构测试使用 N=16 的合成参数，只检查编译契约；明文重放不模拟 CKKS 编码误差。
+
+188Server GPU 数值验证：
+使用物理 GPU 3，CUDA_VISIBLE_DEVICES=GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2。GPU 1/2 初始被其他任务占满；未使用物理 GPU 0，未干预其他任务。
+沿用 N=16384、Q50/P8、30-bit、初始 scale40 的工程测试参数。小图验证，不是完整 Qwen 或安全参数验收。
+容差保持 atol=0.001、rtol=0.0001；检查全部 8192 槽/输出。16 项中 14 项通过，2 项是此前明确暂缓的近似 scale 对齐精度问题。
+
+用例 | 结果 | 最大绝对误差 | Boot / Rescale Q / ModSwitch Q
+greedy-cp-double-rescale | PASS | 7.30885446609e-09 | 0 / 4 / 0
+depth-dp-cp-double-rescale | PASS | 2.69161554156e-09 | 0 / 4 / 0
+greedy-cc-double-rescale | PASS | 1.98566924015e-09 | 0 / 4 / 0
+depth-dp-cc-double-rescale | PASS | 9.05078634261e-09 | 0 / 4 / 0
+greedy-shared-square | PASS | 2.36780990214e-09 | 0 / 4 / 0
+depth-dp-shared-square | PASS | 2.45620161016e-09 | 0 / 4 / 0
+greedy-unequal-depth-residual | PASS | 3.38538986429e-05 | 0 / 6 / 2
+depth-dp-unequal-depth-residual | PASS | 3.38494407339e-05 | 0 / 6 / 2
+greedy-equal-nominal-residual | FAIL（已暂缓精度问题） | 0.0105864668939 | 0 / 5 / 1
+depth-dp-equal-nominal-residual | FAIL（已暂缓精度问题） | 0.0105866989771 | 0 / 5 / 1
+greedy-dead-branch | PASS | 1.50125234702e-07 | 0 / 0 / 0
+depth-dp-dead-branch | PASS | 1.91801684101e-07 | 0 / 0 / 0
+greedy-mixed-cc-cp-host-boot | PASS | 8.75494438057e-09 | 1 / 55 / 17
+depth-dp-mixed-cc-cp-host-boot | PASS | 4.15982620017e-08 | 2 / 66 / 19
+greedy-exhausted-input-host-boot | PASS | 3.2669320027e-09 | 1 / 4 / 0
+depth-dp-exhausted-input-host-boot | PASS | 1.48513404352e-08 | 1 / 4 / 0
+
+关键输出状态（L 为剩余物理 level）：
+三次 CP：名义 scale40 -> 50 -> 60 -> 40，level27 -> 26 -> 25 -> 23；第三次乘法连续消耗 2 个 Q。
+两个 scale50 的密文相乘：乘法前 L26，输出名义 scale40 / L24。
+耗尽输入 Host Boot：输入 scale40 / L4；Boot 输出 scale120 / L49；规范化两次后 scale60 / L47；再乘编码 scale40 的常量并 Rescale 两次，输出名义 scale40 / L45。
+混合 40 次 CP/CC 的 Host Boot 链：greedy 为 1 Boot、55 Rescale Q、17 ModSwitch Q，输出名义 scale60 / L39；depth-dp 为 2 Boot、66 Rescale Q、19 ModSwitch Q，输出名义 scale60 / L5。预算合法，整层刷新策略仍会比 greedy 多耗 Q 和 Boot，本轮没有改变这个策略。
+
+环境重跑：depth-dp-unequal-depth-residual 的第一次运行因共享 GPU 外部内存变化触发 Waterline 检查，未执行出数值结果。只重跑此项，设置 POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB=6144 后通过。初始 report/run.log 已以 .initial 后缀保留；数值与编译参数没有更改。
+
+范围保持：普通编码 1 的 scale 对齐保留；不跳过近似 scale，不添加高精度补偿或额外 Q。没有适配 optimized/PARS。native Boot 的本轮覆盖为结构契约验证，先前独立 native Boot 数值失败尚未修复。
+编译器 SHA-256：8103b2f9a310cd4e6c7e7e264bb8f2f28aba49b7186b1b3c52f8c13c1837f518
+详细数据：complex-summary.json、complex-graphs/summary.json、complex-graphs/server-summary.json、complex-gpu/*/report.json。

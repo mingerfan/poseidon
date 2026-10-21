@@ -1,0 +1,187 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "chains",
+  "memory_planned": true,
+  "places": [
+    {
+      "distinct_allocation_bytes": 14680064,
+      "peak": {
+        "ciphertext_bytes": 14680064,
+        "instruction_ordinal": null,
+        "largest_objects": [
+          {
+            "bytes": 7340032,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          },
+          {
+            "bytes": 7340032,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "1"
+          }
+        ],
+        "operation": "external_inputs",
+        "phase": "external_inputs",
+        "plaintext_bytes": 0
+      },
+      "peak_bytes": 14680064,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 14680064
+    },
+    {
+      "distinct_allocation_bytes": 58589184,
+      "peak": {
+        "ciphertext_bytes": 7340032,
+        "instruction_ordinal": 12,
+        "largest_objects": [
+          {
+            "bytes": 3670016,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "3"
+          },
+          {
+            "bytes": 3670016,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "48"
+          },
+          {
+            "bytes": 1835008,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "50"
+          },
+          {
+            "bytes": 1507328,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "52"
+          },
+          {
+            "bytes": 1179648,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "54"
+          }
+        ],
+        "operation": "ckks.mulcp",
+        "phase": "execution",
+        "plaintext_bytes": 5373952
+      },
+      "peak_bytes": 12713984,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 1048576
+    },
+    {
+      "distinct_allocation_bytes": 58589184,
+      "peak": {
+        "ciphertext_bytes": 7340032,
+        "instruction_ordinal": 14,
+        "largest_objects": [
+          {
+            "bytes": 3670016,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "5"
+          },
+          {
+            "bytes": 3670016,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "49"
+          },
+          {
+            "bytes": 1835008,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "51"
+          },
+          {
+            "bytes": 1507328,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "53"
+          },
+          {
+            "bytes": 1179648,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "55"
+          }
+        ],
+        "operation": "ckks.mulcp",
+        "phase": "execution",
+        "plaintext_bytes": 5373952
+      },
+      "peak_bytes": 12713984,
+      "place": {
+        "index": 1,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 1048576
+    },
+    {
+      "distinct_allocation_bytes": 0,
+      "peak": {
+        "ciphertext_bytes": 0,
+        "instruction_ordinal": null,
+        "largest_objects": [],
+        "operation": "external_inputs",
+        "phase": "external_inputs",
+        "plaintext_bytes": 0
+      },
+      "peak_bytes": 0,
+      "place": {
+        "index": 2,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 0
+    },
+    {
+      "distinct_allocation_bytes": 0,
+      "peak": {
+        "ciphertext_bytes": 0,
+        "instruction_ordinal": null,
+        "largest_objects": [],
+        "operation": "external_inputs",
+        "phase": "external_inputs",
+        "plaintext_bytes": 0
+      },
+      "peak_bytes": 0,
+      "place": {
+        "index": 3,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 0
+    }
+  ],
+  "poly_degree": 16384,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

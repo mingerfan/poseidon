@@ -1,0 +1,54 @@
+{
+  "synthetic_graph_not_qwen": true,
+  "api_regressions_passed": 27,
+  "compiler_regressions_passed": 5,
+  "production_compile_script_devices": [
+    1,
+    4
+  ],
+  "cases": [
+    {
+      "case": "gpu1",
+      "hardware": "4060 Laptop ×1",
+      "degree": 16384,
+      "devices": 1,
+      "native_boots": 4,
+      "profile_setup_ms": 22873.943714,
+      "runtime_ms": 625.501298,
+      "online_ms": 619.575144,
+      "completed": true,
+      "numerical_passed": false,
+      "slots_checked": 16384,
+      "max_abs_error": 237.41980951918438
+    },
+    {
+      "case": "gpu2",
+      "hardware": "V100 ×2 (physical 0,3)",
+      "degree": 16384,
+      "devices": 2,
+      "native_boots": 4,
+      "profile_setup_ms": 118273.329048,
+      "runtime_ms": 252.376621,
+      "online_ms": 234.640003,
+      "completed": true,
+      "numerical_passed": false,
+      "slots_checked": 16384,
+      "max_abs_error": 235.19602890334207
+    },
+    {
+      "case": "gpu1-n65536",
+      "hardware": "V100 ×1 (physical 0)",
+      "degree": 65536,
+      "devices": 1,
+      "native_boots": 4,
+      "profile_setup_ms": 376155.21881,
+      "runtime_ms": 1567.279207,
+      "online_ms": 1500.580033,
+      "completed": true,
+      "numerical_passed": false,
+      "slots_checked": 65536,
+      "max_abs_error": 2075.0377557280226
+    }
+  ],
+  "workspace_limit_negative_case": "fatal runtime error: reason=native Boot workspace allocation exceeds configured hard limit (live=0, request=262144, limit=1) plan_id=0 plan_source_sha256= local_rank=0 api=PoseidonGpuApi"
+}

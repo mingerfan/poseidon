@@ -1,0 +1,292 @@
+{
+  "spec_format_version": 1,
+  "spec_id": "poseidon-ckks-gpu-v1",
+  "version": 1,
+  "status": "placeholder",
+  "target_id": "poseidon-ckks-gpu",
+  "rescale_mode": "lazy",
+  "context": {
+    "context_id": "ctx-main",
+    "poly_degree": 32768,
+    "rns_moduli_log2": [
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28
+    ],
+    "max_modulus_log2": 28,
+    "default_scale_log2": 40
+  },
+  "levels": {
+    "lower_bound": 2,
+    "upper_bound": 13
+  },
+  "operators": {
+    "add_cc": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "add_cp": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "sub_cc": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "sub_cp": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "mul_cc": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "mul_cp": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "negate": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "rotate": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "mod_switch": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "relinearize": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null
+    },
+    "rescale": {
+      "supported": true,
+      "latency_us_by_level": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "noise_by_level": null,
+      "max_levels_per_op": 2
+    },
+    "boot": {
+      "supported": true
+    }
+  },
+  "boot_profiles": [
+    {
+      "profile_id": "poseidon-native-boot-v1",
+      "implementation": "native",
+      "input_level_min": 2,
+      "input_level_max": 13,
+      "input_components": 2,
+      "output_level": 12,
+      "output_scale_log2": 40,
+      "output_components": 2,
+      "latency_us": 1000000,
+      "host_requirements": {
+        "needs_secret_key": false,
+        "needs_host_compute": false
+      }
+    },
+    {
+      "profile_id": "poseidon-cpu-boot-emulation-v1",
+      "implementation": "decrypt_reencrypt",
+      "input_level_min": 2,
+      "input_level_max": 13,
+      "input_components": 2,
+      "output_level": 12,
+      "output_scale_log2": 40,
+      "output_components": 2,
+      "latency_us": 2500000,
+      "host_requirements": {
+        "needs_secret_key": true,
+        "needs_host_compute": true
+      }
+    }
+  ]
+}

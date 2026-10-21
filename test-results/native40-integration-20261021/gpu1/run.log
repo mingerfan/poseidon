@@ -1,0 +1,16 @@
+QWEN inputs=2 outputs=2 devices=1 slots=8192 backend=auto host_boot_instructions=0 native_boot_instructions=4
+KEYS ready rotation_basis=0 key_generation_ms=37.679286
+GPU_POOL maximum_mb=7104 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=7449083904 maximum_bytes=7449083904
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=3296934520 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=4522719864 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=7449083904 pool_cap=7449083904 initial_outside_used=108068864 outside_pool_growth=8388608 allocator_graph_capacity=2926364040
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+waterline GPU0 front_peak=599654400 plain_peak=13107200 remaining_front=2097152 remaining_plain=0
+waterline shared host_peak=54067200 pinned_peak=19726336 raw_peak=524288
+FORWARD complete runtime_ms=625.501298
+FAIL output=0 name=out_x max_abs=207.498 max_relative=758.896 max_imaginary=0.473107 bad_real=1 bad_imaginary=1 nonfinite=0
+FAIL output=1 name=out_y max_abs=237.42 max_relative=1736.66 max_imaginary=0.122267 bad_real=1 bad_imaginary=1 nonfinite=0
+FAIL ALL_OUTPUTS count=2 slots=16384 max_abs=237.42 max_relative=1736.66 max_imaginary=0.473107 bad_real=2 bad_imaginary=2 nonfinite=0
+report=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/native40-integration-20261021/gpu1/report.json decoded=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/native40-integration-20261021/gpu1/decoded.json

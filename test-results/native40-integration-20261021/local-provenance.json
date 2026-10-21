@@ -1,0 +1,17 @@
+{
+  "root_branch": "framework",
+  "root_base": "3a7c6b8db14a5afd8f80d04e7762e079b7710c4a",
+  "dacapo_base": "e205bd57f13dede64d84cb0816190bc6f2d113fa",
+  "sha256": {
+    "src/poseidon/gpu/gpu_memory.h": "c3424ee3f23f81e4200728995bdffd974257da85489275a7c4ccfe1715478f7d",
+    "src/poseidon/gpu/gpu_evaluator.h": "ba6dd89b21db2752a1b880e05becb63dfc26e58aaea904113ff4a1c960729d55",
+    "src/poseidon/gpu/gpu_bootstrap_profile.cpp": "67fa99b84f12a72796b52f88fac1a12d5a674fa62f003645efe58e521acf4e20",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "826de910356508dff09462dcff8d6b39769eb3335ad60bffa8ffcae69eeca74e",
+    "src/poseidon/runtime_api/poseidon_gpu_api.h": "fe5d801e956c1100cfd7f8589178b97dec01ea68ad6817645798dafb056f854a",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp": "d520720bc16ad3f55b635f0d61b9866934700b6f2918a0165be5b7f411b72174",
+    "scripts/qwen3_dsl/compile_plans.py": "90061ea9499c74737c659398fcfae7fa4fee545e5463b192734f09ae92153dbf",
+    "scripts/qwen3_dsl/profiles/operator-spec.json": "39e222162db822b2733b847159667011a0d27ad065702baf4d79a38d1220cc6d",
+    "build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_qwen_e2e": "8778ccaebee3e0d99afe9b53512e8d96af0c52c8855a23c6c2f06f19e8ee63cc",
+    "build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_api_tests": "49e3580aaa9d4269ca8bfdb0ff4aab9fa4bb6df70e300009853708236ff4d231"
+  }
+}

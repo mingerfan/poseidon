@@ -1,0 +1,151 @@
+{
+  "server": "188Server",
+  "physical_gpu_index": 1,
+  "cuda_visible_devices": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+  "gpu0_excluded_due_to_ecc": true,
+  "tests": {
+    "baseline-depth9": {
+      "operators": {
+        "mul_cp": 18,
+        "rescale": 18,
+        "boot": 4,
+        "mod_switch": 2
+      },
+      "Q_drops": {
+        "rescale": 90,
+        "mod_switch": 30
+      },
+      "external_Q_drop_total": 120,
+      "output_levels": [
+        7,
+        7
+      ]
+    },
+    "baseline-depth40": {
+      "operators": {
+        "mul_cp": 80,
+        "rescale": 80,
+        "boot": 18
+      },
+      "Q_drops": {
+        "rescale": 400
+      },
+      "external_Q_drop_total": 400,
+      "output_levels": [
+        7,
+        7
+      ]
+    },
+    "baseline-depth40-host": {
+      "operators": {
+        "mul_cp": 96,
+        "rescale": 88,
+        "boot": 8,
+        "mod_switch": 2
+      },
+      "Q_drops": {
+        "rescale": 440,
+        "mod_switch": 10
+      },
+      "external_Q_drop_total": 450,
+      "output_levels": [
+        4,
+        4
+      ]
+    },
+    "depth9-gpu1": {
+      "operators": {
+        "mul_cp": 18,
+        "rescale": 24
+      },
+      "Q_drops": {
+        "rescale": 24
+      },
+      "external_Q_drop_total": 24,
+      "output_levels": [
+        15,
+        15
+      ],
+      "passed": true,
+      "max_abs_error": 2.4881676330412716e-08,
+      "native_boots": 0,
+      "host_boots": 0,
+      "runtime_ms": 110.308422
+    },
+    "depth40-gpu1": {
+      "operators": {
+        "mul_cp": 80,
+        "rescale": 104,
+        "boot": 4
+      },
+      "Q_drops": {
+        "rescale": 104
+      },
+      "external_Q_drop_total": 104,
+      "output_levels": [
+        5,
+        5
+      ],
+      "passed": false,
+      "max_abs_error": 7.427419969158005,
+      "native_boots": 4,
+      "host_boots": 0,
+      "runtime_ms": 449.293695
+    },
+    "depth40-host-gpu1": {
+      "operators": {
+        "mul_cp": 80,
+        "rescale": 110,
+        "boot": 2
+      },
+      "Q_drops": {
+        "rescale": 110
+      },
+      "external_Q_drop_total": 110,
+      "output_levels": [
+        4,
+        4
+      ],
+      "passed": true,
+      "max_abs_error": 1.8211930297162837e-09,
+      "native_boots": 0,
+      "host_boots": 2,
+      "runtime_ms": 2542.212441
+    },
+    "unequal-scale-add": {
+      "passed": true,
+      "max_abs_error": 4.925589300905364e-05,
+      "native_boots": 0,
+      "host_boots": 0,
+      "runtime_ms": 28.891226
+    },
+    "equal-nominal-add": {
+      "passed": false,
+      "max_abs_error": 0.0105865362711558,
+      "native_boots": 0,
+      "host_boots": 0,
+      "runtime_ms": 28.265221
+    },
+    "precision-prototype": {
+      "operators": {
+        "mul_cp": 5,
+        "rescale": 6,
+        "mod_switch": 1,
+        "add_cc": 1
+      },
+      "Q_drops": {
+        "rescale": 6,
+        "mod_switch": 4
+      },
+      "external_Q_drop_total": 10,
+      "output_levels": [
+        22
+      ],
+      "passed": true,
+      "max_abs_error": 4.297115695193443e-07,
+      "native_boots": 0,
+      "host_boots": 0,
+      "runtime_ms": 73.40442
+    }
+  }
+}

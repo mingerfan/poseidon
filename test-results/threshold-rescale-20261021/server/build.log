@@ -1,0 +1,421 @@
+CMake Warning (dev) at /home/xuming/poseidon-tools/cmake/cmake/data/share/cmake-3.31/Modules/GNUInstallDirs.cmake:253 (message):
+  Unable to determine default CMAKE_INSTALL_LIBDIR directory because no
+  target architecture is known.  Please enable at least one language before
+  including GNUInstallDirs.
+Call Stack (most recent call first):
+  CMakeLists.txt:8 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- CROSS_COMPILE_ARRCH64: OFF
+-- The CXX compiler identification is GNU 11.4.0
+-- The C compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found GMP: /usr/include/x86_64-linux-gnu
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: ON
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_MPI: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL: OFF
+-- The CUDA compiler identification is NVIDIA 12.2.140 with host compiler GNU 11.4.0
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: /usr/local/cuda/bin/nvcc - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- Found CUDAToolkit: /usr/local/cuda/targets/x86_64-linux/include (found version "12.2.140")
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- Found Git: /usr/bin/git (found version "2.34.1")
+-- CPM: Adding package CCCL@ (/home/xuming/poseidon-threshold-rescale-20261021/src/third_party/cccl)
+CMake Warning (dev) at /home/xuming/poseidon-tools/cmake/cmake/data/share/cmake-3.31/Modules/FetchContent.cmake:1953 (message):
+  Calling FetchContent_Populate(CCCL) is deprecated, call
+  FetchContent_MakeAvailable(CCCL) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(CCCL) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  /home/xuming/poseidon/build-runtime-gpu-rmm2412/_deps/rapids-cmake-src/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  /home/xuming/poseidon/build-runtime-gpu-rmm2412/_deps/rapids-cmake-src/rapids-cmake/cpm/cccl.cmake:81 (rapids_cpm_find)
+  /home/xuming/deps/rmm-v24.12.01/cmake/thirdparty/get_cccl.cmake:19 (rapids_cpm_cccl)
+  /home/xuming/deps/rmm-v24.12.01/cmake/thirdparty/get_cccl.cmake:23 (find_and_configure_cccl)
+  /home/xuming/deps/rmm-v24.12.01/CMakeLists.txt:77 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Found libcudacxx: /home/xuming/poseidon-threshold-rescale-20261021/src/third_party/cccl/libcudacxx/lib/cmake/libcudacxx/libcudacxx-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0")
+-- Found Thrust: /home/xuming/poseidon-threshold-rescale-20261021/src/third_party/cccl/thrust/thrust/cmake/thrust-config.cmake (found suitable exact version "2.5.0.0")
+-- Found CUB: /home/xuming/poseidon-threshold-rescale-20261021/src/third_party/cccl/cub/cub/cmake/cub-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0")
+-- Found CCCL: /home/xuming/poseidon-threshold-rescale-20261021/src/third_party/cccl/lib/cmake/cccl/cccl-config.cmake (found version "2.5.0.0")
+-- CPM: Adding package nvtx3@3.1.0 (v3.1.0 at /home/xuming/poseidon-threshold-rescale-20261021/src/third_party/cpm/nvtx3/72787e0a62f981a1041689c3aa467492b6b367e9)
+-- Configuring done (6.4s)
+-- Generating done (0.1s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CPM_fmt_SOURCE
+    CPM_spdlog_SOURCE
+
+
+-- Build files have been written to: /home/xuming/poseidon-threshold-rescale-20261021/build
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/third_party/ckks-runtime/runtime/plan.cpp' has modification time 29 s in the future
+[  0%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/plan.cpp.o
+[  2%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/thread_trace.cpp.o
+[  2%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/plaintext_bundle.cpp.o
+[  3%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/verifier.cpp.o
+[  4%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/utils/sha256.cpp.o
+[  6%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/batchencoder.cpp.o
+[  7%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/ckks_encoder.cpp.o
+[  8%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/ciphertext.cpp.o
+[  8%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/crt_context.cpp.o
+[  9%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/decryptor.cpp.o
+[ 10%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/encryptor.cpp.o
+[ 12%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/keygenerator.cpp.o
+[ 13%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/parameters_literal.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/keygenerator.cpp:12:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 13%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/plaintext.cpp.o
+[ 14%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/poseidon_context.cpp.o
+[ 15%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/rns_poly.cpp.o
+[ 16%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/bootstrapper.cpp.o
+[ 18%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_dft.cpp.o
+[ 18%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_linear_transform.cpp.o
+[ 19%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/homomorphic_mod.cpp.o
+[ 20%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/polynomial_evaluation.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/bootstrapper.h:5,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/bootstrapper.cpp:1:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 21%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/chebyshev_interpolation.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.cpp:1:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.cpp:1:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 22%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/advance/util/cosine_approx.cpp.o
+[ 22%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_base.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/util/chebyshev_interpolation.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/util/chebyshev_interpolation.cpp:1:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 24%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bfv_base.cpp.o
+[ 25%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_bgv_base.cpp.o
+[ 26%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/evaluator_ckks_base.cpp.o
+[ 27%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bfv_software.cpp.o
+[ 27%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_bgv_software.cpp.o
+[ 27%] Linking CXX static library ../libruntime_core.a
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[ 27%] Built target ckks_runtime_core
+[ 28%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/evaluator/software/evaluator_ckks_software.cpp.o
+[ 30%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/factory/poseidon_factory.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.cpp:1:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 31%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/galoiskeys.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/software/evaluator_ckks_software.cpp:1:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 32%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_base.cpp.o
+[ 32%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_bv.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/factory/poseidon_factory.cpp:1:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 33%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_ghs.cpp.o
+[ 34%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/keyswitch_hybrid.cpp.o
+[ 36%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/key/kswitchkeys.cpp.o
+[ 37%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/memorymanager.cpp.o
+[ 37%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/modulus.cpp.o
+[ 38%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/randomgen.cpp.o
+[ 39%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/serialization.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/key/keyswitch_base.cpp:2:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 40%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2b.c.o
+[ 42%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/blake2xb.c.o
+[ 42%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/clipnormal.cpp.o
+[ 43%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/common.cpp.o
+[ 44%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/croots.cpp.o
+[ 45%] Building C object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/fips202.c.o
+[ 46%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/galois.cpp.o
+[ 46%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/globals.cpp.o
+[ 48%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/hash.cpp.o
+[ 49%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/iterator.cpp.o
+[ 50%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/mempool.cpp.o
+[ 51%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ntt.cpp.o
+[ 51%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/numth.cpp.o
+[ 53%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/polyarithsmallmod.cpp.o
+[ 54%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rlwe.cpp.o
+[ 55%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/rns.cpp.o
+[ 56%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/scalingvariant.cpp.o
+[ 56%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/streambuf.cpp.o
+[ 57%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarith.cpp.o
+[ 59%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithmod.cpp.o
+[ 60%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintarithsmallmod.cpp.o
+[ 61%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/uintcore.cpp.o
+[ 61%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/basics/util/ztools.cpp.o
+[ 62%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/debug.cpp.o
+[ 63%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/fft.cpp.o
+[ 65%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/matrix_operation.cpp.o
+[ 66%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/precision.cpp.o
+[ 66%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/random_sample.cpp.o
+[ 67%] Building CXX object CMakeFiles/poseidon_shared.dir/src/poseidon/util/rns_tool_qp.cpp.o
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/third_party/ckks-runtime/runtime/json_plan_reader.cpp' has modification time 5.8 s in the future
+[ 68%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_plan_json.dir/runtime/json_plan_reader.cpp.o
+[ 69%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_plan_json.dir/runtime/plan_reader.cpp.o
+[ 71%] Building CXX object ckks-runtime/CMakeFiles/ckks_runtime_plan_json.dir/runtime/operator_spec_reader.cpp.o
+[ 72%] Linking CXX shared library libposeidon_shared.so
+[ 72%] Built target poseidon_shared
+[ 72%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_bootstrap_profile.cpp.o
+[ 73%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_double_hoist.cpp.o
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_key.cpp.o
+[ 75%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ciphertext.cpp.o
+[ 77%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_memory.cpp.o
+[ 78%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_plaintext.cpp.o
+[ 78%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_parameter.cpp.o
+[ 79%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_uploader.cpp.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_bootstrap_profile.cpp:4:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 80%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_evaluator.cpp.o
+[ 81%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_elementwise_handler.cpp.o
+[ 81%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_keyswitch_handler.cpp.o
+[ 83%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_modswitch_handler.cpp.o
+[ 84%] Building CXX object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_ntt_handler.cpp.o
+[ 85%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_tensor_core_gemm.cu.o
+In file included from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_uploader.cpp:6:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 86%] Linking CXX static library ../libruntime_plan_json.a
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[ 86%] Built target ckks_runtime_plan_json
+[ 87%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_double_hoist_kernels.cu.o
+[ 87%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_elementwise_kernels.cu.o
+[ 89%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_keyswitch_kernels.cu.o
+[ 90%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_ntt_kernels.cu.o
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(293): warning #177-D: variable "poseidon::gpu::<unnamed>::kTensorCoreTileElementsPerLane" was declared but never referenced
+  constexpr int kTensorCoreTileElementsPerLane =
+                ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(296): warning #177-D: function "poseidon::gpu::<unnamed>::build_u32_segment_pow2_factors" was declared but never referenced
+                            void build_u32_segment_pow2_factors(
+                                 ^
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(312): warning #177-D: function "poseidon::gpu::<unnamed>::lazy_add_u64_mod_term" was declared but never referenced
+                            void lazy_add_u64_mod_term(
+                                 ^
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(343): warning #177-D: function "poseidon::gpu::<unnamed>::build_u32_segment_pow2_factors_barrett" was declared but never referenced
+                            void build_u32_segment_pow2_factors_barrett(
+                                 ^
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/gpu/gpu_tensor_core_gemm.cu(362): warning #177-D: function "poseidon::gpu::<unnamed>::lazy_add_u64_mod_term_barrett" was declared but never referenced
+                            void lazy_add_u64_mod_term_barrett(
+                                 ^
+
+[ 91%] Building CUDA object src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/kernels/gpu_rescale_kernels.cu.o
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 92%] Linking CXX static library ../../../libposeidon_gpu.a
+[ 92%] Built target poseidon_gpu
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp' has modification time 129 s in the future
+[ 95%] Building CUDA object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/gpu_plaintext_encoder.cu.o
+[ 95%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/poseidon_gpu_api.cpp.o
+[ 95%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/communication/cuda_local_transfer.cpp.o
+[ 96%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_api.dir/communication/gpu_object_copy.cpp.o
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+      const uint32_t GetLineNum() const { return line_num_; }
+      ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 97%] Linking CXX static library ../../../libposeidon_runtime_gpu_api.a
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[ 97%] Built target poseidon_runtime_gpu_api
+gmake[3]: Warning: File '/home/xuming/poseidon-threshold-rescale-20261021/src/src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp' has modification time 112 s in the future
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_gpu_qwen_e2e.dir/__/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_gpu_qwen_e2e
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[100%] Built target poseidon_runtime_gpu_qwen_e2e
+gmake: *** No rule to make target 'poseidon_runtime_gpu_api_test'.  Stop.

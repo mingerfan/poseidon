@@ -1,0 +1,8 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=explicit host_boot_instructions=0 native_boot_instructions=0
+KEYS ready rotation_basis=0 key_generation_ms=124.448018
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=30380536576 maximum_bytes=30380536576
+FORWARD begin
+FORWARD complete runtime_ms=73.40442
+PASS output=0 name=out max_abs=4.29712e-07 max_relative=0.000429712 max_imaginary=4.15323e-07 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=4.29712e-07 max_relative=0.000429712 max_imaginary=4.15323e-07 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-threshold-rescale-20261021/precision-prototype/report.json decoded=/home/xuming/poseidon-threshold-rescale-20261021/precision-prototype/decoded.json

@@ -1,0 +1,11 @@
+QWEN inputs=2 outputs=2 devices=1 slots=8192 backend=auto host_boot_instructions=0 native_boot_instructions=4
+KEYS ready rotation_basis=0 key_generation_ms=36.925702
+GPU_POOL maximum_mb=7104 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=7449083904 maximum_bytes=7449083904
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=3296934520 retained_workspace_bound=84934656 native_workspace_capacity=1 reserve_required=3448978041 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=7449083904 pool_cap=7449083904 initial_outside_used=108068864 outside_pool_growth=8388608 allocator_graph_capacity=4000105863
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+fatal runtime error: reason=native Boot workspace allocation exceeds configured hard limit (live=0, request=262144, limit=1) plan_id=0 plan_source_sha256= local_rank=0 api=PoseidonGpuApi
+FAIL stage=execute_complete_plan fatal runtime error: reason=native Boot workspace allocation exceeds configured hard limit (live=0, request=262144, limit=1) plan_id=0 plan_source_sha256= local_rank=0 api=PoseidonGpuApi
