@@ -1,0 +1,102 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "chains",
+  "memory_planned": true,
+  "places": [
+    {
+      "distinct_allocation_bytes": 12058624,
+      "peak": {
+        "ciphertext_bytes": 12058624,
+        "instruction_ordinal": null,
+        "largest_objects": [
+          {
+            "bytes": 6029312,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          },
+          {
+            "bytes": 6029312,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "1"
+          }
+        ],
+        "operation": "external_inputs",
+        "phase": "external_inputs",
+        "plaintext_bytes": 0
+      },
+      "peak_bytes": 12058624,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 12058624
+    },
+    {
+      "distinct_allocation_bytes": 213188608,
+      "peak": {
+        "ciphertext_bytes": 9043968,
+        "instruction_ordinal": 18,
+        "largest_objects": [
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "4"
+          },
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "110"
+          },
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "111"
+          },
+          {
+            "bytes": 1507328,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "113"
+          },
+          {
+            "bytes": 1441792,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "114"
+          }
+        ],
+        "operation": "ckks.mulcp",
+        "phase": "execution",
+        "plaintext_bytes": 13434880
+      },
+      "peak_bytes": 22478848,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 1310720
+    }
+  ],
+  "poly_degree": 16384,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

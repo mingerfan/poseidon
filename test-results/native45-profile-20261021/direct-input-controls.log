@@ -1,0 +1,21 @@
+Connection to 10.208.130.188 4000 port [tcp/terabase] succeeded!
+QWEN inputs=6 outputs=6 devices=1 slots=8192 backend=gpu host_boot_instructions=0 native_boot_instructions=6
+KEYS ready rotation_basis=0 key_generation_ms=118.948231
+GPU_POOL maximum_mb=12288 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=3259906680 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=4485692024 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=12884901888 pool_cap=12884901888 initial_outside_used=323747840 outside_pool_growth=2097152 allocator_graph_capacity=8399209864
+waterline rescale workspace plan_max_drop=0 capability_max_drop=50
+FORWARD complete runtime_ms=560.11157
+waterline GPU0 front_peak=35258368 plain_peak=0 remaining_front=35258368 remaining_plain=0
+waterline shared host_peak=152305664 pinned_peak=58982400 raw_peak=0
+PASS output=0 name=output-full-exact-sparse max_abs=2.26534e-05 max_relative=0.0226534 max_imaginary=0.000131978 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=1 name=output-low-exact-sparse max_abs=2.26397e-05 max_relative=0.0226397 max_imaginary=0.00013395 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=2 name=output-mid-drift-sparse max_abs=2.32719e-05 max_relative=0.0232719 max_imaginary=0.00013283 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=3 name=output-low-high-scale-sparse max_abs=2.29398e-05 max_relative=0.0229398 max_imaginary=0.000131177 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL output=4 name=output-low-scale50-sparse max_abs=0.00145567 max_relative=0.0227803 max_imaginary=0.00013116 bad_real=1 bad_imaginary=0 nonfinite=0
+PASS output=5 name=output-full-exact-dense max_abs=0.000171725 max_relative=0.00544942 max_imaginary=0.000133813 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL ALL_OUTPUTS count=6 slots=49152 max_abs=0.00145567 max_relative=0.0232719 max_imaginary=0.00013395 bad_real=1 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-native45-profile-20261021/direct-input-controls/report.json decoded=/home/xuming/poseidon-native45-profile-20261021/direct-input-controls/decoded.json

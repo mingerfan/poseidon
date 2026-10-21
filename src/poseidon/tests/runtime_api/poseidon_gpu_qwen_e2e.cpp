@@ -126,7 +126,8 @@ poseidon::PoseidonContext make_context(const fhegpu::OperatorSpec &spec,
     const std::vector<poseidon::Modulus> p(primes.begin() + q_bits.size(), primes.end());
     const auto log_n = exact_log2(degree);
     poseidon::ParametersLiteral parameters(
-        CKKS, log_n, log_n - 1, static_cast<std::uint32_t>(scale), 0, 0,
+        // Match the independently validated degree58/DA2 scale45 context.
+        CKKS, log_n, log_n - 1, static_cast<std::uint32_t>(scale), 0, 1,
         poseidon::Modulus(0), q, p, poseidon::sec_level_type::none);
     return poseidon::PoseidonContext(parameters);
 }
@@ -320,10 +321,10 @@ BootSelection boot_selection(const fhegpu::RuntimePlan &plan)
                 compute->place.kind == fhegpu::PlaceKind::Host) ++result.host;
             else if (attributes.implementation == fhegpu::BootImplementation::Native &&
                      compute->place.kind == fhegpu::PlaceKind::Device) {
-                if (attributes.operator_profile != "poseidon-gpu-degree58-da2-scale40-experimental" ||
-                    attributes.target_level != 27 || attributes.target_scale_log2 != 40 ||
+                if (attributes.operator_profile != "poseidon-gpu-degree58-da2-scale45" ||
+                    attributes.target_level != 22 || attributes.target_scale_log2 != 45 ||
                     attributes.target_components != 2)
-                    throw std::runtime_error("unsupported Qwen native Boot contract; expected experimental degree58 DA2 level27 scale40");
+                    throw std::runtime_error("unsupported Qwen native Boot contract; expected degree58 DA2 level22 scale45");
                 result.native_profiles.emplace(compute->place.index, attributes.operator_profile);
                 ++result.native;
             } else throw std::runtime_error("Qwen Boot implementation and placement disagree");
@@ -531,10 +532,9 @@ int main(int argc, char **argv)
                        {"waterline", waterline_report(plan)}, {"input_count", input_rows.size()},
                        {"output_count", output_rows.size()}, {"slots_per_output", slot_count},
                        {"execution_mode", "per_device_workers"}, {"device_worker_count", device_count},
-                       {"boot_implementation", boots.native ? (host_boots ? "mixed" : "native_scale40_experimental") :
+                       {"boot_implementation", boots.native ? (host_boots ? "mixed" : "native_scale45") :
                                                    (host_boots ? "host_decrypt_reencrypt" : "none")},
                        {"host_boot_instructions", host_boots}, {"native_boot_instructions", boots.native},
-                       {"native_scale40_known_numerical_errors", boots.native != 0},
                        {"secret_key_assisted_refresh", host_boots != 0},
                        {"security_level", "none; numerical validation context"}});
         int visible_device_count = 0;
@@ -615,6 +615,7 @@ int main(int argc, char **argv)
                                           {"prefix_size", input_rows[index].at("values").size()}});
         }
         report["inputs"] = std::move(input_descriptions);
+        report["context_q0_level"] = context.parameters_literal()->q0_level();
         report["input_encryption_ms"] = milliseconds(input_begin, Clock::now());
         stage = "create_gpu_api";
         const auto api_begin = Clock::now();
@@ -628,16 +629,23 @@ int main(int argc, char **argv)
         for (const auto &[device, id] : boots.native_profiles) {
             poseidon::gpu::GpuBootstrapProfileConfig config;
             config.profile_id = id;
-            config.eval_mod_log_scale = 40;
+            config.eval_mod_log_scale = 45;
             config.eval_mod_sine_degree = 58;
             config.eval_mod_generation_degree = 59;
             config.eval_mod_truncate_degree.reset();
             config.eval_mod_double_angle = 2;
             const auto begin = Clock::now();
             auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(context, keys, device, config);
-            if (profile.output_level != 27 || profile.output_scale_log2 != 40 ||
-                profile.output_components != 2)
-                throw std::runtime_error("built native Boot profile disagrees with compiled level27/scale40 contract");
+            const auto declared = std::find_if(loaded_spec.spec.boot_profiles.begin(), loaded_spec.spec.boot_profiles.end(),
+                [&id](const auto &candidate) { return candidate.profile_id == id; });
+            if (declared == loaded_spec.spec.boot_profiles.end() ||
+                profile.output_level != declared->output_level ||
+                profile.output_scale_log2 != declared->output_scale_log2 ||
+                declared->input_level_min < profile.input_level_min ||
+                declared->input_level_max > profile.input_level_max ||
+                profile.input_components != declared->input_components ||
+                profile.output_components != declared->output_components)
+                throw std::runtime_error("built native Boot profile disagrees with OperatorSpec");
             report["native_boot_profiles"].push_back({{"device", device}, {"profile_id", id},
                 {"output_level", profile.output_level}, {"output_scale_log2", profile.output_scale_log2},
                 {"constant_bytes", profile.bootstrap_data.allocated_bytes()},

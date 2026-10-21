@@ -1,0 +1,89 @@
+[
+  {
+    "name": "depth-dp-depth9",
+    "boot_count": 0,
+    "boot_inputs": [],
+    "output_states": [
+      {
+        "level": 10,
+        "scale_log2": 40.22883154777709
+      },
+      {
+        "level": 10,
+        "scale_log2": 40.22883154777709
+      }
+    ]
+  },
+  {
+    "name": "greedy-depth20",
+    "boot_count": 2,
+    "boot_inputs": [
+      {
+        "level": 4,
+        "scale_log2": 60.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 60.37289450508031
+      }
+    ],
+    "output_states": [
+      {
+        "level": 14,
+        "scale_log2": 45.14416336611769
+      },
+      {
+        "level": 14,
+        "scale_log2": 45.14416336611769
+      }
+    ]
+  },
+  {
+    "name": "depth-dp-depth20",
+    "boot_count": 2,
+    "boot_inputs": [
+      {
+        "level": 14,
+        "scale_log2": 40.14416336611769
+      },
+      {
+        "level": 14,
+        "scale_log2": 40.14416336611769
+      }
+    ],
+    "output_states": [
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      }
+    ]
+  },
+  {
+    "name": "depth-dp-depth27",
+    "boot_count": 2,
+    "boot_inputs": [
+      {
+        "level": 5,
+        "scale_log2": 50.34771237783504
+      },
+      {
+        "level": 5,
+        "scale_log2": 50.34771237783504
+      }
+    ],
+    "output_states": [
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      },
+      {
+        "level": 4,
+        "scale_log2": 65.37289450508031
+      }
+    ]
+  }
+]

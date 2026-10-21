@@ -1,0 +1,16 @@
+QWEN inputs=2 outputs=2 devices=1 slots=8192 backend=gpu host_boot_instructions=0 native_boot_instructions=0
+KEYS ready rotation_basis=0 key_generation_ms=118.759514
+GPU_POOL maximum_mb=12288 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=796010592 retained_workspace_bound=41418752 native_workspace_capacity=0 reserve_required=904538208 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=12884901888 pool_cap=12884901888 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=11980363680
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=293076992 plain_peak=26542080 remaining_front=2883584 remaining_plain=0
+waterline shared host_peak=51445760 pinned_peak=19726336 raw_peak=1179648
+FORWARD complete runtime_ms=31.006477
+PASS output=0 name=out_x max_abs=3.14547e-09 max_relative=9.05911e-08 max_imaginary=3.68601e-09 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=1 name=out_y max_abs=2.07364e-08 max_relative=1.51681e-07 max_imaginary=2.41458e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=2 slots=16384 max_abs=2.07364e-08 max_relative=1.51681e-07 max_imaginary=2.41458e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth9/report.json decoded=/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth9/decoded.json

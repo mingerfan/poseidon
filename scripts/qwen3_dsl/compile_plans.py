@@ -15,8 +15,8 @@ def main():
     p.add_argument('--workspace-bytes',type=int,default=1024*2**20)
     p.add_argument('--lookahead-groups',type=int,default=128)
     p.add_argument('--prepare-backend',choices=['cpu','gpu','auto'],default='auto')
-    p.add_argument('--boot-profile',default='poseidon-gpu-degree58-da2-scale40-experimental',
-                   help='Explicit Boot profile; scale40 native currently has known numerical errors')
+    p.add_argument('--boot-profile',default='poseidon-gpu-degree58-da2-scale45',
+                   help='Native degree58/DA2 GPU Boot, output level22/scale45')
     a=p.parse_args()
     if a.lookahead_groups<=0:p.error('--lookahead-groups must be positive')
     base=a.workspace.resolve();tool=base/'toolchain';profiles=base/'profiles'

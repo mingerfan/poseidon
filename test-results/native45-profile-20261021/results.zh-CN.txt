@@ -1,0 +1,40 @@
+GPU scale45 Boot 配置切换与验证（2026-10-21）
+
+当前 scripts/qwen3_dsl/profiles/operator-spec.json 只保留 poseidon-gpu-degree58-da2-scale45。Host 和 scale40 配置从当前可选列表移除，底层通用实现和历史实验数据保留。
+算法为完整实际 degree58、生成请求59、不截断、DA2、内部/输出 scale45；在现有 N16384 Q50/P8 全30-bit 上输出物理 level22。初始计算 scale 仍为40，阈值70，不强制将Boot输出45变成40。
+工作下界仍为level4，可消耗Q由23变为18；compile_plans.py 自动生成 bootstrap-scale=45、rescalingFactor=30、bootstrapLevelUpperBound=19。context levels.upper_bound 仍为49，保留Boot内部需要的完整Q链。旧计划必须重编。
+
+不能只改 JSON：
+1. JSON boot_profiles 仅声明输入输出契约，不实现算法。
+2. GPU runner 原来硬编码 scale40/level27/旧ID，已切换到 scale45，构建后与OperatorSpec校验。
+3. 之前独立通过的实验使用 q0_level=1；Qwen runner 原来为0。现已同步为1并写入实际执行报告，实际Q/P质数不变。
+4. 不需要修改阈值Rescale、加法对齐或RuntimePlan V5。原optimized/PARS路径仍待新规则适配，换profile不会解除它的限制。
+
+验证：
+编译器 CTest 14/14 通过，其中新增 scale45/level22 的1卡与4卡结构验证；4卡只编译，没有执行GPU0。
+生产 compile_plans.py 单卡默认配置编译通过，核对生成的预算和Boot输出字段。
+188Server物理GPU1，CUDA_VISIBLE_DEVICES=GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5；未使用GPU0。
+所有GPU检查保持atol=0.001、rtol=0.0001，检查每个输出全部8192槽；不回退Host，不增加补偿Rescale，不放宽容差。
+
+计算链用例 | 结果 | 最大实部绝对误差 | Boot输入(L,log2scale)
+depth-dp-depth9 | PASS | 2.07363670401e-08 | []
+greedy-depth20 | FAIL | 646.957691917 | [(4, 60.37289450508031), (4, 60.37289450508031)]
+depth-dp-depth20 | PASS | 3.9385011221e-06 | [(14, 40.14416336611769), (14, 40.14416336611769)]
+depth-dp-depth27 | FAIL | 0.00190624164221 | [(5, 50.34771237783504), (5, 50.34771237783504)]
+
+直接加密输入的Boot对照（同一资源构建、不同输入状态）：
+用例 | 输入level | 输入log2scale | 结果 | 最大实部绝对误差
+full-exact-sparse | 49 | 40 | PASS | 2.2653379896e-05
+low-exact-sparse | 4 | 40 | PASS | 2.26397192583e-05
+mid-drift-sparse | 14 | 40.1441633661 | PASS | 2.32719177301e-05
+low-high-scale-sparse | 4 | 60.3728945051 | PASS | 2.29397769914e-05
+low-scale50-sparse | 5 | 50.3477123778 | FAIL | 0.00145567077156
+full-exact-dense | 49 | 40 | PASS | 0.000171724931795
+
+结论：scale45的输出契约可被新编译规则正确表达和计入预算，独立完整level测试通过并不代表所有新输入状态都通过。scale约50.35的直接Boot仍超出当前容差；greedy高scale计算链有大误差，而相同标称level/scale的直接加密输入通过，因此尚不能只按level/scale归因，也未证明其根因。原greedy输入是运算后的密文，直接对照输入是重新加密的密文。
+本轮仅切换候选配置、同步已验证的构建参数并完成回归，没有修改GPU Boot数学实现来掩盖这些失败。不能宣称完整Qwen可用。
+
+位置：仓库模板 scripts/qwen3_dsl/profiles/operator-spec.json；编译时实际读取 <workspace>/profiles/operator-spec.json。
+服务器当前配置已同步到 /home/xuming/poseidon-threshold-rescale-20261021/profiles；本轮独立验证工作区为 /home/xuming/poseidon-native45-profile-20261021。
+算法参数与上下文在 src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp；默认profile选择在 scripts/qwen3_dsl/compile_plans.py。
+详细证据：validation-summary.json、各case/report.json、direct-input-controls/report.json、production-depth20/gpu1/command.json、compiler-tests.log。

@@ -1,0 +1,596 @@
+{
+  "format_version": 5,
+  "waterline": {
+    "backend": "auto",
+    "device_capacity_bytes": [
+      15032385536
+    ],
+    "device_fractions": [
+      0.5
+    ],
+    "device_reserve_bytes": [
+      6442450944
+    ],
+    "host_budget_bytes": 8589934592,
+    "lookahead_groups": 128,
+    "pinned_budget_bytes": 1073741824,
+    "raw_budget_bytes": 67108864
+  },
+  "plan_id": "0",
+  "target": {
+    "capability_version": 1,
+    "device_counts": [
+      1
+    ],
+    "operator_spec": {
+      "id": "poseidon-ckks-gpu-16384-q50-estimated-v1",
+      "source_sha256": "sha256:dbcc205ec4aa47024d5a6c4790e040f59b94793bdc93f6ac5583d8795010a312",
+      "version": 1
+    },
+    "target_id": "poseidon-ckks-gpu",
+    "world_size": 1
+  },
+  "values": [
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "0",
+      "kind": "ciphertext",
+      "level": 49,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "1",
+      "kind": "ciphertext",
+      "level": 49,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "2",
+      "kind": "ciphertext",
+      "level": 22,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 45.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "3",
+      "kind": "ciphertext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "4",
+      "kind": "ciphertext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "5",
+      "kind": "ciphertext",
+      "level": 22,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 45.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "6",
+      "kind": "ciphertext",
+      "level": 14,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.14416336611769
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "7",
+      "kind": "ciphertext",
+      "level": 14,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 40.14416336611769
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "8",
+      "kind": "ciphertext",
+      "level": 22,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 45.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "9",
+      "kind": "ciphertext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 60.37289450508031
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "10",
+      "kind": "ciphertext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 60.37289450508031
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "11",
+      "kind": "ciphertext",
+      "level": 22,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 45.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "12",
+      "kind": "ciphertext",
+      "level": 5,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 50.34771237783504
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "13",
+      "kind": "ciphertext",
+      "level": 5,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 50.34771237783504
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "14",
+      "kind": "ciphertext",
+      "level": 22,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 45.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "15",
+      "kind": "ciphertext",
+      "level": 49,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "16",
+      "kind": "ciphertext",
+      "level": 49,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-16384-q50-estimated",
+      "id": "17",
+      "kind": "ciphertext",
+      "level": 22,
+      "ntt": true,
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "scale_log2": 45.0
+    }
+  ],
+  "external_inputs": [
+    "0",
+    "3",
+    "6",
+    "9",
+    "12",
+    "15"
+  ],
+  "initialization": [
+    {
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "0"
+      ],
+      "kind": "transfer",
+      "ordinal": 0,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "1"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "0"
+    },
+    {
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "3"
+      ],
+      "kind": "transfer",
+      "ordinal": 1,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "4"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "1"
+    },
+    {
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "6"
+      ],
+      "kind": "transfer",
+      "ordinal": 2,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "7"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "2"
+    },
+    {
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "9"
+      ],
+      "kind": "transfer",
+      "ordinal": 3,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "10"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "3"
+    },
+    {
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "12"
+      ],
+      "kind": "transfer",
+      "ordinal": 4,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "13"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "4"
+    },
+    {
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "15"
+      ],
+      "kind": "transfer",
+      "ordinal": 5,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "16"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "5"
+    }
+  ],
+  "execution": [
+    {
+      "attrs": {
+        "implementation": "native",
+        "operator_profile": "poseidon-gpu-degree58-da2-scale45",
+        "target_components": 2,
+        "target_level": 22,
+        "target_scale_log2": 45
+      },
+      "inputs": [
+        "1"
+      ],
+      "kind": "compute",
+      "op": "boot",
+      "ordinal": 6,
+      "output": "2",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "implementation": "native",
+        "operator_profile": "poseidon-gpu-degree58-da2-scale45",
+        "target_components": 2,
+        "target_level": 22,
+        "target_scale_log2": 45
+      },
+      "inputs": [
+        "4"
+      ],
+      "kind": "compute",
+      "op": "boot",
+      "ordinal": 7,
+      "output": "5",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "implementation": "native",
+        "operator_profile": "poseidon-gpu-degree58-da2-scale45",
+        "target_components": 2,
+        "target_level": 22,
+        "target_scale_log2": 45
+      },
+      "inputs": [
+        "7"
+      ],
+      "kind": "compute",
+      "op": "boot",
+      "ordinal": 8,
+      "output": "8",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "implementation": "native",
+        "operator_profile": "poseidon-gpu-degree58-da2-scale45",
+        "target_components": 2,
+        "target_level": 22,
+        "target_scale_log2": 45
+      },
+      "inputs": [
+        "10"
+      ],
+      "kind": "compute",
+      "op": "boot",
+      "ordinal": 9,
+      "output": "11",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "implementation": "native",
+        "operator_profile": "poseidon-gpu-degree58-da2-scale45",
+        "target_components": 2,
+        "target_level": 22,
+        "target_scale_log2": 45
+      },
+      "inputs": [
+        "13"
+      ],
+      "kind": "compute",
+      "op": "boot",
+      "ordinal": 10,
+      "output": "14",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "implementation": "native",
+        "operator_profile": "poseidon-gpu-degree58-da2-scale45",
+        "target_components": 2,
+        "target_level": 22,
+        "target_scale_log2": 45
+      },
+      "inputs": [
+        "16"
+      ],
+      "kind": "compute",
+      "op": "boot",
+      "ordinal": 11,
+      "output": "17",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    }
+  ],
+  "finalization": [],
+  "final_outputs": [
+    "2",
+    "5",
+    "8",
+    "11",
+    "14",
+    "17"
+  ]
+}

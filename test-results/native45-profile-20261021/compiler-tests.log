@@ -1,0 +1,33 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix
+      Start  1: DacapoThresholdGraphs
+ 1/14 Test  #1: DacapoThresholdGraphs ............   Passed    2.99 sec
+      Start  2: DacapoNativeScale40
+ 2/14 Test  #2: DacapoNativeScale40 ..............   Passed    0.11 sec
+      Start  3: DacapoNativeScale45
+ 3/14 Test  #3: DacapoNativeScale45 ..............   Passed    0.10 sec
+      Start  4: DacapoRuntimePlanBinary
+ 4/14 Test  #4: DacapoRuntimePlanBinary ..........   Passed    0.08 sec
+      Start  5: DacapoRuntimePlanIO
+ 5/14 Test  #5: DacapoRuntimePlanIO ..............   Passed    0.13 sec
+      Start  6: DacapoUnitPlaintext
+ 6/14 Test  #6: DacapoUnitPlaintext ..............   Passed    0.27 sec
+      Start  7: DacapoRuntimeScale
+ 7/14 Test  #7: DacapoRuntimeScale ...............   Passed    0.75 sec
+      Start  8: DacapoFrontendLocations
+ 8/14 Test  #8: DacapoFrontendLocations ..........   Passed    0.04 sec
+      Start  9: DacapoFrontendBytecode
+ 9/14 Test  #9: DacapoFrontendBytecode ...........   Passed    0.06 sec
+      Start 10: DacapoGreedyBootstrap
+10/14 Test #10: DacapoGreedyBootstrap ............   Passed    0.46 sec
+      Start 11: DacapoManualPrecompile
+11/14 Test #11: DacapoManualPrecompile ...........   Passed    0.36 sec
+      Start 12: DacapoRuntimePlanPipeline
+12/14 Test #12: DacapoRuntimePlanPipeline ........   Passed    0.31 sec
+      Start 13: DacapoRuntimeMemory
+13/14 Test #13: DacapoRuntimeMemory ..............   Passed    0.16 sec
+      Start 14: DacapoPlaintextWaterline
+14/14 Test #14: DacapoPlaintextWaterline .........   Passed    0.18 sec
+
+100% tests passed out of 14
+
+Total Test time (real) =   6.03 sec

@@ -1,0 +1,16 @@
+QWEN inputs=2 outputs=2 devices=1 slots=8192 backend=gpu host_boot_instructions=0 native_boot_instructions=2
+KEYS ready rotation_basis=0 key_generation_ms=121.887104
+GPU_POOL maximum_mb=12288 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=3260234360 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=4486019704 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=12884901888 pool_cap=12884901888 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=8398882184
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=355336192 plain_peak=35127296 remaining_front=3932160 remaining_plain=0
+waterline shared host_peak=51445760 pinned_peak=19726336 raw_peak=1835008
+FORWARD complete runtime_ms=229.422619
+FAIL output=0 name=out_x max_abs=105.083 max_relative=344.482 max_imaginary=173.574 bad_real=1 bad_imaginary=1 nonfinite=0
+FAIL output=1 name=out_y max_abs=646.958 max_relative=4241.68 max_imaginary=961.864 bad_real=1 bad_imaginary=1 nonfinite=0
+FAIL ALL_OUTPUTS count=2 slots=16384 max_abs=646.958 max_relative=4241.68 max_imaginary=961.864 bad_real=2 bad_imaginary=2 nonfinite=0
+report=/home/xuming/poseidon-native45-profile-20261021/greedy-depth20/report.json decoded=/home/xuming/poseidon-native45-profile-20261021/greedy-depth20/decoded.json

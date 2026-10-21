@@ -1,0 +1,12 @@
+[
+  "/home/xuming/poseidon-threshold-rescale-20261021/build/bin/poseidon_runtime_gpu_qwen_e2e",
+  "/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth27/result.chains.runtime-plan.json",
+  "/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth27/operator-spec.json",
+  "/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth27/fixture.json",
+  "/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth27/report.json",
+  "/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth27/decoded.json",
+  "--bundle",
+  "/home/xuming/poseidon-native45-profile-20261021/depth-dp-depth27/result.chains.bundle",
+  "--backend",
+  "gpu"
+]

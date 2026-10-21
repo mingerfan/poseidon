@@ -1,0 +1,369 @@
+{
+  "active_profile": "poseidon-gpu-degree58-da2-scale45",
+  "initial_scale_log2": 40,
+  "rescale_bits": 30,
+  "output_level": 22,
+  "output_scale_log2": 45,
+  "working_lower_level": 4,
+  "usable_q": 18,
+  "context_q0_level": 1,
+  "compiler_tests": {
+    "passed": 14,
+    "total": 14
+  },
+  "production_compile_passed": true,
+  "operator_spec_sha256": "dbcc205ec4aa47024d5a6c4790e040f59b94793bdc93f6ac5583d8795010a312",
+  "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+  "chain_cases": [
+    {
+      "name": "depth-dp-depth9",
+      "boot_count": 0,
+      "boot_inputs": [],
+      "output_states": [
+        {
+          "level": 10,
+          "scale_log2": 40.22883154777709
+        },
+        {
+          "level": 10,
+          "scale_log2": 40.22883154777709
+        }
+      ],
+      "returncode": 0,
+      "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 16384,
+        "max_abs_error": 2.07363670401417e-08,
+        "max_imaginary": 2.414584389375059e-08,
+        "max_relative_error_floor_atol": 1.5168068955885993e-07,
+        "max_tail_abs": 9.059113256176786e-11,
+        "nonfinite_slots": 0,
+        "passed": true,
+        "rms_error": 1.6517942527869218e-10,
+        "slots_checked": 16384
+      },
+      "error": null,
+      "context_q0_level": 1,
+      "native_profiles": []
+    },
+    {
+      "name": "greedy-depth20",
+      "boot_count": 2,
+      "boot_inputs": [
+        {
+          "level": 4,
+          "scale_log2": 60.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 60.37289450508031
+        }
+      ],
+      "output_states": [
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 45.14416336611769
+        }
+      ],
+      "returncode": 1,
+      "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "comparison": {
+        "bad_imaginary_slots": 2,
+        "bad_prefix_slots": 2,
+        "bad_real_slots": 2,
+        "bad_tail_slots": 0,
+        "finite_slots": 16384,
+        "max_abs_error": 646.9576919167743,
+        "max_imaginary": 961.8635872367311,
+        "max_relative_error_floor_atol": 4241.684791620575,
+        "max_tail_abs": 3.089691926464094e-12,
+        "nonfinite_slots": 0,
+        "passed": false,
+        "rms_error": 5.120596299035064,
+        "slots_checked": 16384
+      },
+      "error": null,
+      "context_q0_level": 1,
+      "native_profiles": [
+        {
+          "constant_bytes": 757666328,
+          "device": 0,
+          "output_level": 22,
+          "output_scale_log2": 45,
+          "profile_id": "poseidon-gpu-degree58-da2-scale45",
+          "setup_ms": 57152.353875,
+          "workspace_capacity_bytes": 1073741824
+        }
+      ]
+    },
+    {
+      "name": "depth-dp-depth20",
+      "boot_count": 2,
+      "boot_inputs": [
+        {
+          "level": 14,
+          "scale_log2": 40.14416336611769
+        },
+        {
+          "level": 14,
+          "scale_log2": 40.14416336611769
+        }
+      ],
+      "output_states": [
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        }
+      ],
+      "returncode": 0,
+      "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 16384,
+        "max_abs_error": 3.938501122097149e-06,
+        "max_imaginary": 0.00015343005952224244,
+        "max_relative_error_floor_atol": 2.5822214528255614e-05,
+        "max_tail_abs": 1.3926675850505883e-17,
+        "nonfinite_slots": 0,
+        "passed": true,
+        "rms_error": 3.077384319904285e-08,
+        "slots_checked": 16384
+      },
+      "error": null,
+      "context_q0_level": 1,
+      "native_profiles": [
+        {
+          "constant_bytes": 757666328,
+          "device": 0,
+          "output_level": 22,
+          "output_scale_log2": 45,
+          "profile_id": "poseidon-gpu-degree58-da2-scale45",
+          "setup_ms": 56530.991289,
+          "workspace_capacity_bytes": 1073741824
+        }
+      ]
+    },
+    {
+      "name": "depth-dp-depth27",
+      "boot_count": 2,
+      "boot_inputs": [
+        {
+          "level": 5,
+          "scale_log2": 50.34771237783504
+        },
+        {
+          "level": 5,
+          "scale_log2": 50.34771237783504
+        }
+      ],
+      "output_states": [
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        },
+        {
+          "level": 4,
+          "scale_log2": 65.37289450508031
+        }
+      ],
+      "returncode": 1,
+      "gpu_uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 1,
+        "bad_real_slots": 1,
+        "bad_tail_slots": 0,
+        "finite_slots": 16384,
+        "max_abs_error": 0.0019062416422076511,
+        "max_imaginary": 0.0001524271801384678,
+        "max_relative_error_floor_atol": 0.005828554366490238,
+        "max_tail_abs": 1.3986208023069858e-17,
+        "nonfinite_slots": 0,
+        "passed": false,
+        "rms_error": 1.6642765072137788e-05,
+        "slots_checked": 16384
+      },
+      "error": null,
+      "context_q0_level": 1,
+      "native_profiles": [
+        {
+          "constant_bytes": 757666328,
+          "device": 0,
+          "output_level": 22,
+          "output_scale_log2": 45,
+          "profile_id": "poseidon-gpu-degree58-da2-scale45",
+          "setup_ms": 56636.435511,
+          "workspace_capacity_bytes": 1073741824
+        }
+      ]
+    }
+  ],
+  "direct_input_controls": [
+    {
+      "name": "full-exact-sparse",
+      "input_level": 49,
+      "input_scale_log2": 40.0,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 8192,
+        "level": 22,
+        "max_abs_error": 2.265337989598607e-05,
+        "max_imaginary": 0.00013197814679604138,
+        "max_relative_error_floor_atol": 0.022653379895986068,
+        "max_tail_abs": 2.265337989598607e-05,
+        "name": "output-full-exact-sparse",
+        "nonfinite_slots": 0,
+        "passed": true,
+        "prefix_size": 1,
+        "rms_error": 4.337167700735996e-06,
+        "scale_log2": 45.0,
+        "slots_checked": 8192,
+        "value_id": 2
+      }
+    },
+    {
+      "name": "low-exact-sparse",
+      "input_level": 4,
+      "input_scale_log2": 40.0,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 8192,
+        "level": 22,
+        "max_abs_error": 2.263971925834857e-05,
+        "max_imaginary": 0.00013394966339457038,
+        "max_relative_error_floor_atol": 0.02263971925834857,
+        "max_tail_abs": 2.263971925834857e-05,
+        "name": "output-low-exact-sparse",
+        "nonfinite_slots": 0,
+        "passed": true,
+        "prefix_size": 1,
+        "rms_error": 4.332811777570456e-06,
+        "scale_log2": 45.0,
+        "slots_checked": 8192,
+        "value_id": 5
+      }
+    },
+    {
+      "name": "mid-drift-sparse",
+      "input_level": 14,
+      "input_scale_log2": 40.14416336611769,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 8192,
+        "level": 22,
+        "max_abs_error": 2.3271917730084223e-05,
+        "max_imaginary": 0.00013283018845025558,
+        "max_relative_error_floor_atol": 0.023271917730084222,
+        "max_tail_abs": 2.3271917730084223e-05,
+        "name": "output-mid-drift-sparse",
+        "nonfinite_slots": 0,
+        "passed": true,
+        "prefix_size": 1,
+        "rms_error": 4.3190576482014045e-06,
+        "scale_log2": 45.0,
+        "slots_checked": 8192,
+        "value_id": 8
+      }
+    },
+    {
+      "name": "low-high-scale-sparse",
+      "input_level": 4,
+      "input_scale_log2": 60.37289450508031,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 8192,
+        "level": 22,
+        "max_abs_error": 2.2939776991363876e-05,
+        "max_imaginary": 0.00013117672361348108,
+        "max_relative_error_floor_atol": 0.022939776991363875,
+        "max_tail_abs": 2.2939776991363876e-05,
+        "name": "output-low-high-scale-sparse",
+        "nonfinite_slots": 0,
+        "passed": true,
+        "prefix_size": 1,
+        "rms_error": 4.3283541000496055e-06,
+        "scale_log2": 45.0,
+        "slots_checked": 8192,
+        "value_id": 11
+      }
+    },
+    {
+      "name": "low-scale50-sparse",
+      "input_level": 5,
+      "input_scale_log2": 50.34771237783504,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 1,
+        "bad_real_slots": 1,
+        "bad_tail_slots": 0,
+        "finite_slots": 8192,
+        "level": 22,
+        "max_abs_error": 0.001455670771555534,
+        "max_imaginary": 0.00013115987605689884,
+        "max_relative_error_floor_atol": 0.0227803392971506,
+        "max_tail_abs": 2.27803392971506e-05,
+        "name": "output-low-scale50-sparse",
+        "nonfinite_slots": 0,
+        "passed": false,
+        "prefix_size": 1,
+        "rms_error": 1.665659298066561e-05,
+        "scale_log2": 45.0,
+        "slots_checked": 8192,
+        "value_id": 14
+      }
+    },
+    {
+      "name": "full-exact-dense",
+      "input_level": 49,
+      "input_scale_log2": 40.0,
+      "comparison": {
+        "bad_imaginary_slots": 0,
+        "bad_prefix_slots": 0,
+        "bad_real_slots": 0,
+        "bad_tail_slots": 0,
+        "finite_slots": 8192,
+        "level": 22,
+        "max_abs_error": 0.00017172493179531956,
+        "max_imaginary": 0.00013381306473559833,
+        "max_relative_error_floor_atol": 0.005449419330861738,
+        "max_tail_abs": 0.0,
+        "name": "output-full-exact-dense",
+        "nonfinite_slots": 0,
+        "passed": true,
+        "prefix_size": 8192,
+        "rms_error": 0.00015356954049658243,
+        "scale_log2": 45.0,
+        "slots_checked": 8192,
+        "value_id": 17
+      }
+    }
+  ],
+  "full_inference_validated": false
+}

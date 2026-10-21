@@ -77,18 +77,25 @@ OPENBLAS_NUM_THREADS=4 /usr/bin/time -v \
 窗口和后端不会自动改变，需要重新编译才能采用新的默认窗口。
 
 当前 CKKS 数值配置是 N=16384、50 个 30-bit Q、8 个 30-bit P、默认 scale40。
-编译脚本默认选择 `poseidon-gpu-degree58-da2-scale40-experimental`：GPU 原生 Boot，
-完整 degree58、两次 double-angle、内部与输出 scale40，输出物理 level27。
-**此路径已有显著数值错误，仅用于继续编译器和 runtime 开发，不代表正确推理。**
-runner 仍按原容差校验全部输出；错误照常报告失败并返回非零，不回退到 Host refresh。
+当前 OperatorSpec 只提供 `poseidon-gpu-degree58-da2-scale45`：GPU 原生 Boot，
+完整 degree58、两次 double-angle、内部与输出 scale45，输出物理 level22。
+此配置已通过独立 Boot 的固定消息测试；低 level、不同输入 scale 的编译链和完整
+Qwen 仍需分别验证。当前编译链在输入 scale 约40.14 时通过，但约50.35和60.37的
+输入仍出现数值失败，不能视为完整推理可用。runner 按原容差校验全部输出，失败返回非零。
 编译器从 profile 取 `--waterline=40`，等位宽 Q 的 `rescalingFactor=30`。
 普通乘法后，只要名义 `scale_log2 >= 70` 就立即插入一次 Rescale，逐个删除 Q，
 直到名义 scale 落入 `[40,70)`。不再先抬高 scale 并强制回到 40；每个逻辑
 Rescale 对应一个物理 Q。depth-dp 按同一规则模拟每段的实际 Q 消耗，Boot 后
 按 profile 的输出 scale 重新开始记账；返回值保留剩余 level。
-原生路径仍将初始输入和 Boot 输出映射到可恢复的 level27，工作下界为 level4；
-可用预算为 23 个 Q。显式选择 `--boot-profile poseidon-gpu-host-boot-v1` 时，
-Host Boot 输出为 level49、scale120，随后两次 Rescale 得到 level47、名义 scale60。
+初始输入映射到可恢复的 level22、scale40；Boot 输出为 level22、scale45，
+scale45 小于阈值70，因此 Boot 后不额外 Rescale。工作下界为 level4，可用预算
+为 18 个 Q。Host 解密再加密和数值失败的 scale40 配置不在当前可选 profile 中。
+
+Boot 输入输出契约位于 `profiles/operator-spec.json` 的 `boot_profiles`；
+`compile_plans.py` 据此生成 Q 预算和 `--bootstrap-scale`。实际 GPU 算法由
+runner 中的 `GpuBootstrapProfileConfig` 构建；JSON 声明必须与构建出的结果一致，
+仅修改 JSON 的输出 scale 或 level 不会改变底层算法，不一致时直接报错。
+当前 runner 的 CKKS 上下文使用 `q0_level=1`，与独立通过的 scale45 配置一致。
 
 当前 profile 使用 `rescale_mode=native` 并列出真实 `context.rns_moduli`。
 RuntimePlan V5 保存实际的浮点 `log2(scale)`；编译时按真实末端模数推导，
