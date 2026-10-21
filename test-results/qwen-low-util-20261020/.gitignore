@@ -1,0 +1,6 @@
+*.nsys-rep
+*.sqlite
+*.so
+build-host-markers/
+__pycache__/
+**/decoded.json

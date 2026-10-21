@@ -1,0 +1,3 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=25769803776 maximum_bytes=25769803776
+Building native profile degree=16384 context=runtime-mixed
+cold index=0 wall_ms=49.2385 gpu_span_ms=48.7263 max_error=47786 passed=0

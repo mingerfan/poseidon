@@ -1,0 +1,43 @@
+{
+  "checkpoint_original_indices": [
+    0
+  ],
+  "cleanup_releases": 1,
+  "compute_by_place": {
+    "0": 1
+  },
+  "config": {
+    "backend": "auto",
+    "device_capacity_bytes": [
+      33285996544
+    ],
+    "device_fractions": [
+      0.5
+    ],
+    "device_reserve_bytes": [
+      6442450944
+    ],
+    "host_budget_bytes": 68719476736,
+    "lookahead_groups": 128,
+    "pinned_budget_bytes": 1073741824,
+    "raw_budget_bytes": 67108864
+  },
+  "devices": 1,
+  "execution_counts": {
+    "compute": 1,
+    "prepare": 1,
+    "release": 1
+  },
+  "execution_instructions": 3,
+  "finalization_instructions": 1,
+  "initialization_instructions": 1,
+  "limit": 3,
+  "limit_scope": "execution records including first-use Prepare; excludes input initialization and output downloads/Release cleanup",
+  "source_eager_plan": "build-qwen-prefix-20261019/helper-check/eager.json",
+  "source_execution_records_kept": 2,
+  "source_first_ordinal": 4,
+  "source_fixture": "build-qwen-prefix-20261019/helper-check/fixture.json",
+  "source_last_ordinal": 5,
+  "values": 4,
+  "verifier_passed": true
+}

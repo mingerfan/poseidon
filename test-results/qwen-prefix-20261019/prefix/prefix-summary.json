@@ -1,0 +1,73 @@
+{
+  "checkpoint_original_indices": [
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164
+  ],
+  "cleanup_releases": 1063,
+  "compute_by_place": {
+    "0": 152598,
+    "1": 123128,
+    "2": 116852,
+    "3": 114124,
+    "host": 1692
+  },
+  "config": {
+    "backend": "auto",
+    "device_capacity_bytes": [
+      33285996544,
+      33285996544,
+      33285996544,
+      33285996544
+    ],
+    "device_fractions": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "device_reserve_bytes": [
+      6442450944,
+      6442450944,
+      6442450944,
+      6442450944
+    ],
+    "host_budget_bytes": 68719476736,
+    "lookahead_groups": 128,
+    "pinned_budget_bytes": 1073741824,
+    "raw_budget_bytes": 67108864
+  },
+  "devices": 4,
+  "execution_counts": {
+    "communication": 349334,
+    "compute": 508394,
+    "prepare": 143955,
+    "release": 998317
+  },
+  "execution_instructions": 2000000,
+  "finalization_instructions": 1063,
+  "initialization_instructions": 7,
+  "limit": 2000000,
+  "limit_scope": "execution records including first-use Prepare; excludes input initialization and output downloads/Release cleanup",
+  "source_execution_records_kept": 1856045,
+  "source_first_ordinal": 1419190,
+  "source_fixture": "/home/xuming/poseidon-waterline-20261013/qwen3-runner-bsgs-q50.json",
+  "source_last_ordinal": 3275234,
+  "source_plan": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+  "source_waterline": true,
+  "values": 1001690,
+  "verifier_passed": true
+}

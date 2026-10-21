@@ -1,0 +1,4 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=1073741824 maximum_bytes=30064771072
+Building native profile degree=131072 context=qwen30
+GPU_ALLOCATION_FAILURE cuda_device=0 active_cuda_device=0 requested_bytes=29884416 stream=0x2 allocated_live=29919686276 allocated_peak=29919686276 pool_reserved=30038032384 pool_cap=30064771072 driver_free=3714449408 driver_total=34079899648 driver_query_status=0 device_query_status=0
+Native benchmark failed: std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded

@@ -1,0 +1,23 @@
+QWEN inputs=2 outputs=16 devices=4 slots=8192 backend=auto host_boot_instructions=1692
+BOOT semantics=Host decrypt-reencrypt uses_secret_key=true native_bootstrap=false
+KEYS ready rotation_basis=25 key_generation_ms=14914.70006
+GPU_POOL maximum_mb=24576,24576,24576,24576 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=25769803776 maximum_bytes=25769803776
+GPU_POOL_RESERVE cuda_device=1 initial_bytes=25769803776 maximum_bytes=25769803776
+GPU_POOL_RESERVE cuda_device=2 initial_bytes=25769803776 maximum_bytes=25769803776
+GPU_POOL_RESERVE cuda_device=3 initial_bytes=25769803776 maximum_bytes=25769803776
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=2179606624 retained_workspace_bound=84934656 reserve_required=2331650144 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23438153632
+waterline stream GPU1 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU1 persistent_bytes=2179606624 retained_workspace_bound=84934656 reserve_required=2331650144 reserve_configured=6442450944
+waterline physical GPU1 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23438153632
+waterline stream GPU2 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU2 persistent_bytes=2179606624 retained_workspace_bound=84934656 reserve_required=2331650144 reserve_configured=6442450944
+waterline physical GPU2 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23438153632
+waterline stream GPU3 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU3 persistent_bytes=2019960928 retained_workspace_bound=84934656 reserve_required=2172004448 reserve_configured=6442450944
+waterline physical GPU3 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23597799328
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+PREFIX_EXECUTION_BEGIN

@@ -1,0 +1,89 @@
+Qwen3-0.6B 四 V100 截断执行复测，2026-10-19
+
+目的
+重跑真实预训练 Qwen 图，限制到 2,000,000 条执行记录，比较 GPU 利用率和运行时间。
+该实验不是完整 28 层模型推理的通过证明，也不测截断后的 logits/top-1。
+
+输入与范围
+模型 Qwen/Qwen3-0.6B，revision c1899de289a04d12100db370d81485cdf75e47ca；
+权重 SHA256 f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b。
+原始两 token prefill：[9707, 11]。N=16384，Q=50，P=8，默认 scale log2=40。
+使用已有四卡原始 Waterline 计划，保留原设备划分和计算、通信、Release 顺序。
+原计划开头有大量 Prepare 注册；将前缀实际需要的 Prepare 放到首次使用处后计数。
+因此 200 万指令包含 Prepare，不能理解为“原始完整文件 ordinal <= 2000000”。
+具体原始 ordinal 范围和逐类数量见 prefix/prefix-summary.json。
+输入初始化和末尾检查点取出/Release 清理不计入 200 万条。
+没有为获得检查点而添加额外模型计算。PlanVerifier 检查通过。
+
+对照
+updated：当前 Runtime，Auto，lookahead_groups=128。
+previous：上一轮修改前 Runtime，Auto，lookahead_groups=8。
+两者共享相同的当前 GPU API、数学库、原始权重、前缀二进制及算子规格。
+这比较的是两个 Runtime/窗口组合，不是隔离窗口变量的实验，也不是回滚所有 GPU API 修改。
+instrumentation.json 记录了原始 Runtime 头文件哈希；只加 execution begin/end 两个打印。
+build-observed-v2/libraries.json 记录共享链接库哈希。
+每种组合运行一次，先 updated 后 previous；未固定 CPU 亲和性、OS 缓存和 GPU 时钟。
+
+资源
+物理卡 0、1、2、3，V100-SXM2-32GB。启动前各卡无计算进程，CUDA context 全部成功。
+每卡 managed pool 固定 24 GiB，Waterline 配置每卡容量 31 GiB、reserve 6 GiB、
+plain fraction 0.5；共享 host 64 GiB、pinned 1 GiB、raw 64 MiB。
+OPENBLAS_NUM_THREADS=4，OMP_NUM_THREADS=4；关闭逐条指令 trace。
+显存预留量不等于活跃张量大小，也不能当成 GPU 利用率。
+
+计时与利用率
+主要执行时间：PREFIX_EXECUTION_BEGIN 到 PREFIX_EXECUTION_END。
+标记围绕 run_parallel_tasks；包含该调用内的准入/调度元数据和实际运行，
+不含密钥生成、前面的计划预检、输入初始化、末尾清理和解密验证。
+另保留 runtime_ms、runtime_timing 和整个进程墙钟时间，避免混用计时范围。
+有效对照使用 nvml_sampler.py：在同一 Python 进程初始化 NVML 一次，
+每 2 秒直接查询四卡 GPU busy%、memory busy%、显存、电源、时钟及计算进程。
+ctypes 结构和签名按服务器 CUDA 12.2 nvml.h 核对，进程列表使用 v2 接口。
+启动检查每轮查询约 2～6 毫秒；实际每轮耗时保存在 samples.jsonl。
+不在执行中启动 nvidia-smi 或 pmon 子进程。
+GPU busy% 不是 FLOP 效率。按实际时间戳的相邻采样中点分段做时间加权平均，
+再对四卡等权平均；保留全部空闲区间。以实际采样间隔为准。
+samples.jsonl 同时记录其他计算进程，以检查是否存在共享 GPU 干扰。
+
+正确性与解释限制
+对照原始独立 dense FP64 参考，检查 16 个已经算出的 K/V 输出；每个输出 8192 个复数槽，
+包括有效前缀、虚部和零尾。沿用 atol=0.001、rtol=0.0001，不放宽容差。
+这段图有 1692 次 Host decrypt-reencrypt refresh，依赖 secret key，并非 native bootstrap。
+这段图还包含 349334 条通信记录；不能仅凭低 GPU busy% 就归因为按需加载。
+runtime API 的 compute/prepare/communication 等累计耗时可跨线程重叠，不能相加当墙钟，
+也不能用“墙钟减这些累计值”来精确分摊未知开销。
+
+中间产物
+服务器恢复前，已成功从完整 bytecode 编译出两卡 eager 中间图（1816.26 秒）；没有执行它。
+恢复后直接使用原有四卡图进行正式对照，避免改变放置方案。
+make-prefix.cpp 已通过本地小图边界测试、GPU 数值验证和 V4 读写验证。
+helper-gpu-capacity-rejection 是小测试夹具把 8 GiB 配给实际不足 8 GiB 的 4060 后，
+校验器正常拒绝；改为 7 GiB 夹具后数值检查通过。它不是本次 V100 运行失败。
+
+复现
+服务器实验目录 /home/xuming/poseidon-qwen-prefix-20261019。
+run-prefix.py 生成前缀，其原 SMI 采样轮已排除出正式结果。
+run-prefix-nvml.py 使用相同前缀和可执行文件，顺序运行有效对照到 runs-nvml/。
+脚本不会覆盖已有实验目录；遥测异常时终止本脚本自己的模型进程，保留错误。
+fetch-artifacts.py 拉取紧凑证据，排除权重、二进制图和完整解码槽。
+summarize.py 验证两个组合的输入绑定一致，生成 summary.json 和 gpu-utilization.png。
+inspect-prefix.cpp 在两组运行完成后用 production plan reader 做 CPU 静态统计。
+prefix-operations.json 的传输字节数按 degree*(level+1)*components*4 计算，
+依据 crt_context.cpp 的 level=q_count-1 和 gpu_memory.h 的 uint32 GpuWord；
+它是计划逻辑有效载荷，不是实际总线计数器，不含 key、额外 staging 或内部 CPU Prepare 上传。
+其中全部 Prepare 缓冲之和是假设所有输出均保留且不去重的大小，不是存活峰值。
+服务器健康与拓扑查询均在两个有效进程退出后进行；见 server-health-final.txt 和 server-topology.txt。
+
+已排除的监测干扰轮（runs/）
+最初使用两个不断重启的 nvidia-smi 查询（GPU 与进程列表），加一个常驻 pmon。
+每个查询约 1.2 秒，新版执行段 1863.37 秒，GPU busy 平均 3.26%；这些是被干扰的数值，
+不能当作正常运行速度。新版 16 个检查点有 9 个未通过原容差，报告原样保留。
+之后暂停 supervisor/pmon 进行诊断，触发 subprocess 查询超时，原采样线程退出。
+因此 observer-aba-diagnostic.json 的 A/C 已没有原来的重启查询，不能视作有效 A/B/A；
+它只能检查常驻 pmon 的影响，未显示稳定差异。
+observer-query-aba-diagnostic.json 独立恢复原查询方式，保持 pmon 不变：
+12 秒无反复查询约 9.02 MiB/s，12.93 秒反复查询约 0.74 MiB/s，
+随后 12 秒无反复查询约 6.82 MiB/s。这是模型读数据的进度代理，不是完整模型的速度比。
+据此明确排除原轮性能结论；旧版只运行到中途，由本实验发送 SIGTERM 停止。
+superseded-smi-run.json 记录终止的本实验 PID 和原因，没有停止其他任务。
+有效对照另起进程，数值参考、容差、前缀和运行设置不变。

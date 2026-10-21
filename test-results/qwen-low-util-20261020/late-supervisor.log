@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/xuming/poseidon-qwen-low-util-20261020/run-late.py", line 36, in <module>
+    if code:raise RuntimeError(f'nsys returned {code}; inspect profile.log')
+RuntimeError: nsys returned 143; inspect profile.log

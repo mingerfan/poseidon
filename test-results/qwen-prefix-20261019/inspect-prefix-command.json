@@ -1,0 +1,22 @@
+{
+  "compile": [
+    "/usr/bin/c++",
+    "-std=c++20",
+    "-O2",
+    "-I/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/ckks-runtime",
+    "-I/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/ckks-runtime/third_party",
+    "/home/xuming/poseidon-qwen-prefix-20261019/inspect-prefix.cpp",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_plan_json.a",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_core.a",
+    "-lcrypto",
+    "-pthread",
+    "-o",
+    "/home/xuming/poseidon-qwen-prefix-20261019/inspect-prefix"
+  ],
+  "inspect": [
+    "/home/xuming/poseidon-qwen-prefix-20261019/inspect-prefix",
+    "/home/xuming/poseidon-qwen-prefix-20261019/plans/prefix4-2000000/prefix.runtime-plan.bin",
+    "16384"
+  ],
+  "source_sha256": "e5939181a533f85a0249328b8e20e56b96ad2aa2b39fdf71de9782af0d6899a5"
+}

@@ -1,0 +1,11 @@
+{
+  "variant": "previous",
+  "window": 8,
+  "exit_code": -15,
+  "wall_seconds": 715.9512766480002,
+  "report_passed": false,
+  "telemetry_errors": [
+    "TimeoutExpired(['nvidia-smi', '-i', '0,1,2,3', '--query-gpu=index,uuid,utilization.gpu,utilization.memory,memory.used,power.draw,clocks.sm', '--format=csv,noheader,nounits'], 15)"
+  ],
+  "pid": 174725
+}

@@ -1,0 +1,10 @@
+{
+  "variant": "previous",
+  "window": 8,
+  "exit_code": 1,
+  "wall_seconds": 2053.934270400001,
+  "report_passed": false,
+  "telemetry_errors": [],
+  "pid": 181093,
+  "observer": "NVML initialized once; 2-second persistent sampling; no SMI or pmon subprocesses"
+}

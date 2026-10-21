@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-10-20T07:14:19.882142+00:00",
+  "binary_sha256": "5824d7d625439e685704bde83dc3519d369fc98797415dbafcf143a0bc8a29dc",
+  "results": [
+    {
+      "eval_mod_log_scale": 45,
+      "exit_code": 1,
+      "wall_seconds": 640.0606597620063
+    },
+    {
+      "eval_mod_log_scale": 40,
+      "exit_code": 1,
+      "wall_seconds": 635.2931856399955
+    }
+  ]
+}

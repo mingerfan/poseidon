@@ -1,0 +1,48 @@
+QWEN inputs=2 outputs=16 devices=4 slots=8192 backend=auto host_boot_instructions=1692
+BOOT semantics=Host decrypt-reencrypt uses_secret_key=true native_bootstrap=false
+KEYS ready rotation_basis=25 key_generation_ms=14925.17354
+GPU_POOL maximum_mb=24576,24576,24576,24576 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=25769803776 maximum_bytes=25769803776
+GPU_POOL_RESERVE cuda_device=1 initial_bytes=25769803776 maximum_bytes=25769803776
+GPU_POOL_RESERVE cuda_device=2 initial_bytes=25769803776 maximum_bytes=25769803776
+GPU_POOL_RESERVE cuda_device=3 initial_bytes=25769803776 maximum_bytes=25769803776
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=2179606624 retained_workspace_bound=84934656 reserve_required=2331650144 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23438153632
+waterline stream GPU1 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU1 persistent_bytes=2179606624 retained_workspace_bound=84934656 reserve_required=2331650144 reserve_configured=6442450944
+waterline physical GPU1 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23438153632
+waterline stream GPU2 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU2 persistent_bytes=2179606624 retained_workspace_bound=84934656 reserve_required=2331650144 reserve_configured=6442450944
+waterline physical GPU2 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23438153632
+waterline stream GPU3 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU3 persistent_bytes=2019960928 retained_workspace_bound=84934656 reserve_required=2172004448 reserve_configured=6442450944
+waterline physical GPU3 pool_reserved=25769803776 pool_cap=25769803776 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=23597799328
+waterline rescale workspace plan_max_drop=5 capability_max_drop=50
+PREFIX_EXECUTION_BEGIN
+PREFIX_EXECUTION_END
+waterline GPU0 front_peak=1783889920 plain_peak=549715968 remaining_front=7864320 remaining_plain=0
+waterline GPU1 front_peak=1922826240 plain_peak=426180608 remaining_front=2621440 remaining_plain=0
+waterline GPU2 front_peak=1960837120 plain_peak=336461824 remaining_front=0 remaining_plain=0
+waterline GPU3 front_peak=1997864960 plain_peak=249298944 remaining_front=10485760 remaining_plain=0
+waterline shared host_peak=366477312 pinned_peak=69074944 raw_peak=786432
+FORWARD complete runtime_ms=2025330.857363
+FAIL output=0 name=layer_0.key.position_0 max_abs=0.00402087 max_relative=0.00232134 max_imaginary=0.00199739 bad_real=0 bad_imaginary=3 nonfinite=0
+PASS output=1 name=layer_0.key.position_1 max_abs=0.000877383 max_relative=0.00741141 max_imaginary=0.000459808 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=2 name=layer_0.value.position_0 max_abs=0.000179944 max_relative=0.179944 max_imaginary=0.000140514 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=3 name=layer_0.value.position_1 max_abs=6.71663e-05 max_relative=0.0671663 max_imaginary=9.91668e-05 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL output=4 name=layer_1.key.position_0 max_abs=0.00159139 max_relative=0.0321128 max_imaginary=0.00619367 bad_real=1 bad_imaginary=7 nonfinite=0
+FAIL output=5 name=layer_1.key.position_1 max_abs=0.00188428 max_relative=0.0245095 max_imaginary=0.00924204 bad_real=0 bad_imaginary=27 nonfinite=0
+PASS output=6 name=layer_1.value.position_0 max_abs=0.00016582 max_relative=0.16582 max_imaginary=0.000177281 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=7 name=layer_1.value.position_1 max_abs=6.69081e-05 max_relative=0.0669081 max_imaginary=0.000103573 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL output=8 name=layer_2.key.position_0 max_abs=0.00144169 max_relative=0.0250465 max_imaginary=0.00363254 bad_real=0 bad_imaginary=10 nonfinite=0
+FAIL output=9 name=layer_2.key.position_1 max_abs=0.004121 max_relative=0.163848 max_imaginary=0.00838166 bad_real=2 bad_imaginary=53 nonfinite=0
+PASS output=10 name=layer_2.value.position_0 max_abs=0.000136151 max_relative=0.136151 max_imaginary=0.000321392 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=11 name=layer_2.value.position_1 max_abs=6.68551e-05 max_relative=0.0668551 max_imaginary=0.000167384 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=12 name=layer_3.key.position_0 max_abs=0.000346155 max_relative=0.100247 max_imaginary=0.000378682 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL output=13 name=layer_3.key.position_1 max_abs=0.00545534 max_relative=0.499673 max_imaginary=0.018552 bad_real=3 bad_imaginary=112 nonfinite=0
+PASS output=14 name=layer_3.value.position_0 max_abs=6.71269e-05 max_relative=0.0671269 max_imaginary=9.95586e-05 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=15 name=layer_3.value.position_1 max_abs=0.000351168 max_relative=0.115739 max_imaginary=0.000761725 bad_real=0 bad_imaginary=0 nonfinite=0
+FAIL ALL_OUTPUTS count=16 slots=131072 max_abs=0.00545534 max_relative=0.499673 max_imaginary=0.018552 bad_real=6 bad_imaginary=212 nonfinite=0
+report=/home/xuming/poseidon-qwen-prefix-20261019/runs-nvml/previous/report.json decoded=/home/xuming/poseidon-qwen-prefix-20261019/runs-nvml/previous/decoded.json

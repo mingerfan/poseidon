@@ -1,0 +1,15 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=25769803776 maximum_bytes=25769803776
+Building native profile degree=16384 context=qwen30
+cold index=0 wall_ms=100.807 gpu_span_ms=100.788 max_error=0.000193533 passed=1
+warmup index=1 wall_ms=85.7331 gpu_span_ms=85.7108 max_error=0.000193533 passed=1
+warmup index=2 wall_ms=83.1629 gpu_span_ms=83.1427 max_error=0.000193533 passed=1
+measured index=3 wall_ms=82.9433 gpu_span_ms=82.9225 max_error=0.000193533 passed=1
+measured index=4 wall_ms=82.8191 gpu_span_ms=82.7965 max_error=0.000193533 passed=1
+measured index=5 wall_ms=82.868 gpu_span_ms=82.8477 max_error=0.000193533 passed=1
+measured index=6 wall_ms=82.6549 gpu_span_ms=82.6368 max_error=0.000193533 passed=1
+measured index=7 wall_ms=82.6129 gpu_span_ms=82.5969 max_error=0.000193533 passed=1
+measured index=8 wall_ms=82.4843 gpu_span_ms=82.4668 max_error=0.000193533 passed=1
+measured index=9 wall_ms=82.5132 gpu_span_ms=82.4945 max_error=0.000193533 passed=1
+measured index=10 wall_ms=82.5073 gpu_span_ms=82.4904 max_error=0.000193533 passed=1
+measured index=11 wall_ms=82.5582 gpu_span_ms=82.5416 max_error=0.000193533 passed=1
+measured index=12 wall_ms=82.6387 gpu_span_ms=82.6235 max_error=0.000193533 passed=1

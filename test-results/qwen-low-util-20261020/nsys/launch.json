@@ -1,0 +1,5 @@
+{
+  "pid": 183867,
+  "timestamp": "2026-10-20T00:24:02.251231+08:00",
+  "scope": "20-second CUDA and OSRT trace after 60-second process delay; intentional diagnostic termination, not a full validation run."
+}

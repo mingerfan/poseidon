@@ -1,0 +1,52 @@
+{
+  "scope": "Single V100 GPU0, N65536 (32768 complex slots), Q50/P8 all30bit, input scale 2^40; native Boot only",
+  "independent_variable": "GpuBootstrapProfileConfig.eval_mod_log_scale: 40 vs 45; full degree58/DA2 unchanged",
+  "polynomial_degree": 65536,
+  "complex_slots": 32768,
+  "identical_actual_moduli": true,
+  "cases": [
+    {
+      "requested_eval_mod_log_scale": 40,
+      "input_scale_log2": 40,
+      "output_scale_log2": 40,
+      "output_level": 27,
+      "passed": false,
+      "calls": 1,
+      "measured_calls": 0,
+      "passed_calls": 0,
+      "mean_ms": null,
+      "median_ms": null,
+      "min_ms": null,
+      "max_ms": null,
+      "cold_ms": 382.17931,
+      "max_complex_abs_error": 17.709106437165048,
+      "profile_setup_ms": 344649.399474,
+      "tolerance": 0.003,
+      "stage": "numerical_failure",
+      "error": null
+    },
+    {
+      "requested_eval_mod_log_scale": 45,
+      "input_scale_log2": 40,
+      "output_scale_log2": 45,
+      "output_level": 22,
+      "passed": true,
+      "calls": 13,
+      "measured_calls": 10,
+      "passed_calls": 13,
+      "mean_ms": 330.7920494,
+      "median_ms": 330.781255,
+      "min_ms": 330.550409,
+      "max_ms": 331.035853,
+      "cold_ms": 360.22096,
+      "max_complex_abs_error": 0.0005420904829198785,
+      "profile_setup_ms": 337741.57626,
+      "tolerance": 0.003,
+      "stage": "complete",
+      "error": null
+    }
+  ],
+  "pool": "initial1GiB,maximum28GiB",
+  "measurement": "One cold call, two warmups, ten measured; per-call actual GPU completion; validate every complex slot",
+  "limits": "Same deterministic message and same ciphertext repeated within each case; new random keys/ciphertext between cases. Fresh full-level input, not a complete Qwen execution. Other GPUs occupied; GPU0 checked free before each case. No nsys or NVML querying during execution, no fixed clocks or affinity."
+}

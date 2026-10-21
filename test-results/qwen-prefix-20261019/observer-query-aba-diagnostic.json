@@ -1,0 +1,81 @@
+{
+  "model": 174725,
+  "pmon_held_constant": true,
+  "sampling_thread_already_exited": true,
+  "a_begin": {
+    "monotonic": 20095.96340393,
+    "io": "rchar: 1334068872\nwchar: 2623\nsyscr: 42822\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "a_end": {
+    "monotonic": 20107.975615917,
+    "io": "rchar: 1447651336\nwchar: 2623\nsyscr: 44652\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "queries": [
+    {
+      "monotonic": 20107.975962422,
+      "seconds": 1.298396746002254,
+      "text": "0, GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 0, 0, 24892, 86.59, 1290\n1, GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 0, 0, 24892, 86.59, 1290\n2, GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 3, 0, 24892, 116.73, 1290\n3, GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 0, 0, 24892, 84.67, 1290\n"
+    },
+    {
+      "monotonic": 20109.274361486,
+      "seconds": 1.2963321339993854,
+      "text": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 174725, 24890\nGPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 174725, 24890\nGPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 174725, 24890\nGPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 174725, 24890\n"
+    },
+    {
+      "monotonic": 20110.570699423,
+      "seconds": 1.2599484210004448,
+      "text": "0, GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 0, 0, 24892, 80.22, 1290\n1, GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 0, 0, 24892, 81.15, 1290\n2, GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 0, 0, 24892, 112.28, 1290\n3, GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 0, 0, 24892, 80.71, 1290\n"
+    },
+    {
+      "monotonic": 20111.830650009,
+      "seconds": 1.2855092290010361,
+      "text": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 174725, 24890\nGPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 174725, 24890\nGPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 174725, 24890\nGPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 174725, 24890\n"
+    },
+    {
+      "monotonic": 20113.116164622,
+      "seconds": 1.3041550100024324,
+      "text": "0, GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 0, 0, 24892, 76.26, 1290\n1, GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 2, 0, 24892, 82.14, 1290\n2, GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 0, 0, 24892, 109.81, 1290\n3, GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 0, 0, 24892, 79.23, 1290\n"
+    },
+    {
+      "monotonic": 20114.420322719,
+      "seconds": 1.265462415998627,
+      "text": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 174725, 24890\nGPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 174725, 24890\nGPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 174725, 24890\nGPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 174725, 24890\n"
+    },
+    {
+      "monotonic": 20115.685790702,
+      "seconds": 1.2986201160019846,
+      "text": "0, GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 0, 0, 24892, 76.76, 1290\n1, GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 0, 0, 24892, 79.18, 1290\n2, GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 1, 0, 24892, 112.77, 1290\n3, GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 0, 0, 24892, 80.71, 1290\n"
+    },
+    {
+      "monotonic": 20116.984414164,
+      "seconds": 1.3105824129997927,
+      "text": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 174725, 24890\nGPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 174725, 24890\nGPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 174725, 24890\nGPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 174725, 24890\n"
+    },
+    {
+      "monotonic": 20118.295019857,
+      "seconds": 1.3088665239993134,
+      "text": "0, GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 0, 0, 24892, 80.22, 1290\n1, GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 1, 0, 24892, 83.13, 1290\n2, GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 0, 0, 24892, 113.76, 1290\n3, GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 0, 0, 24892, 80.71, 1290\n"
+    },
+    {
+      "monotonic": 20119.603889531,
+      "seconds": 1.3019590049989347,
+      "text": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509, 174725, 24890\nGPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5, 174725, 24890\nGPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 174725, 24890\nGPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2, 174725, 24890\n"
+    }
+  ],
+  "b_begin": {
+    "monotonic": 20107.975892623,
+    "io": "rchar: 1447651336\nwchar: 2623\nsyscr: 44652\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "b_end": {
+    "monotonic": 20120.905852574,
+    "io": "rchar: 1457678344\nwchar: 2623\nsyscr: 44805\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "c_begin": {
+    "monotonic": 20120.906015711,
+    "io": "rchar: 1457678344\nwchar: 2623\nsyscr: 44805\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "c_end": {
+    "monotonic": 20132.91816243,
+    "io": "rchar: 1543530504\nwchar: 2623\nsyscr: 46115\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  }
+}

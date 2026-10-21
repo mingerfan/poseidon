@@ -1,0 +1,4 @@
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/tests/bootstrapping/test_gpu_bootstrap_modraise.cpp:26:10: fatal error: rmm/mr/cuda_memory_resource.hpp: No such file or directory
+   26 | #include <rmm/mr/cuda_memory_resource.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.

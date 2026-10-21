@@ -1,0 +1,183 @@
+{
+  "variant": "updated",
+  "window": 128,
+  "status": {
+    "variant": "updated",
+    "window": 128,
+    "exit_code": 1,
+    "wall_seconds": 1942.759994475,
+    "report_passed": false,
+    "telemetry_errors": [],
+    "pid": 158180
+  },
+  "execution_begin_monotonic": 17548.313294316,
+  "execution_end_monotonic": 19411.687785945,
+  "execution_seconds": 1863.374491628998,
+  "cold_process_seconds": 1942.759994475,
+  "marked_forward_seconds": 1887.3081844849985,
+  "mean_four_gpu_util_percent": 3.2644365465964147,
+  "devices": [
+    {
+      "index": 0,
+      "time_weighted_gpu_util_percent": 3.2577421665417075,
+      "sampled_peak_gpu_util_percent": 62,
+      "sampled_peak_gpu_memory_mib": 24892,
+      "process_sm_arithmetic_mean_percent": 4.34551724137931,
+      "process_sm_valid_samples": 1450,
+      "process_sm_rows": 1450,
+      "process_sm_first_last_span_seconds": 1861.798903979001
+    },
+    {
+      "index": 1,
+      "time_weighted_gpu_util_percent": 3.350499392287562,
+      "sampled_peak_gpu_util_percent": 72,
+      "sampled_peak_gpu_memory_mib": 24892,
+      "process_sm_arithmetic_mean_percent": 3.9593103448275864,
+      "process_sm_valid_samples": 1450,
+      "process_sm_rows": 1450,
+      "process_sm_first_last_span_seconds": 1861.7988730550023
+    },
+    {
+      "index": 2,
+      "time_weighted_gpu_util_percent": 3.151805872099447,
+      "sampled_peak_gpu_util_percent": 73,
+      "sampled_peak_gpu_memory_mib": 24892,
+      "process_sm_arithmetic_mean_percent": 3.946206896551724,
+      "process_sm_valid_samples": 1450,
+      "process_sm_rows": 1450,
+      "process_sm_first_last_span_seconds": 1861.7988817820005
+    },
+    {
+      "index": 3,
+      "time_weighted_gpu_util_percent": 3.297698755456943,
+      "sampled_peak_gpu_util_percent": 79,
+      "sampled_peak_gpu_memory_mib": 24892,
+      "process_sm_arithmetic_mean_percent": 3.8993103448275863,
+      "process_sm_valid_samples": 1450,
+      "process_sm_rows": 1450,
+      "process_sm_first_last_span_seconds": 1861.7988824219974
+    }
+  ],
+  "execution_samples": 738,
+  "median_query_sample_interval_seconds": 2.5370336480009428,
+  "observed_foreign_compute_pids": [],
+  "runtime_timing": {
+    "boot_calls": 1692,
+    "bundle_read_bytes": 9420931072,
+    "bundle_read_calls": 143913,
+    "bundle_read_ms": 42982.161947,
+    "bundle_resident_bytes": 0,
+    "communication_post_calls": 349339,
+    "communication_post_ms": 1558758.662498,
+    "communication_wait_calls": 349339,
+    "communication_wait_ms": 4279.72933,
+    "compute_calls": 508394,
+    "compute_submission_including_boot_ms": 1528340.035688,
+    "encode_calls": 143955,
+    "encode_submission_ms": 306948.507709,
+    "fence_calls": 0,
+    "host_boot_ms": 251854.884355,
+    "initialization_ms": 1237.998782,
+    "online_execution_ms": 1878024.20141,
+    "raw_peak_bytes": 131072,
+    "setup_ms": 7404.236911
+  },
+  "preparation_measurements": {
+    "cpu_encode_ms": 0.0,
+    "cpu_plain_h2d_bytes": 0,
+    "cpu_prepare_calls": 0,
+    "transport_h2d_bytes": 11121459200,
+    "transport_h2d_calls": 1697,
+    "transport_h2d_ms": 1036.424192,
+    "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+  },
+  "device_measurements": [
+    {
+      "allocated_live_bytes": 2207328352,
+      "allocated_peak_bytes": 3770230880,
+      "consumer_wait_calls": 3727,
+      "consumer_wait_ms": 580.064803,
+      "gpu_encode_calls": 35509,
+      "gpu_encode_ms": 8841.296126,
+      "gpu_raw_h2d_bytes": 2327117824,
+      "gpu_raw_h2d_ms": 1167.611756,
+      "logical_device": 0,
+      "managed_pool": true,
+      "pool_capacity_bytes": 25769803776,
+      "pool_reserved_bytes": 25769803776
+    },
+    {
+      "allocated_live_bytes": 2202085472,
+      "allocated_peak_bytes": 3758499936,
+      "consumer_wait_calls": 4070,
+      "consumer_wait_ms": 917.320026,
+      "gpu_encode_calls": 35599,
+      "gpu_encode_ms": 8665.188043,
+      "gpu_raw_h2d_bytes": 2333016064,
+      "gpu_raw_h2d_ms": 1139.781339,
+      "logical_device": 1,
+      "managed_pool": true,
+      "pool_capacity_bytes": 25769803776,
+      "pool_reserved_bytes": 25769803776
+    },
+    {
+      "allocated_live_bytes": 2198808672,
+      "allocated_peak_bytes": 3635685472,
+      "consumer_wait_calls": 5867,
+      "consumer_wait_ms": 825.073732,
+      "gpu_encode_calls": 36509,
+      "gpu_encode_ms": 9363.398598,
+      "gpu_raw_h2d_bytes": 2392653824,
+      "gpu_raw_h2d_ms": 1234.487829,
+      "logical_device": 2,
+      "managed_pool": true,
+      "pool_capacity_bytes": 25769803776,
+      "pool_reserved_bytes": 25769803776
+    },
+    {
+      "allocated_live_bytes": 2050304096,
+      "allocated_peak_bytes": 3579914336,
+      "consumer_wait_calls": 3936,
+      "consumer_wait_ms": 577.249533,
+      "gpu_encode_calls": 36338,
+      "gpu_encode_ms": 8951.615117,
+      "gpu_raw_h2d_bytes": 2381447168,
+      "gpu_raw_h2d_ms": 1169.761787,
+      "logical_device": 3,
+      "managed_pool": true,
+      "pool_capacity_bytes": 25769803776,
+      "pool_reserved_bytes": 25769803776
+    }
+  ],
+  "comparison": {
+    "bad_imaginary_slots": 1066,
+    "bad_prefix_slots": 1073,
+    "bad_real_slots": 134,
+    "bad_tail_slots": 0,
+    "finite_slots": 131072,
+    "max_abs_error": 0.028888927674223908,
+    "max_imaginary": 0.047335348153185325,
+    "max_relative_error_floor_atol": 1.151066959150551,
+    "max_tail_abs": 0.0001741650869643822,
+    "nonfinite_slots": 0,
+    "passed": false,
+    "rms_error": 0.00017882401345324823,
+    "slots_checked": 131072
+  },
+  "checkpoint_count": 16,
+  "boot_implementation": "host_decrypt_reencrypt",
+  "pinned_transfer_live_after_validation_bytes": 0,
+  "bindings": {
+    "executable_sha256": "41ad6bc38e4e19a54aba6706c654a5b946b84668ca2696e0568f9d778336b5b2",
+    "plan_sha256": "66a3969ad60185eaa4dcfa46f174e2f9836053ee213e71c3dd858c1328e4c064",
+    "fixture_sha256": "6d9dfbba17ca94042b45fb7ede7d5fa40bddf221079d172d952386cc9a4bdddd",
+    "spec_sha256": "e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d",
+    "manifest_sha256": "27ecd75ecae952266b02038e9330ce7b0890fa75475bf22c52760b4533eea401",
+    "bundle_data": {
+      "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.bundle/data.bin",
+      "bytes": 61298262016,
+      "mtime_ns": 1791903740120191517
+    }
+  },
+  "dataset": "Superseded SMI observer interference round; excluded from final software comparison."
+}

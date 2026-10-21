@@ -1,0 +1,22 @@
+待验证线索：多卡完成状态/计时回收会切换 CUDA device。
+
+注意：下面的线程快照来自被 SMI 查询显著干扰的最初一轮。
+已确认监测方式本身会拖慢模型进度，所以这些快照不能用于证明生产 Runtime
+存在相同程度的锁瓶颈；保留为待独立验证的源码线索。
+
+当前 src/poseidon/runtime_api/poseidon_gpu_api.cpp:3482 的 collect_completed()
+会遍历全部 devices，调用 collect_consumer_wait() 和 encoder.completed_timing(false)。
+compute 路径在提交后也调用 collect_completed()（同文件约 2334 行）。
+
+src/poseidon/runtime_api/gpu_plaintext_encoder.cu:131 的 completed_timing()
+先获取 timing_mutex_，然后无条件 cudaSetDevice(device_)，再遍历计时事件；
+即使 timing_events_ 为空，也会调用 cudaSetDevice。
+因此“只为自己的一次提交回收完成状态”可能触碰四卡，并与其他提交线程争锁。
+consumer wait 路径有 empty 检查和 try_lock，encoder timing 路径仍使用阻塞锁。
+
+运行期间多次 ps -L 快照看到提交线程处于 os_acquire_rwlock_write，
+这与驱动锁竞争相容，但不证明该函数就是当前主要瓶颈，也不能给出耗时占比。
+服务器 perf_event_paranoid=4，未进行附加的采样 profiler；未用 gdb 暂停对照进程。
+本次两组测量期间不改生产代码，不把上述推断写成已证实根因。
+如要确认，需要在同一小型四卡图上隔离这一回收/计时路径，比较吞吐和驱动调用数，
+并保持资源票据直到实际完成；不能靠提前释放或禁用 Ready 检查获得虚假提速。

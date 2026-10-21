@@ -1,0 +1,12 @@
+[
+  {
+    "eval_mod_log_scale": 40,
+    "exit_code": 1,
+    "wall_seconds": 365.2112725449988
+  },
+  {
+    "eval_mod_log_scale": 45,
+    "exit_code": 0,
+    "wall_seconds": 366.16554853999696
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "model": 174725,
+  "supervisor": 158120,
+  "pmon": [
+    174726
+  ],
+  "a_begin": {
+    "monotonic": 19940.890027491,
+    "io": "rchar: 667342280\nwchar: 2623\nsyscr: 17229\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "a_end": {
+    "monotonic": 19952.902186146,
+    "io": "rchar: 746182856\nwchar: 2623\nsyscr: 18624\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "b_begin": {
+    "monotonic": 19955.905584325,
+    "io": "rchar: 768203144\nwchar: 2623\nsyscr: 19008\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "b_end": {
+    "monotonic": 19967.917920765,
+    "io": "rchar: 847502664\nwchar: 2623\nsyscr: 20458\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "c_begin": {
+    "monotonic": 19967.918222367,
+    "io": "rchar: 847502664\nwchar: 2623\nsyscr: 20458\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  },
+  "c_end": {
+    "monotonic": 19979.930394392,
+    "io": "rchar: 903405832\nwchar: 2623\nsyscr: 21551\nsyscw: 180\nread_bytes: 0\nwrite_bytes: 0\ncancelled_write_bytes: 0\n"
+  }
+}

@@ -1,0 +1,4 @@
+{"eval_mod_log_scale": 45, "exit_code": 1, "wall_seconds": 640.0606597620063}
+{"scale": 45, "stage": "setup", "error": "std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded"}
+{"eval_mod_log_scale": 40, "exit_code": 1, "wall_seconds": 635.2931856399955}
+{"scale": 40, "stage": "setup", "error": "std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded"}

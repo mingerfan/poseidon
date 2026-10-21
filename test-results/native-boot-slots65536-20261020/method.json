@@ -1,0 +1,29 @@
+{
+  "requested_complex_slots": 65536,
+  "polynomial_degree": 131072,
+  "degree_relation": "complex_slots=N/2",
+  "baseline_complex_slots": 8192,
+  "baseline_polynomial_degree": 16384,
+  "unchanged_math_parameters": {
+    "q_count": 50,
+    "p_count": 8,
+    "q_p_nominal_bits": 30,
+    "input_scale_log2": 40,
+    "eval_mod_sine_degree": 58,
+    "eval_mod_generation_degree": 59,
+    "eval_mod_truncate_degree": null,
+    "eval_mod_double_angle": 2,
+    "bootstrap_ratio": 32
+  },
+  "case_order": [
+    45,
+    40
+  ],
+  "case_protocol": "1 cold, 2 warmup, 10 measured; validate all slots after every call; stop a case on first numerical failure, preserve both case outcomes",
+  "gpu": 0,
+  "pool_initial_mib": 1024,
+  "pool_maximum_mib": 28672,
+  "capacity_change_from_previous": "Old pool initial/max were both24576MiB. Larger experiment starts1GiB and may grow to28GiB; no change to numerical workload or tolerance.",
+  "tolerance": 0.003,
+  "same_benchmark_binary": "5824d7d625439e685704bde83dc3519d369fc98797415dbafcf143a0bc8a29dc"
+}

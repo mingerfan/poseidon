@@ -1,0 +1,2013 @@
+{
+  "case": "api-probe-late",
+  "window_begin_ns": 24629392823458,
+  "window_end_ns": 24649392823458,
+  "window_seconds": 20.0,
+  "counted_threads": 9,
+  "runtime_kernel_launch_calls": 329468,
+  "apis": {
+    "cudaSetDevice": {
+      "count": 1089503,
+      "total_ns": 1230474681,
+      "maximum_ns": 20104948,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        386,
+        35674,
+        707304,
+        267418,
+        43012,
+        29710,
+        4192,
+        1737,
+        64,
+        3,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 1.1293908148944978,
+      "calls_per_runtime_kernel_launch": 3.3068552939890976,
+      "cumulative_seconds": 1.230474681
+    },
+    "cudaGetDevice": {
+      "count": 217856,
+      "total_ns": 170588615,
+      "maximum_ns": 53627,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        96,
+        21921,
+        68309,
+        100373,
+        18580,
+        5621,
+        2705,
+        199,
+        47,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 0.7830338159150999,
+      "calls_per_runtime_kernel_launch": 0.6612356890502264,
+      "cumulative_seconds": 0.170588615
+    },
+    "cudaEventQuery": {
+      "count": 78794,
+      "total_ns": 352743951,
+      "maximum_ns": 101043,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        37,
+        2515,
+        14559,
+        31605,
+        20376,
+        8726,
+        869,
+        100,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 4.476786950783055,
+      "calls_per_runtime_kernel_launch": 0.23915524421188097,
+      "cumulative_seconds": 0.352743951
+    },
+    "cudaEventRecord": {
+      "count": 91815,
+      "total_ns": 258650191,
+      "maximum_ns": 90156,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        81,
+        11138,
+        40723,
+        25356,
+        10039,
+        3562,
+        816,
+        98,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 2.817079899798508,
+      "calls_per_runtime_kernel_launch": 0.27867653307756746,
+      "cumulative_seconds": 0.258650191
+    },
+    "cudaEventCreateWithFlags": {
+      "count": 41157,
+      "total_ns": 247438914,
+      "maximum_ns": 6648466,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        115,
+        10045,
+        18015,
+        9055,
+        1033,
+        2165,
+        708,
+        13,
+        0,
+        1,
+        0,
+        0,
+        1,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 6.0120736205262775,
+      "calls_per_runtime_kernel_launch": 0.12491956730243908,
+      "cumulative_seconds": 0.247438914
+    },
+    "cudaEventDestroy": {
+      "count": 26071,
+      "total_ns": 102881913,
+      "maximum_ns": 159017,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        2374,
+        11095,
+        8429,
+        1879,
+        646,
+        1397,
+        239,
+        7,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 3.946220436500326,
+      "calls_per_runtime_kernel_launch": 0.07913059841926985,
+      "cumulative_seconds": 0.102881913
+    },
+    "cudaEventElapsedTime": {
+      "count": 7193,
+      "total_ns": 51376463,
+      "maximum_ns": 60760,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2144,
+        3692,
+        816,
+        499,
+        42,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 7.14256402057556,
+      "calls_per_runtime_kernel_launch": 0.021832165794553646,
+      "cumulative_seconds": 0.051376463
+    },
+    "cudaStreamWaitEvent": {
+      "count": 75480,
+      "total_ns": 273992416,
+      "maximum_ns": 98509,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67,
+        3060,
+        22075,
+        27876,
+        17473,
+        4388,
+        510,
+        29,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 3.6300002119766828,
+      "calls_per_runtime_kernel_launch": 0.22909660422256486,
+      "cumulative_seconds": 0.273992416
+    },
+    "cudaEventSynchronize": {
+      "count": 493,
+      "total_ns": 18826951,
+      "maximum_ns": 878757,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        269,
+        72,
+        25,
+        39,
+        47,
+        32,
+        5,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 38.1885415821501,
+      "calls_per_runtime_kernel_launch": 0.0014963516942464823,
+      "cumulative_seconds": 0.018826951
+    },
+    "cudaMemcpyAsync": {
+      "count": 180,
+      "total_ns": 3840621,
+      "maximum_ns": 39340,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        69,
+        98,
+        11,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 21.336783333333333,
+      "calls_per_runtime_kernel_launch": 0.0005463353041873566,
+      "cumulative_seconds": 0.003840621
+    },
+    "cudaMemcpyPeerAsync": {
+      "count": 7645,
+      "total_ns": 221490860,
+      "maximum_ns": 123883,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        65,
+        5890,
+        1672,
+        18,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 28.97198953564421,
+      "calls_per_runtime_kernel_launch": 0.023204074447290782,
+      "cumulative_seconds": 0.22149086
+    },
+    "cudaMemsetAsync": {
+      "count": 658,
+      "total_ns": 6293089,
+      "maximum_ns": 40356,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        299,
+        340,
+        15,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 9.563965045592706,
+      "calls_per_runtime_kernel_launch": 0.0019971590564182256,
+      "cumulative_seconds": 0.006293089
+    },
+    "cudaLaunchKernel_ptsz": {
+      "count": 329468,
+      "total_ns": 2006393434,
+      "maximum_ns": 3037993,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        51,
+        33238,
+        258216,
+        29132,
+        8310,
+        488,
+        11,
+        3,
+        0,
+        0,
+        0,
+        19,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 6.089797594910583,
+      "calls_per_runtime_kernel_launch": 1.0,
+      "cumulative_seconds": 2.006393434
+    },
+    "cudaMemcpyAsync_ptsz": {
+      "count": 82443,
+      "total_ns": 911083925,
+      "maximum_ns": 3018315,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        386,
+        42720,
+        30412,
+        8574,
+        317,
+        5,
+        0,
+        0,
+        0,
+        8,
+        21,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 11.051076804580134,
+      "calls_per_runtime_kernel_launch": 0.2502306749062124,
+      "cumulative_seconds": 0.911083925
+    },
+    "cudaMallocHost": {
+      "count": 127,
+      "total_ns": 804092453,
+      "maximum_ns": 8939425,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10,
+        21,
+        1,
+        0,
+        0,
+        0,
+        0,
+        18,
+        77,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 6331.436637795276,
+      "calls_per_runtime_kernel_launch": 0.0003854699090655238,
+      "cumulative_seconds": 0.804092453
+    },
+    "cudaFreeHost": {
+      "count": 127,
+      "total_ns": 323912150,
+      "maximum_ns": 5630335,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        27,
+        5,
+        0,
+        0,
+        0,
+        0,
+        93,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 2550.48937007874,
+      "calls_per_runtime_kernel_launch": 0.0003854699090655238,
+      "cumulative_seconds": 0.32391215
+    },
+    "cudaEventRecord_ptsz": {
+      "count": 10227,
+      "total_ns": 64664768,
+      "maximum_ns": 42190,
+      "errors": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3479,
+        3905,
+        2686,
+        143,
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_us": 6.322945927446955,
+      "calls_per_runtime_kernel_launch": 0.031040950866244976,
+      "cumulative_seconds": 0.064664768
+    }
+  },
+  "runtime_launch_start_intervals": [
+    {
+      "count": 88031,
+      "device": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        273,
+        47893,
+        22543,
+        7341,
+        796,
+        1093,
+        3428,
+        1170,
+        1654,
+        1179,
+        472,
+        59,
+        14,
+        12,
+        9,
+        79,
+        15,
+        1,
+        0,
+        0,
+        0
+      ],
+      "maximum_ns": 391284702,
+      "total_ns": 19898807080
+    },
+    {
+      "count": 61327,
+      "device": 3,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1695,
+        26971,
+        17956,
+        6723,
+        1132,
+        1730,
+        1078,
+        1061,
+        1445,
+        996,
+        408,
+        76,
+        29,
+        9,
+        8,
+        4,
+        3,
+        1,
+        2,
+        0,
+        0
+      ],
+      "maximum_ns": 953910119,
+      "total_ns": 9230244312
+    },
+    {
+      "count": 67337,
+      "device": 1,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        412,
+        35803,
+        16054,
+        7065,
+        784,
+        1287,
+        1877,
+        959,
+        1571,
+        921,
+        422,
+        86,
+        32,
+        19,
+        10,
+        13,
+        11,
+        10,
+        1,
+        0,
+        0
+      ],
+      "maximum_ns": 568056324,
+      "total_ns": 13698585997
+    },
+    {
+      "count": 12303,
+      "device": 1,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        71,
+        7173,
+        2509,
+        1045,
+        721,
+        16,
+        0,
+        2,
+        170,
+        196,
+        135,
+        75,
+        78,
+        50,
+        36,
+        14,
+        7,
+        4,
+        0,
+        0,
+        1
+      ],
+      "maximum_ns": 5032915170,
+      "total_ns": 14367745584
+    },
+    {
+      "count": 14895,
+      "device": 3,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10848,
+        1083,
+        1324,
+        705,
+        4,
+        1,
+        3,
+        233,
+        218,
+        176,
+        94,
+        95,
+        65,
+        29,
+        10,
+        4,
+        1,
+        2,
+        0,
+        0
+      ],
+      "maximum_ns": 857568286,
+      "total_ns": 9232304631
+    },
+    {
+      "count": 12863,
+      "device": 0,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        45,
+        9166,
+        1054,
+        1105,
+        683,
+        6,
+        0,
+        0,
+        137,
+        194,
+        194,
+        99,
+        71,
+        55,
+        24,
+        16,
+        7,
+        6,
+        0,
+        0,
+        1
+      ],
+      "maximum_ns": 4478950604,
+      "total_ns": 14387036841
+    },
+    {
+      "count": 58225,
+      "device": 2,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        109,
+        30287,
+        14801,
+        5732,
+        850,
+        1472,
+        1042,
+        748,
+        1646,
+        1026,
+        384,
+        63,
+        33,
+        13,
+        9,
+        4,
+        2,
+        3,
+        1,
+        0,
+        0
+      ],
+      "maximum_ns": 579867545,
+      "total_ns": 9222263165
+    },
+    {
+      "count": 14479,
+      "device": 2,
+      "log2_ns": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10651,
+        974,
+        1240,
+        699,
+        11,
+        0,
+        1,
+        221,
+        227,
+        169,
+        81,
+        102,
+        52,
+        31,
+        12,
+        4,
+        2,
+        2,
+        0,
+        0
+      ],
+      "maximum_ns": 829997695,
+      "total_ns": 9485952441
+    }
+  ],
+  "cpu_core_seconds": 38.72,
+  "cpu_seconds_by_thread": [
+    {
+      "tid": 185597,
+      "cpu_seconds": 4.28
+    },
+    {
+      "tid": 185642,
+      "cpu_seconds": 0.0
+    },
+    {
+      "tid": 185643,
+      "cpu_seconds": 0.0
+    },
+    {
+      "tid": 185644,
+      "cpu_seconds": 0.0
+    },
+    {
+      "tid": 185645,
+      "cpu_seconds": 0.0
+    },
+    {
+      "tid": 185702,
+      "cpu_seconds": 0.01
+    },
+    {
+      "tid": 185703,
+      "cpu_seconds": 0.01
+    },
+    {
+      "tid": 185704,
+      "cpu_seconds": 0.01
+    },
+    {
+      "tid": 185705,
+      "cpu_seconds": 0.02
+    },
+    {
+      "tid": 185792,
+      "cpu_seconds": 5.97
+    },
+    {
+      "tid": 185793,
+      "cpu_seconds": 4.1
+    },
+    {
+      "tid": 185794,
+      "cpu_seconds": 3.8
+    },
+    {
+      "tid": 185795,
+      "cpu_seconds": 3.89
+    },
+    {
+      "tid": 185796,
+      "cpu_seconds": 13.36
+    },
+    {
+      "tid": 185797,
+      "cpu_seconds": 0.84
+    },
+    {
+      "tid": 185798,
+      "cpu_seconds": 0.75
+    },
+    {
+      "tid": 185799,
+      "cpu_seconds": 0.81
+    },
+    {
+      "tid": 185800,
+      "cpu_seconds": 0.87
+    }
+  ],
+  "observed_host_cpu_core_equivalents": 1.951516658338943,
+  "rchar_progress_mib_per_second": 10.588960481072458,
+  "sampled_wchan_counts": {
+    "futex_wait_queue": 2211,
+    "do_poll.constprop.0": 995,
+    "0": 374,
+    "do_futex": 1,
+    "sched_balance_newidle": 1
+  },
+  "sampled_segment_four_gpu_busy_percent": 7.3,
+  "boot_calls_overlapping_window": [
+    {
+      "ordinal": 205891,
+      "start_ns": 24629342355620,
+      "end_ns": 24629479575807,
+      "overlap_ns": 86752349
+    },
+    {
+      "ordinal": 205944,
+      "start_ns": 24629479794110,
+      "end_ns": 24629609318473,
+      "overlap_ns": 129524363
+    },
+    {
+      "ordinal": 205952,
+      "start_ns": 24629609515119,
+      "end_ns": 24629747104276,
+      "overlap_ns": 137589157
+    },
+    {
+      "ordinal": 206005,
+      "start_ns": 24629747303095,
+      "end_ns": 24629884759597,
+      "overlap_ns": 137456502
+    },
+    {
+      "ordinal": 206013,
+      "start_ns": 24629884980562,
+      "end_ns": 24630018678857,
+      "overlap_ns": 133698295
+    },
+    {
+      "ordinal": 206066,
+      "start_ns": 24630018892999,
+      "end_ns": 24630156752541,
+      "overlap_ns": 137859542
+    },
+    {
+      "ordinal": 206110,
+      "start_ns": 24630156981068,
+      "end_ns": 24630293684844,
+      "overlap_ns": 136703776
+    },
+    {
+      "ordinal": 206154,
+      "start_ns": 24630293903537,
+      "end_ns": 24630430557345,
+      "overlap_ns": 136653808
+    },
+    {
+      "ordinal": 206198,
+      "start_ns": 24630430742630,
+      "end_ns": 24630567713720,
+      "overlap_ns": 136971090
+    },
+    {
+      "ordinal": 206242,
+      "start_ns": 24630567933916,
+      "end_ns": 24630701383266,
+      "overlap_ns": 133449350
+    },
+    {
+      "ordinal": 206250,
+      "start_ns": 24630701572697,
+      "end_ns": 24630838781605,
+      "overlap_ns": 137208908
+    },
+    {
+      "ordinal": 206303,
+      "start_ns": 24630838998024,
+      "end_ns": 24630976411379,
+      "overlap_ns": 137413355
+    },
+    {
+      "ordinal": 206311,
+      "start_ns": 24630976610289,
+      "end_ns": 24631114362444,
+      "overlap_ns": 137752155
+    },
+    {
+      "ordinal": 206364,
+      "start_ns": 24631114601175,
+      "end_ns": 24631251183575,
+      "overlap_ns": 136582400
+    },
+    {
+      "ordinal": 206372,
+      "start_ns": 24631251400446,
+      "end_ns": 24631388657790,
+      "overlap_ns": 137257344
+    },
+    {
+      "ordinal": 206425,
+      "start_ns": 24631388838072,
+      "end_ns": 24631525343285,
+      "overlap_ns": 136505213
+    },
+    {
+      "ordinal": 206433,
+      "start_ns": 24631525533842,
+      "end_ns": 24631662255972,
+      "overlap_ns": 136722130
+    },
+    {
+      "ordinal": 206486,
+      "start_ns": 24631662470897,
+      "end_ns": 24631799154164,
+      "overlap_ns": 136683267
+    },
+    {
+      "ordinal": 206530,
+      "start_ns": 24631799346486,
+      "end_ns": 24631936673618,
+      "overlap_ns": 137327132
+    },
+    {
+      "ordinal": 206574,
+      "start_ns": 24631936907032,
+      "end_ns": 24632074463275,
+      "overlap_ns": 137556243
+    },
+    {
+      "ordinal": 206618,
+      "start_ns": 24632074658945,
+      "end_ns": 24632212485552,
+      "overlap_ns": 137826607
+    },
+    {
+      "ordinal": 206662,
+      "start_ns": 24632212704092,
+      "end_ns": 24632350311490,
+      "overlap_ns": 137607398
+    },
+    {
+      "ordinal": 206670,
+      "start_ns": 24632350506136,
+      "end_ns": 24632487718660,
+      "overlap_ns": 137212524
+    },
+    {
+      "ordinal": 206723,
+      "start_ns": 24632487915338,
+      "end_ns": 24632624137130,
+      "overlap_ns": 136221792
+    },
+    {
+      "ordinal": 206731,
+      "start_ns": 24632624331845,
+      "end_ns": 24632761582762,
+      "overlap_ns": 137250917
+    },
+    {
+      "ordinal": 206784,
+      "start_ns": 24632761819949,
+      "end_ns": 24632899778188,
+      "overlap_ns": 137958239
+    },
+    {
+      "ordinal": 206792,
+      "start_ns": 24632899995925,
+      "end_ns": 24633037835659,
+      "overlap_ns": 137839734
+    },
+    {
+      "ordinal": 206845,
+      "start_ns": 24633038058033,
+      "end_ns": 24633175699102,
+      "overlap_ns": 137641069
+    },
+    {
+      "ordinal": 206853,
+      "start_ns": 24633175910487,
+      "end_ns": 24633313472146,
+      "overlap_ns": 137561659
+    },
+    {
+      "ordinal": 206906,
+      "start_ns": 24633313682151,
+      "end_ns": 24633451133738,
+      "overlap_ns": 137451587
+    },
+    {
+      "ordinal": 206933,
+      "start_ns": 24633451340397,
+      "end_ns": 24633589130867,
+      "overlap_ns": 137790470
+    },
+    {
+      "ordinal": 206960,
+      "start_ns": 24633589343440,
+      "end_ns": 24633735681516,
+      "overlap_ns": 146338076
+    },
+    {
+      "ordinal": 206987,
+      "start_ns": 24633735907784,
+      "end_ns": 24633873539467,
+      "overlap_ns": 137631683
+    },
+    {
+      "ordinal": 207014,
+      "start_ns": 24633873734275,
+      "end_ns": 24634012102002,
+      "overlap_ns": 138367727
+    },
+    {
+      "ordinal": 207041,
+      "start_ns": 24634012350274,
+      "end_ns": 24634151349658,
+      "overlap_ns": 138999384
+    },
+    {
+      "ordinal": 207068,
+      "start_ns": 24634151583151,
+      "end_ns": 24634289987679,
+      "overlap_ns": 138404528
+    },
+    {
+      "ordinal": 207095,
+      "start_ns": 24634290190544,
+      "end_ns": 24634428115585,
+      "overlap_ns": 137925041
+    },
+    {
+      "ordinal": 207122,
+      "start_ns": 24634428324715,
+      "end_ns": 24634565738155,
+      "overlap_ns": 137413440
+    },
+    {
+      "ordinal": 207149,
+      "start_ns": 24634565953492,
+      "end_ns": 24634703708733,
+      "overlap_ns": 137755241
+    },
+    {
+      "ordinal": 207176,
+      "start_ns": 24634703943965,
+      "end_ns": 24634841930084,
+      "overlap_ns": 137986119
+    },
+    {
+      "ordinal": 207203,
+      "start_ns": 24634842146316,
+      "end_ns": 24634979645676,
+      "overlap_ns": 137499360
+    },
+    {
+      "ordinal": 207230,
+      "start_ns": 24634979852528,
+      "end_ns": 24635118307387,
+      "overlap_ns": 138454859
+    },
+    {
+      "ordinal": 207257,
+      "start_ns": 24635118592170,
+      "end_ns": 24635257501107,
+      "overlap_ns": 138908937
+    },
+    {
+      "ordinal": 207284,
+      "start_ns": 24635257725368,
+      "end_ns": 24635395599084,
+      "overlap_ns": 137873716
+    },
+    {
+      "ordinal": 207311,
+      "start_ns": 24635395888183,
+      "end_ns": 24635533644167,
+      "overlap_ns": 137755984
+    },
+    {
+      "ordinal": 207338,
+      "start_ns": 24635533851458,
+      "end_ns": 24635671589799,
+      "overlap_ns": 137738341
+    },
+    {
+      "ordinal": 207435,
+      "start_ns": 24635698094905,
+      "end_ns": 24635835829028,
+      "overlap_ns": 137734123
+    },
+    {
+      "ordinal": 207528,
+      "start_ns": 24635836003483,
+      "end_ns": 24635973973951,
+      "overlap_ns": 137970468
+    },
+    {
+      "ordinal": 207621,
+      "start_ns": 24635974185027,
+      "end_ns": 24636113019244,
+      "overlap_ns": 138834217
+    },
+    {
+      "ordinal": 207714,
+      "start_ns": 24636130792305,
+      "end_ns": 24636268280131,
+      "overlap_ns": 137487826
+    },
+    {
+      "ordinal": 207807,
+      "start_ns": 24636268505742,
+      "end_ns": 24636406662113,
+      "overlap_ns": 138156371
+    },
+    {
+      "ordinal": 207900,
+      "start_ns": 24636427675950,
+      "end_ns": 24636565162556,
+      "overlap_ns": 137486606
+    },
+    {
+      "ordinal": 207993,
+      "start_ns": 24636565375288,
+      "end_ns": 24636704312001,
+      "overlap_ns": 138936713
+    },
+    {
+      "ordinal": 208086,
+      "start_ns": 24636727351803,
+      "end_ns": 24636864923696,
+      "overlap_ns": 137571893
+    },
+    {
+      "ordinal": 208179,
+      "start_ns": 24636865159920,
+      "end_ns": 24637003278038,
+      "overlap_ns": 138118118
+    },
+    {
+      "ordinal": 208272,
+      "start_ns": 24637003496954,
+      "end_ns": 24637143243221,
+      "overlap_ns": 139746267
+    },
+    {
+      "ordinal": 208365,
+      "start_ns": 24637143453763,
+      "end_ns": 24637282380496,
+      "overlap_ns": 138926733
+    },
+    {
+      "ordinal": 208458,
+      "start_ns": 24637302132793,
+      "end_ns": 24637439907373,
+      "overlap_ns": 137774580
+    },
+    {
+      "ordinal": 208551,
+      "start_ns": 24637463871007,
+      "end_ns": 24637601701640,
+      "overlap_ns": 137830633
+    },
+    {
+      "ordinal": 208644,
+      "start_ns": 24637601923269,
+      "end_ns": 24637740435522,
+      "overlap_ns": 138512253
+    },
+    {
+      "ordinal": 208737,
+      "start_ns": 24637767584136,
+      "end_ns": 24637906464445,
+      "overlap_ns": 138880309
+    },
+    {
+      "ordinal": 208830,
+      "start_ns": 24637906720795,
+      "end_ns": 24638047201415,
+      "overlap_ns": 140480620
+    },
+    {
+      "ordinal": 208859,
+      "start_ns": 24638047412579,
+      "end_ns": 24638186026565,
+      "overlap_ns": 138613986
+    },
+    {
+      "ordinal": 208900,
+      "start_ns": 24638186287880,
+      "end_ns": 24638324937158,
+      "overlap_ns": 138649278
+    },
+    {
+      "ordinal": 208927,
+      "start_ns": 24638325143847,
+      "end_ns": 24638464089408,
+      "overlap_ns": 138945561
+    },
+    {
+      "ordinal": 208973,
+      "start_ns": 24638464338980,
+      "end_ns": 24638602843135,
+      "overlap_ns": 138504155
+    },
+    {
+      "ordinal": 209000,
+      "start_ns": 24638603085912,
+      "end_ns": 24638741761693,
+      "overlap_ns": 138675781
+    },
+    {
+      "ordinal": 209046,
+      "start_ns": 24638742008316,
+      "end_ns": 24638879724991,
+      "overlap_ns": 137716675
+    },
+    {
+      "ordinal": 209073,
+      "start_ns": 24638879927337,
+      "end_ns": 24639017694062,
+      "overlap_ns": 137766725
+    },
+    {
+      "ordinal": 209119,
+      "start_ns": 24639017956159,
+      "end_ns": 24639155330104,
+      "overlap_ns": 137373945
+    },
+    {
+      "ordinal": 209146,
+      "start_ns": 24639155565436,
+      "end_ns": 24639293838630,
+      "overlap_ns": 138273194
+    },
+    {
+      "ordinal": 209192,
+      "start_ns": 24639294065866,
+      "end_ns": 24639432723327,
+      "overlap_ns": 138657461
+    },
+    {
+      "ordinal": 209219,
+      "start_ns": 24639432945699,
+      "end_ns": 24639572922748,
+      "overlap_ns": 139977049
+    },
+    {
+      "ordinal": 209265,
+      "start_ns": 24639573197447,
+      "end_ns": 24639712492143,
+      "overlap_ns": 139294696
+    },
+    {
+      "ordinal": 209292,
+      "start_ns": 24639712690147,
+      "end_ns": 24639853295470,
+      "overlap_ns": 140605323
+    },
+    {
+      "ordinal": 209338,
+      "start_ns": 24639853554847,
+      "end_ns": 24639992880381,
+      "overlap_ns": 139325534
+    },
+    {
+      "ordinal": 209365,
+      "start_ns": 24639993132821,
+      "end_ns": 24640129689603,
+      "overlap_ns": 136556782
+    },
+    {
+      "ordinal": 210538,
+      "start_ns": 24640292492618,
+      "end_ns": 24640451589875,
+      "overlap_ns": 159097257
+    },
+    {
+      "ordinal": 213184,
+      "start_ns": 24640805576520,
+      "end_ns": 24640963563361,
+      "overlap_ns": 157986841
+    },
+    {
+      "ordinal": 216643,
+      "start_ns": 24641418026511,
+      "end_ns": 24641581762313,
+      "overlap_ns": 163735802
+    },
+    {
+      "ordinal": 219936,
+      "start_ns": 24642001102669,
+      "end_ns": 24642156607684,
+      "overlap_ns": 155505015
+    },
+    {
+      "ordinal": 223263,
+      "start_ns": 24642520404726,
+      "end_ns": 24642709375677,
+      "overlap_ns": 188970951
+    },
+    {
+      "ordinal": 248565,
+      "start_ns": 24646829696709,
+      "end_ns": 24647020474140,
+      "overlap_ns": 190777431
+    },
+    {
+      "ordinal": 248569,
+      "start_ns": 24647020686092,
+      "end_ns": 24647204500429,
+      "overlap_ns": 183814337
+    },
+    {
+      "ordinal": 248733,
+      "start_ns": 24647237724186,
+      "end_ns": 24647422613620,
+      "overlap_ns": 184889434
+    },
+    {
+      "ordinal": 248770,
+      "start_ns": 24647422876929,
+      "end_ns": 24647606814153,
+      "overlap_ns": 183937224
+    },
+    {
+      "ordinal": 248798,
+      "start_ns": 24647607002667,
+      "end_ns": 24647769255934,
+      "overlap_ns": 162253267
+    },
+    {
+      "ordinal": 248880,
+      "start_ns": 24647769458614,
+      "end_ns": 24647912820851,
+      "overlap_ns": 143362237
+    },
+    {
+      "ordinal": 248908,
+      "start_ns": 24647913026271,
+      "end_ns": 24648055448522,
+      "overlap_ns": 142422251
+    },
+    {
+      "ordinal": 248918,
+      "start_ns": 24648055656175,
+      "end_ns": 24648190035405,
+      "overlap_ns": 134379230
+    },
+    {
+      "ordinal": 249027,
+      "start_ns": 24648215356113,
+      "end_ns": 24648352744387,
+      "overlap_ns": 137388274
+    },
+    {
+      "ordinal": 249055,
+      "start_ns": 24648352996505,
+      "end_ns": 24648490862354,
+      "overlap_ns": 137865849
+    },
+    {
+      "ordinal": 249086,
+      "start_ns": 24648491144747,
+      "end_ns": 24648634092507,
+      "overlap_ns": 142947760
+    },
+    {
+      "ordinal": 249114,
+      "start_ns": 24648634441921,
+      "end_ns": 24648770665223,
+      "overlap_ns": 136223302
+    },
+    {
+      "ordinal": 250877,
+      "start_ns": 24649041539880,
+      "end_ns": 24649191153353,
+      "overlap_ns": 149613473
+    }
+  ],
+  "boot_overlap_seconds": 13.417634621,
+  "sampled_setdevice_callers": [
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1049655,
+      "samples": 1926,
+      "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::completed_timing(bool)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 911409,
+      "samples": 487,
+      "symbol": "poseidon::runtime_api::PoseidonGpuApi::collect_completed()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1299044,
+      "samples": 176,
+      "symbol": "poseidon::gpu::GpuCiphertextData::allocate_single_device_sharded(unsigned long, unsigned long, unsigned long, int, std::vector<poseidon::gpu::GpuPolyShard, std::allocator<poseidon::gpu::GpuPolyShard> > const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1941326,
+      "samples": 151,
+      "symbol": "poseidon::gpu::kernel::launch_forward_ntt_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1015244,
+      "samples": 148,
+      "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuCiphertextData, std::allocator<poseidon::gpu::GpuCiphertextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1944529,
+      "samples": 147,
+      "symbol": "poseidon::gpu::kernel::launch_inverse_ntt_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 2010979,
+      "samples": 140,
+      "symbol": "poseidon::gpu::kernel::launch_apply_q_last_rescale_correction_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 2011278,
+      "samples": 136,
+      "symbol": "poseidon::gpu::kernel::launch_build_q_last_rescale_correction_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 909573,
+      "samples": 134,
+      "symbol": "poseidon::runtime_api::PoseidonGpuApi::is_ready(poseidon::runtime_api::PoseidonGpuValue&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1005239,
+      "samples": 126,
+      "symbol": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::collect_completed()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1073144,
+      "samples": 112,
+      "symbol": "poseidon::runtime_api::communication::CudaTransferRequest::collect_completed()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 995069,
+      "samples": 64,
+      "symbol": "std::_Sp_counted_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1007787,
+      "samples": 56,
+      "symbol": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::record(int)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 958541,
+      "samples": 34,
+      "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1760245,
+      "samples": 33,
+      "symbol": "poseidon::gpu::kernel::launch_dyadic_product_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1079862,
+      "samples": 30,
+      "symbol": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_async(poseidon::runtime_api::communication::DeviceBufferCopy const&, poseidon::runtime_api::communication::CudaTransferRoute, CUevent_st*) const"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1078886,
+      "samples": 29,
+      "symbol": "poseidon::runtime_api::communication::(anonymous namespace)::record_execution_ready(int)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1079798,
+      "samples": 26,
+      "symbol": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_async(poseidon::runtime_api::communication::DeviceBufferCopy const&, poseidon::runtime_api::communication::CudaTransferRoute, CUevent_st*) const"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1757757,
+      "samples": 26,
+      "symbol": "poseidon::gpu::kernel::launch_multiply_scalar_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, unsigned long, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1475789,
+      "samples": 23,
+      "symbol": "poseidon::gpu::DeviceVector<unsigned int>::allocate(unsigned long, int)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1005883,
+      "samples": 22,
+      "symbol": "poseidon::gpu::DeviceVector<unsigned int>::~DeviceVector()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1058832,
+      "samples": 19,
+      "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1306277,
+      "samples": 18,
+      "symbol": "void std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> >::_M_realloc_insert<int&, unsigned long const&>(__gnu_cxx::__normal_iterator<poseidon::gpu::GpuFieldData*, std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> > >, int&, unsigned long const&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1775170,
+      "samples": 17,
+      "symbol": "poseidon::gpu::kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage(unsigned int*, unsigned int*, unsigned int const*, unsigned long, unsigned long, unsigned long, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1065599,
+      "samples": 17,
+      "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1761589,
+      "samples": 15,
+      "symbol": "poseidon::gpu::kernel::launch_add_two_poly_shards(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1064856,
+      "samples": 14,
+      "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1812055,
+      "samples": 13,
+      "symbol": "poseidon::gpu::kernel::launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned long, unsigned long, poseidon::gpu::GpuParameterShard const&, unsigned long, bool, bool, bool)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1058022,
+      "samples": 13,
+      "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1016956,
+      "samples": 11,
+      "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuPlaintextData, std::allocator<poseidon::gpu::GpuPlaintextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1065935,
+      "samples": 11,
+      "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1058648,
+      "samples": 11,
+      "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1061458,
+      "samples": 11,
+      "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 938797,
+      "samples": 10,
+      "symbol": "poseidon::runtime_api::PoseidonGpuApi::prepare_plaintext_async(fhegpu::ValueDesc const&, std::vector<double, std::allocator<double> > const&, fhegpu::PrepareBackend)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1058455,
+      "samples": 9,
+      "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 939071,
+      "samples": 8,
+      "symbol": "poseidon::runtime_api::PoseidonGpuApi::prepare_plaintext_async(fhegpu::ValueDesc const&, std::vector<double, std::allocator<double> > const&, fhegpu::PrepareBackend)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1065237,
+      "samples": 7,
+      "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1795312,
+      "samples": 5,
+      "symbol": "poseidon::gpu::kernel::launch_apply_galois_ntt_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, unsigned int, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1015836,
+      "samples": 4,
+      "symbol": "std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> >::~vector()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1083762,
+      "samples": 2,
+      "symbol": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_host_to_device_async(std::shared_ptr<poseidon::runtime_api::communication::PinnedHostBuffer> const&, void*, unsigned long, int) const"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1755425,
+      "samples": 1,
+      "symbol": "poseidon::gpu::kernel::launch_multiply_two_component_ciphertexts(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1530521,
+      "samples": 1,
+      "symbol": "poseidon::gpu::(anonymous namespace)::zero_poly(poseidon::gpu::GpuRNSPolyView&, char const*)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1751644,
+      "samples": 1,
+      "symbol": "poseidon::gpu::kernel::launch_copy_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, unsigned long)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1006900,
+      "samples": 1,
+      "symbol": "poseidon::runtime_api::PoseidonGpuApi::DeviceState::collect_consumer_wait_locked()"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1794805,
+      "samples": 1,
+      "symbol": "poseidon::gpu::kernel::launch_hybrid_apply_moddown_ntt_add_back(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, poseidon::gpu::GpuParameterShard const&, unsigned long, poseidon::gpu::GpuConstPolyShardView const*, poseidon::gpu::GpuConstPolyShardView const*)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1800451,
+      "samples": 1,
+      "symbol": "poseidon::gpu::kernel::launch_hybrid_convert_p_to_q_forward_ntt(unsigned int*, unsigned int*, unsigned int const*, unsigned int const*, poseidon::gpu::GpuParameterShard const&, unsigned long, bool)"
+    },
+    {
+      "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+      "offset": 1005717,
+      "samples": 1,
+      "symbol": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::wait()"
+    }
+  ],
+  "notes": [
+    "No nsys, CUPTI, extra CUDA event, stream wait or synchronization is used by this interposer.",
+    "API duration is CPU wall time of the real function, not GPU kernel time or exclusive CPU execution.",
+    "Calls whose entry falls within the window are counted with full return duration; a call may cross the end.",
+    "Counts cover named intercepted symbols, including PTDS runtime entry points. Driver calls resolved through dispatch tables may bypass interposition.",
+    "cudaSetDevice count is not a count of actual device/context changes.",
+    "Host window read progress is a proxy, not a completed-work throughput measurement. Different cases can reach different graph phases."
+  ]
+}

@@ -1,0 +1,2 @@
+{"context": "runtime-mixed", "degree": 16384, "exit_code": 1, "wall_seconds": 29.338147446997027}
+{"context": "qwen30", "degree": 16384, "exit_code": 1, "wall_seconds": 58.146263711001666}

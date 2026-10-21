@@ -1,0 +1,3611 @@
+{
+  "window_ns": 20000208246,
+  "devices": [
+    {
+      "device": 0,
+      "kernel_duration": {
+        "count": 73325,
+        "total_ns": 1192528621,
+        "mean_ns": 16263.602059324923,
+        "p50_ns": 8288,
+        "p95_ns": 50527,
+        "p99_ns": 77088,
+        "max_ns": 225021
+      },
+      "kernel_union_ns": 1185057792,
+      "copy_union_ns": 563147292,
+      "any_gpu_activity_union_ns": 1710518233,
+      "any_gpu_activity_percent": 8.552502113782241,
+      "kernel_active_percent": 5.925227264756151,
+      "idle_ns": 18289690013,
+      "gap_parts": {
+        "unmatched_ns": 21279328,
+        "before_corresponding_api_entry_ns": 17638592264,
+        "inside_corresponding_api_ns": 561404173,
+        "after_corresponding_api_return_ns": 68414248
+      },
+      "gap_distribution": {
+        "count": 87282,
+        "total_ns": 18288823899,
+        "mean_ns": 209537.17718429916,
+        "p50_ns": 1376,
+        "p95_ns": 157918,
+        "p99_ns": 798934,
+        "max_ns": 1243594248
+      },
+      "idle_during_host_refresh_ns": 10944328939,
+      "gaps_over_100us_total_ns": 17744447730,
+      "gaps_over_1ms_total_ns": 15967891325
+    },
+    {
+      "device": 1,
+      "kernel_duration": {
+        "count": 55040,
+        "total_ns": 844470683,
+        "mean_ns": 15342.853978924419,
+        "p50_ns": 8288,
+        "p95_ns": 40991,
+        "p99_ns": 76479,
+        "max_ns": 146814
+      },
+      "kernel_union_ns": 836303740,
+      "copy_union_ns": 503655886,
+      "any_gpu_activity_union_ns": 1296501465,
+      "any_gpu_activity_percent": 6.48243982789178,
+      "kernel_active_percent": 4.181475161226179,
+      "idle_ns": 18703706781,
+      "gap_parts": {
+        "before_corresponding_api_entry_ns": 18268247237,
+        "inside_corresponding_api_ns": 383925058,
+        "after_corresponding_api_return_ns": 51534486
+      },
+      "gap_distribution": {
+        "count": 64664,
+        "total_ns": 18703706781,
+        "mean_ns": 289244.50669615244,
+        "p50_ns": 3008,
+        "p95_ns": 147678,
+        "p99_ns": 828597,
+        "max_ns": 10484534873
+      },
+      "idle_during_host_refresh_ns": 11294991375,
+      "gaps_over_100us_total_ns": 18276229655,
+      "gaps_over_1ms_total_ns": 16935852356
+    },
+    {
+      "device": 2,
+      "kernel_duration": {
+        "count": 46335,
+        "total_ns": 652281261,
+        "mean_ns": 14077.50644221431,
+        "p50_ns": 8032,
+        "p95_ns": 35392,
+        "p99_ns": 84767,
+        "max_ns": 249309
+      },
+      "kernel_union_ns": 642181528,
+      "copy_union_ns": 510219173,
+      "any_gpu_activity_union_ns": 1105266857,
+      "any_gpu_activity_percent": 5.526276743748661,
+      "kernel_active_percent": 3.21087420741449,
+      "idle_ns": 18894941389,
+      "gap_parts": {
+        "before_corresponding_api_entry_ns": 18453073851,
+        "inside_corresponding_api_ns": 403751281,
+        "after_corresponding_api_return_ns": 37844271,
+        "unmatched_ns": 271986
+      },
+      "gap_distribution": {
+        "count": 54200,
+        "total_ns": 18894669403,
+        "mean_ns": 348610.1365867159,
+        "p50_ns": 6304,
+        "p95_ns": 147582,
+        "p99_ns": 890423,
+        "max_ns": 15272931662
+      },
+      "idle_during_host_refresh_ns": 11530682443,
+      "gaps_over_100us_total_ns": 18429960065,
+      "gaps_over_1ms_total_ns": 17267346420
+    },
+    {
+      "device": 3,
+      "kernel_duration": {
+        "count": 48909,
+        "total_ns": 667167018,
+        "mean_ns": 13640.986689566338,
+        "p50_ns": 8064,
+        "p95_ns": 34687,
+        "p99_ns": 82559,
+        "max_ns": 209246
+      },
+      "kernel_union_ns": 655246771,
+      "copy_union_ns": 475984755,
+      "any_gpu_activity_union_ns": 1091170697,
+      "any_gpu_activity_percent": 5.455796677608253,
+      "kernel_active_percent": 3.276199742225424,
+      "idle_ns": 18909037549,
+      "gap_parts": {
+        "before_corresponding_api_entry_ns": 18464543852,
+        "inside_corresponding_api_ns": 372708190,
+        "after_corresponding_api_return_ns": 71583029,
+        "unmatched_ns": 202478
+      },
+      "gap_distribution": {
+        "count": 57330,
+        "total_ns": 18908835071,
+        "mean_ns": 329824.4387057387,
+        "p50_ns": 5248,
+        "p95_ns": 220990,
+        "p99_ns": 840886,
+        "max_ns": 15292072790
+      },
+      "idle_during_host_refresh_ns": 11512223220,
+      "gaps_over_100us_total_ns": 18491173519,
+      "gaps_over_1ms_total_ns": 17131272023
+    }
+  ],
+  "host_refresh_intervals": [
+    [
+      136012319,
+      283088602
+    ],
+    [
+      283393642,
+      425629661
+    ],
+    [
+      425843483,
+      576458062
+    ],
+    [
+      1256390349,
+      1401846875
+    ],
+    [
+      1545919635,
+      1694297650
+    ],
+    [
+      2201310042,
+      2343997718
+    ],
+    [
+      2821860095,
+      2980701706
+    ],
+    [
+      3491982419,
+      3648729082
+    ],
+    [
+      4749904282,
+      4911417532
+    ],
+    [
+      4911709726,
+      5053781112
+    ],
+    [
+      5054017579,
+      5196177070
+    ],
+    [
+      6009083792,
+      6174273664
+    ],
+    [
+      6174520694,
+      6315688537
+    ],
+    [
+      6316035700,
+      6455676335
+    ],
+    [
+      6455935680,
+      6591908550
+    ],
+    [
+      6592152058,
+      6728905133
+    ],
+    [
+      6729244786,
+      6865433092
+    ],
+    [
+      6865691386,
+      7002390014
+    ],
+    [
+      7002656188,
+      7138168338
+    ],
+    [
+      7138452891,
+      7274282347
+    ],
+    [
+      7274620637,
+      7411403796
+    ],
+    [
+      7411718036,
+      7551559453
+    ],
+    [
+      7551862753,
+      7691973939
+    ],
+    [
+      7692220196,
+      7828204756
+    ],
+    [
+      7828472094,
+      7964738962
+    ],
+    [
+      7965021991,
+      8104391787
+    ],
+    [
+      8104657306,
+      8242711825
+    ],
+    [
+      8242979454,
+      8385145170
+    ],
+    [
+      8385426039,
+      8523373893
+    ],
+    [
+      8523648709,
+      8662437602
+    ],
+    [
+      8662700851,
+      8799886951
+    ],
+    [
+      8800142106,
+      8936732686
+    ],
+    [
+      8936999904,
+      9075776755
+    ],
+    [
+      9076199859,
+      9217067514
+    ],
+    [
+      9217329997,
+      9354550186
+    ],
+    [
+      9354808505,
+      9492224207
+    ],
+    [
+      9492465986,
+      9630317113
+    ],
+    [
+      9630562842,
+      9767713502
+    ],
+    [
+      9768039656,
+      9905185681
+    ],
+    [
+      9905433557,
+      10041983162
+    ],
+    [
+      10042262800,
+      10181745685
+    ],
+    [
+      10181990219,
+      10321413296
+    ],
+    [
+      10321675997,
+      10458733969
+    ],
+    [
+      10459018672,
+      10595917749
+    ],
+    [
+      10596156363,
+      10738691361
+    ],
+    [
+      10738938969,
+      10875852657
+    ],
+    [
+      10894477942,
+      11034426780
+    ],
+    [
+      11034748311,
+      11173785528
+    ],
+    [
+      11196732257,
+      11337911288
+    ],
+    [
+      11338235450,
+      11476741777
+    ],
+    [
+      11501957900,
+      11640963879
+    ],
+    [
+      11641234581,
+      11783466362
+    ],
+    [
+      11805306266,
+      11943706812
+    ],
+    [
+      11943974158,
+      12087028906
+    ],
+    [
+      12110222259,
+      12249292287
+    ],
+    [
+      12249549995,
+      12390785583
+    ],
+    [
+      12413691477,
+      12552595303
+    ],
+    [
+      12552863502,
+      12692411268
+    ],
+    [
+      12715207325,
+      12857239459
+    ],
+    [
+      12857505577,
+      12995733995
+    ],
+    [
+      13018664780,
+      13157821633
+    ],
+    [
+      13158145333,
+      13299807241
+    ],
+    [
+      13300109803,
+      13443718183
+    ],
+    [
+      13444046985,
+      13584736564
+    ],
+    [
+      13585021378,
+      13723794221
+    ],
+    [
+      13724120456,
+      13865243284
+    ],
+    [
+      13865506096,
+      14011713517
+    ],
+    [
+      14012072391,
+      14153554787
+    ],
+    [
+      14153822564,
+      14293797833
+    ],
+    [
+      14294111446,
+      14434038310
+    ],
+    [
+      14434319942,
+      14572089411
+    ],
+    [
+      14572364851,
+      14711403228
+    ],
+    [
+      14711688691,
+      14849452007
+    ],
+    [
+      14849770376,
+      14992122457
+    ],
+    [
+      14992376271,
+      15130386552
+    ],
+    [
+      15130698684,
+      15270963307
+    ],
+    [
+      15271353248,
+      15407219183
+    ],
+    [
+      15617940095,
+      15769214897
+    ],
+    [
+      16170277536,
+      16321872381
+    ],
+    [
+      16776204105,
+      16927730488
+    ],
+    [
+      17384379604,
+      17544389508
+    ],
+    [
+      18012850315,
+      18166747063
+    ]
+  ],
+  "host_refresh_union_ns": 11607467825,
+  "all_devices_idle_ns": 16329439353,
+  "api": {
+    "cudaLaunchKernel_ptsz_v7000": {
+      "count": 219262,
+      "total_ns": 2649389991,
+      "mean_ns": 12083.215472813346,
+      "p50_ns": 10237,
+      "p95_ns": 23207,
+      "p99_ns": 34983,
+      "max_ns": 3107093
+    },
+    "cudaMemcpyAsync_ptsz_v7000": {
+      "count": 53942,
+      "total_ns": 1001818273,
+      "mean_ns": 18572.138092766305,
+      "p50_ns": 15860,
+      "p95_ns": 30713,
+      "p99_ns": 41730,
+      "max_ns": 3152744
+    },
+    "cudaStreamWaitEvent_v3020": {
+      "count": 45072,
+      "total_ns": 243108547,
+      "mean_ns": 5393.782104188854,
+      "p50_ns": 4560,
+      "p95_ns": 11373,
+      "p99_ns": 17167,
+      "max_ns": 624573
+    },
+    "cudaEventCreateWithFlags_v3020": {
+      "count": 26366,
+      "total_ns": 196080761,
+      "mean_ns": 7436.87935219601,
+      "p50_ns": 3962,
+      "p95_ns": 26589,
+      "p99_ns": 42284,
+      "max_ns": 2057249
+    },
+    "cudaEventRecord_v3020": {
+      "count": 59326,
+      "total_ns": 1111192323,
+      "mean_ns": 18730.27547786805,
+      "p50_ns": 3163,
+      "p95_ns": 9083,
+      "p99_ns": 16267,
+      "max_ns": 615239052
+    },
+    "cudaEventQuery_v3020": {
+      "count": 44273,
+      "total_ns": 262207224,
+      "mean_ns": 5922.508616990039,
+      "p50_ns": 4635,
+      "p95_ns": 13764,
+      "p99_ns": 19827,
+      "max_ns": 117553
+    },
+    "cudaMallocHost_v3020": {
+      "count": 99,
+      "total_ns": 5876235496,
+      "mean_ns": 59355914.1010101,
+      "p50_ns": 8386910,
+      "p95_ns": 710211359,
+      "p99_ns": 1239429691,
+      "max_ns": 1239429691
+    },
+    "cudaMemcpyAsync_v3020": {
+      "count": 122,
+      "total_ns": 4038364,
+      "mean_ns": 33101.34426229508,
+      "p50_ns": 29173,
+      "p95_ns": 49100,
+      "p99_ns": 58137,
+      "max_ns": 273089
+    },
+    "cudaFreeHost_v3020": {
+      "count": 99,
+      "total_ns": 666895508,
+      "mean_ns": 6736318.262626262,
+      "p50_ns": 3321780,
+      "p95_ns": 4289617,
+      "p99_ns": 379014529,
+      "max_ns": 379014529
+    },
+    "cudaEventDestroy_v3020": {
+      "count": 16688,
+      "total_ns": 107448687,
+      "mean_ns": 6438.679709971237,
+      "p50_ns": 2897,
+      "p95_ns": 27503,
+      "p99_ns": 41303,
+      "max_ns": 434707
+    },
+    "cudaEventSynchronize_v3020": {
+      "count": 170,
+      "total_ns": 4050379,
+      "mean_ns": 23825.758823529413,
+      "p50_ns": 9790,
+      "p95_ns": 64650,
+      "p99_ns": 315206,
+      "max_ns": 409007
+    },
+    "cudaEventRecord_ptsz_v7000": {
+      "count": 6522,
+      "total_ns": 60749900,
+      "mean_ns": 9314.61208218338,
+      "p50_ns": 7880,
+      "p95_ns": 16717,
+      "p99_ns": 25500,
+      "max_ns": 1504435
+    },
+    "cuStreamIsCapturing": {
+      "count": 2174,
+      "total_ns": 3682141,
+      "mean_ns": 1693.7171113155473,
+      "p50_ns": 1340,
+      "p95_ns": 4400,
+      "p99_ns": 8637,
+      "max_ns": 22340
+    },
+    "cuLaunchKernel": {
+      "count": 4348,
+      "total_ns": 63360751,
+      "mean_ns": 14572.389834406624,
+      "p50_ns": 13360,
+      "p95_ns": 25223,
+      "p99_ns": 36820,
+      "max_ns": 200190
+    },
+    "cudaMemcpyPeerAsync_v4000": {
+      "count": 4767,
+      "total_ns": 161840440,
+      "mean_ns": 33950.165722676735,
+      "p50_ns": 32822,
+      "p95_ns": 49080,
+      "p99_ns": 60603,
+      "max_ns": 206360
+    },
+    "cudaEventCreate_v3020": {
+      "count": 174,
+      "total_ns": 1137655,
+      "mean_ns": 6538.247126436781,
+      "p50_ns": 5123,
+      "p95_ns": 15081,
+      "p99_ns": 35510,
+      "max_ns": 52613
+    },
+    "cudaMemsetAsync_v3020": {
+      "count": 474,
+      "total_ns": 8572029,
+      "mean_ns": 18084.449367088608,
+      "p50_ns": 16580,
+      "p95_ns": 26556,
+      "p99_ns": 47650,
+      "max_ns": 61910
+    }
+  },
+  "top_kernel_names": [
+    {
+      "name": "forward_ntt_fourstep_phase_kernel",
+      "count": 48896,
+      "total_ns": 1542273945,
+      "mean_ns": 31541.9245950589,
+      "p50_ns": 30624,
+      "p95_ns": 46463,
+      "p99_ns": 59647,
+      "max_ns": 92415
+    },
+    {
+      "name": "inverse_ntt_fourstep_phase_kernel",
+      "count": 52551,
+      "total_ns": 498510320,
+      "mean_ns": 9486.219482026983,
+      "p50_ns": 8288,
+      "p95_ns": 15968,
+      "p99_ns": 39167,
+      "max_ns": 61023
+    },
+    {
+      "name": "forward_ntt_stage_kernel",
+      "count": 30436,
+      "total_ns": 195932623,
+      "mean_ns": 6437.528683138389,
+      "p50_ns": 5120,
+      "p95_ns": 12607,
+      "p99_ns": 24032,
+      "max_ns": 60767
+    },
+    {
+      "name": "expand",
+      "count": 2174,
+      "total_ns": 188361748,
+      "mean_ns": 86642.9383624655,
+      "p50_ns": 84928,
+      "p95_ns": 98431,
+      "p99_ns": 144671,
+      "max_ns": 249309
+    },
+    {
+      "name": "apply_q_last_rescale_correction_kernel",
+      "count": 24448,
+      "total_ns": 163344446,
+      "mean_ns": 6681.300965314136,
+      "p50_ns": 6272,
+      "p95_ns": 10016,
+      "p99_ns": 13376,
+      "max_ns": 49216
+    },
+    {
+      "name": "hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel",
+      "count": 2742,
+      "total_ns": 147540625,
+      "mean_ns": 53807.66776075857,
+      "p50_ns": 54047,
+      "p95_ns": 78911,
+      "p99_ns": 86687,
+      "max_ns": 90623
+    },
+    {
+      "name": "build_q_last_rescale_correction_kernel",
+      "count": 24448,
+      "total_ns": 141109239,
+      "mean_ns": 5771.811150196335,
+      "p50_ns": 5376,
+      "p95_ns": 8640,
+      "p99_ns": 12000,
+      "max_ns": 60191
+    },
+    {
+      "name": "hybrid_modup_qp_forward_ntt_first_stage_kernel",
+      "count": 2742,
+      "total_ns": 106683373,
+      "mean_ns": 38907.13822027717,
+      "p50_ns": 40991,
+      "p95_ns": 59135,
+      "p99_ns": 61791,
+      "max_ns": 62239
+    },
+    {
+      "name": "hybrid_forward_ntt_modup_qp_fused_stage_kernel",
+      "count": 8226,
+      "total_ns": 59331318,
+      "mean_ns": 7212.657184536834,
+      "p50_ns": 7264,
+      "p95_ns": 8863,
+      "p99_ns": 9216,
+      "max_ns": 16287
+    },
+    {
+      "name": "dyadic_product_poly_shard_kernel",
+      "count": 5016,
+      "total_ns": 50763058,
+      "mean_ns": 10120.22687400319,
+      "p50_ns": 8992,
+      "p95_ns": 16160,
+      "p99_ns": 28800,
+      "max_ns": 53568
+    },
+    {
+      "name": "multiply_scalar_poly_shard_kernel",
+      "count": 4890,
+      "total_ns": 50048816,
+      "mean_ns": 10234.931697341513,
+      "p50_ns": 8800,
+      "p95_ns": 23872,
+      "p99_ns": 31519,
+      "max_ns": 44863
+    },
+    {
+      "name": "hybrid_forward_ntt_q_two_components_fused_stage_kernel",
+      "count": 3045,
+      "total_ns": 48354260,
+      "mean_ns": 15879.888341543514,
+      "p50_ns": 11808,
+      "p95_ns": 40671,
+      "p99_ns": 55008,
+      "max_ns": 56928
+    },
+    {
+      "name": "hybrid_convert_p_to_q_forward_ntt_first_stage_kernel",
+      "count": 609,
+      "total_ns": 40916639,
+      "mean_ns": 67186.59934318555,
+      "p50_ns": 67455,
+      "p95_ns": 91871,
+      "p99_ns": 96415,
+      "max_ns": 96830
+    },
+    {
+      "name": "regular_fft_factor",
+      "count": 4348,
+      "total_ns": 35106191,
+      "mean_ns": 8074.100965961362,
+      "p50_ns": 7008,
+      "p95_ns": 15648,
+      "p99_ns": 21056,
+      "max_ns": 36800
+    },
+    {
+      "name": "add_two_poly_shards_kernel",
+      "count": 2263,
+      "total_ns": 33130674,
+      "mean_ns": 14640.156429518338,
+      "p50_ns": 13152,
+      "p95_ns": 22239,
+      "p99_ns": 34623,
+      "max_ns": 78271
+    },
+    {
+      "name": "hybrid_forward_ntt_modup_qp_stage_kernel",
+      "count": 2742,
+      "total_ns": 18322773,
+      "mean_ns": 6682.265864332604,
+      "p50_ns": 6880,
+      "p95_ns": 8351,
+      "p99_ns": 8928,
+      "max_ns": 30560
+    },
+    {
+      "name": "hybrid_apply_moddown_ntt_add_back_two_components_kernel",
+      "count": 609,
+      "total_ns": 13852525,
+      "mean_ns": 22746.34646962233,
+      "p50_ns": 23488,
+      "p95_ns": 33472,
+      "p99_ns": 34816,
+      "max_ns": 35744
+    },
+    {
+      "name": "permute",
+      "count": 2174,
+      "total_ns": 10289094,
+      "mean_ns": 4732.793928242871,
+      "p50_ns": 3520,
+      "p95_ns": 10431,
+      "p99_ns": 16672,
+      "max_ns": 36832
+    },
+    {
+      "name": "apply_galois_ntt_poly_shard_kernel",
+      "count": 948,
+      "total_ns": 7322405,
+      "mean_ns": 7724.055907172996,
+      "p50_ns": 8159,
+      "p95_ns": 9792,
+      "p99_ns": 15744,
+      "max_ns": 24352
+    },
+    {
+      "name": "multiply_outer_components_kernel",
+      "count": 135,
+      "total_ns": 2585930,
+      "mean_ns": 19155.037037037036,
+      "p50_ns": 19008,
+      "p95_ns": 27296,
+      "p99_ns": 28960,
+      "max_ns": 29632
+    },
+    {
+      "name": "multiply_cross_component_kernel",
+      "count": 135,
+      "total_ns": 2274467,
+      "mean_ns": 16847.903703703705,
+      "p50_ns": 17279,
+      "p95_ns": 24448,
+      "p99_ns": 25407,
+      "max_ns": 25760
+    },
+    {
+      "name": "add_poly_shard_kernel",
+      "count": 32,
+      "total_ns": 393114,
+      "mean_ns": 12284.8125,
+      "p50_ns": 12576,
+      "p95_ns": 15263,
+      "p99_ns": 15360,
+      "max_ns": 15360
+    }
+  ],
+  "copy_stats": {
+    "Device-to-Device": {
+      "count": 51792,
+      "bytes": 44238766080,
+      "duration_ns": 159505415
+    },
+    "Host-to-Device": {
+      "count": 2257,
+      "bytes": 686424064,
+      "duration_ns": 80728366
+    },
+    "Device-to-Host": {
+      "count": 16,
+      "bytes": 20971520,
+      "duration_ns": 1666283
+    },
+    "Peer-to-Peer": {
+      "count": 4767,
+      "bytes": 13765836800,
+      "duration_ns": 1842882021
+    }
+  },
+  "osrt": {
+    "OS runtime libraries profiling started": {
+      "count": 1,
+      "total_ns": 0,
+      "mean_ns": 0,
+      "p50_ns": 0,
+      "p95_ns": 0,
+      "p99_ns": 0,
+      "max_ns": 0
+    },
+    "pthread_cond_wait": {
+      "count": 2279,
+      "total_ns": 53121595427,
+      "mean_ns": 23309168.682316806,
+      "p50_ns": 1826016,
+      "p95_ns": 110944864,
+      "p99_ns": 206741202,
+      "max_ns": 4805477664
+    },
+    "poll": {
+      "count": 796,
+      "total_ns": 79734406396,
+      "mean_ns": 100168852.2562814,
+      "p50_ns": 100173128,
+      "p95_ns": 100186698,
+      "p99_ns": 100193235,
+      "max_ns": 100205806
+    },
+    "ioctl": {
+      "count": 708,
+      "total_ns": 6286593578,
+      "mean_ns": 8879369.460451977,
+      "p50_ns": 374477,
+      "p95_ns": 6419945,
+      "p99_ns": 380441500,
+      "max_ns": 425516336
+    },
+    "pthread_mutex_lock": {
+      "count": 9291,
+      "total_ns": 3722698891,
+      "mean_ns": 400677.9561941664,
+      "p50_ns": 224200,
+      "p95_ns": 920891,
+      "p99_ns": 1833732,
+      "max_ns": 376983652
+    },
+    "mmap": {
+      "count": 83,
+      "total_ns": 159208226,
+      "mean_ns": 1918171.3975903615,
+      "p50_ns": 1907004,
+      "p95_ns": 2019978,
+      "p99_ns": 3471886,
+      "max_ns": 3471886
+    },
+    "pthread_rwlock_rdlock": {
+      "count": 67,
+      "total_ns": 913105346,
+      "mean_ns": 13628438,
+      "p50_ns": 217552,
+      "p95_ns": 5458202,
+      "p99_ns": 615178162,
+      "max_ns": 615178162
+    },
+    "pthread_rwlock_wrlock": {
+      "count": 17,
+      "total_ns": 263183062,
+      "mean_ns": 15481356.588235294,
+      "p50_ns": 235684,
+      "p95_ns": 256956737,
+      "p99_ns": 256956737,
+      "max_ns": 256956737
+    }
+  },
+  "top_lock_callchains": [
+    {
+      "api": "pthread_rwlock_rdlock",
+      "tid": 284582452843396,
+      "count": 1,
+      "duration_ns": 615178162,
+      "frames": [
+        {
+          "symbol": "__pthread_rwlock_rdlock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "0x7e6fa649868f",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa631ae6c",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa653213a",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fc3e140cd",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "cudaEventRecord",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuCiphertextData, std::allocator<poseidon::gpu::GpuCiphertextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > >::~vector()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> >::_M_erase(__gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >, __gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::collect_completed()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_device_parallel_phases()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run(fhegpu::LoadedRuntimePlan const&, fhegpu::RuntimeResources const&, std::unordered_map<unsigned long, poseidon::runtime_api::PoseidonGpuValue, std::hash<unsigned long>, std::equal_to<unsigned long>, std::allocator<std::pair<unsigned long const, poseidon::runtime_api::PoseidonGpuValue> > > const&, fhegpu::DiffMode)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "main",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x0",
+          "module": "[Unknown]"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 376983652,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "tid": 284582452843405,
+      "count": 1,
+      "duration_ns": 256956737,
+      "frames": [
+        {
+          "symbol": "__pthread_rwlock_wrlock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "0x7e6fa6705958",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa667382e",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa592fdd1",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libcupti.so.12.2"
+        },
+        {
+          "symbol": "0x7e6fa592ef72",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libcupti.so.12.2"
+        },
+        {
+          "symbol": "0x7e6fa592f373",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libcupti.so.12.2"
+        },
+        {
+          "symbol": "0x7e6fa5ab8159",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libcupti.so.12.2"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "tid": 284582452843396,
+      "count": 1,
+      "duration_ns": 242567229,
+      "frames": [
+        {
+          "symbol": "__pthread_rwlock_rdlock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "0x7e6fa649868f",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa631ae6c",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa653213a",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fc3e140cd",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "cudaEventRecord",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuCiphertextData, std::allocator<poseidon::gpu::GpuCiphertextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > >::~vector()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> >::_M_erase(__gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >, __gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::collect_completed()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_device_parallel_phases()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run(fhegpu::LoadedRuntimePlan const&, fhegpu::RuntimeResources const&, std::unordered_map<unsigned long, poseidon::runtime_api::PoseidonGpuValue, std::hash<unsigned long>, std::equal_to<unsigned long>, std::allocator<std::pair<unsigned long const, poseidon::runtime_api::PoseidonGpuValue> > > const&, fhegpu::DiffMode)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "main",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x0",
+          "module": "[Unknown]"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843487,
+      "count": 1,
+      "duration_ns": 13139529,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843485,
+      "count": 1,
+      "duration_ns": 12545899,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuCiphertextData, std::allocator<poseidon::gpu::GpuCiphertextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > >::~vector()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> >::_M_erase(__gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >, __gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::collect_completed()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843489,
+      "count": 1,
+      "duration_ns": 12118458,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::prepare_plaintext_async(fhegpu::ValueDesc const&, std::vector<double, std::allocator<double> > const&, fhegpu::PrepareBackend)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843491,
+      "count": 1,
+      "duration_ns": 12114694,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_allocate(unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_allocate(unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "void std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> >::_M_realloc_insert<int&, unsigned long const&>(__gnu_cxx::__normal_iterator<poseidon::gpu::GpuFieldData*, std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> > >, int&, unsigned long const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::gpu::GpuPlaintextData::allocate_single_device(unsigned long, unsigned long, int, unsigned long)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::prepare_plaintext_async(fhegpu::ValueDesc const&, std::vector<double, std::allocator<double> > const&, fhegpu::PrepareBackend)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843486,
+      "count": 1,
+      "duration_ns": 11224863,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_allocate(unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_allocate(unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::gpu::GpuCiphertextData::allocate_single_device_sharded(unsigned long, unsigned long, unsigned long, int, std::vector<poseidon::gpu::GpuPolyShard, std::allocator<poseidon::gpu::GpuPolyShard> > const&, unsigned long)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::gpu::(anonymous namespace)::prepare_ciphertext_destination(poseidon::gpu::GpuCiphertextData&, poseidon::gpu::GpuCiphertextData const*, poseidon::gpu::GpuCiphertextData const*, poseidon::gpu::GpuCiphertextMeta const&, unsigned long, int, poseidon::gpu::GpuRNSPoly const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::gpu::GpuEvaluator::add(poseidon::gpu::GpuCiphertextData const&, poseidon::gpu::GpuCiphertextData const&, poseidon::gpu::GpuCiphertextData&) const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843396,
+      "count": 1,
+      "duration_ns": 6850583,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_device_parallel_phases()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run(fhegpu::LoadedRuntimePlan const&, fhegpu::RuntimeResources const&, std::unordered_map<unsigned long, poseidon::runtime_api::PoseidonGpuValue, std::hash<unsigned long>, std::equal_to<unsigned long>, std::allocator<std::pair<unsigned long const, poseidon::runtime_api::PoseidonGpuValue> > > const&, fhegpu::DiffMode)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "main",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x0",
+          "module": "[Unknown]"
+        }
+      ]
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "tid": 284582452843396,
+      "count": 1,
+      "duration_ns": 5619605,
+      "frames": [
+        {
+          "symbol": "__pthread_rwlock_rdlock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "0x7e6fa649868f",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa631ae6c",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa653213a",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fc3e140cd",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "cudaEventRecord",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuCiphertextData, std::allocator<poseidon::gpu::GpuCiphertextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > >::~vector()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> >::_M_erase(__gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >, __gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::collect_completed()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_device_parallel_phases()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run(fhegpu::LoadedRuntimePlan const&, fhegpu::RuntimeResources const&, std::unordered_map<unsigned long, poseidon::runtime_api::PoseidonGpuValue, std::hash<unsigned long>, std::equal_to<unsigned long>, std::allocator<std::pair<unsigned long const, poseidon::runtime_api::PoseidonGpuValue> > > const&, fhegpu::DiffMode)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "main",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x0",
+          "module": "[Unknown]"
+        }
+      ]
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "tid": 284582452843396,
+      "count": 1,
+      "duration_ns": 5458202,
+      "frames": [
+        {
+          "symbol": "__pthread_rwlock_rdlock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "0x7e6fa649868f",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa631ae6c",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fa653213a",
+          "module": "/usr/lib/x86_64-linux-gnu/libcuda.so.535.288.01"
+        },
+        {
+          "symbol": "0x7e6fc3e140cd",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "cudaEventRecord",
+          "module": "/usr/local/cuda-12.2/targets/x86_64-linux/lib/libcudart.so.12.2.140"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuCiphertextData, std::allocator<poseidon::gpu::GpuCiphertextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > >::~vector()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> >::_M_erase(__gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >, __gnu_cxx::__normal_iterator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork*, std::vector<poseidon::runtime_api::PoseidonGpuApi::InFlightWork, std::allocator<poseidon::runtime_api::PoseidonGpuApi::InFlightWork> > >)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::collect_completed()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_device_parallel_phases()",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run(fhegpu::LoadedRuntimePlan const&, fhegpu::RuntimeResources const&, std::unordered_map<unsigned long, poseidon::runtime_api::PoseidonGpuValue, std::hash<unsigned long>, std::equal_to<unsigned long>, std::allocator<std::pair<unsigned long const, poseidon::runtime_api::PoseidonGpuValue> > > const&, fhegpu::DiffMode)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "main",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x0",
+          "module": "[Unknown]"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843486,
+      "count": 1,
+      "duration_ns": 4137150,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "rmm::mr::detail::stream_ordered_memory_resource<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>, rmm::mr::detail::coalescing_free_list>::do_allocate(unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_allocate(unsigned long, rmm::cuda_stream_view)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::gpu::GpuCiphertextData::allocate_single_device_sharded(unsigned long, unsigned long, unsigned long, int, std::vector<poseidon::gpu::GpuPolyShard, std::allocator<poseidon::gpu::GpuPolyShard> > const&, unsigned long)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::communication::prepare_full_object_copy(poseidon::gpu::GpuCiphertextData const&, poseidon::gpu::GpuCiphertextData&, int)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::communicate_async(fhegpu::CommAction const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<fhegpu::ValueDesc, std::allocator<fhegpu::ValueDesc> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_communication(fhegpu::CommAction, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelGroup> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#5}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 3885747,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 3544230,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 3475643,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 3406040,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 3395846,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 3392443,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "tid": 284582452843484,
+      "count": 1,
+      "duration_ns": 3390030,
+      "frames": [
+        {
+          "symbol": "__pthread_mutex_lock@GLIBC_2",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::execute_parallel_compute(fhegpu::ComputeOp, unsigned long, std::shared_ptr<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelValue> const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "std::_Function_handler<void (), fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::compile_parallel_phase(std::vector<fhegpu::Instruction, std::allocator<fhegpu::Instruction> > const&, std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, unsigned long, unsigned long)::{lambda()#1}>::_M_invoke(std::_Any_data const&)",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+          "module": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen"
+        },
+        {
+          "symbol": "0x7e6fb8cdc253",
+          "module": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30"
+        },
+        {
+          "symbol": "0x7e6fb7ee458d",
+          "module": "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/libToolsInjection64.so"
+        },
+        {
+          "symbol": "start_thread",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        {
+          "symbol": "__GI___clone3",
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      ]
+    }
+  ],
+  "osrt_by_first_application_frame": [
+    {
+      "api": "poll",
+      "frame": "unresolved/system",
+      "count": 796,
+      "duration_ns": 79734406396
+    },
+    {
+      "api": "pthread_cond_wait",
+      "frame": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+      "count": 1665,
+      "duration_ns": 39066256501
+    },
+    {
+      "api": "pthread_cond_wait",
+      "frame": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::resolve_parallel_value(unsigned long, fhegpu::Place const&, std::optional<unsigned long>)",
+      "count": 614,
+      "duration_ns": 14055338926
+    },
+    {
+      "api": "ioctl",
+      "frame": "unresolved/system",
+      "count": 332,
+      "duration_ns": 3335554479
+    },
+    {
+      "api": "ioctl",
+      "frame": "poseidon::runtime_api::communication::PinnedHostBuffer::PinnedHostBuffer(unsigned long)",
+      "count": 89,
+      "duration_ns": 2487736165
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "poseidon::runtime_api::PoseidonGpuApi::retain_in_flight(std::shared_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent>, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&, std::vector<std::shared_ptr<void>, std::allocator<std::shared_ptr<void> > > const&)",
+      "count": 2452,
+      "duration_ns": 1495783891
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_allocate(unsigned long, rmm::cuda_stream_view)",
+      "count": 3727,
+      "duration_ns": 1239810441
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+      "count": 12,
+      "duration_ns": 870925645
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "poseidon::runtime_api::(anonymous namespace)::DeviceMemoryPool::AllocationDiagnostics::do_deallocate(void*, unsigned long, rmm::cuda_stream_view)",
+      "count": 2670,
+      "duration_ns": 844733422
+    },
+    {
+      "api": "ioctl",
+      "frame": "poseidon::runtime_api::communication::PinnedHostBuffer::~PinnedHostBuffer()",
+      "count": 287,
+      "duration_ns": 463302934
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "frame": "unresolved/system",
+      "count": 2,
+      "duration_ns": 257553714
+    },
+    {
+      "api": "mmap",
+      "frame": "poseidon::runtime_api::communication::PinnedHostBuffer::~PinnedHostBuffer()",
+      "count": 83,
+      "duration_ns": 159208226
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)::{lambda()#8}::operator()() const",
+      "count": 383,
+      "duration_ns": 95206931
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::copy_source_to_destination(char const*, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&)",
+      "count": 11,
+      "duration_ns": 30113416
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::copy_source_to_destination(char const*, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&)",
+      "count": 16,
+      "duration_ns": 13666388
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)",
+      "count": 7,
+      "duration_ns": 9320625
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::launch_inverse_fourstep_stages(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)",
+      "count": 6,
+      "duration_ns": 8655088
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::build_q_last_rescale_correction_kernel(unsigned int*, unsigned int const*, unsigned int const*, unsigned long const*, unsigned int const*, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long, unsigned long)",
+      "count": 6,
+      "duration_ns": 6593201
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::multiply_scalar_poly_shard_kernel(unsigned int*, unsigned int const*, unsigned long, unsigned int const*, unsigned long const*, unsigned long, unsigned long)",
+      "count": 3,
+      "duration_ns": 5286622
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "poseidon::runtime_api::GpuPlaintextEncoder::completed_timing(bool)",
+      "count": 35,
+      "duration_ns": 4640787
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_async(poseidon::runtime_api::communication::DeviceBufferCopy const&, poseidon::runtime_api::communication::CudaTransferRoute, CUevent_st*) const",
+      "count": 5,
+      "duration_ns": 2526511
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::dyadic_product_poly_shard_kernel(unsigned int*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned long const*, unsigned long, unsigned long)",
+      "count": 4,
+      "duration_ns": 2386318
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "frame": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)",
+      "count": 2,
+      "duration_ns": 2263752
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)",
+      "count": 1,
+      "duration_ns": 1471675
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::forward_ntt_stage_kernel(unsigned int*, unsigned int const*, unsigned long const*, unsigned int const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+      "count": 6,
+      "duration_ns": 1377443
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "frame": "fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::run_parallel_tasks(std::vector<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> >, std::allocator<std::vector<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask, std::allocator<fhegpu::SequentialRuntime<poseidon::runtime_api::PoseidonGpuApi>::ParallelTask> > > >&, bool)",
+      "count": 5,
+      "duration_ns": 1056575
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_async(poseidon::runtime_api::communication::DeviceBufferCopy const&, poseidon::runtime_api::communication::CudaTransferRoute, CUevent_st*) const",
+      "count": 4,
+      "duration_ns": 1043082
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "frame": "poseidon::runtime_api::communication::(anonymous namespace)::record_execution_ready(int)",
+      "count": 3,
+      "duration_ns": 980617
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "frame": "poseidon::runtime_api::GpuPlaintextEncoder::completed_timing(bool)",
+      "count": 2,
+      "duration_ns": 643305
+    },
+    {
+      "api": "pthread_mutex_lock",
+      "frame": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)",
+      "count": 1,
+      "duration_ns": 562867
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::launch_forward_fourstep_phase_by_count(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)",
+      "count": 3,
+      "duration_ns": 544612
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "frame": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::record(int)",
+      "count": 1,
+      "duration_ns": 461900
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned long, unsigned long, poseidon::gpu::GpuParameterShard const&, unsigned long, bool, bool, bool)",
+      "count": 2,
+      "duration_ns": 390334
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::gpu::kernel::(anonymous namespace)::add_two_poly_shards_kernel(unsigned int*, unsigned int*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned long, unsigned long, unsigned long)",
+      "count": 1,
+      "duration_ns": 244991
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_host_to_device_async(std::shared_ptr<poseidon::runtime_api::communication::PinnedHostBuffer> const&, void*, unsigned long, int) const",
+      "count": 1,
+      "duration_ns": 225750
+    },
+    {
+      "api": "pthread_rwlock_wrlock",
+      "frame": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_async(poseidon::runtime_api::communication::DeviceBufferCopy const&, poseidon::runtime_api::communication::CudaTransferRoute, CUevent_st*) const",
+      "count": 2,
+      "duration_ns": 223199
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "unresolved/system",
+      "count": 1,
+      "duration_ns": 154840
+    },
+    {
+      "api": "pthread_rwlock_rdlock",
+      "frame": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::record(int)",
+      "count": 1,
+      "duration_ns": 139357
+    },
+    {
+      "api": "OS runtime libraries profiling started",
+      "frame": "unresolved/system",
+      "count": 1,
+      "duration_ns": 0
+    }
+  ],
+  "api_by_thread": {
+    "284582452843484": {
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 64145,
+        "total_ns": 749463318,
+        "mean_ns": 11683.893023618364,
+        "p50_ns": 9893,
+        "p95_ns": 21171,
+        "p99_ns": 33460,
+        "max_ns": 3107093
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 15705,
+        "total_ns": 313011783,
+        "mean_ns": 19930.70888252149,
+        "p50_ns": 15432,
+        "p95_ns": 29783,
+        "p99_ns": 43043,
+        "max_ns": 3152744
+      },
+      "cudaStreamWaitEvent_v3020": {
+        "count": 9905,
+        "total_ns": 50116293,
+        "mean_ns": 5059.69641595154,
+        "p50_ns": 4416,
+        "p95_ns": 9793,
+        "p99_ns": 16318,
+        "max_ns": 57325
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 5215,
+        "total_ns": 36848951,
+        "mean_ns": 7065.954170661553,
+        "p50_ns": 3846,
+        "p95_ns": 22808,
+        "p99_ns": 40037,
+        "max_ns": 1430676
+      },
+      "cudaEventRecord_v3020": {
+        "count": 11626,
+        "total_ns": 44017051,
+        "mean_ns": 3786.087304317908,
+        "p50_ns": 3047,
+        "p95_ns": 8247,
+        "p99_ns": 16163,
+        "max_ns": 252227
+      },
+      "cudaEventQuery_v3020": {
+        "count": 8114,
+        "total_ns": 48106541,
+        "mean_ns": 5928.831772245501,
+        "p50_ns": 4596,
+        "p95_ns": 13720,
+        "p99_ns": 19506,
+        "max_ns": 64400
+      },
+      "cudaMallocHost_v3020": {
+        "count": 95,
+        "total_ns": 5850706066,
+        "mean_ns": 61586379.64210527,
+        "p50_ns": 8398824,
+        "p95_ns": 710211359,
+        "p99_ns": 1239429691,
+        "max_ns": 1239429691
+      },
+      "cudaMemcpyAsync_v3020": {
+        "count": 115,
+        "total_ns": 3883792,
+        "mean_ns": 33772.10434782608,
+        "p50_ns": 30673,
+        "p95_ns": 49563,
+        "p99_ns": 58137,
+        "max_ns": 273089
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 861,
+        "total_ns": 3860983,
+        "mean_ns": 4484.30081300813,
+        "p50_ns": 2797,
+        "p95_ns": 11856,
+        "p99_ns": 37443,
+        "max_ns": 313874
+      },
+      "cudaFreeHost_v3020": {
+        "count": 26,
+        "total_ns": 34454453,
+        "mean_ns": 1325171.2692307692,
+        "p50_ns": 49171,
+        "p95_ns": 3680903,
+        "p99_ns": 5280248,
+        "max_ns": 5280248
+      },
+      "cudaEventSynchronize_v3020": {
+        "count": 16,
+        "total_ns": 933819,
+        "mean_ns": 58363.6875,
+        "p50_ns": 62203,
+        "p95_ns": 67734,
+        "p99_ns": 67734,
+        "max_ns": 67734
+      },
+      "cudaMemcpyPeerAsync_v4000": {
+        "count": 1171,
+        "total_ns": 39776003,
+        "mean_ns": 33967.55166524338,
+        "p50_ns": 32533,
+        "p95_ns": 50310,
+        "p99_ns": 61833,
+        "max_ns": 170627
+      },
+      "cudaMemsetAsync_v3020": {
+        "count": 211,
+        "total_ns": 3784541,
+        "mean_ns": 17936.21327014218,
+        "p50_ns": 16153,
+        "p95_ns": 26980,
+        "p99_ns": 34484,
+        "max_ns": 61910
+      },
+      "cudaEventCreate_v3020": {
+        "count": 26,
+        "total_ns": 178508,
+        "mean_ns": 6865.692307692308,
+        "p50_ns": 4506,
+        "p95_ns": 19079,
+        "p99_ns": 52613,
+        "max_ns": 52613
+      }
+    },
+    "284582452843396": {
+      "cudaEventQuery_v3020": {
+        "count": 14813,
+        "total_ns": 77815568,
+        "mean_ns": 5253.194356308648,
+        "p50_ns": 4286,
+        "p95_ns": 11667,
+        "p99_ns": 18004,
+        "max_ns": 100593
+      },
+      "cudaEventRecord_v3020": {
+        "count": 16476,
+        "total_ns": 946453331,
+        "mean_ns": 57444.36337703326,
+        "p50_ns": 3433,
+        "p95_ns": 12097,
+        "p99_ns": 19473,
+        "max_ns": 615239052
+      },
+      "cudaFreeHost_v3020": {
+        "count": 73,
+        "total_ns": 632441055,
+        "mean_ns": 8663576.09589041,
+        "p50_ns": 3353716,
+        "p95_ns": 4289617,
+        "p99_ns": 379014529,
+        "max_ns": 379014529
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 12067,
+        "total_ns": 85690683,
+        "mean_ns": 7101.241650783128,
+        "p50_ns": 2897,
+        "p95_ns": 29270,
+        "p99_ns": 42353,
+        "max_ns": 434707
+      }
+    },
+    "284582452843489": {
+      "cudaStreamWaitEvent_v3020": {
+        "count": 2538,
+        "total_ns": 15791864,
+        "mean_ns": 6222.168636721828,
+        "p50_ns": 5300,
+        "p95_ns": 12700,
+        "p99_ns": 19406,
+        "max_ns": 39520
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 2040,
+        "total_ns": 14296047,
+        "mean_ns": 7007.8661764705885,
+        "p50_ns": 4337,
+        "p95_ns": 26897,
+        "p99_ns": 41547,
+        "max_ns": 64883
+      },
+      "cudaEventRecord_ptsz_v7000": {
+        "count": 1530,
+        "total_ns": 13690865,
+        "mean_ns": 8948.277777777777,
+        "p50_ns": 7753,
+        "p95_ns": 16403,
+        "p99_ns": 24530,
+        "max_ns": 48237
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 1020,
+        "total_ns": 26596517,
+        "mean_ns": 26075.016666666666,
+        "p50_ns": 25087,
+        "p95_ns": 36687,
+        "p99_ns": 45537,
+        "max_ns": 62227
+      },
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 8160,
+        "total_ns": 113440156,
+        "mean_ns": 13901.979901960784,
+        "p50_ns": 11233,
+        "p95_ns": 28667,
+        "p99_ns": 37710,
+        "max_ns": 68443
+      },
+      "cuStreamIsCapturing": {
+        "count": 510,
+        "total_ns": 854593,
+        "mean_ns": 1675.672549019608,
+        "p50_ns": 1290,
+        "p95_ns": 3877,
+        "p99_ns": 9050,
+        "max_ns": 22340
+      },
+      "cuLaunchKernel": {
+        "count": 1020,
+        "total_ns": 14549334,
+        "mean_ns": 14264.052941176471,
+        "p50_ns": 13210,
+        "p95_ns": 24294,
+        "p99_ns": 34114,
+        "max_ns": 50513
+      },
+      "cudaEventRecord_v3020": {
+        "count": 522,
+        "total_ns": 2173001,
+        "mean_ns": 4162.8371647509575,
+        "p50_ns": 3463,
+        "p95_ns": 8100,
+        "p99_ns": 11263,
+        "max_ns": 15250
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 176,
+        "total_ns": 1008560,
+        "mean_ns": 5730.454545454545,
+        "p50_ns": 3570,
+        "p95_ns": 15483,
+        "p99_ns": 45997,
+        "max_ns": 108090
+      },
+      "cudaEventSynchronize_v3020": {
+        "count": 31,
+        "total_ns": 510547,
+        "mean_ns": 16469.25806451613,
+        "p50_ns": 8816,
+        "p95_ns": 100557,
+        "p99_ns": 131631,
+        "max_ns": 131631
+      }
+    },
+    "284582452843490": {
+      "cudaStreamWaitEvent_v3020": {
+        "count": 2466,
+        "total_ns": 13466168,
+        "mean_ns": 5460.733171127332,
+        "p50_ns": 4047,
+        "p95_ns": 12393,
+        "p99_ns": 17577,
+        "max_ns": 38597
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 1976,
+        "total_ns": 13892391,
+        "mean_ns": 7030.562246963563,
+        "p50_ns": 4010,
+        "p95_ns": 26667,
+        "p99_ns": 38213,
+        "max_ns": 60273
+      },
+      "cudaEventRecord_ptsz_v7000": {
+        "count": 1482,
+        "total_ns": 12314772,
+        "mean_ns": 8309.562753036438,
+        "p50_ns": 6983,
+        "p95_ns": 14120,
+        "p99_ns": 22970,
+        "max_ns": 32743
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 988,
+        "total_ns": 24005986,
+        "mean_ns": 24297.556680161942,
+        "p50_ns": 24190,
+        "p95_ns": 31624,
+        "p99_ns": 40837,
+        "max_ns": 52256
+      },
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 7904,
+        "total_ns": 101505910,
+        "mean_ns": 12842.346912955465,
+        "p50_ns": 10596,
+        "p95_ns": 27883,
+        "p99_ns": 35616,
+        "max_ns": 499857
+      },
+      "cuStreamIsCapturing": {
+        "count": 494,
+        "total_ns": 810243,
+        "mean_ns": 1640.168016194332,
+        "p50_ns": 1293,
+        "p95_ns": 4400,
+        "p99_ns": 8510,
+        "max_ns": 10887
+      },
+      "cuLaunchKernel": {
+        "count": 988,
+        "total_ns": 13120442,
+        "mean_ns": 13279.7995951417,
+        "p50_ns": 11953,
+        "p95_ns": 21536,
+        "p99_ns": 31260,
+        "max_ns": 50720
+      },
+      "cudaEventRecord_v3020": {
+        "count": 498,
+        "total_ns": 1870774,
+        "mean_ns": 3756.574297188755,
+        "p50_ns": 3263,
+        "p95_ns": 7143,
+        "p99_ns": 9600,
+        "max_ns": 26037
+      },
+      "cudaEventSynchronize_v3020": {
+        "count": 37,
+        "total_ns": 435320,
+        "mean_ns": 11765.405405405405,
+        "p50_ns": 8984,
+        "p95_ns": 31310,
+        "p99_ns": 34240,
+        "max_ns": 34240
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 175,
+        "total_ns": 1014915,
+        "mean_ns": 5799.5142857142855,
+        "p50_ns": 3314,
+        "p95_ns": 21797,
+        "p99_ns": 39760,
+        "max_ns": 47311
+      }
+    },
+    "284582452843485": {
+      "cudaEventQuery_v3020": {
+        "count": 7232,
+        "total_ns": 45112974,
+        "mean_ns": 6237.9665376106195,
+        "p50_ns": 4796,
+        "p95_ns": 14178,
+        "p99_ns": 20663,
+        "max_ns": 117553
+      },
+      "cudaEventCreate_v3020": {
+        "count": 94,
+        "total_ns": 559396,
+        "mean_ns": 5951.021276595745,
+        "p50_ns": 5180,
+        "p95_ns": 11947,
+        "p99_ns": 21817,
+        "max_ns": 21817
+      },
+      "cudaEventRecord_v3020": {
+        "count": 10515,
+        "total_ns": 38499615,
+        "mean_ns": 3661.399429386591,
+        "p50_ns": 2935,
+        "p95_ns": 7643,
+        "p99_ns": 13863,
+        "max_ns": 480247
+      },
+      "cudaStreamWaitEvent_v3020": {
+        "count": 8436,
+        "total_ns": 42952526,
+        "mean_ns": 5091.574917022285,
+        "p50_ns": 4386,
+        "p95_ns": 9984,
+        "p99_ns": 15298,
+        "max_ns": 624573
+      },
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 46148,
+        "total_ns": 526527708,
+        "mean_ns": 11409.545549102886,
+        "p50_ns": 10147,
+        "p95_ns": 20597,
+        "p99_ns": 32157,
+        "max_ns": 222820
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 4292,
+        "total_ns": 29367612,
+        "mean_ns": 6842.407269338304,
+        "p50_ns": 3727,
+        "p95_ns": 22995,
+        "p99_ns": 38902,
+        "max_ns": 713683
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 900,
+        "total_ns": 4009845,
+        "mean_ns": 4455.383333333333,
+        "p50_ns": 2707,
+        "p95_ns": 19969,
+        "p99_ns": 33290,
+        "max_ns": 65820
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 12077,
+        "total_ns": 203147822,
+        "mean_ns": 16821.050095222323,
+        "p50_ns": 15350,
+        "p95_ns": 27540,
+        "p99_ns": 37122,
+        "max_ns": 262884
+      },
+      "cudaMemsetAsync_v3020": {
+        "count": 175,
+        "total_ns": 3147822,
+        "mean_ns": 17987.554285714286,
+        "p50_ns": 16364,
+        "p95_ns": 25257,
+        "p99_ns": 47927,
+        "max_ns": 54223
+      },
+      "cudaMemcpyPeerAsync_v4000": {
+        "count": 1198,
+        "total_ns": 40775790,
+        "mean_ns": 34036.552587646074,
+        "p50_ns": 33324,
+        "p95_ns": 47526,
+        "p99_ns": 60603,
+        "max_ns": 172194
+      },
+      "cudaMemcpyAsync_v3020": {
+        "count": 3,
+        "total_ns": 50116,
+        "mean_ns": 16705.333333333332,
+        "p50_ns": 15387,
+        "p95_ns": 20809,
+        "p99_ns": 20809,
+        "max_ns": 20809
+      }
+    },
+    "284582452843491": {
+      "cudaStreamWaitEvent_v3020": {
+        "count": 2812,
+        "total_ns": 17939218,
+        "mean_ns": 6379.522759601707,
+        "p50_ns": 5636,
+        "p95_ns": 12810,
+        "p99_ns": 18864,
+        "max_ns": 44236
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 2256,
+        "total_ns": 22005596,
+        "mean_ns": 9754.253546099291,
+        "p50_ns": 5080,
+        "p95_ns": 35450,
+        "p99_ns": 46090,
+        "max_ns": 2057249
+      },
+      "cudaEventRecord_ptsz_v7000": {
+        "count": 1692,
+        "total_ns": 18542386,
+        "mean_ns": 10958.856973995273,
+        "p50_ns": 9094,
+        "p95_ns": 18450,
+        "p99_ns": 29217,
+        "max_ns": 1504435
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 1128,
+        "total_ns": 33090392,
+        "mean_ns": 29335.45390070922,
+        "p50_ns": 27864,
+        "p95_ns": 43167,
+        "p99_ns": 55143,
+        "max_ns": 71000
+      },
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 9024,
+        "total_ns": 146605467,
+        "mean_ns": 16246.173204787234,
+        "p50_ns": 14780,
+        "p95_ns": 32393,
+        "p99_ns": 45163,
+        "max_ns": 253960
+      },
+      "cuStreamIsCapturing": {
+        "count": 564,
+        "total_ns": 1050310,
+        "mean_ns": 1862.2517730496454,
+        "p50_ns": 1427,
+        "p95_ns": 5380,
+        "p99_ns": 8863,
+        "max_ns": 10320
+      },
+      "cuLaunchKernel": {
+        "count": 1128,
+        "total_ns": 18782719,
+        "mean_ns": 16651.346631205673,
+        "p50_ns": 14870,
+        "p95_ns": 29403,
+        "p99_ns": 44860,
+        "max_ns": 200190
+      },
+      "cudaEventRecord_v3020": {
+        "count": 572,
+        "total_ns": 2754746,
+        "mean_ns": 4815.98951048951,
+        "p50_ns": 4116,
+        "p95_ns": 10317,
+        "p99_ns": 14643,
+        "max_ns": 42570
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 176,
+        "total_ns": 1327129,
+        "mean_ns": 7540.505681818182,
+        "p50_ns": 4163,
+        "p95_ns": 30590,
+        "p99_ns": 62920,
+        "max_ns": 106891
+      },
+      "cudaEventSynchronize_v3020": {
+        "count": 47,
+        "total_ns": 937068,
+        "mean_ns": 19937.617021276597,
+        "p50_ns": 11207,
+        "p95_ns": 34680,
+        "p99_ns": 315206,
+        "max_ns": 315206
+      }
+    },
+    "284582452843492": {
+      "cudaStreamWaitEvent_v3020": {
+        "count": 3014,
+        "total_ns": 18277425,
+        "mean_ns": 6064.175514266755,
+        "p50_ns": 5006,
+        "p95_ns": 13343,
+        "p99_ns": 19210,
+        "max_ns": 38137
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 2424,
+        "total_ns": 19309131,
+        "mean_ns": 7965.813118811881,
+        "p50_ns": 4400,
+        "p95_ns": 30217,
+        "p99_ns": 41826,
+        "max_ns": 83204
+      },
+      "cudaEventRecord_ptsz_v7000": {
+        "count": 1818,
+        "total_ns": 16201877,
+        "mean_ns": 8911.923542354236,
+        "p50_ns": 7630,
+        "p95_ns": 16427,
+        "p99_ns": 25046,
+        "max_ns": 55690
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 1212,
+        "total_ns": 31792871,
+        "mean_ns": 26231.74174917492,
+        "p50_ns": 24677,
+        "p95_ns": 38243,
+        "p99_ns": 48836,
+        "max_ns": 633037
+      },
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 9696,
+        "total_ns": 135712774,
+        "mean_ns": 13996.77949669967,
+        "p50_ns": 11226,
+        "p95_ns": 28514,
+        "p99_ns": 39137,
+        "max_ns": 288487
+      },
+      "cuStreamIsCapturing": {
+        "count": 606,
+        "total_ns": 966995,
+        "mean_ns": 1595.7013201320133,
+        "p50_ns": 1340,
+        "p95_ns": 3470,
+        "p99_ns": 6840,
+        "max_ns": 10137
+      },
+      "cuLaunchKernel": {
+        "count": 1212,
+        "total_ns": 16908256,
+        "mean_ns": 13950.706270627063,
+        "p50_ns": 13017,
+        "p95_ns": 24247,
+        "p99_ns": 34477,
+        "max_ns": 58837
+      },
+      "cudaEventRecord_v3020": {
+        "count": 622,
+        "total_ns": 2727363,
+        "mean_ns": 4384.827974276527,
+        "p50_ns": 3334,
+        "p95_ns": 8920,
+        "p99_ns": 17237,
+        "max_ns": 31640
+      },
+      "cudaEventSynchronize_v3020": {
+        "count": 39,
+        "total_ns": 1233625,
+        "mean_ns": 31631.410256410258,
+        "p50_ns": 8620,
+        "p95_ns": 261081,
+        "p99_ns": 409007,
+        "max_ns": 409007
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 175,
+        "total_ns": 1244735,
+        "mean_ns": 7112.771428571428,
+        "p50_ns": 3650,
+        "p95_ns": 28256,
+        "p99_ns": 41130,
+        "max_ns": 96467
+      }
+    },
+    "284582452843486": {
+      "cudaEventQuery_v3020": {
+        "count": 7027,
+        "total_ns": 48965165,
+        "mean_ns": 6968.146435178597,
+        "p50_ns": 5440,
+        "p95_ns": 15147,
+        "p99_ns": 22597,
+        "max_ns": 100210
+      },
+      "cudaStreamWaitEvent_v3020": {
+        "count": 8229,
+        "total_ns": 46607728,
+        "mean_ns": 5663.838619516345,
+        "p50_ns": 5000,
+        "p95_ns": 11573,
+        "p99_ns": 18152,
+        "max_ns": 45511
+      },
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 36183,
+        "total_ns": 442995377,
+        "mean_ns": 12243.190918387088,
+        "p50_ns": 10697,
+        "p95_ns": 23323,
+        "p99_ns": 36110,
+        "max_ns": 793051
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 4039,
+        "total_ns": 30739718,
+        "mean_ns": 7610.72493191384,
+        "p50_ns": 4030,
+        "p95_ns": 25687,
+        "p99_ns": 44107,
+        "max_ns": 982801
+      },
+      "cudaEventRecord_v3020": {
+        "count": 9260,
+        "total_ns": 38904630,
+        "mean_ns": 4201.363930885529,
+        "p50_ns": 3357,
+        "p95_ns": 8910,
+        "p99_ns": 15469,
+        "max_ns": 382493
+      },
+      "cudaMemsetAsync_v3020": {
+        "count": 49,
+        "total_ns": 892269,
+        "mean_ns": 18209.571428571428,
+        "p50_ns": 17262,
+        "p95_ns": 23913,
+        "p99_ns": 57234,
+        "max_ns": 57234
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 10569,
+        "total_ns": 185140371,
+        "mean_ns": 17517.30258302583,
+        "p50_ns": 15867,
+        "p95_ns": 28630,
+        "p99_ns": 38522,
+        "max_ns": 2791108
+      },
+      "cudaMemcpyPeerAsync_v4000": {
+        "count": 1197,
+        "total_ns": 41897291,
+        "mean_ns": 35001.91395154553,
+        "p50_ns": 33965,
+        "p95_ns": 50190,
+        "p99_ns": 60985,
+        "max_ns": 93790
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 1088,
+        "total_ns": 5305130,
+        "mean_ns": 4876.038602941177,
+        "p50_ns": 2934,
+        "p95_ns": 21151,
+        "p99_ns": 34583,
+        "max_ns": 66537
+      },
+      "cudaEventCreate_v3020": {
+        "count": 24,
+        "total_ns": 173068,
+        "mean_ns": 7211.166666666667,
+        "p50_ns": 6750,
+        "p95_ns": 11777,
+        "p99_ns": 35510,
+        "max_ns": 35510
+      },
+      "cudaMallocHost_v3020": {
+        "count": 2,
+        "total_ns": 12139166,
+        "mean_ns": 6069583,
+        "p50_ns": 6647349,
+        "p95_ns": 6647349,
+        "p99_ns": 6647349,
+        "max_ns": 6647349
+      },
+      "cudaMemcpyAsync_v3020": {
+        "count": 2,
+        "total_ns": 47258,
+        "mean_ns": 23629,
+        "p50_ns": 27889,
+        "p95_ns": 27889,
+        "p99_ns": 27889,
+        "max_ns": 27889
+      }
+    },
+    "284582452843487": {
+      "cudaEventQuery_v3020": {
+        "count": 7087,
+        "total_ns": 42206976,
+        "mean_ns": 5955.549033441513,
+        "p50_ns": 4727,
+        "p95_ns": 13790,
+        "p99_ns": 18983,
+        "max_ns": 60944
+      },
+      "cudaEventCreate_v3020": {
+        "count": 30,
+        "total_ns": 226683,
+        "mean_ns": 7556.1,
+        "p50_ns": 4796,
+        "p95_ns": 34047,
+        "p99_ns": 34824,
+        "max_ns": 34824
+      },
+      "cudaEventRecord_v3020": {
+        "count": 9235,
+        "total_ns": 33791812,
+        "mean_ns": 3659.102544667028,
+        "p50_ns": 2970,
+        "p95_ns": 8070,
+        "p99_ns": 14922,
+        "max_ns": 56731
+      },
+      "cudaStreamWaitEvent_v3020": {
+        "count": 7672,
+        "total_ns": 37957325,
+        "mean_ns": 4947.513686131387,
+        "p50_ns": 4208,
+        "p95_ns": 10114,
+        "p99_ns": 16238,
+        "max_ns": 177353
+      },
+      "cudaLaunchKernel_ptsz_v7000": {
+        "count": 38002,
+        "total_ns": 433139281,
+        "mean_ns": 11397.802247250145,
+        "p50_ns": 9986,
+        "p95_ns": 21370,
+        "p99_ns": 33367,
+        "max_ns": 2664976
+      },
+      "cudaMemsetAsync_v3020": {
+        "count": 39,
+        "total_ns": 747397,
+        "mean_ns": 19164.02564102564,
+        "p50_ns": 18160,
+        "p95_ns": 29320,
+        "p99_ns": 47650,
+        "max_ns": 47650
+      },
+      "cudaMemcpyAsync_ptsz_v7000": {
+        "count": 11243,
+        "total_ns": 185032531,
+        "mean_ns": 16457.576358623144,
+        "p50_ns": 14932,
+        "p95_ns": 28057,
+        "p99_ns": 41176,
+        "max_ns": 212023
+      },
+      "cudaEventCreateWithFlags_v3020": {
+        "count": 4124,
+        "total_ns": 29621315,
+        "mean_ns": 7182.666100872939,
+        "p50_ns": 3628,
+        "p95_ns": 26107,
+        "p99_ns": 44797,
+        "max_ns": 432417
+      },
+      "cudaMemcpyPeerAsync_v4000": {
+        "count": 1201,
+        "total_ns": 39391356,
+        "mean_ns": 32798.79766860949,
+        "p50_ns": 31317,
+        "p95_ns": 47290,
+        "p99_ns": 58956,
+        "max_ns": 206360
+      },
+      "cudaEventDestroy_v3020": {
+        "count": 1070,
+        "total_ns": 3986707,
+        "mean_ns": 3725.8943925233643,
+        "p50_ns": 2436,
+        "p95_ns": 14108,
+        "p99_ns": 28870,
+        "max_ns": 42340
+      },
+      "cudaMallocHost_v3020": {
+        "count": 2,
+        "total_ns": 13390264,
+        "mean_ns": 6695132,
+        "p50_ns": 6748458,
+        "p95_ns": 6748458,
+        "p99_ns": 6748458,
+        "max_ns": 6748458
+      },
+      "cudaMemcpyAsync_v3020": {
+        "count": 2,
+        "total_ns": 57198,
+        "mean_ns": 28599,
+        "p50_ns": 31254,
+        "p95_ns": 31254,
+        "p99_ns": 31254,
+        "max_ns": 31254
+      }
+    }
+  },
+  "launch_return_to_kernel_start_ns": {
+    "count": 223609,
+    "total_ns": 6757211345,
+    "mean_ns": 30218.870193060207,
+    "p50_ns": 5283,
+    "p95_ns": 155239,
+    "p99_ns": 356061,
+    "max_ns": 842548
+  },
+  "largest_idle_gaps": [
+    {
+      "device": 3,
+      "start_ns": 0,
+      "end_ns": 15292072790,
+      "duration_ns": 15292072790,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_ptsz_v7000",
+      "tid": 284582452843492
+    },
+    {
+      "device": 2,
+      "start_ns": 0,
+      "end_ns": 15272931662,
+      "duration_ns": 15272931662,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_ptsz_v7000",
+      "tid": 284582452843491
+    },
+    {
+      "device": 1,
+      "start_ns": 0,
+      "end_ns": 10484534873,
+      "duration_ns": 10484534873,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_ptsz_v7000",
+      "tid": 284582452843490
+    },
+    {
+      "device": 0,
+      "start_ns": 2205492247,
+      "end_ns": 3449086495,
+      "duration_ns": 1243594248,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 4759634407,
+      "end_ns": 5974233624,
+      "duration_ns": 1214599217,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 3496097559,
+      "end_ns": 4690662336,
+      "duration_ns": 1194564777,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 1302280490,
+      "end_ns": 2173121321,
+      "duration_ns": 870840831,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 22109001,
+      "end_ns": 850135579,
+      "duration_ns": 828026578,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 1,
+      "start_ns": 10485675306,
+      "end_ns": 10895879833,
+      "duration_ns": 410204527,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 0,
+      "start_ns": 853461650,
+      "end_ns": 1242514929,
+      "duration_ns": 389053279,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 1,
+      "start_ns": 13755977831,
+      "end_ns": 14045699839,
+      "duration_ns": 289722008,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 13471743846,
+      "end_ns": 13753681190,
+      "duration_ns": 281937344,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 14882940940,
+      "end_ns": 15160017803,
+      "duration_ns": 277076863,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 14603803593,
+      "end_ns": 14879154527,
+      "duration_ns": 275350934,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 14048175581,
+      "end_ns": 14323105627,
+      "duration_ns": 274930046,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 14326517389,
+      "end_ns": 14601313579,
+      "duration_ns": 274796190,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 2,
+      "start_ns": 15273480745,
+      "end_ns": 15447233839,
+      "duration_ns": 173753094,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843486
+    },
+    {
+      "device": 1,
+      "start_ns": 12733086508,
+      "end_ns": 12878515472,
+      "duration_ns": 145428964,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 15295659057,
+      "end_ns": 15438582774,
+      "duration_ns": 142923717,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 12430342339,
+      "end_ns": 12572901837,
+      "duration_ns": 142559498,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 13038518897,
+      "end_ns": 13180627138,
+      "duration_ns": 142108241,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 11215571075,
+      "end_ns": 11357548823,
+      "duration_ns": 141977748,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 11519708382,
+      "end_ns": 11661649202,
+      "duration_ns": 141940820,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 13325212241,
+      "end_ns": 13465935028,
+      "duration_ns": 140722787,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 15656647884,
+      "end_ns": 15797289295,
+      "duration_ns": 140641411,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 11823806841,
+      "end_ns": 11964193955,
+      "duration_ns": 140387114,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 12129324801,
+      "end_ns": 12269453070,
+      "duration_ns": 140128269,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 1,
+      "start_ns": 10916900991,
+      "end_ns": 11054890505,
+      "duration_ns": 137989514,
+      "next_kind": "kernel",
+      "next_api": "cudaLaunchKernel_ptsz_v7000",
+      "tid": 284582452843485
+    },
+    {
+      "device": 0,
+      "start_ns": 6189472070,
+      "end_ns": 6326754045,
+      "duration_ns": 137281975,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 11216074945,
+      "end_ns": 11350319904,
+      "duration_ns": 134244959,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 12735686258,
+      "end_ns": 12869616216,
+      "duration_ns": 133929958,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 13893777525,
+      "end_ns": 14026422476,
+      "duration_ns": 132644951,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 13324975765,
+      "end_ns": 13457299087,
+      "duration_ns": 132323322,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 8123658326,
+      "end_ns": 8255372180,
+      "duration_ns": 131713854,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 11522081198,
+      "end_ns": 11653680783,
+      "duration_ns": 131599585,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 7572826990,
+      "end_ns": 7704353837,
+      "duration_ns": 131526847,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 13039485474,
+      "end_ns": 13170087858,
+      "duration_ns": 130602384,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 12434647103,
+      "end_ns": 12564914196,
+      "duration_ns": 130267093,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 1,
+      "start_ns": 15163421277,
+      "end_ns": 15293494479,
+      "duration_ns": 130073202,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_ptsz_v7000",
+      "tid": 284582452843490
+    },
+    {
+      "device": 0,
+      "start_ns": 6746489890,
+      "end_ns": 6876518355,
+      "duration_ns": 130028465,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 8405800492,
+      "end_ns": 8535764386,
+      "duration_ns": 129963894,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 11826432145,
+      "end_ns": 11956129897,
+      "duration_ns": 129697752,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 6473402625,
+      "end_ns": 6602990296,
+      "duration_ns": 129587671,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 12132130019,
+      "end_ns": 12261628797,
+      "duration_ns": 129498778,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 9101870652,
+      "end_ns": 9229410416,
+      "duration_ns": 127539764,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 7849719487,
+      "end_ns": 7977074386,
+      "duration_ns": 127354899,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 10919698300,
+      "end_ns": 11046793268,
+      "duration_ns": 127094968,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 10067685374,
+      "end_ns": 10194221982,
+      "duration_ns": 126536608,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 10207369627,
+      "end_ns": 10333794428,
+      "duration_ns": 126424801,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    },
+    {
+      "device": 0,
+      "start_ns": 13471654334,
+      "end_ns": 13597228716,
+      "duration_ns": 125574382,
+      "next_kind": "copy",
+      "next_api": "cudaMemcpyAsync_v3020",
+      "tid": 284582452843484
+    }
+  ],
+  "notes": [
+    "CUDA runtime API times and OSRT times overlap and are summed across threads; do not add them to wall time.",
+    "GPU interval unions include all streams. Kernel busy differs from NVML GPU busy. Copy union is not SM computation.",
+    "Idle-before-API means the next recorded GPU activity was not submitted through its matched runtime API yet; may include dependency waits or host work.",
+    "20-second capture is a diagnostic segment, not a replacement for the full 2-million-record speed comparison."
+  ]
+}

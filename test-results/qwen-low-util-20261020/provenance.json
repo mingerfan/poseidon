@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-10-20T00:42:37.749650+08:00",
+  "probe_build": [
+    "/usr/bin/c++",
+    "-std=c++20",
+    "-O2",
+    "-fPIC",
+    "-shared",
+    "-I/usr/local/cuda/include",
+    "-I/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/ckks-runtime/third_party",
+    "/home/xuming/poseidon-qwen-low-util-20261020/cuda_api_probe.cpp",
+    "-ldl",
+    "-o",
+    "/home/xuming/poseidon-qwen-low-util-20261020/cuda_api_probe.so"
+  ],
+  "probe_source_sha256": "13bc0708049b0bd19ce81ec0195fcfaf3c334cb7e89a55464aab13c5701f0e7c",
+  "probe_library_sha256": "0d6d57e7b68ab1d0e149ebda00ed3de12e1a09559814872d72c24b83730a7cf1",
+  "host_marker_runner_sha256": "2918576c9cb6ca04c792837d40c6d03cf098d43a38d3a27cbb4bad5b5895fc27",
+  "canonical_source_runtime_unchanged": true,
+  "shared_libraries_sha256": {
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_runtime_gpu_api.a": "0395a1d0f87938156204fa5daa2d7d223c93fe20feb347497d74d98a42ed2754",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_core.a": "6685e2c535f6e7ee3235887feab3e234057d94f1cd2ea60e20fe60e69a8ab616",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_plan_json.a": "bbbb25ed51a64334dc1d958650e54793ba9868d530eda8b027f58887a168a4c5",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_gpu.a": "1dac4b3b9488268093f3875ba23b8df33dbf85d91ed24e8411aac7edcd2fe95a",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_shared.so": "57fe1f11929480df4f8f7cc2db2b889afe2a5c5be62f805e5ede9fde60852e85"
+  },
+  "plan_sha256": "66a3969ad60185eaa4dcfa46f174e2f9836053ee213e71c3dd858c1328e4c064",
+  "original_fixture_sha256": "6d9dfbba17ca94042b45fb7ede7d5fa40bddf221079d172d952386cc9a4bdddd",
+  "profiles": {
+    "nsys": {
+      "path": "/home/xuming/poseidon-qwen-low-util-20261020/nsys/profile.nsys-rep",
+      "sha256": "a81f1ba83c609bb99029659e3cd477a9521a0d8262d279e37ab535a190347e21",
+      "bytes": 82729963
+    },
+    "nsys-late": {
+      "path": "/home/xuming/poseidon-qwen-low-util-20261020/nsys-late/profile.nsys-rep",
+      "sha256": "b65fae7e46b99240ec64f1bcb8e2282f14607bd8e6625f7a029489ed36db64b6",
+      "bytes": 24208824
+    }
+  },
+  "gpu_checks_after_all_diagnostics": true
+}

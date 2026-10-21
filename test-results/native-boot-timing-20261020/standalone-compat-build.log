@@ -1,0 +1,36 @@
+In file included from /home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:2:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp: In function ‘int main()’:
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:4679:32: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 4679 |                 cpu_evaluator->eval_mod_high_precision(
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:4687:32: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 4687 |                 cpu_evaluator->eval_mod_high_precision(
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:6812:32: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 6812 |                 cpu_evaluator->eval_mod_high_precision(
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:6820:32: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 6820 |                 cpu_evaluator->eval_mod_high_precision(
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:7963:36: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 7963 |                     cpu_evaluator->eval_mod_high_precision(
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:7969:36: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 7969 |                     cpu_evaluator->eval_mod_high_precision(
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp: In lambda function:
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:8004:36: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 8004 |                     cpu_evaluator->eval_mod_high_precision(
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-native-boot-timing-20261020/standalone-compat.cpp:8010:36: error: ‘class poseidon::EvaluatorCkksBase’ has no member named ‘eval_mod_high_precision’
+ 8010 |                     cpu_evaluator->eval_mod_high_precision(
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~

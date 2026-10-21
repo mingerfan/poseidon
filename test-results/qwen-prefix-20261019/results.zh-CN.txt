@@ -1,0 +1,39 @@
+Qwen3-0.6B 四 V100，200 万条执行记录，单次对照
+
+指标 | previous Auto/8 | updated Auto/128
+执行段秒数 | 2004.265 | 866.813
+完整 runtime.run 秒数 | 2025.331 | 889.536
+进程墙钟秒数 | 2053.934 | 919.035
+四卡平均 GPU busy % | 4.327 | 10.107
+GPU0 busy % | 5.141 | 11.620
+GPU1 busy % | 4.109 | 9.888
+GPU2 busy % | 4.166 | 9.359
+GPU3 busy % | 3.892 | 9.562
+通过检查点 | 10/16 | 9/16
+最大绝对误差 | 0.00545533701 | 0.0182359715
+最大虚部 | 0.0185519552 | 0.0627244406
+
+执行段速度比 old/new = 2.3122。
+GPU busy 增量 = 5.780 个百分点。
+
+以下是跨线程可重叠的累计值，不可相加当作墙钟时间：
+指标 | previous | updated
+encode_submission_ms | 1276563.040 | 316561.208
+bundle_read_ms | 21351.935 | 24185.390
+compute_submission_including_boot_ms | 1221441.212 | 1342065.460
+host_boot_ms | 249254.624 | 246181.131
+communication_post_ms | 315612.001 | 617414.194
+communication_wait_ms | 4108.385 | 4536.708
+CPU Prepare 次数 | 45929 | 0
+CPU Encode 累计 ms | 1024196.370844 | 0.0
+CPU 明文 H2D bytes | 80317317120 | 0
+Host cipher 与 CPU 明文 H2D bytes | 91438776320 | 11121459200
+GPU Encode 次数 | 98026 | 143955
+GPU Encode 累计 ms | 21675.767852 | 35526.212253000005
+pinned 校验后存活 bytes | 0 | 0
+
+每组只运行一次；前后使用相同当前 GPU 后端，仅 Runtime 和窗口不同。
+这是截断图及 16 个 K/V 检查点的验证，不是完整 Qwen 输出验证。
+含 1692 次依赖 secret key 的 Host decrypt-reencrypt refresh。
+完整方法见 method.txt，有效报告和遥测见 runs-nvml/；runs/ 是已排除的 SMI 监测干扰诊断轮。
+source-inspection.txt 是未验证线索；其驱动等待快照来自干扰轮，不能用来证明生产 Runtime 的瓶颈。

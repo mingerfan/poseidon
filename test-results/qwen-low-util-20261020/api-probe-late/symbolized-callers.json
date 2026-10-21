@@ -1,0 +1,284 @@
+[
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1049655,
+    "samples": 1926,
+    "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::completed_timing(bool)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 911409,
+    "samples": 487,
+    "symbol": "poseidon::runtime_api::PoseidonGpuApi::collect_completed()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1299044,
+    "samples": 176,
+    "symbol": "poseidon::gpu::GpuCiphertextData::allocate_single_device_sharded(unsigned long, unsigned long, unsigned long, int, std::vector<poseidon::gpu::GpuPolyShard, std::allocator<poseidon::gpu::GpuPolyShard> > const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1941326,
+    "samples": 151,
+    "symbol": "poseidon::gpu::kernel::launch_forward_ntt_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1015244,
+    "samples": 148,
+    "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuCiphertextData, std::allocator<poseidon::gpu::GpuCiphertextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1944529,
+    "samples": 147,
+    "symbol": "poseidon::gpu::kernel::launch_inverse_ntt_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 2010979,
+    "samples": 140,
+    "symbol": "poseidon::gpu::kernel::launch_apply_q_last_rescale_correction_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 2011278,
+    "samples": 136,
+    "symbol": "poseidon::gpu::kernel::launch_build_q_last_rescale_correction_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 909573,
+    "samples": 134,
+    "symbol": "poseidon::runtime_api::PoseidonGpuApi::is_ready(poseidon::runtime_api::PoseidonGpuValue&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1005239,
+    "samples": 126,
+    "symbol": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::collect_completed()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1073144,
+    "samples": 112,
+    "symbol": "poseidon::runtime_api::communication::CudaTransferRequest::collect_completed()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 995069,
+    "samples": 64,
+    "symbol": "std::_Sp_counted_ptr<poseidon::runtime_api::PoseidonGpuValue::ReadyEvent*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1007787,
+    "samples": 56,
+    "symbol": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::record(int)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 958541,
+    "samples": 34,
+    "symbol": "poseidon::runtime_api::PoseidonGpuApi::compute(fhegpu::ComputeOp const&, std::vector<poseidon::runtime_api::PoseidonGpuValue, std::allocator<poseidon::runtime_api::PoseidonGpuValue> > const&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1760245,
+    "samples": 33,
+    "symbol": "poseidon::gpu::kernel::launch_dyadic_product_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1079862,
+    "samples": 30,
+    "symbol": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_async(poseidon::runtime_api::communication::DeviceBufferCopy const&, poseidon::runtime_api::communication::CudaTransferRoute, CUevent_st*) const"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1078886,
+    "samples": 29,
+    "symbol": "poseidon::runtime_api::communication::(anonymous namespace)::record_execution_ready(int)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1079798,
+    "samples": 26,
+    "symbol": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_async(poseidon::runtime_api::communication::DeviceBufferCopy const&, poseidon::runtime_api::communication::CudaTransferRoute, CUevent_st*) const"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1757757,
+    "samples": 26,
+    "symbol": "poseidon::gpu::kernel::launch_multiply_scalar_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, unsigned long, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1475789,
+    "samples": 23,
+    "symbol": "poseidon::gpu::DeviceVector<unsigned int>::allocate(unsigned long, int)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1005883,
+    "samples": 22,
+    "symbol": "poseidon::gpu::DeviceVector<unsigned int>::~DeviceVector()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1058832,
+    "samples": 19,
+    "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1306277,
+    "samples": 18,
+    "symbol": "void std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> >::_M_realloc_insert<int&, unsigned long const&>(__gnu_cxx::__normal_iterator<poseidon::gpu::GpuFieldData*, std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> > >, int&, unsigned long const&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1775170,
+    "samples": 17,
+    "symbol": "poseidon::gpu::kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage(unsigned int*, unsigned int*, unsigned int const*, unsigned long, unsigned long, unsigned long, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1065599,
+    "samples": 17,
+    "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1761589,
+    "samples": 15,
+    "symbol": "poseidon::gpu::kernel::launch_add_two_poly_shards(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1064856,
+    "samples": 14,
+    "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1812055,
+    "samples": 13,
+    "symbol": "poseidon::gpu::kernel::launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, unsigned long, unsigned long, poseidon::gpu::GpuParameterShard const&, unsigned long, bool, bool, bool)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1058022,
+    "samples": 13,
+    "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1016956,
+    "samples": 11,
+    "symbol": "std::_Sp_counted_ptr_inplace<poseidon::gpu::GpuPlaintextData, std::allocator<poseidon::gpu::GpuPlaintextData>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1065935,
+    "samples": 11,
+    "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1058648,
+    "samples": 11,
+    "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1061458,
+    "samples": 11,
+    "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 938797,
+    "samples": 10,
+    "symbol": "poseidon::runtime_api::PoseidonGpuApi::prepare_plaintext_async(fhegpu::ValueDesc const&, std::vector<double, std::allocator<double> > const&, fhegpu::PrepareBackend)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1058455,
+    "samples": 9,
+    "symbol": "poseidon::runtime_api::GpuPlaintextEncoder::submit(double const*, double, poseidon::gpu::GpuParameterShard const&, poseidon::gpu::GpuPlaintextData&)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 939071,
+    "samples": 8,
+    "symbol": "poseidon::runtime_api::PoseidonGpuApi::prepare_plaintext_async(fhegpu::ValueDesc const&, std::vector<double, std::allocator<double> > const&, fhegpu::PrepareBackend)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1065237,
+    "samples": 7,
+    "symbol": "std::_Sp_counted_ptr_inplace<poseidon::runtime_api::(anonymous namespace)::Scratch, std::allocator<poseidon::runtime_api::(anonymous namespace)::Scratch>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1795312,
+    "samples": 5,
+    "symbol": "poseidon::gpu::kernel::launch_apply_galois_ntt_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, unsigned int, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1015836,
+    "samples": 4,
+    "symbol": "std::vector<poseidon::gpu::GpuFieldData, std::allocator<poseidon::gpu::GpuFieldData> >::~vector()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1083762,
+    "samples": 2,
+    "symbol": "poseidon::runtime_api::communication::CudaLocalTransfer::copy_host_to_device_async(std::shared_ptr<poseidon::runtime_api::communication::PinnedHostBuffer> const&, void*, unsigned long, int) const"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1755425,
+    "samples": 1,
+    "symbol": "poseidon::gpu::kernel::launch_multiply_two_component_ciphertexts(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, poseidon::gpu::GpuParameterShard const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1530521,
+    "samples": 1,
+    "symbol": "poseidon::gpu::(anonymous namespace)::zero_poly(poseidon::gpu::GpuRNSPolyView&, char const*)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1751644,
+    "samples": 1,
+    "symbol": "poseidon::gpu::kernel::launch_copy_poly_shard(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuConstPolyShardView const&, unsigned long)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1006900,
+    "samples": 1,
+    "symbol": "poseidon::runtime_api::PoseidonGpuApi::DeviceState::collect_consumer_wait_locked()"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1794805,
+    "samples": 1,
+    "symbol": "poseidon::gpu::kernel::launch_hybrid_apply_moddown_ntt_add_back(poseidon::gpu::GpuPolyShardView const&, poseidon::gpu::GpuPolyShardView const&, unsigned int const*, unsigned int const*, unsigned int const*, unsigned int const*, poseidon::gpu::GpuParameterShard const&, unsigned long, poseidon::gpu::GpuConstPolyShardView const*, poseidon::gpu::GpuConstPolyShardView const*)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1800451,
+    "samples": 1,
+    "symbol": "poseidon::gpu::kernel::launch_hybrid_convert_p_to_q_forward_ntt(unsigned int*, unsigned int*, unsigned int const*, unsigned int const*, poseidon::gpu::GpuParameterShard const&, unsigned long, bool)"
+  },
+  {
+    "object": "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+    "offset": 1005717,
+    "samples": 1,
+    "symbol": "poseidon::runtime_api::PoseidonGpuValue::ReadyEvent::wait()"
+  }
+]

@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-10-20T01:01:38.548644+08:00",
+  "shared_libraries_sha256": {
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_runtime_gpu_api.a": "0395a1d0f87938156204fa5daa2d7d223c93fe20feb347497d74d98a42ed2754",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_core.a": "6685e2c535f6e7ee3235887feab3e234057d94f1cd2ea60e20fe60e69a8ab616",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_plan_json.a": "bbbb25ed51a64334dc1d958650e54793ba9868d530eda8b027f58887a168a4c5",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_gpu.a": "1dac4b3b9488268093f3875ba23b8df33dbf85d91ed24e8411aac7edcd2fe95a",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_shared.so": "57fe1f11929480df4f8f7cc2db2b889afe2a5c5be62f805e5ede9fde60852e85"
+  },
+  "current_sources": {
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp": "2ad1a2adc99ccc8fc1368e9d754dcf226419c605652029cf997d34b345bc17b2",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_bootstrap_profile.h": "376769f70f08a0d52a3b000b6a2ef44c292f0056ab160911cdc25cc17c3020b4",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_bootstrap_profile.cpp": "171f1ae129be56201916549d95e26ed1b750a883379a534f204c758f157888f3"
+  },
+  "benchmark_files": {
+    "native-boot-bench-full59.cpp": "acee407c8f203da0b2c7d09d2cc5aac01fa8650b0412f0d2569c26b9f6365d34",
+    "standalone-compat.cpp": "f7f1ad55f5135ce3e317540a11ca9ddba0afab066cfd084c84c37dadd07d360d",
+    "native-boot-bench-full58.cpp": "f2c564bf775f67c8f6786830d435d822b222edf88941cf1a172236b665d098a3",
+    "native-boot-bench-full59": "b4885ab04f47926b56a1a71442ca853e4ce04e9b2ddc538df8f9e0e22dfefcab",
+    "native-boot-bench": "2a1cdd6a6a042789c801dc890b007fd53acfa493f2d26bd4d9e9129abe1421b4",
+    "native-boot-bench-full58": "cdbf896521ce6eab2f56aaa814518b1e9f38329aceed6fd92be209e3f7eb5801",
+    "native-boot-bench.cpp": "8c5392a0c704c22a1961dc2b132b8b8fab38b989c0636ea68d12925a7b813f30"
+  },
+  "old_standalone": {
+    "checkout_head": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+    "binary_path": "/home/xuming/poseidon-native-gpu-boot-aee1d20/build-native-bootstrap-tests/test_gpu_bootstrap_modraise",
+    "binary_sha256": "612b0df7cfaf9a1c397d8b7605d3772a5eaee0f68ba495d7b3f36ee8a21e6bcb",
+    "shared_library_sha256": "35e52de1125d5898b0c9220d50eb07381c7980f46b38b231decbbaea68ffb472",
+    "scope": "Existing binary, separate build; not a source-identical current-backend performance comparison."
+  },
+  "actual_qwen_boot_profiles": [
+    {
+      "profile_id": "poseidon-gpu-host-boot-v1",
+      "implementation": "decrypt_reencrypt",
+      "input_level_min": 4,
+      "input_level_max": 49,
+      "input_components": 2,
+      "output_level": 49,
+      "output_scale_log2": 120,
+      "output_components": 2,
+      "latency_us_by_input_level": [
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000
+      ],
+      "noise_by_input_level": null,
+      "host_requirements": {
+        "needs_secret_key": true,
+        "needs_host_compute": true
+      }
+    }
+  ]
+}

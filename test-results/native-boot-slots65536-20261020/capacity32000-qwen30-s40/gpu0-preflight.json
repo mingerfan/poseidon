@@ -1,0 +1,16 @@
+{
+  "monotonic": 77499.161235472,
+  "query_seconds": 0.001664818002609536,
+  "gpu": [
+    {
+      "index": 0,
+      "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "gpu_util": 0,
+      "memory_util": 0,
+      "memory_mib": 267,
+      "power_w": 57.028,
+      "clock_mhz": 135
+    }
+  ],
+  "applications": []
+}

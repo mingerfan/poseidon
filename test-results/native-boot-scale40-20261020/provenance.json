@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-10-20T06:47:21.046819+00:00",
+  "libraries_sha256": {
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_runtime_gpu_api.a": "0395a1d0f87938156204fa5daa2d7d223c93fe20feb347497d74d98a42ed2754",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_core.a": "6685e2c535f6e7ee3235887feab3e234057d94f1cd2ea60e20fe60e69a8ab616",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libruntime_plan_json.a": "bbbb25ed51a64334dc1d958650e54793ba9868d530eda8b027f58887a168a4c5",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_gpu.a": "1dac4b3b9488268093f3875ba23b8df33dbf85d91ed24e8411aac7edcd2fe95a",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/build/libposeidon_shared.so": "57fe1f11929480df4f8f7cc2db2b889afe2a5c5be62f805e5ede9fde60852e85"
+  },
+  "current_sources_sha256": {
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/tests/runtime_api/poseidon_gpu_bootstrap_e2e.cpp": "2ad1a2adc99ccc8fc1368e9d754dcf226419c605652029cf997d34b345bc17b2",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_bootstrap_profile.h": "376769f70f08a0d52a3b000b6a2ef44c292f0056ab160911cdc25cc17c3020b4",
+    "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/src/poseidon/gpu/gpu_bootstrap_profile.cpp": "171f1ae129be56201916549d95e26ed1b750a883379a534f204c758f157888f3"
+  },
+  "benchmark_sha256": "6c3742152b1cb010f7eb0fe4c845d423dc505496c0a4d0e0170514d58629b409",
+  "scope": "Qwen-shaped Q50/P8 context; single V100 GPU0; production sources unchanged",
+  "reference": "native-boot-timing-20261020/full58-qwen30"
+}

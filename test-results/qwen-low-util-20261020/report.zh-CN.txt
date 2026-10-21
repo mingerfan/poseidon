@@ -1,0 +1,115 @@
+Qwen 四 V100 低利用率诊断，2026-10-20
+
+结论
+已完成两段各 20 秒的 nsys 抓取，以及两段不启用 nsys 的 CUDA API 计数。
+低利用率片段的直接瓶颈是串行 Host refresh；计算提交、完成状态管理和 pinned
+缓冲区分配也有明确开销。当前证据支持 GPU 经常在等 CPU/依赖，而非 GPU 队列排满。
+尚未通过逐项修改的 A/B 实验证明各项优化能带来的最终加速比。
+
+1. 不带 nsys 的低利用率片段
+同一四卡 200 万条计划，从进程启动后第 110～130 秒统计；只观察这一窗口，
+进程于第 135 秒后按计划发送 SIGTERM 停止。它不是完整模型数值验证。
+使用同一当前 GPU 后端、Auto/128、24 GiB 每卡池、相同 fixture 和 bundle。
+
+Host refresh：95 次与窗口重叠，占用 13.417635 秒，约为窗口的 67.1%。
+该窗口 NVML 四卡采样平均 GPU busy 为 7.3%，仅代表此段，不替代全程 10.11%。
+通过 /proc 观察到约 1.95 个 CPU 核等效用量，CPU 也没有被全部用满。
+Runtime 将 Host compute 全部映射到同一个 Host 工作线程；独立 CPU 刷新也按该线程串行执行。
+下游计算必须等刷新结果返回，GPU 的准备和计算窗口无法消除这个数据依赖。
+此 refresh 是使用 secret key 的 CPU decrypt/decode/encode/encrypt，不是 native bootstrap。
+
+CPU 端 API 统计：
+API | 次数 | 平均调用墙钟 | 跨线程累计调用墙钟
+cudaLaunchKernel_ptsz | 329468 | 6.090 us | 2.006 s
+cudaSetDevice | 1089503 | 1.129 us | 1.230 s
+cudaEventQuery | 78794 | 4.477 us | 0.353 s
+cudaMemcpyAsync_ptsz | 82443 | 11.051 us | 0.911 s
+cudaEventCreateWithFlags | 41157 | 6.012 us | 0.247 s
+cudaMemcpyPeerAsync | 7645 | 28.972 us | 0.221 s
+cudaMallocHost | 127 | 6.331 ms | 0.804 s
+cudaFreeHost | 127 | 2.550 ms | 0.324 s
+
+每次被拦截的 Runtime kernel 启动，约对应 3.31 次 cudaSetDevice。
+以伪随机 1/256 概率抽样并符号化其调用点，共 4248 个样本；45.34% 来自
+GpuPlaintextEncoder::completed_timing(bool)。该函数持有 timing_mutex_，
+即使没有待收集计时事件，也会调用 cudaSetDevice；全局 collect_completed()
+在每次计算提交后遍历四卡调用它。这个常态管理路径值得改为按设备、按需回收。
+cudaSetDevice 调用次数不等于实际切换 CUDA device/context 的次数。
+所有拦截到的返回值均正常（cudaEventQuery 的 NotReady 单独视为正常）。
+
+2. nsys 的低利用率片段
+目标进程运行约 110 秒后采集 20 秒，trace=cuda,nvtx,osrt；不采 CPU 指令栈或
+线程切换，OSRT 仅记录超过 100 us 的等待。用 NVTX 标出 HostRefresh 的开始和结束。
+四卡分别只有 8.55%、6.48%、5.53%、5.46% 的时间出现 kernel/copy/memset 活动。
+平均每卡 93.50% 的时间没有这类 GPU 活动；四张卡同时没有活动共约 16.33 秒。
+
+HostRefresh 活跃合计 11.607 秒；这期间 GPU 几乎都空闲，重合的空闲占本段
+全部四卡空闲的 60.54%。同时有 Runtime::resolve_parallel_value 条件变量等待，
+与下游等待 Host 刷新结果的数据流相符。
+全部 GPU 空闲时间的 97.36% 发生在下一项 GPU 活动对应的 CUDA API 进入之前。
+因此，主要空白发生在工作尚未提交时；它可以包含 Host 工作、调度、数据依赖和锁等待，
+不能把这一项全部解释为 CPU 在执行有效计算。
+
+OSRT 还发现 retain_in_flight 的互斥锁累计等待约 1.50 秒，分配/释放管理也有等待；
+这些是跨线程、超过阈值的等待累计值，不能直接换算成全程墙钟占比。
+原始报告已保留到本地 nsys-late/profile.nsys-rep，可直接打开查看时间线。
+
+3. 为什么先抓初期、又补抓后面
+全程利用率差异很大：最初有准备/提交高峰，之后才进入较低利用率的阶段。
+第一段 nsys 抓到约 76 万个 kernel，单个 kernel 平均约 17～19 us。
+其约 68% 的 GPU 时间没有计算或拷贝，其中约 88% 在下一个 CUDA API 进入之前。
+相应早期无 nsys 计数窗口内有 1048326 次 Runtime kernel 启动、3756629 次
+cudaSetDevice、1582624 次事件查询；其采样 GPU busy 明显高于全程平均。
+所以第一段不能单独用于解释全程 10.11%；后补的片段和无 nsys 观察确认了低利用率阶段。
+
+4. 能否不用 nsys
+可以。cuda_api_probe.cpp 用 LD_PRELOAD 拦截列出的 CUDA Runtime API，
+包括实际程序使用的 _ptsz 入口，记录次数、CPU 调用耗时、对数直方图、线程和设备。
+时间戳用 CLOCK_MONOTONIC；只在线程本地累计，窗口结束后每线程写一次结果。
+没有增加 CUDA event、CUDA 同步、stream wait 或 CUPTI 活动采集。
+配合原程序计时、只记录 Boot 的 CSV、常驻 NVML 和 /proc 线程 CPU/wchan 采样，
+不使用 nsys 也能看到 CPU 刷新、提交管理成本、等待与低 GPU busy 同时存在。
+
+限制：启动 API 的 CPU 耗时不是 kernel 的 GPU 执行时长；启动间隔也不是 GPU kernel 间隔。
+通过 CUDA driver 分发表取得的函数指针可能绕过 LD_PRELOAD，例如部分 cuFFT driver 调用。
+要在没有 nsys 时进一步取得全部实际 GPU start/end，可单独使用 CUPTI Activity，
+或少量采样 CUDA events；那会有自己的采集成本，不能假定完全没有扰动。
+本轮 GPU 实际执行和空白区间来自 nsys，独立计数只声称已拦截 API 的 CPU 时间和次数。
+
+5. 监测扰动与结果边界
+nsys 与独立计数会到达不同图位置，不能把不同窗口的启动次数相除当作性能加速比。
+初期无拦截 control 与 API probe 的读进度也不同；未证明探针在完整图上零开销。
+例如后段 nsys 的 cudaMallocHost 累计为 5.88 秒，无 nsys 计数只有 0.80 秒，
+两者次数/图进度也不同。不能用前者直接断言生产 pinning 要花 5.88 秒。
+各 API 累计耗时跨线程并可重叠，不相加当墙钟；NVML GPU busy 与 GPU interval union
+定义也不同。全部采样保留，没有删除空白、拷贝或大间隙。
+
+只增加私有诊断 runner：Boot-only CSV 加单调时间戳、HostRefresh NVTX 范围。
+生产源码、原 Runtime 头、共享数学/GPU 库和计划哈希复核未变化。
+没有在测试时不断重启 nvidia-smi；NVML 初始化一次，每 2 秒采样，/proc 每 100 ms。
+Nsight 按 --kill=sigterm 计划停止；2023.2 有一轮向 supervisor 返回 143，
+确认报告成功生成后修正了预期退出码，未重复运行该抓取，详情见 late-resume.json。
+探针的确定性 100 次调用计数测试通过。最初真实 CUDA 的 1 秒冒烟窗口只覆盖了
+耗时约 1.47 秒的首次驱动初始化调用，所以用不含初始化的 mock 函数校验固定次数。
+时间区间合并、边界裁剪和交集计算通过已知重叠样例检查，四卡区间分类之和均为 100%。
+结束后四卡显存占用归零、volatile uncorrectable ECC 为 0、无剩余计算进程。
+上一轮 Qwen 精度检查仍有失败；本次没有修复或放宽精度，也没有声称完整 Qwen 验证通过。
+
+6. 下一步优化顺序
+优先对 Host refresh 做独立工作并行/批处理实验，保持数学语义与依赖正确；若改为
+native bootstrap，需单独验证功能与精度，不能删掉刷新来制造提速。
+其次隔离完成/计时回收路径：没有计时事件时跳过设备选择、按设备/stream 批量回收，
+保持 Ready 和资源票据仍以实际完成为准，再比较提交吞吐和全程耗时。
+然后复用 Host transfer 的 pinned 缓冲，减少反复 pin/unpin；最后再评估小 kernel
+融合或可重复算子序列的 CUDA Graph。这些优化尚未在本轮实现或测出最终收益。
+本轮仍不能精确给按需加载分摊墙钟成本，也没有补做同图全驻留对照。
+前次全程已有 CPU Prepare=0、明文峰值远低于配额的证据，结合本轮结果，
+提高水位本身不能消除 Host 刷新依赖、完成管理和细粒度启动成本。
+
+主要产物
+nsys-late-analysis.json：GPU 全流区间合并、空白分解、HostRefresh 和 OSRT 统计。
+api-probe-late-analysis.json：无 nsys 的 CPU API、Host Boot、NVML、线程采样汇总。
+low-util-diagnosis.png：GPU 空白构成、HostRefresh 与 GPU 活动、API 调用数。
+各 case 下保留 command、environment、status、samples、CSV 与原始 API 计数。
+provenance.json 记录探针构建命令、源码/库/runner/计划/报告 SHA256。
+服务器目录 /home/xuming/poseidon-qwen-low-util-20261020；未提交实验文件。

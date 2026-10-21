@@ -1,0 +1,7 @@
+{
+  "original": "qwen30-s40",
+  "change": "Only maximum pool capacity:28672MiB ->32000MiB",
+  "reason": "Separate artificial 28GiB cap from inability to run in available GPU0 VRAM",
+  "initial_pool_mib": 1024,
+  "maximum_pool_mib": 32000
+}

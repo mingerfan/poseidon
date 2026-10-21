@@ -1,0 +1,2 @@
+{"eval_mod_log_scale": 40, "maximum_pool_mib": 32000, "exit_code": 1, "wall_seconds": 785.7976959189982}
+{"stage": "setup", "error": "std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded"}

@@ -1,0 +1,18 @@
+[
+  {
+    "monotonic": 20268.983488876,
+    "text": "FORWARD begin"
+  },
+  {
+    "monotonic": 20290.451806548,
+    "text": "PREFIX_EXECUTION_BEGIN"
+  },
+  {
+    "monotonic": 21157.265219895,
+    "text": "PREFIX_EXECUTION_END"
+  },
+  {
+    "monotonic": 21158.519643596,
+    "text": "FORWARD complete runtime_ms=889535.892291"
+  }
+]

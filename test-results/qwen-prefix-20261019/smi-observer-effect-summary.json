@@ -1,0 +1,24 @@
+{
+  "phases": [
+    {
+      "phase": "a",
+      "seconds": 12.012211986999318,
+      "bytes": 113582464,
+      "mib_per_second": 9.017546379315629
+    },
+    {
+      "phase": "b",
+      "seconds": 12.929959951001365,
+      "bytes": 10027008,
+      "mib_per_second": 0.7395614554289033
+    },
+    {
+      "phase": "c",
+      "seconds": 12.012146719000157,
+      "bytes": 85852160,
+      "mib_per_second": 6.8160173127501515
+    }
+  ],
+  "query_median_seconds": 1.2985084310021193,
+  "metric": "Model /proc rchar progress proxy; not instruction throughput"
+}

@@ -1,0 +1,17 @@
+{
+  "scope": "Two stderr phase markers only; no per-instruction tracing or GPU math changes.",
+  "original": "                run_parallel_tasks(tasks);",
+  "replacement": "                if(phase==&plan_->execution)std::cerr<<\"PREFIX_EXECUTION_BEGIN\\n\"<<std::flush;\n                run_parallel_tasks(tasks);\n                if(phase==&plan_->execution)std::cerr<<\"PREFIX_EXECUTION_END\\n\"<<std::flush;",
+  "variants": {
+    "previous": {
+      "source": "/home/xuming/poseidon-waterline-legacy-20261018/build/current/include/runtime/runtime.hpp",
+      "source_sha256": "db09ac6ee97827a3f70c060e31a25a94b071dbe3f69858a69a68e81e9e5e00b2",
+      "instrumented_sha256": "113f2bba591d21b9cd957d88bb12468ec9652bb444ec4290d291f8bd4083a94f"
+    },
+    "updated": {
+      "source": "/home/xuming/poseidon-framework-validation-20261015-6dc8cbfb/src/third_party/ckks-runtime/runtime/runtime.hpp",
+      "source_sha256": "d10aff268babf762ed4ce5ef75c7482c4c12bba88fef5518210f09008055729c",
+      "instrumented_sha256": "268c0f5c93cb2af82f8402dfe0260614faf307f13f07ee8ea3f99e85f7f2d4b9"
+    }
+  }
+}

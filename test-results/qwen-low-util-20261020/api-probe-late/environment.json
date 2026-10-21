@@ -1,0 +1,12 @@
+{
+  "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+  "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB": "24576",
+  "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB": "24576",
+  "OPENBLAS_NUM_THREADS": "4",
+  "OMP_NUM_THREADS": "4",
+  "POSEIDON_RUNTIME_TRACE": "/home/xuming/poseidon-qwen-low-util-20261020/api-probe-late/boot",
+  "LD_PRELOAD": "/home/xuming/poseidon-qwen-low-util-20261020/cuda_api_probe.so",
+  "CUDA_PROBE_DELAY_SECONDS": "110",
+  "CUDA_PROBE_DURATION_SECONDS": "20",
+  "CUDA_PROBE_OUTPUT": "/home/xuming/poseidon-qwen-low-util-20261020/api-probe-late/cuda-api.jsonl"
+}

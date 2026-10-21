@@ -1,0 +1,12 @@
+{
+  "executable_sha256": "41ad6bc38e4e19a54aba6706c654a5b946b84668ca2696e0568f9d778336b5b2",
+  "plan_sha256": "66a3969ad60185eaa4dcfa46f174e2f9836053ee213e71c3dd858c1328e4c064",
+  "fixture_sha256": "6d9dfbba17ca94042b45fb7ede7d5fa40bddf221079d172d952386cc9a4bdddd",
+  "spec_sha256": "e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d",
+  "manifest_sha256": "27ecd75ecae952266b02038e9330ce7b0890fa75475bf22c52760b4533eea401",
+  "bundle_data": {
+    "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.bundle/data.bin",
+    "bytes": 61298262016,
+    "mtime_ns": 1791903740120191517
+  }
+}

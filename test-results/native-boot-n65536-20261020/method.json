@@ -1,0 +1,19 @@
+{
+  "polynomial_degree": 65536,
+  "complex_slots": 32768,
+  "q_count": 50,
+  "p_count": 8,
+  "prime_bits": 30,
+  "input_scale_log2": 40,
+  "eval_mod_log_scale_cases": [
+    40,
+    45
+  ],
+  "polynomial_actual_degree": 58,
+  "generation_requested_degree": 59,
+  "truncate": false,
+  "double_angle": 2,
+  "tolerance": 0.003,
+  "case_protocol": "one cold call,two warmups,ten measured; validate every complex slot, stop case on first numerical failure",
+  "production_changes": false
+}

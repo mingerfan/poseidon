@@ -1,0 +1,431 @@
+{
+  "previous": {
+    "variant": "previous",
+    "window": 8,
+    "status": {
+      "variant": "previous",
+      "window": 8,
+      "exit_code": 1,
+      "wall_seconds": 2053.934270400001,
+      "report_passed": false,
+      "telemetry_errors": [],
+      "pid": 181093,
+      "observer": "NVML initialized once; 2-second persistent sampling; no SMI or pmon subprocesses"
+    },
+    "execution_begin_monotonic": 21213.813153106,
+    "execution_end_monotonic": 23218.078481435,
+    "execution_seconds": 2004.265328329002,
+    "cold_process_seconds": 2053.934270400001,
+    "marked_forward_seconds": 2025.331017239001,
+    "mean_four_gpu_util_percent": 4.327123926517013,
+    "devices": [
+      {
+        "index": 0,
+        "time_weighted_gpu_util_percent": 5.141447280928291,
+        "sampled_peak_gpu_util_percent": 21,
+        "sampled_peak_gpu_memory_mib": 25159
+      },
+      {
+        "index": 1,
+        "time_weighted_gpu_util_percent": 4.108579261229721,
+        "sampled_peak_gpu_util_percent": 16,
+        "sampled_peak_gpu_memory_mib": 25159
+      },
+      {
+        "index": 2,
+        "time_weighted_gpu_util_percent": 4.166466477269994,
+        "sampled_peak_gpu_util_percent": 20,
+        "sampled_peak_gpu_memory_mib": 25159
+      },
+      {
+        "index": 3,
+        "time_weighted_gpu_util_percent": 3.892002686640044,
+        "sampled_peak_gpu_util_percent": 15,
+        "sampled_peak_gpu_memory_mib": 25159
+      }
+    ],
+    "execution_samples": 1002,
+    "median_query_sample_interval_seconds": 2.000177612000698,
+    "median_query_seconds": 0.007348474999162136,
+    "maximum_query_seconds": 0.013520054999389686,
+    "observed_foreign_compute_pids": [],
+    "runtime_timing": {
+      "boot_calls": 1692,
+      "bundle_read_bytes": 9420931072,
+      "bundle_read_calls": 143913,
+      "bundle_read_ms": 21351.935149,
+      "bundle_resident_bytes": 0,
+      "communication_post_calls": 349339,
+      "communication_post_ms": 315612.001318,
+      "communication_wait_calls": 349339,
+      "communication_wait_ms": 4108.384689,
+      "compute_calls": 508394,
+      "compute_submission_including_boot_ms": 1221441.21232,
+      "encode_calls": 143955,
+      "encode_submission_ms": 1276563.040488,
+      "fence_calls": 0,
+      "host_boot_ms": 249254.623644,
+      "initialization_ms": 202.496413,
+      "online_execution_ms": 2018218.152739,
+      "raw_peak_bytes": 131072,
+      "setup_ms": 6291.433258
+    },
+    "preparation_measurements": {
+      "cpu_encode_ms": 1024196.370844,
+      "cpu_plain_h2d_bytes": 80317317120,
+      "cpu_prepare_calls": 45929,
+      "transport_h2d_bytes": 91438776320,
+      "transport_h2d_calls": 47626,
+      "transport_h2d_ms": 8580.011808,
+      "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+    },
+    "device_measurements": [
+      {
+        "allocated_live_bytes": 2207328352,
+        "allocated_peak_bytes": 3691063392,
+        "consumer_wait_calls": 12582,
+        "consumer_wait_ms": 801.762416,
+        "gpu_encode_calls": 23971,
+        "gpu_encode_ms": 5323.023753,
+        "gpu_raw_h2d_bytes": 1570963456,
+        "gpu_raw_h2d_ms": 615.964018,
+        "logical_device": 0,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      },
+      {
+        "allocated_live_bytes": 2202085472,
+        "allocated_peak_bytes": 3726125152,
+        "consumer_wait_calls": 13034,
+        "consumer_wait_ms": 1072.352658,
+        "gpu_encode_calls": 24287,
+        "gpu_encode_ms": 5358.688458,
+        "gpu_raw_h2d_bytes": 1591672832,
+        "gpu_raw_h2d_ms": 605.666173,
+        "logical_device": 1,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      },
+      {
+        "allocated_live_bytes": 2198808672,
+        "allocated_peak_bytes": 3553110112,
+        "consumer_wait_calls": 12899,
+        "consumer_wait_ms": 900.343883,
+        "gpu_encode_calls": 24811,
+        "gpu_encode_ms": 5499.944991,
+        "gpu_raw_h2d_bytes": 1626013696,
+        "gpu_raw_h2d_ms": 637.917801,
+        "logical_device": 2,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      },
+      {
+        "allocated_live_bytes": 2050304096,
+        "allocated_peak_bytes": 3519621216,
+        "consumer_wait_calls": 11972,
+        "consumer_wait_ms": 760.142401,
+        "gpu_encode_calls": 24957,
+        "gpu_encode_ms": 5494.11065,
+        "gpu_raw_h2d_bytes": 1635581952,
+        "gpu_raw_h2d_ms": 622.707811,
+        "logical_device": 3,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      }
+    ],
+    "comparison": {
+      "bad_imaginary_slots": 212,
+      "bad_prefix_slots": 212,
+      "bad_real_slots": 6,
+      "bad_tail_slots": 0,
+      "finite_slots": 131072,
+      "max_abs_error": 0.005455337009474759,
+      "max_imaginary": 0.01855195515888585,
+      "max_relative_error_floor_atol": 0.49967296604701417,
+      "max_tail_abs": 0.0001799439235126966,
+      "nonfinite_slots": 0,
+      "passed": false,
+      "rms_error": 4.621037254677233e-05,
+      "slots_checked": 131072
+    },
+    "checkpoint_count": 16,
+    "checkpoint_pass_count": 10,
+    "boot_implementation": "host_decrypt_reencrypt",
+    "pinned_transfer_live_after_validation_bytes": 0,
+    "bindings": {
+      "executable_sha256": "bed8796248fbd57f832ffd6285d4d24395c36afd19bbc41138480791bae806b5",
+      "plan_sha256": "66a3969ad60185eaa4dcfa46f174e2f9836053ee213e71c3dd858c1328e4c064",
+      "fixture_sha256": "d803faccae2db251fba9b180ced58150e3572e93a225956913e9bb07f4a202a0",
+      "spec_sha256": "e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d",
+      "manifest_sha256": "27ecd75ecae952266b02038e9330ce7b0890fa75475bf22c52760b4533eea401",
+      "bundle_data": {
+        "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.bundle/data.bin",
+        "bytes": 61298262016,
+        "mtime_ns": 1791903740120191517
+      }
+    },
+    "waterline_ledger_peaks": [
+      {
+        "device": 0,
+        "front_peak_bytes": 1783889920,
+        "plain_peak_bytes": 549715968,
+        "remaining_front_bytes": 7864320,
+        "remaining_plain_bytes": 0
+      },
+      {
+        "device": 1,
+        "front_peak_bytes": 1922826240,
+        "plain_peak_bytes": 426180608,
+        "remaining_front_bytes": 2621440,
+        "remaining_plain_bytes": 0
+      },
+      {
+        "device": 2,
+        "front_peak_bytes": 1960837120,
+        "plain_peak_bytes": 336461824,
+        "remaining_front_bytes": 0,
+        "remaining_plain_bytes": 0
+      },
+      {
+        "device": 3,
+        "front_peak_bytes": 1997864960,
+        "plain_peak_bytes": 249298944,
+        "remaining_front_bytes": 10485760,
+        "remaining_plain_bytes": 0
+      }
+    ],
+    "waterline_shared_peaks": {
+      "host_bytes": 366477312,
+      "pinned_bytes": 69074944,
+      "raw_bytes": 786432
+    }
+  },
+  "updated": {
+    "variant": "updated",
+    "window": 128,
+    "status": {
+      "variant": "updated",
+      "window": 128,
+      "exit_code": 1,
+      "wall_seconds": 919.0349378739993,
+      "report_passed": false,
+      "telemetry_errors": [],
+      "pid": 178741,
+      "observer": "NVML initialized once; 2-second persistent sampling; no SMI or pmon subprocesses"
+    },
+    "execution_begin_monotonic": 20290.451806548,
+    "execution_end_monotonic": 21157.265219895,
+    "execution_seconds": 866.8134133470012,
+    "cold_process_seconds": 919.0349378739993,
+    "marked_forward_seconds": 889.5361547199973,
+    "mean_four_gpu_util_percent": 10.107293132049445,
+    "devices": [
+      {
+        "index": 0,
+        "time_weighted_gpu_util_percent": 11.620416958866803,
+        "sampled_peak_gpu_util_percent": 73,
+        "sampled_peak_gpu_memory_mib": 25159
+      },
+      {
+        "index": 1,
+        "time_weighted_gpu_util_percent": 9.887611088682842,
+        "sampled_peak_gpu_util_percent": 71,
+        "sampled_peak_gpu_memory_mib": 25159
+      },
+      {
+        "index": 2,
+        "time_weighted_gpu_util_percent": 9.359076823576943,
+        "sampled_peak_gpu_util_percent": 86,
+        "sampled_peak_gpu_memory_mib": 25159
+      },
+      {
+        "index": 3,
+        "time_weighted_gpu_util_percent": 9.562067657071195,
+        "sampled_peak_gpu_util_percent": 71,
+        "sampled_peak_gpu_memory_mib": 25159
+      }
+    ],
+    "execution_samples": 433,
+    "median_query_sample_interval_seconds": 2.0001897110014397,
+    "median_query_seconds": 0.007782879998558201,
+    "maximum_query_seconds": 0.01822177299982286,
+    "observed_foreign_compute_pids": [],
+    "runtime_timing": {
+      "boot_calls": 1692,
+      "bundle_read_bytes": 9420931072,
+      "bundle_read_calls": 143913,
+      "bundle_read_ms": 24185.389784,
+      "bundle_resident_bytes": 0,
+      "communication_post_calls": 349339,
+      "communication_post_ms": 617414.193972,
+      "communication_wait_calls": 349339,
+      "communication_wait_ms": 4536.707674,
+      "compute_calls": 508394,
+      "compute_submission_including_boot_ms": 1342065.459974,
+      "encode_calls": 143955,
+      "encode_submission_ms": 316561.207754,
+      "fence_calls": 0,
+      "host_boot_ms": 246181.130633,
+      "initialization_ms": 193.356871,
+      "online_execution_ms": 881331.43506,
+      "raw_peak_bytes": 131072,
+      "setup_ms": 7360.046781
+    },
+    "preparation_measurements": {
+      "cpu_encode_ms": 0.0,
+      "cpu_plain_h2d_bytes": 0,
+      "cpu_prepare_calls": 0,
+      "transport_h2d_bytes": 11121459200,
+      "transport_h2d_calls": 1697,
+      "transport_h2d_ms": 1016.53456,
+      "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+    },
+    "device_measurements": [
+      {
+        "allocated_live_bytes": 2207328352,
+        "allocated_peak_bytes": 3742443616,
+        "consumer_wait_calls": 4145,
+        "consumer_wait_ms": 577.811993,
+        "gpu_encode_calls": 35509,
+        "gpu_encode_ms": 8890.745035,
+        "gpu_raw_h2d_bytes": 2327117824,
+        "gpu_raw_h2d_ms": 1196.028442,
+        "logical_device": 0,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      },
+      {
+        "allocated_live_bytes": 2202085472,
+        "allocated_peak_bytes": 3744802912,
+        "consumer_wait_calls": 5434,
+        "consumer_wait_ms": 1233.436196,
+        "gpu_encode_calls": 35599,
+        "gpu_encode_ms": 8919.587223,
+        "gpu_raw_h2d_bytes": 2333016064,
+        "gpu_raw_h2d_ms": 1205.247063,
+        "logical_device": 1,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      },
+      {
+        "allocated_live_bytes": 2198808672,
+        "allocated_peak_bytes": 3623888992,
+        "consumer_wait_calls": 2784,
+        "consumer_wait_ms": 481.091018,
+        "gpu_encode_calls": 36509,
+        "gpu_encode_ms": 8976.283653,
+        "gpu_raw_h2d_bytes": 2392653824,
+        "gpu_raw_h2d_ms": 1192.147003,
+        "logical_device": 2,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      },
+      {
+        "allocated_live_bytes": 2050304096,
+        "allocated_peak_bytes": 3527551072,
+        "consumer_wait_calls": 3244,
+        "consumer_wait_ms": 456.366666,
+        "gpu_encode_calls": 36338,
+        "gpu_encode_ms": 8739.596342,
+        "gpu_raw_h2d_bytes": 2381447168,
+        "gpu_raw_h2d_ms": 1192.130664,
+        "logical_device": 3,
+        "managed_pool": true,
+        "pool_capacity_bytes": 25769803776,
+        "pool_reserved_bytes": 25769803776
+      }
+    ],
+    "comparison": {
+      "bad_imaginary_slots": 1338,
+      "bad_prefix_slots": 1347,
+      "bad_real_slots": 159,
+      "bad_tail_slots": 0,
+      "finite_slots": 131072,
+      "max_abs_error": 0.018235971495627723,
+      "max_imaginary": 0.06272444061275212,
+      "max_relative_error_floor_atol": 0.5040406470635515,
+      "max_tail_abs": 0.00011223731641780524,
+      "nonfinite_slots": 0,
+      "passed": false,
+      "rms_error": 0.0001510044740492371,
+      "slots_checked": 131072
+    },
+    "checkpoint_count": 16,
+    "checkpoint_pass_count": 9,
+    "boot_implementation": "host_decrypt_reencrypt",
+    "pinned_transfer_live_after_validation_bytes": 0,
+    "bindings": {
+      "executable_sha256": "41ad6bc38e4e19a54aba6706c654a5b946b84668ca2696e0568f9d778336b5b2",
+      "plan_sha256": "66a3969ad60185eaa4dcfa46f174e2f9836053ee213e71c3dd858c1328e4c064",
+      "fixture_sha256": "6d9dfbba17ca94042b45fb7ede7d5fa40bddf221079d172d952386cc9a4bdddd",
+      "spec_sha256": "e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d",
+      "manifest_sha256": "27ecd75ecae952266b02038e9330ce7b0890fa75475bf22c52760b4533eea401",
+      "bundle_data": {
+        "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.bundle/data.bin",
+        "bytes": 61298262016,
+        "mtime_ns": 1791903740120191517
+      }
+    },
+    "waterline_ledger_peaks": [
+      {
+        "device": 0,
+        "front_peak_bytes": 18634506240,
+        "plain_peak_bytes": 568197120,
+        "remaining_front_bytes": 7864320,
+        "remaining_plain_bytes": 0
+      },
+      {
+        "device": 1,
+        "front_peak_bytes": 15236464640,
+        "plain_peak_bytes": 450756608,
+        "remaining_front_bytes": 2621440,
+        "remaining_plain_bytes": 0
+      },
+      {
+        "device": 2,
+        "front_peak_bytes": 11037900800,
+        "plain_peak_bytes": 355926016,
+        "remaining_front_bytes": 0,
+        "remaining_plain_bytes": 0
+      },
+      {
+        "device": 3,
+        "front_peak_bytes": 10174464000,
+        "plain_peak_bytes": 266207232,
+        "remaining_front_bytes": 10485760,
+        "remaining_plain_bytes": 0
+      }
+    ],
+    "waterline_shared_peaks": {
+      "host_bytes": 1121452032,
+      "pinned_bytes": 422969344,
+      "raw_bytes": 5505024
+    }
+  },
+  "comparison": {
+    "execution_speedup": 2.3122223277440885,
+    "execution_reduction_percent": 56.75156372286888,
+    "gpu_util_increase_percentage_points": 5.780169205532433,
+    "samples_per_variant": 1,
+    "order": [
+      "updated",
+      "previous"
+    ],
+    "numerical_validation_passed_for_both": false,
+    "gpu_util_metric": "Time-weighted NVIDIA GPU busy %, midpoint sample intervals clipped to execution markers; not FLOP efficiency.",
+    "scope": "Same bounded Qwen 4-GPU plan, previous Auto/8 vs updated Auto/128; combined production changes, not an isolated window experiment."
+  },
+  "measurement": {
+    "valid_run_folder": "runs-nvml",
+    "excluded_run_folder": "runs",
+    "observer": "Persistent NVML; initialized once; 2-second queries; no SMI/pmon subprocesses in valid runs.",
+    "excluded_reason": "Repeated SMI query startup materially interfered; see observer-query-aba-diagnostic.json."
+  }
+}

@@ -1,0 +1,13 @@
+Observer check seconds: [0.006000719000439858, 0.004312032000598265, 0.002551459998358041]
+Starting updated window 128 persistent NVML
+updated FORWARD begin
+updated PREFIX_EXECUTION_BEGIN
+updated PREFIX_EXECUTION_END
+updated FORWARD complete runtime_ms=889535.892291
+Finished {"variant": "updated", "window": 128, "exit_code": 1, "wall_seconds": 919.0349378739993, "report_passed": false, "telemetry_errors": [], "pid": 178741, "observer": "NVML initialized once; 2-second persistent sampling; no SMI or pmon subprocesses"}
+Starting previous window 8 persistent NVML
+previous FORWARD begin
+previous PREFIX_EXECUTION_BEGIN
+previous PREFIX_EXECUTION_END
+previous FORWARD complete runtime_ms=2025330.857363
+Finished {"variant": "previous", "window": 8, "exit_code": 1, "wall_seconds": 2053.934270400001, "report_passed": false, "telemetry_errors": [], "pid": 181093, "observer": "NVML initialized once; 2-second persistent sampling; no SMI or pmon subprocesses"}

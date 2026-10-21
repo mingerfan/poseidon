@@ -1,0 +1,4 @@
+{"eval_mod_log_scale": 40, "exit_code": 1, "wall_seconds": 365.2112725449988}
+{"scale": 40, "stage": "numerical_failure", "error": null}
+{"eval_mod_log_scale": 45, "exit_code": 0, "wall_seconds": 366.16554853999696}
+{"scale": 45, "stage": "complete", "error": null}

@@ -1,0 +1,122 @@
+{
+  "all_prepared_value_bytes_by_device": {
+    "GPU0": 62346690560,
+    "GPU1": 62202839040,
+    "GPU2": 64027033600,
+    "GPU3": 63120015360
+  },
+  "communication_edges": {
+    "GPU0 -> GPU1": 29767,
+    "GPU0 -> GPU2": 28409,
+    "GPU0 -> GPU3": 28126,
+    "GPU0 -> Host": 988,
+    "GPU1 -> GPU0": 29125,
+    "GPU1 -> GPU2": 29467,
+    "GPU1 -> GPU3": 27939,
+    "GPU1 -> Host": 554,
+    "GPU2 -> GPU0": 28765,
+    "GPU2 -> GPU1": 29542,
+    "GPU2 -> GPU3": 28866,
+    "GPU2 -> Host": 94,
+    "GPU3 -> GPU0": 28003,
+    "GPU3 -> GPU1": 28324,
+    "GPU3 -> GPU2": 29617,
+    "GPU3 -> Host": 56,
+    "Host -> GPU0": 1660,
+    "Host -> GPU1": 8,
+    "Host -> GPU2": 14,
+    "Host -> GPU3": 10
+  },
+  "communication_records_by_hint": {
+    "PointToPoint": 349334
+  },
+  "communication_records_by_kind": {
+    "Transfer": 349334
+  },
+  "compute_by_kind": {
+    "AddCC": 156338,
+    "AddCP": 2988,
+    "Boot": 1692,
+    "ModSwitch": 2950,
+    "MulCC": 5769,
+    "MulCP": 161361,
+    "Negate": 34,
+    "Relinearize": 5769,
+    "Rescale": 159581,
+    "Rotate": 11912
+  },
+  "compute_by_place_and_kind": {
+    "GPU0": {
+      "AddCC": 42782,
+      "AddCP": 1937,
+      "ModSwitch": 1117,
+      "MulCC": 5111,
+      "MulCP": 46058,
+      "Negate": 20,
+      "Relinearize": 5054,
+      "Rescale": 43805,
+      "Rotate": 6714
+    },
+    "GPU1": {
+      "AddCC": 39379,
+      "AddCP": 739,
+      "ModSwitch": 893,
+      "MulCC": 442,
+      "MulCP": 39252,
+      "Negate": 4,
+      "Relinearize": 480,
+      "Rescale": 39073,
+      "Rotate": 2866
+    },
+    "GPU2": {
+      "AddCC": 37843,
+      "AddCP": 290,
+      "ModSwitch": 666,
+      "MulCC": 123,
+      "MulCP": 38254,
+      "Negate": 6,
+      "Relinearize": 133,
+      "Rescale": 38317,
+      "Rotate": 1220
+    },
+    "GPU3": {
+      "AddCC": 36334,
+      "AddCP": 22,
+      "ModSwitch": 274,
+      "MulCC": 93,
+      "MulCP": 37797,
+      "Negate": 4,
+      "Relinearize": 102,
+      "Rescale": 38386,
+      "Rotate": 1112
+    },
+    "Host": {
+      "Boot": 1692
+    }
+  },
+  "execution_records": 2000000,
+  "logical_gpu_payload_bytes": {
+    "GPU0 -> GPU1": 92337930240,
+    "GPU0 -> GPU2": 86876487680,
+    "GPU0 -> GPU3": 85694218240,
+    "GPU0 -> Host": 1294991360,
+    "GPU1 -> GPU0": 87369973760,
+    "GPU1 -> GPU2": 89837404160,
+    "GPU1 -> GPU3": 85151252480,
+    "GPU1 -> Host": 726138880,
+    "GPU2 -> GPU0": 86889267200,
+    "GPU2 -> GPU1": 89855754240,
+    "GPU2 -> GPU3": 88023695360,
+    "GPU2 -> Host": 123207680,
+    "GPU3 -> GPU0": 83986350080,
+    "GPU3 -> GPU1": 86088417280,
+    "GPU3 -> GPU2": 90229637120,
+    "GPU3 -> Host": 73400320,
+    "Host -> GPU0": 10878976000,
+    "Host -> GPU1": 52428800,
+    "Host -> GPU2": 91750400,
+    "Host -> GPU3": 65536000
+  },
+  "payload_scope": "Logical GPU packed payload per edge: degree*(level+1)*components*4. Excludes extra HostStaged transactions, keys, initialization, validation and internal CPU Prepare uploads.",
+  "prepared_value_scope": "Sum of all Prepare output buffers if kept simultaneously, not a peak; no content deduplication. GPU plaintext degree*(level+1)*4."
+}

@@ -1,0 +1,131 @@
+[
+  {
+    "monotonic": 20234.677423484,
+    "query_seconds": 0.006000719000439858,
+    "gpu": [
+      {
+        "index": 0,
+        "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 58.006,
+        "clock_mhz": 135
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 58.957,
+        "clock_mhz": 135
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 85.655,
+        "clock_mhz": 135
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 59.49,
+        "clock_mhz": 135
+      }
+    ],
+    "applications": []
+  },
+  {
+    "monotonic": 20234.68173845,
+    "query_seconds": 0.004312032000598265,
+    "gpu": [
+      {
+        "index": 0,
+        "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 58.006,
+        "clock_mhz": 135
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 58.957,
+        "clock_mhz": 135
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 85.655,
+        "clock_mhz": 135
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 59.49,
+        "clock_mhz": 135
+      }
+    ],
+    "applications": []
+  },
+  {
+    "monotonic": 20234.684291564,
+    "query_seconds": 0.002551459998358041,
+    "gpu": [
+      {
+        "index": 0,
+        "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 58.006,
+        "clock_mhz": 135
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 58.957,
+        "clock_mhz": 135
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 85.655,
+        "clock_mhz": 135
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+        "gpu_util": 0,
+        "memory_util": 0,
+        "memory_mib": 267,
+        "power_w": 59.49,
+        "clock_mhz": 135
+      }
+    ],
+    "applications": []
+  }
+]

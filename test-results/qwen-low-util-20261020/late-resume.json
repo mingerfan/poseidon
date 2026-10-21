@@ -1,0 +1,5 @@
+{
+  "reason": "nsys propagated the planned --kill=sigterm as 143; report was successfully generated. Corrected supervisor expectation; did not repeat the GPU capture.",
+  "expected_target_signal": "SIGTERM",
+  "nsys_returncode": 143
+}

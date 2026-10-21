@@ -1,0 +1,10 @@
+[
+  "/home/xuming/poseidon-qwen-low-util-20261020/build-host-markers/qwen",
+  "/home/xuming/poseidon-qwen-prefix-20261019/plans/prefix4-2000000/prefix.runtime-plan.bin",
+  "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json",
+  "/home/xuming/poseidon-qwen-prefix-20261019/runs-nvml/updated/fixture.json",
+  "/home/xuming/poseidon-qwen-low-util-20261020/api-probe-late/report.json",
+  "/home/xuming/poseidon-qwen-low-util-20261020/api-probe-late/decoded.json",
+  "--bundle",
+  "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.bundle"
+]

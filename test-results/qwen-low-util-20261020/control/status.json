@@ -1,0 +1,20 @@
+{
+  "pid": 184610,
+  "exit_code": -15,
+  "wall_seconds": 85.7572753170025,
+  "intentionally_terminated": true,
+  "scope": "CPU/proc/NVML diagnostics; process seconds 60..80, not full output validation",
+  "markers": [
+    {
+      "text": "FORWARD begin",
+      "monotonic": 23940.4887308,
+      "elapsed": 26.919274690000748
+    },
+    {
+      "text": "PREFIX_EXECUTION_BEGIN",
+      "monotonic": 23960.629896862,
+      "elapsed": 47.06044773800022
+    }
+  ],
+  "proc_ticks_per_second": 100
+}

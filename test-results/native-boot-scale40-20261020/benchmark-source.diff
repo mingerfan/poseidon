@@ -1,0 +1,40 @@
+--- test-results/native-boot-timing-20261020/native-boot-bench-full58.cpp
++++ native-boot-scale-bench.cpp
+@@ -18,7 +18,7 @@
+     out<<report.dump(2)<<'\n';
+ }
+ int main(int argc,char **argv) {
+-    if(argc!=5) {std::cerr<<"usage: native-boot-bench REPORT DEGREE runtime-mixed|qwen30 ITERATIONS\n";return 2;}
++    if(argc!=6) {std::cerr<<"usage: native-boot-bench REPORT DEGREE runtime-mixed|qwen30 ITERATIONS EVAL_MOD_LOG_SCALE\n";return 2;}
+     const std::string report_path=argv[1];
+     Json report={{"passed",false},{"stage","setup"},{"samples",Json::array()},
+         {"scope","Native GPU Boot API with input/output resident on device. Per-call synchronization, no nsys. Setup, explicit transfers and validation excluded from call timings."},
+@@ -27,6 +27,11 @@
+     try {
+         const auto degree=std::stoull(argv[2]);const std::string mode=argv[3];
+         const auto iterations=std::stoull(argv[4]);
++        const auto eval_mod_log_scale=std::stoul(argv[5]);
++        if(eval_mod_log_scale!=40 && eval_mod_log_scale!=45)throw std::runtime_error("scale comparison accepts only 40 or 45");
++        report["requested_eval_mod_log_scale"]=eval_mod_log_scale;
++        report["input_scale_log2"]=kLogScale;
++        report["slots_checked_per_call"]=degree/2;
+         if(!iterations)throw std::runtime_error("iterations must be positive");
+         report["degree"]=degree;report["context_mode"]=mode;
+         const auto context_begin=Clock::now();
+@@ -43,6 +48,8 @@
+         report["security_level"]="none; numerical validation context";
+         for(auto q:context.parameters_literal()->q())report["q_bits"].push_back(q.bit_count());
+         for(auto p:context.parameters_literal()->p())report["p_bits"].push_back(p.bit_count());
++        for(auto q:context.parameters_literal()->q())report["actual_q_moduli"].push_back(q.value());
++        for(auto p:context.parameters_literal()->p())report["actual_p_moduli"].push_back(p.value());
+         const auto keys_begin=Clock::now();
+         poseidon::KeyGenerator generator(context);poseidon::PublicKey public_key;
+         generator.create_public_key(public_key);
+@@ -57,6 +64,7 @@
+         config.eval_mod_generation_degree=59;
+         config.eval_mod_truncate_degree.reset();
+         config.eval_mod_double_angle=2;
++        config.eval_mod_log_scale=static_cast<std::uint32_t>(eval_mod_log_scale);
+         const auto setup_begin=Clock::now();
+         std::cout<<"Building native profile degree="<<degree<<" context="<<mode<<std::endl;
+         auto profile=poseidon::gpu::GpuBootstrapProfileBuilder::build(context,generator,0,config);

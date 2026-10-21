@@ -1,0 +1,5 @@
+{
+  "monotonic": 20154.089678933,
+  "terminated_own_pid": 174725,
+  "reason": "GPU query subprocess initialization materially perturbs model progress; observer pause also caused query timeout. Preserve data as observer-effect diagnostics, exclude from final performance comparison."
+}

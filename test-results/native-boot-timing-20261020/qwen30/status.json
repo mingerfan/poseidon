@@ -1,0 +1,6 @@
+{
+  "context": "qwen30",
+  "degree": 16384,
+  "exit_code": 1,
+  "wall_seconds": 58.146263711001666
+}
