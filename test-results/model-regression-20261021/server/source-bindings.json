@@ -1,0 +1,27 @@
+{
+  "inputs": [
+    {
+      "path": "/home/xuming/poseidon-model-regression-20261021/traced/ResNet20.mlirbc",
+      "bytes": 583441411,
+      "mtime_ns": 1792592748929026014,
+      "sha256": "2f5d665fc777138b0337e131e4685c401ec3a91bff56abc85202afa6c87b1486"
+    },
+    {
+      "path": "/home/xuming/poseidon-model-regression-20261021/qwen-prefix/trace-qwen-prefix.mlirbc",
+      "bytes": 268734597,
+      "mtime_ns": 1792592918649021442,
+      "sha256": "6b70a74eb7a769a980579f0a8f5f9d2ff08ef3df0d450e221d03b6461def662d"
+    },
+    {
+      "path": "/home/xuming/poseidon-waterline-20261013/qwen3-traced-bsgs/trace_qwen3.mlirbc",
+      "bytes": 61353321306,
+      "mtime_ns": 1791887376996487390
+    }
+  ],
+  "binaries": {
+    "/home/xuming/poseidon-model-regression-20261021/hecate-opt-baseline": "92dde839ae17624e70694ce4dec99e4194e5743f7de8b85acb6d16a7559c0123",
+    "/home/xuming/poseidon-threshold-rescale-20261021/toolchain/bin/hecate-opt": "ed9a3eae50e8e8c0e303e5d3cc0867737adc999c402256ae7633364f313b275f",
+    "/home/xuming/poseidon-threshold-rescale-20261021/build/bin/poseidon_runtime_gpu_qwen_e2e": "dd5f3af4eecfae4a28477bd686813109fc1efcc4fa9ca404dc759ef6a2b41952"
+  },
+  "full_qwen_signature_sha256": "5b8c4ef8d109b745c14d5b5b8a6567c4bc11ae3ac72ae07546ab7e6c859a2c9b"
+}

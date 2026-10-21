@@ -1,0 +1,91 @@
+diff --git a/include/hecate/Dialect/Earth/IR/EarthOps.td b/include/hecate/Dialect/Earth/IR/EarthOps.td
+index 446b0f6..c1b814b 100644
+--- a/include/hecate/Dialect/Earth/IR/EarthOps.td
++++ b/include/hecate/Dialect/Earth/IR/EarthOps.td
+@@ -233,7 +233,8 @@ def NegateOp : Unary_Earth_Op<"negate", [SameOperandsAndResultType]> {
+ }
+ 
+ def BootstrapOp : Unary_Earth_Op<"bootstrap"> {
+-  let arguments = (ins HETensor:$value, DefaultValuedAttr<I64Attr, "0">:$targetLevel);
++  let arguments = (ins HETensor:$value, DefaultValuedAttr<I64Attr, "0">:$targetLevel,
++                       DefaultValuedAttr<I64Attr, "0">:$targetScale);
+   let results = (outs HETensor);
+   code extraClassDeclaration = [{
+     void processOperandsEVA(int64_t param);
+diff --git a/include/hecate/Dialect/Earth/Transforms/Passes.td b/include/hecate/Dialect/Earth/Transforms/Passes.td
+index cf225c3..9801284 100644
+--- a/include/hecate/Dialect/Earth/Transforms/Passes.td
++++ b/include/hecate/Dialect/Earth/Transforms/Passes.td
+@@ -169,6 +169,8 @@ def GreedyBootstrapPlacement : Pass<"greedy-bootstrap-placement", "::mlir::func:
+       "Output value upper bound used for return level refinement">,
+     Option<"depth_dp", "depth-dp", "bool", /*default=*/"false",
+       "Choose multiplicative-depth boundaries with dynamic programming">,
++    Option<"bootstrap_scale", "bootstrap-scale", "int64_t", /*default=*/"0",
++      "Boot output scale; zero retains the historical contract">,
+   ];
+ }
+ 
+diff --git a/lib/Dialect/Earth/IR/EarthDialect.cpp b/lib/Dialect/Earth/IR/EarthDialect.cpp
+index 50be657..f72f9a4 100644
+--- a/lib/Dialect/Earth/IR/EarthDialect.cpp
++++ b/lib/Dialect/Earth/IR/EarthDialect.cpp
+@@ -275,7 +275,9 @@ void hecate::earth::BootstrapOp::getCanonicalizationPatterns(
+   if (lScale.getLevel() <=
+       hecate::earth::EarthDialect::bootstrapLevelUpperBound -
+           hecate::earth::EarthDialect::bootstrapLevelLowerBound) {
+-    inferredReturnTypes.push_back(lScale.switchLevel(op.getTargetLevel()));
++    auto result = lScale.switchLevel(op.getTargetLevel());
++    if (op.getTargetScale() > 0) result = result.switchScale(op.getTargetScale());
++    inferredReturnTypes.push_back(result);
+     return ::mlir::success();
+   } else
+     return ::mlir::failure();
+diff --git a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+index efac0b1..9308bcb 100644
+--- a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
++++ b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+@@ -28,6 +28,7 @@ struct GreedyBootstrapPlacementPass
+     waterline = options.waterline;
+     output_val = options.output_val;
+     depth_dp = options.depth_dp;
++    bootstrap_scale = options.bootstrap_scale;
+   }
+ 
+   void runOnOperation() override {
+@@ -185,10 +186,11 @@ struct GreedyBootstrapPlacementPass
+     auto refresh = [&](Value logical) {
+       auto value = resolve(logical);
+       auto type = getScaleType(value);
+-      if (type.getScale() != factor)
++      if (!bootstrap_scale && type.getScale() != factor)
+         value = builder.create<UpscaleOp>(value.getLoc(), value,
+                                           factor - type.getScale());
+-      value = builder.create<BootstrapOp>(value.getLoc(), value);
++      value = builder.create<BootstrapOp>(value.getLoc(), value, 0,
++        bootstrap_scale ? bootstrap_scale.getValue() : factor);
+       current[logical] = normalize(value);
+       ++bootCount;
+     };
+diff --git a/tools/optimizer.cpp b/tools/optimizer.cpp
+index a702413..592c3c3 100644
+--- a/tools/optimizer.cpp
++++ b/tools/optimizer.cpp
+@@ -209,6 +209,9 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+   static cl::opt<int64_t> waterline{
+       "waterline", cl::desc("Waterline of scale management"), cl::init(20)};
+ 
++  static cl::opt<int64_t> bootstrap_scale{
++      "bootstrap-scale", cl::desc("Boot output scale"), cl::init(0)};
++
+   static cl::opt<int64_t> output_val{
+       "output-val", cl::desc("Output value upper bound  of scale management"),
+       cl::init(10)};
+@@ -590,7 +593,7 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+       pm.addNestedPass<func::FuncOp>(
+           hecate::earth::createGreedyBootstrapPlacement(
+               {waterline, output_val,
+-               bootstrap_strategy == BootstrapStrategy::DepthDP}));
++               bootstrap_strategy == BootstrapStrategy::DepthDP, bootstrap_scale}));
+     } else {
+       pm.addNestedPass<func::FuncOp>(
+           hecate::earth::createBypassDetection({waterline, 0.5}));

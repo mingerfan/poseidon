@@ -1,0 +1,50 @@
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 322.4539 seconds
+
+  ----Wall Time----  ----Name----
+   90.8429 ( 28.2%)  Parser
+   48.7666 ( 15.1%)  'func.func' Pipeline
+    6.4645 (  2.0%)    RemoveBootstrap
+   26.8592 (  8.3%)    GreedyBootstrapPlacement
+   15.4429 (  4.8%)    EarlyModswitch
+   42.3533 ( 13.1%)  Canonicalizer
+   24.8846 (  7.7%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+   12.7361 (  3.9%)  CSE
+   20.8915 (  6.5%)  Canonicalizer
+   57.0295 ( 17.7%)  'func.func' Pipeline
+   31.2400 (  9.7%)    EarthToCKKSConversion
+    7.5821 (  2.4%)    UpscaleToMulcpConversion
+    7.8080 (  2.4%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+   10.3993 (  3.2%)    Canonicalizer
+   22.1397 (  6.9%)  Output
+    1.5663 (  0.5%)  Rest
+  322.4539 (100.0%)  Total
+Greedy bootstrap boundaries: 35762
+Number of Bootstrapping: 43471
+	Command being timed: "/home/xuming/poseidon-model-regression-20261021/run-baseline.sh --dacapo-precompile --boot-placement=greedy --ckks-config=/home/xuming/poseidon-model-regression-20261021/compiler-qwen-baseline.json --waterline=40 --bootstrap-scale=45 --mlir-timing --mlir-disable-threading --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 /home/xuming/poseidon-waterline-20261013/qwen3-traced-bsgs/trace_qwen3.mlirbc -o /home/xuming/poseidon-model-regression-20261021/qwen-full-before/greedy/logical.mlir"
+	User time (seconds): 261.02
+	System time (seconds): 68.07
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:29.28
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 123329368
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 25325845
+	Voluntary context switches: 66
+	Involuntary context switches: 1189
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 1623976
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

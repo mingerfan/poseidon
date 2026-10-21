@@ -1,0 +1,16 @@
+QWEN inputs=1 outputs=2 devices=1 slots=8192 backend=gpu host_boot_instructions=0 native_boot_instructions=64
+KEYS ready rotation_basis=24 key_generation_ms=14436.479328
+GPU_POOL maximum_mb=12288 source=user_environment outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=12884901888 maximum_bytes=12884901888
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=4590615160 retained_workspace_bound=84934656 native_workspace_capacity=1073741824 reserve_required=5816400504 reserve_configured=6442450944
+waterline physical GPU0 pool_reserved=12884901888 pool_cap=12884901888 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=7068501384
+waterline rescale workspace plan_max_drop=5 capability_max_drop=5
+waterline GPU0 front_peak=7034175488 plain_peak=88145920 remaining_front=2097152 remaining_plain=0
+waterline shared host_peak=25755648 pinned_peak=9895936 raw_peak=3670016
+FORWARD complete runtime_ms=10474.354131
+FAIL output=0 name=layer0.K.position_0 max_abs=1299.29 max_relative=213.876 max_imaginary=825.772 bad_real=1023 bad_imaginary=1024 nonfinite=0
+FAIL output=1 name=layer0.V.position_0 max_abs=0.507429 max_relative=1.77557 max_imaginary=0.00161075 bad_real=1014 bad_imaginary=26 nonfinite=0
+FAIL ALL_OUTPUTS count=2 slots=16384 max_abs=1299.29 max_relative=213.876 max_imaginary=825.772 bad_real=2037 bad_imaginary=1050 nonfinite=0
+report=qwen-prefix-before-depth-dp/gpu1/gpu-report.json decoded=qwen-prefix-before-depth-dp/gpu1/gpu-decoded.json

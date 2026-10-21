@@ -1,0 +1,9 @@
+{
+  "completed_utc": "2026-10-21T14:58:17.138193+00:00",
+  "temporary_workspace_removed": "/home/xuming/poseidon-model-regression-20261021",
+  "archive_sha256": "9f87dd78481d9321d0fa8ee4554b57ec206c06cb429d3761a09892688ac732cc",
+  "retained_results": "/home/xuming/test-results/model-regression-20261021",
+  "shared_qwen_source_preserved": true,
+  "physical_gpu": 2,
+  "local_baseline_worktree_removed": true
+}

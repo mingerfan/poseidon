@@ -1,0 +1,2 @@
+{"case": "/home/xuming/poseidon-model-regression-20261021/resnet20-before/greedy", "returncode": 0, "elapsed_seconds": 2.003425595990848, "timed_out": false, "pid": 2634137}
+{"case": "/home/xuming/poseidon-model-regression-20261021/resnet20-before/depth-dp", "returncode": 0, "elapsed_seconds": 2.002982191974297, "timed_out": false, "pid": 2634139}

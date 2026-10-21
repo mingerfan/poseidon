@@ -1,0 +1,1347 @@
+{
+  "source": "qwen-full-before/depth-dp/logical.mlir",
+  "stage": "unplaced logical CKKS; nominal scales",
+  "physical_anchor": 22,
+  "physical_lower_bound": 4,
+  "levels_per_logical_level": 5,
+  "logical_base": 4,
+  "boot_count": 42808,
+  "rescale_q": 7905920,
+  "modswitch_q": 84870,
+  "minimum_physical_level": 7,
+  "output_states": [
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    },
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    }
+  ],
+  "operations": {
+    "encode": 1120949,
+    "mulcc": 42942,
+    "relinearize": 42942,
+    "mulcp": 1581184,
+    "rescalec": 1581184,
+    "rotatec": 88328,
+    "addcc": 1521653,
+    "addcp": 22315,
+    "bootstrapc": 42808,
+    "modswitchc": 15476,
+    "negatec": 251
+  },
+  "boot_input_states": [
+    {
+      "level": 7,
+      "scale_log2": 40,
+      "count": 42808
+    }
+  ],
+  "boot_output_states": [
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 42808
+    }
+  ],
+  "state_audit_passed": true
+}

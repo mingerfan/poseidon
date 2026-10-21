@@ -1,0 +1,18 @@
+{
+  "source_sha256": "81c122300e85e9d030549aa71185d7a11ca97cd222be358a82b10406345d6e0d",
+  "reference_sha256": "3477ba96e174513e5f012f78a426a59116dec927ebe18451e3e7680047eaad1e",
+  "weights_manifest_sha256": "867dc4210676484102b3703e2fe8fcf161680dedb5318eaa6782ca4f53f4de1c",
+  "config": {
+    "num_layers": 28,
+    "hidden_size": 1024,
+    "intermediate_size": 3072,
+    "query_heads": 16,
+    "kv_heads": 8,
+    "head_dim": 128,
+    "vocab_size": 151936,
+    "max_sequence_length": 40960,
+    "rope_theta": 1000000,
+    "rms_norm_eps": 1e-06
+  },
+  "scope": "Prefix through first layer K/V, not complete inference"
+}

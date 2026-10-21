@@ -1,0 +1,50 @@
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 0.8812 seconds
+
+  ----Wall Time----  ----Name----
+    0.5857 ( 66.5%)  Parser
+    0.0613 (  7.0%)  'func.func' Pipeline
+    0.0073 (  0.8%)    RemoveBootstrap
+    0.0340 (  3.9%)    GreedyBootstrapPlacement
+    0.0200 (  2.3%)    EarlyModswitch
+    0.0411 (  4.7%)  Canonicalizer
+    0.0272 (  3.1%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0136 (  1.5%)  CSE
+    0.0233 (  2.6%)  Canonicalizer
+    0.0828 (  9.4%)  'func.func' Pipeline
+    0.0393 (  4.5%)    EarthToCKKSConversion
+    0.0132 (  1.5%)    UpscaleToMulcpConversion
+    0.0125 (  1.4%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0178 (  2.0%)    Canonicalizer
+    0.0427 (  4.8%)  Output
+    0.0020 (  0.2%)  Rest
+    0.8812 (100.0%)  Total
+Greedy bootstrap boundaries: 95
+Number of Bootstrapping: 152
+	Command being timed: "/home/xuming/poseidon-threshold-rescale-20261021/run-hecate-opt.sh --dacapo-precompile --boot-placement=greedy --ckks-config=/home/xuming/poseidon-model-regression-20261021/compiler-current.json --waterline=40 --bootstrap-scale=45 --mlir-timing --mlir-disable-threading --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 /home/xuming/poseidon-model-regression-20261021/traced/ResNet20.mlirbc -o /home/xuming/poseidon-model-regression-20261021/resnet20-after/greedy/logical.mlir"
+	User time (seconds): 0.55
+	System time (seconds): 0.42
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.98
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1203200
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 159994
+	Voluntary context switches: 1
+	Involuntary context switches: 15
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 4736
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,1 @@
+/home/xuming/poseidon-model-regression-20261021/source/ResNet20.py:175:0: error: optimized PARS placement does not support the threshold scale policy; select --boot-placement=greedy or depth-dp

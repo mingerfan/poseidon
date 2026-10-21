@@ -1,0 +1,96 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "_hecate_qwen3_prefix",
+  "memory_planned": true,
+  "places": [
+    {
+      "distinct_allocation_bytes": 6029312,
+      "peak": {
+        "ciphertext_bytes": 6029312,
+        "instruction_ordinal": null,
+        "largest_objects": [
+          {
+            "bytes": 6029312,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          }
+        ],
+        "operation": "external_inputs",
+        "phase": "external_inputs",
+        "plaintext_bytes": 0
+      },
+      "peak_bytes": 6029312,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 6029312
+    },
+    {
+      "distinct_allocation_bytes": 26080837632,
+      "peak": {
+        "ciphertext_bytes": 195952640,
+        "instruction_ordinal": 4822,
+        "largest_objects": [
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "324"
+          },
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "325"
+          },
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "330"
+          },
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "337"
+          },
+          {
+            "bytes": 3014656,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "344"
+          }
+        ],
+        "operation": "ckks.mulcp",
+        "phase": "execution",
+        "plaintext_bytes": 4188798976
+      },
+      "peak_bytes": 4384751616,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 2097152
+    }
+  ],
+  "poly_degree": 16384,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

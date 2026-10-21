@@ -1,0 +1,7 @@
+{
+  "source": "qwen-full-after/depth-dp/logical.mlir",
+  "boots": 130298,
+  "boots_without_later_arithmetic": 49167,
+  "definition": "Boot result reaches Return only through Boot/ModSwitch/Rescale/Relinearize; Add/Mul/Rotate/Negate count as arithmetic",
+  "scope": "Use-def structural diagnosis, not a proposed transformed executable"
+}

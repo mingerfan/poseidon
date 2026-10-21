@@ -1,0 +1,7 @@
+{
+  "source": "qwen-full-after/greedy/logical.mlir",
+  "boots": 10814,
+  "boots_without_later_arithmetic": 0,
+  "definition": "Boot result reaches Return only through Boot/ModSwitch/Rescale/Relinearize; Add/Mul/Rotate/Negate count as arithmetic",
+  "scope": "Use-def structural diagnosis, not a proposed transformed executable"
+}

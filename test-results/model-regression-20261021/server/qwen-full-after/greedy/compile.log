@@ -1,0 +1,50 @@
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 475.0781 seconds
+
+  ----Wall Time----  ----Name----
+  277.2824 ( 58.4%)  Parser
+   44.7016 (  9.4%)  'func.func' Pipeline
+    6.4909 (  1.4%)    RemoveBootstrap
+   24.3238 (  5.1%)    GreedyBootstrapPlacement
+   13.8869 (  2.9%)    EarlyModswitch
+   30.9314 (  6.5%)  Canonicalizer
+   21.5304 (  4.5%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+   12.7328 (  2.7%)  CSE
+   17.2006 (  3.6%)  Canonicalizer
+   48.3641 ( 10.2%)  'func.func' Pipeline
+   26.0176 (  5.5%)    EarthToCKKSConversion
+    6.1049 (  1.3%)    UpscaleToMulcpConversion
+    7.3222 (  1.5%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    8.9193 (  1.9%)    Canonicalizer
+   20.2986 (  4.3%)  Output
+    0.9502 (  0.2%)  Rest
+  475.0781 (100.0%)  Total
+Greedy bootstrap boundaries: 8263
+Number of Bootstrapping: 10814
+	Command being timed: "/home/xuming/poseidon-threshold-rescale-20261021/run-hecate-opt.sh --dacapo-precompile --boot-placement=greedy --ckks-config=/home/xuming/poseidon-model-regression-20261021/compiler-qwen-current.json --waterline=40 --bootstrap-scale=45 --mlir-timing --mlir-disable-threading --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 /home/xuming/poseidon-waterline-20261013/qwen3-traced-bsgs/trace_qwen3.mlirbc -o /home/xuming/poseidon-model-regression-20261021/qwen-full-after/greedy/logical.mlir"
+	User time (seconds): 237.54
+	System time (seconds): 112.96
+	Percent of CPU this job got: 72%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:01.10
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 124574580
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 10
+	Minor (reclaiming a frame) page faults: 23189857
+	Voluntary context switches: 437154
+	Involuntary context switches: 2732
+	Swaps: 0
+	File system inputs: 119830728
+	File system outputs: 1731608
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

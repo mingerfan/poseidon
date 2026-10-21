@@ -1,0 +1,15 @@
+[
+  "/home/xuming/poseidon-threshold-rescale-20261021/run-hecate-opt.sh",
+  "--dacapo-precompile",
+  "--boot-placement=greedy",
+  "--ckks-config=/home/xuming/poseidon-model-regression-20261021/compiler-current.json",
+  "--waterline=40",
+  "--bootstrap-scale=45",
+  "--mlir-timing",
+  "--mlir-disable-threading",
+  "--mlir-print-op-on-diagnostic=false",
+  "--mlir-elide-elementsattrs-if-larger=16",
+  "/home/xuming/poseidon-model-regression-20261021/traced/ResNet20.mlirbc",
+  "-o",
+  "/home/xuming/poseidon-model-regression-20261021/resnet20-after/greedy/logical.mlir"
+]

@@ -1,0 +1,60 @@
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=2.300000e+01 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=7.216500e+03 MiB
+runtime-plan-io {"build_seconds":7.921162168,"bundle_bytes":592183296,"bundle_format_version":2,"bundle_reuse_verify_seconds":0.0,"constant_conversion_seconds":3.841454795999999,"constant_hash_seconds":3.432713747999998,"constant_write_seconds":0.38874393399999974,"duplicate_hits":873,"export_seconds":7.92689041,"instructions":38731,"layout_seconds":0.01197958,"manifest_bytes":108595,"manifest_seconds":0.001704949,"plan_bytes":2201492,"plan_format":"binary","plan_hash_seconds":0.0,"plan_serialize_seconds":null,"plan_sha256":"","plan_write_seconds":0.001481572,"pretty":false,"process_peak_rss_bytes":1260331008,"rss_end_bytes":1261191168,"rss_start_bytes":1259970560,"unique_blobs":2259,"values":19497}
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 9.6976 seconds
+
+  ----Wall Time----  ----Name----
+    0.6415 (  6.6%)  Parser
+    0.0629 (  0.6%)  'func.func' Pipeline
+    0.0073 (  0.1%)    RemoveBootstrap
+    0.0349 (  0.4%)    GreedyBootstrapPlacement
+    0.0206 (  0.2%)    EarlyModswitch
+    0.0417 (  0.4%)  Canonicalizer
+    0.0297 (  0.3%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0143 (  0.1%)  CSE
+    0.0249 (  0.3%)  Canonicalizer
+    8.5886 ( 88.6%)  'func.func' Pipeline
+    0.0429 (  0.4%)    EarthToCKKSConversion
+    0.0135 (  0.1%)    UpscaleToMulcpConversion
+    0.0130 (  0.1%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0182 (  0.2%)    Canonicalizer
+    0.0321 (  0.3%)    MaterializePhysicalLevels
+    0.1546 (  1.6%)    AssignPlacement
+    0.0524 (  0.5%)    MaterializeCommunication
+    0.1381 (  1.4%)    PlanPlaintextWaterline
+    0.0726 (  0.7%)    PlanRuntimeMemory
+    0.0685 (  0.7%)    EstimateRuntimeMemory
+    7.9828 ( 82.3%)    EmitRuntimePlan
+    0.2830 (  2.9%)  Output
+    0.0077 (  0.1%)  Rest
+    9.6976 (100.0%)  Total
+Greedy bootstrap boundaries: 95
+Number of Bootstrapping: 152
+	Command being timed: "/home/xuming/poseidon-model-regression-20261021/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-model-regression-20261021/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu /home/xuming/poseidon-model-regression-20261021/toolchain/bin/hecate-opt --dacapo --boot-placement=greedy --ckks-config=/home/xuming/poseidon-model-regression-20261021/resnet-runtime-profiles/compiler-profile.json --waterline=40 --mlir-timing --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 --runtime-plan-id=3101 --runtime-plan-target-id=poseidon-ckks-gpu --runtime-plan-capability-version=1 --runtime-plan-operator-spec-id=poseidon-ckks-gpu-16384-q50-estimated-v1 --runtime-plan-operator-spec-version=1 --runtime-plan-operator-spec-sha256=sha256:97a76a1e6f6012ab56800d77a78bdf815137354505222fdcd50be435df680af3 --runtime-plan-context-id=poseidon-ckks-gpu-16384-q50-estimated --runtime-plan-ntt=true --runtime-plan-boot-profile=poseidon-gpu-degree58-da2-scale45 --runtime-plan-boot-implementation=native --runtime-plan-inline-payload-max-bytes=4096 --runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-model-regression-20261021/resnet-runtime-profiles/operator-spec.json --runtime-plan-levels-per-logical-level=1 --runtime-plan-device-count=1 --runtime-plan-device-counts=1 --runtime-plan-operator-spec-path=/home/xuming/poseidon-model-regression-20261021/resnet-runtime-profiles/operator-spec.json --runtime-plan-communication-profile-path=/home/xuming/poseidon-model-regression-20261021/resnet-runtime-profiles/communication-profile.json --runtime-plan-memory=true --runtime-plan-memory-reuse=true --runtime-plan-memory-report=true --runtime-plan-plaintext-schedule=waterline --runtime-plan-prepare-backend=auto --runtime-plan-gpu-budget-bytes=17179869184 --runtime-plan-reserve-bytes=6442450944 --runtime-plan-workspace-bytes-per-op=1073741824 --runtime-plan-host-budget-bytes=68719476736 --runtime-plan-pinned-budget-bytes=1073741824 --runtime-plan-raw-budget-bytes=67108864 --runtime-plan-waterline-fraction=0.5 --runtime-plan-lookahead-groups=128 --runtime-plan-format=binary --runtime-plan-bundle-format=pack --runtime-plan-report-io=true /home/xuming/poseidon-model-regression-20261021/traced/ResNet20.mlirbc -o /home/xuming/poseidon-model-regression-20261021/resnet20-runtime-greedy/model.mlir --bootstrap-scale=45"
+	User time (seconds): 8.74
+	System time (seconds): 1.06
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.81
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1237320
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 238448
+	Voluntary context switches: 2
+	Involuntary context switches: 37
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 1181944
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

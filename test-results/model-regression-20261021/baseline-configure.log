@@ -1,0 +1,98 @@
+-- The CXX compiler identification is Clang 18.1.8
+-- The C compiler identification is Clang 18.1.8
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /nix/store/i3v1x1v3hzcmsx45q2i60g0248n40r3h-clang-wrapper-18.1.8/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /nix/store/i3v1x1v3hzcmsx45q2i60g0248n40r3h-clang-wrapper-18.1.8/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Could NOT find FFI (missing: FFI_LIBRARIES HAVE_FFI_CALL) 
+-- Could NOT find Terminfo (missing: Terminfo_LIBRARIES Terminfo_LINKABLE) 
+-- Could NOT find ZLIB (missing: ZLIB_LIBRARY ZLIB_INCLUDE_DIR) 
+-- Found LibXml2: /usr/lib/libxml2.so (found version "2.15.4")
+-- Could NOT find OpenMP_C (missing: OpenMP_C_FLAGS OpenMP_C_LIB_NAMES) 
+-- Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES) 
+-- Could NOT find OpenMP (missing: OpenMP_C_FOUND OpenMP_CXX_FOUND) 
+-- Linker detection: GNU ld
+-- Performing Test LLVM_LIBSTDCXX_MIN
+-- Performing Test LLVM_LIBSTDCXX_MIN - Success
+-- Performing Test LLVM_LIBSTDCXX_SOFT_ERROR
+-- Performing Test LLVM_LIBSTDCXX_SOFT_ERROR - Success
+-- Performing Test C_SUPPORTS_FPIC
+-- Performing Test C_SUPPORTS_FPIC - Success
+-- Performing Test CXX_SUPPORTS_FPIC
+-- Performing Test CXX_SUPPORTS_FPIC - Success
+-- Building with -fPIC
+-- Performing Test C_SUPPORTS_FNO_SEMANTIC_INTERPOSITION
+-- Performing Test C_SUPPORTS_FNO_SEMANTIC_INTERPOSITION - Success
+-- Performing Test CXX_SUPPORTS_FNO_SEMANTIC_INTERPOSITION
+-- Performing Test CXX_SUPPORTS_FNO_SEMANTIC_INTERPOSITION - Success
+-- Performing Test SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG
+-- Performing Test SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG - Success
+-- Performing Test C_SUPPORTS_WERROR_DATE_TIME
+-- Performing Test C_SUPPORTS_WERROR_DATE_TIME - Success
+-- Performing Test CXX_SUPPORTS_WERROR_DATE_TIME
+-- Performing Test CXX_SUPPORTS_WERROR_DATE_TIME - Success
+-- Performing Test C_SUPPORTS_WERROR_UNGUARDED_AVAILABILITY_NEW
+-- Performing Test C_SUPPORTS_WERROR_UNGUARDED_AVAILABILITY_NEW - Success
+-- Performing Test CXX_SUPPORTS_WERROR_UNGUARDED_AVAILABILITY_NEW
+-- Performing Test CXX_SUPPORTS_WERROR_UNGUARDED_AVAILABILITY_NEW - Success
+-- Performing Test C_SUPPORTS_CMAKE_CXX_FLAGS
+-- Performing Test C_SUPPORTS_CMAKE_CXX_FLAGS - Failed
+-- Performing Test CXX_SUPPORTS_CMAKE_CXX_FLAGS
+-- Performing Test CXX_SUPPORTS_CMAKE_CXX_FLAGS - Failed
+-- Performing Test CXX_SUPPORTS_MISSING_FIELD_INITIALIZERS_FLAG
+-- Performing Test CXX_SUPPORTS_MISSING_FIELD_INITIALIZERS_FLAG - Success
+-- Performing Test C_SUPPORTS_IMPLICIT_FALLTHROUGH_FLAG
+-- Performing Test C_SUPPORTS_IMPLICIT_FALLTHROUGH_FLAG - Success
+-- Performing Test CXX_SUPPORTS_IMPLICIT_FALLTHROUGH_FLAG
+-- Performing Test CXX_SUPPORTS_IMPLICIT_FALLTHROUGH_FLAG - Success
+-- Performing Test C_SUPPORTS_COVERED_SWITCH_DEFAULT_FLAG
+-- Performing Test C_SUPPORTS_COVERED_SWITCH_DEFAULT_FLAG - Success
+-- Performing Test CXX_SUPPORTS_COVERED_SWITCH_DEFAULT_FLAG
+-- Performing Test CXX_SUPPORTS_COVERED_SWITCH_DEFAULT_FLAG - Success
+-- Performing Test CXX_SUPPORTS_CLASS_MEMACCESS_FLAG
+-- Performing Test CXX_SUPPORTS_CLASS_MEMACCESS_FLAG - Failed
+-- Performing Test CXX_SUPPORTS_NOEXCEPT_TYPE_FLAG
+-- Performing Test CXX_SUPPORTS_NOEXCEPT_TYPE_FLAG - Success
+-- Performing Test CXX_WONT_WARN_ON_FINAL_NONVIRTUALDTOR
+-- Performing Test CXX_WONT_WARN_ON_FINAL_NONVIRTUALDTOR - Success
+-- Performing Test CXX_SUPPORTS_SUGGEST_OVERRIDE_FLAG
+-- Performing Test CXX_SUPPORTS_SUGGEST_OVERRIDE_FLAG - Success
+-- Performing Test CXX_WSUGGEST_OVERRIDE_ALLOWS_ONLY_FINAL
+-- Performing Test CXX_WSUGGEST_OVERRIDE_ALLOWS_ONLY_FINAL - Success
+-- Performing Test C_WCOMMENT_ALLOWS_LINE_WRAP
+-- Performing Test C_WCOMMENT_ALLOWS_LINE_WRAP - Success
+-- Performing Test C_SUPPORTS_STRING_CONVERSION_FLAG
+-- Performing Test C_SUPPORTS_STRING_CONVERSION_FLAG - Success
+-- Performing Test CXX_SUPPORTS_STRING_CONVERSION_FLAG
+-- Performing Test CXX_SUPPORTS_STRING_CONVERSION_FLAG - Success
+-- Performing Test C_SUPPORTS_MISLEADING_INDENTATION_FLAG
+-- Performing Test C_SUPPORTS_MISLEADING_INDENTATION_FLAG - Success
+-- Performing Test CXX_SUPPORTS_MISLEADING_INDENTATION_FLAG
+-- Performing Test CXX_SUPPORTS_MISLEADING_INDENTATION_FLAG - Success
+-- Performing Test C_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG
+-- Performing Test C_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG - Success
+-- Performing Test CXX_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG
+-- Performing Test CXX_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG - Success
+-- Performing Test LINKER_SUPPORTS_COLOR_DIAGNOSTICS
+-- Performing Test LINKER_SUPPORTS_COLOR_DIAGNOSTICS - Failed
+-- Performing Test C_SUPPORTS_FNO_FUNCTION_SECTIONS
+-- Performing Test C_SUPPORTS_FNO_FUNCTION_SECTIONS - Success
+-- Performing Test C_SUPPORTS_FFUNCTION_SECTIONS
+-- Performing Test C_SUPPORTS_FFUNCTION_SECTIONS - Success
+-- Performing Test CXX_SUPPORTS_FFUNCTION_SECTIONS
+-- Performing Test CXX_SUPPORTS_FFUNCTION_SECTIONS - Success
+-- Performing Test C_SUPPORTS_FDATA_SECTIONS
+-- Performing Test C_SUPPORTS_FDATA_SECTIONS - Success
+-- Performing Test CXX_SUPPORTS_FDATA_SECTIONS
+-- Performing Test CXX_SUPPORTS_FDATA_SECTIONS - Success
+-- Looking for os_signpost_interval_begin
+-- Looking for os_signpost_interval_begin - not found
+-- Configuring done (7.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/poseidon-model-baseline-20261021/build

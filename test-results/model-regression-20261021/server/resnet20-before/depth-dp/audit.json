@@ -1,0 +1,47 @@
+{
+  "source": "resnet20-before/depth-dp/logical.mlir",
+  "stage": "unplaced logical CKKS; nominal scales",
+  "physical_anchor": 22,
+  "physical_lower_bound": 4,
+  "levels_per_logical_level": 5,
+  "logical_base": 4,
+  "boot_count": 980,
+  "rescale_q": 22385,
+  "modswitch_q": 6325,
+  "minimum_physical_level": 7,
+  "output_states": [
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    }
+  ],
+  "operations": {
+    "encode": 2266,
+    "modswitchc": 886,
+    "rotatec": 1709,
+    "mulcp": 4477,
+    "rescalec": 4477,
+    "addcc": 3468,
+    "addcp": 229,
+    "bootstrapc": 980,
+    "mulcc": 513,
+    "relinearize": 513,
+    "negatec": 76
+  },
+  "boot_input_states": [
+    {
+      "level": 7,
+      "scale_log2": 40,
+      "count": 980
+    }
+  ],
+  "boot_output_states": [
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 980
+    }
+  ],
+  "state_audit_passed": true
+}

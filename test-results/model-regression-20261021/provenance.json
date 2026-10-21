@@ -1,0 +1,12 @@
+{
+  "root_commit": "c279df0a3e46a4102b872035da31852fa8353be2",
+  "runtime_commit": "56167f5caca9ce9f7a785f6f40598155cf67120c",
+  "compiler_after_commit": "c5fbdf9188c5c86813f76b2e24fc3854d0d568ab",
+  "compiler_baseline_commit": "e205bd57f13dede64d84cb0816190bc6f2d113fa",
+  "baseline_patch_sha256": "343bd758a0c579f1a924423c5971661054a5e0e2384413d1db1abae21f5bca9d",
+  "baseline_binary_sha256": "92dde839ae17624e70694ce4dec99e4194e5743f7de8b85acb6d16a7559c0123",
+  "current_binary_sha256": "ed9a3eae50e8e8c0e303e5d3cc0867737adc999c402256ae7633364f313b275f",
+  "gpu_uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+  "gpu_physical_index": 2,
+  "scope": "Compiler/FP64 model regressions plus bounded Qwen GPU prefix; addition precision compensation deferred"
+}

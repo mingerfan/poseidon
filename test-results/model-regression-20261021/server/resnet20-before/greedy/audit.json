@@ -1,0 +1,47 @@
+{
+  "source": "resnet20-before/greedy/logical.mlir",
+  "stage": "unplaced logical CKKS; nominal scales",
+  "physical_anchor": 22,
+  "physical_lower_bound": 4,
+  "levels_per_logical_level": 5,
+  "logical_base": 4,
+  "boot_count": 808,
+  "rescale_q": 21525,
+  "modswitch_q": 2705,
+  "minimum_physical_level": 7,
+  "output_states": [
+    {
+      "components": 2,
+      "scale_log2": 40,
+      "physical_level": 7
+    }
+  ],
+  "operations": {
+    "rotatec": 1709,
+    "encode": 2268,
+    "mulcp": 4305,
+    "rescalec": 4305,
+    "addcc": 3468,
+    "addcp": 229,
+    "bootstrapc": 808,
+    "modswitchc": 475,
+    "mulcc": 513,
+    "relinearize": 513,
+    "negatec": 76
+  },
+  "boot_input_states": [
+    {
+      "level": 7,
+      "scale_log2": 40,
+      "count": 808
+    }
+  ],
+  "boot_output_states": [
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 808
+    }
+  ],
+  "state_audit_passed": true
+}

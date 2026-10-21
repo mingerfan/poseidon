@@ -1,0 +1,10 @@
+{
+  "reason": "Experiment compile wall-time budget; not a reported compiler error",
+  "limit_seconds": 900,
+  "last_status": {
+    "devices": 1,
+    "pid": 2629504,
+    "elapsed_seconds": 901.1606877500017,
+    "returncode": null
+  }
+}

@@ -1,0 +1,10 @@
+[
+  "/home/xuming/poseidon-threshold-rescale-20261021/toolchain/lib/ld-linux-x86-64.so.2",
+  "--library-path",
+  "/home/xuming/poseidon-model-regression-20261021/frontend/lib:/home/xuming/poseidon-threshold-rescale-20261021/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+  "/home/xuming/poseidon-model-regression-20261021/replay-boot-schedule",
+  "/home/xuming/poseidon-model-regression-20261021/traced/ResNet20.mlirbc",
+  "/home/xuming/poseidon-model-regression-20261021/compiler-current.json",
+  "/home/xuming/poseidon-model-regression-20261021/resnet20-runtime-optimized/selected-schedule.mlirattr",
+  "/home/xuming/poseidon-model-regression-20261021/resnet20-runtime-optimized/scheduled.mlirbc"
+]

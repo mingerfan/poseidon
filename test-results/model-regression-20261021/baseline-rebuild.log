@@ -1,0 +1,3 @@
+[1/3] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/GreedyBootstrapPlacement.cpp.o
+[2/3] Linking CXX static library lib/libEarthTransforms.a
+[3/3] Linking CXX executable bin/hecate-opt

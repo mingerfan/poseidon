@@ -1,0 +1,60 @@
+runtime memory _hecate_qwen3_prefix rank=0 device=-1 peak=5.750000e+00 MiB
+runtime memory _hecate_qwen3_prefix rank=0 device=0 peak=6.124875e+03 MiB
+runtime-plan-io {"build_seconds":3.472608627,"bundle_bytes":268304384,"bundle_format_version":2,"bundle_reuse_verify_seconds":0.0,"constant_conversion_seconds":1.6126335940000016,"constant_hash_seconds":1.473501761000001,"constant_write_seconds":0.1823324040000001,"duplicate_hits":0,"export_seconds":3.47940392,"instructions":32937,"layout_seconds":0.011023768,"manifest_bytes":196679,"manifest_seconds":0.002638285,"plan_bytes":1994928,"plan_format":"binary","plan_hash_seconds":0.0,"plan_serialize_seconds":null,"plan_sha256":"","plan_write_seconds":0.001475073,"pretty":false,"process_peak_rss_bytes":618737664,"rss_end_bytes":618958848,"rss_start_bytes":617742336,"unique_blobs":4094,"values":16501}
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 4.6703 seconds
+
+  ----Wall Time----  ----Name----
+    0.3066 (  6.6%)  Parser
+    0.0667 (  1.4%)  'func.func' Pipeline
+    0.0094 (  0.2%)    RemoveBootstrap
+    0.0442 (  0.9%)    GreedyBootstrapPlacement
+    0.0131 (  0.3%)    EarlyModswitch
+    0.0260 (  0.6%)  Canonicalizer
+    0.0144 (  0.3%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0134 (  0.3%)  CSE
+    0.0256 (  0.5%)  Canonicalizer
+    4.0255 ( 86.2%)  'func.func' Pipeline
+    0.0384 (  0.8%)    EarthToCKKSConversion
+    0.0093 (  0.2%)    UpscaleToMulcpConversion
+    0.0028 (  0.1%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0133 (  0.3%)    Canonicalizer
+    0.0219 (  0.5%)    MaterializePhysicalLevels
+    0.1225 (  2.6%)    AssignPlacement
+    0.0478 (  1.0%)    MaterializeCommunication
+    0.1295 (  2.8%)    PlanPlaintextWaterline
+    0.0625 (  1.3%)    PlanRuntimeMemory
+    0.0649 (  1.4%)    EstimateRuntimeMemory
+    3.5124 ( 75.2%)    EmitRuntimePlan
+    0.1841 (  3.9%)  Output
+    0.0052 (  0.1%)  Rest
+    4.6703 (100.0%)  Total
+Depth-DP bootstrap boundaries: 0
+Number of Bootstrapping: 0
+	Command being timed: "/home/xuming/poseidon-model-regression-20261021/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-model-regression-20261021/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu /home/xuming/poseidon-model-regression-20261021/toolchain/bin/hecate-opt --dacapo --boot-placement=depth-dp --ckks-config=/home/xuming/poseidon-model-regression-20261021/qwen-projection-plan/gpu1/compiler-profile.json --waterline=40 --mlir-timing --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 --runtime-plan-id=3101 --runtime-plan-target-id=poseidon-ckks-gpu --runtime-plan-capability-version=1 --runtime-plan-operator-spec-id=poseidon-ckks-gpu-16384-q50-estimated-v1 --runtime-plan-operator-spec-version=1 --runtime-plan-operator-spec-sha256=sha256:dbcc205ec4aa47024d5a6c4790e040f59b94793bdc93f6ac5583d8795010a312 --runtime-plan-context-id=poseidon-ckks-gpu-16384-q50-estimated --runtime-plan-ntt=true --runtime-plan-boot-profile=poseidon-gpu-degree58-da2-scale45 --runtime-plan-boot-implementation=native --runtime-plan-inline-payload-max-bytes=4096 --runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-model-regression-20261021/profiles/operator-spec.json --runtime-plan-levels-per-logical-level=1 --runtime-plan-device-count=1 --runtime-plan-device-counts=1 --runtime-plan-operator-spec-path=/home/xuming/poseidon-model-regression-20261021/profiles/operator-spec.json --runtime-plan-communication-profile-path=/home/xuming/poseidon-model-regression-20261021/profiles/communication-profile.json --runtime-plan-memory=true --runtime-plan-memory-reuse=true --runtime-plan-memory-report=true --runtime-plan-plaintext-schedule=waterline --runtime-plan-prepare-backend=auto --runtime-plan-gpu-budget-bytes=17179869184 --runtime-plan-reserve-bytes=6442450944 --runtime-plan-workspace-bytes-per-op=1073741824 --runtime-plan-host-budget-bytes=68719476736 --runtime-plan-pinned-budget-bytes=1073741824 --runtime-plan-raw-budget-bytes=67108864 --runtime-plan-waterline-fraction=0.5 --runtime-plan-lookahead-groups=128 --runtime-plan-format=binary --runtime-plan-bundle-format=pack --runtime-plan-report-io=true /home/xuming/poseidon-model-regression-20261021/qwen-projection/trace-qwen-prefix.mlirbc -o /home/xuming/poseidon-model-regression-20261021/qwen-projection-plan/gpu1/qwen3.mlir --bootstrap-scale=45"
+	User time (seconds): 4.31
+	System time (seconds): 0.40
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.72
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 610380
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 84666
+	Voluntary context switches: 2
+	Involuntary context switches: 13
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 545592
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

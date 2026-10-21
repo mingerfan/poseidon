@@ -1,0 +1,47 @@
+{
+  "boots": 980,
+  "clear_runtime": {
+    "bad_slots": 0,
+    "max_abs_error": 0.0,
+    "passed": true,
+    "scope": "FP64 MockVecApi; ideal identity Boot; no CKKS noise"
+  },
+  "compute_operations": {
+    "AddCC": 3468,
+    "AddCP": 229,
+    "Boot": 980,
+    "ModSwitch": 886,
+    "MulCC": 513,
+    "MulCP": 4477,
+    "Negate": 76,
+    "Relinearize": 513,
+    "Rescale": 4477,
+    "Rotate": 1709
+  },
+  "format_version": 4,
+  "modswitch_q": 6325,
+  "outputs": [
+    {
+      "checked_slots": 10,
+      "level": 7,
+      "logits": [
+        -6.606964289872403,
+        2.3473489890440358,
+        1.8511820890930986,
+        22.45786668323259,
+        -5.851935676691774,
+        5.613843153806358,
+        -3.4807083062027386,
+        -7.606758672632609,
+        -2.0131181348360907,
+        -6.706661525567593
+      ],
+      "max_abs_error": 0.0,
+      "scale_log2": 40.0,
+      "value_id": 19594
+    }
+  ],
+  "rescale_q": 22385,
+  "rounded_one_encodings": 0,
+  "verifier_passed": true
+}

@@ -1,0 +1,55 @@
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 856.9024 seconds
+
+  ----Wall Time----  ----Name----
+    0.5967 (  0.1%)  Parser
+  856.0194 ( 99.9%)  'func.func' Pipeline
+    0.0073 (  0.0%)    RemoveBootstrap
+  136.1710 ( 15.9%)    BypassDetection
+    0.0643 (  0.0%)      (A) hecate::CandidateAnalysis
+    0.1207 (  0.0%)    CandidateSelection
+  719.6442 ( 84.0%)    DaCapoPlanner
+    0.0144 (  0.0%)    BootstrapPlacement
+    0.0356 (  0.0%)    ProactiveRescaling
+    0.0261 (  0.0%)    EarlyModswitch
+    0.0512 (  0.0%)  Canonicalizer
+    0.0330 (  0.0%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0157 (  0.0%)  CSE
+    0.0305 (  0.0%)  Canonicalizer
+    0.0988 (  0.0%)  'func.func' Pipeline
+    0.0495 (  0.0%)    EarthToCKKSConversion
+    0.0150 (  0.0%)    UpscaleToMulcpConversion
+    0.0143 (  0.0%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0199 (  0.0%)    Canonicalizer
+    0.0524 (  0.0%)  Output
+    0.0030 (  0.0%)  Rest
+  856.9024 (100.0%)  Total
+Estimated Latency: 2.749524e+00 (sec)
+Number of Bootstrapping: 57
+	Command being timed: "/home/xuming/poseidon-threshold-rescale-20261021/run-hecate-opt.sh --dacapo-precompile --boot-placement=optimized --ckks-config=/home/xuming/poseidon-model-regression-20261021/compiler-current.json --waterline=40 --bootstrap-scale=45 --mlir-timing --mlir-disable-threading --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 /home/xuming/poseidon-model-regression-20261021/traced/ResNet20.mlirbc -o /home/xuming/poseidon-model-regression-20261021/resnet20-after/optimized/logical.mlir"
+	User time (seconds): 854.90
+	System time (seconds): 1.60
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 14:17.07
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1278184
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 218720
+	Voluntary context switches: 5653
+	Involuntary context switches: 2636
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 4584
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

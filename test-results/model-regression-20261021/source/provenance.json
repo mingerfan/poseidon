@@ -1,0 +1,9 @@
+{
+  "branch": "origin/benchmark",
+  "commit": "6f74e2baa8e7c3bdf198cf33a312b59ad8e943ac",
+  "files": {
+    "ResNet20.py": "5fc5cd08ed924166569a30faa198388779a90e3dcd72095f8c0a2f18f3957c30",
+    "check_semantics.py": "039a02547715be7fbd25f2de53e8584ab2ffaa1cb09f4d615265a4bff14d2e43",
+    "fixtures/native-cpu-reference.json": "9dd8608b14ff2a827887505cbcec1ab58cb7ed0edf1a0ce3c15d20b4179ea632"
+  }
+}

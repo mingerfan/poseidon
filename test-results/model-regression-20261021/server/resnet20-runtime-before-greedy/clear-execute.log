@@ -1,0 +1,49 @@
+waterline GPU0 front_peak=36175872 plain_peak=19660800 remaining_front=262144 remaining_plain=0
+waterline shared host_peak=8650752 pinned_peak=0 raw_peak=0
+{
+  "boots": 808,
+  "clear_runtime": {
+    "bad_slots": 0,
+    "max_abs_error": 0.0,
+    "passed": true,
+    "scope": "FP64 MockVecApi; ideal identity Boot; no CKKS noise"
+  },
+  "compute_operations": {
+    "AddCC": 3468,
+    "AddCP": 229,
+    "Boot": 808,
+    "ModSwitch": 475,
+    "MulCC": 513,
+    "MulCP": 4305,
+    "Negate": 76,
+    "Relinearize": 513,
+    "Rescale": 4305,
+    "Rotate": 1709
+  },
+  "format_version": 4,
+  "modswitch_q": 2705,
+  "outputs": [
+    {
+      "checked_slots": 10,
+      "level": 7,
+      "logits": [
+        -6.606964289872403,
+        2.3473489890440358,
+        1.8511820890930986,
+        22.45786668323259,
+        -5.851935676691774,
+        5.613843153806358,
+        -3.4807083062027386,
+        -7.606758672632609,
+        -2.0131181348360907,
+        -6.706661525567593
+      ],
+      "max_abs_error": 0.0,
+      "scale_log2": 40.0,
+      "value_id": 18669
+    }
+  ],
+  "rescale_q": 21525,
+  "rounded_one_encodings": 0,
+  "verifier_passed": true
+}

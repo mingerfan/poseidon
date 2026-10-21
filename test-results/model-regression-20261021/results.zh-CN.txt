@@ -1,0 +1,81 @@
+模型级回归与Boot开销对比（2026-10-21）
+
+本轮执行此前第3项：模型回归和开销比较。第4项加法精度补偿继续暂缓。
+没有改动生产编译器、GPU Boot、加法scale对齐或默认策略。新增内容为实验脚本、结果和证据。
+
+1. ResNet20 DSL来源与统一参数
+
+已核对GitHub远端：origin/benchmark = 6f74e2baa8e7c3bdf198cf33a312b59ad8e943ac。
+采用DSL/resnet20_no_hoist/ResNet20.py，真实116份resnet20_new参数、image0、原d13 ReLU多项式、边界归一化40。
+该前端不手工插入Boot或Rescale。source/保存原文件和Git来源/SHA。
+其他hsb-resnet20分支还有显式CKKS物理DSL，手工安排为18次Boot：9个残差block各2次，stem不Boot。
+该版本已有单样本完整GPU验证；N65536、Q50/P25、27个stem布局输入、起始Q32/scale40，使用原生专门的scale/rescale安排。
+18次与本轮自动optimized的57次不是同参数/同物理安排的对照；当前level22/scale45、18Q预算下尚未手工优化验证。
+benchmark分支历史报告466次使用另一套链、scale52和3Q映射，不作为这次统一参数的旧侧。
+
+本轮统一：N65536/32768 slots，初始scale40，Boot输出level22/scale45，工作下界level4，可用18个Q；Q为等宽30bit。
+旧侧使用DaCapo e205bd5，加baseline-boot-contract.patch，仅适配Boot输入/输出契约：支持声明输出45，跳过Boot前旧的强制抬到120。
+旧乘法仍强制normalize回40、rescalingFactor120、每逻辑Rescale消耗5个Q、Boot后仍normalize；保留旧放置算法。
+新侧使用c5fbdf9：阈值70，每次删除一个Q并保留余下scale，Boot45无需额外Rescale。
+旧侧5Q粒度在18Q预算里实际只能分配15Q；这是旧管理规则的成本，未人为补偿。
+因此以下旧侧是相同模型/Boot契约下的控制实验，不是直接抄历史466次结果。
+
+2. ResNet20真实编译结果
+
+策略 | 旧Boot -> 新Boot | 旧Rescale Q -> 新Rescale Q | 旧ModSwitch Q -> 新ModSwitch Q | 新输出(level,实际scale)
+greedy | 808 -> 152 | 21525 -> 4856 | 2705 -> 5453 | (21, 55.074631007)
+depth-dp | 980 -> 113 | 22385 -> 4520 | 6325 -> 4294 | (18, 45.304837534)
+optimized | 不可比较 -> 57 | - -> 4187 | - -> 4085 | (20, 65.149447486)
+
+greedy的Boot减少81.19%，depth-dp减少88.47%。新optimized比新depth-dp再少49.56%。
+所有旧侧ResNet20输出均为level7/scale40；新侧保留真实剩余level及scale。
+累计删除Q（Rescale+ModSwitch）：greedy 24230->10309；depth-dp 28710->8814；optimized为8272。
+这些是图中各条指令成本的累计值，不是单个密文持有或沿一条路径消耗的Q数量；不包含Boot内部的Rescale/ModSwitch。
+greedy的ModSwitch累计反而增加（2705->5453）；收益来自总Q、Boot和输出剩余level，不能说所有类别都下降。
+
+五个最终RuntimePlan（旧greedy/depth-dp、新greedy/depth-dp/optimized）均通过Verifier和FP64 Runtime回放；10个logits对前端参考最大误差均为0，预测均为3。
+原DSL的输出契约只定义前10槽logits，其他槽未定义；ResNet20按此契约比较。Qwen仍检查全部槽和零尾部。
+原前端的独立slot/dense/C++ oracle验证也通过；这不等于CKKS GPU数值验证。
+optimized搜索耗时856.9秒，greedy/depth-dp约0.88/0.93秒（编译器总时间，含解析）。
+为避免重复搜索，使用编译器保存的57个cut/target在原始常量图上重放；并确认最终Boot/RescaleQ/ModSwitchQ与原搜索结果完全一致。
+optimized使用原profile估算表，2.75秒的estimated latency不是GPU实测时间。
+适配前的optimized分析版本987028e在同一40/30阈值配置下会直接拒绝，日志已保留，因此没有可比的旧optimized Boot数字。
+
+3. Qwen真实前缀与GPU2回归
+
+使用完整Qwen3-0.6B预训练权重中的第一层，真实第一token embedding；未缩小模型维度。
+归一化K/V前缀包含pre-RMSNorm、真实K/V投影、K-head RMSNorm和position0 RoPE，参考为冻结的完整28层近似FP64前向。
+旧/新四种计划的FP64 Runtime最大误差均约1.14e-13。
+
+规则/策略 | Boot | GPU通过 | GPU最大实部误差 | runtime.run毫秒（失败运行，仅记录）
+before/greedy | 141 | False | 7114.52261 | 17276.341
+before/depth-dp | 64 | False | 1299.28558 | 10474.354
+after/greedy | 21 | False | 1928.68916 | 5313.982
+after/depth-dp | 22 | False | 316.767562 | 5340.680
+
+所有GPU回归保持atol=0.001、rtol=0.0001，同时检查全部16384个输出槽的虚部和尾部。
+不含归一化/Boot的真实K/V投影单独通过：0 Boot，最大实部误差1.55e-5、最大虚部8.54e-6；参考由独立NumPy W@embedding计算。
+仅对低scale的全槽编码1模拟整数系数舍入，理想Boot的FP64重放已足以失败：新greedy 40处、最大误差11.85；新depth-dp 48处、最大误差13.14。
+这说明暂缓的加法精度问题确实影响模型；它不能解释全部GPU误差，其余数值来源尚未定位。没有据此修改加法、放宽容差或宣称完整Qwen数值通过。
+Qwen前缀optimized在900秒实验预算内未完成，返回143为实验主动终止，不是编译器诊断的错误。
+
+4. 完整28层Qwen图
+
+输入为同一份约58GiB预训练两token trace，2输入、261输出。仅运行真实Boot规划和逐值Q/scale检查；没有运行完整图的设备放置、明文或加密前向。
+旧greedy：43471 Boot，7909235 Rescale Q，46080 ModSwitch Q。
+新greedy：10814 Boot，1880861 Rescale Q，111704 ModSwitch Q。Boot减少75.12%。
+旧depth-dp：42808 Boot，7905920 Rescale Q，84870 ModSwitch Q。
+新depth-dp：130298 Boot，2376267 Rescale Q，71320 ModSwitch Q。Boot反而增加204.38%；编译895.6秒完成。
+逐值Q/scale检查通过，但这不是好的放置结果。新depth-dp中49,167次Boot的结果只通过管理节点和后续Boot流向Return，没有后续算术消费者；新greedy同项为0。
+这与当前depth-dp在每个边界无条件刷新全部live值（含已完成输出）的实现吻合，是后续插入策略修复的直接线索；尚未修改或验证删除这些Boot后的可执行计划。
+因此本轮不能得出“新规则在所有策略和模型上都减少Boot”的结论。
+
+5. 适用范围、证据与清理
+
+GPU实测全部固定188Server物理GPU2（UUID GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6）。CUDA屏蔽后日志中的GPU0/cuda_device0是该物理GPU2的逻辑编号。
+GPU测试为现有N16384、Q50/P8、sec_level_type::none的数值上下文；不代表安全参数认证。ResNet20 N65536只做编译和FP64回归。
+本轮单次结果，部分CPU编译并行；未把耗时当作严格性能基准，尤其不能用数值失败运行证明性能收益。
+server/保留原命令、profile、日志、逐值状态统计、压缩的真实RuntimePlan及完整解密输出；大权重和bundle不重复入库。
+logical.mlir.gz为省略常量的审计文本，不能用于重新编译。实际源由模型DSL及真实权重生成。
+baseline-boot-contract.patch、provenance.json、server/source-bindings.json记录版本、补丁、二进制和输入绑定。
+本地临时旧编译器worktree已删除。服务器临时工作区已在结果归档并核对SHA后删除；保留的证据在当前仓库及188Server的test-results/model-regression-20261021。

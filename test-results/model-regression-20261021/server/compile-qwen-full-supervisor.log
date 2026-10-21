@@ -1,0 +1,2 @@
+{"case": "/home/xuming/poseidon-model-regression-20261021/qwen-full-after/greedy", "returncode": 0, "elapsed_seconds": 482.99568479700247, "timed_out": false, "pid": 2628872}
+{"case": "/home/xuming/poseidon-model-regression-20261021/qwen-full-after/depth-dp", "returncode": 0, "elapsed_seconds": 895.6253740740067, "timed_out": false, "pid": 2635356}
