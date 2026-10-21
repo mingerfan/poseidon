@@ -174,6 +174,10 @@ public:
     {
         return statistics_.get_bytes_counter().total;
     }
+    std::size_t requested_live_bytes() const noexcept
+    {
+        return statistics_.get_bytes_counter().value;
+    }
 
     ~RmmPoolScope()
     {
@@ -1265,6 +1269,68 @@ void test_device_mapping_rejections(const poseidon::PoseidonContext &context,
                                std::vector<int>{visible_device_count});
         },
         "unavailable");
+}
+
+void test_native_boot_reserve(const poseidon::PoseidonContext &context,
+                              const poseidon::RelinKeys &relin,
+                              const poseidon::GaloisKeys &galois,
+                              RmmPoolScope &pool)
+{
+    const auto before = pool.requested_live_bytes();
+    PoseidonGpuApi api(kContextId, context, kDeviceId);
+    auto r = std::make_shared<const poseidon::gpu::GpuRelinKeysData>(
+        poseidon::gpu::GpuUploader::upload_relin_keys(relin, kDeviceId));
+    auto g = std::make_shared<const poseidon::gpu::GpuGaloisKeysData>(
+        poseidon::gpu::GpuUploader::upload_galois_keys(galois, kDeviceId));
+    for (const auto *name : {"native-a", "native-b"}) {
+        poseidon::gpu::GpuBootstrapData data;
+        const auto constants_before = pool.requested_live_bytes();
+        const auto plain = [] { return poseidon::gpu::GpuPlaintextData::allocate_single_device(16, 1, kDeviceId); };
+        data.post_raise_plaintext=plain(); data.minus_i_plaintext=plain(); data.plus_i_plaintext=plain();
+        data.eval_mod.input_offset_plaintext=plain(); data.eval_mod_input_offset_plaintext=plain();
+        data.eval_mod_polynomial_plaintexts.push_back(plain()); data.double_angle_plaintexts.push_back(plain());
+        data.eval_mod.chebyshev_one_plaintexts.push_back(plain());
+        data.eval_mod.polynomial_coefficients.push_back(plain()); data.eval_mod.double_angle_constants.push_back(plain());
+        data.eval_mod.polynomial_terms.push_back({1,plain()});
+        data.eval_mod.polynomial_blocks.emplace_back();
+        data.eval_mod.polynomial_blocks.back().terms.push_back({1,plain()});
+        data.eval_mod.basis_steps.emplace_back();
+        auto &basis=data.eval_mod.basis_steps.back();
+        basis.operand_alignment_plaintext=plain(); basis.correction_alignment_plaintext=plain(); basis.correction_plaintext=plain();
+        data.eval_mod.polynomial_combine_steps.emplace_back();
+        auto &combine=data.eval_mod.polynomial_combine_steps.back();
+        combine.product_scale_plaintext=plain(); combine.remainder_scale_plaintext=plain();
+        for (auto *group : {&data.coeff_to_slot_matrix, &data.slot_to_coeff_matrix}) {
+            group->data().emplace_back(); group->data().back().plain_vec.emplace(0,plain());
+        }
+        for (auto *group : {&data.coeff_to_slot_matrix_qp, &data.slot_to_coeff_matrix_qp}) {
+            group->data().emplace_back(); auto &matrix=group->data().back();
+            matrix.plain_vec_qp.emplace(0,plain()); matrix.compressed_plain_vec_qp[1].residues.allocate(16,kDeviceId);
+            matrix.plan.diagonal_q_ptrs.allocate(1,kDeviceId); matrix.plan.diagonal_p_ptrs.allocate(1,kDeviceId);
+            matrix.plan.diagonal_periods.allocate(1,kDeviceId); matrix.plan.term_baby_indices.allocate(1,kDeviceId);
+            matrix.plan.group_term_offsets_device.allocate(1,kDeviceId);
+        }
+        require(data.allocated_bytes()==pool.requested_live_bytes()-constants_before,
+                "native Boot constant accounting missed a device allocation");
+        api.configure_native_bootstrap(name,0,std::move(data),r,g,16ULL<<20);
+    }
+    // Compare to actual allocator traffic, including one copy of shared keys.
+    const auto persistent = pool.requested_live_bytes()-before;
+    const auto required = persistent+(32ULL<<20)+(64ULL<<20);
+    fhegpu::RuntimePlan plan;
+    fhegpu::WaterlineConfig config;
+    config.device_capacity_bytes={4ULL<<30}; config.device_reserve_bytes={required-1};
+    config.device_fractions={.5}; config.backend=fhegpu::PrepareBackend::Cpu;
+    plan.waterline=config;
+    require_rejected([&] {api.validate_waterline_resources(plan);},"exceed reserve");
+    plan.waterline->device_reserve_bytes={required};
+    api.validate_waterline_resources(plan);
+    fhegpu::BootAttrs attrs; attrs.operator_profile="native-a"; attrs.implementation=fhegpu::BootImplementation::Native;
+    fhegpu::Instruction boot{0,fhegpu::ComputeOp{fhegpu::ComputeKind::Boot,{0},1,device_place(),attrs}};
+    require(api.instruction_workspace(boot).front.at(0)==0,
+            "fixed native workspace was charged again as dynamic workspace");
+    std::get<fhegpu::BootAttrs>(std::get<fhegpu::ComputeOp>(boot.body).attrs).operator_profile="missing";
+    require_rejected([&] {(void)api.instruction_workspace(boot);},"not configured");
 }
 
 void test_preflight_rejections(PoseidonGpuApi &api,
@@ -3233,6 +3299,9 @@ int main()
             test_waterline_retained_cache_accounting(context,key_generator,loaded_spec,relin_keys);
         });
         RmmPoolScope rmm_pool(kDeviceId);
+        run_test("native Boot constants, shared keys and hard workspace capacities obey reserve boundary", [&] {
+            test_native_boot_reserve(context,*relin_keys,*galois_keys,rmm_pool);
+        });
         run_test("GPU cached packed-read complete Host budget negative/positive boundary",[&] {
             test_gpu_packed_prepare_host_budget(context,loaded_spec);
         });

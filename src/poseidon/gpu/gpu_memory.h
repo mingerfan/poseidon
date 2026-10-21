@@ -53,6 +53,20 @@ private:
     cudaStream_t previous_;
 };
 
+// Allocation overrides are thread-local: GPU Prepare may allocate on another
+// thread while a native Boot uses its separately budgeted workspace resource.
+inline thread_local rmm::mr::device_memory_resource *execution_resource_override = nullptr;
+class ScopedGpuMemoryResource {
+public:
+    explicit ScopedGpuMemoryResource(rmm::mr::device_memory_resource *resource)
+        : previous_(execution_resource_override) { execution_resource_override = resource; }
+    ~ScopedGpuMemoryResource() { execution_resource_override = previous_; }
+    ScopedGpuMemoryResource(const ScopedGpuMemoryResource &) = delete;
+    ScopedGpuMemoryResource &operator=(const ScopedGpuMemoryResource &) = delete;
+private:
+    rmm::mr::device_memory_resource *previous_;
+};
+
 std::shared_ptr<void> device_memory_resource_owner(
     rmm::mr::device_memory_resource *resource);
 void register_device_memory_resource_owner(
@@ -133,7 +147,8 @@ public:
         }
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
-        resource_ = rmm::mr::get_current_device_resource();
+        resource_ = execution_resource_override ? execution_resource_override
+                                                 : rmm::mr::get_current_device_resource();
         resource_owner_ = device_memory_resource_owner(resource_);
         ptr_ = static_cast<T *>(
             resource_->allocate(

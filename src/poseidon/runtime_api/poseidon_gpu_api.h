@@ -178,12 +178,16 @@ public:
         int logical_device_index,
         gpu::GpuBootstrapData bootstrap_data,
         std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
-        std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys);
+        std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys,
+        std::uint64_t workspace_limit_bytes = 0);
 
-    /** Install the complete result returned by GpuBootstrapProfileBuilder. */
+    /** Install a complete profile. Workspace is hard-capped and charged to
+     * Waterline's fixed reserve. Zero selects degree*65536 bytes (1 GiB at
+     * N=16384); exceeding this capacity is an error, never a Host fallback. */
     void configure_native_bootstrap(
         int logical_device_index,
-        gpu::GpuBootstrapProfile profile);
+        gpu::GpuBootstrapProfile profile,
+        std::uint64_t workspace_limit_bytes = 0);
 
     std::string name() const;
     int mpi_rank() const noexcept;
@@ -280,6 +284,7 @@ private:
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;
+    bool native_rescale_ = false;
     std::optional<int> waterline_rescale_workspace_levels_;
     std::vector<std::uint64_t> waterline_allocator_capacity_;
 #ifdef POSEIDON_RUNTIME_GPU_NCCL

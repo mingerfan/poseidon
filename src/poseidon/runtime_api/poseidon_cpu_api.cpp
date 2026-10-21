@@ -941,6 +941,8 @@ void PoseidonCpuApi::preflight(std::string_view plan_source_sha256,
     {
         modulus_bits.push_back(modulus.bit_count());
     }
+    if (operator_spec.rescale_mode == fhegpu::RescaleMode::Native)
+        throw std::invalid_argument("Poseidon CPU Api does not support native actual-scale RuntimePlans");
     if (operator_spec.rns_moduli_log2 != modulus_bits ||
         operator_spec.max_modulus_log2 !=
             *std::max_element(modulus_bits.begin(), modulus_bits.end()) ||

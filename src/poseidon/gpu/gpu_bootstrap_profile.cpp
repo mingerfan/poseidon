@@ -547,5 +547,52 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     return result;
 }
 
+std::size_t GpuBootstrapData::allocated_bytes() const
+{
+    std::size_t bytes = 0;
+    const auto add = [&](std::size_t value) {
+        if (value > std::numeric_limits<std::size_t>::max() - bytes)
+            throw std::overflow_error("native Boot persistent bytes overflow");
+        bytes += value;
+    };
+    const auto plain = [&](const GpuPlaintextData &value) {
+        for (const auto &field : value.fields_) add(field.buffer.allocated_bytes());
+    };
+    const auto plains = [&](const auto &values) { for (const auto &value : values) plain(value); };
+    const auto classic = [&](const GpuLinearMatrixGroup &group) {
+        for (const auto &matrix : group.data())
+            for (const auto &entry : matrix.plain_vec) plain(entry.second);
+    };
+    const auto qp = [&](const GpuLinearMatrixGroupQP &group) {
+        for (const auto &matrix : group.data()) {
+            for (const auto &entry : matrix.plain_vec_qp) plain(entry.second);
+            for (const auto &entry : matrix.compressed_plain_vec_qp)
+                add(entry.second.residues.allocated_bytes());
+            const auto &plan = matrix.plan;
+            add(plan.diagonal_q_ptrs.allocated_bytes()); add(plan.diagonal_p_ptrs.allocated_bytes());
+            add(plan.diagonal_periods.allocated_bytes()); add(plan.term_baby_indices.allocated_bytes());
+            add(plan.group_term_offsets_device.allocated_bytes());
+        }
+    };
+    plain(post_raise_plaintext); plain(minus_i_plaintext); plain(plus_i_plaintext);
+    plain(eval_mod_input_offset_plaintext); plains(eval_mod_polynomial_plaintexts);
+    plains(double_angle_plaintexts); plain(eval_mod.input_offset_plaintext);
+    plains(eval_mod.chebyshev_one_plaintexts); plains(eval_mod.polynomial_coefficients);
+    plains(eval_mod.double_angle_constants);
+    for (const auto &term : eval_mod.polynomial_terms) plain(term.coefficient_plaintext);
+    for (const auto &block : eval_mod.polynomial_blocks)
+        for (const auto &term : block.terms) plain(term.coefficient_plaintext);
+    for (const auto &step : eval_mod.basis_steps) {
+        plain(step.operand_alignment_plaintext); plain(step.correction_alignment_plaintext);
+        plain(step.correction_plaintext);
+    }
+    for (const auto &step : eval_mod.polynomial_combine_steps) {
+        plain(step.product_scale_plaintext); plain(step.remainder_scale_plaintext);
+    }
+    classic(coeff_to_slot_matrix); classic(slot_to_coeff_matrix);
+    qp(coeff_to_slot_matrix_qp); qp(slot_to_coeff_matrix_qp);
+    return bytes;
+}
+
 } // namespace gpu
 } // namespace poseidon

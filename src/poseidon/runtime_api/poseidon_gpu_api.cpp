@@ -374,9 +374,9 @@ std::shared_ptr<DeviceMemoryPool> acquire_device_memory_pool(int cuda_device_id)
     return pool;
 }
 
-double exact_scale(int scale_log2)
+double exact_scale(double scale_log2)
 {
-    const double result = std::ldexp(1.0, scale_log2);
+    const double result = std::exp2(scale_log2);
     if (!(result > 0.0) || !std::isfinite(result))
     {
         throw std::invalid_argument("scale_log2 is outside the supported double range");
@@ -830,6 +830,49 @@ PoseidonGpuValue allocate_descriptor_value(const fhegpu::ValueDesc &desc,
 
 } // namespace
 
+// A hard allocation limit, rather than a measured peak masquerading as a bound.
+// The whole limit is charged to the fixed reserve, including retained scratch.
+class NativeBootMemoryResource final : public rmm::mr::device_memory_resource
+{
+public:
+    NativeBootMemoryResource(rmm::mr::device_memory_resource *upstream, std::uint64_t limit)
+        : upstream_(upstream), upstream_owner_(gpu::device_memory_resource_owner(upstream)), limit_(limit) {}
+    ~NativeBootMemoryResource() { gpu::unregister_device_memory_resource_owner(this, this); }
+    std::uint64_t limit() const { return limit_; }
+    std::uint64_t requested_live() const { std::lock_guard<std::mutex> lock(mutex_); return requested_live_; }
+    bool uses(const rmm::mr::device_memory_resource *resource) const { return upstream_ == resource; }
+private:
+    void *do_allocate(std::size_t bytes, rmm::cuda_stream_view stream) override {
+        std::lock_guard<std::mutex> lock(mutex_);
+        const auto charged = allocation_bytes(bytes);
+        if (charged > limit_ - live_)
+            throw std::runtime_error("native Boot workspace allocation exceeds configured hard limit (live=" +
+                std::to_string(live_) + ", request=" + std::to_string(bytes) + ", limit=" + std::to_string(limit_) + ")");
+        auto *result = upstream_->allocate(bytes, stream);
+        live_ += charged;
+        requested_live_ += bytes;
+        return result;
+    }
+    void do_deallocate(void *ptr, std::size_t bytes, rmm::cuda_stream_view stream) override {
+        std::lock_guard<std::mutex> lock(mutex_);
+        upstream_->deallocate(ptr, bytes, stream);
+        live_ -= allocation_bytes(bytes);
+        requested_live_ -= bytes;
+    }
+    bool do_is_equal(const rmm::mr::device_memory_resource &other) const noexcept override { return this == &other; }
+    static std::size_t allocation_bytes(std::size_t bytes) {
+        if (bytes > std::numeric_limits<std::size_t>::max() - 255)
+            throw std::overflow_error("native Boot workspace allocation alignment overflow");
+        return (bytes + 255) & ~std::size_t(255);
+    }
+    rmm::mr::device_memory_resource *upstream_;
+    std::shared_ptr<void> upstream_owner_;
+    const std::uint64_t limit_;
+    mutable std::mutex mutex_;
+    std::uint64_t live_ = 0;
+    std::uint64_t requested_live_ = 0;
+};
+
 struct PoseidonGpuApi::DeviceState
 {
     struct NativeBootstrapState
@@ -846,7 +889,10 @@ struct PoseidonGpuApi::DeviceState
         gpu::GpuBootstrapData bootstrap_data;
         std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys;
         std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys;
+        std::shared_ptr<NativeBootMemoryResource> memory;
         gpu::GpuBootstrapWorkspace workspace;
+        std::mutex submission_mutex;
+        std::shared_ptr<PoseidonGpuValue::ReadyEvent> ready;
     };
 
     int cuda_device_id = 0;
@@ -1479,7 +1525,8 @@ void PoseidonGpuApi::configure_native_bootstrap(
     int logical_device_index,
     gpu::GpuBootstrapData bootstrap_data,
     std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
-    std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys)
+    std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys,
+    std::uint64_t workspace_limit_bytes)
 {
     if (operator_profile.empty())
     {
@@ -1499,6 +1546,14 @@ void PoseidonGpuApi::configure_native_bootstrap(
         std::move(bootstrap_data),
         std::move(relin_keys),
         std::move(galois_keys));
+    // Default: 1 GiB per N=16384. This is an enforced capacity, not a
+    // guarantee that arbitrary future profiles fit; exceeding it is an error.
+    if (!workspace_limit_bytes)
+        workspace_limit_bytes = checked_mul_size(context_.parameters_literal()->degree(), 65536,
+                                                  "native Boot workspace capacity overflow");
+    state->memory = std::make_shared<NativeBootMemoryResource>(
+        rmm::mr::get_current_device_resource(), workspace_limit_bytes);
+    gpu::register_device_memory_resource_owner(state->memory.get(), state->memory);
     const bool inserted = device.native_bootstrap_by_profile.emplace(
         std::move(operator_profile), std::move(state)).second;
     if (!inserted)
@@ -1510,7 +1565,8 @@ void PoseidonGpuApi::configure_native_bootstrap(
 
 void PoseidonGpuApi::configure_native_bootstrap(
     int logical_device_index,
-    gpu::GpuBootstrapProfile profile)
+    gpu::GpuBootstrapProfile profile,
+    std::uint64_t workspace_limit_bytes)
 {
     const auto &device = device_state(logical_device_index);
     if (profile.cuda_device_id != device.cuda_device_id)
@@ -1523,7 +1579,7 @@ void PoseidonGpuApi::configure_native_bootstrap(
         logical_device_index,
         std::move(profile.bootstrap_data),
         std::move(profile.relin_keys),
-        std::move(profile.galois_keys));
+        std::move(profile.galois_keys), workspace_limit_bytes);
 }
 
 std::string PoseidonGpuApi::name() const
@@ -1661,8 +1717,14 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
                     throw std::runtime_error("GPU complete Prepare resource bound unavailable");
             }
         } else if(const auto *op=std::get_if<fhegpu::ComputeOp>(&instruction.body);op && op->place.kind==fhegpu::PlaceKind::Device) {
-            if(op->kind==fhegpu::ComputeKind::Boot && std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native)
-                throw std::runtime_error("Waterline native Boot persistent/workspace bound is not implemented");
+            if(op->kind==fhegpu::ComputeKind::Boot && std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native) {
+                const auto &attrs=std::get<fhegpu::BootAttrs>(op->attrs);
+                const auto &device=device_state(op->place,"Waterline native Boot");
+                if(!device.native_bootstrap_by_profile.count(attrs.operator_profile))
+                    throw std::runtime_error("Waterline native Boot profile is not configured: "+attrs.operator_profile);
+                keyswitch.at(op->place.index)=true;
+                rescale.at(op->place.index)=true;
+            }
             keyswitch.at(op->place.index)=keyswitch.at(op->place.index) || op->kind==fhegpu::ComputeKind::Relinearize;
             rescale.at(op->place.index)=rescale.at(op->place.index) || op->kind==fhegpu::ComputeKind::Rescale;
             if(op->kind==fhegpu::ComputeKind::Rescale) {
@@ -1676,8 +1738,9 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
                     throw std::invalid_argument("Waterline Rescale level range is unsupported");
                 const auto active=context_.crt_context()->get_context_data(
                     context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>((*input)->level)));
-                make_rescale_normalization(active->parms().q(),exact_scale((*input)->scale_log2),
-                    static_cast<std::size_t>(gap),exact_scale(attrs.target_scale_log2));
+                if (!native_rescale_)
+                    make_rescale_normalization(active->parms().q(),exact_scale((*input)->scale_log2),
+                        static_cast<std::size_t>(gap),exact_scale(attrs.target_scale_log2));
                 rescale_workspace_levels=std::max(rescale_workspace_levels,gap);
             }
         }
@@ -1703,14 +1766,31 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
         std::uint64_t persistent=device.gpu_parameters->allocated_bytes();
         fhegpu::ResourceUsage::add(persistent,key_bytes(device.relin_keys.get()));
         fhegpu::ResourceUsage::add(persistent,key_bytes(device.galois_keys.get()));
+        std::set<const void *> counted_keys;
+        std::uint64_t native_workspace=0,native_pooled_live=0;
+        for(const auto &entry:device.native_bootstrap_by_profile) {
+            const auto &native=*entry.second;
+            fhegpu::ResourceUsage::add(persistent,native.bootstrap_data.allocated_bytes());
+            if(counted_keys.insert(native.relin_keys.get()).second)
+                fhegpu::ResourceUsage::add(persistent,key_bytes(native.relin_keys.get()));
+            if(counted_keys.insert(native.galois_keys.get()).second)
+                fhegpu::ResourceUsage::add(persistent,key_bytes(native.galois_keys.get()));
+            fhegpu::ResourceUsage::add(native_workspace,native.memory->limit());
+            if(device.memory_pool && native.memory->uses(device.memory_pool->resource()))
+                fhegpu::ResourceUsage::add(native_pooled_live,native.memory->requested_live());
+        }
         if(device.plaintext_encoder)fhegpu::ResourceUsage::add(persistent,device.plaintext_encoder->persistent_bytes());
         // Reserve each cache's current storage plus its possible future growth.
         // A later plan can omit an operation while its warmed cache still lives.
         const auto cached=device.evaluator->retained_workspace_bytes();
         const auto retained=std::max<std::uint64_t>(cached.relinearize,keyswitch[d]?n*4*(12*q+8*p):0)+
                             std::max<std::uint64_t>(cached.rescale,rescale[d]?n*4*(12*q+32):0);
-        const std::uint64_t reserve_required=persistent+retained+(64ULL<<20);
+        std::uint64_t reserve_required=persistent;
+        fhegpu::ResourceUsage::add(reserve_required,retained);
+        fhegpu::ResourceUsage::add(reserve_required,native_workspace);
+        fhegpu::ResourceUsage::add(reserve_required,64ULL<<20);
         std::cerr<<"waterline fixed GPU"<<d<<" persistent_bytes="<<persistent<<" retained_workspace_bound="<<retained
+                 <<" native_workspace_capacity="<<native_workspace
                  <<" reserve_required="<<reserve_required<<" reserve_configured="<<config.device_reserve_bytes.at(d)<<'\n';
         if(reserve_required>config.device_reserve_bytes.at(d))
             throw std::runtime_error("Waterline persistent tables/keys/workspace exceed reserve on GPU"+std::to_string(d));
@@ -1731,10 +1811,13 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
         // only this evaluator's storage from this pool before adding its cache
         // reserve; caller-held values and other users of the pool stay charged.
         const auto pooled_cached=device.evaluator->retained_workspace_bytes(device.memory_pool->resource());
-        const auto cached_in_pool=pooled_cached.rescale+pooled_cached.relinearize;
+        const auto cached_in_pool=pooled_cached.rescale+pooled_cached.relinearize+native_pooled_live;
         const auto live=device.memory_pool->bytes_counter().value;
         if(cached_in_pool>live)throw std::logic_error("Waterline cached workspace exceeds pool live bytes");
-        const auto fixed_pool=std::max(persistent,std::uint64_t(live-cached_in_pool))+retained+(64ULL<<20);
+        auto fixed_pool=std::max(persistent,std::uint64_t(live-cached_in_pool));
+        fhegpu::ResourceUsage::add(fixed_pool,retained);
+        fhegpu::ResourceUsage::add(fixed_pool,native_workspace);
+        fhegpu::ResourceUsage::add(fixed_pool,64ULL<<20);
         if(fixed_pool>=pool_reserved)throw std::runtime_error("Waterline reserved pool below fixed allocation reserve");
         waterline_allocator_capacity_[d]=pool_reserved-fixed_pool;
         std::cerr<<"waterline physical GPU"<<d<<" pool_reserved="<<pool_reserved<<" pool_cap="<<capacity
@@ -1829,8 +1912,14 @@ fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instru
                 // automorphism/copy and retained intermediate rotations.
                 bytes=n*(q+p)*4*(16+4*q);break;
             case fhegpu::ComputeKind::Boot:
-                if(std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native)
-                    throw std::runtime_error("Waterline native Boot workspace bound is not implemented");
+                if(std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native) {
+                    const auto &device=device_state(op->place,"native Boot workspace");
+                    if(!device.native_bootstrap_by_profile.count(std::get<fhegpu::BootAttrs>(op->attrs).operator_profile))
+                        throw std::runtime_error("native Boot workspace profile is not configured");
+                    // Every scratch allocation is constrained by the profile's
+                    // hard resource limit, already charged to the fixed reserve.
+                    break;
+                }
                 usage.host=n*(32+(q+p)*8*8);usage.pinned=n*q*8;break;
             }
             usage.front.at(op->place.index)=bytes;
@@ -2091,6 +2180,9 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                     "Poseidon GPU native Boot profile is not configured: " +
                     attrs.operator_profile);
             }
+            auto &native = *resources->second;
+            std::lock_guard<std::mutex> submission(native.submission_mutex);
+            if (native.ready) native.ready->wait_on_execution_stream(device.cuda_device_id);
             if (inputs.front().ready_ != nullptr)
             {
                 inputs.front().ready_->wait_on_execution_stream(
@@ -2101,14 +2193,16 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             std::optional<Value> result;
             try
             {
-                auto &native = *resources->second;
-                device.evaluator->bootstrap(
+                {
+                    gpu::ScopedGpuMemoryResource memory(native.memory.get());
+                    device.evaluator->bootstrap(
                     require_ciphertext(inputs, 0),
                     native.bootstrap_data,
                     *native.relin_keys,
                     *native.galois_keys,
                     native.workspace,
-                    output);
+                        output);
+                }
                 if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
                     output.meta.component_count !=
                         static_cast<std::size_t>(attrs.target_components) ||
@@ -2128,9 +2222,16 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                         std::to_string(exact_scale(attrs.target_scale_log2)) + ")");
                 }
 
-                result.emplace(Value::from_device_ciphertext(std::move(output)));
+                // Export into ordinary graph storage. Retaining Boot outputs
+                // must not consume the fixed workspace arena across calls.
+                gpu::GpuCiphertextData graph_output;
+                for (const auto &copy : communication::prepare_full_object_copy(output, graph_output, device.cuda_device_id))
+                    gpu::gpu_check_cuda(cudaMemcpyAsync(copy.destination, copy.source, copy.bytes,
+                        cudaMemcpyDeviceToDevice, gpu::gpu_execution_stream()), "native Boot output copy");
+                result.emplace(Value::from_device_ciphertext(std::move(graph_output)));
                 result->ready_ = PoseidonGpuValue::ReadyEvent::record(
                     device.cuda_device_id);
+                native.ready = result->ready_;
                 auto retained = inputs;
                 retained.push_back(*result);
                 retain_in_flight(result->ready_, retained);
@@ -2265,6 +2366,23 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             if (drop_count <= 0 || drop_count > *max_rescale_levels_per_op_)
             {
                 throw std::invalid_argument("Poseidon GPU Rescale target level is unsupported");
+            }
+            if (native_rescale_) {
+                // Preserve the scale produced by the actual dropped primes.
+                // Every native Rescale is visible in the plan's level budget.
+                const gpu::GpuCiphertextData *source = &input;
+                std::shared_ptr<gpu::GpuCiphertextData> next;
+                for (int dropped = 0; dropped < drop_count; ++dropped) {
+                    next = std::make_shared<gpu::GpuCiphertextData>();
+                    temporaries.push_back(next);
+                    device.evaluator->rescale(*source, *next);
+                    source = next.get();
+                }
+                if (std::abs(std::log2(source->meta.scale) - attrs.target_scale_log2) > 1e-8)
+                    throw std::runtime_error("native Rescale scale disagrees with the actual-prime plan");
+                output = std::move(*next);
+                temporaries.pop_back();
+                break;
             }
             const auto normalization=make_rescale_normalization(context_data->parms().q(),
                 input.meta.scale,static_cast<std::size_t>(drop_count),exact_scale(attrs.target_scale_log2));
@@ -3131,12 +3249,22 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         operator_spec.max_modulus_log2 !=
             *std::max_element(modulus_bits.begin(), modulus_bits.end()) ||
         operator_spec.default_scale_log2 != static_cast<int>(parameters->log_scale()) ||
-        operator_spec.rescale_mode != fhegpu::RescaleMode::Lazy ||
+        (operator_spec.rescale_mode != fhegpu::RescaleMode::Lazy &&
+         operator_spec.rescale_mode != fhegpu::RescaleMode::Native) ||
         operator_spec.level_lower_bound < 0 ||
         operator_spec.level_upper_bound >= static_cast<int>(modulus_bits.size()) ||
         operator_spec.level_lower_bound > operator_spec.level_upper_bound)
     {
         throw std::invalid_argument("OperatorSpec parameters do not match Poseidon GPU context");
+    }
+
+    native_rescale_ = operator_spec.rescale_mode == fhegpu::RescaleMode::Native;
+    if (native_rescale_) {
+        if (operator_spec.rns_moduli.size() != parameters->q().size())
+            throw std::invalid_argument("native Rescale requires the actual context modulus chain");
+        for (std::size_t i = 0; i < parameters->q().size(); ++i)
+            if (operator_spec.rns_moduli[i] != parameters->q()[i].value())
+                throw std::invalid_argument("native Rescale modulus chain does not match context");
     }
 
     const auto boot_support = operator_spec.operators.find(fhegpu::ComputeKind::Boot);
@@ -3156,10 +3284,11 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
     }
     const auto rescale = operator_spec.operators.find(fhegpu::ComputeKind::Rescale);
     if (rescale == operator_spec.operators.end() || !rescale->second.supported ||
-        !rescale->second.max_levels_per_op || *rescale->second.max_levels_per_op < 4)
+        !rescale->second.max_levels_per_op || *rescale->second.max_levels_per_op < (native_rescale_ ? 1 : 4))
     {
         throw std::invalid_argument(
-            "Poseidon GPU OperatorSpec must support at least four rescale levels per op");
+            native_rescale_ ? "Poseidon GPU OperatorSpec must support at least one rescale level per op" :
+                              "Poseidon GPU OperatorSpec must support at least four rescale levels per op");
     }
     max_rescale_levels_per_op_ = *rescale->second.max_levels_per_op;
 

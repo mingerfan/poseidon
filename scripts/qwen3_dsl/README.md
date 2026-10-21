@@ -77,14 +77,35 @@ OPENBLAS_NUM_THREADS=4 /usr/bin/time -v \
 窗口和后端不会自动改变，需要重新编译才能采用新的默认窗口。
 
 当前 CKKS 数值配置是 N=16384、50 个 30-bit Q、8 个 30-bit P、默认 scale40。
-编译器从该 profile 取 `--waterline=40`，保持 lazy rescale 的触发时机；明文与
-Host refresh 输出 scale 为120。runner 按计划描述显式编码输入。逻辑160→40
-Rescale 在原生除模前先乘整数校正系数并同步中间 scale，避免先降到约10-bit
-再放大舍入误差；不要通过提高 waterline 改变原图的 lazy/Boot 布局来绕过问题。
-每个逻辑 level 对应 5 个物理 level，逻辑 level 0..9 映射到物理 level 4..49。
-一次逻辑 Rescale 为 120-bit scale 下降额外预留 30-bit 模数空间，运行时依据实际 Q
-选择原生除模次数、整数系数校正与剩余 ModSwitch；不只改写 scale 元数据。
+编译脚本默认选择 `poseidon-gpu-degree58-da2-scale40-experimental`：GPU 原生 Boot，
+完整 degree58、两次 double-angle、内部与输出 scale40，输出物理 level27。
+**此路径已有显著数值错误，仅用于继续编译器和 runtime 开发，不代表正确推理。**
+runner 仍按原容差校验全部输出；错误照常报告失败并返回非零，不回退到 Host refresh。
+编译器从 profile 取 `--waterline=40`，等位宽 Q 的 `rescalingFactor=30`。
+普通乘法后，只要名义 `scale_log2 >= 70` 就立即插入一次 Rescale，逐个删除 Q，
+直到名义 scale 落入 `[40,70)`。不再先抬高 scale 并强制回到 40；每个逻辑
+Rescale 对应一个物理 Q。depth-dp 按同一规则模拟每段的实际 Q 消耗，Boot 后
+按 profile 的输出 scale 重新开始记账；返回值保留剩余 level。
+原生路径仍将初始输入和 Boot 输出映射到可恢复的 level27，工作下界为 level4；
+可用预算为 23 个 Q。显式选择 `--boot-profile poseidon-gpu-host-boot-v1` 时，
+Host Boot 输出为 level49、scale120，随后两次 Rescale 得到 level47、名义 scale60。
+
+当前 profile 使用 `rescale_mode=native` 并列出真实 `context.rns_moduli`。
+RuntimePlan V5 保存实际的浮点 `log2(scale)`；编译时按真实末端模数推导，
+runtime 直接执行原生除模并保留实际 scale，不再做整数校正或覆盖 scale 元数据。
+加法用完整槽的编码 1 对齐实际 scale，再用 ModSwitch 对齐 level；接近 1 的
+对齐比例会导致编码精度不足，当前服务器残差用例尚未通过。当前保留普通乘 1
+对齐策略；高精度补偿及其额外 Q 消耗暂缓处理，数值测试仍按原容差报告结果。
+不能把乘法链通过等同于完整模型数值验收。旧 `rescale_mode=lazy` 计划继续使用
+原来的整数校正契约，不能与新计划混用。原 optimized/PARS 路径尚未适配
+`waterline > rescalingFactor`，会明确报错；当前新策略使用 greedy 或 depth-dp。
 默认每算子工作空间上界为 1024 MiB，覆盖 Q50 Rotate 的保守上界。
+原生 Boot 的矩阵、常量与密钥按实际分配计入固定 reserve，共享密钥只计一次。
+每设备每 profile 的临时空间另有独立硬上限：N=16384 时 1 GiB，按 N 线性增长；
+整个上限也计入 reserve。超过上限直接报错，不以一次运行的观测峰值充当上界。
+runner 可用 `--native-boot-workspace-bytes` 显式调整上限，同时需提供足够的 reserve。
+Boot 输出复制到普通图存储，使多个输出的存活时间不占用固定临时空间。
+默认 6 GiB reserve 面向 N=16384；增大 N 时应相应增大 reserve 和实际 GPU 容量。
 物理 latency 行 40..49 延用旧表最后一行估算，未作为新硬件测量；逻辑 latency 表
 及 HEFT 算法保持不变。此参数更新不代表完整 Qwen 数值验收已经通过。
 这个配置使用 `sec_level_type::none`，

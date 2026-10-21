@@ -2,6 +2,7 @@
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/gpu/gpu_bootstrap_profile.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/communication/cuda_local_transfer.h"
@@ -300,25 +301,38 @@ Json device_report(int device_count, const fhegpu::RuntimePlan &plan)
     return devices;
 }
 
-std::size_t host_boot_count(const fhegpu::RuntimePlan &plan)
+struct BootSelection
 {
-    std::size_t count = 0;
-    const auto visit = [&count](const std::vector<fhegpu::Instruction> &instructions) {
+    std::size_t host = 0, native = 0;
+    std::set<std::pair<int, std::string>> native_profiles;
+};
+
+BootSelection boot_selection(const fhegpu::RuntimePlan &plan)
+{
+    BootSelection result;
+    const auto visit = [&result](const std::vector<fhegpu::Instruction> &instructions) {
         for (const auto &instruction : instructions)
         {
             const auto *compute = std::get_if<fhegpu::ComputeOp>(&instruction.body);
             if (!compute || compute->kind != fhegpu::ComputeKind::Boot) continue;
             const auto &attributes = std::get<fhegpu::BootAttrs>(compute->attrs);
-            if (attributes.implementation != fhegpu::BootImplementation::DecryptReencrypt ||
-                compute->place.kind != fhegpu::PlaceKind::Host)
-                throw std::runtime_error("Qwen fixture runner supports only explicit Host decrypt-reencrypt Boot; native Bootstrap is not configured");
-            ++count;
+            if (attributes.implementation == fhegpu::BootImplementation::DecryptReencrypt &&
+                compute->place.kind == fhegpu::PlaceKind::Host) ++result.host;
+            else if (attributes.implementation == fhegpu::BootImplementation::Native &&
+                     compute->place.kind == fhegpu::PlaceKind::Device) {
+                if (attributes.operator_profile != "poseidon-gpu-degree58-da2-scale40-experimental" ||
+                    attributes.target_level != 27 || attributes.target_scale_log2 != 40 ||
+                    attributes.target_components != 2)
+                    throw std::runtime_error("unsupported Qwen native Boot contract; expected experimental degree58 DA2 level27 scale40");
+                result.native_profiles.emplace(compute->place.index, attributes.operator_profile);
+                ++result.native;
+            } else throw std::runtime_error("Qwen Boot implementation and placement disagree");
         }
     };
     visit(plan.initialization);
     visit(plan.execution);
     visit(plan.finalization);
-    return count;
+    return result;
 }
 
 PoseidonGpuValue download(PoseidonGpuApi &api, fhegpu::ValueId id,
@@ -421,7 +435,7 @@ Json timing_report(const fhegpu::RuntimeTiming &timing)
             {"bundle_read_ms", timing.bundle_read_nanoseconds / 1e6},
             {"raw_peak_bytes", timing.raw_peak_bytes}, {"bundle_resident_bytes", timing.bundle_resident_bytes},
             {"compute_calls", timing.compute_calls}, {"compute_submission_including_boot_ms", timing.compute_including_boot_nanoseconds / 1e6},
-            {"boot_calls", timing.boot_calls}, {"host_boot_ms", timing.boot_nanoseconds / 1e6},
+            {"boot_calls", timing.boot_calls}, {"boot_submission_ms", timing.boot_nanoseconds / 1e6},
             {"communication_post_calls", timing.communication_post_calls},
             {"communication_wait_calls", timing.communication_wait_calls},
             {"communication_post_ms", timing.communication_post_nanoseconds / 1e6},
@@ -436,7 +450,8 @@ int main(int argc, char **argv)
     if (argc < 6)
     {
         std::cerr << "usage: poseidon_runtime_gpu_qwen_e2e PLAN SPEC FIXTURE REPORT DECODED "
-                     "[--bundle DIR] [--backend cpu|gpu|auto] [--trace CSV]\n";
+                     "[--bundle DIR] [--backend cpu|gpu|auto] [--trace CSV] "
+                     "[--native-boot-workspace-bytes N]\n";
         return 2;
     }
     Json report{{"format_version", 1}, {"passed", false}};
@@ -445,12 +460,19 @@ int main(int argc, char **argv)
     {
         std::optional<std::filesystem::path> bundle;
         std::optional<fhegpu::PrepareBackend> backend;
+        std::uint64_t native_workspace_bytes = 0;
         for (int argument = 6; argument < argc; argument += 2)
         {
             if (argument + 1 >= argc) throw std::runtime_error("option requires a value");
             const std::string option = argv[argument];
             if (option == "--bundle") bundle = argv[argument + 1];
             else if (option == "--backend") backend = parse_backend(argv[argument + 1]);
+            else if (option == "--native-boot-workspace-bytes") {
+                const std::string value = argv[argument + 1];
+                const auto parsed = std::from_chars(value.data(), value.data()+value.size(), native_workspace_bytes);
+                if (parsed.ec != std::errc{} || parsed.ptr != value.data()+value.size() || !native_workspace_bytes)
+                    throw std::runtime_error("--native-boot-workspace-bytes requires a positive integer");
+            }
             else if (option == "--trace")
             {
                 const std::filesystem::path trace = argv[argument + 1];
@@ -478,7 +500,8 @@ int main(int argc, char **argv)
         const int device_count = plan.target.device_counts.front();
         configure_waterline(plan, fixture, backend);
         const auto requirements = fhegpu::PlanVerifier::verify(plan, loaded_spec, false);
-        const auto host_boots = host_boot_count(plan);
+        const auto boots = boot_selection(plan);
+        const auto host_boots = boots.host;
         const auto descriptions = descriptors(plan);
         const auto slot_count = static_cast<std::size_t>(loaded_spec.spec.poly_degree / 2);
         const auto &input_rows = fixture.at("inputs");
@@ -508,8 +531,10 @@ int main(int argc, char **argv)
                        {"waterline", waterline_report(plan)}, {"input_count", input_rows.size()},
                        {"output_count", output_rows.size()}, {"slots_per_output", slot_count},
                        {"execution_mode", "per_device_workers"}, {"device_worker_count", device_count},
-                       {"boot_implementation", host_boots ? "host_decrypt_reencrypt" : "none"},
-                       {"host_boot_instructions", host_boots}, {"native_boot_instructions", 0},
+                       {"boot_implementation", boots.native ? (host_boots ? "mixed" : "native_scale40_experimental") :
+                                                   (host_boots ? "host_decrypt_reencrypt" : "none")},
+                       {"host_boot_instructions", host_boots}, {"native_boot_instructions", boots.native},
+                       {"native_scale40_known_numerical_errors", boots.native != 0},
                        {"secret_key_assisted_refresh", host_boots != 0},
                        {"security_level", "none; numerical validation context"}});
         int visible_device_count = 0;
@@ -523,7 +548,7 @@ int main(int argc, char **argv)
         std::cout << "QWEN inputs=" << input_rows.size() << " outputs=" << output_rows.size()
                   << " devices=" << device_count << " slots=" << slot_count
                   << " backend=" << (plan.waterline ? backend_name(plan.waterline->backend) : "explicit")
-                  << " host_boot_instructions=" << host_boots << '\n';
+                  << " host_boot_instructions=" << host_boots << " native_boot_instructions=" << boots.native << '\n';
         if (host_boots)
             std::cout << "BOOT semantics=Host decrypt-reencrypt uses_secret_key=true native_bootstrap=false\n";
         std::cout << std::flush;
@@ -581,7 +606,7 @@ int main(int argc, char **argv)
             poseidon::Plaintext plaintext;
             encoder.encode(row_values(input_rows[index], id, slot_count),
                            context.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(description.level)),
-                           std::ldexp(1.0, description.scale_log2), plaintext);
+                           std::exp2(description.scale_log2), plaintext);
             poseidon::Ciphertext ciphertext;
             encryptor.encrypt(plaintext, ciphertext);
             inputs.emplace(id, PoseidonGpuValue::from_host_ciphertext(std::move(ciphertext)));
@@ -598,6 +623,29 @@ int main(int argc, char **argv)
         std::iota(cuda_devices.begin(), cuda_devices.end(), 0);
         PoseidonGpuApi api(loaded_spec.spec.context_id, context, cuda_devices, relin_keys, galois_keys,
                            host_boots ? public_key : nullptr, host_boots ? secret_key : nullptr);
+        stage = "configure_native_boot";
+        report["native_boot_profiles"] = Json::array();
+        for (const auto &[device, id] : boots.native_profiles) {
+            poseidon::gpu::GpuBootstrapProfileConfig config;
+            config.profile_id = id;
+            config.eval_mod_log_scale = 40;
+            config.eval_mod_sine_degree = 58;
+            config.eval_mod_generation_degree = 59;
+            config.eval_mod_truncate_degree.reset();
+            config.eval_mod_double_angle = 2;
+            const auto begin = Clock::now();
+            auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(context, keys, device, config);
+            if (profile.output_level != 27 || profile.output_scale_log2 != 40 ||
+                profile.output_components != 2)
+                throw std::runtime_error("built native Boot profile disagrees with compiled level27/scale40 contract");
+            report["native_boot_profiles"].push_back({{"device", device}, {"profile_id", id},
+                {"output_level", profile.output_level}, {"output_scale_log2", profile.output_scale_log2},
+                {"constant_bytes", profile.bootstrap_data.allocated_bytes()},
+                {"workspace_capacity_bytes", native_workspace_bytes ? native_workspace_bytes :
+                                                    std::uint64_t(context.parameters_literal()->degree()) * 65536},
+                {"setup_ms", milliseconds(begin, Clock::now())}});
+            api.configure_native_bootstrap(device, std::move(profile), native_workspace_bytes);
+        }
         report["gpu_api_setup_ms"] = milliseconds(api_begin, Clock::now());
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             0, 1, device_count, api, fhegpu::DeviceExecutionMode::PerDeviceWorkers, device_count);

@@ -126,6 +126,7 @@ std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
  */
 struct GpuBootstrapData
 {
+    std::size_t allocated_bytes() const;
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::ClassicBsgs;
     bool allow_environment_linear_transform_override = true;

@@ -114,6 +114,6 @@
   "levelLowerBound": 1,
   "levelUpperBound": 9,
   "polynomialDegree": 16384,
-  "rescalingFactor": 120,
+  "rescalingFactor": 30,
   "runtime": "HEAAN-HEVM"
 }
