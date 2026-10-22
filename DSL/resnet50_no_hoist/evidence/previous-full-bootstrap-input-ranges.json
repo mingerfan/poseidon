@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "scope": "Read-only CPU observer of previous exact compiled full plan",
+  "boots": 23891,
+  "max_abs": 4.0157577620128455,
+  "max_abs_mean": 2.075696380535062,
+  "boots_abs_above1": 3131,
+  "boots_mean_abs_above1": 449,
+  "clear_max_error": 0.0
+}

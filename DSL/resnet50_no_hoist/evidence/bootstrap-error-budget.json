@@ -1,0 +1,59 @@
+{
+  "scope": "CPU-only compiled-boundary noise sensitivity; no GPU acceptance claimed",
+  "cases": [
+    {
+      "case": "control",
+      "amplitude": 0,
+      "pattern": "plus",
+      "returncode": 0,
+      "completed": true,
+      "max_abs": 7.105427357601002e-15,
+      "output_finite": true
+    },
+    {
+      "case": "plus-1e-6",
+      "amplitude": 1e-06,
+      "pattern": "plus",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 0.0019371616201979691,
+      "output_finite": true
+    },
+    {
+      "case": "minus-1e-6",
+      "amplitude": 1e-06,
+      "pattern": "minus",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 0.001936262736442984,
+      "output_finite": true
+    },
+    {
+      "case": "random-1e-6",
+      "amplitude": 1e-06,
+      "pattern": "random",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 0.0002131882280957953,
+      "output_finite": true
+    },
+    {
+      "case": "random-1e-7",
+      "amplitude": 1e-07,
+      "pattern": "random",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 2.1297412132081917e-05,
+      "output_finite": true
+    },
+    {
+      "case": "random-1e-8",
+      "amplitude": 1e-08,
+      "pattern": "random",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 2.129526905925161e-06,
+      "output_finite": true
+    }
+  ]
+}

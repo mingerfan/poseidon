@@ -1,0 +1,72 @@
+{
+  "status": "PASS",
+  "scope": "Fresh-key NoHoist native components at +/-1 and the actual prior worst-range input; not full model acceptance",
+  "ratio": 2048,
+  "evalmod_scale": 60,
+  "binary_sha256": "ef68c8dd5ab0a241178b1fa6705da8e2cb7a0a2c58810bebf07fef8afb03f76c",
+  "comparisons": [
+    {
+      "case": "negative1",
+      "baseline": {
+        "ratio": 128,
+        "scale": 60,
+        "case": "negative1",
+        "returncode": 0,
+        "max_abs": 0.00043513712965570495,
+        "rms": 0.0004340972367517485
+      },
+      "corrected": {
+        "case": "negative1",
+        "ratio": 2048,
+        "scale": 60,
+        "returncode": 0,
+        "max_abs": 6.037886447263219e-06,
+        "rms": 1.873569475964153e-06
+      },
+      "max_improvement": 72.0677895247498,
+      "rms_improvement": 231.69529730321787
+    },
+    {
+      "case": "positive1",
+      "baseline": {
+        "ratio": 128,
+        "scale": 60,
+        "case": "positive1",
+        "returncode": 0,
+        "max_abs": 0.0004360825292784032,
+        "rms": 0.0004341081439703093
+      },
+      "corrected": {
+        "case": "positive1",
+        "ratio": 2048,
+        "scale": 60,
+        "returncode": 0,
+        "max_abs": 7.297260747884948e-06,
+        "rms": 1.9125438247570535e-06
+      },
+      "max_improvement": 59.75975703003324,
+      "rms_improvement": 226.97944922932845
+    },
+    {
+      "case": "previous_peak",
+      "baseline": {
+        "ratio": 128,
+        "scale": 60,
+        "case": "previous_peak",
+        "returncode": 0,
+        "max_abs": 0.0009746722261285957,
+        "rms": 0.0009727171134828171
+      },
+      "corrected": {
+        "case": "previous_peak",
+        "ratio": 2048,
+        "scale": 60,
+        "returncode": 0,
+        "max_abs": 1.909994203514935e-05,
+        "rms": 4.018194304107923e-06
+      },
+      "max_improvement": 51.030114349819506,
+      "rms_improvement": 242.07816742171445
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "scope": "Stage bisection, original model/Native implementation and original tolerances",
+  "stages": [
+    {
+      "stage": "stem-conv",
+      "status": "PASS",
+      "scope": "One-device true model stage; not whole-model acceptance",
+      "boots": 32,
+      "max_abs": 0.0073681298541452556,
+      "rms": 0.0011937443224815589,
+      "max_imaginary": 0.00010073826933230232
+    },
+    {
+      "stage": "stem-relu",
+      "status": "PASS",
+      "scope": "One-device true model stage; not whole-model acceptance",
+      "boots": 1601,
+      "max_abs": 0.00545916480482056,
+      "rms": 0.0008710926658219709,
+      "max_imaginary": 1.6729932943531614e-07
+    }
+  ]
+}

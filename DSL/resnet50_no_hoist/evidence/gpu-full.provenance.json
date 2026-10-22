@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-precision-combined-v1/runtime-build-gpu2/poseidon_runtime_gpu_mlp_e2e",
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/compiled-full/resnet50.optimized._hecate_ResNet50Frontend.runtime-plan.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/profiles/operator-spec.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/compiled-full/resnet50.optimized._hecate_ResNet50Frontend.bundle",
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/fixture.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/clear-full.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/gpu-full.json",
+    "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/profiles/native-config.json"
+  ],
+  "gpu_uuids": [
+    "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+    "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6"
+  ],
+  "binary_sha256": "da25e5d3e78ba677c4f10959903f3bdff495cccf480e055088b8ca6a2178ef6f",
+  "plan_sha256": "556b096d062631f00311fde4a023cb65a80341a3c5fabc83a4f96679b23455ad",
+  "fixture_sha256": "2b588f55ca5ae34e6f2ba8fe5dbed014bb10701286df11dcf37dc57ff842c5d8",
+  "clear_sha256": "323cd7b3c07082d4e1fad1ea0e1f856917b5e5c234a23e7fe6b56655fded6806",
+  "spec_sha256": "68dcc33af0efa9a5609821c225acd9b366b568ff3471f299f133f61093b3b844",
+  "native_config_sha256": "9f0555738356f27788f192ea832371523b50bb1ff9a32ca678832b887cc2948b",
+  "environment": {
+    "CUDA_LAUNCH_BLOCKING": "1",
+    "CUDA_VISIBLE_DEVICES": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5,GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+    "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB": "31744",
+    "POSEIDON_RUNTIME_ROTATION_KEY_POLICY": "binary",
+    "POSEIDON_RUNTIME_TRACE": "/home/hanshubin/no-hoist-dsl-work/resnet50-model-v14-blocking/gpu-full.trace.csv"
+  }
+}

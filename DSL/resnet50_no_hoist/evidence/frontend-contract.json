@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "source_sha256": "3cad491d6f2ca739a84f5d610a8d26c3690309723d49fa23e624edc852c906c9",
+  "unchanged_original_functions_and_classes": [
+    "Bottleneck",
+    "ResNet50",
+    "load_model",
+    "make_pool_relu",
+    "dense_pool",
+    "dense",
+    "pack_input",
+    "max_pool",
+    "network",
+    "main"
+  ],
+  "only_polynomial_evaluation_reassociated": false,
+  "no_manual_fhe_scheduling": true,
+  "no_external_resnet18_import": true,
+  "layout_sha256": "825394219af71fe95d2daf21f51dd0fcc95d7966c57a34c7d11c47d5b723afdf",
+  "average_pool_normalization_before_sum": true,
+  "polynomial_evaluation_matches_original": true
+}

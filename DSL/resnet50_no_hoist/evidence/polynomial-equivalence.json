@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "samples": 8193,
+  "domain": [
+    -1,
+    1
+  ],
+  "components": [
+    {
+      "degree": 15,
+      "max_error": 0.0
+    },
+    {
+      "degree": 15,
+      "max_error": 0.0
+    },
+    {
+      "degree": 27,
+      "max_error": 0.0
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "status": "FAIL",
+  "full_plan_peak": 24244125696,
+  "prefix_plan_peak": 11102846976,
+  "native_profile_bytes": 11487329672,
+  "measured_prefix_overhead": 2752249856,
+  "safety_margin_bytes": 1073741824,
+  "estimated_total": 39557447048,
+  "pool_capacity": 33285996544
+}

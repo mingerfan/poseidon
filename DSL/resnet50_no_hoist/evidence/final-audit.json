@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scope": "standalone original polynomial model-level ResNet50 DSL; single image0; not dataset accuracy",
+  "prediction": 65,
+  "label": 65,
+  "max_error": 0.004135181894192375,
+  "rms_error": 0.0007792449202023056,
+  "boots": 23892,
+  "polynomial_unchanged": true,
+  "original_gates_unchanged": true
+}
