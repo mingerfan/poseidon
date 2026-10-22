@@ -1,2 +1,0 @@
-usage: audit.py [-h] [--campaign {spatial,bilinear-retest}]
-audit.py: error: argument --campaign: invalid choice: 'unsupported' (choose from 'spatial', 'bilinear-retest')

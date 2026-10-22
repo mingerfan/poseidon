@@ -1,1 +1,0 @@
-/home/lhohy/Code/Poseidon/scripts/baseline/run_chunked_model_goldens.py

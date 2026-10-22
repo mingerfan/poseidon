@@ -1,8 +1,0 @@
-{
-  "format": "poseidon-paid-plan-superseded-v1",
-  "new_paid_authorization": false,
-  "proposal": "docs/baseline/agent-einsum-live-proposal-r1341.json",
-  "reason": "Explicit v19 source and alias integration changes production identity; old plan is preserved and cannot execute against new sources.",
-  "sha256": "b70cf2d9d94fc6dc07c94beca32cda515f0dab1674424a8e97a11dc173b5f484",
-  "status": "pending_superseded_by_source_change"
-}

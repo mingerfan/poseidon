@@ -1,1 +1,0 @@
-/home/lhohy/Code/Poseidon/scripts/baseline/run_native_call_goldens.py

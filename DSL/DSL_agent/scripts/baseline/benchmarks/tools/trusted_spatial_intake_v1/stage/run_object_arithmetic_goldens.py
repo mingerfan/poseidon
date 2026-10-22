@@ -1,1 +1,0 @@
-/home/lhohy/Code/Poseidon/scripts/baseline/run_object_arithmetic_goldens.py

@@ -1,9 +1,0 @@
-{
-  "files": {
-    "model_output_contract.py": "b0e10703396e0c0c82b717ee6606d2f22f95f39e01c22df5c7c6bd8f8ab3d1b2",
-    "audit.py": "0efe7179827488dfd0c6b125d931d6f6325bc3ad599c43111c78554cb0eee5e9",
-    "test_model_output_contract.py": "b2749ece6d608214e326ab3d6c846be2aef2d7fe89fa7f493146db7c7a1d1e09"
-  },
-  "acceptance": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-component-output-contract-r1071/report.json",
-  "acceptance_sha256": "94e84a160e0ac4624a7b3108326fb5becc91d7005445b1adeba2e6827d16f739"
-}

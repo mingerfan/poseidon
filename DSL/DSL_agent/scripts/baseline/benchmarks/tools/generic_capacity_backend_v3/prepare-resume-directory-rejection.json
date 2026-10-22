@@ -1,8 +1,0 @@
-{
-  "layer": "developer_fixture_resume",
-  "paid_calls": 0,
-  "compiler_calls": 0,
-  "encrypted_calls": 0,
-  "retained_partial_request": true,
-  "reason": "Initial preparation directory exists; exact equal records remain mandatory before reuse."
-}

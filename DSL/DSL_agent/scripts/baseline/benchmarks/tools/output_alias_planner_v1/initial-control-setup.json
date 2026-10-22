@@ -1,1 +1,0 @@
-{"status":"failed","stage":"test_module_import","reason":"developer test lacked baseline module path; no backend or API executed","tests_attempted":1,"passed":0,"errors":1,"compiler_calls":0,"encrypted_calls":0,"api_calls":0}

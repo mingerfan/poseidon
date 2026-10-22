@@ -1,5 +1,0 @@
-{
-  "layer": "rule_preflight",
-  "type": "ValueError",
-  "message": "Capacity output ciphertext budget (maximum 16)"
-}

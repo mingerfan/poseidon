@@ -1,1 +1,0 @@
-{"constants": {"public_2": [0.0, 1.0, 0.0, 1.0, 0.0, 1.0]}, "format": "poseidon-model-graph-v2", "id": "static_alias_source", "inputs": [{"name": "x", "shape": [6]}], "nodes": [{"attrs": {}, "id": "generated_1", "inputs": ["x", "public_2"], "op": "multiply", "outputs": ["generated_0"]}], "outputs": [{"name": "y", "value": "generated_0"}], "resource_profile": "general-tensors-v1"}

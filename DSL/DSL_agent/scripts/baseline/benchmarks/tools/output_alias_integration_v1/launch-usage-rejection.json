@@ -1,1 +1,0 @@
-{"command": "qualification.py offline", "exit_code": 1, "diagnostic": "qualification.py --execute offline|live", "api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0}

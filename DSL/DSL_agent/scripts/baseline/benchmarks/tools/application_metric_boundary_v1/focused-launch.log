@@ -1,5 +1,0 @@
-Dacapo root: /home/lhohy/Code/Poseidon/third_party/ckks-runtime-agent/third_party/dacapo
-Build dir:   /home/lhohy/poseidon-work/platforms/aarch64-linux/build-dacapo/runtime-plan-r232
-Poseidon CPU; LLVM/MLIR 18.1.2, GMP 6.3.0. Build with -j2.
-Python tracing packages and out-of-source Hecate imports are a separate gate.
-{"format": "poseidon-application-metric-focused-controls-v1", "status": "passed", "tests": 69, "failures": 0, "errors": 0, "skipped": 0, "duplicate_test_ids_removed": 62, "modules": ["test_application_metric_boundary", "test_task_numerical_assessment", "test_task_native_assessment", "test_task_dataset_assessment"], "seconds": 41.79271226696437, "log_sha256": "46ce53e641e8947e5e5bce69b387222f6d83624878b27c8190644f5ce782c0a2", "api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "prior_broad_controls_timeout_retained": true, "binding": "33567202b7ad80a3e63ac8991a72d407a37d96e191470f6625181ae0cdfbccbf"}

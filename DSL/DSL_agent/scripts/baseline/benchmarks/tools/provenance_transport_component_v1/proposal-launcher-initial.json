@@ -1,8 +1,0 @@
-{
-  "status": "draft_writer_failed",
-  "reason": "capability file had no registry rewrite",
-  "production_changed": false,
-  "provider_calls": 0,
-  "compiler_calls": 0,
-  "encrypted_calls": 0
-}

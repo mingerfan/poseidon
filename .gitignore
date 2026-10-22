@@ -35,3 +35,18 @@ profiles/
 !.env.example
 *.env.local*
 .pytest_cache/
+
+# DSL Agent process records stay on the local machine, not in git (2026-10-20):
+# benchmark snapshot copies, B-line whole-model evidence, coordination ledgers.
+/DSL/DSL_agent/scripts/baseline/benchmarks/
+/DSL/DSL_agent/docs/whole_models/
+/DSL/DSL_agent/docs/coordination/
+
+# pt_agent: run outputs live in $PT_RESULTS outside the repo; server job outputs stay local.
+/DSL/DSL_agent/scripts/pt_agent/server_jobs/*/out/
+
+# Paper sources are maintained on Overleaf, not in this repo.
+*.aux
+*.bbl
+*.blg
+*.synctex.gz

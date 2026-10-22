@@ -1,7 +1,0 @@
-{
-  "after": "2ba56543cccab8ae3eb35ace71b9dd8b223bd5bff08e99ac1bdff66bb6b6f968",
-  "before": "fe7a646721d621aab335b78121b1af1ba61d8ddafa10a0a4a358365da9167a2c",
-  "file": "scripts/baseline/execution_input_domain.py",
-  "reference_or_backend_edited": false,
-  "scope": "Agent input-domain reference dispatch; current registered operator formats"
-}

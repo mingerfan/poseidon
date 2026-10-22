@@ -1,3 +1,0 @@
-@hc.func('c,c,c,c,c')
-def golden(x0, x1, x2, x3, zero_ct):
-    return [zero_ct + pv12, x1 * pv0 + x1.rotate(1) * pv1 + x1.rotate(1).rotate(2) * pv2 + x2 * pv6 + x2.rotate(1) * pv7 + x2.rotate(1).rotate(2) * pv8 + pv12, zero_ct + pv12 + zero_ct, x2 * pv0 + x2.rotate(1) * pv1 + x2.rotate(1).rotate(2) * pv2 + x3 * pv6 + x3.rotate(1) * pv7 + x3.rotate(1).rotate(2) * pv8 + pv12, zero_ct + pv13, x1 * pv3 + x1.rotate(1) * pv4 + x1.rotate(1).rotate(2) * pv5 + x2 * pv9 + x2.rotate(1) * pv10 + x2.rotate(1).rotate(2) * pv11 + pv13, zero_ct + pv13 + zero_ct, x2 * pv3 + x2.rotate(1) * pv4 + x2.rotate(1).rotate(2) * pv5 + x3 * pv9 + x3.rotate(1) * pv10 + x3.rotate(1).rotate(2) * pv11 + pv13]

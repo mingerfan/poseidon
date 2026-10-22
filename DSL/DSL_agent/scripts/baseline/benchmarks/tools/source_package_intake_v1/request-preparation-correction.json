@@ -1,7 +1,0 @@
-{
-  "corrected_sha256": "e3b5c1a038923057f490473e43f07b4306fc2e803582ae5f4f2668535d36c441",
-  "failure": "ImportError before request preparation",
-  "layer": "development_tool",
-  "original_sha256": "751474db260cbcb5d190cb882c91b0ff760ee1aff9dc25385a9b37fe57f3ee73",
-  "production_changed": false
-}

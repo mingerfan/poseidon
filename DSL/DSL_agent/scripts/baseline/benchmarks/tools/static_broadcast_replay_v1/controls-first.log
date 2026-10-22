@@ -1,9 +1,0 @@
-test_complete_alias_partition (test_controls.ReplayControls) ... ok
-test_declared_output_order (test_controls.ReplayControls) ... ok
-test_original_proposal_preserved (test_controls.ReplayControls) ... ok
-test_rebound_model_change (test_controls.ReplayControls) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.254s
-
-OK

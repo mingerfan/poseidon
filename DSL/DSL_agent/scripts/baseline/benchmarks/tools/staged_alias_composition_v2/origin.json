@@ -1,7 +1,0 @@
-{
-  "origin": "scripts/baseline/benchmarks/tools/static_alias_source_draft_v1/alias_source_plan.py",
-  "sha256": "f40ddf6d00dbf565c6e055f744dfad37dd913d34dec5932eca8304a6afe03557",
-  "source_version": "poseidon-ordered-tensor-source-v1",
-  "production_integrated": false,
-  "backend_changed": false
-}

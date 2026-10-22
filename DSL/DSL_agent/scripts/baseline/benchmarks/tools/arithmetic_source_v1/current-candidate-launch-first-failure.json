@@ -1,9 +1,0 @@
-{
-  "status": "launch_failed",
-  "exit_code": 127,
-  "layer": "tool_environment",
-  "message": "Platform variables were set after importing VENV; no worker or candidate comparison started.",
-  "compiler_calls": 0,
-  "encrypted_calls": 0,
-  "provider_calls": 0
-}

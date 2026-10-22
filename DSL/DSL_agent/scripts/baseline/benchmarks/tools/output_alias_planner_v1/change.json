@@ -1,8 +1,0 @@
-{
-  "after": "7ea0436f7fbe67b769687d18341aef9e9bcd16438f73275b7e119162fc578a8e",
-  "backend_core_changed": false,
-  "before": "24859947737d8fcee848f6c0dcc6c4ca0dec142e802b1e6099b219a045253d5f",
-  "format": "poseidon-alias-planner-change-v1",
-  "scope": "candidate period feasibility uses exact graph-value output sharing; logical budgets unchanged",
-  "source": "scripts/baseline/application_planning/layout.py"
-}

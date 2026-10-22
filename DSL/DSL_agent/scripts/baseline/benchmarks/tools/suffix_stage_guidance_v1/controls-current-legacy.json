@@ -1,1 +1,0 @@
-{"api_calls":0,"binding":"4ad930da53ad8b5d7432218e8477839656ac8514aef28f8558e4297c4c280ca6","compiler_calls":0,"encrypted_calls":0,"errors":0,"failed":0,"format":"poseidon-suffix-stage-guidance-controls-v1","passed":52,"run":52,"skipped":0,"tested_modules":["test_binding_coordinate_guidance","test_unified_tensor_axis_guidance","test_unified_generation_guidance"]}

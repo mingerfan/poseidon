@@ -1,1 +1,0 @@
-/home/lhohy/Code/Poseidon/scripts/baseline/run_public_construction_goldens.py

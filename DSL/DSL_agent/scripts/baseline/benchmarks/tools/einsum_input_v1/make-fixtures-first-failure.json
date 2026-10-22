@@ -1,1 +1,0 @@
-{"code": "missing_existing_libstdcxx_search_path", "compiler_calls": 0, "encrypted_calls": 0, "fix": "command-scoped HECATE_PYTHON_LIBRARY_PATH; existing Nix library only", "format": "poseidon-einsum-fixture-tool-failure-v1", "layer": "tool_environment", "provider_calls": 0, "source_or_fixture_writes": 0}

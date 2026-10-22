@@ -1,6 +1,0 @@
-{
-  "format": "mixed-acceptance-driver-snapshot-v1",
-  "old_sha256": "4ebaa71bbfd160ad1781b19aed837bd2e3a74f2ccf6b033650ec57a536d760e8",
-  "current_sha256": "e189a044ea657217dd1f29f96254fe95707d1a88450b69dd3e9c4c3a991df722",
-  "reason": "Freeze independent slot interpreter and validate the declared output tree; one package call is not repeated execution"
-}

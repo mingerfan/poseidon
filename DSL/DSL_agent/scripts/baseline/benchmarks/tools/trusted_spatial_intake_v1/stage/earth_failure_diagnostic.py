@@ -1,1 +1,0 @@
-/home/lhohy/Code/Poseidon/scripts/baseline/earth_failure_diagnostic.py

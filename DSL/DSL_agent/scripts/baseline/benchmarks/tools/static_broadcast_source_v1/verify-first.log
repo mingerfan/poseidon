@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_broadcast_source_v1/verify.py", line 9, in <module>
-    raise SystemExit(enter_nix(command,seconds=240,environment="poseidon-cpu"))
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/hecate_python_env.py", line 107, in enter_nix
-    raw = subprocess.run(["timeout", "-k", "3s", "90s", *WRAPPER, "nix", "eval",
-  File "/usr/lib/python3.10/subprocess.py", line 526, in run
-    raise CalledProcessError(retcode, process.args,
-subprocess.CalledProcessError: Command '['timeout', '-k', '3s', '90s', 'bash', 'scripts/baseline/nix_portable.sh', 'nix', 'eval', '--offline', '--json', '--argstr', 'platform', 'aarch64-linux', '--file', 'src/poseidon/tools/dacapo/dacapo-dependencies.nix', 'metadata']' returned non-zero exit status 1.

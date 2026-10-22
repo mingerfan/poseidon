@@ -1,9 +1,0 @@
-{
-  "api_calls": 0,
-  "compiler_calls": 0,
-  "encrypted_calls": 0,
-  "model_tests_started": false,
-  "reason": "required_module_arguments_missing",
-  "source_sha256": "d7c969fac4e1dc6460ba9eeae5934042f4791c3685e49508b16f89f61c901a32",
-  "stage": "draft_test_version_gate"
-}

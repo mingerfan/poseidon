@@ -1,1 +1,0 @@
-{"api_calls": 0, "compiler_calls": 0, "encrypted_calls": 0, "layer": "developer_audit", "reason": "handle refers to plan binding; it is not a self-bound record", "source_sha256": "9176f2b20fc767e1cc68ab0529e5d58f909ee209b68371c10c305110cbf3b93e", "status": "failed"}

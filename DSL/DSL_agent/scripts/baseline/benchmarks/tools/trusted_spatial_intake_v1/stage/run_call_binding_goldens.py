@@ -1,1 +1,0 @@
-/home/lhohy/Code/Poseidon/scripts/baseline/run_call_binding_goldens.py

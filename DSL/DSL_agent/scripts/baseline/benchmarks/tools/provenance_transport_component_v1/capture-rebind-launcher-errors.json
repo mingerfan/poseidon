@@ -1,1 +1,0 @@
-{"compiler_calls":0,"encrypted_calls":0,"new_scope_binding":"843ce357b980f1e1723f20cb9f617644df91e4326b3b22c55802e1a2284206e8","old_scope_reused":false,"provider_calls":0,"reasons":["Immutable record writer refused replacing identity","Old binding correctly rejected changed source before launching"],"status":"preexecution_refused"}

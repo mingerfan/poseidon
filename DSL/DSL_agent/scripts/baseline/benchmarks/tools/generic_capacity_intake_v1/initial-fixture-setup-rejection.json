@@ -1,8 +1,0 @@
-{
-  "compiler_calls": 0,
-  "encrypted_calls": 0,
-  "error": "explicit v34 source requires static call JSON",
-  "failure_layer": "developer_fixture_manifest",
-  "provider_calls": 0,
-  "status": "failed"
-}

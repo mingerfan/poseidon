@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_live_acceptance_v1/audit.py", line 21, in <module>
-    run.no_active()
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/run.py", line 200, in no_active
-    require(not active_project_command(a),"active_project_execution")
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_retest_v1/scope.py", line 27, in require
-    if not ok:raise ValueError(code)
-ValueError: active_project_execution

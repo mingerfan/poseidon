@@ -1,6 +1,0 @@
-{
-  "path": "scripts/baseline/benchmarks/tools/closed_group_audit_v2/audit_group.py",
-  "sha256": "6bb082109dfc0ed6f6e3bda654aed36f38e3fed86924d706c9a1ade1198c1cec",
-  "selected_scope_only": true,
-  "no_original_report_mutation": true
-}

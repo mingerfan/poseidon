@@ -1,1 +1,0 @@
-{"api_calls":0,"binding":"aa7cbc309fc829f0b96baf1f732a369fa636570ad3d200303f3061b8244a368a","compiler_calls":0,"encrypted_calls":0,"errors":0,"failed":0,"format":"poseidon-source-retry-guidance-controls-v1","passed":52,"run":52,"skipped":0,"tested_modules":["test_binding_coordinate_guidance","test_unified_tensor_axis_guidance","test_unified_generation_guidance"]}

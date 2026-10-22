@@ -1,1 +1,0 @@
-{"status": "verified_not_launched", "binding": "65cd6aa8932dde905ba5e71884868d35fd164414e4891cecafee12fbf7264225", "original_owner_live": true, "stages": ["wait_for_verified_main_terminal", "audit_original_34_cases", "fresh_bilinear_retest", "audit_retest"], "new_api_calls": 0}

@@ -1,9 +1,0 @@
-{
-  "compiler_calls": 0,
-  "diagnostic": "ImportError: cannot import name build from application_identity",
-  "encrypted_calls": 0,
-  "paid_api_calls": 0,
-  "source_sha256": "98aef36169581b9756a8b94c5580e7bf64b60591305e37a8c4c46c0657575231",
-  "status": "environment_driver_import_failed",
-  "tests_run": 0
-}

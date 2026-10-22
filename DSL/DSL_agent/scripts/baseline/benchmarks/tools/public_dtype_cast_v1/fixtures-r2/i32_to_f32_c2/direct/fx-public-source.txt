@@ -1,7 +1,0 @@
-graph():
-    %x : [#users=3] = placeholder[target=x]
-    %public : [#users=1] = get_attr[target=public]
-    %float_1 : [#users=1] = call_method[target=float](args = (%public,), kwargs = {})
-    %mul : [#users=1] = call_function[target=operator.mul](args = (%x, %float_1), kwargs = {})
-    %add : [#users=1] = call_function[target=operator.add](args = (%mul, %x), kwargs = {})
-    return {'primary': add, 'saved': [x, None]}

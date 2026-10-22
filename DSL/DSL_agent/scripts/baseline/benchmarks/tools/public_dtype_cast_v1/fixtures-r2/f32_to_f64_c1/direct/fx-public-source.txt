@@ -1,7 +1,0 @@
-graph():
-    %x : [#users=1] = placeholder[target=x]
-    %public : [#users=1] = get_attr[target=public]
-    %to : [#users=1] = call_method[target=to](args = (%public,), kwargs = {dtype: torch.float64})
-    %transpose : [#users=1] = call_method[target=transpose](args = (%to, 0, 1), kwargs = {})
-    %add : [#users=1] = call_function[target=operator.add](args = (%x, %transpose), kwargs = {})
-    return add

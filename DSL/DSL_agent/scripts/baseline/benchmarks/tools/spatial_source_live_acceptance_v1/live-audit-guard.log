@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_live_acceptance_v1/audit.py", line 10, in <module>
-    run.no_active()
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_live_v1/run.py", line 189, in no_active
-    require(not any(os.fsdecode(x) in paths or Path(os.fsdecode(x)).name in ("hecate-opt","poseidon-agent-cpu") for x in a if x),"active_project_execution")
-  File "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/spatial_source_live_v1/scope.py", line 27, in require
-    if not ok:raise ValueError(code)
-ValueError: active_project_execution
