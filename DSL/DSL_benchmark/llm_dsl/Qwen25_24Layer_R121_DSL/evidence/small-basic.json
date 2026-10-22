@@ -1,0 +1,775 @@
+{
+  "passed": true,
+  "case": "basic",
+  "pair_calls": 46,
+  "tile_calls": [
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    },
+    {
+      "tile": 8,
+      "width": 8
+    }
+  ],
+  "trace_options": {
+    "rms_degree_strategy": "degree10p2_pair13_silu_canonical_fold2",
+    "linear_budget_mode": "wide_baby16",
+    "layout_fusion": true,
+    "pair_batch": "both_except_last",
+    "rms_batch_strategy": "tiled16",
+    "early_input_mask": true,
+    "clean_kv_output": true,
+    "mlp_pair": true,
+    "lm_head_baby_count": 32
+  },
+  "scope": "24 blocks, reduced dimensions, packed ABI arithmetic only",
+  "config": {
+    "num_layers": 24,
+    "hidden_size": 8,
+    "intermediate_size": 16,
+    "query_heads": 4,
+    "kv_heads": 2,
+    "head_dim": 2,
+    "vocab_size": 19,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "slots": 32,
+  "checks": [
+    {
+      "mode": "prefill",
+      "new_positions": [
+        0,
+        1
+      ],
+      "cached_positions": [],
+      "executed_blocks": 24,
+      "inputs": 2,
+      "outputs": 25,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 5.5892445949279335e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 8.97198694504997e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 6.157069067092014e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "max_tail": 0.0,
+      "seconds": 0.2339999999385327
+    },
+    {
+      "mode": "decode-pair",
+      "new_positions": [
+        0,
+        1
+      ],
+      "cached_positions": [],
+      "executed_blocks": 24,
+      "inputs": 2,
+      "outputs": 25,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 5.5892445949279335e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 8.97198694504997e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 6.157069067092014e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "max_tail": 0.0,
+      "seconds": 0.2029999999795109
+    },
+    {
+      "mode": "prefill",
+      "new_positions": [
+        0
+      ],
+      "cached_positions": [],
+      "executed_blocks": 24,
+      "inputs": 1,
+      "outputs": 25,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 1.7227869922309402e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 7.386388062302629e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 6.15706907125535e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "max_tail": 0.0,
+      "seconds": 0.0940000000409782
+    },
+    {
+      "mode": "decode",
+      "new_positions": [
+        1
+      ],
+      "cached_positions": [
+        0
+      ],
+      "executed_blocks": 24,
+      "inputs": 25,
+      "outputs": 25,
+      "comparison": {
+        "passed": true,
+        "arrays": {
+          "logits": {
+            "max_abs_error": 5.5892445949279335e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "keys": {
+            "max_abs_error": 8.971986953376643e-08,
+            "passed": true,
+            "imaginary_checked": false
+          },
+          "values": {
+            "max_abs_error": 6.157069069867571e-08,
+            "passed": true,
+            "imaginary_checked": false
+          }
+        },
+        "atol": 1e-05,
+        "rtol": 0.0,
+        "tail_checked": false,
+        "execution_provenance": "caller-supplied arrays; does not attest GPU or CKKS execution"
+      },
+      "max_tail": 0.0,
+      "seconds": 0.125
+    }
+  ],
+  "differences": {
+    "pair": {
+      "logits": 0.0,
+      "keys": 0.0,
+      "values": 0.0
+    },
+    "external": {
+      "logits": 6.938893903907228e-18,
+      "keys": 8.326672684688674e-17,
+      "values": 4.163336342344337e-17
+    }
+  },
+  "cache_immutable": true,
+  "native_trace": false,
+  "ckks": false,
+  "gpu": false,
+  "external_cache_level_handoff_verified": false
+}

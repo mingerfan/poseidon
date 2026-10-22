@@ -1,0 +1,172 @@
+{
+  "files": {
+    "check_outputs.py": {
+      "bytes": 1813,
+      "sha256": "8470b5844676dc51d06f52a2de5e7ea3339ecaaef0ba6512428a81b2e5f16b5f"
+    },
+    "compile_qwen24.py": {
+      "bytes": 5938,
+      "sha256": "9234b3d3015ff525f555da3262fb9b713eab824add3f85fab65ee49279df80a2"
+    },
+    "config/approximations.provisional.json": {
+      "bytes": 55601,
+      "sha256": "d3c8e3915697d4fde6536f86faf386a1534cbb6aa4a522a6b0fbcb0cb72f5342"
+    },
+    "config/compiler-config.json": {
+      "bytes": 2098,
+      "sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110"
+    },
+    "config/model.json": {
+      "bytes": 236,
+      "sha256": "75a88ca552e366dfc81a17fc6e92009475920bce91843ce3422e5d20d868d1a9"
+    },
+    "config/operator-spec.json": {
+      "bytes": 2488,
+      "sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b"
+    },
+    "config/weight_schema.json": {
+      "bytes": 18332,
+      "sha256": "eaecef66e973b66bb65adc21598c7145730c0681f2bdb9f0fdc37ec561deb79a"
+    },
+    "prepare_fixture.py": {
+      "bytes": 3687,
+      "sha256": "4c9db905204fe1d0e60ed39d793c4883f84bad5cb5c747838f1585ecc8521dea"
+    },
+    "prepare_inputs.py": {
+      "bytes": 1203,
+      "sha256": "1761ad490108dab28d06bc3cb4bde43ccf99dd263fd929da76304c4b81bc011f"
+    },
+    "provenance.json": {
+      "bytes": 998,
+      "sha256": "179b7e1708a96edfef6d5080106934408c0d3d7a51768253616dee10f5ce408e"
+    },
+    "qwen24/__init__.py": {
+      "bytes": 49,
+      "sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9"
+    },
+    "qwen24/kernels/__init__.py": {
+      "bytes": 69,
+      "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+    },
+    "qwen24/kernels/degree_rms_candidate.py": {
+      "bytes": 1422,
+      "sha256": "b09333dabd4a0dcd9c5d6cd9a0443d003fb6c6c930505733459645e787287c03"
+    },
+    "qwen24/kernels/expr.py": {
+      "bytes": 95,
+      "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff"
+    },
+    "qwen24/kernels/joint_qkv.py": {
+      "bytes": 2794,
+      "sha256": "3b5b716173f4511573512e4238fadf8a6b923404de2e7a64c9c3c488cc55250e"
+    },
+    "qwen24/kernels/ops.py": {
+      "bytes": 5772,
+      "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+    },
+    "qwen24/kernels/packed_linear.py": {
+      "bytes": 6702,
+      "sha256": "e0df32d9226c7f2223e6cc5aacca377a42e68f327981bd224ab65cd44e3d7504"
+    },
+    "qwen24/kernels/packed_lm_head.py": {
+      "bytes": 4077,
+      "sha256": "4e7023943e643e8acdf8d8691c9ec3113254fc1548eeda65fb82d6c2791f42e7"
+    },
+    "qwen24/kernels/packed_mlp_pair.py": {
+      "bytes": 4863,
+      "sha256": "e6293764639389b0e65e90e2f25ee10942ed44b1afb2fdd7f7aa0d5c543ab54d"
+    },
+    "qwen24/kernels/packed_rms_batch.py": {
+      "bytes": 6359,
+      "sha256": "3cfdb16d683e775c4a1afd5317346413a73c12c1b4d3873f62c6d37fce2c0496"
+    },
+    "qwen24/kernels/prefill_rms_adapter.py": {
+      "bytes": 3600,
+      "sha256": "4e3679a82240cc19bc16579b6e2d2060d57053cc65ca65f2d89464c3a88e4e3b"
+    },
+    "qwen24/kernels/prefix_fusion.py": {
+      "bytes": 1994,
+      "sha256": "4aafc31de914381aecd4e759dee7203f3a3b125469134a0bfc3a448d10d11f46"
+    },
+    "qwen24/kernels/qwen_layers.py": {
+      "bytes": 22310,
+      "sha256": "1c550d3aea13fc524e932004ec4675578ddd39858c44620cc129fcddb703fbeb"
+    },
+    "qwen24/kernels/qwen_model.py": {
+      "bytes": 13750,
+      "sha256": "58872039ff0e2f1d5168b6ad5f186c01a57ed794932205c57a4ed866d2e00737"
+    },
+    "qwen24/kernels/qwen_nonlinear.py": {
+      "bytes": 10186,
+      "sha256": "83b996cccd3cc263a2c9df6ed23c663c8f410064a9c0d38c858efeb968ca648e"
+    },
+    "qwen24/kernels/rms_affine_candidate.py": {
+      "bytes": 3011,
+      "sha256": "589a7506df51d4388bb1d07976992862bdc444a131b9695f0ec22757dc16d53b"
+    },
+    "qwen24/kernels/rms_power_polynomial.py": {
+      "bytes": 1411,
+      "sha256": "d22ae4b078d1077524e97d44754a953c71591820acd03043c515fef162a5267d"
+    },
+    "qwen24/kernels/silu_parity_candidate.py": {
+      "bytes": 2335,
+      "sha256": "306b9400c72507a6747ec32a812278124b6e93d39b8157def30d6335c9e5958b"
+    },
+    "qwen24/kernels/tiled_down.py": {
+      "bytes": 3394,
+      "sha256": "00a6928abddfbdb01b430909d0e45f565275976ac30f22896de5c0974be4fd24"
+    },
+    "qwen24/kernels/zero_tail_contract.py": {
+      "bytes": 1347,
+      "sha256": "1f669f4152276487c3305e653953192ccd35d507da9cd338d23c84b2ba454f96"
+    },
+    "qwen24/reference.py": {
+      "bytes": 3631,
+      "sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6"
+    },
+    "qwen24/runtime.py": {
+      "bytes": 5071,
+      "sha256": "00f648b72fb558acdc20af30471e07deb929a6c9ce416e909cd1af7693eef09d"
+    },
+    "qwen24/spec.py": {
+      "bytes": 5131,
+      "sha256": "c8fae6fcf4bad359cc60e4c9d571b96deff459488e12894fc6d9799cdd7c44e5"
+    },
+    "qwen24/weights.py": {
+      "bytes": 1974,
+      "sha256": "91b00ac7991d5b771240931ff18ba423db035ae1b40c7955803a9af4f6afb979"
+    },
+    "README.md": {
+      "bytes": 281,
+      "sha256": "47bab338c0c6195849d78e0fd48e8faf1126c395670e25069d3204554c65ddaa"
+    },
+    "trace_qwen24.py": {
+      "bytes": 2456,
+      "sha256": "02efe19c5def74790b961c77ba10289fe18f1e70191dbbf11e03810759c8a3cf"
+    },
+    "unpack_outputs.py": {
+      "bytes": 2024,
+      "sha256": "2ffc6b9b169b0e8a2e7b62129a5a36eb6285fd0b28ecfdc032b2c3b67671d306"
+    },
+    "verification/small-numpy-validation.json": {
+      "bytes": 16526,
+      "sha256": "99fc3ce170f388a3389ea1621e69fdd74c7cfc58454b17fd50f781663f3f8431"
+    },
+    "verification/smoke_config.json": {
+      "bytes": 226,
+      "sha256": "095b78dd0c476e440c86f7b08419f6b4f3599fccaaff6c6412392f14e8b5f5c7"
+    },
+    "verification/source-check.json": {
+      "bytes": 823,
+      "sha256": "58697391f64ce2c32d1de8515c6145c721b1eb5c3b8200884ea4ed3671833cdc"
+    },
+    "verification/validate_numpy.py": {
+      "bytes": 8205,
+      "sha256": "d3d6e0fb2eb518894a1b394283ad029ce3d204606fff0a34b29fc6e8d70a26ef"
+    },
+    "verify_manifest.py": {
+      "bytes": 758,
+      "sha256": "f0581c91b65f320e75ad6911cb27bab50f06ae516dd1fdd2c98ef641b1ae9375"
+    }
+  }
+}
