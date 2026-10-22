@@ -1,0 +1,5 @@
+# expect: E_HEADER
+@fhe.program(slots=1000)   # ERR
+def mlp(x: Cipher[1, 64]):
+    y = pack(x, layout="flat")
+    return y

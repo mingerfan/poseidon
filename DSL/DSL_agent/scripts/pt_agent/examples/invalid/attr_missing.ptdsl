@@ -1,0 +1,6 @@
+# expect: E_ATTR_MISSING
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    y = pack(x, layout="flat")
+    z = linear(y, b=W["fc1.bias"])   # ERR
+    return z

@@ -1,0 +1,42 @@
+# PT-DSL v1 sample: ResNet20 (CIFAR-10).
+# Weight names follow workloads/resnet20/model_reference.py (B line).
+@fhe.program(slots=16384, refresh="compiler", placement="depth-dp")
+def resnet20(x: Cipher[1, 3, 32, 32]):
+    x = pack(x, layout="mux", gap=1)
+    with region("stem", level_budget=16):
+        y = conv2d(x, w=W["conv1.weight"], bn="bn1", stride=1, pad=1, algo="mpcb")
+        y = act(y, fn="relu", method="minimax_comp", degrees=(15, 15, 27), domain=(-16.0, 16.0))
+    y = basic_block(y, "layer1.0")
+    y = basic_block(y, "layer1.1")
+    y = basic_block(y, "layer1.2")
+    y = down_block(y, "layer2.0", 8)
+    y = basic_block(y, "layer2.1")
+    y = basic_block(y, "layer2.2")
+    y = down_block(y, "layer3.0", 16)
+    y = basic_block(y, "layer3.1")
+    y = basic_block(y, "layer3.2")
+    z = mean(y, axis=(2, 3))
+    z = relayout(z, layout="flat")
+    out = linear(z, w=W["linear.weight"], b=W["linear.bias"], algo="bsgs")
+    return out
+
+
+def basic_block(x, p):
+    t = conv2d(x, w=W[p + ".conv1.weight"], bn=p + ".bn1", stride=1, pad=1, algo="mpcb")
+    t = act(t, fn="relu", method="minimax_comp", degrees=(15, 15, 27), domain=(-16.0, 16.0))
+    t = conv2d(t, w=W[p + ".conv2.weight"], bn=p + ".bn2", stride=1, pad=1, algo="mpcb")
+    t = add(t, x)
+    t = act(t, fn="relu", method="minimax_comp", degrees=(15, 15, 27), domain=(-16.0, 16.0))
+    return t
+
+
+def down_block(x, p, cpad):
+    t = conv2d(x, w=W[p + ".conv1.weight"], bn=p + ".bn1", stride=2, pad=1, algo="mpcb")
+    t = act(t, fn="relu", method="minimax_comp", degrees=(15, 15, 27), domain=(-16.0, 16.0))
+    t = conv2d(t, w=W[p + ".conv2.weight"], bn=p + ".bn2", stride=1, pad=1, algo="mpcb")
+    s = slice(x, axis=2, start=0, end=None, step=2)
+    s = slice(s, axis=3, start=0, end=None, step=2)
+    s = pad(s, pads=(0, 0, 0, 0, cpad, cpad))
+    t = add(t, s)
+    t = act(t, fn="relu", method="minimax_comp", degrees=(15, 15, 27), domain=(-16.0, 16.0))
+    return t

@@ -1,0 +1,8 @@
+# expect-check: E_LAYOUT_MISMATCH
+# weights: mlp
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    a = pack(x, layout="flat")
+    b = relayout(a, layout="rep", copies=2)
+    c = add(a, b)   # ERR
+    return c

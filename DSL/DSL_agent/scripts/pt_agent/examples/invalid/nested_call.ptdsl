@@ -1,0 +1,5 @@
+# expect: E_EXPR
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    z = act(pack(x, layout="flat"), fn="square", method="exact")   # ERR
+    return z

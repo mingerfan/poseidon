@@ -1,0 +1,8 @@
+# expect-check: E_SHAPE
+# weights: mlp
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    a = pack(x, layout="flat")
+    h = linear(a, w=W["fc1.weight"], b=W["fc1.bias"])
+    c = add(a, h)   # ERR
+    return c
