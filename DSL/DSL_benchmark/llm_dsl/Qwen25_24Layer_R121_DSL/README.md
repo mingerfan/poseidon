@@ -2,7 +2,7 @@
 
 本工程由已发布且完整 CPU CKKS 通过的 **Qwen25_2Layer_R121_DSL** 扩展为 **24 个独立 Decoder Block**。使用相同的算子、非线性近似、QKV 打包、配对 MLP down tile=256 和 CPU 内存后处理。不是复制 12 次两层调用：各层有独立权重与 KV，前 23 层使用配对 MLP 路径，末层保留原末层策略。
 
-**本包已通过缩小宽度的 24 层明文算术检查；本包尚未执行真实尺寸编译、完整 CKKS 或 GPU 测试。** R121 的 74 次自举、45.68 分钟和27.08 GiB RSS只属于两层测试，不能套到本包。24 层数据边界见 [MODEL_DATA_ANALYSIS.md](MODEL_DATA_ANALYSIS.md)。
+**本包已通过小尺寸24层算术检查、真实尺寸编译、原始/优化计划校验及完整24层Mock；尚未执行完整CKKS或GPU测试。** R121 的 74 次自举、45.68 分钟和27.08 GiB RSS只属于两层测试，不能套到本包。24 层实际编译统计见 [MODEL_DATA_ANALYSIS.md](MODEL_DATA_ANALYSIS.md)。
 
 ## 模型与接口
 
@@ -38,7 +38,7 @@
 - CPU 计划后处理：终端冗余刷新消除、release_ready 调度、64MiB Encode 根缓存。64MiB只限制该缓存，不限制进程总内存。
 - 自举由匹配编译器自动插入；CPU参考合约为真实48阶自举，L1→L5、scale43。
 
-配对计算通常利用两块不相交槽区；这不意味着所有层都达到高槽位利用率。24层新增的配对层、自举布局和误差累积仍需真实尺寸验证。
+配对计算通常利用两块不相交槽区；这不意味着所有层都达到高槽位利用率。24层新增路径已通过真实尺寸编译/Mock；密文误差累积仍需真实CKKS验证。
 
 ## 使用
 
@@ -63,7 +63,7 @@ python -B optimize_cpu_plan.py --input /data/qwen24-compiled/ACTUAL.runtime-plan
 
 `prepare_fixture.py`生成默认 decode-pair 的独立 dense 参考与 `runtime-fixture.json`。如选用其他入口，应按对应 `interfaces/` 提供输入与参考，不能直接使用默认 fixture。
 
-`frozen/tools/mock_probe.cpp`、`native_probe.cpp`已将输出与层数约束改成24层/29输出，自举期望次数从实际计划读取。**这两个改版 C++ 探针尚未构建执行**；需要匹配的 Runtime API、Poseidon库及 native Boot 回调，先做 PlanVerifier 和完整 Mock，再做 CKKS。
+`frozen/tools/mock_probe.cpp`、`native_probe.cpp`已将输出与层数约束改成24层/29输出，自举期望次数从实际计划读取。**Mock探针已构建并完成24层运行；native CKKS探针尚未构建执行**。后者仍需要匹配的Runtime API、Poseidon库及native Boot回调。
 
 ```bash
 /path/to/mock-probe /data/qwen24-plan.json frozen/model/package/config/operator-spec.json /path/to/bundle /data/qwen24-fixture/runtime-fixture.json /data/qwen24-mock.json
@@ -79,3 +79,7 @@ GPU可复用DSL源码，按GPU合约重新追踪/编译验证；编译入口支�
 `evidence/small-basic.json`、`small-tiled.json`记录实际执行的24层小尺寸算术。每个case检查四条路径、每路径24个Block、独立权重、脏尾部输入、干净输出、外部缓存不变及独立原函数dense参考。tiled case确实覆盖tile256和跨tile的385维MLP中间层。测试未模拟CKKS噪声。
 
 `evidence/parent_two_layer/`严格只属于父版两层结果。`source-binding.json`记录精确继承与修改文件；`manifest.json`校验本包。冻结算子内历史注释保留原出处，以本README的验证范围为准。底层 `frozen/model/package/trace_qwen24.py`保留旧未打包ABI兼容用途，实际交付使用根目录 `trace_model.py`。
+
+## 真实尺寸编译分析已完成
+
+本版24层decode-pair已完成服务器编译与完整Mock，最终计划866次native Boot；全保留逻辑系数1,226.871094GiB，释放图峰值356.500MiB。两者均不含密钥/自举工作区，不能当作CKKS进程RSS。详见[数据与内存主报告](MODEL_DATA_ANALYSIS.md)和[逐层level与自举明细](COMPILED_LEVEL_DETAILS.md)。其他入口未执行真实尺寸编译。

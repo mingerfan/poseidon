@@ -23,12 +23,76 @@
   "logit_ciphertexts": 5,
   "kv_ciphertexts": 24,
   "slots": 32768,
-  "exact_compiled_pt_count": null,
-  "exact_compiled_ct_count": null,
-  "boot_count": null,
-  "level_distribution": null,
+  "exact_compiled_pt_count": 63789,
+  "exact_compiled_ct_count": 296335,
+  "boot_count": 866,
+  "level_distribution": {
+    "ciphertext:L5:c2": {
+      "count": 27619,
+      "coefficient_bytes": 173763723264
+    },
+    "plaintext:L2:c1": {
+      "count": 31530,
+      "coefficient_bytes": 49592401920
+    },
+    "plaintext:L1:c1": {
+      "count": 263,
+      "coefficient_bytes": 275775488
+    },
+    "plaintext:L4:c1": {
+      "count": 7656,
+      "coefficient_bytes": 20069744640
+    },
+    "ciphertext:L2:c2": {
+      "count": 59549,
+      "coefficient_bytes": 187324956672
+    },
+    "ciphertext:L1:c2": {
+      "count": 72044,
+      "coefficient_bytes": 151087218688
+    },
+    "plaintext:L5:c1": {
+      "count": 23791,
+      "coefficient_bytes": 74840014848
+    },
+    "ciphertext:L4:c2": {
+      "count": 78406,
+      "coefficient_bytes": 411073249280
+    },
+    "ciphertext:L4:c3": {
+      "count": 220,
+      "coefficient_bytes": 1730150400
+    },
+    "ciphertext:L3:c2": {
+      "count": 57979,
+      "coefficient_bytes": 243181551616
+    },
+    "plaintext:L3:c1": {
+      "count": 549,
+      "coefficient_bytes": 1151336448
+    },
+    "ciphertext:L5:c3": {
+      "count": 98,
+      "coefficient_bytes": 924844032
+    },
+    "ciphertext:L3:c3": {
+      "count": 220,
+      "coefficient_bytes": 1384120320
+    },
+    "ciphertext:L2:c3": {
+      "count": 200,
+      "coefficient_bytes": 943718400
+    }
+  },
   "peak_rss_bytes": null,
-  "full_retained_coeff_bytes": null,
+  "full_retained_coeff_bytes": 1317342806016,
   "full_model_ckks": false,
-  "gpu": false
+  "gpu": false,
+  "release_peak_coeff_bytes": 373817344,
+  "native_compiled": true,
+  "full_mock_passed": true,
+  "compiled_mode": "decode-pair",
+  "compile_peak_rss_bytes": 31461527552,
+  "mock_peak_rss_bytes": 289669120,
+  "compiled_evidence": "compiled-analysis.json"
 }
