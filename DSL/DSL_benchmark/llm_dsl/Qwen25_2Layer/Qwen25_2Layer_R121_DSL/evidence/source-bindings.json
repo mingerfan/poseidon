@@ -1,0 +1,8 @@
+{
+  "parent_job": "/home/gy/qwen-ckks/experiments/qwen_round_120_1792637438214029000",
+  "same_model_as_compiled_parent": true,
+  "plan_sha256": "968b84b2c9d508d652a19b2ae74286cea4f6e93157abea29328a1477056a7675",
+  "backend_job": "/home/gy/qwen-ckks/experiments/qwen_round_078_1792126042361155300",
+  "selected_threads": 32,
+  "old_experiments_unchanged": true
+}

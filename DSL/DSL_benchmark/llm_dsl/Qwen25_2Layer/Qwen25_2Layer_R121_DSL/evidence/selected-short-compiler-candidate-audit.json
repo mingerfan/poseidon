@@ -1,0 +1,570 @@
+{
+  "complete": true,
+  "compiler_only": true,
+  "isolated_toolchain": "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_120_1792637438214029000/isolated-compiler",
+  "baseline_compiler_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+  "candidate_compiler_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+  "changed_source_files": [
+    "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp"
+  ],
+  "patch": {
+    "before_sha256": "9b4072646fa17bf79ad9adbc5361c5e2607fff3f291339ac60142d27c8c5d933",
+    "after_sha256": "82421975745fa36c63db1695c9364aa7ea72a10bb520362b69f7b76a63e2e81f",
+    "changed_regions": 2,
+    "scope": "Source patch candidate only; no compiler build, plan or CKKS acceptance"
+  },
+  "source_manifest_sha256": "0864c2223af644174f5ebaba809fd333108e1d1bf10079b4a789af1fa5db3bb2",
+  "ctest_passed": true,
+  "regression": {
+    "passed": true,
+    "paired_cases": 12,
+    "cases": [
+      {
+        "case": "chain6",
+        "waterline": 43,
+        "baseline": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 6,
+            "rescale": 6,
+            "boot": 1,
+            "mod_switch": 2,
+            "add_cc": 1
+          },
+          "actual": [
+            0.51538003765025
+          ],
+          "expected": [
+            0.51538003765025
+          ],
+          "plan_sha256": "a95aa3cce7ec8f5bd1fad8355808777309829271758e7e5588917807a20cf277",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        },
+        "candidate": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 6,
+            "rescale": 6,
+            "boot": 1,
+            "mod_switch": 2,
+            "add_cc": 1
+          },
+          "actual": [
+            0.51538003765025
+          ],
+          "expected": [
+            0.51538003765025
+          ],
+          "plan_sha256": "a95aa3cce7ec8f5bd1fad8355808777309829271758e7e5588917807a20cf277",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        }
+      },
+      {
+        "case": "chain9",
+        "waterline": 43,
+        "baseline": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 9,
+            "rescale": 9,
+            "boot": 2,
+            "mod_switch": 3,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5234213181710903
+          ],
+          "expected": [
+            0.5234213181710903
+          ],
+          "plan_sha256": "6bb7bdd80a40ae9b3adb5d825a0535edb73f364639c321bd8fd75864337f6935",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        },
+        "candidate": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 9,
+            "rescale": 9,
+            "boot": 2,
+            "mod_switch": 2,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5234213181710903
+          ],
+          "expected": [
+            0.5234213181710903
+          ],
+          "plan_sha256": "c6db9a3a0211ab4dedc022e59adefffdcca6c4e9bf6eda38b3f4ac66a6d1cafb",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        }
+      },
+      {
+        "case": "chain12",
+        "waterline": 43,
+        "baseline": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 12,
+            "rescale": 12,
+            "boot": 3,
+            "mod_switch": 4,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5317062575329925
+          ],
+          "expected": [
+            0.5317062575329925
+          ],
+          "plan_sha256": "a10f7a258e2db80de923bc03b392dd7f0c9f03db6f0b24730d57f785062c8ec4",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        },
+        "candidate": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 12,
+            "rescale": 12,
+            "boot": 2,
+            "mod_switch": 1,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5317062575329925
+          ],
+          "expected": [
+            0.5317062575329925
+          ],
+          "plan_sha256": "fc2f832349ff769c5545c0aa33fe7d613dcc6c45000618a1335875c69453eb8e",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        }
+      },
+      {
+        "case": "chain17",
+        "waterline": 43,
+        "baseline": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 17,
+            "rescale": 17,
+            "boot": 4,
+            "mod_switch": 4,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5460761078432339
+          ],
+          "expected": [
+            0.5460761078432339
+          ],
+          "plan_sha256": "a4bad0ea101c6544166989372945fd031c0b072d58af13931745644995d6aeab",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        },
+        "candidate": {
+          "counts": {
+            "encode": 4,
+            "mul_cp": 17,
+            "rescale": 17,
+            "boot": 4,
+            "mod_switch": 2,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5460761078432339
+          ],
+          "expected": [
+            0.5460761078432339
+          ],
+          "plan_sha256": "5352f5f33a88dfff57fe1c18446f60c963965952e1aa30dfe622290d647ecd87",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        }
+      },
+      {
+        "case": "return_only",
+        "waterline": 43,
+        "baseline": {
+          "counts": {
+            "encode": 4,
+            "mod_switch": 7,
+            "mul_cp": 17,
+            "rescale": 17,
+            "boot": 5,
+            "add_cc": 1
+          },
+          "actual": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "expected": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "plan_sha256": "20df9fdc5c8dade57fb315f56805af0c72065f3c0bd3ac5bf0e2eae32eff6d04",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        },
+        "candidate": {
+          "counts": {
+            "encode": 4,
+            "mod_switch": 3,
+            "mul_cp": 17,
+            "rescale": 17,
+            "boot": 4,
+            "add_cc": 1
+          },
+          "actual": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "expected": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "plan_sha256": "c4a72e60a5757e63d76af3fd9bffd74823ceda86fe3cd07e2a8dc2d1a40b053c",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        }
+      },
+      {
+        "case": "fanout",
+        "waterline": 43,
+        "baseline": {
+          "counts": {
+            "encode": 11,
+            "mod_switch": 3,
+            "mul_cp": 19,
+            "rescale": 19,
+            "boot": 1,
+            "add_cc": 9
+          },
+          "actual": [
+            2.6956744610999994
+          ],
+          "expected": [
+            2.6956744610999994
+          ],
+          "plan_sha256": "737a1cd27b48fc92b2575a93fb038f1cbae79c4b40965cc8245ddc6235fd0058",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        },
+        "candidate": {
+          "counts": {
+            "encode": 11,
+            "mod_switch": 3,
+            "mul_cp": 19,
+            "rescale": 19,
+            "boot": 1,
+            "add_cc": 9
+          },
+          "actual": [
+            2.6956744610999994
+          ],
+          "expected": [
+            2.6956744610999994
+          ],
+          "plan_sha256": "737a1cd27b48fc92b2575a93fb038f1cbae79c4b40965cc8245ddc6235fd0058",
+          "native_verified": true,
+          "verified_bundle_contents": []
+        }
+      },
+      {
+        "case": "chain6",
+        "waterline": 40,
+        "baseline": {
+          "counts": {
+            "encode": 6,
+            "mul_cp": 8,
+            "rescale": 7,
+            "boot": 1,
+            "mod_switch": 1,
+            "add_cc": 1
+          },
+          "actual": [
+            0.51538003765025
+          ],
+          "expected": [
+            0.51538003765025
+          ],
+          "plan_sha256": "97e048b8a8daa468f9ef4a9bf0f08a3fe203081f5cd9aecac3524078b73f15cd",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        },
+        "candidate": {
+          "counts": {
+            "encode": 6,
+            "mul_cp": 8,
+            "rescale": 7,
+            "boot": 1,
+            "mod_switch": 1,
+            "add_cc": 1
+          },
+          "actual": [
+            0.51538003765025
+          ],
+          "expected": [
+            0.51538003765025
+          ],
+          "plan_sha256": "97e048b8a8daa468f9ef4a9bf0f08a3fe203081f5cd9aecac3524078b73f15cd",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        }
+      },
+      {
+        "case": "chain9",
+        "waterline": 40,
+        "baseline": {
+          "counts": {
+            "encode": 6,
+            "mul_cp": 13,
+            "rescale": 11,
+            "boot": 2,
+            "mod_switch": 1,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5234213181710903
+          ],
+          "expected": [
+            0.5234213181710903
+          ],
+          "plan_sha256": "7184d2d7d0e08f4637108ba9e6f7b28f6ad3f4a4873322a53ffb734d5d7c3909",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        },
+        "candidate": {
+          "counts": {
+            "encode": 6,
+            "mul_cp": 13,
+            "rescale": 11,
+            "boot": 2,
+            "mod_switch": 1,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5234213181710903
+          ],
+          "expected": [
+            0.5234213181710903
+          ],
+          "plan_sha256": "7184d2d7d0e08f4637108ba9e6f7b28f6ad3f4a4873322a53ffb734d5d7c3909",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        }
+      },
+      {
+        "case": "chain12",
+        "waterline": 40,
+        "baseline": {
+          "counts": {
+            "encode": 6,
+            "mul_cp": 18,
+            "rescale": 15,
+            "boot": 3,
+            "mod_switch": 1,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5317062575329925
+          ],
+          "expected": [
+            0.5317062575329925
+          ],
+          "plan_sha256": "04994dc3a0f65a687267090ef5fc675a0dc1ecaf5551ad7b5c8833508ff273d3",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        },
+        "candidate": {
+          "counts": {
+            "encode": 6,
+            "mul_cp": 18,
+            "rescale": 15,
+            "boot": 3,
+            "mod_switch": 1,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5317062575329925
+          ],
+          "expected": [
+            0.5317062575329925
+          ],
+          "plan_sha256": "04994dc3a0f65a687267090ef5fc675a0dc1ecaf5551ad7b5c8833508ff273d3",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        }
+      },
+      {
+        "case": "chain17",
+        "waterline": 40,
+        "baseline": {
+          "counts": {
+            "encode": 7,
+            "mul_cp": 27,
+            "rescale": 22,
+            "boot": 5,
+            "mod_switch": 2,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5460761078432339
+          ],
+          "expected": [
+            0.5460761078432339
+          ],
+          "plan_sha256": "116d68705d4154dac6a2cbf28cd7845e556b921be1a46c72b0c80f97d433b0f0",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        },
+        "candidate": {
+          "counts": {
+            "encode": 7,
+            "mul_cp": 27,
+            "rescale": 22,
+            "boot": 5,
+            "mod_switch": 2,
+            "add_cc": 1
+          },
+          "actual": [
+            0.5460761078432339
+          ],
+          "expected": [
+            0.5460761078432339
+          ],
+          "plan_sha256": "116d68705d4154dac6a2cbf28cd7845e556b921be1a46c72b0c80f97d433b0f0",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        }
+      },
+      {
+        "case": "return_only",
+        "waterline": 40,
+        "baseline": {
+          "counts": {
+            "encode": 5,
+            "mod_switch": 3,
+            "mul_cp": 27,
+            "rescale": 22,
+            "boot": 5,
+            "add_cc": 1
+          },
+          "actual": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "expected": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "plan_sha256": "23c9d09c3b731315bde2815a9fd6049a4ae8f41fa5a2e7e15b5aab9b1de0ca4a",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        },
+        "candidate": {
+          "counts": {
+            "encode": 5,
+            "mod_switch": 3,
+            "mul_cp": 27,
+            "rescale": 22,
+            "boot": 5,
+            "add_cc": 1
+          },
+          "actual": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "expected": [
+            0.255025,
+            0.5460761078432339
+          ],
+          "plan_sha256": "23c9d09c3b731315bde2815a9fd6049a4ae8f41fa5a2e7e15b5aab9b1de0ca4a",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        }
+      },
+      {
+        "case": "fanout",
+        "waterline": 40,
+        "baseline": {
+          "counts": {
+            "encode": 13,
+            "mod_switch": 2,
+            "mul_cp": 21,
+            "rescale": 20,
+            "boot": 1,
+            "add_cc": 9
+          },
+          "actual": [
+            2.6956744610999994
+          ],
+          "expected": [
+            2.6956744610999994
+          ],
+          "plan_sha256": "e6a3a076a9696e896b4764dc9814e904cc74f64226774ba28c25f33ccd1f0e9b",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        },
+        "candidate": {
+          "counts": {
+            "encode": 13,
+            "mod_switch": 2,
+            "mul_cp": 21,
+            "rescale": 20,
+            "boot": 1,
+            "add_cc": 9
+          },
+          "actual": [
+            2.6956744610999994
+          ],
+          "expected": [
+            2.6956744610999994
+          ],
+          "plan_sha256": "e6a3a076a9696e896b4764dc9814e904cc74f64226774ba28c25f33ccd1f0e9b",
+          "native_verified": true,
+          "verified_bundle_contents": [
+            "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+          ]
+        }
+      }
+    ],
+    "equal_scale_reduced_cases": [
+      "chain12",
+      "return_only"
+    ],
+    "unequal_scale_counts_unchanged": true,
+    "baseline_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+    "candidate_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+    "scope": "Small compiled graph semantics and native PlanVerifier; not CKKS precision"
+  },
+  "original_sources_unchanged": true,
+  "scope": "Isolated experimental compiler; model CKKS acceptance is still required"
+}
