@@ -24,7 +24,8 @@ def main():
     for name,inputs in [('decode_pair',2),('prefill_2token',2),('prefill_1token',1),('decode_second_token',25)]:
         sig=read(ROOT/('interfaces/'+name+'.json'))
         assert sig['config']['num_layers']==24 and len(sig['inputs'])==inputs and len(sig['outputs'])==29
-        assert all(not sig[k] for k in ('native_compiled','full_model_ckks_validated','gpu_validated'))
+        assert sig['native_compiled']==(name=='decode_pair')
+        assert not sig['full_model_ckks_validated'] and not sig['gpu_validated']
         assert [v['name'] for v in sig['outputs'][5:]]==[f'layer_{i}.kv_cache' for i in range(24)]
     profiles=read(ROOT/'frozen/model/package/config/approximations.provisional.json')
     assert len(profiles['blocks'])==24
@@ -38,8 +39,11 @@ def main():
         if name=='tiled':assert any(t['tile']==256 and t['width']==385 for t in result['tile_calls'])
     proof=read(ROOT/'evidence/validation-binding.json')
     for name,digest in proof['source_files'].items():assert sha(ROOT/name)==digest,name
+    proof=read(ROOT/'evidence/compiled-verification.json')
+    assert proof['passed'] and proof['plan_verified'] and proof['full_mock_passed'] and not proof['ckks_executed']
+    assert sha(ROOT/'evidence/compiled-analysis.json')==proof['result_sha256']
     print(json.dumps(dict(passed=True,files=len(manifest['files']),blocks=24,weight_arrays=291,
         unchanged_arithmetic=len(binding['unchanged_arithmetic_files']),small_cases=2,paths=8,
-        native_compiled=False,full_model_ckks_validated=False,gpu_validated=False)))
+        native_compiled=True,full_model_ckks_validated=False,gpu_validated=False)))
 
 if __name__=='__main__':main()

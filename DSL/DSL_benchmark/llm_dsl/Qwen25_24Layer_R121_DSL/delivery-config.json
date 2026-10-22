@@ -15,7 +15,9 @@
   "parent_package": "Qwen25_2Layer_R121_DSL",
   "num_layers": 24,
   "tokens": 2,
-  "native_compiled": false,
+  "native_compiled": true,
   "full_model_ckks_validated": false,
-  "gpu_validated": false
+  "gpu_validated": false,
+  "compiled_mode": "decode-pair",
+  "full_mock_passed": true
 }

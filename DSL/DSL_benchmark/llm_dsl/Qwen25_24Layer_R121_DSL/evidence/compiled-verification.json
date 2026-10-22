@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "round": "round_122_qwen24_r121_analysis",
+  "job": "/home/gy/qwen-ckks/experiments/qwen_round_122_1792657228975819700",
+  "source_manifest_sha256": "4a6366040077eac4f20525aca3dc25a63d1d54d4ec286fb2efd5086948b6b1d6",
+  "source_package_manifest_sha256": "89a92639acc8170d8c1543e651e8d83e12db1f9b3d1b7ce9d7b840985262a078",
+  "result_sha256": "6b2ab35576b079422f099811e451c9b00a459b8607d926684f2ea530cede7907",
+  "plan_verified": true,
+  "full_mock_passed": true,
+  "processes_exited": true,
+  "compiler_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+  "model_source_unchanged": true,
+  "ckks_executed": false,
+  "gpu": false
+}
