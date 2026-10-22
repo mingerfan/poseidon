@@ -1,0 +1,31 @@
+{
+  "inherited_parent_evidence": true,
+  "parent_round": "round_018_zero_tail_masks",
+  "applies_to_current_two_layer_test": false,
+  "original": {
+    "interface_checks": [
+      {
+        "mode": "decode-pair",
+        "inputs": 2,
+        "outputs": 245
+      },
+      {
+        "mode": "prefill",
+        "inputs": 2,
+        "outputs": 245
+      },
+      {
+        "mode": "decode",
+        "inputs": 49,
+        "outputs": 245
+      }
+    ],
+    "packed_operators_match_passed_two_layer": {
+      "packed_linear.py": "368a8e264910ae1ea734b543090a49f6d60a736feeaef2cd776ece0572e5658d",
+      "packed_lm_head.py": "0581432e3c44f11c80dc21cf3165d3880baa09dce4d7709fc64f492be10a3c75"
+    },
+    "frozen_arithmetic_unchanged": true,
+    "native_compiled": false,
+    "ckks_passed": false
+  }
+}
