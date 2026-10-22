@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "round_id": "round_112_paper_batch3_full_ckks",
+  "snapshot": "status-1792580315027635000.json",
+  "result_sha256": "4d6add0c62eb281b1445d0609c38070631a18ed41c290aa0fba90329b444507f",
+  "boot_count": 74,
+  "outputs_checked": 7,
+  "threshold": 0.001,
+  "runtime_seconds": 3318.469910507,
+  "workflow_seconds": 3417.4387080669403,
+  "peak_rss_bytes": 29072175104,
+  "max_abs_error": 0.00045489854721095235,
+  "max_imaginary": 0.0005292605847337014,
+  "max_abs_tail": 0.0004278214389033891,
+  "plan_sha256": "17aa94ba46f05be63d2b8278009ea438b96bbc71bcfd1d3aac3139abd41d2466",
+  "model_processes_exited": true,
+  "scope": "Two complete decoder blocks, two explicit known input tokens, synthetic weights; CPU only",
+  "paper_full_batch": [
+    "round_105_wide_rows128_short",
+    "round_106_wide_rows64_short",
+    "round_109_conditional_boot_budget_short",
+    "round_110_paired_down_short",
+    "round_111_release_ready_short"
+  ],
+  "compiler_candidate": {
+    "experimental_compiler": true,
+    "candidate_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+    "baseline_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+    "source_sha256": "82421975745fa36c63db1695c9364aa7ea72a10bb520362b69f7b76a63e2e81f",
+    "paired_regressions": 12,
+    "original_sources_unchanged": true
+  }
+}

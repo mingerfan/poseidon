@@ -1,0 +1,172 @@
+{
+  "files": {
+    "check_outputs.py": {
+      "bytes": 1813,
+      "sha256": "8470b5844676dc51d06f52a2de5e7ea3339ecaaef0ba6512428a81b2e5f16b5f"
+    },
+    "compile_qwen24.py": {
+      "bytes": 5938,
+      "sha256": "9234b3d3015ff525f555da3262fb9b713eab824add3f85fab65ee49279df80a2"
+    },
+    "config/approximations.provisional.json": {
+      "bytes": 5378,
+      "sha256": "74ae65f46d9f28f5a0b6188241ce4d73e4b7215d933ca7ac2aa117b48de72d12"
+    },
+    "config/compiler-config.json": {
+      "bytes": 2098,
+      "sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110"
+    },
+    "config/model.json": {
+      "bytes": 245,
+      "sha256": "dbdaf26d46a2639479308ec0d9fc1648697f5a42059350f68c0e04a6711d5359"
+    },
+    "config/operator-spec.json": {
+      "bytes": 2488,
+      "sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b"
+    },
+    "config/weight_schema.json": {
+      "bytes": 2089,
+      "sha256": "862292a9eaea7c69c0324287323c117545e1a281070cdb005c9313897f5a8023"
+    },
+    "prepare_fixture.py": {
+      "bytes": 3764,
+      "sha256": "b7e8011c85687f4548483344278e9a6baba02679942d3cd5867c8fd0f0fd8902"
+    },
+    "prepare_inputs.py": {
+      "bytes": 1203,
+      "sha256": "1761ad490108dab28d06bc3cb4bde43ccf99dd263fd929da76304c4b81bc011f"
+    },
+    "provenance.json": {
+      "bytes": 765,
+      "sha256": "dee07ae21cc8b3f1ad7272995296e975d6cf8498ce0ab167ba3fd4a98e8a4c81"
+    },
+    "qwen24/__init__.py": {
+      "bytes": 49,
+      "sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9"
+    },
+    "qwen24/kernels/__init__.py": {
+      "bytes": 69,
+      "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+    },
+    "qwen24/kernels/expr.py": {
+      "bytes": 95,
+      "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff"
+    },
+    "qwen24/kernels/ops.py": {
+      "bytes": 5772,
+      "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+    },
+    "qwen24/kernels/packed_linear.py": {
+      "bytes": 6702,
+      "sha256": "e0df32d9226c7f2223e6cc5aacca377a42e68f327981bd224ab65cd44e3d7504"
+    },
+    "qwen24/kernels/packed_lm_head.py": {
+      "bytes": 4077,
+      "sha256": "4e7023943e643e8acdf8d8691c9ec3113254fc1548eeda65fb82d6c2791f42e7"
+    },
+    "qwen24/kernels/qwen_layers.py": {
+      "bytes": 22310,
+      "sha256": "1c550d3aea13fc524e932004ec4675578ddd39858c44620cc129fcddb703fbeb"
+    },
+    "qwen24/kernels/qwen_model.py": {
+      "bytes": 13750,
+      "sha256": "58872039ff0e2f1d5168b6ad5f186c01a57ed794932205c57a4ed866d2e00737"
+    },
+    "qwen24/kernels/qwen_nonlinear.py": {
+      "bytes": 10186,
+      "sha256": "83b996cccd3cc263a2c9df6ed23c663c8f410064a9c0d38c858efeb968ca648e"
+    },
+    "qwen24/reference.py": {
+      "bytes": 3631,
+      "sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6"
+    },
+    "qwen24/runtime.py": {
+      "bytes": 5157,
+      "sha256": "603f23646b1b1d44f3bc6e6749e286e54f6679c1318520b94354b2f63001e820"
+    },
+    "qwen24/spec.py": {
+      "bytes": 5213,
+      "sha256": "629aa6f8fb88cff9fa64e7efa0bbb7e0c8a67fc1f82f2a78704880f81024a78b"
+    },
+    "qwen24/weights.py": {
+      "bytes": 2001,
+      "sha256": "d6b873646af1dcdacba200ed518ad0fb74f7daf2e463fc768ddb88b3aed46c53"
+    },
+    "README.md": {
+      "bytes": 879,
+      "sha256": "e3f73624f9c4da7a286d4e549277e67397b8013cca625bca515a414e2076e164"
+    },
+    "trace_qwen24.py": {
+      "bytes": 2504,
+      "sha256": "0b6e1b80caea8b27c2299d74a19dd345d52eeb11eac1ad51ac5ca0ad5cf12431"
+    },
+    "unpack_outputs.py": {
+      "bytes": 2024,
+      "sha256": "2ffc6b9b169b0e8a2e7b62129a5a36eb6285fd0b28ecfdc032b2c3b67671d306"
+    },
+    "verification/small-numpy-validation.json": {
+      "bytes": 16526,
+      "sha256": "99fc3ce170f388a3389ea1621e69fdd74c7cfc58454b17fd50f781663f3f8431"
+    },
+    "verification/smoke_config.json": {
+      "bytes": 235,
+      "sha256": "10b68ee94323bcc828f82ca0822f5f216bbfb6afd178394263680cb35ad92bc3"
+    },
+    "verification/source-check.json": {
+      "bytes": 823,
+      "sha256": "58697391f64ce2c32d1de8515c6145c721b1eb5c3b8200884ea4ed3671833cdc"
+    },
+    "verification/validate_numpy.py": {
+      "bytes": 8378,
+      "sha256": "4076e2f6b8c64cb841f56285597de21ea01c8cab2e7a9ad95d5add3f5a00df72"
+    },
+    "verify_manifest.py": {
+      "bytes": 772,
+      "sha256": "8b641de230f27e22d67610f989c03621e5468821b9639bd1d0cb790af7b58a10"
+    },
+    "qwen24/kernels/zero_tail_contract.py": {
+      "bytes": 1347,
+      "sha256": "1f669f4152276487c3305e653953192ccd35d507da9cd338d23c84b2ba454f96"
+    },
+    "qwen24/kernels/rms_affine_candidate.py": {
+      "bytes": 3011,
+      "sha256": "589a7506df51d4388bb1d07976992862bdc444a131b9695f0ec22757dc16d53b"
+    },
+    "qwen24/kernels/rms_power_polynomial.py": {
+      "bytes": 1411,
+      "sha256": "d22ae4b078d1077524e97d44754a953c71591820acd03043c515fef162a5267d"
+    },
+    "qwen24/kernels/packed_rms_batch.py": {
+      "bytes": 6359,
+      "sha256": "3cfdb16d683e775c4a1afd5317346413a73c12c1b4d3873f62c6d37fce2c0496"
+    },
+    "qwen24/kernels/prefill_rms_adapter.py": {
+      "bytes": 3600,
+      "sha256": "4e3679a82240cc19bc16579b6e2d2060d57053cc65ca65f2d89464c3a88e4e3b"
+    },
+    "qwen24/kernels/degree_rms_candidate.py": {
+      "bytes": 1422,
+      "sha256": "b09333dabd4a0dcd9c5d6cd9a0443d003fb6c6c930505733459645e787287c03"
+    },
+    "qwen24/kernels/silu_parity_candidate.py": {
+      "bytes": 2335,
+      "sha256": "306b9400c72507a6747ec32a812278124b6e93d39b8157def30d6335c9e5958b"
+    },
+    "qwen24/kernels/prefix_fusion.py": {
+      "bytes": 1994,
+      "sha256": "4aafc31de914381aecd4e759dee7203f3a3b125469134a0bfc3a448d10d11f46"
+    },
+    "qwen24/kernels/packed_mlp_pair.py": {
+      "bytes": 4863,
+      "sha256": "e6293764639389b0e65e90e2f25ee10942ed44b1afb2fdd7f7aa0d5c543ab54d"
+    },
+    "qwen24/kernels/tiled_down.py": {
+      "bytes": 3394,
+      "sha256": "00a6928abddfbdb01b430909d0e45f565275976ac30f22896de5c0974be4fd24"
+    },
+    "qwen24/kernels/joint_qkv.py": {
+      "bytes": 2794,
+      "sha256": "3b5b716173f4511573512e4238fadf8a6b923404de2e7a64c9c3c488cc55250e"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "round": "round_120_down256_short",
+  "cycle": 5,
+  "job": "/home/gy/qwen-ckks/experiments/qwen_round_120_1792637438214029000",
+  "snapshot": "status-1792639015282469000.json",
+  "frozen_source_manifest_sha256": "dcbfa3094b16a7c43d8abd3e1f0bd554b30eb3f8ca2d02a21c2dfd89a2af029c",
+  "worker_exited": true,
+  "full_model_ckks_passed": false,
+  "short_ckks_passed": true,
+  "baseline_round": "round_112_paper_batch3_full_ckks",
+  "comparison_to_baseline": {
+    "boot_delta": 0,
+    "rotate_delta": -1332,
+    "all_retained_delta_bytes": -11589386240,
+    "release_peak_delta_bytes": 2621440
+  },
+  "short_runtime_seconds": 1271.261344952,
+  "short_peak_rss_bytes": 28933652480,
+  "full_plan_boots": 74,
+  "full_plan_totals": {
+    "plaintext": {
+      "count": 9911,
+      "coefficient_bytes": 17817403392
+    },
+    "ciphertext": {
+      "count": 42037,
+      "coefficient_bytes": 134234505216
+    }
+  },
+  "diagnostic_ciphertext_copies": 74,
+  "repair_of": null,
+  "immediate_boot_diagnostics_checked": true,
+  "diagnostic_instrumentation_origin": "round_117_immediate_boot_retry",
+  "down256_small_checked": true,
+  "terminal_refresh_elision_checked": true,
+  "tiled_down_small_checked": true,
+  "compiler_candidate": {
+    "experimental_compiler": true,
+    "candidate_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+    "baseline_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+    "source_sha256": "82421975745fa36c63db1695c9364aa7ea72a10bb520362b69f7b76a63e2e81f",
+    "paired_regressions": 12,
+    "original_sources_unchanged": true
+  },
+  "release_ready_schedule_checked": true,
+  "release_ready_baseline_scope": "current_graph",
+  "joint_qkv_small_checked": true,
+  "first_query_split_small_checked": true
+}

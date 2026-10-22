@@ -1,0 +1,3809 @@
+{
+  "complete": true,
+  "config": {
+    "cycle": 5,
+    "full_test_every": 5,
+    "full_tests_per_batch": 1,
+    "variant": "wide_baby16",
+    "layout_fusion": true,
+    "cache_mib": 64,
+    "schedule": "release_ready",
+    "threads": 32,
+    "short_tests_this_round": 1,
+    "short_scope": "pair_mlp",
+    "pair_batch": "both_except_last",
+    "lm_head_baby": 32,
+    "rms_batch_strategy": "tiled16",
+    "batch_polynomial": "degree10p6",
+    "boot_diagnostics": true,
+    "early_input_mask": true,
+    "clean_kv_output": true,
+    "repair_of": null,
+    "repair_source_manifest_sha256": null,
+    "disk_policy": {
+      "root_user_available_min_bytes": 1073741824,
+      "root_total_free_min_bytes": 17179869184,
+      "data_available_min_bytes": 68719476736,
+      "rationale": "All artifacts/TMP/cache on separate gy-owned data filesystem; no access to reserved root blocks"
+    },
+    "required_passed_jobs": [
+      "/home/gy/qwen-ckks/experiments/qwen_round_082_1792478483425893900",
+      "/home/gy/qwen-ckks/experiments/qwen_round_083_1792477671617498800",
+      "/home/gy/qwen-ckks/experiments/qwen_round_044_1792058361113772000",
+      "/home/gy/qwen-ckks/experiments/qwen_round_098_1792540986348101500",
+      "/home/gy/qwen-ckks/experiments/qwen_round_102_1792553422983231400",
+      "/home/gy/qwen-ckks/experiments/qwen_round_104_1792562061688211400",
+      "/home/gy/qwen-ckks/experiments/qwen_round_103_1792555691525191000",
+      "/home/gy/qwen-ckks/experiments/qwen_round_105_1792565834742399000",
+      "/home/gy/qwen-ckks/experiments/qwen_round_112_1792576883067792100",
+      "/home/gy/qwen-ckks/experiments/qwen_round_109_1792570506258491300",
+      "/home/gy/qwen-ckks/experiments/qwen_round_111_1792574853638120200",
+      "/home/gy/qwen-ckks/experiments/qwen_round_113_1792580487092121300",
+      "/home/gy/qwen-ckks/experiments/qwen_round_117_1792590762455861800",
+      "/home/gy/qwen-ckks/experiments/qwen_round_118_1792592625052555300"
+    ],
+    "weights_job": "/home/gy/qwen-ckks/experiments/qwen_round_033_1792036963471714400",
+    "weights_manifest_sha256": "1603acf72a522ad0f52a20e3e6b824d720760eabf55049ce0759d72f3d065091",
+    "compiler_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+    "full_ckks_this_round": false,
+    "paper_sources": [
+      "AEGIS 2604.03425",
+      "FEnc2 2606.16359"
+    ],
+    "known_inputs_only": true,
+    "batch": 4,
+    "mlp_pair": true,
+    "baseline_full_round": "round_112_paper_batch3_full_ckks",
+    "baseline_source_manifest_sha256": "bb6aff1d73ff8bfa48f4326b7a725b57a1fe186bb4ad5f0e04bc2226abc9d370",
+    "baseline_plan_sha256": "17aa94ba46f05be63d2b8278009ea438b96bbc71bcfd1d3aac3139abd41d2466",
+    "pair_prefix_reuse": true,
+    "certified_pair_input_small_required": true,
+    "refinement_of_failed": null,
+    "failed_parent_source_manifest_sha256": null,
+    "terminal_refresh_elision": true,
+    "tiled_down": true,
+    "tiled_down_small_required": true,
+    "terminal_postpass_sha256": "ed6c6828f82cb88cb7959045aa7dd61398241a2184761f1b2858704939797b0b",
+    "previous_round": "round_118_first_query_split_short",
+    "previous_round_status": "passed",
+    "preceding_experiment": "round_119_tiled_output_short",
+    "preceding_experiment_status": "failed_precision",
+    "preceding_result_sha256": "a47c6c02efe37b0273a35deca69fabeb188113842e9347d9360d6061b730873d",
+    "previous_source_manifest_sha256": "891a6097ed6b01485c6561bb27369d4c2d46eb22d23de185614ecb9c1ad3a199",
+    "tiled_down_tile": 256,
+    "wide_output_rows": true,
+    "compiler_mode": "conditional-normalization-budget",
+    "compiler_candidate_source_sha256": "82421975745fa36c63db1695c9364aa7ea72a10bb520362b69f7b76a63e2e81f",
+    "compiler_source_manifest_sha256": "0864c2223af644174f5ebaba809fd333108e1d1bf10079b4a789af1fa5db3bb2",
+    "startup_repair": null,
+    "joint_qkv": true,
+    "joint_qkv_small_required": true,
+    "terminal_refresh_mode": "direct_downward",
+    "schedule_baseline": "current_graph",
+    "schedule_source_sha256": "177d1f9b96ff7ffb3f9b015b032837dfc935de205d62353d92cb29f44c769008",
+    "schedule_source_round": "round_111_release_ready_short",
+    "qkv_projection": "column_tiles",
+    "qkv_tile": 128,
+    "qkv_internal_raw_v": true,
+    "qkv_tiled_source_sha256": "00a6928abddfbdb01b430909d0e45f565275976ac30f22896de5c0974be4fd24",
+    "immediate_boot_diagnostics": true,
+    "first_boot_diagnostic_stop_threshold": 0.01,
+    "diagnostic_instrumentation_origin": "round_117_immediate_boot_retry",
+    "first_query_split": true,
+    "pair_small_case_count": 100,
+    "down256_revisit": true
+  },
+  "full": {
+    "eager": {
+      "release_peak_coefficient_bytes": 17482907648,
+      "plaintext_peak_coefficient_bytes": 17375952896,
+      "ciphertext_peak_coefficient_bytes": 678428672,
+      "eager_initialization_encode_bytes": 17375952896,
+      "total_encoded_coefficient_bytes": 17375952896,
+      "counts": {
+        "encode": 9723,
+        "mod_switch": 125,
+        "release": 51753,
+        "mul_cp": 10516,
+        "rescale": 10594,
+        "rotate": 5735,
+        "add_cc": 14783,
+        "boot": 74,
+        "mul_cc": 78,
+        "relinearize": 78,
+        "add_cp": 48,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 1285,
+          "coefficient_bytes": 8084520960
+        },
+        "plaintext:L2:c1": {
+          "count": 8224,
+          "coefficient_bytes": 12935233536
+        },
+        "plaintext:L1:c1": {
+          "count": 12,
+          "coefficient_bytes": 12582912
+        },
+        "plaintext:L4:c1": {
+          "count": 428,
+          "coefficient_bytes": 1121976320
+        },
+        "ciphertext:L2:c2": {
+          "count": 11281,
+          "coefficient_bytes": 35486957568
+        },
+        "ciphertext:L1:c2": {
+          "count": 17770,
+          "coefficient_bytes": 37266391040
+        },
+        "plaintext:L5:c1": {
+          "count": 1035,
+          "coefficient_bytes": 3255828480
+        },
+        "ciphertext:L4:c2": {
+          "count": 3936,
+          "coefficient_bytes": 20635975680
+        },
+        "ciphertext:L4:c3": {
+          "count": 22,
+          "coefficient_bytes": 173015040
+        },
+        "ciphertext:L3:c2": {
+          "count": 7687,
+          "coefficient_bytes": 32241614848
+        },
+        "plaintext:L3:c1": {
+          "count": 24,
+          "coefficient_bytes": 50331648
+        },
+        "ciphertext:L5:c3": {
+          "count": 10,
+          "coefficient_bytes": 94371840
+        },
+        "ciphertext:L3:c3": {
+          "count": 22,
+          "coefficient_bytes": 138412032
+        },
+        "ciphertext:L2:c3": {
+          "count": 24,
+          "coefficient_bytes": 113246208
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+      "plan_sha256": "f66fb16823f7739e1409f2835805613d64e29673e1d2531049d48b9d95ec9fe7",
+      "boot_count": 74,
+      "boot_transitions": [
+        {
+          "input_id": "19",
+          "output_id": "25",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "22",
+          "output_id": "26",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24",
+          "output_id": "27",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "69",
+          "output_id": "70",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "134",
+          "output_id": "135",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "166",
+          "output_id": "170",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "169",
+          "output_id": "171",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "789",
+          "output_id": "828",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "790",
+          "output_id": "829",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "825",
+          "output_id": "830",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "826",
+          "output_id": "831",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "827",
+          "output_id": "832",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "931",
+          "output_id": "2106",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "978",
+          "output_id": "2107",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1615",
+          "output_id": "2108",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2000",
+          "output_id": "2109",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2102",
+          "output_id": "2110",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2105",
+          "output_id": "2111",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2160",
+          "output_id": "2161",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2147",
+          "output_id": "2162",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2151",
+          "output_id": "2163",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2155",
+          "output_id": "2164",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2159",
+          "output_id": "2165",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2194",
+          "output_id": "2195",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3260",
+          "output_id": "3264",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3263",
+          "output_id": "3265",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3304",
+          "output_id": "3305",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3358",
+          "output_id": "3359",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3402",
+          "output_id": "3403",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11750",
+          "output_id": "11758",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11759",
+          "output_id": "11760",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11757",
+          "output_id": "11761",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11790",
+          "output_id": "11799",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11794",
+          "output_id": "11800",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11798",
+          "output_id": "11801",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11819",
+          "output_id": "11820",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13887",
+          "output_id": "13890",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13889",
+          "output_id": "13891",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13930",
+          "output_id": "13931",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13984",
+          "output_id": "13985",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14015",
+          "output_id": "14019",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14018",
+          "output_id": "14020",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14633",
+          "output_id": "14672",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14634",
+          "output_id": "14673",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14669",
+          "output_id": "14674",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14670",
+          "output_id": "14675",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14671",
+          "output_id": "14676",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14743",
+          "output_id": "14821",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14775",
+          "output_id": "14822",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14785",
+          "output_id": "14823",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14818",
+          "output_id": "14824",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14820",
+          "output_id": "14825",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14870",
+          "output_id": "14871",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14860",
+          "output_id": "14872",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14863",
+          "output_id": "14873",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14866",
+          "output_id": "14874",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14869",
+          "output_id": "14875",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14903",
+          "output_id": "14904",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "15993",
+          "output_id": "15994",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "16036",
+          "output_id": "16037",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "16095",
+          "output_id": "16099",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "16098",
+          "output_id": "16100",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "20294",
+          "output_id": "24453",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24452",
+          "output_id": "24454",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24477",
+          "output_id": "24478",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24466",
+          "output_id": "24479",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24469",
+          "output_id": "24480",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24473",
+          "output_id": "24481",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24476",
+          "output_id": "24482",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24510",
+          "output_id": "24511",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "30974",
+          "output_id": "30975",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "31015",
+          "output_id": "31016",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "31071",
+          "output_id": "31075",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "31074",
+          "output_id": "31076",
+          "input_level": 1,
+          "output_level": 5
+        }
+      ],
+      "all_values_coefficient_bytes": 151610458112,
+      "values": 51760,
+      "inputs": 2,
+      "outputs": 7,
+      "num_layers": 2,
+      "tokens": 2
+    },
+    "terminal_elision": {
+      "candidate_count": 0,
+      "candidates": [],
+      "removed_value_count": 0,
+      "returned_metadata_unchanged": true,
+      "remaining_arithmetic_unchanged": true,
+      "only_mod_switch_inputs_rewired": true,
+      "original_input_not_mutated": true,
+      "releases_rebuilt": true,
+      "scope": "Uninstalled candidate; requires native PlanVerifier, Mock and CKKS",
+      "original_plan_sha256": "f66fb16823f7739e1409f2835805613d64e29673e1d2531049d48b9d95ec9fe7",
+      "candidate_plan_sha256": "c7facc9c0bbe4a4214511d9bab2e02a99a53355107d3e4dd78e79bb82881b548",
+      "postpass_source_sha256": "ed6c6828f82cb88cb7959045aa7dd61398241a2184761f1b2858704939797b0b"
+    },
+    "execution": {
+      "release_peak_coefficient_bytes": 304611328,
+      "plaintext_peak_coefficient_bytes": 67108864,
+      "ciphertext_peak_coefficient_bytes": 263192576,
+      "eager_initialization_encode_bytes": 0,
+      "total_encoded_coefficient_bytes": 17817403392,
+      "counts": {
+        "mod_switch": 125,
+        "release": 51941,
+        "encode": 9911,
+        "mul_cp": 10516,
+        "rescale": 10594,
+        "rotate": 5735,
+        "add_cc": 14783,
+        "boot": 74,
+        "mul_cc": 78,
+        "relinearize": 78,
+        "add_cp": 48,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 1285,
+          "coefficient_bytes": 8084520960
+        },
+        "plaintext:L2:c1": {
+          "count": 8254,
+          "coefficient_bytes": 12982419456
+        },
+        "plaintext:L1:c1": {
+          "count": 21,
+          "coefficient_bytes": 22020096
+        },
+        "plaintext:L4:c1": {
+          "count": 550,
+          "coefficient_bytes": 1441792000
+        },
+        "ciphertext:L2:c2": {
+          "count": 11281,
+          "coefficient_bytes": 35486957568
+        },
+        "ciphertext:L1:c2": {
+          "count": 17770,
+          "coefficient_bytes": 37266391040
+        },
+        "plaintext:L5:c1": {
+          "count": 1043,
+          "coefficient_bytes": 3280994304
+        },
+        "ciphertext:L4:c2": {
+          "count": 3936,
+          "coefficient_bytes": 20635975680
+        },
+        "ciphertext:L4:c3": {
+          "count": 22,
+          "coefficient_bytes": 173015040
+        },
+        "ciphertext:L3:c2": {
+          "count": 7687,
+          "coefficient_bytes": 32241614848
+        },
+        "plaintext:L3:c1": {
+          "count": 43,
+          "coefficient_bytes": 90177536
+        },
+        "ciphertext:L5:c3": {
+          "count": 10,
+          "coefficient_bytes": 94371840
+        },
+        "ciphertext:L3:c3": {
+          "count": 22,
+          "coefficient_bytes": 138412032
+        },
+        "ciphertext:L2:c3": {
+          "count": 24,
+          "coefficient_bytes": 113246208
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+      "plan_sha256": "968b84b2c9d508d652a19b2ae74286cea4f6e93157abea29328a1477056a7675",
+      "boot_count": 74,
+      "boot_transitions": [
+        {
+          "input_id": "19",
+          "output_id": "25",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "22",
+          "output_id": "26",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24",
+          "output_id": "27",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "69",
+          "output_id": "70",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "134",
+          "output_id": "135",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "166",
+          "output_id": "170",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "169",
+          "output_id": "171",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "789",
+          "output_id": "828",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "790",
+          "output_id": "829",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "825",
+          "output_id": "830",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "826",
+          "output_id": "831",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "827",
+          "output_id": "832",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "931",
+          "output_id": "2106",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "978",
+          "output_id": "2107",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1615",
+          "output_id": "2108",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2000",
+          "output_id": "2109",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2105",
+          "output_id": "2111",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2160",
+          "output_id": "2161",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2147",
+          "output_id": "2162",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2151",
+          "output_id": "2163",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2155",
+          "output_id": "2164",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2159",
+          "output_id": "2165",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2102",
+          "output_id": "2110",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2194",
+          "output_id": "2195",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3260",
+          "output_id": "3264",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3263",
+          "output_id": "3265",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3304",
+          "output_id": "3305",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3358",
+          "output_id": "3359",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3402",
+          "output_id": "3403",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11750",
+          "output_id": "11758",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11759",
+          "output_id": "11760",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11757",
+          "output_id": "11761",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11790",
+          "output_id": "11799",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11794",
+          "output_id": "11800",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11798",
+          "output_id": "11801",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11819",
+          "output_id": "11820",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13887",
+          "output_id": "13890",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13889",
+          "output_id": "13891",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13930",
+          "output_id": "13931",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "13984",
+          "output_id": "13985",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14015",
+          "output_id": "14019",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14018",
+          "output_id": "14020",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14633",
+          "output_id": "14672",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14634",
+          "output_id": "14673",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14669",
+          "output_id": "14674",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14670",
+          "output_id": "14675",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14671",
+          "output_id": "14676",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14743",
+          "output_id": "14821",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14775",
+          "output_id": "14822",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14785",
+          "output_id": "14823",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14818",
+          "output_id": "14824",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14820",
+          "output_id": "14825",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14870",
+          "output_id": "14871",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14860",
+          "output_id": "14872",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14863",
+          "output_id": "14873",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14866",
+          "output_id": "14874",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14869",
+          "output_id": "14875",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "14903",
+          "output_id": "14904",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "15993",
+          "output_id": "15994",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "16036",
+          "output_id": "16037",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "16095",
+          "output_id": "16099",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "16098",
+          "output_id": "16100",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "20294",
+          "output_id": "24453",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24452",
+          "output_id": "24454",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24477",
+          "output_id": "24478",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24466",
+          "output_id": "24479",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24469",
+          "output_id": "24480",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24473",
+          "output_id": "24481",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24476",
+          "output_id": "24482",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "24510",
+          "output_id": "24511",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "30974",
+          "output_id": "30975",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "31015",
+          "output_id": "31016",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "31071",
+          "output_id": "31075",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "31074",
+          "output_id": "31076",
+          "input_level": 1,
+          "output_level": 5
+        }
+      ],
+      "all_values_coefficient_bytes": 152051908608,
+      "values": 51948,
+      "inputs": 2,
+      "outputs": 7,
+      "num_layers": 2,
+      "tokens": 2
+    },
+    "schedule": {
+      "passed": true,
+      "policy": "release_ready",
+      "all_arithmetic_nodes_identical": true,
+      "operand_order_preserved": true,
+      "values_levels_scales_identical": true,
+      "encode_payloads_identical": true,
+      "same_released_values": true,
+      "no_recomputation": true,
+      "arithmetic_graph_sha256": "ec94da9fc002d8339ae7b6840e92e09feb0258ead750fa0c1f7f195eae1111f4",
+      "baseline": {
+        "release_peak_coefficient_bytes": 17426808832,
+        "plaintext_peak_coefficient_bytes": 17375952896,
+        "ciphertext_peak_coefficient_bytes": 173015040,
+        "eager_initialization_encode_bytes": 17375952896,
+        "total_encoded_coefficient_bytes": 17375952896,
+        "counts": {
+          "encode": 9723,
+          "mod_switch": 125,
+          "release": 51753,
+          "mul_cp": 10516,
+          "rescale": 10594,
+          "boot": 74,
+          "rotate": 5735,
+          "add_cc": 14783,
+          "mul_cc": 78,
+          "relinearize": 78,
+          "add_cp": 48,
+          "negate": 4
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 1285,
+            "coefficient_bytes": 8084520960
+          },
+          "plaintext:L2:c1": {
+            "count": 8224,
+            "coefficient_bytes": 12935233536
+          },
+          "plaintext:L1:c1": {
+            "count": 12,
+            "coefficient_bytes": 12582912
+          },
+          "plaintext:L4:c1": {
+            "count": 428,
+            "coefficient_bytes": 1121976320
+          },
+          "ciphertext:L2:c2": {
+            "count": 11281,
+            "coefficient_bytes": 35486957568
+          },
+          "ciphertext:L1:c2": {
+            "count": 17770,
+            "coefficient_bytes": 37266391040
+          },
+          "plaintext:L5:c1": {
+            "count": 1035,
+            "coefficient_bytes": 3255828480
+          },
+          "ciphertext:L4:c2": {
+            "count": 3936,
+            "coefficient_bytes": 20635975680
+          },
+          "ciphertext:L4:c3": {
+            "count": 22,
+            "coefficient_bytes": 173015040
+          },
+          "ciphertext:L3:c2": {
+            "count": 7687,
+            "coefficient_bytes": 32241614848
+          },
+          "plaintext:L3:c1": {
+            "count": 24,
+            "coefficient_bytes": 50331648
+          },
+          "ciphertext:L5:c3": {
+            "count": 10,
+            "coefficient_bytes": 94371840
+          },
+          "ciphertext:L3:c3": {
+            "count": 22,
+            "coefficient_bytes": 138412032
+          },
+          "ciphertext:L2:c3": {
+            "count": 24,
+            "coefficient_bytes": 113246208
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "candidate": {
+        "release_peak_coefficient_bytes": 17422090240,
+        "plaintext_peak_coefficient_bytes": 17375952896,
+        "ciphertext_peak_coefficient_bytes": 263192576,
+        "eager_initialization_encode_bytes": 17375952896,
+        "total_encoded_coefficient_bytes": 17375952896,
+        "counts": {
+          "encode": 9723,
+          "mod_switch": 125,
+          "release": 51753,
+          "mul_cp": 10516,
+          "rescale": 10594,
+          "rotate": 5735,
+          "add_cc": 14783,
+          "boot": 74,
+          "mul_cc": 78,
+          "relinearize": 78,
+          "add_cp": 48,
+          "negate": 4
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 1285,
+            "coefficient_bytes": 8084520960
+          },
+          "plaintext:L2:c1": {
+            "count": 8224,
+            "coefficient_bytes": 12935233536
+          },
+          "plaintext:L1:c1": {
+            "count": 12,
+            "coefficient_bytes": 12582912
+          },
+          "plaintext:L4:c1": {
+            "count": 428,
+            "coefficient_bytes": 1121976320
+          },
+          "ciphertext:L2:c2": {
+            "count": 11281,
+            "coefficient_bytes": 35486957568
+          },
+          "ciphertext:L1:c2": {
+            "count": 17770,
+            "coefficient_bytes": 37266391040
+          },
+          "plaintext:L5:c1": {
+            "count": 1035,
+            "coefficient_bytes": 3255828480
+          },
+          "ciphertext:L4:c2": {
+            "count": 3936,
+            "coefficient_bytes": 20635975680
+          },
+          "ciphertext:L4:c3": {
+            "count": 22,
+            "coefficient_bytes": 173015040
+          },
+          "ciphertext:L3:c2": {
+            "count": 7687,
+            "coefficient_bytes": 32241614848
+          },
+          "plaintext:L3:c1": {
+            "count": 24,
+            "coefficient_bytes": 50331648
+          },
+          "ciphertext:L5:c3": {
+            "count": 10,
+            "coefficient_bytes": 94371840
+          },
+          "ciphertext:L3:c3": {
+            "count": 22,
+            "coefficient_bytes": 138412032
+          },
+          "ciphertext:L2:c3": {
+            "count": 24,
+            "coefficient_bytes": 113246208
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "note": "Draft host schedule; requires cache-aware measurement, native verifier, Mock and CKKS",
+      "current_graph_dfs_baseline": true,
+      "baseline_dfs_plan_sha256": "4a676b04893f11d0718fb173a94d78cf966c926124d64be7d92f927e9eb3832c",
+      "schedule_source_sha256": "177d1f9b96ff7ffb3f9b015b032837dfc935de205d62353d92cb29f44c769008"
+    },
+    "cache": {
+      "passed": true,
+      "scope": "CPU V3 bounded immutable Encode-root cache",
+      "budget_bytes": 67108864,
+      "eviction_policy": "farthest_next_use_with_size_tiebreak",
+      "encoded_cache_peak_bytes": 67108864,
+      "reencodes": 188,
+      "evictions": 188,
+      "extra_value_ids": 188,
+      "original_encode_count": 9723,
+      "candidate_encode_count": 9911,
+      "payload_counts": {
+        "bundle": 9894,
+        "inline": 17
+      },
+      "compute_semantic_sha256": "4cb928315c15616590f63e3ad87233bd0fce516fcf7b204c0bd0f7b1b2b0b0b7",
+      "normalized_compute_hash_matches": true,
+      "all_constant_payloads_identical": true,
+      "ciphertext_lifetimes_unchanged": true,
+      "all_original_value_metadata_unchanged": true,
+      "boot_count_unchanged": true,
+      "deferred_baseline": {
+        "release_peak_coefficient_bytes": 522190848,
+        "plaintext_peak_coefficient_bytes": 467140608,
+        "ciphertext_peak_coefficient_bytes": 263192576,
+        "eager_initialization_encode_bytes": 0,
+        "total_encoded_coefficient_bytes": 17375952896,
+        "counts": {
+          "mod_switch": 125,
+          "release": 51753,
+          "encode": 9723,
+          "mul_cp": 10516,
+          "rescale": 10594,
+          "rotate": 5735,
+          "add_cc": 14783,
+          "boot": 74,
+          "mul_cc": 78,
+          "relinearize": 78,
+          "add_cp": 48,
+          "negate": 4
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 1285,
+            "coefficient_bytes": 8084520960
+          },
+          "plaintext:L2:c1": {
+            "count": 8224,
+            "coefficient_bytes": 12935233536
+          },
+          "plaintext:L1:c1": {
+            "count": 12,
+            "coefficient_bytes": 12582912
+          },
+          "plaintext:L4:c1": {
+            "count": 428,
+            "coefficient_bytes": 1121976320
+          },
+          "ciphertext:L2:c2": {
+            "count": 11281,
+            "coefficient_bytes": 35486957568
+          },
+          "ciphertext:L1:c2": {
+            "count": 17770,
+            "coefficient_bytes": 37266391040
+          },
+          "plaintext:L5:c1": {
+            "count": 1035,
+            "coefficient_bytes": 3255828480
+          },
+          "ciphertext:L4:c2": {
+            "count": 3936,
+            "coefficient_bytes": 20635975680
+          },
+          "ciphertext:L4:c3": {
+            "count": 22,
+            "coefficient_bytes": 173015040
+          },
+          "ciphertext:L3:c2": {
+            "count": 7687,
+            "coefficient_bytes": 32241614848
+          },
+          "plaintext:L3:c1": {
+            "count": 24,
+            "coefficient_bytes": 50331648
+          },
+          "ciphertext:L5:c3": {
+            "count": 10,
+            "coefficient_bytes": 94371840
+          },
+          "ciphertext:L3:c3": {
+            "count": 22,
+            "coefficient_bytes": 138412032
+          },
+          "ciphertext:L2:c3": {
+            "count": 24,
+            "coefficient_bytes": 113246208
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "candidate": {
+        "release_peak_coefficient_bytes": 304611328,
+        "plaintext_peak_coefficient_bytes": 67108864,
+        "ciphertext_peak_coefficient_bytes": 263192576,
+        "eager_initialization_encode_bytes": 0,
+        "total_encoded_coefficient_bytes": 17817403392,
+        "counts": {
+          "mod_switch": 125,
+          "release": 51941,
+          "encode": 9911,
+          "mul_cp": 10516,
+          "rescale": 10594,
+          "rotate": 5735,
+          "add_cc": 14783,
+          "boot": 74,
+          "mul_cc": 78,
+          "relinearize": 78,
+          "add_cp": 48,
+          "negate": 4
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 1285,
+            "coefficient_bytes": 8084520960
+          },
+          "plaintext:L2:c1": {
+            "count": 8254,
+            "coefficient_bytes": 12982419456
+          },
+          "plaintext:L1:c1": {
+            "count": 21,
+            "coefficient_bytes": 22020096
+          },
+          "plaintext:L4:c1": {
+            "count": 550,
+            "coefficient_bytes": 1441792000
+          },
+          "ciphertext:L2:c2": {
+            "count": 11281,
+            "coefficient_bytes": 35486957568
+          },
+          "ciphertext:L1:c2": {
+            "count": 17770,
+            "coefficient_bytes": 37266391040
+          },
+          "plaintext:L5:c1": {
+            "count": 1043,
+            "coefficient_bytes": 3280994304
+          },
+          "ciphertext:L4:c2": {
+            "count": 3936,
+            "coefficient_bytes": 20635975680
+          },
+          "ciphertext:L4:c3": {
+            "count": 22,
+            "coefficient_bytes": 173015040
+          },
+          "ciphertext:L3:c2": {
+            "count": 7687,
+            "coefficient_bytes": 32241614848
+          },
+          "plaintext:L3:c1": {
+            "count": 43,
+            "coefficient_bytes": 90177536
+          },
+          "ciphertext:L5:c3": {
+            "count": 10,
+            "coefficient_bytes": 94371840
+          },
+          "ciphertext:L3:c3": {
+            "count": 22,
+            "coefficient_bytes": 138412032
+          },
+          "ciphertext:L2:c3": {
+            "count": 24,
+            "coefficient_bytes": 113246208
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "note": "Budget covers Encode roots only; report counts derived plaintext separately through full live-set audit. Not measured RSS."
+    },
+    "mock_max_abs_error": 1.3126689116238488e-07,
+    "mock_max_abs_tail": 0.0
+  },
+  "compiler_candidate": {
+    "complete": true,
+    "compiler_only": true,
+    "isolated_toolchain": "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_120_1792637438214029000/isolated-compiler",
+    "baseline_compiler_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+    "candidate_compiler_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+    "changed_source_files": [
+      "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp"
+    ],
+    "patch": {
+      "before_sha256": "9b4072646fa17bf79ad9adbc5361c5e2607fff3f291339ac60142d27c8c5d933",
+      "after_sha256": "82421975745fa36c63db1695c9364aa7ea72a10bb520362b69f7b76a63e2e81f",
+      "changed_regions": 2,
+      "scope": "Source patch candidate only; no compiler build, plan or CKKS acceptance"
+    },
+    "source_manifest_sha256": "0864c2223af644174f5ebaba809fd333108e1d1bf10079b4a789af1fa5db3bb2",
+    "ctest_passed": true,
+    "regression": {
+      "passed": true,
+      "paired_cases": 12,
+      "cases": [
+        {
+          "case": "chain6",
+          "waterline": 43,
+          "baseline": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 6,
+              "rescale": 6,
+              "boot": 1,
+              "mod_switch": 2,
+              "add_cc": 1
+            },
+            "actual": [
+              0.51538003765025
+            ],
+            "expected": [
+              0.51538003765025
+            ],
+            "plan_sha256": "a95aa3cce7ec8f5bd1fad8355808777309829271758e7e5588917807a20cf277",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          },
+          "candidate": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 6,
+              "rescale": 6,
+              "boot": 1,
+              "mod_switch": 2,
+              "add_cc": 1
+            },
+            "actual": [
+              0.51538003765025
+            ],
+            "expected": [
+              0.51538003765025
+            ],
+            "plan_sha256": "a95aa3cce7ec8f5bd1fad8355808777309829271758e7e5588917807a20cf277",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          }
+        },
+        {
+          "case": "chain9",
+          "waterline": 43,
+          "baseline": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 9,
+              "rescale": 9,
+              "boot": 2,
+              "mod_switch": 3,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5234213181710903
+            ],
+            "expected": [
+              0.5234213181710903
+            ],
+            "plan_sha256": "6bb7bdd80a40ae9b3adb5d825a0535edb73f364639c321bd8fd75864337f6935",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          },
+          "candidate": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 9,
+              "rescale": 9,
+              "boot": 2,
+              "mod_switch": 2,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5234213181710903
+            ],
+            "expected": [
+              0.5234213181710903
+            ],
+            "plan_sha256": "c6db9a3a0211ab4dedc022e59adefffdcca6c4e9bf6eda38b3f4ac66a6d1cafb",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          }
+        },
+        {
+          "case": "chain12",
+          "waterline": 43,
+          "baseline": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 12,
+              "rescale": 12,
+              "boot": 3,
+              "mod_switch": 4,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5317062575329925
+            ],
+            "expected": [
+              0.5317062575329925
+            ],
+            "plan_sha256": "a10f7a258e2db80de923bc03b392dd7f0c9f03db6f0b24730d57f785062c8ec4",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          },
+          "candidate": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 12,
+              "rescale": 12,
+              "boot": 2,
+              "mod_switch": 1,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5317062575329925
+            ],
+            "expected": [
+              0.5317062575329925
+            ],
+            "plan_sha256": "fc2f832349ff769c5545c0aa33fe7d613dcc6c45000618a1335875c69453eb8e",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          }
+        },
+        {
+          "case": "chain17",
+          "waterline": 43,
+          "baseline": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 17,
+              "rescale": 17,
+              "boot": 4,
+              "mod_switch": 4,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5460761078432339
+            ],
+            "expected": [
+              0.5460761078432339
+            ],
+            "plan_sha256": "a4bad0ea101c6544166989372945fd031c0b072d58af13931745644995d6aeab",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          },
+          "candidate": {
+            "counts": {
+              "encode": 4,
+              "mul_cp": 17,
+              "rescale": 17,
+              "boot": 4,
+              "mod_switch": 2,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5460761078432339
+            ],
+            "expected": [
+              0.5460761078432339
+            ],
+            "plan_sha256": "5352f5f33a88dfff57fe1c18446f60c963965952e1aa30dfe622290d647ecd87",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          }
+        },
+        {
+          "case": "return_only",
+          "waterline": 43,
+          "baseline": {
+            "counts": {
+              "encode": 4,
+              "mod_switch": 7,
+              "mul_cp": 17,
+              "rescale": 17,
+              "boot": 5,
+              "add_cc": 1
+            },
+            "actual": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "expected": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "plan_sha256": "20df9fdc5c8dade57fb315f56805af0c72065f3c0bd3ac5bf0e2eae32eff6d04",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          },
+          "candidate": {
+            "counts": {
+              "encode": 4,
+              "mod_switch": 3,
+              "mul_cp": 17,
+              "rescale": 17,
+              "boot": 4,
+              "add_cc": 1
+            },
+            "actual": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "expected": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "plan_sha256": "c4a72e60a5757e63d76af3fd9bffd74823ceda86fe3cd07e2a8dc2d1a40b053c",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          }
+        },
+        {
+          "case": "fanout",
+          "waterline": 43,
+          "baseline": {
+            "counts": {
+              "encode": 11,
+              "mod_switch": 3,
+              "mul_cp": 19,
+              "rescale": 19,
+              "boot": 1,
+              "add_cc": 9
+            },
+            "actual": [
+              2.6956744610999994
+            ],
+            "expected": [
+              2.6956744610999994
+            ],
+            "plan_sha256": "737a1cd27b48fc92b2575a93fb038f1cbae79c4b40965cc8245ddc6235fd0058",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          },
+          "candidate": {
+            "counts": {
+              "encode": 11,
+              "mod_switch": 3,
+              "mul_cp": 19,
+              "rescale": 19,
+              "boot": 1,
+              "add_cc": 9
+            },
+            "actual": [
+              2.6956744610999994
+            ],
+            "expected": [
+              2.6956744610999994
+            ],
+            "plan_sha256": "737a1cd27b48fc92b2575a93fb038f1cbae79c4b40965cc8245ddc6235fd0058",
+            "native_verified": true,
+            "verified_bundle_contents": []
+          }
+        },
+        {
+          "case": "chain6",
+          "waterline": 40,
+          "baseline": {
+            "counts": {
+              "encode": 6,
+              "mul_cp": 8,
+              "rescale": 7,
+              "boot": 1,
+              "mod_switch": 1,
+              "add_cc": 1
+            },
+            "actual": [
+              0.51538003765025
+            ],
+            "expected": [
+              0.51538003765025
+            ],
+            "plan_sha256": "97e048b8a8daa468f9ef4a9bf0f08a3fe203081f5cd9aecac3524078b73f15cd",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          },
+          "candidate": {
+            "counts": {
+              "encode": 6,
+              "mul_cp": 8,
+              "rescale": 7,
+              "boot": 1,
+              "mod_switch": 1,
+              "add_cc": 1
+            },
+            "actual": [
+              0.51538003765025
+            ],
+            "expected": [
+              0.51538003765025
+            ],
+            "plan_sha256": "97e048b8a8daa468f9ef4a9bf0f08a3fe203081f5cd9aecac3524078b73f15cd",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          }
+        },
+        {
+          "case": "chain9",
+          "waterline": 40,
+          "baseline": {
+            "counts": {
+              "encode": 6,
+              "mul_cp": 13,
+              "rescale": 11,
+              "boot": 2,
+              "mod_switch": 1,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5234213181710903
+            ],
+            "expected": [
+              0.5234213181710903
+            ],
+            "plan_sha256": "7184d2d7d0e08f4637108ba9e6f7b28f6ad3f4a4873322a53ffb734d5d7c3909",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          },
+          "candidate": {
+            "counts": {
+              "encode": 6,
+              "mul_cp": 13,
+              "rescale": 11,
+              "boot": 2,
+              "mod_switch": 1,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5234213181710903
+            ],
+            "expected": [
+              0.5234213181710903
+            ],
+            "plan_sha256": "7184d2d7d0e08f4637108ba9e6f7b28f6ad3f4a4873322a53ffb734d5d7c3909",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          }
+        },
+        {
+          "case": "chain12",
+          "waterline": 40,
+          "baseline": {
+            "counts": {
+              "encode": 6,
+              "mul_cp": 18,
+              "rescale": 15,
+              "boot": 3,
+              "mod_switch": 1,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5317062575329925
+            ],
+            "expected": [
+              0.5317062575329925
+            ],
+            "plan_sha256": "04994dc3a0f65a687267090ef5fc675a0dc1ecaf5551ad7b5c8833508ff273d3",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          },
+          "candidate": {
+            "counts": {
+              "encode": 6,
+              "mul_cp": 18,
+              "rescale": 15,
+              "boot": 3,
+              "mod_switch": 1,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5317062575329925
+            ],
+            "expected": [
+              0.5317062575329925
+            ],
+            "plan_sha256": "04994dc3a0f65a687267090ef5fc675a0dc1ecaf5551ad7b5c8833508ff273d3",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          }
+        },
+        {
+          "case": "chain17",
+          "waterline": 40,
+          "baseline": {
+            "counts": {
+              "encode": 7,
+              "mul_cp": 27,
+              "rescale": 22,
+              "boot": 5,
+              "mod_switch": 2,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5460761078432339
+            ],
+            "expected": [
+              0.5460761078432339
+            ],
+            "plan_sha256": "116d68705d4154dac6a2cbf28cd7845e556b921be1a46c72b0c80f97d433b0f0",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          },
+          "candidate": {
+            "counts": {
+              "encode": 7,
+              "mul_cp": 27,
+              "rescale": 22,
+              "boot": 5,
+              "mod_switch": 2,
+              "add_cc": 1
+            },
+            "actual": [
+              0.5460761078432339
+            ],
+            "expected": [
+              0.5460761078432339
+            ],
+            "plan_sha256": "116d68705d4154dac6a2cbf28cd7845e556b921be1a46c72b0c80f97d433b0f0",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          }
+        },
+        {
+          "case": "return_only",
+          "waterline": 40,
+          "baseline": {
+            "counts": {
+              "encode": 5,
+              "mod_switch": 3,
+              "mul_cp": 27,
+              "rescale": 22,
+              "boot": 5,
+              "add_cc": 1
+            },
+            "actual": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "expected": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "plan_sha256": "23c9d09c3b731315bde2815a9fd6049a4ae8f41fa5a2e7e15b5aab9b1de0ca4a",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          },
+          "candidate": {
+            "counts": {
+              "encode": 5,
+              "mod_switch": 3,
+              "mul_cp": 27,
+              "rescale": 22,
+              "boot": 5,
+              "add_cc": 1
+            },
+            "actual": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "expected": [
+              0.255025,
+              0.5460761078432339
+            ],
+            "plan_sha256": "23c9d09c3b731315bde2815a9fd6049a4ae8f41fa5a2e7e15b5aab9b1de0ca4a",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          }
+        },
+        {
+          "case": "fanout",
+          "waterline": 40,
+          "baseline": {
+            "counts": {
+              "encode": 13,
+              "mod_switch": 2,
+              "mul_cp": 21,
+              "rescale": 20,
+              "boot": 1,
+              "add_cc": 9
+            },
+            "actual": [
+              2.6956744610999994
+            ],
+            "expected": [
+              2.6956744610999994
+            ],
+            "plan_sha256": "e6a3a076a9696e896b4764dc9814e904cc74f64226774ba28c25f33ccd1f0e9b",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          },
+          "candidate": {
+            "counts": {
+              "encode": 13,
+              "mod_switch": 2,
+              "mul_cp": 21,
+              "rescale": 20,
+              "boot": 1,
+              "add_cc": 9
+            },
+            "actual": [
+              2.6956744610999994
+            ],
+            "expected": [
+              2.6956744610999994
+            ],
+            "plan_sha256": "e6a3a076a9696e896b4764dc9814e904cc74f64226774ba28c25f33ccd1f0e9b",
+            "native_verified": true,
+            "verified_bundle_contents": [
+              "sha256:ca87cb806dd8ced9b360431c5b5b2bde0483e20ab598192347e4632e105b312c"
+            ]
+          }
+        }
+      ],
+      "equal_scale_reduced_cases": [
+        "chain12",
+        "return_only"
+      ],
+      "unequal_scale_counts_unchanged": true,
+      "baseline_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+      "candidate_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+      "scope": "Small compiled graph semantics and native PlanVerifier; not CKKS precision"
+    },
+    "original_sources_unchanged": true,
+    "scope": "Isolated experimental compiler; model CKKS acceptance is still required"
+  },
+  "full_ckks_executed": false,
+  "short_ckks_executed": true,
+  "short": {
+    "eager": {
+      "release_peak_coefficient_bytes": 5062524928,
+      "plaintext_peak_coefficient_bytes": 4958191616,
+      "ciphertext_peak_coefficient_bytes": 277872640,
+      "eager_initialization_encode_bytes": 4958191616,
+      "total_encoded_coefficient_bytes": 4958191616,
+      "counts": {
+        "encode": 2319,
+        "mod_switch": 75,
+        "release": 13877,
+        "mul_cp": 2673,
+        "rescale": 2703,
+        "rotate": 1914,
+        "add_cc": 4078,
+        "boot": 39,
+        "mul_cc": 30,
+        "relinearize": 30,
+        "add_cp": 19,
+        "negate": 2
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 163,
+          "coefficient_bytes": 1025507328
+        },
+        "plaintext:L2:c1": {
+          "count": 1049,
+          "coefficient_bytes": 1649934336
+        },
+        "plaintext:L1:c1": {
+          "count": 11,
+          "coefficient_bytes": 11534336
+        },
+        "plaintext:L3:c1": {
+          "count": 16,
+          "coefficient_bytes": 33554432
+        },
+        "ciphertext:L2:c2": {
+          "count": 2220,
+          "coefficient_bytes": 6983516160
+        },
+        "ciphertext:L1:c2": {
+          "count": 2455,
+          "coefficient_bytes": 5148508160
+        },
+        "plaintext:L5:c1": {
+          "count": 9,
+          "coefficient_bytes": 28311552
+        },
+        "ciphertext:L4:c2": {
+          "count": 2320,
+          "coefficient_bytes": 12163481600
+        },
+        "ciphertext:L4:c3": {
+          "count": 8,
+          "coefficient_bytes": 62914560
+        },
+        "ciphertext:L3:c2": {
+          "count": 4377,
+          "coefficient_bytes": 18358468608
+        },
+        "ciphertext:L5:c3": {
+          "count": 6,
+          "coefficient_bytes": 56623104
+        },
+        "ciphertext:L3:c3": {
+          "count": 10,
+          "coefficient_bytes": 62914560
+        },
+        "ciphertext:L2:c3": {
+          "count": 6,
+          "coefficient_bytes": 28311552
+        },
+        "plaintext:L4:c1": {
+          "count": 1234,
+          "coefficient_bytes": 3234856960
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+      "plan_sha256": "9b0b9d09802e24b6c64582e44ceae0e2a83c1c72bc689a3d045dd4268c27b024",
+      "boot_count": 39,
+      "boot_transitions": [
+        {
+          "input_id": "14",
+          "output_id": "20",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "17",
+          "output_id": "21",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "19",
+          "output_id": "22",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "64",
+          "output_id": "65",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "129",
+          "output_id": "130",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "161",
+          "output_id": "165",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "164",
+          "output_id": "166",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "784",
+          "output_id": "823",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "785",
+          "output_id": "824",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "820",
+          "output_id": "825",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "821",
+          "output_id": "826",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "822",
+          "output_id": "827",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "928",
+          "output_id": "2094",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "975",
+          "output_id": "2095",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1613",
+          "output_id": "2096",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1968",
+          "output_id": "2097",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1991",
+          "output_id": "2098",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2091",
+          "output_id": "2099",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2093",
+          "output_id": "2100",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2149",
+          "output_id": "2150",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2136",
+          "output_id": "2151",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2140",
+          "output_id": "2152",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2144",
+          "output_id": "2153",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2148",
+          "output_id": "2154",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2183",
+          "output_id": "2184",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3247",
+          "output_id": "3253",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3252",
+          "output_id": "3254",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3293",
+          "output_id": "3294",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3347",
+          "output_id": "3348",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3376",
+          "output_id": "3377",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11745",
+          "output_id": "11746",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11747",
+          "output_id": "11748",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11740",
+          "output_id": "11749",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11744",
+          "output_id": "11750",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11766",
+          "output_id": "11781",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11771",
+          "output_id": "11782",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11776",
+          "output_id": "11783",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11780",
+          "output_id": "11784",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11813",
+          "output_id": "11814",
+          "input_level": 1,
+          "output_level": 5
+        }
+      ],
+      "all_values_coefficient_bytes": 48848437248,
+      "values": 13884,
+      "inputs": 2,
+      "outputs": 7,
+      "num_layers": 2,
+      "tokens": 2
+    },
+    "terminal_elision": {
+      "candidate_count": 2,
+      "candidates": [
+        {
+          "output_index": 3,
+          "original_output": "13882",
+          "replacement_output": "13882",
+          "removed_boot": "11746",
+          "removed_values": [
+            "11745",
+            "11746"
+          ],
+          "source": "3380",
+          "source_level": 4,
+          "metadata": {
+            "components": 2,
+            "context": "qwen-bootstrap48",
+            "kind": "ciphertext",
+            "level": 2,
+            "ntt": true,
+            "place": {
+              "kind": "host",
+              "rank": 0
+            },
+            "scale_log2": 43
+          },
+          "mode": "direct_downward_switch"
+        },
+        {
+          "output_index": 4,
+          "original_output": "13883",
+          "replacement_output": "13883",
+          "removed_boot": "11748",
+          "removed_values": [
+            "11747",
+            "11748"
+          ],
+          "source": "3383",
+          "source_level": 4,
+          "metadata": {
+            "components": 2,
+            "context": "qwen-bootstrap48",
+            "kind": "ciphertext",
+            "level": 2,
+            "ntt": true,
+            "place": {
+              "kind": "host",
+              "rank": 0
+            },
+            "scale_log2": 43
+          },
+          "mode": "direct_downward_switch"
+        }
+      ],
+      "removed_value_count": 4,
+      "returned_metadata_unchanged": true,
+      "remaining_arithmetic_unchanged": true,
+      "only_mod_switch_inputs_rewired": true,
+      "original_input_not_mutated": true,
+      "releases_rebuilt": true,
+      "scope": "Uninstalled candidate; requires native PlanVerifier, Mock and CKKS",
+      "original_plan_sha256": "9b0b9d09802e24b6c64582e44ceae0e2a83c1c72bc689a3d045dd4268c27b024",
+      "candidate_plan_sha256": "9346460d421dc3d8f61f21cfa884438d2b0182c121066c9a5e4a387fd198af19",
+      "postpass_source_sha256": "ed6c6828f82cb88cb7959045aa7dd61398241a2184761f1b2858704939797b0b"
+    },
+    "execution": {
+      "release_peak_coefficient_bytes": 254803968,
+      "plaintext_peak_coefficient_bytes": 67108864,
+      "ciphertext_peak_coefficient_bytes": 254803968,
+      "eager_initialization_encode_bytes": 0,
+      "total_encoded_coefficient_bytes": 5285347328,
+      "counts": {
+        "mod_switch": 73,
+        "release": 14004,
+        "encode": 2450,
+        "mul_cp": 2673,
+        "rescale": 2703,
+        "rotate": 1914,
+        "add_cc": 4078,
+        "boot": 37,
+        "mul_cc": 30,
+        "relinearize": 30,
+        "add_cp": 19,
+        "negate": 2
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 161,
+          "coefficient_bytes": 1012924416
+        },
+        "plaintext:L2:c1": {
+          "count": 1059,
+          "coefficient_bytes": 1665662976
+        },
+        "plaintext:L1:c1": {
+          "count": 13,
+          "coefficient_bytes": 13631488
+        },
+        "plaintext:L3:c1": {
+          "count": 22,
+          "coefficient_bytes": 46137344
+        },
+        "ciphertext:L2:c2": {
+          "count": 2220,
+          "coefficient_bytes": 6983516160
+        },
+        "ciphertext:L1:c2": {
+          "count": 2453,
+          "coefficient_bytes": 5144313856
+        },
+        "plaintext:L5:c1": {
+          "count": 10,
+          "coefficient_bytes": 31457280
+        },
+        "ciphertext:L4:c2": {
+          "count": 2320,
+          "coefficient_bytes": 12163481600
+        },
+        "ciphertext:L4:c3": {
+          "count": 8,
+          "coefficient_bytes": 62914560
+        },
+        "ciphertext:L3:c2": {
+          "count": 4377,
+          "coefficient_bytes": 18358468608
+        },
+        "ciphertext:L5:c3": {
+          "count": 6,
+          "coefficient_bytes": 56623104
+        },
+        "ciphertext:L3:c3": {
+          "count": 10,
+          "coefficient_bytes": 62914560
+        },
+        "ciphertext:L2:c3": {
+          "count": 6,
+          "coefficient_bytes": 28311552
+        },
+        "plaintext:L4:c1": {
+          "count": 1346,
+          "coefficient_bytes": 3528458240
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+      "plan_sha256": "b0b425dbe6a04b736f378e0b2fd9ca758ecf1c6cabb1e702f2a125cf3116c894",
+      "boot_count": 37,
+      "boot_transitions": [
+        {
+          "input_id": "14",
+          "output_id": "20",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "17",
+          "output_id": "21",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "19",
+          "output_id": "22",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "64",
+          "output_id": "65",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "129",
+          "output_id": "130",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "161",
+          "output_id": "165",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "164",
+          "output_id": "166",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "784",
+          "output_id": "823",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "785",
+          "output_id": "824",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "820",
+          "output_id": "825",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "821",
+          "output_id": "826",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "822",
+          "output_id": "827",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "928",
+          "output_id": "2094",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "975",
+          "output_id": "2095",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1613",
+          "output_id": "2096",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1968",
+          "output_id": "2097",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "1991",
+          "output_id": "2098",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2149",
+          "output_id": "2150",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2136",
+          "output_id": "2151",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2140",
+          "output_id": "2152",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2144",
+          "output_id": "2153",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2148",
+          "output_id": "2154",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2091",
+          "output_id": "2099",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2093",
+          "output_id": "2100",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "2183",
+          "output_id": "2184",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3247",
+          "output_id": "3253",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3252",
+          "output_id": "3254",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3293",
+          "output_id": "3294",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3347",
+          "output_id": "3348",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "3376",
+          "output_id": "3377",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11740",
+          "output_id": "11749",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11744",
+          "output_id": "11750",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11766",
+          "output_id": "11781",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11771",
+          "output_id": "11782",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11776",
+          "output_id": "11783",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11780",
+          "output_id": "11784",
+          "input_level": 1,
+          "output_level": 5
+        },
+        {
+          "input_id": "11813",
+          "output_id": "11814",
+          "input_level": 1,
+          "output_level": 5
+        }
+      ],
+      "all_values_coefficient_bytes": 49158815744,
+      "values": 14011,
+      "inputs": 2,
+      "outputs": 7,
+      "num_layers": 2,
+      "tokens": 2
+    },
+    "schedule": {
+      "passed": true,
+      "policy": "release_ready",
+      "all_arithmetic_nodes_identical": true,
+      "operand_order_preserved": true,
+      "values_levels_scales_identical": true,
+      "encode_payloads_identical": true,
+      "same_released_values": true,
+      "no_recomputation": true,
+      "arithmetic_graph_sha256": "b7d4eaa8ef701c26847ebb7c76291ae8e54617e72375f9c3a5594f810b8f5e01",
+      "baseline": {
+        "release_peak_coefficient_bytes": 5009047552,
+        "plaintext_peak_coefficient_bytes": 4958191616,
+        "ciphertext_peak_coefficient_bytes": 149946368,
+        "eager_initialization_encode_bytes": 4958191616,
+        "total_encoded_coefficient_bytes": 4958191616,
+        "counts": {
+          "encode": 2319,
+          "mod_switch": 73,
+          "release": 13873,
+          "mul_cp": 2673,
+          "rescale": 2703,
+          "rotate": 1914,
+          "add_cc": 4078,
+          "boot": 37,
+          "mul_cc": 30,
+          "relinearize": 30,
+          "add_cp": 19,
+          "negate": 2
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 161,
+            "coefficient_bytes": 1012924416
+          },
+          "plaintext:L2:c1": {
+            "count": 1049,
+            "coefficient_bytes": 1649934336
+          },
+          "plaintext:L1:c1": {
+            "count": 11,
+            "coefficient_bytes": 11534336
+          },
+          "plaintext:L3:c1": {
+            "count": 16,
+            "coefficient_bytes": 33554432
+          },
+          "ciphertext:L2:c2": {
+            "count": 2220,
+            "coefficient_bytes": 6983516160
+          },
+          "ciphertext:L1:c2": {
+            "count": 2453,
+            "coefficient_bytes": 5144313856
+          },
+          "plaintext:L5:c1": {
+            "count": 9,
+            "coefficient_bytes": 28311552
+          },
+          "ciphertext:L4:c2": {
+            "count": 2320,
+            "coefficient_bytes": 12163481600
+          },
+          "ciphertext:L4:c3": {
+            "count": 8,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L3:c2": {
+            "count": 4377,
+            "coefficient_bytes": 18358468608
+          },
+          "ciphertext:L5:c3": {
+            "count": 6,
+            "coefficient_bytes": 56623104
+          },
+          "ciphertext:L3:c3": {
+            "count": 10,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L2:c3": {
+            "count": 6,
+            "coefficient_bytes": 28311552
+          },
+          "plaintext:L4:c1": {
+            "count": 1234,
+            "coefficient_bytes": 3234856960
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          1,
+          1
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "candidate": {
+        "release_peak_coefficient_bytes": 5004328960,
+        "plaintext_peak_coefficient_bytes": 4958191616,
+        "ciphertext_peak_coefficient_bytes": 254803968,
+        "eager_initialization_encode_bytes": 4958191616,
+        "total_encoded_coefficient_bytes": 4958191616,
+        "counts": {
+          "encode": 2319,
+          "mod_switch": 73,
+          "release": 13873,
+          "mul_cp": 2673,
+          "rescale": 2703,
+          "rotate": 1914,
+          "add_cc": 4078,
+          "boot": 37,
+          "mul_cc": 30,
+          "relinearize": 30,
+          "add_cp": 19,
+          "negate": 2
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 161,
+            "coefficient_bytes": 1012924416
+          },
+          "plaintext:L2:c1": {
+            "count": 1049,
+            "coefficient_bytes": 1649934336
+          },
+          "plaintext:L1:c1": {
+            "count": 11,
+            "coefficient_bytes": 11534336
+          },
+          "plaintext:L3:c1": {
+            "count": 16,
+            "coefficient_bytes": 33554432
+          },
+          "ciphertext:L2:c2": {
+            "count": 2220,
+            "coefficient_bytes": 6983516160
+          },
+          "ciphertext:L1:c2": {
+            "count": 2453,
+            "coefficient_bytes": 5144313856
+          },
+          "plaintext:L5:c1": {
+            "count": 9,
+            "coefficient_bytes": 28311552
+          },
+          "ciphertext:L4:c2": {
+            "count": 2320,
+            "coefficient_bytes": 12163481600
+          },
+          "ciphertext:L4:c3": {
+            "count": 8,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L3:c2": {
+            "count": 4377,
+            "coefficient_bytes": 18358468608
+          },
+          "ciphertext:L5:c3": {
+            "count": 6,
+            "coefficient_bytes": 56623104
+          },
+          "ciphertext:L3:c3": {
+            "count": 10,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L2:c3": {
+            "count": 6,
+            "coefficient_bytes": 28311552
+          },
+          "plaintext:L4:c1": {
+            "count": 1234,
+            "coefficient_bytes": 3234856960
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          1,
+          1
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "note": "Draft host schedule; requires cache-aware measurement, native verifier, Mock and CKKS",
+      "current_graph_dfs_baseline": true,
+      "baseline_dfs_plan_sha256": "6ccc3c3403be3282b639c2664fc491ccb11da9af9116da8ba822e352f0128b0a",
+      "schedule_source_sha256": "177d1f9b96ff7ffb3f9b015b032837dfc935de205d62353d92cb29f44c769008"
+    },
+    "cache": {
+      "passed": true,
+      "scope": "CPU V3 bounded immutable Encode-root cache",
+      "budget_bytes": 67108864,
+      "eviction_policy": "farthest_next_use_with_size_tiebreak",
+      "encoded_cache_peak_bytes": 67108864,
+      "reencodes": 131,
+      "evictions": 131,
+      "extra_value_ids": 131,
+      "original_encode_count": 2319,
+      "candidate_encode_count": 2450,
+      "payload_counts": {
+        "bundle": 2440,
+        "inline": 10
+      },
+      "compute_semantic_sha256": "842b0c0a4ec31864bb59f0bd1c350050e293cfe0fb59dd48b1ebbe92d1b4c0df",
+      "normalized_compute_hash_matches": true,
+      "all_constant_payloads_identical": true,
+      "ciphertext_lifetimes_unchanged": true,
+      "all_original_value_metadata_unchanged": true,
+      "boot_count_unchanged": true,
+      "deferred_baseline": {
+        "release_peak_coefficient_bytes": 418906112,
+        "plaintext_peak_coefficient_bytes": 355467264,
+        "ciphertext_peak_coefficient_bytes": 254803968,
+        "eager_initialization_encode_bytes": 0,
+        "total_encoded_coefficient_bytes": 4958191616,
+        "counts": {
+          "mod_switch": 73,
+          "release": 13873,
+          "encode": 2319,
+          "mul_cp": 2673,
+          "rescale": 2703,
+          "rotate": 1914,
+          "add_cc": 4078,
+          "boot": 37,
+          "mul_cc": 30,
+          "relinearize": 30,
+          "add_cp": 19,
+          "negate": 2
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 161,
+            "coefficient_bytes": 1012924416
+          },
+          "plaintext:L2:c1": {
+            "count": 1049,
+            "coefficient_bytes": 1649934336
+          },
+          "plaintext:L1:c1": {
+            "count": 11,
+            "coefficient_bytes": 11534336
+          },
+          "plaintext:L3:c1": {
+            "count": 16,
+            "coefficient_bytes": 33554432
+          },
+          "ciphertext:L2:c2": {
+            "count": 2220,
+            "coefficient_bytes": 6983516160
+          },
+          "ciphertext:L1:c2": {
+            "count": 2453,
+            "coefficient_bytes": 5144313856
+          },
+          "plaintext:L5:c1": {
+            "count": 9,
+            "coefficient_bytes": 28311552
+          },
+          "ciphertext:L4:c2": {
+            "count": 2320,
+            "coefficient_bytes": 12163481600
+          },
+          "ciphertext:L4:c3": {
+            "count": 8,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L3:c2": {
+            "count": 4377,
+            "coefficient_bytes": 18358468608
+          },
+          "ciphertext:L5:c3": {
+            "count": 6,
+            "coefficient_bytes": 56623104
+          },
+          "ciphertext:L3:c3": {
+            "count": 10,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L2:c3": {
+            "count": 6,
+            "coefficient_bytes": 28311552
+          },
+          "plaintext:L4:c1": {
+            "count": 1234,
+            "coefficient_bytes": 3234856960
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          1,
+          1
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "candidate": {
+        "release_peak_coefficient_bytes": 254803968,
+        "plaintext_peak_coefficient_bytes": 67108864,
+        "ciphertext_peak_coefficient_bytes": 254803968,
+        "eager_initialization_encode_bytes": 0,
+        "total_encoded_coefficient_bytes": 5285347328,
+        "counts": {
+          "mod_switch": 73,
+          "release": 14004,
+          "encode": 2450,
+          "mul_cp": 2673,
+          "rescale": 2703,
+          "rotate": 1914,
+          "add_cc": 4078,
+          "boot": 37,
+          "mul_cc": 30,
+          "relinearize": 30,
+          "add_cp": 19,
+          "negate": 2
+        },
+        "by_level": {
+          "ciphertext:L5:c2": {
+            "count": 161,
+            "coefficient_bytes": 1012924416
+          },
+          "plaintext:L2:c1": {
+            "count": 1059,
+            "coefficient_bytes": 1665662976
+          },
+          "plaintext:L1:c1": {
+            "count": 13,
+            "coefficient_bytes": 13631488
+          },
+          "plaintext:L3:c1": {
+            "count": 22,
+            "coefficient_bytes": 46137344
+          },
+          "ciphertext:L2:c2": {
+            "count": 2220,
+            "coefficient_bytes": 6983516160
+          },
+          "ciphertext:L1:c2": {
+            "count": 2453,
+            "coefficient_bytes": 5144313856
+          },
+          "plaintext:L5:c1": {
+            "count": 10,
+            "coefficient_bytes": 31457280
+          },
+          "ciphertext:L4:c2": {
+            "count": 2320,
+            "coefficient_bytes": 12163481600
+          },
+          "ciphertext:L4:c3": {
+            "count": 8,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L3:c2": {
+            "count": 4377,
+            "coefficient_bytes": 18358468608
+          },
+          "ciphertext:L5:c3": {
+            "count": 6,
+            "coefficient_bytes": 56623104
+          },
+          "ciphertext:L3:c3": {
+            "count": 10,
+            "coefficient_bytes": 62914560
+          },
+          "ciphertext:L2:c3": {
+            "count": 6,
+            "coefficient_bytes": 28311552
+          },
+          "plaintext:L4:c1": {
+            "count": 1346,
+            "coefficient_bytes": 3528458240
+          }
+        },
+        "input_levels": [
+          5,
+          5
+        ],
+        "output_levels": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          1,
+          1
+        ],
+        "coefficients_only": true,
+        "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+      },
+      "note": "Budget covers Encode roots only; report counts derived plaintext separately through full live-set audit. Not measured RSS."
+    },
+    "mock_max_abs_error": 1.9392378214355688e-06,
+    "mock_max_abs_tail": 0.0,
+    "ckks": {
+      "passed": true,
+      "runtime_seconds": 1271.261344952,
+      "peak_rss_bytes": 28933652480,
+      "runtime_average_cpu_cores": 5.677847670474506,
+      "max_abs_error": 0.0009043864135123494,
+      "max_imaginary": 0.0007737846614659309,
+      "max_abs_tail": 0.0004822856794774565
+    }
+  },
+  "boot_diagnostic_dependencies": [
+    {
+      "input_id": "14",
+      "output_id": "20",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "17",
+      "output_id": "21",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "19",
+      "output_id": "22",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention0",
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "64",
+      "output_id": "65",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention0",
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "129",
+      "output_id": "130",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention0",
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "161",
+      "output_id": "165",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention0",
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "164",
+      "output_id": "166",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "784",
+      "output_id": "823",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "785",
+      "output_id": "824",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention0",
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "820",
+      "output_id": "825",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "821",
+      "output_id": "826",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "block0_kv",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "822",
+      "output_id": "827",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "928",
+      "output_id": "2094",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "975",
+      "output_id": "2095",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "1613",
+      "output_id": "2096",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "1968",
+      "output_id": "2097",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "block0_kv"
+      ]
+    },
+    {
+      "input_id": "1991",
+      "output_id": "2098",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "2149",
+      "output_id": "2150",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "2136",
+      "output_id": "2151",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "2140",
+      "output_id": "2152",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "2144",
+      "output_id": "2153",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "2148",
+      "output_id": "2154",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "2091",
+      "output_id": "2099",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention0"
+      ]
+    },
+    {
+      "input_id": "2093",
+      "output_id": "2100",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "2183",
+      "output_id": "2184",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1",
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "3247",
+      "output_id": "3253",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "attention1"
+      ]
+    },
+    {
+      "input_id": "3252",
+      "output_id": "3254",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "3293",
+      "output_id": "3294",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "3347",
+      "output_id": "3348",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "3376",
+      "output_id": "3377",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "post_norm0",
+        "post_norm1",
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "11740",
+      "output_id": "11749",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "11744",
+      "output_id": "11750",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "11766",
+      "output_id": "11781",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "11771",
+      "output_id": "11782",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "11776",
+      "output_id": "11783",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "11780",
+      "output_id": "11784",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "mlp0",
+        "mlp1"
+      ]
+    },
+    {
+      "input_id": "11813",
+      "output_id": "11814",
+      "input_level": 1,
+      "output_level": 5,
+      "dependent_outputs": [
+        "mlp0",
+        "mlp1"
+      ]
+    }
+  ]
+}
