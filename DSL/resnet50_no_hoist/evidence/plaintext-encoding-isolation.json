@@ -1,0 +1,19 @@
+{
+  "scope": "CPU plaintext quantization isolation, not GPU acceptance",
+  "cases": [
+    {
+      "case": "control",
+      "returncode": 0,
+      "completed": true,
+      "max_abs": 7.105427357601002e-15,
+      "output_finite": true
+    },
+    {
+      "case": "actual-plaintext-encoding",
+      "returncode": 0,
+      "completed": true,
+      "max_abs": 5.236642230954658e-10,
+      "output_finite": true
+    }
+  ]
+}

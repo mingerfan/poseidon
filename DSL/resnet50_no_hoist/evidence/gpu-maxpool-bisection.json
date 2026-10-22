@@ -1,0 +1,23 @@
+{
+  "scope": "Stage bisection, original model/Native implementation and original tolerances",
+  "stages": [
+    {
+      "stage": "maxpool-first-pair",
+      "status": "PASS",
+      "scope": "One-device true model stage; not whole-model acceptance",
+      "boots": 2136,
+      "max_abs": 0.006277491527329371,
+      "rms": 0.0005526724010292602,
+      "max_imaginary": 4.7252338821723134e-05
+    },
+    {
+      "stage": "maxpool-full-single",
+      "status": "PASS",
+      "scope": "One-device true model stage; not whole-model acceptance",
+      "boots": 5888,
+      "max_abs": 0.001980587092080023,
+      "rms": 0.0001531025589389337,
+      "max_imaginary": 1.163423509527756e-05
+    }
+  ]
+}

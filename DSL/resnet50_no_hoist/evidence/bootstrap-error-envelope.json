@@ -1,0 +1,32 @@
+{
+  "scope": "CPU-only sensitivity at the observed GPU local-error envelope, not encrypted acceptance",
+  "cases": [
+    {
+      "case": "plus-3.2e-5",
+      "amplitude": 3.2e-05,
+      "pattern": "plus",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 0.06243684670214833,
+      "output_finite": true
+    },
+    {
+      "case": "minus-3.2e-5",
+      "amplitude": 3.2e-05,
+      "pattern": "minus",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 0.06152265636501042,
+      "output_finite": true
+    },
+    {
+      "case": "random-1e-5",
+      "amplitude": 1e-05,
+      "pattern": "random",
+      "returncode": 1,
+      "completed": true,
+      "max_abs": 0.0021532836789890375,
+      "output_finite": true
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "boots": 5505,
+  "max_abs": 1.0000500007173634,
+  "max_abs_mean": 0.9998905448490782,
+  "max_rms": 0.9998906281679634,
+  "scope": "Read-only CPU observation; reject huge pooling intermediates well outside the independently tested Native component domain"
+}

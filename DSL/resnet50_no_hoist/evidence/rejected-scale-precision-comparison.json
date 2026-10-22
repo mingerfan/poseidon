@@ -1,0 +1,29 @@
+{
+  "status": "FAIL",
+  "scope": "Same captured input; fresh keys; verify high-scale precision loss and isolated correction, not model acceptance",
+  "reports": [
+    {
+      "case": "baseline-scale40",
+      "input_scale": 40,
+      "returncode": 0,
+      "max_abs": 5.492193760003872e-06,
+      "rms": 9.09036860795118e-07
+    },
+    {
+      "case": "baseline-scale60",
+      "input_scale": 60,
+      "returncode": 0,
+      "max_abs": 6.167978395810181e-06,
+      "rms": 1.1195975319720788e-06
+    },
+    {
+      "case": "fixed-scale60",
+      "input_scale": 60,
+      "returncode": 0,
+      "max_abs": 1.6534455133943027e-05,
+      "rms": 1.225805339987835e-06
+    }
+  ],
+  "max_improvement": 0.37303789848799707,
+  "rms_improvement": 0.9133567096250289
+}

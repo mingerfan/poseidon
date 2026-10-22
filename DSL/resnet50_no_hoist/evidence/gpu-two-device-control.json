@@ -1,0 +1,23 @@
+{
+  "scope": "Same bytecode as passing single-GPU references; only device count changes",
+  "stages": [
+    {
+      "stage": "stem-relu-two",
+      "status": "PASS",
+      "scope": "Two-device true model stage; not whole-model acceptance",
+      "boots": 1601,
+      "max_abs": 0.003453949357998809,
+      "rms": 0.0005042551857078231,
+      "max_imaginary": 4.467197981711967e-07
+    },
+    {
+      "stage": "maxpool-first-pair-two",
+      "status": "FAIL",
+      "scope": "Two-device true model stage; not whole-model acceptance",
+      "boots": 2136,
+      "max_abs": 231359.95342660064,
+      "rms": 18745.123747997583,
+      "max_imaginary": 1.543053354374161e-05
+    }
+  ]
+}

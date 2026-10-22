@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "max_abs": 2.3756755113180095e-05,
+    "rms": 2.7753034729955727e-06
+  },
+  "baseline_repeat_difference": {
+    "max_abs": 0.0,
+    "rms": 0.0
+  },
+  "corrected": {
+    "max_abs": 5.917006628861661e-06,
+    "rms": 8.548223158088202e-07
+  },
+  "input": 26385,
+  "input_level": 6,
+  "input_scale_log2": 60,
+  "max_improvement": 4.014995521096876,
+  "output": 26386,
+  "rms_improvement": 3.2466436845060853,
+  "scope": "Same actual model ciphertext and same evaluation keys: baseline, baseline repeat, corrected preprocessing. Read-only diagnostics; not model acceptance.",
+  "status": "FAIL"
+}

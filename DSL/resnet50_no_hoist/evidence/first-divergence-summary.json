@@ -1,0 +1,12 @@
+{
+  "after_error": 0.0050444990958289915,
+  "before_error": 0.005046006227725219,
+  "boot": 588,
+  "boot_change": 1.954965506639761e-05,
+  "input": 103570,
+  "input_level": 6,
+  "input_scale_log2": 60,
+  "output": 33577,
+  "scope": "read-only diagnostic; not model acceptance",
+  "status": "FIRST_DIVERGENCE_FOUND"
+}
