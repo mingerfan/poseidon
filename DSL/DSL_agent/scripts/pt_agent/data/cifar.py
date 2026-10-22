@@ -13,7 +13,8 @@ SELECTIONS = RESULTS / "agent-resnet20-original-accuracy-r1805/frozen-selections
 MEAN = (0.485, 0.456, 0.406)
 STD = (0.229, 0.224, 0.225)
 HELDOUT = range(9000, 10000)
-REPORT = range(0, 9000)
+CONFIRM = range(8000, 9000)
+REPORT = range(0, 8000)
 
 
 def read_rows(split: str, indices) -> tuple[np.ndarray, np.ndarray]:
@@ -90,7 +91,13 @@ def heldout_set(n: int = 1000, normalization=(MEAN, STD)):
     return normalize(pixels, normalization), labels
 
 
+def confirm_set(normalization=(MEAN, STD)):
+    """Read confirmation-only test records 8000 through 8999."""
+    pixels, labels = read_rows("test", CONFIRM)
+    return normalize(pixels, normalization), labels
+
+
 def report_test_set(normalization=(MEAN, STD)):
-    """Read report-only test records 0 through 8999."""
+    """Read report-only test records 0 through 7999."""
     pixels, labels = read_rows("test", REPORT)
     return normalize(pixels, normalization), labels

@@ -8,6 +8,7 @@ import time
 from ..llm import LLMError
 from ..dsl.parser import parse
 from .agent_tools import AgentContext, evaluate
+from .confirm import Candidate, confirm_select
 from .prompts import build_system_prompt, feedback_message, initial_message
 from .tuner import tune
 
@@ -21,6 +22,7 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
     llm_min = None
     has_tuned = False
     history = []
+    pool, records = [], {}
     calls = prompt_tokens = completion_tokens = stale = 0
     failed = None
     trace_path = Path(trace_path)
@@ -80,6 +82,14 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
             if result.feasible:
                 candidates.append((result.source, result.cost_after, confirmation, 'tuned'))
         for candidate, candidate_cost, confirmed, origin in candidates:
+            pool.append(Candidate(candidate, origin, iteration, candidate_cost['latency_pred_us'],
+                                  candidate_cost['boots_pred']))
+            records[(iteration, origin, candidate)] = (
+                dict(candidate_cost, iteration=iteration, source=origin,
+                     agree=confirmed['agree'], max_u=confirmed['max_u'],
+                     boot_input_max_abs=confirmed.get('boot_input_max_abs'),
+                     worst_acts=confirmed.get('worst_acts', [])),
+                sum(bool(line.strip()) for line in source.splitlines()))
             if first_feasible is None:
                 first_feasible = iteration
             if best is None or candidate_cost['latency_pred_us'] < best['latency_pred_us']:
@@ -101,9 +111,17 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
             stale = 0 if previous is None or previous-best["latency_pred_us"] >= .05*previous else stale+1
             if stale >= 2:
                 break
-    return dict(status="error" if failed else "feasible" if best is not None else "infeasible",
+    confirmation = confirm_select(pool, ctx)
+    selected = confirmation['selected']
+    if selected is None:
+        best_program = best_iteration = best = best_llm_lines = None
+    else:
+        best_program, best_iteration = selected.source, selected.iteration
+        best, best_llm_lines = records[(selected.iteration, selected.origin, selected.source)]
+    return dict(status="error" if failed else "feasible" if selected is not None else "confirm_failed",
                 best_program=best_program, best_iteration=best_iteration, first_feasible_iteration=first_feasible,
                 best=best, best_source=best['source'] if best else None, llm_source_lines=best_llm_lines,
                 frozen_source_lines=sum(bool(line.strip()) for line in best_program.splitlines()) if best_program else None,
                 iterations=len(history), llm_calls=calls, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens,
-                seconds=time.monotonic()-started, history=history, error=failed)
+                seconds=time.monotonic()-started, history=history, error=failed,
+                confirm=confirmation, pool_size=len(pool))

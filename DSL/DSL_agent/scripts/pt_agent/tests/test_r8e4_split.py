@@ -22,15 +22,18 @@ R3 = ROOT/'r3-resnet20-20261020T131658'
 
 class HeldoutTests(unittest.TestCase):
     def test_01_disjoint_complete_and_first_record(self):
-        self.assertFalse(set(cifar.HELDOUT) & set(cifar.REPORT))
-        self.assertEqual(set(cifar.HELDOUT) | set(cifar.REPORT), set(range(10000)))
+        heldout, confirm, report = map(set, (cifar.HELDOUT, cifar.CONFIRM, cifar.REPORT))
+        self.assertFalse(heldout & confirm)
+        self.assertFalse(heldout & report)
+        self.assertFalse(confirm & report)
+        self.assertEqual(heldout | confirm | report, set(range(10000)))
         images, labels = cifar.heldout_set()
         pixels, expected = cifar.read_rows('test', [9000])
         np.testing.assert_array_equal(images[:1], cifar.normalize(pixels))
         np.testing.assert_array_equal(labels[:1], expected)
         report, report_labels = cifar.report_test_set()
-        self.assertEqual(len(report), 9000)
-        pixels, expected = cifar.read_rows('test', [0, 8999])
+        self.assertEqual(len(report), 8000)
+        pixels, expected = cifar.read_rows('test', [0, 7999])
         np.testing.assert_array_equal(report[[0, -1]], cifar.normalize(pixels))
         np.testing.assert_array_equal(report_labels[[0, -1]], expected)
         with self.assertRaises(ValueError):
@@ -98,7 +101,7 @@ class HeldoutTests(unittest.TestCase):
             baseline = root/'baseline.json'
             baseline.write_text(json.dumps(dict(models=[dict(model=row['model'], rule_report_path='unused') for row in models])))
             original = dict(round='R8e4', tuner='on', models_dir='unused', baseline_report=str(baseline),
-                            val_split='test[9000:10000]', test_split='test[0:9000]', api_before=0, api_limit=24,
+                            val_split='test[9000:10000]', test_split='test[0:8000]', api_before=0, api_limit=24,
                             api_budget=24, models=models, git_rev='offline')
             (run/'REPORT.json').write_text(json.dumps(original))
             calls = []

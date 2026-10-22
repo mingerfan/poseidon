@@ -8,7 +8,7 @@ from ..cost import PROFILES
 from ..intake.patterns import annotate
 from .agent_tools import FEASIBLE_MAX_U
 
-PROMPT_VERSION = "r8-v3"
+PROMPT_VERSION = "r8-v4"
 TEMPLATE = """You are an FHE compiler engineer. You write PT-DSL programs that implement a given neural network on CKKS
 homomorphic encryption. A trusted lowering turns PT-DSL into Hecate code; an unmodified compiler then inserts
 rescale/modswitch/bootstrap. Your program must compute exactly the given network (except for the polynomial
@@ -39,7 +39,7 @@ After each feasible program, a deterministic tuner lowers activation degrees and
 
 Feasibility (all required): the program parses and type-checks; the exact-mode check matches the reference
 network; on the {n_val} validation images no activation input leaves its domain (max |u| <= {max_u}, where u is
-the input mapped to [-1, 1]) and the predicted class agrees with the exact network for at least 99% of the images. The program must also stay within the target limits given in the input ("target"); a violated limit is reported at stage "resources". When the target gives boot_input_bound, every value the compiler bootstraps must stay within it on the validation images.
+the input mapped to [-1, 1]) and the top-1 accuracy on these images is at most 0.5 percentage points below that of the exact network. The program must also stay within the target limits given in the input ("target"); a violated limit is reported at stage "resources". When the target gives boot_input_bound, every value the compiler bootstraps must stay within it on the validation images.
 Among feasible programs, lower predicted latency is better.
 
 When feedback reports an error, it gives the line, the source text, the macro call site and the shapes

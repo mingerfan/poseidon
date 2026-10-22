@@ -66,6 +66,15 @@ def _calls(path):
     return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
 
 
+def _prompt_version():
+    # The outer Python has no NumPy; import the canonical constant in the pure environment.
+    command = [sys.executable, '-B', '-m', 'pt_agent.tools.nixrun', '--seconds', '600', '--', '-c',
+               'from pt_agent.planners.prompts import PROMPT_VERSION; print(PROMPT_VERSION)']
+    result = subprocess.run(command, cwd=Path(__file__).resolve().parents[2],
+                            capture_output=True, text=True, check=True, timeout=720)
+    return result.stdout.strip().splitlines()[-1]
+
+
 def _outer(args):
     from ..registry import append, git_rev, load, new_run_id
 
@@ -89,7 +98,7 @@ def _outer(args):
         base = len(_calls(budget_path))
         result = dict(round=args.round, complete=False, stage='agent',
                       models_dir=str((args.models_dir or root/'models-v2').resolve()),
-                      baseline_report=str(args.baseline_report), prompt_version='r8-v3', tuner=args.tuner,
+                      baseline_report=str(args.baseline_report), prompt_version=_prompt_version(), tuner=args.tuner,
                       val_split='test[9000:10000]', test_split='test[0:9000]',
                       api_before=base, api_budget=24, api_limit=min(base+24, 300), api_calls=0,
                       models=[dict(model=name, report_path=str(out/name/'REPORT.json'), complete=False,

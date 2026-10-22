@@ -46,7 +46,7 @@ class FeedbackTests(unittest.TestCase):
         self.assertNotEqual(evaluate(corrected, self.ctx)['stage'], 'typecheck')
 
     def test_prompt_version_padding_and_example(self):
-        self.assertEqual(PROMPT_VERSION, 'r8-v3')
+        self.assertEqual(PROMPT_VERSION, 'r8-v4')
         prompt = build_system_prompt(self.ctx)
         self.assertIn('C -> C + 2p', prompt)
         source = prompt.split('# example: residual_small\n', 1)[1].split('\n# example:', 1)[0]

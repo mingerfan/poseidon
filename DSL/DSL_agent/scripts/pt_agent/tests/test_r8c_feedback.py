@@ -36,9 +36,11 @@ def context():
                           Node('l1', 'linear', ['activated'], ['output'], dict(weight='identity', bias=None), '')],
                   {name: TensorInfo(name, (1, 2), 'cipher') for name in ('input', 'hidden', 'activated', 'output')},
                   weights, ['input'], ['output'])
+    val_exact_logits = np.maximum(images, 0)
     return AgentContext(graph=graph, weights=weights, calibration={'hidden': dict(min=-2., max=2.)},
                         weight_shapes={'identity': (2, 2)}, val_images=images,
-                        val_exact_logits=np.maximum(images, 0), probe_images=images,
+                        val_exact_logits=val_exact_logits, val_labels=val_exact_logits.argmax(axis=1),
+                        val_exact_top1=100.0, probe_images=images,
                         probe_act_inputs=[images.copy()], needed_margin={'hidden': 1.},
                         act_tensors=['hidden'], model_name='toy')
 
@@ -108,7 +110,7 @@ class FeedbackTests(unittest.TestCase):
                                       limits=dict(const_bytes=4*2**30), boot_input_bound=None))
 
     def test_r8_v2_prompt_and_feedback(self):
-        self.assertEqual(PROMPT_VERSION, 'r8-v3')
+        self.assertEqual(PROMPT_VERSION, 'r8-v4')
         self.assertIn('hotspots', TEMPLATE)
         self.assertIn('stage "resources"', TEMPLATE)
         generic = TEMPLATE.format(capabilities=render_capabilities(), max_u=FEASIBLE_MAX_U,

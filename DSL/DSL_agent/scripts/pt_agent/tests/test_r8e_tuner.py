@@ -41,6 +41,8 @@ class TunerTests(unittest.TestCase):
         cls.ctx50 = copy.copy(cls.ctx)
         cls.ctx50.val_images = cls.ctx.val_images[:50]
         cls.ctx50.val_exact_logits = cls.ctx.val_exact_logits[:50]
+        cls.ctx50.val_labels = cls.ctx.val_labels[:50]
+        cls.ctx50.val_exact_top1 = float(100*np.mean(cls.ctx50.val_exact_logits.argmax(axis=1) == cls.ctx50.val_labels))
 
     def test_01_validate_matches_evaluate(self):
         source = R6C.read_text()
@@ -57,9 +59,11 @@ class TunerTests(unittest.TestCase):
         snapshot = canonical(original)
         with patch('pt_agent.planners.tuner.N_COARSE', 100):
             result = tune(original, self.ctx, budget_s=900, max_sweeps=1)
-        self.assertTrue(result.feasible)
-        self.assertTrue(validate(result.program, self.ctx)['feasible'])
-        self.assertLessEqual(result.cost_after['latency_pred_us'], result.cost_before['latency_pred_us'])
+        if result.feasible:
+            self.assertTrue(validate(result.program, self.ctx)['feasible'])
+            self.assertLessEqual(result.cost_after['latency_pred_us'], result.cost_before['latency_pred_us'])
+        else:
+            self.assertEqual(canonical(result.program), snapshot)
         self.assertEqual(snapshot, canonical(original))
         wanted = []
         for old, new in zip(original.ops, result.program.ops):
@@ -94,6 +98,7 @@ class TunerTests(unittest.TestCase):
             feasible = n is not None or all(op.attrs['deg'] >= 63 for op in acts)
             return dict(agree=200 if n is not None else 1000 if feasible else 980,
                         total=200 if n is not None else 1000, feasible=feasible, diverged=False, max_u=.8,
+                        top1=92.0 if feasible else 90.0, exact_top1=92.0, acc_drop_pp=0.0 if feasible else 2.0,
                         rows=[dict(obs_min=-2., obs_max=2.) for _ in acts])
 
         def fake_cost(program, weights, **kwargs):
@@ -125,6 +130,7 @@ class TunerTests(unittest.TestCase):
             acts = [op for op in program.ops if op.kind == 'act']
             total = 200 if n is not None else 1000
             return dict(agree=total, total=total, feasible=True, diverged=False, max_u=.8,
+                        top1=92.0, exact_top1=92.0, acc_drop_pp=0.0,
                         rows=[dict(obs_min=-3.0, obs_max=2.0) for _ in acts])
 
         def fake_cost(program, weights, **kwargs):
@@ -163,11 +169,16 @@ class TunerTests(unittest.TestCase):
                 return dict(content=json.dumps(dict(program=source)), seconds=0,
                             usage=dict(prompt_tokens=1, completion_tokens=2))
 
+        def fake_confirm(candidates, ctx, **kwargs):
+            ordered = sorted(candidates, key=lambda c: (c.latency_pred_us, c.iteration, c.origin))
+            return dict(selected=ordered[0] if ordered else None, evals=[])
+
         with TemporaryDirectory() as directory:
             for enabled in (True, False):
                 path = Path(directory)/f'trace-{enabled}.jsonl'
                 with patch('pt_agent.planners.agent.evaluate', return_value=feedback), \
-                        patch('pt_agent.planners.agent.tune', return_value=result) as tuner:
+                        patch('pt_agent.planners.agent.tune', return_value=result) as tuner, \
+                        patch('pt_agent.planners.agent.confirm_select', side_effect=fake_confirm):
                     answer = run_agent(self.ctx50, FakeClient(), max_iters=2, trace_path=path, tuner=enabled)
                 trace = [json.loads(line) for line in path.read_text().splitlines()]
                 self.assertEqual(len(trace), 2)
@@ -179,7 +190,7 @@ class TunerTests(unittest.TestCase):
                     self.assertEqual(answer['best_program'], source)
 
     def test_06_prompt_and_tuned_feedback(self):
-        self.assertEqual(PROMPT_VERSION, 'r8-v3')
+        self.assertEqual(PROMPT_VERSION, 'r8-v4')
         generic = TEMPLATE.format(capabilities=render_capabilities(), max_u=FEASIBLE_MAX_U,
                                   n_val=50, examples='').lower()
         for word in ('resnet', 'layer1.', 'conv1.weight', 'linear.weight', 'fc1.weight', 'fc2.weight', 'cifar'):

@@ -168,7 +168,7 @@ class GenericTests(unittest.TestCase):
     def test_context_default_and_feasibility_constant(self):
         self.assertEqual(FEASIBLE_MAX_U, 0.90)
         self.assertEqual(inspect.signature(build_context).parameters['n_val'].default, 1000)
-        self.assertEqual(prompts.PROMPT_VERSION, 'r8-v3')
+        self.assertEqual(prompts.PROMPT_VERSION, 'r8-v4')
         self.assertEqual(self.contexts['mlp'].val_images.shape, (50, 3072))
         self.assertEqual(self.contexts['mlp'].val_exact_logits.shape, (50, 10))
 

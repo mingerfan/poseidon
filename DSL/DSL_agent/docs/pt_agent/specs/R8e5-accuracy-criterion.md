@@ -92,4 +92,24 @@ feedback 的 validation 中自动带上 top1、exact_top1 和 acc_drop_pp（来�
 ## 3. 不要做
 
 - 不修改 TARGET_U、LADDER 和 N_COARSE；不使用报告测试集（第 0–8999 张）的任何结果。
-- 除 §1.5 列出的两项外，不修改其他旧测试。
+- 除 §1.5 列出的两项和 §3.1 的兼容适配外，不修改其他旧测试。
+
+### 3.1 允许的兼容适配（2026-10-22 修订，回应 STATUS 中的 R8e5 阻塞）
+
+以下修改只是让旧测试跟上本轮的接口和版本变化，不改变任何断言的含义和期望数值，全部允许：
+
+1. **版本号断言**：`tests/test_r7c_feedback.py:49`、`tests/test_r8b_generic.py:171`、`tests/test_r8c_feedback.py:111`、`tests/test_r8e_tuner.py:182` 中的 `"r8-v3"` 改为 `"r8-v4"`，只改这个字符串。
+2. **FakeValidate 补字段**（`tests/test_r8e_tuner.py` 中的 test_03、test_04）：返回的 dict 中增加 `top1`、`exact_top1`、`acc_drop_pp`：
+   - test_03：全量验证可行时（所有 deg ≥ 63）返回 `top1=92.0, exact_top1=92.0, acc_drop_pp=0.0`；不可行时返回 `top1=90.0, exact_top1=92.0, acc_drop_pp=2.0`；粗筛（n 不为 None）返回 `acc_drop_pp=0.0`。原有的 agree、feasible 和回退预期（保留 2 项、撤销 6 项）不变。
+   - test_04：一律返回 `top1=92.0, exact_top1=92.0, acc_drop_pp=0.0`。
+3. **R8c 的合成 AgentContext**（`tests/test_r8c_feedback.py:39`）：补上
+   ```python
+   val_labels = val_exact_logits.argmax(axis=1)
+   val_exact_top1 = 100.0
+   ```
+   也就是说，这个合成夹具的"真实标签"取精确网络的预测，所以准确率下降就等于与精确网络的不一致率。原测试的含义保持不变。
+4. **`experiments/r8b_dev.py:92`**：顶层的 `prompt_version` 改为引用 `planners.prompts.PROMPT_VERSION`，不再写死字符串。
+
+### 3.2 以后同类情况的处理
+
+AGENTS.md 已经补充：当 spec 修改接口、新增必填字段或升级版本号时，旧测试中只为适配而做的机械修改（版本字符串、给夹具补新增字段的中性值、元数据改为引用常量）可以直接做，并在汇报中逐条列出。改变断言含义或期望数值的修改，仍然必须停下。

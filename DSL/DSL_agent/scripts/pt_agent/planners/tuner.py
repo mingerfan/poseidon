@@ -1,4 +1,4 @@
-"""Deterministic activation tuning using training validation and predicted cost."""
+"""Deterministic activation tuning using held-out validation and predicted cost."""
 
 import copy
 from dataclasses import dataclass
@@ -13,7 +13,7 @@ from .agent_tools import _exact_check, validate
 LADDER = (255, 127, 63, 31, 15, 7)
 TARGET_U = 0.80
 N_COARSE = 200
-TUNER_AGREE_MIN = 0.992
+TUNER_MAX_ACC_DROP_PP = 0.3
 
 
 @dataclass
@@ -31,7 +31,7 @@ class TuneResult:
 
 
 def _strict(result):
-    return result['feasible'] and result['agree'] >= TUNER_AGREE_MIN * result['total']
+    return result['feasible'] and result['acc_drop_pp'] <= TUNER_MAX_ACC_DROP_PP
 
 
 def _changes(original, current):
@@ -60,6 +60,8 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1) -> TuneRe
     def record(phase, candidate, cost, result, accepted, **details):
         entry = dict(phase=phase, latency_pred_us=cost['latency_pred_us'],
                      agree=result.get('agree'), total=result.get('total'), max_u=result.get('max_u'),
+                     top1=result.get('top1'), exact_top1=result.get('exact_top1'),
+                     acc_drop_pp=result.get('acc_drop_pp'),
                      accepted=accepted, **details)
         history.append(entry)
         print(f"TUNER phase={phase} accepted={accepted} agree={entry['agree']}/{entry['total']} "
@@ -140,8 +142,8 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1) -> TuneRe
                 continue
             result = validate(trial, ctx, N_COARSE)
             coarse_evals += 1
-            record('coarse', trial, cost, result, result['feasible'], **detail)
-            if result['feasible']:
+            record('coarse', trial, cost, result, _strict(result), **detail)
+            if _strict(result):
                 accepted.append((index, degree))
                 cur, current_cost = trial, cost
         current_result = full(cur)

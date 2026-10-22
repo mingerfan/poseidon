@@ -96,6 +96,7 @@ def report_test(run_batch, model, program_text, out, report, *, seconds=7200):
     import numpy as np
     import torch
     from .data.cifar import report_test_set
+    from .planners.agent_tools import VAL_BATCH
 
     progress_path = out/"test_progress.json"
     _write(progress_path, _test_progress(progress_path, program_text))
@@ -111,13 +112,13 @@ def report_test(run_batch, model, program_text, out, report, *, seconds=7200):
     try:
         images, labels = report_test_set(normalization=model.normalization)
         images = model.adapt(images)
-        report["test_split"] = "test[0:9000]"
+        report["test_split"] = "test[0:8000]"
         if report.get("torch_top1_report") is None:
             correct = 0
             with torch.no_grad():
-                for start in range(0, len(images), 50):
-                    logits = model.module(torch.from_numpy(images[start:start+50]).float())
-                    correct += int(np.sum(logits.argmax(dim=1).cpu().numpy() == labels[start:start+50]))
+                for start in range(0, len(images), VAL_BATCH):
+                    logits = model.module(torch.from_numpy(images[start:start+VAL_BATCH]).float())
+                    correct += int(np.sum(logits.argmax(dim=1).cpu().numpy() == labels[start:start+VAL_BATCH]))
             report["torch_top1_report"] = 100.0*correct/len(images)
             _write(out/"REPORT.json", report)
 
@@ -127,14 +128,14 @@ def report_test(run_batch, model, program_text, out, report, *, seconds=7200):
             print(f"TEST images={result['test_images_done']} top1={result['top1_test']} "
                   f"n_diverged={result['n_diverged']}", flush=True)
 
-        report.update(evaluate_batches(run_batch, images, labels, 50, on_progress=progress,
+        report.update(evaluate_batches(run_batch, images, labels, VAL_BATCH, on_progress=progress,
                                        progress_path=progress_path, program_text=program_text))
         report["m1_item3_pass"] = report["top1_test"] >= report["torch_top1_report"]-1.0
     except TimeoutError:
         state = json.loads(progress_path.read_text())
         report.update(correct=state["correct"], test_images_done=state["images_done"],
                       diverged_indices=state["diverged_indices"], n_diverged=len(state["diverged_indices"]),
-                      top1_test=100.0*state["correct"]/9000, test_seconds=time.monotonic()-started)
+                      top1_test=100.0*state["correct"]/8000, test_seconds=time.monotonic()-started)
         raise
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
@@ -213,6 +214,7 @@ def _inside(args):
     from .models.zoo import get
     from .planners.rule import plan
     from .kernels import MuxLayout
+    from .planners.agent_tools import VAL_BATCH
 
     toolchain.setup_env()
     out = args.out
@@ -227,9 +229,9 @@ def _inside(args):
                   latency_pred_us=None, activations=None,
                   plan_latency=None, pruned=None, validation=None, top1_test=None, n_diverged=None, diverged_indices=None,
                   m1_item3_pass=None, test_images_done=0)
-    if args.stages == ["test"] and path.exists():
+    if (args.stages == ["test"] or ("check" in args.stages and "plan" not in args.stages)) and path.exists():
         report.update(json.loads(path.read_text()))
-    report.update(complete=False, val_split="test[9000:10000]", test_split="test[0:9000]")
+    report.update(complete=False, val_split="test[9000:10000]", test_split="test[0:8000]")
     report.pop("error", None)
     _write(path, report)
     graph = program = images = labels = calibration = zm = None
@@ -250,6 +252,16 @@ def _inside(args):
             zm = get(args.model, args.models_dir)
             graph = zm.import_graph()
             program = parse((out/"program.ptdsl").read_text())
+        elif "check" in args.stages and "plan" not in args.stages:
+            zm = get(args.model, args.models_dir)
+            graph = zm.import_graph()
+            images, labels = calibration_set(normalization=zm.normalization)
+            images = zm.adapt(images)
+            calibration_path = out/"calibration.json"
+            calibration = (json.loads(calibration_path.read_text()) if calibration_path.exists()
+                           else calibrate(graph, {graph.inputs[0]: images}))
+            _write(calibration_path, calibration)
+            report["source_lines"] = sum(bool(line.strip()) for line in (out/"program.ptdsl").read_text().splitlines())
         for stage in STAGES:
             if stage not in args.stages:
                 continue
@@ -270,8 +282,8 @@ def _inside(args):
                 act_names = [node.inputs[0] for node in graph.nodes if node.op == "act"]
                 needed = dict.fromkeys(act_names, 0.0)
                 references = []
-                for start in range(0, len(validation_images), 50):
-                    batch = validation_images[start:start+50]
+                for start in range(0, len(validation_images), VAL_BATCH):
+                    batch = validation_images[start:start+VAL_BATCH]
                     values = reference_forward(graph, {graph.inputs[0]: batch}, keep=True)
                     references.append(values[graph.outputs[0]].copy())
                     for name in act_names:
@@ -304,8 +316,8 @@ def _inside(args):
 
                         started = time.monotonic()
                         squared = 0.0
-                        for start in range(0, len(validation_images), 50):
-                            batch = validation_images[start:start+50]
+                        for start in range(0, len(validation_images), VAL_BATCH):
+                            batch = validation_images[start:start+VAL_BATCH]
                             try:
                                 logits = evaluate(batch, candidate=candidate, observer=observer)
                             except BackendError as exc:
@@ -348,7 +360,9 @@ def _inside(args):
                     result = run_agent(ctx, client, max_iters=args.agent_iters, trace_path=out / "agent_trace.jsonl",
                                        tuner=getattr(args, 'tuner', 'on') == 'on',
                                        tuner_budget_s=getattr(args, 'tuner_budget_s', 2400))
-                    report["agent"] = result
+                    selected = result['confirm']['selected']
+                    report["agent"] = dict(result, confirm=dict(result['confirm'],
+                        selected=asdict(selected) if selected is not None else None))
                     report.update({key: result[key] for key in ("llm_calls", "prompt_tokens", "completion_tokens", "best_iteration")})
                     if result["best_iteration"] is not None:
                         report["latency_pred_us"] = result['best']['latency_pred_us']
@@ -356,7 +370,7 @@ def _inside(args):
                                   frozen_source_lines=result['frozen_source_lines'])
                     _write(path, report)
                     if result["status"] != "feasible":
-                        raise RuntimeError("Agent did not produce a feasible program")
+                        raise RuntimeError("Agent status: "+result['status'])
                     text = result["best_program"]
                     del ctx, client
                     gc.collect()
@@ -390,8 +404,8 @@ def _inside(args):
                     raise RuntimeError("exact lowering logits difference exceeded 1e-9")
                 agree = correct = 0
                 squared = 0.0
-                for start in range(0, len(images), 50):
-                    batch = images[start:start+50]
+                for start in range(0, len(images), VAL_BATCH):
+                    batch = images[start:start+VAL_BATCH]
                     logits = evaluate(batch)
                     reference = reference_forward(graph, {graph.inputs[0]: batch})[graph.outputs[0]]
                     predictions = logits.argmax(axis=1)

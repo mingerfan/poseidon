@@ -19,6 +19,8 @@ from ..placement import PlacementError
 
 
 FEASIBLE_MAX_U = 0.90
+VAL_BATCH = 20
+MAX_ACC_DROP_PP = 0.5
 
 
 @dataclass
@@ -29,6 +31,8 @@ class AgentContext:
     weight_shapes: dict
     val_images: np.ndarray
     val_exact_logits: np.ndarray
+    val_labels: np.ndarray
+    val_exact_top1: float
     probe_images: np.ndarray
     probe_act_inputs: list
     needed_margin: dict
@@ -36,16 +40,17 @@ class AgentContext:
     model_name: str
     profile: str = "qwen48"
     val_split: str = "test[9000:10000]"
+    normalization: tuple = (MEAN, STD)
 
 
 def build_context(graph, calibration, n_val=1000, *, normalization=(MEAN, STD)) -> AgentContext:
-    images, _ = heldout_set(n_val, normalization=normalization)
+    images, labels = heldout_set(n_val, normalization=normalization)
     images = images.reshape((len(images), *graph.tensors[graph.inputs[0]].shape[1:]))
     act_tensors = [node.inputs[0] for node in graph.nodes if node.op == "act"]
     needed = dict.fromkeys(act_tensors, 0.0)
     logits, probes = [], []
-    for start in range(0, len(images), 50):
-        batch = images[start:start+50]
+    for start in range(0, len(images), VAL_BATCH):
+        batch = images[start:start+VAL_BATCH]
         values = reference_forward(graph, {graph.inputs[0]: batch}, keep=True)
         logits.append(values[graph.outputs[0]].copy())
         if start == 0:
@@ -56,8 +61,13 @@ def build_context(graph, calibration, n_val=1000, *, normalization=(MEAN, STD)) 
             margin = np.maximum(value.max(axis=1)/limits["max"], value.min(axis=1)/limits["min"])
             needed[name] = max(needed[name], float(margin.max()))
         del values
-    return AgentContext(graph, graph.weights, calibration, {name: value.shape for name, value in graph.weights.items()},
-                        images, np.concatenate(logits), images[:4], probes, needed, act_tensors, graph.name)
+    exact_logits = np.concatenate(logits)
+    return AgentContext(graph=graph, weights=graph.weights, calibration=calibration,
+                        weight_shapes={name: value.shape for name, value in graph.weights.items()},
+                        val_images=images, val_exact_logits=exact_logits, val_labels=labels,
+                        val_exact_top1=float(100*np.mean(exact_logits.argmax(axis=1) == labels)),
+                        probe_images=images[:4], probe_act_inputs=probes, needed_margin=needed,
+                        act_tensors=act_tensors, model_name=graph.name, normalization=normalization)
 
 
 def _unpack(value, layout):
@@ -99,7 +109,8 @@ def _exact_check(program, ctx):
     return result
 
 
-def validate(program, ctx, n: int | None = None, *, boot_nodes=None) -> dict:
+def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
+             stop_on_divergence=True) -> dict:
     """Apply validation checks to the first n held-out images (all by default)."""
     images = ctx.val_images if n is None else ctx.val_images[:n]
     profile = PROFILES[ctx.profile]
@@ -110,49 +121,89 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None) -> dict:
                  obs_min=None, obs_max=None,
                  deg=op.attrs["deg"], method=op.attrs["method"], degrees=op.attrs.get("degrees"),
                  domain=op.attrs["domain"]) for index, op in enumerate(ops)]
-    validation = dict(agree=0, total=len(images), diverged=False, images_done=0, worst_acts=[], max_u=0.0,
-                      boot_input_max_abs=0.0, boot_input_bound=profile['boot_input_bound'])
+    validation = dict(agree=0, total=len(images), diverged=False, n_diverged=0, diverged_indices=[],
+                      images_done=0, worst_acts=[], max_u=0.0,
+                      boot_input_max_abs=0.0, boot_input_bound=profile['boot_input_bound'],
+                      top1=0.0, exact_top1=float(100*np.mean(ctx.val_exact_logits[:len(images)].argmax(axis=1)
+                                                          == ctx.val_labels[:len(images)])))
+    correct = 0
     watch = set(boot_nodes)
     noise = (profile['boot_abs_error'], 20261022) if profile['boot_abs_error'] else None
-    for start in range(0, len(images), 50):
-        batch = images[start:start+50]
+    def run_batch(batch):
+        # Keep failed vector-batch observations separate from the per-image retries.
+        observations = [dict(obs_min=None, obs_max=None, max_u=0.0) for _ in rows]
         observed = 0
 
         def observer(name, value, layout, cfg):
             nonlocal observed
-            row = rows[observed]
+            row = observations[observed]
             observed += 1
             data = value.value[..., layout.index_grid()] if isinstance(layout, MuxLayout) else value.value[..., :layout.size]
-            row["obs_min"] = float(data.min()) if row["obs_min"] is None else min(row["obs_min"], float(data.min()))
-            row["obs_max"] = float(data.max()) if row["obs_max"] is None else max(row["obs_max"], float(data.max()))
+            row["obs_min"] = float(data.min())
+            row["obs_max"] = float(data.max())
             _, _, lo, hi = cfg
-            row["max_u"] = max(row["max_u"], float(np.max(np.abs(data*(2/(hi-lo))-(hi+lo)/(hi-lo)))))
+            row["max_u"] = float(np.max(np.abs(data*(2/(hi-lo))-(hi+lo)/(hi-lo))))
 
+        backend = MockBackend(16384, batch=len(batch), watch=watch, noise=noise)
+        logits, error = None, None
         try:
-            backend = MockBackend(16384, batch=len(batch), watch=watch, noise=noise)
             backend.bind(pack_inputs(program, [batch]))
             values, layouts = lower(program, ctx.weights, backend, observer=observer)
             logits = decode_outputs([value.value for value in values], layouts)[0]
-            validation["agree"] += int(np.sum(logits.argmax(axis=1) == ctx.val_exact_logits[start:start+len(batch)].argmax(axis=1)))
-            validation["images_done"] = start+len(batch)
-            del values, logits
+            if not np.isfinite(logits).all():
+                raise BackendError("Mock arithmetic produced a nonfinite value")
         except BackendError as exc:
-            validation["diverged"] = True
-            validation["error"] = str(exc)
-        validation['boot_input_max_abs'] = max(validation['boot_input_max_abs'],
-                                               max(backend.watch_max.values(), default=0.0))
+            logits, error = None, str(exc)
+        boot_max = max(backend.watch_max.values(), default=0.0)
         del backend
         gc.collect()
-        if validation["diverged"]:
+        return logits, observations, boot_max, error
+
+    def record(logits, observations, boot_max, start, count):
+        nonlocal correct
+        for row, observation in zip(rows, observations):
+            if observation["obs_min"] is not None:
+                row["obs_min"] = (observation["obs_min"] if row["obs_min"] is None
+                                  else min(row["obs_min"], observation["obs_min"]))
+                row["obs_max"] = (observation["obs_max"] if row["obs_max"] is None
+                                  else max(row["obs_max"], observation["obs_max"]))
+                row["max_u"] = max(row["max_u"], observation["max_u"])
+        validation["boot_input_max_abs"] = max(validation["boot_input_max_abs"], boot_max)
+        if logits is not None:
+            predictions = logits.argmax(axis=1)
+            validation["agree"] += int(np.sum(predictions == ctx.val_exact_logits[start:start+count].argmax(axis=1)))
+            correct += int(np.sum(predictions == ctx.val_labels[start:start+count]))
+        validation["images_done"] = start+count
+
+    for start in range(0, len(images), VAL_BATCH):
+        batch = images[start:start+VAL_BATCH]
+        logits, observations, boot_max, error = run_batch(batch)
+        if error is None:
+            record(logits, observations, boot_max, start, len(batch))
+            continue
+        for offset in range(len(batch)):
+            logits, observations, boot_max, error = run_batch(batch[offset:offset+1])
+            record(logits, observations, boot_max, start+offset, 1)
+            if error is not None:
+                validation["diverged_indices"].append(start+offset)
+                validation["error"] = error
+                if stop_on_divergence:
+                    break
+        if validation["diverged_indices"] and stop_on_divergence:
             break
+    validation["n_diverged"] = len(validation["diverged_indices"])
+    validation["diverged"] = validation["n_diverged"] > 0
     # Put the earliest domain violations before their downstream amplification.
     ordered = sorted(enumerate(rows), key=lambda item: (item[1]["max_u"] <= FEASIBLE_MAX_U,
                      item[0] if item[1]["max_u"] > FEASIBLE_MAX_U else -item[1]["max_u"]))
     validation["worst_acts"] = [row for _, row in ordered[:5]]
     validation["max_u"] = max((row["max_u"] for row in rows), default=0.0)
     validation["rows"] = rows
+    incomplete = validation["diverged"] and stop_on_divergence
+    validation["top1"] = None if incomplete else 100.0*correct/len(images)
+    validation["acc_drop_pp"] = None if incomplete else validation["exact_top1"]-validation["top1"]
     validation["feasible"] = (not validation["diverged"] and validation["max_u"] <= FEASIBLE_MAX_U
-                              and validation["agree"] >= .99*validation["total"]
+                              and validation["acc_drop_pp"] <= MAX_ACC_DROP_PP
                               and (validation['boot_input_bound'] is None
                                    or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
     return validation

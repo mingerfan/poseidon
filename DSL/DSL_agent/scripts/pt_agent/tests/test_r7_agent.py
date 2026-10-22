@@ -88,7 +88,23 @@ class AgentTests(unittest.TestCase):
         with TemporaryDirectory() as temporary:
             directory = Path(temporary)
             client = FakeClient(responses, directory/'budget.jsonl')
-            result = run_agent(self.ctx, client, max_iters=8, trace_path=directory/'trace.jsonl', tuner=False)
+            def scripted(latency):
+                return dict(stage='complete', feasible=True, exact=dict(ok=True),
+                            cost=dict(latency_pred_us=latency, boots_pred=0),
+                            validation=dict(agree=50, total=50, diverged=False, max_u=.8,
+                                            top1=92.0, exact_top1=92.0, acc_drop_pp=0.0,
+                                            boot_input_bound=None, boot_input_max_abs=0.0))
+
+            feedback = [dict(stage='parse', feasible=False, exact=None, cost=None, validation=None),
+                        scripted(200), scripted(100), scripted(100), scripted(100)]
+
+            def fake_confirm(candidates, ctx, **kwargs):
+                ordered = sorted(candidates, key=lambda c: (c.latency_pred_us, c.iteration, c.origin))
+                return dict(selected=ordered[0] if ordered else None, evals=[])
+
+            with patch('pt_agent.planners.agent.evaluate', side_effect=feedback), \
+                    patch('pt_agent.planners.agent.confirm_select', side_effect=fake_confirm):
+                result = run_agent(self.ctx, client, max_iters=8, trace_path=directory/'trace.jsonl', tuner=False)
             rows = [json.loads(line) for line in (directory/'trace.jsonl').read_text().splitlines()]
             self.assertEqual(len(rows), 6)
             self.assertEqual(len((directory/'budget.jsonl').read_text().splitlines()), 6)
