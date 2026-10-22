@@ -1,0 +1,297 @@
+{
+  "constants": {
+    "gain": [
+      1.0,
+      0.5,
+      -0.5,
+      1.0
+    ],
+    "generated_10": 0.8944271909999159,
+    "generated_17": -0.5,
+    "generated_20": 1.5,
+    "generated_4": 0.25,
+    "generated_7": 0.0
+  },
+  "format": "poseidon-model-graph-v1",
+  "id": "decomposed_rmsnorm",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "generated_1",
+      "inputs": [
+        "x"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          -1
+        ],
+        "keepdims": true
+      },
+      "id": "generated_3",
+      "inputs": [
+        "generated_0"
+      ],
+      "op": "mean",
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_6",
+      "inputs": [
+        "generated_2",
+        "generated_4"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_5"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_9",
+      "inputs": [
+        "generated_5",
+        "generated_7"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_12",
+      "inputs": [
+        "generated_8",
+        "generated_10"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_11"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_14",
+      "inputs": [
+        "generated_11"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_13"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_16",
+      "inputs": [
+        "generated_5",
+        "generated_13"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_15"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_19",
+      "inputs": [
+        "generated_15",
+        "generated_17"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_18"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_22",
+      "inputs": [
+        "generated_18",
+        "generated_20"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_21"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_24",
+      "inputs": [
+        "generated_11",
+        "generated_21"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_23"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_26",
+      "inputs": [
+        "generated_23"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_25"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_28",
+      "inputs": [
+        "generated_5",
+        "generated_25"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_27"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_30",
+      "inputs": [
+        "generated_27",
+        "generated_17"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_29"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_32",
+      "inputs": [
+        "generated_29",
+        "generated_20"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_31"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_34",
+      "inputs": [
+        "generated_23",
+        "generated_31"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_33"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_36",
+      "inputs": [
+        "generated_33"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_35"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_38",
+      "inputs": [
+        "generated_5",
+        "generated_35"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_37"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_40",
+      "inputs": [
+        "generated_37",
+        "generated_17"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_39"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_42",
+      "inputs": [
+        "generated_39",
+        "generated_20"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_41"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_44",
+      "inputs": [
+        "generated_33",
+        "generated_41"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_43"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_46",
+      "inputs": [
+        "x",
+        "generated_43"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_45"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_48",
+      "inputs": [
+        "generated_45",
+        "gain"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_47"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "generated_47"
+    }
+  ]
+}

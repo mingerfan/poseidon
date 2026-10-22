@@ -1,0 +1,5 @@
+# expect: E_PARAM
+@fhe.program(slots=8192)
+def mlp(x: Tensor[1, 64]):   # ERR
+    y = pack(x, layout="flat")
+    return y

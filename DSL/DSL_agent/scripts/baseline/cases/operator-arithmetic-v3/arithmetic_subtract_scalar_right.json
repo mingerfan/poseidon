@@ -1,0 +1,1 @@
+{"constants":{"public":0.375},"format":"poseidon-operator-graph-v3","id":"arithmetic_subtract_scalar_right","inputs":[{"name":"x","shape":[4]}],"nodes":[{"attrs":{},"id":"arithmetic","inputs":["x","public"],"op":"subtract","outputs":["y"]}],"outputs":[{"name":"result","value":"y"}]}

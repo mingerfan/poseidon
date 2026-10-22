@@ -1,0 +1,18 @@
+{
+  "format": "poseidon-pytorch-call-v1",
+  "args": [
+    {
+      "kind": "dict",
+      "items": [
+        [
+          "value",
+          {
+            "kind": "tensor",
+            "name": "x"
+          }
+        ]
+      ]
+    }
+  ],
+  "kwargs": {}
+}

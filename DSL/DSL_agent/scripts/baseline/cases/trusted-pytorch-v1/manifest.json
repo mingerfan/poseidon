@@ -1,0 +1,20 @@
+{
+  "format": "poseidon-trusted-pytorch-v1",
+  "files": {
+    "model.py": "0c3d24537832fb0d6be7e844a44b4c244f26e0a8212bb76c37abd74cc0ad7b19"
+  },
+  "entry": "model.make_model",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        4
+      ]
+    }
+  ],
+  "outputs": [
+    "prediction"
+  ],
+  "approximations": {}
+}

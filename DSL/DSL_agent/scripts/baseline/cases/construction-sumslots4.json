@@ -1,0 +1,59 @@
+{
+  "schema": 2,
+  "id": "construction-sumslots4",
+  "input_shape": [
+    4
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "rot1",
+      "op": "rotate",
+      "inputs": [
+        "x"
+      ],
+      "step": 1
+    },
+    {
+      "id": "sum1",
+      "op": "add",
+      "inputs": [
+        "x",
+        "rot1"
+      ]
+    },
+    {
+      "id": "rot2",
+      "op": "rotate",
+      "inputs": [
+        "x"
+      ],
+      "step": 2
+    },
+    {
+      "id": "sum2",
+      "op": "add",
+      "inputs": [
+        "sum1",
+        "rot2"
+      ]
+    },
+    {
+      "id": "rot3",
+      "op": "rotate",
+      "inputs": [
+        "x"
+      ],
+      "step": 3
+    },
+    {
+      "id": "sum3",
+      "op": "add",
+      "inputs": [
+        "sum2",
+        "rot3"
+      ]
+    }
+  ],
+  "output": "sum3"
+}

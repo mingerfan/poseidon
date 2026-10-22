@@ -1,0 +1,15 @@
+{
+  "cases": [
+    {
+      "exercise_reuse": true,
+      "id": "functions_nodes",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-approximation-v5/functions_nodes.json",
+      "options": {
+        "chunk_period": 4,
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "generation_guidance": "explicit-v10"
+      }
+    }
+  ],
+  "format": "poseidon-pytorch-offline-cases-v1"
+}

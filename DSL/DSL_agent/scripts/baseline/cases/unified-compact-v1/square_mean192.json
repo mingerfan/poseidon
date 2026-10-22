@@ -1,0 +1,52 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "compact_v1_square_mean192",
+  "inputs": [
+    {
+      "name": "input0",
+      "shape": [
+        192
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "n0",
+      "op": "square",
+      "inputs": [
+        "input0"
+      ],
+      "attrs": {},
+      "outputs": [
+        "n0v0"
+      ]
+    },
+    {
+      "id": "n1",
+      "op": "mean",
+      "inputs": [
+        "input0"
+      ],
+      "attrs": {
+        "axes": [
+          0
+        ],
+        "keepdims": false
+      },
+      "outputs": [
+        "n1v0"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output0",
+      "value": "n0v0"
+    },
+    {
+      "name": "output1",
+      "value": "n1v0"
+    }
+  ]
+}

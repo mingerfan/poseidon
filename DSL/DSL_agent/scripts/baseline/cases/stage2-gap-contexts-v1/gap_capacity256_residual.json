@@ -1,0 +1,55 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "gap_capacity256_residual",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        256
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "base",
+      "op": "square",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {},
+      "outputs": [
+        "base_v"
+      ]
+    },
+    {
+      "id": "context",
+      "op": "square",
+      "inputs": [
+        "base_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "z"
+      ]
+    },
+    {
+      "id": "shared",
+      "op": "add",
+      "inputs": [
+        "z",
+        "base_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

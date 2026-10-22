@@ -1,0 +1,168 @@
+[
+  {
+    "name": "mlp_flat",
+    "file": "mlp_flat.ptdsl",
+    "source_model": "synthetic",
+    "features": [
+      "linear",
+      "act",
+      "flat_input"
+    ],
+    "weight_shapes": {
+      "l1.weight": [
+        64,
+        512
+      ],
+      "l1.bias": [
+        64
+      ],
+      "l2.weight": [
+        10,
+        64
+      ],
+      "l2.bias": [
+        10
+      ]
+    }
+  },
+  {
+    "name": "cnn_plain_small",
+    "file": "cnn_plain_small.ptdsl",
+    "source_model": "synthetic",
+    "features": [
+      "conv2d",
+      "batchnorm",
+      "act",
+      "mean",
+      "linear",
+      "conv_bn",
+      "mean_head"
+    ],
+    "weight_shapes": {
+      "c1.weight": [
+        8,
+        3,
+        3,
+        3
+      ],
+      "c2.weight": [
+        16,
+        8,
+        3,
+        3
+      ],
+      "fc.weight": [
+        10,
+        16
+      ],
+      "fc.bias": [
+        10
+      ],
+      "n1.weight": [
+        8
+      ],
+      "n1.bias": [
+        8
+      ],
+      "n1.running_mean": [
+        8
+      ],
+      "n1.running_var": [
+        8
+      ],
+      "n2.weight": [
+        16
+      ],
+      "n2.bias": [
+        16
+      ],
+      "n2.running_mean": [
+        16
+      ],
+      "n2.running_var": [
+        16
+      ]
+    }
+  },
+  {
+    "name": "residual_small",
+    "file": "residual_small.ptdsl",
+    "source_model": "synthetic",
+    "features": [
+      "conv2d",
+      "batchnorm",
+      "act",
+      "add",
+      "slice",
+      "pad",
+      "mean",
+      "linear",
+      "conv_bn",
+      "downsample_pad",
+      "mean_head"
+    ],
+    "weight_shapes": {
+      "stem.weight": [
+        8,
+        3,
+        3,
+        3
+      ],
+      "block1.conv1.weight": [
+        16,
+        8,
+        3,
+        3
+      ],
+      "block1.conv2.weight": [
+        16,
+        16,
+        3,
+        3
+      ],
+      "head.weight": [
+        10,
+        16
+      ],
+      "head.bias": [
+        10
+      ],
+      "stem_bn.weight": [
+        8
+      ],
+      "stem_bn.bias": [
+        8
+      ],
+      "stem_bn.running_mean": [
+        8
+      ],
+      "stem_bn.running_var": [
+        8
+      ],
+      "block1.bn1.weight": [
+        16
+      ],
+      "block1.bn1.bias": [
+        16
+      ],
+      "block1.bn1.running_mean": [
+        16
+      ],
+      "block1.bn1.running_var": [
+        16
+      ],
+      "block1.bn2.weight": [
+        16
+      ],
+      "block1.bn2.bias": [
+        16
+      ],
+      "block1.bn2.running_mean": [
+        16
+      ],
+      "block1.bn2.running_var": [
+        16
+      ]
+    }
+  }
+]

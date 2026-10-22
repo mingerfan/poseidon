@@ -1,0 +1,43 @@
+{
+  "constants": {},
+  "format": "poseidon-operator-graph-v2",
+  "id": "batched_cipher_0",
+  "inputs": [
+    {
+      "name": "left",
+      "shape": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "right",
+      "shape": [
+        2,
+        2,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "product",
+      "inputs": [
+        "left",
+        "right"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "result"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "result"
+    }
+  ]
+}

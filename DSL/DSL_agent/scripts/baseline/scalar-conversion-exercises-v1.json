@@ -1,0 +1,142 @@
+{
+  "sc-defaults": {
+    "schema": 3,
+    "id": "sc-defaults",
+    "family": "affine",
+    "required_features": [
+      "cast.float.default",
+      "cast.int.default"
+    ],
+    "instruction": "Use both zero-argument float() and int() to derive output operands. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-bools": {
+    "schema": 3,
+    "id": "sc-bools",
+    "family": "affine",
+    "required_features": [
+      "cast.float.bool",
+      "cast.int.bool"
+    ],
+    "instruction": "Use float and int conversions of public booleans as output operands. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-strings": {
+    "schema": 3,
+    "id": "sc-strings",
+    "family": "affine",
+    "required_features": [
+      "cast.float.str",
+      "cast.int.base"
+    ],
+    "instruction": "Parse a public float string and int(string, base) to derive output operands. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-float-zero": {
+    "schema": 3,
+    "id": "sc-float-zero",
+    "family": "affine",
+    "required_features": [
+      "cast.float.numeric.zero"
+    ],
+    "instruction": "Convert a rank-zero numeric array using float() in output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-int-negative": {
+    "schema": 3,
+    "id": "sc-int-negative",
+    "family": "affine",
+    "required_features": [
+      "cast.int.numeric.negative_fraction"
+    ],
+    "instruction": "Convert a negative noninteger public numeric array via int(), using truncation toward zero in output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-float-single": {
+    "schema": 3,
+    "id": "sc-float-single",
+    "family": "affine",
+    "required_features": [
+      "cast.float.numeric.legacy"
+    ],
+    "instruction": "Convert a rank-positive singleton numeric array via float(), using the pinned legacy NumPy behavior. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-int-single": {
+    "schema": 3,
+    "id": "sc-int-single",
+    "family": "affine",
+    "required_features": [
+      "cast.int.numeric.legacy"
+    ],
+    "instruction": "Convert a rank-positive singleton numeric array via int() in output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-object-cast": {
+    "schema": 3,
+    "id": "sc-object-cast",
+    "family": "affine",
+    "required_features": [
+      "cast.float.object.zero"
+    ],
+    "instruction": "Convert a public rank-zero dtype=object array via float() in output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-item-single": {
+    "schema": 3,
+    "id": "sc-item-single",
+    "family": "affine",
+    "required_features": [
+      "item.numeric.sole"
+    ],
+    "instruction": "Use no-argument .item() to extract a sole public numeric array cell for output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-item-flat": {
+    "schema": 3,
+    "id": "sc-item-flat",
+    "family": "affine",
+    "required_features": [
+      "item.numeric.flat_negative"
+    ],
+    "instruction": "Use .item(negative_flat_index) on a multi-element numeric array for output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-item-tuple": {
+    "schema": 3,
+    "id": "sc-item-tuple",
+    "family": "affine",
+    "required_features": [
+      "item.numeric.tuple"
+    ],
+    "instruction": "Use .item((i,j)) on a rank-two numeric array for output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-item-pos": {
+    "schema": 3,
+    "id": "sc-item-pos",
+    "family": "affine",
+    "required_features": [
+      "item.numeric.positional"
+    ],
+    "instruction": "Use .item(i,j) with multiple positional indices on a numeric array for output construction. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-item-cipher": {
+    "schema": 3,
+    "id": "sc-item-cipher",
+    "family": "affine",
+    "required_features": [
+      "item.object.cipher"
+    ],
+    "instruction": "Extract a ciphertext Expr from an object array using .item() and use that Expr in the returned output, without decrypting it. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-object-constant": {
+    "schema": 3,
+    "id": "sc-object-constant",
+    "family": "affine",
+    "required_features": [
+      "cast.float.object.legacy",
+      "object.named_numeric_constructor"
+    ],
+    "instruction": "Convert an original supplied public constant to a dtype=object array and cast the singleton array to float. Preserve its numeric storage shape, rather than wrapping an opaque Plain. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  },
+  "sc-overlap": {
+    "schema": 3,
+    "id": "sc-overlap",
+    "family": "quadratic",
+    "required_features": [
+      "cast.float.numeric.legacy",
+      "object.overlap_mult"
+    ],
+    "instruction": "Derive public scalar coefficients using float() on public numeric arrays, and use slice *= on genuinely overlapping object-array views in the returned quadratic output. All required constructs must execute and affect returned output; no dead padding. Preserve the supplied model. Constants are c0/c1 as specified in the request; no unknown weight names."
+  }
+}

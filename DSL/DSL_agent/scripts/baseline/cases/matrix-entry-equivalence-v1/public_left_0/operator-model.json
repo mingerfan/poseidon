@@ -1,0 +1,47 @@
+{
+  "constants": {
+    "public_weight": [
+      [
+        -0.46875,
+        -0.25,
+        -0.03125
+      ],
+      [
+        0.1875,
+        0.40625,
+        -0.34375
+      ]
+    ]
+  },
+  "format": "poseidon-operator-graph-v1",
+  "id": "public_left_0",
+  "inputs": [
+    {
+      "name": "right",
+      "shape": [
+        3,
+        2
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "product",
+      "inputs": [
+        "public_weight",
+        "right"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "result"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "result"
+    }
+  ]
+}

@@ -1,0 +1,288 @@
+{
+  "original_case": "construct_083_2",
+  "request": {
+    "compiler_configuration": {
+      "backend": "upstream_SEAL_HEVM_CPU",
+      "ckks_config_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+      "identity_sha256": "b37bb8a8942013637366a241389a087cd0562c3e7c3d0b8326f701b73406bf46",
+      "name": "seal-cpu-eva-w45-v1",
+      "pipeline": "eva",
+      "schema": 1,
+      "waterline": 45
+    },
+    "compiler_profile_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "constant_origins": {
+      "kind": "verified public model and layout"
+    },
+    "construction_exercise": {
+      "id": "unified-public-call-values",
+      "instruction": "Use an executed call.values expression whose result contributes to a named output. Unused expressions, dead branches, cancelled values and unobserved slots do not qualify. Acceptance uses bounded finite public interventions at an executed source span; it is not an all-input or per-invocation proof.",
+      "required_features": [
+        "call.values"
+      ]
+    },
+    "construction_profile": "hecate-unified-public-v1",
+    "fx_graph": "independent typed logical DAG; no rule DSL included",
+    "generation_guidance": {
+      "authority": "This guidance clarifies the existing rules; it adds no allowed syntax, helper, resource budget or backend capability.",
+      "constant_rule": "Use public_constants keys directly as prebound names. Do not define replacement weights or load a dictionary/file. hc and np are provided by the trusted runner; do not import them.",
+      "construction_requirements": [],
+      "directed_semantics": [
+        {
+          "feature": "call.values",
+          "meaning": "Obtain and consume an admitted public dictionary values view.",
+          "registered_instruction": "Use an executed call.values expression whose result contributes to a named output. Unused expressions, dead branches, cancelled values and unobserved slots do not qualify. Acceptance uses bounded finite public interventions at an executed source span; it is not an all-input or per-invocation proof."
+        }
+      ],
+      "encrypted_zero_rule": "The SEAL backend can reject transparent ciphertexts produced by exact ciphertext self-cancellation or multiplication by plaintext zero. The supplied zero_ct is a genuine client-encrypted zero. Preserve the mathematical graph semantics without relying on a transparent intermediate; do not disable backend checks or decrypt/re-encrypt.",
+      "entry_header": "@hc.func(\"c,c,c\")\ndef golden(x, y, zero_ct):",
+      "entry_name": "golden",
+      "entry_rule": "Define exactly one top-level golden. The header has no body; implement the supplied graph yourself. Use the literal decorator call with parentheses and the exact c signature, never bare @hc.func.",
+      "helper_rule": "Additional construction helpers are undecorated and obey the public construction rules.",
+      "logical_model_semantics": {
+        "attributes": "All required attributes are explicit in each node; no implicit framework defaults are to be inferred.",
+        "axes": "Negative existing axes are normalized against input rank; stack inserts an axis and normalizes against output rank.",
+        "broadcasting": "Align dimensions from the right. Each pair must be equal or contain 1. Public broadcasting cannot expand the encrypted operand shape.",
+        "layout_boundary": "Model operators act on logical tensors. Padding, repeated periods, chunks and Expr object-array storage are representation details, not extra mathematical elements.",
+        "operations": {
+          "linear": "Inputs are x, public weight W, and optional public bias b. W has shape [out_features,in_features]. y[...,j]=sum_k x[...,k]*W[j,k]+b[j]; omit b if absent. Contract the last axis of x.",
+          "subtract": "Elementwise x - y in the listed operand order, with right-aligned broadcasting."
+        },
+        "ordering": "Named input/output order and node output order are significant. Tensor flattening always uses C order.",
+        "scope": "Mathematical definition of the public input graph; no DSL implementation or test answers.",
+        "version": "logical-tensors-v1"
+      },
+      "ordered_parameters": [
+        "x",
+        "y",
+        "zero_ct"
+      ],
+      "output_rule": "Return exactly layout.output_ciphertexts whole ciphertext expressions in the frozen output order; object-array cells are whole expressions, not slots.",
+      "parameter_rule": "Use exactly these unannotated positional names, without defaults, varargs or keyword-only parameters. zero_ct is the final trusted ciphertext argument.",
+      "rotation_rule": "Call ciphertext.rotate(k), never hc.rotate(...). The request rules determine permitted displacements.",
+      "version": "explicit-v4"
+    },
+    "layout": {
+      "auxiliary_ciphertexts": [
+        {
+          "dsl_name": "zero_ct",
+          "kind": "encrypted_zero",
+          "slot_period": 4,
+          "source": "trusted_client"
+        }
+      ],
+      "execution_abi": "unified-periodic-inputs-v1",
+      "input_slot_period": 4,
+      "inputs": [
+        {
+          "dsl_name": "x",
+          "name": "input0",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "dsl_name": "y",
+          "name": "input1",
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "output_ciphertexts": 1,
+      "output_representation": "named_packed_prefixes",
+      "output_selectors": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "output_shape": [
+        2
+      ],
+      "outputs": [
+        {
+          "ciphertext": 0,
+          "name": "output0",
+          "shape": [
+            2
+          ]
+        }
+      ]
+    },
+    "model": {
+      "constants": {
+        "c0": [
+          [
+            -0.08333333333333333,
+            -0.020833333333333332,
+            0.041666666666666664
+          ],
+          [
+            0.0625,
+            -0.0625,
+            0.0
+          ]
+        ],
+        "c1": [
+          0.0625,
+          0.0625
+        ],
+        "c2": [
+          [
+            -0.08333333333333333,
+            -0.020833333333333332,
+            0.041666666666666664
+          ],
+          [
+            0.0625,
+            -0.0625,
+            0.0
+          ]
+        ],
+        "c3": [
+          0.0625,
+          0.0625
+        ]
+      },
+      "format": "poseidon-model-graph-v1",
+      "id": "bench_graph_0251",
+      "inputs": [
+        {
+          "name": "input0",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "input1",
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {},
+          "id": "n0",
+          "inputs": [
+            "input0",
+            "c0",
+            "c1"
+          ],
+          "op": "linear",
+          "outputs": [
+            "n0v0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "n1",
+          "inputs": [
+            "input1",
+            "c2",
+            "c3"
+          ],
+          "op": "linear",
+          "outputs": [
+            "n1v0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "n2",
+          "inputs": [
+            "n0v0",
+            "n1v0"
+          ],
+          "op": "subtract",
+          "outputs": [
+            "n2v0"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output0",
+          "value": "n2v0"
+        }
+      ]
+    },
+    "privacy": {
+      "input": "encrypted",
+      "weights": "public"
+    },
+    "public_constants": {
+      "mask0": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mask1": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "p0": -2.0,
+      "p1": -1.0,
+      "p10": 2.0,
+      "p2": -0.08333333333333333,
+      "p3": -0.0625,
+      "p4": -0.020833333333333332,
+      "p5": 0.0,
+      "p6": 0.041666666666666664,
+      "p7": 0.0625,
+      "p8": 0.5,
+      "p9": 1.0
+    },
+    "request_id": "9123f6ead0873dd246eb53367fbcaa3fb76d7d98b2f1d65f99c4efb1c1f2eb9f",
+    "response_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "hecate_source": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "schema": {
+          "enum": [
+            1
+          ],
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "request_id",
+        "hecate_source"
+      ],
+      "type": "object"
+    },
+    "rules": "Implement the immutable logical graph and all named outputs.\nThe trusted runner supplies hc and public_constants; no imports or candidate Python execution.\nOnly golden is decorated @hc.func with one c per ordered logical input plus zero_ct.\nOther functions are undecorated construction-time AST helpers, not native Hecate Func calls.\nUse bounded lexical helpers/closures/nonlocal, defaults, positional/keyword binding, lambdas,\nlist/tuple/dict containers and views, public comprehensions, public if/for/while,\nbreak/continue and early helper returns. All conditions, indices and iteration are public.\nAllowed public builtins: range,len,enumerate,zip,reversed,iter,next,list,tuple,dict,sorted,\nint,float,pow. No eval/exec, arbitrary attributes, I/O, network, reflection or external calls.\nPublic strings allow strip/lstrip/rstrip,split/rsplit,partition/rpartition,replace,join.\nNumeric np.array/asarray use finite bounded real data, reshape/flatten, shape and item.\nPublic np.floor/ceil/log2 and np.polynomial.Chebyshev with coef/domain/window are allowed.\nObject arrays support the bounded registered np.empty/full/concatenate, indexing, copies,\nviews, reshape/transpose/T, object arithmetic and name-target mutation, np.negative/positive.\nEmpty()/hc.Empty() is only a symbolic construction identity; never encryption or bootstrap.\nWhole Expr objects are array cells, not slots. Golden returns exactly one cipher Expr\nper named output, in a flat list/tuple or a one-dimensional object array; no implicit flattening.\nCipher arithmetic is +,-,*,unary minus,rotate(k); each arithmetic pair requires a cipher.\nEvery input uses separate C-order padded packing repeated every P=layout.input_slot_period.\nOutputs use the fixed C-order prefix and frozen selectors. Only positive power-of-two\nrotations below P are legal. Compose rotations for other offsets.\nPublic supplied constants stay immutable. Derived Plain encoding is scalar or length P;\npublic arrays/containers remain limited to128 elements, rank<=4; shape rules still apply.\nFinite public scalar magnitude<=1024 when encoded as Plain. No ciphertext conditions,\ntraining, random forward, bootstrap, level changes or plaintext replacement of FHE.\nAt most17 total function/lambda declarations,128 helper calls,call depth<16;\nsource<=65536 bytes,AST<=4096 nodes,interpretation<=4096 steps,emitted cipher ops<=256.\nOther existing type,integer,string,container,iteration,recursion and sandbox bounds apply.\nCompiler owns scale/levels,rescale,modswitch,relinearization and security; client owns keys.\nDo not alter model weights,layout,reference,test inputs,tolerance or compiler configuration.\nReturn only response-schema JSON. Acceptance requires real compilation and encrypted comparison.\n",
+    "schema": 1,
+    "semantic_guidance": {
+      "helper_semantics": "trusted bounded public AST construction, not native Func calls",
+      "model": "logical tensor graph",
+      "packing": "common periodic inputs, named packed outputs",
+      "profile": "hecate-unified-public-v1",
+      "schema": 1
+    },
+    "task": "hecate-unified-graph-synthesis-v1"
+  },
+  "candidate": {
+    "hecate_source": "@hc.func(\"c,c,c\")\ndef golden(x, y, zero_ct):\n    coef = {'a00': p2, 'a01': p4, 'a02': p6,\n            'a10': p7, 'a11': p3, 'a12': p5}\n    vals = list(coef.values())\n    a00 = vals[0]\n    a01 = vals[1]\n    a02 = vals[2]\n    a10 = vals[3]\n    a11 = vals[4]\n    a12 = vals[5]\n\n    m0 = np.array([1.0, 0.0, 0.0, 0.0])\n    m1 = np.array([0.0, 1.0, 0.0, 0.0])\n\n    d = x - y\n\n    s0 = d * (m0 * a00) + d.rotate(1) * (m0 * a01) + d.rotate(2) * (m0 * a02)\n    s1 = (d.rotate(2).rotate(1)) * (m1 * a10) + d * (m1 * a11)\n\n    res = zero_ct + s0 + s1\n    return [res]\n",
+    "request_id": "9123f6ead0873dd246eb53367fbcaa3fb76d7d98b2f1d65f99c4efb1c1f2eb9f",
+    "schema": 1
+  },
+  "original_source_sha256": "3e80a85db4e12f68ba04bfb0482ac22bce1214c64dbaf7a319a97075100b404a",
+  "manual_repair": true,
+  "new_agent_generation": false,
+  "reason": "Omit the structurally zero public matrix coefficient; never multiply a ciphertext by an all-zero Plain."
+}

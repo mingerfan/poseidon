@@ -1,0 +1,82 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "broadcast_1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        1
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "reshape",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          2,
+          1
+        ]
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "concat",
+      "inputs": [
+        "generated_0",
+        "generated_0"
+      ],
+      "attrs": {
+        "axis": 0
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "concat",
+      "inputs": [
+        "generated_2",
+        "generated_2"
+      ],
+      "attrs": {
+        "axis": 2
+      },
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "concat",
+      "inputs": [
+        "generated_2",
+        "generated_4"
+      ],
+      "attrs": {
+        "axis": 2
+      },
+      "outputs": [
+        "generated_6"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_6"
+    }
+  ]
+}

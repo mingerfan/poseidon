@@ -1,0 +1,79 @@
+{
+  "nf-scalar": {
+    "id": "nf-scalar",
+    "required_features": [
+      "call.scalar_cipher"
+    ],
+    "instruction": "Use a decorated helper returning one ciphertext; its return must affect the final result."
+  },
+  "nf-pair": {
+    "id": "nf-pair",
+    "required_features": [
+      "call.tuple_multi"
+    ],
+    "instruction": "Use a decorated helper returning at least two ciphertexts in a tuple. Consume every returned cell in the final result."
+  },
+  "nf-nested": {
+    "id": "nf-nested",
+    "required_features": [
+      "call.nested"
+    ],
+    "instruction": "Call a decorated helper from the body of another decorated helper; the inner result must affect golden."
+  },
+  "nf-forward": {
+    "id": "nf-forward",
+    "required_features": [
+      "call.forward"
+    ],
+    "instruction": "Define a used helper after its caller in source order. Its return must affect golden."
+  },
+  "nf-two-inputs": {
+    "id": "nf-two-inputs",
+    "required_features": [
+      "call.two_cipher_arguments"
+    ],
+    "instruction": "Pass both encrypted model inputs to a decorated helper. Both arguments must affect its result; preserve ordered subtraction."
+  },
+  "nf-public-argument": {
+    "id": "nf-public-argument",
+    "required_features": [
+      "call.public_argument"
+    ],
+    "instruction": "Pass a public coefficient through a p parameter of a decorated helper. That parameter must affect the final result."
+  },
+  "nf-identity": {
+    "id": "nf-identity",
+    "required_features": [
+      "call.identity"
+    ],
+    "instruction": "Use a ciphertext identity helper with a direct return of its ciphertext parameter. Use its returned value in the model computation."
+  },
+  "nf-repeated": {
+    "id": "nf-repeated",
+    "required_features": [
+      "call.repeated"
+    ],
+    "instruction": "Call the same decorated helper at least twice; both call results must independently affect the final output."
+  },
+  "nf-zero-input": {
+    "id": "nf-zero-input",
+    "required_features": [
+      "call.zero_arguments"
+    ],
+    "instruction": "Call a zero-argument decorated helper that returns a Plain coefficient used in the model."
+  },
+  "nf-empty": {
+    "id": "nf-empty",
+    "required_features": [
+      "call.empty_return"
+    ],
+    "instruction": "Invoke a decorated helper returning an empty list/tuple from the reachable call graph. This requirement is explicitly trace-structural, not output-sensitive."
+  },
+  "nf-plain-return": {
+    "id": "nf-plain-return",
+    "required_features": [
+      "call.plain_return"
+    ],
+    "instruction": "Use a decorated helper returning a Plain value that contributes to the encrypted output."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "approximations": {},
+  "dtype_policy": "strict-float64-v1",
+  "entry": "models.make_loop",
+  "factory": {
+    "args": [
+      1
+    ],
+    "kwargs": {}
+  },
+  "files": {
+    "models.py": "5c2f5dd0a1bf62040355ab317221383eb33a06e921b250a1048ef3370b3b9d88"
+  },
+  "format": "poseidon-trusted-pytorch-v4",
+  "inputs": [
+    {
+      "name": "input0",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ],
+  "weights": {}
+}

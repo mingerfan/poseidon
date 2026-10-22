@@ -1,0 +1,1265 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "id": "exercise-closure-nonlocal",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-call-defaults",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-call-unpacking",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-comprehensions",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-iterators",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-lambda-sorted",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-sequence-slices",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-sequence-alias",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-numeric-scalars",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-numeric-arrays",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-while-control",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-loop-else",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-boolean-membership",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-string-strip",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-string-split",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-string-replace-join",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-chebyshev-coefficients",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-chebyshev-arithmetic",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-numpy-functions",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-object-full-empty",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-object-empty-initialization",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-object-array-alias",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-object-slice-copy",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-object-reshape-transpose",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-object-concatenate",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-object-augassign",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-mapping-get-default",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-mapping-update-copy",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-mapping-pop-clear",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-mapping-live-views",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    }
+  ]
+}

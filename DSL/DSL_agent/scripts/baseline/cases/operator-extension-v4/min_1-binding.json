@@ -1,0 +1,49 @@
+{
+  "format": "poseidon-decomposition-binding-v1",
+  "registry_version": "operator-decomposition-v4",
+  "implementation_sha256": "f55e76e2b59f0163e748b0e494be26f55aebb67e86a5317b9e5934f7e411b407",
+  "original_sha256": "ba5dc29595d78164c0047dbab90ef511952c4acc2160b659dd4e90bfc75ce8f0",
+  "lowered_sha256": "8ff90d201d0527d17fa117f26c73d4ae4cad28b049499377e066bc6c3c2b1006",
+  "source_map": {
+    "generated_1": "operation",
+    "generated_3": "operation",
+    "generated_5": "operation",
+    "generated_7": "operation",
+    "generated_10": "operation",
+    "generated_12": "operation",
+    "generated_14": "operation",
+    "generated_17": "operation",
+    "generated_19": "operation",
+    "generated_21": "operation",
+    "generated_23": "operation",
+    "generated_25": "operation",
+    "generated_27": "operation",
+    "generated_29": "operation"
+  },
+  "required_capabilities": [
+    "ckks_add_multiply_rotate"
+  ],
+  "approximation_profiles": {
+    "operation": {
+      "axes": [
+        -1
+      ],
+      "keepdims": true,
+      "approximation": {
+        "method": "polynomial",
+        "basis": "power",
+        "domain": [
+          -4.0,
+          4.0
+        ],
+        "coefficients": [
+          0.5,
+          0.0,
+          0.25
+        ]
+      }
+    }
+  },
+  "no_dsl_answer": true,
+  "binding_sha256": "be8be34be6766a4532be7aeae2df3df8259884e59abf853546371d8b1e6b1cce"
+}

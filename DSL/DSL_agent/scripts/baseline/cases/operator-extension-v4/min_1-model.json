@@ -1,0 +1,217 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "min_1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        3
+      ]
+    }
+  ],
+  "constants": {
+    "generated_8": [
+      0.5,
+      0.0,
+      0.25
+    ],
+    "generated_15": 0.5
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 1,
+        "stop": 2,
+        "step": 1
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 2,
+        "stop": 3,
+        "step": 1
+      },
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "subtract",
+      "inputs": [
+        "generated_0",
+        "generated_2"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_10",
+      "op": "polynomial",
+      "inputs": [
+        "generated_6",
+        "generated_8"
+      ],
+      "attrs": {
+        "basis": "power"
+      },
+      "outputs": [
+        "generated_9"
+      ]
+    },
+    {
+      "id": "generated_12",
+      "op": "add",
+      "inputs": [
+        "generated_0",
+        "generated_2"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_11"
+      ]
+    },
+    {
+      "id": "generated_14",
+      "op": "subtract",
+      "inputs": [
+        "generated_11",
+        "generated_9"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_13"
+      ]
+    },
+    {
+      "id": "generated_17",
+      "op": "multiply",
+      "inputs": [
+        "generated_13",
+        "generated_15"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_16"
+      ]
+    },
+    {
+      "id": "generated_19",
+      "op": "subtract",
+      "inputs": [
+        "generated_16",
+        "generated_4"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_18"
+      ]
+    },
+    {
+      "id": "generated_21",
+      "op": "polynomial",
+      "inputs": [
+        "generated_18",
+        "generated_8"
+      ],
+      "attrs": {
+        "basis": "power"
+      },
+      "outputs": [
+        "generated_20"
+      ]
+    },
+    {
+      "id": "generated_23",
+      "op": "add",
+      "inputs": [
+        "generated_16",
+        "generated_4"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_22"
+      ]
+    },
+    {
+      "id": "generated_25",
+      "op": "subtract",
+      "inputs": [
+        "generated_22",
+        "generated_20"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_24"
+      ]
+    },
+    {
+      "id": "generated_27",
+      "op": "multiply",
+      "inputs": [
+        "generated_24",
+        "generated_15"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_26"
+      ]
+    },
+    {
+      "id": "generated_29",
+      "op": "reshape",
+      "inputs": [
+        "generated_26"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          1
+        ]
+      },
+      "outputs": [
+        "generated_28"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_28"
+    }
+  ]
+}

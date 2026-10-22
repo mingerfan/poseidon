@@ -1,0 +1,7 @@
+"""Explicit static public/mixed tensor assembly intake."""
+SOURCE_FORMAT="poseidon-trusted-pytorch-v34"
+PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v34"
+REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v34"
+CAPTURE_FORMAT="poseidon-public-expression-source-capture-v11"
+VALUE_POLICY="poseidon-public-value-expressions-v7"
+POLICY="poseidon-public-tensor-join-normalization-v1"

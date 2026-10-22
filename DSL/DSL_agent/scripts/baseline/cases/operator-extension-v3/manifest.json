@@ -1,0 +1,167 @@
+{
+  "format": "poseidon-operator-regression-v1",
+  "cases": [
+    {
+      "id": "broadcast_0",
+      "operator": "broadcast",
+      "model": "broadcast_0-model.json",
+      "source": "broadcast_0-source.json",
+      "binding": "broadcast_0-binding.json",
+      "model_sha256": "251ab0e3ac729232635eba24937ffaa47dce476e837094ed8a50ba7fad3897b5",
+      "source_sha256": "81f7755ed4e33269db29ec88ea77af32b9310d82f573ce9fcfd360d5bc69a0f3"
+    },
+    {
+      "id": "broadcast_1",
+      "operator": "broadcast",
+      "model": "broadcast_1-model.json",
+      "source": "broadcast_1-source.json",
+      "binding": "broadcast_1-binding.json",
+      "model_sha256": "a873f97b4b68a2a79f8a6a97b61fa8781340da8605e5e9328249de17781ba1a5",
+      "source_sha256": "0efd3d5952e34660d7f127809f6f5c3d4df340e9c64aec6e318f4fc1920bf896"
+    },
+    {
+      "id": "broadcast_2",
+      "operator": "broadcast",
+      "model": "broadcast_2-model.json",
+      "source": "broadcast_2-source.json",
+      "binding": "broadcast_2-binding.json",
+      "model_sha256": "0d2933da6cdfd8cf1a0cd7bc274d18e6e916e4aece83305ef91d5eaa97b491f5",
+      "source_sha256": "11eb3c7855b684bf0ec2187455291afafefc151ab6e5690b8abb8150dcaa9130"
+    },
+    {
+      "id": "public_gather_0",
+      "operator": "public_gather",
+      "model": "public_gather_0-model.json",
+      "source": "public_gather_0-source.json",
+      "binding": "public_gather_0-binding.json",
+      "model_sha256": "f8901e67ea973a621c6e595d44560c524de46fc2a6acc9b35433891b59181778",
+      "source_sha256": "40823cac6b4fcc57d87803ae44d6784cbce13e8064316bfb659ae39ff46197c8"
+    },
+    {
+      "id": "public_gather_1",
+      "operator": "public_gather",
+      "model": "public_gather_1-model.json",
+      "source": "public_gather_1-source.json",
+      "binding": "public_gather_1-binding.json",
+      "model_sha256": "da77247f752769d47bbd9f6e481f7e7c5c3342117864131095befce09c759727",
+      "source_sha256": "bc89ce55e7c29fbd8b6d608f95c68c4de5544c697f1a981ad49bc2e5307cdff4"
+    },
+    {
+      "id": "public_gather_2",
+      "operator": "public_gather",
+      "model": "public_gather_2-model.json",
+      "source": "public_gather_2-source.json",
+      "binding": "public_gather_2-binding.json",
+      "model_sha256": "4c66ca4d4bdb5a1ec47eaffcb978794a8ad329597f46519bf82cc21874b6cf9a",
+      "source_sha256": "6571dc87081f78c24ce66f1c96c246b81e453ce11257c3374800cfad58fe80ae"
+    },
+    {
+      "id": "adaptive_avg_pool_0",
+      "operator": "adaptive_avg_pool",
+      "model": "adaptive_avg_pool_0-model.json",
+      "source": "adaptive_avg_pool_0-source.json",
+      "binding": "adaptive_avg_pool_0-binding.json",
+      "model_sha256": "fbad2b9a73f32e89a3ea93e873125f278ef8ee8bcb14a609342bda55c2855e78",
+      "source_sha256": "caf68225c7932b76ed5b05a91d54e8d6e2e82268eb22b71e4680bab864a7e077"
+    },
+    {
+      "id": "adaptive_avg_pool_1",
+      "operator": "adaptive_avg_pool",
+      "model": "adaptive_avg_pool_1-model.json",
+      "source": "adaptive_avg_pool_1-source.json",
+      "binding": "adaptive_avg_pool_1-binding.json",
+      "model_sha256": "837e73af81f4c1d7d71bad7ccfbbc901259cbe5442addbe1aea4093ca77e7853",
+      "source_sha256": "a5487c864706498fd1833da27b541fcdab841cf2c5898a40eced4d7cb8284ae5"
+    },
+    {
+      "id": "adaptive_avg_pool_2",
+      "operator": "adaptive_avg_pool",
+      "model": "adaptive_avg_pool_2-model.json",
+      "source": "adaptive_avg_pool_2-source.json",
+      "binding": "adaptive_avg_pool_2-binding.json",
+      "model_sha256": "04810ab9fd719ebccc259b5a152ef2245a80a93d1580d01c6a6da8497bee1fd5",
+      "source_sha256": "e6f9ba6f6fe34ad3f956ee02c48eb4c97389e0795eed29c7bad55a7cadd781ec"
+    },
+    {
+      "id": "leaky_relu_0",
+      "operator": "leaky_relu",
+      "model": "leaky_relu_0-model.json",
+      "source": "leaky_relu_0-source.json",
+      "binding": "leaky_relu_0-binding.json",
+      "model_sha256": "15ab6f61df338f88163fbe659fd4af792b698892750bca602c599bff15735262",
+      "source_sha256": "257cc463f97343288e334ab45886c1ea9b451b7c9ee2b453e1af6f0b5d582a52"
+    },
+    {
+      "id": "prelu_0",
+      "operator": "prelu",
+      "model": "prelu_0-model.json",
+      "source": "prelu_0-source.json",
+      "binding": "prelu_0-binding.json",
+      "model_sha256": "6303b4214fef7f2db56ba474858f9ce2edc0f64e8f29d7b6183e642a4598ecc6",
+      "source_sha256": "b7e01f6b1690e72bfc93aa745e5276f16b8353910832bec6a82614592ba641e2"
+    },
+    {
+      "id": "leaky_relu_1",
+      "operator": "leaky_relu",
+      "model": "leaky_relu_1-model.json",
+      "source": "leaky_relu_1-source.json",
+      "binding": "leaky_relu_1-binding.json",
+      "model_sha256": "57e9efa28ea7fcc9852ead1b3137207b9dfab457852d52825749e3f5808e6985",
+      "source_sha256": "cb50714ac75aa8b392f86a9fd29046d0549759f4f0fe4f232517e578554b3e29"
+    },
+    {
+      "id": "prelu_1",
+      "operator": "prelu",
+      "model": "prelu_1-model.json",
+      "source": "prelu_1-source.json",
+      "binding": "prelu_1-binding.json",
+      "model_sha256": "d2bc1f38f9ade033979bac3f637a1e6e3834f3cbf472da4ab3d9b89c31aa041f",
+      "source_sha256": "e507be51daef86e498ded963bc81f0eca6c699bc742f659206497491a06021df"
+    },
+    {
+      "id": "leaky_relu_2",
+      "operator": "leaky_relu",
+      "model": "leaky_relu_2-model.json",
+      "source": "leaky_relu_2-source.json",
+      "binding": "leaky_relu_2-binding.json",
+      "model_sha256": "890f124e1d843b7280fe503d14390e5cbfb523f4bc2b97b9677fd84d2da47fb0",
+      "source_sha256": "3f22b1367c3518805dbe1e9fa3820bf77a92a4b356cc7aae45cb4c1edfc295c6"
+    },
+    {
+      "id": "prelu_2",
+      "operator": "prelu",
+      "model": "prelu_2-model.json",
+      "source": "prelu_2-source.json",
+      "binding": "prelu_2-binding.json",
+      "model_sha256": "f7102ef844b5801c364f40ec32068f63c498f355b6193249a6d8c239eae781bd",
+      "source_sha256": "75ac99b68aa9315c9c8f7c633e520fa1e3424bf79ec53839b53f73b961e9d516"
+    },
+    {
+      "id": "logsoftmax_0",
+      "operator": "logsoftmax",
+      "model": "logsoftmax_0-model.json",
+      "source": "logsoftmax_0-source.json",
+      "binding": "logsoftmax_0-binding.json",
+      "model_sha256": "3607f8a9a03a2872d8adaa19e818cd47035288eae4a18aa7287a6b9e72b80499",
+      "source_sha256": "d6332419d1fa214ae84e9be11831f47cdcf8b45bc603d7f532048689aae28558"
+    },
+    {
+      "id": "logsoftmax_1",
+      "operator": "logsoftmax",
+      "model": "logsoftmax_1-model.json",
+      "source": "logsoftmax_1-source.json",
+      "binding": "logsoftmax_1-binding.json",
+      "model_sha256": "bbe9b93b7e9a957503fc944aeb95fadec34c697605f0a82810f7530f0071056a",
+      "source_sha256": "3250eaea7e562deaeb3d7ddd599e5f8297819136bdf970edceafcca325791678"
+    },
+    {
+      "id": "logsoftmax_2",
+      "operator": "logsoftmax",
+      "model": "logsoftmax_2-model.json",
+      "source": "logsoftmax_2-source.json",
+      "binding": "logsoftmax_2-binding.json",
+      "model_sha256": "8d278b58989e4b43012232a4bf21478f25352e6b2191afe615161a8e20408787",
+      "source_sha256": "ad28e8131195b48af7128474bd62f2ae667596ed1a61bc1d0f119446342335b5"
+    }
+  ]
+}

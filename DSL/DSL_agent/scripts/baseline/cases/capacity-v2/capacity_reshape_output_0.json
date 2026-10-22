@@ -1,0 +1,1 @@
+{"constants":{},"format":"poseidon-model-graph-v2","id":"capacity_reshape_output_0","inputs":[{"name":"input0","shape":[512]}],"nodes":[{"attrs":{"shape":[2,256]},"id":"n0","inputs":["input0"],"op":"reshape","outputs":["v0"]}],"outputs":[{"name":"result","value":"v0"}],"resource_profile":"medium-v1"}

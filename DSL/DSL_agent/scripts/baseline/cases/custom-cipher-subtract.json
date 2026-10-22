@@ -1,0 +1,12 @@
+{
+  "schema": 2,
+  "id": "cipher-subtract-polynomial",
+  "input_shape": [4],
+  "constants": {"weight": [0.125, -0.5, 0.75, -0.25]},
+  "nodes": [
+    {"id": "squared", "op": "square", "inputs": ["x"]},
+    {"id": "scaled", "op": "multiply", "inputs": ["x", "weight"]},
+    {"id": "difference", "op": "subtract", "inputs": ["squared", "scaled"]}
+  ],
+  "output": "difference"
+}

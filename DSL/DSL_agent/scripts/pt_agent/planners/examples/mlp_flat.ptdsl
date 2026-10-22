@@ -1,0 +1,7 @@
+@fhe.program(slots=16384, refresh="compiler", placement="depth-dp")
+def smallmlp(v: Cipher[1, 512]):
+    x = pack(v, layout="flat")
+    h = linear(x, w=W["l1.weight"], b=W["l1.bias"], algo="bsgs")
+    h = act(h, fn="relu", method="cheb", deg=31, domain=(-4.0, 6.0))
+    out = linear(h, w=W["l2.weight"], b=W["l2.bias"], algo="diag")
+    return out

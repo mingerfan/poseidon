@@ -1,0 +1,10 @@
+# expect: E_MACRO
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    y = pack(x, layout="flat")
+    z = f(y)
+    return z
+
+def f(a):
+    b = f(a)   # ERR
+    return b

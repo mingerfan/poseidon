@@ -1,0 +1,77 @@
+{
+  "constants": {
+    "c0": [
+      0.0625,
+      -0.125,
+      0.03125,
+      0.015625
+    ]
+  },
+  "format": "poseidon-model-graph-v1",
+  "id": "bench_boundary_0097",
+  "inputs": [
+    {
+      "name": "input0",
+      "shape": [
+        1,
+        1,
+        1,
+        17
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "basis": "power"
+      },
+      "id": "n0",
+      "inputs": [
+        "input0",
+        "c0"
+      ],
+      "op": "polynomial",
+      "outputs": [
+        "n0v0"
+      ]
+    },
+    {
+      "attrs": {
+        "step": -3
+      },
+      "id": "n1",
+      "inputs": [
+        "n0v0"
+      ],
+      "op": "rotate",
+      "outputs": [
+        "n1v0"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "keepdims": false
+      },
+      "id": "n2",
+      "inputs": [
+        "n1v0"
+      ],
+      "op": "mean",
+      "outputs": [
+        "n2v0"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output0",
+      "value": "n2v0"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema": 2,
+  "input_shape": [
+    4
+  ],
+  "id": "zero-linear-mixed",
+  "constants": {
+    "w": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0.5,
+        -0.25,
+        0.125,
+        0.75
+      ]
+    ],
+    "b": [
+      0.375,
+      -0.125
+    ]
+  },
+  "nodes": [
+    {
+      "id": "out",
+      "op": "linear",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w",
+      "bias": "b"
+    }
+  ],
+  "output": "out"
+}

@@ -1,0 +1,85 @@
+{
+  "schema": 2,
+  "id": "construction-genpoly5",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "fifth": [
+      2
+    ],
+    "cubic": [
+      -0.5
+    ],
+    "linear": [
+      -0.625
+    ]
+  },
+  "nodes": [
+    {
+      "id": "square",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "x"
+      ]
+    },
+    {
+      "id": "cube",
+      "op": "multiply",
+      "inputs": [
+        "square",
+        "x"
+      ]
+    },
+    {
+      "id": "power5",
+      "op": "multiply",
+      "inputs": [
+        "cube",
+        "square"
+      ]
+    },
+    {
+      "id": "part5",
+      "op": "multiply",
+      "inputs": [
+        "power5",
+        "fifth"
+      ]
+    },
+    {
+      "id": "part3",
+      "op": "multiply",
+      "inputs": [
+        "cube",
+        "cubic"
+      ]
+    },
+    {
+      "id": "part1",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "linear"
+      ]
+    },
+    {
+      "id": "sum53",
+      "op": "add",
+      "inputs": [
+        "part5",
+        "part3"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "add",
+      "inputs": [
+        "sum53",
+        "part1"
+      ]
+    }
+  ],
+  "output": "out"
+}

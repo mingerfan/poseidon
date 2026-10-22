@@ -1,0 +1,96 @@
+{
+  "constants": {
+    "c0": [
+      [
+        [
+          [
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125
+          ]
+        ]
+      ]
+    ]
+  },
+  "format": "poseidon-model-graph-v1",
+  "id": "bench_boundary_0044",
+  "inputs": [
+    {
+      "name": "input0",
+      "shape": [
+        1,
+        1,
+        1,
+        17
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "n0",
+      "inputs": [
+        "input0",
+        "c0"
+      ],
+      "op": "add",
+      "outputs": [
+        "n0v0"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          2
+        ],
+        "keepdims": false
+      },
+      "id": "n1",
+      "inputs": [
+        "n0v0"
+      ],
+      "op": "mean",
+      "outputs": [
+        "n1v0"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          0,
+          1,
+          2
+        ],
+        "keepdims": false
+      },
+      "id": "n2",
+      "inputs": [
+        "n1v0"
+      ],
+      "op": "mean",
+      "outputs": [
+        "n2v0"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output0",
+      "value": "n2v0"
+    }
+  ]
+}

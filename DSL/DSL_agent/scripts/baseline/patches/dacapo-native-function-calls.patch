@@ -1,0 +1,209 @@
+diff --git a/python/hecate/hecate/expr.py b/python/hecate/hecate/expr.py
+--- a/python/hecate/hecate/expr.py
++++ b/python/hecate/hecate/expr.py
+@@ -40,6 +40,11 @@ lt.initFunc.argtypes = [
+ lt.createConstant.restype = ctypes.c_size_t
+ lt.createConstant.restype = ctypes.c_size_t
+ lt.createFunc.restype = ctypes.c_size_t
++lt.createCall.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
++        ctypes.POINTER(ctypes.c_size_t), ctypes.c_size_t,
++        ctypes.POINTER(ctypes.c_size_t), ctypes.c_size_t,
++        ctypes.c_char_p, ctypes.c_size_t]
++lt.createCall.restype = ctypes.c_size_t
+ 
+ """Immediate arguments"""
+ lt.createRotation.argtypes = [
+@@ -292,6 +315,8 @@ class Empty :
+ 
+ """Function Decorator"""
+ funcList = []
++_active_traces = []
++_tracing_failed = False
+ 
+ 
+ def func(param):
+@@ -314,35 +339,86 @@ class Func(metaclass=hecateMetaBase):
+         name = fun.__name__
+         self.fun = fun
+ 
+-        arg = paramstr.split(",")
++        if not isinstance(paramstr, str):
++            raise TypeError("Function parameter signature must be a string")
++        arg = [a.strip() for a in paramstr.split(",")] if paramstr.strip() else []
++        if any(a not in ("c", "p") for a in arg):
++            raise ValueError("Function parameters must be c or p")
+         inputs = [ a== "c" for a in arg]
+ 
+         self.inputlen = len(inputs)
++        inspect.signature(fun).bind(*([None] * self.inputlen))
++        self.evaluation_state = "new"
+         inputTys = (ctypes.c_int * len(inputs))(*inputs)
+         self.obj = lt.createFunc(ctxt, name.encode('utf-8'), inputTys,
+                 len(inputs), filename.encode('utf-8'),
+                 line_number)
+ 
+     def eval(self):
+-        inputarr = (ctypes.c_size_t * self.inputlen)()
+-        lt.initFunc(ctxt, self.obj, inputarr, self.inputlen)
+-        inputs = [Expr(x) for x in inputarr[:self.inputlen]]
+-        returns = self.fun(*inputs)
+-        if not isinstance (returns, Iterable) : 
+-            returns = [returns]
+-        outputs = [ x.obj for  x in returns]
+-        outputvec = (ctypes.c_size_t * len(outputs))(*outputs)
+-        lt.setOutput(ctxt, self.obj, outputvec, len(outputs))
++        global _tracing_failed
++        if _tracing_failed:
++            raise ValueError("Native tracing context previously failed; use a fresh process")
++        if self.evaluation_state == "done":
++            return
++        if self.evaluation_state != "new":
++            raise ValueError("Recursive or previously failed decorated function tracing")
++        self.evaluation_state = "active"
++        _active_traces.append(self)
++        try:
++            inputarr = (ctypes.c_size_t * self.inputlen)()
++            lt.initFunc(ctxt, self.obj, inputarr, self.inputlen)
++            inputs = [Expr(x) for x in inputarr[:self.inputlen]]
++            returns = self.fun(*inputs)
++            if _tracing_failed:
++                raise ValueError("Nested native tracing failed; use a fresh process")
++            if isinstance(returns, Expr):
++                self.return_kind, self.return_shape = "scalar", None
++                values = [returns]
++            elif isinstance(returns, np.ndarray) and returns.dtype == object:
++                self.return_kind, self.return_shape = "array", returns.shape
++                values = list(returns.flat)
++            elif isinstance(returns, (list, tuple)):
++                self.return_kind, self.return_shape = type(returns).__name__, None
++                values = list(returns)
++            else:
++                raise TypeError("Decorated functions return Expr or a flat expression container")
++            if not all(isinstance(value, Expr) for value in values):
++                raise TypeError("Function output cells must be Expr values")
++            outputs = [x.obj for x in values]
++            self.outputlen = len(outputs)
++            outputvec = (ctypes.c_size_t * len(outputs))(*outputs)
++            lt.setOutput(ctxt, self.obj, outputvec, len(outputs))
++            self.evaluation_state = "done"
++        except BaseException:
++            self.evaluation_state = "failed"
++            _tracing_failed = True
++            raise
++        finally:
++            _active_traces.pop()
+ 
+     def __call__(self, *args):
++        if len(args) != self.inputlen:
++            raise TypeError("Decorated function argument count mismatch")
++        if not _active_traces or _tracing_failed:
++            raise ValueError("Decorated function calls require an active, non-failed trace")
+         (frame, filename, line_number, function_name, lines,
+                 index) = getProperFrame()
+         tmps = [resolveType(arg) for arg in args]
+         argarr = (ctypes.c_size_t * len(args))(*[tmp.obj for tmp in tmps])
+-
+-        return Expr(
+-                lt.createCall(ctxt, self.obj, argarr, len(args),
+-                    filename.encode('utf-8'), line_number))
++        self.eval()  # Also handles forward definitions; restores caller insertion point.
++        outputs = (ctypes.c_size_t * self.outputlen)()
++        count = lt.createCall(ctxt, self.obj, argarr, len(args), outputs,
++                             self.outputlen, filename.encode('utf-8'), line_number)
++        if count != self.outputlen:
++            raise ValueError("Native function call type/body/insertion-point mismatch")
++        values = [Expr(value) for value in outputs]
++        if self.return_kind == "scalar":
++            return values[0]
++        if self.return_kind == "array":
++            result = np.empty(self.return_shape, dtype=object)
++            result.flat[:] = values
++            return result
++        return tuple(values) if self.return_kind == "tuple" else values
+ 
+ 
+ def removeCtxt() :
+diff --git a/tools/frontend.cpp b/tools/frontend.cpp
+--- a/tools/frontend.cpp
++++ b/tools/frontend.cpp
+@@ -18,7 +18,9 @@
+ #include <mlir/Dialect/Tensor/Transforms/Passes.h>
+ #include <mlir/IR/Builders.h>
+ #include <mlir/IR/MLIRContext.h>
++#include <mlir/IR/IRMapping.h>
+ #include <mlir/IR/Value.h>
++#include <mlir/IR/Verifier.h>
+ #include <mlir/Pass/Pass.h>
+ #include <mlir/Pass/PassManager.h>
+ #include <mlir/Transforms/Passes.h>
+@@ -57,6 +59,7 @@ struct Context {
+   std::unique_ptr<mlir::OpBuilder> builder;
+   llvm::SmallVector<mlir::Value, 32> valueMap;
+   llvm::SmallVector<mlir::func::FuncOp, 32> funcMap;
++  llvm::SmallVector<mlir::OpBuilder::InsertPoint, 8> insertionPoints;
+ };
+ 
+ Context::Context() : ctxt(), mod(), builder() {
+@@ -89,9 +92,10 @@ funcID createFunc(Context *ctxt, char *name, int *inputTys, size_t len,
+   auto &&funcMap = ctxt->funcMap;
+   llvm::SmallVector<mlir::Type, 4> arg_types(len);
+   std::transform(inputTys, inputTys + len, arg_types.begin(), [&](auto a) {
++    mlir::Type element = a ? mlir::Type(builder.getType<hecate::earth::CipherType>(0, 0))
++                          : mlir::Type(builder.getType<hecate::earth::PlainType>(0, 0));
+     return mlir::RankedTensorType::get(
+-        llvm::SmallVector<int64_t, 1>{1},
+-        builder.getType<hecate::earth::CipherType>(0, 0));
++        llvm::SmallVector<int64_t, 1>{1}, element);
+   });
+   auto funcType = builder.getFunctionType(
+       arg_types, mlir::RankedTensorType::get(
+@@ -106,6 +110,7 @@ funcID createFunc(Context *ctxt, char *name, int *inputTys, size_t len,
+ }
+ 
+ void initFunc(Context *ctxt, funcID fun, valueID *args, size_t len) {
++  ctxt->insertionPoints.push_back(ctxt->builder->saveInsertionPoint());
+   auto &&funcOp = ctxt->funcMap[fun];
+   auto &&valueMap = ctxt->valueMap;
+   auto entryBlock = funcOp.addEntryBlock();
+@@ -232,6 +251,41 @@ void setOutput(Context *ctxt, funcID fun, valueID *ret, size_t len) {
+   auto retType = func.getFunctionType();
+   func.setFunctionType(
+       ctxt->builder->getFunctionType(retType.getInputs(), types));
++  ctxt->builder->restoreInsertionPoint(ctxt->insertionPoints.pop_back_val());
++}
++
++// Statically inline the already traced straight-line body. Earth/HEVM has no
++// runtime call instruction; cloning IR preserves every operand/result without
++// re-executing the user's Python function at each call site.
++size_t createCall(Context *ctxt, funcID fun, valueID *args, size_t nargs,
++                  valueID *results, size_t capacity, char *, size_t) {
++  const auto invalid = std::numeric_limits<size_t>::max();
++  if (fun >= ctxt->funcMap.size() || !ctxt->builder->getInsertionBlock())
++    return invalid;
++  auto callee = ctxt->funcMap[fun];
++  if (callee.empty() || !llvm::hasSingleElement(callee.getBody()) ||
++      nargs != callee.getNumArguments() || capacity != callee.getNumResults() ||
++      mlir::failed(mlir::verify(callee)))
++    return invalid;
++  auto &body = callee.front();
++  auto returned = mlir::dyn_cast<mlir::func::ReturnOp>(body.getTerminator());
++  if (!returned || returned.getNumOperands() != capacity)
++    return invalid;
++  mlir::IRMapping mapping;
++  for (size_t i = 0; i < nargs; ++i) {
++    if (args[i] >= ctxt->valueMap.size() ||
++        ctxt->valueMap[args[i]].getParentBlock() != ctxt->builder->getInsertionBlock() ||
++        ctxt->valueMap[args[i]].getType() != body.getArgument(i).getType())
++      return invalid;
++    mapping.map(body.getArgument(i), ctxt->valueMap[args[i]]);
++  }
++  for (auto &op : body.without_terminator())
++    ctxt->builder->clone(op, mapping);
++  for (size_t i = 0; i < capacity; ++i) {
++    ctxt->valueMap.push_back(mapping.lookup(returned.getOperand(i)));
++    results[i] = ctxt->valueMap.size() - 1;
++  }
++  return capacity;
+ }
+ 
+ Context *init() {

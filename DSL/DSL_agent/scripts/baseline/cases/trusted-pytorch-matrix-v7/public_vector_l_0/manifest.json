@@ -1,0 +1,46 @@
+{
+  "format": "poseidon-trusted-pytorch-v7",
+  "files": {
+    "models.py": "cb8cb4f4fb484ddd2069fc1c831c525048febc90f781ae26d7e8b7a1172d2265"
+  },
+  "entry": "models.make_model",
+  "factory": {
+    "args": [
+      "public_vector_l",
+      0
+    ],
+    "kwargs": {
+      "structure": "tensor"
+    }
+  },
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        3,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "out"
+  ],
+  "approximations": {
+    "format": "poseidon-pytorch-approximations-v1",
+    "defaults": {},
+    "modules": [],
+    "nodes": []
+  },
+  "dtype_policy": "strict-float64-v1",
+  "weights": {
+    "weight": {
+      "file": "state_0000.npy",
+      "sha256": "ff6f8654d4fdd07ff3a6d70529d60e23ea6daf73d26bd18982046e6127426f9d",
+      "bytes": 152,
+      "shape": [
+        3
+      ],
+      "dtype": "<f8"
+    }
+  }
+}

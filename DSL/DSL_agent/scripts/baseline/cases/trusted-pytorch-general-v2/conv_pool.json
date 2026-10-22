@@ -1,0 +1,30 @@
+{
+  "format": "poseidon-trusted-pytorch-v2",
+  "files": {
+    "models.py": "b554ae82d8c58ba9aba7b0e816ded60da70f4c6e1d69277fbfe3216185efe639"
+  },
+  "entry": "models.make_conv",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        2,
+        4
+      ]
+    }
+  ],
+  "outputs": [
+    "pooled"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [],
+    "kwargs": {
+      "channels": 1,
+      "seed": 72
+    }
+  },
+  "dtype_policy": "convert-float64-v1"
+}

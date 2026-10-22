@@ -1,0 +1,61 @@
+{
+  "approximations": {
+    "defaults": {},
+    "format": "poseidon-pytorch-approximations-v1",
+    "modules": [],
+    "nodes": []
+  },
+  "call": {
+    "args": [
+      {
+        "items": [
+          [
+            "value",
+            {
+              "kind": "tensor",
+              "name": "x"
+            }
+          ]
+        ],
+        "kind": "dict"
+      }
+    ],
+    "format": "poseidon-pytorch-call-v1",
+    "kwargs": {}
+  },
+  "dtype_policy": "strict-float64-v1",
+  "entry": "model.make",
+  "factory": {
+    "args": [],
+    "kwargs": {}
+  },
+  "files": {
+    "model.py": "f78432cb875c592bae6e0bf2f451129fdb68742fe544e7f03a84b1b019c58c2f"
+  },
+  "format": "poseidon-trusted-pytorch-v27",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        3
+      ]
+    }
+  ],
+  "outputs": [
+    "result",
+    "square"
+  ],
+  "weights": {
+    "mask": {
+      "bytes": 133,
+      "dtype": "|b1",
+      "file": "mask.npy",
+      "sha256": "de642c82aea2abc6de6a69a582e5d2abf4fa35e3813f7707eab436bfb742891d",
+      "shape": [
+        5
+      ]
+    }
+  }
+}

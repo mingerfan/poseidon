@@ -1,0 +1,29 @@
+{
+  "approximations": {},
+  "entry": "model.make_bmm2",
+  "files": {
+    "model.py": "aa243de7ee79995596fa3d74a0c8f0ca27aca9405a4757b6da13f9534e31218e"
+  },
+  "format": "poseidon-trusted-pytorch-v1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        1,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "output"
+  ]
+}

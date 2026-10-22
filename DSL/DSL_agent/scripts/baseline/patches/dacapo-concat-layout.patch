@@ -1,0 +1,43 @@
+diff --git a/python/poly/poly/MPCB.py b/python/poly/poly/MPCB.py
+index 12e6fab..4a6b0d9 100644
+--- a/python/poly/poly/MPCB.py
++++ b/python/poly/poly/MPCB.py
+@@ -295,8 +295,11 @@ def shapeClosure(nt, bb, fh, fw, s , hi, ho, wi, wo, ni, no, ci, co, ki, ko, ti,
+     
+     def ConcatSelecting () : 
+         tt = min (co * wo *ho , nt)
+-        M = torch.ones ((tt - (ci * wi * hi) % tt), dtype = torch.double)
+-        FF = F.pad (M, (0, (ci * wi * hi) %tt), mode = 'constant', value = 0)
++        # The first output fragment retains the valid tail of A, not its
++        # complement. For multi-cipher inputs this is ci*wi*hi modulo nt.
++        tail = (ci * wi * hi) % tt
++        M = torch.ones ((tail), dtype = torch.double)
++        FF = F.pad (M, (0, tt - tail), mode = 'constant', value = 0)
+         BB = 1 - FF
+         FF = F.pad (FF, (0, nt//po - tt), mode = 'constant', value = 0)
+         BB = F.pad (BB, (0, nt//po - tt), mode = 'constant', value = 0)
+@@ -322,8 +325,10 @@ def shapeClosure(nt, bb, fh, fw, s , hi, ho, wi, wo, ni, no, ci, co, ki, ko, ti,
+         second = [C[i] for i in range(ni)]
+         for i in range (ni) : 
+             D[ni-1 +i] = first [i] * FF + second[i] * BB
+-        if ni != no : 
+-            D[no-1] = first[ni]
++        # The loop already fills 2*ni-1 ciphertexts. Only a larger result
++        # needs a final carry; mask it so wrapped data is not duplicated.
++        if no == 2 * ni :
++            D[no-1] = first[ni] * FF
+             
+         return D
+         
+@@ -636,6 +641,11 @@ def InferShapes(shapes) :
+     
+ def CascadeConcat (shapes1, shapes2) : 
+     shapes = shapes1.copy()
++    # Both branches must describe the same channel-packing geometry. Taking
++    # only shapes1 silently accepted incompatible spatial sizes or scaling.
++    if any(shapes1[key] != shapes2[key]
++           for key in ("nt", "bb", "ko", "ho", "wo", "no", "po")):
++        raise ValueError("concat requires matching branch packing and spatial shapes")
+     if (shapes1["co"] != shapes2["co"]) or (shapes1["co"] % (shapes["ko"] * shapes["ko"]) != 0):  
+         print ("concat does not support this shape")
+         return 0

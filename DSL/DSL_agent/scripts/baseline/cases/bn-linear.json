@@ -1,0 +1,75 @@
+{
+  "schema": 2,
+  "id": "bn-linear",
+  "input_shape": [
+    2,
+    2
+  ],
+  "constants": {
+    "mean": [
+      0.5,
+      -0.25
+    ],
+    "variance": [
+      0.75,
+      3.75
+    ],
+    "gamma": [
+      -1,
+      4
+    ],
+    "beta": [
+      0.125,
+      0.375
+    ],
+    "fc": [
+      [
+        0.5,
+        -0.25,
+        0.75,
+        0.125
+      ],
+      [
+        -0.25,
+        0.5,
+        0.125,
+        -0.75
+      ]
+    ],
+    "fb": [
+      0.125,
+      -0.25
+    ]
+  },
+  "nodes": [
+    {
+      "id": "norm",
+      "op": "batch_norm",
+      "inputs": [
+        "x"
+      ],
+      "running_mean": "mean",
+      "running_var": "variance",
+      "weight": "gamma",
+      "bias": "beta",
+      "eps": 0.25
+    },
+    {
+      "id": "flat",
+      "op": "flatten",
+      "inputs": [
+        "norm"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "linear",
+      "inputs": [
+        "flat"
+      ],
+      "weight": "fc",
+      "bias": "fb"
+    }
+  ],
+  "output": "out"
+}

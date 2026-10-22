@@ -1,0 +1,38 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "variance",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        4
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "compute",
+      "op": "variance",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

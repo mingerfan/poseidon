@@ -1,0 +1,50 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "decomposed_rmsnorm",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {
+    "gain": [
+      1.0,
+      0.5,
+      -0.5,
+      1.0
+    ]
+  },
+  "nodes": [
+    {
+      "id": "rms",
+      "op": "rms_norm",
+      "inputs": [
+        "x",
+        "gain"
+      ],
+      "attrs": {
+        "eps": 0.25,
+        "approximation": {
+          "method": "newton",
+          "domain": [
+            0.25,
+            1.25
+          ],
+          "iterations": 3
+        }
+      },
+      "outputs": [
+        "rms_v"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "rms_v"
+    }
+  ]
+}

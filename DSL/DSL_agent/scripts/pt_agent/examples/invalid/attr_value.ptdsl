@@ -1,0 +1,6 @@
+# expect: E_ATTR_VALUE
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    y = pack(x, layout="flat")
+    z = act(y, fn="relu", method="minimax_comp", deg=7, domain=(-4.0, 4.0))   # ERR
+    return z

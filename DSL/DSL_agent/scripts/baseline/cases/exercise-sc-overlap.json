@@ -1,0 +1,50 @@
+{
+  "schema": 2,
+  "id": "exercise-sc-overlap",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "weight": [
+      0.5
+    ],
+    "bias": [
+      0.375
+    ]
+  },
+  "nodes": [
+    {
+      "id": "square",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "x"
+      ]
+    },
+    {
+      "id": "scaled",
+      "op": "multiply",
+      "inputs": [
+        "square",
+        "weight"
+      ]
+    },
+    {
+      "id": "merged",
+      "op": "add",
+      "inputs": [
+        "scaled",
+        "x"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "add",
+      "inputs": [
+        "merged",
+        "bias"
+      ]
+    }
+  ],
+  "output": "out"
+}

@@ -1,0 +1,41 @@
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -4,14 +4,26 @@
+   frontend.cpp
+   )
+ 
+-get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
+-get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
++# The default retains upstream's broad SDK compatibility. The pinned Hecate
++# distribution opts into the explicit Earth/CKKS dependencies below.
++option(HECATE_LINK_ALL_MLIR_LIBS "Link every upstream MLIR dialect and conversion library" ON)
++if(HECATE_LINK_ALL_MLIR_LIBS)
++  get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
++  get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
++  set(hecate_mlir_libs ${dialect_libs} ${conversion_libs})
++else()
++  set(hecate_mlir_libs
++    MLIRFuncDialect
++    MLIRTensorDialect
++    MLIRParser
++    MLIRTransforms
++  )
++endif()
+ 
+ target_link_libraries(HecateFrontend
+   EarthDialect
+   EarthTransforms
+-  ${dialect_libs}
+-  ${conversion_libs}
++  ${hecate_mlir_libs}
+   )
+ 
+ add_executable (hecate-opt
+@@ -28,6 +40,5 @@
+   HecateCKKSCommonConversion
+   HecateEarthToCKKS
+   HecateCKKSToCKKS
+-  ${dialect_libs}
+-  ${conversion_libs}
++  ${hecate_mlir_libs}
+   )

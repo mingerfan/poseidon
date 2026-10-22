@@ -1,0 +1,29 @@
+{
+  "format": "poseidon-trusted-pytorch-v1",
+  "files": {
+    "model.py": "6c61695e6e3adc25df199afa71ce2f9d35b44fbd16bb3dc9a2545c7fb2e9b17f"
+  },
+  "entry": "model.make_linear_fusion",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        65
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        65
+      ]
+    }
+  ],
+  "outputs": [
+    "joined",
+    "stacked",
+    "average"
+  ],
+  "approximations": {}
+}

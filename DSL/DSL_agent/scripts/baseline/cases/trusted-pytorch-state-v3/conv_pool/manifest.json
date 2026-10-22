@@ -1,0 +1,53 @@
+{
+  "format": "poseidon-trusted-pytorch-v3",
+  "files": {
+    "models.py": "1b09ea0975251c2b80e5e9d19560a560f140aa4d91d0c6ad74b5364c946a8deb"
+  },
+  "entry": "models.make_conv",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        1,
+        2,
+        4
+      ]
+    }
+  ],
+  "outputs": [
+    "pooled"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [],
+    "kwargs": {
+      "channels": 1,
+      "seed": 72
+    }
+  },
+  "dtype_policy": "convert-float64-v1",
+  "weights": {
+    "layers.0.bias": {
+      "file": "state_0000.npy",
+      "sha256": "d52587c1d0b838eea59d52fb1b03039ea3ecf6bc9e1721ffc35021f923a19576",
+      "bytes": 132,
+      "shape": [
+        1
+      ],
+      "dtype": "<f4"
+    },
+    "layers.0.weight": {
+      "file": "state_0001.npy",
+      "sha256": "8fc6f1355ea309e1014fd1a8531d23011257b43d3e154f48eb4fc719f921b246",
+      "bytes": 132,
+      "shape": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "dtype": "<f4"
+    }
+  }
+}

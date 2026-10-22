@@ -1,0 +1,41 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "global_pool",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "mean",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axes": [
+          2,
+          3
+        ],
+        "keepdims": true
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_0"
+    }
+  ]
+}

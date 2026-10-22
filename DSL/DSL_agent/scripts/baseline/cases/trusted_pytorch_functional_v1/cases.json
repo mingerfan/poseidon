@@ -1,0 +1,95 @@
+{
+  "cases": [
+    {
+      "exercise_reuse": false,
+      "id": "layer_0",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/layer_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": true,
+      "id": "layer_1",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/layer_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "layer_2",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/layer_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "group_0",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/group_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": true,
+      "id": "group_1",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/group_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "group_2",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/group_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "variance_0",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/variance_0.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": true,
+      "id": "variance_1",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/variance_1.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "variance_2",
+      "manifest": "scripts/baseline/cases/trusted_pytorch_functional_v1/variance_2.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    }
+  ],
+  "format": "poseidon-pytorch-offline-cases-v1"
+}

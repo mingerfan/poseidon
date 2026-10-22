@@ -1,0 +1,1 @@
+{"approximations":{},"entry":"model.make_cifar_reduction","files":{"model.py":"55e5276385c93069b6c8dd4dfee2fb99e3fdaf59568f04896732c7529d719092"},"format":"poseidon-trusted-pytorch-v1","inputs":[{"name":"x","shape":[1,3,32,32]}],"outputs":["totals"]}

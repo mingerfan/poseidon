@@ -1,0 +1,65 @@
+{
+  "cases": [
+    {
+      "exercise_reuse": false,
+      "id": "modules",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-approximation-v5/modules.json",
+      "options": {
+        "chunk_period": 4,
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "generation_guidance": "explicit-v10"
+      }
+    },
+    {
+      "exercise_reuse": true,
+      "id": "nodes",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-approximation-v5/nodes.json",
+      "options": {
+        "chunk_period": 4,
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "generation_guidance": "explicit-v10"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "nested",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-approximation-v5/nested.json",
+      "options": {
+        "chunk_period": 4,
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "generation_guidance": "explicit-v10"
+      }
+    },
+    {
+      "exercise_reuse": true,
+      "id": "functions",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-approximation-v5/functions.json",
+      "options": {
+        "chunk_period": 4,
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "generation_guidance": "explicit-v10"
+      }
+    },
+    {
+      "exercise_reuse": true,
+      "id": "norms",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-approximation-v5/norms.json",
+      "options": {
+        "chunk_period": 4,
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "generation_guidance": "explicit-v10"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "compound",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-approximation-v5/compound.json",
+      "options": {
+        "chunk_period": 4,
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "generation_guidance": "explicit-v10"
+      }
+    }
+  ],
+  "format": "poseidon-pytorch-offline-cases-v1"
+}

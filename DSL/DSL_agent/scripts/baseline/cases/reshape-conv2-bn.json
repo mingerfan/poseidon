@@ -1,0 +1,87 @@
+{
+  "schema": 2,
+  "id": "reshape-conv2-bn",
+  "input_shape": [
+    1,
+    2,
+    2
+  ],
+  "constants": {
+    "mean": [
+      0.5
+    ],
+    "variance": [
+      0.75
+    ],
+    "gamma": [
+      -1
+    ],
+    "beta": [
+      0.125
+    ],
+    "kernel": [
+      [
+        [
+          [
+            0.5
+          ]
+        ]
+      ]
+    ],
+    "conv_bias": [
+      0.25
+    ]
+  },
+  "nodes": [
+    {
+      "id": "convolved",
+      "op": "conv2d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "kernel",
+      "bias": "conv_bias",
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "shaped",
+      "op": "reshape",
+      "inputs": [
+        "convolved"
+      ],
+      "shape": [
+        1,
+        1,
+        2,
+        2
+      ]
+    },
+    {
+      "id": "normalized",
+      "op": "batch_norm",
+      "inputs": [
+        "shaped"
+      ],
+      "running_mean": "mean",
+      "running_var": "variance",
+      "weight": "gamma",
+      "bias": "beta",
+      "eps": 0.25
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "normalized"
+      ]
+    }
+  ],
+  "output": "out"
+}

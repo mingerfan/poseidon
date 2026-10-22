@@ -1,0 +1,58 @@
+{
+  "schema": 2,
+  "id": "construction-chebyshev3",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "four": [
+      4
+    ],
+    "minus_three": [
+      -3
+    ]
+  },
+  "nodes": [
+    {
+      "id": "square",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "x"
+      ]
+    },
+    {
+      "id": "cube",
+      "op": "multiply",
+      "inputs": [
+        "square",
+        "x"
+      ]
+    },
+    {
+      "id": "high",
+      "op": "multiply",
+      "inputs": [
+        "cube",
+        "four"
+      ]
+    },
+    {
+      "id": "low",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "minus_three"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "add",
+      "inputs": [
+        "high",
+        "low"
+      ]
+    }
+  ],
+  "output": "out"
+}

@@ -1,0 +1,11 @@
+@fhe.program(slots=16384, refresh="compiler", placement="depth-dp")
+def plaincnn(img: Cipher[1, 3, 16, 16]):
+    x = pack(img, layout="mux", gap=1)
+    h = conv2d(x, w=W["c1.weight"], bn="n1", stride=1, pad=1, algo="mpcb")
+    h = act(h, fn="silu", method="cheb", deg=63, domain=(-5.0, 7.5))
+    h = conv2d(h, w=W["c2.weight"], bn="n2", stride=2, pad=1, algo="mpcb")
+    h = act(h, fn="silu", method="cheb", deg=31, domain=(-6.0, 8.0))
+    z = mean(h, axis=(2, 3))
+    z = relayout(z, layout="flat")
+    out = linear(z, w=W["fc.weight"], b=W["fc.bias"], algo="bsgs")
+    return out

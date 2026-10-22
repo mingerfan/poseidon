@@ -1,0 +1,331 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "input_shape": [
+        4
+      ],
+      "id": "zero-linear-pure",
+      "constants": {
+        "w": [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": null
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "input_shape": [
+        4
+      ],
+      "id": "zero-linear-mixed",
+      "constants": {
+        "w": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.75
+          ]
+        ],
+        "b": [
+          0.375,
+          -0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b"
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "input_shape": [
+        4
+      ],
+      "id": "zero-mlp-hidden",
+      "constants": {
+        "w1": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ]
+        ],
+        "w2": [
+          [
+            0.75,
+            -0.5
+          ]
+        ],
+        "b": [
+          0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "hidden",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w1",
+          "bias": null
+        },
+        {
+          "id": "square",
+          "op": "square",
+          "inputs": [
+            "hidden"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "square"
+          ],
+          "weight": "w2",
+          "bias": "b"
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "input_shape": [
+        1,
+        4
+      ],
+      "id": "zero-conv",
+      "constants": {
+        "w": [
+          [
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "b": [
+          0.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "conv",
+          "op": "conv1d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b",
+          "stride": [
+            1
+          ],
+          "padding": [
+            0
+          ]
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "conv"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 3,
+      "id": "zero-quad",
+      "inputs": [
+        {
+          "name": "a",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "b",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "c",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "d",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "constants": {
+        "w": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.75
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "ab",
+          "op": "add",
+          "inputs": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "id": "cd",
+          "op": "add",
+          "inputs": [
+            "c",
+            "d"
+          ]
+        },
+        {
+          "id": "sum",
+          "op": "add",
+          "inputs": [
+            "ab",
+            "cd"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "sum"
+          ],
+          "weight": "w",
+          "bias": null
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "input_shape": [
+        4
+      ],
+      "id": "zero-multiply",
+      "constants": {
+        "w": [
+          0
+        ]
+      },
+      "nodes": [
+        {
+          "id": "out",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "w"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "zero-scalar-mask",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "w": [
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ]
+        ],
+        "mask": [
+          0,
+          -0.5
+        ]
+      },
+      "nodes": [
+        {
+          "id": "linear",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": null
+        },
+        {
+          "id": "masked",
+          "op": "multiply",
+          "inputs": [
+            "linear",
+            "mask"
+          ]
+        }
+      ],
+      "output": "masked"
+    }
+  ]
+}

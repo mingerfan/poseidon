@@ -1,0 +1,16 @@
+{
+  "schema": 3,
+  "id": "custom-dual-linear",
+  "inputs": [{"name": "features", "shape": [2, 2]}, {"name": "residual", "shape": [4]}],
+  "constants": {
+    "weights": [[0.3, -0.7, 0.125, 0.5], [-0.4, 0.2, 0.75, -0.25]],
+    "bias": [0.1, -0.2]
+  },
+  "nodes": [
+    {"id": "flat", "op": "flatten", "inputs": ["features"]},
+    {"id": "difference", "op": "subtract", "inputs": ["flat", "residual"]},
+    {"id": "linear", "op": "linear", "inputs": ["difference"], "weight": "weights", "bias": "bias"},
+    {"id": "activated", "op": "square", "inputs": ["linear"]}
+  ],
+  "output": "activated"
+}

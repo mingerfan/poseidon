@@ -1,0 +1,1461 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "id": "custom-wide-mlp-5",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight_in": [
+          [
+            0.25,
+            -0.125,
+            0.375,
+            0.125
+          ],
+          [
+            -0.25,
+            0.5,
+            0.125,
+            -0.125
+          ],
+          [
+            0.125,
+            0.25,
+            -0.25,
+            0.5
+          ],
+          [
+            0.5,
+            -0.375,
+            0.25,
+            0.125
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.25
+          ]
+        ],
+        "bias_in": [
+          0.125,
+          -0.125,
+          0.25,
+          -0.25,
+          0.0625
+        ],
+        "offset": 0.125,
+        "weight_out": [
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.375,
+            -0.5
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.375,
+            0.125
+          ]
+        ],
+        "bias_out": [
+          0.125,
+          -0.0625
+        ]
+      },
+      "nodes": [
+        {
+          "id": "hidden",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "weight_in",
+          "bias": "bias_in"
+        },
+        {
+          "id": "squared",
+          "op": "square",
+          "inputs": [
+            "hidden"
+          ]
+        },
+        {
+          "id": "shifted",
+          "op": "add",
+          "inputs": [
+            "squared",
+            "offset"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "shifted"
+          ],
+          "weight": "weight_out",
+          "bias": "bias_out"
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "custom-wide-mlp-6",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight_in": [
+          [
+            0.25,
+            -0.125,
+            0.375,
+            0.125
+          ],
+          [
+            -0.25,
+            0.5,
+            0.125,
+            -0.125
+          ],
+          [
+            0.125,
+            0.25,
+            -0.25,
+            0.5
+          ],
+          [
+            0.5,
+            -0.375,
+            0.25,
+            0.125
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.25
+          ],
+          [
+            0.375,
+            0.125,
+            -0.125,
+            0.25
+          ]
+        ],
+        "bias_in": [
+          0.125,
+          -0.125,
+          0.25,
+          -0.25,
+          0.0625,
+          -0.0625
+        ],
+        "offset": 0.125,
+        "weight_out": [
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.375,
+            -0.5,
+            0.25
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.375,
+            0.125,
+            -0.25
+          ]
+        ],
+        "bias_out": [
+          0.125,
+          -0.0625
+        ]
+      },
+      "nodes": [
+        {
+          "id": "hidden",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "weight_in",
+          "bias": "bias_in"
+        },
+        {
+          "id": "squared",
+          "op": "square",
+          "inputs": [
+            "hidden"
+          ]
+        },
+        {
+          "id": "shifted",
+          "op": "add",
+          "inputs": [
+            "squared",
+            "offset"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "shifted"
+          ],
+          "weight": "weight_out",
+          "bias": "bias_out"
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "custom-wide-mlp-7",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight_in": [
+          [
+            0.25,
+            -0.125,
+            0.375,
+            0.125
+          ],
+          [
+            -0.25,
+            0.5,
+            0.125,
+            -0.125
+          ],
+          [
+            0.125,
+            0.25,
+            -0.25,
+            0.5
+          ],
+          [
+            0.5,
+            -0.375,
+            0.25,
+            0.125
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.25
+          ],
+          [
+            0.375,
+            0.125,
+            -0.125,
+            0.25
+          ],
+          [
+            0.25,
+            0.5,
+            -0.375,
+            0.125
+          ]
+        ],
+        "bias_in": [
+          0.125,
+          -0.125,
+          0.25,
+          -0.25,
+          0.0625,
+          -0.0625,
+          0.1875
+        ],
+        "offset": [
+          0.125,
+          -0.25,
+          0.0625,
+          0.1875,
+          -0.0625,
+          0.125,
+          -0.125
+        ],
+        "weight_out": [
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.375,
+            -0.5,
+            0.25,
+            -0.125
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.375,
+            0.125,
+            -0.25,
+            0.375
+          ]
+        ],
+        "bias_out": [
+          0.125,
+          -0.0625
+        ]
+      },
+      "nodes": [
+        {
+          "id": "hidden",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "weight_in",
+          "bias": "bias_in"
+        },
+        {
+          "id": "squared",
+          "op": "square",
+          "inputs": [
+            "hidden"
+          ]
+        },
+        {
+          "id": "shifted",
+          "op": "add",
+          "inputs": [
+            "squared",
+            "offset"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "shifted"
+          ],
+          "weight": "weight_out",
+          "bias": "bias_out"
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "custom-wide-mlp-8",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight_in": [
+          [
+            0.25,
+            -0.125,
+            0.375,
+            0.125
+          ],
+          [
+            -0.25,
+            0.5,
+            0.125,
+            -0.125
+          ],
+          [
+            0.125,
+            0.25,
+            -0.25,
+            0.5
+          ],
+          [
+            0.5,
+            -0.375,
+            0.25,
+            0.125
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.25
+          ],
+          [
+            0.375,
+            0.125,
+            -0.125,
+            0.25
+          ],
+          [
+            0.25,
+            0.5,
+            -0.375,
+            0.125
+          ],
+          [
+            -0.5,
+            0.125,
+            0.25,
+            0.375
+          ]
+        ],
+        "bias_in": [
+          0.125,
+          -0.125,
+          0.25,
+          -0.25,
+          0.0625,
+          -0.0625,
+          0.1875,
+          -0.1875
+        ],
+        "offset": [
+          0.125,
+          -0.25,
+          0.0625,
+          0.1875,
+          -0.0625,
+          0.125,
+          -0.125,
+          0.25
+        ],
+        "weight_out": [
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.375,
+            -0.5,
+            0.25,
+            -0.125,
+            0.625
+          ],
+          [
+            -0.125,
+            0.25,
+            0.5,
+            -0.375,
+            0.125,
+            -0.25,
+            0.375,
+            -0.5
+          ]
+        ],
+        "bias_out": [
+          0.125,
+          -0.0625
+        ]
+      },
+      "nodes": [
+        {
+          "id": "hidden",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "weight_in",
+          "bias": "bias_in"
+        },
+        {
+          "id": "squared",
+          "op": "square",
+          "inputs": [
+            "hidden"
+          ]
+        },
+        {
+          "id": "shifted",
+          "op": "add",
+          "inputs": [
+            "squared",
+            "offset"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "shifted"
+          ],
+          "weight": "weight_out",
+          "bias": "bias_out"
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "conv1d-dilation2",
+      "input_shape": [
+        1,
+        4
+      ],
+      "constants": {
+        "w": [
+          [
+            [
+              0.5,
+              -0.25
+            ]
+          ]
+        ],
+        "b": [
+          0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "spatial",
+          "op": "conv1d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b",
+          "stride": [
+            1
+          ],
+          "padding": [
+            0
+          ],
+          "dilation": [
+            2
+          ],
+          "groups": 1
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "spatial"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "conv1d-dilation3",
+      "input_shape": [
+        1,
+        4
+      ],
+      "constants": {
+        "w": [
+          [
+            [
+              0.25,
+              0.5
+            ]
+          ]
+        ],
+        "b": [
+          -0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "spatial",
+          "op": "conv1d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b",
+          "stride": [
+            1
+          ],
+          "padding": [
+            0
+          ],
+          "dilation": [
+            3
+          ],
+          "groups": 1
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "spatial"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "conv2d-dilation2",
+      "input_shape": [
+        1,
+        1,
+        4
+      ],
+      "constants": {
+        "w": [
+          [
+            [
+              [
+                0.5,
+                -0.25
+              ]
+            ]
+          ]
+        ],
+        "b": [
+          0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "spatial",
+          "op": "conv2d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b",
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "dilation": [
+            1,
+            2
+          ],
+          "groups": 1
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "spatial"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "conv1d-groups2",
+      "input_shape": [
+        2,
+        2
+      ],
+      "constants": {
+        "w": [
+          [
+            [
+              0.5
+            ]
+          ],
+          [
+            [
+              -0.25
+            ]
+          ]
+        ],
+        "b": [
+          0.125,
+          -0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "spatial",
+          "op": "conv1d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b",
+          "stride": [
+            1
+          ],
+          "padding": [
+            0
+          ],
+          "dilation": [
+            1
+          ],
+          "groups": 2
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "spatial"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "conv2d-depthwise-multiplier",
+      "input_shape": [
+        2,
+        1,
+        2
+      ],
+      "constants": {
+        "w": [
+          [
+            [
+              [
+                0.5,
+                -0.25
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                0.25,
+                0.5
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                -0.5,
+                0.25
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                0.75,
+                -0.25
+              ]
+            ]
+          ]
+        ],
+        "b": [
+          0.125,
+          -0.125,
+          0.25,
+          -0.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "spatial",
+          "op": "conv2d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b",
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ],
+          "dilation": [
+            1,
+            1
+          ],
+          "groups": 2
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "spatial"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "conv2d-grouped-dilated-pad",
+      "input_shape": [
+        2,
+        1,
+        2
+      ],
+      "constants": {
+        "w": [
+          [
+            [
+              [
+                0.5,
+                -0.25
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                -0.5,
+                0.25
+              ]
+            ]
+          ]
+        ],
+        "b": [
+          0.125,
+          -0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "spatial",
+          "op": "conv2d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "w",
+          "bias": "b",
+          "stride": [
+            1,
+            2
+          ],
+          "padding": [
+            0,
+            1
+          ],
+          "dilation": [
+            1,
+            2
+          ],
+          "groups": 2
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "spatial"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "explicit-power-2",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "coefficient": [
+          0.5
+        ],
+        "offset": [
+          0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "raised",
+          "op": "power",
+          "inputs": [
+            "x"
+          ],
+          "exponent": 2
+        },
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "raised",
+            "coefficient"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "offset"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "explicit-power-4",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "coefficient": [
+          0.5
+        ],
+        "offset": [
+          0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "raised",
+          "op": "power",
+          "inputs": [
+            "x"
+          ],
+          "exponent": 4
+        },
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "raised",
+            "coefficient"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "offset"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "arithmetic-alias-chain",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "construction-linear",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.75
+          ],
+          [
+            -0.375,
+            0.25,
+            0.5,
+            -0.125
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "weight",
+          "bias": null
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "construction-sumslots3",
+      "input_shape": [
+        4
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "rot1",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": 1
+        },
+        {
+          "id": "sum1",
+          "op": "add",
+          "inputs": [
+            "x",
+            "rot1"
+          ]
+        },
+        {
+          "id": "rot2",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": 2
+        },
+        {
+          "id": "sum2",
+          "op": "add",
+          "inputs": [
+            "sum1",
+            "rot2"
+          ]
+        }
+      ],
+      "output": "sum2"
+    },
+    {
+      "schema": 2,
+      "id": "construction-sumslots4",
+      "input_shape": [
+        4
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "rot1",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": 1
+        },
+        {
+          "id": "sum1",
+          "op": "add",
+          "inputs": [
+            "x",
+            "rot1"
+          ]
+        },
+        {
+          "id": "rot2",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": 2
+        },
+        {
+          "id": "sum2",
+          "op": "add",
+          "inputs": [
+            "sum1",
+            "rot2"
+          ]
+        },
+        {
+          "id": "rot3",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": 3
+        },
+        {
+          "id": "sum3",
+          "op": "add",
+          "inputs": [
+            "sum2",
+            "rot3"
+          ]
+        }
+      ],
+      "output": "sum3"
+    },
+    {
+      "schema": 2,
+      "id": "construction-genpoly3",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "cubic": [
+          2
+        ],
+        "linear": [
+          -1.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "square",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "x"
+          ]
+        },
+        {
+          "id": "cube",
+          "op": "multiply",
+          "inputs": [
+            "square",
+            "x"
+          ]
+        },
+        {
+          "id": "high",
+          "op": "multiply",
+          "inputs": [
+            "cube",
+            "cubic"
+          ]
+        },
+        {
+          "id": "low",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "linear"
+          ]
+        },
+        {
+          "id": "odd",
+          "op": "add",
+          "inputs": [
+            "high",
+            "low"
+          ]
+        }
+      ],
+      "output": "odd"
+    },
+    {
+      "schema": 2,
+      "id": "construction-genpoly5",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "fifth": [
+          2
+        ],
+        "cubic": [
+          -0.5
+        ],
+        "linear": [
+          -0.625
+        ]
+      },
+      "nodes": [
+        {
+          "id": "square",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "x"
+          ]
+        },
+        {
+          "id": "cube",
+          "op": "multiply",
+          "inputs": [
+            "square",
+            "x"
+          ]
+        },
+        {
+          "id": "power5",
+          "op": "multiply",
+          "inputs": [
+            "cube",
+            "square"
+          ]
+        },
+        {
+          "id": "part5",
+          "op": "multiply",
+          "inputs": [
+            "power5",
+            "fifth"
+          ]
+        },
+        {
+          "id": "part3",
+          "op": "multiply",
+          "inputs": [
+            "cube",
+            "cubic"
+          ]
+        },
+        {
+          "id": "part1",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "linear"
+          ]
+        },
+        {
+          "id": "sum53",
+          "op": "add",
+          "inputs": [
+            "part5",
+            "part3"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "sum53",
+            "part1"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "construction-genpoly7",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "seventh": [
+          4
+        ],
+        "fifth": [
+          -5
+        ],
+        "cubic": [
+          2
+        ],
+        "linear": [
+          -0.4375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "square",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "x"
+          ]
+        },
+        {
+          "id": "cube",
+          "op": "multiply",
+          "inputs": [
+            "square",
+            "x"
+          ]
+        },
+        {
+          "id": "power5",
+          "op": "multiply",
+          "inputs": [
+            "cube",
+            "square"
+          ]
+        },
+        {
+          "id": "power7",
+          "op": "multiply",
+          "inputs": [
+            "power5",
+            "square"
+          ]
+        },
+        {
+          "id": "part7",
+          "op": "multiply",
+          "inputs": [
+            "power7",
+            "seventh"
+          ]
+        },
+        {
+          "id": "part5",
+          "op": "multiply",
+          "inputs": [
+            "power5",
+            "fifth"
+          ]
+        },
+        {
+          "id": "part3",
+          "op": "multiply",
+          "inputs": [
+            "cube",
+            "cubic"
+          ]
+        },
+        {
+          "id": "part1",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "linear"
+          ]
+        },
+        {
+          "id": "sum75",
+          "op": "add",
+          "inputs": [
+            "part7",
+            "part5"
+          ]
+        },
+        {
+          "id": "sum753",
+          "op": "add",
+          "inputs": [
+            "sum75",
+            "part3"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "sum753",
+            "part1"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "construction-genpoly-even",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "cubic": [
+          2
+        ],
+        "linear": [
+          -1.25
+        ],
+        "quadratic": [
+          0.5
+        ],
+        "offset": [
+          -0.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "square",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "x"
+          ]
+        },
+        {
+          "id": "cube",
+          "op": "multiply",
+          "inputs": [
+            "square",
+            "x"
+          ]
+        },
+        {
+          "id": "high",
+          "op": "multiply",
+          "inputs": [
+            "cube",
+            "cubic"
+          ]
+        },
+        {
+          "id": "low",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "linear"
+          ]
+        },
+        {
+          "id": "odd",
+          "op": "add",
+          "inputs": [
+            "high",
+            "low"
+          ]
+        },
+        {
+          "id": "even",
+          "op": "multiply",
+          "inputs": [
+            "square",
+            "quadratic"
+          ]
+        },
+        {
+          "id": "shifted",
+          "op": "add",
+          "inputs": [
+            "even",
+            "offset"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "odd",
+            "shifted"
+          ]
+        }
+      ],
+      "output": "out"
+    }
+  ]
+}

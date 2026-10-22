@@ -1,0 +1,367 @@
+{
+  "closure-nonlocal": {
+    "schema": 1,
+    "id": "closure-nonlocal",
+    "instruction": "Create and call nested closures. Update a nonlocal accumulator, preserve late binding, and use its value in the returned encrypted affine output.",
+    "required_features": [
+      "counter.nonlocal_writes",
+      "counter.helper_calls",
+      "counter.closure_instances"
+    ]
+  },
+  "call-defaults": {
+    "schema": 1,
+    "id": "call-defaults",
+    "instruction": "Use a helper with a default value, positional-only and keyword-only parameters; actually exercise an omitted default and a keyword argument in constructing the output.",
+    "required_features": [
+      "counter.default_evaluations",
+      "counter.keyword_arguments",
+      "signature.posonly",
+      "signature.kwonly",
+      "counter.helper_calls"
+    ]
+  },
+  "call-unpacking": {
+    "schema": 1,
+    "id": "call-unpacking",
+    "instruction": "Use *args and **kwargs parameters and call helpers with both * and ** argument expansion. The expanded operands must contribute to the affine result.",
+    "required_features": [
+      "signature.vararg",
+      "signature.kwarg",
+      "expansion.star",
+      "expansion.kwstar",
+      "counter.starred_expansions",
+      "counter.helper_calls"
+    ]
+  },
+  "comprehensions": {
+    "schema": 1,
+    "id": "comprehensions",
+    "instruction": "Build and consume both a list comprehension and dictionary comprehension to obtain operands for the affine result.",
+    "required_features": [
+      "node.ListComp",
+      "node.DictComp",
+      "counter.comprehensions"
+    ]
+  },
+  "iterators": {
+    "schema": 1,
+    "id": "iterators",
+    "instruction": "Use iter, next, enumerate, zip, reversed, list and tuple to build/consume public sequences of symbolic operands. Consume their values into the result. Bounded explicit sequences only, no generator expression.",
+    "required_features": [
+      "call.iter",
+      "call.next",
+      "call.enumerate",
+      "call.zip",
+      "call.reversed",
+      "call.list",
+      "call.tuple",
+      "counter.iterator_advances"
+    ]
+  },
+  "lambda-sorted": {
+    "schema": 1,
+    "id": "lambda-sorted",
+    "instruction": "Use a lambda as sorted key and call another lambda to construct the result from the sorted public entries. Sort public keys, never ciphertext values.",
+    "required_features": [
+      "node.Lambda",
+      "call.sorted",
+      "counter.lambda_instances",
+      "counter.sorted_calls",
+      "counter.sort_key_calls"
+    ]
+  },
+  "sequence-slices": {
+    "schema": 1,
+    "id": "sequence-slices",
+    "instruction": "Use public list slicing with a negative step, concatenation and repetition to select the affine operands. Include a slice assignment that changes an operand subsequently used in output.",
+    "required_features": [
+      "slice.read",
+      "slice.write",
+      "counter.sequence_operations",
+      "counter.slice_writes"
+    ]
+  },
+  "sequence-alias": {
+    "schema": 1,
+    "id": "sequence-alias",
+    "instruction": "Use list += and *= through aliases, then consume the changed shared list into the output. Preserve shallow sequence alias semantics.",
+    "required_features": [
+      "aug.Add",
+      "aug.Mult",
+      "counter.sequence_operations",
+      "counter.container_writes"
+    ]
+  },
+  "numeric-scalars": {
+    "schema": 1,
+    "id": "numeric-scalars",
+    "instruction": "Derive public affine coefficients using float(), int(), pow(), true division and **. The derived public arithmetic must feed ciphertext multiplication/addition.",
+    "required_features": [
+      "call.float",
+      "call.int",
+      "call.pow",
+      "binary.Div",
+      "binary.Pow",
+      "counter.public_numeric_operations"
+    ]
+  },
+  "numeric-arrays": {
+    "schema": 1,
+    "id": "numeric-arrays",
+    "instruction": "Construct numeric np.array and np.asarray, use trailing-dimension broadcast, reshape and flatten, then index/select derived constants for encrypted affine arithmetic.",
+    "required_features": [
+      "call.array",
+      "call.asarray",
+      "call.reshape",
+      "call.flatten",
+      "index.read",
+      "counter.public_array_operations"
+    ]
+  },
+  "while-control": {
+    "schema": 1,
+    "id": "while-control",
+    "instruction": "Use a genuinely iterated public while loop, both continue and break actually taken, and pass. Accumulate values used in affine output.",
+    "required_features": [
+      "node.While",
+      "node.Break",
+      "node.Continue",
+      "node.Pass",
+      "counter.while_iterations",
+      "counter.loop_breaks",
+      "counter.loop_continues"
+    ]
+  },
+  "loop-else": {
+    "schema": 1,
+    "id": "loop-else",
+    "instruction": "Use both for-else and while-else with the else suites actually reached by normal exhaustion. Each else must modify data used by the output.",
+    "required_features": [
+      "event.for_else",
+      "event.while_else",
+      "counter.loop_iterations",
+      "counter.while_iterations"
+    ]
+  },
+  "boolean-membership": {
+    "schema": 1,
+    "id": "boolean-membership",
+    "instruction": "Use public and, or, not, in and not in with real short-circuit evaluation. Branch decisions must choose operands contributing to the affine output. Never inspect ciphertext truth.",
+    "required_features": [
+      "bool.And",
+      "bool.Or",
+      "unary.Not",
+      "compare.In",
+      "compare.NotIn",
+      "counter.short_circuits",
+      "counter.membership_tests"
+    ]
+  },
+  "string-strip": {
+    "schema": 1,
+    "id": "string-strip",
+    "instruction": "Parse public coefficient text using strip, lstrip and rstrip, then float. Use resulting coefficients in encrypted affine arithmetic.",
+    "required_features": [
+      "call.strip",
+      "call.lstrip",
+      "call.rstrip",
+      "call.float",
+      "counter.public_string_calls"
+    ]
+  },
+  "string-split": {
+    "schema": 1,
+    "id": "string-split",
+    "instruction": "Parse coefficient text using split and rsplit including explicit separator fields, plus partition and rpartition. Consume the parsed values into affine output.",
+    "required_features": [
+      "call.split",
+      "call.rsplit",
+      "call.partition",
+      "call.rpartition",
+      "counter.public_string_calls"
+    ]
+  },
+  "string-replace-join": {
+    "schema": 1,
+    "id": "string-replace-join",
+    "instruction": "Use public replace and join to build/transform coefficient text, then parse it into coefficients actually used in encrypted output.",
+    "required_features": [
+      "call.replace",
+      "call.join",
+      "call.float",
+      "counter.public_string_calls"
+    ]
+  },
+  "chebyshev-coefficients": {
+    "schema": 1,
+    "id": "chebyshev-coefficients",
+    "instruction": "Create np.polynomial.Chebyshev public objects. Read coef, domain and window and use those values to derive the affine coefficients. Chebyshev coefficients are not monomial coefficients. No direct polynomial-object call on ciphertext.",
+    "required_features": [
+      "call.Chebyshev",
+      "attr.coef",
+      "attr.domain",
+      "attr.window",
+      "counter.public_polynomial_operations"
+    ]
+  },
+  "chebyshev-arithmetic": {
+    "schema": 1,
+    "id": "chebyshev-arithmetic",
+    "instruction": "Use public Chebyshev +, -, *, **, // and %; use quotient and remainder coefficient values to derive affine coefficients. Keep the calculation small, and never use these operators as ciphertext division.",
+    "required_features": [
+      "call.Chebyshev",
+      "binary.Add",
+      "binary.Sub",
+      "binary.Mult",
+      "binary.Pow",
+      "binary.FloorDiv",
+      "binary.Mod",
+      "attr.coef",
+      "counter.public_polynomial_operations"
+    ]
+  },
+  "numpy-functions": {
+    "schema": 1,
+    "id": "numpy-functions",
+    "instruction": "Use np.floor, np.ceil, np.log2 and both np.double/np.float64 dtype markers in public arrays; derive coefficients for the encrypted affine result.",
+    "required_features": [
+      "call.floor",
+      "call.ceil",
+      "call.log2",
+      "attr.double",
+      "attr.float64",
+      "counter.public_numpy_functions"
+    ]
+  },
+  "object-full-empty": {
+    "schema": 1,
+    "id": "object-full-empty",
+    "instruction": "Use np.full(..., Empty(), dtype=object), replace sentinel cells via symbolic accumulation, and use the resulting ciphertext cells in output. Empty - Expr returns Expr, not its negation: exercise that direction in the output too.",
+    "required_features": [
+      "call.full",
+      "call.Empty",
+      "counter.object_array_operations",
+      "counter.empty_operations",
+      "binary.Sub"
+    ]
+  },
+  "object-empty-initialization": {
+    "schema": 1,
+    "id": "object-empty-initialization",
+    "instruction": "Use np.empty(..., dtype=object), explicitly initialize None cells before reading/using them as ciphertext, and return a value obtained from the initialized object array.",
+    "required_features": [
+      "call.empty",
+      "subscript.write",
+      "counter.object_array_operations"
+    ]
+  },
+  "object-array-alias": {
+    "schema": 1,
+    "id": "object-array-alias",
+    "instruction": "Use np.array(..., dtype=object) and np.asarray with object dtype; demonstrate shared asarray storage by writing through an alias and using the original in output.",
+    "required_features": [
+      "call.array",
+      "call.asarray",
+      "subscript.write",
+      "counter.object_array_operations"
+    ]
+  },
+  "object-slice-copy": {
+    "schema": 1,
+    "id": "object-slice-copy",
+    "instruction": "Use symbolic object-array slicing and .copy(). Modify shared slice storage and independently modify the copy, then consume both in affine result.",
+    "required_features": [
+      "slice.read",
+      "call.copy",
+      "subscript.write",
+      "counter.object_array_operations"
+    ]
+  },
+  "object-reshape-transpose": {
+    "schema": 1,
+    "id": "object-reshape-transpose",
+    "instruction": "Use object-array reshape, .T, transpose and flatten. Derive output from the resulting symbolic cells. These reshape storage objects, never CKKS slots.",
+    "required_features": [
+      "call.reshape",
+      "attr.T",
+      "call.transpose",
+      "call.flatten",
+      "counter.object_array_operations"
+    ]
+  },
+  "object-concatenate": {
+    "schema": 1,
+    "id": "object-concatenate",
+    "instruction": "Use np.concatenate on symbolic object arrays, query shape/size/ndim and len, and iterate stored symbolic cells to obtain the affine output.",
+    "required_features": [
+      "call.concatenate",
+      "attr.shape",
+      "attr.size",
+      "attr.ndim",
+      "call.len",
+      "counter.object_array_operations",
+      "counter.loop_iterations"
+    ]
+  },
+  "object-augassign": {
+    "schema": 1,
+    "id": "object-augassign",
+    "instruction": "Use a scalar object-array cell += and *= on ciphertext values. The target evaluation must occur before RHS; use the mutated cell in the affine output.",
+    "required_features": [
+      "aug.Add",
+      "aug.Mult",
+      "subscript.write",
+      "counter.object_array_operations"
+    ]
+  },
+  "mapping-get-default": {
+    "schema": 1,
+    "id": "mapping-get-default",
+    "instruction": "Construct dict() from iterable pairs and keywords. Use get and setdefault to supply operands that contribute to the affine output.",
+    "required_features": [
+      "call.dict",
+      "call.get",
+      "call.setdefault",
+      "counter.mapping_calls",
+      "counter.mapping_writes"
+    ]
+  },
+  "mapping-update-copy": {
+    "schema": 1,
+    "id": "mapping-update-copy",
+    "instruction": "Use dict.update and shallow dict.copy, then consume updated original/copied entries into the affine output.",
+    "required_features": [
+      "call.update",
+      "call.copy",
+      "counter.mapping_calls",
+      "counter.mapping_writes"
+    ]
+  },
+  "mapping-pop-clear": {
+    "schema": 1,
+    "id": "mapping-pop-clear",
+    "instruction": "Use pop and popitem return values in the encrypted output; call clear and use the now-empty state to select an output operand.",
+    "required_features": [
+      "call.pop",
+      "call.popitem",
+      "call.clear",
+      "counter.mapping_calls",
+      "counter.mapping_writes"
+    ]
+  },
+  "mapping-live-views": {
+    "schema": 1,
+    "id": "mapping-live-views",
+    "instruction": "Use dict.keys, values and items views acquired BEFORE update. Mutate dict, then consume these live views using iteration/reversed/membership and their observed new values in the affine output.",
+    "required_features": [
+      "call.keys",
+      "call.values",
+      "call.items",
+      "call.update",
+      "call.reversed",
+      "counter.mapping_views",
+      "counter.mapping_writes"
+    ]
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "cases": [
+    {
+      "context": 0,
+      "id": "function_sections_0",
+      "input_shape": [
+        2,
+        4
+      ],
+      "manifest": "function_sections_0/manifest.json",
+      "output_style": "tensor",
+      "partition": "function_sections"
+    },
+    {
+      "context": 1,
+      "id": "function_sections_1",
+      "input_shape": [
+        4,
+        2
+      ],
+      "manifest": "function_sections_1/manifest.json",
+      "output_style": "tuple",
+      "partition": "function_sections"
+    },
+    {
+      "context": 2,
+      "id": "function_sections_2",
+      "input_shape": [
+        1,
+        2,
+        6
+      ],
+      "manifest": "function_sections_2/manifest.json",
+      "output_style": "dict",
+      "partition": "function_sections"
+    },
+    {
+      "context": 0,
+      "id": "method_size_0",
+      "input_shape": [
+        5
+      ],
+      "manifest": "method_size_0/manifest.json",
+      "output_style": "tensor",
+      "partition": "method_size"
+    },
+    {
+      "context": 1,
+      "id": "method_size_1",
+      "input_shape": [
+        2,
+        6
+      ],
+      "manifest": "method_size_1/manifest.json",
+      "output_style": "tuple",
+      "partition": "method_size"
+    },
+    {
+      "context": 2,
+      "id": "method_size_2",
+      "input_shape": [
+        1,
+        2,
+        7
+      ],
+      "manifest": "method_size_2/manifest.json",
+      "output_style": "dict",
+      "partition": "method_size"
+    },
+    {
+      "context": 0,
+      "id": "keyword_sections_0",
+      "input_shape": [
+        4
+      ],
+      "manifest": "keyword_sections_0/manifest.json",
+      "output_style": "tensor",
+      "partition": "keyword_sections"
+    },
+    {
+      "context": 1,
+      "id": "keyword_sections_1",
+      "input_shape": [
+        1,
+        6
+      ],
+      "manifest": "keyword_sections_1/manifest.json",
+      "output_style": "tuple",
+      "partition": "keyword_sections"
+    },
+    {
+      "context": 2,
+      "id": "keyword_sections_2",
+      "input_shape": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        8
+      ],
+      "manifest": "keyword_sections_2/manifest.json",
+      "output_style": "dict",
+      "partition": "keyword_sections"
+    },
+    {
+      "context": 0,
+      "id": "tuple_output_0",
+      "input_shape": [
+        4
+      ],
+      "manifest": "tuple_output_0/manifest.json",
+      "output_style": "direct_tuple",
+      "partition": "tuple_output"
+    },
+    {
+      "context": 1,
+      "id": "tuple_output_1",
+      "input_shape": [
+        2,
+        6
+      ],
+      "manifest": "tuple_output_1/manifest.json",
+      "output_style": "direct_tuple",
+      "partition": "tuple_output"
+    },
+    {
+      "context": 2,
+      "id": "tuple_output_2",
+      "input_shape": [
+        1,
+        2,
+        8
+      ],
+      "manifest": "tuple_output_2/manifest.json",
+      "output_style": "direct_tuple",
+      "partition": "tuple_output"
+    },
+    {
+      "context": 0,
+      "id": "public_loop_0",
+      "input_shape": [
+        10
+      ],
+      "manifest": "public_loop_0/manifest.json",
+      "output_style": "tensor",
+      "partition": "public_loop"
+    },
+    {
+      "context": 1,
+      "id": "public_loop_1",
+      "input_shape": [
+        2,
+        12
+      ],
+      "manifest": "public_loop_1/manifest.json",
+      "output_style": "tuple",
+      "partition": "public_loop"
+    },
+    {
+      "context": 2,
+      "id": "public_loop_2",
+      "input_shape": [
+        1,
+        1,
+        14
+      ],
+      "manifest": "public_loop_2/manifest.json",
+      "output_style": "dict",
+      "partition": "public_loop"
+    },
+    {
+      "context": 0,
+      "id": "public_weight_0",
+      "input_shape": [
+        1,
+        3
+      ],
+      "manifest": "public_weight_0/manifest.json",
+      "output_style": "tensor",
+      "partition": "public_weight"
+    },
+    {
+      "context": 1,
+      "id": "public_weight_1",
+      "input_shape": [
+        2,
+        3
+      ],
+      "manifest": "public_weight_1/manifest.json",
+      "output_style": "tuple",
+      "partition": "public_weight"
+    },
+    {
+      "context": 2,
+      "id": "public_weight_2",
+      "input_shape": [
+        1,
+        2,
+        3
+      ],
+      "manifest": "public_weight_2/manifest.json",
+      "output_style": "dict",
+      "partition": "public_weight"
+    }
+  ],
+  "format": "poseidon-pytorch-split-contexts-v1",
+  "models_source_sha256": "582c487936811421183a1fd884d9741854c246b9682e53232b1c42fe5d001a31",
+  "paid_calls": 0,
+  "partitions": 6,
+  "planned": 18,
+  "source_origin": "ordinary_pytorch_fixed_public_weights"
+}

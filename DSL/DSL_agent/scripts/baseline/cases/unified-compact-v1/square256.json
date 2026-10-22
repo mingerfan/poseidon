@@ -1,0 +1,32 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "compact_v1_square256",
+  "inputs": [
+    {
+      "name": "input0",
+      "shape": [
+        256
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "n0",
+      "op": "square",
+      "inputs": [
+        "input0"
+      ],
+      "attrs": {},
+      "outputs": [
+        "n0v0"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output0",
+      "value": "n0v0"
+    }
+  ]
+}

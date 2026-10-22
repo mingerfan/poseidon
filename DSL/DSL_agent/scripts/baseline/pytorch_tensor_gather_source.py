@@ -1,0 +1,6 @@
+"""Explicit v37 source protocol; inherits v36 and registers public gather normalization."""
+SOURCE_FORMAT="poseidon-trusted-pytorch-v37"
+PACKAGE_FORMAT="poseidon-trusted-pytorch-provenance-v37"
+REFERENCE_FORMAT="poseidon-trusted-pytorch-reference-v37"
+CAPTURE_FORMAT="poseidon-public-expression-source-capture-v14"
+POLICY="poseidon-pytorch-public-tensor-gather-v1"

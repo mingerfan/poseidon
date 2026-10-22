@@ -1,0 +1,11 @@
+{
+  "schema": 3,
+  "id": "custom-triple-merge",
+  "inputs": [{"name": "first", "shape": [4]}, {"name": "second", "shape": [4]}, {"name": "skip", "shape": [4]}],
+  "constants": {},
+  "nodes": [
+    {"id": "sum", "op": "add", "inputs": ["first", "second"]},
+    {"id": "out", "op": "subtract", "inputs": ["sum", "skip"]}
+  ],
+  "output": "out"
+}

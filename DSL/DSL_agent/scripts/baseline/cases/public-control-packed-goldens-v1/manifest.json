@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "construct_121_2",
+    "task_sha256": "8b12441c89be2a7494ffd6a9d1d4fdfff99588acf9efeb1c74049152e93dff80",
+    "model_sha256": "ded3af853ae7b8bbea137971cbffb3536d9adbdaebcc7befecc836ae856f58af",
+    "exercise": "unified-public-counter-public_array_operations",
+    "model_file": "construct_121_2.json",
+    "source_file": "construct_121_2.py",
+    "origin": "manual packed correctness golden; not rule baseline or Agent"
+  },
+  {
+    "task_id": "construct_122_1",
+    "task_sha256": "94675e5d09a43c9c41fd100974bbe102a8425bcc12627c8724b1c94043e9978c",
+    "model_sha256": "6cc66163e4a31d802529384263de92f37e39253dbcf1ad3806d5615d19a55e34",
+    "exercise": "unified-public-counter-public_numeric_operations",
+    "model_file": "construct_122_1.json",
+    "source_file": "construct_122_1.py",
+    "origin": "manual packed correctness golden; not rule baseline or Agent"
+  },
+  {
+    "task_id": "construct_124_0",
+    "task_sha256": "620c47faff19ef4ac35ef5cfca3d3434469a79fec31b7c76589a7297a23b7b58",
+    "model_sha256": "7a3a362d8de1bab878832ee0b975bfd96a65a37b9779bf8738c7b510bfdfe0cc",
+    "exercise": "unified-public-counter-public_polynomial_operations",
+    "model_file": "construct_124_0.json",
+    "source_file": "construct_124_0.py",
+    "origin": "manual packed correctness golden; not rule baseline or Agent"
+  }
+]

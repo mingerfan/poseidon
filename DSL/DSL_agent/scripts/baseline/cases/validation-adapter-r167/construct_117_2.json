@@ -1,0 +1,335 @@
+{
+  "original_case": "construct_117_2",
+  "request": {
+    "compiler_configuration": {
+      "backend": "upstream_SEAL_HEVM_CPU",
+      "ckks_config_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+      "identity_sha256": "b37bb8a8942013637366a241389a087cd0562c3e7c3d0b8326f701b73406bf46",
+      "name": "seal-cpu-eva-w45-v1",
+      "pipeline": "eva",
+      "schema": 1,
+      "waterline": 45
+    },
+    "compiler_profile_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "constant_origins": {
+      "kind": "verified public model and layout"
+    },
+    "construction_exercise": {
+      "id": "unified-public-counter-mapping_writes",
+      "instruction": "Observe a positive trusted counter.mapping_writes increment at its executed source span, and show finite output influence of the associated operation at that span. This is scoped operational evidence, not an assertion that the accounting integer itself is a numerical model input.",
+      "required_features": [
+        "counter.mapping_writes"
+      ]
+    },
+    "construction_profile": "hecate-unified-public-v1",
+    "fx_graph": "independent typed logical DAG; no rule DSL included",
+    "generation_guidance": {
+      "authority": "This guidance clarifies the existing rules; it adds no allowed syntax, helper, resource budget or backend capability.",
+      "constant_rule": "Use public_constants keys directly as prebound names. Do not define replacement weights or load a dictionary/file. hc and np are provided by the trusted runner; do not import them.",
+      "construction_requirements": [],
+      "directed_semantics": [
+        {
+          "counted_operation": {
+            "feature": "call.update",
+            "registered_instruction": "Execute call.update with a matching control or state-change intervention that changes a named output. Preserve argument/RHS evaluation where the intervention suppresses a write. Dead/unused operations do not qualify; finite evidence is not an all-input proof."
+          },
+          "feature": "counter.mapping_writes",
+          "registered_instruction": "Observe a positive trusted counter.mapping_writes increment at its executed source span, and show finite output influence of the associated operation at that span. This is scoped operational evidence, not an assertion that the accounting integer itself is a numerical model input."
+        }
+      ],
+      "encrypted_zero_rule": "The SEAL backend can reject transparent ciphertexts produced by exact ciphertext self-cancellation or multiplication by plaintext zero. The supplied zero_ct is a genuine client-encrypted zero. Preserve the mathematical graph semantics without relying on a transparent intermediate; do not disable backend checks or decrypt/re-encrypt.",
+      "entry_header": "@hc.func(\"c,c,c\")\ndef golden(x, y, zero_ct):",
+      "entry_name": "golden",
+      "entry_rule": "Define exactly one top-level golden. The header has no body; implement the supplied graph yourself. Use the literal decorator call with parentheses and the exact c signature, never bare @hc.func.",
+      "helper_rule": "Additional construction helpers are undecorated and obey the public construction rules.",
+      "logical_model_semantics": {
+        "attributes": "All required attributes are explicit in each node; no implicit framework defaults are to be inferred.",
+        "axes": "Negative existing axes are normalized against input rank; stack inserts an axis and normalizes against output rank.",
+        "broadcasting": "Align dimensions from the right. Each pair must be equal or contain 1. Public broadcasting cannot expand the encrypted operand shape.",
+        "layout_boundary": "Model operators act on logical tensors. Padding, repeated periods, chunks and Expr object-array storage are representation details, not extra mathematical elements.",
+        "operations": {
+          "concat": "Concatenate the listed logical tensors in input-list order along existing attrs.axis; all other dimensions must match.",
+          "multiply": "Elementwise x * y with right-aligned broadcasting; this is not matrix multiplication.",
+          "polynomial": "Inputs are x and a public 1-D coefficient vector c in ascending degree order. basis=power means sum_k c[k]*x**k. basis=chebyshev means sum_k c[k]*T_k(x), where T_0=1, T_1=x, T_(k+1)=2*x*T_k-T_(k-1). Evaluate this polynomial itself; do not substitute an original nonlinear function."
+        },
+        "ordering": "Named input/output order and node output order are significant. Tensor flattening always uses C order.",
+        "scope": "Mathematical definition of the public input graph; no DSL implementation or test answers.",
+        "version": "logical-tensors-v1"
+      },
+      "ordered_parameters": [
+        "x",
+        "y",
+        "zero_ct"
+      ],
+      "output_rule": "Return exactly layout.output_ciphertexts whole ciphertext expressions in the frozen output order; object-array cells are whole expressions, not slots.",
+      "parameter_rule": "Use exactly these unannotated positional names, without defaults, varargs or keyword-only parameters. zero_ct is the final trusted ciphertext argument.",
+      "rotation_rule": "Call ciphertext.rotate(k), never hc.rotate(...). The request rules determine permitted displacements.",
+      "version": "explicit-v4"
+    },
+    "layout": {
+      "auxiliary_ciphertexts": [
+        {
+          "dsl_name": "zero_ct",
+          "kind": "encrypted_zero",
+          "slot_period": 8,
+          "source": "trusted_client"
+        }
+      ],
+      "execution_abi": "unified-periodic-inputs-v1",
+      "input_slot_period": 8,
+      "inputs": [
+        {
+          "dsl_name": "x",
+          "name": "input0",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "dsl_name": "y",
+          "name": "input1",
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "output_ciphertexts": 1,
+      "output_representation": "named_packed_prefixes",
+      "output_selectors": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ]
+      ],
+      "output_shape": [
+        6
+      ],
+      "outputs": [
+        {
+          "ciphertext": 0,
+          "name": "output0",
+          "shape": [
+            6
+          ]
+        }
+      ]
+    },
+    "model": {
+      "constants": {
+        "c0": [
+          0.0625,
+          -0.125,
+          0.03125,
+          0.015625
+        ],
+        "c1": [
+          0.125
+        ]
+      },
+      "format": "poseidon-model-graph-v1",
+      "id": "bench_graph_0353",
+      "inputs": [
+        {
+          "name": "input0",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "input1",
+          "shape": [
+            3
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "attrs": {
+            "basis": "power"
+          },
+          "id": "n0",
+          "inputs": [
+            "input0",
+            "c0"
+          ],
+          "op": "polynomial",
+          "outputs": [
+            "n0v0"
+          ]
+        },
+        {
+          "attrs": {},
+          "id": "n1",
+          "inputs": [
+            "input1",
+            "c1"
+          ],
+          "op": "multiply",
+          "outputs": [
+            "n1v0"
+          ]
+        },
+        {
+          "attrs": {
+            "axis": 0
+          },
+          "id": "n2",
+          "inputs": [
+            "n0v0",
+            "n1v0"
+          ],
+          "op": "concat",
+          "outputs": [
+            "n2v0"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output0",
+          "value": "n2v0"
+        }
+      ]
+    },
+    "privacy": {
+      "input": "encrypted",
+      "weights": "public"
+    },
+    "public_constants": {
+      "mask0": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mask1": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mask2": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mask3": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mask4": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mask5": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "p0": -2.0,
+      "p1": -1.0,
+      "p10": 2.0,
+      "p2": -0.125,
+      "p3": 0.0,
+      "p4": 0.015625,
+      "p5": 0.03125,
+      "p6": 0.0625,
+      "p7": 0.125,
+      "p8": 0.5,
+      "p9": 1.0
+    },
+    "request_id": "c90f7189c7b5bc0f7680c7dd07b216f2a83224f4b4ddc7dabe98f0fd4c79fe01",
+    "response_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "hecate_source": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "schema": {
+          "enum": [
+            1
+          ],
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema",
+        "request_id",
+        "hecate_source"
+      ],
+      "type": "object"
+    },
+    "rules": "Implement the immutable logical graph and all named outputs.\nThe trusted runner supplies hc and public_constants; no imports or candidate Python execution.\nOnly golden is decorated @hc.func with one c per ordered logical input plus zero_ct.\nOther functions are undecorated construction-time AST helpers, not native Hecate Func calls.\nUse bounded lexical helpers/closures/nonlocal, defaults, positional/keyword binding, lambdas,\nlist/tuple/dict containers and views, public comprehensions, public if/for/while,\nbreak/continue and early helper returns. All conditions, indices and iteration are public.\nAllowed public builtins: range,len,enumerate,zip,reversed,iter,next,list,tuple,dict,sorted,\nint,float,pow. No eval/exec, arbitrary attributes, I/O, network, reflection or external calls.\nPublic strings allow strip/lstrip/rstrip,split/rsplit,partition/rpartition,replace,join.\nNumeric np.array/asarray use finite bounded real data, reshape/flatten, shape and item.\nPublic np.floor/ceil/log2 and np.polynomial.Chebyshev with coef/domain/window are allowed.\nObject arrays support the bounded registered np.empty/full/concatenate, indexing, copies,\nviews, reshape/transpose/T, object arithmetic and name-target mutation, np.negative/positive.\nEmpty()/hc.Empty() is only a symbolic construction identity; never encryption or bootstrap.\nWhole Expr objects are array cells, not slots. Golden returns exactly one cipher Expr\nper named output, in a flat list/tuple or a one-dimensional object array; no implicit flattening.\nCipher arithmetic is +,-,*,unary minus,rotate(k); each arithmetic pair requires a cipher.\nEvery input uses separate C-order padded packing repeated every P=layout.input_slot_period.\nOutputs use the fixed C-order prefix and frozen selectors. Only positive power-of-two\nrotations below P are legal. Compose rotations for other offsets.\nPublic supplied constants stay immutable. Derived Plain encoding is scalar or length P;\npublic arrays/containers remain limited to128 elements, rank<=4; shape rules still apply.\nFinite public scalar magnitude<=1024 when encoded as Plain. No ciphertext conditions,\ntraining, random forward, bootstrap, level changes or plaintext replacement of FHE.\nAt most17 total function/lambda declarations,128 helper calls,call depth<16;\nsource<=65536 bytes,AST<=4096 nodes,interpretation<=4096 steps,emitted cipher ops<=256.\nOther existing type,integer,string,container,iteration,recursion and sandbox bounds apply.\nCompiler owns scale/levels,rescale,modswitch,relinearization and security; client owns keys.\nDo not alter model weights,layout,reference,test inputs,tolerance or compiler configuration.\nReturn only response-schema JSON. Acceptance requires real compilation and encrypted comparison.\n",
+    "schema": 1,
+    "semantic_guidance": {
+      "helper_semantics": "trusted bounded public AST construction, not native Func calls",
+      "model": "logical tensor graph",
+      "packing": "common periodic inputs, named packed outputs",
+      "profile": "hecate-unified-public-v1",
+      "schema": 1
+    },
+    "task": "hecate-unified-graph-synthesis-v1"
+  },
+  "candidate": {
+    "hecate_source": "@hc.func(\"c,c,c\")\ndef golden(x, y, zero_ct):\n    counter = {}\n    counter[\"mapping_writes\"] = 0\n    d = {}\n    for step in range(2):\n        counter[\"mapping_writes\"] = counter[\"mapping_writes\"] + 1\n        if counter[\"mapping_writes\"] == 1:\n            d.update({\"n0\": p6 + p2 * x + p5 * x * x + p4 * x * x * x})\n        else:\n            d.update({\"n1\": p7 * y})\n    a = d[\"n0\"]\n    b = d[\"n1\"]\n    out = a * mask0 + a * mask1 + a * mask2 + b.rotate(1).rotate(4)\n    return [out]\n",
+    "request_id": "c90f7189c7b5bc0f7680c7dd07b216f2a83224f4b4ddc7dabe98f0fd4c79fe01",
+    "schema": 1
+  },
+  "original_source_sha256": "5010b931d2f0bb34d7c21b01b6e30b38b21e3fd9ccae0034112172dd4138775b",
+  "manual_repair": true,
+  "new_agent_generation": false,
+  "reason": "Period-8 concat shifts the second length-3 input right by 3, equivalent to left by 5. Original left-by-3 rotation was incorrect."
+}

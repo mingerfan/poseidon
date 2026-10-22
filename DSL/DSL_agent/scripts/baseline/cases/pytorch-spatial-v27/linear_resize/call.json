@@ -1,0 +1,10 @@
+{
+  "format": "poseidon-pytorch-call-v1",
+  "args": [
+    {
+      "kind": "tensor",
+      "name": "x"
+    }
+  ],
+  "kwargs": {}
+}

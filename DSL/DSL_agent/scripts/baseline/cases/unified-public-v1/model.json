@@ -1,0 +1,76 @@
+{
+  "constants": {},
+  "format": "poseidon-model-graph-v1",
+  "id": "pending",
+  "inputs": [
+    {
+      "name": "input0",
+      "shape": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "input1",
+      "shape": [
+        6
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "id": "n0",
+      "inputs": [
+        "input1"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "n0v0"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "n1",
+      "inputs": [
+        "input0",
+        "n0v0"
+      ],
+      "op": "subtract",
+      "outputs": [
+        "n1v0"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "id": "n2",
+      "inputs": [
+        "n1v0"
+      ],
+      "op": "mean",
+      "outputs": [
+        "n2v0"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output0",
+      "value": "n1v0"
+    },
+    {
+      "name": "output1",
+      "value": "n2v0"
+    }
+  ]
+}

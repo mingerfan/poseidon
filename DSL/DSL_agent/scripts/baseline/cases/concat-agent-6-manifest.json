@@ -1,0 +1,487 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "id": "concat-vector",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "a": [
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ]
+        ],
+        "b": [
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "a1",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "a",
+          "bias": null
+        },
+        {
+          "id": "b1",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "b",
+          "bias": null
+        },
+        {
+          "id": "out",
+          "op": "concat",
+          "inputs": [
+            "a1",
+            "b1"
+          ],
+          "axis": 0
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 3,
+      "id": "concat-packed",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "y",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "constants": {
+        "w": [
+          [
+            0.5,
+            -1,
+            0.25,
+            2,
+            -2,
+            0.75,
+            1,
+            -0.5
+          ],
+          [
+            1,
+            2,
+            3,
+            4,
+            4,
+            3,
+            2,
+            1
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "c",
+          "op": "concat",
+          "inputs": [
+            "x",
+            "y"
+          ],
+          "axis": 0
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "c"
+          ],
+          "weight": "w",
+          "bias": null
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 3,
+      "id": "concat-axis0",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            2
+          ]
+        },
+        {
+          "name": "y",
+          "shape": [
+            2,
+            2
+          ]
+        }
+      ],
+      "constants": {
+        "eye": [
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "w": [
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            -1,
+            0
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "yf",
+          "op": "flatten",
+          "inputs": [
+            "y"
+          ]
+        },
+        {
+          "id": "ys",
+          "op": "linear",
+          "inputs": [
+            "yf"
+          ],
+          "weight": "eye",
+          "bias": null
+        },
+        {
+          "id": "ym",
+          "op": "reshape",
+          "inputs": [
+            "ys"
+          ],
+          "shape": [
+            2,
+            2
+          ]
+        },
+        {
+          "id": "c",
+          "op": "concat",
+          "inputs": [
+            "x",
+            "ym"
+          ],
+          "axis": 0
+        },
+        {
+          "id": "f",
+          "op": "flatten",
+          "inputs": [
+            "c"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "f"
+          ],
+          "weight": "w",
+          "bias": null
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 3,
+      "id": "concat-axisneg",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            2,
+            2
+          ]
+        },
+        {
+          "name": "y",
+          "shape": [
+            2,
+            2
+          ]
+        }
+      ],
+      "constants": {
+        "w": [
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          [
+            -1,
+            0.5,
+            -0.25,
+            1,
+            2,
+            -2,
+            0.75,
+            -0.5
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "c",
+          "op": "concat",
+          "inputs": [
+            "x",
+            "y"
+          ],
+          "axis": -1
+        },
+        {
+          "id": "f",
+          "op": "flatten",
+          "inputs": [
+            "c"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "f"
+          ],
+          "weight": "w",
+          "bias": null
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "concat-three",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "a": [
+          [
+            1,
+            0,
+            0,
+            0
+          ]
+        ],
+        "b": [
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ]
+        ],
+        "c": [
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ]
+      },
+      "nodes": [
+        {
+          "id": "a1",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "a",
+          "bias": null
+        },
+        {
+          "id": "b1",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "b",
+          "bias": null
+        },
+        {
+          "id": "c1",
+          "op": "linear",
+          "inputs": [
+            "x"
+          ],
+          "weight": "c",
+          "bias": null
+        },
+        {
+          "id": "out",
+          "op": "concat",
+          "inputs": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "axis": -1
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "concat-spatial",
+      "input_shape": [
+        1,
+        4
+      ],
+      "constants": {
+        "a": [
+          [
+            [
+              1
+            ]
+          ]
+        ],
+        "b": [
+          [
+            [
+              2
+            ]
+          ]
+        ],
+        "bias": [
+          0.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "a1",
+          "op": "conv1d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "a",
+          "bias": null,
+          "stride": [
+            2
+          ],
+          "padding": [
+            0
+          ]
+        },
+        {
+          "id": "b1",
+          "op": "conv1d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "b",
+          "bias": "bias",
+          "stride": [
+            2
+          ],
+          "padding": [
+            0
+          ]
+        },
+        {
+          "id": "c",
+          "op": "concat",
+          "inputs": [
+            "a1",
+            "b1"
+          ],
+          "axis": 1
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "c"
+          ]
+        }
+      ],
+      "output": "out"
+    }
+  ]
+}

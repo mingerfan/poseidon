@@ -1,0 +1,455 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "id": "exercise-nf-scalar",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-pair",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-nested",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-forward",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 3,
+      "id": "exercise-nf-two-inputs",
+      "inputs": [
+        {
+          "name": "left",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "right",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "difference",
+          "op": "subtract",
+          "inputs": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "output": "difference"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-public-argument",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-identity",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-repeated",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-zero-input",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-empty",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-nf-plain-return",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    }
+  ]
+}

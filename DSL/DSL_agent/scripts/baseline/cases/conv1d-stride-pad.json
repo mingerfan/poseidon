@@ -1,0 +1,47 @@
+{
+  "schema": 2,
+  "id": "conv1d-stride-pad",
+  "input_shape": [
+    1,
+    4
+  ],
+  "constants": {
+    "w": [
+      [
+        [
+          0.3,
+          -0.2,
+          0.5
+        ]
+      ]
+    ],
+    "b": [
+      -0.1
+    ]
+  },
+  "nodes": [
+    {
+      "id": "spatial",
+      "op": "conv1d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w",
+      "bias": "b",
+      "stride": [
+        2
+      ],
+      "padding": [
+        1
+      ]
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "spatial"
+      ]
+    }
+  ],
+  "output": "out"
+}

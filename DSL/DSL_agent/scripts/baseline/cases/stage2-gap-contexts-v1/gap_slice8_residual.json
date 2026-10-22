@@ -1,0 +1,60 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "gap_slice8_residual",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        10
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "base",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 1,
+        "stop": 8,
+        "step": 1
+      },
+      "outputs": [
+        "base_v"
+      ]
+    },
+    {
+      "id": "context",
+      "op": "square",
+      "inputs": [
+        "base_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "z"
+      ]
+    },
+    {
+      "id": "shared",
+      "op": "add",
+      "inputs": [
+        "z",
+        "base_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

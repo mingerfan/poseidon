@@ -1,0 +1,594 @@
+{
+  "format": "poseidon-cnn-transformer-scope-v1",
+  "rows": [
+    {
+      "name": "linear",
+      "group": "linear_convolution",
+      "operator": "linear",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "dot",
+      "group": "linear_convolution",
+      "operator": "dot",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "matmul",
+      "group": "linear_convolution",
+      "operator": "matmul",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "batched_matmul",
+      "group": "linear_convolution",
+      "operator": "matmul",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "conv1d",
+      "group": "linear_convolution",
+      "operator": "conv1d",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "conv2d",
+      "group": "linear_convolution",
+      "operator": "conv2d",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "grouped_conv",
+      "group": "linear_convolution",
+      "operator": "conv2d",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "depthwise_conv",
+      "group": "linear_convolution",
+      "operator": "conv2d",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "batch_norm",
+      "group": "normalization",
+      "operator": "batch_norm",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "layer_norm",
+      "group": "normalization",
+      "operator": "layer_norm",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "rms_norm",
+      "group": "normalization",
+      "operator": "rms_norm",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "group_norm",
+      "group": "normalization",
+      "operator": "group_norm",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "instance_norm",
+      "group": "normalization",
+      "operator": "instance_norm",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "relu",
+      "group": "nonlinear",
+      "operator": "relu",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "leaky_relu",
+      "group": "nonlinear",
+      "operator": "leaky_relu",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "prelu",
+      "group": "nonlinear",
+      "operator": "prelu",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "gelu",
+      "group": "nonlinear",
+      "operator": "gelu",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "silu",
+      "group": "nonlinear",
+      "operator": "silu",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "sigmoid",
+      "group": "nonlinear",
+      "operator": "sigmoid",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "tanh",
+      "group": "nonlinear",
+      "operator": "tanh",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "exp",
+      "group": "nonlinear",
+      "operator": "exp",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "reciprocal",
+      "group": "nonlinear",
+      "operator": "reciprocal",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "sqrt",
+      "group": "nonlinear",
+      "operator": "sqrt",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "rsqrt",
+      "group": "nonlinear",
+      "operator": "rsqrt",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "avg_pool1d",
+      "group": "pool_reduction",
+      "operator": "avg_pool1d",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "avg_pool2d",
+      "group": "pool_reduction",
+      "operator": "avg_pool2d",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "global_avg_pool",
+      "group": "pool_reduction",
+      "operator": "global_avg_pool",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "adaptive_avg_pool",
+      "group": "pool_reduction",
+      "operator": "adaptive_avg_pool",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "max_pool",
+      "group": "pool_reduction",
+      "operator": "max_pool1d",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "Explicit abs-difference polynomial and fixed balanced reduction tree; approximation error scored separately",
+      "operators": [
+        "max_pool1d",
+        "max_pool2d"
+      ],
+      "historical_backend_evidence": "docs/baseline/stage3-extrema-offline-r229.json"
+    },
+    {
+      "name": "sum",
+      "group": "pool_reduction",
+      "operator": "sum",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "mean",
+      "group": "pool_reduction",
+      "operator": "mean",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "variance",
+      "group": "pool_reduction",
+      "operator": "variance",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "max",
+      "group": "pool_reduction",
+      "operator": "max",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "Explicit abs-difference polynomial and fixed balanced reduction tree; approximation error scored separately",
+      "historical_backend_evidence": "docs/baseline/stage3-extrema-offline-r229.json"
+    },
+    {
+      "name": "min",
+      "group": "pool_reduction",
+      "operator": "min",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "Explicit abs-difference polynomial and fixed balanced reduction tree; approximation error scored separately",
+      "historical_backend_evidence": "docs/baseline/stage3-extrema-offline-r229.json"
+    },
+    {
+      "name": "reshape",
+      "group": "tensor",
+      "operator": "reshape",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "flatten",
+      "group": "tensor",
+      "operator": "flatten",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "permute",
+      "group": "tensor",
+      "operator": "permute",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "transpose",
+      "group": "tensor",
+      "operator": "transpose",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "broadcast",
+      "group": "tensor",
+      "operator": "broadcast",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "concat",
+      "group": "tensor",
+      "operator": "concat",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "stack",
+      "group": "tensor",
+      "operator": "stack",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "slice",
+      "group": "tensor",
+      "operator": "slice",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "split",
+      "group": "tensor",
+      "operator": "split",
+      "implementation": "core",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "padding",
+      "group": "tensor",
+      "operator": "padding",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "constant/reflect/replicate; nonnegative static per-axis padding",
+      "historical_backend_evidence": "docs/baseline/stage3-extrema-offline-r229.json"
+    },
+    {
+      "name": "public_gather",
+      "group": "tensor",
+      "operator": "public_gather",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "softmax",
+      "group": "transformer",
+      "operator": "softmax",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "logsoftmax",
+      "group": "transformer",
+      "operator": "logsoftmax",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "scaled_dot_product_attention",
+      "group": "transformer",
+      "operator": null,
+      "implementation": "pending",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "multi_head_attention",
+      "group": "transformer",
+      "operator": null,
+      "implementation": "pending",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "public_mask",
+      "group": "transformer",
+      "operator": null,
+      "implementation": "pending",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "rope",
+      "group": "transformer",
+      "operator": "rope",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "explicit_kv_cache",
+      "group": "transformer",
+      "operator": null,
+      "implementation": "pending",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "residual",
+      "group": "structure",
+      "operator": null,
+      "implementation": "graph_structure",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "fanout",
+      "group": "structure",
+      "operator": null,
+      "implementation": "graph_structure",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "shared_intermediate",
+      "group": "structure",
+      "operator": null,
+      "implementation": "graph_structure",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "multi_input_output",
+      "group": "structure",
+      "operator": null,
+      "implementation": "graph_structure",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    },
+    {
+      "name": "dropout_eval",
+      "group": "structure",
+      "operator": "dropout",
+      "implementation": "decomposition",
+      "current_binding_backend": "not_run",
+      "current_binding_agent": "not_run",
+      "required_contexts": 3,
+      "limitations": "See versioned operator attributes and resource profile"
+    }
+  ],
+  "excluded": [
+    "training",
+    "dynamic_shapes",
+    "encrypted_control_flow",
+    "rnn",
+    "lstm",
+    "gru",
+    "encrypted_embedding"
+  ],
+  "bootstrap_status": "blocked_security_profile",
+  "cuda_status": "awaiting_nvidia_hardware"
+}

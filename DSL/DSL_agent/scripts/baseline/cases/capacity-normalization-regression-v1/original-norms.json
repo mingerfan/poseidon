@@ -1,0 +1,514 @@
+{
+  "constants": {
+    "generated_10": 0.5,
+    "generated_13": 0.0,
+    "generated_16": 0.7071067811865475,
+    "generated_23": -0.5,
+    "generated_26": 1.5,
+    "weight_0": 0.125,
+    "weight_1": [
+      1.0,
+      1.0
+    ],
+    "weight_2": [
+      0.0,
+      0.0
+    ],
+    "weight_3": 0.25,
+    "weight_4": [
+      1.0,
+      1.0
+    ],
+    "weight_5": [
+      0.0,
+      0.0
+    ]
+  },
+  "format": "poseidon-model-graph-v2",
+  "id": "pytorch_model",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "generated_1",
+      "inputs": [
+        "x",
+        "weight_0"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "id": "generated_3",
+      "inputs": [
+        "generated_0"
+      ],
+      "op": "mean",
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_5",
+      "inputs": [
+        "generated_0",
+        "generated_2"
+      ],
+      "op": "subtract",
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_7",
+      "inputs": [
+        "generated_4"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "id": "generated_9",
+      "inputs": [
+        "generated_6"
+      ],
+      "op": "mean",
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_12",
+      "inputs": [
+        "generated_8",
+        "generated_10"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_11"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_15",
+      "inputs": [
+        "generated_11",
+        "generated_13"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_14"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_18",
+      "inputs": [
+        "generated_14",
+        "generated_16"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_17"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_20",
+      "inputs": [
+        "generated_17"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_19"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_22",
+      "inputs": [
+        "generated_11",
+        "generated_19"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_21"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_25",
+      "inputs": [
+        "generated_21",
+        "generated_23"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_24"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_28",
+      "inputs": [
+        "generated_24",
+        "generated_26"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_27"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_30",
+      "inputs": [
+        "generated_17",
+        "generated_27"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_29"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_32",
+      "inputs": [
+        "generated_4",
+        "generated_29"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_31"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_34",
+      "inputs": [
+        "generated_31",
+        "weight_1"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_33"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_36",
+      "inputs": [
+        "generated_33",
+        "weight_2"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_35"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_38",
+      "inputs": [
+        "x",
+        "weight_3"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_37"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "id": "generated_40",
+      "inputs": [
+        "generated_37"
+      ],
+      "op": "mean",
+      "outputs": [
+        "generated_39"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_42",
+      "inputs": [
+        "generated_37",
+        "generated_39"
+      ],
+      "op": "subtract",
+      "outputs": [
+        "generated_41"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_44",
+      "inputs": [
+        "generated_41"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_43"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          1
+        ],
+        "keepdims": true
+      },
+      "id": "generated_46",
+      "inputs": [
+        "generated_43"
+      ],
+      "op": "mean",
+      "outputs": [
+        "generated_45"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_48",
+      "inputs": [
+        "generated_45",
+        "weight_3"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_47"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_50",
+      "inputs": [
+        "generated_47",
+        "generated_13"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_49"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_52",
+      "inputs": [
+        "generated_49",
+        "generated_16"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_51"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_54",
+      "inputs": [
+        "generated_51"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_53"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_56",
+      "inputs": [
+        "generated_47",
+        "generated_53"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_55"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_58",
+      "inputs": [
+        "generated_55",
+        "generated_23"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_57"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_60",
+      "inputs": [
+        "generated_57",
+        "generated_26"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_59"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_62",
+      "inputs": [
+        "generated_51",
+        "generated_59"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_61"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_64",
+      "inputs": [
+        "generated_61"
+      ],
+      "op": "square",
+      "outputs": [
+        "generated_63"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_66",
+      "inputs": [
+        "generated_47",
+        "generated_63"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_65"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_68",
+      "inputs": [
+        "generated_65",
+        "generated_23"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_67"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_70",
+      "inputs": [
+        "generated_67",
+        "generated_26"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_69"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_72",
+      "inputs": [
+        "generated_61",
+        "generated_69"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_71"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_74",
+      "inputs": [
+        "generated_41",
+        "generated_71"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_73"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_76",
+      "inputs": [
+        "generated_73",
+        "weight_4"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "generated_75"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_78",
+      "inputs": [
+        "generated_75",
+        "weight_5"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_77"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "generated_80",
+      "inputs": [
+        "generated_35",
+        "generated_77"
+      ],
+      "op": "add",
+      "outputs": [
+        "generated_79"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "generated_79"
+    }
+  ],
+  "resource_profile": "general-tensors-v1"
+}

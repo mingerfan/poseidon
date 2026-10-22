@@ -1,0 +1,49 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "leaky_relu_2",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "operation",
+      "op": "leaky_relu",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "negative_slope": 0.2,
+        "approximation": {
+          "method": "polynomial",
+          "basis": "power",
+          "domain": [
+            -1.0,
+            1.0
+          ],
+          "coefficients": [
+            0.1875,
+            0.5,
+            0.3125
+          ]
+        }
+      },
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

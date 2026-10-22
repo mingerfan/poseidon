@@ -1,0 +1,58 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "resource_profile": "resnet20-v1",
+  "id": "wide_slice_sum_4096",
+  "inputs": [
+    {
+      "name": "image",
+      "shape": [
+        4096
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cut",
+      "op": "slice",
+      "inputs": [
+        "image"
+      ],
+      "outputs": [
+        "upper"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 2048,
+        "stop": 4096,
+        "step": 1
+      }
+    },
+    {
+      "id": "total",
+      "op": "sum",
+      "inputs": [
+        "image"
+      ],
+      "outputs": [
+        "total_value"
+      ],
+      "attrs": {
+        "axes": [
+          0
+        ],
+        "keepdims": false
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "name": "upper_half",
+      "value": "upper"
+    },
+    {
+      "name": "sum",
+      "value": "total_value"
+    }
+  ],
+  "constants": {}
+}

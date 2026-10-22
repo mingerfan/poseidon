@@ -1,0 +1,40 @@
+{
+  "schema": 2,
+  "id": "avg2d-wide",
+  "input_shape": [
+    1,
+    1,
+    4
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "spatial",
+      "op": "avg_pool2d",
+      "inputs": [
+        "x"
+      ],
+      "kernel": [
+        1,
+        2
+      ],
+      "stride": [
+        1,
+        2
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "count_include_pad": true
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "spatial"
+      ]
+    }
+  ],
+  "output": "out"
+}

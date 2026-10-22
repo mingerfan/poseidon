@@ -1,0 +1,51 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "padding_8",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "operation",
+      "op": "padding",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "pads": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "mode": "replicate",
+        "value": 0
+      },
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "y"
+    }
+  ]
+}

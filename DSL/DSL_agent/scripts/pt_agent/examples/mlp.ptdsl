@@ -1,0 +1,8 @@
+# PT-DSL v1 sample: two-layer MLP with square activation.
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    x = pack(x, layout="flat")
+    h = linear(x, w=W["fc1.weight"], b=W["fc1.bias"], algo="bsgs")
+    h = act(h, fn="square", method="exact")
+    out = linear(h, w=W["fc2.weight"], b=W["fc2.bias"], algo="diag")
+    return out

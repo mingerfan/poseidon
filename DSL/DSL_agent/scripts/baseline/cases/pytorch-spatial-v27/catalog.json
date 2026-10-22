@@ -1,0 +1,113 @@
+{
+  "format": "poseidon-pytorch-spatial-examples-v1",
+  "cases": [
+    {
+      "name": "linear_resize",
+      "manifest": "linear_resize/manifest.json",
+      "source_format": "poseidon-trusted-pytorch-v27",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            1,
+            3
+          ]
+        }
+      ],
+      "outputs": [
+        "output"
+      ],
+      "weights": [],
+      "validation": {
+        "source_manifest": true,
+        "plaintext": "passed",
+        "poseidon_cpu": "passed",
+        "agent": "not_run",
+        "plaintext_groups": 16,
+        "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+        "source_application_admission": "passed",
+        "proof_case": "resize_1_linear_0",
+        "program_reloaded": true,
+        "candidate_origin": "frozen_deterministic_rule",
+        "backend_proof": "docs/baseline/agent-spatial-source-offline-results-r1406.json",
+        "audit_binding": "5732c87524838ff102f2496e5d3a4dce509ab4f52bd47d3fce57aea9beeee5c9",
+        "maximum_absolute_error": 2.438710084984308e-07
+      }
+    },
+    {
+      "name": "grouped_conv_transpose",
+      "manifest": "grouped_conv_transpose/manifest.json",
+      "source_format": "poseidon-trusted-pytorch-v27",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "outputs": [
+        "output"
+      ],
+      "weights": [
+        "layer.weight=weight.npy",
+        "layer.bias=bias.npy"
+      ],
+      "validation": {
+        "source_manifest": true,
+        "plaintext": "passed",
+        "poseidon_cpu": "passed",
+        "agent": "not_run",
+        "plaintext_groups": 16,
+        "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+        "source_application_admission": "passed",
+        "proof_case": "transpose_1_0",
+        "program_reloaded": true,
+        "candidate_origin": "frozen_deterministic_rule",
+        "backend_proof": "docs/baseline/agent-spatial-source-offline-results-r1406.json",
+        "audit_binding": "5732c87524838ff102f2496e5d3a4dce509ab4f52bd47d3fce57aea9beeee5c9",
+        "maximum_absolute_error": 7.946016848843496e-08
+      }
+    },
+    {
+      "name": "masked_resize",
+      "manifest": "masked_resize/manifest.json",
+      "source_format": "poseidon-trusted-pytorch-v27",
+      "inputs": [
+        {
+          "name": "x",
+          "shape": [
+            1,
+            1,
+            3
+          ]
+        }
+      ],
+      "outputs": [
+        "result",
+        "square"
+      ],
+      "weights": [
+        "mask=mask.npy"
+      ],
+      "validation": {
+        "source_manifest": true,
+        "plaintext": "passed",
+        "poseidon_cpu": "passed",
+        "agent": "not_run",
+        "plaintext_groups": 16,
+        "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+        "source_application_admission": "passed",
+        "proof_case": "structured_dict",
+        "program_reloaded": true,
+        "candidate_origin": "frozen_deterministic_rule",
+        "backend_proof": "docs/baseline/agent-spatial-source-offline-results-r1406.json",
+        "audit_binding": "5732c87524838ff102f2496e5d3a4dce509ab4f52bd47d3fce57aea9beeee5c9",
+        "maximum_absolute_error": 1.04739843687085e-07
+      }
+    }
+  ]
+}

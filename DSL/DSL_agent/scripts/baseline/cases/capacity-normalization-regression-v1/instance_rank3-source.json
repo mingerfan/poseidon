@@ -1,0 +1,1 @@
+{"constants":{"bias":[0.0],"gain":[0.75]},"format":"poseidon-operator-graph-v1","id":"instance_rank3","inputs":[{"name":"x","shape":[1,1,2]}],"nodes":[{"attrs":{"approximation":{"domain":[0.1,4.0],"iterations":2,"method":"newton"},"eps":0.2},"id":"normalize","inputs":["x","gain","bias"],"op":"instance_norm","outputs":["z"]}],"outputs":[{"name":"result","value":"z"}]}

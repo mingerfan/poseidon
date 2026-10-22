@@ -1,0 +1,36 @@
+{
+  "format": "poseidon-decomposition-binding-v1",
+  "registry_version": "operator-decomposition-v4",
+  "implementation_sha256": "f55e76e2b59f0163e748b0e494be26f55aebb67e86a5317b9e5934f7e411b407",
+  "original_sha256": "f4ab2a0d69d180dcb610bfcdcd5865c214ccf80142432299c7671388d3da5c05",
+  "lowered_sha256": "a3e1a8313176133abbf4bba13da65abb9c79d54749e19c2e6b1777d8848f12fc",
+  "source_map": {
+    "generated_1": "operation",
+    "generated_4": "operation",
+    "generated_6": "operation",
+    "generated_8": "operation",
+    "generated_11": "operation"
+  },
+  "required_capabilities": [
+    "ckks_add_multiply_rotate"
+  ],
+  "approximation_profiles": {
+    "operation": {
+      "approximation": {
+        "method": "polynomial",
+        "basis": "power",
+        "domain": [
+          -4.0,
+          4.0
+        ],
+        "coefficients": [
+          0.5,
+          0.0,
+          0.25
+        ]
+      }
+    }
+  },
+  "no_dsl_answer": true,
+  "binding_sha256": "770ab8e92009e6a5bc5be54f9ebb3075a44c411265d492f30f2d600b7bd37ed8"
+}

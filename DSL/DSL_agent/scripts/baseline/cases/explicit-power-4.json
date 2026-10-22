@@ -1,0 +1,42 @@
+{
+  "schema": 2,
+  "id": "explicit-power-4",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "coefficient": [
+      0.5
+    ],
+    "offset": [
+      0.125
+    ]
+  },
+  "nodes": [
+    {
+      "id": "raised",
+      "op": "power",
+      "inputs": [
+        "x"
+      ],
+      "exponent": 4
+    },
+    {
+      "id": "scaled",
+      "op": "multiply",
+      "inputs": [
+        "raised",
+        "coefficient"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "add",
+      "inputs": [
+        "scaled",
+        "offset"
+      ]
+    }
+  ],
+  "output": "out"
+}

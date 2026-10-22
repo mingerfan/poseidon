@@ -1,0 +1,36 @@
+{
+  "content": "Frozen public model, requests and deterministic candidates; no private test arrays or reference outputs.",
+  "format": "wide-capacity-compatibility-fixtures-v1",
+  "requests": [
+    {
+      "candidate_sha256": "2e4b3cb22bfc5f45b24d47bcfd51c6b5739562c8ce4f7f94e6110c4f9194b631",
+      "name": "fx_extended_cifar_reduction",
+      "request_sha256": "4cf179256e726c4b4e7e17a7869ed2a8b5697285d0ed45ad87f2579d28593ec5"
+    },
+    {
+      "candidate_sha256": "701598983d611fac4b08ef4de4603fbceb4e5f15fd28b4daa66263ac8a8d830d",
+      "name": "fx_extended_elementwise",
+      "request_sha256": "f58b4d78a630b4d64e302ea9ff0ee40301aa1d9c4bd4e2f8a75828a0ed84d563"
+    },
+    {
+      "candidate_sha256": "bbcdfe94ffd05c6edd2d3ad07042d95919fea3e5acd76268eb7c148e25b9e5e9",
+      "name": "fx_extended_multi_io",
+      "request_sha256": "6c6785c4480379ea371ab5397a0694c6c802c87390ba06122ef1f5456e77a799"
+    },
+    {
+      "candidate_sha256": "5b87d8bfb9ff118ce2c22e8295f5886418ed280e2cf73716be8454867c5513e7",
+      "name": "fx_scalar_stack_fusion",
+      "request_sha256": "7ca76965fab07e67038f8424d9700205178c432f6de65311b55475cd06c78e00"
+    },
+    {
+      "candidate_sha256": "df7346cd8660af0db64a3bf1850251d094a35961421772ff88099c669cc32721",
+      "name": "fx_scalar_stack_rank_four",
+      "request_sha256": "854cee76ea57f8569edc624cd18b6a910b739649b5b8504585bf2a1d451a7b66"
+    }
+  ],
+  "source_reports": [
+    "poseidon-resnet20-source-r533",
+    "poseidon-pytorch-extended-r532"
+  ],
+  "stem_sha256": "3b3a5ab74bf5a2aa49b675550b59173fbdd1f7f2bc3ca415a1269aaa14a9cb58"
+}

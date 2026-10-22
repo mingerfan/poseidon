@@ -1,0 +1,22 @@
+@fhe.program(slots=16384, refresh="compiler", placement="depth-dp")
+def tinynet(img: Cipher[1, 3, 16, 16]):
+    x = pack(img, layout="mux", gap=1)
+    h = conv2d(x, w=W["stem.weight"], bn="stem_bn", stride=1, pad=1, algo="mpcb")
+    h = act(h, fn="relu", method="cheb", deg=63, domain=(-6.0, 9.0))
+    h = down(h, "block1", 4, (-5.0, 7.0), (-6.5, 10.0))
+    z = mean(h, axis=(2, 3))
+    z = relayout(z, layout="flat")
+    out = linear(z, w=W["head.weight"], b=W["head.bias"], algo="bsgs")
+    return out
+
+
+def down(x, p, cpad, d1, d2):
+    t = conv2d(x, w=W[p + ".conv1.weight"], bn=p + ".bn1", stride=2, pad=1, algo="mpcb")
+    t = act(t, fn="relu", method="cheb", deg=63, domain=d1)
+    t = conv2d(t, w=W[p + ".conv2.weight"], bn=p + ".bn2", stride=1, pad=1, algo="mpcb")
+    s = slice(x, axis=2, start=0, end=None, step=2)
+    s = slice(s, axis=3, start=0, end=None, step=2)
+    s = pad(s, pads=(0, 0, 0, 0, cpad, cpad))
+    t = add(t, s)
+    t = act(t, fn="relu", method="cheb", deg=31, domain=d2)
+    return t

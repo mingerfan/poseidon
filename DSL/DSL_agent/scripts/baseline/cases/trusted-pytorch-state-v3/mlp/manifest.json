@@ -1,0 +1,69 @@
+{
+  "format": "poseidon-trusted-pytorch-v3",
+  "files": {
+    "models.py": "1b09ea0975251c2b80e5e9d19560a560f140aa4d91d0c6ad74b5364c946a8deb"
+  },
+  "entry": "models.make_mlp",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        4
+      ]
+    }
+  ],
+  "outputs": [
+    "scores"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [
+      3
+    ],
+    "kwargs": {
+      "seed": 71
+    }
+  },
+  "dtype_policy": "convert-float64-v1",
+  "weights": {
+    "layers.0.bias": {
+      "file": "state_0000.npy",
+      "sha256": "860e7340f08df9611b0b826eac9155bdca666f73dfc93df8ae27ec4cab5dfd50",
+      "bytes": 140,
+      "shape": [
+        3
+      ],
+      "dtype": "<f4"
+    },
+    "layers.0.weight": {
+      "file": "state_0001.npy",
+      "sha256": "4167344f0b72c0ba69faddf608d465e77ad5e2066f2e75427463403246a944eb",
+      "bytes": 176,
+      "shape": [
+        3,
+        4
+      ],
+      "dtype": "<f4"
+    },
+    "layers.1.bias": {
+      "file": "state_0002.npy",
+      "sha256": "0a0056fb87421eeee5830b373fe8302e5bb5608c04925e1da5868e6070fa7f8f",
+      "bytes": 136,
+      "shape": [
+        2
+      ],
+      "dtype": "<f4"
+    },
+    "layers.1.weight": {
+      "file": "state_0003.npy",
+      "sha256": "7a095dc1f5a9a453228359a6b50d5c778930d235245dd1754102ad4cccd32366",
+      "bytes": 152,
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "<f4"
+    }
+  }
+}

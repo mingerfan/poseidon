@@ -1,0 +1,63 @@
+{
+  "schema": 3,
+  "id": "concat-packed",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {
+    "w": [
+      [
+        0.5,
+        -1,
+        0.25,
+        2,
+        -2,
+        0.75,
+        1,
+        -0.5
+      ],
+      [
+        1,
+        2,
+        3,
+        4,
+        4,
+        3,
+        2,
+        1
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "c",
+      "op": "concat",
+      "inputs": [
+        "x",
+        "y"
+      ],
+      "axis": 0
+    },
+    {
+      "id": "out",
+      "op": "linear",
+      "inputs": [
+        "c"
+      ],
+      "weight": "w",
+      "bias": null
+    }
+  ],
+  "output": "out"
+}

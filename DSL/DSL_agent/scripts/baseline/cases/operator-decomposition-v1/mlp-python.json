@@ -1,0 +1,54 @@
+{
+  "format": "poseidon-python-model-v1",
+  "id": "decomposed_mlp",
+  "files": {
+    "main.py": "7254c16c5fbb0c0fdc84e3d47112fcc1b75f979029515ec52aab4da2fcedcbb0",
+    "helper.py": "22b170356900c0158d35becd0c09e58027b57cbb9bb12cdd6dc2f2a9dbd5d595"
+  },
+  "entry": "main.forward",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {
+    "w1": [
+      [
+        0.2,
+        -0.1,
+        0.1,
+        0.3
+      ],
+      [
+        -0.2,
+        0.2,
+        0.1,
+        0.1
+      ]
+    ],
+    "b1": [
+      0.1,
+      -0.1
+    ],
+    "w2": [
+      [
+        0.3,
+        -0.2
+      ],
+      [
+        0.1,
+        0.4
+      ]
+    ],
+    "b2": [
+      0.01,
+      0.02
+    ]
+  },
+  "outputs": [
+    "output"
+  ]
+}

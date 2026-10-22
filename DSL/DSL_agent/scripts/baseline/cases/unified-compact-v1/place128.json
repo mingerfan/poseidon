@@ -1,0 +1,96 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "compact_v1_place128",
+  "inputs": [
+    {
+      "name": "input0",
+      "shape": [
+        256
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "n0",
+      "op": "slice",
+      "inputs": [
+        "input0"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "n0v0"
+      ]
+    },
+    {
+      "id": "n1",
+      "op": "subtract",
+      "inputs": [
+        "input0",
+        "input0"
+      ],
+      "attrs": {},
+      "outputs": [
+        "n1v0"
+      ]
+    },
+    {
+      "id": "n2",
+      "op": "slice",
+      "inputs": [
+        "n1v0"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 0,
+        "stop": 128,
+        "step": 1
+      },
+      "outputs": [
+        "n2v0"
+      ]
+    },
+    {
+      "id": "n3",
+      "op": "slice",
+      "inputs": [
+        "n1v0"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 0,
+        "stop": 127,
+        "step": 1
+      },
+      "outputs": [
+        "n3v0"
+      ]
+    },
+    {
+      "id": "n4",
+      "op": "concat",
+      "inputs": [
+        "n2v0",
+        "n0v0",
+        "n3v0"
+      ],
+      "attrs": {
+        "axis": 0
+      },
+      "outputs": [
+        "n4v0"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output0",
+      "value": "n4v0"
+    }
+  ]
+}

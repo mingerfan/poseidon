@@ -1,0 +1,306 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "padding_2",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {
+    "generated_6": 0.0,
+    "generated_9": 0.125
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "slice",
+      "inputs": [
+        "generated_0"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "slice",
+      "inputs": [
+        "generated_2"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_8",
+      "op": "multiply",
+      "inputs": [
+        "generated_4",
+        "generated_6"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_7"
+      ]
+    },
+    {
+      "id": "generated_11",
+      "op": "add",
+      "inputs": [
+        "generated_7",
+        "generated_9"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_10"
+      ]
+    },
+    {
+      "id": "generated_13",
+      "op": "reshape",
+      "inputs": [
+        "generated_10"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          1
+        ]
+      },
+      "outputs": [
+        "generated_12"
+      ]
+    },
+    {
+      "id": "generated_15",
+      "op": "concat",
+      "inputs": [
+        "generated_12",
+        "generated_12"
+      ],
+      "attrs": {
+        "axis": 2
+      },
+      "outputs": [
+        "generated_14"
+      ]
+    },
+    {
+      "id": "generated_17",
+      "op": "reshape",
+      "inputs": [
+        "generated_10"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          1
+        ]
+      },
+      "outputs": [
+        "generated_16"
+      ]
+    },
+    {
+      "id": "generated_19",
+      "op": "concat",
+      "inputs": [
+        "generated_16",
+        "generated_16"
+      ],
+      "attrs": {
+        "axis": 2
+      },
+      "outputs": [
+        "generated_18"
+      ]
+    },
+    {
+      "id": "generated_21",
+      "op": "concat",
+      "inputs": [
+        "generated_14",
+        "x",
+        "generated_18"
+      ],
+      "attrs": {
+        "axis": 1
+      },
+      "outputs": [
+        "generated_20"
+      ]
+    },
+    {
+      "id": "generated_23",
+      "op": "slice",
+      "inputs": [
+        "generated_20"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_22"
+      ]
+    },
+    {
+      "id": "generated_25",
+      "op": "slice",
+      "inputs": [
+        "generated_22"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_24"
+      ]
+    },
+    {
+      "id": "generated_27",
+      "op": "slice",
+      "inputs": [
+        "generated_24"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_26"
+      ]
+    },
+    {
+      "id": "generated_29",
+      "op": "multiply",
+      "inputs": [
+        "generated_26",
+        "generated_6"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_28"
+      ]
+    },
+    {
+      "id": "generated_31",
+      "op": "add",
+      "inputs": [
+        "generated_28",
+        "generated_9"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_30"
+      ]
+    },
+    {
+      "id": "generated_33",
+      "op": "reshape",
+      "inputs": [
+        "generated_30"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          1,
+          1
+        ]
+      },
+      "outputs": [
+        "generated_32"
+      ]
+    },
+    {
+      "id": "generated_35",
+      "op": "concat",
+      "inputs": [
+        "generated_32",
+        "generated_32"
+      ],
+      "attrs": {
+        "axis": 1
+      },
+      "outputs": [
+        "generated_34"
+      ]
+    },
+    {
+      "id": "generated_37",
+      "op": "concat",
+      "inputs": [
+        "generated_34",
+        "generated_34"
+      ],
+      "attrs": {
+        "axis": 1
+      },
+      "outputs": [
+        "generated_36"
+      ]
+    },
+    {
+      "id": "generated_39",
+      "op": "concat",
+      "inputs": [
+        "generated_20",
+        "generated_36"
+      ],
+      "attrs": {
+        "axis": 2
+      },
+      "outputs": [
+        "generated_38"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_38"
+    }
+  ]
+}

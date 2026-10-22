@@ -1,0 +1,328 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "id": "bn-batched",
+      "input_shape": [
+        2,
+        2
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          -1,
+          4
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "norm",
+          "op": "batch_norm",
+          "inputs": [
+            "x"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "norm"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "bn-spatial",
+      "input_shape": [
+        1,
+        2,
+        2
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          -1,
+          4
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "norm",
+          "op": "batch_norm",
+          "inputs": [
+            "x"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "norm"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "bn-no-affine",
+      "input_shape": [
+        2,
+        2
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          -1,
+          4
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "norm",
+          "op": "batch_norm",
+          "inputs": [
+            "x"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": null,
+          "bias": null,
+          "eps": 0.25
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "norm"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "bn-zero-gamma",
+      "input_shape": [
+        2,
+        2
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          0,
+          0
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "norm",
+          "op": "batch_norm",
+          "inputs": [
+            "x"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "norm"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "bn-polynomial",
+      "input_shape": [
+        2,
+        2
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          -1,
+          4
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "norm",
+          "op": "batch_norm",
+          "inputs": [
+            "x"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "flat",
+          "op": "flatten",
+          "inputs": [
+            "norm"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "square",
+          "inputs": [
+            "flat"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "bn-linear",
+      "input_shape": [
+        2,
+        2
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          -1,
+          4
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ],
+        "fc": [
+          [
+            0.5,
+            -0.25,
+            0.75,
+            0.125
+          ],
+          [
+            -0.25,
+            0.5,
+            0.125,
+            -0.75
+          ]
+        ],
+        "fb": [
+          0.125,
+          -0.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "norm",
+          "op": "batch_norm",
+          "inputs": [
+            "x"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "flat",
+          "op": "flatten",
+          "inputs": [
+            "norm"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "linear",
+          "inputs": [
+            "flat"
+          ],
+          "weight": "fc",
+          "bias": "fb"
+        }
+      ],
+      "output": "out"
+    }
+  ]
+}

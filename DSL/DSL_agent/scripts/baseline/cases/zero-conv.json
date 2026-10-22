@@ -1,0 +1,46 @@
+{
+  "schema": 2,
+  "input_shape": [
+    1,
+    4
+  ],
+  "id": "zero-conv",
+  "constants": {
+    "w": [
+      [
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    "b": [
+      0.25
+    ]
+  },
+  "nodes": [
+    {
+      "id": "conv",
+      "op": "conv1d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w",
+      "bias": "b",
+      "stride": [
+        1
+      ],
+      "padding": [
+        0
+      ]
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "conv"
+      ]
+    }
+  ],
+  "output": "out"
+}

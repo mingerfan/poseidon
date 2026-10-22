@@ -1,0 +1,441 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "id": "exercise-oa-broadcast",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-inplace-multiply-alias",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-overlap-add",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-empty-subtract",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-cipher-product",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "square",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "x"
+          ]
+        },
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "square",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-zero-dimension",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-inplace-subtract-alias",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-inplace-add-alias",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-overlap-multiply",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "square",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "x"
+          ]
+        },
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "square",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "exercise-oa-overlap-subtract",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "weight": [
+          0.5
+        ],
+        "bias": [
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "scaled",
+          "op": "multiply",
+          "inputs": [
+            "x",
+            "weight"
+          ]
+        },
+        {
+          "id": "merged",
+          "op": "add",
+          "inputs": [
+            "scaled",
+            "x"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "add",
+          "inputs": [
+            "merged",
+            "bias"
+          ]
+        }
+      ],
+      "output": "out"
+    }
+  ]
+}

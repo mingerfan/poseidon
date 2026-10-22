@@ -1,0 +1,76 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "gap_pool_negate",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        3,
+        3
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "base",
+      "op": "avg_pool2d",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "kernel": [
+          2,
+          2
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "count_include_pad": true
+      },
+      "outputs": [
+        "base_v"
+      ]
+    },
+    {
+      "id": "context",
+      "op": "negate",
+      "inputs": [
+        "base_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    },
+    {
+      "id": "reduce",
+      "op": "mean",
+      "inputs": [
+        "y"
+      ],
+      "attrs": {
+        "axes": [
+          -2,
+          -1
+        ],
+        "keepdims": false
+      },
+      "outputs": [
+        "out"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "out"
+    }
+  ]
+}

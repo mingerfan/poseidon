@@ -1,0 +1,1 @@
+{"approximations":{},"entry":"model.make_four_tensor_fusion","files":{"model.py":"55e5276385c93069b6c8dd4dfee2fb99e3fdaf59568f04896732c7529d719092"},"format":"poseidon-trusted-pytorch-v1","inputs":[{"name":"x","shape":[1024]},{"name":"y","shape":[2,512]},{"name":"z","shape":[1,4,256]},{"name":"t","shape":[1,1,32,32]}],"outputs":["left","matrix","volume","image"]}

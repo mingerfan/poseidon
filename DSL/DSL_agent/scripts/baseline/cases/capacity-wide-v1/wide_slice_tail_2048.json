@@ -1,0 +1,49 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "resource_profile": "resnet20-v1",
+  "id": "wide_slice_tail_2048",
+  "inputs": [
+    {
+      "name": "image",
+      "shape": [
+        3073
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cut",
+      "op": "slice",
+      "inputs": [
+        "image"
+      ],
+      "outputs": [
+        "cut_image"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 1024,
+        "stop": 3073,
+        "step": 1
+      }
+    },
+    {
+      "id": "neg",
+      "op": "negate",
+      "inputs": [
+        "cut_image"
+      ],
+      "outputs": [
+        "negative"
+      ],
+      "attrs": {}
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "negative"
+    }
+  ],
+  "constants": {}
+}

@@ -1,0 +1,403 @@
+{
+  "backend": "poseidon_cpu",
+  "cases": [
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "direct_tensor",
+      "id": "module1_input_0",
+      "input_shape": [
+        1,
+        1,
+        3
+      ],
+      "manifest": "module1_input_0/manifest.json",
+      "partition": "module1_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "normalization_and_reduction",
+      "id": "module1_input_1",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "module1_input_1/manifest.json",
+      "partition": "module1_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "shared_normalized_residual",
+      "id": "module1_input_2",
+      "input_shape": [
+        1,
+        2,
+        3
+      ],
+      "manifest": "module1_input_2/manifest.json",
+      "partition": "module1_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "direct_tensor",
+      "id": "module2_input_0",
+      "input_shape": [
+        1,
+        1,
+        2,
+        2
+      ],
+      "manifest": "module2_input_0/manifest.json",
+      "partition": "module2_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "normalization_and_reduction",
+      "id": "module2_input_1",
+      "input_shape": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "manifest": "module2_input_1/manifest.json",
+      "partition": "module2_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "shared_normalized_residual",
+      "id": "module2_input_2",
+      "input_shape": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "manifest": "module2_input_2/manifest.json",
+      "partition": "module2_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "direct_tensor",
+      "id": "module1_frozen_0",
+      "input_shape": [
+        1,
+        1,
+        3
+      ],
+      "manifest": "module1_frozen_0/manifest.json",
+      "partition": "module1_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "normalization_and_reduction",
+      "id": "module1_frozen_1",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "module1_frozen_1/manifest.json",
+      "partition": "module1_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "shared_normalized_residual",
+      "id": "module1_frozen_2",
+      "input_shape": [
+        1,
+        2,
+        3
+      ],
+      "manifest": "module1_frozen_2/manifest.json",
+      "partition": "module1_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "direct_tensor",
+      "id": "module2_frozen_0",
+      "input_shape": [
+        1,
+        1,
+        2,
+        2
+      ],
+      "manifest": "module2_frozen_0/manifest.json",
+      "partition": "module2_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "normalization_and_reduction",
+      "id": "module2_frozen_1",
+      "input_shape": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "manifest": "module2_frozen_1/manifest.json",
+      "partition": "module2_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "shared_normalized_residual",
+      "id": "module2_frozen_2",
+      "input_shape": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "manifest": "module2_frozen_2/manifest.json",
+      "partition": "module2_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "direct_tensor",
+      "id": "unbatched1_0",
+      "input_shape": [
+        1,
+        3
+      ],
+      "manifest": "unbatched1_0/manifest.json",
+      "partition": "unbatched1",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "normalization_and_reduction",
+      "id": "unbatched1_1",
+      "input_shape": [
+        2,
+        2
+      ],
+      "manifest": "unbatched1_1/manifest.json",
+      "partition": "unbatched1",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "shared_normalized_residual",
+      "id": "unbatched1_2",
+      "input_shape": [
+        2,
+        3
+      ],
+      "manifest": "unbatched1_2/manifest.json",
+      "partition": "unbatched1",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "direct_tensor",
+      "id": "unbatched2_0",
+      "input_shape": [
+        1,
+        2,
+        2
+      ],
+      "manifest": "unbatched2_0/manifest.json",
+      "partition": "unbatched2",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "normalization_and_reduction",
+      "id": "unbatched2_1",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "unbatched2_1/manifest.json",
+      "partition": "unbatched2",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "shared_normalized_residual",
+      "id": "unbatched2_2",
+      "input_shape": [
+        2,
+        2,
+        3
+      ],
+      "manifest": "unbatched2_2/manifest.json",
+      "partition": "unbatched2",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "direct_tensor",
+      "id": "unbatched1_frozen_0",
+      "input_shape": [
+        1,
+        3
+      ],
+      "manifest": "unbatched1_frozen_0/manifest.json",
+      "partition": "unbatched1_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "normalization_and_reduction",
+      "id": "unbatched1_frozen_1",
+      "input_shape": [
+        2,
+        2
+      ],
+      "manifest": "unbatched1_frozen_1/manifest.json",
+      "partition": "unbatched1_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "shared_normalized_residual",
+      "id": "unbatched1_frozen_2",
+      "input_shape": [
+        2,
+        3
+      ],
+      "manifest": "unbatched1_frozen_2/manifest.json",
+      "partition": "unbatched1_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "direct_tensor",
+      "id": "unbatched2_frozen_0",
+      "input_shape": [
+        1,
+        2,
+        2
+      ],
+      "manifest": "unbatched2_frozen_0/manifest.json",
+      "partition": "unbatched2_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "normalization_and_reduction",
+      "id": "unbatched2_frozen_1",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "unbatched2_frozen_1/manifest.json",
+      "partition": "unbatched2_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "shared_normalized_residual",
+      "id": "unbatched2_frozen_2",
+      "input_shape": [
+        2,
+        2,
+        3
+      ],
+      "manifest": "unbatched2_frozen_2/manifest.json",
+      "partition": "unbatched2_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "direct_tensor",
+      "id": "functional_input_0",
+      "input_shape": [
+        1,
+        1,
+        3
+      ],
+      "manifest": "functional_input_0/manifest.json",
+      "partition": "functional_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "normalization_and_reduction",
+      "id": "functional_input_1",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "functional_input_1/manifest.json",
+      "partition": "functional_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "declared rsqrt Newton1; original error reported separately",
+      "context": "shared_normalized_residual",
+      "id": "functional_input_2",
+      "input_shape": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "manifest": "functional_input_2/manifest.json",
+      "partition": "functional_input",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "direct_tensor",
+      "id": "functional_frozen_0",
+      "input_shape": [
+        1,
+        1,
+        3
+      ],
+      "manifest": "functional_frozen_0/manifest.json",
+      "partition": "functional_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "normalization_and_reduction",
+      "id": "functional_frozen_1",
+      "input_shape": [
+        2,
+        2,
+        2
+      ],
+      "manifest": "functional_frozen_1/manifest.json",
+      "partition": "functional_frozen",
+      "source_origin": "trusted_pytorch"
+    },
+    {
+      "approximation": "not_required",
+      "context": "shared_normalized_residual",
+      "id": "functional_frozen_2",
+      "input_shape": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "manifest": "functional_frozen_2/manifest.json",
+      "partition": "functional_frozen",
+      "source_origin": "trusted_pytorch"
+    }
+  ],
+  "format": "poseidon-pytorch-instance-contexts-v1",
+  "models_source_sha256": "80bc376561193e5219ff2cd9bd77a1543ac2d55047c3c6ac4e28fc7ddccca672",
+  "old_frozen_benchmark_changed": false,
+  "paid_calls": 0,
+  "partitions": 10,
+  "planned": 30
+}

@@ -1,0 +1,36 @@
+{
+  "format": "poseidon-trusted-pytorch-v2",
+  "files": {
+    "models.py": "b554ae82d8c58ba9aba7b0e816ded60da70f4c6e1d69277fbfe3216185efe639"
+  },
+  "entry": "models.make_matrix",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "outputs": [
+    "product",
+    "sum",
+    "difference"
+  ],
+  "approximations": {},
+  "factory": {
+    "args": [],
+    "kwargs": {
+      "scale": 1
+    }
+  },
+  "dtype_policy": "strict-float64-v1"
+}

@@ -1,0 +1,123 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "padding_0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        3
+      ]
+    }
+  ],
+  "constants": {
+    "generated_2": 0.0,
+    "generated_5": 0.125
+  },
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 0,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_4",
+      "op": "multiply",
+      "inputs": [
+        "generated_0",
+        "generated_2"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_3"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "add",
+      "inputs": [
+        "generated_3",
+        "generated_5"
+      ],
+      "attrs": {},
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "reshape",
+      "inputs": [
+        "generated_6"
+      ],
+      "attrs": {
+        "shape": [
+          1
+        ]
+      },
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "id": "generated_11",
+      "op": "reshape",
+      "inputs": [
+        "generated_6"
+      ],
+      "attrs": {
+        "shape": [
+          1
+        ]
+      },
+      "outputs": [
+        "generated_10"
+      ]
+    },
+    {
+      "id": "generated_13",
+      "op": "concat",
+      "inputs": [
+        "generated_10",
+        "generated_10"
+      ],
+      "attrs": {
+        "axis": 0
+      },
+      "outputs": [
+        "generated_12"
+      ]
+    },
+    {
+      "id": "generated_15",
+      "op": "concat",
+      "inputs": [
+        "generated_8",
+        "x",
+        "generated_12"
+      ],
+      "attrs": {
+        "axis": 0
+      },
+      "outputs": [
+        "generated_14"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_14"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+# expect: E_SYNTAX
+@fhe.program(slots=8192)
+def mlp(x: Cipher[1, 64]):
+    x = pack(x, layout="flat"   # ERR
+    return x

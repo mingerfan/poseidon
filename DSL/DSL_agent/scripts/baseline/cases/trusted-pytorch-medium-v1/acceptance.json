@@ -1,0 +1,26 @@
+{
+  "format": "poseidon-pytorch-acceptance-list-v1",
+  "cases": [
+    {
+      "id": "reduction_fusion",
+      "file": "reduction_fusion.json",
+      "sha256": "5afbe3dc757abeac75f47235f4d9e04d5ad08d9d2e5786d99d3fd0e2bff04640",
+      "resource_profile": "medium-v1",
+      "chunk_period": 256
+    },
+    {
+      "id": "spatial_residual",
+      "file": "spatial_residual.json",
+      "sha256": "509b65b2b92ca01d300429d3c3d18daf6ee70134a5684c0358cbe469d004ce80",
+      "resource_profile": "medium-v1",
+      "chunk_period": 256
+    },
+    {
+      "id": "linear_fusion",
+      "file": "linear_fusion.json",
+      "sha256": "a76326df216a89819cde5d92742ed0852c0f372b233538cd1e021400ed623b0d",
+      "resource_profile": "medium-v1",
+      "chunk_period": 256
+    }
+  ]
+}

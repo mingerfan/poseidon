@@ -1,0 +1,47 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "id": "duplicate_input",
+  "resource_profile": "general-tensors-v1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "identity",
+      "op": "reshape",
+      "inputs": [
+        "x"
+      ],
+      "outputs": [
+        "reshaped"
+      ],
+      "attrs": {
+        "shape": [
+          2,
+          2
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "name": "first",
+      "value": "reshaped"
+    },
+    {
+      "name": "second",
+      "value": "reshaped"
+    },
+    {
+      "name": "third",
+      "value": "reshaped"
+    }
+  ]
+}

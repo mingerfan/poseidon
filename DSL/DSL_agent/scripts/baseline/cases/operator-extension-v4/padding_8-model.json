@@ -1,0 +1,166 @@
+{
+  "format": "poseidon-model-graph-v1",
+  "id": "padding_8",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "generated_1",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_0"
+      ]
+    },
+    {
+      "id": "generated_3",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_2"
+      ]
+    },
+    {
+      "id": "generated_5",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 1,
+        "stop": 2,
+        "step": 1
+      },
+      "outputs": [
+        "generated_4"
+      ]
+    },
+    {
+      "id": "generated_7",
+      "op": "slice",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {
+        "axis": 1,
+        "start": 1,
+        "stop": 2,
+        "step": 1
+      },
+      "outputs": [
+        "generated_6"
+      ]
+    },
+    {
+      "id": "generated_9",
+      "op": "concat",
+      "inputs": [
+        "generated_0",
+        "generated_2",
+        "generated_4",
+        "generated_6"
+      ],
+      "attrs": {
+        "axis": 1
+      },
+      "outputs": [
+        "generated_8"
+      ]
+    },
+    {
+      "id": "generated_11",
+      "op": "slice",
+      "inputs": [
+        "generated_8"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 0,
+        "stop": 1,
+        "step": 1
+      },
+      "outputs": [
+        "generated_10"
+      ]
+    },
+    {
+      "id": "generated_13",
+      "op": "slice",
+      "inputs": [
+        "generated_8"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 1,
+        "stop": 2,
+        "step": 1
+      },
+      "outputs": [
+        "generated_12"
+      ]
+    },
+    {
+      "id": "generated_15",
+      "op": "slice",
+      "inputs": [
+        "generated_8"
+      ],
+      "attrs": {
+        "axis": 2,
+        "start": 1,
+        "stop": 2,
+        "step": 1
+      },
+      "outputs": [
+        "generated_14"
+      ]
+    },
+    {
+      "id": "generated_17",
+      "op": "concat",
+      "inputs": [
+        "generated_10",
+        "generated_12",
+        "generated_14"
+      ],
+      "attrs": {
+        "axis": 2
+      },
+      "outputs": [
+        "generated_16"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "value": "generated_16"
+    }
+  ]
+}

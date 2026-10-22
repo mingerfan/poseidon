@@ -1,0 +1,331 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "decomposed_attention_decode",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "cached_k",
+      "shape": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "cached_v",
+      "shape": [
+        1,
+        2
+      ]
+    }
+  ],
+  "constants": {
+    "wq": [
+      [
+        0.2,
+        0.0
+      ],
+      [
+        0.0,
+        0.2
+      ]
+    ],
+    "wk": [
+      [
+        0.2,
+        0.0
+      ],
+      [
+        0.0,
+        0.2
+      ]
+    ],
+    "wv": [
+      [
+        0.3,
+        0.0
+      ],
+      [
+        0.0,
+        0.3
+      ]
+    ],
+    "wo": [
+      [
+        0.3,
+        0.0
+      ],
+      [
+        0.0,
+        0.3
+      ]
+    ],
+    "scale": 0.7071067811865476
+  },
+  "nodes": [
+    {
+      "id": "q",
+      "op": "linear",
+      "inputs": [
+        "x",
+        "wq"
+      ],
+      "attrs": {},
+      "outputs": [
+        "q_v"
+      ]
+    },
+    {
+      "id": "k",
+      "op": "linear",
+      "inputs": [
+        "x",
+        "wk"
+      ],
+      "attrs": {},
+      "outputs": [
+        "k_v"
+      ]
+    },
+    {
+      "id": "v",
+      "op": "linear",
+      "inputs": [
+        "x",
+        "wv"
+      ],
+      "attrs": {},
+      "outputs": [
+        "v_v"
+      ]
+    },
+    {
+      "id": "qvec",
+      "op": "reshape",
+      "inputs": [
+        "q_v"
+      ],
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "outputs": [
+        "qvec_v"
+      ]
+    },
+    {
+      "id": "qrope",
+      "op": "rope",
+      "inputs": [
+        "qvec_v"
+      ],
+      "attrs": {
+        "position": 1,
+        "theta": 100.0
+      },
+      "outputs": [
+        "qrope_v"
+      ]
+    },
+    {
+      "id": "qrow",
+      "op": "reshape",
+      "inputs": [
+        "qrope_v"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "outputs": [
+        "qrow_v"
+      ]
+    },
+    {
+      "id": "kvec",
+      "op": "reshape",
+      "inputs": [
+        "k_v"
+      ],
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "outputs": [
+        "kvec_v"
+      ]
+    },
+    {
+      "id": "krope",
+      "op": "rope",
+      "inputs": [
+        "kvec_v"
+      ],
+      "attrs": {
+        "position": 1,
+        "theta": 100.0
+      },
+      "outputs": [
+        "krope_v"
+      ]
+    },
+    {
+      "id": "krow",
+      "op": "reshape",
+      "inputs": [
+        "krope_v"
+      ],
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "outputs": [
+        "krow_v"
+      ]
+    },
+    {
+      "id": "keys",
+      "op": "concat",
+      "inputs": [
+        "cached_k",
+        "krow_v"
+      ],
+      "attrs": {
+        "axis": 0
+      },
+      "outputs": [
+        "keys_v"
+      ]
+    },
+    {
+      "id": "values",
+      "op": "concat",
+      "inputs": [
+        "cached_v",
+        "v_v"
+      ],
+      "attrs": {
+        "axis": 0
+      },
+      "outputs": [
+        "values_v"
+      ]
+    },
+    {
+      "id": "kt",
+      "op": "transpose",
+      "inputs": [
+        "keys_v"
+      ],
+      "attrs": {
+        "dim0": 0,
+        "dim1": 1
+      },
+      "outputs": [
+        "kt_v"
+      ]
+    },
+    {
+      "id": "scores",
+      "op": "matmul",
+      "inputs": [
+        "qrow_v",
+        "kt_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "scores_v"
+      ]
+    },
+    {
+      "id": "scale",
+      "op": "multiply",
+      "inputs": [
+        "scores_v",
+        "scale"
+      ],
+      "attrs": {},
+      "outputs": [
+        "scale_v"
+      ]
+    },
+    {
+      "id": "prob",
+      "op": "softmax",
+      "inputs": [
+        "scale_v"
+      ],
+      "attrs": {
+        "axis": -1,
+        "exp": {
+          "method": "taylor",
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "degree": 6
+        },
+        "reciprocal": {
+          "method": "goldschmidt",
+          "domain": [
+            0.1,
+            8.0
+          ],
+          "iterations": 3
+        }
+      },
+      "outputs": [
+        "prob_v"
+      ]
+    },
+    {
+      "id": "attend",
+      "op": "matmul",
+      "inputs": [
+        "prob_v",
+        "values_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "attend_v"
+      ]
+    },
+    {
+      "id": "output",
+      "op": "linear",
+      "inputs": [
+        "attend_v",
+        "wo"
+      ],
+      "attrs": {},
+      "outputs": [
+        "output_v"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "output_v"
+    },
+    {
+      "name": "keys",
+      "value": "keys_v"
+    },
+    {
+      "name": "values",
+      "value": "values_v"
+    }
+  ]
+}

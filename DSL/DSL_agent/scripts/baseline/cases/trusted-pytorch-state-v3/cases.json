@@ -1,0 +1,65 @@
+{
+  "cases": [
+    {
+      "exercise_reuse": false,
+      "id": "pytorch_state_mlp",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-state-v3/mlp/manifest.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "pytorch_state_conv_pool",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-state-v3/conv_pool/manifest.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "pytorch_state_residual",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-state-v3/residual/manifest.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "pytorch_state_batchnorm",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-state-v3/batchnorm/manifest.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "pytorch_state_matrix_fusion",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-state-v3/matrix_fusion/manifest.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    },
+    {
+      "exercise_reuse": false,
+      "id": "pytorch_state_shape_linear",
+      "manifest": "scripts/baseline/cases/trusted-pytorch-state-v3/shape_linear/manifest.json",
+      "options": {
+        "chunk_period": 4,
+        "generation_guidance": "explicit-v10",
+        "public_weight_policy": "descriptors-v1"
+      }
+    }
+  ],
+  "format": "poseidon-pytorch-offline-cases-v1"
+}

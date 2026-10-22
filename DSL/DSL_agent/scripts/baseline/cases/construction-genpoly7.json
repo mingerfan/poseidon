@@ -1,0 +1,112 @@
+{
+  "schema": 2,
+  "id": "construction-genpoly7",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "seventh": [
+      4
+    ],
+    "fifth": [
+      -5
+    ],
+    "cubic": [
+      2
+    ],
+    "linear": [
+      -0.4375
+    ]
+  },
+  "nodes": [
+    {
+      "id": "square",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "x"
+      ]
+    },
+    {
+      "id": "cube",
+      "op": "multiply",
+      "inputs": [
+        "square",
+        "x"
+      ]
+    },
+    {
+      "id": "power5",
+      "op": "multiply",
+      "inputs": [
+        "cube",
+        "square"
+      ]
+    },
+    {
+      "id": "power7",
+      "op": "multiply",
+      "inputs": [
+        "power5",
+        "square"
+      ]
+    },
+    {
+      "id": "part7",
+      "op": "multiply",
+      "inputs": [
+        "power7",
+        "seventh"
+      ]
+    },
+    {
+      "id": "part5",
+      "op": "multiply",
+      "inputs": [
+        "power5",
+        "fifth"
+      ]
+    },
+    {
+      "id": "part3",
+      "op": "multiply",
+      "inputs": [
+        "cube",
+        "cubic"
+      ]
+    },
+    {
+      "id": "part1",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "linear"
+      ]
+    },
+    {
+      "id": "sum75",
+      "op": "add",
+      "inputs": [
+        "part7",
+        "part5"
+      ]
+    },
+    {
+      "id": "sum753",
+      "op": "add",
+      "inputs": [
+        "sum75",
+        "part3"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "add",
+      "inputs": [
+        "sum753",
+        "part1"
+      ]
+    }
+  ],
+  "output": "out"
+}

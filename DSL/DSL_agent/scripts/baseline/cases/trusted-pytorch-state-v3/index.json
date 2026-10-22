@@ -1,0 +1,41 @@
+{
+  "format": "poseidon-pytorch-state-fixtures-v1",
+  "cases": [
+    {
+      "id": "mlp",
+      "state_tensors": 4,
+      "changed_elements": 23,
+      "declared_bytes": 604
+    },
+    {
+      "id": "conv_pool",
+      "state_tensors": 2,
+      "changed_elements": 2,
+      "declared_bytes": 264
+    },
+    {
+      "id": "residual",
+      "state_tensors": 2,
+      "changed_elements": 6,
+      "declared_bytes": 280
+    },
+    {
+      "id": "batchnorm",
+      "state_tensors": 5,
+      "changed_elements": 8,
+      "declared_bytes": 680
+    },
+    {
+      "id": "matrix_fusion",
+      "state_tensors": 1,
+      "changed_elements": 1,
+      "declared_bytes": 136
+    },
+    {
+      "id": "shape_linear",
+      "state_tensors": 2,
+      "changed_elements": 10,
+      "declared_bytes": 336
+    }
+  ]
+}

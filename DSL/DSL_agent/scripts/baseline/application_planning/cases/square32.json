@@ -1,0 +1,33 @@
+{
+  "format": "poseidon-model-graph-v2",
+  "id": "layout_square32",
+  "resource_profile": "general-tensors-v1",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        32
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "square",
+      "op": "square",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {},
+      "outputs": [
+        "value"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "out",
+      "value": "value"
+    }
+  ]
+}
