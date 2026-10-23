@@ -106,6 +106,20 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                     value = act_minimax(b, value, tuple(a["degrees"]), a["domain"])
                 else:
                     raise KernelError("v1 lowering 不支持 this activation")
+                if isinstance(layout, FlatLayout):
+                    tail = 0.0
+                    if act_mode == "exact":
+                        from .kernels.poly import EXACT
+
+                        tail = EXACT[a["fn"]](np.zeros(1))[0]
+                    elif a["method"] == "cheb":
+                        tail = act_cheb(None, np.zeros(1), a["fn"], a["deg"], a["domain"])[0]
+                    elif a["method"] == "minimax_comp":
+                        tail = act_minimax(None, np.zeros(1), tuple(a["degrees"]), a["domain"])[0]
+                    if tail != 0:
+                        correction = np.zeros(layout.n)
+                        correction[layout.size:] = -tail
+                        value = value + b.const(correction)
             elif op.kind == "add":
                 other, other_layout = env[op.inputs[1]]
                 if isinstance(layout, MuxLayout) and isinstance(other_layout, MuxLayout):

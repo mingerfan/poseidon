@@ -3,6 +3,8 @@
 from collections import namedtuple
 from dataclasses import dataclass
 
+import numpy as np
+
 from .core.layout import FlatLayout, KernelError, MuxLayout, mux_layout
 from .core.conv import add_mux, conv2d_mux, downsample_pad_mux, fold_bn
 from .core.pool import mean_mux
@@ -68,6 +70,20 @@ def act(b, x, a):
         value = value*(s+0.5)
     else:
         raise KernelError("v1 lowering 不支持 this activation")
+    if isinstance(layout, FlatLayout):
+        tail = 0.0
+        if a["method"] == "cheb":
+            tail = cheb_eval(None, np.zeros(1)*scale+c, a["coefficients"])[0]
+        elif a["method"] == "minimax_comp":
+            zero = np.zeros(1)
+            s = zero*(1.0/hi)
+            for coefficients in a["coefficients"]:
+                s = cheb_eval(None, s, coefficients)
+            tail = (zero*(s+0.5))[0]
+        if tail != 0:
+            correction = np.zeros(layout.n)
+            correction[layout.size:] = -tail
+            value = value + b.const(correction)
     return Tensor(value, layout)
 
 

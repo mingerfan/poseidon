@@ -7,6 +7,7 @@ import time
 from ..cost import estimate
 from ..dsl.ir import Program
 from ..dsl.printer import print_program
+from ..tensor_sim import cached_estimate
 from .agent_tools import _exact_check, validate
 
 
@@ -45,17 +46,27 @@ def _changes(original, current):
     return changes
 
 
-def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1) -> TuneResult:
+def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
+         engine: str = "tensor", cache: bool = True) -> TuneResult:
     started = time.monotonic()
+    def cost_of(candidate):
+        return cached_estimate(candidate, ctx.weights, ctx.profile, estimate, cache=cache)
+
+    def validation(candidate, n=None, cost=None):
+        if engine == "mock":
+            cost = cost_of(candidate) if cost is None else cost
+            return validate(candidate, ctx, n, boot_nodes=cost['boot_nodes'], engine=engine, cache=cache)
+        return validate(candidate, ctx, n, engine=engine, cache=cache)
+
     cur = copy.deepcopy(program)
-    before = estimate(cur, ctx.weights, profile=ctx.profile)
+    before = cost_of(cur)
     history = []
     coarse_evals = full_evals = 0
 
     def full(candidate):
         nonlocal full_evals
         full_evals += 1
-        return validate(candidate, ctx)
+        return validation(candidate)
 
     def record(phase, candidate, cost, result, accepted, **details):
         entry = dict(phase=phase, latency_pred_us=cost['latency_pred_us'],
@@ -68,10 +79,19 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1) -> TuneRe
               f"max_u={entry['max_u']} latency_pred_us={entry['latency_pred_us']}", flush=True)
 
     def finish(candidate, result, feasible):
-        after = estimate(candidate, ctx.weights, profile=ctx.profile)
+        after = cost_of(candidate)
         if initial['feasible'] and after['latency_pred_us'] > before['latency_pred_us']:
             candidate, result, after, feasible = copy.deepcopy(program), initial, before, True
             record('rollback_cost', candidate, after, result, False)
+        if engine == "tensor":
+            verified = validate(candidate, ctx, boot_nodes=after['boot_nodes'],
+                                engine="mock", cache=cache)
+            for field in ('feasible', 'agree'):
+                if verified[field] != result[field]:
+                    raise RuntimeError(
+                        f"Final Mock verification differs from tensor: {field} "
+                        f"tensor={result[field]!r}, mock={verified[field]!r}")
+            result = verified
         record('result', candidate, after, result, feasible, feasible=feasible,
                boot_input_max_abs=result.get('boot_input_max_abs'), worst_acts=result.get('worst_acts', []))
         return TuneResult(candidate, print_program(candidate), _changes(program, candidate), before, after,
@@ -96,7 +116,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1) -> TuneRe
     # Degenerate rounded domains cannot be executed; reject this whole alignment.
     if all(op.attrs['domain'][0] < op.attrs['domain'][1] for op in acts):
         aligned_result = full(aligned)
-        aligned_cost = estimate(aligned, ctx.weights, profile=ctx.profile)
+        aligned_cost = cost_of(aligned)
     else:
         aligned_result = dict(initial, feasible=False)
         aligned_cost = before
@@ -134,13 +154,13 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1) -> TuneRe
                 continue
             trial = copy.deepcopy(cur)
             trial.ops[index].attrs['deg'] = degree
-            cost = estimate(trial, ctx.weights, profile=ctx.profile)
+            cost = cost_of(trial)
             detail = dict(act=index, line=op.lineno, call_lines=list(op.call_lines), kind='deg',
                           old=op.attrs['deg'], new=degree, sweep=sweep)
             if cost['latency_pred_us'] >= current_cost['latency_pred_us']:
                 record('skip_cost', trial, cost, {}, False, **detail)
                 continue
-            result = validate(trial, ctx, N_COARSE)
+            result = validation(trial, N_COARSE, cost)
             coarse_evals += 1
             record('coarse', trial, cost, result, _strict(result), **detail)
             if _strict(result):
@@ -158,14 +178,14 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1) -> TuneRe
                 for index, degree in accepted[:middle]:
                     trial.ops[index].attrs['deg'] = degree
                 result = full(trial)
-                cost = estimate(trial, ctx.weights, profile=ctx.profile)
+                cost = cost_of(trial)
                 record('prefix', trial, cost, result, _strict(result), prefix=middle, sweep=sweep)
                 if _strict(result):
                     low, kept, kept_result = middle, trial, result
                 else:
                     high = middle-1
             cur, current_result = kept, kept_result
-            current_cost = estimate(cur, ctx.weights, profile=ctx.profile)
+            current_cost = cost_of(cur)
             record('rollback', cur, current_cost, current_result, True,
                    kept=low, removed=len(accepted)-low, sweep=sweep)
         if not accepted or time.monotonic()-started >= budget_s:

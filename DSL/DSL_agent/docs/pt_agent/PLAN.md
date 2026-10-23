@@ -12,6 +12,7 @@
 已确认的决策：
 - 设计一个高层 DSL，优化放在 Agent 层，编译器代码一行不改；
 - Agent 冻结输出前允许使用内部工具循环（语法/类型检查、明文仿真、代价估计），真实编译与 CKKS 结果永不回传给 Agent；
+- 按 R8f2 §8–§9，精调 `tune` 默认用 float64 张量参考解释器及三层缓存；面向 LLM 的 `evaluate`、冻结确认、独立精确检查和最终报告用槽级 Mock，`validate` 默认也保持 Mock。Tensor精调在最终程序上增加一次完整Mock复核，核对feasible/agree并用Mock统计构造对外反馈。反馈全文证明按§10替代流程执行；当前静态检查发现既有路径差异，处理口径与进展见STATUS。精调预算、搜索轮数和数值条件保持；本轮不打新 tag。
 - LLM 预算放宽到数百次 DeepSeek 调用；
 - 目标 DAC，约 1 个月交稿；
 - 目前只有本机（ARM，7 GB 内存、2 核、25 GB 空闲盘），服务器可协调；
@@ -61,7 +62,7 @@
 ```
 PyTorch / JSON 图（复用现有 intake）
   → Analyzer：形状、校准集取值范围、算子分类
-  → Planner Agent（DeepSeek）⇄ 工具：parse/typecheck · CountExpr 代价/level · MockExpr 明文仿真
+  → Planner Agent（DeepSeek）⇄ 工具：parse/typecheck · CountExpr 代价/level · Mock反馈验证 · 张量参考解释器精调
       输出：PT-DSL 程序（高层、带性能注解，可读）
   → 冻结（Agent 声明完成，记录迭代次数）
   → Lowering：可信 kernel 库 → Hecate 图（hc API 直接 trace，不 exec LLM 代码）
@@ -201,8 +202,11 @@ JSON 计算图          ──► 前端 B：现有 model_import_cli（复用）
 | | R9a2 | 在 2000 张未见图上复核 E1 中比冻结程序更快的可行配置（E1 只用了 200 张，噪声大）；E6 按程序的刷新模式选择预测方法；E3 补 MLP 的人工决定数。不调 LLM，约 1 小时 | ⏳ 待做 | 10/23 |
 | | P1 | **可移植性与工具链解耦**（Claude 直接完成，用户 10/23 批准）：编译命令由 pt_agent 自己生成（7 种模式与旧命令行逐字相同）、参数文件内置于 pt_agent/compiler_profiles、不再导入旧 SDK 认证模块；位置统一由 paths.py 提供并可用环境变量覆盖；依赖本机产物的测试在缺文件时跳过（缺产物时 160 跳过、155 通过、0 报错）；Dacapo 本地补丁和使用说明入库。Agent 决策行为不变：315 项测试通过，mlp/ResNet20 端到端编译自举数 20/383 与之前相同 | ✅ 完成 | 10/23 |
 | | P2 | **导出后端**（用户 10/23 要求）：PT-DSL → 结构化 Hecate DSL 包（与 DSL_benchmark 的 Qwen 包同格式：model.py 每个运算一行函数调用，近似参数显式写在 config，interfaces/manifest/README，全部相对路径，不导入 pt_agent）→ 编译器。run.py 的 compile 改为编译这个包；验收：与 Emit 发出的运算序列完全相同、与 Mock 输出完全相同、7 个程序编译后的自举数和运算计数与记录值相同。spec：`specs/P2-hecate-package.md`。结果：7 个程序 Emit 文本和常量完全相同、Mock 20 图完全相同、自举数 226/160/72/24/383/288/461 与记录一致、11 类运算计数全部相同；ResNet20 的 model.py 59 行（旧直线代码 18007 行）；327 项测试通过 | ✅ 完成 | 10/23 |
-| | R10 | 未见模型所需的 kernel（通用 slice/pad、depthwise 等）；未见模型一次性评测；导入覆盖率 RQ5 | ⏳ | 11/01–05 |
-| | R11 | **M1 第 5 条：真实 CKKS**（40 张图 + 4 组探针），需要可自举的运行时（GPU 原生 Boot 或 gy 的 CPU 回调）；同时标定该平台的延迟表、自举输入上界和精度 | ⏳ 等待硬件 | 10/30–11/05 |
+| | R8f | **张量级快速验证**（用户 10/23 要求优化精调效率）：循环内验证由 16384 槽逐条模拟改为张量层参考解释器（同一多项式系数与表达式），并去掉 validate 内重复的代价模型调用；加三层缓存（结果、结构化前缀激活、小函数）且与无缓存逐位相同；用 R8e5/R8e7 全部轨迹重放精调，决策逐条一致才切换默认；冻结确认和报告集测试仍用 Mock。spec：`specs/R8f-tensor-validate.md` | ⏸ §3已通过；§10静态检查的既有路径差异待明确 | 10/23 |
+| | R8f2 | **flat 尾槽缺陷修复**：R8f 数值对照发现 flat 布局激活后空槽位变成 p(0)≠0，被下一层 linear 的复制旋转卷入，使 Chebyshev-MLP 的 logits 带常数偏移（逐类等于 p(0)·W 行和，真实加密程序同样存在）。在 lower 的 act 后用一次明文加法把尾槽清零（不耗 level；p(0)=0 时不发任何运算，冻结程序逐字不变），然后完整重跑 R8f 验收并重算受影响的 R9a/R9a2 MLP 行。spec：`specs/R8f2-flat-tail-fix.md` | ⏸ 修复与数值验收通过；§8反馈契约阻塞，历史行待重算 | 10/23 |
+| | R8g | **MLP 重跑**（用户 10/23 决定）：用修复后的代码按冻结协议只重跑 MLP 的 Agent（≤8 次 LLM 调用），作为冻结 v1.1 的 MLP 部分；其余 3 个模型不受尾槽缺陷影响，沿用 R8e7。spec：`specs/R8g-mlp-rerun.md` | ⏳ 待做 | 10/24 |
+| | R10 | ~~未见模型所需的 kernel~~ → 并入 §4.B 的 U3/U4（用户 10/23 调整），未见模型评测在 U3/U4 各自完成后做 | ⤳ 并入 U3/U4 | — |
+| | R11 | **M1 第 5 条：真实 CKKS**（40 张图 + 4 组探针），需要可自举的运行时（GPU 原生 Boot 或 gy 的 CPU 回调）；同时标定该平台的延迟表、自举输入上界和精度。**用户 10/23：暂不考虑 GPU**，论文暂以编译器给出的自举数和预测延迟为主指标 | ⏸ 暂缓 | — |
 | H 论文 | — | 数据定稿、作图 → 摘要 → 全文 | ⏳ | 摘要 11/11，全文 11/18 |
 
 **ResNet20 验收（M1）在哪一步完成：**
@@ -240,6 +244,52 @@ JSON 计算图          ──► 前端 B：现有 model_import_cli（复用）
 </details>
 
 
+
+### 4.B 通用化阶段（用户 2026-10-23 调整优先级）
+
+用户要求在 R8f2 之后优先做三件事：①支持多种常用明文模型的描述框架；②尽可能多地支持算子，至少覆盖 NN 和 LLM，初步具备通用性；③支持多密文布局。R9b（三组对照）推迟到 U3 之后，R11（GPU）暂缓。
+
+**现状**：PT-DSL 语法（`dsl/ops_spec.py`）已经定义了 matmul、softmax、layernorm、avgpool、concat、permute、split、poly 等运算；ATen 前端（`intake/`）已经能映射 bmm、softmax、layer_norm、gelu、max_pool2d、cat 等。真正的缺口在**可信 lowering**：`HANDLED_OPS` 只有 10 种运算，而且全部基于单密文（中间张量必须放进 16384 个槽位）。所以通用化的主体工作是"布局系统 + kernel 库 + 代价模型 + 张量参考解释器"四件套，每个新运算都要同时提供这四样。
+
+依赖关系：U1 与 U2 可以先行；U3 和 U4 依赖 U2，因为 VGG/AlexNet 的中间张量和 LLM 的 FFN 都超出单个密文；U5 是 U4 的前提，softmax 和 norm 都需要它。
+
+| 轮次 | 内容 | 验收 | 目标日期 |
+|---|---|---|---|
+| U1 模型描述框架 | `ModelSpec` 注册表：每个模型声明来源，三类都必须支持（用户 10/23 确认）：PyTorch nn.Module（含 torchvision/timm）、HuggingFace Transformers（按配置构建，处理 tokenizer、注意力掩码和固定序列长度）、ONNX（覆盖 TensorFlow/Keras、JAX、scikit-learn 的导出）、权重来源、输入规格（形状、归一化、dtype）、数据适配器（CIFAR、ImageNet 子集、token 序列）、评价指标（分类 top-1；LLM 用下一 token 一致率和 logits 误差）、容差。`validate` 和 `confirm` 的"准确率下降"改为调用指标接口，现有 4 个模型的结果保持逐位不变。前端增加 `torch.export` 路径（与 make_fx 并存），用于 HuggingFace 风格的模块 | 4 个现有模型在新框架下的全部数字逐位不变；HuggingFace 和 ONNX 各至少 2 个模型能导入成 PT-Graph（各含 1 个 CNN 或 MLP、1 个 Transformer；只验证导入、与原框架前向一致和覆盖率统计，不要求能 lowering）；同一个模型分别从 PyTorch 和 ONNX 导入，得到的 PT-Graph 等价 | 10/24–27 |
+| U2 多密文布局 | 布局对象改为"张量 → 密文列表"：`MuxLayout` 增加跨密文的通道分块；`FlatLayout` 增加分块（向量切成多个 n 槽块）；新增 `TokenLayout`（每个 token 一行，参考 Qwen 包的 PackedVector）。conv、linear、mean、add、act 的 kernel 支持多输入、多输出密文；代价模型、DAG、depth-dp 复现、张量解释器和 P2 包导出同步支持；单密文是多密文的特例，现有程序发出的运算序列逐字不变 | 现有 7 个程序逐字不变；一个强制拆成 2 个和 4 个密文的 ResNet20 与 Mock、张量解释器一致；编译通过，自举数与代价模型一致 | 10/27–31 |
+| U3 CNN 算子 | depthwise/分组卷积、一般 kernel 大小和步长、一般 avgpool/adaptive avgpool、maxpool（多项式 max，复用 DaCapo HE_Max 的组合 sign 思路）、concat、一般 slice/pad、独立的 batchnorm。用 DaCapo 自带权重（已批准）评测 AlexNet、VGG16、MobileNet、SqueezeNet、ResNet20-relu，与 DaCapo、Orbit 是同一批基准 | 5 个模型能导入、lowering、编译；与张量解释器一致；Agent 在冻结协议下生成，报告自举数和精度 | 11/01–05 |
+| U4 Transformer/LLM 算子 | 密文×明文的 token 矩阵乘（复用 Qwen 包验证过的打包线性层）、密文×密文 matmul（QKᵀ、AV）、softmax（exp 近似、求和、倒数）、LayerNorm/RMSNorm（均值、方差、倒数平方根）、RoPE、SwiGLU 门控乘、causal mask、残差。目标是 1–2 个 Qwen2.5 decoder block（团队包的合成权重）加一个本地训练的小 Transformer | 与张量解释器一致；编译通过；Agent 能为每个 softmax 和 norm 选择近似参数 | 11/06–12（论文中可能只作为示范） |
+| U5 非线性自动拟合 | 在可信库中自动生成近似，不需要新 DSL：`method` 增加 remez（任意函数单段 minimax）、composite（组合 sign，用于 relu/max，阶数拆分自动搜索）、newton（倒数、倒数平方根，用于 softmax 和 norm，初值多项式加迭代次数）。参数仍写在 PT-DSL 的 act/softmax/layernorm 上，系数在 lowering 时生成并写入 P2 包的 config | 每种方法在给定定义域上的最大误差达到要求；与张量解释器一致；可以作为 Agent 的新旋钮 | 与 U4 一起，11/03–08 |
+
+| S0 编译器流水线验证（半天，不改编译器） | 确认两件事：①hecate-opt 能否用单独注册的 pass 组成"跳过 scale 管理"的流水线，并单独调用 RuntimePlan 导出；②`check-smu` 能否完整检查外部写出的已管理 earth MLIR。做法：取现有一份编译记录中编译器自己产生的 `lowered.earth.mlir`（已管理），送进自定义流水线，检查导出的 RuntimePlan 与原流水线导出的是否一致；再人为删掉一个 rescale 或 modswitch，确认 `check-smu` 能报错 | 两项都成立才继续 S1；任何一项需要改编译器就停下，由用户决定 | R8f2 之后、U1 之前，约 10/24（用户 10/23 提前） |
+| S1 DSL 管理模式（复现编译器） | ①P2 包增加 `config/management.json` 和 `earth_backend.py`，`trace_model.py`、`compile_model.py` 增加 `--mode managed`，`model.py`、ops 和 kernel 不变；②pt_agent 新增 scale/level 管理器组件，**第一版逐条复现编译器的管理**（waterline rescaling、early modswitch、depth-dp 自举放置），由我们写出已管理的 earth MLIR；③PT-DSL header 增加管理模式（与 refresh="compiler"/"agent" 并列），代价模型和 Mock 支持该模式的 level/scale 语义 | 对现有 7 个程序，managed 模式导出的 RuntimePlan 与 compiler 模式的自举数和各类运算计数相同（理想情况下逐条相同）；`check-smu` 通过；compiler 模式完全不受影响 | 11/05–10 |
+| S2 联合优化（研究） | 在 S1 的基础上，让近似决策（每层的方法、阶数）与 level 分配、自举位置一起选，作为 Agent 和精调的新旋钮；与"compiler 模式 + 同一近似"对比自举数和预测延迟 | 在至少 ResNet20 上找到比编译器管理更少自举或更低预测延迟、且精度满足冻结协议的程序；否则如实报告为负结果 | DAC 之后；如果 S1 提前完成，可以先做 ResNet20 的初步结果 |
+
+**顺序与论文范围（10/23 用户确认把 DSL 管理模式放在 U1–U3 之后）**：S0 → U1 → U2 → U3 → S1 → R9b → U5/U4 → S2（S0 由用户 10/23 提前到 R8f2 之后）。11/18 前能完整做完的是 U1–U3（CNN 通用性，与 DaCapo、Orbit 同一批基准），这是 DAC 版本通用性的主证据。S1 能按时完成的话，论文写成"同一份 PT-DSL 既能交给编译器管理，也能由 DSL 层管理，两者导出相同的 RuntimePlan"。R9b 是论文核心对照，必须在全文截止前完成，安排在 S1 之后。U4/U5 和 S2 大概率排不进 DAC 版本，作为未来工作；如果 S0 不通过，S1 和 S2 取消，时间还给 R9b 和 U5。
+
+### 4.C 是否把 rescale、自举等编译器优化信息放进 DSL（Claude 2026-10-23 评估）
+
+结论（10/23 更新）：**用户决定做 DSL 管理模式，排在 U1–U3 之后（见 §4.B 的 S0–S2）**。技术上可能不改编译器就能做到，先用 S0 验证；价值取决于 S2 能否与近似决策联合优化。以下为当时的分析，仍然有效；只做两类编译器缺少、又能通过现有接口传给编译器的"数据感知信息"；非线性自动拟合要做（即 U5），不需要新 DSL。
+
+1. **能不能做**：
+   - 编译器自带的 5 条流水线（eva、elasm、hecate、dacapo、pars）都会自己做 scale 管理，dacapo 的第一步还会删除用户写的 bootstrap；只有 pars 保留用户的 bootstrap，rescale 仍由编译器放置。Python 前端也没有 rescale、modswitch 语法。所以**只要走"Python 前端 + 自带流水线"这条路，rescale 就一定由编译器放置**。
+   - 但编译器的 IR（earth 方言）本身有 `rescale`、`modswitch`、`upscale`、`bootstrap` 运算，类型里带 scale 和 level；`optimizer.cpp` 用 `registerEarthPasses`、`registerCKKSPasses`、`registerConversionPasses` 把各个 pass 单独注册成了命令行可调用的形式，其中包括检查 scale 管理正确性的 `check-smu`。
+   - 因此存在一条**不改编译器代码**的路：DSL lowering 直接输出已经完成 scale 管理的 earth MLIR（自己放 rescale、modswitch、bootstrap），再用 hecate-opt 的单独 pass 拼一条跳过 scale 管理的流水线：`check-smu` → earth→ckks 转换 → upscale→mulcp → RuntimePlan 输出。
+   - 待确认的是 RuntimePlan 输出能否作为单独的 pass 调用，以及 `check-smu` 能否完整验证我们生成的管理。这需要一个约半天的 spike，不改编译器源码。
+2. **值不值得做**：
+   - 更正：R6b 的 461 对 383，比较的是两种**放置算法**，不是代价模型与编译器的差异。代价模型对两种模式的预测都准确：refresh="compiler" 时按 depth-dp 预测 383，实际编译 383；refresh="agent" 时程序里的自举由 RefreshBackend 按**惰性策略**（level 不够时才自举）插入，预测 461，pars 编译 461。另一组同样一一对应：288 对 382。惰性策略本来就比 depth-dp 差。
+   - 所以 DSL 层放置的上限取决于算法：照搬 depth-dp（代价模型里已经有）只能打平 383；要更好，需要 Orbit 式的联合优化（Orbit 比 DaCapo 好 7–19%），或者**与近似决策联合优化**，例如阶数、level 分配和自举位置一起选。后者编译器做不了，是唯一可能体现 DSL 层价值的方向，但属于新的研究问题，工作量大。
+   - DAC 版本不做；保留 refresh="agent" 作为消融。如果 DAC 之后要做，先做 1 中的 spike，再设计"带 level/scale 注解的 PT-DSL"。
+3. **值得做的"数据感知信息"**（编译器本来拿不到，DSL 层有校准数据）：
+   - (a) **数值范围归一化**：用校准得到的范围，把缩放因子并入相邻权重和多项式的仿射变换，使自举输入落在后端要求的范围内。不额外消耗 level，接入真实 GPU 时必需；
+   - (b) **明文常量的 scale 提示**：`hc.Plain(data, scale=)` 是前端现有的接口，可以按层设置精度。是否有收益，需要先做一个小实验再决定。
+   - 这两项都放在 U2、U5 之后，按需要再开轮次。
+5. **"绕过前端"的含义与组件化影响**（10/23 补充，供 DAC 之后决策）：
+   - 现在的流程：PT-DSL → 可信 lowering → P2 包（Python，调用 `hecate.expr`）→ 运行 Python，由前端库 libHecateFrontend 记录运算并生成**未做 scale 管理**的 earth MLIR → hecate-opt 自带流水线（删除用户 bootstrap、放置自举、rescale、modswitch、转换到 CKKS 层、输出 RuntimePlan）。
+   - 绕过前端的流程：PT-DSL（带 level/scale 注解或由新组件自动决定）→ 可信 lowering → **新组件"scale/level 管理器"**（在 pt_agent 内放置 rescale、modswitch、upscale、bootstrap，给每个值标注 scale 和 level）→ **新后端"earth 发射器"**（直接写出 earth MLIR 文本，不运行 Python 前端）→ hecate-opt 自定义流水线（`check-smu` 验证 → earth→ckks 转换 → upscale→mulcp → 输出 RuntimePlan，不再做 scale 管理）。
+   - 组件化：可以作为**可选模式**加入，不破坏现有组件。PT-DSL 仍然是各组件之间的契约，header 增加一种管理模式（与现有的 refresh="compiler"/"agent" 并列）；新增的是一个管理器组件和一个后端，代价模型和 Mock 需要相应地支持新模式的 level/scale 语义。默认模式不变。
+   - 但有三处边界会变：①**正确性责任**从编译器移到 pt_agent，编译器只用 `check-smu` 验证；②**交付物格式**：Python 前端写不出 rescale，P2 的结构化 Python 包表达不了这种程序，交付物只能是 earth MLIR，或者另定义一种带管理信息的包格式；③**论文定位**从"与编译器正交"变为"部分替代编译器的 scale 管理"，需要证明联合优化比编译器更好。
+4. **非线性自动拟合**：PT-DSL 的 act 已经能描述方法、阶数和定义域，系数由可信库在 lowering 时生成（现在的 cheb 就是这样）。扩展方法（remez、composite、newton）和 softmax、norm 的近似参数，就是 U5，**不需要新 DSL**。真正需要新 DSL 的只有"显式 level/scale"一类信息，而它依赖编译器扩展，列为 DAC 之后的未来工作。
 
 ### 4.0 里程碑 M1：ResNet20 通过（短期验收，目标 11/03）
 输入：B 线的 ResNet20 PyTorch 模型和权重（`DSL/DSL_agent/workloads/resnet20/model_reference.py`、`public_assets.py`，只读），**经前端 A 从 `nn.Module` 导入**。"通过"要求以下全部满足：
@@ -380,15 +430,17 @@ coverage 中 `needs_composition` 的节点交给 Agent：Agent 在 PT-DSL 里用
 | 10/24 | R8d 组合 minimax ReLU | |
 | 10/25 | R8c（实现 + 离线测试） | Design：代价模型（与编译器一致） |
 | 10/26–27 | R8e 精调工具 + 4 个模型的真实运行 → 用户决定冻结（10/27 不变） | Design：Agent 循环（LLM 结构决策 + 搜索精调） |
-| 10/28–31 | R9 基线、motivation、消融 | Related Work；Evaluation 的实验设置 |
-| 10/30–11/05 | R11 真实 CKKS（拿到硬件即开始，与 R9/R10 并行） | |
-| 11/01–05 | R10 未见模型 | Evaluation 的已有结果 |
-| 11/06–08 | 数据定稿、作图 | 摘要 v1 |
-| 11/09–10 | 只补缺口 | 摘要定稿，**11/11 提交** |
-| 11/11–16 | 不再加新实验 | 写完全文 |
+| 10/23–24 | R8f/R8f2 张量验证与 flat 尾槽修复 | |
+| 10/24 | R8g MLP 重跑，然后 S0 编译器流水线验证（半天，spec：`specs/S0-pass-pipeline-spike.md`） | |
+| 10/24–27 | U1 模型描述框架（PyTorch、HuggingFace、ONNX） | Related Work；Evaluation 的实验设置 |
+| 10/28–31 | U2 多密文布局 | Design：布局与 kernel 库 |
+| 11/01–05 | U3 CNN 算子 + 5 个 DaCapo 基准 | Evaluation 的已有结果 |
+| 11/05–10 | S1 DSL 管理模式（复现编译器） | 摘要 v1；Design 增加"两种管理模式" |
+| 11/10–13 | R9b 三组对照与消融 | 摘要 11/11 提交 |
+| 11/13 以后 | U5/U4、S2（排不进 DAC 的写入未来工作） | 11/14–16 写全文 |
 | 11/17–18 | — | 内部审读，**11/18 提交** |
 
-风险：可自举的运行时最晚 10/30 到位，否则 R11 赶不上 11/05。届时论文的 ResNet20 部分只报告编译结果、预测延迟和仿真精度，真实 CKKS 用本机不需要自举的模型展示。
+风险（10/23 修订）：GPU 暂缓，论文以编译器给出的自举数、预测延迟和仿真精度为主指标。U1–U3、S0–S1 和 R9b 都要占用 Nix，只能串行，排期很紧：R9b 被推到 11/10–13，摘要只能用已有数据；任何一轮超期，就先砍 S1（保留 S0 的结论），保证 U3 和 R9b 进论文。
 
 ---
 

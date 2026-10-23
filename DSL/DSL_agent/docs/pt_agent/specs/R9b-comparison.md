@@ -67,9 +67,13 @@ def search(graph, calib, ctx, *, fe_budget: float, rng_seed=20261024) -> dict
 
 REPORT 记录每个阶段的接受次数、FE 用量、最终程序的自举数、确认集和报告集的下降。
 
+## 3.9 编译路径（P2 之后，2026-10-23 补充）
+
+G1/G2/G3 和消融中所有"编译"都使用 P2 之后的 run.py 路径：export 阶段生成结构化包，compile 阶段编译这个包。不要再使用旧的 emit→trace 路径。P2 已证明两条路径的编译结果相同（7 个程序的自举数和运算计数一致），因此与 R8e7 的历史数字可以直接比较。每个最终程序的包保存在对应的运行目录中。
+
 ## 4. B1 / B1+：LLM 直接写 Hecate 代码
 
-> ⚠️ **需要用户单独批准**：B1 和 B1+ 必须在沙箱中执行 LLM 写的代码，以便 trace 和数值核对。这与 AGENTS.md "LLM 输出只解析，永不执行"相冲突。未获批准时，只做 §4.3 的第 1 级（解析和静态检查），并在 STATUS 中注明。
+> ✅ **用户已批准（2026-10-23，见 STATUS"用户批准记录"）**：B1 和 B1+ 可以执行 LLM 写的代码，作为 AGENTS.md "LLM 输出只解析，永不执行"的例外，仅限本节。条件：只在 `poseidon_candidate_sandbox`（`trusted=False`）中执行，执行前必须通过 §4.3 第 1 级的 AST 白名单检查；不得在可信运行器或 pt_agent 进程内执行 LLM 代码。
 
 ### 4.1 任务约定（写进 B1 提示词 `planners/b1_prompt.py`，新增，不属于冻结的 Agent）
 
@@ -154,7 +158,7 @@ boots_plan, latency_plan_s, confirm_drop_pp, report_drop_pp, n_diverged, frozen_
 | 消融 A1–A5 | 30 |
 | **合计** | **135**（上限 140） |
 
-- **顺序**：§1 金标准 → 测试 → G1 → G3（依赖 G1 的 FE）→ G2 → 消融 → B4 → B1/B1+（等待批准）→ 汇总。
+- **顺序**：§1 金标准 → 测试 → G1 → G3（依赖 G1 的 FE）→ G2 → 消融 → B4 → B1/B1+（已批准）→ 汇总。
 - 每一项都用 `--resume` 方式接续，单项失败照实记录，然后继续下一项。
 - **Nix 占用**：G1、G2 和消融每次约 1.5–2 小时（resnet20），全部约 25–30 小时。运行期间不要并行启动其他 Nix 任务。
 
@@ -162,5 +166,5 @@ boots_plan, latency_plan_s, confirm_drop_pp, report_drop_pp, n_diverged, frozen_
 
 - 不修改冻结 Agent 的默认行为（§1）：提示词文本、可行性条件、精调与确认参数一律不变。
 - 报告集只用于最终测试；确认集只在 confirm_select 中使用。
-- B1/B1+ 未获批准前，不执行 LLM 写的代码。
+- B1/B1+ 的 LLM 代码只在候选沙箱中执行，且必须先通过 AST 白名单；不在可信运行器中执行。
 - 不重试失败的 LLM 调用；不为了改善某一组的结果而调整预算或参数。

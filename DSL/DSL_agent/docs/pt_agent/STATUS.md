@@ -1,8 +1,9 @@
-# pt_agent 状态（最后更新：2026-10-23 / 883c9b14-dirty）
+# pt_agent 状态（最后更新：2026-10-24 / fb6d7f3c-dirty）
 
 主线：`/home/lhohy/Code/Poseidon`，`lhy-agent-dsl`。
 当前按 A 线 AGENTS.md 的逐轮 spec 规则推进；PLAN.md 仅作路线图。
-当前轮次P2已完成：新增结构化Hecate包与export编译入口；新增12项及既有315项分组共327/327通过。7包真实trace/编译全部通过，自举数226/160/72/24/383/288/461和11类运算计数均与原记录相同；每包test[9000:9020]输出与Mock完全相同、最大差0。每包34文件，model.py为10–59行；API0、累计45/300，整网CKKS0。冻结模块与原程序/计划保持。[SUMMARY](/home/lhohy/pt_agent_results/p2-export-20261023T075648/SUMMARY.json)。
+当前轮次R8f2 §10.4已完成：静态及输入内容比较通过，9个候选两侧evaluate、13个最终程序Mock复核、18轮反馈文本全部一致；测试341＋1＋16＝358/358通过，155行MLP历史重算完成。旧整轮重放、停止及部分运行证据保留。API0、累计45/300。[SUMMARY](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/SUMMARY.json)。
+历史P2已完成：新增结构化Hecate包与export编译入口；新增12项及既有315项分组共327/327通过。7包真实trace/编译全部通过，自举数226/160/72/24/383/288/461和11类运算计数均与原记录相同；每包test[9000:9020]输出与Mock完全相同、最大差0。每包34文件，model.py为10–59行；API0、累计45/300，整网CKKS0。冻结模块与原程序/计划保持。[SUMMARY](/home/lhohy/pt_agent_results/p2-export-20261023T075648/SUMMARY.json)。
 历史R9a2已完成：310/310测试通过；121配置各2000图复核完成、执行错误0，robust_feasible为5/12、9/10、30/31、68/68；E6 matched自举40/40一致，延迟相对误差中位0.9412328560719451%、最大1.6305665547421428%；E3专家MLP改为2/manual。API/新编译/下载/训练/新权重/CKKS0，累计45/300。 [完整SUMMARY](/home/lhohy/pt_agent_results/r9a2-20261023T004744/SUMMARY.json)。
 历史R9a：305/305测试通过；setsid nohup all完整结束（20228.307369275994秒，约5小时37分），13项工作退出均0。E1 751项、E3 26项、E4 84项、E6 40对，执行错误均0；新增真实编译26/26，复用14份历史计划。Agent冻结模块保持，API0、累计45/300；报告集/下载/训练/新权重/真实CKKS0。 [运行REPORT](/home/lhohy/pt_agent_results/r9a-20261022T152208/REPORT.json)；§8完整表格见本文件R9a节。
 
@@ -17,6 +18,8 @@
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| R8f2 | specs/R8f2-flat-tail-fix.md（含§10.4） | 完成 | 原尾槽与最终Mock实现保持；本轮仅结果接续脚本与STATUS | 358/358；§10证明9/13/18；MLP重算155行 | 按§10.4授权时限机械接续；核心代码和旧断言保持，历史停止记录保留 |
+| R8f | specs/R8f-tensor-validate.md；R8f2含§10.4接续 | 完成 | tensor_sim.py、agent_tools.py、tuner.py、张量与缓存测试、默认引擎文档 | 复用46数值/18候选/13精调/224 history/6无缓存/9计时；完整回归358/358 | 精调tensor；evaluate、确认、精确检查及报告Mock；最终Mock复核已验证 |
 | P2 | specs/P2-hecate-package.md | 完成 | export/、run.py、toolchain.py、README.md、tests/test_p2_export.py、STATUS.md | 新增12＋既有315＝327/327；七包A/B/真实编译均通过，11类计数全部相同；[REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075648/REPORT.json) | 初次合并回归峰值失败和启动漏路径记录保留；分组执行及历史夹具说明见P2节 |
 | R1 | specs/R1-skeleton-ptdsl.md | 完成 | registry.py、dsl/、examples/、tests/test_r1_*.py、STATUS.md | 40 tests，OK；完整输出见最近运行 | 无 |
 | R2 | specs/R2-backends-emit.md | 完成 | tools/nixrun.py、backends/、fixtures/、tests/test_r2_*.py、STATUS.md | R2 Nix：13 tests，OK；R1 系统：40 tests，OK | 无 |
@@ -67,6 +70,36 @@
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+当前无待用户或Claude决定的问题。R8f/R8f2已按§10.4完成；M1第5条真实CKKS保留待执行。下列为保留的历史记录。
+
+
+历史停止项（已由§10.4解除）：完整回归的运行时限：本轮自写测试编排把17项张量测试放入同一个1200秒进程；新增最终Mock复核增加了耗时。实际运行1200.540964秒、退出124。需要新spec明确剩余16项的接续分组；已通过341项及ResNet20缓存对照应复用，全部358项完成后再做155行重算。原4GiB、串行限制和已用时间保持，尚未扩大时限、重试或启动MLP。本轮未观察到新的数值差异，未标记编译器依赖阻塞。[REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/REPORT.json)、[超时RUN](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor/RUN.json)、[完整日志](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor/tests.log)。依据AGENTS.md：“有疑问或报错，就停下来写进STATUS.md的阻塞一栏，等待新的spec。”下列保留历史记录。
+
+R8f2 §10历史停止记录（已由§10.3解除，2026-10-23）：静态核对19个文件，与“048f737c+同一尾槽修复”相比，[kernels/poly.py:14](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/kernels/poly.py:14)新增`from ..paths import DACAPO_ROOT`，第17行将minimax系数位置从仓库`third_party/dacapo/...`改为`DACAPO_ROOT/...`。这是既有e4583b24路径解耦提交，本轮保持原样。§10.2.1明确“如果发现其他改动，停下来汇报”，其列出的四类为engine/cache传递、boot_nodes复用、§9.2最终Mock复核、尾槽修复；路径来源变化尚未列入。需要用户或Claude在spec明确这项既有路径差异的静态证明处理口径。未观察到本轮新数值失败；未标记编译器依赖阻塞。下游动态步骤、全测及155行重算均停止。[静态diff](/home/lhohy/pt_agent_results/r8f2-section10-20261023T140329/static-frozen-tail-v-current.diff)、[REPORT](/home/lhohy/pt_agent_results/r8f2-section10-20261023T140329/REPORT.json)。
+
+R8f2 §8的两项停止已由用户及§9解除（2026-10-23）：反馈基准改为冻结tag 048f737c加flat尾槽修复；tuned统计进入best通过最终Mock复核处理。当前无新增阻塞。R8e5 REPORT记录2ccd117a-dirty，该提交至冻结tag的tuner/validate存在判定变化，且缺少运行时dirty差异，故不复用历史精调，按§9实际重算。下列§8及更早停止记录作为历史保留。
+
+R8f2 §8当前阻塞（2026-10-23，静态与既有证据核对）：
+
+1. R8e5 ResNet20六条和MLP三条原反馈都没有`feedback.validation.n_diverged`、`diverged_indices`；当前[agent_tools.py:142](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/agent_tools.py:142)初始化两字段，301行把它们保留在evaluate结果，`feedback_message`完整序列化fb。因此默认恢复Mock后仍存在新增字段，影响未获flat例外的ResNet20。需要明确历史反馈字段的兼容规则。
+2. [agent.py:98](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/agent.py:98)还把精调的`max_u`、`boot_input_max_abs`、`worst_acts`放入best，[prompts.py:138](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/prompts.py:138)将完整best发送。R20六条best均source=tuned；原第1条boot_input_max_abs=395.94425529152136，已有Tensor重放对应值=None，max_u原0.8101091089941468、重放0.8101091089941471。实际路径超出§8.1“精调的结果中只有latency_pred_us、boots_pred和changes进入LLM反馈”的描述。需要明确best的数值来源/序列化规则。
+
+依AGENTS的“spec本身有矛盾”及§8其他性质问题停止规则，不自行删字段、补Mock统计或放宽文本断言；新反馈测试尚未写入，全测与155行重算均未启动。当前代码evaluate=mock、tune=tensor，旧测试保持。证据为源码与历史JSON核对，尚无本次evaluate执行或新数值试验。[REPORT](/home/lhohy/pt_agent_results/r8f2-section8-review-20261023T122656/REPORT.json)。
+
+R8f2 §7历史停止记录（已由§8.1指定恢复evaluate=mock）：主回归在[tests/test_r8c_feedback.py:73](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8c_feedback.py:73)报错。`test_boot_range_reports_without_default_limit`第70行调用默认`evaluate`，当前使用tensor；`agent_tools.validate`将tensor的`boot_input_max_abs`设为None，只有Mock观察并填写槽级自举输入。第71行feasible与第72行bound断言已通过，第73行`assertGreater(None, 0)`触发TypeError。该项涉及槽级统计字段，按[当前spec §7.1](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/R8f2-flat-tail-fix.md)“如果是其他性质的失败，停下来汇报”停止，未擅自改旧测试或引擎语义。需要用户或Claude明确这类槽级自举测试的engine适配范围；同文件另有boot_input_bound与boot_abs_error用例，尚未执行。当前无新增数值失败或编译器依赖阻塞证据。[失败REPORT](/home/lhohy/pt_agent_results/r8f2-section7-20261023T120346/regression-main/REPORT.json)。
+
+R8f2默认入口停止项已由用户及spec §7解除（2026-10-23）：§7.1明确旧测试双方使用同一engine，并新增tensor版；§7.2明确exact激活的尾值路径；§7.3要求全测与155行重算。原max_u停止项的处理已明确，下段保留原停止依据；新自举观测停止项见上段。
+
+R8f2历史停止记录（2026-10-23，已由§7解除）：R8f §3.1–§3.3已全部通过，按§4切换tune/evaluate默认为tensor后，补充运行的旧`test_r8e_tuner.TunerTests.test_01_validate_matches_evaluate`在[第54行](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8e_tuner.py:54)失败。该测试分别用默认validate（Mock）和evaluate（Tensor）计算，并要求max_u严格相等；实测0.7545855443514613与0.7545855443514609，差4.440892098500626e-16。该差值小于R8f指定的1e-9比较条件，但修改旧断言含义需新spec，依用户“任何其他不一致停下汇报”及AGENTS旧测试规则停止。旧测试和容差保持，未回退已执行的默认切换。需要用户或Claude指定旧测试应继续验证同一引擎一致性，还是采用跨引擎的R8f比较口径；当前不自行选择。补充回归1执行/1失败/3待执行，155行MLP历史重算0/155。[失败REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/default-smoke/REPORT.json)、[日志](/home/lhohy/pt_agent_results/r8f2-20261023T101943/default-smoke/tests.log)。
+
+R8f原flat停止项已由R8f2修复并重验（2026-10-23）：用户及spec §0确认flat激活尾槽变为p(0)，下一linear叠加该尾值，逐类偏移等于p(0)乘fc2权重行和。故障程序修复后logits最大差1.1546319456101628e-14，46/46程序全过；下段为当时记录，原数值与报告保持，当前结果见R8f2节。
+
+R8f历史停止记录（原轮2026-10-23，已由R8f2修复）：§3.1第38个程序`e1/mlp/random/051`在test[9000:9100]的logits最大绝对差0.029403407183288266，最大`abs(Δ)/(1+abs(Mock))`为0.029016284086462146，超出规定1e-9。该程序为ReLU cheb deg=255，domain=(-36.70227470297503, 24.37496681919903)。100张图均存在logits超差；argmax 100/100相同、两引擎发散均0，act统计最大差1.7763568394002505e-15。依用户“任何不一致停下汇报”及spec§3的要求停止，未更改算法、容差或默认引擎。具体原因尚未定位，未标记为编译器依赖阻塞；等待后续spec指定诊断或修复。原logits、逐图act统计、top-2间隔、程序及错误报告已保存：[REPORT](/home/lhohy/pt_agent_results/r8f-20261023T092453/acceptance/REPORT.json)、[diagnostics](/home/lhohy/pt_agent_results/r8f-20261023T092453/acceptance/mismatch/e1__mlp__random__051/diagnostics.json)。
+
+R8f原数据读取冲突已解除（用户2026-10-23修订）：仅既有3项精确模型/数据回归允许读取报告集，原327项已完整执行并通过；测试结果不用于近似候选评估或选择。原冲突对应`test_r3_resnet20.test_first_500_argmax`、`test_frozen_data`及`test_r8e4_split.test_01_disjoint_complete_and_first_record`；新增R8f代码、测试、实验排除报告集。
+
+R8f重放只读核对已完成：`r8e5-dev-20261022T041646`四模型trace分别6/5/4/3轮，共18轮；`r8e7-reconfirm-20261022T122558`各模型REPORT.trace_path均引用这批原trace，retuning=false，独立请求只计一次。18个fb.validation均diverged=false且images_done=total=1000，缺失的历史n_diverged可确定为0；feasible取fb顶层，18个exact.ok均为true。精调共13次、history共224条，原预算2400秒，最长1422.229秒。起点取messages中assistant.content的JSON program，沿用agent.py逻辑。后续比较可据此兼容提取，历史文件保持原样。
 
 P2已完成，无新增阻塞。七包自举数及所有运算计数均与原记录相同。初次合并回归在旧R5历史峰值断言失败，保留原断言，P2与旧回归分进程后327/327通过；启动脚本漏传模块搜索路径已按本轮自写错误例外修正，原失败记录保留，该次实际导出/trace/编译0。整网真实CKKS沿用M1第5条待执行。
 
@@ -141,6 +174,20 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+R8f2 §10.4已完成，API0，累计45/300；registry共178条。替代证明9/13/18、测试358/358、MLP重算155行全部完成。[SUMMARY](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/SUMMARY.json)。本次状态脚本只读registry，历史记录保留。
+
+R8f2 §10.3本轮API0、累计45/300；registry现有175条。替代证明9/13/18全部通过；测试341项完整通过报告及1项局部通过日志，张量组1200秒超时，155行重算未启动。已用时间及所有历史行保持。[REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/REPORT.json)。
+
+R8f2 §9–§10 API0，累计45/300；registry共149条，原141条全部保留。新增3/3专项测试、4条成功侧运行（2对全文一致），以及用户停止、第三轮部分运行、§10静态阻塞各1条。旧outer及全部6个子进程已终止；第三轮已用560.79秒未重置。§10动态模型/编译/CKKS/下载/训练/155行重算均0。
+
+R8f2 §8核对API0，累计45/300；registry共141条，新增1条offline-spec-review。新增测试、模型、编译、CKKS、下载、155行重算均0。默认恢复Mock仅改一行，历史报告及用量保留。
+
+R8f2 §7接续API0，累计45/300；registry共140条，新增2条（专项通过、主回归失败），原138条保持。已执行250项、249通过、1错误，余105项测试未执行；155行历史重算未启动。P1历史回归的真实trace/编译各1次，CKKS/下载/训练/新权重0。
+
+R8f2 API0，累计45/300、剩余255；registry共138条，本轮新增33条，含32条成功分段记录及默认入口失败1条。切换前352项全过，§3数值/重放/计时完整通过；默认切换后补充入口首项失败并停止。既有P1回归含真实trace/编译各1次，CKKS/下载/训练/新权重/提交0；报告集仅原授权3项历史回归读取，新增实验只用留出集。155行历史重算未启动。
+
+R8f API0，累计45/300、剩余255；registry共105条，本轮新增6条且原记录保留。新增17项与既有327项全部通过；§3.1已执行38/46、首个数值不一致后停止。既有P1回归含真实trace/编译各1次，CKKS/下载/训练/新权重0。新增数值实验仅用test[9000:9100]，缓存整网测试用留出集；报告集仅§5.7明确批准的3项旧回归读取。
+
 P2 API0，累计45/300、剩余255；registry共99条，含本轮全部7条成功/失败记录。七程序验收trace/编译各7次，315项既有回归另含P1 trace/编译各1次，合计各8次；实际CKKS0、下载/训练/新权重0。新包数值对照仅留出test[9000:9020]，旧回归固有数据夹具见P2节；Agent决策保持。
 
 R9a2 API0，累计45/300、剩余255；310项通过，原失败测试记录及全部92条registry保留。121配置复核、E6 40对matched与E3 26项重算均完成；重新编译/报告集读取/下载/训练/新权重/CKKS0，原R9a目录未写入。
@@ -153,11 +200,11 @@ pt_agent：**45 / 300**，剩余255次。R8e7 API0、重新生成0、重新精�
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| P2-export-tests-20261023T080203 | seven-programs | P2最终12/12通过，补充首个错误优先顺序检查；[REPORT](/home/lhohy/pt_agent_results/P2-export-tests-20261023T080203/REPORT.json) |
-| p2-export-20261023T075648 | seven-programs | 7包真实编译与计数对照全部通过；7×20图完全相同；[REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075648/REPORT.json) |
-| p2-export-20261023T075634 | seven-programs | 启动脚本漏模块搜索路径，导出/trace/编译0；失败保留；[REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075634/REPORT.json) |
-| P2-export-tests-20261023T075627 | seven-programs | 既有工具链5/5通过；[REPORT](/home/lhohy/pt_agent_results/P2-export-tests-20261023T075627/REPORT.json) |
-| P2-export-tests-20261023T074752 | seven-programs | 既有逐轮310/310通过；[REPORT](/home/lhohy/pt_agent_results/P2-export-tests-20261023T074752/REPORT.json) |
+| r8f2-section104-20261023T154734-complete | dev-models | complete=true；recomputed_rows=155；api_calls=0；[证据目录](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734) |
+| r8f2-mlp-recheck-20261023T160203 | mlp | complete=true；exit_code=0；recomputed_rows=155；seconds=50.165022811997915；stage="complete"；[证据目录](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203) |
+| r8f2-section104-20261023T154734-regression-tensor-remaining | dev-models | successful=true；exit_code=0；tests_run=16；passed=16；failures=0；errors=0；skipped=0；seconds=661.8775016540021；[证据目录](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/regression-tensor-remaining) |
+| r8f2-section103-20261023T141823-regression-stop | dev-models | complete=false；exit_code=124；evaluate_candidates=9；tuned_validations=13；feedback_rounds=18；api_calls=0；[证据目录](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823) |
+| r8f2-section103-20261023T141823-regression-tensor | dev-models | successful=false；exit_code=124；[证据目录](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor) |
 
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
@@ -1308,3 +1355,632 @@ run.py新增export，compile使用包内trace_model.py和compile_model.py；emit
 4. 本轮`export/package.py:176`原先先生成源码再调用lower检查，多错误程序可能先报告较晚的pad；调整为先复用冻结lower检查，再生成源码。新增`tests/test_p2_export.py:123`验证较早非法卷积优先，保持错误文本、op id及行号。12项P2全部重跑通过，七份有效程序的Emit文本及常量仍相同；已完成的七包及原生证据保持，无额外编译。
 
 未完成项：P2指定实现、测试和七包编译验收均完成，无新增编译器依赖阻塞。新增Agent独立生成0、整网真实CKKS0，M1第5条及未见模型证据仍按后续spec推进。API0，累计45/300；下载、训练、新权重、库修改、commit/push均0。
+
+
+## R8f 张量验证与三层缓存（原轮停止记录，当前接续见R8f2）
+
+指定spec：`specs/R8f-tensor-validate.md`，基线`fb6d7f3c`，当前目录`/home/lhohy/Code/Poseidon`、分支`lhy-agent-dsl`。张量引擎和三层缓存已实现，§5测试全部通过；§3.1出现首个不一致后停止。结果：[SUMMARY](/home/lhohy/pt_agent_results/r8f-20261023T092453/SUMMARY.json)、[REPORT](/home/lhohy/pt_agent_results/r8f-20261023T092453/acceptance/REPORT.json)、[46程序数值表](/home/lhohy/pt_agent_results/r8f-20261023T092453/numerical.csv)。
+
+改动文件：
+
+- `scripts/pt_agent/tensor_sim.py`：新增float64张量执行；复用既有布局及属性检查；结果缓存深拷贝、结构前缀缓存和小函数/estimate缓存。前缀缓存1.5 GiB LRU，按权重、图像身份及结构区分，变量改名继续命中；失败batch不提交缓存，命中时恢复act观察统计。
+- `scripts/pt_agent/planners/agent_tools.py`：`validate/evaluate`接入engine/cache，mock默认保持；tensor直接执行计算且不调用estimate，boot_input_max_abs=None；profile带自举误差/输入约束时拒绝tensor。`confirm_select`、`_exact_check`及报告流程保持Mock。
+- `scripts/pt_agent/planners/tuner.py`：传递engine/cache，复用cost与boot_nodes；精调阶数、判定条件、2400秒预算及max_sweeps=1保持。
+- `scripts/pt_agent/tests/test_r8f_tensor_validate.py`：17项新增测试；`tests/test_r8e_tuner.py`仅兼容新传参及boot_nodes字段。文档仅更新本STATUS；冻结模块、PLAN/README、历史响应与程序均保留。
+
+测试输出（全部退出0、失败0、错误0、跳过0）：
+
+| 分组 | 通过/执行 | 秒 | 峰值RSS KiB | 证据 |
+|---|---:|---:|---:|---|
+| tensor-unit | 14/14 | 0.324832 | 242496 | [日志](/home/lhohy/pt_agent_results/r8f-20261023T092453/tensor-unit/tests.log)、[REPORT](/home/lhohy/pt_agent_results/r8f-20261023T092453/tensor-unit/REPORT.json) |
+| tensor-all | 16/16 | 379.373807 | 2560444 | [日志](/home/lhohy/pt_agent_results/r8f-20261023T092453/tensor-all/tests.log)、[REPORT](/home/lhohy/pt_agent_results/r8f-20261023T092453/tensor-all/REPORT.json) |
+| tensor-cost-location-check | 15/15 | 0.317051 | 243544 | [日志](/home/lhohy/pt_agent_results/r8f-20261023T092453/tensor-cost-location-check/tests.log)、[REPORT](/home/lhohy/pt_agent_results/r8f-20261023T092453/tensor-cost-location-check/REPORT.json) |
+| regression-main | 310/310 | 467.817110 | 2167016 | [日志](/home/lhohy/pt_agent_results/r8f-20261023T092453/regression-main/tests.log)、[REPORT](/home/lhohy/pt_agent_results/r8f-20261023T092453/regression-main/REPORT.json) |
+| regression-packaging | 17/17 | 22.892715 | 1833732 | [日志](/home/lhohy/pt_agent_results/r8f-20261023T092453/regression-packaging/tests.log)、[REPORT](/home/lhohy/pt_agent_results/r8f-20261023T092453/regression-packaging/REPORT.json) |
+
+去重后新增17项、旧回归327项，共344/344。`tensor-all`先执行16项；随后给estimate缓存补入源码位置并新增test_14，重跑14项小测试＋该新增测试，共15项；两整网完整精调未重复运行。§5第6a项两模型各24次validation、480批logits逐个`np.array_equal`，各25条history、最终源码、变更及validation字典完全相同。第6b–6d项前缀/改名命中、LRU与字典隔离通过。旧3项报告区间回归按用户例外完整执行，新增测试与实验只读留出数据。
+
+§3.1数值一致性：固定seed=20261023，每模型抽取10配置，预留ResNet20 minimax配置及SiLU degree=7 reference后无放回抽样；完整40个key见REPORT.e1_sampling。另加4份R8e7冻结程序、R6c及R7c-B，共46个；实际执行38个，37通过、1失败、8待执行。每程序100张test[9000:9100]。已执行38个程序的两引擎发散集合均为空。下表分别记录logits与各act统计的最大绝对差；通过依据保留spec规定的相对表达式和act绝对差，不按表中绝对值另定规则。
+
+| 程序 | logits最大绝对差 | act统计最大绝对差 | 结论 |
+|---|---:|---:|---|
+| frozen/resnet20 | 4.2632564145606011e-14 | 7.1054273576010019e-15 | 通过 |
+| frozen/resnet20_silu | 3.5527136788005009e-14 | 1.0658141036401503e-14 | 通过 |
+| frozen/cnn_plain | 5.3290705182007514e-15 | 1.7763568394002505e-15 | 通过 |
+| frozen/mlp | 7.9936057773011271e-15 | 1.7763568394002505e-15 | 通过 |
+| baseline/R6c | 5.3290705182007514e-14 | 1.7763568394002505e-14 | 通过 |
+| baseline/R7c-B | 5.3290705182007514e-14 | 1.0658141036401503e-14 | 通过 |
+| e1/resnet20/random/083 | 3.907985046680551e-14 | 2.1316282072803006e-14 | 通过 |
+| e1/resnet20/random/048 | 4.9737991503207013e-14 | 7.9936057773011271e-15 | 通过 |
+| e1/resnet20/anchor/uniform-cheb-31-1.2 | 4.2632564145606011e-14 | 1.0658141036401503e-14 | 通过 |
+| e1/resnet20/random/132 | 4.2632564145606011e-14 | 8.8817841970012523e-15 | 通过 |
+| e1/resnet20/random/138 | 4.9737991503207013e-14 | 8.8817841970012523e-15 | 通过 |
+| e1/resnet20/anchor/uniform-cheb-15-1.5 | 4.7073456244106637e-14 | 7.1054273576010019e-15 | 通过 |
+| e1/resnet20/random/050 | 4.9737991503207013e-14 | 8.8817841970012523e-15 | 通过 |
+| e1/resnet20/random/066 | 4.2632564145606011e-14 | 1.2434497875801753e-14 | 通过 |
+| e1/resnet20/random/094 | 5.6843418860808015e-14 | 1.7763568394002505e-14 | 通过 |
+| e1/resnet20/anchor/uniform-cheb-63-1.2 | 3.6415315207705135e-14 | 1.0658141036401503e-14 | 通过 |
+| e1/resnet20_silu/reference/r8e7 | 3.5527136788005009e-14 | 1.0658141036401503e-14 | 通过 |
+| e1/resnet20_silu/random/041 | 4.7961634663806763e-14 | 7.9936057773011271e-15 | 通过 |
+| e1/resnet20_silu/random/147 | 3.907985046680551e-14 | 1.0658141036401503e-14 | 通过 |
+| e1/resnet20_silu/random/093 | 3.2418512319054571e-14 | 8.8817841970012523e-15 | 通过 |
+| e1/resnet20_silu/random/113 | 3.730349362740526e-14 | 8.8817841970012523e-15 | 通过 |
+| e1/resnet20_silu/random/088 | 3.1974423109204508e-14 | 7.1054273576010019e-15 | 通过 |
+| e1/resnet20_silu/random/027 | 4.9737991503207013e-14 | 2.1316282072803006e-14 | 通过 |
+| e1/resnet20_silu/random/116 | 3.1974423109204508e-14 | 1.4210854715202004e-14 | 通过 |
+| e1/resnet20_silu/random/040 | 6.0396132539608516e-14 | 5.3290705182007514e-15 | 通过 |
+| e1/resnet20_silu/anchor/uniform-cheb-255-1.5 | 4.9737991503207013e-14 | 1.4210854715202004e-14 | 通过 |
+| e1/cnn_plain/random/045 | 7.1054273576010019e-15 | 8.8817841970012523e-15 | 通过 |
+| e1/cnn_plain/random/074 | 5.3290705182007514e-15 | 7.1054273576010019e-15 | 通过 |
+| e1/cnn_plain/random/170 | 1.021405182655144e-14 | 1.7763568394002505e-15 | 通过 |
+| e1/cnn_plain/random/087 | 1.0880185641326534e-14 | 7.1054273576010019e-15 | 通过 |
+| e1/cnn_plain/random/040 | 7.1054273576010019e-15 | 1.0658141036401503e-14 | 通过 |
+| e1/cnn_plain/anchor/uniform-cheb-31-1.5 | 6.2172489379008766e-15 | 3.5527136788005009e-15 | 通过 |
+| e1/cnn_plain/random/166 | 7.1054273576010019e-15 | 5.3290705182007514e-15 | 通过 |
+| e1/cnn_plain/random/137 | 5.3290705182007514e-15 | 1.7763568394002505e-15 | 通过 |
+| e1/cnn_plain/random/056 | 7.1054273576010019e-15 | 1.7763568394002505e-15 | 通过 |
+| e1/cnn_plain/random/099 | 4.9960036108132044e-15 | 7.1054273576010019e-15 | 通过 |
+| e1/mlp/random/122 | 1.0658141036401503e-14 | 1.7763568394002505e-15 | 通过 |
+| e1/mlp/random/051 | 0.029403407183288266 | 1.7763568394002505e-15 | 未通过 |
+| e1/mlp/random/033 | — | — | 待执行 |
+| e1/mlp/random/008 | — | — | 待执行 |
+| e1/mlp/random/146 | — | — | 待执行 |
+| e1/mlp/random/017 | — | — | 待执行 |
+| e1/mlp/anchor/uniform-cheb-31-1.2 | — | — | 待执行 |
+| e1/mlp/random/078 | — | — | 待执行 |
+| e1/mlp/random/069 | — | — | 待执行 |
+| e1/mlp/random/094 | — | — | 待执行 |
+
+失败程序`e1/mlp/random/051`：ReLU cheb deg=255、domain=(-36.70227470297503, 24.37496681919903)，最大scaled差0.029016284086462146；100/100图有logits超差，argmax 100/100相同、两侧发散0。唯一act的obs_min/obs_max差均1.7763568394002505e-15，max_u差0。原始[程序](/home/lhohy/pt_agent_results/r8f-20261023T092453/acceptance/mismatch/e1__mlp__random__051/program.ptdsl)、[logits与逐图act数组](/home/lhohy/pt_agent_results/r8f-20261023T092453/acceptance/mismatch/e1__mlp__random__051/logits.npz)、[全部100图诊断](/home/lhohy/pt_agent_results/r8f-20261023T092453/acceptance/mismatch/e1__mlp__random__051/diagnostics.json)保留。最严重3张图：
+
+| CIFAR测试索引 | logits最大绝对差 | Mock top-2间隔 | Tensor top-2间隔 |
+|---|---:|---:|---:|
+| 9072 | 0.029403407183288266 | 0.48938116750241001 | 0.47776463398820468 |
+| 9045 | 0.029403407183287378 | 8.9833521227416568 | 8.9692560767545526 |
+| 9025 | 0.02940340718328649 | 1.470349063328853 | 1.483031464388457 |
+
+§3.2未执行：候选0/18，精调0/13，history比较0/224，ResNet20无缓存精调0/6；这些0均表示未开始。只读核对确认R8e7引用R8e5的同一批trace，去重后迭代6/5/4/3、精调6/4/2/1、history112/101/8/3。历史最长精调1422.229秒，原预算2400秒；未发生需扩预算重放的历史提前停止。§3.3三项×三配置共9项计时未执行，加速比和对应完整缓存命中统计待取得；§3.1逐程序100图时间与缓存统计保存在REPORT，仅作为该次运行记录。§4未执行，tune/evaluate/validate默认均为mock，PLAN和README未因本轮改动。
+
+与spec不一致之处及本轮自写修正：算法、数值比较条件和旧断言含义均按spec保持；数据读取冲突已按用户修订解除。按AGENTS例外记录以下修正：
+
+1. [test_r8e_tuner.py:98](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8e_tuner.py:98)、同文件131行：旧fake_validate增加`**kwargs`接收engine/cache/boot_nodes。108、140行：旧fake_cost补中性`boot_nodes=[]`。只作接口兼容，原数值及断言保持。
+2. [tensor_sim.py:186](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tensor_sim.py:186)：本轮前缀缓存初稿直接设置数组只读，改为先取view再设置，避免修改调用者数组的writeable属性。
+3. [tensor_sim.py:102](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tensor_sim.py:102)：初稿estimate缓存遗漏规范文本之外的源码行号，补入lineno/call_lines，保留cost热点与精调排序的位置来源；新增test_14并完成15项针对性检查。
+4. 新测试初稿的minimax类继承会重复收集小测试，改为独立TestCase；LRU夹具改用串行链，令“旧条目被淘汰”断言只依赖目标缓存数组。两项均在首轮测试前修正，保留spec缓存断言含义。
+5. [外层运行器:12](/home/lhohy/pt_agent_results/r8f-20261023T092453/orchestration/r8f_stage.py:12)：首次14项测试通过后，registry写入因本轮脚本漏设PT_RESULTS失败；补用paths.RESULTS_DIR，单次补记完成记录，未重跑这14项。原[说明](/home/lhohy/pt_agent_results/r8f-20261023T092453/tensor-unit/outer-runner-note.txt)保留。
+
+资源与未完成项：normal进程上限4 GiB、Nix共享锁、串行执行保持；§3.1峰值RSS2770.41015625 MiB，退出2后已结束。旧P1回归使用既有可信运行器，trace/编译各1次。API0、累计45/300；新增6条registry、总105条；CKKS/下载/训练/新权重/库修改/提交0。已发现数值不一致的具体原因待后续spec诊断；剩余8程序、全部决策重放、9项计时及默认切换均未完成。新增首次Agent输出0，M1第1–4条沿用R8e7结果，第5条真实CKKS和未见整网证据保持待执行。
+
+
+## R8f2：flat 尾槽修复与 R8f 接续
+
+`lower.py` 的 flat act 在尾值非零时补一次常量加法，P2 模板同步；`FlatLayout` 文档记录有效长度以外槽位为零的不变量。单元素零向量沿同一 act 数值路径计算尾值；零尾值和 mux 的运算序列保持。linear 与张量引擎的数学计算保持。
+
+新增 8 项和既有 344 项共 **352/352** 通过，失败、错误、跳过均为 0。46 程序全部通过；18 候选、13 次精调、224 条 history、6 次 ResNet20 无缓存复核全部一致；9 组计时已完成。随后按 R8f §4 将 tune/evaluate 默认切到 tensor。定向旧测试第1项在 max_u 的严格相等断言失败，依用户要求停止；其余3项未执行，155行 MLP 历史重算未启动。本轮整体状态为阻塞，此前352项完整验收计数保持，额外失败单列。API 0，整网 CKKS 0。
+
+[SUMMARY](/home/lhohy/pt_agent_results/r8f2-20261023T101943/SUMMARY.json)；[验收 REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/REPORT.json)；[默认入口失败 REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/default-smoke/REPORT.json)。
+
+### 测试
+
+| 组 | 通过/执行 | 失败/错误/跳过 | 测试秒 | 外层秒 | RSS MiB | 证据 |
+|---|---|---|---|---|---|---|
+| R8f2 新增 | 8/8 | 0/0/0 | 9.961585 | 11.383875 | 1795.562500 | [REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/flat-tail-tests/REPORT.json) |
+| 既有主回归 | 310/310 | 0/0/0 | 435.342592 | 436.750919 | 2115.023438 | [REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/regression-main/REPORT.json) |
+| P2 12 + 工具链 5 | 17/17 | 0/0/0 | 19.420758 | 20.759585 | 1790.511719 | [REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/regression-packaging/REPORT.json) |
+| R8f 张量与缓存 | 17/17 | 0/0/0 | 388.644645 | 390.004158 | 2511.722656 | [REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/regression-tensor/REPORT.json) |
+
+### 七个冻结程序
+
+| 程序 | 常量个数 | 修复前后 Emit 文本及常量 | 新包与 lower |
+|---|---:|---|---|
+| resnet20 | 4540 | 完全相同 | 完全相同 |
+| resnet20_silu | 4216 | 完全相同 | 完全相同 |
+| cnn_plain | 826 | 完全相同 | 完全相同 |
+| mlp | 339 | 完全相同 | 完全相同 |
+| R6c | 6208 | 完全相同 | 完全相同 |
+| R7c-B | 4992 | 完全相同 | 完全相同 |
+| rule-agent | 6208 | 完全相同 | 完全相同 |
+
+来源：[R8f2 日志](/home/lhohy/pt_agent_results/r8f2-20261023T101943/flat-tail-tests/tests.log)、[P2 回归日志](/home/lhohy/pt_agent_results/r8f2-20261023T101943/regression-packaging/tests.log)。修复前使用 spec 指定的 git `fb6d7f3c` lower；历史文件保持。
+
+### 完整精调缓存逐位相同
+
+| 模型 | 每种配置 validation 次数 | 比较 logits 批次数 | history 条数 | 最终程序 |
+|---|---:|---:|---:|---|
+| resnet20 | 24 | 480 | 25 | 完全相同 |
+| resnet20_silu | 24 | 480 | 25 | 完全相同 |
+
+两次完整精调分别使用 cache=True / False，engine=tensor；每次 validation 字典、history、源码相同，logits 用 np.array_equal 检查。使用留出集 1000 张、批大小 20、budget_s=2400、max_sweeps=1。
+
+### §3.1 数值一致性
+
+每程序使用 test[9000:9100]。maxscaled 为 `max(abs(tensor−Mock)/(1+abs(Mock)))`；actdiff 为 obs_min、obs_max、max_u 的最大绝对差。全局 maxabs=6.0396132539608516e-14，maxscaled=4.0150167676452113e-14，actdiff=2.1316282072803006e-14。
+
+| 程序 | maxabs | maxscaled | actdiff | 有限图像 | Mock/Tensor 发散 | 结论 |
+|---|---|---|---|---|---|---|
+| frozen/resnet20 | 4.2632564145606011e-14 | 1.9321405540810888e-14 | 7.1054273576010019e-15 | 100 | 0/0 | 通过 |
+| frozen/resnet20_silu | 3.5527136788005009e-14 | 2.0268008462583208e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 通过 |
+| frozen/cnn_plain | 5.3290705182007514e-15 | 1.8949010138177542e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| frozen/mlp | 7.9936057773011271e-15 | 5.8798396682685447e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| baseline/R6c | 5.3290705182007514e-14 | 3.6225711665445065e-14 | 1.7763568394002505e-14 | 100 | 0/0 | 通过 |
+| baseline/R7c-B | 5.3290705182007514e-14 | 2.8102247896225134e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20/random/083 | 3.907985046680551e-14 | 1.8667511504528501e-14 | 2.1316282072803006e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20/random/048 | 4.9737991503207013e-14 | 2.4668632525700985e-14 | 7.9936057773011271e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20/anchor/uniform-cheb-31-1.2 | 4.2632564145606011e-14 | 4.0150167676452113e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20/random/132 | 4.2632564145606011e-14 | 3.1740747710421471e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20/random/138 | 4.9737991503207013e-14 | 2.1994252354001124e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20/anchor/uniform-cheb-15-1.5 | 4.7073456244106637e-14 | 1.8613601148642202e-14 | 7.1054273576010019e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20/random/050 | 4.9737991503207013e-14 | 2.5721711164029799e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20/random/066 | 4.2632564145606011e-14 | 1.6114390686965562e-14 | 1.2434497875801753e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20/random/094 | 5.6843418860808015e-14 | 2.2269613982316253e-14 | 1.7763568394002505e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20/anchor/uniform-cheb-63-1.2 | 3.6415315207705135e-14 | 2.272891743094815e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/reference/r8e7 | 3.5527136788005009e-14 | 2.0268008462583208e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/041 | 4.7961634663806763e-14 | 2.3719098408199831e-14 | 7.9936057773011271e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/147 | 3.907985046680551e-14 | 1.8827929136965322e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/093 | 3.2418512319054571e-14 | 2.3426045981688733e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/113 | 3.730349362740526e-14 | 1.8943061542353311e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/088 | 3.1974423109204508e-14 | 1.4579582217871788e-14 | 7.1054273576010019e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/027 | 4.9737991503207013e-14 | 2.0800214675429109e-14 | 2.1316282072803006e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/116 | 3.1974423109204508e-14 | 1.7300352655688013e-14 | 1.4210854715202004e-14 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/random/040 | 6.0396132539608516e-14 | 1.5765865211605887e-14 | 5.3290705182007514e-15 | 100 | 0/0 | 通过 |
+| e1/resnet20_silu/anchor/uniform-cheb-255-1.5 | 4.9737991503207013e-14 | 2.4025118763918687e-14 | 1.4210854715202004e-14 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/045 | 7.1054273576010019e-15 | 3.1169708051119533e-15 | 8.8817841970012523e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/074 | 5.3290705182007514e-15 | 2.3102072000147302e-15 | 7.1054273576010019e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/170 | 1.021405182655144e-14 | 4.6488247695078632e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/087 | 1.0880185641326534e-14 | 6.8037575032256416e-15 | 7.1054273576010019e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/040 | 7.1054273576010019e-15 | 3.2069603034981791e-15 | 1.0658141036401503e-14 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/anchor/uniform-cheb-31-1.5 | 6.2172489379008766e-15 | 3.2297474305667797e-15 | 3.5527136788005009e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/166 | 7.1054273576010019e-15 | 3.6240680951163042e-15 | 5.3290705182007514e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/137 | 5.3290705182007514e-15 | 3.3140097064295067e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/056 | 7.1054273576010019e-15 | 1.6682600002432386e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/cnn_plain/random/099 | 4.9960036108132044e-15 | 2.7702520466660104e-15 | 7.1054273576010019e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/122 | 1.0658141036401503e-14 | 5.449252389261748e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/051 | 1.1546319456101628e-14 | 7.4250519440135388e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/033 | 1.0436096431476471e-14 | 8.5774618961995908e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/008 | 1.2434497875801753e-14 | 6.6512098948404445e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/146 | 8.8817841970012523e-15 | 6.4445616192965921e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/017 | 1.2434497875801753e-14 | 4.8729330403150027e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/anchor/uniform-cheb-31-1.2 | 1.1546319456101628e-14 | 5.4662143700473136e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/078 | 1.2434497875801753e-14 | 4.3069689390295276e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/069 | 1.0436096431476471e-14 | 6.7265212720996204e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+| e1/mlp/random/094 | 9.2148511043887993e-15 | 6.9700228504829421e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 通过 |
+
+### §3.2 决策重放
+
+| 模型 | 候选 | 精调 | history | 无缓存复核 |
+|---|---|---|---|---|
+| resnet20 | 6 | 6 | 112 | 6 |
+| resnet20_silu | 5 | 4 | 101 | 0 |
+| cnn_plain | 4 | 2 | 8 | 0 |
+| mlp | 3 | 1 | 3 | 0 |
+
+起点均取原 trace 的 assistant 响应 program；预算 2400 秒、max_sweeps=1、批大小 20。R8e7 引用同一批 R8e5 trace，计数按18个独立迭代。其余条目严格对照原记录；受影响条目先以修复后 Mock 建立基准，历史原文保留。
+
+受影响条目 `mlp/iteration-2`（candidate），feasible 改变：是，accepted：validation 记录无该字段，精调记录单列。[基准与差异](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/affected-baselines/mlp__iteration-2/validation.json)
+
+| 字段 | 原记录 | 修复后 Mock | 差值 |
+|---|---|---|---|
+| agree | 973 | 998 | 25 |
+| feasible | 否 | 是 | — |
+| acc_drop_pp | 1.3999999999999915 | -7.1054273576010019e-15 | -1.3999999999999986 |
+| top1 | 56.200000000000003 | 57.600000000000001 | 1.3999999999999986 |
+| boot_input_max_abs | 17.373919564631773 | 17.330950005741826 | -0.042969558889947024 |
+
+### §3.3 计时
+
+| 任务 | 配置 | 秒 | 相对 Mock 加速 | 结果 命中/未中 | 前缀 命中/未中 | cheb 命中/未中 | estimate 命中/未中 | LRU 淘汰 | 末尾缓存 MiB |
+|---|---|---|---|---|---|---|---|---|---|
+| 冻结 ResNet20 validate(1000) | mock | 133.282652 | 1.000× | 0/0 | 0/0 | 0/0 | 0/1 | 0 | 0.000 |
+| 冻结 ResNet20 validate(1000) | tensor_no_cache | 8.390386 | 15.885× | 0/0 | 0/0 | 0/0 | 0/0 | 0 | 0.000 |
+| 冻结 ResNet20 validate(1000) | tensor_cache | 8.136924 | 16.380× | 0/1 | 0/950 | 882/18 | 0/0 | 0 | 1437.500 |
+| ResNet20 第 2 次完整精调 | mock | 1148.256491 | 1.000× | 0/0 | 0/0 | 0/0 | 4/20 | 0 | 0.000 |
+| ResNet20 第 2 次完整精调 | tensor_no_cache | 85.635000 | 13.409× | 0/0 | 0/0 | 0/0 | 0/0 | 0 | 0.000 |
+| ResNet20 第 2 次完整精调 | tensor_cache | 69.309065 | 16.567× | 0/21 | 2000/4270 | 4267/53 | 1/20 | 3163 | 1535.625 |
+| R8e5 ResNet20 首次精调 | mock | 1418.007646 | 1.000× | 0/0 | 0/0 | 0/0 | 4/20 | 0 | 0.000 |
+| R8e5 ResNet20 首次精调 | tensor_no_cache | 144.989488 | 9.780× | 0/0 | 0/0 | 0/0 | 0/0 | 0 | 0.000 |
+| R8e5 ResNet20 首次精调 | tensor_cache | 111.963202 | 12.665× | 0/21 | 1950/4320 | 4268/52 | 1/20 | 3213 | 1535.625 |
+
+各组从空缓存开始；小函数缓存分别列 cheb_fit 和 estimate，结果以原始测量值计算加速比。
+
+### 历史停止：默认入口回归（已由§7.1修订）
+
+`test_01_validate_matches_evaluate (pt_agent.tests.test_r8e_tuner.TunerTests)` 在 `test_r8e_tuner.py:54` 使用严格 `assertEqual` 比较 max_u：Mock=0.7545855443514613，Tensor=0.75458554435146086，绝对差=4.4408920985006262e-16。额外定向组执行1项、失败1项，剩余3项未执行；进程退出1，测试耗时12.792984秒。
+
+默认值当前已切换为 tensor；代码与旧测试按停止要求保持，未调整断言、比较条件或算法。等待后续 spec 明确这条旧测试的处理。完整 traceback 与命令保存在 [REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/default-smoke/REPORT.json) 和 [RUN](/home/lhohy/pt_agent_results/r8f2-20261023T101943/default-smoke/RUN.json)。
+
+### 尚未执行的 MLP 历史重算
+
+| 实验 | 计划行数 | 已执行 | 状态 |
+|---|---|---|---|
+| e1 | 147 | 0 | 未启动 |
+| e4 | 6 | 0 | 未启动 |
+| e1confirm | 2 | 0 | 未启动 |
+
+155行重算全部未执行，feasible_like、robust_feasible、延迟范围与 Pareto 变化仍待测量。已备[重算脚本](/home/lhohy/pt_agent_results/r8f2-20261023T101943/orchestration/r8f2_mlp_recheck_inside.py)保留，未启动；原 R9a/R9a2 目录保持。M1 整网真实 CKKS 继续待后续任务。
+
+### 改动文件与范围
+
+本轮改动为 `lower.py` act分支、`kernels/layout.py` docstring、`export/templates/_package/ops.py`、新增 `tests/test_r8f2_flat_tail.py`，以及通过§3之后 `planners/tuner.py:50` / `planners/agent_tools.py:246` 两处默认值；按R8f §4同步README/PLAN并更新本STATUS。`validate`默认保持Mock，`confirm_select`、`_exact_check`、报告集执行路径保持；`agent.run`通过既有调用继承新默认。库、安全参数和精调预算保持，未打新tag。
+
+### 与 spec 不一致之处与未完成项
+
+修复算法、签名、参数及比较条件均按spec执行；本轮新代码与8项新测试首次运行通过，无需实现层面修正。完整验收后的两处默认值改动增加4项定向入口回归以核对实际调用，首项旧断言失败即停止；其余3项未启动。该额外失败独立列示，352/352是默认切换前的完整测试结果。旧测试断言、原响应、程序包和历史证据保留。
+
+MLP历史重算仍为0/155（E1 147、E4 6、e1confirm 2）；各组feasible_like、robust_feasible和E1延迟/Pareto变化尚无新结果。首次Agent生成0、整网CKKS0，M1第1–4条沿用R8e7，第5条待执行。资源仍单进程4 GiB、Nix锁与串行；P1旧回归沿用可信运行器。API0、累计45/300，registry共138条，本轮新增33条，历史额度保留。
+
+
+## R8f2 §7 接续：同引擎测试与 exact 尾槽（历史停止记录）
+
+结果：[SUMMARY](/home/lhohy/pt_agent_results/r8f2-section7-20261023T120346/SUMMARY.json)。本次新目录保留全部测试及编排记录，旧R8f/R8f2结果保持。仍为lhy-agent-dsl、fb6d7f3c-dirty。
+
+改动文件：
+
+- [lower.py:111](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/lower.py:111)：flat exact模式用`EXACT[fn](np.zeros(1))[0]`求尾值，沿用一次常量加法清零。普通cheb/minimax运算保持。
+- [test_r8e_tuner.py:49](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8e_tuner.py:49)：test_01两边显式mock，严格相等断言保留；新增test_01b两边显式tensor，断言相同。主回归在R8c处停止，本次尚未执行到这两个用例。
+- [test_r8f2_flat_tail.py:137](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8f2_flat_tail.py:137)：新增exact sigmoid/exp尾槽严格0测试；150行新增linear→sigmoid→linear，独立NumPy参考、_exact_check.ok且logit差≤1e-9。两项通过，原8项断言保持。
+- 本STATUS更新当前状态、原因、API与最近运行；本次未改PLAN、README、冻结生成机制、库或参数。
+
+测试输出：
+
+| 分组 | 通过/执行 | 失败/错误/跳过 | 时间秒 | RSS KiB | 结论 |
+|---|---:|---|---:|---:|---|
+| flat-tail-tests | 10/10 | 0/0/0 | 10.007768 | 1838464 | OK；exact新测试通过，7份Emit及常量相同 |
+| regression-main | 239/240 | 0/1/0 | 21.602264 | 936120 | TypeError；failfast停止，本组余71项 |
+| regression-packaging | 0/17 | 未执行 | — | — | 原计划组待执行 |
+| regression-tensor | 0/17 | 未执行 | — | — | 原计划组待执行 |
+
+合计已执行250项、249通过、1错误，预期355项、余105项未执行；0跳过。错误为`test_boot_range_reports_without_default_limit`在`assertGreater(result['validation']['boot_input_max_abs'], 0)`收到None。默认evaluate=tensor，validate默认mock；Tensor显式拒绝bootstrap输入边界或噪声配置并无槽级watch统计。未改test_r8c_feedback.py或任何统计字段。[完整日志](/home/lhohy/pt_agent_results/r8f2-section7-20261023T120346/regression-main/tests.log)。
+
+与spec不一致之处：本次实现及两类测试按§7.1/§7.2执行，无额外旧测试适配，无自写代码或测试错误修正。按§7.3复用已通过的§3结果：46数值、18候选/13精调/224 history/6次无缓存重放、9组计时；7份冻结Emit及常量本次再验相同，非exact路径保持。新的失败涉及bootstrap统计字段，与§7.1授权的双方同引擎严格相等适配范围不同，按该条停止。
+
+未完成项：余105项测试（含test_01、test_01b和先前3项入口回归）；155行MLP历史重算仍为0/155（E1 147、E4 6、e1confirm 2）。feasible_like、robust_feasible、延迟范围及Pareto变化待取得。R8f/R8f2保留阻塞，尚未标完成。API0、累计45/300；新增2条registry，共140条；下载/训练/新权重/CKKS/提交0。M1表保持原状态。
+
+## R8f2 §8 接续：反馈文本契约核对（历史停止记录）
+
+[REPORT](/home/lhohy/pt_agent_results/r8f2-section8-review-20261023T122656/REPORT.json)记录全部9条历史validation字段、6条R20 best与对应Tensor重放结果、源码位置及当前默认配置。
+
+改动文件：`planners/agent_tools.py:246`仅把evaluate默认恢复mock；tuner默认保持tensor。按§8.3同步README与PLAN的说明为“精调用张量引擎，面向LLM的evaluate、冻结确认和报告用Mock”。本STATUS记录本次核对与停止原因。agent.py、prompts.py、旧测试和历史证据保持；尚未新增反馈测试。
+
+测试输出：本次测试0、模型0。静态核对读取R8e5 ResNet20 6条、MLP 3条反馈；9/9均缺少当前输出中新增的`n_diverged`、`diverged_indices`。ResNet20 6/6的best来源tuned；既有Tensor重放证明best的槽级自举统计为None，并有末位差异。
+
+| R20反馈迭代 | best来自迭代 | 原best boot_input_max_abs | Tensor重放对应值 |
+|---|---:|---:|---|
+| 1 | 1 | 395.94425529152136 | None |
+| 2 | 2 | 424.127487640067 | None |
+| 3 | 3 | 27.302527779166205 | None |
+| 4 | 4 | 27.01137577170661 | None |
+| 5 | 4 | 27.01137577170661 | None |
+| 6 | 4 | 27.01137577170661 | None |
+
+与spec不一致之处：§8.1默认值修改按指示完成。§8.2的逐字契约与现有新增字段冲突；§8.1对精调进入LLM的字段描述遗漏完整best路径。只把测试中的best取自历史原文会掩盖真实agent.run的此项变化，故未采用该方式宣称完整交互通过。等待spec明确兼容字段及best数值来源，不自行选择修复方案。没有本轮自写代码/测试错误修正。
+
+未完成项：§8.2两类新测试、§8.3全测与155行MLP重算。此前46/46数值、18候选/13精调/224history/6无缓存重放、9计时保持；§7已有exact尾槽10项专项通过及旧主回归错误记录保留。R8f/R8f2均保留阻塞，M1保持。API0、累计45/300，registry141条；新编译/CKKS/下载/训练/新权重/提交0。
+
+## 用户批准记录（2026-10-23）
+
+1. **B1/B1+ 执行 LLM 代码**：批准。R9b §4 的 B1/B1+ 可以执行 LLM 写的 Hecate 代码，作为 AGENTS.md "LLM 输出只解析，永不执行"的例外，仅限 R9b §4。条件：只在 `poseidon_candidate_sandbox`（`trusted=False`）中执行；执行前必须通过 §4.3 第 1 级的 AST 白名单检查；不得在可信运行器或 pt_agent 进程内执行。
+2. **使用 DaCapo 自带的训练权重**：批准。E2、R9b 的 B4 和 R10 可以读取本机未修改的 DaCapo 克隆 `third_party/dacapo/examples/data/` 中已有的权重文件（alexNet/vgg16/mobileNet/squeezeNet 的 relu_maxpool 与 silu_avgpool 版本、resnet20_relu_model、resnet20.silu.model、mlp.model），只读使用。不下载新文件，不复制进 git，不修改这些文件。
+
+
+## R8f2 §9 接续：冻结反馈基准与最终 Mock 复核（已按§10停止）
+
+冻结基准为pt-agent-freeze-v1的048f737c，临时worktree只加入lower.py act分支的同一尾槽修复。R8e5运行记录2ccd117a-dirty，源码差异影响精调判定且缺少dirty快照，因此冻结侧重新执行精调；前次13精调/224 history证明继续保留。四模型18轮以双方各自真实run_agent恢复best并构造反馈，无API。每模型每轮每侧一进程，串行、4GiB、3600秒，精调原2400秒及单轮搜索保持。
+
+本次tuner.finish对Tensor最终程序使用同ctx、完整验证集、最终estimate的boot_nodes执行一次Mock validate；feasible或agree不同就抛异常，最终统计写入result记录，搜索决策保持。新增test_r8f2_feedback.py三项已通过（3/3，0失败/错误/跳过）：Mock最终统计逐项相同、差异报错、evaluate/tune实际引擎接线。[测试REPORT](/home/lhohy/pt_agent_results/r8f2-section9-20261023T124500/feedback-unit/REPORT.json)。
+
+原§9逐轮方案已按用户新增§10停止。ResNet20第1–2轮反馈逐字一致，已完成2/18；第1轮冻结侧1622.16秒、当前侧含最终Mock复核574.84秒；第2轮分别1471.10/465.26秒。第三轮冻结侧evaluate完成，精调已完成1次1000图验证（agree=977、feasible=true），停止时已运行560.79秒；部分输出及原RUN/REPORT全部保留，独立停止记录补记用量。全部回归与155行重算尚未启动。API0，累计45/300。源码审查和本轮结果保存在[结果目录](/home/lhohy/pt_agent_results/r8f2-section9-20261023T124500)。
+
+## R8f2 §10：停止整轮重放与替代证明（静态核对阻塞）
+
+§10.1已完成：仅终止精确入口`/tmp/r8f2_s9_feedback_outer.py`及其6个子进程，外层退出143；复核宿主无剩余Python/Nix工作进程。前2轮两侧原结果和第三轮部分结果保留，原文件未改写；停止事件和第三轮已用560.79秒单独补记registry。API0。
+
+§10.2.1共审查19文件，完整diff保存在[新结果目录](/home/lhohy/pt_agent_results/r8f2-section10-20261023T140329)。agent.py和prompts.py无差异；lower.py与已修复tag工作树相同；agent_tools/tuner的变更为引擎与缓存接线、boot_nodes复用、最终Mock复核，原Mock算式与顺序、接受/回滚/best逻辑保持。layout.py仅尾槽不变量注释。唯一额外变更为poly.py既有路径来源调整，详情见阻塞栏。本轮未修改该文件。
+
+本次实际改动：§9在tuner.py:86增加一次最终Mock复核并检查feasible/agree，新增test_r8f2_feedback.py；README/PLAN同步默认引擎说明，STATUS更新。§10新增静态diff、停止/部分运行记录和REPORT，核心源码保持。
+
+测试输出：§9新测试`Ran 3 tests; OK`，失败/错误/跳过均0。旧整轮方案ResNet20第1–2轮全文比较通过，字符数14,107和14,196；第三轮按用户要求停止。§10仅静态核对，新增动态测试0。此前46/46数值、18候选/13精调/224 history/6次无缓存和9组计时证据保持。
+
+与spec不一致之处：静态diff包含§10.2.1四类之外的既有路径来源改动；按spec停止并等待口径补充，未自行忽略、回退或改写该差异。首次状态更新脚本（标准输入第8行）出现单引号字符串换行笔误，文件未写入；按本轮自写错误例外修正为独立脚本后更新成功，实现、测试及断言保持。
+
+未完成项：§10.2第2项9个候选两侧evaluate抽查、第3项13个最终程序Mock复核、第4项反馈纯函数比较；随后358项全测和155行MLP重算。R8f/R8f2保持阻塞，M1第1–4条历史通过、第5条真实CKKS待执行的结论保持。
+
+
+## R8f2 §10.3 接续：证明已通过，完整回归超时停止
+
+以下保留本次过程记录；最终停止结论见文末。
+
+§10.3允许P1路径解耦作为第五类变更。复用上轮19文件静态审查；其中涉及的数据文件仅sgn151527.txt。仓库原路径third_party/dacapo/python/poly/poly/data/sgn151527.txt与当前DACAPO_ROOT下同名文件各1538字节，diff退出0、无差异；未使用哈希。旧静态停止报告保持。新[静态证明](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/STATIC_PROOF.json)已写入结果目录，registry新增1条。
+
+下一步按§10.2顺序执行：9候选两侧evaluate（ResNet20首轮复用已完成且两侧相等的证据）、13个最终程序full Mock复核、18轮反馈纯函数比较；全部通过后358项全测及147+6+2=155行MLP重算。本轮API0、真实CKKS0，M1原结论保持。
+
+§10.3动态抽查9/9通过：ResNet20首轮复用原两侧证据，SiLU首轮、CNN四轮、MLP三轮均逐项相同。MLP第2轮修复前lower复现旧trace共同字段，仅已知n_diverged/diverged_indices在旧记录中缺失；修复后差异为feasible、cost.latency_pred_us/ops_total/boot_share及validation.agree/boot_input_max_abs/top1/acc_drop_pp。两侧修复后结果相同。[证明进度](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/feedback-proof/REPORT.json)。
+
+本轮脚本修正：复核入口最初重新parse打印source会丢原宏位置，现保留原candidate位置，仅恢复最终act domain/deg，并检查完整canonical和打印源码相同；七项统计断言保持。另一次附加静态准备探测误用系统Python，因无NumPy在导入阶段结束，模型/API均0；所需检查已纳入现有Nix入口。[修正说明](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/SCRIPT_PREPARATION_NOTES.json)。
+
+§10替代证明已完成：9/9候选两侧evaluate字典相同，13/13最终程序的全部7项指定统计严格相等，18/18轮真实各侧agent.run_agent与feedback_message纯函数文本逐字相同。9个未动态抽查的fb只作为两侧共同纯函数输入，按静态路径证明接入；已明确区别动态样本数。R20六份、SiLU四份、CNN两份、MLP一份均复核；历史feasible=false的R20第6份保持false。当前开始358项全测，155行重算待测试通过后执行。
+
+
+## R8f2 §10.3 最终汇报（完整回归超时，阻塞）
+
+**改动文件**
+
+本次接续新增结果目录内的运行脚本、P1输入内容比较附录与停止报告，并更新本STATUS；核心模块保持此前已实现的尾槽修复、默认evaluate=Mock、tune=Tensor及一次最终Mock复核。sgn151527.txt两处各1538字节，延迟compiler-config.json两处各2098字节，diff均无差异。所有历史源文、响应、程序、结果和已消费用量保留。
+
+**测试输出**
+
+- §10替代证明完成：9/9动态evaluate字典相同、13/13最终程序的全部7项统计严格相等、18/18轮反馈文本逐字相同。未动态抽查的9条fb明确记为纯函数两侧共同输入，沿用静态路径证明。
+- 完整测试已出正式报告的三组：13/13、311/311、17/17，共341/341，失败/错误/跳过均0。
+- 剩余17项张量组在1200秒限时内退出124，外层记录1200.540964秒。日志第57–58行确认ResNet20缓存开关对照通过：25次验证、530个logit批次、25条history。SiLU缓存对照进行中被限时结束，其余15项未开始；完整套件尚缺16项终态结果。不得把未完成组计为17项通过。
+- R8f §3既有46数值、18候选/13精调/224条history/6次无缓存及9组计时仍保留有效；本轮没有重跑这些集合。155行MLP重算尚未启动。
+
+**与 spec 不一致之处**
+
+1. 本轮新复核脚本初稿重新parse打印source，遗漏原candidate的行号和宏调用位置。按自写实现错误例外，保留原位置属性，仅恢复最终act的domain/deg；逐份完整canonical及打印原文相等后才验证。13份均已通过，七字段的比较和期望保持。
+2. 附加准备探测误用系统Python，在导入时因无NumPy结束，模型/API均0；所需候选检查随后在既有Nix入口全部执行并通过。
+3. 本轮测试编排沿用旧1200秒组时限，新增最终Mock复核后该组未能完成。未改旧测试、断言或核心代码；按AGENTS报错停止规则停止，保持原用量，等待接续分组的明确口径。当前没有数值断言失败或后端依赖阻塞证据。
+
+**未完成项**
+
+剩余16项张量测试的完整结果；随后155行MLP历史重算（E1 147、E4 6、e1confirm 2）及其可行率/延迟/Pareto汇总。R8f与R8f2保持阻塞。M1第1–4条沿用R8e7，第5条真实CKKS 40图及4探针继续待执行；本轮API、真实CKKS、下载、训练均0。
+
+[完整REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/REPORT.json)；[反馈证明](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/feedback-proof/REPORT.json)；[测试REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/TESTS_REPORT.json)；[脚本修正说明](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/SCRIPT_PREPARATION_NOTES.json)。宿主已确认无遗留Python/Nix进程。
+
+## R8f2 §10.4 接续（完成）
+
+以下为本次接续的过程记录，最终数字与结论见文末“R8f2 §10.4 最终汇报”。
+
+已核对aarch64、lhy-agent-dsl、fb6d7f3c及现有修改。按§10.4复用全部通过证据，仅重跑剩余16项张量测试，墙钟3600秒；随后155行MLP历史重算。核心代码、旧测试及历史结果保持，API0。结果完成后在本节补充§5要求的汇总。
+
+§10.4测试已通过：本轮16/16，661.877秒；SiLU缓存对照25次验证、530个logit批次、25条history相同。合并341+1+16=358，失败/错误/跳过均0；155行MLP重算已启动，最终状态待其完成。
+
+## R8f2 §10.4 最终汇报（完成）
+
+本节为R8f/R8f2的最终接续结论；此前的停止、超时、部分运行及用量记录保持。[SUMMARY](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/SUMMARY.json)；[合成测试REPORT](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/TESTS_REPORT.json)；[反馈证明](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/feedback-proof/REPORT.json)；[MLP重算](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203/REPORT.json)。
+
+**改动文件与 diff 摘要**
+
+本轮§10.4仅新增精确测试接续、合成汇总、MLP重算接线及状态更新脚本，核心代码与既有测试保持。按用户授权将剩余16项张量测试的墙钟时限设为3600秒，内存4GiB、单Nix并发及其他资源设置保持。
+
+累计实现保留：[lower.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/lower.py)的act分支对flat未使用尾槽清零，[layout.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/kernels/layout.py)补充不变量，[P2 ops.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/export/templates/_package/ops.py)采用同一修正；[tensor_sim.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tensor_sim.py)提供张量引擎与三层缓存。[agent_tools.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/agent_tools.py)保持默认evaluate为Mock；[tuner.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/tuner.py)默认Tensor并在最终程序上做一次完整Mock复核，feasible或agree不同即报错，接受、回滚及最终程序选择保持。
+
+沿用§10.3的静态范围证明与P1输入内容比较：[STATIC_PROOF](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/STATIC_PROOF.json)；[输入内容附录](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/STATIC_INPUTS_ADDENDUM.json)。
+
+**测试输出**
+
+完整验收由341项旧完整报告、1项旧日志通过证据、16项本轮完整结果组成，共358/358个唯一用例。失败0、错误0、跳过0。
+
+| 测试组 | 来源 | 通过/执行 | 失败/错误/跳过 | 秒 | RSS KiB | 证据 |
+|---|---|---|---|---|---|---|
+| flat-tail-tests | 复用旧完整报告 | 13/13 | 0/0/0 | 10.429112130994326 | 1838844 | [REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/flat-tail-tests/REPORT.json) |
+| regression-main | 复用旧完整报告 | 311/311 | 0/0/0 | 192.93511459100409 | 3383792 | [REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-main/REPORT.json) |
+| regression-packaging | 复用旧完整报告 | 17/17 | 0/0/0 | 26.515481421010918 | 1833244 | [REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-packaging/REPORT.json) |
+| regression-tensor-remaining | 本轮执行 | 16/16 | 0/0/0 | 661.87750165400212 | 3084068 | [REPORT](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/regression-tensor-remaining/REPORT.json) |
+
+单独复用test_r8f_tensor_validate.FrozenTuneCacheTests.test_resnet20_full_tune：旧日志第5行开始、第58行记录ok；25次验证、530个logit批次、25条history。[原日志](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor/tests.log)。该用例没有独立耗时记录；原1200秒组的退出124保持在[旧RUN](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor/RUN.json)。张量组17项的最终结论明确由旧日志1项与新报告16项合成。
+
+复用§10替代证明：9个动态候选两侧evaluate、13个最终程序Mock复核、18轮反馈文本全部通过。另9条未动态抽查的fb沿用静态证明，只作为两侧共同的纯函数输入。
+
+| 模型 | 动态evaluate候选 | 最终Mock复核 | 反馈通过/轮次 |
+|---|---|---|---|
+| resnet20 | 1 | 6 | 6/6 |
+| resnet20_silu | 1 | 4 | 5/5 |
+| cnn_plain | 4 | 2 | 4/4 |
+| mlp | 3 | 1 | 3/3 |
+
+**复用的 R8f §3.1 数值一致性**
+
+下表直接列出旧验收的逐程序结果，程序及比较条件保持。[原完整REPORT](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/REPORT.json)。
+
+| 程序 | max abs | max scaled | act统计最大差 | 有限样本 | 发散Mock/Tensor | 通过 |
+|---|---|---|---|---|---|---|
+| frozen/resnet20 | 4.2632564145606011e-14 | 1.9321405540810888e-14 | 7.1054273576010019e-15 | 100 | 0/0 | 是 |
+| frozen/resnet20_silu | 3.5527136788005009e-14 | 2.0268008462583208e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 是 |
+| frozen/cnn_plain | 5.3290705182007514e-15 | 1.8949010138177542e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| frozen/mlp | 7.9936057773011271e-15 | 5.8798396682685447e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| baseline/R6c | 5.3290705182007514e-14 | 3.6225711665445065e-14 | 1.7763568394002505e-14 | 100 | 0/0 | 是 |
+| baseline/R7c-B | 5.3290705182007514e-14 | 2.8102247896225134e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 是 |
+| e1/resnet20/random/083 | 3.907985046680551e-14 | 1.8667511504528501e-14 | 2.1316282072803006e-14 | 100 | 0/0 | 是 |
+| e1/resnet20/random/048 | 4.9737991503207013e-14 | 2.4668632525700985e-14 | 7.9936057773011271e-15 | 100 | 0/0 | 是 |
+| e1/resnet20/anchor/uniform-cheb-31-1.2 | 4.2632564145606011e-14 | 4.0150167676452113e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 是 |
+| e1/resnet20/random/132 | 4.2632564145606011e-14 | 3.1740747710421471e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 是 |
+| e1/resnet20/random/138 | 4.9737991503207013e-14 | 2.1994252354001124e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 是 |
+| e1/resnet20/anchor/uniform-cheb-15-1.5 | 4.7073456244106637e-14 | 1.8613601148642202e-14 | 7.1054273576010019e-15 | 100 | 0/0 | 是 |
+| e1/resnet20/random/050 | 4.9737991503207013e-14 | 2.5721711164029799e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 是 |
+| e1/resnet20/random/066 | 4.2632564145606011e-14 | 1.6114390686965562e-14 | 1.2434497875801753e-14 | 100 | 0/0 | 是 |
+| e1/resnet20/random/094 | 5.6843418860808015e-14 | 2.2269613982316253e-14 | 1.7763568394002505e-14 | 100 | 0/0 | 是 |
+| e1/resnet20/anchor/uniform-cheb-63-1.2 | 3.6415315207705135e-14 | 2.272891743094815e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/reference/r8e7 | 3.5527136788005009e-14 | 2.0268008462583208e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/041 | 4.7961634663806763e-14 | 2.3719098408199831e-14 | 7.9936057773011271e-15 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/147 | 3.907985046680551e-14 | 1.8827929136965322e-14 | 1.0658141036401503e-14 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/093 | 3.2418512319054571e-14 | 2.3426045981688733e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/113 | 3.730349362740526e-14 | 1.8943061542353311e-14 | 8.8817841970012523e-15 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/088 | 3.1974423109204508e-14 | 1.4579582217871788e-14 | 7.1054273576010019e-15 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/027 | 4.9737991503207013e-14 | 2.0800214675429109e-14 | 2.1316282072803006e-14 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/116 | 3.1974423109204508e-14 | 1.7300352655688013e-14 | 1.4210854715202004e-14 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/random/040 | 6.0396132539608516e-14 | 1.5765865211605887e-14 | 5.3290705182007514e-15 | 100 | 0/0 | 是 |
+| e1/resnet20_silu/anchor/uniform-cheb-255-1.5 | 4.9737991503207013e-14 | 2.4025118763918687e-14 | 1.4210854715202004e-14 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/045 | 7.1054273576010019e-15 | 3.1169708051119533e-15 | 8.8817841970012523e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/074 | 5.3290705182007514e-15 | 2.3102072000147302e-15 | 7.1054273576010019e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/170 | 1.021405182655144e-14 | 4.6488247695078632e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/087 | 1.0880185641326534e-14 | 6.8037575032256416e-15 | 7.1054273576010019e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/040 | 7.1054273576010019e-15 | 3.2069603034981791e-15 | 1.0658141036401503e-14 | 100 | 0/0 | 是 |
+| e1/cnn_plain/anchor/uniform-cheb-31-1.5 | 6.2172489379008766e-15 | 3.2297474305667797e-15 | 3.5527136788005009e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/166 | 7.1054273576010019e-15 | 3.6240680951163042e-15 | 5.3290705182007514e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/137 | 5.3290705182007514e-15 | 3.3140097064295067e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/056 | 7.1054273576010019e-15 | 1.6682600002432386e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/cnn_plain/random/099 | 4.9960036108132044e-15 | 2.7702520466660104e-15 | 7.1054273576010019e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/122 | 1.0658141036401503e-14 | 5.449252389261748e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/051 | 1.1546319456101628e-14 | 7.4250519440135388e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/033 | 1.0436096431476471e-14 | 8.5774618961995908e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/008 | 1.2434497875801753e-14 | 6.6512098948404445e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/146 | 8.8817841970012523e-15 | 6.4445616192965921e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/017 | 1.2434497875801753e-14 | 4.8729330403150027e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/anchor/uniform-cheb-31-1.2 | 1.1546319456101628e-14 | 5.4662143700473136e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/078 | 1.2434497875801753e-14 | 4.3069689390295276e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/069 | 1.0436096431476471e-14 | 6.7265212720996204e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+| e1/mlp/random/094 | 9.2148511043887993e-15 | 6.9700228504829421e-15 | 1.7763568394002505e-15 | 100 | 0/0 | 是 |
+
+**复用的 R8f §3.2 决策重放**
+
+| 候选 | 参考来源 | agree/total | feasible | 发散数 | max_u | 通过 |
+|---|---|---|---|---|---|---|
+| resnet20/iteration-1 | original_trace | 996/1000 | 否 | 0 | 0.92408649965728684 | 是 |
+| resnet20/iteration-2 | original_trace | 990/1000 | 是 | 0 | 0.88516365329093483 | 是 |
+| resnet20/iteration-3 | original_trace | 977/1000 | 是 | 0 | 0.84855429780136571 | 是 |
+| resnet20/iteration-4 | original_trace | 956/1000 | 是 | 0 | 0.85848803552362052 | 是 |
+| resnet20/iteration-5 | original_trace | 955/1000 | 是 | 0 | 0.85352400743490542 | 是 |
+| resnet20/iteration-6 | original_trace | 565/1000 | 否 | 0 | 0.80635174483646199 | 是 |
+| resnet20_silu/iteration-1 | original_trace | 1000/1000 | 是 | 0 | 0.86354297131112745 | 是 |
+| resnet20_silu/iteration-2 | original_trace | 999/1000 | 是 | 0 | 0.81697482566246493 | 是 |
+| resnet20_silu/iteration-3 | original_trace | 987/1000 | 是 | 0 | 0.8083386390616103 | 是 |
+| resnet20_silu/iteration-4 | original_trace | 975/1000 | 是 | 0 | 0.81407250783932583 | 是 |
+| resnet20_silu/iteration-5 | original_trace | 978/1000 | 是 | 0 | 0.81619725176101299 | 是 |
+| cnn_plain/iteration-1 | original_trace | 981/1000 | 是 | 0 | 0.76880006764970554 | 是 |
+| cnn_plain/iteration-2 | original_trace | 999/1000 | 是 | 0 | 0.79335523769073779 | 是 |
+| cnn_plain/iteration-3 | original_trace | 999/1000 | 是 | 0 | 0.80000007039511511 | 是 |
+| cnn_plain/iteration-4 | original_trace | 999/1000 | 是 | 0 | 0.79335523769073779 | 是 |
+| mlp/iteration-1 | original_trace | 1000/1000 | 是 | 0 | 0.58637330536997845 | 是 |
+| mlp/iteration-2 | repaired_mock | 998/1000 | 是 | 0 | 0.79959996186815252 | 是 |
+| mlp/iteration-3 | original_trace | 1000/1000 | 是 | 0 | 0.79999996184907696 | 是 |
+
+受flat尾槽修复影响的MLP候选沿用旧§3已经列明的修复后Mock参考；修复前的结果保留在历史段及原报告。
+
+| 精调 | history行 | 程序相同 | history相同 | 通过 | 证据 |
+|---|---|---|---|---|---|
+| resnet20/iteration-1 | 21 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-1/tune.json) |
+| resnet20/iteration-2 | 21 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-2/tune.json) |
+| resnet20/iteration-3 | 22 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-3/tune.json) |
+| resnet20/iteration-4 | 23 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-4/tune.json) |
+| resnet20/iteration-5 | 23 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-5/tune.json) |
+| resnet20/iteration-6 | 2 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-6/tune.json) |
+| resnet20_silu/iteration-1 | 22 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20_silu__iteration-1/tune.json) |
+| resnet20_silu/iteration-2 | 27 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20_silu__iteration-2/tune.json) |
+| resnet20_silu/iteration-3 | 27 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20_silu__iteration-3/tune.json) |
+| resnet20_silu/iteration-4 | 25 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20_silu__iteration-4/tune.json) |
+| cnn_plain/iteration-1 | 5 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/cnn_plain__iteration-1/tune.json) |
+| cnn_plain/iteration-2 | 3 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/cnn_plain__iteration-2/tune.json) |
+| mlp/iteration-1 | 3 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/mlp__iteration-1/tune.json) |
+
+以上13次精调共224条history，源码与决策重放全部通过。
+
+| 无缓存重放 | history行 | 程序相同 | history相同 | 通过 | 证据 |
+|---|---|---|---|---|---|
+| resnet20/iteration-1 | 21 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-1__cache-off/tune.json) |
+| resnet20/iteration-2 | 21 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-2__cache-off/tune.json) |
+| resnet20/iteration-3 | 22 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-3__cache-off/tune.json) |
+| resnet20/iteration-4 | 23 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-4__cache-off/tune.json) |
+| resnet20/iteration-5 | 23 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-5__cache-off/tune.json) |
+| resnet20/iteration-6 | 2 | 是 | 是 | 是 | [tune.json](/home/lhohy/pt_agent_results/r8f2-20261023T101943/acceptance/replay/resnet20__iteration-6__cache-off/tune.json) |
+
+**复用的 R8f §3.3 九组计时**
+
+以下是加入§9.2最终Mock复核之前的历史测量。本轮沿用这些证据，未重新测量性能。当前默认tune包含最终Mock复核，evaluate使用Mock；下表秒数及速度比对应当时列出的配置。
+
+| 任务 | 配置 | 秒 | 相对Mock速度比 | prefix命中/未命中 | result命中/未命中 | estimate命中/未命中 |
+|---|---|---|---|---|---|---|
+| validate_frozen_n1000 | mock | 133.2826520580129 | 1 | 0/0 | 0/0 | 0/1 |
+| validate_frozen_n1000 | tensor_no_cache | 8.390385652994155 | 15.885163992485882 | 0/0 | 0/0 | 0/0 |
+| validate_frozen_n1000 | tensor_cache | 8.1369244999950752 | 16.37997895373044 | 0/950 | 0/1 | 0/0 |
+| complete_replay_iteration_2 | mock | 1148.2564911350055 | 1 | 0/0 | 0/0 | 4/20 |
+| complete_replay_iteration_2 | tensor_no_cache | 85.63499991199933 | 13.408728817831291 | 0/0 | 0/0 | 0/0 |
+| complete_replay_iteration_2 | tensor_cache | 69.309065202993224 | 16.567190565505076 | 2000/4270 | 0/21 | 1/20 |
+| r8e5_first_tune | mock | 1418.0076463059959 | 1 | 0/0 | 0/0 | 4/20 |
+| r8e5_first_tune | tensor_no_cache | 144.98948765499517 | 9.7800721227470504 | 0/0 | 0/0 | 0/0 |
+| r8e5_first_tune | tensor_cache | 111.963201837003 | 12.664943687215588 | 1950/4320 | 0/21 | 1/20 |
+
+
+最终默认值：tune使用Tensor并执行一次最终Mock复核；evaluate、validate、confirm_select、_exact_check及报告路径使用Mock。R8f默认切换按修订后的范围完成，数学与CKKS比较条件保持。
+
+**MLP历史重算**
+
+完成155行、45400个程序/图像对，engine=tensor；耗时48.515667307990952秒，峰值RSS 391000 KiB。箭头表示修复前→修复后；robust仅在e1confirm中定义。
+
+| 实验 | 重算/全部MLP | 图像范围 | 受影响feasible | 全部feasible | 受影响robust | 全部robust |
+|---|---|---|---|---|---|---|
+| e1 | 147/213 | test[9000:9200] | 32→71 | 98→137 | 未定义 | 未定义 |
+| e4 | 6/13 | test[8000:10000] | 0→4 | 未定义 | 未定义 | 未定义 |
+| e1confirm | 2/68 | test[8000:10000] | 2→2 | 68→68 | 2→2 | 68→68 |
+
+| E1全部MLP | 修复前 | 修复后 |
+|---|---|---|
+| 最小延迟us | 1934173 | 1934176 |
+| 中位延迟us | 5288679 | 5288682 |
+| 最大延迟us | 8639734 | 8639737 |
+| 最大/最小 | 4.4668879154036381 | 4.4668825380937411 |
+| 可行配置数 | 98 | 137 |
+| 可行最小延迟us | 6286530 | 4244994 |
+
+延迟范围改变：是；Pareto前沿改变：是。新增：mlp/anchor/uniform-cheb-127-1.2, mlp/anchor/uniform-cheb-127-1.5, mlp/random/000, mlp/random/001, mlp/random/002, mlp/random/013, mlp/random/028, mlp/random/033, mlp/random/048, mlp/random/060, mlp/random/068, mlp/random/120, mlp/random/128, mlp/random/131, mlp/random/139, mlp/random/155, mlp/random/170, mlp/random/171, mlp/random/177, mlp/random/180, mlp/random/184, mlp/random/192, mlp/random/198；移除：mlp/anchor/uniform-cheb-63-1.2, mlp/anchor/uniform-minimax-1.2, mlp/anchor/uniform-minimax-1.5, mlp/random/004, mlp/random/006, mlp/random/011, mlp/random/012, mlp/random/015, mlp/random/017, mlp/random/019, mlp/random/022, mlp/random/024, mlp/random/025, mlp/random/030, mlp/random/031, mlp/random/032, mlp/random/034, mlp/random/038, mlp/random/040, mlp/random/042, mlp/random/044, mlp/random/045, mlp/random/052, mlp/random/053, mlp/random/054, mlp/random/055, mlp/random/058, mlp/random/063, mlp/random/064, mlp/random/065, mlp/random/066, mlp/random/067, mlp/random/070, mlp/random/075, mlp/random/076, mlp/random/077, mlp/random/080, mlp/random/082, mlp/random/084, mlp/random/086, mlp/random/088, mlp/random/091, mlp/random/103, mlp/random/108, mlp/random/109, mlp/random/110, mlp/random/111, mlp/random/112, mlp/random/113, mlp/random/116, mlp/random/118, mlp/random/121, mlp/random/122, mlp/random/124, mlp/random/125, mlp/random/127, mlp/random/129, mlp/random/130, mlp/random/133, mlp/random/136, mlp/random/138, mlp/random/143, mlp/random/147, mlp/random/152, mlp/random/153, mlp/random/154, mlp/random/156, mlp/random/159, mlp/random/161, mlp/random/164, mlp/random/168, mlp/random/173, mlp/random/176, mlp/random/179, mlp/random/181, mlp/random/183, mlp/random/185, mlp/random/186, mlp/random/187, mlp/random/193, mlp/random/194, mlp/reference/r8e7。
+
+原前沿：mlp/random/004, mlp/random/006, mlp/random/008, mlp/random/011, mlp/random/012, mlp/random/014, mlp/random/015, mlp/random/017, mlp/random/019, mlp/random/020, mlp/random/022, mlp/random/024, mlp/random/025, mlp/random/029, mlp/random/030, mlp/random/031, mlp/random/032, mlp/random/034, mlp/random/035, mlp/random/038, mlp/random/039, mlp/random/040, mlp/random/042, mlp/random/044, mlp/random/045, mlp/random/052, mlp/random/053, mlp/random/054, mlp/random/055, mlp/random/058, mlp/random/063, mlp/random/064, mlp/random/065, mlp/random/066, mlp/random/067, mlp/random/070, mlp/random/071, mlp/random/074, mlp/random/075, mlp/random/076, mlp/random/077, mlp/random/080, mlp/random/082, mlp/random/084, mlp/random/086, mlp/random/088, mlp/random/091, mlp/random/097, mlp/random/100, mlp/random/103, mlp/random/105, mlp/random/108, mlp/random/109, mlp/random/110, mlp/random/111, mlp/random/112, mlp/random/113, mlp/random/116, mlp/random/118, mlp/random/121, mlp/random/122, mlp/random/124, mlp/random/125, mlp/random/127, mlp/random/129, mlp/random/130, mlp/random/133, mlp/random/135, mlp/random/136, mlp/random/138, mlp/random/143, mlp/random/147, mlp/random/152, mlp/random/153, mlp/random/154, mlp/random/156, mlp/random/159, mlp/random/160, mlp/random/161, mlp/random/164, mlp/random/165, mlp/random/168, mlp/random/169, mlp/random/173, mlp/random/175, mlp/random/176, mlp/random/179, mlp/random/181, mlp/random/182, mlp/random/183, mlp/random/185, mlp/random/186, mlp/random/187, mlp/random/189, mlp/random/190, mlp/random/191, mlp/random/193, mlp/random/194, mlp/anchor/uniform-cheb-63-1.2, mlp/anchor/uniform-minimax-1.2, mlp/anchor/uniform-minimax-1.5, mlp/reference/r8e7。
+
+新前沿：mlp/random/000, mlp/random/001, mlp/random/002, mlp/random/008, mlp/random/013, mlp/random/014, mlp/random/020, mlp/random/028, mlp/random/029, mlp/random/033, mlp/random/035, mlp/random/039, mlp/random/048, mlp/random/060, mlp/random/068, mlp/random/071, mlp/random/074, mlp/random/097, mlp/random/100, mlp/random/105, mlp/random/120, mlp/random/128, mlp/random/131, mlp/random/135, mlp/random/139, mlp/random/155, mlp/random/160, mlp/random/165, mlp/random/169, mlp/random/170, mlp/random/171, mlp/random/175, mlp/random/177, mlp/random/180, mlp/random/182, mlp/random/184, mlp/random/189, mlp/random/190, mlp/random/191, mlp/random/192, mlp/random/198, mlp/anchor/uniform-cheb-127-1.2, mlp/anchor/uniform-cheb-127-1.5。
+
+e1：[逐行结果](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203/e1/rows.jsonl)；[合并总体](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203/e1/mlp_merged.json)。
+
+e1 feasible_like变化：
+
+| 配置 | 修复前 | 修复后 |
+|---|---|---|
+| mlp/random/000 | 否 | 是 |
+| mlp/random/001 | 否 | 是 |
+| mlp/random/002 | 否 | 是 |
+| mlp/random/008 | 否 | 是 |
+| mlp/random/013 | 否 | 是 |
+| mlp/random/014 | 否 | 是 |
+| mlp/random/020 | 否 | 是 |
+| mlp/random/029 | 否 | 是 |
+| mlp/random/033 | 否 | 是 |
+| mlp/random/035 | 否 | 是 |
+| mlp/random/039 | 否 | 是 |
+| mlp/random/048 | 否 | 是 |
+| mlp/random/060 | 否 | 是 |
+| mlp/random/071 | 否 | 是 |
+| mlp/random/074 | 否 | 是 |
+| mlp/random/097 | 否 | 是 |
+| mlp/random/100 | 否 | 是 |
+| mlp/random/105 | 否 | 是 |
+| mlp/random/128 | 否 | 是 |
+| mlp/random/131 | 否 | 是 |
+| mlp/random/139 | 否 | 是 |
+| mlp/random/155 | 否 | 是 |
+| mlp/random/160 | 否 | 是 |
+| mlp/random/165 | 否 | 是 |
+| mlp/random/169 | 否 | 是 |
+| mlp/random/170 | 否 | 是 |
+| mlp/random/171 | 否 | 是 |
+| mlp/random/175 | 否 | 是 |
+| mlp/random/177 | 否 | 是 |
+| mlp/random/180 | 否 | 是 |
+| mlp/random/182 | 否 | 是 |
+| mlp/random/184 | 否 | 是 |
+| mlp/random/189 | 否 | 是 |
+| mlp/random/190 | 否 | 是 |
+| mlp/random/191 | 否 | 是 |
+| mlp/random/192 | 否 | 是 |
+| mlp/random/198 | 否 | 是 |
+| mlp/anchor/uniform-cheb-127-1.2 | 否 | 是 |
+| mlp/anchor/uniform-cheb-127-1.5 | 否 | 是 |
+
+e4：[逐行结果](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203/e4/rows.jsonl)；[合并总体](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203/e4/mlp_merged.json)。
+
+e4 feasible_like变化：
+
+| 配置 | 修复前 | 修复后 |
+|---|---|---|
+| mlp/margin/cheb/1.05 | 否 | 是 |
+| mlp/margin/cheb/1.1 | 否 | 是 |
+| mlp/margin/cheb/1.3 | 否 | 是 |
+| mlp/margin/cheb/1.5 | 否 | 是 |
+
+e1confirm：[逐行结果](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203/e1confirm/rows.jsonl)；[合并总体](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203/e1confirm/mlp_merged.json)。
+
+**与 spec 不一致之处**
+
+本轮状态生成结果末尾多出一个空行，已清理，内容和结论保持。本轮§10.4按授权机械接续：只执行旧REPORT列出的16项，调整其墙钟时限后保留原资源配置；核心模块、已有断言、精调参数、数学及CKKS比较条件保持。§10.3中源码位置属性遗漏、系统Python缺NumPy的准备探测及1200秒超时均作为历史记录保留；[历史脚本修正说明](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/SCRIPT_PREPARATION_NOTES.json)；[历史停止REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/REPORT.json)。
+
+**未完成项**
+
+R8f与R8f2本轮要求均已完成，当前无待用户或Claude决定的问题。M1第1–4条沿用R8e7；第5条整网真实CKKS 40图及4探针仍待后续任务。本轮完成开发验证和历史重算，未新增首次Agent输出的完整CKKS验收。
+
+本轮API0、真实CKKS0；累计45/300，registry现有178条，本脚本只读计数。旧超时用量、原R9a/R9a2及其他历史证据保留。
