@@ -29,6 +29,11 @@ spec 本身有矛盾；期望值与实测不符；需要做设计选择；修正
 对 pt_agent 生效的新规则（替换下文对应的旧规则）：
 - Agent 冻结前可以使用内部工具循环（parse/typecheck、MockExpr 明文仿真、CountExpr 代价）。
   真实编译、CKKS 和测试集结果永不回传给 Agent。
+- 工具链与路径（2026-10-23 解耦）：pt_agent 的 trace 和编译不再导入 baseline 的 SDK 模块（poseidon_runtime_paths、
+  poseidon_runtime_compile、compiler_configuration），编译命令由 toolchain.hecate_command 生成，参数文件在 pt_agent/profiles/。
+  所有位置统一由 pt_agent/paths.py 提供，可用环境变量 POSEIDON_WORK_ROOT、PT_AGENT_RESULTS_ROOT、PT_HECATE_BUILD、
+  PT_DACAPO_ROOT 覆盖；新代码不得写死绝对路径，也不得重新引入对 SDK 选择文件的依赖（只有 execute_cpu 等旧路径保留）。
+  依赖本机产物（历史运行目录、CIFAR 数据、编译器构建）的测试类，必须用 pt_agent/tests/_artifacts.py 的 require(...) 标记。
   数据划分（用户 2026-10-22 决定，同日修订）：CIFAR 测试集第 9000–9999 张为"留出验证集"，供 Agent 和精调在循环中使用；
   第 8000–8999 张为"确认集"，只在冻结时对候选做一次确认，其结果不回传给 Agent；
   第 0–7999 张为"报告测试集"，只用于最终报告，其结果永不回传、不用于任何选择。M1 第 5 条使用的 40 张加密测试图

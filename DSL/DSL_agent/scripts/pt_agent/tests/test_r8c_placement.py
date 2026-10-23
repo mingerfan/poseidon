@@ -12,6 +12,7 @@ from pt_agent.intake import Graph
 from pt_agent.lower import lower, pack_inputs
 from pt_agent.placement import PlacementError, depth_dp
 from pt_agent.paths import pt_result, work_result
+from pt_agent.tests._artifacts import DATA, WORK_RESULTS, require
 
 
 R3 = pt_result('r3-resnet20-20261020T131658')
@@ -28,6 +29,7 @@ def place(dag):
                     latency_table=load_latency('qwen48'))
 
 
+@require(DATA, WORK_RESULTS, R3)
 class DagTests(unittest.TestCase):
     def test_cipher_operands_context_and_count_keys(self):
         dag = DagBackend(16)
@@ -73,6 +75,7 @@ class DagTests(unittest.TestCase):
             self.assertTrue(np.array_equal(actual, outputs[0]))
 
 
+@require(DATA, WORK_RESULTS, R3)
 class PlacementTests(unittest.TestCase):
     def test_chain(self):
         dag = DagBackend(16)
@@ -109,6 +112,7 @@ class PlacementTests(unittest.TestCase):
             place(dag)
 
 
+@require(DATA, WORK_RESULTS, R3)
 class CompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

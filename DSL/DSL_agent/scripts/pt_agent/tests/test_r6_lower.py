@@ -15,12 +15,14 @@ from pt_agent.lower import LoweringError, decode_outputs, lower, pack_inputs
 from pt_agent.models.resnet20_fhe import build, pack_input
 from pt_agent.planners.rule import plan
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, require
 
 
 R3 = pt_result('r3-resnet20-20261020T131658')
 EXAMPLES = Path(__file__).resolve().parents[1] / 'examples'
 
 
+@require(DATA, R3)
 class LowerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

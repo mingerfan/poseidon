@@ -22,6 +22,7 @@ from pt_agent.planners.rule import plan
 from pt_agent.tests.test_r3_ops import CASES
 from pt_agent.tests.test_r8a_models import StaticPool
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, require
 
 
 BASE = pt_result('run-resnet20-rule-20261020T165817')
@@ -39,6 +40,7 @@ def parameter_independent_canonical(program):
     return result
 
 
+@require(DATA, BASE)
 class AtenTests(unittest.TestCase):
     def setUp(self):
         torch.manual_seed(20261022)

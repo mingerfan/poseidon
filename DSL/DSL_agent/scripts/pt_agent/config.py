@@ -4,13 +4,11 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 
-from .paths import PLATFORM_DIR
+from .paths import HECATE_BUILD, PROFILES_DIR
 
 
-DEFAULT_HECATE_OPT = PLATFORM_DIR / "build-dacapo/hecate-18.1.2-nix/bin/hecate-opt"
-DEFAULT_OPERATOR_SPEC = (
-    Path(__file__).resolve().parents[1] / "baseline/poseidon-operator-spec-v1.json"
-)
+DEFAULT_HECATE_OPT = HECATE_BUILD / "bin/hecate-opt"
+DEFAULT_OPERATOR_SPEC = PROFILES_DIR / "poseidon-operator-spec-v1.json"
 
 
 @dataclass(frozen=True)

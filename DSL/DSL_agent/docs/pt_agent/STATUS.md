@@ -1,8 +1,11 @@
-# pt_agent 状态（最后更新：2026-10-22 / 2ccd117a-dirty）
+# pt_agent 状态（最后更新：2026-10-23 / 048f737c-dirty）
 
 主线：`/home/lhohy/Code/Poseidon`，`lhy-agent-dsl`。
 当前按 A 线 AGENTS.md 的逐轮 spec 规则推进；PLAN.md 仅作路线图。
-当前轮次为R8e7：实现与指定实验完成。23组共295/295测试通过；模型选中4/4，原样真实编译4/4、8000图Mock报告准确率4/4。ResNet20选中第2轮tuned／226自举，报告91.25%对Torch91.7125%，下降0.4625pp、发散1；按PLAN.md §4.0第3条澄清，M1第1–4条通过、第5条待执行；校准域覆盖18/19保留为诊断。两份固定基线均完成新确认及8000图报告，复用既有编译计划。本轮API0、重新生成0、重新精调0、真实CKKS0；累计45/300，registry共82条。真实CKKS及未见模型证据仍待后续spec。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)、[完整汇总](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/SUMMARY.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8e7-confirm-criterion-tests-20261022T121728/REPORT.json)。
+当前轮次：R9a2已完成：310/310测试通过；121配置各2000图复核完成、执行错误0，robust_feasible为5/12、9/10、30/31、68/68；E6 matched自举40/40一致，延迟相对误差中位0.9412328560719451%、最大1.6305665547421428%；E3专家MLP改为2/manual。API/新编译/下载/训练/新权重/CKKS0，累计45/300。 [完整SUMMARY](/home/lhohy/pt_agent_results/r9a2-20261023T004744/SUMMARY.json)。
+历史R9a：305/305测试通过；setsid nohup all完整结束（20228.307369275994秒，约5小时37分），13项工作退出均0。E1 751项、E3 26项、E4 84项、E6 40对，执行错误均0；新增真实编译26/26，复用14份历史计划。Agent冻结模块保持，API0、累计45/300；报告集/下载/训练/新权重/真实CKKS0。 [运行REPORT](/home/lhohy/pt_agent_results/r9a-20261022T152208/REPORT.json)；§8完整表格见本文件R9a节。
+
+历史R8e7：实现与指定实验完成。23组共295/295测试通过；模型选中4/4，原样真实编译4/4、8000图Mock报告准确率4/4。ResNet20选中第2轮tuned／226自举，报告91.25%对Torch91.7125%，下降0.4625pp、发散1；按PLAN.md §4.0第3条澄清，M1第1–4条通过、第5条待执行；校准域覆盖18/19保留为诊断。两份固定基线均完成新确认及8000图报告，复用既有编译计划。本轮API0、重新生成0、重新精调0、真实CKKS0；累计45/300，registry共82条。真实CKKS及未见模型证据仍待后续spec。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)、[完整汇总](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/SUMMARY.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8e7-confirm-criterion-tests-20261022T121728/REPORT.json)。
 
 历史R8e6：实现及指定实验已结束。全部292/292测试通过，基线接线修复后新组7/7复核。四模型确认2/4：ResNet20与SiLU各6次未通过，无新冻结、编译或报告测试；CNN／MLP原文通过真实编译及8000图Mock报告评测（65.65%／56.05%，发散均0）。复杂整网确认0/2，整网真实CKKS仍待执行。两份固定基线各完成一次确认和8000图报告。API0，累计45/300；registry共80条。初次基线接线错误及失败REPORT保留，只接续未执行基线，四模型未重跑。[最终REPORT](/home/lhohy/pt_agent_results/r8e6-baselines-continuation-20261022T104428/REPORT.json)、[完整汇总](/home/lhohy/pt_agent_results/r8e6-baselines-continuation-20261022T104428/SUMMARY.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8e6-confirm-split-tests-20261022T095940/REPORT.json)。留出test[9000:10000]、确认test[8000:9000]、报告test[0:8000]。
 
@@ -44,6 +47,8 @@
 | R8e5 | specs/R8e5-accuracy-criterion.md（含§3.1） | 完成（实现与指定实验） | agent_tools.py、tuner.py、prompts.py、run.py、r8b_dev.py、新criterion及5份旧测试、STATUS.md | 285/285；2基线／4模型完整运行；编译4/4、Mock报告准确率3/4；API18/24、累计45/300；[汇总](/home/lhohy/pt_agent_results/r8e5-dev-20261022T041646/SUMMARY.json) | 兼容适配按§3.1及AGENTS例外执行；R20数值失败和两份整网域覆盖缺口保留，M1未完成 |
 | R8e6 | specs/R8e6-confirm-split.md（含§6） | 完成（实现与指定实验） | data/cifar.py、planners/agent_tools.py/confirm.py/agent.py、run.py、experiments/r8e6_reconfirm.py、tests/test_r8e6_confirm.py及§6三份旧测试、STATUS.md | 292/292；修复后新组7/7；4模型与2基线结束；确认2/4，原文编译2/2选中模型；API0 | §6适配已执行；自写测试夹具漏val_split、基线误配旧校准字段已修，失败记录和已用额度保持；复杂整网未通过确认 |
 | R8e7 | specs/R8e7-confirm-criterion.md | 完成（实现与指定实验） | planners/agent_tools.py/confirm.py、experiments/r8e6_reconfirm.py、tests/test_r8e7_criterion.py、tests/test_r8e6_confirm.py、STATUS.md | 295/295；确认4/4、原文编译4/4、8000图Mock准确率4/4；2基线完成；API0 | 旧确认夹具n_diverged=0兼容适配；按PLAN.md §4.0澄清，M1第1–4条通过、第5条待执行，域覆盖仅作诊断 |
+| R9a | specs/R9a-motivation-study.md | 完成 | experiments/r9a_motivation.py、experiments/r9a_sampler.py、tests/test_r9a_motivation.py、STATUS.md | 305/305测试；E1 751、E3 26、E4 84、E6 40对完成，执行错误0；新编译26/26，旧计划14；[REPORT](/home/lhohy/pt_agent_results/r9a-20261022T152208/REPORT.json) | 冻结模块保持，LLM0；本轮自写错误及启动锁失败保留，见阻塞栏 |
+| R9a2 | specs/R9a2-frontier-confirm.md | 完成 | experiments/r9a_motivation.py、tests/test_r9a_motivation.py、STATUS.md | 310/310通过；121复核/40对照/26代码统计完成，执行错误0；[SUMMARY](/home/lhohy/pt_agent_results/r9a2-20261023T004744/SUMMARY.json) | 两处本轮自写错误已修正，旧失败保留；原目录与冻结模块保持；LLM/新编译0 |
 
 ## M1 ResNet20
 
@@ -60,6 +65,10 @@
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+R9a2指定实现、测试与运行均完成，无新增阻塞。首轮新夹具漏header必填字段的13项12过1错记录保留，补齐既有profile字段后310/310通过。冻结Agent模块及原R9a结果保持，M1历史结论保持；本轮实际CKKS0。
+
+R9a当前无新增阻塞。初次自写记录器多加seconds字段，断点测试6项中5过1失败，已删除该字段并保持原断言；原[失败REPORT](/home/lhohy/pt_agent_results/R9a-motivation-tests-20261022T151139/REPORT.json)保留。两项边界测试首次Nix启动器串行锁等待到期，实际测试0项，原[启动失败REPORT](/home/lhohy/pt_agent_results/R9a-motivation-tests-20261022T151332/post-review-tests/REPORT.json)保留；主回归结束后串行2/2通过。现305项通过，all已完成，无额外原生调用或API重试。
 
 R8e7实现与指定实验已完成，无新增实现或编译器／运行库阻塞。按PLAN.md §4.0第3条澄清，M1第1–4条以R8e7 resnet20结果记为通过，第5条真实CKKS待执行。ResNet20与SiLU的校准域覆盖均为18/19，作为诊断保留。整网真实CKKS及未见模型验收待后续spec。R8e6下列确认结果按旧规则保留：发散后早停并使用完整分母的准确率属于历史统计，R8e7已按逐张完整评估重新报告；SiLU及R6c的max_u在新确认规则中只记录。
 
@@ -128,17 +137,22 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+R9a2 API0，累计45/300、剩余255；310项通过，原失败测试记录及全部92条registry保留。121配置复核、E6 40对matched与E3 26项重算均完成；重新编译/报告集读取/下载/训练/新权重/CKKS0，原R9a目录未写入。
+
+R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry记录保留。all已完成，E1/E3/E4/E6执行错误0；新编译26/26（R20 8、SiLU 8、CNN 8、MLP 2），历史计划14份复用。M1第1–4条沿用R8e7通过结果，第5条待执行。
+
 pt_agent：**45 / 300**，剩余255次。R8e7 API0、重新生成0、重新精调0、训练0、下载0、真实CKKS0；4模型trace／真实编译各4次，2固定基线复用既有计划。4模型共8次确认，2基线各1次；全部6份程序完成8000图Mock报告。全部历史调用与82条registry记录保留。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)。
 
 ## 最近 5 次运行（run_id、模型、结论）
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| R8e7-dev-models-reconfirm-20261022T141917-bbce | dev-models / reconfirm | 4模型与2基线完成；确认4/4、原文编译4/4、Mock报告准确率4/4；API0；M1第1–4条通过、第5条待执行；[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json) |
-| R8e7-dev-models-offline-tests-20261022T122530-08a3 | dev-models / offline-tests | 295/295测试通过；API0；[REPORT](/home/lhohy/pt_agent_results/R8e7-confirm-criterion-tests-20261022T121728/REPORT.json) |
-| R8e6-dev-models-reconfirm-continuation-20261022T113156-5cf0 | dev-models / reconfirm-continuation | 已保留原记录；[REPORT](/home/lhohy/pt_agent_results/r8e6-baselines-continuation-20261022T104428/REPORT.json) |
-| R8e6-dev-models-post-fix-tests-20261022T104428-d97f | dev-models / post-fix-tests | 已保留原记录；[REPORT](/home/lhohy/pt_agent_results/R8e6-confirm-split-tests-20261022T095940/post-baseline-fix-tests/REPORT.json) |
-| R8e6-dev-models-reconfirm-20261022T104104-3d35 | dev-models / reconfirm | 已保留原记录；[REPORT](/home/lhohy/pt_agent_results/r8e6-reconfirm-20261022T100839/REPORT.json) |
+| R9a2-dev-models-e3-20261023T045310-f8a3 | dev-models / e3 | 26项统计完成；专家MLP=2/manual；[REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e3/REPORT.json) |
+| R9a2-dev-models-e6-20261023T045310-b8e8 | dev-models / e6 | 40对matched自举全吻合；重新编译0；[REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e6/REPORT.json) |
+| R9a2-dev-models-e1confirm-20261023T045208-d34c | dev-models / e1confirm | 121配置复核完成，执行错误0；robust 5/12、9/10、30/31、68/68；[REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e1confirm/REPORT.json) |
+| R9a2-dev-models-offline-tests-20261023T004721-4788 | dev-models / offline-tests | 310/310测试通过；API0；[REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235615/REPORT.json) |
+| R9a2-dev-models-offline-tests-20261022T235524-c638 | dev-models / offline-tests | 12/13测试通过；新夹具漏字段，失败保留，后续已修正；[REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235522/REPORT.json) |
+
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
 旧 T0/T2 测试输出保留原路径；旧源码副本：[before/](/home/lhohy/pt_agent_results/R1-ptdsl-unit-20261020T111834-3fa0/before/)。
@@ -925,3 +939,325 @@ ResNet20对R7c B：真实计划自举288→189，减少99次（34.375%）；报�
 预算与证据：API0，模型确认8次、基线确认2次；模型编译4次且串行，基线新增编译0。复用R8e5全部27份候选及原固定基线，重新精调0，报告测试集结果未参与选择；原源码、响应、证据、包和已消费额度保持。运行结束磁盘余量20.074GiB。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/SUMMARY.json)。
 
 未完成项：M1第5条整网真实CKKS；未见同级整网验证。按PLAN.md §4.0第3条澄清，M1第1–4条以R8e7 resnet20结果记为通过，校准域覆盖18/19仅作诊断。当前spec指定实现与实验全部完成，未新增编译器依赖阻塞。
+
+## R9a 实现与实验（完成）
+
+R9a完成：305/305测试通过；setsid nohup all完整结束（20228.307369275994秒，约5小时37分），13项工作退出均0。E1 751项、E3 26项、E4 84项、E6 40对，执行错误均0；新增真实编译26/26，复用14份历史计划。Agent冻结模块保持，API0、累计45/300；报告集/下载/训练/新权重/真实CKKS0。
+
+改动文件仅为两份新实验脚本、一份新测试及STATUS.md。冻结tag `pt-agent-freeze-v1`对应048f737c；既有pt_agent模块、基线、库和历史证据保持。实际run_id：`R9a-dev-models-all-20261022T205917-1570`。
+
+测试输出：主测试/回归303/303（本轮8项＋既有295项），补充E6边界2/2，共305项通过；failures=0、errors=0。[主测试REPORT](/home/lhohy/pt_agent_results/R9a-motivation-tests-20261022T151332/REPORT.json)、[边界REPORT](/home/lhohy/pt_agent_results/R9a-motivation-tests-20261022T151332/post-review-tests-after-regression/REPORT.json)。
+
+数据与预算：E1固定test[9000:9200]共200图；E4固定test[8000:10000]共2000图；沿用既有训练校准统计。E1随机700、anchor46、参照5，总751；E6最多32新编译，按8个延迟分位去重后实际26。Mock/编译各1并发，普通4GiB及可信编译6GiB/单文件8GiB/墙钟1小时/磁盘至少10GiB限制保持。API0，全部87条registry保留。
+
+E1：以下延迟为代价模型预测，单位秒。feasible_like按发散数0且准确率下降≤0.5pp计算，分母含全部请求。[summary](/home/lhohy/pt_agent_results/r9a-20261022T152208/e1/summary.json)、[完整配置与指标](/home/lhohy/pt_agent_results/r9a-20261022T152208/e1/rows.jsonl)。
+
+| 模型 | 配置数 | 最小 / 中位 / 最大 s | 倍数 | 可行比例 | 最低可行 s | 冻结分位 |
+|---|---|---|---|---|---|---|
+| resnet20 | 164 | 38.573766 / 95.7047205 / 165.665744 | 4.29477754389 | 72/164 (43.902439%) | 52.992248 | 2.77777777778% |
+| resnet20_silu | 161 | 38.573766 / 88.752536 / 165.665363 | 4.29476766671 | 95/161 (59.006211%) | 44.733076 | 1.05263157895% |
+| cnn_plain | 213 | 6.331167 / 15.088335 / 26.186009 | 4.13604774602 | 48/213 (22.535211%) | 12.454662 | 72.9166666667% |
+| mlp | 213 | 1.934173 / 5.288679 / 8.639734 | 4.4668879154 | 98/213 (46.009390%) | 6.28653 | 67.3469387755% |
+
+分位公式为100×可行配置中延迟≤冻结延迟的数量/全部可行数量。MLP冻结程序延迟6286530us，已等于最低可行值；67.3469387755%包含66个最低代价并列项。CNN冻结程序在72.9166666667%分位，采样中存在更快的可行配置。
+
+E1 anchor全表（46项）：
+
+| 模型 | anchor | top1 % | 下降pp | 发散数 | boots | 预测 s | 可行 |
+|---|---|---|---|---|---|---|---|
+| resnet20 | uniform-cheb-15-1.2 | 76.5 | 17 | 0 | 136 | 38.573766 | 否 |
+| resnet20 | uniform-cheb-15-1.5 | 39 | 54.5 | 0 | 136 | 38.573766 | 否 |
+| resnet20 | uniform-cheb-31-1.2 | 95 | -1.5 | 0 | 192 | 52.992248 | 是 |
+| resnet20 | uniform-cheb-31-1.5 | 91 | 2.5 | 0 | 192 | 52.992248 | 否 |
+| resnet20 | uniform-cheb-63-1.2 | 94 | -0.5 | 0 | 288 | 77.354667 | 是 |
+| resnet20 | uniform-cheb-63-1.5 | 93.5 | 0 | 0 | 288 | 77.354667 | 是 |
+| resnet20 | uniform-cheb-127-1.2 | 93.5 | 0 | 0 | 383 | 102.30938 | 是 |
+| resnet20 | uniform-cheb-127-1.5 | 93.5 | 0 | 0 | 383 | 102.30938 | 是 |
+| resnet20 | uniform-cheb-255-1.2 | 93.5 | 0 | 0 | 629 | 165.665744 | 是 |
+| resnet20 | uniform-cheb-255-1.5 | 93.5 | 0 | 0 | 629 | 165.665744 | 是 |
+| resnet20 | uniform-minimax-1.2 | 93.5 | 0 | 0 | 458 | 120.954868 | 是 |
+| resnet20 | uniform-minimax-1.5 | 93.5 | 0 | 0 | 458 | 120.954868 | 是 |
+| resnet20_silu | uniform-cheb-15-1.2 | 91 | 3 | 0 | 136 | 38.573766 | 否 |
+| resnet20_silu | uniform-cheb-15-1.5 | 65 | 29 | 0 | 136 | 38.573766 | 否 |
+| resnet20_silu | uniform-cheb-31-1.2 | 94.5 | -0.5 | 0 | 192 | 52.992248 | 是 |
+| resnet20_silu | uniform-cheb-31-1.5 | 94 | 0 | 0 | 192 | 52.992248 | 是 |
+| resnet20_silu | uniform-cheb-63-1.2 | 94 | 0 | 0 | 288 | 77.354667 | 是 |
+| resnet20_silu | uniform-cheb-63-1.5 | 94 | 0 | 0 | 288 | 77.354667 | 是 |
+| resnet20_silu | uniform-cheb-127-1.2 | 94 | 0 | 0 | 383 | 102.30938 | 是 |
+| resnet20_silu | uniform-cheb-127-1.5 | 94 | 0 | 0 | 383 | 102.30938 | 是 |
+| resnet20_silu | uniform-cheb-255-1.2 | 94 | 0 | 0 | 629 | 165.665363 | 是 |
+| resnet20_silu | uniform-cheb-255-1.5 | 94 | 0 | 0 | 629 | 165.665363 | 是 |
+| cnn_plain | uniform-cheb-15-1.2 | 18.5 | 53 | 0 | 22 | 6.331167 | 否 |
+| cnn_plain | uniform-cheb-15-1.5 | 21 | 50.5 | 0 | 22 | 6.331167 | 否 |
+| cnn_plain | uniform-cheb-31-1.2 | 44 | 27.5 | 0 | 30 | 8.395457 | 否 |
+| cnn_plain | uniform-cheb-31-1.5 | 33 | 38.5 | 0 | 30 | 8.395457 | 否 |
+| cnn_plain | uniform-cheb-63-1.2 | 67.5 | 4 | 0 | 48 | 12.893452 | 否 |
+| cnn_plain | uniform-cheb-63-1.5 | 66.5 | 5 | 0 | 48 | 12.893452 | 否 |
+| cnn_plain | uniform-cheb-127-1.2 | 73.5 | -2 | 0 | 61 | 16.394685 | 是 |
+| cnn_plain | uniform-cheb-127-1.5 | 71 | 0.5 | 0 | 61 | 16.394685 | 是 |
+| cnn_plain | uniform-cheb-255-1.2 | 70 | 1.5 | 0 | 99 | 26.186009 | 否 |
+| cnn_plain | uniform-cheb-255-1.5 | 70.5 | 1 | 0 | 99 | 26.186009 | 否 |
+| cnn_plain | uniform-minimax-1.2 | 71.5 | 0 | 0 | 72 | 19.126397 | 是 |
+| cnn_plain | uniform-minimax-1.5 | 71.5 | 0 | 0 | 72 | 19.126397 | 是 |
+| mlp | uniform-cheb-15-1.2 | 41 | 17 | 0 | 7 | 1.934173 | 否 |
+| mlp | uniform-cheb-15-1.5 | 37 | 21 | 0 | 7 | 1.934173 | 否 |
+| mlp | uniform-cheb-31-1.2 | 52.5 | 5.5 | 0 | 10 | 2.70955 | 否 |
+| mlp | uniform-cheb-31-1.5 | 52 | 6 | 0 | 10 | 2.70955 | 否 |
+| mlp | uniform-cheb-63-1.2 | 56 | 2 | 0 | 16 | 4.244991 | 否 |
+| mlp | uniform-cheb-63-1.5 | 55 | 3 | 0 | 16 | 4.244991 | 否 |
+| mlp | uniform-cheb-127-1.2 | 56.5 | 1.5 | 0 | 20 | 5.288679 | 否 |
+| mlp | uniform-cheb-127-1.5 | 56 | 2 | 0 | 20 | 5.288679 | 否 |
+| mlp | uniform-cheb-255-1.2 | 58 | -7.1054273576e-15 | 0 | 33 | 8.639734 | 是 |
+| mlp | uniform-cheb-255-1.5 | 58 | -7.1054273576e-15 | 0 | 33 | 8.639734 | 是 |
+| mlp | uniform-minimax-1.2 | 58 | -7.1054273576e-15 | 0 | 24 | 6.28653 | 是 |
+| mlp | uniform-minimax-1.5 | 58 | -7.1054273576e-15 | 0 | 24 | 6.28653 | 是 |
+
+E1固定参照（5项）与所有Pareto key保留在summary及完整rows中：
+
+| 模型 | 参照 | top1 % | 下降pp | 发散数 | 预测 s | 可行 |
+|---|---|---|---|---|---|---|
+| resnet20 | r8e7 | 95 | -1.5 | 0 | 61.636379 | 是 |
+| resnet20 | r6c | 93.5 | 0 | 0 | 102.30938 | 是 |
+| resnet20_silu | r8e7 | 94.5 | -0.5 | 0 | 44.733076 | 是 |
+| cnn_plain | r8e7 | 71.5 | 0 | 0 | 19.126397 | 是 |
+| mlp | r8e7 | 58 | -7.1054273576e-15 | 0 | 6.28653 | 是 |
+
+E3：LOC排除空行与纯注释；人工决定数按spec命名正则出现次数统计，开发模型取既有ATen图。未指定人工决定数的来源记—，共享库单列。[loc.csv](/home/lhohy/pt_agent_results/r9a-20261022T152208/e3/loc.csv)、[来源和方法](/home/lhohy/pt_agent_results/r9a-20261022T152208/e3/rows.jsonl)。
+
+| 模型 | 来源 | LOC | 人工决定数 |
+|---|---|---|---|
+| MLP | expert_dsl | 71 | 0 |
+| ResNet | expert_dsl | 112 | 14 |
+| AlexNet | expert_dsl | 113 | 14 |
+| VGG16 | expert_dsl | 181 | 25 |
+| MobileNet | expert_dsl | 73 | 10 |
+| SqueezeNet | expert_dsl | 222 | 32 |
+| 共享库 | expert_shared | 636 | — |
+| Lenet | expert_torch | 85 | — |
+| ResNet | expert_torch | 84 | — |
+| AlexNet | expert_torch | 80 | — |
+| VGG16 | expert_torch | 105 | — |
+| MobileNet | expert_torch | 81 | — |
+| SqueezeNet | expert_torch | 97 | — |
+| resnet20 | handwritten_cpp | 4817 | — |
+| resnet20 | pytorch | 114 | 77 |
+| resnet20 | frozen_dsl | 60 | 77 |
+| resnet20 | llm_macro | 42 | 77 |
+| resnet20_silu | pytorch | 84 | 77 |
+| resnet20_silu | frozen_dsl | 60 | 77 |
+| resnet20_silu | llm_macro | 35 | 77 |
+| cnn_plain | pytorch | 15 | 13 |
+| cnn_plain | frozen_dsl | 13 | 13 |
+| cnn_plain | llm_macro | 13 | 13 |
+| mlp | pytorch | 7 | 5 |
+| mlp | frozen_dsl | 7 | 5 |
+| mlp | llm_macro | 7 | 5 |
+
+E4：42个逐激活范围与42个余量配置全部保留。[ranges.csv](/home/lhohy/pt_agent_results/r9a-20261022T152208/e4/ranges.csv)、[margin_sweep.csv](/home/lhohy/pt_agent_results/r9a-20261022T152208/e4/margin_sweep.csv)、[summary](/home/lhohy/pt_agent_results/r9a-20261022T152208/e4/summary.json)。
+
+| 模型 | 激活数 | 范围比最大 | 中位 | >1.1比例 |
+|---|---|---|---|---|
+| resnet20 | 19 | 1.36496032812 | 1.09890585551 | 9/19 |
+| resnet20_silu | 19 | 1.27123966433 | 1.05928038642 | 6/19 |
+| cnn_plain | 3 | 1.15273005465 | 1.038807114 | 1/3 |
+| mlp | 1 | 1.03097058648 | 1.03097058648 | 0/1 |
+
+E4余量扫描全表：准确率参考分别为ResNet20 91.8%、SiLU 91.55%、CNN 63.95%、MLP 55.25%；发散输入计为分类错误。Chebyshev均为63次，minimax_comp为(15,15,27)。
+
+| 模型 | 方法 | 余量 | top1 % | 下降pp | 发散数 | max_u |
+|---|---|---|---|---|---|---|
+| resnet20 | cheb | 1 | 90.2 | 1.6 | 32 | 3.79646275071e+272 |
+| resnet20 | cheb | 1.05 | 90.95 | 0.85 | 15 | 6.95619208772e+278 |
+| resnet20 | cheb | 1.1 | 91.55 | 0.25 | 7 | 2.55770976727e+117 |
+| resnet20 | cheb | 1.2 | 91.7 | 0.1 | 2 | 1.56807698177e+74 |
+| resnet20 | cheb | 1.3 | 91.9 | -0.1 | 1 | 822305.144652 |
+| resnet20 | cheb | 1.5 | 91.7 | 0.1 | 0 | 0.934070916481 |
+| resnet20 | minimax_comp | 1 | 91 | 0.8 | 17 | 1.20041931278e+276 |
+| resnet20 | minimax_comp | 1.05 | 91.3 | 0.5 | 10 | 4.34984640842e+287 |
+| resnet20 | minimax_comp | 1.1 | 91.5 | 0.3 | 6 | 1.2408926188 |
+| resnet20 | minimax_comp | 1.2 | 91.7 | 0.1 | 2 | 1.13743347094 |
+| resnet20 | minimax_comp | 1.3 | 91.75 | 0.05 | 1 | 1.04991831067 |
+| resnet20 | minimax_comp | 1.5 | 91.8 | 0 | 0 | 0.910009668883 |
+| resnet20_silu | cheb | 1 | 90.9 | 0.65 | 9 | 7.69002601513e+298 |
+| resnet20_silu | cheb | 1.05 | 91.35 | 0.2 | 2 | 4.53872484359e+156 |
+| resnet20_silu | cheb | 1.1 | 91.45 | 0.1 | 1 | 3.45754208747e+154 |
+| resnet20_silu | cheb | 1.2 | 91.55 | 0 | 0 | 1.07017495535 |
+| resnet20_silu | cheb | 1.3 | 91.55 | 0 | 0 | 0.973850578909 |
+| resnet20_silu | cheb | 1.5 | 91.55 | 0 | 0 | 0.865789864694 |
+| cnn_plain | cheb | 1 | 62.55 | 1.4 | 0 | 18.3872791978 |
+| cnn_plain | cheb | 1.05 | 62.4 | 1.55 | 0 | 1.07355909675 |
+| cnn_plain | cheb | 1.1 | 61.95 | 2 | 0 | 1.01906941011 |
+| cnn_plain | cheb | 1.2 | 61.7 | 2.25 | 0 | 0.92581771395 |
+| cnn_plain | cheb | 1.3 | 60.85 | 3.1 | 0 | 0.879121523187 |
+| cnn_plain | cheb | 1.5 | 59.85 | 4.1 | 0 | 0.815699802663 |
+| cnn_plain | minimax_comp | 1 | 63.85 | 0.1 | 3 | 1.54353802069 |
+| cnn_plain | minimax_comp | 1.05 | 63.9 | 0.05 | 2 | 1.09800911841 |
+| cnn_plain | minimax_comp | 1.1 | 63.9 | 0.05 | 1 | 1.04803628628 |
+| cnn_plain | minimax_comp | 1.2 | 63.9 | 0.05 | 0 | 0.960715021356 |
+| cnn_plain | minimax_comp | 1.3 | 63.9 | 0.05 | 0 | 0.886901717359 |
+| cnn_plain | minimax_comp | 1.5 | 63.9 | 0.05 | 0 | 0.768710359454 |
+| mlp | cheb | 1 | 54.45 | 0.8 | 0 | 1.02471974827 |
+| mlp | cheb | 1.05 | 54.55 | 0.7 | 0 | 0.985534590948 |
+| mlp | cheb | 1.1 | 54.65 | 0.6 | 0 | 0.949911720656 |
+| mlp | cheb | 1.2 | 54.45 | 0.8 | 0 | 0.887571697645 |
+| mlp | cheb | 1.3 | 54.55 | 0.7 | 0 | 0.834822447404 |
+| mlp | cheb | 1.5 | 54.35 | 0.9 | 0 | 0.75042364702 |
+| mlp | minimax_comp | 1 | 55.25 | 0 | 0 | 0.712726922383 |
+| mlp | minimax_comp | 1.05 | 55.25 | 0 | 0 | 0.678787545127 |
+| mlp | minimax_comp | 1.1 | 55.25 | 0 | 0 | 0.647933565803 |
+| mlp | minimax_comp | 1.2 | 55.25 | 0 | 0 | 0.593939101986 |
+| mlp | minimax_comp | 1.3 | 55.25 | 0 | 0 | 0.548251478757 |
+| mlp | minimax_comp | 1.5 | 55.25 | 0 | 0 | 0.475151281589 |
+
+E6：40个唯一对照，错误0；新增真实trace/编译26/26通过（8/8/8/2），复用已有14对，旧计划新增编译0。MLP可行代价只有2个不同取值，8个分位去重后得到2份新程序。[pairs.csv](/home/lhohy/pt_agent_results/r9a-20261022T152208/e6/pairs.csv)、[summary](/home/lhohy/pt_agent_results/r9a-20261022T152208/e6/summary.json)、[逐程序REPORT](/home/lhohy/pt_agent_results/r9a-20261022T152208/e6/programs)。
+
+| 估计器 | 有效对数/总数 | 自举精确比例 | 自举MAE | 延迟相对误差中位 | 最大 |
+|---|---|---|---|---|---|
+| depth-dp | 40/40 | 95% | 4.3 | 0.954710203167% | 23.3621368965% |
+| lazy | 40/40 | 5% | 56.875 | 26.4207748916% | 74.1773488428% |
+
+40对总分母包含两项R6b历史PARS计划：existing/r6b/1的depth-dp预测383对实际461，existing/r6b/3预测288对实际382；两项lazy自举数与PARS计划一致。其余38对编译模式为dacapo-depth-dp，自举预测38/38一致，延迟相对误差中位0.9477617392384077%、最大1.6305665547421428%。延迟对照使用真实编译计划的延迟模型，真实CKKS墙钟测量为0。
+
+与spec不一致之处：签名、采样、算法和数值条件无偏离。按本轮自写错误例外，删除记录器初版多余seconds字段，保持原测试断言；首次6项中5过1失败的REPORT保留。补充E6失败CSV与已完成原生编译的断点恢复检查，两项首次因Nix串行锁等待到期未执行，串行复核2/2通过；原启动失败证据保留。实验all单次完整结束，API/原生编译重试0。
+
+未完成项：本轮spec实现、测试和四项研究均完成，无新增阻塞。新增首次Agent输出0、真实CKKS0；M1第1–4条沿用R8e7 resnet20通过结论，第5条整网真实CKKS及未见同级整网验证留待后续spec。开发研究结果单列，原始交付记录保持。
+
+R9a阶段记录（保留，以下为运行期间快照）：
+
+
+新增experiments/r9a_motivation.py、experiments/r9a_sampler.py、tests/test_r9a_motivation.py；既有冻结模块保持。测试303/303加E6边界2/2通过。运行目录[/home/lhohy/pt_agent_results/r9a-20261022T152208](/home/lhohy/pt_agent_results/r9a-20261022T152208)，PID122183，使用setsid nohup；同一目录再次运行all时按rows.jsonl key接续，历史终态错误行保留并跳过。
+
+有限规模：E1 751项（随机700、anchor46、参照5）；E4范围42项、余量配置42项（每项2000图）；E6最多32个新编译配置并复用14组编译对。E1仅test[9000:9200]，E4仅test[8000:10000]，校准沿用训练图；Mock与编译串行，普通4GiB及可信编译6GiB、8GiB单文件、1小时、磁盘至少10GiB配置保持。API0、报告集读取0、训练0、下载0、新权重0、真实CKKS0。
+
+与spec不一致之处：无算法或数值条件偏离。按AGENTS本轮自写错误例外删除多余seconds字段；新E6实现复核补齐失败CSV程序标识及已完成编译的统计恢复，新增两项离线边界验证。源码人工决定数按spec的正则出现次数统计，来源路径及方法说明写入E3结果；开发模型决定数取已有ATen图。
+
+启动时E3完成26行、错误0：[loc.csv](/home/lhohy/pt_agent_results/r9a-20261022T152208/e3/loc.csv)、[summary.json](/home/lhohy/pt_agent_results/r9a-20261022T152208/e3/summary.json)。E4/E1/E6运行及汇总待取得，最终按§8补齐。M1第1–4条继续以R8e7 resnet20结果记通过，第5条真实CKKS待执行。
+
+R9a阶段记录：ResNet20 cheb 63六组（确认＋留出2000图）已完成，后续minimax_comp进行中：
+
+| margin | top1 % | acc_drop_pp | n_diverged | max_u |
+|---|---|---|---|---|
+| 1.0 | 90.2 | 1.5999999999999943 | 32 | 3.796462750705749e+272 |
+| 1.05 | 90.95 | 0.8499999999999943 | 15 | 6.956192087723168e+278 |
+| 1.1 | 91.55 | 0.25 | 7 | 2.557709767272167e+117 |
+| 1.2 | 91.7 | 0.09999999999999432 | 2 | 1.568076981774262e+74 |
+| 1.3 | 91.9 | -0.10000000000000853 | 1 | 822305.1446523652 |
+| 1.5 | 91.7 | 0.09999999999999432 | 0 | 0.934070916480585 |
+
+R9a E4阶段更新：ResNet20已完成31项（19范围＋12余量配置），未发生执行错误；范围比最大1.3649603281211529、中位1.098905855508858、>1.1比例9/19。minimax_comp margin1.5：top1=91.8%、acc_drop_pp=0、n_diverged=0、max_u=0.9100096688829659。SiLU已完成19项范围统计，正在余量扫描；E1/E6待执行。数据见同一运行目录e4/rows.jsonl与e4/summary.json。
+
+R9a E4完成：84/84行、错误0，包含42项范围与42组余量配置。E1已开始；E6待执行。[余量全表](/home/lhohy/pt_agent_results/r9a-20261022T152208/e4/margin_sweep.csv)、[逐激活范围](/home/lhohy/pt_agent_results/r9a-20261022T152208/e4/ranges.csv)。
+
+| 模型 | 激活数 | 范围比最大 | 中位 | >1.1比例 |
+|---|---|---|---|---|
+| resnet20 | 19 | 1.3649603281211529 | 1.098905855508858 | 9/19 |
+| resnet20_silu | 19 | 1.2712396643318316 | 1.0592803864160192 | 6/19 |
+| cnn_plain | 3 | 1.152730054651498 | 1.0388071140016581 | 1/3 |
+| mlp | 1 | 1.0309705864753638 | 1.0309705864753638 | 0/1 |
+
+R9a E1阶段更新：resnet20完成164/164项（随机150、anchor12、参照2），错误0；feasible_like=72/164=43.902439024390244%，预测延迟最小38573766us、中位95704720.5us、最大165665744us，最大/最小4.294777543888248，最小可行52992248us，冻结R8e7程序分位2.7777777777777777%。当前进入resnet20_silu；E6待执行。以上为固定200图配置研究，未调用LLM或真实CKKS。
+
+R9a E1第二整网完成：resnet20_silu完成161/161项（随机150、anchor10、参照1），错误0；feasible_like=95/161=59.00621118012422%，预测延迟最小38573766us、中位88752536us、最大165665363us，倍数4.294767666709027，最小可行44733076us，冻结程序分位1.0526315789473684%。当前CNN、MLP接续；E1累计已过325项，E6待执行。
+
+## R9a2 实现与复核（完成）
+
+R9a2已完成：310/310测试通过；121配置各2000图复核完成、执行错误0，robust_feasible为5/12、9/10、30/31、68/68；E6 matched自举40/40一致，延迟相对误差中位0.9412328560719451%、最大1.6305665547421428%；E3专家MLP改为2/manual。API/新编译/下载/训练/新权重/CKKS0，累计45/300。
+
+改动文件：experiments/r9a_motivation.py、tests/test_r9a_motivation.py及STATUS.md。r9a_sampler.py及所有冻结模块保持；只解析原DSL并复用既有模型、权重、数据与编译计划。原R9a目录未写入。运行目录：[/home/lhohy/pt_agent_results/r9a2-20261023T004744](/home/lhohy/pt_agent_results/r9a2-20261023T004744)；[SUMMARY](/home/lhohy/pt_agent_results/r9a2-20261023T004744/SUMMARY.json)。
+
+测试输出：本轮R9a测试15项＋既有R1–R8e7 295项，24组共310/310通过，failures=0、errors=0，API45→45。[测试REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235615/REPORT.json)。
+
+有限规模：从R9a 751行按指定并集、按key去重选出121项（12/10/31/68），每项固定2000图。e1confirm单次完整执行，耗时10244.6372662秒（约2小时51分）；E6 40对默认估计复算、E3 26项统计各执行一次，新增编译0。原普通4GiB与Mock/Nix串行限制保持；255次多项式阶段观测RSS约2.69GiB。[复核REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e1confirm/REPORT.json)、[E6 REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e6/REPORT.json)、[E3 REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e3/REPORT.json)。
+
+数据口径：严格使用spec指定test[8000:10000]，不读取报告test[0:8000]。这2000图包含原E1 test[9000:9200]的200图，R9a E4也曾使用同一2000图；本轮记录为指定范围复核。确认结果不回传冻结Agent，不用于改动生成机制。
+
+E1confirm：robust_feasible按n_diverged=0且acc_drop_pp≤0.5计算。以下分母为选中的配置数；延迟单位us，为既有代价模型预测。[summary](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e1confirm/summary.json)、[完整rows](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e1confirm/rows.jsonl)。
+
+| 模型 | 复核数 | 稳健可行 | 最快稳健us | 冻结us | 比值 | 冻结下降pp | 冻结发散数 |
+|---|---|---|---|---|---|---|---|
+| resnet20 | 12 | 5/12 (41.666667%) | 77354667 | 61636379 | 1.25501640841 | -0.25 | 1 |
+| resnet20_silu | 10 | 9/10 (90.000000%) | 44733076 | 44733076 | 1 | 0.05 | 0 |
+| cnn_plain | 31 | 30/31 (96.774194%) | 12454662 | 19126397 | 0.651176591179 | 0.05 | 0 |
+| mlp | 68 | 68/68 (100.000000%) | 6286530 | 6286530 | 1 | 0 | 0 |
+
+最快key：ResNet20 anchor/uniform-cheb-63-1.5；SiLU reference/r8e7；CNN random/112；MLP anchor/uniform-minimax-1.2（与冻结程序同代价）。ResNet20冻结程序在本轮有1张发散输入；SiLU、CNN、MLP冻结程序均满足本轮robust_feasible。
+
+200图与2000图混淆表（仅上述121个预选配置）：
+
+| 模型 | 两者可行 | 仅200图可行 | 仅2000图可行 | 均不可行 |
+|---|---|---|---|---|
+| resnet20 | 5 | 7 | 0 | 0 |
+| resnet20_silu | 9 | 1 | 0 | 0 |
+| cnn_plain | 30 | 1 | 0 | 0 |
+| mlp | 68 | 0 | 0 | 0 |
+
+合计：112项两者可行，9项仅200图可行，其余两项计数均0；执行错误0，所有121项保留在分母。
+
+E6：matched实际调用cost.estimate(program, weights)默认派发：38项depth-dp、2项lazy。两项历史refresh=agent的PARS程序正确使用lazy；depth-dp与lazy原预测列逐字段与旧R9a记录相同。40个唯一编译对、错误0；未创建新编译程序目录。[pairs.csv](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e6/pairs.csv)、[summary](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e6/summary.json)。
+
+| 估计器 | 对数/总数 | 自举完全一致 | 自举MAE | 延迟相对误差中位 | 最大 |
+|---|---|---|---|---|---|
+| matched | 40/40 | 100% | 0 | 0.941232856072% | 1.63056655474% |
+| depth-dp | 40/40 | 95% | 4.3 | 0.954710203167% | 23.3621368965% |
+| lazy | 40/40 | 5% | 56.875 | 26.4207748916% | 74.1773488428% |
+
+延迟对照沿用原真实编译计划的延迟模型；本轮真实CKKS墙钟测量为0。
+
+E3修正后的完整表：MLP平方激活的方法固定，近似决策0；两层手写全连接各计1，总数2，source=manual。decisions_source对专家DSL标记regex/manual；开发模型的既有ATen图计数保持，其他未统计来源记—。所有26项LOC与R9a保持，除专家MLP外的决定数保持。[loc.csv](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e3/loc.csv)、[完整rows](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e3/rows.jsonl)。
+
+| 模型 | 来源 | LOC | 决定数 | 专家计数来源 |
+|---|---|---|---|---|
+| MLP | expert_dsl | 71 | 2 | manual |
+| ResNet | expert_dsl | 112 | 14 | regex |
+| AlexNet | expert_dsl | 113 | 14 | regex |
+| VGG16 | expert_dsl | 181 | 25 | regex |
+| MobileNet | expert_dsl | 73 | 10 | regex |
+| SqueezeNet | expert_dsl | 222 | 32 | regex |
+| 共享库 | expert_shared | 636 | — | — |
+| Lenet | expert_torch | 85 | — | — |
+| ResNet | expert_torch | 84 | — | — |
+| AlexNet | expert_torch | 80 | — | — |
+| VGG16 | expert_torch | 105 | — | — |
+| MobileNet | expert_torch | 81 | — | — |
+| SqueezeNet | expert_torch | 97 | — | — |
+| resnet20 | handwritten_cpp | 4817 | — | — |
+| resnet20 | pytorch | 114 | 77 | — |
+| resnet20 | frozen_dsl | 60 | 77 | — |
+| resnet20 | llm_macro | 42 | 77 | — |
+| resnet20_silu | pytorch | 84 | 77 | — |
+| resnet20_silu | frozen_dsl | 60 | 77 | — |
+| resnet20_silu | llm_macro | 35 | 77 | — |
+| cnn_plain | pytorch | 15 | 13 | — |
+| cnn_plain | frozen_dsl | 13 | 13 | — |
+| cnn_plain | llm_macro | 13 | 13 | — |
+| mlp | pytorch | 7 | 5 | — |
+| mlp | frozen_dsl | 7 | 5 | — |
+| mlp | llm_macro | 7 | 5 | — |
+
+结果核对：121个唯一复核key且每项input_count=2000；从rows独立重算稳健数量、最快代价和混淆表与summary一致。E6 40个唯一key的原两列保持，matched自举均吻合，独立重算延迟误差与summary一致；E3全26项LOC保持、MLP修正为2/manual。API累计45/300，全部92条registry保留。
+
+与spec不一致之处：无签名、算法、采样、判定条件或旧断言含义偏离。以下两处本轮自写实现错误按AGENTS例外直接修正：
+
+- [r9a_motivation.py:364](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/r9a_motivation.py:364)：实现初稿误用ctx.val_inputs，已改用现有ctx.val_images，修正发生在首轮测试前。
+- [test_r9a_motivation.py:328](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r9a_motivation.py:328)：新增test_13遗漏agent header的l_max/boot_out_level，补当前qwen48 profile的既有值，保持全部断言。初次13项12通过1错误的[失败REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235522/REPORT.json)保留，修正后310/310通过。
+
+本轮未完成项：无。未新增首次独立Agent输出或真实CKKS证据，M1第1–4条沿用R8e7历史结论，第5条整网CKKS及未见同级整网验收留待后续spec。
+
+R9a2原实现与阶段记录（保留）：
+
+
+只修改experiments/r9a_motivation.py及tests/test_r9a_motivation.py；r9a_sampler.py与冻结模块保持。新增e1confirm的选择、原配置重建、逐key续跑、robust_feasible与混淆表；E6读取旧源码调用默认cost.estimate，不触发trace/编译；E3专家MLP=2，source=manual，并增加专家decisions_source列。非专家图统计保持既有方法。
+
+有限规模：依据原751行选择121项，分模型12/10/31/68；每项2000图，固定test[8000:10000]，其中含E1原test[9000:9200]的200图。按指定索引报告为2000图复核；E4此前也使用该范围。E6复用40对、E3 26项重算，API/报告集读取/下载/训练/新权重/重新编译/CKKS均0。全部结果写入新的r9a2目录，旧R9a目录只读；原4GiB进程限制、串行Mock与Nix共享锁保持。
+
+与spec不一致之处：无算法或数值条件偏离。实现初稿误写ctx.val_inputs，已按本轮自写错误例外改成现有ctx.val_images；无旧测试改动。
+
+测试已完成：本轮15项＋既有295项，共310/310，全部24组退出0。测试[REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235615/REPORT.json)。运行目录[/home/lhohy/pt_agent_results/r9a2-20261023T004744](/home/lhohy/pt_agent_results/r9a2-20261023T004744)，PID170893，按key断点接续。未完成项：e1confirm、E6 matched和E3复算及最终汇总。
+
+R9a2自写夹具修正：新增test_13初稿只设置refresh=agent，遗漏parser要求的l_max与boot_out_level；初次13项12通过、1错误，原[REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235522/REPORT.json)保留。已仅给本轮新夹具补当前qwen48 profile的既有字段值，断言和默认派发要求保持；新一轮离线及未运行回归继续。
+
+R9a2阶段结果：ResNet20 12/12完成、执行错误0；robust_feasible=5/12（41.66666666666667%），最快77354667us，冻结程序61636379us，比值1.2550164084103643。冻结程序acc_drop_pp=-0.25、n_diverged=1；混淆表：两者可行5、仅200图可行7、仅2000图可行0、均不可行0。SiLU接续，后续CNN/MLP及E6/E3待执行。见[summary](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e1confirm/summary.json)。本轮研究判定单列，M1历史结果保持。
+
+R9a2阶段结果：SiLU 10/10完成、执行错误0；robust_feasible=9/10（90%），最快44733076us，为冻结程序自身，比值1.0。冻结程序acc_drop_pp=0.04999999999999716、n_diverged=0；混淆表：两者可行9、仅200图可行1、仅2000图可行0、均不可行0。两整网共22项已结束，CNN/MLP继续，E6/E3尚未重算。
+
+R9a2阶段结果：CNN 31/31完成、执行错误0；robust_feasible=30/31（96.7741935483871%），最快random/112为12454662us，冻结程序19126397us，比值0.6511765911791959。冻结程序acc_drop_pp=0.04999999999999716、n_diverged=0；混淆表：两者可行30、仅200图可行1、仅2000图可行0、均不可行0。已完成前三模型53项，MLP 68项接续，E6/E3待重算。

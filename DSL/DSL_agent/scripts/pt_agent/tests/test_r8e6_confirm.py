@@ -18,6 +18,7 @@ from pt_agent.planners.confirm import (
     MAX_CONFIRM_EVALS, Candidate, build_confirm_context, confirm_select,
 )
 from pt_agent.planners.tuner import TuneResult
+from pt_agent.tests._artifacts import DATA, require
 
 
 TRACE = pt_result('r8e5-dev-20261022T041646/resnet20/agent_trace.jsonl')
@@ -52,6 +53,7 @@ class FakeClient:
                     seconds=0, usage=dict(prompt_tokens=1, completion_tokens=2))
 
 
+@require(DATA, TRACE)
 class ConfirmTests(unittest.TestCase):
     def test_01_three_splits_and_encrypted_indices(self):
         groups = [set(cifar.HELDOUT), set(cifar.CONFIRM), set(cifar.REPORT)]

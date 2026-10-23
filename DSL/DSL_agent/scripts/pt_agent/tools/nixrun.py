@@ -6,7 +6,12 @@ from pathlib import Path
 import shlex
 import sys
 
-from ..paths import WORK_ROOT
+from ..paths import ENV_VARS, WORK_ROOT
+
+
+def forwarded_env() -> str:
+    """The pure shell drops the caller's environment; forward the pt_agent location overrides explicitly."""
+    return "".join(f"{name}={shlex.quote(os.environ[name])} " for name in ENV_VARS if os.environ.get(name, "").strip())
 
 
 def main():
@@ -23,8 +28,9 @@ def main():
     sys.path.insert(0, str(scripts_dir / "baseline"))
     from hecate_python_env import enter_nix, ROOT, VENV
 
+    forwarded = forwarded_env()
     command = ("cd " + shlex.quote(str(scripts_dir)) + " && env LD_LIBRARY_PATH=\"$HECATE_PYTHON_LIBRARY_PATH\" "
-               "PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
+               + forwarded + "PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
                + shlex.quote(str(VENV / "bin/python")) + " -B " + shlex.join(args))
     os.chdir(ROOT)
     return enter_nix(command, seconds=options.seconds)

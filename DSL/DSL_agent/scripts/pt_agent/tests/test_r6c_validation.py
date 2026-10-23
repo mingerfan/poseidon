@@ -9,8 +9,10 @@ import numpy as np
 from pt_agent.backends.base import BackendError
 from pt_agent.data import cifar
 from pt_agent.run import evaluate_batches, main, select
+from pt_agent.tests._artifacts import DATA, require
 
 
+@require(DATA)
 class ValidationTests(unittest.TestCase):
     def test_validation_set(self):
         with mock.patch.object(cifar, 'read_rows', wraps=cifar.read_rows) as read:

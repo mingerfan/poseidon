@@ -7,11 +7,13 @@ import unittest
 import numpy as np
 
 from pt_agent import toolchain
+from pt_agent.tests._artifacts import COMPILER, LEGACY_CPU, require
 
 
 toolchain.setup_env()
 
 
+@require(COMPILER, LEGACY_CPU)
 class ToolchainTests(unittest.TestCase):
     def setUp(self):
         self.directory = TemporaryDirectory()

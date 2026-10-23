@@ -40,7 +40,7 @@ class Config:
                       max_tokens=self.max_tokens, response_format={"type": "json_object"}, stream=self.stream)
         if self.stream:
             values['stream_options'] = {'include_usage': True}
-        values["thinking"] = {"type": "enabled"}
+        values["thinking"] = {"type": "disabled" if self.reasoning_effort == "none" else "enabled"}
         return values
 
     def __post_init__(self):
@@ -52,7 +52,7 @@ class Config:
         check(type(self.stream) is bool, 'invalid_stream_setting')
         check(self.service_provider == "deepseek", "unsupported_provider")
         check(self.model in MODEL_OUTPUT_LIMITS, "unsupported_model")
-        check(self.reasoning_effort in ("low", "high", "max"), "unsupported_effort")
+        check(type(self.reasoning_effort) is str and self.reasoning_effort in ("none", "low", "high", "max"), "unsupported_effort")
         check(type(self.max_tokens) is int and 1 <= self.max_tokens <= MODEL_OUTPUT_LIMITS[self.model], "output_token_limit")
         check(type(self.max_calls) is int and 1 <= self.max_calls <= 4, "call_limit")
         check(type(self.timeout_seconds) in (int, float) and math.isfinite(self.timeout_seconds)

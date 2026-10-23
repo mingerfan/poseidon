@@ -1,4 +1,10 @@
-"""The specified existing trace, compiler and ordinary CPU execution interfaces."""
+"""Trace, compile and ordinary CPU execution for pt_agent.
+
+Tracing and compilation are self-contained: paths come from pt_agent.paths, compiler profiles are shipped
+in pt_agent/profiles, and the hecate-opt command line is built here. Only two legacy paths still use the
+baseline SDK modules (and therefore the SDK selector): the non-trusted candidate sandbox
+(trace/compile with trusted=False) and ordinary CPU CKKS execution (execute_cpu, bind, write_inputs).
+"""
 
 from __future__ import annotations
 
@@ -16,7 +22,7 @@ import subprocess
 import sys
 import time
 from typing import TYPE_CHECKING
-from .paths import WORK_RESULTS, WORK_ROOT
+from .paths import DACAPO_ROOT, HECATE_BUILD, PROFILES_DIR, WORK_RESULTS, WORK_ROOT
 
 if TYPE_CHECKING:
     import numpy as np
@@ -25,29 +31,63 @@ if TYPE_CHECKING:
 RESULTS_ROOT = WORK_RESULTS
 SDK_SELECTOR = RESULTS_ROOT / "agent-normal-cpu-approved-overlay-staging-r2680/sdk/ordinary-cpu-selector.json"
 REPO = Path(__file__).resolve().parents[4]
-BOOT_CONFIG_DIR = REPO / "DSL/DSL_benchmark/llm_dsl/Qwen25_2Layer_Decode_Autoboot_DSL/config"
+BOOT_CONFIG_DIR = PROFILES_DIR / "qwen48"
 COMPILE_MODES = ("eva", "dacapo-optimized", "dacapo-depth-dp", "pars")
 BOOT_PROFILES = (None, "qwen48")
 TRUSTED_LIMITS = dict(mem_gib=6, fsize_gib=8, wall_seconds=3600, min_free_gib=10)
 
 
 def setup_env() -> None:
-    """Set missing toolchain environment values before any baseline import."""
+    """Set missing toolchain environment values and make hecate_python_env importable."""
     os.environ.setdefault("POSEIDON_PLATFORM", "aarch64-linux")
     os.environ.setdefault("POSEIDON_WORK_ROOT", str(WORK_ROOT))
-    os.environ.setdefault("POSEIDON_SDK_MANIFEST", str(SDK_SELECTOR))
     baseline = str(REPO / "DSL/DSL_agent/scripts/baseline")
     if baseline not in sys.path:
         sys.path.insert(0, baseline)
 
 
-def host_paths() -> dict:
-    """Resolve the existing host toolchain after setting up its environment."""
+def _legacy_sdk_env() -> None:
+    """Only for the legacy baseline paths that resolve their tools through the SDK selector."""
     setup_env()
-    from poseidon_runtime_paths import BUILD, DACAPO, PROFILE, SPEC
+    os.environ.setdefault("POSEIDON_SDK_MANIFEST", str(SDK_SELECTOR))
 
-    return dict(hecate_opt=BUILD / "bin/hecate-opt", hecate_build=BUILD, hecate=BUILD.parent,
-                frontend=DACAPO / "python/hecate/hecate/expr.py", profile=PROFILE, spec=SPEC)
+
+def server_env_exports() -> str:
+    """Shell lines that reproduce this machine's toolchain locations in a server job script."""
+    import shlex
+    values = dict(POSEIDON_WORK_ROOT=str(WORK_ROOT), PT_HECATE_BUILD=str(HECATE_BUILD), PT_DACAPO_ROOT=str(DACAPO_ROOT))
+    return "".join(f"export {name}={shlex.quote(value)}\n" for name, value in values.items())
+
+
+def host_paths() -> dict:
+    """Host toolchain locations from pt_agent.paths and the shipped profiles."""
+    return dict(hecate_opt=HECATE_BUILD / "bin/hecate-opt", hecate_build=HECATE_BUILD, hecate=HECATE_BUILD.parent,
+                frontend=DACAPO_ROOT / "python/hecate/hecate/expr.py",
+                profile=PROFILES_DIR / "poseidon-compiler-profile-v1.json",
+                spec=PROFILES_DIR / "poseidon-operator-spec-v1.json")
+
+
+def _file_sha256(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def hecate_command(*, dacapo: bool) -> list[str]:
+    """The hecate-opt command line (sandbox-relative paths), waterline 45, JSON RuntimePlan with file bundles.
+
+    Same arguments as the legacy baseline poseidon_runtime_compile.command(45, serialization_policy=
+    "runtime-plan-json-files-v1"[, state_management_policy="compiler-dacapo-optimized-v1"]); the operator-spec
+    digest is RuntimePlan metadata required by the compiler, not an integrity check."""
+    pipeline = (["--dacapo", "--boot-placement=optimized", "--output-val=10", "--threshold=0.5", "--dump-pass-pipeline"]
+                if dacapo else ["--eva"])
+    return ["/hecate-opt", "/out/candidate_trace.mlir", "--runtime-plan-format=json", "--runtime-plan-bundle-format=files",
+            *pipeline, "--ckks-config=/profile.json", "--waterline=45", "--enable-debug-printer",
+            "--mlir-disable-threading", "--verify-each", "--runtime-plan-id=1", "--runtime-plan-target-id=poseidon-ckks-cpu",
+            "--runtime-plan-capability-version=1", "--runtime-plan-operator-spec-id=poseidon-agent-cpu-v1",
+            "--runtime-plan-operator-spec-version=1",
+            "--runtime-plan-operator-spec-sha256=sha256:" + _file_sha256(host_paths()["spec"]),
+            "--runtime-plan-context-id=poseidon-agent-n15-q13-p1-tc128-v1", "--runtime-plan-device-count=0",
+            "--runtime-plan-ntt=true", "--runtime-plan-boot-implementation=native",
+            "--runtime-plan-inline-payload-max-bytes=4096", "-o", "/out/lowered.mlir"]
 
 
 def retarget(run_dir: Path) -> None:
@@ -158,13 +198,9 @@ def compile_argv(mode: str, boot: str | None, run_dir: Path) -> list[str]:
         raise ValueError("Unknown compile mode or boot profile")
     if boot is not None and mode == "eva":
         raise ValueError("eva does not support the qwen48 boot profile")
-    from poseidon_runtime_compile import command
-    from compiler_configuration import COMPILER_STATE_POLICY, RUNTIME_PLAN_SERIALIZATION_POLICY
-
-    base = command(45, serialization_policy=RUNTIME_PLAN_SERIALIZATION_POLICY)
+    base = hecate_command(dacapo=False)
     if mode.startswith("dacapo-"):
-        argv = list(command(45, serialization_policy=RUNTIME_PLAN_SERIALIZATION_POLICY,
-                            state_management_policy=COMPILER_STATE_POLICY))
+        argv = hecate_command(dacapo=True)
         if mode == "dacapo-depth-dp":
             _replace(argv, lambda arg: arg == "--boot-placement=optimized", "--boot-placement=depth-dp")
     else:
@@ -207,6 +243,7 @@ def trace(run_dir: Path, seconds: int = 600, *, trusted=False) -> dict:
         mlir = run_dir / "candidate_trace.mlir"
         result.update(mlir=mlir.is_file(), mlir_bytes=mlir.stat().st_size if mlir.is_file() else 0)
         return result
+    _legacy_sdk_env()
     from poseidon_candidate_sandbox import run
 
     started = time.monotonic()
@@ -230,6 +267,7 @@ def compile(run_dir: Path, mode: str, boot: str | None = None, seconds: int = 90
                              env_extra=dict(LD_LIBRARY_PATH=os.environ["HECATE_PYTHON_LIBRARY_PATH"]))
         result["plan"] = (run_dir / "lowered._hecate_golden.runtime-plan.json").is_file()
         return result
+    _legacy_sdk_env()
     from poseidon_candidate_sandbox import run
 
     started = time.monotonic()
@@ -270,7 +308,7 @@ def prune(run_dir: Path):
 
 def bind(run_dir: Path, period: int) -> dict:
     """inside nix. Use the existing periodic-constant binder with its original record."""
-    setup_env()
+    _legacy_sdk_env()
     from poseidon_artifact_gate import bind_periodic_constants
 
     run_dir = Path(run_dir)
@@ -280,7 +318,7 @@ def bind(run_dir: Path, period: int) -> dict:
 
 def write_inputs(run_dir: Path, samples: list[list[np.ndarray]], period: int) -> None:
     """Validate ordinary-protocol sample vectors and write inputs.json."""
-    setup_env()
+    _legacy_sdk_env()
     import numpy as np
     from packed_input_abi import PERIODS
 
@@ -304,7 +342,7 @@ def write_inputs(run_dir: Path, samples: list[list[np.ndarray]], period: int) ->
 
 def execute_cpu(run_dir: Path, seconds: int = 150) -> np.ndarray:
     """inside nix. Execute once with original CPU limits and return final decoded values."""
-    setup_env()
+    _legacy_sdk_env()
     import numpy as np
     from normal_cpu_overlay_sandbox import run
     from poseidon_runtime_paths import POSEIDON_BUILD

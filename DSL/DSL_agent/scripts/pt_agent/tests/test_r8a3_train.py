@@ -10,8 +10,10 @@ import torch
 from pt_agent.models.train_small import (CLIP_NORM, DIVERGENCE_FACTOR, RECIPE,
                                          _write, check_divergence, run_epochs)
 from pt_agent.models.zoo import Mlp
+from pt_agent.tests._artifacts import DATA, require
 
 
+@require(DATA)
 class TrainTests(unittest.TestCase):
     def test_divergence(self):
         check_divergence([1.7, 1.5, 1.4])

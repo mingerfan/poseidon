@@ -10,12 +10,14 @@ from pt_agent.planners.agent_tools import build_context, evaluate
 from pt_agent.planners.prompts import PROMPT_VERSION, build_system_prompt
 from pt_agent.planners.rule import plan
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, require
 
 
 R3 = pt_result('r3-resnet20-20261020T131658')
 TRACE = pt_result('run-resnet20-agent-20261021T031807/agent_trace.jsonl')
 
 
+@require(DATA, R3, TRACE)
 class FeedbackTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

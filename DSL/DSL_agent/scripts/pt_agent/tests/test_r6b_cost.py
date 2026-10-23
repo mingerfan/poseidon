@@ -14,11 +14,13 @@ from pt_agent.dsl.typecheck import check
 from pt_agent.intake import Graph
 from pt_agent.planners.rule import plan
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import require
 
 
 R3 = pt_result('r3-resnet20-20261020T131658')
 
 
+@require(R3)
 class CostTests(unittest.TestCase):
     def test_inner_does_not_read_registry(self):
         from pt_agent.experiments import r6b_refresh
