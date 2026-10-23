@@ -13,7 +13,7 @@ import sys
 import time
 
 
-STAGES = ("validate", "plan", "check", "mock", "count", "emit", "compile", "test")
+STAGES = ("validate", "plan", "check", "mock", "count", "emit", "export", "compile", "test")
 
 
 def select(grid_rows):
@@ -162,41 +162,62 @@ def _defaults():
     return 63, 1.25
 
 
-def _server_job(out, directory, refresh="compiler"):
+def _server_job(out, package, weights):
     from . import toolchain
 
-    code = '''import json, shutil, sys
-from pathlib import Path
-from pt_agent import toolchain
-from pt_agent.cost import plan_latency
-toolchain.setup_env()
-source = Path(sys.argv[1])
-directory = toolchain.new_run_dir("r6-resnet20-server")
-original = source / "candidate_trace.sandbox.py"
-shutil.copy2(original if original.exists() else source / "candidate_trace.py", directory / "candidate_trace.py")
-shutil.copy2(source / "constants.npz", directory / "constants.npz")
-traced = toolchain.trace(directory, trusted=True)
-print(json.dumps(traced), flush=True)
-if traced["exit"] != 0 or not traced["mlir"]: raise SystemExit(1)
-compiled = toolchain.compile(directory, sys.argv[2], boot="qwen48", seconds=3600, trusted=True)
-print(json.dumps(compiled), flush=True)
-if compiled["exit"] != 0 or not compiled["plan"]: raise SystemExit(1)
-print(json.dumps(toolchain.plan_stats(directory)), flush=True)
-print(json.dumps(plan_latency(directory / "lowered._hecate_golden.runtime-plan.json")), flush=True)
-toolchain.prune(directory)
-'''
-    path = out / "server_jobs/r6-resnet20/run.sh"
+    import shutil
+
+    package, weights = Path(package), Path(weights)
+    path = out / "server_jobs" / package.name / "run.sh"
     path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(package, path.parent/package.name)
+    shutil.copy2(weights, path.parent/weights.name)
     path.write_text("#!/usr/bin/env bash\nset -euo pipefail\n"
-                    "# Prepare the same Nix/toolchain paths and transfer the complete Emit directory.\n"
+                    "# Run in the prepared Nix environment; transfer this entire job directory.\n"
                     + toolchain.server_env_exports() +
-                    "export PYTHONPATH="+shlex.quote(str(toolchain.REPO / "DSL/DSL_agent/scripts"))+"\n"
-                    "pt_agent_run_dir="+shlex.quote(str(directory))+"\n"
-                    "cd "+shlex.quote(str(toolchain.REPO))+"\n"
-                    "python3 -B -m pt_agent.tools.nixrun --seconds 7320 -- -c "+shlex.quote(code)
-                    +' "$pt_agent_run_dir" '+("pars" if refresh == "agent" else "dacapo-depth-dp")+'\n')
+                    'export HECATE_BUILD="$PT_HECATE_BUILD"\n'
+                    'export HECATE="$(dirname "$HECATE_BUILD")"\n'
+                    'export PYTHONPATH="$PT_DACAPO_ROOT/python/hecate"\n'
+                    'export LD_LIBRARY_PATH="$HECATE_PYTHON_LIBRARY_PATH"\n'
+                    'cd -- "$(dirname -- "$0")"\n'
+                    'test "$(df -Pk . | awk \'NR==2 {print $4}\')" -ge 10485760\n'
+                    'ulimit -v 6291456\nulimit -f 8388608\n'
+                    'timeout 3600 python3 -B '+shlex.quote(package.name+"/trace_model.py")+
+                    ' --weights '+shlex.quote(weights.name)+' --output-dir trace\n'
+                    'timeout 3600 python3 -B '+shlex.quote(package.name+"/compile_model.py")+
+                    ' --hecate-opt "$HECATE_BUILD/bin/hecate-opt" --input trace/trace_model.mlir --output-dir compiled\n')
     path.chmod(0o755)
     return path
+
+
+def _compile_export(record):
+    from . import toolchain
+    from .cost import plan_latency
+    toolchain.setup_env()
+    from hecate_python_env import VENV
+
+    package, weights = Path(record["package"]), Path(record["weights"])
+    directory = package.parent
+    trace_dir, compile_dir = directory/"trace", directory/"compiled"
+    traced = toolchain.trusted_run(directory, [str(VENV/"bin/python"), "-B", str(package/"trace_model.py"),
+        "--weights", str(weights), "--output-dir", str(trace_dir)], directory/"trace.log",
+        env_extra=toolchain.package_trace_env())
+    mlir = trace_dir/"trace_model.mlir"
+    traced.update(mlir=mlir.is_file(), mlir_bytes=mlir.stat().st_size if mlir.is_file() else 0)
+    result = dict(trace=traced, compile=None, plan=None, plan_latency=None)
+    if traced["exit"] != 0 or not traced["mlir"]:
+        return result
+    compiled = toolchain.trusted_run(directory, [str(VENV/"bin/python"), "-B", str(package/"compile_model.py"),
+        "--hecate-opt", str(toolchain.host_paths()["hecate_opt"]), "--input", str(mlir),
+        "--output-dir", str(compile_dir)], directory/"compile.log",
+        env_extra=dict(LD_LIBRARY_PATH=os.environ["HECATE_PYTHON_LIBRARY_PATH"]))
+    name = json.loads((package/"config/model.json").read_text())["name"]
+    plan_path = compile_dir/f"lowered._hecate_{name}.runtime-plan.json"
+    compiled["plan"] = plan_path.is_file()
+    result["compile"] = compiled
+    if compiled["exit"] == 0 and compiled["plan"]:
+        result.update(plan=toolchain.plan_stats(compile_dir, name), plan_latency=plan_latency(plan_path))
+    return result
 
 
 def _inside(args):
@@ -222,7 +243,7 @@ def _inside(args):
                   deg=args.deg, margin=args.margin, refresh=args.refresh,
                   program_path=str(out / "program.ptdsl"), source_lines=None, check=None,
                   exact_max_abs_diff=None, agree=None, top1=None, logit_rmse=None, mock_seconds=None,
-                  mock_images_done=0, count=None, counts=None, max_depth=None, emit=None,
+                  mock_images_done=0, count=None, counts=None, max_depth=None, emit=None, export=None,
                   constants_bytes=None, trace=None, compile=None, plan=None, server_job=None,
                   agent=None, llm_calls=0, prompt_tokens=0, completion_tokens=0, best_iteration=None,
                   latency_pred_us=None, activations=None,
@@ -247,6 +268,8 @@ def _inside(args):
         return logits
 
     try:
+        if "compile" in args.stages and "export" not in args.stages:
+            raise RuntimeError("compile requires the export stage")
         if args.stages == ["test"]:
             zm = get(args.model, args.models_dir)
             graph = zm.import_graph()
@@ -439,31 +462,31 @@ def _inside(args):
                 backend.write(directory)
                 size = (directory / "constants.npz").stat().st_size
                 report.update(constants_bytes=size, emit=dict(run_dir=str(directory), counts=backend.stats()["counts"],
-                                                             constants_bytes=size),
-                              server_job=str(_server_job(out, directory, args.refresh)))
+                                                             constants_bytes=size))
                 del backend, active
                 gc.collect()
+            elif stage == "export":
+                from .export import export_package
+
+                directory = toolchain.new_run_dir("structured-export")
+                package = export_package((out/"program.ptdsl").read_text(), program, graph.weights, directory,
+                    run_info=dict(program_path=out/"program.ptdsl", run_dir=out))
+                report["export"] = dict(package=str(package), weights=str(directory/"weights"/(program.name+".npz")),
+                    model_lines=len((package/program.name/"model.py").read_text().splitlines()),
+                    files=sum(path.is_file() for path in package.rglob("*")))
+                report["server_job"] = str(_server_job(out, package, Path(report["export"]["weights"])))
             elif stage == "compile":
-                if report["emit"] is None:
-                    raise RuntimeError("compile requires the emit stage")
-                if report["constants_bytes"] > 1.5*1024**3:
-                    report["compile"] = dict(skipped="constants exceed 1.5 GiB; server job retained")
-                else:
-                    directory = Path(report["emit"]["run_dir"])
-                    report["trace"] = toolchain.trace(directory, trusted=True)
-                    _write(path, report)
-                    if report["trace"]["exit"] != 0 or not report["trace"]["mlir"]:
-                        raise RuntimeError("trusted trace failed")
-                    mode = "pars" if args.refresh == "agent" else "dacapo-depth-dp"
-                    report["compile"] = toolchain.compile(directory, mode, boot="qwen48",
-                                                           seconds=3600, trusted=True)
-                    _write(path, report)
-                    if report["compile"]["exit"] != 0 or not report["compile"]["plan"]:
-                        raise RuntimeError("trusted compile failed")
-                    report["plan"] = toolchain.plan_stats(directory)
-                    report["plan_latency"] = plan_latency(directory / "lowered._hecate_golden.runtime-plan.json")
-                    _write(path, report)
-                    report["pruned"] = toolchain.prune(directory)
+                if report["export"] is None:
+                    raise RuntimeError("compile requires the export stage")
+                report.update(_compile_export(report["export"]))
+                _write(path, report)
+                if report["trace"]["exit"] != 0 or not report["trace"]["mlir"]:
+                    raise RuntimeError("trusted trace failed")
+                if report["compile"]["exit"] != 0 or not report["compile"]["plan"]:
+                    raise RuntimeError("trusted compile failed")
+                directory = Path(report["export"]["package"]).parent
+                report["pruned"] = dict(trace=toolchain.prune(directory/"trace"),
+                                        compiled=toolchain.prune(directory/"compiled"))
             elif stage == "test":
                 if not args.final:
                     raise RuntimeError("test stage requires --final")

@@ -1,8 +1,9 @@
-# pt_agent 状态（最后更新：2026-10-23 / 048f737c-dirty）
+# pt_agent 状态（最后更新：2026-10-23 / 883c9b14-dirty）
 
 主线：`/home/lhohy/Code/Poseidon`，`lhy-agent-dsl`。
 当前按 A 线 AGENTS.md 的逐轮 spec 规则推进；PLAN.md 仅作路线图。
-当前轮次：R9a2已完成：310/310测试通过；121配置各2000图复核完成、执行错误0，robust_feasible为5/12、9/10、30/31、68/68；E6 matched自举40/40一致，延迟相对误差中位0.9412328560719451%、最大1.6305665547421428%；E3专家MLP改为2/manual。API/新编译/下载/训练/新权重/CKKS0，累计45/300。 [完整SUMMARY](/home/lhohy/pt_agent_results/r9a2-20261023T004744/SUMMARY.json)。
+当前轮次P2已完成：新增结构化Hecate包与export编译入口；新增12项及既有315项分组共327/327通过。7包真实trace/编译全部通过，自举数226/160/72/24/383/288/461和11类运算计数均与原记录相同；每包test[9000:9020]输出与Mock完全相同、最大差0。每包34文件，model.py为10–59行；API0、累计45/300，整网CKKS0。冻结模块与原程序/计划保持。[SUMMARY](/home/lhohy/pt_agent_results/p2-export-20261023T075648/SUMMARY.json)。
+历史R9a2已完成：310/310测试通过；121配置各2000图复核完成、执行错误0，robust_feasible为5/12、9/10、30/31、68/68；E6 matched自举40/40一致，延迟相对误差中位0.9412328560719451%、最大1.6305665547421428%；E3专家MLP改为2/manual。API/新编译/下载/训练/新权重/CKKS0，累计45/300。 [完整SUMMARY](/home/lhohy/pt_agent_results/r9a2-20261023T004744/SUMMARY.json)。
 历史R9a：305/305测试通过；setsid nohup all完整结束（20228.307369275994秒，约5小时37分），13项工作退出均0。E1 751项、E3 26项、E4 84项、E6 40对，执行错误均0；新增真实编译26/26，复用14份历史计划。Agent冻结模块保持，API0、累计45/300；报告集/下载/训练/新权重/真实CKKS0。 [运行REPORT](/home/lhohy/pt_agent_results/r9a-20261022T152208/REPORT.json)；§8完整表格见本文件R9a节。
 
 历史R8e7：实现与指定实验完成。23组共295/295测试通过；模型选中4/4，原样真实编译4/4、8000图Mock报告准确率4/4。ResNet20选中第2轮tuned／226自举，报告91.25%对Torch91.7125%，下降0.4625pp、发散1；按PLAN.md §4.0第3条澄清，M1第1–4条通过、第5条待执行；校准域覆盖18/19保留为诊断。两份固定基线均完成新确认及8000图报告，复用既有编译计划。本轮API0、重新生成0、重新精调0、真实CKKS0；累计45/300，registry共82条。真实CKKS及未见模型证据仍待后续spec。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)、[完整汇总](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/SUMMARY.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8e7-confirm-criterion-tests-20261022T121728/REPORT.json)。
@@ -16,6 +17,7 @@
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| P2 | specs/P2-hecate-package.md | 完成 | export/、run.py、toolchain.py、README.md、tests/test_p2_export.py、STATUS.md | 新增12＋既有315＝327/327；七包A/B/真实编译均通过，11类计数全部相同；[REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075648/REPORT.json) | 初次合并回归峰值失败和启动漏路径记录保留；分组执行及历史夹具说明见P2节 |
 | R1 | specs/R1-skeleton-ptdsl.md | 完成 | registry.py、dsl/、examples/、tests/test_r1_*.py、STATUS.md | 40 tests，OK；完整输出见最近运行 | 无 |
 | R2 | specs/R2-backends-emit.md | 完成 | tools/nixrun.py、backends/、fixtures/、tests/test_r2_*.py、STATUS.md | R2 Nix：13 tests，OK；R1 系统：40 tests，OK | 无 |
 | R2b | specs/R2b-toolchain.md | 完成 | toolchain.py、experiments/__init__.py、experiments/r2b_smoke.py、tests/test_r2b_toolchain.py、STATUS.md | R2b 8、R1 40、R2 13 tests 均 OK；六组合已运行：2 CKKS 通过、2 编译失败、2 自举编译通过；失败依赖见阻塞栏 | 无；保留两项失败，未重试或换参数 |
@@ -65,6 +67,8 @@
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+P2已完成，无新增阻塞。七包自举数及所有运算计数均与原记录相同。初次合并回归在旧R5历史峰值断言失败，保留原断言，P2与旧回归分进程后327/327通过；启动脚本漏传模块搜索路径已按本轮自写错误例外修正，原失败记录保留，该次实际导出/trace/编译0。整网真实CKKS沿用M1第5条待执行。
 
 R9a2指定实现、测试与运行均完成，无新增阻塞。首轮新夹具漏header必填字段的13项12过1错记录保留，补齐既有profile字段后310/310通过。冻结Agent模块及原R9a结果保持，M1历史结论保持；本轮实际CKKS0。
 
@@ -137,6 +141,8 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+P2 API0，累计45/300、剩余255；registry共99条，含本轮全部7条成功/失败记录。七程序验收trace/编译各7次，315项既有回归另含P1 trace/编译各1次，合计各8次；实际CKKS0、下载/训练/新权重0。新包数值对照仅留出test[9000:9020]，旧回归固有数据夹具见P2节；Agent决策保持。
+
 R9a2 API0，累计45/300、剩余255；310项通过，原失败测试记录及全部92条registry保留。121配置复核、E6 40对matched与E3 26项重算均完成；重新编译/报告集读取/下载/训练/新权重/CKKS0，原R9a目录未写入。
 
 R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry记录保留。all已完成，E1/E3/E4/E6执行错误0；新编译26/26（R20 8、SiLU 8、CNN 8、MLP 2），历史计划14份复用。M1第1–4条沿用R8e7通过结果，第5条待执行。
@@ -147,11 +153,11 @@ pt_agent：**45 / 300**，剩余255次。R8e7 API0、重新生成0、重新精�
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| R9a2-dev-models-e3-20261023T045310-f8a3 | dev-models / e3 | 26项统计完成；专家MLP=2/manual；[REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e3/REPORT.json) |
-| R9a2-dev-models-e6-20261023T045310-b8e8 | dev-models / e6 | 40对matched自举全吻合；重新编译0；[REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e6/REPORT.json) |
-| R9a2-dev-models-e1confirm-20261023T045208-d34c | dev-models / e1confirm | 121配置复核完成，执行错误0；robust 5/12、9/10、30/31、68/68；[REPORT](/home/lhohy/pt_agent_results/r9a2-20261023T004744/e1confirm/REPORT.json) |
-| R9a2-dev-models-offline-tests-20261023T004721-4788 | dev-models / offline-tests | 310/310测试通过；API0；[REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235615/REPORT.json) |
-| R9a2-dev-models-offline-tests-20261022T235524-c638 | dev-models / offline-tests | 12/13测试通过；新夹具漏字段，失败保留，后续已修正；[REPORT](/home/lhohy/pt_agent_results/R9a2-motivation-tests-20261022T235522/REPORT.json) |
+| P2-export-tests-20261023T080203 | seven-programs | P2最终12/12通过，补充首个错误优先顺序检查；[REPORT](/home/lhohy/pt_agent_results/P2-export-tests-20261023T080203/REPORT.json) |
+| p2-export-20261023T075648 | seven-programs | 7包真实编译与计数对照全部通过；7×20图完全相同；[REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075648/REPORT.json) |
+| p2-export-20261023T075634 | seven-programs | 启动脚本漏模块搜索路径，导出/trace/编译0；失败保留；[REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075634/REPORT.json) |
+| P2-export-tests-20261023T075627 | seven-programs | 既有工具链5/5通过；[REPORT](/home/lhohy/pt_agent_results/P2-export-tests-20261023T075627/REPORT.json) |
+| P2-export-tests-20261023T074752 | seven-programs | 既有逐轮310/310通过；[REPORT](/home/lhohy/pt_agent_results/P2-export-tests-20261023T074752/REPORT.json) |
 
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
@@ -1261,3 +1267,44 @@ R9a2阶段结果：ResNet20 12/12完成、执行错误0；robust_feasible=5/12�
 R9a2阶段结果：SiLU 10/10完成、执行错误0；robust_feasible=9/10（90%），最快44733076us，为冻结程序自身，比值1.0。冻结程序acc_drop_pp=0.04999999999999716、n_diverged=0；混淆表：两者可行9、仅200图可行1、仅2000图可行0、均不可行0。两整网共22项已结束，CNN/MLP继续，E6/E3尚未重算。
 
 R9a2阶段结果：CNN 31/31完成、执行错误0；robust_feasible=30/31（96.7741935483871%），最快random/112为12454662us，冻结程序19126397us，比值0.6511765911791959。冻结程序acc_drop_pp=0.04999999999999716、n_diverged=0；混淆表：两者可行30、仅200图可行1、仅2000图可行0、均不可行0。已完成前三模型53项，MLP 68项接续，E6/E3待重算。
+
+
+## P2 结构化 Hecate 包（完成）
+
+指定spec：`specs/P2-hecate-package.md`。源码基线883c9b14，工作目录`/home/lhohy/Code/Poseidon`、分支`lhy-agent-dsl`。只新增`export/`、`tests/test_p2_export.py`，修改`run.py`、`toolchain.py`、`README.md`及本STATUS。冻结lower/cost/placement/kernels/backends/planners/dsl/intake保持；baseline、DSL_benchmark和库无本轮改动。旧响应、PT-DSL、程序包、编译计划和已消费额度全部保留。
+
+实现：每个PT-DSL运算生成一个具名kernel调用，仅按lower的消费者条件融合slice/slice/pad。近似系数显式写入JSON；权重仅写包外NPZ。core按spec复制，cheb_eval保留原函数体；包入口仅依赖标准库、NumPy及调用方hecate。manifest在导出末尾生成，保留导出时验证状态；新原生验证结果写在包外REPORT，不回写已生成包。
+
+run.py新增export，compile使用包内trace_model.py和compile_model.py；emit保留原路径。服务器任务携带包和NPZ，脚本使用server_env_exports，不依赖pt_agent源码。编译参数只取toolchain.compile_argv；plan_stats支持程序函数名，默认golden保持；prune只清理获准中间产物类型。
+
+测试输出：
+
+- [最终P2 12/12](/home/lhohy/pt_agent_results/P2-export-tests-20261023T080203/tests.log)，19.125秒；补充首个错误优先顺序检查后重跑全部P2项。原[11/11记录](/home/lhohy/pt_agent_results/P2-export-tests-20261023T074535/tests.log)保留；七份render文本完全相同、全部常量逐个array_equal；MLP/CNN/ResNet20留出20图array_equal；迁移、独立入口、清单、编译argv与错误信息均通过。
+- [既有逐轮310/310](/home/lhohy/pt_agent_results/P2-export-tests-20261023T074752/tests.log)，464.160秒；[既有工具链5/5](/home/lhohy/pt_agent_results/P2-export-tests-20261023T075627/tests.log)，0.065秒。共327个不同测试全部通过，旧测试及断言未修改。
+- 首次将新增测试与旧测试放入同一进程，在144项中143过、旧R5 `test_count_calibration_memory` 1失败；进程历史峰值1835768 KiB对断言1048576 KiB。双Emit对照先行造成峰值统计污染，P2与旧回归分进程后原断言通过。[失败记录](/home/lhohy/pt_agent_results/P2-export-tests-20261023T074610/REPORT.json)保持。
+
+七程序验收目录：[p2-export-20261023T075648](/home/lhohy/pt_agent_results/p2-export-20261023T075648)，退出0、complete=true，耗时97.99004206000245秒。[完整REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075648/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/p2-export-20261023T075648/SUMMARY.json)。A为Emit文本与常量一致；B为包run_numpy对Mock、20张test[9000:9020]逐元素相同，max_abs_diff均0，check_outputs全部通过。每包34文件，包内无权重。
+
+| 程序 | A | B（20图） | 自举 新/原 | 11类运算计数 | model.py行数 | 旧candidate_trace.py行数 |
+|---|---|---|---|---|---|---|
+| resnet20 | 通过 | 完全相同 | 226/226 | 全部相同 | 59 | 18007 |
+| resnet20_silu | 通过 | 完全相同 | 160/160 | 全部相同 | 59 | 16888 |
+| cnn_plain | 通过 | 完全相同 | 72/72 | 全部相同 | 16 | 3526 |
+| mlp | 通过 | 完全相同 | 24/24 | 全部相同 | 10 | 1115 |
+| R6c规则基线 | 通过 | 完全相同 | 383/383 | 全部相同 | 59 | 23500 |
+| R7c-B基线 | 通过 | 完全相同 | 288/288 | 全部相同 | 59 | 19396 |
+| rule-agent刷新 | 通过 | 完全相同 | 461/461 | 全部相同 | 59 | 23961 |
+
+七包真实trace均退出0，最大RSS1458.83984375 MiB；真实编译均退出0，最大RSS1456.8515625 MiB。全部串行，沿用trusted运行器6GiB/8GiB/1小时/磁盘余量10GiB限制，无资源扩额。七程序共7次trace、7次编译；既有R5d P1回归另含各1次，总计各8次。启动失败在任何导出与原生调用之前退出，未消费这7次验收调用。
+
+示例包：[ResNet20_PTAgent_DSL](/home/lhohy/pt_agent_results/p2-export-20261023T075648/resnet20/ResNet20_PTAgent_DSL)，[完整目录树](/home/lhohy/pt_agent_results/p2-export-20261023T075648/package-tree.txt)、[model.py前20行](/home/lhohy/pt_agent_results/p2-export-20261023T075648/model-first20.txt)。所有原始源码仍在program.ptdsl，权重在对应包外weights/resnet20.npz。
+
+与spec不一致之处及本轮修正：
+
+1. 实验启动脚本漏传模块搜索目录，首次报ModuleNotFoundError；按本轮自写错误例外，在`/tmp/p2_accept_inside.py:4`补搜索路径、`/tmp/p2_accept_outer.py:22`显式传入scripts目录后继续。对应脚本保存在最终结果目录；[原失败REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075634/REPORT.json)保留，源码模块及测试断言未因该错误修改。
+2. 全套测试采用P2 12项、既有逐轮310项、工具链5项独立进程，保留首次合并运行失败，保持旧内存断言。
+3. §6要求既有315项回归，这些测试沿用历史数据夹具：`tests/test_r3_resnet20.py:45`读取test[0:500]，同文件frozen-data用例读取既有40图选取及test[0]。P2新包验收只读test[9000:9020]；未用报告区间选参数，未向冻结Agent反馈任何结果。
+
+4. 本轮`export/package.py:176`原先先生成源码再调用lower检查，多错误程序可能先报告较晚的pad；调整为先复用冻结lower检查，再生成源码。新增`tests/test_p2_export.py:123`验证较早非法卷积优先，保持错误文本、op id及行号。12项P2全部重跑通过，七份有效程序的Emit文本及常量仍相同；已完成的七包及原生证据保持，无额外编译。
+
+未完成项：P2指定实现、测试和七包编译验收均完成，无新增编译器依赖阻塞。新增Agent独立生成0、整网真实CKKS0，M1第5条及未见模型证据仍按后续spec推进。API0，累计45/300；下载、训练、新权重、库修改、commit/push均0。

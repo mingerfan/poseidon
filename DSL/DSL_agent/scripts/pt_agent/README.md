@@ -1,10 +1,10 @@
 # pt_agent：从 PyTorch 模型生成性能感知的 FHE DSL 程序
 
-pt_agent 读入一个 PyTorch `nn.Module`，生成 PT-DSL 程序（受限 Python 子集，只解析、不执行）。可信 lowering 把 PT-DSL 展开成 Hecate 程序，再交给**不做任何修改的** Hecate/DaCapo 编译器，得到 RuntimePlan。
+pt_agent 读入一个 PyTorch `nn.Module`，生成 PT-DSL 程序（受限 Python 子集，只解析、不执行）。导出后端把 PT-DSL 转成可独立交付的结构化 Hecate 包，再交给 Hecate/DaCapo 编译器，得到 RuntimePlan。
 
 ```
 PyTorch nn.Module ──(intake: make_fx/ATen)──► PT-Graph ──(planners: rule | agent)──► PT-DSL
-     ──(lower + kernels)──► Hecate 程序 ──(toolchain: hecate-opt)──► RuntimePlan
+     ──(export + copied kernels)──► 结构化 Hecate 包 ──(trace_model / compile_model)──► RuntimePlan
 ```
 
 设计、各轮 spec 和当前状态见 `DSL/DSL_agent/docs/pt_agent/`（PLAN.md、specs/、STATUS.md）。
@@ -17,6 +17,7 @@ PyTorch nn.Module ──(intake: make_fx/ATen)──► PT-Graph ──(planners
 | `dsl/` | PT-DSL 的 IR、解析器、打印器、类型检查 |
 | `backends/`、`kernels/` | Mock / Count / Emit / DAG 后端；mux 卷积、Chebyshev 与组合 minimax 激活、池化、全连接 |
 | `lower.py`、`cost.py`、`placement.py` | lowering、代价模型（复现编译器的 depth-dp 自举放置） |
+| `export/` | 结构化交付包：逐层模型、显式近似系数、接口、固定内核及独立入口；权重保存在包外 |
 | `planners/` | 规则规划器、LLM Agent 循环、精调工具、冻结确认 |
 | `toolchain.py`、`compiler_profiles/` | Hecate trace、`hecate-opt` 调用、随仓库提供的编译参数文件 |
 | `experiments/`、`tests/` | 各轮实验脚本和测试 |
@@ -80,13 +81,23 @@ python3 -m pt_agent.tools.nixrun --seconds 3000 -- -m unittest discover -s pt_ag
 # 规则规划器：模型 → PT-DSL → 编译（不调用 LLM）
 python3 -m pt_agent.tools.nixrun --seconds 3000 -- -m pt_agent.run --inside --out <dir> --model resnet20 \
     --models-dir <PT_AGENT_RESULTS_ROOT>/models-v2 --planner rule --deg 127 --margin 1.5 \
-    --stages plan,check,mock,count,emit,compile
+    --stages plan,check,mock,count,export,compile
+
+# 已有 PT-DSL → 可迁移的包和外部 NPZ
+python3 -m pt_agent.tools.nixrun -- -m pt_agent.export --program <program.ptdsl> --model resnet20 \
+    --models-dir <PT_AGENT_RESULTS_ROOT>/models-v2 --out <new-dir>
+
+# 在交付包中检查接口；trace/compile 要求新的输出目录
+python3 <new-dir>/ResNet20_PTAgent_DSL/trace_model.py --plan
 
 # LLM Agent（需要 DeepSeek API 密钥，放在仓库根目录的 .env 中，由 baseline/agent_credentials.py 读取）
 python3 -m pt_agent.experiments.r8b_dev --round <name> --tuner on
 ```
 
+交付包包含 program.ptdsl、model.py、显式近似配置、权重 schema、接口和相对路径入口，无 pt_agent 运行依赖。
+权重 NPZ 位于包的同级 weights/ 目录；调用方提供 hecate 前端。包内 README 给出完整 trace、编译和自检命令。
 编译结果写在 `<poseidon-work>/platforms/<platform>/results/pt-agent-*` 下，包括 RuntimePlan 和编译日志。
+旧 `emit` 阶段保留供对照使用。`compile` 阶段要求 `export`。
 
 ## 5. 已知限制
 
