@@ -11,10 +11,10 @@ import numpy as np
 
 from .layout import KernelError
 from .slots import accumulate
+from ..paths import DACAPO_ROOT
 
 
-_REPO = Path(__file__).resolve().parents[5]
-MINIMAX_DATA = _REPO / "third_party/dacapo/python/poly/poly/data/sgn151527.txt"
+MINIMAX_DATA = DACAPO_ROOT / "python/poly/poly/data/sgn151527.txt"
 MINIMAX_SETS = {(15, 15, 27): ((0, 16, 2.0), (16, 32, 1.7), (32, 60, 2.0))}
 
 

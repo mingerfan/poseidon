@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 import stat
+import subprocess
 
 NAME = "DEEPSEEK_API_KEY"
 FILENAME = ".env"
@@ -47,6 +48,38 @@ def parse_env(text, key_name=NAME):
     return values[key_name]
 
 
+def credential_root(root):
+    """Linked checkouts use the primary checkout's single credential file."""
+    root = Path(root).absolute()
+    marker = root / ".git"
+    if not marker.exists() and not marker.is_symlink():
+        return root
+    try:
+        info = marker.lstat()
+        if stat.S_ISDIR(info.st_mode):
+            return root
+        if not stat.S_ISREG(info.st_mode) or not 0 < info.st_size <= LIMIT:
+            raise CredentialError("Invalid Git worktree metadata for credential discovery.")
+        result = subprocess.run(
+            ["/usr/bin/git", "--no-optional-locks", "-C", str(root), "rev-parse",
+             "--path-format=absolute", "--show-toplevel", "--git-common-dir"],
+            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            text=True, check=True, timeout=5,
+            env={"PATH": "/usr/bin:/bin", "LANG": "C.UTF-8"})
+        fields = result.stdout.splitlines()
+        if len(fields) != 2 or Path(fields[0]).resolve() != root.resolve():
+            raise CredentialError("Invalid Git worktree credential root.")
+        common = Path(fields[1])
+        if (not common.is_absolute() or common.name != ".git" or common.is_symlink()
+                or not common.is_dir() or common.resolve() != common):
+            raise CredentialError("Invalid Git common directory for credential discovery.")
+        return common.parent
+    except CredentialError:
+        raise
+    except (OSError, UnicodeError, subprocess.SubprocessError):
+        raise CredentialError("Cannot resolve Git worktree credential root.") from None
+
+
 def load_api_key(root, environ=None, *, provider="deepseek"):
     if provider not in PROVIDERS:
         raise CredentialError("Unsupported credential provider.")
@@ -54,7 +87,7 @@ def load_api_key(root, environ=None, *, provider="deepseek"):
     env = os.environ if environ is None else environ
     if env.get(key_name):
         return validate_key(env[key_name], key_name)
-    path = Path(root) / FILENAME
+    path = credential_root(root) / FILENAME
     try:
         info = path.lstat()
         if not stat.S_ISREG(info.st_mode) or info.st_size > LIMIT:

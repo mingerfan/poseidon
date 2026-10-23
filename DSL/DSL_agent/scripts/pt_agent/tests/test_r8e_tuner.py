@@ -22,6 +22,7 @@ from pt_agent.planners.agent_tools import FEASIBLE_MAX_U, build_context, evaluat
 from pt_agent.planners.prompts import PROMPT_VERSION, TEMPLATE, build_system_prompt, feedback_message
 from pt_agent.planners.tuner import TuneResult, tune
 from pt_agent.paths import RESULTS_DIR
+from pt_agent.tests._artifacts import DATA, require
 
 
 ROOT = RESULTS_DIR
@@ -31,6 +32,7 @@ R7B = ROOT/'run-resnet20-agent-20261021T033036/program.ptdsl'
 R8D = ROOT/'r8d-methods-20261021T093203/cnn_plain'
 
 
+@require(DATA, ROOT)
 class TunerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

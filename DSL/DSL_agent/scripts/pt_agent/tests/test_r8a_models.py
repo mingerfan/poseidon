@@ -21,6 +21,7 @@ from pt_agent.models.zoo import (CIFAR_NORMALIZATION, CnnPlain, IMAGENET_NORMALI
                                  Mlp, ZooModel, get)
 from pt_agent.planners.rule import plan
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, WEIGHTS, require
 
 
 BASE = pt_result('run-resnet20-rule-20261020T165817')
@@ -41,6 +42,7 @@ class StaticPool(nn.Module):
         return F.avg_pool2d(x, x.size(3)).flatten(x.size(0))
 
 
+@require(DATA, WEIGHTS, BASE)
 class ModelsTests(unittest.TestCase):
     def setUp(self):
         torch.manual_seed(20261022)

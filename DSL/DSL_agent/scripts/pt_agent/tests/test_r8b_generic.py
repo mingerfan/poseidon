@@ -22,11 +22,13 @@ from pt_agent.models.zoo import NAMES, get
 from pt_agent.planners import prompts
 from pt_agent.planners.agent_tools import FEASIBLE_MAX_U, build_context
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, require
 
 
 MODELS = pt_result('models-v2')
 
 
+@require(DATA, MODELS)
 class GenericTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

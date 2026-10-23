@@ -8,11 +8,13 @@ from unittest.mock import patch
 from pt_agent import toolchain
 from pt_agent.backends import EmitBackend, run_program
 from pt_agent.tests.test_r2_backends import SLOTS, p1
+from pt_agent.tests._artifacts import COMPILER, require
 
 
 toolchain.setup_env()
 
 
+@require(COMPILER)
 class TrustedRunnerTests(unittest.TestCase):
     def emit_p1(self, directory):
         backend = EmitBackend(SLOTS)

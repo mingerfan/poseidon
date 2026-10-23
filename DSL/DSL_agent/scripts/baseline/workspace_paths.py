@@ -31,7 +31,7 @@ def require_linux_backend():
 
 def nix_environment_options():
     # Only non-secret path configuration crosses the pure-shell boundary here.
-    return [item for name in ('POSEIDON_WORK_ROOT', 'POSEIDON_PLATFORM')
+    return [item for name in ('POSEIDON_WORK_ROOT', 'POSEIDON_PLATFORM', 'POSEIDON_SDK_MANIFEST')
             if name in os.environ for item in ('--keep', name)]
 
 

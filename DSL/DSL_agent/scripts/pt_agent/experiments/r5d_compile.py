@@ -27,8 +27,7 @@ def _server_job(out, emit_dir):
         "#!/usr/bin/env bash\nset -euo pipefail\n"
         "# Prepare the same pinned Nix environment and toolchain directories on the server.\n"
         "# Preserve the original Emit directory with its sandbox paths and constants.\n"
-        "export POSEIDON_WORK_ROOT=" + shlex.quote(os.environ["POSEIDON_WORK_ROOT"]) + "\n"
-        "export POSEIDON_SDK_MANIFEST=" + shlex.quote(os.environ["POSEIDON_SDK_MANIFEST"]) + "\n"
+        + toolchain.server_env_exports() +
         "export PT_RESULTS=" + shlex.quote(str(out.parent)) + "\n"
         "pt_agent_run_dir=" + shlex.quote(str(emit_dir)) + "\n"
         "cd " + shlex.quote(str(scripts)) + "\n"

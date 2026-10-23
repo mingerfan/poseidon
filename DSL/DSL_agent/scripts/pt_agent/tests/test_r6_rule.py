@@ -10,11 +10,13 @@ from pt_agent.dsl.typecheck import check
 from pt_agent.intake import Graph
 from pt_agent.planners.rule import plan
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import require
 
 
 R3 = pt_result('r3-resnet20-20261020T131658')
 
 
+@require(R3)
 class RuleTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

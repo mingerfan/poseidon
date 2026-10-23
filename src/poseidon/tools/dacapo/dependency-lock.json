@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "system": "x86_64-linux",
+  "dacapo_commit": "4616402710f39df3e5f5bd7930a6c036025aaac3",
+  "nixpkgs": {
+    "rev": "cfd6b5fc90b15709b780a5a1619695a88505a176",
+    "nar_hash": "sha256-WKm9CvgCldeIVvRz87iOMi8CFVB1apJlkUT4GGvA0iM=",
+    "bundled_path": "/nix/store/110pw1i26zj3c16fd36hy5l7vi9nsir5-yy5l09gfsagkv8rswblknmsjc2gyr20d-source",
+    "evidence": "https://github.com/DavHau/nix-portable/blob/v012/flake.lock"
+  },
+  "llvm": {
+    "version": "18.1.2",
+    "commit": "26a1d6601d727a96f4301d0d8647b5a42760ae0c",
+    "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.2/llvm-project-18.1.2.src.tar.xz",
+    "sha256": "51073febd91d1f2c3b411d022695744bda322647e76e0b4eb1918229210c48d5",
+    "archive_bytes": 132060436,
+    "checksum_evidence": "https://github.com/freebsd/freebsd-ports/commit/935a2fb3225e597d204b459b92a05466a0e8dfab"
+  },
+  "seal": {
+    "version": "4.0.0",
+    "commit": "a0fc0b732f44fa5242593ab488c8b2b3076a5f76",
+    "url": "https://github.com/Microsoft/SEAL/archive/4.0.0.tar.gz",
+    "sha256": "616653498ba8f3e0cd23abef1d451c6e161a63bd88922f43de4b3595348b5c7e",
+    "archive_bytes": 612928,
+    "checksum_evidence": "https://github.com/freebsd/freebsd-ports/blob/2db69f114426f6c90a2ecba5253c38a5248b4d88/security/seal/distinfo",
+    "ref_note": "4.0.0 is currently a compatibility branch, not a tag. Its HEAD matches v4.0.0; the archive SHA-256, not this movable ref, locks the bytes."
+  },
+  "msgsl": {
+    "version": "3.1.0",
+    "commit": "0f6dbc9e2915ef5c16830f3fa3565738de2a9230",
+    "nar_hash": "sha256-gIpyuNlp3mvR8r1Azs2r76ElEodykRLGAwMN4BDJez0=",
+    "checksum_evidence": "https://github.com/NixOS/nixpkgs/blob/2cceb4b94829fbec2573f3f7293066cdc7fa3dd6/pkgs/development/libraries/microsoft_gsl/default.nix"
+  },
+  "python_stage": {
+    "minimum_python": "3.10",
+    "numpy": "1.25.2",
+    "torch": "2.0.1+cpu",
+    "wheels_locked": true,
+    "wheel_lock": "python-wheels.lock.json",
+    "included_in_compiler_install": false
+  },
+  "limits": { "max_jobs": 1, "cores": 2, "link_jobs": 1 }
+}

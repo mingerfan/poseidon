@@ -189,8 +189,7 @@ toolchain.prune(directory)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("#!/usr/bin/env bash\nset -euo pipefail\n"
                     "# Prepare the same Nix/toolchain paths and transfer the complete Emit directory.\n"
-                    "export POSEIDON_WORK_ROOT="+shlex.quote(os.environ["POSEIDON_WORK_ROOT"])+"\n"
-                    "export POSEIDON_SDK_MANIFEST="+shlex.quote(os.environ["POSEIDON_SDK_MANIFEST"])+"\n"
+                    + toolchain.server_env_exports() +
                     "export PYTHONPATH="+shlex.quote(str(toolchain.REPO / "DSL/DSL_agent/scripts"))+"\n"
                     "pt_agent_run_dir="+shlex.quote(str(directory))+"\n"
                     "cd "+shlex.quote(str(toolchain.REPO))+"\n"

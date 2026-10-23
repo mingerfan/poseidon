@@ -8,8 +8,10 @@ from pt_agent.analyzer import reference_forward
 from pt_agent.data.cifar import calibration_set, encrypted_test_set, read_rows, test_set
 from pt_agent.intake.coverage import report
 from pt_agent.models.resnet20 import load_graph, load_torch
+from pt_agent.tests._artifacts import DATA, WEIGHTS, require
 
 
+@require(DATA, WEIGHTS)
 class ResNet20Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

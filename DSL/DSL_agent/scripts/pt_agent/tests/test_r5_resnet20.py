@@ -15,11 +15,13 @@ from pt_agent.intake import Graph
 from pt_agent.kernels import KernelError
 from pt_agent.models.resnet20_fhe import build, decode_logits, pack_input
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, require
 
 
 GRAPH = pt_result('r3-resnet20-20261020T131658/graph')
 
 
+@require(DATA, GRAPH)
 class ResNet20FheTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

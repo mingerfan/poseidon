@@ -14,12 +14,14 @@ from pt_agent.intake import Graph
 from pt_agent.planners.agent_tools import build_context
 from pt_agent.run import evaluate_batches
 from pt_agent.paths import RESULTS_DIR
+from pt_agent.tests._artifacts import DATA, require
 
 
 ROOT = RESULTS_DIR
 R3 = ROOT/'r3-resnet20-20261020T131658'
 
 
+@require(DATA, ROOT)
 class HeldoutTests(unittest.TestCase):
     def test_01_disjoint_complete_and_first_record(self):
         heldout, confirm, report = map(set, (cifar.HELDOUT, cifar.CONFIRM, cifar.REPORT))

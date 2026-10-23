@@ -16,6 +16,7 @@ from pt_agent.planners.prompts import build_system_prompt, feedback_message, ini
 from pt_agent.planners.rule import plan
 from pt_agent.dsl.parser import parse
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, require
 
 
 R3 = pt_result('r3-resnet20-20261020T131658')
@@ -35,6 +36,7 @@ class FakeClient:
                     id='offline', seconds=0)
 
 
+@require(DATA, R3)
 class AgentTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -135,6 +137,7 @@ class AgentTests(unittest.TestCase):
             self.assertIn('next', json.loads(feedback_message(feedback, 1, None)))
 
 
+@require(DATA, R3)
 class LLMOfflineTests(unittest.TestCase):
     def test_worker_framing_and_content_free_accounting(self):
         response = dict(id='offline', choices=[dict(message=dict(content='{"ok":true}'), finish_reason='stop')],

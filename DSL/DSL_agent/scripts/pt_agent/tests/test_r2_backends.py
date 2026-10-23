@@ -5,6 +5,7 @@ import unittest
 import numpy as np
 
 from pt_agent.backends import BackendError, CountBackend, LevelError, MockBackend, run_program
+from pt_agent.tests._artifacts import LEGACY_MATH, require
 
 
 SLOTS = 64
@@ -114,6 +115,7 @@ class BackendTests(unittest.TestCase):
         self.assertTrue(np.array_equal(outputs[1], x0*x1))
         self.assertEqual(count_run(p5, 2).stats()["outputs"], 2)
 
+    @require(LEGACY_MATH)
     def test_rotate_matches_existing_math(self):
         baseline = str(Path(__file__).resolve().parents[2] / "baseline")
         sys.path.insert(0, baseline)

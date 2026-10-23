@@ -20,11 +20,13 @@ from pt_agent.models.zoo import get
 from pt_agent.planners.agent_tools import build_context, evaluate
 from pt_agent.planners.rule import plan
 from pt_agent.paths import pt_result
+from pt_agent.tests._artifacts import DATA, RESULTS_DIR, require
 
 
 DEGREES = (15, 15, 27)
 
 
+@require(DATA, RESULTS_DIR)
 class MinimaxTests(unittest.TestCase):
     def test_coefficients(self):
         self.assertTrue(MINIMAX_DATA.is_file())
@@ -92,6 +94,7 @@ class MinimaxTests(unittest.TestCase):
         self.assertIn('17 multiplicative levels', text)
 
 
+@require(DATA, RESULTS_DIR)
 class ModelTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

@@ -9,11 +9,12 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from ..paths import DACAPO_ROOT
 from .resnet20 import load_torch
 
 
 REPO = Path(__file__).resolve().parents[5]
-WEIGHTS_SILU = REPO / 'third_party/ckks-runtime/third_party/dacapo/examples/data/resnet20.silu.model'
+WEIGHTS_SILU = DACAPO_ROOT / 'examples/data/resnet20.silu.model'
 NAMES = ('resnet20', 'resnet20_silu', 'cnn_plain', 'mlp')
 IMAGENET_NORMALIZATION = ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
 CIFAR_NORMALIZATION = ((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
@@ -70,7 +71,7 @@ def get(name: str, models_dir: Path) -> ZooModel:
     if name == 'resnet20':
         module = load_torch()
     elif name == 'resnet20_silu':
-        source = REPO / 'third_party/ckks-runtime/third_party/dacapo/python/poly/poly/models/ResNet.py'
+        source = DACAPO_ROOT / 'python/poly/poly/models/ResNet.py'
         spec = importlib.util.spec_from_file_location('pt_agent_dacapo_resnet', source)
         definition = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(definition)
