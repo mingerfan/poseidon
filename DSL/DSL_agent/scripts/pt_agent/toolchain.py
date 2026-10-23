@@ -67,6 +67,14 @@ def host_paths() -> dict:
                 spec=PROFILES_DIR / "poseidon-operator-spec-v1.json")
 
 
+def package_trace_env() -> dict:
+    """The trusted trace environment for an independent structured package."""
+    paths = host_paths()
+    return dict(HECATE=str(paths["hecate"]), HECATE_BUILD=str(paths["hecate_build"]),
+                LD_LIBRARY_PATH=os.environ["HECATE_PYTHON_LIBRARY_PATH"],
+                PYTHONPATH=str(DACAPO_ROOT/"python/hecate"))
+
+
 def _file_sha256(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -277,9 +285,9 @@ def compile(run_dir: Path, mode: str, boot: str | None = None, seconds: int = 90
                 log_tail=(run_dir / "compile.log").read_text(errors="replace")[-800:])
 
 
-def plan_stats(run_dir: Path) -> dict:
+def plan_stats(run_dir: Path, function="golden") -> dict:
     """Read operation counts from the unmodified compiled RuntimePlan."""
-    plan = json.loads((Path(run_dir) / "lowered._hecate_golden.runtime-plan.json").read_text())
+    plan = json.loads((Path(run_dir) / f"lowered._hecate_{function}.runtime-plan.json").read_text())
     steps = plan["initialization"] + plan["execution"] + plan["finalization"]
     ops = dict(Counter(step.get("op") or step["kind"] for step in steps))
     return dict(ops=ops, steps=len(steps), boots=ops.get("boot", 0), values=len(plan["values"]),
@@ -290,8 +298,10 @@ def prune(run_dir: Path):
     """Remove only the intermediates approved in R6b §4, retaining plans and logs."""
     run_dir = Path(run_dir)
     deleted = []
-    for name in ("candidate_trace.mlir", "constants.npz", "lowered.mlir", "lowered.earth.mlir",
-                 "lowered.ckks.mlir", "lowered._hecate_golden.bundle"):
+    names = {"candidate_trace.mlir", "trace_model.mlir", "constants.npz", "lowered.mlir",
+             "lowered.earth.mlir", "lowered.ckks.mlir"}
+    names.update(path.name for path in run_dir.glob("lowered._hecate_*.bundle"))
+    for name in sorted(names):
         path = run_dir / name
         if path.is_symlink() or path.is_file():
             path.unlink()
