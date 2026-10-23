@@ -29,4 +29,9 @@ def require(*groups):
     return unittest.skipIf(bool(missing), "missing local artifacts: " + ", ".join(missing[:3]))
 
 
-__all__ = ["COMPILER", "DATA", "LEGACY_CPU", "RESULTS_DIR", "WEIGHTS", "WORK_RESULTS", "require"]
+# The R2 rotation cross-check compares against a legacy baseline module that is not in this repository.
+LEGACY_MATH = tuple(Path(__file__).resolve().parents[2] / "baseline" / f"{name}.py"
+                    for name in ("first_output_dsl_math", "delivery_component"))
+
+
+__all__ = ["COMPILER", "DATA", "LEGACY_CPU", "LEGACY_MATH", "RESULTS_DIR", "WEIGHTS", "WORK_RESULTS", "require"]
