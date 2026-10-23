@@ -1,0 +1,169 @@
+{
+  "draft_not_applied": true,
+  "estimate_excludes": [
+    "evaluation_keys",
+    "NTT/scratch",
+    "API input copies",
+    "memory_pool_retention",
+    "allocator/virtual_memory"
+  ],
+  "estimates": [
+    {
+      "actual_memory_measurement": false,
+      "batch": "poseidon-pytorch-medium-r484",
+      "case": "linear_fusion",
+      "execution_ops": 567,
+      "last_use_ciphertext_polynomial_peak_bytes": 69206016,
+      "plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ltzqrpdt/attempt-00/output/bound/plan.json",
+      "plan_sha256": "5a4cdae053adc82bf19ae1958b7db5a97235ec56bfa6b25a8b0fab3e8fac5d5b",
+      "retained_ciphertext_polynomial_bytes": 2862612480,
+      "status": "failed",
+      "value_count": 601
+    },
+    {
+      "actual_memory_measurement": false,
+      "batch": "poseidon-pytorch-medium-r487",
+      "case": "spatial_residual",
+      "execution_ops": 969,
+      "last_use_ciphertext_polynomial_peak_bytes": 412614656,
+      "plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kjv8h7b6/attempt-00/output/bound/plan.json",
+      "plan_sha256": "1933953cdc66979478439f7224ed833370fd5726e06966b8a5f325a3975e71ce",
+      "retained_ciphertext_polynomial_bytes": 4857266176,
+      "status": "failed",
+      "value_count": 1193
+    },
+    {
+      "actual_memory_measurement": false,
+      "batch": "poseidon-pytorch-medium-r487",
+      "case": "linear_fusion",
+      "execution_ops": 375,
+      "last_use_ciphertext_polynomial_peak_bytes": 47710208,
+      "plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-phv251cb/attempt-00/output/bound/plan.json",
+      "plan_sha256": "25fef1142c321967f9e6917ba29718d21637e82b3e09261647e2ab52b96ed912",
+      "retained_ciphertext_polynomial_bytes": 1757413376,
+      "status": "passed",
+      "value_count": 409
+    }
+  ],
+  "format": "poseidon-runtime-host-lifetime-proposal-v2",
+  "limits": {
+    "build_bytes": 4294967296,
+    "build_seconds": 7200,
+    "compile_jobs": 2,
+    "download_bytes": 0,
+    "free_disk_bytes": 4294967296,
+    "global_results_bytes": 34359738368,
+    "link_jobs": 1,
+    "native_as_bytes": 4294967296,
+    "native_seconds": 150,
+    "native_workers": 1,
+    "new_dependencies": 0,
+    "validation_bytes": 1073741824,
+    "validation_seconds": 1800
+  },
+  "observation": "ValueStore retains Ready values until reset; FinalOnly filters returned artifacts but does not erase intermediates",
+  "paid_calls": 0,
+  "patch": "docs/baseline/poseidon-runtime-lifetime-proposal-r490.patch",
+  "patch_sha256": "5a35988c1fa148598c28fd3085e0bd0f93411d946bbec06122bff959deabc4e7",
+  "scope": [
+    "optional single-host sequential FinalOnly last-use release",
+    "preserve default and AllValuesAfterRun behaviour",
+    "explicit Poseidon CPU runner opt-in",
+    "new runtime/build/package identities",
+    "object lifetime tests and exact candidate numeric/reload regressions",
+    "update exact local-patch/source/build identities and affected provenance checks",
+    "keep original model, candidate and reference for failed spatial_residual",
+    "replay r573 original-size stem without using it as evidence of residual/full-network acceptance"
+  ],
+  "source_hashes": {
+    "src/poseidon/tools/agent_runtime/cpu_runner.cpp": "53ea3382c9cfe5f3339899be812a6670b575f17a5383051e6ec0c39ba66fc9b2",
+    "third_party/ckks-runtime-agent/runtime/runtime.hpp": "7e2af31a3cb875d3909c7cb98f0c7ba72fbe259bab77702505c371bac4c32ab4"
+  },
+  "status": "pending_approval",
+  "tests": [
+    "duplicate input use",
+    "fanout/shared intermediates",
+    "final outputs used again",
+    "unused encoding",
+    "cross-phase use",
+    "repeated run",
+    "default/AllValues preservation",
+    "reject GPU/communication",
+    "original spatial_residual candidate and 3 medium captures",
+    "MLP/RMS historical exact sources",
+    "nine routing contexts"
+  ],
+  "unchanged": [
+    "Dacapo",
+    "OperatorSpec semantics",
+    "CKKS parameters",
+    "models",
+    "reference",
+    "candidate DSL",
+    "tolerance",
+    "sandbox resource limits"
+  ],
+  "parent_proposal": "docs/baseline/poseidon-runtime-lifetime-proposal-r490.json",
+  "parent_sha256": "e4b8fb4026b87fcfde9e7f76f7b69e6471c47ac67e67d394fe193b590ec578a0",
+  "current_backend_manifest": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/deps/poseidon-runtime-v1.json",
+    "sha256": "eee4982dc2bf0fcf9f255fd3f856893c2d22c16075b803b8c7d1b13026f7b109"
+  },
+  "execution_source_report": {
+    "path": "docs/baseline/poseidon-wide-trace-acceptance-r574.json",
+    "sha256": "d95229ab57420ea9a0ef6a51681f653dbce73014ededb377caf0696184b96cfc"
+  },
+  "new_build": "/home/lhohy/poseidon-work/platforms/aarch64-linux/build-poseidon/agent-runtime-lifetime-r575",
+  "current_blocker": "Original 578-input spatial_residual still fails allocation/timeout with retained intermediates. Original ResNet20 stem passed at r573 without this patch.",
+  "historical_estimate_note": "r490 estimates describe their original plans, not current process memory. linear_fusion subsequently passed without this patch at r508. spatial_residual remains unresolved.",
+  "initial_regressions": [
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kjv8h7b6",
+      "files": {
+        "model.json": "ee31cf78ebead4300b8f98964d2c038491154c2b67bf7f771f0eb7fb334bdeac",
+        "request.json": "40d810ecb05b10bf50321b1e57daaf2b8fe938892472800a40675f039b13e782",
+        "attempt-00/candidate.py": "3f8bcf6aa3eb8e7ebbeb63b209e639400cab415a253b1a1ab558341f7c23cf04",
+        "arrays.npz": "4e89f29d96e08469a33bd631faef0351734af513eaa276a02d7142ea43e5a49d"
+      }
+    },
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b0zl_ap7",
+      "files": {
+        "model.json": "d759de0badc95e72d76c76e429cc9397a18569d94cad86670d8ce64ddc4f0498",
+        "request.json": "ede6756fef027bdf94ceeb657fbcfa91106a12e542938e1af497afc7da4344d5",
+        "attempt-00/candidate.py": "fc08e1fc4669890cbf4088b0e5ce8f78fbae9ec11e8bb9fde8740af6ef5c4060",
+        "arrays.npz": "98ce6caf42d6a495dc0f13a6b800d98d15bbf138ed60a26f4da8e5ab8c3621e0"
+      }
+    },
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-v2aei4jg",
+      "files": {
+        "model.json": "b327ab77648b2ac77c39f9edd6bf8a91a6f9937d9198d5e67d7aee4325d1e522",
+        "request.json": "ef2088fe348625916af14112280719eb23918ea7d64d861bad934a2e3accf212",
+        "attempt-00/candidate.py": "2345c508c3c6d3482be258ec7f67226ab1dc7f0df8b201d7367daee263dcb93a",
+        "arrays.npz": "87c92d01d655ec7acd9ff97e068212f838992c1d5f99990ef007f57c1ac15679"
+      }
+    },
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-in06f7dv",
+      "files": {
+        "model.json": "93b1a48551a954f5da6c2f025d3b4b9d96a15a8689beee5a813f44b94d02f8d8",
+        "request.json": "f2cad98d30571300362f5a1f7da8e94ada3605eb04b5cc6bc8e90d2e29215131",
+        "attempt-00/candidate.py": "05a2d9dbcc715d66f1ebc333002b2bdab2267511a7ddd898400133868deba23f",
+        "arrays.npz": "b8ad92704f38cc49a944a6d61743769d7e8261c298c15bda040044b7bf4ad2ae"
+      }
+    },
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-2lmhubjg",
+      "files": {
+        "model.json": "6c41affd3cbf52b8227ec6a3ef016b6656d10d9515b96776763ced5661bf8236",
+        "request.json": "80ce1c8a5b51c94903fb592fce04c52830c579cb3174bb4d49621f28cdb95ff6",
+        "attempt-00/candidate.py": "35ba6efa0bbe6c4381e8ea9802b4b1fad814c0df94861c838daeae03f53616fd",
+        "arrays.npz": "fb8c204a698f0d8cd82865843bfc1b164cae79d3c1634367edbf3b2490801e0b"
+      }
+    }
+  ],
+  "approval_reason": "User requires separate approval for Runtime core semantic changes; ValueStore last-use release changes object lifetime.",
+  "patch_check": "passed against current checkout; not applied",
+  "binding": "f380cd2d64d662a1e69a0be2b85d5d3fda8f8a36afc0a59a813137bea7bef137"
+}

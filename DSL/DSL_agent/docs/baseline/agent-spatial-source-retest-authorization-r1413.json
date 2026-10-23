@@ -1,0 +1,39 @@
+{
+  "approved": true,
+  "authorization": "human_explicit_current_plan_test_approval",
+  "binding": "25b6ff49f8a33931134233f261fc9cd5e02e1c554021f9def4bdcc8da5cd662c",
+  "bounds": {
+    "api_concurrency": 1,
+    "batch_wall_seconds": 14400,
+    "case_wall_seconds": 14400,
+    "compiler_jobs": 2,
+    "encrypted_concurrency": 1,
+    "global_result_bytes": 34359738368,
+    "link_jobs": 1,
+    "max_compiler_calls": 4,
+    "max_encrypted_calls": 6,
+    "max_generations": 4,
+    "max_http_attempts": 16,
+    "minimum_free_bytes": 4294967296,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "new_batch_bytes": 4294967296
+  },
+  "cases": [
+    "resize_2_bilinear_0"
+  ],
+  "format": "poseidon-public-arithmetic-human-authorization-v1",
+  "human_message": "目前执行的计划内后续所有的离线和真实测试全部批准同意",
+  "proposal_binding": "4740ce158851472cdd93b7852b73e86d28976ecf5ac1df93756d2472eb23e60d",
+  "proposal_sha256": "9afd1a61902681526581fbf936ef9ecafceb123bc1800dd62a278c5c3a19de61",
+  "provider": {
+    "max_tokens": 384000,
+    "model": "deepseek-flash",
+    "name": "deepseek",
+    "reasoning_effort": "high",
+    "stream": true,
+    "timeout_seconds": 1200,
+    "transport_retries": 3
+  },
+  "question_item_id": "direct-user-current-plan-test-approval-2026-10-11"
+}

@@ -1,0 +1,22 @@
+# MHA 两项反馈重测方案
+
+当前状态：待批准；新增 API 调用 0。
+
+案例保持原模型、公开权重、request、reference 和 P4/w45 配置：
+
+1. self Attention → Linear → 残差：`self_post_linear_residual__declared_shallow_v1`
+2. Linear → cross Attention：`linear_into_separate_cross_none__declared_shallow_v1`
+
+本轮验证 Agent 层新增工作量／hc.func 签名反馈及两个未通过组合的自由生成。布尔 mask 模型已有原 Agent 源码离线交付结果，不再次付费生成。原失败和调用记录保留。
+
+使用 DeepSeek `deepseek-flash`、high、stream、explicit-v11。每例最多 3 轮修复、4 次生成；每次生成最多 3 次传输重试、4 次 HTTP。全批最多 **8 次生成／32 次 HTTP**。API 和密态串行，编译最多 2、链接最多 1；native 内存 4 GiB、CPU 150 秒保持。
+
+单次请求最多 1200 秒、384000 tokens；每例 4 小时、全批 8 小时。新增产物合计 4 GiB，全部 results 32 GiB，磁盘余量至少 4 GiB。达到上限即停止并保留证据。
+
+只外发公开模型、权重或描述符、layout、DSL 规则和受控反馈；不发送人工答案、私有输入、reference 或凭据。无明确货币上限，超时重试可能重复计费。
+
+新测试独立绑定当前源码与依赖，不沿用已关闭批次的批准，不复写旧报告。新增付费调用须先批准该范围，执行前再次核对哈希、进程和硬预算。
+
+授权依据：Ubuntu `docs/baseline/agent-mha-feedback-live-proposal-r1316.json`。
+
+方案绑定：`f35dd50e53380d7d2b42fb8548bd09e2696aaa8d9d546a1853735e8c3ab9ef5e`。

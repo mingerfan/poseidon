@@ -1,0 +1,93 @@
+{
+  "all_DSL_semantics_proven": false,
+  "backend": "upstream_SEAL_HEVM_CPU",
+  "baseline_seconds": 5511.476998389,
+  "categories": {
+    "boundary": {
+      "blocked_preflight": 69,
+      "passed": 51
+    },
+    "composition": {
+      "passed": 360
+    },
+    "graph": {
+      "passed": 360
+    },
+    "helper": {
+      "blocked_preflight": 41,
+      "failed": 2,
+      "passed": 77
+    },
+    "primitive": {
+      "passed": 240
+    }
+  },
+  "compared_values": 16436,
+  "compiler_configuration": "seal-cpu-eva-w45-v1",
+  "compiler_failed_models": [
+    "bench_helper_0040",
+    "bench_helper_0044"
+  ],
+  "corpus_models": 1200,
+  "counts": {
+    "blocked_preflight": 110,
+    "failed": 2,
+    "passed": 1088
+  },
+  "directed_627_status": "running_separate_chain",
+  "evaluation": "deterministic_baseline_not_Agent",
+  "evidence_reports": {
+    "benchmark-r30-full-baseline/report.json": "7227220d7af9be78c4531742859995a2ab4d462d4c6a63264fb5e8fd42cf4161",
+    "benchmark-r40-final-artifact-audit/report.json": "7de8ba78055ca0cb102b6fa6f151cae540d4610ced3b76f7967e96796cd9c35d",
+    "benchmark-r41-independent-audit/report.json": "f43350c8e7ec347fdc484326f34c6d99939a781e8f50c79e89d2fd5b78074db9",
+    "construction-trace-counterexamples/report.json": "5560edef21413fcb9b38954e1a82112a38b98586ad62174638bf5c2fb072cd7e",
+    "helper-call-negatives-000/report.json": "b9fa506d728ebd28467076ec4c3ee487a60f5052e9b8fe059d50d855028e327b",
+    "helper-call-negatives-001/report.json": "aa33aa4d701359371b68fa1974f38cb033e61b48215cbf93e00f0b3bb0b8ff33",
+    "model-contexts-dual-reference/report.json": "af856d0d3eb47f46b1ece96e35ca2dd6659e387b8de5633cfcf09bfcfb60b2a0"
+  },
+  "free_agent_status": "not_run",
+  "helper_call_omission_gate": {
+    "encrypted_execution": false,
+    "failed": 0,
+    "passed": 76,
+    "skipped": 0,
+    "source_tasks": 60
+  },
+  "independently_recomputed_passed_cases": 1088,
+  "maximum_absolute_error": 2.5902924893603064e-06,
+  "not_run": 0,
+  "paid_calls": 0,
+  "passed_share_all_models": 0.9066666666666666,
+  "passed_share_ready_subset": 0.998165137614679,
+  "peak_individual_process_rss_kib": 1304152,
+  "platform": "aarch64-linux",
+  "preflight_reasons": {
+    "AST node limit": 41,
+    "Deterministic baseline operation budget": 69
+  },
+  "ready_subset_denominator": 1090,
+  "retained_case_evidence_bytes": 155750231,
+  "schema": 1,
+  "source_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "suite": "scripts/baseline/benchmarks/semantic-v1-chunk-helpers-r29",
+  "supplementary_dual_reference": {
+    "counted_in_original_1200": false,
+    "encrypted_execution": false,
+    "failed": 0,
+    "max_composition_error": 0.0,
+    "max_reference_error": 6.661338147750939e-16,
+    "passed": 92,
+    "probes": 1472,
+    "skipped": 0
+  },
+  "synthetic_trace_gate": {
+    "actual_frontend_executed": false,
+    "failed": 0,
+    "passed": 209,
+    "skipped": 0
+  },
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  }
+}

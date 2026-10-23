@@ -1,0 +1,45 @@
+{
+  "additional_source_replays": {
+    "executed": 0,
+    "planned": 25,
+    "status": "pending_origin_campaign_completion"
+  },
+  "backend_modified": false,
+  "binding": "898a8505d92f72770aaf644d675cfb5ef25823373b119d5f9a75498bb78ed5a3",
+  "bootstrap_validated": false,
+  "committed": false,
+  "concluded": {
+    "calls_resolved": true,
+    "failed": 0,
+    "generations": 10,
+    "http_attempts": 10,
+    "not_run": 16,
+    "passed": 10
+  },
+  "control_tests_passed": 68,
+  "cuda_validated": false,
+  "current_spatial_contexts_with_genuine_agent_pass_records": 34,
+  "format": "poseidon-planned-test-progress-v1",
+  "frozen_generation_requests": 26,
+  "network_modified": false,
+  "observed_utc": "2026-10-11 20:30:34 UTC",
+  "old_failure_preserved": true,
+  "old_spatial_original": {
+    "failed": 1,
+    "passed": 33
+  },
+  "old_spatial_retest": {
+    "failed": 0,
+    "passed": 1
+  },
+  "owner_live": true,
+  "paid_calls": "Actual DeepSeek calls are running within the frozen scope; these counters cover concluded cases only.",
+  "proposal_binding": "8558690a119b9aced44d1487c6e5cbb74fed5be5fae06e0c40a7d438c478e7ae",
+  "pushed": false,
+  "replay_planning_controls_passed": 16,
+  "report_status": "running",
+  "source_contexts_reference_qualified": 51,
+  "source_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-normalized-source-live-v1/report.json",
+  "source_report_sha256": "ad608fadc2f8e076f148d90b3d225ffd4cd8ecac3673ffe9c7e893ac4aae284e",
+  "source_stage_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6"
+}

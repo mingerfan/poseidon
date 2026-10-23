@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "tests_passed": 9,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "classification_records": 107,
+  "previously_unclassified": 92,
+  "canonical_ledger_updated": false,
+  "encrypted_execution": false,
+  "paid_calls": 0,
+  "files": {
+    "scripts/baseline/benchmarks/tools/test_upstream_api_classification.py": "3db1a78c41ebef82af3a0e32638add31a38f96f7a442d82572b275a77df941f4",
+    "scripts/baseline/benchmarks/tools/classify_upstream_semantic_api.py": "d1789f0d7e746c69a7b021ff259be8db4bfb261a60fa2bcab8be394a73c9f435",
+    "scripts/baseline/benchmarks/upstream-api-classification-draft-v1/classification.json": "b5e4095d4a31e3f400bff7c955d24f8c79a6671d4b08f0f9c36078f54dda5372"
+  },
+  "log_sha256": "7051a9060e3b1c906b360e08e1ef1b29fd80bbda248efc165d06b1040d0cf2ed"
+}

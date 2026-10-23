@@ -1,0 +1,145 @@
+{
+  "active_source_version": "poseidon-trusted-pytorch-v28",
+  "audit_binding": "9606074f92fdc0831682ceedbf680639dee07a7d9be16f788e9ed0c109d25ea6",
+  "backend_library_changes": false,
+  "binding": "916d5802927a08d58624cc67e9d08dadcde90d0b5a5b21829227a395768e8a62",
+  "branch": "lhy-agent-dsl",
+  "changes": [
+    "Agent-owned explicit package declarations and static import records",
+    "Safe source reading, hashes, bounded AST and private source snapshots",
+    "Structured relative diagnostics and binding-checked snapshot reload"
+  ],
+  "compatibility": {
+    "active_sdk_unchanged": true,
+    "distinct_old_requests": 3,
+    "git_diff_check": "passed",
+    "latest_unchanged": true,
+    "linux_x86_configuration_unchanged": true,
+    "old_interface_unchanged": true,
+    "old_request_files": [
+      {
+        "context": "expand_as__arithmetic",
+        "request_id": "48bc1b5b103d54d1b51e3587c7faffb9bc26350b9cc646eafed6853fa09423f0",
+        "sha256": "5d17163d5f7ef39436bef67c7150221942baf629029e688c3447e9ee195d3c43",
+        "unchanged": true
+      },
+      {
+        "context": "expand_as__transpose_alias",
+        "request_id": "d3e13650654330f21238077f7362279b97111ae652808fdca8309b46ff58a725",
+        "sha256": "29aa253394378c5eb43fe80d69f918a6ba3fae767578a23576afd25019b3c45b",
+        "unchanged": true
+      },
+      {
+        "context": "expand_as__scalar_linear",
+        "request_id": "de07cf11905b052dceb4b76188ddbd9fef599d3f4158b76e9ecb78aa6f7733d4",
+        "sha256": "34f4f9812cdcdeca94d3113bdb1392c545b5cb0c8a2418ff8fd9b749dd0de8f6",
+        "unchanged": true
+      },
+      {
+        "context": "broadcast_to__arithmetic",
+        "request_id": "48bc1b5b103d54d1b51e3587c7faffb9bc26350b9cc646eafed6853fa09423f0",
+        "sha256": "5d17163d5f7ef39436bef67c7150221942baf629029e688c3447e9ee195d3c43",
+        "unchanged": true
+      },
+      {
+        "context": "broadcast_to__transpose_alias",
+        "request_id": "d3e13650654330f21238077f7362279b97111ae652808fdca8309b46ff58a725",
+        "sha256": "29aa253394378c5eb43fe80d69f918a6ba3fae767578a23576afd25019b3c45b",
+        "unchanged": true
+      },
+      {
+        "context": "broadcast_to__scalar_linear",
+        "request_id": "de07cf11905b052dceb4b76188ddbd9fef599d3f4158b76e9ecb78aa6f7733d4",
+        "sha256": "34f4f9812cdcdeca94d3113bdb1392c545b5cb0c8a2418ff8fd9b749dd0de8f6",
+        "unchanged": true
+      }
+    ]
+  },
+  "created_at": "2026-10-11T23:47:34.024824+00:00",
+  "current_backend_regression": "not_run_for_sdk_65e3_after_r1435",
+  "downloads": 0,
+  "evidence": {
+    "scripts/baseline/benchmarks/tools/source_package_preparation_v1/controls-first.json": "fefb02fb34a16e8a278e27a33c65f7e921d80b896478fba3b65c6e6f8b69f426",
+    "scripts/baseline/benchmarks/tools/source_package_preparation_v1/controls-first.log": "0293172ca2618fc40935489148db2c87481a69bedd8dbd87ad40c39efc4f4400",
+    "scripts/baseline/benchmarks/tools/source_package_preparation_v1/controls-snapshot.json": "326bf315530acb20c75b1b47c6b8785b9211146081fa195ce310dc4d7ba1dd2b",
+    "scripts/baseline/benchmarks/tools/source_package_preparation_v1/controls-snapshot.log": "f282103ef040d1a381e3517208d2db22212782c48f2cbd94d47f88e2a213163d",
+    "scripts/baseline/benchmarks/tools/source_package_preparation_v1/snapshot-audit.json": "a2238ca236f9d7c39aa5e3156d908b1224e3c5c5d22baba86576ebd10fe97aa7",
+    "scripts/baseline/benchmarks/tools/source_package_preparation_v1/test-correction.json": "d9b5c0ab96c36e1bc7f374912ca229f3b1ea39842d7d3a6f4dc095bae5c22eef",
+    "scripts/baseline/pytorch_source_package.py": "237c2f55a800459585be00d1a3e69de9918ddcfa48e20fc1e05961f0e8a653a2",
+    "scripts/baseline/test_pytorch_source_package.py": "a3bccaa233db17ea1c877337bbd483e4785157d8a6a27fde8155d7867740baf1"
+  },
+  "excluded_or_unverified": [
+    "namespace packages",
+    "factory/import execution",
+    "graph capture",
+    "application/CLI package submission",
+    "numerical reference",
+    "compiler",
+    "Poseidon execution",
+    "real Agent generation"
+  ],
+  "format": "poseidon-source-package-preparation-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_poseidon_evidence_report": "docs/baseline/agent-static-broadcast-phase-summary-r1433.json",
+  "installations": 0,
+  "limits": {
+    "ast_nodes": 32768,
+    "files": 8,
+    "path_depth": 8,
+    "source_bytes": 65536
+  },
+  "network_changes": false,
+  "new_calls": {
+    "compiler": 0,
+    "encrypted": 0,
+    "http_attempts": 0,
+    "provider_generations": 0,
+    "source_capture": 0
+  },
+  "next_actions": [
+    "Add an explicit source-package input contract and connect snapshots, mounts, archive paths and dotted factory loading.",
+    "Capture representative package models in the existing sandbox and compare equivalent flat sources.",
+    "Freeze and run representative Poseidon/package replays after the pending storage budget decision.",
+    "Use existing plan-wide test authorization for bounded new-feature Agent tests."
+  ],
+  "original_first_run": {
+    "errors": 0,
+    "failed": 1,
+    "failure_layer": "test harness",
+    "passed": 51,
+    "production_fix_required": false,
+    "reason": "The test blocked trusted stdlib imports in ast.walk",
+    "retained": true,
+    "skipped": 0,
+    "tests": 52
+  },
+  "platform": "aarch64-linux",
+  "prepared_package_support": [
+    "flat modules",
+    "regular packages with explicit __init__.py",
+    "empty initializers",
+    "nested packages",
+    "registered relative/absolute import declarations",
+    "explicit dotted factory entry",
+    "original byte snapshot and reload"
+  ],
+  "resource_decision_pending": "docs/baseline/agent-result-storage-proposal-r1434.json",
+  "sdk_identity": "65e3d2514d448221fb61a1d410a812d2bd1908f483db892c63595b2a3ad0a7b2",
+  "sdk_identity_unchanged": true,
+  "source_package_format": "poseidon-pytorch-source-package-v1",
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "status": "static_controls_passed",
+  "tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 67,
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "report": "scripts/baseline/benchmarks/tools/source_package_preparation_v1/controls-snapshot.json",
+    "skipped": 0,
+    "unique_tests": 67
+  }
+}

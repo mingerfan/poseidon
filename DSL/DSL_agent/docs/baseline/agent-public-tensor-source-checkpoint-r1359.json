@@ -1,0 +1,86 @@
+{
+  "accepted_cases": [
+    "vector_function",
+    "channel_method",
+    "inplace_snapshot",
+    "mixed_scalar_power",
+    "dual_fusion",
+    "dense_projection",
+    "batch_norm_module",
+    "batch_norm_function",
+    "index_select_function",
+    "index_method_nested",
+    "divided_relu_residual",
+    "divided_gelu_linear",
+    "divided_sigmoid_tuple",
+    "float32_vector",
+    "float32_batch_norm",
+    "float32_gelu_projection"
+  ],
+  "backend_libraries_changed": false,
+  "binding": "35f5ccc9b2bc222b91dd7e7b349c9465e667213c4e6c392a560779fc6517c272",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "failed_cases": [
+    {
+      "capture_log_sha256": "6b180b01733163bf3d01a752f72dc8a0dc1aca9d9f1498e38b5cc49ca438bf16",
+      "case": "bool_multiply",
+      "code": "boolean_public_arithmetic_unsupported",
+      "layer": "agent_input_capture",
+      "retained_capture_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-tensor-source-draft-v2/bool_multiply/capture.log"
+    },
+    {
+      "capture_log_sha256": "6b180b01733163bf3d01a752f72dc8a0dc1aca9d9f1498e38b5cc49ca438bf16",
+      "case": "mask_index_residual",
+      "code": "boolean_public_arithmetic_unsupported",
+      "layer": "agent_input_capture",
+      "retained_capture_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-tensor-source-draft-v2/mask_index_residual/capture.log"
+    }
+  ],
+  "fixture_builder_initial_failure_preserved": true,
+  "format": "poseidon-public-tensor-source-checkpoint-v1",
+  "full_source_controls_run": false,
+  "groups": 256,
+  "metrics": {
+    "max_approximation_error": 0.2693331419108774,
+    "max_decomposition_error": 2.220446049250313e-16,
+    "max_normalization_tolerance_ratio": 7.168781715067877e-05,
+    "max_original_torch_vs_independent_ideal": 2.220446049250313e-16,
+    "max_original_vs_normalized_torch": 1.1102230246251565e-16,
+    "max_reference_tolerance_ratio": 0.00012732468738997185
+  },
+  "network_configuration_changes": 0,
+  "observed_wall": 1791626065.7332664,
+  "production_activation": false,
+  "provider_calls": 0,
+  "reference_or_threshold_changed": false,
+  "source_capture_records_sha256": {
+    "batch_norm_function": "061d09db357c67792d984a7ab01442c3f4840612ae9f83ff7d74d91aa529ba31",
+    "batch_norm_module": "529b8e735e9a6f85250e501048864180c4004925014a4981d3ad8ac2005614cd",
+    "channel_method": "27cda5b89583743d1b28216f17b7cb035ede035a9e008d68cd2d06e91f83952e",
+    "dense_projection": "18e25f0ad3648fde84a53f7b06c80b7007f20163490a2d70eb317ad885da82e0",
+    "divided_gelu_linear": "ae2a952d975c820b30b347c3ef185f8d8960ddbf9e5b3f5364ff72ce035b56f3",
+    "divided_relu_residual": "253cffb2fbf74c8b0e823fd4265778499a1ed05c66530024dced26c79f55a5ce",
+    "divided_sigmoid_tuple": "c51e37f445c1a79ccc80f37aad2bce3e41e28954ea72301407b90635b7faeeea",
+    "dual_fusion": "53517775bb06b25189ef36f06ad2ead7fa6c51d762049dcc3c2d75033303b4a2",
+    "float32_batch_norm": "6e360ee64e7bc478d7683a9f9711bb079ee00d7a891628b4362c5bf00de15a5f",
+    "float32_gelu_projection": "455ffe38494505f6c7ef22c8cb29fd53f477cd0780e1ed40bc0cdb9e31ca12af",
+    "float32_vector": "5a2d653855d1af2c27db58f7fb33bc92475551caec5e362fb2116da76f68e560",
+    "index_method_nested": "280031de1574facae658f6193d4af0b897b9bcf0e042e4084961d5efdad3ad7c",
+    "index_select_function": "6763627ea007c4f54600bbba0c0f826ecd982cfdd658d6ae0b59ebf42c24295b",
+    "inplace_snapshot": "02474dca14bd15b8957b784446379e7ce57fb88c15e439fc94d94a4445975994",
+    "mixed_scalar_power": "f65ad5473cc65619fb3b800769c743aa0bd781416768ac90cb45b0a63a65de88",
+    "vector_function": "3e01d7555e15665cd11e17afcd36ff721f2f8358678113cba9750a967a742826"
+  },
+  "source_captures_failed": 2,
+  "source_captures_passed": 16,
+  "source_captures_planned": 18,
+  "source_report_binding": "31d7237b5db43d6d52a8c37d75348a314cd8752ade36ed42c0be21e8d5537940",
+  "source_report_sha256": "e887ee4faa1c5a6ad3ef6625097226e8048e310a697c701a0983e417bf80f048",
+  "static_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 58,
+    "skipped": 0
+  }
+}

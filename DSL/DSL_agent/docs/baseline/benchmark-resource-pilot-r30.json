@@ -1,0 +1,86 @@
+{
+  "binding": "aab1ff86f344afd31b7655b7c4fba586e996f2ffc02bd95a069602aa4d508750",
+  "completed": 48,
+  "failed": 1,
+  "guest_minimum_mem_available_kib": 5971724,
+  "max_individual_process_rss_kib": 1304152,
+  "memory_method": "Individual kernel high-water mark; sampled sum of descendant RSS may double-count shared pages and miss short peaks",
+  "not_run": 0,
+  "paid_api_calls": 0,
+  "passed": 47,
+  "peak_observed_filesystem_growth_bytes": 589811712,
+  "peak_sampled_tree_rss_kib": 1624852,
+  "pilot_directory_bytes": 1777811,
+  "planned": 48,
+  "retained_evidence_bytes": 6393258,
+  "schema": 1,
+  "seconds": 230.2378359830036,
+  "source_changed": false,
+  "source_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "upstream_helper_execution_claimed": false,
+  "pilot_report_sha256": "1638724b0fc7abc4d25239e587e654d3c913e54d2741758c36100d105856a3b1",
+  "pilot_plan_sha256": "a2b58519dd3c42265c9e2e077106e907568ce19fb0a9145959af572eaa813e44",
+  "frozen_suite": "scripts/baseline/benchmarks/semantic-v1-chunk-helpers-r29",
+  "index_sha256": "acbc6a9a8c01d9c8d8f0f89ca92b2db68d2144039b3bcbff500ed77be9fb95eb",
+  "full_preflight": {
+    "total": 1200,
+    "ready": 1090,
+    "blocked": 110,
+    "reasons": {
+      "Deterministic baseline operation budget": 69,
+      "AST node limit": 41
+    }
+  },
+  "timing": {
+    "case_mean_seconds": 4.756997155708329,
+    "case_median_seconds": 4.052351681006257,
+    "case_p95_nearest_rank_seconds": 7.584761381993303,
+    "case_max_seconds": 11.443481504000374,
+    "full_ready_mean_projection_seconds": 5185.126899722079,
+    "full_ready_p95_projection_seconds": 8267.3899063727,
+    "inference_only": true,
+    "selection_not_random": true
+  },
+  "budget": {
+    "native_concurrency": 1,
+    "max_wall_seconds": 7200,
+    "max_result_mib": 1024,
+    "stop_and_preserve_at_limit": true,
+    "new_installations": 0,
+    "paid_api_calls": 0
+  },
+  "failure_rows": [
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "numerically_correct": false
+        }
+      ],
+      "category": "helper",
+      "cpu_system_seconds": 0.21015499999999998,
+      "cpu_user_seconds": 1.4703179999999998,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8llxmmx8",
+      "evidence_bytes": 157085,
+      "exit_code": 1,
+      "id": "bench_helper_0044",
+      "log_sha256": "873f4647528ce81ec8bf17adee26c3eca59f0744577bd99991e5758f187588d8",
+      "max_individual_process_rss_kib": 744624,
+      "model_sha256": "41682ade40051e88b1348bc657effe9a7b95756a5cc51cf13c406ecad41c705c",
+      "peak_sampled_tree_rss_kib": 870344,
+      "report_sha256": "70285fd348c4bdf0b9ab5db639b5b6557937643c0a1446126ad69154efdf7e97",
+      "resource_stop": null,
+      "samples": 12,
+      "seconds": 3.0298889460100327,
+      "split": "development",
+      "status": "repair_budget_exhausted",
+      "work": 370
+    }
+  ],
+  "artifact_hashes_verified": 1739,
+  "no_numerical_failures": true,
+  "full_batch_result": "running_not_yet_accepted"
+}

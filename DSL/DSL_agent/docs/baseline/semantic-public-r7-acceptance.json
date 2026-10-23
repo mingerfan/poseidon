@@ -1,0 +1,112 @@
+{
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_seal_execution": true,
+  "actual_upstream_helper_execution": false,
+  "agent_calls": 0,
+  "all_dsl_semantics_covered": false,
+  "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding/batch48",
+  "batch_plan_sha256": "c9e3d1a3c9ea8efbb9b5954a2d8637bb91fed13ec59c65d3b31889d71bff71c8",
+  "case_seconds": 231.4714045989531,
+  "checker_sources": {
+    "scripts/baseline/benchmarks/tools/audit_public_batch.py": "b34719f3a2e8975cbcfa0a13a54b9cdfaaca285439611dc494888ea1c308e6fd",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/audit.py": "81a59b9fe5d894df99ea3ffcf39c6e6c48bb4beb1f5db1fbf335d14316f96b86"
+  },
+  "compared_values": 620,
+  "coordinator_seconds": 246.3295375960006,
+  "counts": {
+    "blocked_contract": 96,
+    "blocked_rule_preflight": 3,
+    "not_run": 459,
+    "passed": 48
+  },
+  "directed_numeric_counts": {
+    "blocked_contract": 96,
+    "blocked_rule_preflight": 3,
+    "not_run": 448,
+    "passed": 47
+  },
+  "directed_structural_counts": {
+    "not_run": 11,
+    "passed": 1
+  },
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding-unit-initial.log": "76202dcb9fc4e91a0c1db533c1a474a3faa174b4fdb6c0ab89ef002d02c34921",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding/audit.json": "1493591f30870b3eec7f720596a81d4187a9a12217f4305473a3c48f40226ab1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding/batch48/report.json": "ed3c6f9af5a948af12144de8b894b2e69b3c521784a6b1ae53eb15ea02b3c57b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding/coordinator-plan.json": "8d7a3e1ef857b13303ca63cc7126d01893194c5f0cca5f2f24f4220e9bd28d1e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding/final-state.json": "0a9e90b1c0d8eb2548464141e29f692dddf179e1ff459a18150d38f2132f4ad4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding/full-replay-audit.json": "3254a06bf9f4a7bb71284328336934e3058cc44aef79168703dcac00501ffacc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-plaintext/report.json": "e3b23a01d30236f30af8a9f1e04ec90105217baa4114a1605ba826d6a7e95a50",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-unit.log": "84907f5e83f6344f95c05acb127450f9084c1415756ec04ca603035e3489e182"
+  },
+  "evidence_bytes": 7818130,
+  "formal_equivalence_proven": false,
+  "inputs": {
+    "1": 31,
+    "2": 6,
+    "3": 11
+  },
+  "max_absolute_error": 1.4840241380209562e-07,
+  "max_individual_process_rss_kib": 930996,
+  "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+  "native_bound_tasks": 114,
+  "native_directed_retested": false,
+  "new_partitions": 6,
+  "new_tasks": 18,
+  "numeric": 47,
+  "old_regressions": 30,
+  "outputs": {
+    "1": 31,
+    "2": 12,
+    "3": 5
+  },
+  "passed": 48,
+  "periods": {
+    "4": 44,
+    "8": 4
+  },
+  "plaintext": {
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "platform": "aarch64-linux",
+  "public_bound_tasks": 396,
+  "public_partitions": 132,
+  "release": "semantic-v1-public-r7",
+  "remaining": [
+    "96 unbound directed tasks",
+    "lambda signature directed witnesses and other parameter type combinations",
+    "general chunked layout",
+    "three prior default rule operation-budget blocks",
+    "Agent-callable actual upstream helper contract",
+    "remaining helpers and bootstrap",
+    "two original compiler failures",
+    "full semantic and compiler artifact audit",
+    "separately approved live Agent evaluation"
+  ],
+  "schema": 1,
+  "source_snapshot": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r7-binding/frozen-source.tar.gz",
+    "sha256": "2510b103e484bb96f77f928c5ca84a7c3c7177838f6d3c6ffb98f9a5ddee5e1b"
+  },
+  "statuses": {
+    "failed": 0,
+    "passed": 48,
+    "skipped": 0
+  },
+  "structural": 1,
+  "unbound_tasks": 96,
+  "unit_tests": {
+    "failed": 0,
+    "passed": 111,
+    "skipped": 3,
+    "total": 114
+  },
+  "weighted_mae": 7.438351498372377e-09,
+  "x86_retested": false
+}

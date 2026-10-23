@@ -1,0 +1,131 @@
+{
+  "agent_calls": 0,
+  "cases": [
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 0,
+      "compiled": true,
+      "encrypted_execution": false,
+      "id": "raw",
+      "traced": true
+    },
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 0,
+      "compiled": true,
+      "encrypted_execution": false,
+      "id": "pre_add",
+      "traced": true
+    },
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 1,
+      "compiled": false,
+      "encrypted_execution": false,
+      "id": "pre_multiply",
+      "traced": true
+    },
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 0,
+      "compiled": true,
+      "encrypted_execution": false,
+      "id": "pre_sum",
+      "traced": true
+    },
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 1,
+      "compiled": false,
+      "encrypted_execution": false,
+      "id": "pre_sum_multiply",
+      "traced": true
+    },
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 0,
+      "compiled": true,
+      "encrypted_execution": false,
+      "id": "post_multiply",
+      "traced": true
+    },
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 1,
+      "compiled": false,
+      "encrypted_execution": false,
+      "id": "native_boundary",
+      "traced": true
+    },
+    {
+      "actual_helper_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      },
+      "compile_exit": 1,
+      "compiled": false,
+      "encrypted_execution": false,
+      "id": "original_residual",
+      "traced": true
+    }
+  ],
+  "compile_failed": 4,
+  "compiled": 4,
+  "conclusion": "Observed failing type exceeds fixed MulOp capacity guard; does not prove no alternative schedule could execute it",
+  "configured_capacity": 780,
+  "encrypted_execution": false,
+  "evidence_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/probe_upstream_silu_depth.py": "e129172e144d7621cb3c6699f8306a52e0b9781b9d08710f38c3d7e0e83ac3ec",
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp": "f022d4668e0bfac7e9389a54573836c66422dbd015fc857804f14ec6d3bd6a9c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-silu-depth-r16/frozen-source.tar.gz": "dde8b8ca5c801790c3fe439c47ee09758112eaaa32fe2d25571316f0f51c8f13",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-silu-depth-r16/plan.json": "8703b833fa7795bc54be145fd89976ea01fac0cdb9178a025c97c12e1121c00b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-silu-depth-r16/report.json": "25293f58edd4d0e6eeaa159edf354a6ec72107a678ff2a7251865375ec295ca8"
+  },
+  "frontend_traced": 8,
+  "level_upper": 13,
+  "observed_level": 12,
+  "observed_scale": 80,
+  "profile_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+  "required_lhs_capacity": 800,
+  "rescaling_factor": 60,
+  "schema": 1,
+  "seconds": 5.063629526994191,
+  "source_sha256": "9a1ee63fe5f5c2c335dbbd16032080297bd6c6737a4d1930f2660a40a2c8786a"
+}

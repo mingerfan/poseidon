@@ -1,0 +1,660 @@
+{
+  "binding": "2b7c9fad1008ee0fbd5102450eb7548ab7b8e32ec802791b2ae47da9a3ff0c13",
+  "boundary_negative_controls": 18,
+  "diagnostic_attempts": 18,
+  "format": "poseidon-fixed-capacity-audit-v1",
+  "guard_sha256": "c97abbd2cadb38d49fd136a6c2d9ae92e755bde9d8034e5e4c0cf18d73f2f887",
+  "guard_source": "::mlir::LogicalResult hecate::earth::MulOp::inferReturnTypes(\n    ::mlir::MLIRContext *context, ::std::optional<::mlir::Location> location,\n    ::mlir::ValueRange operands, ::mlir::DictionaryAttr attributes,\n    ::mlir::OpaqueProperties properties, ::mlir::RegionRange regions,\n    ::llvm::SmallVectorImpl<::mlir::Type> &inferredReturnTypes) {\n  auto op = MulOpAdaptor(operands, attributes, properties, regions);\n  auto lScale = earth::getScaleType(op.getLhs());\n  auto lTensor = earth::getTensorType(op.getLhs());\n  auto rScale = earth::getScaleType(op.getRhs());\n  auto rTensor = earth::getTensorType(op.getRhs());\n  if (lScale.getLevel() == rScale.getLevel() &&\n      lTensor.getShape()[0] == rTensor.getShape()[0] &&\n      ((EarthDialect::bootstrapLevelUpperBound)*EarthDialect::rescalingFactor >=\n       lScale.getLevel() * EarthDialect::rescalingFactor + lScale.getScale())) {\n    inferredReturnTypes.push_back(\n        lScale.switchScale(lScale.getScale() + rScale.getScale()).toCipher());\n    return ::mlir::success();\n  } else {\n    return ::mlir::failure();\n  }\n}\n\n",
+  "mappings": [
+    {
+      "alternative_schedule_impossibility_proven": false,
+      "attempts": 6,
+      "contexts": 3,
+      "encrypted_passes": 0,
+      "reason": "Actual unchanged helper traces; MulOp guard fails solely at fixed-profile capacity",
+      "records": [
+        {
+          "calls_sha256": "6c3f77ecaaf38138946da897b90c6ea1c1cf9949bff250ded71f89051a92d7c5",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 0,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-6dwewjsd",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 855,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_sign_0",
+          "log_sha256": "941b845a1ba03231bff44dacdb533a7aa2799dcf63bb1e26437aa6a92e7480ba",
+          "model_without_id_sha256": "2f4e7634386e76dc84e3b230c7fc3be07af38bf7155f2ad0c620754d64b4895b",
+          "operand_types": {
+            "left": [
+              1,
+              75,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "sign",
+          "report_sha256": "cd43ef33c9e45d2faf6ef472c5e1f1277f3e8f2ec6a70d81f740918dc98e4b5c",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "40607b433888f5ff248169cc6030d4130dc6d92e780fae5d1214d68014609de9"
+        },
+        {
+          "calls_sha256": "81b7ae17b5f48cd985c9ef00fba163243cf61e80026c2601dfa86ff7889afcbb",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 1,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-rqsc3pw6",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 855,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_sign_1",
+          "log_sha256": "dee6d32942745607722703a8b71dda582a115bb440a9de9357ecbb69b494a3ef",
+          "model_without_id_sha256": "39f032cd8108095b39d5f1aa7b08102a77730a5b79c10af942653260f7290876",
+          "operand_types": {
+            "left": [
+              1,
+              75,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "sign",
+          "report_sha256": "616d14b166d33f2bc1b1a9ec4b44613c61d317286d0e0375932d483bec863fc0",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "07ba6651f0368b36b71ef9b656dd5cca62b99c4913422a84f5be960dcdfdc5c2"
+        },
+        {
+          "calls_sha256": "8b3a4fe346b3655459edad81c28441327bfb577a488f70a08112df53e9cd462d",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 2,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-qgb4le3p",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_sign_2",
+          "log_sha256": "5fb3ab1704b08fcd2436ae3bcf1bc01fd7dece22ebf2310ed5cecca33c580511",
+          "model_without_id_sha256": "4bd234e4674b4dae3c5f19dc722ab899740a8a99ace76a23dddb1d8bd6905ada",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "sign",
+          "report_sha256": "c73b96498a6dfb634b15ea5526fcfe14985575643a26779a6f11531ed514ef03",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "16011527d01e70a3de0d67591e2d284d3b31b338f2767d63af7509eec14f2f5a"
+        },
+        {
+          "calls_sha256": "f492b97a663ef04fb3065833d3de75031bb84d606b06b86edb6a6c842f90fba2",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 0,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-8_u719rp",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_sign_scaled_0",
+          "log_sha256": "054b399ab4299057b5fadb626a9366b2174c2aa3e29081407cf29ded98d70cf5",
+          "model_without_id_sha256": "2f4e7634386e76dc84e3b230c7fc3be07af38bf7155f2ad0c620754d64b4895b",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              80,
+              13
+            ]
+          },
+          "regime": "sign",
+          "report_sha256": "f31ce5bd13f63872a6f3ce2f6cfe7291031441428d67889e6a1eddac83f9656c",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "40607b433888f5ff248169cc6030d4130dc6d92e780fae5d1214d68014609de9"
+        },
+        {
+          "calls_sha256": "24bce7954d25bf6142602b89b9a67d9d6149c13b8207742c422c64a04c7070cd",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 1,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-klzqlr__",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_sign_scaled_1",
+          "log_sha256": "be893382d629f2cfe94a7b9c753abf03a165670fa51a7ab034f7447fe46bc760",
+          "model_without_id_sha256": "39f032cd8108095b39d5f1aa7b08102a77730a5b79c10af942653260f7290876",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              80,
+              13
+            ]
+          },
+          "regime": "sign",
+          "report_sha256": "68890a2b2b660be5672002a3962eb35838b15d31a12b6491419a7e58975d2329",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "07ba6651f0368b36b71ef9b656dd5cca62b99c4913422a84f5be960dcdfdc5c2"
+        },
+        {
+          "calls_sha256": "326c309785d5fe10355879ca1ad0b4f8e23f81d90311dcf7f235d7cc02cb2619",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 2,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-kwe3evcl",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 800,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_sign_scaled_2",
+          "log_sha256": "7081dade9d4d4504aec0a7191ed4475d202bf67f33daa6e345cd2acb1fc3a306",
+          "model_without_id_sha256": "4bd234e4674b4dae3c5f19dc722ab899740a8a99ace76a23dddb1d8bd6905ada",
+          "operand_types": {
+            "left": [
+              1,
+              80,
+              12
+            ],
+            "right": [
+              1,
+              40,
+              12
+            ]
+          },
+          "regime": "sign",
+          "report_sha256": "5028989da7c3eab6fd0c400c31fdc091fc867978553adb3f9469c7f0d9a4cac1",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "16011527d01e70a3de0d67591e2d284d3b31b338f2767d63af7509eec14f2f5a"
+        }
+      ],
+      "source_contains_bootstrap": false,
+      "state": "configured_compiler_capacity_blocked",
+      "symbol": "Poly.sign",
+      "tested_configurations": [
+        "seal-cpu-eva-w40-v1",
+        "seal-cpu-eva-w45-v1"
+      ]
+    },
+    {
+      "alternative_schedule_impossibility_proven": false,
+      "attempts": 6,
+      "contexts": 3,
+      "encrypted_passes": 0,
+      "reason": "Actual unchanged helper traces; MulOp guard fails solely at fixed-profile capacity",
+      "records": [
+        {
+          "calls_sha256": "8e0755363302de80a4111cae3b96bd2d554e10ad4a6d130e2ca67d49fdac5391",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 0,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-6pwmu6hw",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 855,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_relua_0",
+          "log_sha256": "941b845a1ba03231bff44dacdb533a7aa2799dcf63bb1e26437aa6a92e7480ba",
+          "model_without_id_sha256": "19045e233951ecdc6e1b8fd80cc75dd445443732dbab8ff007da7b5916cf1a19",
+          "operand_types": {
+            "left": [
+              1,
+              75,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "relua",
+          "report_sha256": "9079a1c8752645e6b484b5c139a2e706e51fe33d9f9855121026d2767dc8a82f",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "0a995b00792d12392254f6ec64a51179b2fcec2c020083c4c095742e1e62c5ac"
+        },
+        {
+          "calls_sha256": "e1b8442e60caa389c9b928ec528f2d4142b2663bd32179bd83cfc2f6f2c05bca",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 1,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-oa5wwjwd",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 855,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_relua_1",
+          "log_sha256": "dee6d32942745607722703a8b71dda582a115bb440a9de9357ecbb69b494a3ef",
+          "model_without_id_sha256": "4dbdcc54de059656c73aa5ebf66f2aaf095686878e32fb65e533235938dcf059",
+          "operand_types": {
+            "left": [
+              1,
+              75,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "relua",
+          "report_sha256": "bd94673910de07fd393860bd014f407ce32ad9b97fdbd45ba892b7115ea43902",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "158f2690d08d85aad303a38a2be3a87a839dfb1cb1a24a9fbc84dc0208858669"
+        },
+        {
+          "calls_sha256": "58d301de7d02a11758deea6e48815aeac90840c0d4f3a35f513b4e9067b1b978",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 2,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-r8csx69w",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_relua_2",
+          "log_sha256": "5fb3ab1704b08fcd2436ae3bcf1bc01fd7dece22ebf2310ed5cecca33c580511",
+          "model_without_id_sha256": "56ec476327aaa23dce0c8b11e6e5b2b88dd98d21c1e617ecd95695b2cc325ddc",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "relua",
+          "report_sha256": "2cfdd8d6d98498ab2f9490d3c2dad4411d4a087a9ed9a6f07f2ed14ef2512237",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "0d2665529a8098bd169650fd7eed320f584684c54d5c81a4ee426d811ad6400b"
+        },
+        {
+          "calls_sha256": "b51fbe9f4d00fce3d96a85c750c4c0b4108e01348f607393ffc6e0e48b964d3d",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 0,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-5ud20wv0",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_relua_scaled_0",
+          "log_sha256": "054b399ab4299057b5fadb626a9366b2174c2aa3e29081407cf29ded98d70cf5",
+          "model_without_id_sha256": "19045e233951ecdc6e1b8fd80cc75dd445443732dbab8ff007da7b5916cf1a19",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              80,
+              13
+            ]
+          },
+          "regime": "relua",
+          "report_sha256": "384afbc3dab9ec013742a5f2a72e6c5c04fff418bbf2d17daff5101c6523d8f2",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "0a995b00792d12392254f6ec64a51179b2fcec2c020083c4c095742e1e62c5ac"
+        },
+        {
+          "calls_sha256": "551a22f498e7221af6cbc83ee3fdfeb52b77762f8d3796507dae7005741daa0c",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 1,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-miijo5r6",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_relua_scaled_1",
+          "log_sha256": "be893382d629f2cfe94a7b9c753abf03a165670fa51a7ab034f7447fe46bc760",
+          "model_without_id_sha256": "4dbdcc54de059656c73aa5ebf66f2aaf095686878e32fb65e533235938dcf059",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              80,
+              13
+            ]
+          },
+          "regime": "relua",
+          "report_sha256": "5aef2649747e68b09c6858fb64b7cba4c538d754d12d27b4478f944d9785a5c7",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "158f2690d08d85aad303a38a2be3a87a839dfb1cb1a24a9fbc84dc0208858669"
+        },
+        {
+          "calls_sha256": "38b52239c4d2a9470c0cbefc437e09149767bec3f6059928d476ce020ef243f5",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 2,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-b4gf38hp",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 800,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_relua_scaled_2",
+          "log_sha256": "7081dade9d4d4504aec0a7191ed4475d202bf67f33daa6e345cd2acb1fc3a306",
+          "model_without_id_sha256": "56ec476327aaa23dce0c8b11e6e5b2b88dd98d21c1e617ecd95695b2cc325ddc",
+          "operand_types": {
+            "left": [
+              1,
+              80,
+              12
+            ],
+            "right": [
+              1,
+              40,
+              12
+            ]
+          },
+          "regime": "relua",
+          "report_sha256": "e96f4fa51bc44721ea2b4575fdb590e6bbc620777b90ba7d11b1f3146a20b005",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "0d2665529a8098bd169650fd7eed320f584684c54d5c81a4ee426d811ad6400b"
+        }
+      ],
+      "source_contains_bootstrap": false,
+      "state": "configured_compiler_capacity_blocked",
+      "symbol": "Poly.relua",
+      "tested_configurations": [
+        "seal-cpu-eva-w40-v1",
+        "seal-cpu-eva-w45-v1"
+      ]
+    },
+    {
+      "alternative_schedule_impossibility_proven": false,
+      "attempts": 6,
+      "contexts": 3,
+      "encrypted_passes": 0,
+      "reason": "Actual unchanged helper traces; MulOp guard fails solely at fixed-profile capacity",
+      "records": [
+        {
+          "calls_sha256": "449cb1550dd51dbecbc6af448fa2ebce82cc363f9d441cf3a18758a083f667b3",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 0,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-uj979fhb",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 855,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_genRelu6_0",
+          "log_sha256": "941b845a1ba03231bff44dacdb533a7aa2799dcf63bb1e26437aa6a92e7480ba",
+          "model_without_id_sha256": "19045e233951ecdc6e1b8fd80cc75dd445443732dbab8ff007da7b5916cf1a19",
+          "operand_types": {
+            "left": [
+              1,
+              75,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "genRelu6",
+          "report_sha256": "1a5934656ec70967aa122b82f97b181093e07a6440067a13027bb204cb271f87",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "0a995b00792d12392254f6ec64a51179b2fcec2c020083c4c095742e1e62c5ac"
+        },
+        {
+          "calls_sha256": "2829014567f9521e2fe0d82aae22c883d3524499d7d614c22f94e49674897aa3",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 1,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-ydmv94sk",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 855,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_genRelu6_1",
+          "log_sha256": "dee6d32942745607722703a8b71dda582a115bb440a9de9357ecbb69b494a3ef",
+          "model_without_id_sha256": "4dbdcc54de059656c73aa5ebf66f2aaf095686878e32fb65e533235938dcf059",
+          "operand_types": {
+            "left": [
+              1,
+              75,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "genRelu6",
+          "report_sha256": "237f0130c355022662e20e9b434e01c05540f27008cb8653085c99d1c0bab21d",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "158f2690d08d85aad303a38a2be3a87a839dfb1cb1a24a9fbc84dc0208858669"
+        },
+        {
+          "calls_sha256": "17a721c31c4d573febc277dee691cf089a09c790e940d550c176d0e23f840d84",
+          "compiler_configuration": "seal-cpu-eva-w45-v1",
+          "context": 2,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-ge0r7_vg",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_genRelu6_2",
+          "log_sha256": "5fb3ab1704b08fcd2436ae3bcf1bc01fd7dece22ebf2310ed5cecca33c580511",
+          "model_without_id_sha256": "56ec476327aaa23dce0c8b11e6e5b2b88dd98d21c1e617ecd95695b2cc325ddc",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              75,
+              13
+            ]
+          },
+          "regime": "genRelu6",
+          "report_sha256": "af752b9870b0ed573463956cf6204829fb3908c0a423dafd20c8d24c2c895b29",
+          "source_batch": "stage2-polynomial-r68",
+          "topology": "0d2665529a8098bd169650fd7eed320f584684c54d5c81a4ee426d811ad6400b"
+        },
+        {
+          "calls_sha256": "235baa1e98385f900d3fdd55f9fbd150a6e8814f63b0c2a577cdd107939a06ce",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 0,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-kbg_f5fj",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_genRelu6_scaled_0",
+          "log_sha256": "054b399ab4299057b5fadb626a9366b2174c2aa3e29081407cf29ded98d70cf5",
+          "model_without_id_sha256": "19045e233951ecdc6e1b8fd80cc75dd445443732dbab8ff007da7b5916cf1a19",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              80,
+              13
+            ]
+          },
+          "regime": "genRelu6",
+          "report_sha256": "cc04ae0f108832876d025a9e3176b002586eeb50676c967fb2902e6a284ef5d0",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "0a995b00792d12392254f6ec64a51179b2fcec2c020083c4c095742e1e62c5ac"
+        },
+        {
+          "calls_sha256": "5ba18e1fa8db4c766424e0256713cc137a2a5dc22d000e75ea9982aeb37bab0e",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 1,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-qx1ao3gt",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 840,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_genRelu6_scaled_1",
+          "log_sha256": "be893382d629f2cfe94a7b9c753abf03a165670fa51a7ab034f7447fe46bc760",
+          "model_without_id_sha256": "4dbdcc54de059656c73aa5ebf66f2aaf095686878e32fb65e533235938dcf059",
+          "operand_types": {
+            "left": [
+              1,
+              60,
+              13
+            ],
+            "right": [
+              1,
+              80,
+              13
+            ]
+          },
+          "regime": "genRelu6",
+          "report_sha256": "613a2e8b9800d3afeb529727d1398089ed62554fe226d89d89e8f0fb93e4e51f",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "158f2690d08d85aad303a38a2be3a87a839dfb1cb1a24a9fbc84dc0208858669"
+        },
+        {
+          "calls_sha256": "aa496a84c6c7ab44b2fa9cf69d24347d05afa8f087ccdd2ed1876cec19e6bc25",
+          "compiler_configuration": "seal-cpu-eva-w40-v1",
+          "context": 2,
+          "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-polynomial-tgt_0xv0",
+          "guard": {
+            "capacity": 780,
+            "equal_level": true,
+            "equal_shape": true,
+            "required": 800,
+            "within_capacity": false
+          },
+          "id": "poly_dependency_genRelu6_scaled_2",
+          "log_sha256": "7081dade9d4d4504aec0a7191ed4475d202bf67f33daa6e345cd2acb1fc3a306",
+          "model_without_id_sha256": "56ec476327aaa23dce0c8b11e6e5b2b88dd98d21c1e617ecd95695b2cc325ddc",
+          "operand_types": {
+            "left": [
+              1,
+              80,
+              12
+            ],
+            "right": [
+              1,
+              40,
+              12
+            ]
+          },
+          "regime": "genRelu6",
+          "report_sha256": "dcab1e17599539db73aed377990a0ee1a222916406d866efba56cfbb4e51ee8d",
+          "source_batch": "stage2-polynomial-scaled-w40-r77",
+          "topology": "0d2665529a8098bd169650fd7eed320f584684c54d5c81a4ee426d811ad6400b"
+        }
+      ],
+      "source_contains_bootstrap": false,
+      "state": "configured_compiler_capacity_blocked",
+      "symbol": "Poly.genRelu6",
+      "tested_configurations": [
+        "seal-cpu-eva-w40-v1",
+        "seal-cpu-eva-w45-v1"
+      ]
+    }
+  ],
+  "new_encrypted_executions": 0,
+  "no_bootstrap_substitution": true,
+  "paid_calls": 0,
+  "parents": {
+    "stage2-polynomial-r68": {
+      "binding": "0f91535110fe3f99f23797a55585f4d2fbc4a88d26f589868cf4e469b64ccee5",
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-polynomial-r68",
+      "plan_sha256": "16f2c75f42e82a0d0b46c8910afd5358d3a4975555eeb5cef1413a48c688be99",
+      "report_sha256": "b1e8a3ad94a964bcdee3feb8b90817fec0479c1a75fb6808dddf2fdaaa1da7ec"
+    },
+    "stage2-polynomial-scaled-w40-r77": {
+      "binding": "f0e29924c425ad79517ae862d0b0275f1edb89bfabdc22e00d960eb1c7cfc544",
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-polynomial-scaled-w40-r77",
+      "plan_sha256": "aec8505fc9f9828b639e47962a64c8511f3eaa772a009c6c2ff629f44834ab3f",
+      "report_sha256": "800926ff519506c12cbd1f8daf4846d8e770d86c75267aca134edc563714c94a"
+    }
+  },
+  "profile_unchanged": true,
+  "runner_sha256": "2ce8b27e7a1e76825b0d2f1ac5d53dff9094b42303fd77581dcba2b0b6e282de",
+  "security_unchanged": true,
+  "sources": {
+    "third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp": "f022d4668e0bfac7e9389a54573836c66422dbd015fc857804f14ec6d3bd6a9c",
+    "third_party/dacapo/profiled_SEAL_CPU.json": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "third_party/dacapo/python/poly/poly/MPCB.py": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+    "third_party/dacapo/python/poly/poly/Poly.py": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7"
+  }
+}

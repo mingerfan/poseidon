@@ -1,0 +1,513 @@
+{
+  "actual_execution": {
+    "downloads": 0,
+    "dsl_compilations": 0,
+    "encrypted_executions": 0,
+    "git_publication_actions": 0,
+    "installs": 0,
+    "paid_calls": 0,
+    "sdk_builds": 0
+  },
+  "approximation_domain": {
+    "actual_execution": false,
+    "diagnostic": "Reference input outside explicit approximation domain",
+    "independent_domain_check": "rejected",
+    "input_packing": "accepted",
+    "input_values_excluded_from_public_report": true,
+    "numerical_verification": false,
+    "status": "gap_confirmed"
+  },
+  "backend_gaps_preserved": [
+    "Ciphertext-preserving partition handoff",
+    "Runtime internal memory lifetime",
+    "CPU native bootstrap",
+    "CUDA hardware acceptance"
+  ],
+  "branch": "lhy-agent-dsl",
+  "capture": {
+    "expected_refusals": 3,
+    "initial_fixture_error": {
+      "fixed_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-forms-r681",
+      "historical_records_preserved": true,
+      "id": "float32_convert",
+      "initial_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-input-forms-r680",
+      "reason": "Audit manifest shape matched conv substring by mistake"
+    },
+    "input_gaps": 8,
+    "planned": 24,
+    "reference_passed": 13,
+    "reference_probes_per_model": 16,
+    "rows": [
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "300214d0efc9b96a640953281e23e239a26423bb7380a13b4ca73c9c788e2411",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "module_linear",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "300214d0efc9b96a640953281e23e239a26423bb7380a13b4ca73c9c788e2411",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "functional_linear",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "ValueError: Unsupported PyTorch call: <built-in function getattr>",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "matrix_linear",
+        "reason": "Tensor.T property normalization",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "58834459782566d7dc0341e720f80ff89f262aa34083dbb2ae9ae569265946fe",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "module_conv",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "ValueError: Unsupported PyTorch call: <built-in method conv1d of type object at 0xffffb61cac78>",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "functional_conv",
+        "reason": "Functional convolution mapping",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "93ab7e26b8a258de7e032c35b43c29a6ef82b28ce76dfde6c46f900677e8665c",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "module_pool",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "ValueError: Unsupported PyTorch call: <built-in method avg_pool1d of type object at 0xffffb214ac78>",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "functional_pool",
+        "reason": "Functional average-pool mapping",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "4ddf59a6226f49d17951bda5efd5ba7a84f52292e79a59b06b756396c8483b16",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "module_batch_norm",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "ValueError: Unsupported PyTorch call: <function batch_norm at 0xffff786035b0>",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "functional_batch_norm",
+        "reason": "Functional inference BatchNorm mapping",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "child_error": "ValueError: LayerNorm affine required",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "module_layer_no_affine",
+        "reason": "LayerNorm affine=False mapping",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "57365519a9ba23bf65ce9830f4b1c457e2fa49c1a4cf07e5def53069d5baca87",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "functional_layer_no_affine",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 5.551115123125783e-17,
+          "max_original_function_approximation_error": 0.15053244709901825,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "ValueError: GroupNorm affine required",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "module_group_no_affine",
+        "reason": "GroupNorm affine=False mapping",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "a8bbea5b16081ec020001ba8f997baeee4647f600b6a2de460c60c00e53e6431",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "functional_group_no_affine",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 5.551115123125783e-17,
+          "max_original_function_approximation_error": 0.2249618675234475,
+          "max_original_module_error": 1.1102230246251565e-16,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "35b789687953e86179de36602c11b10b7d8e3be3532ddd4f6715ff91151f2328",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "shape_reshape",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "TypeError: 'Proxy' object cannot be interpreted as an integer",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "shape_loop",
+        "reason": "Shape-derived static loop tracing",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "0f435eec917da099a2f1cc0deade97e2a9c01bc4e65ada6900fff80022329f5b",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "public_loop",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "ValueError: Scalar outputs require reshape(1)",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "scalar_output",
+        "reason": "Scalar output shape restoration",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "675b9b1ffc090369b382a426159e0ca0aa7bf39ad4d533d3b9aba6e4cc980a9c",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "scalar_reshape",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "0300a6031a7f2e07a64fc738c869747a9dc214ab1babf2f37bb8f8c6030a9412",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "tuple_output",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "0300a6031a7f2e07a64fc738c869747a9dc214ab1babf2f37bb8f8c6030a9412",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "dict_output",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "torch.fx.proxy.TraceError: symbolically traced variables cannot be used as inputs to control flow",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "data_branch",
+        "reason": "Encrypted-data branch refusal",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      },
+      {
+        "child_error": "ValueError: Strict float64 source policy",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "float32_strict",
+        "reason": "Explicit strict source dtype refusal",
+        "source_report": "agent-pytorch-input-forms-r681",
+        "status": "rejected"
+      },
+      {
+        "capture": {
+          "agent_generated": false,
+          "encrypted_execution": false,
+          "model_sha256": "8041827ac2c7f7a7ef473a0de1120684dcb9f5d074388fce86ed126b38cc80e8",
+          "reference_scope": "16 finite inputs; original nn.Module and two independent decomposed references",
+          "reference_verified": true,
+          "resource_profile": "general-tensors-v1",
+          "status": "captured"
+        },
+        "expected": "reference_passed",
+        "id": "float32_convert",
+        "reason": "Existing mapping compatibility",
+        "reference": {
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "max_original_module_error": 0.0,
+          "probes": 16,
+          "source_precision_execution_compared": false
+        },
+        "source_report": "agent-pytorch-input-forms-r681",
+        "status": "reference_passed"
+      },
+      {
+        "child_error": "ValueError: Only population variance (unbiased=False) is supported",
+        "diagnostic": "Trusted capture failed; inspect capture.log",
+        "expected": "rejected",
+        "id": "sample_variance",
+        "reason": "Sample variance differs from registered population variance",
+        "source_report": "agent-pytorch-input-forms-r680",
+        "status": "rejected"
+      }
+    ]
+  },
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "format": "poseidon-agent-input-form-review-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "next_agent_changes": [
+    "Functional convolution/pooling/inference BatchNorm mapping",
+    "Affine-free module normalization and Tensor.T mapping",
+    "Explicit scalar output normalization and shape-derived static-loop tracing",
+    "Per-node approximation selection and supplied-input domain preflight"
+  ],
+  "paid_authorizations": {
+    "consumed_r620": {
+      "generations": 16,
+      "http_attempts": 16,
+      "passed": 14,
+      "planned": 14
+    },
+    "pending_r675": {
+      "binding": "c089b9c4ce2d49e8c7ed7b8ff23218c91c10d5245779f889f26f6072b109d982",
+      "cases": 15,
+      "full_binding_checked_in": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-guard-domain-r682/pending-binding.json",
+      "new_calls": 0,
+      "status": "awaiting_human_authorization"
+    }
+  },
+  "source_guard": {
+    "capture_smoke": {
+      "encrypted_execution": false,
+      "failed": 0,
+      "reference_passed": 1
+    },
+    "hashes_recomputed": true,
+    "previous_tool_preserved": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-guard-domain-r682/offline-tool-before.py",
+    "real_pinned_worker_timing": {
+      "current": {
+        "median": 7.170873722527176,
+        "seconds": [
+          7.1568376700161025,
+          7.18490977503825
+        ]
+      },
+      "previous": {
+        "median": 14.265488067496335,
+        "seconds": [
+          14.203637826954946,
+          14.327338308037724
+        ]
+      }
+    },
+    "static_tests": {
+      "failed": 0,
+      "mocked_backend": true,
+      "passed": 6,
+      "skipped": 0
+    }
+  },
+  "status": "offline_review_complete",
+  "tool_sha256": {
+    "scripts/baseline/benchmarks/tools/audit_pytorch_input_forms.py": "a2311efc6673f82cdcf84e7237c156a063b017549b2bfc99ec11c042d3353bfc",
+    "scripts/baseline/benchmarks/tools/check_pytorch_guard_domain.py": "1626bb9d803dc77f1100a25ed68951ae43b95099400de97b6d7ed8d0880f512a",
+    "scripts/baseline/benchmarks/tools/check_pytorch_sources.py": "f7352eeb9c0e36517c53ef9f9686702e8890ca5074adff4a5287da03b278e3e2",
+    "scripts/baseline/benchmarks/tools/test_check_pytorch_source_guard.py": "84a3a5445a24d5dc53cca83a79edacb402e5f9a9384117e95d523b627263c1ed"
+  },
+  "unchanged": {
+    "backend_source_files": 545,
+    "reference_files": 5,
+    "shared_application_sources": true,
+    "threshold": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    },
+    "x86_configuration": true
+  }
+}

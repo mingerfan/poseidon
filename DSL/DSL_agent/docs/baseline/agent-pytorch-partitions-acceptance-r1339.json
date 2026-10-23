@@ -1,0 +1,463 @@
+{
+  "backend_changes": 0,
+  "backend_files_unchanged": 654,
+  "backend_identity": {
+    "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+    "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+    "executor_sha256": "6cdd255e321025e9286d9968864c5ce0db9333017ca62e6618c6d9830178afd4",
+    "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e",
+    "platform": {
+      "byteorder": "little",
+      "configured_platform": "aarch64-linux",
+      "machine": "aarch64",
+      "pointer_bits": 64,
+      "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "system": "linux",
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+    },
+    "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+    "source_lock": {
+      "dacapo": {
+        "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+        "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+        "patches": [
+          {
+            "file": "dacapo-plaintext-subtraction.patch",
+            "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+          },
+          {
+            "file": "dacapo-concat-layout.patch",
+            "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+          },
+          {
+            "file": "dacapo-bootstrap-containers.patch",
+            "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+          },
+          {
+            "file": "dacapo-native-function-calls.patch",
+            "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+          },
+          {
+            "file": "dacapo-refined-function-input-types.patch",
+            "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+          },
+          {
+            "file": "dacapo-augmented-operand-order.patch",
+            "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+          },
+          {
+            "file": "dacapo-constant-output-path.patch",
+            "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+          },
+          {
+            "file": "dacapo-minimal-mlir-link.patch",
+            "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+          },
+          {
+            "file": "dacapo-gcc-qualified-casts.patch",
+            "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+          },
+          {
+            "file": "dacapo-unused-mlir-dependencies.patch",
+            "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+          }
+        ],
+        "path": "third_party/ckks-runtime-agent/third_party/dacapo"
+      },
+      "format": "poseidon-runtime-source-lock-v1",
+      "integration_method": "reviewed source archives; original independent repositories preserved",
+      "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+      "runtime": {
+        "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+        "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+        "path": "third_party/ckks-runtime-agent"
+      }
+    }
+  },
+  "binding": "71cd0c85cf92b19b420585e19e5f54010778da4dd267d1d29c3932c130dd19e7",
+  "branch": "lhy-agent-dsl",
+  "candidate_origin": "deterministic_rule_baseline",
+  "capability_claim": "registered input plus six finite rule/backend contexts; not arbitrary PyTorch or all ranks tested",
+  "cases": [
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 24,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.3012020261271573e-07,
+        "numerically_validated": true
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "4daa436b3dd2a3aeec77573ef5e28754f35e20fe8786cbf1e39f073007a38c59",
+      "case": "chunk_branches",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/tasks/f0a1abf7ac73478fbae52ed926012d6f/program",
+      "package_binding": "892e1e95313498496e4d5c4a6c7d068699473e12f369b19889c3145318b1cbd1",
+      "qualification_status": "succeeded",
+      "request_id": "00b21d80fda0b866fad7663d2ba6dafacf1c9289571868ab974dabc076c29d59",
+      "reuse_agent_calls": 0,
+      "reuse_compiler_calls": 0,
+      "reuse_input_groups": 4,
+      "reuse_maximum_absolute_error": 5.074545579852874e-07,
+      "reuse_passed": true,
+      "reuse_values": 24,
+      "source_captured": true,
+      "status": "passed",
+      "task_id": "f0a1abf7ac73478fbae52ed926012d6f"
+    },
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 16,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 5.498387721514231e-08,
+        "numerically_validated": true
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "4d85d922d2b784aee502e0a5b1c4a61e915516b2572258535b56037b8fbbaeb8",
+      "case": "chunk_projection",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/tasks/8a872a13312448c4a6756e6f35d2e7c3/program",
+      "package_binding": "92118a41b43138a0e4b903b88343c0eca68813377c8f5a81ee18688c042b56db",
+      "qualification_status": "succeeded",
+      "request_id": "8f8693d19016013a24bb98f56266e8576734a5b419c13a2293a7394ca4467e9d",
+      "reuse_agent_calls": 0,
+      "reuse_compiler_calls": 0,
+      "reuse_input_groups": 4,
+      "reuse_maximum_absolute_error": 8.94910525996162e-08,
+      "reuse_passed": true,
+      "reuse_values": 16,
+      "source_captured": true,
+      "status": "passed",
+      "task_id": "8a872a13312448c4a6756e6f35d2e7c3"
+    },
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.5583606016722484e-08,
+        "numerically_validated": true
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "8ba71828eb2ecfb855a74ab183a88ad658106d0dd5a9eaf6169ad4e468d1ec1d",
+      "case": "chunk_public_weight",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/tasks/5218b2d98d2c468a89b9d3c87a2f21bb/program",
+      "package_binding": "bee723c5956431e0ab74e0baf478e05e384aa354f1dfab1ba084a280990fb354",
+      "qualification_status": "succeeded",
+      "request_id": "dce8b4494c13f14f69f16a179b912d5fb741844c228eab783eec489b4a1629bc",
+      "reuse_agent_calls": 0,
+      "reuse_compiler_calls": 0,
+      "reuse_input_groups": 4,
+      "reuse_maximum_absolute_error": 1.208235758318188e-08,
+      "reuse_passed": true,
+      "reuse_values": 8,
+      "source_captured": true,
+      "status": "passed",
+      "task_id": "5218b2d98d2c468a89b9d3c87a2f21bb"
+    },
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 3.622051880647348e-07,
+        "numerically_validated": true
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "3b4f422e8b91267eb8c3fd6f5ed3c4f8d899c2398c6accaf83008f3c495bf7fa",
+      "case": "unbind_fusion",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/tasks/df205601b9f74f068d747b5b16aaa782/program",
+      "package_binding": "b0783e0d5489a57d1c9a738f602ab4b54f779a6e3720324dd4c6399648a49607",
+      "qualification_status": "succeeded",
+      "request_id": "95d3f6d45e078038c0f485fe22b72423684b870bd80b531481e4873289ffedf4",
+      "reuse_agent_calls": 0,
+      "reuse_compiler_calls": 0,
+      "reuse_input_groups": 4,
+      "reuse_maximum_absolute_error": 1.2160754170320587e-07,
+      "reuse_passed": true,
+      "reuse_values": 8,
+      "source_captured": true,
+      "status": "passed",
+      "task_id": "df205601b9f74f068d747b5b16aaa782"
+    },
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 24,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 9.980376081131226e-09,
+        "numerically_validated": true
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "415f7d9107f03d36a11d2602abd8c28ddcd237ec96c0cde69f13262e7b6eff7b",
+      "case": "unbind_mutation",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/tasks/927e55c58069431c81f4a39ce5424f36/program",
+      "package_binding": "a212221e16caa9857a9749fa8e3e0720385e0ba0dc57eea6578e9d6ba998c984",
+      "qualification_status": "succeeded",
+      "request_id": "63585ceb3ac90facb3c64d9d8b35f7a79af2dbec62e69f0366c558d5df8dbb75",
+      "reuse_agent_calls": 0,
+      "reuse_compiler_calls": 0,
+      "reuse_input_groups": 4,
+      "reuse_maximum_absolute_error": 6.331963425809661e-09,
+      "reuse_passed": true,
+      "reuse_values": 24,
+      "source_captured": true,
+      "status": "passed",
+      "task_id": "927e55c58069431c81f4a39ce5424f36"
+    },
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 32,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.5529854624496409e-07,
+        "numerically_validated": true
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "86a586f85e8b07df1d273c85e7285c403cbe07fa8e63c7ae9575c29a876450b5",
+      "case": "unbind_sequence",
+      "compiled": true,
+      "encrypted_execution": true,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/tasks/38505bd2da614cf38ad28d8f65342c22/program",
+      "package_binding": "ce9bd0934d82ab944bc0405aefbf7e7fd8d8cff5af47c61b2370757fae0c2807",
+      "qualification_status": "succeeded",
+      "request_id": "3bf7cb0ee458b8d229ed2aa2cb15fd9f2f2aaeef363851a6cb19a5a82aa60311",
+      "reuse_agent_calls": 0,
+      "reuse_compiler_calls": 0,
+      "reuse_input_groups": 4,
+      "reuse_maximum_absolute_error": 1.233310396031584e-07,
+      "reuse_passed": true,
+      "reuse_values": 32,
+      "source_captured": true,
+      "status": "passed",
+      "task_id": "38505bd2da614cf38ad28d8f65342c22"
+    }
+  ],
+  "commit": 0,
+  "controls": {
+    "compatibility": {
+      "compiler_calls": 0,
+      "encrypted_calls": 0,
+      "errors": 0,
+      "failed": 0,
+      "format": "poseidon-static-partition-controls-v1",
+      "modules": [
+        "test_pytorch_model_intake",
+        "test_application_capabilities",
+        "test_pytorch_mha_component",
+        "test_pytorch_gelu_source_capture",
+        "test_pytorch_static_capture",
+        "test_pytorch_arithmetic_shape_intake"
+      ],
+      "provider_calls": 0,
+      "seconds": 4.024575585999628,
+      "skipped": 0,
+      "status": "passed",
+      "tested_sources": {
+        "application_capabilities.py": "b6278637ed059d77088b4fdfc82bd04e6ac5bb84d07d813d35e085ef2d4f9691",
+        "pytorch_model_intake.py": "fcd09b83b99763063b3e1aae910f3fccf4ab94c1482d56f2feba073896dbae4f",
+        "pytorch_ordered_capture.py": "893dc97fcb89bd245ffe9447a540f132144027e485681f07f3e93aadc218f97b",
+        "pytorch_ordered_contract.py": "5703e37088b4ed9cb7fd71cf7a3266dcdadd51a6bcc71c57079847aee97d928a",
+        "pytorch_ordered_intake.py": "897a7b1e981d5a2820d9df8faa7c6d87252324300e060ae22282c547a40e12c4",
+        "pytorch_partition_normalization.py": "3b6b9f6a000f5715733b22c6024c70329a09811704c44591dfc56eb6f8d030d6",
+        "pytorch_static_trace.py": "a2ce9c33634904f6a5939ee811372045493042083db2e378abc89dab85d791e9",
+        "source_precision_reference.py": "e3dfbbbc3395a6871492a284ba35a9be645500c71c1bc14169b8e6c58a883f46",
+        "test_pytorch_partitions.py": "03d5c35b331156924a81aec19eb625bb96130c5e7ad7e4491abaa53049604393"
+      },
+      "tests_run": 94
+    },
+    "errors": 0,
+    "failed": 0,
+    "new": {
+      "compiler_calls": 0,
+      "encrypted_calls": 0,
+      "errors": 0,
+      "failed": 0,
+      "format": "poseidon-static-partition-controls-v1",
+      "modules": [
+        "test_pytorch_partitions"
+      ],
+      "provider_calls": 0,
+      "seconds": 0.45752504200027033,
+      "skipped": 0,
+      "status": "passed",
+      "tested_sources": {
+        "application_capabilities.py": "b6278637ed059d77088b4fdfc82bd04e6ac5bb84d07d813d35e085ef2d4f9691",
+        "pytorch_model_intake.py": "fcd09b83b99763063b3e1aae910f3fccf4ab94c1482d56f2feba073896dbae4f",
+        "pytorch_ordered_capture.py": "893dc97fcb89bd245ffe9447a540f132144027e485681f07f3e93aadc218f97b",
+        "pytorch_ordered_contract.py": "5703e37088b4ed9cb7fd71cf7a3266dcdadd51a6bcc71c57079847aee97d928a",
+        "pytorch_ordered_intake.py": "897a7b1e981d5a2820d9df8faa7c6d87252324300e060ae22282c547a40e12c4",
+        "pytorch_partition_normalization.py": "3b6b9f6a000f5715733b22c6024c70329a09811704c44591dfc56eb6f8d030d6",
+        "pytorch_static_trace.py": "a2ce9c33634904f6a5939ee811372045493042083db2e378abc89dab85d791e9",
+        "source_precision_reference.py": "e3dfbbbc3395a6871492a284ba35a9be645500c71c1bc14169b8e6c58a883f46",
+        "test_pytorch_partitions.py": "03d5c35b331156924a81aec19eb625bb96130c5e7ad7e4491abaa53049604393"
+      },
+      "tests_run": 26
+    },
+    "passed": 120,
+    "skipped": 0
+  },
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "documentation_changes": {
+    "docs/baseline/application-agent-component-v1.md": "c43c940cdd5eb21993d04779779ab0891eeafc2e7895c430dbb3febbac4d3d29",
+    "docs/baseline/operator-decomposition-and-python.md": "192f20eab93f609a203310e86065e57dc12024c4b2832b0ff5c48fd0ad080c77",
+    "scripts/README.md": "b398859ce80dcb8e75f4a68e57a115d02c1444a551d52ae690b7e8d481f09201"
+  },
+  "downloads": 0,
+  "format": "poseidon-pytorch-partition-acceptance-v1",
+  "free_bytes": 45720281088,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_request_files_unchanged": 2,
+  "http_attempts": 0,
+  "identity_sha256": "e3cdaa8c413fed4dad3920ec7df7b37765af8362b7b1e0becacefa397e9a2760",
+  "implementation_files": {
+    "application_capabilities.py": "b6278637ed059d77088b4fdfc82bd04e6ac5bb84d07d813d35e085ef2d4f9691",
+    "pytorch_model_intake.py": "fcd09b83b99763063b3e1aae910f3fccf4ab94c1482d56f2feba073896dbae4f",
+    "pytorch_ordered_capture.py": "893dc97fcb89bd245ffe9447a540f132144027e485681f07f3e93aadc218f97b",
+    "pytorch_ordered_contract.py": "5703e37088b4ed9cb7fd71cf7a3266dcdadd51a6bcc71c57079847aee97d928a",
+    "pytorch_ordered_intake.py": "897a7b1e981d5a2820d9df8faa7c6d87252324300e060ae22282c547a40e12c4",
+    "pytorch_partition_normalization.py": "3b6b9f6a000f5715733b22c6024c70329a09811704c44591dfc56eb6f8d030d6",
+    "pytorch_static_trace.py": "a2ce9c33634904f6a5939ee811372045493042083db2e378abc89dab85d791e9",
+    "source_precision_reference.py": "e3dfbbbc3395a6871492a284ba35a9be645500c71c1bc14169b8e6c58a883f46"
+  },
+  "installs": 0,
+  "mathematical_reference_changes": 0,
+  "native": {
+    "artifact_bytes": 2368962,
+    "binding": "58b4890c4f5204f9a943a484eb937973d91e38e44fa76032f30271fc1af65131",
+    "compared_values": 224,
+    "compilations": 6,
+    "encrypted_calls": 12,
+    "failed": 0,
+    "format": "poseidon-static-partition-offline-report-v1",
+    "http_attempts": 0,
+    "identity_sha256": "e3cdaa8c413fed4dad3920ec7df7b37765af8362b7b1e0becacefa397e9a2760",
+    "input_groups": 48,
+    "maximum_absolute_error": 5.074545579852874e-07,
+    "new_agent_generation": false,
+    "passed": 6,
+    "plan_binding": "1894fdffa9cbb7d0d1124b51083bebd08bf8d2ba8be407413d3082c1dfadbfe5",
+    "planned_cases": 6,
+    "protected_sources_changed": 0,
+    "protected_sources_checked": 654,
+    "provider_calls": 0,
+    "seconds": 406.5139220270012,
+    "source_captures": 6,
+    "source_format": "poseidon-trusted-pytorch-v17",
+    "status": "passed",
+    "tolerance": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "native_plan_binding": "1894fdffa9cbb7d0d1124b51083bebd08bf8d2ba8be407413d3082c1dfadbfe5",
+  "native_plan_sha256": "5f2ce78665f7a1b43d4b3debf5db79620696cc596a2816d26fee737e8aae0d4c",
+  "native_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v2/report.json",
+  "native_report_sha256": "72e31e2e63f7b41f7fa5fcf79ef5cbcbcfd618d4257aceaae2b70f5447e6e60d",
+  "new_calls": [
+    "torch.chunk",
+    "Tensor.chunk",
+    "torch.unbind",
+    "Tensor.unbind"
+  ],
+  "new_real_agent_passes": 0,
+  "new_result_bytes": 52355478,
+  "normalization": "registered basic index; preserves shared views and source order",
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "parameter_changes": 0,
+  "policy": "poseidon-pytorch-static-partition-v1",
+  "preserved_failures": [
+    {
+      "cause": "new test fixture and exception expectations; fixed test data only",
+      "errors": 5,
+      "failed": 1,
+      "file": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/static_partition_v1/controls-round1.json",
+      "sha256": "10ebcb816d1288e5d32d7ad2918c811c882bd8d5fb45a969172a8cea15ac589c",
+      "tests": 26
+    },
+    {
+      "cause": "tool read pending task before prepare_source; no capture/compile/encrypted execution",
+      "file": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/report.json",
+      "sha256": "54a8d0654cf5d17692901c8d889740db56f04a01d5dcdd90527fb1752cab07c3"
+    },
+    {
+      "actual_source_captures": 0,
+      "file": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-static-partition-acceptance-v1/intake-count-correction.json",
+      "sha256": "fe756d950d5fc57286c8977aefc3a9fa3e4eb5dc63c3bcfffecfadd509d507da"
+    }
+  ],
+  "provider_calls": 0,
+  "push": 0,
+  "remaining": [
+    "chunk/unbind real-Agent 3 contexts per operation; separately approved",
+    "two historical MHA failures require fresh current identities and bounded approval; old unknown HTTP not auto-retried",
+    "rank-1 unbind scalar alias views not registered",
+    "larger layouts, application precision, encrypted partition handoff, bootstrap, CUDA and whole networks remain separate"
+  ],
+  "resource_scope": {
+    "compile_jobs": 2,
+    "global_bytes": 34359738368,
+    "link_jobs": 1,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "native_workers": 1,
+    "new_bytes": 1073741824,
+    "provider_calls": 0,
+    "reserve_bytes": 4294967296,
+    "wall_seconds": 1200
+  },
+  "revision": "r1339",
+  "source_baseline_binding": "273f1d4d86a9e5f4ff7f5cf02add4ce30f61200a3a0718d045bdc59a5bf81a84",
+  "source_format": "poseidon-trusted-pytorch-v17",
+  "stage_source_counts": {
+    "compilation": 624,
+    "execution": 624,
+    "generation": 630,
+    "validation": 624
+  },
+  "status": "offline_verified",
+  "test_file": {
+    "file": "scripts/baseline/test_pytorch_partitions.py",
+    "sha256": "03d5c35b331156924a81aec19eb625bb96130c5e7ad7e4491abaa53049604393"
+  },
+  "tolerance_changes": 0,
+  "total_result_bytes": 27702265582,
+  "x86_configuration_preserved": true,
+  "x86_native_retest": false
+}

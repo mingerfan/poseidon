@@ -1,0 +1,693 @@
+{
+  "format": "poseidon-stage3-agent-acceptance-v1",
+  "plan_binding": "877a66c325acf0719380339fd97c7f8edc84811076c0c2041cdbe92719398617",
+  "proposal_binding": "2991be4574d9a6846c9fa1b345f521a5a9dfad2bee4a612721ca682552652451",
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage3-operator-live-r227-shard-03-audit/report.json": "2987757029ab3492fcbaaffd9bd9a4e0f939a9494564e9776fa0fee39fca791f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage3-operator-live-r227-shard-02-audit/report.json": "305d03edce147825fff41d06093fa6bad968b79ad3e6e328a8eba25903a51ea1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage3-operator-live-r227-shard-00-audit/report.json": "9b43771af40443351a8b13a323e9e9350daa5be94e5ee43d3d0e76948d1d6168",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage3-operator-live-r227-shard-01-audit/report.json": "683e7afe239e868972e6a15164f95ea6e15c91258cc8fa83df981c9eaad0d4be"
+  },
+  "rows": [
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "6a338816ad827c38444ccc9b8dd72f7c468e3490b1d6c1f04e0210b4aba6ad14",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 12,
+        "mae": 5.616339655710455e-08,
+        "max_absolute_error": 1.2474039145000868e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-pq925mto",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "public_gather_0",
+      "model_sha256": "f8901e67ea973a621c6e595d44560c524de46fc2a6acc9b35433891b59181778",
+      "provider_status": "passed",
+      "report_sha256": "b085146b5658579150f591cc00a87a6d54059fe608c425f530a08889f9210fc0",
+      "request_id": "e918093bb03f481995aff0da245265c7adba1de3d1b081151025e7d4183c8461",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "public_gather"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "e4999ce9378d979baedd798c7bcc7fc0106e16094e026d06ed0480d48034f34d",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 1.684665632501218e-08,
+        "max_absolute_error": 5.593214363624978e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fketxz6k",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "adaptive_avg_pool_1",
+      "model_sha256": "837e73af81f4c1d7d71bad7ccfbbc901259cbe5442addbe1aea4093ca77e7853",
+      "provider_status": "passed",
+      "report_sha256": "660bd2d344c7b246acbbab07a67b5d84fd98adf21e0df0b6c74d051568653b8d",
+      "request_id": "4884073d8042c46325960886c7054164abfb141920607c09e2e72a723db7d7f5",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "adaptive_avg_pool"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "7baada928451d228a8fb5f32255327e37fc6bdfb5f515103cf1d2465075a20c9",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 8.281776328090962e-11,
+        "max_absolute_error": 3.2979385888864954e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kg6dagg2",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "leaky_relu_1",
+      "model_sha256": "57e9efa28ea7fcc9852ead1b3137207b9dfab457852d52825749e3f5808e6985",
+      "provider_status": "passed",
+      "report_sha256": "3a27af5ad80493e13531bc042dde6e5d15be3e1e9928726506e10840ba2997bc",
+      "request_id": "b2bf7dcd4a0ff85069c95ec0ae091e50097681c857acddf916dda432b469c0fc",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "leaky_relu"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "61702e75051a46c47a5a3e5830976bf399e50da197865c776a7a1b27ebd46b29",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 12,
+        "mae": 7.15066709548277e-11,
+        "max_absolute_error": 1.3611378690825404e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-i9qlzmz0",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "logsoftmax_0",
+      "model_sha256": "3607f8a9a03a2872d8adaa19e818cd47035288eae4a18aa7287a6b9e72b80499",
+      "provider_status": "passed",
+      "report_sha256": "c1801fd8d5d3e20141bd1f703a61e4e782393dee81cccf4e83896298c8772546",
+      "request_id": "0ae03fdef66da887183aec85cc3c4414aa85fd566149992eb25315362cc24803",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "logsoftmax"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "40949939917eab72ccfe1f037326d1d749e1b1913f19f810323b98d377b5c7be",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 68,
+        "mae": 8.283886445164194e-08,
+        "max_absolute_error": 1.079261941594467e-06,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xjmrglpy",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "broadcast_2",
+      "model_sha256": "0d2933da6cdfd8cf1a0cd7bc274d18e6e916e4aece83305ef91d5eaa97b491f5",
+      "provider_status": "passed",
+      "report_sha256": "4da8b8a912d41949aa90147b60a2c4c34f7fdd8888cc0b20f771059078ed4053",
+      "request_id": "1cf7d758d581a84d6057b73b3265dc9dbc504193ddc1fdee00d9c6fb3753939c",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "broadcast"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "423bf53c663a73eba4f8cd258b50966be8df531fa6c9249d32c1298a6e1a1bc8",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 7.226897152853682e-09,
+        "max_absolute_error": 1.858532803452874e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-y1ot1eyx",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "adaptive_avg_pool_0",
+      "model_sha256": "fbad2b9a73f32e89a3ea93e873125f278ef8ee8bcb14a609342bda55c2855e78",
+      "provider_status": "passed",
+      "report_sha256": "85e4e57204279ce765abcb4c97e1aa8d775e78e4997f75e9c6b3eb1fae6f4fec",
+      "request_id": "549eb9ca5799509ed1f3e6b8334c24a05fe9e20496d9a04cb8d85056a471e091",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "adaptive_avg_pool"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "7a4d5d75ed0ff667c461605666a3573e6f552054f58ab02c00e8991e2a4ab70b",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 7.093815986014551e-11,
+        "max_absolute_error": 1.6554868587093097e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4bc4zjnq",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "prelu_0",
+      "model_sha256": "6303b4214fef7f2db56ba474858f9ce2edc0f64e8f29d7b6183e642a4598ecc6",
+      "provider_status": "passed",
+      "report_sha256": "586dd79de580467d7ab1b1a4435de7b7d1a326f93cb2c1a2fab35de5b3603768",
+      "request_id": "c38604637af2bcff3521e19eb53a850638ebcc51c114aa4e7f3eb38ab0ca0cd5",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "prelu"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "e037ca5cb7a58cb9ac57018e254065550c565ba83d24c5dac83e88c0a0ff2241",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 8.12524943161197e-11,
+        "max_absolute_error": 2.1788615356399532e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ahhdvuo6",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "prelu_2",
+      "model_sha256": "f7102ef844b5801c364f40ec32068f63c498f355b6193249a6d8c239eae781bd",
+      "provider_status": "passed",
+      "report_sha256": "ec63da9c5f5e98da29471369b27ee34be220b1470ab6a8b1d84e8adefd6f31bd",
+      "request_id": "899bd9e00d9b0c6ea7e1bbef6eaff7637eb74bec9764f9eb433e3f7605db05f0",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "prelu"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "6fec24c483970907cd474ab6947402197031cf1c9561a6cff9facd5792ff78bf",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 1.4461918880081118e-08,
+        "max_absolute_error": 5.896078720407327e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g9gwuvq9",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "broadcast_0",
+      "model_sha256": "251ab0e3ac729232635eba24937ffaa47dce476e837094ed8a50ba7fad3897b5",
+      "provider_status": "passed",
+      "report_sha256": "831b7fbb574622190f1e2d309bdd4f1c9a6ce5cea5f9d7f0ec013f26564a334a",
+      "request_id": "f45d81dc7496068a8d2960be44f60e893f349abaf5d45e12829435b976b61af7",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "broadcast"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "30aac3145e3fc80b7b0ceb341fc4ec67d02d0139f120fbee99b62f76db2fd0e1",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 3.193667809201503e-08,
+        "max_absolute_error": 7.446523869747423e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-gn1su3w8",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "public_gather_1",
+      "model_sha256": "da77247f752769d47bbd9f6e481f7e7c5c3342117864131095befce09c759727",
+      "provider_status": "passed",
+      "report_sha256": "7d1ede1086e3af56cfe4c57b2c9f44561eb234ff2ca3ba8bc6f33a6273350b07",
+      "request_id": "6ca1cf51d283f95b2cd7fc02be424088d24c18976ada23b6ec11ccbb17cc4f38",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "public_gather"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "d3d1f1af80f697016c73870a47e0d98f6680967ddb284ac7f3e860eb66fe428e",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 32,
+        "mae": 1.3466764247564234e-08,
+        "max_absolute_error": 8.347390481524414e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-hovmzp4f",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "adaptive_avg_pool_2",
+      "model_sha256": "04810ab9fd719ebccc259b5a152ef2245a80a93d1580d01c6a6da8497bee1fd5",
+      "provider_status": "passed",
+      "report_sha256": "f8677427ea8047754e996d995574b142cbc8b8907aabd64ee78eedfd6e7937a8",
+      "request_id": "5677b85973c18e45b00bcadc194b4acc0c5e0e4a30edde685759e5b615c4e8c6",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "adaptive_avg_pool"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "df9a6870646f3ee78aa667d0c2f3d7d22df877fdad09958bd955425ad416b71d",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 1.1905775732333249e-10,
+        "max_absolute_error": 3.494250444546765e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k77yc3ek",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "prelu_1",
+      "model_sha256": "d2bc1f38f9ade033979bac3f637a1e6e3834f3cbf472da4ab3d9b89c31aa041f",
+      "provider_status": "passed",
+      "report_sha256": "24ac6057bb7a253f51686b57003dd084eaf25f7f7aaffd5e87addf4734ca8c90",
+      "request_id": "ac8c7e3a03e2fc93384ab919cfa7817d3603e39d2db145e14c7110813a108dfc",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "prelu"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "4b82069bc0034967fe47586af46975f60e7a6aee72fa7829ac3f562e95acd44e",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 1.7334130889927005e-10,
+        "max_absolute_error": 5.724472007528902e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-a3wj92ar",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "logsoftmax_1",
+      "model_sha256": "bbe9b93b7e9a957503fc944aeb95fadec34c697605f0a82810f7530f0071056a",
+      "provider_status": "passed",
+      "report_sha256": "a719b1c7d73c8a5c17698f8eef3075852c4f7bf6d8a135ae3cac0f377d1f8365",
+      "request_id": "8434b815806b3444920219d715c6a206fad6ba04dbd79eaa357dea88d9fc64df",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "logsoftmax"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "c1f1e8af79c6ec3313e5d85f36c0df3a1f0a3de8835e89192e1ff6658188f3b1",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 48,
+        "mae": 1.2366471566373565e-10,
+        "max_absolute_error": 2.612201166775002e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-zxw3p4vq",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "broadcast_1",
+      "model_sha256": "a873f97b4b68a2a79f8a6a97b61fa8781340da8605e5e9328249de17781ba1a5",
+      "provider_status": "passed",
+      "report_sha256": "495f4d0ed40f535fc90a1aa9b8c3990df3e0e43ecfd23e3f4eaca612a2821745",
+      "request_id": "6b56003bc5795603d2936ba144e2707b88ecec51573b587375ebac34bd5207ba",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "broadcast"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "a34ee155fbc55364aaa0f89ad2b296a5628317fcb7bac695cc2f9abac4751400",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 36,
+        "mae": 1.884358730412825e-08,
+        "max_absolute_error": 1.2130557003331432e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-gllbsm13",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "public_gather_2",
+      "model_sha256": "4c66ca4d4bdb5a1ec47eaffcb978794a8ad329597f46519bf82cc21874b6cf9a",
+      "provider_status": "passed",
+      "report_sha256": "97b6500a16249e54ec5a7c6c9f1fdedb2ea66623421e7b03e32a9ab8fd63701a",
+      "request_id": "42591cfa0ef0e993292831ec58473e7c5beb73931d8f749e1945c80f1e91fea8",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "public_gather"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "1b78b7bbfba2c9e63086e77f5a98a8e6b05135fa4ba90c8f4448f5174bdc7e91",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 4.133679249590516e-11,
+        "max_absolute_error": 1.6036905137184476e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-baehx6v6",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "leaky_relu_0",
+      "model_sha256": "15ab6f61df338f88163fbe659fd4af792b698892750bca602c599bff15735262",
+      "provider_status": "passed",
+      "report_sha256": "f379677a46dc070ce984642f43924c611f2aeb0ced31f170e68a957c71a00931",
+      "request_id": "7b319136c6d64eb2a1c622d4fb5cc7456addb7efaaee8130168adb0ec34ec81f",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "leaky_relu"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "523a6fcfef419716d623b0fa0e27635d72a4d51c0892e9bbb005fb40cee05309",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 7.764014604838554e-11,
+        "max_absolute_error": 2.5375379575365287e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-po4906bq",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "leaky_relu_2",
+      "model_sha256": "890f124e1d843b7280fe503d14390e5cbfb523f4bc2b97b9677fd84d2da47fb0",
+      "provider_status": "passed",
+      "report_sha256": "7b2eb29ef4768c56d179c6f5f13a643ee964f9208ea48b3cb779d321a2cec657",
+      "request_id": "23a4cbf4af2f23530f03dcab4c40c819d5934267e23fe94486fb3d8fb48538ce",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "leaky_relu"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "8da36c68ace382fbcb7a62f8f53aad821112aad104ccedd8b20c217f5414f52f",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 1.488214135259014e-10,
+        "max_absolute_error": 4.13490908179881e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-wf7m8i0m",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "logsoftmax_2",
+      "model_sha256": "8d278b58989e4b43012232a4bf21478f25352e6b2191afe615161a8e20408787",
+      "provider_status": "passed",
+      "report_sha256": "2ebe67a04ca676d20f28f3b80e934815d5c9c8e19fe8a283a9a3172ae0abfeec",
+      "request_id": "6cb33651213f3486d372e94d2058c2245a878e5c227f2c244af5a7026a9f3eaa",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free",
+      "operator": "logsoftmax"
+    }
+  ],
+  "statuses": {
+    "passed": 18
+  },
+  "per_operator": {
+    "adaptive_avg_pool": {
+      "passed": 3
+    },
+    "broadcast": {
+      "passed": 3
+    },
+    "leaky_relu": {
+      "passed": 3
+    },
+    "logsoftmax": {
+      "passed": 3
+    },
+    "prelu": {
+      "passed": 3
+    },
+    "public_gather": {
+      "passed": 3
+    }
+  },
+  "first_attempt_passed": 18,
+  "successful_after_repair": 0,
+  "generations": 18,
+  "http_attempts": 18,
+  "transport_retries": 0,
+  "seconds": 292.05752004898386,
+  "usage": {
+    "completion_tokens": 204147,
+    "prompt_cache_hit_tokens": 39040,
+    "prompt_cache_miss_tokens": 53667,
+    "prompt_tokens": 92707,
+    "reasoning_tokens": 200619,
+    "total_tokens": 296854
+  },
+  "max_absolute_error": 1.079261941594467e-06,
+  "compared_values": 448,
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "paid_calls_this_batch": 18,
+  "scope": "18 free-generation cases after explicit operator decomposition. Approximate math is frozen; not a claim of original-function or full-network accuracy.",
+  "all_operators_complete": false,
+  "bootstrap_validated": false,
+  "resnet20_validated": false,
+  "cuda_validated": false,
+  "binding": "091609db6949ab38fc720298187c115950e403dcc57dff2111b7f0c083cd8238"
+}

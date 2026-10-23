@@ -1,0 +1,11 @@
+{
+  "format": "poseidon-offline-authorization-v1",
+  "proposal_binding": "2801d63485a56dddbb4aa7c6b782ee9d3a90e4a25e5bff6f6983341c4e9293c7",
+  "approved": true,
+  "approved_by": "user",
+  "approved_scope": "18 fixed public arithmetic and legacy regression cases; limits as frozen r1385",
+  "received_at": "2026-10-11T06:53:11.436517+00:00",
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "binding": "c99898c7e1f3ac88192625bfe6ea213261c25acfd923e89bbe80510d90f2369f"
+}

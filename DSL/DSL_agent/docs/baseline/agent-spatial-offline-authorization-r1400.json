@@ -1,0 +1,27 @@
+{
+  "answer": "\u6279\u51c6\u8fd945\u9879\u79bb\u7ebf\u9a8c\u6536",
+  "approved": true,
+  "approved_at_utc": "2026-10-11T13:03:12.360853+00:00",
+  "format": "poseidon-spatial-graph-offline-authorization-v1",
+  "http_attempts": 0,
+  "proposal_binding": "86b1c249c3844f350de4e2dc2304b08994d24d5744712eb2cd37585a74928202",
+  "provider_calls": 0,
+  "question_id": "call_fIeiI0nlLlhbNF6BuXuCrV6W",
+  "scope": {
+    "compiler_jobs": 2,
+    "global_bytes": 34359738368,
+    "initial_task_seconds": 180,
+    "launcher_total_seconds": 2700,
+    "link_jobs": 1,
+    "maximum_compiler_calls": 45,
+    "maximum_encrypted_calls": 51,
+    "native_address_bytes": 4294967296,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "new_bytes": 536870912,
+    "reserve_bytes": 4294967296,
+    "wall_seconds": 2400
+  },
+  "sdk_identity": "388e891a44863d95e6a8ce7e83c4206799434e08e122c63ff58afa2b62452337",
+  "source": "direct_user_reply"
+}

@@ -1,0 +1,106 @@
+{
+  "as_of": "2026-10-07T16:43:46+08:00",
+  "backend_changes": false,
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "current_closed_subset_audit": {
+    "failed": 2,
+    "groups": 7,
+    "maximum_absolute_error": 9.899662478662918e-10,
+    "passed": 1,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-closed-subset-audit-r1182/report.json",
+    "values": 21
+  },
+  "cutover_guard": {
+    "acceptance": "scripts/baseline/benchmarks/tools/staged_binding_feedback_v1/acceptance-r1185.json",
+    "exact_original_scope_required": 76,
+    "source_applied": false,
+    "tests_passed": 20
+  },
+  "downloads": 0,
+  "format": "poseidon-generalization-progress-v1",
+  "git_status_counts": {
+    " M": 62,
+    " m": 1,
+    "??": 681
+  },
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "independently_audited_original_agent_packages": {
+    "current_added_package": "instance__unbatched1_0",
+    "groups": 350,
+    "maximum_absolute_error": 1.0207768190717559e-06,
+    "packages": 50,
+    "unique_counts_not_added_to_older_batches": true,
+    "values": 2387
+  },
+  "installations": 0,
+  "open_items": [
+    "Close original paid scope and resolved ledgers; release Nix lock",
+    "Joint source/feedback cutover and post-cutover component compatibility",
+    "Poseidon tracing, compilation, numerical and program-package acceptance for V12",
+    "V12 new Agent quality evaluation with separately frozen approval",
+    "V11 common normalization is not yet composed into V12",
+    "Bootstrap accuracy, ciphertext graph partition, CUDA hardware, ResNet20 and original float32 application precision"
+  ],
+  "paid_original_scope": {
+    "binding": "0623167de71327bb1d2ec15a2d0563b74ee1c5bd1d35acf61f072027e2521c1b",
+    "calls": {
+      "active_generations_reserved": 4,
+      "active_http_attempts_reserved": 4,
+      "closed_generations": 117,
+      "closed_http_attempts": 117
+    },
+    "failed": 15,
+    "new_authorization_scope": false,
+    "not_started": 10,
+    "passed": 50,
+    "planned": 76,
+    "root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approved-unstarted-continuation-r1174",
+    "running": [
+      "instance__unbatched1_2"
+    ]
+  },
+  "pushes": 0,
+  "staging": {
+    "actual_facade_capture_runs": 3,
+    "boundary_reference_groups": 48,
+    "boundary_reference_values": 272,
+    "code_targets": 13,
+    "compilations": 0,
+    "encrypted_executions": 0,
+    "hecate_traces": 0,
+    "integration": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_ordered_intake_v1/integration.json",
+    "paid_calls": 0,
+    "production_registered": false,
+    "source_format": "poseidon-trusted-pytorch-v12",
+    "source_models": 10,
+    "source_provenance_reloads": 3,
+    "source_reference_groups": 160,
+    "source_reference_values": 1280,
+    "unit_tests": {
+      "errors": 0,
+      "failed": 0,
+      "passed": 106,
+      "skipped": 0
+    },
+    "wrong_platform_rejections": 1
+  },
+  "unchanged": {
+    "execution_tools": 3,
+    "production_sources": 695,
+    "protected": {
+      "protected-backend.json": {
+        "files": 648,
+        "record_sha256": "72d9c394d1a799bc877d2522bec0ab6292847cb99e050ca3cf3df5f0e962dfa8",
+        "unchanged": true
+      },
+      "protected-references.json": {
+        "files": 6,
+        "record_sha256": "a450d27c8831e61514e8180c2858a1ba3cbd00a6f7a9ffaae2131469e992ea05",
+        "unchanged": true
+      }
+    },
+    "retained_files": 1375
+  }
+}

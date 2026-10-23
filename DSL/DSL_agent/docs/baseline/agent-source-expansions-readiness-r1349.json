@@ -1,0 +1,125 @@
+{
+  "authenticated_probe": false,
+  "backend_or_parameter_or_reference_algorithm_changes": false,
+  "binding": "65f804d7a0f73ffd058dcb695f3c06bd2c8fd7c53141ad378a301b97e7d2fc6e",
+  "branch": "lhy-agent-dsl",
+  "commit": false,
+  "current_compile_calls": 0,
+  "current_decryption_calls": 0,
+  "current_encrypted_calls": 0,
+  "current_generation_http_attempts": 0,
+  "current_provider_calls": 0,
+  "default_source_format": "poseidon-trusted-pytorch-v18",
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "disk_free_bytes": 45218332672,
+  "downloads": 0,
+  "evidence": {
+    "audit": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_live_v2/final-audit.json",
+    "controls": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_live_v2/controls.json",
+    "metadata_controls": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_manifest_v1/controls-latest-fixed.json",
+    "preparation_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-scope-refresh-v1/report.json"
+  },
+  "format": "poseidon-source-expansions-readiness-report-v1",
+  "groups": [
+    {
+      "count": 8,
+      "description": "矩阵、分头、广播收缩、多操作数、公开权重及视图组合",
+      "group": "einsum",
+      "source_format": "poseidon-trusted-pytorch-v18"
+    },
+    {
+      "count": 6,
+      "description": "chunk/unbind、尾块、共享写入、公开权重与多输出",
+      "group": "static_partition",
+      "source_format": "poseidon-trusted-pytorch-v17"
+    },
+    {
+      "count": 6,
+      "description": "对角线、trace、标量因子与共享视图写入",
+      "group": "einsum_views",
+      "source_format": "poseidon-trusted-pytorch-v19"
+    },
+    {
+      "count": 6,
+      "description": "一维 unbind、标量视图、快照、stack 与公开权重",
+      "group": "scalar_partition",
+      "source_format": "poseidon-trusted-pytorch-v20"
+    },
+    {
+      "count": 8,
+      "description": "平方、四次方、公开标量除法与别名组合",
+      "group": "exact_arithmetic",
+      "source_format": "poseidon-trusted-pytorch-v21"
+    },
+    {
+      "count": 2,
+      "description": "self Attention＋Linear＋残差；投影后的 cross Attention",
+      "group": "mha",
+      "source_format": "poseidon-trusted-pytorch-v16"
+    }
+  ],
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_requests_changed": 0,
+  "installations": 0,
+  "latest_metadata_fixture_checks": 8,
+  "live_proposal": {
+    "approved": false,
+    "binding": "06411a2e643d76d81e974349268f4bc887b84eacb0771748870e1093a1e792dd",
+    "cases": 36,
+    "executed": false,
+    "max_generations": 144,
+    "max_http_attempts": 576,
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-source-expansions-live-proposal-r1349.json",
+    "sha256": "8d9388ac7797a97c31687a618a52b4d032f592f7e190216a4aebb74c504e9415"
+  },
+  "long_stream_verified": false,
+  "old_proposal_r1341_unchanged": true,
+  "pending": [
+    "current real-Agent generation for 36 cases",
+    "larger graph and weight families",
+    "application accuracy",
+    "bootstrap",
+    "ciphertext handoff",
+    "CUDA hardware acceptance",
+    "whole networks"
+  ],
+  "platform": "aarch64-linux",
+  "protected_sources": {
+    "changed": 0,
+    "checked": 654
+  },
+  "provider_documentation_only": true,
+  "push": false,
+  "result_bytes_conservative": 29732114432,
+  "revision": "r1349",
+  "runner_manifest": {
+    "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_live_v2/runner-manifest.json",
+    "sha256": "461b1f16db67dec7fceb341a241476f814528be4da8ca1e9afd7d9cd1124e17a"
+  },
+  "source_capture_and_reference_are_not_dsl_or_encrypted_acceptance": true,
+  "source_cli_sha256": "9c48099d7b858747018b0b07c4ceb51bf23989ded5991ef5f80fec00f91ea806",
+  "source_cli_version_selection": "latest -> poseidon-trusted-pytorch-v21",
+  "source_identity": "67fc349e857bff911cc66c6a889d033853ba69b86d6df3b6114a9aa477e1539f",
+  "source_manifest_changed": false,
+  "source_or_weights_changed": false,
+  "source_preparation": {
+    "cases": 36,
+    "closed_tasks": 36,
+    "deadline_seconds": 900,
+    "independent_references_verified": 36,
+    "seconds": 672.8289995193481,
+    "unique_generation_requests": 36,
+    "unique_semantic_signatures": 36,
+    "unique_topology_signatures": 36
+  },
+  "static_tests": {
+    "campaign_controls": 76,
+    "errors": 0,
+    "failed": 0,
+    "metadata": 67,
+    "passed": 143,
+    "skipped": 0
+  },
+  "status": "offline_preparation_complete",
+  "unauthenticated_https_probe": 1
+}

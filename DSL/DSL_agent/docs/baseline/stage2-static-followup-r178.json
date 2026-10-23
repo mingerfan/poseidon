@@ -1,0 +1,17 @@
+{
+  "id": "free_bench_helper_0113",
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lui_9dz3",
+  "original_agent_status": "failed",
+  "cause": "Native candidate attempted Plain-only coefficient arithmetic; earlier candidates also spent levels on repeated plaintext doubling.",
+  "manual_change": "Evaluate only public scalar coefficient arithmetic from frozen manifest; represent 2*(a*b) as a shared product added to itself.",
+  "original_response_preserved": true,
+  "automatic_pipeline_change": false,
+  "new_agent_success": false,
+  "transformations": {
+    "public_scalar_folds": 96,
+    "twice_product_to_addition": 95
+  },
+  "manual_fhe_status": "pending after live queue",
+  "manual_job": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-noncompiler-r177/followup-helper-0113/job.json",
+  "paid_calls": 0
+}

@@ -1,0 +1,77 @@
+{
+  "binding": "323fd52de1461ace44b0304f9c8e8e7f6f2c890bcd34c7d34c5f4233553167b4",
+  "compiler_calls": 0,
+  "constraints": [
+    "No exclusion blacklist to hide active imports",
+    "No ignored module/source hashes",
+    "Keep existing identity policy and old evidence; add explicit policy version if semantics change",
+    "Generation edits may avoid execution invalidation only after actual runtime dependency isolation",
+    "Execution/reference/security changes must still invalidate matching cache stages",
+    "No backend-library or parameter changes"
+  ],
+  "current_policy": "complete whole-module static/dynamic import closure; fail-closed",
+  "encrypted_calls": 0,
+  "execution_paths": {
+    "deepseek_http_worker.py": [
+      "poseidon_validation.py",
+      "application_planning/compiled_resources.py",
+      "application_planning/resources.py",
+      "application_planning/layout.py",
+      "application_component.py",
+      "deepseek_provider.py",
+      "deepseek_http_worker.py"
+    ],
+    "deepseek_provider.py": [
+      "poseidon_validation.py",
+      "application_planning/compiled_resources.py",
+      "application_planning/resources.py",
+      "application_planning/layout.py",
+      "application_component.py",
+      "deepseek_provider.py"
+    ],
+    "run_candidate.py": [
+      "poseidon_validation.py",
+      "application_planning/compiled_resources.py",
+      "application_planning/resources.py",
+      "sandbox_policy.py",
+      "upstream_helper_probe.py",
+      "result_retention.py",
+      "run_candidate.py"
+    ],
+    "run_model_batch.py": [
+      "poseidon_validation.py",
+      "application_planning/compiled_resources.py",
+      "application_planning/resources.py",
+      "sandbox_policy.py",
+      "upstream_helper_probe.py",
+      "result_retention.py",
+      "run_model_batch.py"
+    ],
+    "unified_binding_guidance.py": [
+      "application_backend.py",
+      "candidate_bundle.py",
+      "unified_binding_guidance.py"
+    ]
+  },
+  "format": "poseidon-stage-identity-dependency-audit-v1",
+  "identical_sets": true,
+  "impact": "Stage envelopes and backend projections differ, but broad import cycles make generation-only edits invalidate execution identity.",
+  "implementation_changed": false,
+  "paid_api_calls": 0,
+  "required_change": "Separate lightweight package verification, runtime execution, qualification and Provider orchestration modules; then prove smaller complete dependency closures.",
+  "source_binding": "79fc203a8aeed254a5c5c829723237c53c88801eb04c498701e4e2dcea247792",
+  "source_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-mha-layout-component-backend-v2/report.json",
+  "source_report_sha256": "8b283c0e94d0c668fe770683688f4f0687108487236701fdd269aa90a08db3ee",
+  "stage_counts": {
+    "compilation": 691,
+    "execution": 691,
+    "generation": 691,
+    "validation": 691
+  },
+  "tests_required": [
+    "per-stage mutation/cache matrix",
+    "legacy manifest compatibility and tamper rejection",
+    "cancel and budget control",
+    "real package reload/new input/repeat through new isolated entry"
+  ]
+}

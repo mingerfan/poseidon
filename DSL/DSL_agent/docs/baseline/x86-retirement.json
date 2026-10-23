@@ -1,0 +1,55 @@
+{
+  "condition": "ARM native offline subset acceptance passed; user authorized old simulator deletion",
+  "evidence_archive": "/Users/lhohy/Virtual Machines/Poseidon-migration-evidence/x86-retired-20260921.tar.gz",
+  "evidence_archive_sha256": "bdf835807d56a109f15d0e58424a374ce58ea3ced2cb68fdc8505cb0576ec36b",
+  "paths": [
+    {
+      "path": "/Users/lhohy/Virtual Machines/Poseidon-x86_64.utm",
+      "allocated_bytes": 18772766720
+    },
+    {
+      "path": "/Users/lhohy/Virtual Machines/Poseidon-x86_64-access",
+      "allocated_bytes": 135168
+    },
+    {
+      "path": "/private/tmp/poseidon-bootstrap-z3teyu__",
+      "allocated_bytes": 736419840
+    },
+    {
+      "path": "/private/tmp/poseidon-migration-wewghfrp",
+      "allocated_bytes": 21491712
+    }
+  ],
+  "source_preserved": "/Users/lhohy/Projects/Poseidon",
+  "arm_vm_preserved": "/Users/lhohy/Virtual Machines/Poseidon-arm64.utm",
+  "x86_source_support_preserved": true,
+  "started": 1789926791.0277472,
+  "status": "deleted",
+  "finished": 1789926791.458139,
+  "allocated_bytes_removed": 19530813440,
+  "utm_state": "UUID                                 Status   Name\n7DC8A801-3630-4780-944B-A0306DFCC8B9 started  Poseidon-arm64\n",
+  "archived_then_removed_host_checkpoint_files": [
+    {
+      "path": "/private/tmp/poseidon-compiler-gate-before.json",
+      "bytes": 229,
+      "sha256": "fac33078cfcc425253877fa680fb73eb078f33d26602b300cc296c8346d38a9d"
+    },
+    {
+      "path": "/private/tmp/poseidon-doc-before-gcc-status",
+      "bytes": 64,
+      "sha256": "d133114454f5ecece4ce4500f9b41fd0e1e462b265ee5637bbc07e6b5b9ec082"
+    },
+    {
+      "path": "/private/tmp/poseidon-gcc-sync-before.json",
+      "bytes": 1038,
+      "sha256": "5654fcf43a48c8148117899443d4bab42a3f1cfa79c53876c51861d4286e8643"
+    },
+    {
+      "path": "/private/tmp/poseidon-minimal-acceptance-before.json",
+      "bytes": 323,
+      "sha256": "90147a4cc8f95776c1f071570a445fc5bb036e4cc26e474f62dcf190b5220844"
+    }
+  ],
+  "host_checkpoint_archive": "/Users/lhohy/Virtual Machines/Poseidon-migration-evidence/x86-host-checkpoints-20260921.tar.gz",
+  "host_checkpoint_archive_sha256": "63adadeb74f3f590cb598ab183b9829c0dd4d57d801d76954dc47b0275a15957"
+}

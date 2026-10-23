@@ -1,0 +1,102 @@
+{
+  "audited_generation_count": 222,
+  "audited_http_attempt_count": 234,
+  "audits": [
+    {
+      "binding": "9982aa332ebe477aedddd3b9dd80ce1c07209a5e2e5c19a0010dc198f5660ba5",
+      "compared_values": 316,
+      "first_attempt_passed": 45,
+      "generations": 51,
+      "http_attempts": 54,
+      "maximum_absolute_error": 5.215657639112692e-08,
+      "numerically_correct_attempts": 48,
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-005-audit/report.json",
+      "real_compiled_attempts": 50,
+      "real_executed_attempts": 50,
+      "sha256": "34df7673987d2e71a2215d4c22dcc1d80abf02c6ef1cf7d96ea07cdf91965d16",
+      "shard": "005",
+      "statuses": {
+        "passed": 48
+      },
+      "successful_after_repair": 3
+    },
+    {
+      "binding": "1b6df6c87e4dc845925928d9f22e65e27cfad523042a211fe548ba5f6194be84",
+      "compared_values": 344,
+      "first_attempt_passed": 47,
+      "generations": 49,
+      "http_attempts": 52,
+      "maximum_absolute_error": 6.69067631298148e-08,
+      "numerically_correct_attempts": 48,
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-006-audit/report.json",
+      "real_compiled_attempts": 48,
+      "real_executed_attempts": 48,
+      "sha256": "30fcb0f48c848c6f4b44fba0b3f951a2ea30ce8efc9d15971c308570fa675827",
+      "shard": "006",
+      "statuses": {
+        "passed": 48
+      },
+      "successful_after_repair": 1
+    },
+    {
+      "binding": "28459a5b15b1a7ad7c5cb99fce19d26ab15558a8854d77cab77850ea2e091d86",
+      "compared_values": 340,
+      "first_attempt_passed": 45,
+      "generations": 50,
+      "http_attempts": 52,
+      "maximum_absolute_error": 1.0339306624751465e-07,
+      "numerically_correct_attempts": 47,
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-008-audit/report.json",
+      "real_compiled_attempts": 48,
+      "real_executed_attempts": 48,
+      "sha256": "4bda3d9e7dc5ca902d735670da67c690120f0c686f2dd063e37bea93b18ab1d1",
+      "shard": "008",
+      "statuses": {
+        "failed": 1,
+        "passed": 47
+      },
+      "successful_after_repair": 2
+    }
+  ],
+  "binding": "851001fa969de6cc8922babdf203513bb2ad6d36c892f7cc7d530de0fbbbf3bd",
+  "format": "poseidon-stage2-parallel-checkpoint-r123",
+  "limitations": [
+    "All current paid-run outcomes remain separately recorded; a preliminary report is not a pass.",
+    "Source 80738 remains frozen. Original shard001 31 unrun cases and remaining time budget are preserved.",
+    "Only one designated Agent semantic partition has all required contexts at this checkpoint."
+  ],
+  "new_api_calls_from_summary": 0,
+  "new_encrypted_runs_from_summary": 0,
+  "partitions": {
+    "backend_blocked": 3,
+    "current_compiler_contexts_passed": 5,
+    "designated_contexts_passed": 1,
+    "incomplete_agent_contexts": 376,
+    "static_controls_separate": 16
+  },
+  "provider_failure_categories": {
+    "tls_failure_unresolved": 1
+  },
+  "source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "stage2_complete": false,
+  "summary": {
+    "all_planned_task_success_rate": 0.10344827586206896,
+    "all_tasks_audited": false,
+    "audited": 211,
+    "audited_task_success_rate": 0.995260663507109,
+    "planned": 2030,
+    "statuses": {
+      "failed": 1,
+      "not_run": 1541,
+      "passed": 210,
+      "running_verified": 10,
+      "terminal_pending_audit": 268
+    }
+  },
+  "summary_binding": "44033f370408b7522b1faa237e7bbce8f50b542d562923f5b7db754ca7e55448",
+  "summary_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-summary-r123.json",
+  "summary_sha256": "ae15d1ff253f8569d0950b708d6fac2a509a6d50daa9d6ab23a9da4dd8f6b753",
+  "terminal_failure_layers": {
+    "provider": 1
+  }
+}

@@ -1,0 +1,447 @@
+{
+  "agent_generation_is_real": true,
+  "approval_record": "/home/lhohy/Code/Poseidon/docs/baseline/agent-mha-feedback-live-approval-r1330.json",
+  "approval_record_sha256": "b50b36de696280363a1f77f17574d44f3991145c89bad01001d5e562d1d80129",
+  "automatic_restart": false,
+  "backend_libraries_changed": false,
+  "batch_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-mha-feedback-live-v5/report.json",
+  "batch_report_sha256": "4890b66ab6da2561c69ff53b9f784a0e694c7a55deea42c5270e9f421558a395",
+  "binding": "3086ad27143759620ca4ecd2cdc40faf5bd30cd41dde573104c319608648f2c4",
+  "bounds": {
+    "api_concurrency": 1,
+    "batch_wall_seconds": 28800,
+    "case_wall_seconds": 14400,
+    "compiler_jobs": 2,
+    "encrypted_concurrency": 1,
+    "global_result_bytes": 34359738368,
+    "link_jobs": 1,
+    "max_generations": 8,
+    "max_http_attempts": 32,
+    "minimum_free_bytes": 4294967296,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "new_batch_bytes": 4294967296
+  },
+  "branch": "lhy-agent-dsl",
+  "cache_reuse": 0,
+  "calls_resolved": true,
+  "candidate_validation": {
+    "compared_values": 64,
+    "compiled": 1,
+    "compiler_rejected": 1,
+    "encrypted_executions": 1,
+    "input_groups": 4,
+    "numerically_passed": 0,
+    "static_rejections": 2,
+    "traced": 2
+  },
+  "cases": [
+    {
+      "calls": [
+        {
+          "content_characters": 3691,
+          "finish_reason": "stop",
+          "generation_index": 0,
+          "index": 0,
+          "model": "deepseek-flash",
+          "response_model_matches": true,
+          "retry_index": 0,
+          "status": "response_received",
+          "usage": {
+            "completion_tokens": 94208,
+            "prompt_cache_hit_tokens": 39424,
+            "prompt_cache_miss_tokens": 228,
+            "prompt_tokens": 39652,
+            "reasoning_tokens": 92310,
+            "total_tokens": 133860
+          }
+        },
+        {
+          "content_characters": 4296,
+          "finish_reason": "stop",
+          "generation_index": 1,
+          "index": 1,
+          "model": "deepseek-flash",
+          "response_model_matches": true,
+          "retry_index": 0,
+          "status": "response_received",
+          "usage": {
+            "completion_tokens": 58271,
+            "prompt_cache_hit_tokens": 39552,
+            "prompt_cache_miss_tokens": 2403,
+            "prompt_tokens": 41955,
+            "reasoning_tokens": 55859,
+            "total_tokens": 100226
+          }
+        },
+        {
+          "error": "transport_invalid_stream",
+          "generation_index": 2,
+          "index": 2,
+          "retry_index": 0,
+          "retry_scheduled": true,
+          "status": "failed"
+        },
+        {
+          "content_characters": 2350,
+          "finish_reason": "stop",
+          "generation_index": 2,
+          "index": 3,
+          "model": "deepseek-flash",
+          "response_model_matches": true,
+          "retry_index": 1,
+          "status": "response_received",
+          "usage": {
+            "completion_tokens": 77737,
+            "prompt_cache_hit_tokens": 44928,
+            "prompt_cache_miss_tokens": 246,
+            "prompt_tokens": 45174,
+            "reasoning_tokens": 76595,
+            "total_tokens": 122911
+          }
+        },
+        {
+          "content_characters": 2760,
+          "finish_reason": "stop",
+          "generation_index": 3,
+          "index": 4,
+          "model": "deepseek-flash",
+          "response_model_matches": true,
+          "retry_index": 0,
+          "status": "response_received",
+          "usage": {
+            "completion_tokens": 67025,
+            "prompt_cache_hit_tokens": 45056,
+            "prompt_cache_miss_tokens": 1665,
+            "prompt_tokens": 46721,
+            "reasoning_tokens": 65572,
+            "total_tokens": 113746
+          }
+        }
+      ],
+      "case": "self_post_linear_residual__declared_shallow_v1",
+      "failure": {
+        "code": "numerical_mismatch",
+        "context": {},
+        "format": "poseidon-diagnostic-v2",
+        "layer": "numerical_comparison",
+        "location": null,
+        "owner": "candidate_or_backend",
+        "reason_code": "numerical_mismatch",
+        "repeat_key_available": false,
+        "retry_policy": "diagnose"
+      },
+      "generations": 4,
+      "http_attempts": 5,
+      "metrics_sha256": "3b9efa7da98430d10e56e8a36d30f48d941096c2fbf29b5fca7f89d615743107",
+      "rounds": [
+        {
+          "compiler_diagnosis": null,
+          "failure": {
+            "code": "candidate_contract_rejected",
+            "context": {
+              "limit": 1024,
+              "observed": 1526
+            },
+            "format": "poseidon-diagnostic-v2",
+            "layer": "static_check",
+            "location": {
+              "column": 0,
+              "kind": "source",
+              "line": 27
+            },
+            "owner": "candidate",
+            "reason_code": "expanded_work_budget",
+            "repeat_key_available": false,
+            "retry_policy": "repair_within_budget"
+          },
+          "index": 0,
+          "observed_stages": null,
+          "source_sha256": "479d6fa24d783bb79c29f376fa2796be43f9e7cb8be998fa8a4aa74974258f0f"
+        },
+        {
+          "compiler_diagnosis": {
+            "backend": "poseidon_cpu",
+            "code": "earth_mul_constraints_rejected",
+            "compiler_accumulated_scale": 735,
+            "compiler_budget": 720,
+            "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+            "compiler_rescaling_factor": 60,
+            "compiler_upper_consumed_level": 12,
+            "evidence_kind": "interpretation_of_untrusted_compiler_log",
+            "failed_conditions": [
+              "compiler_accumulated_scale_budget"
+            ],
+            "format": "fixed-earth-mul-diagnosis-v2",
+            "level_semantics": "Earth consumed levels; not RuntimePlan/Poseidon zero-based data-modulus index",
+            "operands": [
+              {
+                "consumed_level": 11,
+                "kind": "ci",
+                "scale": 75,
+                "tensor_length": 1
+              },
+              {
+                "consumed_level": 11,
+                "kind": "pl",
+                "scale": 45,
+                "tensor_length": 1
+              }
+            ],
+            "proves_all_equivalent_programs_impossible": false,
+            "runtime_capacity_checked": false,
+            "seal_capacity_checked": false
+          },
+          "failure": {
+            "code": "backend_rejected",
+            "context": {},
+            "format": "poseidon-diagnostic-v2",
+            "layer": "compiler",
+            "location": null,
+            "owner": "candidate_or_backend",
+            "reason_code": "compiler_rejected",
+            "repeat_key_available": false,
+            "retry_policy": "diagnose"
+          },
+          "index": 1,
+          "observed_stages": {
+            "compiled": false,
+            "encrypted_execution": false,
+            "evidence_integrity_not_rejected": true,
+            "numerically_compared": false,
+            "traced": true
+          },
+          "source_sha256": "57fcf09b51b91a5cb2124832eedd0113923d20a9c2b797b02b544d2378e1345d"
+        },
+        {
+          "compiler_diagnosis": null,
+          "failure": {
+            "code": "candidate_contract_rejected",
+            "context": {
+              "limit": 1024,
+              "observed": 2809
+            },
+            "format": "poseidon-diagnostic-v2",
+            "layer": "static_check",
+            "location": {
+              "column": 0,
+              "kind": "source",
+              "line": 56
+            },
+            "owner": "candidate",
+            "reason_code": "expanded_work_budget",
+            "repeat_key_available": false,
+            "retry_policy": "repair_within_budget"
+          },
+          "index": 2,
+          "observed_stages": null,
+          "source_sha256": "f9311cb550ef8f865b99a05e50d1e3025e69f85e779b9b40a269b1b636c7ac54"
+        },
+        {
+          "compiler_diagnosis": null,
+          "failure": {
+            "code": "numerical_mismatch",
+            "context": {},
+            "format": "poseidon-diagnostic-v2",
+            "layer": "numerical_comparison",
+            "location": null,
+            "owner": "candidate_or_backend",
+            "reason_code": "numerical_mismatch",
+            "repeat_key_available": false,
+            "retry_policy": "diagnose"
+          },
+          "index": 3,
+          "observed_stages": {
+            "compiled": true,
+            "encrypted_execution": true,
+            "evidence_integrity_not_rejected": true,
+            "numerically_compared": true,
+            "traced": true
+          },
+          "source_sha256": "0167c83eff89500edc05040e750cb94c42633208b3ac65cf1efce854d3d53677"
+        }
+      ],
+      "status": "budget_exhausted",
+      "task_id": "acccc7d449024375af208747d1d781cc",
+      "task_state_sha256": "b2a7eb264d3185d7f2677dd43e1304f57667db0af6df65738386d6152455aed1"
+    },
+    {
+      "calls": [
+        {
+          "error": "transport_invalid_stream",
+          "generation_index": 0,
+          "index": 0,
+          "retry_index": 0,
+          "retry_scheduled": true,
+          "status": "failed"
+        },
+        {
+          "error": "transport_invalid_stream",
+          "generation_index": 0,
+          "index": 1,
+          "retry_index": 1,
+          "retry_scheduled": false,
+          "status": "failed"
+        }
+      ],
+      "case": "linear_into_separate_cross_none__declared_shallow_v1",
+      "failure": {
+        "code": "pipeline_failure",
+        "context": {},
+        "format": "poseidon-diagnostic-v2",
+        "layer": "provider",
+        "location": null,
+        "owner": "host",
+        "reason_code": "provider_failure",
+        "repeat_key_available": false,
+        "retry_policy": "review"
+      },
+      "generations": 1,
+      "http_attempts": 2,
+      "metrics_sha256": "3d6d7f74c32f10ab2a5f38fb620e27d93eb1e9d78206c94b6711faf84f7589f8",
+      "rounds": [],
+      "status": "service_error",
+      "task_id": "8306734056dd40fb895d8fce624c6929",
+      "task_state_sha256": "d211c8f6a778d077c5952e287d929c32d6c4b1d6a5ab0cbe3b0abf56b002bfcd"
+    }
+  ],
+  "commits": 0,
+  "date": "2026-10-09",
+  "diagnostic_is_not_model_acceptance": true,
+  "disk_free_bytes": 45979971584,
+  "downloads": 0,
+  "duration_seconds": 2131.977,
+  "failed": 2,
+  "format": "poseidon-mha-r1330-live-results-v1",
+  "frozen_sources_unchanged": true,
+  "generations": 5,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 7,
+  "installs": 0,
+  "invalid_stream_attempts": 3,
+  "model_reference_changed": false,
+  "new_artifact_bytes": 14270464,
+  "new_input_execute": 0,
+  "no_active_batch": true,
+  "not_run": 0,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "numerical": {
+    "atol": 1e-05,
+    "compared_values": 64,
+    "cosine_similarity": 0.9999990126103597,
+    "mae": 0.0003571821156224828,
+    "max_absolute_error": 0.0023141155996542206,
+    "max_nonzero_reference_relative_error": 0.010702274934307024,
+    "passed": false,
+    "rtol": 0.0001,
+    "violating_values": 40
+  },
+  "original_reports_preserved": true,
+  "package_reload": 0,
+  "parameters_changed": false,
+  "passed": 0,
+  "planned": 2,
+  "program_packages_exported": 0,
+  "proposal_binding": "c9932a659a0ac6a0c34ed4038b067b1ee7129930df0a5e581b0240d1f312c9e5",
+  "proposal_sha256": "6c911ceccea0a42b75daac78a07135d478e773dd081dcc8022c5c48b80fbd84b",
+  "protected_sources_changed": [],
+  "protected_sources_checked": 654,
+  "prs": 0,
+  "pushes": 0,
+  "raw_function_accuracy_certified": false,
+  "received_candidates": 4,
+  "remaining": [
+    "Fix generation guidance and controlled feedback for attention head/row slot mapping; keep model and reference.",
+    "Identify exact invalid-stream termination diagnostics before a separately bounded live retry.",
+    "New Agent generation and package delivery remain unaccepted for both cases.",
+    "General operator/capacity/precision, bootstrap, CUDA and whole-model goals remain in progress."
+  ],
+  "repeat_execute": 0,
+  "sdk_rebuilds": 0,
+  "slot_semantic_diagnosis": {
+    "binding": "bbd2077ad626597f9425a05ca01310fce0f26b668b88ec2c46caf91315ec18fc",
+    "candidate_plaintext_vs_model_reference": {
+      "mae": 0.0003571769294538859,
+      "max_absolute_error": 0.0023141186774697786,
+      "values": 64,
+      "violating_values": 40
+    },
+    "candidate_source_sha256": "0167c83eff89500edc05040e750cb94c42633208b3ac65cf1efce854d3d53677",
+    "controls": {
+      "failed": 0,
+      "passed": 6,
+      "skipped": 0
+    },
+    "evidence_sha256": {
+      "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5z8pvlvi/attempt-00/output/inputs.json": "52f5aff90de2d924d1cc1c99a282a7c75602b4f8e2189c7800d14de5920477bd",
+      "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5z8pvlvi/attempt-00/report.json": "c1b4bdff3bdcb7bb2aff6263a12b10e90a9d0c7d428f19120fa5cbaf0639ea2a",
+      "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5z8pvlvi/attempt-00/trace-payload.json": "78188cc7a4a4cac5b57830bbc52056decc290e65b05566fe273ede18197c89f0"
+    },
+    "external_arrays_written": false,
+    "fhe_vs_candidate_plaintext": {
+      "mae": 1.2158297577275282e-08,
+      "max_absolute_error": 1.383837180957137e-07,
+      "values": 64,
+      "violating_values": 0
+    },
+    "format": "poseidon-candidate-slot-semantic-probe-v1",
+    "input_groups": 4,
+    "new_compiler_calls": 0,
+    "new_fhe_calls": 0,
+    "new_provider_calls": 0,
+    "paired_score_lane_deviation": {
+      "max_absolute_error": 0.011756052128269866,
+      "nonzero_differences": 24
+    },
+    "public_period": 4,
+    "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+    "scope": "diagnostic of frozen candidate only, not an Agent pass or model correctness acceptance"
+  },
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "stage_source_counts": {
+    "compilation": 621,
+    "execution": 621,
+    "generation": 626,
+    "validation": 621
+  },
+  "status": "complete",
+  "tooling_fix": {
+    "audit_binding": "ff2d06403b2ecd617695dbfdfe1be8721c6ea6f26d1add7172d24fdedd234e70",
+    "authority_checks_original_proposal_and_exact_derived_view": true,
+    "controls": {
+      "compiler_calls": 0,
+      "elapsed_seconds": 0.6821560090029379,
+      "encrypted_calls": 0,
+      "errors": 0,
+      "failed": 0,
+      "format": "poseidon-mha-feedback-runner-controls-v1",
+      "passed": 60,
+      "production_authorization_created": false,
+      "provider_calls": 0,
+      "skipped": 0,
+      "synthetic_authorization_fixtures_only": true,
+      "tests": 60
+    },
+    "current_runner": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/mha_feedback_live_v5",
+    "manifest_sha256": "c7ca4e5b8abeb0c588befb50ba585457f4ee482268cd236dfb091201e6cef8af",
+    "original_preflight_code": "rebound_expands_reviewed_scope",
+    "original_runner_unchanged": true,
+    "production_agent_source_changed": false
+  },
+  "total_result_bytes": 29062897664,
+  "transport_retries": 2,
+  "usage": {
+    "currency_total": null,
+    "missing": 3,
+    "received": 4,
+    "summed": {
+      "completion_tokens": 297241,
+      "prompt_tokens": 173502,
+      "reasoning_tokens": 290336,
+      "total_tokens": 470743
+    }
+  }
+}

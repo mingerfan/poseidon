@@ -1,0 +1,396 @@
+{
+  "agent_generated": false,
+  "all_dsl_semantics_covered": false,
+  "audit": {
+    "counts": {
+      "baseline": {
+        "blocked_preflight": 110,
+        "not_run": 1042,
+        "passed": 48
+      },
+      "free_agent": {
+        "not_run": 1200
+      },
+      "plaintext": {
+        "passed": 1200
+      }
+    },
+    "directed_counts": {
+      "blocked_contract": 492,
+      "passed": 114
+    },
+    "manual_negative_checks": [
+      "duplicate_tasks_rejected",
+      "old_runtime_binding_rejected"
+    ],
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-native-r3-audit.json",
+    "sha256": "ead0149f81e282ae28be2efeb36f5cb5533a2fc7bad5f55f4a89c3f8fae306d0"
+  },
+  "baseline48": {
+    "binary_hashes": {
+      "frontend_sha256": [
+        "b15f62508bf42ba70436e131be514d4cb38a8aec270e15c1b29d426f597d7926"
+      ],
+      "packed_key_helper_sha256": [
+        "18464c17fcaf491c177d544bc9668eeb19e0b01e1e431459bb97e4d3c66531ea"
+      ],
+      "runtime_sha256": [
+        "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156"
+      ]
+    },
+    "binding": "e77db883be3ac52ed81eb4648f1090c05e236a0be6f43aaca052c3489d74cb9c",
+    "compared_values": 408,
+    "feature_counts": {},
+    "inputs": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "max_absolute_error": 1.1914797470868876e-06,
+    "maximum_individual_process_rss_kib": 1304148,
+    "not_selected": 1152,
+    "operators": [
+      "add",
+      "avg_pool1d",
+      "avg_pool2d",
+      "batch_norm",
+      "concat",
+      "conv1d",
+      "conv2d",
+      "flatten",
+      "linear",
+      "mean",
+      "multiply",
+      "negate",
+      "permute",
+      "polynomial",
+      "power",
+      "reshape",
+      "rotate",
+      "slice",
+      "split",
+      "square",
+      "stack",
+      "subtract",
+      "sum",
+      "transpose"
+    ],
+    "outputs": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "periods": [
+      4,
+      8,
+      16,
+      32
+    ],
+    "platform_identities": [
+      {
+        "byteorder": "little",
+        "configured_platform": "aarch64-linux",
+        "machine": "aarch64",
+        "pointer_bits": 64,
+        "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+        "system": "linux",
+        "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+      }
+    ],
+    "preflight_blocked": 110,
+    "selected": 48,
+    "statuses": {
+      "passed": 48
+    },
+    "weighted_mae": 2.9362121582320094e-08
+  },
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "current_full_baseline_validated": false,
+  "decryption": true,
+  "directed": {
+    "binary_hashes": {
+      "frontend_sha256": [
+        "b15f62508bf42ba70436e131be514d4cb38a8aec270e15c1b29d426f597d7926"
+      ],
+      "packed_key_helper_sha256": [
+        "18464c17fcaf491c177d544bc9668eeb19e0b01e1e431459bb97e4d3c66531ea"
+      ],
+      "runtime_sha256": [
+        "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156"
+      ]
+    },
+    "blocked_contract": 492,
+    "compared_values": 1236,
+    "coordinator": {
+      "all_shards_processed": true,
+      "binding": "e146aa932354f6eb489b8364433ab9c0e653cb85799d194ce3ec98076f3880cd",
+      "evidence_bytes": 16136309,
+      "failures_are_not_passes": true,
+      "paid_calls": 0,
+      "seconds": 630.882715314001,
+      "stages": [
+        {
+          "binding": "63c99b2c7d82c1ec4363c1e00da10f0b7d1722748bb951422135c1dbdc984bc8",
+          "evidence_bytes": 443848,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 21.775684109001304,
+          "shard": 0,
+          "statuses": {
+            "passed": 3
+          }
+        },
+        {
+          "binding": "b40e4c6c19a5a8583b759f4b5995b2306aca5ebb3426dcc3ab8133e33c6573ba",
+          "evidence_bytes": 0,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 8.045136224995076,
+          "shard": 1,
+          "statuses": {}
+        },
+        {
+          "binding": "9b6a9c258e6e3b7a48316380d5299f9aeaa9a235565817cad592150e0f388cb7",
+          "evidence_bytes": 1478648,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 51.79035368900077,
+          "shard": 2,
+          "statuses": {
+            "passed": 9
+          }
+        },
+        {
+          "binding": "5d79a2aaeadc249a7f55d166df3f9ac3b1e8c5cf1ff725ea54a493e7b7c217f5",
+          "evidence_bytes": 1810791,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 60.43825280399324,
+          "shard": 3,
+          "statuses": {
+            "passed": 9
+          }
+        },
+        {
+          "binding": "b078fe9d8bf4d523d9acb6d9e71d052691fd34571a4cc49decd87add6a92b6c7",
+          "evidence_bytes": 1710119,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 55.14284804699855,
+          "shard": 4,
+          "statuses": {
+            "passed": 9
+          }
+        },
+        {
+          "binding": "bac32fd37de1eee2cf8393ffba4dafd0c75fcb04c835ff0f37a26ed8e91090f2",
+          "evidence_bytes": 1706826,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 53.64916705899668,
+          "shard": 5,
+          "statuses": {
+            "passed": 9
+          }
+        },
+        {
+          "binding": "f6aee8bb056dbf2be9f5aa859d6d04dbb608dd5070fa25bad44b5ba4e30a83aa",
+          "evidence_bytes": 544542,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 24.424586881999858,
+          "shard": 6,
+          "statuses": {
+            "passed": 3
+          }
+        },
+        {
+          "binding": "30c337f27d0ceaad73a3f6dd70933386007bf3cbf9c267024de24359368ca4ad",
+          "evidence_bytes": 0,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 8.13061879399902,
+          "shard": 7,
+          "statuses": {}
+        },
+        {
+          "binding": "e7b7442b4059c577e5a678011b6d3e373052de7bc8b5d07125b51bbe402c85c0",
+          "evidence_bytes": 976123,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 45.10124293500121,
+          "shard": 8,
+          "statuses": {
+            "passed": 9
+          }
+        },
+        {
+          "binding": "4bf63e90a9b1fa1f7a7952f1c9aebf98d426fd80e786c56b1dfcd9a2aade8ff5",
+          "evidence_bytes": 752075,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 34.51310191200173,
+          "shard": 9,
+          "statuses": {
+            "passed": 6
+          }
+        },
+        {
+          "binding": "91be916519c3eb6771806584ce39bbcca4f39bf540982ea5f1cc64fc1970de78",
+          "evidence_bytes": 774738,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 37.44103016600275,
+          "shard": 10,
+          "statuses": {
+            "passed": 6
+          }
+        },
+        {
+          "binding": "5b8a4c4cb2da9129452489720ba44b2b0960f1e5dd9efe08c8dde5c9155abae5",
+          "evidence_bytes": 3409185,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 132.76941377700132,
+          "shard": 11,
+          "statuses": {
+            "passed": 30
+          }
+        },
+        {
+          "binding": "241299d941cb1ecc5e15b342361ef8591ce4388b5a94203bbab724ad2bec23a9",
+          "evidence_bytes": 2529414,
+          "exit_code": 0,
+          "not_run": 0,
+          "seconds": 97.59438392000447,
+          "shard": 12,
+          "statuses": {
+            "passed": 21
+          }
+        }
+      ]
+    },
+    "feature_counts": {
+      "array.view_inplace": 3,
+      "call.empty_return": 3,
+      "call.forward": 3,
+      "call.identity": 3,
+      "call.nested": 3,
+      "call.nested_array": 3,
+      "call.plain_return": 3,
+      "call.public_argument": 3,
+      "call.repeated": 3,
+      "call.scalar_cipher": 3,
+      "call.tuple_multi": 3,
+      "call.two_cipher_arguments": 3,
+      "call.zero_arguments": 3,
+      "copy": 3,
+      "golden.zero": 3,
+      "index.reverse": 3,
+      "index.zero": 3,
+      "item.zero": 3,
+      "loop.augmented": 3,
+      "reshape.rank4": 3,
+      "return.empty": 3,
+      "return.matrix": 3,
+      "return.mixed": 3,
+      "return.rank4": 3,
+      "return.zero": 3,
+      "scalar.augmented": 3,
+      "star.arguments": 3,
+      "star.array": 3,
+      "star.call_result": 3,
+      "star.empty": 3,
+      "star.flatten_matrix": 3,
+      "star.list": 3,
+      "star.mixed": 3,
+      "star.multiple": 3,
+      "star.reverse": 3,
+      "star.tuple": 3,
+      "transpose": 3,
+      "unpack.rows": 3
+    },
+    "fully_executed_partitions": 38,
+    "max_absolute_error": 5.162761724797349e-07,
+    "maximum_individual_process_rss_kib": 930996,
+    "numeric_tasks_passed": 105,
+    "planned": 606,
+    "platform_identities": [
+      {
+        "byteorder": "little",
+        "configured_platform": "aarch64-linux",
+        "machine": "aarch64",
+        "pointer_bits": 64,
+        "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+        "system": "linux",
+        "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+      }
+    ],
+    "statuses": {
+      "passed": 114
+    },
+    "structural_only_tasks_passed": 9,
+    "weighted_mae": 2.122231423932415e-08
+  },
+  "frozen_suite": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v1-native-r3",
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "model_count": 1200,
+  "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+  "new_installations": 0,
+  "paid_calls": 0,
+  "pending": [
+    "492 construction tasks not bound",
+    "general chunked layout",
+    "remaining real upstream helper adapters and packing parity",
+    "two original compiler failures",
+    "separately approved real Agent evaluation",
+    "bootstrap backend"
+  ],
+  "plaintext": {
+    "binding": "b5445e7d0b01d3af3801482e78b5cb7ba6ca11366b322ee9618f225892d68381",
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "poseidon_gpu_validated": false,
+  "preserved_intermediate": {
+    "limitation": "Some ledger instructions retained legacy compound text; not reused as r3 task passes",
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-native-r2-directed",
+    "request_witnesses_passed": 114,
+    "revision": "semantic-v1-native-r2"
+  },
+  "pull_requests": 0,
+  "pushes": 0,
+  "real_program_compilation": true,
+  "real_seal_execution": true,
+  "real_tracing": true,
+  "revision": "semantic-v1-native-r3",
+  "schema": 1,
+  "source_snapshot": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-native-r3-directed/frozen-source.tar.gz",
+    "sha256": "59129c1a631b62b51169f896d35e7fce3024b8a1f9d3e939a664601af0478e78"
+  },
+  "split": {
+    "development": 720,
+    "holdout": 240,
+    "validation": 240
+  },
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "topology_groups": 779,
+  "unit_tests": {
+    "failed": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-native-r3-unit.log",
+    "passed": 107,
+    "skip_reason": "Optional evidence tests require separately named historical replay/configuration/guard runs; not credited as pass",
+    "skipped": 6
+  }
+}

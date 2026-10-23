@@ -1,0 +1,392 @@
+{
+  "api_concurrency_limit": 10,
+  "api_timeout_seconds": 1200,
+  "binding": "f1fd7760ac1d25ba73431c21116867e445c237cc092f6b1e1480f212032c7b52",
+  "compile_jobs": 2,
+  "format": "poseidon-budget-extension-proposal-r126",
+  "link_jobs": 1,
+  "max_tokens": 384000,
+  "maximum_added_wall_budget_seconds": 21600,
+  "maximum_new_generations": 188,
+  "maximum_new_http_attempts": 752,
+  "model": "deepseek-flash",
+  "monetary_cap": null,
+  "native_concurrency_limit": 2,
+  "no_changes_to_reference_or_security": true,
+  "no_retry_of_uncertain_or_failed_calls": true,
+  "note": "Do not create new 3600-second budgets under fresh directories. Approval would explicitly amend six existing cumulative time ceilings; preserve elapsed time and all original claims/evidence. Timeout retries can be billed more than once.",
+  "paid_calls": 0,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002/plan.json": "ba3ad665c6706c500e654b42469b7f46a89d233e613f18b61ac7e4d338cab442",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002/report.json": "66a0d6803592600f7798071797ad7970394ab3169af71a8bae78422d4c7dd955",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003/plan.json": "e1d25f2528eea8dddc224f7fd7fe3f4e6d50b08703241d4881d07775291d7661",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003/report.json": "046741a10719ccdc93cf9e40900e514187179732cb770902fc2b68f2f9e84bba",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007/plan.json": "c115b9ae94971605fac7eaf4eb1185d6c4058cbd8cfb540b5733d5199ca1edda",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007/report.json": "eb6b7448b7515304f41825409c60ac9952e500bc9b77b518210d9d182436eb72",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009/plan.json": "4b09e761ac788f57835fcb90dd8aa9c3a8dcc49039b9e0a1b565826df2cbbac8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009/report.json": "78a13181b49ea5d3c6985fa1a08129ebe27c38859166b3f9372ea3d9a3a5c7ac",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-010/plan.json": "22dd5027b1c6a690887cfeaa6186211d06d4d56f9cb551f0dcb2a45a86bbf3cf",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-010/report.json": "01bfce6b022da8e129e2a415ed6e669b06372f9e041df5cefbb1c94e2f5e752a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011/plan.json": "f9fef9b631f39f3f1959f2d084ec47c5345066091287674ea42cd8848c53a796",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011/report.json": "181b9d6dab9503e66b3b588911b6643e30e2853cf97ff9841ba18fbab6bd1c60"
+  },
+  "per_case_max_repairs": 3,
+  "planned_cases": 47,
+  "provider_retries": 3,
+  "reasoning_effort": "high",
+  "request_scope": "Same frozen public models, weights, layouts, DSL contract and bounded diagnostics; no hidden inputs, reference values or credentials",
+  "retained_per_original_shard_mib": 1024,
+  "shards": [
+    {
+      "maximum_additional_seconds": 3599.745240079006,
+      "old_wall_limit": 3600,
+      "original_batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002",
+      "original_plan_binding": "1dbf7bf4fef0fd7d72e7952b0ba43ba7fe42a7e77e9b18ccd3d4c45501c42965",
+      "proposed_wall_limit": 7200,
+      "seconds_already_used": 3600.254759920994,
+      "shard": "002",
+      "tasks": [
+        {
+          "evaluation_identity": "e71852f6e4273dcdcdd487960b7304ad4594233d238e25fab0ac15cc65ec7103",
+          "id": "free_bench_composition_0005",
+          "model_sha256": "361e2182b4fa60aab61a5c23bfb31a28e13a6510dd2a2548b7973bf8fe2d577e",
+          "request_id": "2145e8a8b7b5da35e361398b4fb58c32fc93a1bc4e1ac28238cbdcf1933b403b"
+        },
+        {
+          "evaluation_identity": "09e6db5ca5cbdc1df672d9d3f939baf7308c688c2d637237b902fa796619e669",
+          "id": "free_bench_composition_0006",
+          "model_sha256": "62d49df28b6c3d773ab3d0a69f398bd3986875117e1e12bd8e82c957ef60cc53",
+          "request_id": "f819df3b0a6c8fec88f3da98b74d20c65cf4b648a7b73ff5457a3c05340ac5ca"
+        },
+        {
+          "evaluation_identity": "7c1b6fcedb7157c4757fc0e9497b0b5aaaa57dda9826aca83929eadf70dbf62e",
+          "id": "free_bench_composition_0007",
+          "model_sha256": "3011487c35c8f7e7106940e020cff026eb5f19b1b146ac6fad9f8f7f247e4611",
+          "request_id": "cf5ac62229cdb3c140d47b61daf5e207449081e881bd6bbb1bdee94929004180"
+        },
+        {
+          "evaluation_identity": "44536525f454863ed5b3497383fe75d1b62782be65e5c270da5084275aa54080",
+          "id": "free_bench_composition_0008",
+          "model_sha256": "a0b1305d28e558b8a0c7064a8ba231c06cb1cf45e00181065770830662ffa142",
+          "request_id": "1c6ef8ce661d48abc0b4875a4353331fd9cc12b834ccc0f894a80c01c8a53537"
+        },
+        {
+          "evaluation_identity": "ee42530873fc6bd67e31ea9c3fb18c93add0aede0caf7d5fb9f855365fb17c6a",
+          "id": "free_bench_composition_0009",
+          "model_sha256": "a2b93f443372aaf2812ee80ed409184592e0713530055de9c62c72403468d30e",
+          "request_id": "71c932ad18848d02d5a093f9abc7a3c103923cf8355292f4cc5190b061fb965e"
+        },
+        {
+          "evaluation_identity": "0e24c5e4bc9fd7302a1fef6532f4e327ba5a34e09bf19059eb5dce2acabe2f7e",
+          "id": "free_bench_composition_0010",
+          "model_sha256": "ab3d9e18554260c91dc028879b56d7854ff6b038b2538d309f475391203e37f8",
+          "request_id": "774309ae86aa562734cb233321a39c9a5c4fc4852b9e557af9d9a5253e6fed40"
+        },
+        {
+          "evaluation_identity": "e1eb4bfcb1db2188df7fa0d1876d48d62817220882e7b84c2e950dd6c66a043c",
+          "id": "free_bench_composition_0011",
+          "model_sha256": "1834ac1154859d94fb260097761dc28697962929e56e5891700020c09bfa3af7",
+          "request_id": "39b36edf3155b499067fd1446c8e475e7ac49525bc90ae6f2da85d8a1179d716"
+        },
+        {
+          "evaluation_identity": "f48d31baff5fa1651c7d130bbcc1ef5fd7b314bb81a029ab644f5c00dca3cdcd",
+          "id": "free_bench_composition_0012",
+          "model_sha256": "a4ba4f008becea6dc35d3dcfcf06fae5b548b7c98b471c35f4988fce66f5b69f",
+          "request_id": "5f6825e6cdb22f95e8a396bf57e851db32120891b2399b89efd3e9c0cc558d03"
+        },
+        {
+          "evaluation_identity": "48707c59921263baedf5454bf047b5d73322e44e5842203560fc026c903acf7f",
+          "id": "free_bench_composition_0013",
+          "model_sha256": "c431e0bf3194ed60a2ba5ade04bcf2308bfd5d0f7944328d81e89d4f441e5aeb",
+          "request_id": "d78224e26ab1b8c85a85d6fe0ece4d9f1a7ddc72e9e654f0c77908964b00695f"
+        },
+        {
+          "evaluation_identity": "3f34cd2a9228cf5a29a506dfaa3c8ae9772215afa0d6fff184f9964e6931b563",
+          "id": "free_bench_composition_0014",
+          "model_sha256": "4fc0a72569568ad73cac8a824fe9609fde4122f65a2edb6756bfcb46e238a119",
+          "request_id": "063a97ced192b79e29036cfca7cf53b09b9d0b877395e4ead423b6d0836329c6"
+        },
+        {
+          "evaluation_identity": "ed753a6984c716c337da02009f80a54c15e5affd5ecdfabab65b794da7961972",
+          "id": "free_bench_composition_0015",
+          "model_sha256": "6451a45169edc67e2ba916488504e10940a281f4ce7f7e243eaf0ce2191b331d",
+          "request_id": "7314af0afd55b7341aaa9b1f112b24cde1b4a1e377074907d08a7920e28714ae"
+        },
+        {
+          "evaluation_identity": "2760d7411298814c06eaa961cb78220cfca497d22832a27111a7c3c5ff1bb11e",
+          "id": "free_bench_composition_0016",
+          "model_sha256": "dd34f9bc0912ab63ddfef724176a5c82fe00170e7a1c1cf38d4375bcc8b653c1",
+          "request_id": "11203667666d80c51c6badebc0c3ee9c6a63886130074e5eaeed67b0ff123c87"
+        },
+        {
+          "evaluation_identity": "05a73d1719d7f58d150bfeaa3761db7a6d3adefe4171ba281510283e246ca0b5",
+          "id": "free_bench_composition_0017",
+          "model_sha256": "386f394efac89c4a6ec9aa7289b00051c4b11a4d3e889a866dc169767d2abd46",
+          "request_id": "c4f27b1f184e29f2979b45598b0f96192e556ed633d71250cad9bf67df12d4b6"
+        },
+        {
+          "evaluation_identity": "6bc053ccd32bb3a1b5d3547f0a4dd7ee77778c23c4dff4b861a845990f2b2fcd",
+          "id": "free_bench_composition_0018",
+          "model_sha256": "2d4f837b3fdc4b80b97297c583bb9e147da704ce9e559990c65d6c82d0804170",
+          "request_id": "a080512b3708bb1750508cd17d3d6413fdb5a3849cddc2c2988884ce39de9148"
+        },
+        {
+          "evaluation_identity": "e05cb89e605abd817e683d8755912536aaf84f424499761020e728c851369c43",
+          "id": "free_bench_composition_0019",
+          "model_sha256": "eda9e33ce163d79b2f27ccbb794e7cec9b45fc451ac86b64685e8f91380b8650",
+          "request_id": "69304ede2f0c0de23b8e724600fdeacc97d12ef9e2cbb020f3dc04bd43477643"
+        },
+        {
+          "evaluation_identity": "a02f6d75edf5b8e63ea4503f5c47adadb4c17eb7dadb0302245432b559e116a6",
+          "id": "free_bench_composition_0020",
+          "model_sha256": "3334e25cee590b43295ad751906f6ffa81a16b104971341e4e20b8d09c3811b1",
+          "request_id": "3f0db76acdb1267595f0bd88a4da35ad3386a89f9d53a9c40b611f0c708690a6"
+        },
+        {
+          "evaluation_identity": "04af4e944356089c953bb40970b4128f07be07506a697a03565df6555be3136e",
+          "id": "free_bench_composition_0021",
+          "model_sha256": "26629ce14bd43c74ebe7375c2d1e6710e8eafb735631640c9f8c92067575c9f4",
+          "request_id": "7abb3bf224ec54eabc9033e54764b72270deeae8241166f402c4e9bc7c229587"
+        },
+        {
+          "evaluation_identity": "9bb58dc7ebda58fc24226dc51205e8053c829caa8f65dae9c7c6ea7eb928274d",
+          "id": "free_bench_composition_0022",
+          "model_sha256": "09a54990522bc2bb9e7ced12924fbacfafbf23237478a5376755639685bb0740",
+          "request_id": "a887479313a461b40184bbb64fed487fd1f2bced4252423786ac5f5cb82695ec"
+        },
+        {
+          "evaluation_identity": "b8482688c68441a7d88334630a6218d49c6bfbaf9ff8c0329970adc10e4bfbe3",
+          "id": "free_bench_composition_0023",
+          "model_sha256": "698e234bb1fdc4cf92b8c05cd18f2e7699e65fbf32be25dadc7f59a88bbe4f86",
+          "request_id": "9560960fcf7476e1b5f08ecf77b525db0007c74e111bd8ac79a8a1b238b9800c"
+        }
+      ]
+    },
+    {
+      "maximum_additional_seconds": 3599.5055404479936,
+      "old_wall_limit": 3600,
+      "original_batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003",
+      "original_plan_binding": "9759c8945320c1bb73ee749b9e996fceb2d69d04125504d7506913e3849956ad",
+      "proposed_wall_limit": 7200,
+      "seconds_already_used": 3600.4944595520064,
+      "shard": "003",
+      "tasks": [
+        {
+          "evaluation_identity": "f6a597d60a8cbad7c8c89b675700e36b9712f5d03a1db51fa593599b962dfdc5",
+          "id": "free_bench_composition_0071",
+          "model_sha256": "909363d1ff24d6dd0a0ed9434481e9cc228b7bfeb6085813c7d12e88ab83b4fe",
+          "request_id": "60756d2c3ef9cc5972bce29fb3b21c9f148cd2cdc19b6e7b2c958fc7ffc49ada"
+        }
+      ]
+    },
+    {
+      "maximum_additional_seconds": 3599.310900933997,
+      "old_wall_limit": 3600,
+      "original_batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007",
+      "original_plan_binding": "75bf5c3d69ef3dff5b906c1b973608527a9c10766902449f4a10cc53873f7019",
+      "proposed_wall_limit": 7200,
+      "seconds_already_used": 3600.689099066003,
+      "shard": "007",
+      "tasks": [
+        {
+          "evaluation_identity": "601438651927b18e3961b10c562ce562f650c71b00325aca21a42f59be3d27bd",
+          "id": "free_bench_composition_0258",
+          "model_sha256": "0c9af15aad9b8fc4fca04263d6b1fb629a81ddb14d03bdf9bf0cb6484e177542",
+          "request_id": "34f2c814614051c658a85cc1d01278ab803dcb49dd90e36af520feec7f93dfe3"
+        },
+        {
+          "evaluation_identity": "db0b018461380a94725d7584580fc5b1af32ea0df75132502b9a4f362ced1e17",
+          "id": "free_bench_composition_0259",
+          "model_sha256": "eaebd2a30cce8c6c4c3331acbf2bf052aa13d23680c8964a0bf59411a75302ab",
+          "request_id": "7d964851a1979593adad3fb54f7585a120b3f30bd696cd7e5290ee9371a1b808"
+        },
+        {
+          "evaluation_identity": "f0705b6e627387ec9869021ea90f322dd8eddee4bba5452eb5f8c1196c82efdf",
+          "id": "free_bench_composition_0260",
+          "model_sha256": "cc9531ce2ab05213ad4d27e4dfc25ea98639e1d6570a4078f77471f1ddc0d51b",
+          "request_id": "a7b27d8d711487579ecec66953b7f556b554bb3aebf6615f1c3de5761014754c"
+        },
+        {
+          "evaluation_identity": "0adf62119ff1e1877ab1321b16aa66d76755b6f45d1c4033e8b7afe80474118e",
+          "id": "free_bench_composition_0261",
+          "model_sha256": "2101633402f6edb87135ad47e75b504753ec80506d9f6280dce1d5e7d85e29f8",
+          "request_id": "82e97b80c324474776f215f5ffc30b2e8fcd0436d59e9e5f5771bad912d0e979"
+        },
+        {
+          "evaluation_identity": "2d4c706a3c851bdf5135ad043d5364c85ad6f5888f1db4536363a6a20065acab",
+          "id": "free_bench_composition_0262",
+          "model_sha256": "310b78a20a1b6d2e8504122e4999fbfcfc9db90e5d273aa235db00257141c8de",
+          "request_id": "927a19f6903ea19ff5ca6ad995db05a5939c24edb327565b6a052f39bbf6478a"
+        },
+        {
+          "evaluation_identity": "4480b269b6c9f218ce0ded7cf61853f23b22c2b7f232de27f6fe636d802edab7",
+          "id": "free_bench_composition_0263",
+          "model_sha256": "62226a87d0632fad67375479ee359e7da415dad321d3b07e51ecc3131a9c3ae2",
+          "request_id": "d6b20ed307a8b22050aeed4ff1372c9ec97669376be163ce8fdf7dc6a6f5364e"
+        }
+      ]
+    },
+    {
+      "maximum_additional_seconds": 3599.074161041004,
+      "old_wall_limit": 3600,
+      "original_batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009",
+      "original_plan_binding": "9c7e8aab5a3a3c8e1cd3aca2cd687a1629d34f595d02945e455718d19ba20f0d",
+      "proposed_wall_limit": 7200,
+      "seconds_already_used": 3600.925838958996,
+      "shard": "009",
+      "tasks": [
+        {
+          "evaluation_identity": "97ca858f82c115d55eb843f84d15763117000dee24d9e1d6e9743507d7a5799f",
+          "id": "free_bench_composition_0356",
+          "model_sha256": "092585ed409f393fe49810042c813132fd7ce7f53822fa62c63270d76e38fd05",
+          "request_id": "b3862e9a0ca6c19b912d5583b161cb02c8a8a16bbadffb0a4778aadc64987113"
+        },
+        {
+          "evaluation_identity": "7b20cba9b751502b8c01e62d31ac1bfae1cb5fd507c264a36bf8a46650efedc2",
+          "id": "free_bench_composition_0357",
+          "model_sha256": "e64fb35e9950e59c631a71ac1d79dfbf7eb8821cd1ba6e221f6326c894b9fe7e",
+          "request_id": "4d5ce042dc6b607a0fe3e535cac3a98942e25ec621a7f93a2f18758c8cdb7dbe"
+        },
+        {
+          "evaluation_identity": "990703d0e52e26f3bfa0a99b1cf80b9135f6e0e4d391cf7759e06d823b50bd36",
+          "id": "free_bench_composition_0358",
+          "model_sha256": "ca1507150a3a7ca18af2bf50dd6f528d958a7cf53aa3ba61ee709e9cd4461b35",
+          "request_id": "f809b1c80af2487642ef1bc2bcfed82ce84a19d170475f91463cf8d25de6dba3"
+        },
+        {
+          "evaluation_identity": "ab15126793baa6606792b200eb66bcc19289c1fdad971f9f2779f7a962c43065",
+          "id": "free_bench_composition_0359",
+          "model_sha256": "0021432f75bc8bd867159d0a4d600cbe7474bf71f3ecde1b6809c03be667ce3b",
+          "request_id": "f982c195c09ab801009d3040d7e14913843fc00fe6e5e05ee978360b6870a892"
+        }
+      ]
+    },
+    {
+      "maximum_additional_seconds": 3599.2796702189953,
+      "old_wall_limit": 3600,
+      "original_batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-010",
+      "original_plan_binding": "320bfaac6ab9a0d475f0ba68c8ee8990c01a28e34085b140ab92697a0bb7c1c9",
+      "proposed_wall_limit": 7200,
+      "seconds_already_used": 3600.7203297810047,
+      "shard": "010",
+      "tasks": [
+        {
+          "evaluation_identity": "e44581b2f7b28ecb3c04feab18a78515ec7e50e7980ac68a93f9ea625ce7b8e0",
+          "id": "free_bench_graph_0044",
+          "model_sha256": "f9210243e42fd6fc5d44f416b058eebcacd60226f358a65ac6de1775940b0483",
+          "request_id": "36749d00b39d631e0e9f27d1e275999d9e81409f210ded97d008013be84ae1f3"
+        },
+        {
+          "evaluation_identity": "259dc7ac06b6594bedea0ff42404511fc61803a0ef2c03be21d232aa178f65fc",
+          "id": "free_bench_graph_0045",
+          "model_sha256": "585cbb11b0c954f6d3b3c7c160437291fe3308b62e59513b60b7b3853f8b6c5b",
+          "request_id": "0157f455a1847581d360afb9717e4a878df40ce9b6d7a7bbcd0641b2e1aceb29"
+        },
+        {
+          "evaluation_identity": "e9a6d1cbbbaa6fe69adade9fa38b9c0f60f0049116f3075e509c5189af20c975",
+          "id": "free_bench_graph_0046",
+          "model_sha256": "6adf55f08564a5dfa5e76d6fd3fb4279736bf1ec3f564e95e693f1366b0b2c3a",
+          "request_id": "2cb27bdba57e911c29f7018a9c923257a303104e6a621e39bd368283ed9e161e"
+        },
+        {
+          "evaluation_identity": "384175c48b79010e67a6b95a2fc39b709241098995fe10b203b99f746b64f1fd",
+          "id": "free_bench_graph_0047",
+          "model_sha256": "112cd8a014bbd0d68a728666eebdcea339612c3dccabd51d19a12cd269af240a",
+          "request_id": "c5c76dac06a98146e5e83572a96d9340ce8f3ec4f2a0badfeb52790902baf6c5"
+        }
+      ]
+    },
+    {
+      "maximum_additional_seconds": 3599.523804532,
+      "old_wall_limit": 3600,
+      "original_batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011",
+      "original_plan_binding": "c49a8b71ed8e96c3f40547a15c8e57677fcaed988b5d3bc896f951a059328d8e",
+      "proposed_wall_limit": 7200,
+      "seconds_already_used": 3600.476195468,
+      "shard": "011",
+      "tasks": [
+        {
+          "evaluation_identity": "005fc0a60faf7fdd82217cedb52e08e148b0021e02c4d5806ec4faef004d81a9",
+          "id": "free_bench_graph_0083",
+          "model_sha256": "9ad3a8874be8d95b8e96496c55243f93b705986284cee52d399d2c193cfc8785",
+          "request_id": "a6d250fbbdf6800254482332a3b10925b58885e5b42b8fe7410ad076231ae08a"
+        },
+        {
+          "evaluation_identity": "4fde69e756891df1a5d103198f81260c8147ddc61780712c31c932e49bf2f30a",
+          "id": "free_bench_graph_0084",
+          "model_sha256": "c638cfc4217c7d1a41bf00aed5937f79538fa31c3675576309455600cd496e95",
+          "request_id": "4c253df04febf375f954ffd9804d805ec8a281481dc72cb07b52228ebbb06edb"
+        },
+        {
+          "evaluation_identity": "757e74f62c2aaa0ac92ecc624f00c2976c4d17e94fc14b2e97f664c8c67eb789",
+          "id": "free_bench_graph_0085",
+          "model_sha256": "839f6bde3d057032f18c9fdc0fddbe1fd1e044aa59b8170e5713c42dc8501e71",
+          "request_id": "7e7383dd1a49afaf2463cf48deed39746064532a0152341ccb8a35a175c499dd"
+        },
+        {
+          "evaluation_identity": "e82cd4af8645af93b0c092d7b44bef54751726d56d9fd0a1d9e6330206393bb6",
+          "id": "free_bench_graph_0086",
+          "model_sha256": "1063aa4d1d455634187c3bebbef2967a36da1a51d13ee984d4cf2ab4e260373f",
+          "request_id": "f73212c0379ff3bc51225c5e229f1327bf98e5b25640e78bc0c2f22bdb168840"
+        },
+        {
+          "evaluation_identity": "bc33eb58447b9347cee874f00d10b66bbfe059e93d7f132c61589844fde3ec1d",
+          "id": "free_bench_graph_0087",
+          "model_sha256": "d3078ac9078e2b0198dc6d6fe61a60857ed5aa61105653123eee49e5379df24e",
+          "request_id": "02bed1f89be621dd9d19489479409e0de313a3b74137346cf14e247d88a4816a"
+        },
+        {
+          "evaluation_identity": "4f0b8728b446d0238104bd01fcd344c68024b04a1bb3c8ad9a6e43586439e393",
+          "id": "free_bench_graph_0088",
+          "model_sha256": "914b2118263d8cf9002c03c6791227d3f198dad6b40c02f29201176faf5e2e46",
+          "request_id": "79c703f18136e50244c51961044f0b272cacfe5eab4937b453522a6075155958"
+        },
+        {
+          "evaluation_identity": "e1179222f8706508af371f33e524f2f0ddcf1a1435ccfce253af5ca344ee686f",
+          "id": "free_bench_graph_0089",
+          "model_sha256": "3d60fa700c8c066b53db09042af9ccb85219c7832ad7612ad11f17c685bef70c",
+          "request_id": "91774691e12d3b95e0510c5fd7d546e80b7dc0f6ccebc2892b01fd18a57c08ce"
+        },
+        {
+          "evaluation_identity": "1a2f5861c6f69912b7a1c1218d03ca6730fbde91ac1993a743ff1b24965ac1c9",
+          "id": "free_bench_graph_0090",
+          "model_sha256": "6d8e87a2d831804498649adff8de86800c2b62ff0172c979271cae9cea5fb332",
+          "request_id": "448d98acd4d328ef24cbdd0bc8054d68c68976347c0194a19ca7647b0ef23d9d"
+        },
+        {
+          "evaluation_identity": "94e0cf97ddde232adbaf0aff7b358a0d29d4376cd379d7451282ecd6f54eac98",
+          "id": "free_bench_graph_0091",
+          "model_sha256": "ff0b5198a79bd7a1dc25f2f423ca00fd045d204ae372524dabe8d80348aaf17b",
+          "request_id": "6dff6a3046f12885209388b7c88220062225f353b01742d155d7368232d0486c"
+        },
+        {
+          "evaluation_identity": "4355222b609fd73c89bee166d60691255295740f1c0c541a9f1640fe6d5006d7",
+          "id": "free_bench_graph_0092",
+          "model_sha256": "fe8bfd6e8e3bbd8dfcce7fc09b28abc45a2a12e1834dfd5baaa5c3e76aaedb90",
+          "request_id": "cfafbff1c6f2ed9c4aae90f0ac1bf1f83afe69bb88f872a9081db14702b641e6"
+        },
+        {
+          "evaluation_identity": "c101cd0a57cfdbf5c079b144a2025057e859c9b86f547a718c4c27ff9ad1ba50",
+          "id": "free_bench_graph_0093",
+          "model_sha256": "b6da1fe46e2e5dfe53ca524a8a294e0e984ccb883db158fbf58dde2a962a97d9",
+          "request_id": "702f19a17aec83aa028a4f5eec59be7bf3be1da260224c32d69db7beec922a47"
+        },
+        {
+          "evaluation_identity": "b9a096ffcaf1e66a09e0a28fc6d1cf6fcd682610edb073e489327e85f247b54f",
+          "id": "free_bench_graph_0094",
+          "model_sha256": "aa1a1ef6f9c8e2f09e2ef020e33cf292019b4ecfec4ec5009337fa743a3e58ee",
+          "request_id": "a2955734cb1a978e658661e0c733b00f17cc6dd7e1dd9508d35b66aaa5abeca4"
+        },
+        {
+          "evaluation_identity": "04d9b2d7eda3c57b709e9c62897ed0be10839eea41ed8f61ddbb6a52d1ef406b",
+          "id": "free_bench_graph_0095",
+          "model_sha256": "f4450c17759ba285cb8a6f9484c271df61453525c230748a4577ae06c418c741",
+          "request_id": "ed85bee2078fde81810860a3d9a8a22721b14e040bea50c5d5de97bbf56a26c9"
+        }
+      ]
+    }
+  ],
+  "status": "awaiting_user_approval_not_executable",
+  "stream": true,
+  "total_retained_mib": 8192
+}

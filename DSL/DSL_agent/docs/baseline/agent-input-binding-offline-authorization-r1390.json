@@ -1,0 +1,30 @@
+{
+  "format": "poseidon-offline-human-authorization-v1",
+  "proposal_binding": "96e0c0f058429781a0d88fa0ed8333ca12e5924b0fc52356bd35ada8dfbc451f",
+  "approved": true,
+  "approved_at_utc": "2026-10-11T09:32:20.313240+00:00",
+  "human_reply": "批准这15项离线验收",
+  "question_item_id": "[\"request_user_input_async\",\"call_25e8fd9a55734599a4db5f25701e30e7\",0]",
+  "scope": {
+    "wall_seconds": 2400,
+    "launcher_total_seconds": 2700,
+    "maximum_compiler_calls": 15,
+    "maximum_encrypted_calls": 24,
+    "initial_task_seconds": 180,
+    "compiler_jobs": 2,
+    "link_jobs": 1,
+    "native_concurrency": 1,
+    "native_address_bytes": 4294967296,
+    "native_cpu_seconds": 150,
+    "new_bytes": 536870912,
+    "global_bytes": 34359738368,
+    "reserve_bytes": 4294967296
+  },
+  "provider_calls": 0,
+  "http_attempts": 0,
+  "maximum_compiler_calls": 15,
+  "maximum_encrypted_calls": 24,
+  "backend": "poseidon_cpu",
+  "candidate_origin": "frozen_deterministic_rule",
+  "no_environment_or_network_changes": true
+}

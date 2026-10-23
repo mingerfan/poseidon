@@ -1,0 +1,34 @@
+{
+  "abandoned_draft": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-paid-queue-r113/plan.json",
+  "actual_queue_dispatch_verified": false,
+  "binding": "1fdf74af0d4cfea54928df0ef2386867cc75f43e31becc9279d3ab9fd44e4e06",
+  "format": "poseidon-queue-preflight-r113-v1",
+  "max_retained_mib": 8192,
+  "max_wall_seconds": 167580,
+  "maximum_generations": 7928,
+  "maximum_http_attempts": 31712,
+  "min_free_mib": 4096,
+  "monetary_cap": null,
+  "new_fhe_executions": 0,
+  "new_paid_calls": 0,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-paid-queue-r113-verified/plan.json": "d48d1d465d055c5a5d8577948b99b488be730f204e403f185e08c7c3eab98a70",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-queue-preflight-r113/tests.log": "e338e9f3a7f39b03d4782a2b2057fd51632bce7d4f947cf8af5c293c6947d3ea"
+  },
+  "planned_shards": 42,
+  "planned_tasks": 1982,
+  "queue_binding": "c636a6b200ca7b3b6c36535f537c33cc797b7a2acd8d346efcd5912cc04a061b",
+  "readiness": "offline_prepared; wait for first 48-task batch terminal audit and resource review",
+  "single_pinned_nix_parent": true,
+  "sources": {
+    "scripts/baseline/benchmarks/tools/campaign_queue.py": "8aac4916b66fc4c7a93dc2bb2304ab5cfbab2def018f298cab375b391d381b6d",
+    "scripts/baseline/benchmarks/tools/observe_agent_resources.py": "d7db73755b5d3f4520eba9bcc6473f3731e20571ce9b779304b7e2a7a2cfb77a",
+    "scripts/baseline/benchmarks/tools/test_campaign_queue.py": "bc9930c38a6e74348b4d32101b4f1c306c52d776efeb91e0c46f05a418be06d7"
+  },
+  "stage2_complete": false,
+  "tests": {
+    "failed": 0,
+    "passed": 9,
+    "skipped": 0
+  }
+}

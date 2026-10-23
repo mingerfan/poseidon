@@ -1,0 +1,283 @@
+{
+  "all_durable_candidate_claims_absent": true,
+  "audit_directory_absent": true,
+  "automatic_restart": false,
+  "billing_claim": "No provider-side billing assertion",
+  "binding": "65adb37b117a9251653e170343a9cfab052a8dda97d4835533b664549f6fed0b",
+  "conclusion": "Frozen runner did not reach durable paid candidate launch for these 48 identities; scheduler dispatch alone is not a provider request",
+  "empty_dispatch_log": true,
+  "format": "poseidon-dispatched-preflight-review-r126",
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "old_dispatcher_process_absent": true,
+  "original_queue_binding": "9d42e64f62bf5610ca4eed311e5e1b1c4d34f7b628604fd76f94729204688c85",
+  "original_shard_limit_seconds": 3600,
+  "output_directory_absent": true,
+  "paid_call_evidence_found": false,
+  "parents": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/campaign_live_state.py": "cbe4c9629f914ba70644f07bb848ac772e1e6381bf2fe4093b1ce1679f3cdca9",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/run_stage2_agent_campaign_v5.py": "ef0bd692d0bbe933467122998a7ce6e9b531df7593b229dbbcbf836c03f3b622",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v5-r121/shard-016.json": "09413b923247940b36921d2f3071e9eaae7ab6d6db940c4639db422e1b90c3a3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121/launches/5a819d6cdc8ca295e3a64bef5f3eb43d9940164d6a10aeaf946e2ab2df23d4e2/launch.json": "d51bf8850778f42a176ae3b981c3d6b6ea98d13ae15b34380e6b5cc00fbb8f94",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121/launches/5a819d6cdc8ca295e3a64bef5f3eb43d9940164d6a10aeaf946e2ab2df23d4e2/run.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121/plan.json": "fe2f7edc04fb328df6caa9a227cd5404aa2655081f9c3a8eaf397c7e90187c6a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121/report.json": "07a7f7982d54d986fb9b91f0ef934bdcaf682d588686cc5ea484cf917c9ee44d"
+  },
+  "prior_global_seconds": 3608.113134942003,
+  "requires_recheck_before_later_dispatch": true,
+  "reviewed_runner_order": [
+    "validate_plan and parent verification",
+    "create batch output directory",
+    "acquire locks",
+    "start shard monotonic budget",
+    "persist claim before candidate launch",
+    "launch run_candidate child"
+  ],
+  "shard": 16,
+  "shard_binding": "5a819d6cdc8ca295e3a64bef5f3eb43d9940164d6a10aeaf946e2ab2df23d4e2",
+  "shard_execution_budget_started": false,
+  "stage2_complete": false,
+  "task_count": 48,
+  "tasks": [
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/15522b4721be1da60450e211b4936db7eb15f63ab0b173c84886116a60b0ffb4.json",
+      "evaluation_identity": "15522b4721be1da60450e211b4936db7eb15f63ab0b173c84886116a60b0ffb4",
+      "id": "free_bench_graph_0288"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/4ea2c49ccbcd201970a0906e9fd945fc43d5321e70ab9fa5e65e795e7990a7de.json",
+      "evaluation_identity": "4ea2c49ccbcd201970a0906e9fd945fc43d5321e70ab9fa5e65e795e7990a7de",
+      "id": "free_bench_graph_0289"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/45451cccbf601f47128278c55290a0a6ec1557057ad2da4e8d40cffe5ecfb2a3.json",
+      "evaluation_identity": "45451cccbf601f47128278c55290a0a6ec1557057ad2da4e8d40cffe5ecfb2a3",
+      "id": "free_bench_graph_0290"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/88395e17a1252959275335ff5e1240286c527cc721b9f5f2d6bd1d3f6e5e89e8.json",
+      "evaluation_identity": "88395e17a1252959275335ff5e1240286c527cc721b9f5f2d6bd1d3f6e5e89e8",
+      "id": "free_bench_graph_0291"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/c9cf35ad0d4e21da3fe5ee4ff6eea81795cba09d20b8694ed559ba2791b70d49.json",
+      "evaluation_identity": "c9cf35ad0d4e21da3fe5ee4ff6eea81795cba09d20b8694ed559ba2791b70d49",
+      "id": "free_bench_graph_0292"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/09bbb3e6c5d062cf7899969ee3b4bc00b354c5a5cd1bb1ce7aef61d447f903a4.json",
+      "evaluation_identity": "09bbb3e6c5d062cf7899969ee3b4bc00b354c5a5cd1bb1ce7aef61d447f903a4",
+      "id": "free_bench_graph_0293"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/9a2c729f3ee9dc0891578ab7526f290fa71832ecf99a65167bd4d835335c932f.json",
+      "evaluation_identity": "9a2c729f3ee9dc0891578ab7526f290fa71832ecf99a65167bd4d835335c932f",
+      "id": "free_bench_graph_0294"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/a9356ff3e0bb487f3e562d113e86d973b273e24175620b5762a1fa6839f9a05a.json",
+      "evaluation_identity": "a9356ff3e0bb487f3e562d113e86d973b273e24175620b5762a1fa6839f9a05a",
+      "id": "free_bench_graph_0295"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/b7a53d57b2d05317348eb20fec6000725ca3d7ba524d4db40c1f18002110776f.json",
+      "evaluation_identity": "b7a53d57b2d05317348eb20fec6000725ca3d7ba524d4db40c1f18002110776f",
+      "id": "free_bench_graph_0296"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/6dacfdcec882a139db06f6a2f49d2c6996ade89b61ba093886e12b1a65bcb4f0.json",
+      "evaluation_identity": "6dacfdcec882a139db06f6a2f49d2c6996ade89b61ba093886e12b1a65bcb4f0",
+      "id": "free_bench_graph_0297"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/e8fa1dd9b273bf04261496f9f4fac3eff9ccf0d64f524cf2c706e8b9a89e1e59.json",
+      "evaluation_identity": "e8fa1dd9b273bf04261496f9f4fac3eff9ccf0d64f524cf2c706e8b9a89e1e59",
+      "id": "free_bench_graph_0298"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/70a56252b61aba8f6bb8d7b67992cb6528dc9c9a5b2b1c5944690f7f6a5cca1e.json",
+      "evaluation_identity": "70a56252b61aba8f6bb8d7b67992cb6528dc9c9a5b2b1c5944690f7f6a5cca1e",
+      "id": "free_bench_graph_0299"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/a353c71137755cc761074d9d41b4b703bf10391c66540e49aaff6cd819470e5f.json",
+      "evaluation_identity": "a353c71137755cc761074d9d41b4b703bf10391c66540e49aaff6cd819470e5f",
+      "id": "free_bench_graph_0300"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/2cb1768576c15e598d8cf22aa053eadbbae4e15872972129e86a7f24a26078d4.json",
+      "evaluation_identity": "2cb1768576c15e598d8cf22aa053eadbbae4e15872972129e86a7f24a26078d4",
+      "id": "free_bench_graph_0301"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/ed0954015ce77c2fb8f7baf8a3ed340cc0ac2a81ba3276a7adc4a22f90235af6.json",
+      "evaluation_identity": "ed0954015ce77c2fb8f7baf8a3ed340cc0ac2a81ba3276a7adc4a22f90235af6",
+      "id": "free_bench_graph_0302"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/63c6b0b877e75a9fe4e7f9ac315f6521327df13f9373aba60962fb37a083ac18.json",
+      "evaluation_identity": "63c6b0b877e75a9fe4e7f9ac315f6521327df13f9373aba60962fb37a083ac18",
+      "id": "free_bench_graph_0303"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/c9a0ad1b23c2b20cff321d18d37b9750a2ffb3843126a80ac08e90e1a5983248.json",
+      "evaluation_identity": "c9a0ad1b23c2b20cff321d18d37b9750a2ffb3843126a80ac08e90e1a5983248",
+      "id": "free_bench_graph_0304"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/5fa27c1add5e5e9ee148e53bad09f7a444e589b0604a8240b4e777d99ad32c07.json",
+      "evaluation_identity": "5fa27c1add5e5e9ee148e53bad09f7a444e589b0604a8240b4e777d99ad32c07",
+      "id": "free_bench_graph_0305"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/4012efd946ab4ddef30823d38d047356e5a289f465f0cd2cd7c120d3a40d3983.json",
+      "evaluation_identity": "4012efd946ab4ddef30823d38d047356e5a289f465f0cd2cd7c120d3a40d3983",
+      "id": "free_bench_graph_0306"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/711800851e90c362af5a231971710ebb5bd52a2d7878abf3b992aaab6552ffda.json",
+      "evaluation_identity": "711800851e90c362af5a231971710ebb5bd52a2d7878abf3b992aaab6552ffda",
+      "id": "free_bench_graph_0307"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/7b79c95d1651f85d6e0a8f8f465c29a4bec074782fbd2d3c657fd31507387a15.json",
+      "evaluation_identity": "7b79c95d1651f85d6e0a8f8f465c29a4bec074782fbd2d3c657fd31507387a15",
+      "id": "free_bench_graph_0308"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/686a09a08ebcf4c2311e3b1f673795cce3a205061cba56f20a9ee58672ffaf80.json",
+      "evaluation_identity": "686a09a08ebcf4c2311e3b1f673795cce3a205061cba56f20a9ee58672ffaf80",
+      "id": "free_bench_graph_0309"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/bf822e47dd549ad26da9d03aebf5b788dea94e6bc5e17a0fb23ae5c6f4b44d77.json",
+      "evaluation_identity": "bf822e47dd549ad26da9d03aebf5b788dea94e6bc5e17a0fb23ae5c6f4b44d77",
+      "id": "free_bench_graph_0310"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/ed17557a73c3dbfa45f941b60c51aa401d99c78d13cd6270e24e02c2ba35f809.json",
+      "evaluation_identity": "ed17557a73c3dbfa45f941b60c51aa401d99c78d13cd6270e24e02c2ba35f809",
+      "id": "free_bench_graph_0311"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/0e47211467b16cb3be06f3bd36354c66cd682a5dba49b005c8e89a2dffe5e459.json",
+      "evaluation_identity": "0e47211467b16cb3be06f3bd36354c66cd682a5dba49b005c8e89a2dffe5e459",
+      "id": "free_bench_graph_0312"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/eb1bf7df4248c52c1b7a4a373b4b350a2764e2471d2949b9476b28109730213e.json",
+      "evaluation_identity": "eb1bf7df4248c52c1b7a4a373b4b350a2764e2471d2949b9476b28109730213e",
+      "id": "free_bench_graph_0313"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/c2cbd0527e223541b8e0e3c2afabf9f9e7e9e8b073f6f4016b62cdffecb8f64a.json",
+      "evaluation_identity": "c2cbd0527e223541b8e0e3c2afabf9f9e7e9e8b073f6f4016b62cdffecb8f64a",
+      "id": "free_bench_graph_0314"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/56b39bb0fcd1d3a82476e1f9931c0f2f9ad8d0b6cfad2d0ee87c8b2109543740.json",
+      "evaluation_identity": "56b39bb0fcd1d3a82476e1f9931c0f2f9ad8d0b6cfad2d0ee87c8b2109543740",
+      "id": "free_bench_graph_0315"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/608247208134a70dd62ad871892fa9a69620722917f984ef4c7a9b14652ef161.json",
+      "evaluation_identity": "608247208134a70dd62ad871892fa9a69620722917f984ef4c7a9b14652ef161",
+      "id": "free_bench_graph_0316"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/da2e059ad07bfb6eb0726ce55f367df7727ca766c7aea30a3de9c0f732ce8992.json",
+      "evaluation_identity": "da2e059ad07bfb6eb0726ce55f367df7727ca766c7aea30a3de9c0f732ce8992",
+      "id": "free_bench_graph_0317"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/f2a56806c4ad92cb4feced478f6346db3ce021b6467447842b6e753eb4ae47b2.json",
+      "evaluation_identity": "f2a56806c4ad92cb4feced478f6346db3ce021b6467447842b6e753eb4ae47b2",
+      "id": "free_bench_graph_0318"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/3568dfcc0e908f792d405834db7546a5e7e54f73a60eab7b09ddd2d9197322a6.json",
+      "evaluation_identity": "3568dfcc0e908f792d405834db7546a5e7e54f73a60eab7b09ddd2d9197322a6",
+      "id": "free_bench_graph_0319"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/912ec3af570e9709e634da1259bcab6d33ca2ed14bbc746d3af2eb7e3ef34f73.json",
+      "evaluation_identity": "912ec3af570e9709e634da1259bcab6d33ca2ed14bbc746d3af2eb7e3ef34f73",
+      "id": "free_bench_graph_0320"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/b0cba9f9b164574fc2abbf4e9039eb1033e6564e51ae9d294da3f9b5da90d187.json",
+      "evaluation_identity": "b0cba9f9b164574fc2abbf4e9039eb1033e6564e51ae9d294da3f9b5da90d187",
+      "id": "free_bench_graph_0321"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/ee44b7cefb239ce19878392635dabc59768bf8006a50874fa7b1aab76f5250ce.json",
+      "evaluation_identity": "ee44b7cefb239ce19878392635dabc59768bf8006a50874fa7b1aab76f5250ce",
+      "id": "free_bench_graph_0322"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/924537007cecd5b0366ebe78c8a5691c8941ad8bfceffeb2f9978e6dd4f85de6.json",
+      "evaluation_identity": "924537007cecd5b0366ebe78c8a5691c8941ad8bfceffeb2f9978e6dd4f85de6",
+      "id": "free_bench_graph_0323"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/028b043c900ef3f6a39762fef0eeaa5dfa29d25c16fd6281ce68b27075eef4b5.json",
+      "evaluation_identity": "028b043c900ef3f6a39762fef0eeaa5dfa29d25c16fd6281ce68b27075eef4b5",
+      "id": "free_bench_graph_0324"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/c511eb4a2833a6d90a5878cab221a2299738a75b37d829cd37a82f0ab88813bd.json",
+      "evaluation_identity": "c511eb4a2833a6d90a5878cab221a2299738a75b37d829cd37a82f0ab88813bd",
+      "id": "free_bench_graph_0325"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/978887fd4370fd0ed73491caa0064ebe428559bb7cf82d8a6ebd148ca4757910.json",
+      "evaluation_identity": "978887fd4370fd0ed73491caa0064ebe428559bb7cf82d8a6ebd148ca4757910",
+      "id": "free_bench_graph_0326"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/c82122f7d826c7ea9b5cb4ea2cd45c6eb604e63f84226acaaaa51aa8bc899ffd.json",
+      "evaluation_identity": "c82122f7d826c7ea9b5cb4ea2cd45c6eb604e63f84226acaaaa51aa8bc899ffd",
+      "id": "free_bench_graph_0327"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/45308633b8dfd3cbbe8c773865b76899a1ab661fdd0f7eca85c1a263225f05db.json",
+      "evaluation_identity": "45308633b8dfd3cbbe8c773865b76899a1ab661fdd0f7eca85c1a263225f05db",
+      "id": "free_bench_graph_0328"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/5141d4fac1266b2e4063aec928595f790883fc7760375db7bc43e44deb418ee6.json",
+      "evaluation_identity": "5141d4fac1266b2e4063aec928595f790883fc7760375db7bc43e44deb418ee6",
+      "id": "free_bench_graph_0329"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/24d6b76f2a606a3ce5bb32360cbe06a49eaa6f498b56704802ba0960216c1903.json",
+      "evaluation_identity": "24d6b76f2a606a3ce5bb32360cbe06a49eaa6f498b56704802ba0960216c1903",
+      "id": "free_bench_graph_0330"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/045a93ccbac06555ef44650742185105f840b634f7f2496c4cd182ced954fa6d.json",
+      "evaluation_identity": "045a93ccbac06555ef44650742185105f840b634f7f2496c4cd182ced954fa6d",
+      "id": "free_bench_graph_0331"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/c695189b494f5e93971bfdb842c1d761ac53fb99651f96abf2060cb251087f88.json",
+      "evaluation_identity": "c695189b494f5e93971bfdb842c1d761ac53fb99651f96abf2060cb251087f88",
+      "id": "free_bench_graph_0332"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/0e2c41f92ee7cd09ed759803264b3499df6bd688cecf702b9167ca4842d43ceb.json",
+      "evaluation_identity": "0e2c41f92ee7cd09ed759803264b3499df6bd688cecf702b9167ca4842d43ceb",
+      "id": "free_bench_graph_0333"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/85905d79408456b9eee461873e2191e160dc659073242724dedbb21673801bde.json",
+      "evaluation_identity": "85905d79408456b9eee461873e2191e160dc659073242724dedbb21673801bde",
+      "id": "free_bench_graph_0334"
+    },
+    {
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/4f249110821897c69eafebe80e4e5013f33a04ff96840c9213b02ce56862c383.json",
+      "evaluation_identity": "4f249110821897c69eafebe80e4e5013f33a04ff96840c9213b02ce56862c383",
+      "id": "free_bench_graph_0335"
+    }
+  ]
+}

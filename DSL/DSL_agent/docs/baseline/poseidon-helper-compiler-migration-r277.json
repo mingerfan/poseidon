@@ -1,0 +1,143 @@
+{
+  "format": "poseidon-helper-compiler-cli-migration-v1",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "dispatcher": "scripts/benchmark.py",
+  "tool": "scripts/baseline/benchmarks/tools/poseidon_benchmark_entries.py",
+  "tests": {
+    "total": 33,
+    "passed": 33,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-benchmark-tools-r277/tests.log",
+    "log_sha256": "74dbec6153c2158da0e1b8e17fe2531f5414d70098bbcd95ed485cbb73002c91"
+  },
+  "helpers": {
+    "planned": 3,
+    "passed": 3,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "independent_reference_groups": 48,
+    "encrypted_input_groups": 12,
+    "compared_values": 36,
+    "max_absolute_error": 8.430188647157166e-08,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-benchmark-tools-r277/helpers/report.json",
+    "report_sha256": "4fcbc58daab1911cfc8c403849fd20aa39800bee21782a1bf051c3f67980c3a0",
+    "binding": "27503701477f0a9ce0fe616ab8abb37dfa5d63ca00e8f5a673b661f5c4cba721",
+    "rows": [
+      {
+        "id": "upstream_silu_frozen_0",
+        "request_id": "9279063038d39bf10a5269ab8eb796ac1480b04f0a65279390c56d2c17ff8627",
+        "original_task_sha256": "c4399f4cb61ccf45e1d7ccc055119d9d49e34bb341f5e615c319de77c10765f3",
+        "compiler_configuration": "poseidon-cpu-eva-w40-v1",
+        "actual_calls": 1,
+        "actual_frontend_checked": true,
+        "finite_return_influence_checked": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cp2soxa3",
+        "comparison": {
+          "compared_values": 8,
+          "mae": 2.698966761650489e-08,
+          "max_absolute_error": 8.430188647157166e-08,
+          "passed": true
+        }
+      },
+      {
+        "id": "upstream_bn_asymmetric_0",
+        "request_id": "192c1d1c4bc08a326312d0e24f72eb1520fc932e6c1b2665179ea0acdf13a964",
+        "original_task_sha256": "d7da2f40043735b36222476a68de631de030435f02a8d4316eae2a9fb77cf859",
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "actual_calls": 1,
+        "actual_frontend_checked": true,
+        "finite_return_influence_checked": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-f9s3q3it",
+        "comparison": {
+          "compared_values": 4,
+          "mae": 1.4773033490955711e-09,
+          "max_absolute_error": 3.7327789192964644e-09,
+          "passed": true
+        }
+      },
+      {
+        "id": "upstream_concat_frozen_1",
+        "request_id": "fafbda0287dfb489b254c83431079a7b3fb50ec06ff1fe11beb0b886f68bf5ad",
+        "original_task_sha256": "e824f8d0a9e7a86b674146dfcda92c446dea105e320e9b828354d988646097c0",
+        "compiler_configuration": "poseidon-cpu-eva-w45-v1",
+        "actual_calls": 1,
+        "actual_frontend_checked": true,
+        "finite_return_influence_checked": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-uwd1jq8q",
+        "comparison": {
+          "compared_values": 24,
+          "mae": 1.3253410326148696e-09,
+          "max_absolute_error": 4.0664891454156304e-09,
+          "passed": true
+        }
+      }
+    ]
+  },
+  "resume": {
+    "completed_verified": 3,
+    "new_encrypted_executions": 0,
+    "report_unchanged": true,
+    "recorded_metrics_and_helper_witnesses_reaudited": true
+  },
+  "compiler_audit": {
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-benchmark-tools-r277/compiler-audit.json",
+    "report_sha256": "37ba09bc6398aa552c3ae18a34618f72a831ca846548cb3c5ffdab4d755f8317",
+    "planned": 12,
+    "audited": 12,
+    "numerical_passed": 12,
+    "observed_execution_counts": {
+      "compiler.modswitch": 12,
+      "compiler.relinearization": 6,
+      "compiler.rescale": 8,
+      "compiler.rotation_keys": 8,
+      "compiler.security_parameters": 12
+    },
+    "new_encrypted_executions": 0,
+    "per_instruction_native_trace": false,
+    "scope": "RuntimePlan instruction/propagation, actual fixed parameters and retained numerical evidence",
+    "output_component_count_scope": "plan declarations; not per-output native metadata observation"
+  },
+  "historical": {
+    "old_entry_modules_preserved": true,
+    "old_reports_preserved": true,
+    "earlier_current_turn_source": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-benchmark-tools-r276/poseidon_benchmark_entries.py.used",
+    "earlier_stage_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-benchmark-tools-r276/local-report.json"
+  },
+  "current_core": {
+    "proposal": "docs/baseline/poseidon-whole-models-live-proposal-r274.json",
+    "binding": "b130e29ba8b4e799435bd90977bf5b94534d243260079787e099e8eb952675ea",
+    "source_files": 513,
+    "mismatches": [],
+    "paid_status": "pending_approval",
+    "core_changed": false
+  },
+  "parameters_changed": false,
+  "compiler_core_changed": false,
+  "runtime_core_changed": false,
+  "reference_changed": false,
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "seal_execution": false,
+  "agent_successes": 0,
+  "paid_calls": 0,
+  "installs": 0,
+  "downloads": 0,
+  "commits": 0,
+  "pushes": 0,
+  "remaining": {
+    "math_compiler_models": 12,
+    "bootstrap": "r234 numerical failed; r235 trial pending approval",
+    "paid_agent_whole_models": "r274 pending approval",
+    "rejection_cli": "legacy static entry migration remains",
+    "x86_native": "deferred",
+    "clean_install": "deferred",
+    "cuda": "deferred"
+  }
+}

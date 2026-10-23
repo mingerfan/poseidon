@@ -1,0 +1,78 @@
+{
+  "format": "poseidon-bootstrap-parameter-proposal-v1",
+  "status": "pending_approval",
+  "context_id": "poseidon-bootstrap-cpu-n15-q17x48-p1x60-scale40-experimental-v0",
+  "degree": 32768,
+  "log_slots": 14,
+  "q": [
+    281474976317441,
+    281474975662081,
+    281474974482433,
+    281474972188673,
+    281474971926529,
+    281474971533313,
+    281474966880257,
+    281474966683649,
+    281474962554881,
+    281474961309697,
+    281474960392193,
+    281474960326657,
+    281474957180929,
+    281474956066817,
+    281474955804673,
+    281474955673601,
+    281474955476993
+  ],
+  "p": [
+    1152921504606584833
+  ],
+  "nominal_scale_log2": 40,
+  "security": "tc128",
+  "actual_qp_product_bits": 876,
+  "security_table_max_bits": 881,
+  "bootstrap": {
+    "boundary_k": 25,
+    "log_message_ratio": 5,
+    "double_angle": 2,
+    "scaling_log": 48,
+    "output_ratio": 32,
+    "project_real": true,
+    "logical_rescale_count": 1,
+    "q0_modulus_count": 1,
+    "cosine_heap": "unchanged embedded polynomial in current Poseidon library"
+  },
+  "scope": [
+    "separate offline CPU library probe",
+    "context admission before keys",
+    "four deterministic input groups",
+    "refresh numerical comparison",
+    "continue with square and rescale",
+    "second refresh if first refresh meets threshold"
+  ],
+  "preserve_current_agent_context": true,
+  "runtime_core_changes": false,
+  "dacapo_changes": false,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "paid_calls": 0,
+  "new_dependencies": false,
+  "download_bytes": 0,
+  "limits": {
+    "max_wall_seconds": 1800,
+    "max_disk_bytes": 536870912,
+    "max_address_space_bytes": 6442450944,
+    "max_compile_jobs": 2,
+    "max_link_jobs": 1,
+    "max_native_tasks": 1
+  },
+  "locations": {
+    "source": "src/poseidon/tests/bootstrapping/agent_fixed_context",
+    "work": "/home/lhohy/poseidon-work/platforms/aarch64-linux"
+  },
+  "rationale": "Current Q13x60/default scaling51 reaches CoeffToSlot but fails inside EvalMod before polynomial output. Proposed separate aligned48 context gives more levels within existing tc128 table. This is an unverified feasibility hypothesis.",
+  "key_memory_rationale": "Q17 with one P prime increases evaluation-key memory; 6 GiB applies only to this isolated probe, not candidate sandboxes.",
+  "rejection": "Stop on security rejection, resource/time limit, refresh failure or numerical failure. Preserve evidence; do not change parameters or tolerance automatically.",
+  "proposal_sha256": "eceea06af2491f22889b46299c33d7a0ed0d03085cebf2866482fdbb127a3143"
+}

@@ -1,0 +1,116 @@
+{
+  "accepted_date": "2026-09-22",
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_seal_execution": true,
+  "actual_upstream_helper_execution": false,
+  "agent_calls": 0,
+  "all_dsl_semantics_covered": false,
+  "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/batch48",
+  "batch_plan_sha256": "4d36a694805e01282525e339a9593bc77a00b2d23158f846cd337d310dc38e54",
+  "case_seconds": 248.25523612397956,
+  "checker_sources": {
+    "scripts/baseline/benchmarks/tools/audit_public_batch.py": "b34719f3a2e8975cbcfa0a13a54b9cdfaaca285439611dc494888ea1c308e6fd",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/audit.py": "81a59b9fe5d894df99ea3ffcf39c6e6c48bb4beb1f5db1fbf335d14316f96b86"
+  },
+  "compared_values": 548,
+  "coordinator_seconds": 276.8539059750037,
+  "counts": {
+    "blocked_contract": 63,
+    "blocked_rule_preflight": 3,
+    "not_run": 492,
+    "passed": 48
+  },
+  "directed_numeric_counts": {
+    "blocked_contract": 63,
+    "blocked_rule_preflight": 3,
+    "not_run": 481,
+    "passed": 47
+  },
+  "directed_structural_counts": {
+    "not_run": 11,
+    "passed": 1
+  },
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-plaintext/report.json": "b9380d558d649f33328cd9fda5c53930258d148d800615b7ad021dbf6af56e11",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/audit.json": "42af82794de949c9c57ccbdb979fc915d5b7fc5f2a69193b33ed6d0f097a98e8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/batch48/report.json": "82dc9ce32e8cd18a986088f35792c8aaf9eeb10027d28cd6d35e0e9fb7a314fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/coordinator-plan.json": "d93b0d2d22a899fcffa90cb6a982f4dd7198ee440ee89b3691e4462e26418d39",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/final-state.json": "2b302bd05e226d14266a96b590e7cf7f71a48b6291b1b1eb72b5e616017508e6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/full-replay-audit.json": "a22e1d0ea33112c448a00b1c32ea813363f3d995cb1498b339d356f7f681f41f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/unit.log": "47c197201542705fc8627d09b40132122d16bfd40bb41ca23127eafb0961d34f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unit-initial.log": "74171a40a80e75bff1e204bec8a007b8b8b8c414022ad75689e3b75fb952214c"
+  },
+  "evidence_bytes": 7688278,
+  "formal_equivalence_proven": false,
+  "inputs": {
+    "1": 30,
+    "2": 7,
+    "3": 6,
+    "4": 5
+  },
+  "max_absolute_error": 3.5401066306173234e-07,
+  "max_individual_process_rss_kib": 930996,
+  "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+  "native_bound_tasks": 114,
+  "native_directed_retested": false,
+  "new_partitions": 11,
+  "new_tasks": 33,
+  "numeric": 47,
+  "old_regressions": 15,
+  "outputs": {
+    "1": 36,
+    "2": 9,
+    "3": 2,
+    "4": 1
+  },
+  "passed": 48,
+  "periods": {
+    "4": 45,
+    "8": 3
+  },
+  "plaintext": {
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "platform": "aarch64-linux",
+  "public_bound_tasks": 429,
+  "public_partitions": 143,
+  "release": "semantic-v1-public-r8",
+  "remaining": [
+    "63 unbound directed tasks (21 partitions)",
+    "object arithmetic/alias mutation and aggregate construction coverage",
+    "lambda signature directed witnesses and additional parameter type combinations",
+    "general chunked layout",
+    "three prior default rule operation-budget blocks",
+    "Agent-callable actual upstream helper contract",
+    "remaining upstream helpers and bootstrap",
+    "two original compiler failures",
+    "full semantic and compiler artifact audit",
+    "separately approved live Agent evaluation"
+  ],
+  "schema": 1,
+  "source_snapshot": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r8-unary/frozen-source.tar.gz",
+    "sha256": "fcf41eff9ab5680577eb27a4f3cf7f12e14ad9a3a9704a6852b5d0e624307ed1"
+  },
+  "statuses": {
+    "failed": 0,
+    "passed": 48,
+    "skipped": 0
+  },
+  "structural": 1,
+  "unbound_tasks": 63,
+  "unit_tests": {
+    "failed": 0,
+    "passed": 98,
+    "skipped": 3,
+    "total": 101
+  },
+  "weighted_mae": 1.4236503293852366e-08,
+  "x86_retested": false
+}

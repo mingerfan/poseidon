@@ -1,0 +1,42 @@
+{
+  "format": "poseidon-stage2-recovery-start-r148",
+  "authorization_binding": "030c94d81f8bd626b2034f0b5b49f3dd98ecccd0a42196d9ee97a25ce6b78b2a",
+  "queue_binding": "14779f5d75dcd4c7c16c1ce46a912a9b3a7e614e6d1310cadd4b3f02060896a5",
+  "runtime_source_sha256": "f6493518f4bf63c257fb7eab9f9a782a89cf5cf4a16c9006f607976f2c58b69b",
+  "planned": 54,
+  "shards": 10,
+  "session": 21691,
+  "source_locked": true,
+  "tests": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+  },
+  "parallel_native": {
+    "passed": 2,
+    "two_slots_observed": true,
+    "min_available_mib": 5475,
+    "new_paid_calls": 0
+  },
+  "startup_failure": {
+    "reason": "Runner wrongly bypassed trusted credential loader via --inside",
+    "verified_no_api_cases": 10,
+    "proof_binding": "85ff18cb2f45dc2850ee32037843b8da3173bab3fca15fd060d88e2991af6f0b",
+    "old_claims_removed": 0,
+    "old_evidence_preserved": true
+  },
+  "new_claim_registry": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-execution-claims-r147",
+  "paid_execution_started": true,
+  "last_verified_candidate_processes": 10,
+  "last_verified_http_attempts": 10,
+  "original_campaign_statistics_unchanged": true,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-authorization-r147.json": "9aad6f6015075a053feb8c017edd25b66451a2c3f2af2742b695628ae816df48",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-native-probe-r147/report.json": "423d42c8e949d8f76006bee1136a1ef0ae53f21eb0fa330fb567c9e64391c926",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-startup-proof-r148.json": "42f11e357eb6eaa15c17689ffec0f04ab3c887eb738a38a90f93b84c93f0a058",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-preflight-r148/unittest.log": "6219d51db33882d88d006f55849da2b0315b0c53bfa1d3d05a92cc9840646db1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-queue-r148/plan.json": "989dc3eb2639d8e269c19ff31056dfea3b618f8e63f9c37ca8851de72ffe0fe9"
+  },
+  "stage2_complete": false,
+  "binding": "e99b4fef960971e22cd4616db9895ec234c9443248eb4b8a68225ef1e00220aa"
+}

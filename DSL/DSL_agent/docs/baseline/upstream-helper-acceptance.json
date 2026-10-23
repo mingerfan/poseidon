@@ -1,0 +1,123 @@
+{
+  "actual_fhe_period_counts": {
+    "16": 4,
+    "32": 1,
+    "4": 8,
+    "64": 1,
+    "8": 9
+  },
+  "agent_calls": 0,
+  "asymmetric_passed_shapes": [
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      1,
+      3,
+      2
+    ],
+    [
+      1,
+      2,
+      2,
+      3
+    ],
+    [
+      1,
+      4,
+      4,
+      4
+    ],
+    [
+      1,
+      3,
+      3,
+      3
+    ],
+    [
+      1,
+      2,
+      1,
+      5
+    ]
+  ],
+  "compared_values": 844,
+  "constant_layout": "exact-byte-period-repetition-v1",
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-helpers-r3-batch/audit.json": "fca70b957b3d0a7882b2112cd3943ed4e14aa868d1bd66013a2f0c9a0df8b6e1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-helpers-r3-batch/continued-state.json": "7d906e37c6bc058c78088ae83c8e02ca54f0ac9c26289f639e1325ef8adc2a7c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-helpers-r3-unit.log": "c70699a0cef26ec2707e8ae18555b7c59a7225220bf22d1b6fecffbf59d6b076"
+  },
+  "evidence_bytes": 8640073,
+  "failed_supplemental": {
+    "actual_compilation": false,
+    "diagnostic": "Unified constant registry budget",
+    "encrypted_execution": false,
+    "failure_layer": "preparation",
+    "shape": [
+      1,
+      4,
+      8,
+      8
+    ]
+  },
+  "frozen_counts": {
+    "blocked_bootstrap": 24,
+    "not_run": 80,
+    "passed": 16
+  },
+  "frozen_helper_models": 120,
+  "manual_helpers": true,
+  "max_absolute_error": 1.6864272645022993e-08,
+  "metrics": {
+    "HE_BN/asymmetric-v1": {
+      "compared_values": 492,
+      "failed": 1,
+      "max_absolute_error": 1.1819241696464644e-09,
+      "passed": 7
+    },
+    "HE_BN/frozen": {
+      "compared_values": 176,
+      "failed": 0,
+      "max_absolute_error": 3.1284046186907943e-10,
+      "passed": 8
+    },
+    "HE_SiLU/frozen": {
+      "compared_values": 176,
+      "failed": 0,
+      "max_absolute_error": 1.6864272645022993e-08,
+      "passed": 8
+    }
+  },
+  "platform": "aarch64-linux",
+  "prior_failed_pilot": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-o8_a_lrn",
+  "remaining": [
+    "Agent trusted helper call contract",
+    "other 13 upstream helpers",
+    "bootstrap",
+    "general layout composition",
+    "256-element registry budget",
+    "258 unbound directed tasks"
+  ],
+  "schema": 1,
+  "seconds": 140.92993953499536,
+  "source_snapshot": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-helpers-r3-batch/frozen-source.tar.gz",
+    "sha256": "469f2e307288231175aa26770c40fd0103d6df3f72e18cc79567a7dd12e6310c"
+  },
+  "supplemental_counts": {
+    "failed": 1,
+    "passed": 7
+  },
+  "unchanged_gate": true,
+  "unit_tests": {
+    "failed": 0,
+    "passed": 24,
+    "skipped": 0
+  }
+}

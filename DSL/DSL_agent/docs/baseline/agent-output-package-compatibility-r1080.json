@@ -1,0 +1,148 @@
+{
+  "agent_generation": 0,
+  "audit": {
+    "binding": "65e2e4de170ae977829dccdc332f9fe2cb175011a8846b9df4a0c6cd7fe940f7",
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-output-package-read-only-r1079/report.json"
+  },
+  "backend_core_changed": false,
+  "binding": "fbb3580ccdb5855638dc13ce01b4ae55b0df617e7cc610dd5641971a238eeb72",
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": false,
+  "compiler_calls": 0,
+  "confirmed": [
+    "three retained task/package directories are byte-identical before/after inspection",
+    "real current package checker rejects Trusted reference identity",
+    "Application and TaskOutputAdapter both expose delivery service_error",
+    "current fixed SDK/tools equal retained historical and pending identities"
+  ],
+  "current_application_successes": 0,
+  "current_direct_integrity_successes": 0,
+  "current_output_receipts": 0,
+  "decryption": 0,
+  "download": 0,
+  "encrypted_execution": 0,
+  "existing_reference_changed": false,
+  "format": "poseidon-output-package-compatibility-v1",
+  "frozen_ckks_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "hecate_tracing": 0,
+  "historical_numerical_successes_preserved": 3,
+  "http_attempts": 0,
+  "inference": [
+    "these rejected deliveries are version-bound requalification gaps rather than evidence of model numerical failure"
+  ],
+  "installation": 0,
+  "interpretation": "current dependency and trusted-reference identities reject delivery before compilation or execution; not a new mathematical or ciphertext failure",
+  "low_level_tools_equal_historical": true,
+  "low_level_tools_equal_pending": true,
+  "next_positive_method": "After approved batch completion, use its checked current packages and already produced execution reports for output-receipt restoration; no extra FHE execution or generation is implied.",
+  "next_positive_output_package_candidates_from_existing_scope": [
+    "channel_broadcast_mix_0",
+    "indexed_batched_matmul_1",
+    "public_weight_1"
+  ],
+  "old_three_cases_not_added_to_pending_scope": true,
+  "packages_inspected": 3,
+  "paid_calls": 0,
+  "parameters_changed": false,
+  "pending_proposal": {
+    "approved": false,
+    "binding": "cda259c92d763f99d7f32dfad7efc1ec6f59d38bfd542cbc9f8b2c4bb9d7cbe0",
+    "frozen_entries": 5960,
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-pytorch-offline-proposal-r1076.json",
+    "scope_changed": false,
+    "started": false
+  },
+  "pr": false,
+  "protected_counts": {
+    "protected-backend.json": 648,
+    "protected-current-history.json": 14,
+    "protected-history.json": 6,
+    "protected-new-history.json": 6,
+    "protected-references.json": 6
+  },
+  "push": false,
+  "revision": "r1080",
+  "rows": [
+    {
+      "application_error_code": "cached_dependency_mismatch",
+      "changed_stage_configuration_counts": {
+        "compilation": 2,
+        "execution": 2,
+        "generation": 2,
+        "validation": 2
+      },
+      "changed_stage_source_counts": {
+        "compilation": 13,
+        "execution": 13,
+        "generation": 14,
+        "validation": 13
+      },
+      "direct_package_rejection": "Trusted reference identity",
+      "failure_layer": "delivery",
+      "id": "function_sections_0",
+      "original_task_and_package_files_preserved": true,
+      "pending_case_matches": []
+    },
+    {
+      "application_error_code": "cached_dependency_mismatch",
+      "changed_stage_configuration_counts": {
+        "compilation": 2,
+        "execution": 2,
+        "generation": 2,
+        "validation": 2
+      },
+      "changed_stage_source_counts": {
+        "compilation": 13,
+        "execution": 13,
+        "generation": 14,
+        "validation": 13
+      },
+      "direct_package_rejection": "Trusted reference identity",
+      "failure_layer": "delivery",
+      "id": "function_sections_1",
+      "original_task_and_package_files_preserved": true,
+      "pending_case_matches": []
+    },
+    {
+      "application_error_code": "cached_dependency_mismatch",
+      "changed_stage_configuration_counts": {
+        "compilation": 2,
+        "execution": 2,
+        "generation": 2,
+        "validation": 2
+      },
+      "changed_stage_source_counts": {
+        "compilation": 13,
+        "execution": 13,
+        "generation": 14,
+        "validation": 13
+      },
+      "direct_package_rejection": "Trusted reference identity",
+      "failure_layer": "delivery",
+      "id": "function_sections_2",
+      "original_task_and_package_files_preserved": true,
+      "pending_case_matches": []
+    }
+  ],
+  "scope": "read-only Application/result and output binding over three retained real Poseidon packages",
+  "source_hashes": {
+    "scripts/baseline/application_backend.py": "988355b519df4246aa5a7e65da94fc99897974511a0fc7d3220e51117e6835b5",
+    "scripts/baseline/application_component.py": "757fcdd553630ca62458644f80a34f59ec45428d16cb7e3e10b7c7a631ef03cb",
+    "scripts/baseline/application_identity.py": "dcf382935687bea75bfbac5d11b2983aee9151db7d700d3277ca87cbf9e5e59d",
+    "scripts/baseline/benchmarks/tools/component_output_contract_audit_v1/read_only_package_audit.py": "3cf2c98891f7e801d32d1686ed1bafde28c4a6fd070717d2d421669db88f626e",
+    "scripts/baseline/candidate_bundle.py": "df777d01cdd23db7e0775567f97c22c04152df0098f67eaa307f44150fd8ff7e",
+    "scripts/baseline/model_output_contract.py": "e509a3c2cfa848943f9c02ec41d633ce79f034a0ad6561e16e811e0ae65816db",
+    "scripts/baseline/task_output_adapter.py": "088c636eabdb00ac19419315bd4983f815708ca9933d6ba14a93c391fcc79e0c"
+  },
+  "status": "inspection_complete_requalification_required",
+  "unit_tests_run_this_turn": 0,
+  "unverified": [
+    "new output adapter successful actual current program receipt",
+    "new output adapter restoration over real current execution packets",
+    "current 151-case encrypted compatibility batch"
+  ]
+}

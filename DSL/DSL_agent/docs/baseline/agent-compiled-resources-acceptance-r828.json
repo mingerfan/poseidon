@@ -1,0 +1,1031 @@
+{
+  "artifact_audit": {
+    "audited": 30,
+    "compilation_performed": false,
+    "encrypted_execution": false,
+    "lower_payload_bytes_range": [
+      23330816,
+      1671430144
+    ],
+    "planned": 30,
+    "rows": [
+      {
+        "analysis_binding": "86604040f406169dfa98575c6c23189ca53e8bc004a747849489930dda99b221",
+        "ciphertexts": 607,
+        "final_levels": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "id": "cipher_batch_0",
+        "input_ciphertexts": 9,
+        "known_retained_payload_lower_bytes": 1671430144,
+        "numerical_reexecution": false,
+        "output_objects": 6,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/4608030548004c9b93b0ea2cfc3d584f/program",
+        "package_binding": "f6ef6cbd23386c7dc08c010a0b95626a4693bb801ccda7d7962dd70b0a7efa8c",
+        "peak_memory": "unknown",
+        "plaintexts": 25,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "aaa460637d847c994a1e989d3cacf379fedf62137172dd96331bfcaf8100905f",
+        "ciphertexts": 358,
+        "final_levels": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "id": "cipher_batch_1",
+        "input_ciphertexts": 4,
+        "known_retained_payload_lower_bytes": 1448738816,
+        "numerical_reexecution": false,
+        "output_objects": 6,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/61d3b7e01055458a8473ecb6f176d331/program",
+        "package_binding": "a82ccfef7c442153daca41ee6e4db5a4a3cd52dcb2690c959d68b5c61d4c5d7a",
+        "peak_memory": "unknown",
+        "plaintexts": 26,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "a2f502ffb9247102c0ace58aa304c5f60c3b31de7355f2ef8ff620335708d6f1",
+        "ciphertexts": 81,
+        "final_levels": [
+          1
+        ],
+        "id": "cipher_batch_2",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 215744512,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/dc834393b6884d5cb08b62e0fd021bb3/program",
+        "package_binding": "26a34847ae6695c11de335e2d3048370e9a57bd70f18f7d458352303146b11cb",
+        "peak_memory": "unknown",
+        "plaintexts": 4,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "93c47fc460b0ee502b7e45b5b6af45619de790304d51ff20ec95b1d7f270b506",
+        "ciphertexts": 42,
+        "final_levels": [
+          2
+        ],
+        "id": "cipher_mv_0",
+        "input_ciphertexts": 4,
+        "known_retained_payload_lower_bytes": 123338752,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/45c19ffb6b8d4389b4843cc24da44340/program",
+        "package_binding": "58fda41f61cbb8de86bbc52d812496b2e21ce924dbe1230e80fcfb2319f59391",
+        "peak_memory": "unknown",
+        "plaintexts": 4,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "33e5b7c5995094604ca03bf947fd55800aa887a3bf6a63352193100df803c17c",
+        "ciphertexts": 30,
+        "final_levels": [
+          2
+        ],
+        "id": "cipher_mv_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 86376448,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/1db2bce27b3b49279e0c905891aa71be/program",
+        "package_binding": "92d9e7a9c4441023778338dc6eb9fba06e26078cc1e0da82fe992c015e168860",
+        "peak_memory": "unknown",
+        "plaintexts": 5,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "b39b0fa6e2811d85c1077decb239fea94083d730a8c3c534c52b2dda3a0aea73",
+        "ciphertexts": 67,
+        "final_levels": [
+          1
+        ],
+        "id": "cipher_mv_2",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 156893184,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/e3dfd3ee66614978979ea61f7eb90ab7/program",
+        "package_binding": "bba242e194f1b05882b8561efcd4b6dabaaad4bb74c98e1ba0eadc12f5245873",
+        "peak_memory": "unknown",
+        "plaintexts": 8,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "a354dfaa2f0525151b8b628fb91b7ff83ad28eb54ed11355001a725b5345a5cb",
+        "ciphertexts": 35,
+        "final_levels": [
+          2
+        ],
+        "id": "cipher_vm_0",
+        "input_ciphertexts": 4,
+        "known_retained_payload_lower_bytes": 107479040,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/fbfbe6e7f7eb48aa8037befa75cfe3d1/program",
+        "package_binding": "32776d078720f6f880a2f34ed52a1c88de837edb8ff8bbf79d0a3c2f7d586742",
+        "peak_memory": "unknown",
+        "plaintexts": 2,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "9aad29e86d93c49030b0832484543ba425656f189c7963b677d31dc66714f78e",
+        "ciphertexts": 30,
+        "final_levels": [
+          2
+        ],
+        "id": "cipher_vm_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 86376448,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/297e6c09e9cb47faa34b4ea33fbab078/program",
+        "package_binding": "5582a0a5df1be31cce745aa41dcc66ea48b8eedcd3c888454094913378272c87",
+        "peak_memory": "unknown",
+        "plaintexts": 5,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "e5272402ca4edb8f46a2b0c3effe03d7e67aab52079f9d5da6b1dace87d94f24",
+        "ciphertexts": 73,
+        "final_levels": [
+          1
+        ],
+        "id": "cipher_vm_2",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 173277184,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/0733787269a84882a5c8cc97c9b67bd7/program",
+        "package_binding": "9389230b692f188e1fe9532aecb562ccb95fd4b593ec291e060b2e1e4877d7a3",
+        "peak_memory": "unknown",
+        "plaintexts": 6,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "6baaf5685f7e2bd1c24e871a80cd337de1f2b2a5b89e7f9ea874c9a034774ff3",
+        "ciphertexts": 13,
+        "final_levels": [
+          2
+        ],
+        "id": "cipher_vv_0",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 43122688,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/d9190313971c4e9090b80cd8a391a530/program",
+        "package_binding": "ba1c2b90e977b588eed8b41e193d0bbcf0798433011c08bb7e3f1b39b6e8aae2",
+        "peak_memory": "unknown",
+        "plaintexts": 1,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "3b8bc06f9b53abce1f9bb57ed0bd235c3708dcbe11e08febbc7b69a45730b144",
+        "ciphertexts": 15,
+        "final_levels": [
+          2
+        ],
+        "id": "cipher_vv_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 47316992,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/b1d645e9084349399c4f765859793f31/program",
+        "package_binding": "fa3fa98148b81419e07b92867491d067021b271dc8ac8977a2a7eccbcd299ab7",
+        "peak_memory": "unknown",
+        "plaintexts": 1,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "974562aa95b3b189a9aec0c3aaa3c2f392d07f079f6c1ccf72be00da0792ec81",
+        "ciphertexts": 18,
+        "final_levels": [
+          2
+        ],
+        "id": "cipher_vv_2",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 53608448,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/58a951f6b519473a8ed4e174ddfd06ce/program",
+        "package_binding": "df5aac7cc2c84617969895673377dd9c3bb037a2788de30084abb26b8de071b9",
+        "peak_memory": "unknown",
+        "plaintexts": 1,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "21119f3d05ab0d49fbd162215101f21b1ff996f56cccf10d8cba9c52f844abd7",
+        "ciphertexts": 72,
+        "final_levels": [
+          2,
+          2
+        ],
+        "id": "public_batch_l_0",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 203030528,
+        "numerical_reexecution": false,
+        "output_objects": 2,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/0e2ef108b2a24607aa7b6cac0b4b9b38/program",
+        "package_binding": "b1e1e569f6875df75bc07b50f11afd9694cf5900871ccd29df4d7744b8435bf0",
+        "peak_memory": "unknown",
+        "plaintexts": 16,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "9c93476cca600baaf0397a8979ed7acd42e30008e949bce3277f176262b9bdc1",
+        "ciphertexts": 76,
+        "final_levels": [
+          2,
+          2,
+          2
+        ],
+        "id": "public_batch_l_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 198967296,
+        "numerical_reexecution": false,
+        "output_objects": 3,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/0b613cb2abef41c9a1d596c163f2e73f/program",
+        "package_binding": "611a4ac27bbaab28c860fc05add87c47ab6b206e39461c9320454323aed31315",
+        "peak_memory": "unknown",
+        "plaintexts": 20,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "c8c83f81ae29a06173008603b253ffd280c5a1935ece7a00b0ad24c37585979c",
+        "ciphertexts": 35,
+        "final_levels": [
+          2
+        ],
+        "id": "public_batch_l_2",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 98304000,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/d07daef99b1a4230afa7ac42a6d4ce79/program",
+        "package_binding": "d91b670b102f80808556d2d9c96f573612e17b8afea06533038b12ff4665a16f",
+        "peak_memory": "unknown",
+        "plaintexts": 10,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "83e4ffa4e0ef1f397519a3b9b40a067263fe2ea6a2a9315954629990842ebdc6",
+        "ciphertexts": 123,
+        "final_levels": [
+          2,
+          2
+        ],
+        "id": "public_batch_r_0",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 349306880,
+        "numerical_reexecution": false,
+        "output_objects": 2,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/363c918e5b42473bb7f0175eed787e3e/program",
+        "package_binding": "9886d01811861efc33324c1f25ff16f0ec76052d6e31890098fd20791d945c90",
+        "peak_memory": "unknown",
+        "plaintexts": 26,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "202944a9e3cef13af5f37fedbe3a0aa03110592274b3a3936ca336d7ecc2a624",
+        "ciphertexts": 91,
+        "final_levels": [
+          2
+        ],
+        "id": "public_batch_r_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 232914944,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/6e094d7d085c47849e6ca7cc2b19dca4/program",
+        "package_binding": "2627b1bf000f9f4d29c41ea3fe049e2cb09d7f389a9abffbf659f075ac9a181d",
+        "peak_memory": "unknown",
+        "plaintexts": 25,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "d5ef8227e0b39bf9d89aa1cbb5c0e65e5eda7b9f8af7dcf01c2d3b190deb1452",
+        "ciphertexts": 96,
+        "final_levels": [
+          1
+        ],
+        "id": "public_batch_r_2",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 280756224,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/8514432f3f044a97977ac5f554060395/program",
+        "package_binding": "63508a44c455666e7ed3c381673ffa97b58d80a29421e72b59ed0f64bb8bf0c2",
+        "peak_memory": "unknown",
+        "plaintexts": 24,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "6e4c499a0c3dc18c80b0189d83247d21690b7952c331997cfd160c027ebb2a27",
+        "ciphertexts": 20,
+        "final_levels": [
+          2
+        ],
+        "id": "public_matrix_l_0",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 63963136,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/2c57c1a8ee384e89a02c80def3f6ff9a/program",
+        "package_binding": "aca6e6028ffde5c3d827955730e72c00e12e6170df21dc2e1e8b533e95a3e006",
+        "peak_memory": "unknown",
+        "plaintexts": 6,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "a30dadc211075bc1b3e7594db4ea420ffdd7026d8a81d1cbbeaaf1d342ffd536",
+        "ciphertexts": 82,
+        "final_levels": [
+          2,
+          2
+        ],
+        "id": "public_matrix_l_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 219283456,
+        "numerical_reexecution": false,
+        "output_objects": 2,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/23f7324317e64235b22cd21972c2979e/program",
+        "package_binding": "9d64fbca1b31587558de4f998e9b169cab3d6699b5398bbed7bcb7a6ab6819de",
+        "peak_memory": "unknown",
+        "plaintexts": 18,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "34e4e68a8eca562991bd312105199417491c0740b1218763d3b4a04eeb0efd37",
+        "ciphertexts": 21,
+        "final_levels": [
+          2
+        ],
+        "id": "public_matrix_l_2",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 66191360,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/6d62eff4c7624914b11667d75792ffd9/program",
+        "package_binding": "2ac9d98d406bc2719363263ba10118640b22a66abceb0c95f5d42749a82921de",
+        "peak_memory": "unknown",
+        "plaintexts": 5,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "5a8d6d0af9a4b2d7aa907c37f1ac8d7267657255d0480283c2daa19a740afa02",
+        "ciphertexts": 10,
+        "final_levels": [
+          2
+        ],
+        "id": "public_matrix_r_0",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 28966912,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/d83bcf780127495f9487ace575322042/program",
+        "package_binding": "8c6c5d0f3d6e8238c63e8c1c1f8903059c7c9ed194b3056945fd0918c2752d6f",
+        "peak_memory": "unknown",
+        "plaintexts": 3,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "98fe2ea4714f2da9d36e66d82ae5b43e5feaec334011a384d7cf10f45939550b",
+        "ciphertexts": 25,
+        "final_levels": [
+          2
+        ],
+        "id": "public_matrix_r_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 61472768,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/87638135de9a4108b24412d6879ee21e/program",
+        "package_binding": "3dc39cd8c44c998553a2fae3aeb7ce77dd36bb53e3b5e78e64448df23f3b547f",
+        "peak_memory": "unknown",
+        "plaintexts": 7,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "cc8e53b28dac4a9de0342f6db74c4c4d1388aff8cc49a908f7268c9a42bf6f88",
+        "ciphertexts": 17,
+        "final_levels": [
+          2
+        ],
+        "id": "public_matrix_r_2",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 40894464,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/ace07c9dffad4785b6aeae9e8bd5625b/program",
+        "package_binding": "868176b934c8c8a3677d5f4a1c3b0a29d2c62d1e7b0a0b708e7aa5e522b9757b",
+        "peak_memory": "unknown",
+        "plaintexts": 4,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "b824d424b0e8bc6c4aaf6734962802e74beb154657a67132c1c2e60a71bc728d",
+        "ciphertexts": 30,
+        "final_levels": [
+          2
+        ],
+        "id": "public_vector_l_0",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 98304000,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/8ab87938c69a4841b3c74c5c1aa8c5fe/program",
+        "package_binding": "2af4737e6a19d07200145a66463b5c4d2ddb01bb0c42c1c680c14ef892902dd4",
+        "peak_memory": "unknown",
+        "plaintexts": 8,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "ee4c51aac7018f2c8a682369e6a738548b97759cbcc2d6665e2f20101819941a",
+        "ciphertexts": 55,
+        "final_levels": [
+          2
+        ],
+        "id": "public_vector_l_1",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 169345024,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/1ca28c7bfc0445b89f84e021d55032a3/program",
+        "package_binding": "ad80a82958de3880135a4a9159e397aa7be6cfd986366b65bfc7e3c65850673d",
+        "peak_memory": "unknown",
+        "plaintexts": 14,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "01a65b24a3fec612b9bde4ac9d900903a0686303e4d3ab8941c5a22b2085e24d",
+        "ciphertexts": 45,
+        "final_levels": [
+          2
+        ],
+        "id": "public_vector_l_2",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 169476096,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/e2360fd304874cba870003f41614c3cb/program",
+        "package_binding": "a462a84187378a6ecf5ff3a4b3d714db5998fc0673bd6f7a17510dda8614c76c",
+        "peak_memory": "unknown",
+        "plaintexts": 14,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "2643efc7b97b8d738667c042f9e900c108de88cd73f8a7f616985b78dd26b87a",
+        "ciphertexts": 11,
+        "final_levels": [
+          2
+        ],
+        "id": "public_vector_r_0",
+        "input_ciphertexts": 3,
+        "known_retained_payload_lower_bytes": 35782656,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/a682587b65a24eb5a6fb33c434356c3b/program",
+        "package_binding": "543543adf6a504898615d0ef250ac48ef45560fe97b96682dd95d4fbd0404213",
+        "peak_memory": "unknown",
+        "plaintexts": 3,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "549ca1c9982f794272e932631667a060da3eb5effa0dc43651afaaf8c1aa626f",
+        "ciphertexts": 7,
+        "final_levels": [
+          2
+        ],
+        "id": "public_vector_r_1",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 23330816,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/457033c525b44432b83cee8674a70abb/program",
+        "package_binding": "f635e3da6106fce2cdcb3852af1b9e80cf325a87ecc9e0272fd2ada62ac4c76a",
+        "peak_memory": "unknown",
+        "plaintexts": 2,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      },
+      {
+        "analysis_binding": "29eff94b0a394c8a0681b55e4e459e1b07a343fa045ed39d2b2b83d38305a96a",
+        "ciphertexts": 17,
+        "final_levels": [
+          2
+        ],
+        "id": "public_vector_r_2",
+        "input_ciphertexts": 2,
+        "known_retained_payload_lower_bytes": 41811968,
+        "numerical_reexecution": false,
+        "output_objects": 1,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/349c1614b7f04b5e9d7c2b7991b3f9c2/program",
+        "package_binding": "ffd34029c7ee54dc804d92609b3ba77be0b4c9064f57af4e83754548ed8773d9",
+        "peak_memory": "unknown",
+        "plaintexts": 5,
+        "previous_poseidon_validation": "numerical",
+        "source_origin": "rule_baseline",
+        "status": "assessed"
+      }
+    ],
+    "source_origin": "rule_baseline"
+  },
+  "binding": "a9f514f4c66cd700473b198f80eda0296a8f75350bafd608f1c8c4cdfa76b462",
+  "branch": "lhy-agent-dsl",
+  "cli": {
+    "checks": [
+      {
+        "binding": "6baaf5685f7e2bd1c24e871a80cd337de1f2b2a5b89e7f9ea874c9a034774ff3",
+        "check": "default",
+        "execution_readiness": "unknown",
+        "exit": 0,
+        "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/cli-default-r827.json",
+        "seconds": 3.3551320910919458,
+        "status": "assessed"
+      },
+      {
+        "binding": "16f6c3652853b2f6cfb29378a5857a6ecb6c0fa522bdf33b6a14e830ad429dfd",
+        "check": "below-floor",
+        "execution_readiness": "unknown",
+        "exit": 1,
+        "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/cli-below-floor-r827.json",
+        "seconds": 3.3524476470192894,
+        "status": "blocked"
+      }
+    ],
+    "failed": 0,
+    "passed": 2
+  },
+  "compilation_performed": false,
+  "final_check": {
+    "active_workers": [],
+    "analysis_source_count": 665,
+    "artifact_accounting": "GNU du allocated bytes; initial top-level namespace snapshot plus full current preflight directory",
+    "backend_changes": 0,
+    "branch": "lhy-agent-dsl",
+    "case_hashes": 78,
+    "downloads": 0,
+    "elapsed_seconds": 2584.3521893024445,
+    "existing_modified_paths_preserved": 1481,
+    "free_bytes": 49155047424,
+    "git_diff_check": "passed",
+    "git_publishing": 0,
+    "global_artifact_bytes": 26058821632,
+    "hard_seconds": 3600,
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "http_attempts": 0,
+    "installs": 0,
+    "models_changed": 0,
+    "modified_paths": 1486,
+    "new_artifact_bytes": 24858624,
+    "paid_calls": 0,
+    "parameter_changes": 0,
+    "pending_and_historical_reports": 4,
+    "protected_backend": 648,
+    "protected_references": 6,
+    "reference_or_threshold_changes": 0,
+    "source_authority_sha256": "c50c7cb61eb893ece2175dcd1d0f7373103de976ffabc25bae4b709c405f117d",
+    "source_basis_files": 12,
+    "source_hashes": 670,
+    "status": "passed"
+  },
+  "format": "poseidon-compiled-resources-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "memory_budget_scope": "retained_payload_precheck",
+  "models_in_frozen_benchmark_changed": 0,
+  "native_address_limit": 4294967296,
+  "new_agent_generation": 0,
+  "numerical_gate": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "paid_calls": 0,
+  "pending_paid_proposal": {
+    "case_count": 30,
+    "path": "docs/baseline/agent-pytorch-matrix-live-proposal-r816.json",
+    "sha256": "9e3e7b727ada57aa88838badb0e316531cd9dab1a379d52d33bbe9cc825bb76b",
+    "source_and_case_bindings_unchanged": true,
+    "status": "awaiting separate approval"
+  },
+  "previous_failures": [
+    {
+      "id": "r832_report_aggregation",
+      "layer": "report_driver",
+      "reason": "standalone test log path absent; final combined log used, successful final integrity record retained unchanged",
+      "resolved_in": "r833",
+      "retained": true
+    },
+    {
+      "id": "r831_final_driver",
+      "layer": "audit_driver",
+      "reason": "initial result snapshot contains top-level namespaces; full file paths incorrectly treated historical bytes as new; actual namespace and allocated-byte accounting corrected without changing budgets",
+      "resolved_in": "r832",
+      "retained": true
+    },
+    {
+      "id": "r830_final_driver",
+      "layer": "audit_driver",
+      "reason": "ps header parsed as PID; header excluded before process checks",
+      "resolved_in": "r831",
+      "retained": true
+    },
+    {
+      "id": "r829_final_driver",
+      "layer": "audit_driver",
+      "reason": "pure Nix PATH lacked ps; used existing guest /usr/bin/ps for process inventory only, without installing packages",
+      "resolved_in": "r830",
+      "retained": true
+    },
+    {
+      "id": "r828_final_driver",
+      "layer": "audit_driver",
+      "reason": "compared raw backend tools identity against wrapped component backend record; corrected wrapper comparison without changing identity",
+      "resolved_in": "r829",
+      "retained": true
+    },
+    {
+      "id": "r818",
+      "layer": "test_driver",
+      "reason": "PYTHONPATH not inherited by test subprocess",
+      "resolved_in": "r819",
+      "retained": true
+    },
+    {
+      "id": "r820",
+      "layer": "new_analysis_parser",
+      "reason": "candidate response 128KiB bound used for artifact; fixed to existing artifact 16MiB protocol",
+      "resolved_in": "r821 and r824",
+      "retained": true
+    },
+    {
+      "guest_execution": false,
+      "id": "cli_start",
+      "layer": "ssh_transport",
+      "reason": "banner broken pipe before guest invocation",
+      "resolved_in": "r827"
+    }
+  ],
+  "raw_evidence": [
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/scope.json",
+      "sha256": "2cb5fa98805e2252f02a6c280fb2eb53e673dc29fb319c635dfa597fef1c2f8f"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/analysis-authority-r824.json",
+      "sha256": "e64da32533a70fae62dbbaed20ae0e8e8ab37926d3e9dc653ee18ef7b66b686b"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/tests-r824.json",
+      "sha256": "5c19287befa89b4291520a78b7f62fbdb1f30c8f75c5cbf263208fe1a0c79c02"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/combined-final-r824-r826.log",
+      "sha256": "4713aff11e8741d07a48539c440ed7ed7907c74c36ef3beb4b3b364585ad7452"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/combined-final-terminal.json",
+      "sha256": "1cb61dfaaffc1e25b8f13e199cd54a34a2313eef833304dfb3ae15918df0c26d"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/combined-final-r824-r826.log",
+      "sha256": "4713aff11e8741d07a48539c440ed7ed7907c74c36ef3beb4b3b364585ad7452"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-audit-r825/report.json",
+      "sha256": "e2cb24a902da35298d89ff90d9a86bea87d68ca78da7be020a98fe16e3b781d8"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-reload-r826/report.json",
+      "sha256": "a6392dfab36e8f175862edfa627ed6be0ddf427ae71aa922052f327354c8eb17"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/cli-report-r827.json",
+      "sha256": "0347c1f28ef2d80a51f724e24f2d19366233fd6333fee9cddaba5210e1d14459"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-r828.log",
+      "sha256": "5f080fa9c365ef63bf49850316e1e79ac306452f9d495d1a61a35de75410eb44"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-terminal-r828.json",
+      "sha256": "29d3bf2a6ec6efc1876f4697f32aec9621bd43738fff7a90489f93ce18cdbb8a"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-r829.log",
+      "sha256": "61a1acbcc739439a8f86dcd87759c2384819300b56e0e9035119247a843c64bb"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-terminal-r829.json",
+      "sha256": "67eba304918f89f16007658f08dd9c275d3f0d5e8e2e23be4b03542ad7f99be3"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-r830.log",
+      "sha256": "7fc7bd5e3d71c12cbeba2ee7c7e93d9739d46de3edc5ba09b12f97ea7fc4ee20"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-terminal-r830.json",
+      "sha256": "dcfdcb75fed298abf92baa05d613215c85417ea8a7ea9278fb05bd6d6a2a13e7"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-r831.log",
+      "sha256": "bf2c63bd6a289727b35abcb60b7a0645e666a3bd1f5c802721480bf17d5c3287"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-driver-terminal-r831.json",
+      "sha256": "2c87d16d35ca764f5fce9444864e03b8b30f2356439cbf922f8ace931bc043ad"
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-compiled-resources-preflight-r817/final-check-r828.json",
+      "sha256": "ec0c6ca5895851ad0521d9e4dc13414b0ce613533dc396a2674559427e637a53"
+    }
+  ],
+  "real_reload": {
+    "compared_values": 152,
+    "compilation_performed": false,
+    "failed": 0,
+    "generation_performed": false,
+    "input_groups": 12,
+    "max_absolute_error": 8.873954631671843e-07,
+    "passed": 3,
+    "planned": 3,
+    "rejection_checks": 13,
+    "rejects": [
+      {
+        "check": "cipher_vv_0: lower bound exceeds preflight budget",
+        "exception": "compiled_resource_execution_blocked"
+      },
+      {
+        "check": "cipher_vv_0: forged peak memory",
+        "exception": "compiled_resource_analysis_changed"
+      },
+      {
+        "check": "cipher_vv_0: stale artifact identity",
+        "exception": "compiled_resource_analysis_changed"
+      },
+      {
+        "check": "cipher_vv_0: budget above unchanged sandbox",
+        "exception": "compiled_resource_memory_budget"
+      },
+      {
+        "check": "cipher_batch_0: lower bound exceeds preflight budget",
+        "exception": "compiled_resource_execution_blocked"
+      },
+      {
+        "check": "cipher_batch_0: forged peak memory",
+        "exception": "compiled_resource_analysis_changed"
+      },
+      {
+        "check": "cipher_batch_0: stale artifact identity",
+        "exception": "compiled_resource_analysis_changed"
+      },
+      {
+        "check": "cipher_batch_0: budget above unchanged sandbox",
+        "exception": "compiled_resource_memory_budget"
+      },
+      {
+        "check": "public_batch_l_1: lower bound exceeds preflight budget",
+        "exception": "compiled_resource_execution_blocked"
+      },
+      {
+        "check": "public_batch_l_1: forged peak memory",
+        "exception": "compiled_resource_analysis_changed"
+      },
+      {
+        "check": "public_batch_l_1: stale artifact identity",
+        "exception": "compiled_resource_analysis_changed"
+      },
+      {
+        "check": "public_batch_l_1: budget above unchanged sandbox",
+        "exception": "compiled_resource_memory_budget"
+      },
+      {
+        "check": "package candidate hash tampered",
+        "exception": "Bundle file integrity"
+      }
+    ],
+    "rows": [
+      {
+        "analysis_binding": "6baaf5685f7e2bd1c24e871a80cd337de1f2b2a5b89e7f9ea874c9a034774ff3",
+        "comparison": {
+          "atol": 1e-05,
+          "compared_values": 4,
+          "cosine_similarity": 1.0000000000000002,
+          "mae": 2.3718064737486424e-09,
+          "max_absolute_error": 7.2498829162270795e-09,
+          "max_nonzero_reference_relative_error": 2.41662763874236e-09,
+          "nonzero_reference_count": 3,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "compilation_performed": false,
+        "compiled_artifacts_reused": true,
+        "developer_memory_observation": {
+          "interval_seconds": 0.2,
+          "processes": {},
+          "scope": "sampled /proc memory of CPU runner; not a forecast or complete host peak",
+          "status": "not_observed"
+        },
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-qej7nnyz",
+        "generation_performed": false,
+        "id": "cipher_vv_0",
+        "input_groups": 4,
+        "native_process_address_limit": 4294967296,
+        "numerical_seconds": 1.6996736850123852,
+        "numerically_validated": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/d9190313971c4e9090b80cd8a391a530/program",
+        "package_binding": "ba1c2b90e977b588eed8b41e193d0bbcf0798433011c08bb7e3f1b39b6e8aae2",
+        "source_origin": "rule_baseline",
+        "status": "passed"
+      },
+      {
+        "analysis_binding": "86604040f406169dfa98575c6c23189ca53e8bc004a747849489930dda99b221",
+        "comparison": {
+          "atol": 1e-05,
+          "compared_values": 96,
+          "cosine_similarity": 0.9999999999999682,
+          "mae": 4.8539024119400904e-08,
+          "max_absolute_error": 8.873954631671843e-07,
+          "max_nonzero_reference_relative_error": 5.52427506498508e-06,
+          "nonzero_reference_count": 72,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "compilation_performed": false,
+        "compiled_artifacts_reused": true,
+        "developer_memory_observation": {
+          "interval_seconds": 0.2,
+          "processes": {},
+          "scope": "sampled /proc memory of CPU runner; not a forecast or complete host peak",
+          "status": "not_observed"
+        },
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-txkcsxpy",
+        "generation_performed": false,
+        "id": "cipher_batch_0",
+        "input_groups": 4,
+        "native_process_address_limit": 4294967296,
+        "numerical_seconds": 9.88741804601159,
+        "numerically_validated": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/4608030548004c9b93b0ea2cfc3d584f/program",
+        "package_binding": "f6ef6cbd23386c7dc08c010a0b95626a4693bb801ccda7d7962dd70b0a7efa8c",
+        "source_origin": "rule_baseline",
+        "status": "passed"
+      },
+      {
+        "analysis_binding": "9c93476cca600baaf0397a8979ed7acd42e30008e949bce3277f176262b9bdc1",
+        "comparison": {
+          "atol": 1e-05,
+          "compared_values": 52,
+          "cosine_similarity": 0.9999999999999681,
+          "mae": 3.2587789851240363e-09,
+          "max_absolute_error": 4.2344767275936945e-08,
+          "max_nonzero_reference_relative_error": 5.807274323326272e-07,
+          "nonzero_reference_count": 39,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "compilation_performed": false,
+        "compiled_artifacts_reused": true,
+        "developer_memory_observation": {
+          "interval_seconds": 0.2,
+          "processes": {},
+          "scope": "sampled /proc memory of CPU runner; not a forecast or complete host peak",
+          "status": "not_observed"
+        },
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-36f7zmnd",
+        "generation_performed": false,
+        "id": "public_batch_l_1",
+        "input_groups": 4,
+        "native_process_address_limit": 4294967296,
+        "numerical_seconds": 2.35184693406336,
+        "numerically_validated": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-matmul-backend-r812/tasks/0b613cb2abef41c9a1d596c163f2e73f/program",
+        "package_binding": "611a4ac27bbaab28c860fc05add87c47ab6b206e39461c9320454323aed31315",
+        "source_origin": "rule_baseline",
+        "status": "passed"
+      }
+    ],
+    "source_origin": "rule_baseline"
+  },
+  "report_policy": {
+    "previous_bindings_not_rewritten": true,
+    "private_test_arrays_omitted": true,
+    "raw_responses_and_private_arrays_retained_in_work_root": true,
+    "reference_arrays_omitted": true
+  },
+  "requested_budget_applied_to_runtime": false,
+  "resource_policy": {
+    "policy": "fixed-cpu-retained-coefficients-v1",
+    "policy_sha256": "0cab58693e08089fc5c376e59f2729b8e903bbcc01e565ba08a6ec2892a25c58",
+    "source_basis_files": 12
+  },
+  "scope": "optional compiled-program resource analysis; not full Agent-generalization completion",
+  "source_authority": {
+    "policy": "conservative-local-module-closure-v1",
+    "sha256": "c50c7cb61eb893ece2175dcd1d0f7373103de976ffabc25bae4b709c405f117d",
+    "source_count": 665
+  },
+  "source_hashes": {
+    "scripts/analyze_program.py": "502914293f6df6e5bd5750be43f9dc9ce2baa59cd88d66e21a5cd1703bbd3a82",
+    "scripts/baseline/application_planning/compiled-resource-policy-v1.json": "0cab58693e08089fc5c376e59f2729b8e903bbcc01e565ba08a6ec2892a25c58",
+    "scripts/baseline/application_planning/compiled_resources.py": "c96591bf07af3cd0188aef1ec291ebf976f413bb4036acd23f19179c4d12a566",
+    "scripts/baseline/application_planning/tests/test_compiled_resources.py": "c3e2ad2c88dc8da744025d9c618efe8843c5d71208e501b003ca86d90e7c4a27"
+  },
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "status": "complete",
+  "tests": {
+    "encrypted_execution": false,
+    "errors": [],
+    "failed": [],
+    "modules": [
+      "application_planning.tests.test_compiled_resources",
+      "application_planning.tests.test_resources",
+      "application_planning.tests.test_layout",
+      "application_execution.tests.test_context"
+    ],
+    "paid_calls": 0,
+    "passed": 70,
+    "seconds": 31.50870552205015,
+    "skipped": [],
+    "tests": 70
+  },
+  "unverified": [
+    "peak memory/allocator capacity/evaluation-key/workspace forecast",
+    "automatic default Application integration of optional compiled-resource service",
+    "new v7 matrix real Agent generation",
+    "CPU bootstrap and cipher-preserving multi-call partition",
+    "CUDA hardware",
+    "native x86 and clean-machine setup",
+    "end-to-end ResNet20"
+  ]
+}

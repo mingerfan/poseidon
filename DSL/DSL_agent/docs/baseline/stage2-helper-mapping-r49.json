@@ -1,0 +1,1968 @@
+{
+  "agent_stage_complete": false,
+  "all_api_behaviors_accepted": false,
+  "api": [
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_BN",
+        "missing_task_ids": [],
+        "scope": "bound_batch1_rank2_to4_prefix_fits_period",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_bn_asymmetric_0",
+          "upstream_bn_multi_residual",
+          "upstream_bn_then_linear",
+          "upstream_linear_then_bn",
+          "upstream_bn_nested_native"
+        ],
+        "verified_contexts": 4
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_BN"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_MPBN",
+        "missing_task_ids": [
+          "upstream_bench_helper_0008"
+        ],
+        "scope": "full_virtual_ring_fixed_prefix_or_explicit_chunked_bindings_within_work_budget",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_virtual_38_HE_MPBN",
+          "upstream_virtual_39_HE_MPBN",
+          "upstream_chunk_helper_4",
+          "upstream_chunk_helper_5",
+          "upstream_chunk_helper_9",
+          "upstream_chunk_helper_10"
+        ],
+        "verified_contexts": 4
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_MPBN"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_Conv",
+        "missing_task_ids": [],
+        "scope": "bound_batch1_periodic_or_public_window_maps_within_work_budget_without_bootstrap",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_conv_1_2_2_1_1",
+          "upstream_conv_1_2_2_1_1_pre_negate",
+          "upstream_conv_1_2_2_1_1_post_square",
+          "upstream_bench_helper_0016",
+          "upstream_bench_helper_0018",
+          "upstream_bench_helper_0021"
+        ],
+        "verified_contexts": 4
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_Conv"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_ConvBN",
+        "missing_task_ids": [],
+        "scope": "bound_conv2d_bn_edge_exact_public_mean_shift_and_maps_within_work_budget",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_bench_helper_0024",
+          "upstream_bench_helper_0026",
+          "upstream_bench_helper_0029"
+        ],
+        "verified_contexts": 3
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_ConvBN"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "backend_blocked",
+      "symbol": "HE_MaxPad"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "backend_blocked",
+      "symbol": "HE_MaxPad.maximum"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "backend_blocked",
+      "symbol": "HE_Max"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "backend_blocked",
+      "symbol": "HE_Max.maximum"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_Avg",
+        "missing_task_ids": [],
+        "scope": "bound_batch1_periodic_or_public_window_maps_within_work_budget_without_bootstrap",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_avg_1_4_4_2_2",
+          "upstream_avg_1_4_4_2_2_pre_negate",
+          "upstream_avg_1_4_4_2_2_post_square",
+          "upstream_bench_helper_0048",
+          "upstream_bench_helper_0050",
+          "upstream_bench_helper_0053"
+        ],
+        "verified_contexts": 4
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_Avg"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_DS",
+        "missing_task_ids": [],
+        "scope": "bound_two_spatial_slices_step_two_with_actual_centering_and_public_maps",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_bench_helper_0056",
+          "upstream_bench_helper_0058",
+          "upstream_ds_then_square"
+        ],
+        "verified_contexts": 3
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_DS"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_Pool",
+        "missing_task_ids": [],
+        "scope": "bound_batch1_periodic_or_public_window_maps_within_work_budget_without_bootstrap",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_pool_2_4_4",
+          "upstream_pool_2_4_4_pre_negate",
+          "upstream_pool_2_4_4_post_square",
+          "upstream_bench_helper_0021",
+          "upstream_bench_helper_0053",
+          "upstream_bench_helper_0064",
+          "upstream_bench_helper_0066",
+          "upstream_mapped_pool_then_square",
+          "upstream_bench_helper_0029",
+          "upstream_bench_helper_0093"
+        ],
+        "verified_contexts": 10
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_Pool"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_Linear",
+        "missing_task_ids": [
+          "upstream_bench_helper_0072"
+        ],
+        "scope": "full_virtual_ring_fixed_prefix_or_explicit_chunked_bindings_within_work_budget",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_virtual_40_HE_Linear",
+          "upstream_virtual_41_HE_Linear",
+          "upstream_chunk_helper_0",
+          "upstream_chunk_helper_1",
+          "upstream_chunk_helper_2",
+          "upstream_chunk_helper_3",
+          "upstream_chunk_helper_7",
+          "upstream_chunk_helper_8"
+        ],
+        "verified_contexts": 5
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_Linear"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_ReshapeLinear",
+        "missing_task_ids": [
+          "upstream_bench_helper_0080"
+        ],
+        "scope": "full_virtual_ring_fixed_prefix_or_explicit_chunked_bindings_within_work_budget",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_virtual_42_HE_ReshapeLinear",
+          "upstream_virtual_43_HE_ReshapeLinear",
+          "upstream_chunk_helper_6",
+          "upstream_chunk_helper_11",
+          "upstream_chunk_helper_12"
+        ],
+        "verified_contexts": 4
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_ReshapeLinear"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_DwConv",
+        "missing_task_ids": [],
+        "scope": "bound_conv2d_bn_edge_exact_public_mean_shift_and_maps_within_work_budget",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_bench_helper_0088",
+          "upstream_bench_helper_0090",
+          "upstream_bench_helper_0093"
+        ],
+        "verified_contexts": 3
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_DwConv"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_Concat",
+        "missing_task_ids": [],
+        "scope": "two_equal_shape_flat_or_batch1_channel_concat_fits_period",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_concat_frozen_1",
+          "upstream_concat_square_negate",
+          "upstream_concat_then_linear"
+        ],
+        "verified_contexts": 3
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_Concat"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "backend_blocked",
+      "symbol": "HE_ReLU"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "backend_blocked",
+      "symbol": "HE_ReLU.sign"
+    },
+    {
+      "partition": {
+        "blocker": null,
+        "id": "helper.HE_SiLU",
+        "missing_task_ids": [],
+        "scope": "fixed_polynomial_no_bootstrap",
+        "state": "three_contexts_verified",
+        "task_ids": [
+          "upstream_silu_frozen_0",
+          "upstream_silu_nested_native",
+          "upstream_silu_shared_rotation"
+        ],
+        "verified_contexts": 3
+      },
+      "reason": "Only recorded adapter parameter/layout partitions; not all helper arguments or implementation branches",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "state": "mapped_bounded_entry_partition",
+      "symbol": "HE_SiLU"
+    },
+    {
+      "reason": "Ceil/floor of public shape arithmetic; not encrypted rounding.",
+      "role": "public_integer_shape_utility",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "cint"
+    },
+    {
+      "reason": "Ceil/floor of public shape arithmetic; not encrypted rounding.",
+      "role": "public_integer_shape_utility",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "fint"
+    },
+    {
+      "reason": "Default torch.maximum is replaced by HE_Max/HE_MaxPad; distinguish default plaintext hook from bootstrap encrypted path.",
+      "role": "mutable_maximum_hook",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "outside_candidate_computation",
+      "symbol": "maximum"
+    },
+    {
+      "reason": "Maps roll(A,i) to A.rotate(-i); direction is part of the contract.",
+      "role": "cipher_rotation_wrapper",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "roll"
+    },
+    {
+      "reason": "Builds a fixed-coefficient Chebyshev evaluation closure; trees, coefficients and scale must be bound.",
+      "role": "polynomial_factory_and_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "GenPoly"
+    },
+    {
+      "reason": "Builds a fixed-coefficient Chebyshev evaluation closure; trees, coefficients and scale must be bound.",
+      "role": "polynomial_factory_and_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "GenPoly.polynomial"
+    },
+    {
+      "reason": "Captures packing geometry and returns keyed helper closures; construction alone is not numeric coverage.",
+      "role": "packing_closure_factory",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure"
+    },
+    {
+      "reason": "Rearranges public torch tensors for input/output packing; not arbitrary encrypted reshape.",
+      "role": "public_tensor_pack_unpack",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.MultParPack"
+    },
+    {
+      "reason": "Rearranges public torch tensors for input/output packing; not arbitrary encrypted reshape.",
+      "role": "public_tensor_pack_unpack",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.OutPack"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.ParMultWgt"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.DwMultWgt"
+    },
+    {
+      "reason": "Rotate/add reduction handles power-of-two and remainder branches; requires packing-sensitive contexts.",
+      "role": "cipher_reduction_dependency",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.SumSlots"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.Selecting"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.ParBNConst"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.ParInBNConst"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.DownSelecting"
+    },
+    {
+      "reason": "upstream_stub",
+      "role": "upstream_unimplemented_stub",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "backend_blocked",
+      "symbol": "shapeClosure.AvgMidSelecting"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.ParMPDA"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.ParMPDM"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.PoolSelecting"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.Downsamp"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.AvgPool"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.AvgMidPool"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.ConcatSelecting"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.Concat"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_maximum_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "backend_blocked",
+      "symbol": "shapeClosure.MaxPool"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_maximum_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "backend_blocked",
+      "symbol": "shapeClosure.MaxPoolPad"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.DwConvBN"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.MultParBN"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.MultParConv"
+    },
+    {
+      "reason": "Real MPCB operation over expression containers; bounded adapter mappings determine supported layouts.",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "shapeClosure.MultParConvBN"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "abstractBN"
+    },
+    {
+      "reason": "Fixed nt affine operation; actual helper adapters bind layout and public parameters.",
+      "role": "cipher_dense_affine_dependency",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Linear"
+    },
+    {
+      "reason": "Fixed nt affine operation; actual helper adapters bind layout and public parameters.",
+      "role": "cipher_dense_affine_dependency",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "BN"
+    },
+    {
+      "reason": "Public constants/layout transformation used by checked helper paths; every branch is not individually traced.",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Reshape"
+    },
+    {
+      "reason": "Public dictionary/model shape propagation only; CascadeMax itself does not execute Max or bootstrap.",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "InferShapes"
+    },
+    {
+      "reason": "Public dictionary/model shape propagation only; CascadeMax itself does not execute Max or bootstrap.",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "CascadeConcat"
+    },
+    {
+      "reason": "Public dictionary/model shape propagation only; CascadeMax itself does not execute Max or bootstrap.",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "CascadeConv"
+    },
+    {
+      "reason": "Public dictionary/model shape propagation only; CascadeMax itself does not execute Max or bootstrap.",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "CascadeMax"
+    },
+    {
+      "reason": "Public dictionary/model shape propagation only; CascadeMax itself does not execute Max or bootstrap.",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "CascadeDS"
+    },
+    {
+      "reason": "Public dictionary/model shape propagation only; CascadeMax itself does not execute Max or bootstrap.",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "CascadePool"
+    },
+    {
+      "reason": "Uses source-pinned coefficient/tree data and MPCB.GenPoly, including actual coefficient structure.",
+      "role": "fixed_polynomial_factory",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "GenPoly"
+    },
+    {
+      "reason": "Publicly named polynomial composition not directly exposed by current helper profiles; requires distinct capacity/approximation checks.",
+      "role": "standalone_approximation_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "sign"
+    },
+    {
+      "reason": "Publicly named polynomial composition not directly exposed by current helper profiles; requires distinct capacity/approximation checks.",
+      "role": "standalone_approximation_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "genRelu6"
+    },
+    {
+      "reason": "Publicly named polynomial composition not directly exposed by current helper profiles; requires distinct capacity/approximation checks.",
+      "role": "standalone_approximation_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "relua"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_maximum_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "backend_blocked",
+      "symbol": "maxx"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_maximum_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "backend_blocked",
+      "symbol": "maxx.sign"
+    },
+    {
+      "reason": "Uses NumPy maximum/sqrt/mean on plaintext; not evidence for encrypted ReLU or sqrt support.",
+      "role": "plaintext_diagnostic_utility",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "outside_candidate_computation",
+      "symbol": "ReLU"
+    },
+    {
+      "reason": "Uses NumPy maximum/sqrt/mean on plaintext; not evidence for encrypted ReLU or sqrt support.",
+      "role": "plaintext_diagnostic_utility",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "outside_candidate_computation",
+      "symbol": "rms"
+    },
+    {
+      "reason": "Uses NumPy maximum/sqrt/mean on plaintext; not evidence for encrypted ReLU or sqrt support.",
+      "role": "plaintext_diagnostic_utility",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "state": "outside_candidate_computation",
+      "symbol": "nprelu"
+    },
+    {
+      "reason": "Owned by trusted tracing lifecycle; generated programs may not choose arbitrary paths or teardown the context.",
+      "role": "trusted_framework_io",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "save"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_frontend_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "backend_blocked",
+      "symbol": "unaryFactory"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_frontend_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "backend_blocked",
+      "symbol": "unaryFactory.unaryMethod"
+    },
+    {
+      "reason": "real_bootstrap",
+      "role": "bootstrap_frontend_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "backend_blocked",
+      "symbol": "unaryFactory.unaryMethod.apply"
+    },
+    {
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "hecateMetaBase"
+    },
+    {
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "hecateMetaBase.__new__"
+    },
+    {
+      "reason": "Installs copy/deepcopy raisers; intentional rejection, not a missing numerical operator.",
+      "role": "copy_rejection",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "hecateMetaBase.__new__.raiser"
+    },
+    {
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "hecateMetaBinary"
+    },
+    {
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "hecateMetaBinary.__new__"
+    },
+    {
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory"
+    },
+    {
+      "reason": "Creates binary IR with explicit left/right operand order; __i*__ is installed as binaryMethod.",
+      "role": "binary_operand_order",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryMethod"
+    },
+    {
+      "reason": "Creates binary IR with explicit left/right operand order; __i*__ is installed as binaryMethod.",
+      "role": "binary_operand_order",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryReverseMethod"
+    },
+    {
+      "reason": "Function mutates self.obj but is never installed; actual __i*__ uses binaryMethod, so do not attribute mutation semantics to this unused definition.",
+      "role": "defined_but_unregistered_inplace",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryInplaceMethod"
+    },
+    {
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "hecateMetaBinary.__new__.innerFactory"
+    },
+    {
+      "reason": "Installed inner unary negation opcode 13; distinguish object-array outer operations.",
+      "role": "cipher_negation_implementation",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "hecateMetaBinary.__new__.innerFactory.innerMethod"
+    },
+    {
+      "reason": "Creates frontend rotation with literal offset; key/layout restrictions remain caller-bound.",
+      "role": "cipher_rotation_implementation",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "hecateMetaBinary.__new__.rotate"
+    },
+    {
+      "reason": "Finds source location in call stack for trusted frontend; candidate introspection remains rejected.",
+      "role": "trusted_framework_introspection",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "getProperFrame"
+    },
+    {
+      "reason": "Recursive public-list shape/flatten utilities; not encrypted tensor reshape and not direct candidate imports.",
+      "role": "legacy_public_literal_utility",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "recType"
+    },
+    {
+      "reason": "Recursive public-list shape/flatten utilities; not encrypted tensor reshape and not direct candidate imports.",
+      "role": "legacy_public_literal_utility",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "flatten"
+    },
+    {
+      "reason": "Converts allowed public operands to Plain; upstream capability is broader than the restricted candidate allowlist.",
+      "role": "implicit_public_operand_conversion",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "resolveType"
+    },
+    {
+      "reason": "Wraps frontend object handle; candidates cannot manufacture or mutate raw C++ handles.",
+      "role": "frontend_expression_handle",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "Expr"
+    },
+    {
+      "reason": "Wraps frontend object handle; candidates cannot manufacture or mutate raw C++ handles.",
+      "role": "frontend_expression_handle",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "Expr.__init__"
+    },
+    {
+      "reason": "Creates a public constant via ctypes; fixed candidate constants and allocation bounds still apply.",
+      "role": "plaintext_expression_constructor",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Plain"
+    },
+    {
+      "reason": "Creates a public constant via ctypes; fixed candidate constants and allocation bounds still apply.",
+      "role": "plaintext_expression_constructor",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Plain.__init__"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty.__init__"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty.__add__"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty.__radd__"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty.__iadd__"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty.__sub__"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty.__rsub__"
+    },
+    {
+      "reason": "Identity-like accumulation; all subtraction methods return resolveType(other) in this pinned source. Do not assume ordinary zero-minus-x semantics.",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Empty.__isub__"
+    },
+    {
+      "reason": "Signature binding, return container preservation, forward calls, recursion rejection and failed-context rejection.",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "func"
+    },
+    {
+      "reason": "Signature binding, return container preservation, forward calls, recursion rejection and failed-context rejection.",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "func.generateFunc"
+    },
+    {
+      "reason": "Signature binding, return container preservation, forward calls, recursion rejection and failed-context rejection.",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Func"
+    },
+    {
+      "reason": "Signature binding, return container preservation, forward calls, recursion rejection and failed-context rejection.",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Func.__init__"
+    },
+    {
+      "reason": "Signature binding, return container preservation, forward calls, recursion rejection and failed-context rejection.",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Func.eval"
+    },
+    {
+      "reason": "Signature binding, return container preservation, forward calls, recursion rejection and failed-context rejection.",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "execution_partition_mapping_pending",
+      "symbol": "Func.__call__"
+    },
+    {
+      "reason": "Owned by trusted tracing lifecycle; generated programs may not choose arbitrary paths or teardown the context.",
+      "role": "trusted_framework_io",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "state": "outside_candidate_computation",
+      "symbol": "removeCtxt"
+    }
+  ],
+  "api_counts": {
+    "backend_blocked": 14,
+    "execution_partition_mapping_pending": 65,
+    "mapped_bounded_entry_partition": 12,
+    "outside_candidate_computation": 16
+  },
+  "binding": "e63087baffeed414c5f70619f6f3399a2e4779c374d44c88aeaee97b1020cd91",
+  "blocked_helper_partitions": 3,
+  "format": "poseidon-stage2-helper-mapping-v1",
+  "helper_partitions": [
+    {
+      "blocker": null,
+      "id": "helper.HE_BN",
+      "missing_task_ids": [],
+      "scope": "bound_batch1_rank2_to4_prefix_fits_period",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_bn_asymmetric_0",
+        "upstream_bn_multi_residual",
+        "upstream_bn_then_linear",
+        "upstream_linear_then_bn",
+        "upstream_bn_nested_native"
+      ],
+      "verified_contexts": 4
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_MPBN",
+      "missing_task_ids": [
+        "upstream_bench_helper_0008"
+      ],
+      "scope": "full_virtual_ring_fixed_prefix_or_explicit_chunked_bindings_within_work_budget",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_virtual_38_HE_MPBN",
+        "upstream_virtual_39_HE_MPBN",
+        "upstream_chunk_helper_4",
+        "upstream_chunk_helper_5",
+        "upstream_chunk_helper_9",
+        "upstream_chunk_helper_10"
+      ],
+      "verified_contexts": 4
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_Conv",
+      "missing_task_ids": [],
+      "scope": "bound_batch1_periodic_or_public_window_maps_within_work_budget_without_bootstrap",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_conv_1_2_2_1_1",
+        "upstream_conv_1_2_2_1_1_pre_negate",
+        "upstream_conv_1_2_2_1_1_post_square",
+        "upstream_bench_helper_0016",
+        "upstream_bench_helper_0018",
+        "upstream_bench_helper_0021"
+      ],
+      "verified_contexts": 4
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_ConvBN",
+      "missing_task_ids": [],
+      "scope": "bound_conv2d_bn_edge_exact_public_mean_shift_and_maps_within_work_budget",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_bench_helper_0024",
+        "upstream_bench_helper_0026",
+        "upstream_bench_helper_0029"
+      ],
+      "verified_contexts": 3
+    },
+    {
+      "blocker": "bootstrap_backend",
+      "id": "helper.HE_MaxPad",
+      "missing_task_ids": [],
+      "scope": null,
+      "state": "backend_blocked",
+      "task_ids": [],
+      "verified_contexts": 0
+    },
+    {
+      "blocker": "bootstrap_backend",
+      "id": "helper.HE_Max",
+      "missing_task_ids": [],
+      "scope": null,
+      "state": "backend_blocked",
+      "task_ids": [],
+      "verified_contexts": 0
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_Avg",
+      "missing_task_ids": [],
+      "scope": "bound_batch1_periodic_or_public_window_maps_within_work_budget_without_bootstrap",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_avg_1_4_4_2_2",
+        "upstream_avg_1_4_4_2_2_pre_negate",
+        "upstream_avg_1_4_4_2_2_post_square",
+        "upstream_bench_helper_0048",
+        "upstream_bench_helper_0050",
+        "upstream_bench_helper_0053"
+      ],
+      "verified_contexts": 4
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_DS",
+      "missing_task_ids": [],
+      "scope": "bound_two_spatial_slices_step_two_with_actual_centering_and_public_maps",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_bench_helper_0056",
+        "upstream_bench_helper_0058",
+        "upstream_ds_then_square"
+      ],
+      "verified_contexts": 3
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_Pool",
+      "missing_task_ids": [],
+      "scope": "bound_batch1_periodic_or_public_window_maps_within_work_budget_without_bootstrap",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_pool_2_4_4",
+        "upstream_pool_2_4_4_pre_negate",
+        "upstream_pool_2_4_4_post_square",
+        "upstream_bench_helper_0021",
+        "upstream_bench_helper_0053",
+        "upstream_bench_helper_0064",
+        "upstream_bench_helper_0066",
+        "upstream_mapped_pool_then_square",
+        "upstream_bench_helper_0029",
+        "upstream_bench_helper_0093"
+      ],
+      "verified_contexts": 10
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_Linear",
+      "missing_task_ids": [
+        "upstream_bench_helper_0072"
+      ],
+      "scope": "full_virtual_ring_fixed_prefix_or_explicit_chunked_bindings_within_work_budget",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_virtual_40_HE_Linear",
+        "upstream_virtual_41_HE_Linear",
+        "upstream_chunk_helper_0",
+        "upstream_chunk_helper_1",
+        "upstream_chunk_helper_2",
+        "upstream_chunk_helper_3",
+        "upstream_chunk_helper_7",
+        "upstream_chunk_helper_8"
+      ],
+      "verified_contexts": 5
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_ReshapeLinear",
+      "missing_task_ids": [
+        "upstream_bench_helper_0080"
+      ],
+      "scope": "full_virtual_ring_fixed_prefix_or_explicit_chunked_bindings_within_work_budget",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_virtual_42_HE_ReshapeLinear",
+        "upstream_virtual_43_HE_ReshapeLinear",
+        "upstream_chunk_helper_6",
+        "upstream_chunk_helper_11",
+        "upstream_chunk_helper_12"
+      ],
+      "verified_contexts": 4
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_DwConv",
+      "missing_task_ids": [],
+      "scope": "bound_conv2d_bn_edge_exact_public_mean_shift_and_maps_within_work_budget",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_bench_helper_0088",
+        "upstream_bench_helper_0090",
+        "upstream_bench_helper_0093"
+      ],
+      "verified_contexts": 3
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_Concat",
+      "missing_task_ids": [],
+      "scope": "two_equal_shape_flat_or_batch1_channel_concat_fits_period",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_concat_frozen_1",
+        "upstream_concat_square_negate",
+        "upstream_concat_then_linear"
+      ],
+      "verified_contexts": 3
+    },
+    {
+      "blocker": "bootstrap_backend",
+      "id": "helper.HE_ReLU",
+      "missing_task_ids": [],
+      "scope": null,
+      "state": "backend_blocked",
+      "task_ids": [],
+      "verified_contexts": 0
+    },
+    {
+      "blocker": null,
+      "id": "helper.HE_SiLU",
+      "missing_task_ids": [],
+      "scope": "fixed_polynomial_no_bootstrap",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_silu_frozen_0",
+        "upstream_silu_nested_native",
+        "upstream_silu_shared_rotation"
+      ],
+      "verified_contexts": 3
+    },
+    {
+      "blocker": null,
+      "id": "helper.chunked.HE_MPBN",
+      "missing_task_ids": [],
+      "scope": "complete logical input assembled from independent chunks; immutable per-output chunk projection",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_chunk_helper_4",
+        "upstream_chunk_helper_5",
+        "upstream_chunk_helper_9",
+        "upstream_chunk_helper_10"
+      ],
+      "verified_contexts": 3
+    },
+    {
+      "blocker": null,
+      "id": "helper.chunked.HE_Linear",
+      "missing_task_ids": [],
+      "scope": "complete logical input assembled from independent chunks; immutable per-output chunk projection",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_chunk_helper_0",
+        "upstream_chunk_helper_1",
+        "upstream_chunk_helper_2",
+        "upstream_chunk_helper_3",
+        "upstream_chunk_helper_7",
+        "upstream_chunk_helper_8"
+      ],
+      "verified_contexts": 3
+    },
+    {
+      "blocker": null,
+      "id": "helper.chunked.HE_ReshapeLinear",
+      "missing_task_ids": [],
+      "scope": "complete logical input assembled from independent chunks; immutable per-output chunk projection",
+      "state": "three_contexts_verified",
+      "task_ids": [
+        "upstream_chunk_helper_6",
+        "upstream_chunk_helper_11",
+        "upstream_chunk_helper_12"
+      ],
+      "verified_contexts": 3
+    }
+  ],
+  "historical_verifier_sha256": "75b102b717e73e209fa3cf0363766a2a731497385e90ec39b5daececf46afb03",
+  "input_reports": [
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-chunks-r29-helper-directed",
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "plan_sha256": "025b8539f8e6375b6e80267e8725a490460d75ed8a0143100966abb7f7794278",
+      "report_sha256": "6c220e8cc2a60b50fe040e471d5e7efcd3c399f1d779b52aad24bb0ae87be3c8"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-chunks-r29-helper-remainder",
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "plan_sha256": "a4110d368dbbe4e39ed324ab6f41097d78a3b473d57e4a4800922461e6e92d28",
+      "report_sha256": "0eb2c580ffed6b058b91c710d851f079f4ac21aee2785e6e66a73cca81c05413"
+    }
+  ],
+  "ledger_sha256": "f07d6fbb1f2c55022dcbc421a9e8082b446d3bdc34dff170ebd3f97352fb8851",
+  "new_encrypted_executions": 0,
+  "offline_stage_complete": false,
+  "paid_calls": 0,
+  "records": {
+    "upstream_avg_1_4_4_2_2": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-z3loxz6u",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "5adda9ca6ca15f8d42524066862b20077e15a978c5c2b8981f259a84b74167b1",
+      "numerical": true,
+      "report_sha256": "d79386f7e0c43664679c357a82fed322d59150fe1155a39edeff397be0c61ca9",
+      "task_sha256": "a1064db24cab884c2f296fee6c9ef6bafb9cce212113bb6568d02a8565a3413a",
+      "topology": "e1909f31f114ce8950af81a20cf9a3a10f53d5133d8c1a9a27a626a4dae78f30"
+    },
+    "upstream_avg_1_4_4_2_2_post_square": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-vyn9g6fh",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "490058610281e6d89be05055d8aaafbdcf4cf9819b6aa78b89f78dbb7ad88fa1",
+      "numerical": true,
+      "report_sha256": "b3da5036c6c6e618a62590049957e8a38b9786f5b69b995b6053f8558e9c5182",
+      "task_sha256": "98441a2c3ab8e444da550f7b91126d1e537701489bdb60ea356520db041a3d78",
+      "topology": "534d354d0ac4876c4e75eb94315a9edc336585c9c9f29e545a9809d2303bdb0b"
+    },
+    "upstream_avg_1_4_4_2_2_pre_negate": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qfd91k8p",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "13d59e53a0bbcd5818e0f07c4a05cc650ec61035472a1ea5e97a1ab1e5c4fbcb",
+      "numerical": true,
+      "report_sha256": "bd59707dc2c4efd416037b445115cc60d1ae269d326755a758ca3bcecbeb2601",
+      "task_sha256": "054223b2ebad6db3aa981bd0bdab0c0501f03afa8e7106d48d0510201be878a2",
+      "topology": "a89307268809a554cefc1d01e08a5ca4d769611976fc7067a40998cad36228cc"
+    },
+    "upstream_bench_helper_0016": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-fvbl7aa9",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "de265f5263daf8b3b62d64d75db2bb19237edc8370b1846a66801cc3bb8c944a",
+      "numerical": true,
+      "report_sha256": "9363b0d99137cb59370400e29b0c9e623bca0c36f547d7816ab31551ccfbec91",
+      "task_sha256": "555ac7002cac69b3ffafd28ecd55e071e392a1616506a15ace9bd87c5c80d8c2",
+      "topology": "69d76fd36dd7e86f5999b5449c5194d711edff14d0f509daa42157cb7a63182f"
+    },
+    "upstream_bench_helper_0018": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-t9dcnjq5",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "d6791a92f0eb665b25717a3f701689780612535f969d3da86853a7de20eafefe",
+      "numerical": true,
+      "report_sha256": "08930247c2826d6be53ecef7a45214cac1cc2ba22f271a06b4cc8f53959c65de",
+      "task_sha256": "986bca6d6535cba255448394d33bdc304061182dd316fe8bd1ea23c1fd613e45",
+      "topology": "c90f2a6968c0d86aa406f1af25e8ca0771fc639275c2650b5f1eb5e5f253144d"
+    },
+    "upstream_bench_helper_0021": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-v1b4448k",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "7f426d1343ff3b727b127e06501bcb51c3bc89d074e83f8d73b5336ed159fd56",
+      "numerical": true,
+      "report_sha256": "f945d95004755792223114f76c5bc0308fbb711e1f787b5af7226da942880a32",
+      "task_sha256": "a80b2f9fb5315ec75895bdb7d153ee3552dfe4c5340c75ab59e530730f00f20e",
+      "topology": "ad4f1ce58b3bcd7136846fdb78a37f0dd849a993d15e6c32435fe7b7e121807d"
+    },
+    "upstream_bench_helper_0024": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-huirn4dn",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "dedd1d778098c42d507aa45a0e11884eeb4eec99c62a75c8e70632ac74050e98",
+      "numerical": true,
+      "report_sha256": "3a6fd193c127a5bd51233acfa2355c4e7d4ec7f59821fc1fceb6a1334b11b7e7",
+      "task_sha256": "ff29cef1f428bb5b29ffc2eeb8e282bcee68277b89d8402fb2e8f276e146f0cf",
+      "topology": "98aae9be7cf91206610696fddc73b4c91ce6d072c9d3798c0fcadebee20ad7da"
+    },
+    "upstream_bench_helper_0026": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wzcnxtec",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "f5fc720a32f74284de4be5cc11e4485dcd09540feeda644ac1d58a94ba4069b9",
+      "numerical": true,
+      "report_sha256": "e3b9b589f26af1a55ffff066a2a50f3b048e05672567e8b08c2eae51b80ce29d",
+      "task_sha256": "39e427ce68ea0082de888c6af27aa26bb805456ecf54b8065b5404f2e395fbcb",
+      "topology": "3010faf0b22c3324a14f21d3de9b6e50b9cb41e12fbf8f9e35dc378779a6aa7d"
+    },
+    "upstream_bench_helper_0029": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qbp22vct",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "8ea3e87fd5ef10e33257f115b1097421aab4584d8996814befedafe883c45a27",
+      "numerical": true,
+      "report_sha256": "d248dce103b7fd10c45cbaf4a36bc0ef5104a5a666420ae60e9b57d62bd43b39",
+      "task_sha256": "0adaecbbb4cc19e609b15ca8339e5fe35865e54db9e56cd7b7f4b15bcb9333c9",
+      "topology": "ad5d9612ef88a06f38feb8d6d17d84ac99870e3623e5a3d042bf0d13748a99e7"
+    },
+    "upstream_bench_helper_0048": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-uumn9xdr",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "6590e203bc208637704b720d24ccbc92d0e6b1e0a6387f8b5bd3bb7ef006838d",
+      "numerical": true,
+      "report_sha256": "86f773fadd0ca984ad90db25cba9641878780b3478cac976a9e2aa1f21914acb",
+      "task_sha256": "49d53e8c6f8888065c7b1650e1983859758a877f10832f45f829225cde2f3a8c",
+      "topology": "e1909f31f114ce8950af81a20cf9a3a10f53d5133d8c1a9a27a626a4dae78f30"
+    },
+    "upstream_bench_helper_0050": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ctxj1_5j",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "52c8cb2604742e3268d7db55f64a757a6cca0ba16be6a6d26a4b2ceac7840674",
+      "numerical": true,
+      "report_sha256": "5870878a392851973a4ca576ee05a7404b7ca1a9a27d3e8c26dbae21a786f5cf",
+      "task_sha256": "462edaa99a2e2f1c51182035364f4e018a939e85b69ab4ad309ed62b68aa3634",
+      "topology": "a89307268809a554cefc1d01e08a5ca4d769611976fc7067a40998cad36228cc"
+    },
+    "upstream_bench_helper_0053": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w3diser5",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "264464e12158ea281d49820e436980b8a0414fcdc13cf4c627b1f629a542235e",
+      "numerical": true,
+      "report_sha256": "db40728e63917ad252c6eb25113aed49d25d9bc28f0098a7ba5f94a86689f9ee",
+      "task_sha256": "9dcb8a10ee5b126e4941f8fb3b8dfc0f018bb6fe857279922f3940f12a6508f3",
+      "topology": "3650821b46d556323cc913212f044ea0a56c8e423940d08d3d646753f613b61a"
+    },
+    "upstream_bench_helper_0056": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b2z2qluq",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "d64a4f3c09922d02e22fcf34b456ed3e3a44a85da5b0a01b49a024e71706f748",
+      "numerical": true,
+      "report_sha256": "f525fc5d3cd67286b4d23d08b89f4788856ae0cde8334cc045db57e16f5dea5b",
+      "task_sha256": "e3406130e0c1c863c961a97110302134789b172e66221997ab50faf4c8177f13",
+      "topology": "153dd1d467003149c30c5563ea04fc4cbc037880e7b563de27da6592f58a49bd"
+    },
+    "upstream_bench_helper_0058": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-c0e3h7c8",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "f57b2aede9538d624dae8880a65aba9f621a97d82f77ebe36165eaec4a7e4291",
+      "numerical": true,
+      "report_sha256": "af0ad11d6fef6215a974c3f1a8e46165690c64256b3f8f7d81a0d24d02caa3fc",
+      "task_sha256": "8d67faf5586f0cf9f9c29ebbba756a4a8f4310c5424193dcee81be6cc29e9881",
+      "topology": "9d15e219df0183b8eec26329344cc78a4a6f7fabab638b371af0d9414a8a0012"
+    },
+    "upstream_bench_helper_0064": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-vvhbcq81",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "f9f9ced5ccb62f57a92e5ed280330c6b9f737cb33328581cdad4dc874885b0a1",
+      "numerical": true,
+      "report_sha256": "6cabd220eb6f7286235166603e7a6fd314f4642650133df9f305a2d13dec8c88",
+      "task_sha256": "688ca4f3893d4aedb3bc38940d7ed40e5b2ec90a98d42a926f0d50d57a4c752b",
+      "topology": "806e6d44965b44172584f16967a0116540b722502934744ffc7c904161ae2062"
+    },
+    "upstream_bench_helper_0066": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-k6pvh5bx",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "5039c955b384fb7f48a0297ce3756ebe0b5443274162954668b4f59c4821e2f2",
+      "numerical": true,
+      "report_sha256": "f7e09e7bf78ddc018ccb652024f9354f45ed2ede4ec336aac6e41aca7c5d6e8a",
+      "task_sha256": "2e98e183d15d6f1df36b9fa5b6b1cb90942b0c07319039d912659d94e06e1454",
+      "topology": "1c3aa316ebf46f0fecd542bc0b4afde6c4721d8a053b0643050d48703250bfa7"
+    },
+    "upstream_bench_helper_0088": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o2xa3fe7",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "3286674427aafa8575d9a627ffa10de90090feabb58bf0b3d55fe7f318b8176f",
+      "numerical": true,
+      "report_sha256": "64c699c2869653a1d96bfbfe5a27afd98cf8baa788c0b3b026b3672537e14a55",
+      "task_sha256": "0e03bf373b6a3ae9a150a0a5effaa48e7a67e71c9b9c1a479e2a22f6c858e620",
+      "topology": "6cf6b6441b319c5317ccc4fa55892c37d5464452260e34f35d6e29b903dd6a57"
+    },
+    "upstream_bench_helper_0090": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-z89quwzp",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "3e6664dbc4288b9de2be6d641ab75b35f87aa1dd1a4c4bf74685f8bffb5180a2",
+      "numerical": true,
+      "report_sha256": "c1e5efbc66cebacd7a808340998ac3908aabca4c04905eb2f394e398369c3ff0",
+      "task_sha256": "b24fa07b6c35d3f153df7c592ff0f6794a9e7c81b8673ff899e1ed19b6fe7ad7",
+      "topology": "cf3a0aff6fc788a0a9ceab3a0828cc1dbea2541637ed4704e32baaef0907421d"
+    },
+    "upstream_bench_helper_0093": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-sl5m6ban",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "efb0cb9c9c3bff15e7ce33daba8686229a2068de033e3e62d68246c5a5ea7a9d",
+      "numerical": true,
+      "report_sha256": "2c5e900c0535a8dac9fd559538dd7f1dc4265028cc0c3b24f99abed702ad6975",
+      "task_sha256": "5fa679d39687bde605cb50bba7c411ace71f7a7e422790405684f5d6498436b0",
+      "topology": "f3d413ec60d4ece45cf54f253e5f512c61ed7337d7157022fd158878545c817f"
+    },
+    "upstream_bn_asymmetric_0": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-im4y3gaj",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "382c652aa3e7aa9d1bef8b0710d0fd8f773577fa947d8de5a7bd5fc89e839e1a",
+      "numerical": true,
+      "report_sha256": "03b3d1cacc3adea7f32ad4a4dd60e0faa834622ca238790298ec638ff264b998",
+      "task_sha256": "d7da2f40043735b36222476a68de631de030435f02a8d4316eae2a9fb77cf859",
+      "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+    },
+    "upstream_bn_multi_residual": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5ie9orbs",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "a3cbb6f5e3c39385c7eeaa5be44d273e3d3b02b62d9caa9f0b3aed9b9d2ffaf3",
+      "numerical": true,
+      "report_sha256": "283924ac62aa0a46d9e8b080339883377557ac7d515199115257535bb3783c31",
+      "task_sha256": "2b2397a408bc1dbb563224885dd10d1a7d122e16ba6a3cdebe6b1e4ec260594f",
+      "topology": "a59188ccc4748172b0364f6114570c879a466f3de7dc773464a0b500a7f4074e"
+    },
+    "upstream_bn_nested_native": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7i99dami",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "c5b4c1be6dc813a3ed91849415f8f301606720f480a63cf8e5bda62dacbc7dbb",
+      "numerical": true,
+      "report_sha256": "48475f77802e86224d7d2fa3182d1a47f76008f32a3705ddb712ad7930d1aa7f",
+      "task_sha256": "6d93d863ba4e8556738bb1f9400d0152ec0e9cdb6b705ffbc436f1f5c395e1df",
+      "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+    },
+    "upstream_bn_then_linear": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-tr5sdnqo",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "9e72d5beef108a6ea1d6e2a5dfc0cb309c8979ec002372bf54f858b8d7bb34d5",
+      "numerical": true,
+      "report_sha256": "257573c12287fcab7212ea830481058383efa14e5e2cd9da85de6fc91df887ba",
+      "task_sha256": "d3deb82169461c50dacf9db0886d5617d1181fb97a3223433a3ddcaea6c6871b",
+      "topology": "407cb344651c4208c82e9f2f7b280f3fc27b7de7e5c3bedcb40bdb8aa6f5c6d5"
+    },
+    "upstream_chunk_helper_0": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-2feqm_wh",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "534a372c4fdbc90af0f4039e2abca34c31e01e855fc6131f2314f86aff1e8d35",
+      "numerical": true,
+      "report_sha256": "924c5bef9d7a40346022b0cbb6d8be8f126cb3c6f9f9a2a91277083e623069b0",
+      "task_sha256": "6691a5fe5b9a71601cdf42500d51f33eae744babb5b2bc97ff84a91627f59dec",
+      "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+    },
+    "upstream_chunk_helper_1": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7fbq7mnu",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "a45a79906433ce562e4c9c07e097ee9e48581d5a17c589ebaa0d07d1295bee20",
+      "numerical": true,
+      "report_sha256": "478da4fddb8cdf41ffe057a96752db624b1f47f7b6ba09a5eb630e4f57bc5b35",
+      "task_sha256": "f38fd165c85d3b489d2499b507617321e3ee2a5b6ab83c3bdddeb168e448e9f2",
+      "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+    },
+    "upstream_chunk_helper_10": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yjrs9bhi",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "3d1dfd28993a630f6024d3636e7426f90b9eccbc82de1873f9081bb683e371b5",
+      "numerical": true,
+      "report_sha256": "d60e5d9a965ec30dc6307913182e8f5a7be0fa321e88473226cb9ef0c46125c0",
+      "task_sha256": "3b3ac0a6954410085080cba3a2ff0173827ec0509c17c80167f48ba221d02cf6",
+      "topology": "d2a301eb3b5c2fe4dec35c03ec2041a4b104a405c38a5fa00bd3dfca2152b143"
+    },
+    "upstream_chunk_helper_11": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kzbs0zxh",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "68a0a78696e767e8821162a042cde175ecace30d86ad6c4b8decaecbc1a57d8f",
+      "numerical": true,
+      "report_sha256": "9da7e71c81d042a7260116d2cd85a81d9125ba8d3e71dec7fd9f9aa28e032acb",
+      "task_sha256": "da87a3b8609bdab4ef837c1307c9b34a177cb89454b9b23f8f67dbeebbd06a88",
+      "topology": "fe0b5aa108e188fa6db103ab5d4ae410308777d7bc8a8f28a026e88f025a3340"
+    },
+    "upstream_chunk_helper_12": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yc8fm3rh",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "787ffc53cc94a6105979479edaee8d1c9152240958f1b2a38318339b9946a4b8",
+      "numerical": true,
+      "report_sha256": "f9ae2ce3c54444faa41eb6954d9e14721190e8d49faa72980959be9ee83e2e9d",
+      "task_sha256": "eee6e37b2abe6e3b78822336b2ec66b401cf00ecc4feb15ada20a229a69e7316",
+      "topology": "856a44a454e9761df96a50e11923fe7665c3ec26b0fcccb1601c255da0a9f8f1"
+    },
+    "upstream_chunk_helper_2": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xupadb4y",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "ef78895a12039b14c2152be673e648cfe103ca5c61dcb592b71afa151174c718",
+      "numerical": true,
+      "report_sha256": "b8a9a2aa50be8177a3466295c704d7e3a1d04d9987fa6d126a315337c5dd6ad5",
+      "task_sha256": "374610c88877b309eddd27699b247c092c0de0b0ccaad806ec7c8facdcd77241",
+      "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+    },
+    "upstream_chunk_helper_3": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9lkhyonr",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "893b4fb58e4ad282353ba87c4691776cecb2134b20748b78cba6f3ca5c174eb8",
+      "numerical": true,
+      "report_sha256": "dc3044466084c0154ec014597bc2ff9d470ea4558b4ab888d3b3808282d707b2",
+      "task_sha256": "9d0f2beeab7a5c8ea5513a042609cf7f964a3754d7fb72df8626dcd14a9d8dec",
+      "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+    },
+    "upstream_chunk_helper_4": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xe3jv3v4",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "bcc610b2b661c8495d92a8a102f7ab602c9766af2f539477f9843b7d888413e9",
+      "numerical": true,
+      "report_sha256": "ec34b8740495d5ed6ec4a15485960705049f5af426b1e70e9763e1b0024f0aee",
+      "task_sha256": "07b72c585e34a02b8e61c804035660568904c09b574187f576ba97002505feb4",
+      "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+    },
+    "upstream_chunk_helper_5": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cm3aqebg",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "c3cd6ad470a1c13d770b04aae1e0df393466c3d10cee4934ed4f765cbeb4e18d",
+      "numerical": true,
+      "report_sha256": "acdb6adf54837902f5e4f6fa151933324e1c763ac2e1d9717fc0b7d3e25133cd",
+      "task_sha256": "3c4b558bc12bf96158ec3285bf982f540adfa6f64693c8854c7f08f6c9384d0c",
+      "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+    },
+    "upstream_chunk_helper_6": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7jfea3gt",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "376cf20b5df459cf3aaf7b16847823246cec5d0dc25dd470891fbafb8fff6231",
+      "numerical": true,
+      "report_sha256": "08b2da14d98c25864dce593e2493768500f05714384de6f4684e005c30b4a912",
+      "task_sha256": "19c8c72e2ca11bc86a3ae78e1dcb85c3e3ea2dbfbc586f746ac203bdfd7ad885",
+      "topology": "271b4819c12d55c1f569931995f0723a635b3ff28d0ef5ceca0cff79f221835a"
+    },
+    "upstream_chunk_helper_7": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-d3rsb12y",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "46a41e79a3758f4006c226b12a78420ae2d4fae4d6a4a36782c7f5998afc3887",
+      "numerical": true,
+      "report_sha256": "b5aeec005e1914ea3660d82cff4224ffbc2020d560242e7f7b651255ae69a7a3",
+      "task_sha256": "f9f9a77bcbf8b7eeec12fbc1ae913b2880016c877cb01a46f1118eb0b646d9b5",
+      "topology": "4adfbe960388d9f211ab36a503180b8d3470ab31541843df18fa0116bf605fb2"
+    },
+    "upstream_chunk_helper_8": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5s15ixv8",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "4297a170c829e12e3ae365368e7e75a9cdb1c5438d0f5f2fe127f2d3edb67f8d",
+      "numerical": true,
+      "report_sha256": "141f45bbae7693442935653bd1abb6d33e8ed6523fdaed23749e5e10e6e0540e",
+      "task_sha256": "b89da20ea7f2eb45dee7c83748189c01de4d38dfd161baebc0cfd970f6f9eb23",
+      "topology": "df2dc260bbd36ed1d08fb575d902e050b8997383f8b086ce2cd58b65409816c2"
+    },
+    "upstream_chunk_helper_9": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1twftb1i",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "884b12f644e71aa7cccb1f93b485c26968b7472e41941ecd0e36452c3c49440b",
+      "numerical": true,
+      "report_sha256": "9a6bc80326b2ae1fffda4b5dafacb423c1733934f2cd7f5bb8fb2cbc84b97d51",
+      "task_sha256": "34a2641094317190b02bf2861bbdc82036bdeb301cd924bc86ab3086b2c5d212",
+      "topology": "448cb66b79fce8994184982876f3d867f0a06167c2d3f33a2071d424a488ce5a"
+    },
+    "upstream_concat_frozen_1": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bepmdcdv",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "a7ff474112e7f5c66aff1812f770347f124568d1bd3ed3b0ac8d034d8b60c017",
+      "numerical": true,
+      "report_sha256": "9ecb229e222556d53e52108c3500d822ee4bf906d21bb07184687bbc6f4d80c4",
+      "task_sha256": "e824f8d0a9e7a86b674146dfcda92c446dea105e320e9b828354d988646097c0",
+      "topology": "dfc6bc27efbaceba04a1130f7234efe826bbe23ea6f46c6bb43c8e35d13bda37"
+    },
+    "upstream_concat_square_negate": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7mfn9pa8",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "7c52d795de62c068d45aac09c1384dd9bd5121b41d80048a2d569ee2ad7e9dc6",
+      "numerical": true,
+      "report_sha256": "76d00cde4ff0f6125f64ebec4481875acd57200b8510889fec61cf5516bd66bd",
+      "task_sha256": "6591269a13daeae53d26c0e1d120b257e7c34234b2da92251cde6abdc7adc199",
+      "topology": "c967d47e655a1dd4fb04e4b444ab1df14b31c9ab0cc1f4817ca8839eb58c0346"
+    },
+    "upstream_concat_then_linear": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1qbyncwx",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "c73ec4d8b35ac74b3b61a6a13315038509bf9860793c20f3bf0de1ec671b9ddf",
+      "numerical": true,
+      "report_sha256": "714811bfd1b8fd4b98a566bfbe0ff301760a9d7fc15ce375fe418e3a46c385ed",
+      "task_sha256": "f01b5d4557aaa127908e419faeb54e6f2c158e601d21846028d0bf06fe92bca5",
+      "topology": "f355feecf1b25c0f1ea35521dbcc3bdc8dfbbc5f96d3f2db0dae9cb047fe2759"
+    },
+    "upstream_conv_1_2_2_1_1": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-eitz4i4v",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "627d77955e9e8e22b6aa3588c29ab3284b7d6617b6ac3d1b03ed498c9d0cbec4",
+      "numerical": true,
+      "report_sha256": "7e7ec3e51f2bc257d80d7efb9ac02b01d9c0f66008533976bdd2089e3c4f791f",
+      "task_sha256": "79660ebf544e9393493ae66224b26e926633529045f20890bef0cc31e6529632",
+      "topology": "69d76fd36dd7e86f5999b5449c5194d711edff14d0f509daa42157cb7a63182f"
+    },
+    "upstream_conv_1_2_2_1_1_post_square": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7f38vzob",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "2bcc4ea290290d81d3dcdbd62b1eae958d71c8d8c0d4dda62f937669a4dd89b6",
+      "numerical": true,
+      "report_sha256": "35a72225d53c8489bd25bdddd3c8f686f7ad6ecea0dc2dfb7f5b9542d16417ab",
+      "task_sha256": "2f28ae703144b2c8540dad1ebbde20b10faee9a603221b243d8e6e3515305eed",
+      "topology": "e481225b9ee77641beca799dcdb625d00b07908e02e57fe6294e42ff2319ab84"
+    },
+    "upstream_conv_1_2_2_1_1_pre_negate": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-m68no61j",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "b855c5a52c81152bed2eee4804647fdc753f1e6b87b699db6341a3b78e88e01b",
+      "numerical": true,
+      "report_sha256": "d12ece885b3a87cf25f02b8953cfedb4f3844edff9d2d1fe1accd93fbb0e3c11",
+      "task_sha256": "c2630e411e07156e31e314108670be996ed593a887ae698e5ec2b677ddc56ca1",
+      "topology": "c90f2a6968c0d86aa406f1af25e8ca0771fc639275c2650b5f1eb5e5f253144d"
+    },
+    "upstream_ds_then_square": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mnfk_3vf",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "20a87ceb9fa6322e1ccff77e91b1f68001ed54b3cc30fb06c22517f11393f0ee",
+      "numerical": true,
+      "report_sha256": "0bf26f8a6399cbc001db972e035e08a2ce6a69d4e344051130f867dbabb3228d",
+      "task_sha256": "cdd2c8465b88c040223400fe0a96745e7f3161b1b2414f61742dc33852d0642e",
+      "topology": "8c5c228dfb2acb21bdf0ab1878b1bb80f7cc3ec12b107f930927a417268c1ccc"
+    },
+    "upstream_linear_then_bn": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ce1fla2g",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "478d868c9b3e4eabc5f4fa7b94ee2bf66f6d10f80d58e53f6d980aa438f7ee33",
+      "numerical": true,
+      "report_sha256": "24db1617faa20353accbae9c9a388a079409f9abcfd5605e99f659c2a068c637",
+      "task_sha256": "a0e8c44b26d570b9d194bae749400149136a1213a44ba4df1b610aecc7514be5",
+      "topology": "59b9fd702e7ed0a46b2e783a8dbd2d86a68d21a49892e1ad33dc3db9a75acefc"
+    },
+    "upstream_mapped_pool_then_square": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8s6gbw20",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "ddadb77a395a4ad4651c00e9a8454b0538939413cc89c56b149f50375fc1e3a3",
+      "numerical": true,
+      "report_sha256": "4645e157c214675fd66aa3f029f0c5a830af5f3db6ada83b36d11c7d183af9be",
+      "task_sha256": "99652fc25e9c433c5e980da114f93e165f34ec7eef5e422f4efe62a21310315d",
+      "topology": "81ee357f6b11adbe89b83559f4f633431d80577f0fc940e1e9bc0d0e085b23dd"
+    },
+    "upstream_pool_2_4_4": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-i8n3azdp",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "3b9b57db7e413bb32684219ea8f1b806ebd2dea12451a5b4355156618e5da0d8",
+      "numerical": true,
+      "report_sha256": "3f508b7860deb585e37710f5322ff8f2c47a472beaaefc4f4884f129d38e518a",
+      "task_sha256": "b420cf118bc23f897079b9b2f11e65dbf05ea61bead0419c30827ea0cc7ed517",
+      "topology": "e1909f31f114ce8950af81a20cf9a3a10f53d5133d8c1a9a27a626a4dae78f30"
+    },
+    "upstream_pool_2_4_4_post_square": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7yeij60f",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "1e36728451818944478d3a34057003155455423c7d28a56413d948530a616d63",
+      "numerical": true,
+      "report_sha256": "f50809cce64f4e3568ab2449e8ce6e82cfca6a98348c8126975a0786a4663ee9",
+      "task_sha256": "8fede438e6e7625ed965444d3066a3c3714bbf9c65d17b505362a6d2ae5654b9",
+      "topology": "534d354d0ac4876c4e75eb94315a9edc336585c9c9f29e545a9809d2303bdb0b"
+    },
+    "upstream_pool_2_4_4_pre_negate": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-gvpgnffo",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "2d625cda4757502ef5b121d834da35a034c907e599ee96c1df4215ce342e3d45",
+      "numerical": true,
+      "report_sha256": "3993a6dcc7826780fa53343a9864cf355d83ffb72c73cb78e9a6efb24a8b3c39",
+      "task_sha256": "98e6d2b2144fce888d6cbff0d674d1e18a65e56c7cd6159fa6629c43fa3e8ac7",
+      "topology": "a89307268809a554cefc1d01e08a5ca4d769611976fc7067a40998cad36228cc"
+    },
+    "upstream_silu_frozen_0": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-tfhqfer4",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "4c09fb7de17c38971f5249c6b8d829039391d3f5424bb9d016389bdf078b1816",
+      "numerical": true,
+      "report_sha256": "db2a7ea1a81e8484317f64116af027ce8b6bf83559b4f54f12c745bd85bc6363",
+      "task_sha256": "c4399f4cb61ccf45e1d7ccc055119d9d49e34bb341f5e615c319de77c10765f3",
+      "topology": "88152c4928a647b53c561597043e9191f719a1f939e7acab5ecbcd3b4b388e3a"
+    },
+    "upstream_silu_nested_native": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cusjshvi",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "6281324d06c16df5328d9494d16c13e3535d6a72c908d9f6c1af96991eaa5b1f",
+      "numerical": true,
+      "report_sha256": "0c225a318d40740aa6db58319b5be8f911bba0eb3fe3dc08e77ea84f1f61d427",
+      "task_sha256": "ada0bf836e426b7f853f9a91997f3d1157d5188dd469dcbe3d34669f334af778",
+      "topology": "6d6246b81896e54c2f6b18b839fb35088328a849e45c15274fba0eca319bd303"
+    },
+    "upstream_silu_shared_rotation": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yqz2iajn",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "7fe09d5a3a918add31a82943a21027cc153f700a1077a3c062e9e14c4b56a800",
+      "numerical": true,
+      "report_sha256": "c41cd7f31ee69d2cbd8b40767b6186e020cc6e7442e2d40e4188de39c6add874",
+      "task_sha256": "bab34b91ebdfe1a9e8c18d60a3324ae440a0638d2b90434e23a7cb7ce8f40ef7",
+      "topology": "6f966c21708be2394d1ba078416ee0e2cab8fd32550a6dbc0c5f4c0eb9274a5b"
+    },
+    "upstream_virtual_38_HE_MPBN": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-zun338wt",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "9876672224f9b488bd6976c641a1054c28a08f905248d3bcec0b742be8a449bc",
+      "numerical": true,
+      "report_sha256": "843812ef48d9d50a6671ef416c0c4abb43a8489d0aa18e19f679f56565d1eb47",
+      "task_sha256": "8258737f63d3ba04844b06643e5fe50ee8a1573d5826cd45e3f608761a1802f8",
+      "topology": "448cb66b79fce8994184982876f3d867f0a06167c2d3f33a2071d424a488ce5a"
+    },
+    "upstream_virtual_39_HE_MPBN": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o_z6x9da",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "335bfc8650dcc3242d255124d2c901d71039b9fe94404b9ef491119caef49059",
+      "numerical": true,
+      "report_sha256": "2cf77f88b3f1aa5d25a797f3b5af1c78ab1ebf787549fd1d483b34b4f3225720",
+      "task_sha256": "2da053fbb595fd0f71209a1b740f0674bb3fc41d2536145ccb493a8f3a15d8bf",
+      "topology": "6dc3706b32a5d5cd4c9c1f89260c83aaaa0e6b0229bb94a4e40e48d085483632"
+    },
+    "upstream_virtual_40_HE_Linear": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-y56y2ppz",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "c65361829e4b65f4e56c37877ea9fb699cfae1dc3cba97625f2d16cc7810a643",
+      "numerical": true,
+      "report_sha256": "d71a269117bf3ab6f0aaf58ec4b46a56db98a75137faad64cdedba642feb4f89",
+      "task_sha256": "8a0e3184e9123e29d4fb91c502e7b2e38cb02e0946f593e2d3bc002d61087e2e",
+      "topology": "676970cb66d5cbde47105550f111b53fbad3c1f64df8c56f8a80778d890a5837"
+    },
+    "upstream_virtual_41_HE_Linear": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-vsqmus27",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "ab1c407a3b6cab6030d48e0778b48a4446038fb7d8666c5a96165bd83efed2a4",
+      "numerical": true,
+      "report_sha256": "9c9cb8704cf136e5cd15bb20050c732a2426da70a003c93f0813b2b148e2cdb9",
+      "task_sha256": "7dded6471c967853097d47777e807619103948394af2babe4933debb1b8e1ab2",
+      "topology": "aae46f823fc6358970b70aa8ef66a7515cb31e7a637dd6befe9dc5ea1062f88a"
+    },
+    "upstream_virtual_42_HE_ReshapeLinear": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-au3gse46",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "9358a888d5dc7c3fd16f20f37b477319007392a611783ad15f590a3a0e68b5f0",
+      "numerical": true,
+      "report_sha256": "212b146b3639d95b1f3994ceed885357165eae6ad5df36eae850f741c3a86603",
+      "task_sha256": "9cfc4531582e89f29ae84b44ba26a40160a55bad0b80d552502f48c3fa299a22",
+      "topology": "fe0b5aa108e188fa6db103ab5d4ae410308777d7bc8a8f28a026e88f025a3340"
+    },
+    "upstream_virtual_43_HE_ReshapeLinear": {
+      "actual_frontend_checked": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kmiaog9w",
+      "finite_return_influence_checked": true,
+      "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+      "model_sha256": "1d711728ad6f6b8fab17ed767fa1b8782e016b13047b68d333dccc83d1b60c1d",
+      "numerical": true,
+      "report_sha256": "5bdbdb47232b1414070f63a397f8d77c3122ac886ae1fc6edf859dab59026c7c",
+      "task_sha256": "2caa25bf077467114f63dd0f5790cb11d8457564f62d055ca992e11cc9bd00ff",
+      "topology": "bac27ce4b3d2bf4f411fa5738d99188e71c0758859666a674422a2819000c9e6"
+    }
+  },
+  "runner_sha256": "dd58d57bbb224262f5eb6f05f861f5b7a059ca7f326c7ccaef64d723e62f38ce",
+  "verified_helper_partitions": 15,
+  "verified_helper_tasks": 57
+}

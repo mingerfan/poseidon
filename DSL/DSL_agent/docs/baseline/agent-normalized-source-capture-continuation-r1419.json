@@ -1,0 +1,30 @@
+{
+  "authority": "docs/baseline/current-plan-test-authorization-2026-10-11.json",
+  "backend_changes": false,
+  "binding": "5e5be47e6e435d0af1fa9b0cec41ca53d54cf73c39420ed6a9b2127c3b815bcb",
+  "bounds": {
+    "compiler_calls": 0,
+    "encrypted_calls": 0,
+    "global_result_bytes": 34359738368,
+    "minimum_free_bytes": 4294967296,
+    "new_result_bytes": 67108864,
+    "provider_calls": 0,
+    "wall_seconds": 180
+  },
+  "checkpoint_binding": "fca94942cc6b6622875983964a12498befa2b6ba5fd422fbb18b3409bab89f4b",
+  "compiler_calls": 0,
+  "completed_contexts": 49,
+  "encrypted_calls": 0,
+  "format": "poseidon-source-capture-continuation-v1",
+  "network_changes": false,
+  "original_deadline_not_extended": true,
+  "original_stop_preserved": true,
+  "parameter_changes": false,
+  "provider_calls": 0,
+  "remaining_contexts": [
+    "public_dtype/f64_roundtrip_c1",
+    "public_dtype/f64_roundtrip_c2"
+  ],
+  "reuse": "Recheck all original files, current identity, request and independent reference provenance; do not recapture qualified contexts.",
+  "status": "frozen_offline_scope"
+}

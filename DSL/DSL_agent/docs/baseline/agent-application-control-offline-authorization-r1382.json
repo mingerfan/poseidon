@@ -1,0 +1,11 @@
+{
+  "approved": true,
+  "format": "poseidon-human-offline-authorization-v1",
+  "http_attempts": 0,
+  "human_reply": "\u6279\u51c6\u8fd93\u9879\u79bb\u7ebf\u56de\u5f52",
+  "maximum_compiler_calls": 3,
+  "maximum_encrypted_calls": 9,
+  "proposal_binding": "ed7765a63eb36d64030a8b2f25994ae36d0ac320f095e022a6f0b0c4203f0a5e",
+  "provider_calls": 0,
+  "recorded_wall": 1791697834.4575517
+}

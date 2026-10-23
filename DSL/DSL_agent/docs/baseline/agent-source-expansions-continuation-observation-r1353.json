@@ -1,0 +1,82 @@
+{
+  "format": "poseidon-original-continuation-observation-v1",
+  "observed_wall": 1791618544.4460027,
+  "owner": {
+    "pid": 5522,
+    "start": 288449
+  },
+  "owner_live": true,
+  "plan_binding": "3258b7eb5d38e525fbccf8e22f58d7ece28d8a4471184d476b904334800b55c5",
+  "original_authority_binding": "9dc7707debde35473f399ca30d4857cc9bfe5d4f3e5a5cb486295991418222e8",
+  "original_request_and_backend_identity_preserved": true,
+  "status": "running",
+  "scope": "30 original never-started cases",
+  "cases": [
+    {
+      "case": "einsum_view_mutation",
+      "status": "passed",
+      "generations": 1,
+      "http_attempts": 1,
+      "failure_layer": null,
+      "compiled": true,
+      "encrypted_execution": true,
+      "numerically_validated": true,
+      "maximum_absolute_error": 6.28888405795891e-08,
+      "case_report_sha256": "1c2310a74c2391b9ec7a0ccc73d0f1bb5a224cf99ceaa6759511d4078c643d5b",
+      "new_inputs_repeat_cache_passed": true
+    },
+    {
+      "case": "einsum_partition_composition",
+      "status": "passed",
+      "generations": 2,
+      "http_attempts": 2,
+      "failure_layer": null,
+      "compiled": true,
+      "encrypted_execution": true,
+      "numerically_validated": true,
+      "maximum_absolute_error": 6.481018521853343e-08,
+      "case_report_sha256": "a8fd8d260f25e5464eda8ef032555ebf1cf7aaf7fe2762899e4ca1f1255ebeb8",
+      "new_inputs_repeat_cache_passed": true
+    },
+    {
+      "case": "chunk_branches",
+      "status": "passed",
+      "generations": 1,
+      "http_attempts": 1,
+      "failure_layer": null,
+      "compiled": true,
+      "encrypted_execution": true,
+      "numerically_validated": true,
+      "maximum_absolute_error": 5.766882990032585e-07,
+      "case_report_sha256": "5134c5a2dca94fffcb743066dd361cb39354687c523d1a5e91cebf766cee704f",
+      "new_inputs_repeat_cache_passed": true
+    }
+  ],
+  "active_cases": [
+    {
+      "case": "chunk_projection",
+      "status": "running",
+      "phase": "generating",
+      "generations": 1,
+      "http_attempts": 1
+    }
+  ],
+  "counts": {
+    "generations": 5,
+    "http_attempts": 5,
+    "calls_resolved": false,
+    "cumulative_generations": 15,
+    "cumulative_http_attempts": 16,
+    "prior_generations": 10,
+    "prior_http_attempts": 11,
+    "prior_calls_resolved": false,
+    "all_campaign_calls_resolved": false
+  },
+  "old_results_preserved": true,
+  "old_unknown_http_retried": false,
+  "budget_increase": 0,
+  "production_source_changes": 0,
+  "network_configuration_changes": 0,
+  "controls_passed": 26,
+  "binding": "dc71fb42cdb1cba25b3966930c2050478d668eb3b0550f7f0891524332a1d963"
+}

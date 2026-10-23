@@ -1,0 +1,67 @@
+{
+  "attempts": [
+    {
+      "compiled": false,
+      "diagnostic": "Flat container limit",
+      "executed": false,
+      "failure_layer": "static_check",
+      "index": 0,
+      "numerically_correct": false,
+      "status": "failed"
+    },
+    {
+      "compiled": false,
+      "diagnostic": "Native core arithmetic requires a ciphertext operand",
+      "executed": false,
+      "failure_layer": "static_check",
+      "index": 1,
+      "numerically_correct": false,
+      "status": "failed"
+    },
+    {
+      "compiled": false,
+      "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+      "executed": false,
+      "failure_layer": "compiler",
+      "index": 2,
+      "numerically_correct": false,
+      "status": "failed"
+    },
+    {
+      "compiled": false,
+      "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+      "executed": false,
+      "failure_layer": "compiler",
+      "index": 3,
+      "numerically_correct": false,
+      "status": "failed"
+    }
+  ],
+  "binding": "ad2b7d1e0dfc1b85a42ecb94d0e0a2a4b5c6884b5f18b22d060565a6cbbc4006",
+  "confirmed": [
+    "Four generated attempts retained; maximum repairs exhausted",
+    "Two static-check rejections followed by two compiler failures",
+    "Earth mul failed returned-type inference",
+    "No successful compilation or encrypted execution for this task"
+  ],
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s",
+  "formal_shard_audit": "pending",
+  "format": "poseidon-agent-failure-observation-r128",
+  "hypothesis": "Sequential Chebyshev recurrence and operand scale/level interaction may exceed supported inference constraints; not yet demonstrated as the cause",
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "next_minimal_test": "After active frozen batches, inspect pinned Earth multiplication inference and retained IR; if needed replay retained candidate without provider calls",
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/attempt-02/candidate.py": "9c5b4cdec6e42cfac9e83e11d0c52267f3b2e062b26285e81e87ab7184bd8a82",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/attempt-02/compile.log": "9b522a7e617bdef4494d0d14ee956b7fffacc369ccb6a9f880590ad32bc0aef4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/attempt-03/candidate.py": "5c1813adf808f799fbb59247aab53fe49019cedf034c7481ea890cf86c441e88",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/attempt-03/compile.log": "23e57391add15323cab478443a61c119cc686a843ed96d1944f82f62d4183619",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/model.json": "7e891dc4eca138a2b7aca1fa874b06c8d5e70ee980d621a5a54f4fdf8bcb6eb2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/report.json": "daa4cb156a2f016ab4a486dfb9c3afc324616964fefadde02ef4fde07c050c39",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/request.json": "d0e4e91ac243ee697a3ef69219d0e255aea097cc0dcbea37a488b65a0921e3e4"
+  },
+  "reference_or_tolerance_changed": false,
+  "request_id": "2ceab518087f14ecf91f2194cfc2c53f3b8d6e73ce810fd3db274e2deb084fa2",
+  "status": "repair_budget_exhausted",
+  "task_id": "free_supplement_semantic_context_89458ebf15d877d81d6b8b2d"
+}

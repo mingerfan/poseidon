@@ -1,0 +1,53 @@
+{
+  "backend_changes": false,
+  "binding": "d9f0564537b54ce17a4a0c8f7a07c4f2683f52dd7be6a5a3fcb6e72a8d6fd7ec",
+  "compiler_calls": 0,
+  "controls": {
+    "compiler_calls": 0,
+    "encrypted_calls": 0,
+    "errors": 0,
+    "failed": 0,
+    "format": "poseidon-public-value-draft-controls-v1",
+    "http_attempts": 0,
+    "planned_contexts": 12,
+    "planned_reference_groups": 48,
+    "production_integrated": false,
+    "provider_calls": 0,
+    "reference": "real CPU float64 Torch compared with independent NumPy public-value normalization",
+    "reference_groups": 48,
+    "seconds": 0.34239745140075684,
+    "skipped": 0,
+    "source_files": {
+      "check.py": "1d4bd5efa426ce462baa641e58e0ed5a4f94b3522e21187facf8801f0e34b5c4",
+      "public_values.py": "581ef9a16a6df921cac902a041145209425b0155c674082b4297b73882308d5f",
+      "test_public_values.py": "914fe1053438eae3314abc016102a333c2818c4fc2c75e377481eb98d88ff303"
+    },
+    "tests": 42,
+    "validated_contexts": 12
+  },
+  "encrypted_calls": 0,
+  "format": "poseidon-public-value-expression-draft-checkpoint-v1",
+  "http_attempts": 0,
+  "initial_report_counts_are_planned": true,
+  "network_changes": false,
+  "next": [
+    "authenticated FX public-expression origin mapping",
+    "production capture/metadata integration at safe boundary",
+    "real tracing/Poseidon numerical/package qualification",
+    "separately approved real-Agent acceptance"
+  ],
+  "observed_compatibility_gap": {
+    "classification": "source-based inference; v22 native-precision None-output behavior not executed",
+    "direction": "reuse registered output-tree policy rather than maintain separate inconsistent version lists",
+    "file": "scripts/baseline/source_precision_reference.py",
+    "line": 245,
+    "symptom": "allow_none whitelist stops at exact-arithmetic source version v21"
+  },
+  "original_failure_record": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_value_expression_draft_v1/controls.json",
+  "paid_calls": 0,
+  "paid_proposal_binding": "8752cc0b9e0fb913dedea3f717be0320e5f0339802cd046603a04a772a1a21e2",
+  "paid_proposal_preserved": true,
+  "parameter_changes": false,
+  "production_integrated": false,
+  "source_root": "/home/lhohy/Code/Poseidon"
+}

@@ -1,0 +1,35 @@
+{
+  "format": "poseidon-original-live-continuation-launch-v1",
+  "launch_wall": 1791617490.8741486,
+  "owner": {
+    "pid": 5522,
+    "start": 288449
+  },
+  "stdout": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-expansions-live-continuation-v1-launch.log",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_live_continuation_v1/run.py",
+    "--execute",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-expansions-live-continuation-v1",
+    "--approval-record",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-source-expansions-execution-approval-r1349.json"
+  ],
+  "preflight_binding": "f88a0af6091a858b3e50356afa81cb727f3901e6e504538ca25c286ea974d403",
+  "preflight_sha256": "57389ae7c334a6735c90967f03a0e715ab2f2735fd104a4514e675b22c7df9c8",
+  "controls_sha256": "76a1ceef9a2e825857a8e1cb3b5728bcbd45d94e9914aa51711e6930b4ac9dbd",
+  "continuation_manifest_sha256": "79c86fc8ac97a51c839fb9f6088475c10f61f40242aafc9323d11fb2d0db9404",
+  "original_human_authorization_sha256": "5ce638eaf98767b7149a9a54d5b9146651828b7985a5f20d53583d399a57c6c3",
+  "original_approval_sha256": "c01d8f634d7dcae2c4f0177a39296673a557543b282084bfc7458d4f4717ebbb",
+  "original_proposal_binding": "06411a2e643d76d81e974349268f4bc887b84eacb0771748870e1093a1e792dd",
+  "original_deadline_wall": 1791686268.7730896,
+  "prior_generations": 10,
+  "prior_http_attempts": 11,
+  "new_cases": 0,
+  "budget_increase": 0,
+  "automatic_restart": false,
+  "unknown_http_retried": false,
+  "production_source_changes": 0,
+  "network_configuration_changes": 0,
+  "binding": "44581e011f34084bfacf24bee0d3506b5036229075b6b52d91ec74ba5b5a7346"
+}

@@ -1,0 +1,44 @@
+{
+  "format": "poseidon-bootstrap-math-audit-v1",
+  "source_sha256": "9f26b65ac4839f226cb2f574654df6440efd56675ab4f5c18d5fe0c7e2d17782",
+  "evidence_log_sha256": "7c22b86a4f28ca118ba34e8dcebe1b18476c363528e1abcd4c369d736a555e7a",
+  "evidence_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+  "inverse_coefficient": 0.15915569197480922,
+  "heap_vs_root_max_error": 2.042810365310288e-14,
+  "ckks_embedding_roundtrip_max_error": 2.109500894921088e-14,
+  "scalar_zero_carry_poly_sine_max_error": 1.871747548620739e-12,
+  "signed_surrogate_max_error": 0.0001009785755093362,
+  "actual_minus_surrogate_max_error": 4.150597791408028e-06,
+  "actual_minus_surrogate_mae": 7.159752356830309e-07,
+  "predicted_failure_slots": 16384,
+  "signed_groups": [
+    {
+      "reference": 0.125,
+      "actual_mean_error": -8.959236032370092e-05,
+      "predicted_mean_error": -8.960517344947434e-05
+    },
+    {
+      "reference": -0.25,
+      "actual_mean_error": 9.530581892469548e-05,
+      "predicted_mean_error": 9.529188632267926e-05
+    },
+    {
+      "reference": 0.375,
+      "actual_mean_error": -0.0001009791706351737,
+      "predicted_mean_error": -0.0001009785755093362
+    },
+    {
+      "reference": -0.5,
+      "actual_mean_error": 0.00010042462519666007,
+      "predicted_mean_error": 0.00010039042786885721
+    }
+  ],
+  "conclusion": "Normalized sine approximation explains the dominant signed-input bias; residual includes encrypted arithmetic and polynomial/carry effects.",
+  "limits": [
+    "Not a new encrypted execution",
+    "Does not isolate every residual error",
+    "Not a replacement reference",
+    "No parameter change"
+  ],
+  "paid_calls": 0
+}

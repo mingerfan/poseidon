@@ -1,0 +1,36 @@
+{
+  "automatic_candidate_retry": false,
+  "binding": "d889697267c5f7ce459aa576ce1aba434cd7f2e610f745956720cd74c82acc36",
+  "classified_status": "failed",
+  "constraints": [
+    "terminal repair budget exhausted",
+    "complete retained responses",
+    "exact trusted stderr",
+    "compiled artifact hashes",
+    "complete key cleanup"
+  ],
+  "current_active_batch_unchanged": true,
+  "format": "poseidon-candidate-rejection-r112-v1",
+  "frozen_plans_upgraded": 43,
+  "new_fhe_executions": 0,
+  "new_paid_calls": 0,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v3-r112/index.json": "2c949861f4a4e6368892bc09612800baf94ab72ecd5b5e73ddd8946d6a7dc5a9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-candidate-failures-r112/tests.log": "423c7695d399dc4c54278984e7e63b7e72168993480a9c4599a56ff237ed9114"
+  },
+  "recognized_error": "result ciphertext is transparent",
+  "requests_regenerated": 0,
+  "sources": {
+    "scripts/baseline/benchmarks/tools/campaign_candidate_failures.py": "b9a7be17f111881f397f37980fd099982be7a6b62641da7790ccf9af454a5f1e",
+    "scripts/baseline/benchmarks/tools/run_stage2_agent_campaign_v3.py": "5668e611c9915810a9bf64cda7deed26745e75da63ebff2719bec6013603d6fc",
+    "scripts/baseline/benchmarks/tools/test_campaign_candidate_failures.py": "28a927158f87e7d8d5e38f10e7739a26e216e9f05a36716e344be9d6eac4a4cc",
+    "scripts/baseline/benchmarks/tools/upgrade_campaign_plans_v3.py": "2caadfc80d5cfb35a0b1e9a8813c9427d19b26ce730f5741f712cd1d15651eb5"
+  },
+  "stage2_complete": false,
+  "tests": {
+    "failed": 0,
+    "passed": 7,
+    "skipped": 0
+  },
+  "unknown_runtime_error_stops": true
+}

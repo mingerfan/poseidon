@@ -1,0 +1,58 @@
+{
+  "binding": "89747b5a4093ed818d79990a2f450a0a9743e3d40ce977e1e38b65a994495c2f",
+  "format": "poseidon-explicit-math-guidance-acceptance-r116-v1",
+  "legacy_modes_preserved": [
+    null,
+    "explicit-v1",
+    "explicit-v2"
+  ],
+  "new_mode": "explicit-v3",
+  "new_requests_prepared": 2030,
+  "old_requests_identical": 2030,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-logical-guidance-r116/compatibility-after-sandbox-fix.json": "cf8f173259dc83b2b4adc731e35c5b3e2884549642da37b84d94384001a3e02e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-logical-guidance-r116/tests-after-sandbox-fix.log": "20307f0b058127c1bab1e508ffb25e8c2568d74d64ebddd7859f90fc3d76f863",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-guidance-offline-r116-fixed/report.json": "0ed8e54dd8dcffb88a278ba6f6cae094ff6d621971dd9560b1a0834b5d9fa01c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-prepare-r117-ready/plan.json": "eccb9c5d12619041e16afd8ce4d45d2daed5de5053a03b3a6d29aa7c5cdc2094",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-prepare-r117-ready/report.json": "c7eebd1b48533b69d99d5fbf24a37ad710edb58f11b5576d43f067ff76e99cea",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-r117-authorization.json": "136a4ac253d542b4446b68aa57b7733258fe92df67f4e42b0a63e518831fa357",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-runtime-c74d-before-r116/manifest.json": "50a4dba7aab63ade18f5b4eb60de60dcd4b53b9c5003731a8e51714bf2396222"
+  },
+  "pilot_independent_audit_complete": false,
+  "pilot_live_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-r117-live",
+  "pilot_plan_binding": "183d9f96722d3f1272e0b973600564530ae2f8d575e59026dc43f5d2cc9346a0",
+  "pilot_prepared": 6,
+  "prior_failed_replay": {
+    "counted_as_pass": false,
+    "diagnostic": "Missing trusted module in isolated mount; original result retained",
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-x8kw9518",
+    "failure_layer": "dsl_trace"
+  },
+  "sandbox_change": "one trusted read-only module; candidate import policy, isolation and limits unchanged",
+  "scripted_fhe_replays": {
+    "agent_generation": false,
+    "failed": 0,
+    "new_paid_calls": 0,
+    "passed": 2,
+    "skipped": 0
+  },
+  "source_changes": {
+    "added": [
+      "scripts/baseline/unified_logical_semantics.py"
+    ],
+    "changed": [
+      "scripts/baseline/candidate_sandbox.py",
+      "scripts/baseline/run_candidate.py",
+      "scripts/baseline/unified_graph_contract.py",
+      "scripts/baseline/test_unified_generation_guidance.py"
+    ],
+    "removed": []
+  },
+  "source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "stage2_complete": false,
+  "tests": {
+    "failed": 0,
+    "passed": 23,
+    "skipped": 0
+  }
+}

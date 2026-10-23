@@ -1,0 +1,125 @@
+{
+  "format": "poseidon-native-source-numerical-phase-v1",
+  "status": "offline_component_acceptance_passed",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "source_changes": {
+    "scripts/baseline/task_numerical_assessment.py": "eda654a6c5d55897be0279c269e783d3832ae200f851ff825cf37195623ae0de",
+    "scripts/baseline/test_task_native_assessment.py": "bada885733da88afa6dba48d03fd8628ee94cd2d95ca877d6cfee4aa4b5ba84d"
+  },
+  "historical_implementation": {
+    "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/native_assessment_v1/task_numerical_assessment.r1321.py",
+    "sha256": "047f3a8fdc56b178a3c8e575626698eb85f8796b328c09bbf4518f2863c0df15"
+  },
+  "controls": {
+    "report": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/native_assessment_v1/controls.final.json",
+    "binding": "db5e1f2f698248256710a79d6d20fe58caa137476354cd6ac3f31a69d7cefeef",
+    "tests": {
+      "run": 47,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "backend": "Injected fixtures; not real Agent or FHE"
+  },
+  "real_backend": {
+    "format": "poseidon-native-criterion-local-acceptance-v1",
+    "status": "passed",
+    "acceptance_kind": "Expected application-accuracy failure is reported correctly",
+    "application_status": "validation_failed",
+    "application_failure": "assessment_application_criterion_failed",
+    "encrypted_execution": true,
+    "source_reference_evaluated": true,
+    "samples": 3,
+    "compared_values": 30,
+    "ckks_max_absolute_error": 2.48294335092325e-09,
+    "ckks_mae": 4.0934349106201144e-10,
+    "native_vs_registered_max_absolute_error": 1.1102230246251565e-16,
+    "approximation_and_conversion_max_absolute_error": 0.7657156493384427,
+    "decrypted_vs_native_max_absolute_error": 0.7657156480471775,
+    "application_criterion": {
+      "kind": "max_absolute_error",
+      "status": "failed",
+      "passed": false,
+      "limit": 0.01,
+      "max_absolute_error": 0.7657156480471775,
+      "scope": "bound-source-native-dtype-finite-v1"
+    },
+    "original_source_accuracy_certified": false,
+    "case_origin": "Byte-identical retained real-Agent DSL; offline package reused; no new Agent generation",
+    "package_binding": "8865c3fd84d28d756446ca53770bee50c72e81c2f38032a468870f83c3ad04ad",
+    "assessment_binding": "a49082ff553bea124677e2374e70dabbe4449e3f374482efd9d91d3f80c78142",
+    "scope_binding": "309f8acd0c68f74afd8deb7a16b88b6505414c4476dd97064833604d06c273e6",
+    "original_task_and_package_unchanged": true,
+    "stage_identity": "aea83c53afb1bd7456c2c5fc90c56b45cb2886d1a47b9739e3da156381e7c2ad",
+    "new_api_calls": 0,
+    "new_compiler_calls": 0,
+    "new_encrypted_calls": 1,
+    "bytes": 9134481,
+    "elapsed_seconds": 70.84468013800506,
+    "binding": "e106b980b46bc7fa3e3696bd67d7581db0e386bbb78941ecdd66dd3b2c40f4d5"
+  },
+  "real_backend_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-native-criterion-acceptance-v1/report.json",
+  "native_source_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-native-criterion-acceptance-v1/native-source/native-reference.json",
+  "assessment_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-native-criterion-acceptance-v1/assessment.json",
+  "preserved_failed_controls": [
+    {
+      "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/native_assessment_v1/controls.json",
+      "binding": "2c8377f95feb4720055ab3b085875661c7b1bc41a35c94f855d1512a51909699",
+      "causes": [
+        "Reference identity lacked scoped manifest import authority",
+        "Test fixture passed lists to mathematical ndarray API"
+      ]
+    },
+    {
+      "path": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/native_assessment_v1/controls.retry1.json",
+      "binding": "1efda5aac99c91a7c41b76ffe2862ed1426ba111a9a2a203edf5ec36a10abae3",
+      "causes": [
+        "Source snapshot was retained by reference; now snapshotted before encrypted execution"
+      ]
+    }
+  ],
+  "protected_files": {
+    "count": 654,
+    "changed": 0
+  },
+  "production_stages": {
+    "manifest": "aea83c53afb1bd7456c2c5fc90c56b45cb2886d1a47b9739e3da156381e7c2ad",
+    "code_unchanged": true
+  },
+  "pending_paid_scope": {
+    "readonly_plan": "passed",
+    "provider_calls": 0,
+    "authorized": false,
+    "proposal_binding": "509391f78f2bc75e6f5fb749e9c048ce9ea049b9aa0e51f5d7c62521b8fd4d69",
+    "authorization_file_present": false
+  },
+  "permissions": {
+    "new_api_calls": 0,
+    "new_compiler_calls": 0,
+    "new_encrypted_calls": 1,
+    "new_dependencies": 0,
+    "download_bytes": 0,
+    "backend_library_changes": 0,
+    "security_parameter_changes": 0,
+    "numerical_threshold_changes": 0,
+    "git_commits": 0,
+    "git_pushes": 0
+  },
+  "resources": {
+    "batch_output_bytes": 9134481,
+    "total_result_bytes": 27067100596,
+    "global_result_limit_bytes": 34359738368,
+    "free_bytes": 46088097792,
+    "minimum_free_bytes": 4294967296
+  },
+  "remaining": [
+    "Native source mode is explicit; current production CLI and old entry behavior are unchanged",
+    "Whole-dataset source accuracy is not certified by 1..16 sample evidence",
+    "Declared MHA approximation does not meet the diagnostic max-absolute-error criterion",
+    "Two MHA generation retests remain under the existing unanswered scoped approval",
+    "Resource-boundary activation, bootstrap, CUDA, and whole ResNet20 remain separate work"
+  ],
+  "binding": "b420a4b717a2996ca6437721e3d0eaf3c77790486fb82ac7f0296d8bbd74b7fd"
+}

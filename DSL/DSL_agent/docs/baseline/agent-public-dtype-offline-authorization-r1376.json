@@ -1,0 +1,23 @@
+{
+  "authorized_scope": {
+    "case_seconds": 180,
+    "compiler_jobs": 2,
+    "global_bytes": 34359738368,
+    "http_attempts": 0,
+    "link_jobs": 1,
+    "maximum_compiler_calls": 36,
+    "maximum_encrypted_calls": 42,
+    "native_address_bytes": 4294967296,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "new_bytes": 536870912,
+    "provider_calls": 0,
+    "reserve_bytes": 4294967296,
+    "wall_seconds": 1200
+  },
+  "format": "poseidon-public-dtype-offline-authorization-v1",
+  "human_reply": "\u6279\u51c6\u8fd936\u9879\u79bb\u7ebf\u9a8c\u6536",
+  "no_new_paid_calls": true,
+  "proposal_binding": "2ed1e15ffdf508b856b8f6b83def6c31eaee4ec1392d5cb094e5da4cdaf7be0c",
+  "received_wall": 1791693992.0376117
+}

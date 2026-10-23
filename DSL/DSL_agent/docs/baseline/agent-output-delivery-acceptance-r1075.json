@@ -1,0 +1,145 @@
+{
+  "agent_generation": 0,
+  "application_adapter": {
+    "application_lifecycle": "real existing Application methods with injected package/execution backend",
+    "binding": "af4fed41830f82e57c2d74ad8b7827f431d2dd3be8a65b8f794a6de183ff9d62",
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-component-output-contract-r1074/report.json",
+    "execution": "synthetic protocol fixtures, not encrypted execution",
+    "units": {
+      "errors": 0,
+      "failed": 0,
+      "run": 24,
+      "skipped": 0
+    },
+    "wired": "explicit TaskOutputAdapter instance; existing default interface unchanged"
+  },
+  "backend_core_changed": false,
+  "binding": "f5e880f9bbb72537b909716b7421c87253834a23dbe8875a60e723985f953f6d",
+  "binding_checks": [
+    "external trusted receipt binding",
+    "task and package origin",
+    "request and model",
+    "shape and output names",
+    "source provenance digest",
+    "exact validation booleans and resource metadata types",
+    "current adapter implementation"
+  ],
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": false,
+  "compiler_calls": 0,
+  "confirmed": [
+    "77 current distinct unit methods pass",
+    "6 local output contexts and 96 plaintext probes pass",
+    "current SDK and low-level backend identity equal prior fixed configuration",
+    "v4 launch without approval stops before Nix"
+  ],
+  "current_distinct_unit_methods": 77,
+  "current_offline_proposal": {
+    "binding": "cda259c92d763f99d7f32dfad7efc1ec6f59d38bfd542cbc9f8b2c4bb9d7cbe0",
+    "case_count": 151,
+    "frozen_files": 5960,
+    "launcher_refusal_check": {
+      "before_nix": true,
+      "execution_root_created": false,
+      "exit_code": 1,
+      "receipt_created": false
+    },
+    "old_cases_budgets_preserved": true,
+    "package_reuse_count": 25,
+    "path": "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-pytorch-offline-proposal-r1076.json",
+    "status": "prepared_not_approved_not_executed"
+  },
+  "date_utc": "2026-10-06T14:45:04.654558+00:00",
+  "decryption": 0,
+  "default_source_capture_unchanged": true,
+  "download": 0,
+  "encrypted_execution": 0,
+  "existing_reference_changed": false,
+  "format": "poseidon-agent-output-delivery-acceptance-v1",
+  "frozen_benchmark_modified": false,
+  "frozen_ckks_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "hecate_tracing": 0,
+  "http_attempts": 0,
+  "inference": [
+    "the explicit adapter is usable at the existing host delivery boundary within its tested protocol scope"
+  ],
+  "initial_failure_preserved": {
+    "error_test": "test_structure_depth_boundary",
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-component-output-contract-r1070",
+    "source_snapshot": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/component_output_contract_audit_v1/initial-r1070",
+    "units": {
+      "errors": 1,
+      "failed": 0,
+      "run": 45,
+      "skipped": 0
+    }
+  },
+  "install": 0,
+  "new_unique_benchmark_models_claimed": 0,
+  "old_frozen_files_checked": 5952,
+  "old_proposal_executable_on_current_source": false,
+  "old_proposal_reasons": [
+    "v3 launcher refers to nonexistent proposal",
+    "global source inventory and broad legacy identity gained four Agent files"
+  ],
+  "old_source_bytes_preserved": true,
+  "output_contract": {
+    "binding": "c7d3ad3955d147de4743e13f0cdcd888d0a85c2e65aa537bde653ed53ea59faa",
+    "contexts": 6,
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-component-output-contract-r1073/report.json",
+    "maximum_reference_error": 0.0,
+    "output_values": 272,
+    "reference_groups": 96,
+    "units": {
+      "errors": 0,
+      "failed": 0,
+      "run": 53,
+      "skipped": 0
+    }
+  },
+  "paid_calls": 0,
+  "parameters_changed": false,
+  "plaintext_tolerance": {
+    "atol": 1e-12,
+    "rtol": 1e-12
+  },
+  "pr": false,
+  "push": false,
+  "revision": "r1075",
+  "runtime": {
+    "cuda": null,
+    "hip": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "scope": "data-only output contract and explicit host adapter over existing Application",
+  "source_hashes": {
+    "scripts/baseline/benchmarks/tools/component_output_contract_audit_v1/application_audit.py": "41ef67740229d28f69723ae886c77a087f0fb6f3e2bb52457a421c037ddbf9b6",
+    "scripts/baseline/benchmarks/tools/component_output_contract_audit_v1/audit.py": "0efe7179827488dfd0c6b125d931d6f6325bc3ad599c43111c78554cb0eee5e9",
+    "scripts/baseline/model_output_contract.py": "e509a3c2cfa848943f9c02ec41d633ce79f034a0ad6561e16e811e0ae65816db",
+    "scripts/baseline/task_output_adapter.py": "088c636eabdb00ac19419315bd4983f815708ca9933d6ba14a93c391fcc79e0c",
+    "scripts/baseline/test_model_output_contract.py": "40f5868abd8d8e41ee74047e7af9d593c122051722404d9484a91c8dcbeba5f5",
+    "scripts/baseline/test_task_output_adapter.py": "ee888055ef63ad64aa2760a6e5d753ddca372e262530fdef48470135ad7ba1d0"
+  },
+  "static_none_auto_capture_wired": false,
+  "status": "output_contract_and_optional_application_adapter_validated",
+  "trusted_pytorch_inplace_reference_isolation": "pending; existing model intake uses shared input arguments for original and normalized references",
+  "unverified": [
+    "new adapter actual Poseidon encrypted execution",
+    "current Agent generated outputs for new input forms",
+    "new static None automatic production capture",
+    "inplace source production integration",
+    "capacity/bootstrap/ciphertext handoff/application accuracy/ResNet20/CUDA/x86-native/clean installation"
+  ],
+  "x86_configuration_preserved": true
+}

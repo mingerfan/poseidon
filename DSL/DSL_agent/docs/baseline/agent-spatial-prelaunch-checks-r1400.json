@@ -1,0 +1,51 @@
+{
+  "api_calls": 0,
+  "authorization_exists": false,
+  "binding": "74e9c0fa91970bcc7eebcb1403257a34cecc79afabc8f9b097317fa42208297d",
+  "compilations": 0,
+  "controls": [
+    {
+      "check": "unchanged_frozen_plan",
+      "passed": true
+    },
+    {
+      "check": "control_proposal_binding",
+      "passed": true
+    },
+    {
+      "check": "control_scope",
+      "passed": true
+    },
+    {
+      "check": "control_current_sdk",
+      "passed": true
+    },
+    {
+      "check": "control_backend_identity",
+      "passed": true
+    },
+    {
+      "check": "control_tool_changed",
+      "passed": true
+    },
+    {
+      "check": "control_fixture_changed",
+      "passed": true
+    },
+    {
+      "check": "missing_human_authorization_rejected_before_execution",
+      "passed": true
+    }
+  ],
+  "encrypted_calls": 0,
+  "execution_output_exists": false,
+  "format": "poseidon-spatial-prelaunch-controls-v1",
+  "free_disk_bytes": 43103191040,
+  "git_porcelain_entries": 10161,
+  "global_artifact_bytes": 31664672768,
+  "proposal_binding": "86b1c249c3844f350de4e2dc2304b08994d24d5744712eb2cd37585a74928202",
+  "scoped_diff_check": true,
+  "sdk_identity": "388e891a44863d95e6a8ce7e83c4206799434e08e122c63ff58afa2b62452337",
+  "status": "passed",
+  "syntax_files": 6
+}

@@ -1,0 +1,125 @@
+{
+  "format": "poseidon-agent-generalization-progress-v1",
+  "snapshot": {
+    "time_beijing": "2026-10-07 14:39:05",
+    "branch": "lhy-agent-dsl",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "binding": "b7a48ad854529ae215ae3133c1c0e53cacffd89a840c63aa06c4b2e74fb5ae47",
+    "original_scope": 76,
+    "passed": 42,
+    "failed": 8,
+    "running": 1,
+    "not_started": 25,
+    "cumulative_reserved_generations": 87,
+    "cumulative_http_attempts": 87,
+    "original_deadline_wall": 1791387505.0085838,
+    "live_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-approved-unstarted-continuation-r1113",
+    "active_tasks": [
+      {
+        "id": "instance__functional_input_2",
+        "task_id": "db23f0bbb0db46bdaabc6b118f79e77b",
+        "status": "running",
+        "phase": "generating",
+        "generations": 3,
+        "http_attempts": 3
+      }
+    ],
+    "terminal_new_failures": [
+      {
+        "id": "instance__functional_input_0",
+        "status": "budget_exhausted",
+        "failure": {
+          "code": "numerical_mismatch",
+          "context": {},
+          "format": "poseidon-diagnostic-v2",
+          "layer": "numerical_comparison",
+          "location": null,
+          "owner": "candidate_or_backend",
+          "reason_code": "numerical_mismatch",
+          "repeat_key_available": false,
+          "retry_policy": "diagnose"
+        }
+      },
+      {
+        "id": "instance__functional_input_1",
+        "status": "budget_exhausted",
+        "failure": {
+          "code": "candidate_contract_rejected",
+          "context": {},
+          "format": "poseidon-diagnostic-v2",
+          "layer": "static_check",
+          "location": null,
+          "owner": "candidate",
+          "reason_code": "contract_rejected",
+          "repeat_key_available": false,
+          "retry_policy": "repair_within_budget"
+        }
+      }
+    ],
+    "processes": [
+      {
+        "pid": 991574,
+        "scripts": [
+          "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/approved_pending_execution_v4/run.py"
+        ]
+      },
+      {
+        "pid": 991581,
+        "scripts": [
+          "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/approved_pending_execution_v4/run.py"
+        ]
+      }
+    ],
+    "freeze_checks": {
+      "source_hashes": 695,
+      "tool_hashes": 3,
+      "retained_hashes": 1168
+    },
+    "results_bytes": 26087987163,
+    "free_disk_bytes": 47210352640,
+    "tracked_changes": 63,
+    "untracked_entries": 670
+  },
+  "staged_feedback": {
+    "production_applied": false,
+    "component_passed": 113,
+    "portable_passed": 20,
+    "cutover_guard_passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "acceptance": [
+      "acceptance-r1133.json",
+      "acceptance-r1134.json"
+    ],
+    "prompt_version": "explicit-v11",
+    "default_unchanged": "explicit-v10"
+  },
+  "alias": {
+    "version": 3,
+    "production_integrated": false,
+    "tests_passed": 21,
+    "contexts": 39,
+    "input_groups": 624,
+    "compared_values": 7600,
+    "maximum_error": 4.163336342344337e-17,
+    "acceptance": "scripts/baseline/benchmarks/tools/staged_alias_composition_v2/acceptance-r1137.json",
+    "torch_capture": 0,
+    "compilations": 0,
+    "encrypted_executions": 0,
+    "provider_calls": 0
+  },
+  "permissions": {
+    "added_paid_scope": false,
+    "new_installations": 0,
+    "downloads": 0,
+    "backend_changes": false,
+    "parameter_changes": false,
+    "committed": false,
+    "pushed": false
+  },
+  "threshold": {
+    "atol": 0.00001,
+    "rtol": 0.0001
+  }
+}

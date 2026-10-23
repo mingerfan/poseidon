@@ -1,0 +1,40 @@
+{
+  "execution_results_imported": false,
+  "helper_negative_bindings": 76,
+  "helper_transform_tests": {
+    "failed": 0,
+    "passed": 4,
+    "skipped": 0
+  },
+  "index_sha256": "ee7a0868cd5ea68e7ada18e43a52249b6d1a474a4c13e006fb7285cbe506a6a2",
+  "integrity": {
+    "components": 6,
+    "models": 1200,
+    "requirements": 401
+  },
+  "metadata_tests": {
+    "failed": 0,
+    "passed": 6,
+    "skipped": 0
+  },
+  "new_FHE_executions": 0,
+  "old_directed_tasks_unchanged": 627,
+  "old_helper_tasks_unchanged": 60,
+  "old_rejection_tasks_unchanged": 48,
+  "only_index_change": "coverage_sha256",
+  "original_models_unchanged": 1200,
+  "paid_calls": 0,
+  "pending": [
+    "supplemental_dual_reference",
+    "construction_trace_negatives",
+    "helper_call_negatives",
+    "complete_r29_baseline",
+    "complete_r29_directed_tasks",
+    "paid_agent_requires_approval"
+  ],
+  "release": "scripts/baseline/benchmarks/semantic-v2-ledger-r38",
+  "runtime_source_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "schema": 1,
+  "shard_files_byte_identical": 25,
+  "supplemental_models": 92
+}

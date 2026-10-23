@@ -1,0 +1,43 @@
+{
+  "format": "poseidon-campaign-runner-state-tests-r107-v1",
+  "runtime_source_sha256": "c74d21106c1e509ad75d4e59828b07093af6284fc0cd67793711958e5807f8ad",
+  "tools": {
+    "scripts/baseline/benchmarks/tools/campaign_live_state.py": "cbe4c9629f914ba70644f07bb848ac772e1e6381bf2fe4093b1ce1679f3cdca9",
+    "scripts/baseline/benchmarks/tools/run_stage2_agent_campaign.py": "eb763da0892853752b0d7d7e6ae53e01e1fefae9c04d06d4c83c7e9b038c099e",
+    "scripts/baseline/benchmarks/tools/audit_stage2_campaign_shard.py": "9215374043782144a93942526f05fd84fc8269216dec161e81474247dfc3819b",
+    "scripts/baseline/benchmarks/tools/import_campaign_audit.py": "ddae5bb8ecaff161cd7d891068989fd62b9bae187949667c2faca6a3cf336d9e",
+    "scripts/baseline/benchmarks/tools/test_campaign_live_state.py": "0ba753d568d76e20b912d14b09ff466091797377813a3f012038636415d263b7",
+    "scripts/baseline/benchmarks/tools/stage2_agent_campaign.py": "4fd0d1b4269380cdd276b4c7ab07ba5ef4661b9ab01ff25e0c98280bc35756cd"
+  },
+  "tests": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-runner-r107/state-tests.log",
+    "log_sha256": "c2e78621ac2ac51ed5a4d2cee963449fced7f8face753e87e92e6575265184d0"
+  },
+  "capabilities_implemented": [
+    "durable prelaunch claims",
+    "exact model/request/runtime evaluation identity",
+    "serial batch mutex",
+    "same-plan cumulative wall resume",
+    "no retry of uncertain launch",
+    "independent shard audit",
+    "same-version audited result claim import",
+    "read-only plan check"
+  ],
+  "real_dispatch_validated": false,
+  "full_request_preparation_validated": false,
+  "paid_calls": 0,
+  "new_compile": false,
+  "new_encrypted_execution": false,
+  "stage2_complete": false,
+  "limits": "Tests use temporary local state, no provider, no fake evidence counted as benchmark pass",
+  "remaining": [
+    "prepare all requests in pinned environment after r105 finishes",
+    "verify actual CLI requests and --check",
+    "independently audit r105 and import matching task claims",
+    "validate bounded unified dispatch and audit on concrete approved tasks"
+  ],
+  "binding": "a550f381bb02017483aeeb84902dc10f454e3147ac464bf0faa3a1ce25f961eb"
+}

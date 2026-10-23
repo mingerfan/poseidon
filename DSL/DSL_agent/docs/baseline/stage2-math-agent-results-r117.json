@@ -1,0 +1,340 @@
+{
+  "artifact_bytes": 1620393,
+  "binding": "0dc60e3f6dae83ae9e3c0faa631c6d74728264e2f65ea2daad49aa84bacd17aa",
+  "compared_values": 1428,
+  "compiled": 6,
+  "compiler_partitions": {
+    "compiler.modswitch": {
+      "case_ids": [
+        "free_bench_boundary_0011",
+        "free_bench_boundary_0030",
+        "free_bench_boundary_0036",
+        "free_bench_boundary_0044",
+        "free_bench_composition_0000",
+        "free_bench_graph_0012"
+      ],
+      "distinct_topologies": 5,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "current_bound_batch",
+      "three_contexts_verified": true,
+      "topologies": [
+        "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8",
+        "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362",
+        "3ff4ea40d9a5d065cc929acd0680146f73d1b0891bac3d74a040efcf86ee9d1a",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1",
+        "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+      ]
+    },
+    "compiler.relinearization": {
+      "case_ids": [
+        "free_bench_boundary_0030",
+        "free_bench_boundary_0036",
+        "free_bench_composition_0000",
+        "free_bench_graph_0012"
+      ],
+      "distinct_topologies": 3,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "current_bound_batch",
+      "three_contexts_verified": true,
+      "topologies": [
+        "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362",
+        "3ff4ea40d9a5d065cc929acd0680146f73d1b0891bac3d74a040efcf86ee9d1a",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ]
+    },
+    "compiler.rescale": {
+      "case_ids": [
+        "free_bench_boundary_0030",
+        "free_bench_boundary_0036",
+        "free_bench_composition_0000",
+        "free_bench_graph_0012"
+      ],
+      "distinct_topologies": 3,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "current_bound_batch",
+      "three_contexts_verified": true,
+      "topologies": [
+        "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362",
+        "3ff4ea40d9a5d065cc929acd0680146f73d1b0891bac3d74a040efcf86ee9d1a",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ]
+    },
+    "compiler.rotation_keys": {
+      "case_ids": [
+        "free_bench_boundary_0030",
+        "free_bench_boundary_0036",
+        "free_bench_boundary_0044",
+        "free_bench_composition_0000",
+        "free_bench_graph_0012"
+      ],
+      "distinct_topologies": 4,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "current_bound_batch",
+      "three_contexts_verified": true,
+      "topologies": [
+        "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8",
+        "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362",
+        "3ff4ea40d9a5d065cc929acd0680146f73d1b0891bac3d74a040efcf86ee9d1a",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ]
+    },
+    "compiler.security_parameters": {
+      "case_ids": [
+        "free_bench_boundary_0011",
+        "free_bench_boundary_0030",
+        "free_bench_boundary_0036",
+        "free_bench_boundary_0044",
+        "free_bench_composition_0000",
+        "free_bench_graph_0012"
+      ],
+      "distinct_topologies": 5,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "current_bound_batch",
+      "three_contexts_verified": true,
+      "topologies": [
+        "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8",
+        "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362",
+        "3ff4ea40d9a5d065cc929acd0680146f73d1b0891bac3d74a040efcf86ee9d1a",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1",
+        "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+      ]
+    }
+  },
+  "encrypted": 6,
+  "first_attempt_passed": 6,
+  "format": "poseidon-stage2-math-agent-results-r117",
+  "generations": 6,
+  "http_attempts": 6,
+  "limitations": [
+    "Six free-generation cases only; no causal or full-coverage inference",
+    "Compiler evidence is artifact/pinned-runtime/final-metadata, not per-instruction tracing",
+    "Old runtime results retained separately"
+  ],
+  "max_absolute_error": 4.715815174471949e-08,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-r117-audit/report.json": "c53520bad87d82d7e5aa0393713a67396c0735da51d37f7d3b0b9d8ade1003e8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-r117-compiler.json": "d59c2ab44e9ae4bd079dcaccb923c0e974fbcabf83e18795201ae27c48771747",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-r117-live/report.json": "feb09ddde06128262d2c6444ca654c1d8e50014f764f71ea4383c811d80260e5"
+  },
+  "rows": [
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "81809ba86e1d3f36517b482b4c572e25d579e138ec06b1d3a0698d3a293cf812",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 132,
+        "mae": 1.1758608781991213e-10,
+        "max_absolute_error": 5.68672859361209e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-epv8uvbt",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "free_bench_boundary_0011",
+      "model_sha256": "d32589f18249898ebf48c77e7696c6b613eeb1d1fdf89a30fd7fcde3d2431cb8",
+      "provider_status": "passed",
+      "report_sha256": "1293107a667853fd60d9a3d57498f8672308fbf7eeaf9ae8d232e8733601a605",
+      "request_id": "a1e5751468955fca172903b6ae4d2c28ceaa5ce2aeff0c357c71ba235da91f95",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "1acca541dedde0098cd519a43db035bcc9cdf8090f983e7c2c72c276d0f56e07",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 252,
+        "mae": 1.2990496204017238e-10,
+        "max_absolute_error": 1.4997392216997696e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8m_sltss",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "free_bench_boundary_0030",
+      "model_sha256": "efe56bee1351f06a4029d84e2aaec9528fc6ce969ca4b66df77e0db4630d6c90",
+      "provider_status": "passed",
+      "report_sha256": "213bcc79d2419ffe9825f4c39f4acd736d5c5abf1d03a7ddcf1144dde46e801d",
+      "request_id": "6c86e15b2edfd054998735a63c21abee3844a9ca4af61c46bfedaf8431958677",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "7c8324e04bc336d1469306576a90eed90c6013cf71e28e994889ace365fc34b7",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 1020,
+        "mae": 1.213327161366168e-10,
+        "max_absolute_error": 1.4343395360327804e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-q0v97oj2",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "free_bench_boundary_0036",
+      "model_sha256": "96633c41ec999e68fc9e76f2e004ac0560c058d74c1d8fae1f10e1d055b84df0",
+      "provider_status": "passed",
+      "report_sha256": "0bcea2713310c2f9c91ee9d5e2738c251a0dd8a4c6a75a5691cf1ea37dd89790",
+      "request_id": "ba40796f8fb99f64a470c0e34631ba2be4ec299f1ce0f5193af5af8e8752e6c7",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "3f8e75fdf472b49c0b05b4f33816f0e3b09e5e3ebec8ddc62ec82b95e3a00214",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.3339455682409573e-08,
+        "max_absolute_error": 1.3563707518260415e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-clpo482e",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "free_bench_boundary_0044",
+      "model_sha256": "ded3af853ae7b8bbea137971cbffb3536d9adbdaebcc7befecc836ae856f58af",
+      "provider_status": "passed",
+      "report_sha256": "8c593727f87e4b2577f55431b7d49d7223e46694155291e77c2ed190898cdd8e",
+      "request_id": "81f8a77486d2651b3f9c21a450892e826358dddf3f7b48a9600f83b46be5d1e9",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "af81242df15b835f016ee748d72782a013f5aa7120f60863f73060437705caca",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 4.6878070963235485e-08,
+        "max_absolute_error": 4.715815174471949e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-r79syi85",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "free_bench_composition_0000",
+      "model_sha256": "a126262ebd76d9715712d308212f4ef17c7a8eacca39fa920adf30d65a26e727",
+      "provider_status": "passed",
+      "report_sha256": "e5b7a27f34ea48f2b089826dbd45b1cab326e7cee55b2dd8581a33c732dd6791",
+      "request_id": "2c06803c7f2441ec55ba8ac1107cfd3746980dc0e879e36d6b054a45dbf4889f",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "32af52f15cc7e0a73f2cc2cd6055359c7c3bad771c81a7c025d98c2faa22cb9c",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 5.044978478333634e-10,
+        "max_absolute_error": 3.0196217089273336e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-d_p2cn2p",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "free_bench_graph_0012",
+      "model_sha256": "4bbbd5b58c07f271c0694325081a66c416ab2718d84da54ec293198bb94f5d08",
+      "provider_status": "passed",
+      "report_sha256": "a969707d96afd06c407545d87c6779fd0d8f2c756fee4b20e03b5924b9095e86",
+      "request_id": "1e7c94084565a08d89c809c5e94151565d35c90e40814e9c34744be10d59d3ee",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "free"
+    }
+  ],
+  "seconds": 340.06843460300297,
+  "source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "stage2_complete": false,
+  "statuses": {
+    "passed": 6
+  },
+  "successful_after_repair": 0,
+  "usage": {
+    "completion_tokens": 67983,
+    "prompt_cache_hit_tokens": 2432,
+    "prompt_cache_miss_tokens": 37866,
+    "prompt_tokens": 40298,
+    "reasoning_tokens": 66931,
+    "total_tokens": 108281
+  }
+}

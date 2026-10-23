@@ -1,0 +1,79 @@
+{
+  "backend_library_changes": false,
+  "binding": "4e6b176262ec75f7bca8c1a4b018244f139fa90300c118e8117f53c3d0f7ba7c",
+  "branch": "lhy-agent-dsl",
+  "candidate_origin": "historical_real_agent_source_unmodified",
+  "changes": "Fit optional examples against the complete public envelope after adding weight metadata and mandatory rules.",
+  "commits": 0,
+  "context_limit_bytes": 131072,
+  "control_report": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/tensor_axis_budget_v1/controls-fast.final.json",
+  "control_report_sha256": "90d922402ff46804ff8b944a1abf9e83f14992531ea85720c90aac23fd305e84",
+  "controls": {
+    "binding": "3c3ed6d9cf59a6ced69ec7a7ce22ae6e2fcb79542c5c91c5954fe1cf6710eb93",
+    "errors": 0,
+    "failed": 0,
+    "passed": 166,
+    "skipped": 0,
+    "tests": 166
+  },
+  "current_new_agent_generation": false,
+  "date": "2026-10-09",
+  "downloads": 0,
+  "format": "poseidon-tensor-axis-context-budget-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "identity_sha256": "4094ca5f0523323f2976d1e3d265a5d2fd933c8d71883edc0da458d7219a762b",
+  "installs": 0,
+  "interrupted_control_batch": {
+    "api_calls": 0,
+    "completed_passes": 322,
+    "counted_as_complete": false,
+    "exit_code": 124,
+    "failures": [
+      "test_historical_v11_fixture_bytes_reconstruct (test_tensor_axis_context_budget.ContextBudgetTests) ... FAIL"
+    ],
+    "status": "timed_out"
+  },
+  "mandatory_rules_preserved": true,
+  "models_weights_layout_reference_unchanged": true,
+  "native": {
+    "compared_values": 80,
+    "compilations": 1,
+    "encrypted_calls": 2,
+    "failed": 0,
+    "input_groups": 8,
+    "maximum_absolute_error": 5.942335901121254e-09,
+    "new_artifact_bytes": 8156586,
+    "passed": 1,
+    "seconds": 46.412788482004544
+  },
+  "native_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-context-budget-acceptance-r1334/report.json",
+  "native_report_sha256": "6cc233ec9880072d6e92aaa2f9eda03013150c08ed5c6faa78d02389029c5047",
+  "next": "Freeze new v12 requests for the two unresolved MHA Agent tasks, obtain paid approval separately.",
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "old_versions_default_unchanged": true,
+  "parameters_changed": false,
+  "prior_qualified_v12_requests_unchanged": 3,
+  "prior_report": "docs/baseline/agent-tensor-axis-guidance-r1332.json",
+  "prior_report_sha256": "28faf8a488a6b56c15fdae58509b944d7af8b167e724d43015953a012b992f24",
+  "protected_sources_changed": 0,
+  "protected_sources_checked": 654,
+  "provider_calls": 0,
+  "prs": 0,
+  "pushes": 0,
+  "resource_expansion": false,
+  "sdk_rebuilds": 0,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "source_transition_binding": "b24629e972ab117ecaf0bba1fb870ea4d17fe93204511e8f72f2555772b7be34",
+  "stage_source_counts": {
+    "compilation": 622,
+    "execution": 622,
+    "generation": 628,
+    "validation": 622
+  },
+  "status": "offline_passed",
+  "version": "explicit-v12"
+}

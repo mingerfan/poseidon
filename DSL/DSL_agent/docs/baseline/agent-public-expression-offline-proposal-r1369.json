@@ -1,0 +1,419 @@
+{
+  "approved": false,
+  "backend": "poseidon_cpu",
+  "binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+  "candidate_origin": "deterministic_rule",
+  "cases": [
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_0/candidate.py",
+      "case": "reshape_0",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model.json": "3beab768c36fcea67674e86aa087639b688caccda05f065a871d723829996d3a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/manifest.json": "769e28f757953a0d5e5f71e08dd4c7501de925083f251ea0ebafeeba07bee41c",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/provenance.json": "55379ef37eafbd903ae33d4daa6dffb0bff1ade63256d47343d68f54e06f54ba",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_0/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_0/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_0/model/manifest.json",
+      "model_sha256": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_0/request.json",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "task_id": "cdc1479adacb44788fdebaa19de656cf",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_0/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_1/candidate.py",
+      "case": "reshape_1",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model.json": "7dd844cc11049381edfaa609de93a42c4760ad2a796eaef7496d4994f4adb2e3",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/manifest.json": "b49fb88275d5a97907cf52e1dd00e790935eed14df2f5e913dea36c485b4948e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/provenance.json": "68e0c02d99eadcaec0f6e51b4d3454ade86a1305fab23cfccf376677ed34c5bc",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_1/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_1/request.json": "1a2ba05e49a4217c88deaa6de410bae9ac6eb73648b8f07818761ad820a8d7ab"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_1/model/manifest.json",
+      "model_sha256": "55d474358ba2931b6b862b28af774dffc93b56a82c02644e1a0cdab5f5c47e0e",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_1/request.json",
+      "request_id": "d83974f41e7d848483c300d636eb38f58d0f59077acfbc5acb56accd7f104f33",
+      "request_sha256": "2415a642ff92b0b4211c4a0fa9290252fcfb723f4a7a036c517009010e02dd29",
+      "task_id": "48ccfc1e47794259a34973e52c21f606",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_1/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_2/candidate.py",
+      "case": "reshape_2",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model.json": "93ca0dc7850219bdc0b53925a15fd1279418f7cf97d21854d3ae13299c696d82",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/manifest.json": "da0b0b1ae63e60119fc40ebacfaf69d413d6f32cdbcf184a317ed3e27dacc0ff",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/provenance.json": "b6c892520ecd3597819b96117af226e373cad84fad15f3bed7a9e71b99258c8d",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_2/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_2/request.json": "cb0a53670e81743648de70c35239715b7ae9b584415bad9e2faa14879059072e"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/reshape_2/model/manifest.json",
+      "model_sha256": "9cdddc2b3543443804e33c226eae4e003944439e6bb03354e3490ae5f7dd7185",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_2/request.json",
+      "request_id": "30baf614dcd1a8e2c37cb63a652e7df8f33a6b9b64b96c350dcacf546585904f",
+      "request_sha256": "3e97dce28afe2bca5d75bbf87f31c0f67f4576890187369212e4ceb42fa2ebc2",
+      "task_id": "93fd3103f7844bfea72b17659a50c288",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/reshape_2/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_0/candidate.py",
+      "case": "permute_0",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model.json": "04c948f7e8c8a9250ccd72cdc07614dd11698adcebe7a6e54ec31926a45d2f4a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/manifest.json": "d167cbe1fcf7cfdd2a7866b346685d70b1e05f355c87ec056d1ef1abd15a06e7",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/provenance.json": "8d43315ae3fd6b556e76a641e31a1232ba9efac223e41c76a2001330ca7ab87e",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_0/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_0/request.json": "bffb1668d1321a1bebdd51552c1f1f431f5d2ed9a92efdb836e5e1988010fdea"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_0/model/manifest.json",
+      "model_sha256": "f909d9f1a77a86917a645805970b037d2f836da46e7bbc34c1d536dd9af994b8",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_0/request.json",
+      "request_id": "ad6bae0e9224108eb611f7db2d5e2140e8e215d8d00ba85c2720a5afbdb44fa9",
+      "request_sha256": "ee37d5dd4e5d96b049f9ecd8307f1d77c4b64b672ac22e3d983f6bf4c4ca6ca7",
+      "task_id": "7afeb7afbb4e4f7583993e0e8ce811e0",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_0/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_1/candidate.py",
+      "case": "permute_1",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model.json": "9db8d5d82354b3fbd6c27d86be89f023db661debb7ede40ed9b3f8961cd0ff4e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/manifest.json": "b6c811ce74a23ac478a6674fc6b3ad6787f26170947ac91622e5675dc5698cf5",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/provenance.json": "ddb5c0d70da353b22c0b84ac4ea27a6824de4227a8a0dc6c1f5e2eef8bdd907d",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_1/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_1/request.json": "206d6bf00c77d04dd2492a0f138e97375d781f425c60f14737691dcf932e4ff8"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_1/model/manifest.json",
+      "model_sha256": "d6f18e43b243fbb78deae48a27bfd0a66d146e1bb4e07c2d20280ea1b9cd4da7",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_1/request.json",
+      "request_id": "e465db200bcf99e26b65da89f83b7c1c4b43a186966c6921450874056d455be8",
+      "request_sha256": "f9dfe9f716f11ffca0c96e5502ab9af606040a7782859cafd7e59988cd1da9c7",
+      "task_id": "1a424112ff924958bf7d32d10419d16d",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_1/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_2/candidate.py",
+      "case": "permute_2",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model.json": "5c4353a25b11a4f2b9ce2f57ab3ce23c9494dcb5ec9416b94a75499d94ffd38c",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/manifest.json": "a17204de4856be57d9cee14bbcecca25665f8aaee119b9176b52f3585d25d8bf",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/provenance.json": "c8362ca8e149a6be290b02977adc49bcf71c064b9147156d14682363e5468234",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_2/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_2/request.json": "45afe2b4954009d3d68dd1adf9828ca4da7e2004646ff8e956a900aa67cbebde"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/permute_2/model/manifest.json",
+      "model_sha256": "2208ca50b074c91ec56a90b47172cf4482ff84af6c546edd93d0787c4a6cd3ee",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_2/request.json",
+      "request_id": "c8b7d1f986f462671c214eae4728b630ba2c746f6557e5d6a2d1d3a8d6579ee7",
+      "request_sha256": "0c81dbe70dda290c1bed1d78fb70726e5863b500ad718a3da63c1bbd319b4883",
+      "task_id": "6fda6ecad2b141df8a37ee3448ceeeb9",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/permute_2/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_0/candidate.py",
+      "case": "slice_0",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model.json": "eb06438007dee8ceae33ec8f8b3eb3657d4ac6906b9f5bb930b32659e51a85ea",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/manifest.json": "369159a8be1ca95613d836ee3353fac35c4c4465de5c3122298ad830ebce3f8b",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/provenance.json": "25d2dba8ec90cd92e3f36ea3c2860d907ada90e55bac2e20e7fb6f35ac567520",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_0/candidate.py": "435d4bfc12c0e4ff4abf942d890ba9a0a4bd0dbc60ea20390bb0704a637c4ac8",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_0/request.json": "487c3729bd9d2777427ffa768a5300851834cf67b4bbaca5b39d39eb0061cff4"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_0/model/manifest.json",
+      "model_sha256": "b0fea7ec6b6edd50e4cdf71851775b722b8066c7e2b5cd58c0d1e1e4c3dd383e",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_0/request.json",
+      "request_id": "bd9caec3d7047760650c13857759c41c9d907988f5f00d4045482fa0ecb598c5",
+      "request_sha256": "26823a32b9da004520d7483c97b4a417a018d657491b9eff1c3eb9453be0da24",
+      "task_id": "0b526655243b4589b432ef666817abc4",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_0/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_1/candidate.py",
+      "case": "slice_1",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model.json": "74341f49d6b90e8255f0f2e061d324e815681dbcf486d3f34559579af03b4860",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/manifest.json": "e6db5c02730fb01ec4bbee4ab5da992ebec3e1ea893cf93a35668f7f2607a713",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/provenance.json": "1d0c2f417343be89b96516146d95861a840abbdce20e22803d6dd39de9fb0e6f",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_1/candidate.py": "435d4bfc12c0e4ff4abf942d890ba9a0a4bd0dbc60ea20390bb0704a637c4ac8",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_1/request.json": "8792c8dd63ed0e84f58603bcdd249f8062beb6bd7a0602c76b2ebc6156d86bf1"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_1/model/manifest.json",
+      "model_sha256": "defa121ffc93fde34e5a726646026f7254dbb53136158223089c3afe7b829976",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_1/request.json",
+      "request_id": "dbbd92d8fa56d038f5af9fff2ca19d5bcf6b2bcead4de97fa4f00db48e62d79f",
+      "request_sha256": "94329dfe8e5bab67c41a9c1ea05c0cec5423d85d4e5cd8f85034dc31ec081581",
+      "task_id": "722da97acc4743bb98cb69f5d4f64fb8",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_1/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_2/candidate.py",
+      "case": "slice_2",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model.json": "5b367c823ef00944250ce7344e03110e945b62a956b586119739d5a7624c085b",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/manifest.json": "5b7b32cc62e7ec0df7c007a95d0e1d94b32d18429ce902bffb2f1cefc2eb9164",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/provenance.json": "4925178dc478565eb39a47b1232923cd7c674012bf73b259dd5f7710eef5dd17",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_2/candidate.py": "435d4bfc12c0e4ff4abf942d890ba9a0a4bd0dbc60ea20390bb0704a637c4ac8",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_2/request.json": "cb0b4554376b6e3504397af7fe0741a5e4dc5bc30da5f872452b0e3a4650b494"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/slice_2/model/manifest.json",
+      "model_sha256": "62017898f3314aefd9536f28ba67ae6d176f5dd0785a66b03cacbdea70455b33",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_2/request.json",
+      "request_id": "1bce88ae9b54465ce0c0589a0bc2de97cc9188bcd36b188591c75b1720a188c6",
+      "request_sha256": "f1cc35f80d1ca0bc8b135c465fecd3e770a0c4dc9d89c5e8a9aacde48b8682af",
+      "task_id": "fee4b25776b84c93906ecb070fa9bb59",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/slice_2/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_0/candidate.py",
+      "case": "bool_cast_0",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model.json": "4b6bec06e500cb86ba5fd70fc4aafddb7a973c6a0428e5e28297e4be58ebc557",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/manifest.json": "4e718e6f92a27a4c4ffa78160da5c3cd8ad7c27130fca1ccbcc034756d1f9482",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/state_0000.npy": "8a5f12b3ff91a780a3a465dd60bac4962f937211c474bd7ddf73f9ebfbbddf9c",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/provenance.json": "79796d04a5828f59581e05886c60b032a815a8555761426468f293285c0d69d8",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_0/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_0/request.json": "c1e61b29cd150f4453d24ef59f73ead23f91cdec765c1937bc6e0018da7949bd"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_0/model/manifest.json",
+      "model_sha256": "3c950df08e210e49b09d900a552dd86b5693402bb1a203731ef3c814b614aafe",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_0/request.json",
+      "request_id": "1de53aa804f0c312e41775809ad13ea95c8dede914c71eb396c212b1d3f15f35",
+      "request_sha256": "609bf40a022d206f00703440c6a7d6846704899d6e6fde8ca6d338510622185b",
+      "task_id": "88d97fa0a8fe4591b816c3a439983c7e",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_0/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_1/candidate.py",
+      "case": "bool_cast_1",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model.json": "a672f8752d61f7dbb07808e46f66f66c9708cb0e4b82b3b0d59c03493d589170",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/manifest.json": "6e530de274ce1813cc61309239fce3f012c01099598d13bfdc0952ae32b56cbf",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/state_0000.npy": "122742851ab4d502356d8ad66fb364f007af36df7803235ac275ce0c9e4b2b1f",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/provenance.json": "c311d92d2404ddea1c5c724c9cd5c8de938c67e26f71f9d1ad60c9cc6f7a577c",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_1/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_1/request.json": "88cfb40cdad3507623a2e18bda300c3567c720d32ef16dd1fd4176881004497e"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_1/model/manifest.json",
+      "model_sha256": "278d9087ddcd6d684549e444682786d40fca63ce96750a57d47a56b20fb961ae",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_1/request.json",
+      "request_id": "5b500ffbaac96efb3beef1d72edd9da6f8f9edf7e63f0dbad915695f13c7681e",
+      "request_sha256": "142ab85f435e6d97e384c8cd560b19862220bf36ce3b970cf97c9d7fbef40caf",
+      "task_id": "a2732cf4dba04f88a441caf7afd8b455",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_1/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_2/candidate.py",
+      "case": "bool_cast_2",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model.json": "eda73d085def07fd40053a5e0eba6d14c2cb2e6654fd17b001309b0630752aed",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/manifest.json": "7204aa81189f981cfcce5ea1da1be3ffef500516344524c41ecbefe751e9b0ca",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/state_0000.npy": "660091e64631a38850f35cf88eb6e10415ce3d48866b2b9077438977c2e4aa0d",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/provenance.json": "748b4cecf911ab571fec06ab086c015fc527e30a3217178fd3d128bec455b1ba",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_2/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_2/request.json": "b68d99f8bf9faee6fff94c73b264d8b79393ffa1cb38705c00a2c277d80eba4c"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/bool_cast_2/model/manifest.json",
+      "model_sha256": "2d8718e09d0ffcb99d95077bca2f0b85506641366e2c83878d36de417a863358",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_2/request.json",
+      "request_id": "6992b1189a0965d1f097426c067c32a8dc1069ba511da64df0a728e4e01d30a0",
+      "request_sha256": "425f7a7b085653549436eb55aa59d94a91dff9a88c23aedbac3482e36d0afdf4",
+      "task_id": "6958c231d345454aab2ece66fe710a04",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/bool_cast_2/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_0/candidate.py",
+      "case": "identity_0",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model.json": "04c948f7e8c8a9250ccd72cdc07614dd11698adcebe7a6e54ec31926a45d2f4a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/manifest.json": "b0e5fb9063bd462d23ace0d71c99519729cb949cd438a95e94996327c778694e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/provenance.json": "5728fd73cdacfefad85927e6846ec5831fce17f0d1e38a5860a27e0a27631b64",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_0/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_0/request.json": "bffb1668d1321a1bebdd51552c1f1f431f5d2ed9a92efdb836e5e1988010fdea"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_0/model/manifest.json",
+      "model_sha256": "f909d9f1a77a86917a645805970b037d2f836da46e7bbc34c1d536dd9af994b8",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_0/request.json",
+      "request_id": "ad6bae0e9224108eb611f7db2d5e2140e8e215d8d00ba85c2720a5afbdb44fa9",
+      "request_sha256": "ee37d5dd4e5d96b049f9ecd8307f1d77c4b64b672ac22e3d983f6bf4c4ca6ca7",
+      "task_id": "51f4090bce2e48e588895c7b56254aee",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_0/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_1/candidate.py",
+      "case": "identity_1",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model.json": "3beab768c36fcea67674e86aa087639b688caccda05f065a871d723829996d3a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/manifest.json": "8b6ad95ac417b637f2d7bf1b9a41cb19abcc1f623d1a3f8080b14f381e4b2ec4",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/state_0000.npy": "deb421ed8c6470346a3244e15213ae7d19d840735f59c858fb091bbcec7ca665",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/provenance.json": "0e6ee3a8db1732dd5cf96447ec86ed7d5269f5a29017e6a2caf857d62df8ed97",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_1/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_1/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_1/model/manifest.json",
+      "model_sha256": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_1/request.json",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "task_id": "680faea4f0a5445eac0f2bb9cd18041c",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_1/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_2/candidate.py",
+      "case": "identity_2",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model.json": "3007847e8c5506285020458c135fd4702c6f14fb8a0df8dc7b4083f81717ff6a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/manifest.json": "712d6bc45cc9eef1f3af71b84a007436ed760f3d1add15265d9584568b572463",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/state_0000.npy": "fff8a31b7b99925516aec6cb0ba4d87e0b0aec5cc3a49f04e6ef1893aec308e9",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/provenance.json": "6bc6a9efa8ceafd623dd7d4ed50336174ee3995ae751a0657e741dfa7fe0145f",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_2/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_2/request.json": "22854375e5cafa94d043b72fb0b044358141a8d9f47f6eec21ae1bde94b9f5d6"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/identity_2/model/manifest.json",
+      "model_sha256": "4df4057ba7bc0d96b0f9a63f37a35a3179f8277b5d3c1ef37010cbae277a261a",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_2/request.json",
+      "request_id": "3c6ee0fdae53d10a5eeb33be5c8982e847bcf545b3abe37bb1e4c07dae88614f",
+      "request_sha256": "c0b1ff024ceb5db4ede2ca4e09210376f65794c0259401caad56eb466e850258",
+      "task_id": "7a1d6ee2b34c4498a1b82274158e0249",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/identity_2/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/float32/candidate.py",
+      "case": "float32",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model.json": "3beab768c36fcea67674e86aa087639b688caccda05f065a871d723829996d3a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/manifest.json": "af8df6ef305865ec7c815b9178c9d65294772c2c8751b375fd1bd3f2c28725fb",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/state_0000.npy": "7d19ffd5c2d1d87ad4c97a9996916601c2f1bbf2d63067db0ebc53677001845d",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/provenance.json": "1e6491be0c53a5ec6bbee2e617b8a84f8bd2aadb619b9ee12a2cf263826f53c7",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/float32/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/float32/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/float32/model/manifest.json",
+      "model_sha256": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/float32/request.json",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "task_id": "4d87587b10f64fd1b167ad5057c0b839",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/float32/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/candidate.py",
+      "case": "named",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model.json": "6bc2fa4328429f6c809ebafeb6e0b1b3ecfb072a2b0fa334d17d5e4f076449c6",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/manifest.json": "2204e27558e7fe0a4c3d83f20271684082586b624ab925026757a9395c10d8cc",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/provenance.json": "9b9327e2347b615ef657cda012c62807ca5621607c078ec2364bb8db15570f0b",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/candidate.py": "21faabe87faf8f727f83014574ba9e5b2e000109f318ae5c266782f1dca592f2",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/request.json": "b6772eb945f86b651c79c86245d9bfc206d5925da34e0fafbefe319cd773fd87"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/manifest.json",
+      "model_sha256": "82341e7f74f73628abcf8ff69378a2d03ff81f776c50fe7bc21eab9e533ab04e",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/request.json",
+      "request_id": "61e277c6e9d3062e24c98c14cadb54702edd201785b4f8c3b780c50257e6372d",
+      "request_sha256": "ed82f9bab7d239ee79f22daf2e324f22b817a024ac05abf404d33af320d99be6",
+      "task_id": "ad6800ca1e8d4020905293bac01e9091",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/tasks"
+    },
+    {
+      "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/unused/candidate.py",
+      "case": "unused",
+      "files": {
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model.json": "3beab768c36fcea67674e86aa087639b688caccda05f065a871d723829996d3a",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/manifest.json": "90181ca63f090ac3cc0e02ca09e406d5e91a511ecd52d6704ee32b7cced45497",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/state_0001.npy": "339fb06679091dd9a30361f56d2914a698ecf5e9f423d074eb957219a833a137",
+        "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/provenance.json": "e238f992f0810c975aa1fda6078aad4a166ed1855d210d03968673992cff99ae",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/unused/candidate.py": "5e7e936ad6ce8dc95ea96b42b3186ed049bc171aa636d61923f3b96fb8906afb",
+        "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/unused/request.json": "122a5b5703cb5bba3f036a5f2755eaa8f96418bcc10ce400e5830b35b108359f"
+      },
+      "manifest": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/unused/model/manifest.json",
+      "model_sha256": "16ec11d186baddb9d7c412926ddb802cb8ba12cad005d7b39cc6aaed9525aea5",
+      "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/unused/request.json",
+      "request_id": "9cc698679022136975ea433b2fffc7cff6ff343b3e4de8560babd16bf194385a",
+      "request_sha256": "e554130c77bca34886d0bb399cd2eaaeee1cb984959471a673c623325049e964",
+      "task_id": "3a4491f0fb4343869f3c1b9474452ada",
+      "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/unused/tasks"
+    }
+  ],
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "format": "poseidon-public-expression-offline-proposal-v1",
+  "http_attempts": 0,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "options": {
+    "capacity_packing_version": "capacity-public-tensors-v9",
+    "chunk_period": 4,
+    "generation_guidance": "explicit-v13",
+    "public_weight_policy": "descriptors-math-roles-v2"
+  },
+  "preparation_recovery": "data_validation_only_no_case_rerun",
+  "provider_calls": 0,
+  "reuse_cases": [
+    "permute_1",
+    "bool_cast_1",
+    "named"
+  ],
+  "scope": {
+    "case_seconds": 180,
+    "compiler_jobs": 2,
+    "global_bytes": 34359738368,
+    "http_attempts": 0,
+    "link_jobs": 1,
+    "native_address_bytes": 4294967296,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "new_bytes": 536870912,
+    "provider_calls": 0,
+    "reserve_bytes": 4294967296,
+    "wall_seconds": 900
+  },
+  "sdk_identity": "b41fe9599da34b14b013ce1aad5237969897132f0f0130643c795fc780841d5a",
+  "source_contract": "poseidon-trusted-pytorch-v23",
+  "source_controls_binding": "9ad9ca99b6c363c3d98ff5e0a16742df91909e1c06f6d1731e2a043521252c5d",
+  "stage_identities": {
+    "compilation": "5e39b8a81bd1b189ac65a2af8dd61b28be7cadeee42d9e2f083cee822b0bfdbb",
+    "execution": "b6c8c69c6a83c7406796c1d96ac2f49f82ba181c822b8aeb3efed2feaddc1621",
+    "generation": "017c9e7dc608380dda7c6a5c677cfdba76fb7a642895cc0a49a6d0a7189962d4",
+    "validation": "053c4f812d7cbaa403b2ebb9bb16ca4b0db181e0b289ed8a9da2189fa99f49d5"
+  },
+  "tools": {
+    "scripts/baseline/benchmarks/tools/public_expression_cpu_v1/prepare.py": "7343fc44608b062f6e66fed21ba279ab07dea9bcf57e3656ba7dd7ebdd054163",
+    "scripts/baseline/benchmarks/tools/public_expression_cpu_v1/recover_preparation.py": "9cc5f42096c44b3768d20e8dd0eab6997395e45b60238e222a420177ac12ec7d",
+    "scripts/baseline/benchmarks/tools/public_expression_cpu_v1/run.py": "e3fe24131ca82e75452caa89ceb2365bb40c601aaf3793e17e2cba6a3d06f13f",
+    "scripts/baseline/benchmarks/tools/public_expression_cpu_v1/scope.py": "915f0f6a12b3e100555f1bb0a6b3e80271827acabcd91f11ba0dcee3a706ee38"
+  }
+}

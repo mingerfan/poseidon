@@ -1,0 +1,81 @@
+{
+  "backend_changes": false,
+  "backend_files_preserved": 648,
+  "binding": "26f895601c80bbd1b73f8b6d3abf169eb0e8df2d1ab0a5bbe32829c886714370",
+  "branch": "lhy-agent-dsl",
+  "commit": false,
+  "compared_values": 16096,
+  "compiler_calls": 0,
+  "contexts": 41,
+  "downloads": 0,
+  "encrypted_executions": 0,
+  "format": "poseidon-fused-matrix-draft-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "initial_test": {
+    "diagnosis": "Valid rejection had generic broadcast message; operation-specific diagnostic and metadata provenance guards added.",
+    "errors": 0,
+    "failed": 1,
+    "passed": 23,
+    "result": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-fused-matrix-source-r1265",
+    "skipped": 0
+  },
+  "input_groups": 656,
+  "installations": 0,
+  "max_decomposition_error": 4.440892098500626e-16,
+  "max_source_normalization_error": 4.440892098500626e-16,
+  "next_steps": [
+    "Approved ordered-common SDK qualification, new-input execution and package cache checks",
+    "Integrate common and fused capture at a new explicit source/contract boundary",
+    "Poseidon regressions for each fused partition, followed by separately approved Agent evaluation"
+  ],
+  "numerical_tolerance_changes": false,
+  "operation_contexts": {
+    "addbmm": 13,
+    "addmm": 14,
+    "baddbmm": 14
+  },
+  "paid_calls": 0,
+  "parameter_changes": false,
+  "prerequisite_targets_preserved": 8,
+  "production_applied": false,
+  "production_files_preserved": 704,
+  "provider_calls": 0,
+  "push": false,
+  "recorded_at": "2026-10-07T13:05:01.938323+00:00",
+  "reference_changes": false,
+  "reference_files_preserved": 6,
+  "report_sha256": "265de3890d5b2b6ac0fef55e88a6f8835de929ee972767470dd72e824031050d",
+  "result": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-fused-matrix-source-r1266",
+  "root": "/home/lhohy/Code/Poseidon",
+  "runtime": {
+    "cuda": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "sandbox_sha256": "454c892eb2694e849957d4bc4f7e79ead03225b7110ef7daacbb761b2b818a4d",
+  "scope": "Internal trusted capture staging; application format and generator contract unchanged",
+  "source_hashes": {
+    "scripts/baseline/benchmarks/tools/fused_matrix_intake_draft_v1/inside_tests.py": "d378fb33ad2f683a2fc5029135ffcd4b6dadacdff07021ae2c795f1bb0feb922",
+    "scripts/baseline/benchmarks/tools/fused_matrix_intake_draft_v1/plan.json": "b7e5a3488943f115a3e18ac2cbf383b30553818340f1de9e92c3b9485c960075",
+    "scripts/baseline/benchmarks/tools/fused_matrix_intake_draft_v1/run_isolated.py": "678ee988af5f4e1742d149d9a0c7f90c9da15ad63577898d8f87341bc236cb4c",
+    "scripts/baseline/benchmarks/tools/fused_matrix_intake_draft_v1/targets/pytorch_fused_matrix_normalization.py": "a5164093d318d344b1d18aee0726f3638d3c63a10c1c44654db67047053c1477",
+    "scripts/baseline/benchmarks/tools/fused_matrix_intake_draft_v1/targets/pytorch_ordered_capture.py": "ecc6d55eca4454f1ffb33af54f7bb3d5398ba3d3f9dda8763411dc3c08378a95",
+    "scripts/baseline/benchmarks/tools/fused_matrix_intake_draft_v1/targets/pytorch_static_trace.py": "bf37763c36337bb9ff7090af5ba51fad59870039c3d812739d65bd674f502080",
+    "scripts/baseline/benchmarks/tools/fused_matrix_intake_draft_v1/test_fused.py": "a4656e2b61f35837247459b18d9266e43d7111f50898025220429dcd850a6370"
+  },
+  "source_manifest_exposed": false,
+  "stage": "staged_reference_verified",
+  "tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 26,
+    "skipped": 0
+  },
+  "unchanged_pending_live_binding": "1120ab0063c801e2d4199e956bb55dec12f0a68a167c17325ef7bb2a77a21481",
+  "unchanged_pending_offline_binding": "c91c0fa28ae574fecbdb12fd6267165bfd135d34eaef3bdd7be7b88c790697a9"
+}

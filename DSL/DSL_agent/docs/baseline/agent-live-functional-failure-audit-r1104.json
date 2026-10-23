@@ -1,0 +1,106 @@
+{
+  "failure_source_analysis": {
+    "all_numerical_rounds_match_candidate_math": true,
+    "delivery_report_sha256": "4d20aef6816bdc39352fd90c775156bd41206bdae1c7565630c216955b75d4e9",
+    "numerical_rounds": 15,
+    "source_report_sha256": "9f35f4061e28bc5b9e1e82c6b45e5650d99548ade02b46be58477204636751ca",
+    "static_rejections": 5
+  },
+  "format": "poseidon-agent-live-stage-audit-v1",
+  "frozen": [
+    {
+      "files": 695,
+      "group": "source_hashes",
+      "mismatches": 0
+    },
+    {
+      "files": 3,
+      "group": "tool_hashes",
+      "mismatches": 0
+    },
+    {
+      "files": 698,
+      "group": "retained_hashes",
+      "mismatches": 0
+    }
+  ],
+  "full_batch_completed": false,
+  "functional": {
+    "cumulative_generations": 34,
+    "cumulative_http": 34,
+    "failed": 5,
+    "first_pass": 8,
+    "input_groups": 70,
+    "max_absolute_error": 1.9341682254425674e-07,
+    "passed": 10,
+    "repaired_pass": 2,
+    "values": 378
+  },
+  "production_or_backend_changes": false,
+  "snapshot": {
+    "binding": "81c396aeb46344fdce88d746ea781e784afd0647b58d37ff848027028d57c01e",
+    "controller_processes": [
+      [
+        "981958",
+        "981924",
+        "03:04:34"
+      ],
+      [
+        "984019",
+        "981958",
+        "01:42:52"
+      ]
+    ],
+    "cumulative_generation_reservations": 68,
+    "cumulative_http_attempts": 68,
+    "groups": [
+      {
+        "completed_new_generations": 33,
+        "completed_new_http_attempts": 33,
+        "failed": 5,
+        "id": "functional15",
+        "not_started": 0,
+        "passed": 10,
+        "planned": 15,
+        "running": 0,
+        "status": "complete"
+      },
+      {
+        "completed_new_generations": 33,
+        "completed_new_http_attempts": 33,
+        "failed": 0,
+        "id": "matrix_instance60",
+        "not_started": 32,
+        "passed": 27,
+        "planned": 60,
+        "running": 1,
+        "status": "running"
+      },
+      {
+        "failed": 0,
+        "id": "attention1",
+        "not_started": 1,
+        "passed": 0,
+        "planned": 1,
+        "running": 0,
+        "status": "not_started"
+      }
+    ],
+    "prior_generations": 1,
+    "prior_http_attempts": 1,
+    "running": [
+      {
+        "generations": 1,
+        "http_attempts": 1,
+        "id": "matrix__public_vector_r_0",
+        "phase": "generating",
+        "status": "running"
+      }
+    ],
+    "time": "2026-10-07T13:21:16.872141+08:00"
+  },
+  "threshold": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  }
+}

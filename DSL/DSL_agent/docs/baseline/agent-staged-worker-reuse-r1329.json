@@ -1,0 +1,207 @@
+{
+  "actual_acceptance": {
+    "backend_parameters_unchanged": true,
+    "binding": "8ab9d50ef53143cbc7c69cb98ca13a407e76edb456e744275cb7bf8aea8bc4bd",
+    "candidate_origin": "deterministic_rule_baseline",
+    "compared_values": 32,
+    "compiler_calls": 0,
+    "current_identity_sha256": "863f5d1906a1c083034d7a08105f032729117386fa7c738b7a56af1865aeb83c",
+    "delivery_stages_unchanged": true,
+    "encrypted_calls": 4,
+    "format": "poseidon-staged-context-package-report-v1",
+    "generation_identity_changed": true,
+    "http_attempts": 0,
+    "input_groups": 16,
+    "max_absolute_error": 9.972899639443256e-07,
+    "new_agent_generation": false,
+    "provider_calls": 0,
+    "retained_evidence_unchanged": true,
+    "rows": [
+      {
+        "case": "linear4x2",
+        "new_task": "db79b2443a7c4b2b85dec42dcfec938c",
+        "old_acceptance_preserved": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 8,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 2.9577002080838355e-07,
+          "numerically_validated": true
+        },
+        "old_task": "0842668d48044faeb4021a73b7bd3e9f",
+        "package_binding": "909550b77a1def8cc7bf75186d5b8ca593e27216ed433e79a002aad9ebecaef0",
+        "request_id": "3fda06df31dae1311c4f937d23965ebbdc7f7207830b552112f7cdbd126bfe68",
+        "reuse_checks": [
+          {
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-ymzuw4bj",
+            "groups": 4,
+            "index": 0,
+            "max_absolute_error": 7.068915381935881e-07,
+            "passed": true,
+            "values": 8
+          },
+          {
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-43gl3dvj",
+            "groups": 4,
+            "index": 1,
+            "max_absolute_error": 8.76277511774326e-07,
+            "passed": true,
+            "values": 8
+          }
+        ],
+        "reused": true,
+        "status": "passed"
+      },
+      {
+        "case": "mlp4x4x2",
+        "new_task": "1b45797604744b3ca4afb7396704163e",
+        "old_acceptance_preserved": {
+          "artifact_checked": true,
+          "claim": "finite configured inputs only; no formal equivalence",
+          "compared_values": 8,
+          "compiled": true,
+          "encrypted_execution": true,
+          "input_groups": 4,
+          "level": "numerical",
+          "maximum_absolute_error": 2.297512715188077e-06,
+          "numerically_validated": true
+        },
+        "old_task": "131e854dd8874712911abed885a8fda5",
+        "package_binding": "c11eeb5e274f76991826a318745306084d374e56e4cc474297395d5a1c32d3b0",
+        "request_id": "f1aa37743920f3b771ef86cc7bf8d7e024aa1ec76b9484c0f9b288d4637d6d25",
+        "reuse_checks": [
+          {
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-gu074czt",
+            "groups": 4,
+            "index": 0,
+            "max_absolute_error": 9.972899639443256e-07,
+            "passed": true,
+            "values": 8
+          },
+          {
+            "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-6aeoz7tb",
+            "groups": 4,
+            "index": 1,
+            "max_absolute_error": 2.2404648347684741e-07,
+            "passed": true,
+            "values": 8
+          }
+        ],
+        "reused": true,
+        "status": "passed"
+      }
+    ],
+    "seconds": 78.6122997479979,
+    "status": "passed",
+    "worker_binding": "e65f4bb91d96f06174ec38bfd591d2e40870256a40d06a40d5d2eaf2e8f95e0b",
+    "worker_format": "poseidon-worker-context-v2"
+  },
+  "added_artifact_bytes": 24346263,
+  "backend_changed": false,
+  "binding": "beb3c55d406c1e441a2eddeb8c888075bf7ec2f0e843a361045ba04e90edb661",
+  "branch": "lhy-agent-dsl",
+  "candidate_origin": "deterministic_rule_baseline",
+  "changes": {
+    "added": [
+      "scripts/baseline/application_execution/context_identity.py",
+      "scripts/baseline/application_reuse.py",
+      "scripts/baseline/test_staged_application_reuse.py"
+    ],
+    "before": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_context_activation_v1/source-before",
+    "modified": [
+      "scripts/baseline/application_execution/context.py",
+      "scripts/baseline/application_component.py"
+    ],
+    "reviewed_source_sha256": {
+      "application_component.py": "4590d737b5dd6c835627ebc7600e7ff713d5f09a3caa6468caa1ef545833bc87",
+      "application_execution/context.py": "6937e5cf13ad31e386bf649e9f50b91b1943441869201d8c959533544c20e781",
+      "application_execution/context_identity.py": "33dff09b68c31e6dbfa72fc7f6c9802742af8398696c53a66fd26a56f07163f9",
+      "application_reuse.py": "6a6d2e19bf54549538f2e4da326e2d352662e11810332a3f8e87a3b265d376df",
+      "test_staged_application_reuse.py": "ad13c2707203902958a081226b5afba1658d53e36c3770f13989f0c29fc11bc5"
+    }
+  },
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": false,
+  "date": "2026-10-09",
+  "disk_free_bytes": 45967183872,
+  "downloads": 0,
+  "format": "poseidon-staged-worker-package-reuse-milestone-v1",
+  "global_apparent_bytes": 27491418644,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "installs": 0,
+  "legacy_policy": "legacy-v1",
+  "legacy_records_not_promoted": true,
+  "native_limits": {
+    "address_bytes": 4294967296,
+    "cpu_seconds": 150
+  },
+  "new_agent_generation": false,
+  "new_mha_scope": {
+    "approved": false,
+    "binding": "c9932a659a0ac6a0c34ed4038b067b1ee7129930df0a5e581b0240d1f312c9e5",
+    "cases": [
+      "self_post_linear_residual__declared_shallow_v1",
+      "linear_into_separate_cross_none__declared_shallow_v1"
+    ],
+    "max_generations": 8,
+    "max_http_attempts": 32,
+    "paid_calls": 0,
+    "proposal": "docs/baseline/agent-mha-feedback-live-proposal-r1330.json",
+    "runner": "scripts/baseline/benchmarks/tools/mha_feedback_live_v4/run.py",
+    "runner_controls": {
+      "compiler_calls": 0,
+      "elapsed_seconds": 0.3492853329953505,
+      "encrypted_calls": 0,
+      "errors": 0,
+      "failed": 0,
+      "format": "poseidon-mha-feedback-runner-controls-v1",
+      "passed": 54,
+      "production_authorization_created": false,
+      "provider_calls": 0,
+      "skipped": 0,
+      "synthetic_authorization_fixtures_only": true,
+      "tests": 54
+    }
+  },
+  "new_worker_format": "poseidon-worker-context-v2",
+  "old_execution_stages_unchanged": true,
+  "original_evidence_unchanged": true,
+  "paid_calls": 0,
+  "parameter_changed": false,
+  "protected_sources_changed": [],
+  "protected_sources_checked": 654,
+  "push": false,
+  "queued_generation_keeps_complete_identity": true,
+  "reference_changed": false,
+  "source_stage_counts": {
+    "compilation": 621,
+    "execution": 621,
+    "generation": 626,
+    "validation": 621
+  },
+  "stage_identity_sha256": "863f5d1906a1c083034d7a08105f032729117386fa7c738b7a56af1865aeb83c",
+  "static_controls": {
+    "binding": "dca9ec846c2d65637e190ecc8e522b65db4f74cfa0314878e632c9c2dea319c0",
+    "errors": 0,
+    "evidence": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/staged_context_activation_v1/controls.initial.json",
+    "failed": 0,
+    "passed": 86,
+    "qualification_outputs_injected": true,
+    "skipped": 0,
+    "source_capture_and_sdk_checks": true
+  },
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "unverified": [
+    "New-source real Agent tests",
+    "Exhaustive historical program compatibility",
+    "x86 actual runtime in this batch",
+    "Bootstrap and CUDA"
+  ],
+  "worker_policy": "staged-sdk-v1"
+}

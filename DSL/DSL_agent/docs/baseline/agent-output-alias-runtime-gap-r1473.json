@@ -1,0 +1,23 @@
+{
+  "backend_changed": false,
+  "backend_core_changes_required": false,
+  "case": "where_2",
+  "compiled": true,
+  "current_resolution": "same real Agent repaired within the original budget; accepted response retained",
+  "encrypted_execution": false,
+  "error_log_sha256": "05eb1b20c4257c90c93d9f17a6073f3903936e75133a3b2e1a7f5eb4cf35e7a0",
+  "failure_layer": "runtime_plan_verification",
+  "followup_scope": "affected output-alias contexts and compatibility representatives; preserve original records",
+  "format": "poseidon-agent-output-alias-runtime-gap-v1",
+  "implement_after_frozen_batch": true,
+  "live_scope_binding": "3ae159c4143ef746fde74bbfc4470ac6f3f9bf00f051b3a986007fb3b1b6bbc1",
+  "next_agent_only_changes": [
+    "match the fixed Runtime unique-final-output-ID constraint in the artifact gate",
+    "return controlled duplicate-output feedback before invoking execution",
+    "register general output-alias expression guidance with a new version and request binding"
+  ],
+  "original_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-x0ly2mir",
+  "sdk": "03de9614dfda4e85e4315c4fd8a598d88cf888e508b3a79361bb95eef8090ce7",
+  "symptom": "plan verification failed: duplicate final output",
+  "user_model_or_reference_changed": false
+}

@@ -1,0 +1,91 @@
+{
+  "format": "poseidon-stage2-guidance-acceptance-r99-v1",
+  "source_before": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+  "source_after": "0705d150dcf7fb8db18aeb6d92b6dfa785a30f31bc3c5aae77b7d9218df2092d",
+  "changed": [
+    "scripts/baseline/run_candidate.py",
+    "scripts/baseline/test_unified_generation_guidance.py",
+    "scripts/baseline/unified_graph_contract.py"
+  ],
+  "compatibility": {
+    "requests_unchanged": 12,
+    "responses_unchanged": 40,
+    "static_failures_with_actionable_hints": 30
+  },
+  "tests": {
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "initial_test_failure": "CLI test initially treated shell-quoted forwarding string as an argv list; fixed test with shlex.split; initial log retained."
+  },
+  "audit_adjustment": "Guided helper metadata has a new upstream_exercise.request_id. Verified its exact new binding, then compared remaining metadata; old request metadata remains byte-identical.",
+  "offline_execution": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "compiled": 3,
+    "encrypted": 3,
+    "decrypted": 3,
+    "input_groups": 12,
+    "compared_values": 40,
+    "maximum_absolute_error": 2.730806866840236e-07,
+    "manual_scripted_replay": true,
+    "new_agent_generation": false,
+    "cases": [
+      {
+        "id": "native",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-44hc0gn0",
+        "seconds": 4.139473701994575,
+        "comparison": {
+          "passed": true,
+          "atol": 1e-05,
+          "rtol": 0.0001,
+          "compared_values": 12,
+          "mae": 9.30916965609515e-08,
+          "max_absolute_error": 2.730806866840236e-07
+        }
+      },
+      {
+        "id": "public",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yyjfzvrl",
+        "seconds": 4.145749005001562,
+        "comparison": {
+          "passed": true,
+          "atol": 1e-05,
+          "rtol": 0.0001,
+          "compared_values": 12,
+          "mae": 5.028142202607953e-08,
+          "max_absolute_error": 1.4514056556613752e-07
+        }
+      },
+      {
+        "id": "helper_replay",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w4zwaaga",
+        "seconds": 6.413793349005573,
+        "comparison": {
+          "passed": true,
+          "atol": 1e-05,
+          "rtol": 0.0001,
+          "compared_values": 16,
+          "mae": 2.9409302241753532e-09,
+          "max_absolute_error": 8.678905288883598e-09
+        }
+      }
+    ]
+  },
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-guidance-r99/before.json": "61bd74c21a267bf14838d48ae207788e01b693a23d02f540559e332ad55bf658",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-guidance-r99/compatibility.json": "ab328ca6ab1eddfacc4d45c5705b869f07b424c4a1531e9a2ab161d87db02893",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-guidance-r99/tests.log": "6fead4c58fda18253af9c2348dca859c0d197ebdc0573d357542c3227de82391",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-guidance-r99/tests-initial-failed.log": "10bc727d3c2900e3494055d3e25dbc1c48242d23dd1f57cf41b67fbf41a110fc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-guidance-r99/compatibility-initial-failed.log": "e6d353ddca010e5e9132e239620880326371df3bab127794379590fe9ec94e12",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-guidance-r99/offline-execution.json": "999e98a7f768e49f96df658c834314643bd46e5605ddb4b12011df9bb80fcc8a"
+  },
+  "paid_calls": 0,
+  "installed": false,
+  "sdk_rebuilt": false,
+  "committed": false,
+  "pushed": false,
+  "stage2_complete": false,
+  "binding": "df766da177c4c0d748763bf3bafc01d12637b101b21ec1f0cea49c8ad6a4f939"
+}

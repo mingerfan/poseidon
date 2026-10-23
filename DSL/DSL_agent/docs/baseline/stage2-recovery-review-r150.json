@@ -1,0 +1,312 @@
+{
+  "format": "poseidon-stage2-recovery-review-r150",
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-aggregate-r150.json": "8546455faa1ce5338b9a3c00096cb0ba8147f986169695d7701007659bb0e930",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-progress-r145.json": "2d78c60f4b2bea9873edd1dc3ca7f4f992c8105c4092cecbe479e4d97ed35132",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r145.json": "3588f5bcef7c4d49c3427f6f255e95e115544f92d1bbfcb8d98f597300ae3e62",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-offline-acceptance-r94.json": "455bf2d0d552b43d8fab8492c50a9cadc9cb98c36ccfabc2bb18c32210034a04",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-runtime-lineage-r139.json": "88aacdaf242761b6421d1908c42095da057c8827b835ef9d922e7382e94b5c06",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-directed-guidance-acceptance-r146.json": "947be46870be183411a912715df8dc798a8a34d1b359b514e997db3ef4673910"
+  },
+  "recovery_binding": "cbd3ed054543d16fb308023f2e9182306c986312fdc23ebb2ac5c98c9b375686",
+  "recovery_statuses": {
+    "failed": 6,
+    "passed": 48
+  },
+  "cohorts": {
+    "explicit_v4_pilot": {
+      "failed": 1,
+      "passed": 4
+    },
+    "interrupted_recovery": {
+      "failed": 5,
+      "passed": 44
+    }
+  },
+  "paid_generation_count": 80,
+  "paid_http_attempt_count": 91,
+  "failed_cases": [
+    {
+      "id": "construct_012_2",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-aucls5s8",
+      "terminal_failure_layer": "provider",
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: attr.shape",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: attr.shape",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        }
+      ],
+      "provider_failure": {
+        "attempts_evaluated_before_provider_failure": 2,
+        "automatic_retry_authorized_by_classification": false,
+        "billing_status": "not_determined",
+        "category": "tls_failure_unresolved",
+        "compiled_before_provider_failure": false,
+        "encrypted_before_provider_failure": false,
+        "error_code": "transport_tls_failed",
+        "http_attempts": 3,
+        "layer": "provider",
+        "limitation": "TLS code alone does not distinguish certificate validation, handshake termination or local network cause; no DSL support conclusion",
+        "received_responses": 2,
+        "terminal_retryable": false
+      },
+      "automatic_retry_authorized": false
+    },
+    {
+      "id": "construct_119_1",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-yd2qnaad",
+      "terminal_failure_layer": "numerical_comparison",
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: counter.nonlocal_writes",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: counter.nonlocal_writes",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "executed": true,
+          "failure_layer": "numerical_comparison",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "executed": true,
+          "failure_layer": "numerical_comparison",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "provider_failure": null,
+      "automatic_retry_authorized": false
+    },
+    {
+      "id": "construct_135_1",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_ere46v6",
+      "terminal_failure_layer": "static_check",
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Truth value requires public construction data; cipher/array truth is unsupported",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "provider_failure": null,
+      "automatic_retry_authorized": false
+    },
+    {
+      "id": "free_bench_helper_0032",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0l5ucnop",
+      "terminal_failure_layer": "compiler",
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Native core arithmetic requires a ciphertext operand",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "provider_failure": null,
+      "automatic_retry_authorized": false
+    },
+    {
+      "id": "free_bench_helper_0033",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-2sfh9k00",
+      "terminal_failure_layer": "static_check",
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Native core arithmetic requires a ciphertext operand",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "provider_failure": null,
+      "automatic_retry_authorized": false
+    },
+    {
+      "id": "free_bench_helper_0034",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-vfebar7z",
+      "terminal_failure_layer": "static_check",
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "executed": false,
+          "failure_layer": "compiler",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Rotation step must be a signed integer literal",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "provider_failure": null,
+      "automatic_retry_authorized": false
+    }
+  ],
+  "historical_offline_acceptance": {
+    "accepted": true,
+    "runtime": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+    "requirements": {
+      "accepted_current_static": 16,
+      "accepted_historical_artifact": 5,
+      "accepted_historical_construction": 209,
+      "accepted_historical_helper": 15,
+      "accepted_historical_numeric": 153,
+      "backend_blocked": 3
+    },
+    "parents_rechecked": true
+  },
+  "evaluation_accounting": {
+    "original_task_ids": 2030,
+    "original_audited_outcomes": 1981,
+    "formerly_unconfirmed_tasks_with_separate_recovery_outcomes": 49,
+    "new_guidance_task_variants": 5,
+    "all_original_task_ids_have_an_audited_outcome": true,
+    "single_runtime_all_tasks_evaluated": false,
+    "historical_billing_uncertainty_resolved": false,
+    "explanation": "Evaluation outcome availability is not successful semantic coverage; original r145 scores remain unchanged."
+  },
+  "scope": [
+    "Retained source-bound offline acceptance is historical, not a new current-runtime full replay.",
+    "All 54 newly authorized evaluations ended; failure, skip and interruption are not pass.",
+    "The 377 executable partitions still need version-qualified successful context accounting before a full coverage claim.",
+    "Three real-bootstrap partitions remain blocked; compiler and rejection evidence are separate."
+  ],
+  "stage2_complete": false,
+  "new_paid_calls": 0,
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "next_actions": [
+    "Diagnose Earth mul type inference failures in helper_0032/0033/0034 as a shared compiler/scale-level issue; root cause not yet proven.",
+    "Diagnose construct_119_1 concatenation padding and unmasked polynomial tail using retained arrays; do not alter reference.",
+    "Audit remaining directed success gaps with exact source/request versions before proposing a bounded paid repair batch."
+  ],
+  "binding": "936870d4f884e9bbae816c92365a91e2f8a53bf896bbd312e5af764d95bdbb5d"
+}

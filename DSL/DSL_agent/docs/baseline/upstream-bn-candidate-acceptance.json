@@ -1,0 +1,296 @@
+{
+  "accepted_date": "2026-09-22",
+  "actual_bn_calls": 16,
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_seal_execution": true,
+  "actual_upstream_helper_execution": true,
+  "adapter_unit": {
+    "failed": 0,
+    "passed": 7,
+    "skipped": 0
+  },
+  "agent_calls": 0,
+  "all_dsl_semantics_covered": false,
+  "all_helpers_supported": false,
+  "approximations": [
+    {
+      "id": "silu_v1",
+      "mae": 0.15053669178631113,
+      "max_error": 0.2689129328038613,
+      "not_execution_error": true
+    },
+    {
+      "id": "silu_v2",
+      "mae": 0.15053669178631113,
+      "max_error": 0.2689129328038613,
+      "not_execution_error": true
+    },
+    {
+      "id": "silu_then_bn",
+      "mae": 0.06949694736800449,
+      "max_error": 0.13445579412464076,
+      "not_execution_error": true
+    }
+  ],
+  "branch": "lhy-agent-dsl",
+  "case_rows": [
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ohv0lbg_",
+      "evidence_bytes": 360761,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_0",
+      "reference_max": 5.551115123125783e-17,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b9spn4o_",
+      "evidence_bytes": 365543,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_1",
+      "reference_max": 2.220446049250313e-16,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9b617p7n",
+      "evidence_bytes": 372023,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_2",
+      "reference_max": 2.220446049250313e-16,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xhi08eul",
+      "evidence_bytes": 386381,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_3",
+      "reference_max": 5.551115123125783e-17,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-m_qxigsl",
+      "evidence_bytes": 553340,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_4",
+      "reference_max": 4.440892098500626e-16,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-eby8swyx",
+      "evidence_bytes": 730540,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_5",
+      "reference_max": 4.440892098500626e-16,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ysyhdyce",
+      "evidence_bytes": 432299,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_6",
+      "reference_max": 2.220446049250313e-16,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-pqcg7h0t",
+      "evidence_bytes": 382140,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_asymmetric_7",
+      "reference_max": 5.551115123125783e-17,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-lh6zcx_8",
+      "evidence_bytes": 654822,
+      "exit_code": 0,
+      "expected_calls": 2,
+      "id": "bn_multi_residual",
+      "reference_max": 5.551115123125783e-17,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-pgq87v8c",
+      "evidence_bytes": 381340,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_then_linear",
+      "reference_max": 0.0,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-s_s4z_8w",
+      "evidence_bytes": 380366,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "linear_then_bn",
+      "reference_max": 1.3877787807814457e-17,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-tm5hmwz8",
+      "evidence_bytes": 637100,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_nested_native",
+      "reference_max": 1.3877787807814457e-17,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-brl57ubm",
+      "evidence_bytes": 366868,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_array_starred",
+      "reference_max": 1.3877787807814457e-17,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8ojyxs_y",
+      "evidence_bytes": 366198,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_public_loop",
+      "reference_max": 1.6263032587282567e-19,
+      "reference_probes": 16,
+      "status": "passed"
+    },
+    {
+      "contribution_negative": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w0h8xxv_",
+      "evidence_bytes": 368667,
+      "exit_code": 0,
+      "expected_calls": 1,
+      "id": "bn_unused_definition",
+      "reference_max": 0.0,
+      "reference_probes": 16,
+      "status": "passed"
+    }
+  ],
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "current": {
+    "agent_calls": 0,
+    "all_helpers_supported": false,
+    "compared_values": 1604,
+    "directed_helper_contribution_proven": false,
+    "failed": 0,
+    "max_absolute_error": 3.072271834159146e-08,
+    "passed": 15,
+    "planned": 15,
+    "seconds": 63.621778975997586,
+    "skipped": 0,
+    "source_sha256": "0e0ccdb357a06d48efee2b4e999977ffe6790ea2aaf1b8818a8fd1782de5d768",
+    "weighted_mae": 2.7662847563606884e-10
+  },
+  "directed_helper_contribution_proven": false,
+  "downloads": 0,
+  "evidence_bytes": 6738388,
+  "evidence_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/audit_upstream_bn_batch.py": "4b9bb075be7090320081f49e625257f462af7aa0e3d04ea8c4492fc2e3131597",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/run_upstream_bn_candidate_batch.py": "2b6ff4ce86fd9455b8b1b18bb76e8b4ab7e3021dc4afe490523b22c864a71a12",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/run_upstream_bn_regression.py": "2e09a37bc02822f9103af52c416240ea4ba6588040b1f7290149609c90eb98fc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-candidate-r16/archived-initial-auditor.py": "167e996461d325e118ea81d24af58cb80ea9487557d86c0aa3ce5eaa0a095dc8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-candidate-r16/frozen-source.tar.gz": "ddbdc30433729cc04c3cecd1847f07fe352ee1f2bfd8e18fca315385701bc296",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-candidate-r16/independent-audit.json": "54bd3da4139b111d11503e1ed8a2cf435f288ca8c9a79a381b431c68767361bb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-candidate-r16/plan.json": "039d90d3ad351ce91010f58c5ba2ffbab0df88b1336932a7c63fcc9014dcaaf2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-candidate-r16/portable-audit.json": "26480ccc1b699acdb2fd8bf3ca876973427e91cc962f4753be67cc8a762b7e61",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-candidate-r16/report.json": "db6e30c9733b19ee6d2dbd19b75af06943bea54709cf15d2eee4a8ad44ec105d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-r16-initial-unit.log": "d1a2fbb76c7ce5e94c8ef560fa1661bab4c15ef3f46ecb910ba67a2730f7decf",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-r16-regression/adapter-unit.log": "015361fae08f20a4be33b6c98cd12dcf49a6ac1d77f41ab635997261d32ddae8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-r16-regression/plan.json": "213742c39368097f742db753186aacdb9c4d4a04648a270d95673eb537ff3d05",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-r16-regression/report.json": "b61bbbfb4879a9020f2f28aa9504169acdbb2ee15c6eaf609ae6e3adfd395520",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-r16-regression/unit.json": "f54802aac3958633155060036d727e3893ec5c2960bb4efbc168f875f1f428e6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-bn-r16-regression/unit.log": "af5a24641854d1effe445788c4fcce5eb119f43903c4bb0d9ab785cfe8729c9c"
+  },
+  "formal_equivalence_proven": false,
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "installs": 0,
+  "lossless_full_vector_conversions": 34,
+  "modelset_models": 1200,
+  "new_benchmark_models_added": 0,
+  "old_v1_requests_unchanged": 13,
+  "platform": "aarch64-linux",
+  "profile": "upstream-poly-bn-silu-v2",
+  "prs": 0,
+  "pushes": 0,
+  "reference": {
+    "failed": 0,
+    "max_difference": 4.440892098500626e-16,
+    "models": 15,
+    "probes": 240,
+    "skipped": 0
+  },
+  "regression": {
+    "cases": [
+      "native",
+      "public-v1",
+      "silu_v1",
+      "silu_v2",
+      "silu_then_bn"
+    ],
+    "compared_values": 48,
+    "failed": 0,
+    "max_absolute_error": 6.529827202172989e-06,
+    "passed": 5,
+    "seconds": 27.11132622101286,
+    "skipped": 0
+  },
+  "retained_negative": "bn_unused_definition traces real helper but has no output contribution; counts only pipeline success",
+  "source_sha256": "0e0ccdb357a06d48efee2b4e999977ffe6790ea2aaf1b8818a8fd1782de5d768",
+  "unit": {
+    "failed": 0,
+    "passed": 115,
+    "skip_reasons": [
+      [
+        "test_numerical_fault_and_recovery_are_real_encrypted_runs (test_candidate_pipeline.CandidateEvidenceTests)",
+        "requires actual isolated candidate replay run"
+      ],
+      [
+        "test_private_reference_and_artifact_integrity (test_candidate_pipeline.CandidateEvidenceTests)",
+        "requires actual isolated candidate replay run"
+      ],
+      [
+        "test_real_sandbox_probe_and_no_agent_claim (test_candidate_pipeline.CandidateEvidenceTests)",
+        "requires actual isolated candidate replay run"
+      ]
+    ],
+    "skipped": 3,
+    "total": 118
+  },
+  "x86_retested": false
+}

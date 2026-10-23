@@ -1,0 +1,203 @@
+{
+  "actual_compile": true,
+  "actual_decrypt": true,
+  "actual_seal_cpu": true,
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": false,
+  "compiler_audits": {
+    "chunk_regression": 18,
+    "helper_regression": 47,
+    "legacy_regression": 2,
+    "native": 44
+  },
+  "compiler_configuration": "seal-cpu-eva-w45-v1",
+  "construction_tasks": 627,
+  "default_configuration_changed": false,
+  "downloaded": false,
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-chunk-regression/report.json": "9421f877630ecad54ba35cfcd8f28ad198bd48dd0715a7bc4d274594ad152c50",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-chunk_regression-compiler-evidence.json": "1ab41d732c0f4a203eb0ef3a58adaf6673ced5b5586c1cfdcc82d88f6715761e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-compatibility.json": "60bda03a1312b3bfafddcd6c5be4dc14eed018a8d08eaab1fbe06a93df838755",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-helper-directed/report.json": "40d0b5eb3c01f3e52da9df4985d4b22bd516fed61b1e6b9e3090c4f0575ff14e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-helper_regression-compiler-evidence.json": "48730b4141553d597a95c12e77f44271ceda0a753e71f01a6b32ab1a2537fcb8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-legacy_regression-compiler-evidence.json": "e448ca28fcb958039000bed5866c2c68ecaa4bb393406099f05aa41994b5b9ee",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-native-compiler-evidence.json": "71ed40078ff642b240a72a6661b279971d48e0096df4d62e32a1e776f8c9fddb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-native/report.json": "c5c4fa473555b027abbb7486438ce447ad9620647b03504476fb20f4ceb2d987",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-original-corpus-audit.json": "07cba210773ce9b866329a1fbfe5315e7b493163cb3f14a53bc59aba22ce70c7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-plaintext/report.json": "068d42d14f24cecc11e398a206e4d038eb3f1e4e63a8f9e5a55b1030a5038dea",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-regression/report.json": "a518b753947d2fa088934cabb1f037a76c575d078a1f518c386f9be981341795",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-rejections.json": "ed1680f668d023767ed1fa2e7c7b9da84591da83d32a5fb40cb04c8fe0bf6983",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-unit-final.json": "3acab4a89b2eaf6f4f1f440de96c13c18901960be5f9f6a573ee7bf9587054ae",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-verification-complete.json": "b73bd957e8aaf5809b35f604f0429886dd7e7b20840cc07b1ac60c2b62ceb550"
+  },
+  "fresh_executed_runs": 111,
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "helper_tasks": 47,
+  "holdout_scope": "Original split preserved; manual backend acceptance is not unseen Agent scoring",
+  "installed": false,
+  "manual_batches": {
+    "chunk-regression": {
+      "blocked": 0,
+      "compared_values": 1456,
+      "failed": 0,
+      "max_absolute_error": 1.813968971679096e-06,
+      "passed": 18,
+      "planned": 18,
+      "seconds": 87.11491369799478,
+      "skipped": 0,
+      "weighted_mae": 1.4884304224461486e-08
+    },
+    "helper-directed": {
+      "compared_values": 640,
+      "failed": 0,
+      "max_absolute_error": 4.246438165822486e-07,
+      "passed": 47,
+      "planned": 47,
+      "seconds": 253.60552382399328,
+      "skipped": 0,
+      "weighted_mae": 7.593825309666023e-09
+    },
+    "native": {
+      "blocked": 0,
+      "compared_values": 688,
+      "failed": 0,
+      "max_absolute_error": 2.2705336521350317e-07,
+      "passed": 44,
+      "planned": 44,
+      "seconds": 219.09421861500596,
+      "skipped": 0,
+      "weighted_mae": 5.331244383031774e-09
+    },
+    "regression": {
+      "failed": 0,
+      "passed": 2,
+      "seconds": 9.033490401998279,
+      "skipped": 0
+    }
+  },
+  "model_count": 1200,
+  "old_helper_tasks_unchanged": 38,
+  "old_requests_unchanged": 357,
+  "original_virtual_helper_corpus": {
+    "blocked": 0,
+    "failed": 0,
+    "families": {
+      "HE_Linear": 8,
+      "HE_MPBN": 8,
+      "HE_ReshapeLinear": 8
+    },
+    "models_unchanged": true,
+    "passed": 24,
+    "planned": 24,
+    "skipped": 0,
+    "splits": {
+      "development": 24
+    },
+    "total_actual_inner_virtual_calls": 24,
+    "total_public_zero_eliminations": 72
+  },
+  "paid_api_calls": 0,
+  "phase": "upstream_virtual_prefix_r26",
+  "plaintext": {
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "pr": false,
+  "profile": "upstream-poly-virtual-prefix-v8",
+  "push": false,
+  "rejection": {
+    "failed": 0,
+    "not_run": 0,
+    "passed": 48,
+    "planned": 48,
+    "scope": "static validators only; no sandbox or runtime execution",
+    "skipped": 0
+  },
+  "rejection_tasks": 48,
+  "remaining": [
+    "HE_MaxPad/bootstrap",
+    "HE_Max/bootstrap",
+    "HE_ReLU/bootstrap",
+    "chunk/helper joint layout",
+    "parameter/resource boundaries",
+    "w40 precision failure",
+    "3 rule-budget and 2 historical compile failures",
+    "final-source full encrypted corpus and 627 constructions",
+    "separately approved paid Agent evaluation"
+  ],
+  "runtime_source_sha256": "fe1c6a9c5a9103d2866fe17604c6eac48383295fb729e67eee4fd8bd23ad2808",
+  "schema": 1,
+  "security_checks_unchanged": true,
+  "status": "phase_passed_overall_plan_incomplete",
+  "suite": "scripts/baseline/benchmarks/semantic-v1-virtual-r26",
+  "tolerance": "abs(actual-reference) <= 1e-5 + 1e-4*abs(reference)",
+  "topology_groups": 779,
+  "unique_model_count_not_claimed": true,
+  "unit": {
+    "agent_calls": 0,
+    "discovered": 253,
+    "errors": 0,
+    "failures": 0,
+    "modules": [
+      "test_benchmark_execution",
+      "test_candidate_pipeline",
+      "test_compiler_artifact_evidence",
+      "test_portability",
+      "test_rejection_benchmark",
+      "test_semantic_benchmark",
+      "test_unified_chunk_layout",
+      "test_unified_composites",
+      "test_unified_constants",
+      "test_unified_graph",
+      "test_unified_lambda_binding",
+      "test_unified_native_coverage",
+      "test_unified_public",
+      "test_unified_public_arithmetic",
+      "test_unified_public_coverage",
+      "test_unified_public_storage",
+      "test_unified_public_unary",
+      "test_unified_public_views",
+      "test_upstream_candidate_bn",
+      "test_upstream_candidate_helpers",
+      "test_upstream_concat",
+      "test_upstream_downsample",
+      "test_upstream_fused",
+      "test_upstream_helper_coverage",
+      "test_upstream_spatial",
+      "test_upstream_spatial_mapped",
+      "test_upstream_virtual_node",
+      "test_upstream_virtual_ring"
+    ],
+    "passed": 245,
+    "runner_sha256": "90f064ff35357eaaa84e22d94a651ec8fef324783df88f17b69030ab6a0d8fc1",
+    "skip_count_scope": "includes class-level skips; do not subtract from tests_run",
+    "skip_records": [
+      {
+        "reason": "requires actual isolated candidate replay run",
+        "test": "test_numerical_fault_and_recovery_are_real_encrypted_runs (test_candidate_pipeline.CandidateEvidenceTests)"
+      },
+      {
+        "reason": "requires actual isolated candidate replay run",
+        "test": "test_private_reference_and_artifact_integrity (test_candidate_pipeline.CandidateEvidenceTests)"
+      },
+      {
+        "reason": "requires actual isolated candidate replay run",
+        "test": "test_real_sandbox_probe_and_no_agent_claim (test_candidate_pipeline.CandidateEvidenceTests)"
+      },
+      {
+        "reason": "Historical r18 execution sources differ; use fresh compiler-evidence audit for current source",
+        "test": "setUpClass (test_compiler_artifact_evidence.CompilerEvidenceTests)"
+      }
+    ],
+    "skipped_record_count": 4,
+    "source_sha256": "fe1c6a9c5a9103d2866fe17604c6eac48383295fb729e67eee4fd8bd23ad2808",
+    "success": true,
+    "tests_run": 248
+  },
+  "x86_retested": false
+}

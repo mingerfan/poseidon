@@ -1,0 +1,1084 @@
+{
+  "format": "poseidon-migration-acceptance-r233",
+  "backend": "poseidon_cpu",
+  "platform": "aarch64-linux",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "compiler_rebuilt_this_batch": false,
+  "old_7_patches_built_in": "r232",
+  "helper_source_lock_sha256": "a291c876599596d441bdf6cd77200b014d59a2b5966ee17a5d15b00520065e7c",
+  "helpers": {
+    "planned": 84,
+    "qualified_cases": 84,
+    "profiles": [
+      "upstream-poly-bn-silu-v2",
+      "upstream-poly-chunked-virtual-v9",
+      "upstream-poly-concat-bn-silu-v3",
+      "upstream-poly-downsample-v7",
+      "upstream-poly-fixed-polynomials-v10",
+      "upstream-poly-fused-spatial-v6",
+      "upstream-poly-silu-v1",
+      "upstream-poly-spatial-mapped-v5",
+      "upstream-poly-spatial-v4",
+      "upstream-poly-virtual-prefix-v8"
+    ],
+    "initial_w45_compiler_failures_preserved": 3,
+    "explicit_w40_requalification": [
+      "fixed_Poly_Default_0",
+      "fixed_Poly_Default_1",
+      "fixed_Poly_Default_2"
+    ],
+    "bindings": [
+      {
+        "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-helpers-shard0-r233",
+        "report_sha256": "888a447f55a15d3bb87427129552679cb2129a2d3d1cf3b91fc9d575e3e9c02c",
+        "plan_sha256": "98c0d80cf128305fa156b7f191c82dba0ce907fda02cfa534bb1ace28927a773",
+        "passed": 48,
+        "failed": 0,
+        "unrun": 0
+      },
+      {
+        "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-helpers-shard1-r233",
+        "report_sha256": "708d686000502094d9033aa5d20945a99c017ee351c7abdd50015338b02a2f89",
+        "plan_sha256": "cd96b3bb2200cab8776265da8de8ea3dd0b5b9247fa0a9ee61f4cb53606aa6f5",
+        "passed": 33,
+        "failed": 3,
+        "unrun": 0
+      },
+      {
+        "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-helpers-default-w40-r233",
+        "report_sha256": "6ecabb6efb64aea7db28ec5d2689493d79efc461b450b868f75c3e13464a7052",
+        "plan_sha256": "13c8b9a3e2eab03cff4d1c05ff3793182d3567e8260c41b22c6ab7ce0e74ae18",
+        "passed": 3,
+        "failed": 0,
+        "unrun": 0
+      }
+    ],
+    "compared_values": 2360,
+    "max_absolute_error": 1.8591083010832676e-06,
+    "actual_frontend_and_finite_contribution": true,
+    "rows": [
+      {
+        "id": "silu_frozen_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jj3b2mno",
+        "compared_values": 8,
+        "max_absolute_error": 7.062728624163128e-08
+      },
+      {
+        "id": "silu_nested_native",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-54grsqmn",
+        "compared_values": 16,
+        "max_absolute_error": 8.286942976276634e-08
+      },
+      {
+        "id": "silu_shared_rotation",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bl8g2gq8",
+        "compared_values": 32,
+        "max_absolute_error": 6.363038040912983e-08
+      },
+      {
+        "id": "bn_asymmetric_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bo50kmek",
+        "compared_values": 4,
+        "max_absolute_error": 3.4448143226839534e-09
+      },
+      {
+        "id": "bn_multi_residual",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ogh9xwq0",
+        "compared_values": 24,
+        "max_absolute_error": 3.1699745051128048e-09
+      },
+      {
+        "id": "bn_then_linear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-suv6xcjv",
+        "compared_values": 8,
+        "max_absolute_error": 1.2778248459355268e-09
+      },
+      {
+        "id": "linear_then_bn",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mwfk0gff",
+        "compared_values": 8,
+        "max_absolute_error": 4.2373272196583045e-08
+      },
+      {
+        "id": "bn_nested_native",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-r09aom5h",
+        "compared_values": 16,
+        "max_absolute_error": 2.76214234470884e-09
+      },
+      {
+        "id": "concat_frozen_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-st6yjw6w",
+        "compared_values": 24,
+        "max_absolute_error": 7.645254984645078e-09
+      },
+      {
+        "id": "concat_square_negate",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ci5o327i",
+        "compared_values": 24,
+        "max_absolute_error": 4.777134746887094e-09
+      },
+      {
+        "id": "concat_then_linear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-h9q8q572",
+        "compared_values": 8,
+        "max_absolute_error": 9.065892481174842e-10
+      },
+      {
+        "id": "conv_1_2_2_1_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-70qb6y9u",
+        "compared_values": 32,
+        "max_absolute_error": 2.310587832177191e-10
+      },
+      {
+        "id": "conv_1_2_2_1_1_pre_negate",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5nav8m8g",
+        "compared_values": 32,
+        "max_absolute_error": 3.866856834733312e-10
+      },
+      {
+        "id": "conv_1_2_2_1_1_post_square",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-689qhvgu",
+        "compared_values": 32,
+        "max_absolute_error": 5.898582663976804e-11
+      },
+      {
+        "id": "avg_1_4_4_2_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5z8v4pug",
+        "compared_values": 16,
+        "max_absolute_error": 1.6281198236062057e-07
+      },
+      {
+        "id": "avg_1_4_4_2_2_pre_negate",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-u49zqegp",
+        "compared_values": 16,
+        "max_absolute_error": 1.055803022986022e-07
+      },
+      {
+        "id": "avg_1_4_4_2_2_post_square",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-r_hk99wt",
+        "compared_values": 16,
+        "max_absolute_error": 1.6876139974407803e-09
+      },
+      {
+        "id": "pool_2_4_4",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yahejw0s",
+        "compared_values": 8,
+        "max_absolute_error": 2.2455950573293256e-08
+      },
+      {
+        "id": "pool_2_4_4_pre_negate",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8momrb6r",
+        "compared_values": 8,
+        "max_absolute_error": 3.8592258102366455e-08
+      },
+      {
+        "id": "pool_2_4_4_post_square",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jvor5cmx",
+        "compared_values": 8,
+        "max_absolute_error": 1.7046923664332247e-08
+      },
+      {
+        "id": "bench_helper_0016",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-l7u6hfq6",
+        "compared_values": 16,
+        "max_absolute_error": 9.267075093410959e-10
+      },
+      {
+        "id": "bench_helper_0018",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_u15hnxt",
+        "compared_values": 16,
+        "max_absolute_error": 9.057283950619777e-10
+      },
+      {
+        "id": "bench_helper_0021",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yslukr37",
+        "compared_values": 8,
+        "max_absolute_error": 2.992516096034237e-08
+      },
+      {
+        "id": "bench_helper_0048",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cl52_8c2",
+        "compared_values": 16,
+        "max_absolute_error": 3.572247673376427e-08
+      },
+      {
+        "id": "bench_helper_0050",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5vel06v3",
+        "compared_values": 16,
+        "max_absolute_error": 1.751240494285433e-08
+      },
+      {
+        "id": "bench_helper_0053",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1qjlp_1f",
+        "compared_values": 8,
+        "max_absolute_error": 8.704399777348382e-09
+      },
+      {
+        "id": "bench_helper_0064",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b58s6a0e",
+        "compared_values": 4,
+        "max_absolute_error": 6.568923530125836e-10
+      },
+      {
+        "id": "bench_helper_0066",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1vn5am0a",
+        "compared_values": 4,
+        "max_absolute_error": 8.266769907505633e-10
+      },
+      {
+        "id": "mapped_pool_then_square",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0rflrx28",
+        "compared_values": 4,
+        "max_absolute_error": 1.0522816645819333e-10
+      },
+      {
+        "id": "bench_helper_0024",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-g2a42w6f",
+        "compared_values": 16,
+        "max_absolute_error": 3.696645767270468e-10
+      },
+      {
+        "id": "bench_helper_0026",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mdga1ah9",
+        "compared_values": 16,
+        "max_absolute_error": 3.895558597921678e-10
+      },
+      {
+        "id": "bench_helper_0029",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1s5xuql6",
+        "compared_values": 8,
+        "max_absolute_error": 5.676792896869287e-09
+      },
+      {
+        "id": "bench_helper_0088",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-12khg1pl",
+        "compared_values": 16,
+        "max_absolute_error": 1.307729376176514e-10
+      },
+      {
+        "id": "bench_helper_0090",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-gsodoa47",
+        "compared_values": 16,
+        "max_absolute_error": 9.058374016157611e-11
+      },
+      {
+        "id": "bench_helper_0093",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jfuwde55",
+        "compared_values": 8,
+        "max_absolute_error": 3.989686012118021e-11
+      },
+      {
+        "id": "bench_helper_0056",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-se9n8f95",
+        "compared_values": 16,
+        "max_absolute_error": 8.067418733048726e-09
+      },
+      {
+        "id": "bench_helper_0058",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-e_475avt",
+        "compared_values": 16,
+        "max_absolute_error": 6.6847229116022695e-09
+      },
+      {
+        "id": "ds_then_square",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_zuw658t",
+        "compared_values": 32,
+        "max_absolute_error": 6.6642431573171734e-09
+      },
+      {
+        "id": "bench_helper_0008",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-y4q_e8n2",
+        "compared_values": 8,
+        "max_absolute_error": 2.0950112755713235e-09
+      },
+      {
+        "id": "bench_helper_0072",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-zd26_o9s",
+        "compared_values": 4,
+        "max_absolute_error": 3.301146635908969e-07
+      },
+      {
+        "id": "bench_helper_0080",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yualajg8",
+        "compared_values": 4,
+        "max_absolute_error": 1.0820525864901898e-07
+      },
+      {
+        "id": "virtual_38_HE_MPBN",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o5nr8dg0",
+        "compared_values": 8,
+        "max_absolute_error": 1.4096382949801978e-09
+      },
+      {
+        "id": "virtual_39_HE_MPBN",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-djwsrmys",
+        "compared_values": 8,
+        "max_absolute_error": 1.285827611052781e-09
+      },
+      {
+        "id": "virtual_40_HE_Linear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0ce75c96",
+        "compared_values": 4,
+        "max_absolute_error": 1.7436115876123814e-07
+      },
+      {
+        "id": "virtual_41_HE_Linear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-q6uwlywe",
+        "compared_values": 4,
+        "max_absolute_error": 1.7320654110281053e-07
+      },
+      {
+        "id": "virtual_42_HE_ReshapeLinear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-x7w_quvi",
+        "compared_values": 12,
+        "max_absolute_error": 1.144428420779553e-08
+      },
+      {
+        "id": "virtual_43_HE_ReshapeLinear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-l_acdbhu",
+        "compared_values": 12,
+        "max_absolute_error": 1.2486281036894198e-09
+      },
+      {
+        "id": "chunk_helper_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0sh0vj7l",
+        "compared_values": 28,
+        "max_absolute_error": 2.132637361151879e-08
+      },
+      {
+        "id": "chunk_helper_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wy3ti_dq",
+        "compared_values": 36,
+        "max_absolute_error": 3.387892396483627e-08
+      },
+      {
+        "id": "chunk_helper_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ydi1h9dd",
+        "compared_values": 16,
+        "max_absolute_error": 2.507325840006569e-10
+      },
+      {
+        "id": "chunk_helper_3",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-j4hq9xn7",
+        "compared_values": 28,
+        "max_absolute_error": 5.362365419758763e-09
+      },
+      {
+        "id": "chunk_helper_4",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-t9el0_7r",
+        "compared_values": 24,
+        "max_absolute_error": 1.430361634691124e-09
+      },
+      {
+        "id": "chunk_helper_5",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-boipdang",
+        "compared_values": 48,
+        "max_absolute_error": 1.310387878067365e-09
+      },
+      {
+        "id": "chunk_helper_6",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-373ccf2m",
+        "compared_values": 12,
+        "max_absolute_error": 2.0302185765874725e-09
+      },
+      {
+        "id": "chunk_helper_7",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mlzvziun",
+        "compared_values": 44,
+        "max_absolute_error": 1.42384337403767e-07
+      },
+      {
+        "id": "chunk_helper_8",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mfgs9px5",
+        "compared_values": 12,
+        "max_absolute_error": 7.028515346119146e-08
+      },
+      {
+        "id": "chunk_helper_9",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yd8mdrxo",
+        "compared_values": 24,
+        "max_absolute_error": 7.65330993024449e-10
+      },
+      {
+        "id": "chunk_helper_10",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-t8yu4yoj",
+        "compared_values": 24,
+        "max_absolute_error": 2.9235196208343694e-10
+      },
+      {
+        "id": "chunk_helper_11",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-16_ao794",
+        "compared_values": 12,
+        "max_absolute_error": 1.2642458938234846e-08
+      },
+      {
+        "id": "chunk_helper_12",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-aoukifob",
+        "compared_values": 12,
+        "max_absolute_error": 9.428119136095647e-10
+      },
+      {
+        "id": "silu_frozen_0_profile_v1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-hjxsm1_n",
+        "compared_values": 8,
+        "max_absolute_error": 3.931537641497676e-08
+      },
+      {
+        "id": "silu_nested_native_profile_v1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-fmutqiuy",
+        "compared_values": 16,
+        "max_absolute_error": 5.290479210273702e-08
+      },
+      {
+        "id": "silu_shared_rotation_profile_v1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-3shjzcds",
+        "compared_values": 32,
+        "max_absolute_error": 1.4730463382406356e-07
+      },
+      {
+        "id": "fixed_Poly_Default_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-detz2joj",
+        "compared_values": 64,
+        "max_absolute_error": 7.455641741601976e-07
+      },
+      {
+        "id": "fixed_Poly_Default_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-erra3q8t",
+        "compared_values": 64,
+        "max_absolute_error": 1.590518357679463e-06
+      },
+      {
+        "id": "fixed_Poly_Default_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_3z3uys2",
+        "compared_values": 64,
+        "max_absolute_error": 8.593811869259923e-07
+      },
+      {
+        "id": "fixed_Poly_Tree15First_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ybzhkg8y",
+        "compared_values": 64,
+        "max_absolute_error": 2.7993827156000406e-07
+      },
+      {
+        "id": "fixed_Poly_Tree15First_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wgsdlimn",
+        "compared_values": 64,
+        "max_absolute_error": 4.045360739446391e-07
+      },
+      {
+        "id": "fixed_Poly_Tree15First_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-x13tt9k0",
+        "compared_values": 64,
+        "max_absolute_error": 3.8042130657070516e-07
+      },
+      {
+        "id": "fixed_Poly_Tree15Second_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5y8224u9",
+        "compared_values": 64,
+        "max_absolute_error": 1.8382745814449208e-06
+      },
+      {
+        "id": "fixed_Poly_Tree15Second_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-k8_kha3u",
+        "compared_values": 64,
+        "max_absolute_error": 5.195079122444213e-07
+      },
+      {
+        "id": "fixed_Poly_Tree15Second_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9y95823e",
+        "compared_values": 64,
+        "max_absolute_error": 1.7907033846853437e-06
+      },
+      {
+        "id": "fixed_Poly_Tree27_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-j_lmaag7",
+        "compared_values": 64,
+        "max_absolute_error": 8.7641035273478e-07
+      },
+      {
+        "id": "fixed_Poly_Tree27_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-6y5577bi",
+        "compared_values": 64,
+        "max_absolute_error": 1.8591083010832676e-06
+      },
+      {
+        "id": "fixed_Poly_Tree27_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qimoejxt",
+        "compared_values": 64,
+        "max_absolute_error": 1.1446380066004735e-06
+      },
+      {
+        "id": "fixed_Poly_Leaf1_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-3xvf7_rj",
+        "compared_values": 64,
+        "max_absolute_error": 6.442912814375035e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf1_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8kbqki3u",
+        "compared_values": 64,
+        "max_absolute_error": 3.15531584194062e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf1_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-2re_03p3",
+        "compared_values": 64,
+        "max_absolute_error": 2.9814208324374647e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf17_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-buerptua",
+        "compared_values": 64,
+        "max_absolute_error": 3.2865136723181365e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf17_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-shxkvcfu",
+        "compared_values": 64,
+        "max_absolute_error": 3.3560688672551464e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf17_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-w2gh4dyy",
+        "compared_values": 64,
+        "max_absolute_error": 1.1417986001127645e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf2_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yz1uikc4",
+        "compared_values": 64,
+        "max_absolute_error": 1.5716666024179204e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf2_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jtq2bc8z",
+        "compared_values": 64,
+        "max_absolute_error": 2.186416131477742e-09
+      },
+      {
+        "id": "fixed_Poly_Leaf2_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ej1wjpsh",
+        "compared_values": 64,
+        "max_absolute_error": 1.8102249560447703e-09
+      }
+    ]
+  },
+  "input_regression": {
+    "planned": 28,
+    "passed": 28,
+    "failed": 0,
+    "unrun": 0,
+    "binding": "f43774fdef31cce1b8098dfccaf35364246d2cf27821b2b903121b37222d3d90",
+    "rows": [
+      {
+        "id": "linear-1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o2tn79vd",
+        "compared_values": 8,
+        "max_absolute_error": 2.9791380473653817e-09
+      },
+      {
+        "id": "user-subneg-linear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-v49nvfwj",
+        "compared_values": 8,
+        "max_absolute_error": 3.4593818365458162e-09
+      },
+      {
+        "id": "custom-dual-linear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9ww1_4kh",
+        "compared_values": 8,
+        "max_absolute_error": 3.742227083769478e-09
+      },
+      {
+        "id": "unified_two_input_two_output",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-tj_znx67",
+        "compared_values": 12,
+        "max_absolute_error": 5.1644064508889655e-08
+      },
+      {
+        "id": "chunked-linear-5",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-cwit73di",
+        "compared_values": 8,
+        "max_absolute_error": 1.0183116294637529e-09
+      },
+      {
+        "id": "chunked-linear-2x2x2x2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ggep63xt",
+        "compared_values": 8,
+        "max_absolute_error": 1.45339277071721e-09
+      },
+      {
+        "id": "packed-linear-17",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mszx23_a",
+        "compared_values": 8,
+        "max_absolute_error": 1.3791089242820576e-09
+      },
+      {
+        "id": "packed-linear-127",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-3sb92944",
+        "compared_values": 8,
+        "max_absolute_error": 5.927300889690956e-09
+      },
+      {
+        "id": "packed-zero_rows-1x255",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ngswveyo",
+        "compared_values": 8,
+        "max_absolute_error": 4.5865161113489705e-09
+      },
+      {
+        "id": "ps-grouped1d",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-2mjxzyc0",
+        "compared_values": 40,
+        "max_absolute_error": 1.1679518324703153e-09
+      },
+      {
+        "id": "ps-dilated2d",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ev5ewmer",
+        "compared_values": 16,
+        "max_absolute_error": 1.2860506548584283e-09
+      },
+      {
+        "id": "ps-depthwise-multiplier",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5kn4whxg",
+        "compared_values": 64,
+        "max_absolute_error": 7.62302054813091e-10
+      },
+      {
+        "id": "ps-conv-square-pool-linear",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-n6ca_3qr",
+        "compared_values": 8,
+        "max_absolute_error": 4.554270849332909e-11
+      },
+      {
+        "id": "broadcast_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ymazy3eo",
+        "compared_values": 24,
+        "max_absolute_error": 3.5449965185563315e-09
+      },
+      {
+        "id": "public_gather_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-hn3a04ry",
+        "compared_values": 12,
+        "max_absolute_error": 6.8855718904359264e-09
+      },
+      {
+        "id": "adaptive_avg_pool_2",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wpb60udg",
+        "compared_values": 32,
+        "max_absolute_error": 8.896284556247913e-09
+      },
+      {
+        "id": "leaky_relu_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-hujnsckh",
+        "compared_values": 16,
+        "max_absolute_error": 4.698023553517672e-09
+      },
+      {
+        "id": "prelu_1",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5t9_nie7",
+        "compared_values": 24,
+        "max_absolute_error": 3.585637120551155e-09
+      },
+      {
+        "id": "logsoftmax_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qt33dm90",
+        "compared_values": 12,
+        "max_absolute_error": 4.606641890170238e-08
+      },
+      {
+        "id": "padding_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ny7hjbrt",
+        "compared_values": 24,
+        "max_absolute_error": 4.669930372958042e-09
+      },
+      {
+        "id": "padding_3",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-gyrqvl0j",
+        "compared_values": 24,
+        "max_absolute_error": 9.314637282320515e-08
+      },
+      {
+        "id": "padding_6",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-4v0b382z",
+        "compared_values": 24,
+        "max_absolute_error": 3.4318402325337204e-09
+      },
+      {
+        "id": "maximum_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-jw_hvy9_",
+        "compared_values": 12,
+        "max_absolute_error": 5.50162393420095e-09
+      },
+      {
+        "id": "minimum_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-v387php6",
+        "compared_values": 12,
+        "max_absolute_error": 4.590216734490227e-09
+      },
+      {
+        "id": "max_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-v1l7sftd",
+        "compared_values": 4,
+        "max_absolute_error": 4.0529642153508405e-07
+      },
+      {
+        "id": "min_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b6_4nii9",
+        "compared_values": 4,
+        "max_absolute_error": 3.131472621209497e-07
+      },
+      {
+        "id": "max_pool1d_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-c8ve_y9f",
+        "compared_values": 8,
+        "max_absolute_error": 1.1669785285328693e-07
+      },
+      {
+        "id": "max_pool2d_0",
+        "status": "passed",
+        "failure_layer": null,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0_5bryjx",
+        "compared_values": 4,
+        "max_absolute_error": 3.323531074794772e-07
+      }
+    ],
+    "max_absolute_error": 4.0529642153508405e-07
+  },
+  "unit": {
+    "run": 202,
+    "passed": 199,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 3,
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-acceptance-r233/unit.json",
+    "sha256": "26058ba806611cba6c722aad84e1d64d560aa7d8a6d050d54fcabe5b294285ff",
+    "post_unit_change": "Only offline application test fixture profile fallback; rerun real application passed"
+  },
+  "application": {
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-application-retry-r233",
+    "levels": [
+      {
+        "level": "compiled",
+        "status": "succeeded",
+        "reload_status": "compiled",
+        "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-qb8rhd_s",
+        "compiler_calls": 0,
+        "agent_calls": 0,
+        "cache_reused": true,
+        "reused_provider_calls": 0
+      },
+      {
+        "level": "numerical",
+        "status": "succeeded",
+        "reload_status": "passed",
+        "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-9kawlwz1",
+        "compiler_calls": 0,
+        "agent_calls": 0,
+        "cache_reused": true,
+        "reused_provider_calls": 0
+      }
+    ]
+  },
+  "whole_models": [
+    {
+      "id": "mlp",
+      "status": "passed",
+      "failure_layer": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_lijizis",
+      "compared_values": 8,
+      "max_absolute_error": 4.0765669284681394e-08,
+      "configuration": "w45"
+    },
+    {
+      "id": "rmsnorm",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mi7tmy6t",
+      "compared_values": null,
+      "max_absolute_error": null,
+      "configuration": "w45",
+      "compiler_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %86 = \"earth.mul\"(%85, %84) : (tensor<1x!earth.ci<90 * 12>>, tensor<1x!earth.ci<45 * 12>>) -> tensor<1x!earth.ci<0 * 0>>\n"
+    },
+    {
+      "id": "attention_decode",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-141zssrx",
+      "compared_values": null,
+      "max_absolute_error": null,
+      "configuration": "w45",
+      "compiler_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %147 = \"earth.mul\"(%145, %146) : (tensor<1x!earth.ci<75 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n"
+    },
+    {
+      "id": "rmsnorm",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1lyfgrtu",
+      "compared_values": null,
+      "max_absolute_error": null,
+      "configuration": "w40",
+      "compiler_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %79 = \"earth.mul\"(%77, %78) : (tensor<1x!earth.ci<80 * 11>>, tensor<1x!earth.pl<40 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n"
+    },
+    {
+      "id": "attention_decode",
+      "status": "failed",
+      "failure_layer": "compiler",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-00vtmhs9",
+      "compared_values": null,
+      "max_absolute_error": null,
+      "configuration": "w40",
+      "compiler_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %164 = \"earth.mul\"(%159, %163) : (tensor<1x!earth.ci<40 * 12>>, tensor<1x!earth.ci<80 * 12>>) -> tensor<1x!earth.ci<0 * 0>>\n"
+    }
+  ],
+  "bootstrap": {
+    "status": "blocked",
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-bootstrap-trace-r233",
+    "observed": "ModRaise and CoeffToSlot completed; EvalMod entered; scale out of bounds before polynomial output",
+    "numerical_passed": false,
+    "runtime_native_boot": "not_connected",
+    "proposal": "docs/baseline/poseidon-native-bootstrap-proposal-r233.json",
+    "proposal_approved": false
+  },
+  "limitations": [
+    "No new real-Agent generation",
+    "Coverage is scoped sample evidence, not all DSL combinations",
+    "RMSNorm and Attention remain compiler failures under both registered waterlines",
+    "Bootstrap not numerically accepted or connected",
+    "x86 native, fresh install and CUDA excluded"
+  ],
+  "preserved_failures": [
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-helpers-pilot-r233",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-helpers-shard1-r233",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-acceptance-r233/batch-2.log",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-whole-models-r233",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-whole-w40-r233",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-bootstrap-fixed-r233"
+  ],
+  "paid_calls": 0,
+  "new_dependencies": false,
+  "security_or_tolerance_changes": false,
+  "commit": false,
+  "push": false
+}

@@ -1,0 +1,145 @@
+{
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_seal_execution": true,
+  "actual_upstream_helper_execution": false,
+  "agent_calls": 0,
+  "all_dsl_semantics_covered": false,
+  "default_rule_blocks_retained": 3,
+  "directed_counts": {
+    "blocked_contract": 114,
+    "blocked_rule_preflight": 3,
+    "not_run": 324,
+    "passed": 165
+  },
+  "directed_numeric_counts": {
+    "blocked_contract": 114,
+    "blocked_rule_preflight": 3,
+    "not_run": 315,
+    "passed": 162
+  },
+  "directed_structural_counts": {
+    "not_run": 9,
+    "passed": 3
+  },
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-directed/audit.json": "a2a5873f494ff5af899a552613e667fec611723e27603d7df3b8ebb30782cf9d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-directed/coordinator-plan.json": "863510fc27f598840285d5532ba0fd64e55d57a31c0089bf15ed60a019369af4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-directed/final-state.json": "13b0f796225fca7d53614d3a318e593b0f63f9c1e62e763254e4ece69dd97780",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-directed/full-replay-audit.json": "35062b5e1eebd910a1b611961d5bd6af5c3dc550c6c7e61040cd5fec541beba4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-directed/supplemental-packed/preflight.json": "5d9374fea53f959f0005483f3f033721b32be22732f8bb3a5a8aa9c46fdf2bfc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-directed/supplemental-packed/run-summary.json": "030e04bfa0b45d96b73864a6cdb630be6704793f57c7457d55a9bb3a53e4fa10",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-plaintext/report.json": "e380e43c43072840c976b98dca79a502ffb7e9cacf52200fbf9d97cb3a6c0edd",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-recipe-initial.json": "1688fd04b3922cb1d93fa555675ba7be2170d76608c84c0dfd9e1ce52589d5d9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-unit.log": "ac82c2a0287942e36324a58efa77bd8efda606155519c90314748426717f6443"
+  },
+  "fixture_hashes": {
+    "scripts/baseline/cases/public-control-packed-goldens-v1/README.md": "d70243c800fc0a1e4cfb4c36562b12393fed890ecfd992cb9f35ab38ce5f2e30",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/construct_121_2.json": "12f94a1f239b970b0febd002613277739cdb09530412783e623016aefb0672ab",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/construct_121_2.py": "e971f9d5a150f378733f5890ffb36612ff3b070d0f052a6831006e298cea3961",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/construct_122_1.json": "341b66f0f9032b2c88bcc4479dc109945264aab8767c155437544063462937db",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/construct_122_1.py": "d7b6c804c24cfc3a6a8c6068e240e53eee4e6ffb514c976eb839e3a729d21f42",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/construct_124_0.json": "e9d52470e2dac96a8f83456d56d37484d34742e636d4326da177ae1e07735c2d",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/construct_124_0.py": "0e54451317887b17b046405d1be73dc1a92e0f0d7f504570d365aaee32cceca8",
+    "scripts/baseline/cases/public-control-packed-goldens-v1/manifest.json": "2638b4474a527cfe20b82e550ddb8d40fda98be99c47547f9c7ad4796016451f"
+  },
+  "formal_equivalence_proven": false,
+  "main": {
+    "compared_values": 2480,
+    "failed": 0,
+    "inputs": {
+      "1": 69,
+      "2": 37,
+      "3": 34,
+      "4": 25
+    },
+    "max_absolute_error": 8.609338817411327e-07,
+    "numeric": 162,
+    "outputs": {
+      "1": 108,
+      "2": 47,
+      "3": 9,
+      "4": 1
+    },
+    "passed": 165,
+    "periods": {
+      "16": 1,
+      "32": 1,
+      "4": 135,
+      "8": 28
+    },
+    "skipped": 0,
+    "structural": 3,
+    "weighted_mae": 1.675149043054117e-08
+  },
+  "main_coordinator_seconds": 955.6768535000156,
+  "main_evidence_bytes": 30073930,
+  "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+  "native_bound_tasks": 114,
+  "native_directed_retested": false,
+  "new_default_passed": 141,
+  "new_directed_tasks": 144,
+  "new_partitions": 48,
+  "new_supplemental_manual_passed": 3,
+  "old_public_regression_passed": 24,
+  "plaintext": {
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "platform": "aarch64-linux",
+  "public_bound_tasks": 378,
+  "public_partitions": 126,
+  "release": "semantic-v1-public-r6",
+  "remaining": [
+    "114 unbound directed tasks",
+    "three default rule operation-budget blocks (manual alternatives separately pass)",
+    "general chunked layout",
+    "Agent callable actual upstream helper contract",
+    "remaining upstream helpers and bootstrap",
+    "two original compiler failures",
+    "full semantic partition and compiler artifact audit",
+    "separately approved live Agent evaluation"
+  ],
+  "schema": 1,
+  "source_snapshot": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/public-r6-directed/frozen-source.tar.gz",
+    "sha256": "5f420cad1c855f1e88bc656ea68e8673ab314a7efac1b7d796ab6585aa0513a6"
+  },
+  "supplemental_auditor": {
+    "path": "scripts/baseline/cases/public-control-packed-goldens-v1/audit.py",
+    "sha256": "81a59b9fe5d894df99ea3ffcf39c6e6c48bb4beb1f5db1fbf335d14316f96b86"
+  },
+  "supplemental_case_seconds": 16.478139065977302,
+  "supplemental_manual": {
+    "compared_values": 12,
+    "failed": 0,
+    "inputs": {
+      "1": 3
+    },
+    "max_absolute_error": 1.685882140833872e-08,
+    "numeric": 3,
+    "outputs": {
+      "1": 3
+    },
+    "passed": 3,
+    "periods": {
+      "32": 3
+    },
+    "skipped": 0,
+    "structural": 0,
+    "weighted_mae": 5.564076234476634e-09
+  },
+  "unbound_tasks": 114,
+  "unit_tests": {
+    "failed": 0,
+    "passed": 285,
+    "skip_reason": "historical or paid evidence directories unavailable",
+    "skipped": 13,
+    "total": 298
+  },
+  "x86_retested": false
+}

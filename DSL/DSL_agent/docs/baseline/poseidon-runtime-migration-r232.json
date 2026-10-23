@@ -1,0 +1,237 @@
+{
+  "format": "poseidon-runtime-migration-acceptance-v1",
+  "created_at": "2026-09-28T10:45:41.793112+00:00",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "integration": "selective source archives and CPU API import; no merge or commit",
+  "backend_identity": {
+    "format": "poseidon-backend-identity-v1",
+    "platform": {
+      "configured_platform": "aarch64-linux",
+      "system": "linux",
+      "machine": "aarch64",
+      "byteorder": "little",
+      "pointer_bits": 64,
+      "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+    },
+    "source_lock_sha256": "5e8d7adebd0cac8e9748bcddf0dc5ea408b7123095ff79199cdf47738de84647",
+    "source_lock": {
+      "format": "poseidon-runtime-source-lock-v1",
+      "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+      "runtime": {
+        "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+        "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+        "path": "third_party/ckks-runtime-agent"
+      },
+      "dacapo": {
+        "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+        "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+        "path": "third_party/ckks-runtime-agent/third_party/dacapo",
+        "patches": [
+          {
+            "file": "dacapo-plaintext-subtraction.patch",
+            "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+          },
+          {
+            "file": "dacapo-concat-layout.patch",
+            "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+          },
+          {
+            "file": "dacapo-bootstrap-containers.patch",
+            "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+          },
+          {
+            "file": "dacapo-native-function-calls.patch",
+            "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+          },
+          {
+            "file": "dacapo-refined-function-input-types.patch",
+            "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+          },
+          {
+            "file": "dacapo-augmented-operand-order.patch",
+            "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+          },
+          {
+            "file": "dacapo-constant-output-path.patch",
+            "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+          },
+          {
+            "file": "dacapo-minimal-mlir-link.patch",
+            "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+          },
+          {
+            "file": "dacapo-gcc-qualified-casts.patch",
+            "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+          },
+          {
+            "file": "dacapo-unused-mlir-dependencies.patch",
+            "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+          }
+        ]
+      },
+      "integration_method": "reviewed source archives; original independent repositories preserved"
+    },
+    "runtime_dacapo_tree_sha256": "f2ef1a237d1cb6d782e1013372e9d395f4e88e7aa449b9301a1fc2956d22a23a",
+    "api_tree_sha256": "c8a3d120aae1800ce48a5d3085044b00c7f92c844a7e1531615df3a4babccbf7",
+    "runner_tree_sha256": "1485b2dc31699067f2f9074be042e6739b22a5eee54e7d7c422d47b22ca5cfa6",
+    "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+    "frontend_sha256": "0baecce07032d37aaecba38b64b93cbbc23fb21dac8476de85598dc9ba8d6e73",
+    "executor_sha256": "92074cb9fb7726d1d71c08aa377f68df02c7faa2b7f7079bb75fa5ffc60844d5",
+    "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+    "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+    "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e"
+  },
+  "acceptance_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-acceptance-r232-b4qtbfdx",
+  "static_tests": {
+    "passed": 73,
+    "failed": 0,
+    "skipped": 3
+  },
+  "runtime_tests": {
+    "passed": 3,
+    "failed": 0,
+    "encrypted_execution": false
+  },
+  "cases": [
+    {
+      "name": "linear",
+      "kind": "scripted_candidate",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-oojuftnz",
+      "request_id": "f2abeda94a5beb8a674dcb54437bbf582c0e200a205cfb47c52bc8b80852676a",
+      "status": "passed",
+      "comparison": {
+        "passed": true,
+        "compared_values": 8,
+        "mae": 4.100659998194922e-10,
+        "max_absolute_error": 7.221712117200241e-10,
+        "max_nonzero_reference_relative_error": 8.938807360969747e-09,
+        "cosine_similarity": 1.0
+      },
+      "report_sha256": "6ec6cae23ac86b74196143426895e0f535a13f77d86ab3ef6c7e7ec6476565a4"
+    },
+    {
+      "name": "multiio",
+      "kind": "scripted_candidate",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-nb3xk14i",
+      "request_id": "6826e0f35367d9b182147cb7e3e9e5847dc09cfe9bf65bbe7ee3762680bd87fc",
+      "status": "passed",
+      "comparison": {
+        "passed": true,
+        "compared_values": 12,
+        "mae": 7.078356064714201e-08,
+        "max_absolute_error": 2.1198091171292788e-07,
+        "max_nonzero_reference_relative_error": 2.658232950687288e-07,
+        "cosine_similarity": 0.9999999999999585
+      },
+      "report_sha256": "8112936cbedf0d9f07149bb3ac84f5c5284839d88d918d588ee2dc3908931606"
+    },
+    {
+      "name": "mlp4x4x2",
+      "kind": "manual_golden",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-linear-probe-r232-y754gz3v",
+      "status": "passed",
+      "comparison": {
+        "passed": true,
+        "compared_values": 8,
+        "mae": 8.448806895419714e-09,
+        "max_absolute_error": 2.816518218651254e-08,
+        "max_nonzero_reference_relative_error": 4.822255693749288e-08,
+        "cosine_similarity": 1.0000000000000002
+      },
+      "report_sha256": "f56e6e41689cb33c7c0cdba00afda6c89155d888d887c2a4d42716f2c4d70b5d"
+    },
+    {
+      "name": "native-helper-loop",
+      "kind": "manual_golden",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-hh8kh3fh",
+      "request_id": "233bb9bc2868a0a4d19a352b1ff9f719f49d9ad66cc2b0abc0d7561290451c8e",
+      "status": "passed",
+      "comparison": {
+        "passed": true,
+        "compared_values": 16,
+        "mae": 1.5910009490416321e-09,
+        "max_absolute_error": 5.618935094986455e-09,
+        "max_nonzero_reference_relative_error": 1.4983826919963878e-08,
+        "cosine_similarity": 1.0000000000000002
+      },
+      "report_sha256": "26b757d4d7f014b1ed007640c9b3f67f28fbeed192556258f7d4c2f2267d77ea"
+    },
+    {
+      "name": "native-array-transpose",
+      "kind": "manual_golden",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_f9fr9l6",
+      "request_id": "4a012fe4ae132b0c09e468af121e872e0af130953a345f58a0bf87eceaeabb9b",
+      "status": "passed",
+      "comparison": {
+        "passed": true,
+        "compared_values": 16,
+        "mae": 2.0533430025726496e-09,
+        "max_absolute_error": 5.967321525801594e-09,
+        "max_nonzero_reference_relative_error": 1.258354886957136e-08,
+        "cosine_similarity": 1.0000000000000002
+      },
+      "report_sha256": "2204f1f4a10eff73da79087d7cf5bbfb2317c77f6d72b7d3b84822e4d7f9d9eb"
+    },
+    {
+      "name": "native-augmented-subtract",
+      "kind": "manual_golden",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9x1t194b",
+      "request_id": "4343c11eb5eba3a49a48e11d96bbab4e2f0846d513cc0cf8e6bf1949571018ec",
+      "status": "passed",
+      "comparison": {
+        "passed": true,
+        "compared_values": 16,
+        "mae": 1.6797006424651428e-09,
+        "max_absolute_error": 7.154101977491223e-09,
+        "max_nonzero_reference_relative_error": 1.8288905703453777e-08,
+        "cosine_similarity": 1.0
+      },
+      "report_sha256": "3075b42305e801cc943d7615c5a739aebd16577aa661401c61bda25bd3660bea"
+    },
+    {
+      "name": "native-plain-left",
+      "kind": "manual_golden",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_bfhhkgo",
+      "request_id": "4343c11eb5eba3a49a48e11d96bbab4e2f0846d513cc0cf8e6bf1949571018ec",
+      "status": "passed",
+      "comparison": {
+        "passed": true,
+        "compared_values": 16,
+        "mae": 2.314917811260808e-09,
+        "max_absolute_error": 1.034371896468933e-08,
+        "max_nonzero_reference_relative_error": 5.397605725728976e-08,
+        "cosine_similarity": 1.0
+      },
+      "report_sha256": "6e64dfa8aa0bff57456f68f086619022d029b18f632717468419e18e339c5a21"
+    }
+  ],
+  "package": {
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-efk0tc4w",
+    "status": "passed",
+    "compiler_calls": 0,
+    "agent_calls": 0,
+    "compared_values": 12,
+    "max_absolute_error": 1.059971806993687e-07,
+    "binding": "8c32a987794fa0d3e29adfc95fd5c19b22b4afa46a12639248f74e9f3b206bbb"
+  },
+  "paid_calls": 0,
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "cpu_scope": "7 candidate programs over 4 mathematical models, four input groups per program",
+  "new_agent_generated_programs": 0,
+  "bootstrap": "blocked: CPU API only offers decrypt_reencrypt, rejected by Agent",
+  "cuda": "not_executed: no NVIDIA hardware",
+  "x86": "configuration preserved; no new native execution",
+  "installer": "existing-SDK build helper added; blank-machine provisioning pending",
+  "historical_failures_preserved": [
+    "poseidon-regression-r232-3z8mkgv4: 3 OperatorSpec Negate rejections; source binding preserved",
+    "candidate-replay-sdv5v5qp: intentional malformed-response and wrong-reduction failures"
+  ],
+  "passed_output_values": 92,
+  "maximum_absolute_error": 2.1198091171292788e-07
+}

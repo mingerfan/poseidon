@@ -1,0 +1,17 @@
+{
+  "actual_dispatch_tested": false,
+  "binding": "05ef283afa98f8188f6c4896982995ec72c3a5a127e13a5e7f2a148471686d05",
+  "format": "poseidon-stage2-queue-preflight-v2",
+  "index": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v4-r118/index.json",
+  "paid_calls": 0,
+  "planned_tasks": 2030,
+  "queue_binding": "1153460d5848b642367705199dc2439833ac5c50907ee8820280b89d7b1ecbff",
+  "remaining": 2024,
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "same_binding_audited_pilot": 6,
+  "stage2_complete": false,
+  "test_log_sha256": "8f7a3d39107331af564bfc2cfa87df028cdcee3ea3bc6237ecf0de4c33851d8a",
+  "tests_failed": 0,
+  "tests_passed": 10,
+  "tests_skipped": 0
+}

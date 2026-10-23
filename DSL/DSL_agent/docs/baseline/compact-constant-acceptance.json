@@ -1,0 +1,77 @@
+{
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_encrypted_execution": true,
+  "agent_calls": 0,
+  "candidate_probes": {
+    "compared_values": 5640,
+    "failed": 0,
+    "max_absolute_error": 4.139816424560128e-09,
+    "passed": 6,
+    "period": 256,
+    "profiles": [
+      "native",
+      "public-v1"
+    ],
+    "skipped": 0,
+    "unique_models": 3
+  },
+  "compatibility": {
+    "newly_prepared": 6,
+    "unchanged": 1194
+  },
+  "constant_limit": 256,
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-provider-regression.log": "79f93b8a63ec92ba605813f6c427b2c169fc08124dc6f17bdbb2f724f2aea177",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-registry-compatibility.json": "bdd91f988bac9f80d7e875d844201b9f99d1c7f7a774c85b58ee6134c375fb2d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-registry-fhe-r1/helper-audit.json": "dac05ab29257569a00ed88892320b6629d0bd716bb2e64d01eca21569a1b68a1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-registry-fhe-r2/audit.json": "d37a382154b3ecf7aeeeb7335f02d95dccfcd1bf235363bbae85533d2cf5ad94",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-registry-fhe-r2/state.json": "76b6930d6f01172716c241319a865fd6b0d15290c61c6bb0e7f244e815114609",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-registry-unit-initial.log": "34af361e10d2d7e113eeaff30c5250c7f8051a2b634cdd13720c25e2c5ac798a"
+  },
+  "frozen_models": 1200,
+  "helper_probes": {
+    "compared_values": 1040,
+    "failed": 0,
+    "includes_asymmetric_bn_256": true,
+    "max_absolute_error": 8.228407955002126e-09,
+    "passed": 3,
+    "skipped": 0
+  },
+  "initial_harness_failures": {
+    "count": 6,
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-registry-fhe-r1/state.json",
+    "reason": "Fixture generation rejected plaintext-first concat; model files not emitted. Corrected fixture and ran new batch."
+  },
+  "main_unit_suite": {
+    "failed": 0,
+    "passed": 53,
+    "skipped": 3
+  },
+  "old_fhe_results_relabelled": false,
+  "old_schema_request_hashes_changed": false,
+  "platform": "aarch64-linux",
+  "policy": "compact-periodic-v1",
+  "previously_accepted_unified_hashes_changed": false,
+  "provider_unit_suite": {
+    "failed": 0,
+    "overlapping_tests": 5,
+    "passed": 34,
+    "skipped": 0
+  },
+  "remaining": [
+    "258 unbound directed tasks",
+    "general chunked layout",
+    "real helper Agent contract",
+    "remaining upstream helpers",
+    "two historical compiler failures",
+    "bootstrap",
+    "approved live Agent evaluation"
+  ],
+  "request_canonical_byte_limit": 131072,
+  "schema": 1,
+  "source_snapshot": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compact-registry-fhe-r2/frozen-source.tar.gz",
+    "sha256": "190939816807fbcc38fbffdd5998b9c0df301b9a5ae6678a837dd2cb808bc834"
+  }
+}

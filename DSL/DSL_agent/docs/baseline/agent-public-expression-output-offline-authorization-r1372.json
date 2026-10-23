@@ -1,0 +1,27 @@
+{
+  "binding": "cd37564ee5c4dfeee7ddc2a962d4dd022f8803b455f26b169840aae3af45b817",
+  "format": "poseidon-public-expression-output-offline-authorization-v1",
+  "http_attempts": 0,
+  "human_reply": "\u6279\u51c6\u8fd91\u9879\u79bb\u7ebf\u8865\u9a8c",
+  "proposal_binding": "0e0d796df8da1070f56c39209036bf1239490b1c8acbd0425e18d0042fc0e63a",
+  "provider_calls": 0,
+  "question_call_id": "call_39be14decd274eb482c02bd90f904422",
+  "question_item": 0,
+  "recorded_at_utc": "2026-10-10T16:33:43.328553+00:00",
+  "scope": {
+    "case_seconds": 180,
+    "compiler_jobs": 2,
+    "global_bytes": 34359738368,
+    "http_attempts": 0,
+    "link_jobs": 1,
+    "maximum_compiler_calls": 1,
+    "maximum_encrypted_calls": 3,
+    "native_address_bytes": 4294967296,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "new_bytes": 134217728,
+    "provider_calls": 0,
+    "reserve_bytes": 4294967296,
+    "wall_seconds": 240
+  }
+}

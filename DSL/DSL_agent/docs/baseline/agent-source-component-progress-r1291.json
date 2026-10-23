@@ -1,0 +1,113 @@
+{
+  "acceptance_binding": "67ca43ac0daa9a34d713a85208f07b030a534e81775a279e4ae91f767c988637",
+  "affected_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-component-admission-r1290/report.json",
+  "binding": "1b585b11cb6e6ee80b1e8e7ea85ba38c2e3783ea03b4cc97a6e04e014ffbaa0b",
+  "cancelled_source_tasks": 9,
+  "combined_plan_binding": "1f2f80e9da4db0731f77954e79428e36de3407c305b0fbb3b9bd68735e5ff433",
+  "combined_sources": 706,
+  "compiler_calls": 0,
+  "current_boundary": {
+    "activation_supported": false,
+    "active_processes": [],
+    "backend_acceptance": "not_run",
+    "branch": "lhy-agent-dsl",
+    "combined_sources": 706,
+    "compiler_calls": 0,
+    "encrypted_executions": 0,
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "new_files": [
+      "pytorch_common_constant_provenance.py",
+      "pytorch_fused_matrix_normalization.py"
+    ],
+    "originals_retained": 8,
+    "plan_binding": "1f2f80e9da4db0731f77954e79428e36de3407c305b0fbb3b9bd68735e5ff433",
+    "production_applied": false,
+    "provider_calls": 0,
+    "request_acceptance": true,
+    "source_acceptance": true,
+    "status": "awaiting_backend_qualification",
+    "targets": 10
+  },
+  "current_method_hashes": {
+    "test_actual_backend_identity_binds_combined_agent_bytes": "2a85b3e3eabc18a0571c92459d3b0a85ceea129fb4c87732259387ab6253b53d",
+    "test_identical_model_request_has_stable_reuse_identity": "6a5e6e66e8b246f17c2e595ab461a2d39446922a1c7a2d35ea8e5ea85517fc77",
+    "test_missing_weight_and_wrong_source_hash_are_public_input_failures": "4b4d4430454b6670ccd8aa53b630f77c66ece79047068753dcdb193c20a46a7e",
+    "test_nine_normalized_sources_admit_with_real_identity_and_bound_provenance": "21a6702b2d8dc454522e57bef53c6b23fd26bebf0ed76bfeb91c7a5eebd4ff59",
+    "test_real_request_cancellation_never_promotes_validation": "3bb4d33e36fb9ef6dc051065615b211701f5aa4532d9cac4d3192af1eac36f8e",
+    "test_snapshot_rejects_nontrusted_sources_and_changed_weight_bytes": "cf0b779fbaa0cbdfa3d4f023b2cb4b3baed8030d564ca90d3ea042679edb8282",
+    "test_source_snapshots_keep_real_identity_files_weights_and_unverified_grade": "1ccb017c7739cd716a6fdbfeeeb648c77ffb87d66cb121c77fb66a772b9ad3bf",
+    "test_zero_processes_source_imports_and_paid_calls": "275f0e1b09092adf5a0a6a1a80569af3a9ba627d0de8111c4e2190510f55453a"
+  },
+  "current_method_successes": 8,
+  "date": "2026-10-08",
+  "downloads": 0,
+  "encrypted_executions": 0,
+  "evidence_mode": "seven unchanged methods from retained failed run plus one corrected affected-only method",
+  "format": "poseidon-agent-source-component-progress-v1",
+  "git_commits": 0,
+  "git_pushes": 0,
+  "graph_admissions": 9,
+  "identity_sha256": "33eca31bbbf4bf53b0b4d671620079005a631ac509b1b4919d53237efef92707",
+  "installation_calls": 0,
+  "negative_contexts": {
+    "changed_source_hash": 9,
+    "missing_weight": 6,
+    "undeclared_weight": 3
+  },
+  "new_dependencies": 0,
+  "new_scope": "Real PoseidonBackend identity admission; no compiler/FHE/API",
+  "old_real_agent_batch": {
+    "changed": false,
+    "failed": 20,
+    "passed": 56,
+    "total": 76
+  },
+  "original_failed_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-component-admission-r1289/report.json",
+  "original_launch_diagnostics": [
+    "agent-source-component-admission-r1287",
+    "agent-source-component-admission-r1288"
+  ],
+  "pending": [
+    "combined compiler and Poseidon numerical qualification",
+    "compiled V14 package reload and new input execution",
+    "new real Agent quality tests"
+  ],
+  "pending_offline_proposal": "docs/baseline/agent-ordered-common-expression-offline-proposal-r1286.json",
+  "pending_paid_proposal": "docs/baseline/agent-v12-live-proposal-r1232.json",
+  "production_applied": false,
+  "production_checks": 704,
+  "protected_backend_checks": 648,
+  "protected_reference_checks": 6,
+  "provider_calls": 0,
+  "retained_original": {
+    "errors": 3,
+    "failed": 0,
+    "reason": "weightless ciphertext fixtures",
+    "skipped": 0,
+    "status": "failed",
+    "tests": 8
+  },
+  "runtime": {
+    "cuda": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "source_factory_calls": 0,
+  "source_models": 9,
+  "source_snapshots": 9,
+  "source_tools": {
+    "scripts/baseline/benchmarks/tools/source_component_acceptance_v1/README.md": "7ae6fdba736c75553daf51bd005a544690a611e857411349739c83b576eb9435",
+    "scripts/baseline/benchmarks/tools/source_component_acceptance_v1/acceptance.json": "c4fd4e12b81093680d495eb5b4110138930b5f559be228d22f9ea10380658910",
+    "scripts/baseline/benchmarks/tools/source_component_acceptance_v1/audit.py": "2529f80759406567e91180386e9467db2d8504353eb1dc6076923c3e22ed67c2",
+    "scripts/baseline/benchmarks/tools/source_component_acceptance_v1/inside.py": "44a768cbc7e72f10acb08af3e03d12ecd409ed1aa0dcf4c2df7c78ccce69e3d1",
+    "scripts/baseline/benchmarks/tools/source_component_acceptance_v1/run.py": "636eb2f08b0ddc578b987db698b935046f5884c228fd2073d54bd2bbb0a0b79e"
+  },
+  "stage": "staged_application_admission_verified",
+  "verification_level": "task admission and binding only",
+  "verified_hashes": 213
+}

@@ -1,0 +1,114 @@
+{
+  "after_sdk": "65e3d2514d448221fb61a1d410a812d2bd1908f483db892c63595b2a3ad0a7b2",
+  "backend_changes": false,
+  "backend_identity_unchanged": true,
+  "before_sdk": "5a88df990a07ead9e19944721146d997b04e23408b3e0266cff497ced7658343",
+  "binding": "8a35120c5bd686fdd6e2d6cfa4632d6e557003c94e1877d52f2383e2b5d1c842",
+  "branch": "lhy-agent-dsl",
+  "broadcast_calls": [
+    "Tensor.broadcast_to",
+    "Tensor.expand_as"
+  ],
+  "broadcast_source_version": "poseidon-trusted-pytorch-v28",
+  "commits": 0,
+  "compiler_calls": 0,
+  "controls": {
+    "errors": 0,
+    "failed": 0,
+    "skipped": 0,
+    "tests": 168,
+    "unique_case_ids": 168
+  },
+  "current_backend_acceptance": "not_run",
+  "downloads": 0,
+  "encrypted_calls": 0,
+  "evidence": {
+    "scripts/baseline/application_capabilities.py": "4028995bfbf3fa3fff2a45260f89865594e9fe741f2098fc4fa6d3fd3f59a8eb",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/audit-first.log": "e06039cd78f8a986ba3d2420487562da5b27766dfb664ad503b79feaed089e83",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/audit-original.py": "8148ea4485e8c01d4a2e3c8f062456cc9f48c4415cb103f3dc5b785e6a0a052c",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/audit-reporting-recovery.log": "3af4651f6b4f08c72e3a7f32a6a45fa3ecdadc1a7b57c4ffe149b42451b0a93f",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/audit.py": "6eafa179690d1a437fa4dbf51531239cdcbbabb743b889f423f89e43b0aebda7",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/change.json": "b6a92a1819347d6c215bd7ae44e22c8ca26d3a5dbde9bfa08b874fd20339caa6",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/consistency-audit.json": "3c3b1c1df0758504e2388602a72693d9fcf66af7bb0d18a3a3343e3380570919",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/controls-first.json": "a2538078c379023fccb9675266b92c35655094cc1b25193d804ae2d8bc1b0ed4",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/controls-first.log": "85a0b692f0cba6ccae523611f3f2f3462e3fa85ba030d26d1363a4a991b25ee1",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/controls.py": "50e4eef12ba983b62bd7196e8e455a9c60a5d2dc15261e60e11103e545b6bfa0",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/identity-after.json": "837229aa01f991b789f19ee701476094f3464b5a629d17b294d65f90907733a0",
+    "scripts/baseline/benchmarks/tools/capability_source_versions_v1/identity-before.json": "dd00457793d4ebfa536adddf741129b37148a3aeab30b06f39422ec4220ac03f",
+    "scripts/baseline/test_application_source_versions.py": "56e42b9b276f0ec0c8c907f9465b18904b83e545edceca0f3b1976397ba6ff0c"
+  },
+  "format": "poseidon-source-capabilities-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "implementation_file": "scripts/baseline/application_capabilities.py",
+  "input_call_versions": [
+    "poseidon-trusted-pytorch-v26",
+    "poseidon-trusted-pytorch-v27",
+    "poseidon-trusted-pytorch-v28"
+  ],
+  "input_format_or_validation_rules_changed": false,
+  "installations": 0,
+  "models_or_references_changed": false,
+  "network_changes": false,
+  "new_test_cases": 9,
+  "next_action": "Resource approval, then freeze a small unchanged genuine-DSL offline regression under the new SDK; no paid regeneration needed for metadata alone.",
+  "old_source_request_files_unchanged": 6,
+  "other_capability_fields_unchanged": true,
+  "other_regression_test_cases": 159,
+  "paid_api_calls": 0,
+  "parameter_changes": false,
+  "preserved_audit_reporting_failure": {
+    "corrected_case_ids": 168,
+    "original_auditor": "scripts/baseline/benchmarks/tools/capability_source_versions_v1/audit-original.py",
+    "original_log": "scripts/baseline/benchmarks/tools/capability_source_versions_v1/audit-first.log",
+    "reason": "Provider-control retry log interleaves before unittest ok marker",
+    "unit_suite_repeated": false
+  },
+  "prior_backend_evidence": "docs/baseline/agent-static-broadcast-phase-summary-r1433.json; original binding unchanged",
+  "pushes": 0,
+  "qualified_stage_claims": "Registration is separate from scoped execution evidence; compiler/encrypted/agent remain unverified in declarations.",
+  "recorded_at": "2026-10-11T23:16:02.862928+00:00",
+  "request_reconstruction": "byte-identical for all six existing source requests",
+  "resource_approval": "pending",
+  "resource_proposal": "docs/baseline/agent-result-storage-proposal-r1434.json",
+  "resource_remaining_bytes": 5275648,
+  "resource_result_bytes": 34354462720,
+  "source_capture_calls": 0,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "spatial_versions": [
+    "poseidon-trusted-pytorch-v27",
+    "poseidon-trusted-pytorch-v28"
+  ],
+  "stage_changes": {
+    "compilation": {
+      "after_sha256": "6b909d9f8c2313107726c995811b627b2a653be3292b8f259ea043bb3bbcb231",
+      "before_sha256": "fa66d5c19280843b25576fcd09e30d387773d33c64b223be250964d63911c691",
+      "changed_paths": [
+        "application_capabilities.py"
+      ]
+    },
+    "execution": {
+      "after_sha256": "21dcf79f2c699304a47fd7ee5ba3bc61be21d2d89b0c8d36d1b57ebe08581416",
+      "before_sha256": "d35a1d9a314c68fe6fbcb316cb1d382d851d9b15791ef8d478e07d07b2034c24",
+      "changed_paths": [
+        "application_capabilities.py"
+      ]
+    },
+    "generation": {
+      "after_sha256": "648dd6f96c82993f70e634d43446494509232049649cb6aa8a731ec2da6be52f",
+      "before_sha256": "5de5025fcda3d1c59cbea77b8255584c0446705e0072eac42eaa9ff2a2dfbf7e",
+      "changed_paths": [
+        "application_capabilities.py"
+      ]
+    },
+    "validation": {
+      "after_sha256": "a5676aec52682c8e27ecff01995574aa8c1a25ef7c93afc41ffd8032a983204c",
+      "before_sha256": "40f5a410a646faa346b55fd5247879220f1957375d339b00ad7a94791ddffbb8",
+      "changed_paths": [
+        "application_capabilities.py"
+      ]
+    }
+  },
+  "status": "passed_for_component_scope",
+  "unique_old_request_ids": 3
+}

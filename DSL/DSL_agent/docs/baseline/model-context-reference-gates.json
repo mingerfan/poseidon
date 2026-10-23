@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "tests_passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "numpy_torch_validation": "not_run",
+  "encrypted_execution": false,
+  "paid_calls": 0,
+  "files": {
+    "scripts/baseline/benchmarks/tools/test_model_context_reference_gates.py": "a425a9a94860d8ee419768f3eac3bb523e2c7cb78f327de381f11e809dbb89f1",
+    "scripts/baseline/benchmarks/tools/verify_model_semantic_contexts.py": "acb4305ccd6065ff1b49990d8d38af72f3d2e937c6ac5d425d4ec26449f6992a"
+  },
+  "log_sha256": "153c5cb59dd843de01e8ab9065709916dcad59e6cbc8d2d046c183038d472f52"
+}

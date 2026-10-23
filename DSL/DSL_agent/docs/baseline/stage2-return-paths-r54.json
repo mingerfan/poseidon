@@ -1,0 +1,619 @@
+{
+  "actual_ciphertext_execution": false,
+  "actual_compile": false,
+  "binding": "3b19afa7277e8a773681bf90bd572367343c855c0cc97e1dc8b4f745b5ea99ed",
+  "format": "poseidon-upstream-return-path-audit-v1",
+  "mapped_internal_symbols": 10,
+  "mappings": [
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-im4y3gaj",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "382c652aa3e7aa9d1bef8b0710d0fd8f773577fa947d8de5a7bd5fc89e839e1a",
+          "numerical": true,
+          "parent_call_records_sha256": "3966bd3309cf12c8c0bff6fa7b580f5f86086f42241272b1010b6e1ee55e2b5d",
+          "report_sha256": "03b3d1cacc3adea7f32ad4a4dd60e0faa834622ca238790298ec638ff264b998",
+          "task": "upstream_bn_asymmetric_0",
+          "task_sha256": "d7da2f40043735b36222476a68de631de030435f02a8d4316eae2a9fb77cf859",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5ie9orbs",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "a3cbb6f5e3c39385c7eeaa5be44d273e3d3b02b62d9caa9f0b3aed9b9d2ffaf3",
+          "numerical": true,
+          "parent_call_records_sha256": "1f266ffb942658af47030508c58ceca39b1a4661e9d417817b4198751653a435",
+          "report_sha256": "283924ac62aa0a46d9e8b080339883377557ac7d515199115257535bb3783c31",
+          "task": "upstream_bn_multi_residual",
+          "task_sha256": "2b2397a408bc1dbb563224885dd10d1a7d122e16ba6a3cdebe6b1e4ec260594f",
+          "topology": "a59188ccc4748172b0364f6114570c879a466f3de7dc773464a0b500a7f4074e"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-tr5sdnqo",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "9e72d5beef108a6ea1d6e2a5dfc0cb309c8979ec002372bf54f858b8d7bb34d5",
+          "numerical": true,
+          "parent_call_records_sha256": "c694a77a6e8a5f7bedd7312939879788b6a66e55fedaedb965eb88ab715731b4",
+          "report_sha256": "257573c12287fcab7212ea830481058383efa14e5e2cd9da85de6fc91df887ba",
+          "task": "upstream_bn_then_linear",
+          "task_sha256": "d3deb82169461c50dacf9db0886d5617d1181fb97a3223433a3ddcaea6c6871b",
+          "topology": "407cb344651c4208c82e9f2f7b280f3fc27b7de7e5c3bedcb40bdb8aa6f5c6d5"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.MultParBN",
+        "callee_result_is_parent_result": true,
+        "closure_key": "BN",
+        "parent": "HE_BN",
+        "parent_ast_sha256": "8b65864dc9d0a7b4da6884758d6b1e83ebd885de598190eee4bbcc3f4e72dcd8",
+        "parent_return_line": 11
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.MultParBN"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-eitz4i4v",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "627d77955e9e8e22b6aa3588c29ab3284b7d6617b6ac3d1b03ed498c9d0cbec4",
+          "numerical": true,
+          "parent_call_records_sha256": "8e9a0e768864716b06cd2500140185fb706ca690a1bb78a96cd16f38426946e8",
+          "report_sha256": "7e7ec3e51f2bc257d80d7efb9ac02b01d9c0f66008533976bdd2089e3c4f791f",
+          "task": "upstream_conv_1_2_2_1_1",
+          "task_sha256": "79660ebf544e9393493ae66224b26e926633529045f20890bef0cc31e6529632",
+          "topology": "69d76fd36dd7e86f5999b5449c5194d711edff14d0f509daa42157cb7a63182f"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-m68no61j",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "b855c5a52c81152bed2eee4804647fdc753f1e6b87b699db6341a3b78e88e01b",
+          "numerical": true,
+          "parent_call_records_sha256": "fa7c37f0bbc93c9e8b3d242c60cdc6532463a38aa043b6aeaa40b1d9fb821dbc",
+          "report_sha256": "d12ece885b3a87cf25f02b8953cfedb4f3844edff9d2d1fe1accd93fbb0e3c11",
+          "task": "upstream_conv_1_2_2_1_1_pre_negate",
+          "task_sha256": "c2630e411e07156e31e314108670be996ed593a887ae698e5ec2b677ddc56ca1",
+          "topology": "c90f2a6968c0d86aa406f1af25e8ca0771fc639275c2650b5f1eb5e5f253144d"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7f38vzob",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "2bcc4ea290290d81d3dcdbd62b1eae958d71c8d8c0d4dda62f937669a4dd89b6",
+          "numerical": true,
+          "parent_call_records_sha256": "8cc1520e58fac8e92786c8aa991528b8b5d09a8b51f1077ecf3a2213b3a920a2",
+          "report_sha256": "35a72225d53c8489bd25bdddd3c8f686f7ad6ecea0dc2dfb7f5b9542d16417ab",
+          "task": "upstream_conv_1_2_2_1_1_post_square",
+          "task_sha256": "2f28ae703144b2c8540dad1ebbde20b10faee9a603221b243d8e6e3515305eed",
+          "topology": "e481225b9ee77641beca799dcdb625d00b07908e02e57fe6294e42ff2319ab84"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.MultParConv",
+        "callee_result_is_parent_result": true,
+        "closure_key": "MPC",
+        "parent": "HE_Conv",
+        "parent_ast_sha256": "5400ebe2a2a7656b0184347d86dce50eeb0a2cb7d06deefcc3453ea52851f8e7",
+        "parent_return_line": 20
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.MultParConv"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-huirn4dn",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "dedd1d778098c42d507aa45a0e11884eeb4eec99c62a75c8e70632ac74050e98",
+          "numerical": true,
+          "parent_call_records_sha256": "b788d838a3342407f560984ab195e20dc946f2d13596e71a00e719a9d71f8d1c",
+          "report_sha256": "3a6fd193c127a5bd51233acfa2355c4e7d4ec7f59821fc1fceb6a1334b11b7e7",
+          "task": "upstream_bench_helper_0024",
+          "task_sha256": "ff29cef1f428bb5b29ffc2eeb8e282bcee68277b89d8402fb2e8f276e146f0cf",
+          "topology": "98aae9be7cf91206610696fddc73b4c91ce6d072c9d3798c0fcadebee20ad7da"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wzcnxtec",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "f5fc720a32f74284de4be5cc11e4485dcd09540feeda644ac1d58a94ba4069b9",
+          "numerical": true,
+          "parent_call_records_sha256": "0b524628cef0e3df305d6cdef4e20a47662d040709ee8acb41c9270a231d9b7c",
+          "report_sha256": "e3b9b589f26af1a55ffff066a2a50f3b048e05672567e8b08c2eae51b80ce29d",
+          "task": "upstream_bench_helper_0026",
+          "task_sha256": "39e427ce68ea0082de888c6af27aa26bb805456ecf54b8065b5404f2e395fbcb",
+          "topology": "3010faf0b22c3324a14f21d3de9b6e50b9cb41e12fbf8f9e35dc378779a6aa7d"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qbp22vct",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "8ea3e87fd5ef10e33257f115b1097421aab4584d8996814befedafe883c45a27",
+          "numerical": true,
+          "parent_call_records_sha256": "6cb8b950c83c580c73a96912d285ee6bb7ebbe4210c841015584d7e0da4b2e8b",
+          "report_sha256": "d248dce103b7fd10c45cbaf4a36bc0ef5104a5a666420ae60e9b57d62bd43b39",
+          "task": "upstream_bench_helper_0029",
+          "task_sha256": "0adaecbbb4cc19e609b15ca8339e5fe35865e54db9e56cd7b7f4b15bcb9333c9",
+          "topology": "ad5d9612ef88a06f38feb8d6d17d84ac99870e3623e5a3d042bf0d13748a99e7"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.MultParConvBN",
+        "callee_result_is_parent_result": true,
+        "closure_key": "MPCB",
+        "parent": "HE_ConvBN",
+        "parent_ast_sha256": "920570cbc9587a71c5dd772c80aae8ee95e00e1bca0810196951d48cb00952bd",
+        "parent_return_line": 24
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.MultParConvBN"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o2xa3fe7",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "3286674427aafa8575d9a627ffa10de90090feabb58bf0b3d55fe7f318b8176f",
+          "numerical": true,
+          "parent_call_records_sha256": "e8a698736570c8c711477a5eeb8dab63c8b4b6bc1d5cd987d490e089b01fda15",
+          "report_sha256": "64c699c2869653a1d96bfbfe5a27afd98cf8baa788c0b3b026b3672537e14a55",
+          "task": "upstream_bench_helper_0088",
+          "task_sha256": "0e03bf373b6a3ae9a150a0a5effaa48e7a67e71c9b9c1a479e2a22f6c858e620",
+          "topology": "6cf6b6441b319c5317ccc4fa55892c37d5464452260e34f35d6e29b903dd6a57"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-z89quwzp",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "3e6664dbc4288b9de2be6d641ab75b35f87aa1dd1a4c4bf74685f8bffb5180a2",
+          "numerical": true,
+          "parent_call_records_sha256": "35295057677c20372da970f9f1159ea34d29194758a019bad09055f09115e5c2",
+          "report_sha256": "c1e5efbc66cebacd7a808340998ac3908aabca4c04905eb2f394e398369c3ff0",
+          "task": "upstream_bench_helper_0090",
+          "task_sha256": "b24fa07b6c35d3f153df7c592ff0f6794a9e7c81b8673ff899e1ed19b6fe7ad7",
+          "topology": "cf3a0aff6fc788a0a9ceab3a0828cc1dbea2541637ed4704e32baaef0907421d"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-sl5m6ban",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "efb0cb9c9c3bff15e7ce33daba8686229a2068de033e3e62d68246c5a5ea7a9d",
+          "numerical": true,
+          "parent_call_records_sha256": "7081799f10a14601a746c25df1dada51d426012ad0ad5407b939606a46897345",
+          "report_sha256": "2c5e900c0535a8dac9fd559538dd7f1dc4265028cc0c3b24f99abed702ad6975",
+          "task": "upstream_bench_helper_0093",
+          "task_sha256": "5fa679d39687bde605cb50bba7c411ace71f7a7e422790405684f5d6498436b0",
+          "topology": "f3d413ec60d4ece45cf54f253e5f512c61ed7337d7157022fd158878545c817f"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.DwConvBN",
+        "callee_result_is_parent_result": true,
+        "closure_key": "DW",
+        "parent": "HE_DwConv",
+        "parent_ast_sha256": "5c28657dc81d39ac1ffbc33de45ab89b5ae486baf896dc28c4a037f25be73723",
+        "parent_return_line": 67
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.DwConvBN"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-b2z2qluq",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "d64a4f3c09922d02e22fcf34b456ed3e3a44a85da5b0a01b49a024e71706f748",
+          "numerical": true,
+          "parent_call_records_sha256": "088bb490933084f6f3ceb23b6f641843fbf610df12554b6529d3988f90bbf6ed",
+          "report_sha256": "f525fc5d3cd67286b4d23d08b89f4788856ae0cde8334cc045db57e16f5dea5b",
+          "task": "upstream_bench_helper_0056",
+          "task_sha256": "e3406130e0c1c863c961a97110302134789b172e66221997ab50faf4c8177f13",
+          "topology": "153dd1d467003149c30c5563ea04fc4cbc037880e7b563de27da6592f58a49bd"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-c0e3h7c8",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "f57b2aede9538d624dae8880a65aba9f621a97d82f77ebe36165eaec4a7e4291",
+          "numerical": true,
+          "parent_call_records_sha256": "0f9a5f808a1b6314ca8e9951f614c932b96cb3e6aa22ab4116820f7336ae5cfb",
+          "report_sha256": "af0ad11d6fef6215a974c3f1a8e46165690c64256b3f8f7d81a0d24d02caa3fc",
+          "task": "upstream_bench_helper_0058",
+          "task_sha256": "8d67faf5586f0cf9f9c29ebbba756a4a8f4310c5424193dcee81be6cc29e9881",
+          "topology": "9d15e219df0183b8eec26329344cc78a4a6f7fabab638b371af0d9414a8a0012"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mnfk_3vf",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "20a87ceb9fa6322e1ccff77e91b1f68001ed54b3cc30fb06c22517f11393f0ee",
+          "numerical": true,
+          "parent_call_records_sha256": "3f008e3d35ef9b73397e89a784f8eeaa201884e5264a1e1e271f50f3387b5097",
+          "report_sha256": "0bf26f8a6399cbc001db972e035e08a2ce6a69d4e344051130f867dbabb3228d",
+          "task": "upstream_ds_then_square",
+          "task_sha256": "cdd2c8465b88c040223400fe0a96745e7f3161b1b2414f61742dc33852d0642e",
+          "topology": "8c5c228dfb2acb21bdf0ab1878b1bb80f7cc3ec12b107f930927a417268c1ccc"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.Downsamp",
+        "callee_result_is_parent_result": true,
+        "closure_key": "DS",
+        "parent": "HE_DS",
+        "parent_ast_sha256": "24004173b0cc40adb00553eb9fa391a23326774e963951a41d08ac2c0878065b",
+        "parent_return_line": 50
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.Downsamp"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-i8n3azdp",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "3b9b57db7e413bb32684219ea8f1b806ebd2dea12451a5b4355156618e5da0d8",
+          "numerical": true,
+          "parent_call_records_sha256": "87e951369b4d69b4647093f0cbcbc2f461c93eb8e1bb7249af1926cf40cfbaa8",
+          "report_sha256": "3f508b7860deb585e37710f5322ff8f2c47a472beaaefc4f4884f129d38e518a",
+          "task": "upstream_pool_2_4_4",
+          "task_sha256": "b420cf118bc23f897079b9b2f11e65dbf05ea61bead0419c30827ea0cc7ed517",
+          "topology": "e1909f31f114ce8950af81a20cf9a3a10f53d5133d8c1a9a27a626a4dae78f30"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-gvpgnffo",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "2d625cda4757502ef5b121d834da35a034c907e599ee96c1df4215ce342e3d45",
+          "numerical": true,
+          "parent_call_records_sha256": "7393d36886d81c64cea1497cdf66febc2b6b62447078920dc3d1d4dab11656c9",
+          "report_sha256": "3993a6dcc7826780fa53343a9864cf355d83ffb72c73cb78e9a6efb24a8b3c39",
+          "task": "upstream_pool_2_4_4_pre_negate",
+          "task_sha256": "98e6d2b2144fce888d6cbff0d674d1e18a65e56c7cd6159fa6629c43fa3e8ac7",
+          "topology": "a89307268809a554cefc1d01e08a5ca4d769611976fc7067a40998cad36228cc"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7yeij60f",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "1e36728451818944478d3a34057003155455423c7d28a56413d948530a616d63",
+          "numerical": true,
+          "parent_call_records_sha256": "1123bf63f1fb073adbe1f79aa731db241bd7c03b8f823f681c29f6039dd220cd",
+          "report_sha256": "f50809cce64f4e3568ab2449e8ce6e82cfca6a98348c8126975a0786a4663ee9",
+          "task": "upstream_pool_2_4_4_post_square",
+          "task_sha256": "8fede438e6e7625ed965444d3066a3c3714bbf9c65d17b505362a6d2ae5654b9",
+          "topology": "534d354d0ac4876c4e75eb94315a9edc336585c9c9f29e545a9809d2303bdb0b"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.AvgPool",
+        "callee_result_is_parent_result": true,
+        "closure_key": "AP",
+        "parent": "HE_Pool",
+        "parent_ast_sha256": "685cc7a95757b8a3e451cd66a27038abb0e715f6408f0818874e0e1098fd8fe3",
+        "parent_return_line": 53
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.AvgPool"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-z3loxz6u",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "5adda9ca6ca15f8d42524066862b20077e15a978c5c2b8981f259a84b74167b1",
+          "numerical": true,
+          "parent_call_records_sha256": "daac81e5571ecc97decb35b9a14f6a7a28a22ed38d3f979a36e4f859f8f19e4e",
+          "report_sha256": "d79386f7e0c43664679c357a82fed322d59150fe1155a39edeff397be0c61ca9",
+          "task": "upstream_avg_1_4_4_2_2",
+          "task_sha256": "a1064db24cab884c2f296fee6c9ef6bafb9cce212113bb6568d02a8565a3413a",
+          "topology": "e1909f31f114ce8950af81a20cf9a3a10f53d5133d8c1a9a27a626a4dae78f30"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qfd91k8p",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "13d59e53a0bbcd5818e0f07c4a05cc650ec61035472a1ea5e97a1ab1e5c4fbcb",
+          "numerical": true,
+          "parent_call_records_sha256": "86249518c546fbf7f2083b2d8336e0993c968245fdfe74a5f7b36ca222d6089f",
+          "report_sha256": "bd59707dc2c4efd416037b445115cc60d1ae269d326755a758ca3bcecbeb2601",
+          "task": "upstream_avg_1_4_4_2_2_pre_negate",
+          "task_sha256": "054223b2ebad6db3aa981bd0bdab0c0501f03afa8e7106d48d0510201be878a2",
+          "topology": "a89307268809a554cefc1d01e08a5ca4d769611976fc7067a40998cad36228cc"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-vyn9g6fh",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "490058610281e6d89be05055d8aaafbdcf4cf9819b6aa78b89f78dbb7ad88fa1",
+          "numerical": true,
+          "parent_call_records_sha256": "693d4fe11a78c0a8bac30cda4cb0fb256568b8b556c113eafe64f70634ca5b1d",
+          "report_sha256": "b3da5036c6c6e618a62590049957e8a38b9786f5b69b995b6053f8558e9c5182",
+          "task": "upstream_avg_1_4_4_2_2_post_square",
+          "task_sha256": "98441a2c3ab8e444da550f7b91126d1e537701489bdb60ea356520db041a3d78",
+          "topology": "534d354d0ac4876c4e75eb94315a9edc336585c9c9f29e545a9809d2303bdb0b"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.AvgMidPool",
+        "callee_result_is_parent_result": true,
+        "closure_key": "MA",
+        "parent": "HE_Avg",
+        "parent_ast_sha256": "3bccd39f576fa374e9e31245fe0835ffe72fe39d43c5dc4706ac63c17885f6a7",
+        "parent_return_line": 46
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.AvgMidPool"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bepmdcdv",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "a7ff474112e7f5c66aff1812f770347f124568d1bd3ed3b0ac8d034d8b60c017",
+          "numerical": true,
+          "parent_call_records_sha256": "93bf8e441cc781dca3044c7a69d93e132ad209862726231c2510925411e003df",
+          "report_sha256": "9ecb229e222556d53e52108c3500d822ee4bf906d21bb07184687bbc6f4d80c4",
+          "task": "upstream_concat_frozen_1",
+          "task_sha256": "e824f8d0a9e7a86b674146dfcda92c446dea105e320e9b828354d988646097c0",
+          "topology": "dfc6bc27efbaceba04a1130f7234efe826bbe23ea6f46c6bb43c8e35d13bda37"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7mfn9pa8",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "7c52d795de62c068d45aac09c1384dd9bd5121b41d80048a2d569ee2ad7e9dc6",
+          "numerical": true,
+          "parent_call_records_sha256": "01b88baec7d6950b45c47203291ae3c6dcf8b3386dad5ebfbdde89bc30afac4b",
+          "report_sha256": "76d00cde4ff0f6125f64ebec4481875acd57200b8510889fec61cf5516bd66bd",
+          "task": "upstream_concat_square_negate",
+          "task_sha256": "6591269a13daeae53d26c0e1d120b257e7c34234b2da92251cde6abdc7adc199",
+          "topology": "c967d47e655a1dd4fb04e4b444ab1df14b31c9ab0cc1f4817ca8839eb58c0346"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1qbyncwx",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "c73ec4d8b35ac74b3b61a6a13315038509bf9860793c20f3bf0de1ec671b9ddf",
+          "numerical": true,
+          "parent_call_records_sha256": "988641ceedf8056e7acc69940409d1cfc99b7d5ff3178d2b06eb9fb774102371",
+          "report_sha256": "714811bfd1b8fd4b98a566bfbe0ff301760a9d7fc15ce375fe418e3a46c385ed",
+          "task": "upstream_concat_then_linear",
+          "task_sha256": "f01b5d4557aaa127908e419faeb54e6f2c158e601d21846028d0bf06fe92bca5",
+          "topology": "f355feecf1b25c0f1ea35521dbcc3bdc8dfbbc5f96d3f2db0dae9cb047fe2759"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "shapeClosure.Concat",
+        "callee_result_is_parent_result": true,
+        "closure_key": "CC",
+        "parent": "HE_Concat",
+        "parent_ast_sha256": "b9f509f2b3b35d67d676c6c48bccc23f957187edf2168285ac86c987c6a6a6ba",
+        "parent_return_line": 72
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.shapeClosure.Concat"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-y56y2ppz",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "c65361829e4b65f4e56c37877ea9fb699cfae1dc3cba97625f2d16cc7810a643",
+          "numerical": true,
+          "parent_call_records_sha256": "7e90c1466c275d6c1e0f9d41ae12e719cc5ff8edf6f786086caa2a159bf50b2f",
+          "report_sha256": "d71a269117bf3ab6f0aaf58ec4b46a56db98a75137faad64cdedba642feb4f89",
+          "task": "upstream_virtual_40_HE_Linear",
+          "task_sha256": "8a0e3184e9123e29d4fb91c502e7b2e38cb02e0946f593e2d3bc002d61087e2e",
+          "topology": "676970cb66d5cbde47105550f111b53fbad3c1f64df8c56f8a80778d890a5837"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-vsqmus27",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "ab1c407a3b6cab6030d48e0778b48a4446038fb7d8666c5a96165bd83efed2a4",
+          "numerical": true,
+          "parent_call_records_sha256": "8e42134ff0090086711fdd220027d22276b4755a328960cefb5eb7e5e7c64b5c",
+          "report_sha256": "9c9cb8704cf136e5cd15bb20050c732a2426da70a003c93f0813b2b148e2cdb9",
+          "task": "upstream_virtual_41_HE_Linear",
+          "task_sha256": "7dded6471c967853097d47777e807619103948394af2babe4933debb1b8e1ab2",
+          "topology": "aae46f823fc6358970b70aa8ef66a7515cb31e7a637dd6befe9dc5ea1062f88a"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-2feqm_wh",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "534a372c4fdbc90af0f4039e2abca34c31e01e855fc6131f2314f86aff1e8d35",
+          "numerical": true,
+          "parent_call_records_sha256": "6bc3c5497e07aceb6b78d589384da9fc0fa6b7b41207d854ef7736b1f6dc17c1",
+          "report_sha256": "924c5bef9d7a40346022b0cbb6d8be8f126cb3c6f9f9a2a91277083e623069b0",
+          "task": "upstream_chunk_helper_0",
+          "task_sha256": "6691a5fe5b9a71601cdf42500d51f33eae744babb5b2bc97ff84a91627f59dec",
+          "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "Linear",
+        "callee_result_is_parent_result": true,
+        "closure_key": null,
+        "parent": "HE_Linear",
+        "parent_ast_sha256": "34f48f2b5d142507c9218b300faab4f67242a8c32712a4f4c89b4c97d4691c35",
+        "parent_return_line": 57
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.Linear"
+    },
+    {
+      "branches_exhausted": false,
+      "contexts": [
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-zun338wt",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "9876672224f9b488bd6976c641a1054c28a08f905248d3bcec0b742be8a449bc",
+          "numerical": true,
+          "parent_call_records_sha256": "1cf8bbac2b84c94ec2dfb44847c29c4c80b24318750556d21c2e0275cea5a5f3",
+          "report_sha256": "843812ef48d9d50a6671ef416c0c4abb43a8489d0aa18e19f679f56565d1eb47",
+          "task": "upstream_virtual_38_HE_MPBN",
+          "task_sha256": "8258737f63d3ba04844b06643e5fe50ee8a1573d5826cd45e3f608761a1802f8",
+          "topology": "448cb66b79fce8994184982876f3d867f0a06167c2d3f33a2071d424a488ce5a"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o_z6x9da",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "335bfc8650dcc3242d255124d2c901d71039b9fe94404b9ef491119caef49059",
+          "numerical": true,
+          "parent_call_records_sha256": "88177b673e60a767ff27c07af24b42bd1191ffd006446dd7b168cbbcb7a7676d",
+          "report_sha256": "2cf77f88b3f1aa5d25a797f3b5af1c78ab1ebf787549fd1d483b34b4f3225720",
+          "task": "upstream_virtual_39_HE_MPBN",
+          "task_sha256": "2da053fbb595fd0f71209a1b740f0674bb3fc41d2536145ccb493a8f3a15d8bf",
+          "topology": "6dc3706b32a5d5cd4c9c1f89260c83aaaa0e6b0229bb94a4e40e48d085483632"
+        },
+        {
+          "accepted_scope": "Inherited exact return value under recorded adapter parameters and projections only",
+          "actual_frontend_checked": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-xe3jv3v4",
+          "finite_return_influence_checked": true,
+          "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+          "model_sha256": "bcc610b2b661c8495d92a8a102f7ab602c9766af2f539477f9843b7d888413e9",
+          "numerical": true,
+          "parent_call_records_sha256": "e0a76a5b0d6e48d20318686d69745ad7c87fe51dfb9271fb97edb75582b610e6",
+          "report_sha256": "ec34b8740495d5ed6ec4a15485960705049f5af426b1e70e9763e1b0024f0aee",
+          "task": "upstream_chunk_helper_4",
+          "task_sha256": "07b72c585e34a02b8e61c804035660568904c09b574187f576ba97002505feb4",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+        }
+      ],
+      "direct_candidate_access": false,
+      "new_encrypted_execution": false,
+      "proof": {
+        "callee": "BN",
+        "callee_result_is_parent_result": true,
+        "closure_key": null,
+        "parent": "HE_MPBN",
+        "parent_ast_sha256": "3bda255b146670fb5d8da5c2169c8ffabb629438e6c73873e4230f92295165e0",
+        "parent_return_line": 16
+      },
+      "scope": "Internal function return is the witnessed parent result; neither arbitrary arguments nor each inner operation is certified",
+      "state": "internal_direct_return_mapped",
+      "symbol": "MPCB.BN"
+    }
+  ],
+  "negative_proof_controls": 30,
+  "paid_calls": 0,
+  "parent_audit_binding": "e63087baffeed414c5f70619f6f3399a2e4779c374d44c88aeaee97b1020cd91",
+  "parent_audit_sha256": "3351da38551eb57b11cff2ed361437c4573abd1ffa06aab22544271fbc03ad29",
+  "runner_sha256": "245014c0297cccb7dc52fbde75faf118ed96f4c554144664ce93419302a278f7",
+  "sources": {
+    "third_party/dacapo/python/poly/poly/Func.py": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+    "third_party/dacapo/python/poly/poly/MPCB.py": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a"
+  },
+  "status": "passed"
+}

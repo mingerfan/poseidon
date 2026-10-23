@@ -1,0 +1,69 @@
+{
+  "approved": false,
+  "backend": "poseidon_cpu",
+  "binding": "0e0d796df8da1070f56c39209036bf1239490b1c8acbd0425e18d0042fc0e63a",
+  "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-output-tree-v23-v1/candidate.py",
+  "candidate_origin": "unchanged_previous_rule",
+  "case": "named",
+  "compiler_calls": 0,
+  "encrypted_calls": 0,
+  "files": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model.json": "6bc2fa4328429f6c809ebafeb6e0b1b3ecfb072a2b0fa334d17d5e4f076449c6",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/manifest.json": "2204e27558e7fe0a4c3d83f20271684082586b624ab925026757a9395c10d8cc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/model.py": "262754eb4746e830a8581bb87b20dfc89722bc456dd6510ee38d47abc08694e2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/model/state_0000.npy": "6518bd536e1d69ae2d62b35d1d7311b3e7ea808687785d650a16aed4c2cf3e8e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_cutover_v1/capture-evidence-v3/named/provenance.json": "9b9327e2347b615ef657cda012c62807ca5621607c078ec2364bb8db15570f0b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-output-tree-v23-v1/candidate.py": "21faabe87faf8f727f83014574ba9e5b2e000109f318ae5c266782f1dca592f2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-output-tree-v23-v1/request.json": "b6772eb945f86b651c79c86245d9bfc206d5925da34e0fafbefe319cd773fd87",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/candidate.py": "21faabe87faf8f727f83014574ba9e5b2e000109f318ae5c266782f1dca592f2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-v23-cpu-v1/named/request.json": "b6772eb945f86b651c79c86245d9bfc206d5925da34e0fafbefe319cd773fd87"
+  },
+  "format": "poseidon-public-expression-output-offline-proposal-v1",
+  "http_attempts": 0,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "options": {
+    "capacity_packing_version": "capacity-public-tensors-v9",
+    "chunk_period": 4,
+    "generation_guidance": "explicit-v13",
+    "public_weight_policy": "descriptors-math-roles-v2"
+  },
+  "original_proposal_binding": "faa04c4a585dfca471c8eca23484a149002c6d24d7d2b6bfef21c416afb854c1",
+  "original_report_binding": "43f485c321dce9572e9d4abbd5b61b5122d9fb40af282f5574232b18d174145f",
+  "provider_calls": 0,
+  "request": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-output-tree-v23-v1/request.json",
+  "request_id": "61e277c6e9d3062e24c98c14cadb54702edd201785b4f8c3b780c50257e6372d",
+  "scope": {
+    "case_seconds": 180,
+    "compiler_jobs": 2,
+    "global_bytes": 34359738368,
+    "http_attempts": 0,
+    "link_jobs": 1,
+    "maximum_compiler_calls": 1,
+    "maximum_encrypted_calls": 3,
+    "native_address_bytes": 4294967296,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "new_bytes": 134217728,
+    "provider_calls": 0,
+    "reserve_bytes": 4294967296,
+    "wall_seconds": 240
+  },
+  "sdk_identity": "e2b3e63c27e8ed49f6ddca34b2c5a5d8be366eefa9cdb1ab67d9b953b8a64992",
+  "source_contract": "poseidon-trusted-pytorch-v23",
+  "stage_identities": {
+    "compilation": "49791308fe706ec6e42b37d6c0c8d9277dbcb84710f5a9708efdba320e404a5e",
+    "execution": "a7169161cda78145a05020af6dfb188a531224331121a3244d2bf50b7b243827",
+    "generation": "7b5d7759c7159b4dc45256c7742b71001ca019a211186e662bb068a72fd27481",
+    "validation": "739cee0bf5f0c8c381f522f8ec0a8a7fef56e52636cabb17fb085ad2ebbda7e5"
+  },
+  "task_id": "5a0a79ee63264a8aa277a589d55729bb",
+  "task_store": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-public-expression-output-tree-v23-v1/tasks",
+  "tools": {
+    "scripts/baseline/benchmarks/tools/public_expression_output_tree_v1/prepare.py": "cd6b1311e0b3e4c1f662fdeee85aa29b5ae31688eb684ac3fca72fb984ca5dcf",
+    "scripts/baseline/benchmarks/tools/public_expression_output_tree_v1/run.py": "3cfaaa09a98735c27d5af3368163e39436ddb7af9b02accff30c564d0d14a8ae",
+    "scripts/baseline/benchmarks/tools/public_expression_output_tree_v1/scope.py": "9fa9988828835e02a6004bde4b24cbfc118e09fbda03d2b978eb7e0ecc57e7f4"
+  }
+}

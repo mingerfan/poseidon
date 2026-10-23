@@ -1,0 +1,217 @@
+{
+  "format": "poseidon-current-pending-authorization-v1",
+  "approval_text": "批准当前计划内积累的所有待批准执行",
+  "approval_source": "Direct human message in current conversation",
+  "snapshot_epoch": 1791303471.3890657,
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "offline": {
+    "proposal": "docs/baseline/agent-common-pytorch-offline-proposal-r1081.json",
+    "binding": "adc294e9f755d7c16968ba7556221ba5c68beb5aae9635d5b9e46e08ef316376",
+    "cases": 151,
+    "package_reuse_cases": 25,
+    "scope": {
+      "api_calls": 0,
+      "artifact_bytes": 4294967296,
+      "backend_changes": 0,
+      "candidate_seconds": 180,
+      "compile_jobs": 2,
+      "downloads": 0,
+      "encrypted_concurrency": 1,
+      "global_bytes": 34359738368,
+      "installs": 0,
+      "link_jobs": 1,
+      "max_shard_cases": 48,
+      "parameter_changes": 0,
+      "reserve_bytes": 4294967296,
+      "shards_sequential": true,
+      "wall_seconds": 7200
+    },
+    "output": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-backend-r1082",
+    "status_snapshot": {
+      "status": "running",
+      "passed": 54,
+      "failed": 8,
+      "not_run": 89,
+      "seconds": 1246.0882268860005
+    }
+  },
+  "live": [
+    {
+      "path": "docs/baseline/agent-pytorch-functional-live-proposal-r675.json",
+      "file_sha256": "88d5e524b833411f15baf4c3541d41427a466b338c92af0798e7943ef3a37b4a",
+      "old_binding": "c089b9c4ce2d49e8c7ed7b8ff23218c91c10d5245779f889f26f6072b109d982",
+      "case_ids": [
+        "pytorch_state_mlp",
+        "pytorch_state_conv_pool",
+        "pytorch_state_residual",
+        "pytorch_state_batchnorm",
+        "pytorch_state_matrix_fusion",
+        "pytorch_state_shape_linear",
+        "pytorch_functional_layer_0",
+        "pytorch_functional_layer_1",
+        "pytorch_functional_layer_2",
+        "pytorch_functional_group_0",
+        "pytorch_functional_group_1",
+        "pytorch_functional_group_2",
+        "pytorch_functional_variance_0",
+        "pytorch_functional_variance_1",
+        "pytorch_functional_variance_2"
+      ],
+      "case_count": 15,
+      "status": "approved_requires_current_source_rebind",
+      "max_generations": 60,
+      "max_http_attempts": 240
+    },
+    {
+      "path": "docs/baseline/agent-pytorch-general-input-live-proposal-r848.json",
+      "file_sha256": "de8fc4583d96d38f95daf3161083c3c0776751a1d1747321dd6b0a5bf865c793",
+      "old_binding": "8e97a33ba9cdc67b9ee833f7326f2e121cce8870f62e1f96de941d774e417bd8",
+      "case_ids": [
+        "matrix__cipher_batch_0",
+        "matrix__cipher_batch_1",
+        "matrix__cipher_batch_2",
+        "matrix__cipher_mv_0",
+        "matrix__cipher_mv_1",
+        "matrix__cipher_mv_2",
+        "matrix__cipher_vm_0",
+        "matrix__cipher_vm_1",
+        "matrix__cipher_vm_2",
+        "matrix__cipher_vv_0",
+        "matrix__cipher_vv_1",
+        "matrix__cipher_vv_2",
+        "matrix__public_batch_l_0",
+        "matrix__public_batch_l_1",
+        "matrix__public_batch_l_2",
+        "matrix__public_batch_r_0",
+        "matrix__public_batch_r_1",
+        "matrix__public_batch_r_2",
+        "matrix__public_matrix_l_0",
+        "matrix__public_matrix_l_1",
+        "matrix__public_matrix_l_2",
+        "matrix__public_matrix_r_0",
+        "matrix__public_matrix_r_1",
+        "matrix__public_matrix_r_2",
+        "matrix__public_vector_l_0",
+        "matrix__public_vector_l_1",
+        "matrix__public_vector_l_2",
+        "matrix__public_vector_r_0",
+        "matrix__public_vector_r_1",
+        "matrix__public_vector_r_2",
+        "instance__functional_frozen_0",
+        "instance__functional_frozen_1",
+        "instance__functional_frozen_2",
+        "instance__functional_input_0",
+        "instance__functional_input_1",
+        "instance__functional_input_2",
+        "instance__module1_frozen_0",
+        "instance__module1_frozen_1",
+        "instance__module1_frozen_2",
+        "instance__module1_input_0",
+        "instance__module1_input_1",
+        "instance__module1_input_2",
+        "instance__module2_frozen_0",
+        "instance__module2_frozen_1",
+        "instance__module2_frozen_2",
+        "instance__module2_input_0",
+        "instance__module2_input_1",
+        "instance__module2_input_2",
+        "instance__unbatched1_0",
+        "instance__unbatched1_1",
+        "instance__unbatched1_2",
+        "instance__unbatched1_frozen_0",
+        "instance__unbatched1_frozen_1",
+        "instance__unbatched1_frozen_2",
+        "instance__unbatched2_0",
+        "instance__unbatched2_1",
+        "instance__unbatched2_2",
+        "instance__unbatched2_frozen_0",
+        "instance__unbatched2_frozen_1",
+        "instance__unbatched2_frozen_2"
+      ],
+      "case_count": 60,
+      "status": "approved_requires_current_source_rebind",
+      "max_generations": 240,
+      "max_http_attempts": 960
+    },
+    {
+      "path": "docs/baseline/poseidon-attention-feedback-live-proposal-r536.json",
+      "file_sha256": "e00842de980bac59657af6a2d45abbf5ca1849754878368a92e7d5c2ced306eb",
+      "old_binding": "73fd99ebc73879101110bf27aab06b73bb706655759238045b1fca3dadac6378",
+      "case_ids": [
+        "attention_decode"
+      ],
+      "case_count": 1,
+      "status": "approved_requires_current_source_rebind",
+      "max_generations": 4,
+      "max_http_attempts": 16
+    }
+  ],
+  "total_live_cases": 76,
+  "max_live_generations": 304,
+  "max_live_http_attempts": 1216,
+  "monetary_ceiling": null,
+  "sequenced": true,
+  "shared_source_freeze": true,
+  "provider": {
+    "name": "deepseek",
+    "model": "deepseek-flash",
+    "reasoning_effort": "high",
+    "stream": true,
+    "api_timeout_seconds": 1200,
+    "max_tokens": 384000,
+    "max_repairs": 3,
+    "provider_retries": 3
+  },
+  "superseded": [
+    {
+      "path": "docs/baseline/agent-pytorch-state-live-proposal-r635.json",
+      "covered_by": "agent-pytorch-functional-live-proposal-r675.json"
+    },
+    {
+      "path": "docs/baseline/agent-pytorch-matrix-live-proposal-r816.json",
+      "covered_by": "agent-pytorch-general-input-live-proposal-r848.json"
+    }
+  ],
+  "older_offline_lineage": [
+    "r892",
+    "r914",
+    "r950",
+    "r976",
+    "r991",
+    "r1021",
+    "r1025",
+    "r1042",
+    "r1076"
+  ],
+  "completed_not_restarted": [
+    "r620 live14",
+    "r870 offline24",
+    "r368 whole-models live3",
+    "r233 and r235 native bootstrap probes",
+    "historical stage2 SEAL batches"
+  ],
+  "deferred_by_latest_plan": [
+    "r490/r575 Runtime lifetime patch: latest plan prioritizes keeping backend libraries unchanged"
+  ],
+  "exclusions": [
+    "new cases",
+    "new dependencies or downloads",
+    "backend library or parameter edits",
+    "historical cleanup",
+    "commit/push/PR"
+  ],
+  "original_failed_launch": {
+    "receipt": "approved-backend-scope-r1077.json",
+    "reason": "Missing resource baseline fields before any model execution",
+    "paid_calls": 0
+  },
+  "preparation_entry_failure": {
+    "reason": "Concurrent Nix launcher lock; no capture or API started",
+    "record": "pending-live-prepare-launch-failure-r1084.json"
+  },
+  "queue_tool": "scripts/baseline/benchmarks/tools/approved_pending_execution_v1/queue.py",
+  "backend_changes": 0,
+  "paid_calls_at_snapshot": 0,
+  "binding": "b4c49a678727cf44fc512cb4c4e1dd98cd50571712381d869a7e25f959e9d592"
+}

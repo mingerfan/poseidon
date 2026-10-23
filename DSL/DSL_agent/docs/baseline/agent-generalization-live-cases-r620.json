@@ -1,0 +1,122 @@
+[
+  {
+    "id": "pytorch_mlp",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-import-refresh-r621/pytorch_mlp",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10"
+    }
+  },
+  {
+    "id": "pytorch_conv_pool",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-import-refresh-r621/pytorch_conv_pool",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10"
+    }
+  },
+  {
+    "id": "pytorch_residual",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-import-refresh-r621/pytorch_residual",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10"
+    }
+  },
+  {
+    "id": "pytorch_batchnorm",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-import-refresh-r621/pytorch_batchnorm",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10"
+    }
+  },
+  {
+    "id": "pytorch_matrix_fusion",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-import-refresh-r621/pytorch_matrix_fusion",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10"
+    }
+  },
+  {
+    "id": "pytorch_shape_linear",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-import-refresh-r621/pytorch_shape_linear",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10"
+    }
+  },
+  {
+    "id": "weights_linear",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_linear",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  },
+  {
+    "id": "weights_mlp",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_mlp",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  },
+  {
+    "id": "weights_residual",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_residual",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  },
+  {
+    "id": "weights_channel_linear",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_channel_linear",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  },
+  {
+    "id": "weights_batched_linear",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_batched_linear",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  },
+  {
+    "id": "weights_multi_input",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_multi_input",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  },
+  {
+    "id": "weights_shared_outputs",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_shared_outputs",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  },
+  {
+    "id": "weights_conv_pool",
+    "imported_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-generalization-weights-acceptance-r614/imports/weights_conv_pool",
+    "options": {
+      "chunk_period": 4,
+      "generation_guidance": "explicit-v10",
+      "public_weight_policy": "descriptors-v1"
+    }
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "binding": "9fbc5211170b718d3b6801f034f75415a5417507bad12c13a1ea295d1b341828",
+  "checked_files": 174,
+  "compiler_calls": 0,
+  "doc_links_checked": 545,
+  "encrypted_calls": 0,
+  "format": "poseidon-application-control-readonly-inspection-v1",
+  "http_attempts": 0,
+  "inspection_tool": "scripts/baseline/benchmarks/tools/application_admission_budget_v1/inspect_completed.py",
+  "inspection_tool_sha256": "d4aa75055f9f4add2076441af699b05056834f940fb8d6f5845c230c5c212fd6",
+  "preserved_logs": {
+    "scripts/baseline/benchmarks/tools/application_admission_budget_v1/inspect_completed-before-status-fix-r1383.py.txt": "ae30bf99b11d9654427ad0f21b76da4c78ffa3474edf2bc201d552023ed99772",
+    "scripts/baseline/benchmarks/tools/application_admission_budget_v1/inspection-corrected-r1383.log": "643a26db1bd6c709bc57ae9bf61cb5281eea75a40b6e8b1762cfcdbf51d8e0c7",
+    "scripts/baseline/benchmarks/tools/application_admission_budget_v1/inspection-r1383.log": "a107392178301bd979ce4dda4c6ae56dbe40e4194521b2f1903a139255a6b811"
+  },
+  "provider_calls": 0,
+  "resolved_issue": "The initial readonly script compared four terminal status counts against a three-item expected tuple; corrected to 3/0/0/0.",
+  "result_binding": "6aa0686875363122984692d17db42e3fff7a6fe68d23afe652cbada62734b24f",
+  "status": "intact"
+}

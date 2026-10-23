@@ -1,0 +1,1418 @@
+{
+  "schema": 1,
+  "kind": "completion_gap_audit_not_a_new_coverage_ledger",
+  "ledger": "scripts/baseline/benchmarks/semantic-v1-chunk-helpers-r29/coverage.json",
+  "ledger_sha256": "14d8e2b547958c5501a6c90804ff812c6acd4ea51cbe526b54790c17e1e0cc11",
+  "requirement_counts": {
+    "model": 153,
+    "construction": 209,
+    "upstream_helper": 15,
+    "upstream_helper_layout": 3,
+    "compiler": 5,
+    "rejection": 16
+  },
+  "model_requirements_with_fewer_than_three_topologies": [
+    {
+      "requirement": "op.avg_pool1d",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_composition_0001",
+        "bench_primitive_0022",
+        "bench_primitive_0023",
+        "bench_primitive_0049",
+        "bench_primitive_0050"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "op.conv1d",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_composition_0001",
+        "bench_primitive_0020",
+        "bench_primitive_0021",
+        "bench_primitive_0047",
+        "bench_primitive_0048",
+        "bench_primitive_0072",
+        "bench_primitive_0073"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "op.permute",
+      "model_ids": [
+        "bench_primitive_0010",
+        "bench_primitive_0037",
+        "bench_primitive_0062",
+        "bench_primitive_0085",
+        "bench_primitive_0105",
+        "bench_primitive_0125",
+        "bench_primitive_0145",
+        "bench_primitive_0165",
+        "bench_primitive_0184",
+        "bench_primitive_0203",
+        "bench_primitive_0222"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "op.power",
+      "model_ids": [
+        "bench_primitive_0005",
+        "bench_primitive_0032",
+        "bench_primitive_0058",
+        "bench_primitive_0080",
+        "bench_primitive_0100",
+        "bench_primitive_0120",
+        "bench_primitive_0140",
+        "bench_primitive_0160",
+        "bench_primitive_0179",
+        "bench_primitive_0198",
+        "bench_primitive_0217",
+        "bench_primitive_0236"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "op.sum",
+      "model_ids": [
+        "bench_helper_0103",
+        "bench_primitive_0016",
+        "bench_primitive_0043",
+        "bench_primitive_0068",
+        "bench_primitive_0091",
+        "bench_primitive_0111",
+        "bench_primitive_0131",
+        "bench_primitive_0151",
+        "bench_primitive_0171",
+        "bench_primitive_0190",
+        "bench_primitive_0209",
+        "bench_primitive_0228"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "op.transpose",
+      "model_ids": [
+        "bench_primitive_0009",
+        "bench_primitive_0036",
+        "bench_primitive_0061",
+        "bench_primitive_0084",
+        "bench_primitive_0104",
+        "bench_primitive_0124",
+        "bench_primitive_0144",
+        "bench_primitive_0164",
+        "bench_primitive_0183",
+        "bench_primitive_0202",
+        "bench_primitive_0221"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "output.count.4",
+      "model_ids": [
+        "bench_boundary_0000",
+        "bench_boundary_0001"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.avg_pool1d.count_include_pad.false",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_primitive_0022",
+        "bench_primitive_0023"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.avg_pool1d.count_include_pad.true",
+      "model_ids": [
+        "bench_composition_0001",
+        "bench_primitive_0049",
+        "bench_primitive_0050"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.avg_pool1d.kernel.[2]",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_composition_0001",
+        "bench_primitive_0022",
+        "bench_primitive_0023",
+        "bench_primitive_0049",
+        "bench_primitive_0050"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.avg_pool1d.padding.[0]",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_primitive_0022",
+        "bench_primitive_0023"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.avg_pool1d.padding.[1]",
+      "model_ids": [
+        "bench_composition_0001",
+        "bench_primitive_0049",
+        "bench_primitive_0050"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.avg_pool1d.stride.[1]",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_primitive_0022",
+        "bench_primitive_0023"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.avg_pool1d.stride.[2]",
+      "model_ids": [
+        "bench_composition_0001",
+        "bench_primitive_0049",
+        "bench_primitive_0050"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.conv1d.dilation.[1]",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_composition_0001",
+        "bench_primitive_0020",
+        "bench_primitive_0021",
+        "bench_primitive_0047",
+        "bench_primitive_0048",
+        "bench_primitive_0072",
+        "bench_primitive_0073"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.conv1d.groups.1",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_composition_0001",
+        "bench_primitive_0047",
+        "bench_primitive_0048",
+        "bench_primitive_0072",
+        "bench_primitive_0073"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.conv1d.groups.2",
+      "model_ids": [
+        "bench_primitive_0020",
+        "bench_primitive_0021"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.conv1d.padding.[0]",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_primitive_0020",
+        "bench_primitive_0021",
+        "bench_primitive_0072",
+        "bench_primitive_0073"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.conv1d.padding.[1]",
+      "model_ids": [
+        "bench_composition_0001",
+        "bench_primitive_0047",
+        "bench_primitive_0048"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.conv1d.stride.[1]",
+      "model_ids": [
+        "bench_composition_0000",
+        "bench_primitive_0020",
+        "bench_primitive_0021",
+        "bench_primitive_0072",
+        "bench_primitive_0073"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.conv1d.stride.[2]",
+      "model_ids": [
+        "bench_composition_0001",
+        "bench_primitive_0047",
+        "bench_primitive_0048"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.mean.axes.[0,1,2,3]",
+      "model_ids": [
+        "bench_boundary_0097",
+        "bench_boundary_0098",
+        "bench_boundary_0099",
+        "bench_boundary_0100",
+        "bench_boundary_0101",
+        "bench_boundary_0102",
+        "bench_boundary_0103",
+        "bench_boundary_0104",
+        "bench_boundary_0105",
+        "bench_boundary_0106",
+        "bench_boundary_0107",
+        "bench_boundary_0108"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.mean.axes.[0,1,2]",
+      "model_ids": [
+        "bench_boundary_0044",
+        "bench_boundary_0045",
+        "bench_boundary_0046",
+        "bench_boundary_0047",
+        "bench_boundary_0048",
+        "bench_boundary_0049",
+        "bench_boundary_0050",
+        "bench_boundary_0051",
+        "bench_boundary_0052",
+        "bench_boundary_0053",
+        "bench_boundary_0054",
+        "bench_boundary_0055"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.mean.axes.[0,1]",
+      "model_ids": [
+        "bench_boundary_0079",
+        "bench_boundary_0080",
+        "bench_boundary_0081",
+        "bench_boundary_0082",
+        "bench_boundary_0083",
+        "bench_boundary_0084",
+        "bench_boundary_0085",
+        "bench_boundary_0086",
+        "bench_boundary_0087",
+        "bench_boundary_0088",
+        "bench_boundary_0089",
+        "bench_boundary_0090"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.mean.axes.[1]",
+      "model_ids": [
+        "bench_primitive_0172",
+        "bench_primitive_0210"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.mean.axes.[2]",
+      "model_ids": [
+        "bench_boundary_0038",
+        "bench_boundary_0039",
+        "bench_boundary_0040",
+        "bench_boundary_0041",
+        "bench_boundary_0042",
+        "bench_boundary_0043",
+        "bench_boundary_0044",
+        "bench_boundary_0045",
+        "bench_boundary_0046",
+        "bench_boundary_0047",
+        "bench_boundary_0048",
+        "bench_boundary_0049",
+        "bench_boundary_0050",
+        "bench_boundary_0051",
+        "bench_boundary_0052",
+        "bench_boundary_0053",
+        "bench_boundary_0054",
+        "bench_boundary_0055"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.permute.dims.[0]",
+      "model_ids": [
+        "bench_primitive_0010",
+        "bench_primitive_0037",
+        "bench_primitive_0062",
+        "bench_primitive_0085",
+        "bench_primitive_0105",
+        "bench_primitive_0125",
+        "bench_primitive_0145"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.permute.dims.[1,0]",
+      "model_ids": [
+        "bench_primitive_0165",
+        "bench_primitive_0184",
+        "bench_primitive_0203",
+        "bench_primitive_0222"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.power.exponent.2",
+      "model_ids": [
+        "bench_primitive_0005",
+        "bench_primitive_0058",
+        "bench_primitive_0100",
+        "bench_primitive_0140",
+        "bench_primitive_0179",
+        "bench_primitive_0217"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.power.exponent.4",
+      "model_ids": [
+        "bench_primitive_0032",
+        "bench_primitive_0080",
+        "bench_primitive_0120",
+        "bench_primitive_0160",
+        "bench_primitive_0198",
+        "bench_primitive_0236"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.reshape.shape.[1,3]",
+      "model_ids": [
+        "bench_primitive_0035",
+        "bench_primitive_0045"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.reshape.shape.[1,4]",
+      "model_ids": [
+        "bench_primitive_0060",
+        "bench_primitive_0070"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.reshape.shape.[1,5]",
+      "model_ids": [
+        "bench_primitive_0083",
+        "bench_primitive_0093"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.reshape.shape.[1,6]",
+      "model_ids": [
+        "bench_primitive_0103",
+        "bench_primitive_0113"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.reshape.shape.[1,7]",
+      "model_ids": [
+        "bench_primitive_0123",
+        "bench_primitive_0133"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.reshape.shape.[1,8]",
+      "model_ids": [
+        "bench_primitive_0143",
+        "bench_primitive_0153"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.reshape.shape.[1]",
+      "model_ids": [
+        "bench_composition_0064"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.reshape.shape.[3]",
+      "model_ids": [
+        "bench_primitive_0182"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.reshape.shape.[4]",
+      "model_ids": [
+        "bench_primitive_0201"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.reshape.shape.[5]",
+      "model_ids": [
+        "bench_primitive_0220"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.reshape.shape.[6]",
+      "model_ids": [
+        "bench_primitive_0239"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.rotate.step.-1",
+      "model_ids": [
+        "bench_primitive_0086",
+        "bench_primitive_0166",
+        "bench_primitive_0204"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.rotate.step.-2",
+      "model_ids": [
+        "bench_boundary_0021",
+        "bench_boundary_0022",
+        "bench_boundary_0023",
+        "bench_boundary_0024",
+        "bench_boundary_0025",
+        "bench_boundary_0026",
+        "bench_boundary_0027",
+        "bench_boundary_0028",
+        "bench_boundary_0029",
+        "bench_boundary_0030",
+        "bench_boundary_0031",
+        "bench_boundary_0032",
+        "bench_boundary_0033",
+        "bench_boundary_0034",
+        "bench_boundary_0035",
+        "bench_boundary_0036",
+        "bench_boundary_0037",
+        "bench_primitive_0038"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.rotate.step.1",
+      "model_ids": [
+        "bench_primitive_0011",
+        "bench_primitive_0146"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.rotate.step.2",
+      "model_ids": [
+        "bench_primitive_0106",
+        "bench_primitive_0185",
+        "bench_primitive_0223"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.rotate.step.3",
+      "model_ids": [
+        "bench_primitive_0063"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.slice.axis.-2",
+      "model_ids": [
+        "bench_helper_0056",
+        "bench_helper_0057",
+        "bench_helper_0058",
+        "bench_helper_0059",
+        "bench_helper_0060",
+        "bench_helper_0061",
+        "bench_helper_0062",
+        "bench_helper_0063"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.slice.stop.1",
+      "model_ids": [
+        "bench_helper_0032",
+        "bench_helper_0033",
+        "bench_helper_0034",
+        "bench_helper_0035",
+        "bench_helper_0036",
+        "bench_helper_0037",
+        "bench_helper_0038",
+        "bench_helper_0039"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.slice.stop.10",
+      "model_ids": [
+        "bench_helper_0035",
+        "bench_helper_0039"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.slice.stop.5",
+      "model_ids": [
+        "bench_primitive_0089",
+        "bench_primitive_0226"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.slice.stop.7",
+      "model_ids": [
+        "bench_primitive_0129"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.split.sections.[1,4]",
+      "model_ids": [
+        "bench_primitive_0090",
+        "bench_primitive_0227"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.split.sections.[1,6]",
+      "model_ids": [
+        "bench_primitive_0130"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.split.sections.[1,7]",
+      "model_ids": [
+        "bench_primitive_0150"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.sum.axes.[0]",
+      "model_ids": [
+        "bench_helper_0103",
+        "bench_primitive_0016",
+        "bench_primitive_0043",
+        "bench_primitive_0068",
+        "bench_primitive_0091",
+        "bench_primitive_0111",
+        "bench_primitive_0131",
+        "bench_primitive_0151",
+        "bench_primitive_0190",
+        "bench_primitive_0228"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.sum.axes.[1]",
+      "model_ids": [
+        "bench_primitive_0171",
+        "bench_primitive_0209"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.sum.keepdims.false",
+      "model_ids": [
+        "bench_primitive_0016",
+        "bench_primitive_0068",
+        "bench_primitive_0111",
+        "bench_primitive_0151",
+        "bench_primitive_0190",
+        "bench_primitive_0228"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.sum.keepdims.true",
+      "model_ids": [
+        "bench_helper_0103",
+        "bench_primitive_0043",
+        "bench_primitive_0091",
+        "bench_primitive_0131",
+        "bench_primitive_0171",
+        "bench_primitive_0209"
+      ],
+      "distinct_topologies": 2,
+      "contexts_missing": 1
+    },
+    {
+      "requirement": "parameter.transpose.dim0.0",
+      "model_ids": [
+        "bench_primitive_0009",
+        "bench_primitive_0036",
+        "bench_primitive_0061",
+        "bench_primitive_0084",
+        "bench_primitive_0104",
+        "bench_primitive_0124",
+        "bench_primitive_0144",
+        "bench_primitive_0164",
+        "bench_primitive_0183",
+        "bench_primitive_0202",
+        "bench_primitive_0221"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.transpose.dim1.0",
+      "model_ids": [
+        "bench_primitive_0009",
+        "bench_primitive_0036",
+        "bench_primitive_0061",
+        "bench_primitive_0084",
+        "bench_primitive_0104",
+        "bench_primitive_0124",
+        "bench_primitive_0144"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    },
+    {
+      "requirement": "parameter.transpose.dim1.1",
+      "model_ids": [
+        "bench_primitive_0164",
+        "bench_primitive_0183",
+        "bench_primitive_0202",
+        "bench_primitive_0221"
+      ],
+      "distinct_topologies": 1,
+      "contexts_missing": 2
+    }
+  ],
+  "construction_contexts_all_three": true,
+  "metadata_audit_scope": "Direct ledger fields only; contract and examples may be recoverable from linked tasks/source. Absence here is not proof of absent implementation.",
+  "explicit_field_counts": {
+    "applicable_contract": 3,
+    "positive_examples": 0,
+    "negative_examples": 0,
+    "acceptance": 3,
+    "acceptance_layer": 16,
+    "evidence_protocol": 5
+  },
+  "upstream_api_pending_classification": [
+    {
+      "kind": "function",
+      "line": 27,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "symbol": "HE_MaxPad.maximum"
+    },
+    {
+      "kind": "function",
+      "line": 36,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "symbol": "HE_Max.maximum"
+    },
+    {
+      "kind": "function",
+      "line": 75,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "symbol": "HE_ReLU.sign"
+    },
+    {
+      "kind": "function",
+      "line": 9,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "cint"
+    },
+    {
+      "kind": "function",
+      "line": 12,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "fint"
+    },
+    {
+      "kind": "function",
+      "line": 15,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "maximum"
+    },
+    {
+      "kind": "function",
+      "line": 21,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "roll"
+    },
+    {
+      "kind": "function",
+      "line": 24,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "GenPoly"
+    },
+    {
+      "kind": "function",
+      "line": 50,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "GenPoly.polynomial"
+    },
+    {
+      "kind": "function",
+      "line": 82,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure"
+    },
+    {
+      "kind": "function",
+      "line": 86,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.MultParPack"
+    },
+    {
+      "kind": "function",
+      "line": 99,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.OutPack"
+    },
+    {
+      "kind": "function",
+      "line": 108,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.ParMultWgt"
+    },
+    {
+      "kind": "function",
+      "line": 121,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.DwMultWgt"
+    },
+    {
+      "kind": "function",
+      "line": 135,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.SumSlots"
+    },
+    {
+      "kind": "function",
+      "line": 148,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.Selecting"
+    },
+    {
+      "kind": "function",
+      "line": 155,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.ParBNConst"
+    },
+    {
+      "kind": "function",
+      "line": 162,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.ParInBNConst"
+    },
+    {
+      "kind": "function",
+      "line": 169,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.DownSelecting"
+    },
+    {
+      "kind": "function",
+      "line": 180,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.AvgMidSelecting"
+    },
+    {
+      "kind": "function",
+      "line": 183,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.ParMPDA"
+    },
+    {
+      "kind": "function",
+      "line": 190,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.ParMPDM"
+    },
+    {
+      "kind": "function",
+      "line": 198,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.PoolSelecting"
+    },
+    {
+      "kind": "function",
+      "line": 205,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.Downsamp"
+    },
+    {
+      "kind": "function",
+      "line": 226,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.AvgPool"
+    },
+    {
+      "kind": "function",
+      "line": 252,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.AvgMidPool"
+    },
+    {
+      "kind": "function",
+      "line": 296,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.ConcatSelecting"
+    },
+    {
+      "kind": "function",
+      "line": 311,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.Concat"
+    },
+    {
+      "kind": "function",
+      "line": 336,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.MaxPool"
+    },
+    {
+      "kind": "function",
+      "line": 378,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.MaxPoolPad"
+    },
+    {
+      "kind": "function",
+      "line": 428,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.DwConvBN"
+    },
+    {
+      "kind": "function",
+      "line": 468,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.MultParBN"
+    },
+    {
+      "kind": "function",
+      "line": 475,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.MultParConv"
+    },
+    {
+      "kind": "function",
+      "line": 517,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "shapeClosure.MultParConvBN"
+    },
+    {
+      "kind": "function",
+      "line": 566,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "abstractBN"
+    },
+    {
+      "kind": "function",
+      "line": 576,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "Linear"
+    },
+    {
+      "kind": "function",
+      "line": 605,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "BN"
+    },
+    {
+      "kind": "function",
+      "line": 614,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "Reshape"
+    },
+    {
+      "kind": "function",
+      "line": 625,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "InferShapes"
+    },
+    {
+      "kind": "function",
+      "line": 642,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "CascadeConcat"
+    },
+    {
+      "kind": "function",
+      "line": 668,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "CascadeConv"
+    },
+    {
+      "kind": "function",
+      "line": 687,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "CascadeMax"
+    },
+    {
+      "kind": "function",
+      "line": 715,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "CascadeDS"
+    },
+    {
+      "kind": "function",
+      "line": 735,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "symbol": "CascadePool"
+    },
+    {
+      "kind": "function",
+      "line": 31,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "GenPoly"
+    },
+    {
+      "kind": "function",
+      "line": 33,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "sign"
+    },
+    {
+      "kind": "function",
+      "line": 35,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "genRelu6"
+    },
+    {
+      "kind": "function",
+      "line": 38,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "relua"
+    },
+    {
+      "kind": "function",
+      "line": 40,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "maxx"
+    },
+    {
+      "kind": "function",
+      "line": 41,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "maxx.sign"
+    },
+    {
+      "kind": "function",
+      "line": 51,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "ReLU"
+    },
+    {
+      "kind": "function",
+      "line": 53,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "rms"
+    },
+    {
+      "kind": "function",
+      "line": 56,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "symbol": "nprelu"
+    },
+    {
+      "kind": "function",
+      "line": 97,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "save"
+    },
+    {
+      "kind": "function",
+      "line": 120,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "unaryFactory"
+    },
+    {
+      "kind": "function",
+      "line": 121,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "unaryFactory.unaryMethod"
+    },
+    {
+      "kind": "function",
+      "line": 124,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "unaryFactory.unaryMethod.apply"
+    },
+    {
+      "kind": "class",
+      "line": 155,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBase"
+    },
+    {
+      "kind": "function",
+      "line": 156,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBase.__new__"
+    },
+    {
+      "kind": "function",
+      "line": 159,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBase.__new__.raiser"
+    },
+    {
+      "kind": "class",
+      "line": 166,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary"
+    },
+    {
+      "kind": "function",
+      "line": 167,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__"
+    },
+    {
+      "kind": "function",
+      "line": 170,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory"
+    },
+    {
+      "kind": "function",
+      "line": 171,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryMethod"
+    },
+    {
+      "kind": "function",
+      "line": 179,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryReverseMethod"
+    },
+    {
+      "kind": "function",
+      "line": 187,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryInplaceMethod"
+    },
+    {
+      "kind": "function",
+      "line": 202,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__.innerFactory"
+    },
+    {
+      "kind": "function",
+      "line": 203,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__.innerFactory.innerMethod"
+    },
+    {
+      "kind": "function",
+      "line": 221,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "hecateMetaBinary.__new__.rotate"
+    },
+    {
+      "kind": "function",
+      "line": 231,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "getProperFrame"
+    },
+    {
+      "kind": "function",
+      "line": 239,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "recType"
+    },
+    {
+      "kind": "function",
+      "line": 252,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "flatten"
+    },
+    {
+      "kind": "function",
+      "line": 260,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "resolveType"
+    },
+    {
+      "kind": "class",
+      "line": 279,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Expr"
+    },
+    {
+      "kind": "function",
+      "line": 280,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Expr.__init__"
+    },
+    {
+      "kind": "class",
+      "line": 283,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Plain"
+    },
+    {
+      "kind": "function",
+      "line": 284,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Plain.__init__"
+    },
+    {
+      "kind": "class",
+      "line": 299,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty"
+    },
+    {
+      "kind": "function",
+      "line": 300,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty.__init__"
+    },
+    {
+      "kind": "function",
+      "line": 302,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty.__add__"
+    },
+    {
+      "kind": "function",
+      "line": 304,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty.__radd__"
+    },
+    {
+      "kind": "function",
+      "line": 306,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty.__iadd__"
+    },
+    {
+      "kind": "function",
+      "line": 308,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty.__sub__"
+    },
+    {
+      "kind": "function",
+      "line": 310,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty.__rsub__"
+    },
+    {
+      "kind": "function",
+      "line": 312,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Empty.__isub__"
+    },
+    {
+      "kind": "function",
+      "line": 322,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "func"
+    },
+    {
+      "kind": "function",
+      "line": 323,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "func.generateFunc"
+    },
+    {
+      "kind": "class",
+      "line": 337,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Func"
+    },
+    {
+      "kind": "function",
+      "line": 338,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Func.__init__"
+    },
+    {
+      "kind": "function",
+      "line": 357,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Func.eval"
+    },
+    {
+      "kind": "function",
+      "line": 399,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "Func.__call__"
+    },
+    {
+      "kind": "function",
+      "line": 424,
+      "role": "dependency_or_frontend_api_requires_classification",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "symbol": "removeCtxt"
+    }
+  ],
+  "completion": false,
+  "proposed_next_work": [
+    "Normalize requirement metadata with traceable existing task/source references",
+    "Add separately counted context tasks where fewer than three topology contexts are mapped",
+    "Classify upstream dependency/frontend APIs without equating API enumeration to execution",
+    "Keep current frozen runtime evidence tied to its exact hash"
+  ]
+}

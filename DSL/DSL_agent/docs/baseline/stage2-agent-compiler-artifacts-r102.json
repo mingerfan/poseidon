@@ -1,0 +1,3611 @@
+{
+  "actual_agent_evidence": true,
+  "binding": "f1ec5c27b901135d4d32cf7edbf07cee2f5c7421970a2367dbffb8f2acf2158f",
+  "checker_sources": {
+    "compiler_artifact_evidence.py": "23d269549aa9bd254e2ab7a52aa2bd3f8fc6b18329381e94024278d0ffe541f5",
+    "compiler_configuration.py": "71e6e90c112f6cb5b09fed02e87ca83adf74092ebaa7090d854a2b4b391dc29b",
+    "seal_artifact_gate.py": "bc2d0723cdab4e54f7fd75e176d45f775efe96b05c5a4019944be4d95513e69b"
+  },
+  "current_guidance_agent_acceptance": false,
+  "formal_error_bound": false,
+  "format": "poseidon-agent-compiler-artifact-audit-r102-v1",
+  "historical_audit_binding": "c93338364edc094c47937caffddc6a986eba9151d117c73cc349167c79a1090d",
+  "new_agent_generation": false,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "parents": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-agent-pilot-results-r98.json": "f577307a680b2d3642673fe1b263b76749c1e114cb98d25a1a3f3bc8f400f2b6",
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/lib/Runtime/SEAL_HEVM.cpp": "3a5dfb8751d176e50fb66f88feaa7351470b6ea6e226fa022e12c7e2aebd3332",
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/profiled_SEAL_CPU.json": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-pilot-r98-audit/free_bench_boundary_0000.audit.json": "ed02c6b506e00b77b8d254e3256de0e5ee222059a0b385eae92c498f21ffef72",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-pilot-r98-audit/free_bench_boundary_0099.audit.json": "76e05cfaeb704460f547a8481b7161893975422274591f390f77bb20b6e66a66",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-pilot-r98-audit/free_bench_graph_0306.audit.json": "ba316d401956ef5e877050c4ca769d84679a1de6c5f4e1f8eb63474e136355bf",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-pilot-r98-audit/free_bench_graph_0329.audit.json": "c9881137fd7655791c0f23507f4222efbc6cef538fb67fb1942064719f0eeb7c"
+  },
+  "partitions": {
+    "compiler.modswitch": {
+      "case_ids": [
+        "free_bench_graph_0306",
+        "free_bench_boundary_0000",
+        "free_bench_graph_0329",
+        "free_bench_boundary_0099"
+      ],
+      "distinct_topologies": 4,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "historical_r97_only",
+      "three_contexts_verified": true,
+      "topologies": [
+        "259b12793cb4b1b84e5c4a48e7c0b71a536bc5a8353709993ae67b97239705c0",
+        "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216",
+        "acf2cc8bb3d3b484c19561018e97d82071e8576751b60c580267f2693561ff5a",
+        "c1b190ae5630caebcd2ade06c434dad67db98a6d133da993ad5678820d5fdefd"
+      ]
+    },
+    "compiler.relinearization": {
+      "case_ids": [
+        "free_bench_graph_0306",
+        "free_bench_boundary_0000",
+        "free_bench_graph_0329",
+        "free_bench_boundary_0099"
+      ],
+      "distinct_topologies": 4,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "historical_r97_only",
+      "three_contexts_verified": true,
+      "topologies": [
+        "259b12793cb4b1b84e5c4a48e7c0b71a536bc5a8353709993ae67b97239705c0",
+        "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216",
+        "acf2cc8bb3d3b484c19561018e97d82071e8576751b60c580267f2693561ff5a",
+        "c1b190ae5630caebcd2ade06c434dad67db98a6d133da993ad5678820d5fdefd"
+      ]
+    },
+    "compiler.rescale": {
+      "case_ids": [
+        "free_bench_graph_0306",
+        "free_bench_graph_0329",
+        "free_bench_boundary_0099"
+      ],
+      "distinct_topologies": 3,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "historical_r97_only",
+      "three_contexts_verified": true,
+      "topologies": [
+        "259b12793cb4b1b84e5c4a48e7c0b71a536bc5a8353709993ae67b97239705c0",
+        "acf2cc8bb3d3b484c19561018e97d82071e8576751b60c580267f2693561ff5a",
+        "c1b190ae5630caebcd2ade06c434dad67db98a6d133da993ad5678820d5fdefd"
+      ]
+    },
+    "compiler.rotation_keys": {
+      "case_ids": [
+        "free_bench_graph_0306",
+        "free_bench_graph_0329",
+        "free_bench_boundary_0099"
+      ],
+      "distinct_topologies": 3,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "historical_r97_only",
+      "three_contexts_verified": true,
+      "topologies": [
+        "259b12793cb4b1b84e5c4a48e7c0b71a536bc5a8353709993ae67b97239705c0",
+        "acf2cc8bb3d3b484c19561018e97d82071e8576751b60c580267f2693561ff5a",
+        "c1b190ae5630caebcd2ade06c434dad67db98a6d133da993ad5678820d5fdefd"
+      ]
+    },
+    "compiler.security_parameters": {
+      "case_ids": [
+        "free_bench_graph_0306",
+        "free_bench_boundary_0000",
+        "free_bench_graph_0329",
+        "free_bench_boundary_0099"
+      ],
+      "distinct_topologies": 4,
+      "evidence_scope": "artifact operation, pinned runtime implementation and observed final metadata; not per-instruction runtime tracing",
+      "source_scope": "historical_r97_only",
+      "three_contexts_verified": true,
+      "topologies": [
+        "259b12793cb4b1b84e5c4a48e7c0b71a536bc5a8353709993ae67b97239705c0",
+        "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216",
+        "acf2cc8bb3d3b484c19561018e97d82071e8576751b60c580267f2693561ff5a",
+        "c1b190ae5630caebcd2ade06c434dad67db98a6d133da993ad5678820d5fdefd"
+      ]
+    }
+  },
+  "per_instruction_runtime_tracing": false,
+  "records": [
+    {
+      "actual_parameters": {
+        "data_modulus_count": 13,
+        "execution_abi": "periodic-packed-v1",
+        "modulus_bits": [
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60
+        ],
+        "modulus_values": [
+          "1152921504581419009",
+          "1152921504581877761",
+          "1152921504583647233",
+          "1152921504585547777",
+          "1152921504586530817",
+          "1152921504589938689",
+          "1152921504592429057",
+          "1152921504592822273",
+          "1152921504593412097",
+          "1152921504595640321",
+          "1152921504595968001",
+          "1152921504597016577",
+          "1152921504598720513",
+          "1152921504606584833"
+        ],
+        "parameters_set": true,
+        "polynomial_degree": 32768,
+        "rotation_steps": [
+          1,
+          2
+        ],
+        "seal_version": "4.0.0",
+        "security_check": "tc128",
+        "slot_period": 4,
+        "slots": 16384
+      },
+      "compiler_evidence": {
+        "modswitch": 4,
+        "relinearization": 1,
+        "rescale": 3,
+        "rotation_keys": true,
+        "security_parameters": true
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c89ydmhb",
+      "historical_source_digest": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+      "id": "free_bench_graph_0306",
+      "independent_agent_audit_sha256": "ba316d401956ef5e877050c4ca769d84679a1de6c5f4e1f8eb63474e136355bf",
+      "lineage": {
+        "automatically_changes_acceptance": false,
+        "contract": "nominal-hevm-scale-lineage-v1",
+        "cst_sha256": "b9bfe39bb08d8997c6c97b2fc6bc27a1ea35e1dd90698efee5d9923a0d3d2ffe",
+        "error_bound_proven": false,
+        "events": [
+          {
+            "destination": 0,
+            "index": 0,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg0",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 10,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 0,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": 3,
+            "destination": 0,
+            "index": 2,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 2,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 0,
+            "index": 3,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 0,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "producer": 2,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 3,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 1,
+            "index": 4,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg1",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 10,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 4,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 1,
+            "index": 5,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 4,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 4,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 5,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 1,
+            "index": 6,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 5,
+                "scale": 80
+              }
+            ],
+            "opcode": 2,
+            "operation": "negate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 6,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 1,
+            "index": 7,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 3,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 6,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 7,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 8,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg2",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 10,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 8,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 4,
+            "index": 10,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 8,
+                "scale": 40
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 10,
+              "scale": 40
+            },
+            "rotation_step": 1
+          },
+          {
+            "destination": 4,
+            "index": 11,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 8,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 10,
+                "scale": 40
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 11,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 12,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 8,
+                "scale": 40
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 12,
+              "scale": 40
+            },
+            "rotation_step": 2
+          },
+          {
+            "destination": 4,
+            "index": 13,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 11,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 12,
+                "scale": 40
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 13,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 14,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 12,
+                "scale": 40
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 14,
+              "scale": 40
+            },
+            "rotation_step": 1
+          },
+          {
+            "destination": 2,
+            "index": 15,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 13,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 14,
+                "scale": 40
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 15,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": 4,
+            "destination": 1,
+            "index": 17,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 17,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 18,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 15,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "producer": 17,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 18,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 19,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 7,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 18,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 19,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 1,
+            "index": 20,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 19,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 20,
+              "scale": 80
+            },
+            "rotation_step": 1
+          },
+          {
+            "destination": 2,
+            "index": 21,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 19,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 21,
+              "scale": 80
+            },
+            "rotation_step": 2
+          },
+          {
+            "constant_index": 0,
+            "destination": 2,
+            "index": 23,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 23,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 4,
+            "index": 24,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 20,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "producer": 23,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 24,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 4,
+            "index": 25,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 24,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 25,
+              "scale": 60
+            }
+          },
+          {
+            "constant_index": 1,
+            "destination": 3,
+            "index": 27,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 27,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 1,
+            "index": 28,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 20,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "producer": 27,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 28,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 1,
+            "index": 29,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 28,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 29,
+              "scale": 60
+            }
+          },
+          {
+            "destination": 1,
+            "index": 30,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 25,
+                "scale": 60
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 29,
+                "scale": 60
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 30,
+              "scale": 60
+            }
+          },
+          {
+            "constant_index": 2,
+            "destination": 4,
+            "index": 32,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 32,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 33,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 21,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "producer": 32,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 33,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 2,
+            "index": 34,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 33,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 34,
+              "scale": 60
+            }
+          },
+          {
+            "destination": 2,
+            "index": 35,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 30,
+                "scale": 60
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 34,
+                "scale": 60
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 35,
+              "scale": 60
+            }
+          },
+          {
+            "destination": 0,
+            "index": 36,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 3,
+                "scale": 80
+              }
+            ],
+            "moduli_dropped": 1,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 36,
+              "scale": 80
+            }
+          }
+        ],
+        "exact_prime_rounding_modeled": false,
+        "gate": {
+          "arg_level": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "arg_scale": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "bootstrap_rejected": true,
+          "ciphertext_buffers": 5,
+          "execution_validated": false,
+          "initial_level": 13,
+          "opcode_counts": {
+            "0": 5,
+            "1": 5,
+            "2": 1,
+            "3": 3,
+            "4": 4,
+            "6": 7,
+            "65535": 6,
+            "8": 1,
+            "9": 5
+          },
+          "plaintext_buffers": 5,
+          "res_dst": [
+            2,
+            0
+          ],
+          "res_level": [
+            2,
+            2
+          ],
+          "res_scale": [
+            60,
+            80
+          ],
+          "rotation_steps": [
+            1,
+            2
+          ]
+        },
+        "hevm_sha256": "9539fb0cf676d2795f4d525ac0dd589ac5ba18ff0b1ffc34fe9355464834ecb3",
+        "nominal_rescale_bits": 60,
+        "outputs": [
+          {
+            "ciphertext": 0,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 60,
+            "producer": 35,
+            "register": 2,
+            "scale": 60
+          },
+          {
+            "ciphertext": 1,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 40,
+            "producer": 36,
+            "register": 0,
+            "scale": 80
+          }
+        ],
+        "scale_metadata_overrides": [],
+        "schema": 1
+      },
+      "model_sha256": "956d6c3bcbc8ff19c1116069d2af4d025c32d1278c5521f8889bf547cfbba90f",
+      "output_metadata": [
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000002903,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000002903,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000002903,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000002903,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        }
+      ],
+      "request_id": "3281212d15e7e9b17f2732c4e95d8ebf6f1e9adf92afa8d0a0358dc9321cbc44",
+      "rotation_key_check": {
+        "actual_key_file_verified": true,
+        "required_steps": [
+          1,
+          2
+        ]
+      },
+      "runtime_sha256": "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156",
+      "successful_attempt": 2,
+      "topology": "c1b190ae5630caebcd2ade06c434dad67db98a6d133da993ad5678820d5fdefd"
+    },
+    {
+      "actual_parameters": {
+        "data_modulus_count": 13,
+        "execution_abi": "periodic-packed-v1",
+        "modulus_bits": [
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60
+        ],
+        "modulus_values": [
+          "1152921504581419009",
+          "1152921504581877761",
+          "1152921504583647233",
+          "1152921504585547777",
+          "1152921504586530817",
+          "1152921504589938689",
+          "1152921504592429057",
+          "1152921504592822273",
+          "1152921504593412097",
+          "1152921504595640321",
+          "1152921504595968001",
+          "1152921504597016577",
+          "1152921504598720513",
+          "1152921504606584833"
+        ],
+        "parameters_set": true,
+        "polynomial_degree": 32768,
+        "rotation_steps": [
+          1,
+          2
+        ],
+        "seal_version": "4.0.0",
+        "security_check": "tc128",
+        "slot_period": 4,
+        "slots": 16384
+      },
+      "compiler_evidence": {
+        "modswitch": 4,
+        "relinearization": 4,
+        "rescale": 0,
+        "rotation_keys": false,
+        "security_parameters": true
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ndsw8t6k",
+      "historical_source_digest": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+      "id": "free_bench_boundary_0000",
+      "independent_agent_audit_sha256": "ed02c6b506e00b77b8d254e3256de0e5ee222059a0b385eae92c498f21ffef72",
+      "lineage": {
+        "automatically_changes_acceptance": false,
+        "contract": "nominal-hevm-scale-lineage-v1",
+        "cst_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "error_bound_proven": false,
+        "events": [
+          {
+            "destination": 0,
+            "index": 0,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg0",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 11,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 0,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 0,
+            "index": 1,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 0,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 0,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 1,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 1,
+            "index": 2,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg1",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 11,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 2,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 1,
+            "index": 3,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 2,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 2,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 3,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 4,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg2",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 11,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 4,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 5,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 4,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 4,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 5,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 6,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg3",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 11,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 6,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 3,
+            "index": 7,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 6,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 6,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 7,
+              "scale": 80
+            }
+          }
+        ],
+        "exact_prime_rounding_modeled": false,
+        "gate": {
+          "arg_level": [
+            13,
+            13,
+            13,
+            13,
+            13
+          ],
+          "arg_scale": [
+            40,
+            40,
+            40,
+            40,
+            40
+          ],
+          "bootstrap_rejected": true,
+          "ciphertext_buffers": 5,
+          "execution_validated": false,
+          "initial_level": 13,
+          "opcode_counts": {
+            "4": 4,
+            "8": 4
+          },
+          "plaintext_buffers": 0,
+          "res_dst": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "res_level": [
+            2,
+            2,
+            2,
+            2
+          ],
+          "res_scale": [
+            80,
+            80,
+            80,
+            80
+          ],
+          "rotation_steps": []
+        },
+        "hevm_sha256": "11842eec5cac8621767f4af208c911ecde3438a050a87d0fae7ec054b395c94e",
+        "nominal_rescale_bits": 60,
+        "outputs": [
+          {
+            "ciphertext": 0,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 40,
+            "producer": 1,
+            "register": 0,
+            "scale": 80
+          },
+          {
+            "ciphertext": 1,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 40,
+            "producer": 3,
+            "register": 1,
+            "scale": 80
+          },
+          {
+            "ciphertext": 2,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 40,
+            "producer": 5,
+            "register": 2,
+            "scale": 80
+          },
+          {
+            "ciphertext": 3,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 40,
+            "producer": 7,
+            "register": 3,
+            "scale": 80
+          }
+        ],
+        "scale_metadata_overrides": [],
+        "schema": 1
+      },
+      "model_sha256": "3ea7b0abe84b93f6e6afd939aa7a061ea12de970740816e0fc4207dcc7587d48",
+      "output_metadata": [
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        }
+      ],
+      "request_id": "e5a4c9204555451214c1e620eedf824f68726dc3a7cb72898686ace1070dbbeb",
+      "rotation_key_check": {
+        "actual_key_file_verified": true,
+        "required_steps": []
+      },
+      "runtime_sha256": "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156",
+      "successful_attempt": 2,
+      "topology": "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216"
+    },
+    {
+      "actual_parameters": {
+        "data_modulus_count": 13,
+        "execution_abi": "periodic-packed-v1",
+        "modulus_bits": [
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60
+        ],
+        "modulus_values": [
+          "1152921504581419009",
+          "1152921504581877761",
+          "1152921504583647233",
+          "1152921504585547777",
+          "1152921504586530817",
+          "1152921504589938689",
+          "1152921504592429057",
+          "1152921504592822273",
+          "1152921504593412097",
+          "1152921504595640321",
+          "1152921504595968001",
+          "1152921504597016577",
+          "1152921504598720513",
+          "1152921504606584833"
+        ],
+        "parameters_set": true,
+        "polynomial_degree": 32768,
+        "rotation_steps": [
+          1,
+          2,
+          4
+        ],
+        "seal_version": "4.0.0",
+        "security_check": "tc128",
+        "slot_period": 8,
+        "slots": 16384
+      },
+      "compiler_evidence": {
+        "modswitch": 5,
+        "relinearization": 2,
+        "rescale": 3,
+        "rotation_keys": true,
+        "security_parameters": true
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-v1pcedt4",
+      "historical_source_digest": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+      "id": "free_bench_graph_0329",
+      "independent_agent_audit_sha256": "c9881137fd7655791c0f23507f4222efbc6cef538fb67fb1942064719f0eeb7c",
+      "lineage": {
+        "automatically_changes_acceptance": false,
+        "contract": "nominal-hevm-scale-lineage-v1",
+        "cst_sha256": "43bd971dd155ffab63ed977c9bac992488f7187e055e5aa6f503b7ee23569f3e",
+        "error_bound_proven": false,
+        "events": [
+          {
+            "destination": 0,
+            "index": 0,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg0",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 11,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 0,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": 7,
+            "destination": 0,
+            "index": 2,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 2,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 0,
+            "index": 3,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 0,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "producer": 2,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 3,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 5,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg1",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 9,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 4,
+              "nominal_modulus_minus_scale_bits": 200,
+              "producer": 5,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 4,
+            "index": 7,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 200,
+                "producer": 5,
+                "scale": 40
+              },
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 200,
+                "producer": 5,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 4,
+              "nominal_modulus_minus_scale_bits": 160,
+              "producer": 7,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 8,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 160,
+                "producer": 7,
+                "scale": 80
+              },
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 200,
+                "producer": 5,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 4,
+              "nominal_modulus_minus_scale_bits": 120,
+              "producer": 8,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 3,
+            "index": 9,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 8,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 120,
+              "producer": 9,
+              "scale": 60
+            }
+          },
+          {
+            "constant_index": 3,
+            "destination": 1,
+            "index": 11,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 11,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 1,
+            "index": 12,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg1",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 11,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 12,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 1,
+            "index": 13,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 12,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "producer": 11,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 13,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 5,
+            "destination": 2,
+            "index": 15,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 15,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 4,
+            "index": 16,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 160,
+                "producer": 7,
+                "scale": 80
+              }
+            ],
+            "moduli_dropped": 1,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 16,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 4,
+            "index": 17,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 16,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "producer": 15,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 17,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 4,
+            "index": 18,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 17,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 18,
+              "scale": 60
+            }
+          },
+          {
+            "constant_index": null,
+            "destination": 3,
+            "index": 20,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 20,
+              "scale": 20
+            }
+          },
+          {
+            "destination": 4,
+            "index": 21,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 18,
+                "scale": 60
+              },
+              {
+                "level": 2,
+                "producer": 20,
+                "scale": 20
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 21,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 4,
+            "index": 22,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 13,
+                "scale": 80
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 21,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 22,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 4,
+            "destination": 4,
+            "index": 24,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 24,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 3,
+            "index": 25,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 9,
+                "scale": 60
+              },
+              {
+                "level": 3,
+                "producer": 24,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 25,
+              "scale": 100
+            }
+          },
+          {
+            "destination": 3,
+            "index": 26,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 25,
+                "scale": 100
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 26,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": null,
+            "destination": 5,
+            "index": 28,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 28,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 3,
+            "index": 29,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 26,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "producer": 28,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 29,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 30,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 22,
+                "scale": 80
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 29,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 30,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 31,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 30,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 31,
+              "scale": 80
+            },
+            "rotation_step": 1
+          },
+          {
+            "destination": 3,
+            "index": 32,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 31,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 32,
+              "scale": 80
+            },
+            "rotation_step": 4
+          },
+          {
+            "destination": 2,
+            "index": 33,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg2",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 11,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 33,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": 6,
+            "destination": 6,
+            "index": 35,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 35,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 36,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 33,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "producer": 35,
+                "scale": 40
+              }
+            ],
+            "opcode": 7,
+            "operation": "addcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 80,
+              "producer": 36,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": 0,
+            "destination": 7,
+            "index": 38,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 38,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 4,
+            "index": 39,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 36,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "producer": 38,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 39,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 1,
+            "destination": 8,
+            "index": 41,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 41,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 1,
+            "index": 42,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 36,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "producer": 41,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 42,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 1,
+            "index": 43,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 39,
+                "scale": 80
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 42,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 43,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 2,
+            "destination": 9,
+            "index": 45,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 2,
+              "producer": 45,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 46,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 80,
+                "producer": 36,
+                "scale": 40
+              },
+              {
+                "level": 2,
+                "producer": 45,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 46,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 47,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 43,
+                "scale": 80
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 46,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 47,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 48,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 3,
+                "scale": 80
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 32,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 48,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 49,
+            "inputs": [
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 48,
+                "scale": 80
+              },
+              {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 40,
+                "producer": 47,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 40,
+              "producer": 49,
+              "scale": 80
+            }
+          }
+        ],
+        "exact_prime_rounding_modeled": false,
+        "gate": {
+          "arg_level": [
+            13,
+            13,
+            13
+          ],
+          "arg_scale": [
+            40,
+            40,
+            40
+          ],
+          "bootstrap_rejected": true,
+          "ciphertext_buffers": 5,
+          "execution_validated": false,
+          "initial_level": 13,
+          "opcode_counts": {
+            "0": 10,
+            "1": 2,
+            "3": 3,
+            "4": 5,
+            "6": 6,
+            "65535": 12,
+            "7": 1,
+            "8": 2,
+            "9": 9
+          },
+          "plaintext_buffers": 10,
+          "res_dst": [
+            2
+          ],
+          "res_level": [
+            2
+          ],
+          "res_scale": [
+            80
+          ],
+          "rotation_steps": [
+            1,
+            4
+          ]
+        },
+        "hevm_sha256": "1cc9155d4b3a5ada8e8859de01d7a58f31ae4c858e133d598d2203f3c263134e",
+        "nominal_rescale_bits": 60,
+        "outputs": [
+          {
+            "ciphertext": 0,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 40,
+            "producer": 49,
+            "register": 2,
+            "scale": 80
+          }
+        ],
+        "scale_metadata_overrides": [],
+        "schema": 1
+      },
+      "model_sha256": "63fa4e16e90ef7a1cc307c410569e0256e4677a7e81704d79df8ba5b249aa8ca",
+      "output_metadata": [
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 80.0,
+              "polynomials": 2
+            }
+          ]
+        }
+      ],
+      "request_id": "18827efa16f153c06447eae7111974f76b958296cb0e7a93f596aa21036deda2",
+      "rotation_key_check": {
+        "actual_key_file_verified": true,
+        "required_steps": [
+          1,
+          4
+        ]
+      },
+      "runtime_sha256": "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156",
+      "successful_attempt": 3,
+      "topology": "259b12793cb4b1b84e5c4a48e7c0b71a536bc5a8353709993ae67b97239705c0"
+    },
+    {
+      "actual_parameters": {
+        "data_modulus_count": 13,
+        "execution_abi": "periodic-packed-v1",
+        "modulus_bits": [
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60
+        ],
+        "modulus_values": [
+          "1152921504581419009",
+          "1152921504581877761",
+          "1152921504583647233",
+          "1152921504585547777",
+          "1152921504586530817",
+          "1152921504589938689",
+          "1152921504592429057",
+          "1152921504592822273",
+          "1152921504593412097",
+          "1152921504595640321",
+          "1152921504595968001",
+          "1152921504597016577",
+          "1152921504598720513",
+          "1152921504606584833"
+        ],
+        "parameters_set": true,
+        "polynomial_degree": 32768,
+        "rotation_steps": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ],
+        "seal_version": "4.0.0",
+        "security_check": "tc128",
+        "slot_period": 32,
+        "slots": 16384
+      },
+      "compiler_evidence": {
+        "modswitch": 3,
+        "relinearization": 2,
+        "rescale": 4,
+        "rotation_keys": true,
+        "security_parameters": true
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-w3pr331b",
+      "historical_source_digest": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+      "id": "free_bench_boundary_0099",
+      "independent_agent_audit_sha256": "76e05cfaeb704460f547a8481b7161893975422274591f390f77bb20b6e66a66",
+      "lineage": {
+        "automatically_changes_acceptance": false,
+        "contract": "nominal-hevm-scale-lineage-v1",
+        "cst_sha256": "a205d696c2ec41155abff52043490c220000949cdcf39ff7b9a8fbf1d4ecc538",
+        "error_bound_proven": false,
+        "events": [
+          {
+            "destination": 2,
+            "index": 1,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg0",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 8,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 5,
+              "nominal_modulus_minus_scale_bits": 260,
+              "producer": 1,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 3,
+            "index": 3,
+            "inputs": [
+              {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 260,
+                "producer": 1,
+                "scale": 40
+              },
+              {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 260,
+                "producer": 1,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 5,
+              "nominal_modulus_minus_scale_bits": 220,
+              "producer": 3,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 4,
+            "inputs": [
+              {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 220,
+                "producer": 3,
+                "scale": 80
+              },
+              {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 260,
+                "producer": 1,
+                "scale": 40
+              }
+            ],
+            "opcode": 8,
+            "operation": "mulcc_relinearize",
+            "output": {
+              "level": 5,
+              "nominal_modulus_minus_scale_bits": 180,
+              "producer": 4,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 2,
+            "index": 5,
+            "inputs": [
+              {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 4,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 4,
+              "nominal_modulus_minus_scale_bits": 180,
+              "producer": 5,
+              "scale": 60
+            }
+          },
+          {
+            "destination": 0,
+            "index": 6,
+            "inputs": [
+              {
+                "level": 13,
+                "producer": "arg0",
+                "scale": 40
+              }
+            ],
+            "moduli_dropped": 10,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 6,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": 0,
+            "destination": 0,
+            "index": 8,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 8,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 0,
+            "index": 9,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 6,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "producer": 8,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 9,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 3,
+            "destination": 1,
+            "index": 11,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 11,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 0,
+            "index": 12,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 9,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "producer": 11,
+                "scale": 80
+              }
+            ],
+            "opcode": 7,
+            "operation": "addcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 12,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 13,
+            "inputs": [
+              {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 220,
+                "producer": 3,
+                "scale": 80
+              }
+            ],
+            "moduli_dropped": 1,
+            "opcode": 4,
+            "operation": "modswitch",
+            "output": {
+              "level": 4,
+              "nominal_modulus_minus_scale_bits": 160,
+              "producer": 13,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 2,
+            "destination": 2,
+            "index": 15,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 4,
+              "producer": 15,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 3,
+            "index": 16,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 160,
+                "producer": 13,
+                "scale": 80
+              },
+              {
+                "level": 4,
+                "producer": 15,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 4,
+              "nominal_modulus_minus_scale_bits": 120,
+              "producer": 16,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 3,
+            "index": 17,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 16,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 120,
+              "producer": 17,
+              "scale": 60
+            }
+          },
+          {
+            "constant_index": null,
+            "destination": 3,
+            "index": 19,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 19,
+              "scale": 20
+            }
+          },
+          {
+            "destination": 3,
+            "index": 20,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 17,
+                "scale": 60
+              },
+              {
+                "level": 3,
+                "producer": 19,
+                "scale": 20
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 20,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 21,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 12,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 20,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 21,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 1,
+            "destination": 4,
+            "index": 23,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 4,
+              "producer": 23,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 24,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 5,
+                "scale": 60
+              },
+              {
+                "level": 4,
+                "producer": 23,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 4,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 24,
+              "scale": 100
+            }
+          },
+          {
+            "destination": 2,
+            "index": 25,
+            "inputs": [
+              {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 24,
+                "scale": 100
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 140,
+              "producer": 25,
+              "scale": 40
+            }
+          },
+          {
+            "constant_index": null,
+            "destination": 5,
+            "index": 27,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 27,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 2,
+            "index": 28,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 140,
+                "producer": 25,
+                "scale": 40
+              },
+              {
+                "level": 3,
+                "producer": 27,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 28,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 29,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 21,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 28,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 29,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 30,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 29,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 30,
+              "scale": 80
+            },
+            "rotation_step": 1
+          },
+          {
+            "destination": 3,
+            "index": 31,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 29,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 30,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 31,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 32,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 31,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 32,
+              "scale": 80
+            },
+            "rotation_step": 2
+          },
+          {
+            "destination": 2,
+            "index": 33,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 31,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 32,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 33,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 34,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 33,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 34,
+              "scale": 80
+            },
+            "rotation_step": 4
+          },
+          {
+            "destination": 3,
+            "index": 35,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 33,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 34,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 35,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 2,
+            "index": 36,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 35,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 36,
+              "scale": 80
+            },
+            "rotation_step": 8
+          },
+          {
+            "destination": 2,
+            "index": 37,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 35,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 36,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 37,
+              "scale": 80
+            }
+          },
+          {
+            "destination": 3,
+            "index": 38,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 37,
+                "scale": 80
+              }
+            ],
+            "opcode": 1,
+            "operation": "rotate",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 38,
+              "scale": 80
+            },
+            "rotation_step": 16
+          },
+          {
+            "destination": 3,
+            "index": 39,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 37,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 38,
+                "scale": 80
+              }
+            ],
+            "opcode": 6,
+            "operation": "addcc",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 100,
+              "producer": 39,
+              "scale": 80
+            }
+          },
+          {
+            "constant_index": 2,
+            "destination": 6,
+            "index": 41,
+            "opcode": 0,
+            "operation": "encode",
+            "output": {
+              "level": 3,
+              "producer": 41,
+              "scale": 40
+            }
+          },
+          {
+            "destination": 3,
+            "index": 42,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 100,
+                "producer": 39,
+                "scale": 80
+              },
+              {
+                "level": 3,
+                "producer": 41,
+                "scale": 40
+              }
+            ],
+            "opcode": 9,
+            "operation": "mulcp",
+            "output": {
+              "level": 3,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 42,
+              "scale": 120
+            }
+          },
+          {
+            "destination": 3,
+            "index": 43,
+            "inputs": [
+              {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 42,
+                "scale": 120
+              }
+            ],
+            "opcode": 3,
+            "operation": "rescale",
+            "output": {
+              "level": 2,
+              "nominal_modulus_minus_scale_bits": 60,
+              "producer": 43,
+              "scale": 60
+            }
+          }
+        ],
+        "exact_prime_rounding_modeled": false,
+        "gate": {
+          "arg_level": [
+            13,
+            13
+          ],
+          "arg_scale": [
+            40,
+            40
+          ],
+          "bootstrap_rejected": true,
+          "ciphertext_buffers": 4,
+          "execution_validated": false,
+          "initial_level": 13,
+          "opcode_counts": {
+            "0": 7,
+            "1": 5,
+            "3": 4,
+            "4": 3,
+            "6": 7,
+            "65535": 9,
+            "7": 1,
+            "8": 2,
+            "9": 6
+          },
+          "plaintext_buffers": 7,
+          "res_dst": [
+            3
+          ],
+          "res_level": [
+            2
+          ],
+          "res_scale": [
+            60
+          ],
+          "rotation_steps": [
+            1,
+            2,
+            4,
+            8,
+            16
+          ]
+        },
+        "hevm_sha256": "6280b525ec5b42e546fa50d8027a2245966195d7009001ac67e55eb6c6845902",
+        "nominal_rescale_bits": 60,
+        "outputs": [
+          {
+            "ciphertext": 0,
+            "level": 2,
+            "nominal_modulus_minus_scale_bits": 60,
+            "producer": 43,
+            "register": 3,
+            "scale": 60
+          }
+        ],
+        "scale_metadata_overrides": [],
+        "schema": 1
+      },
+      "model_sha256": "badb0bde036b1874c2aa94b5f3f00a9d663eb71b95d589172289cc1f8804d8eb",
+      "output_metadata": [
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000008111,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000008111,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000008111,
+              "polynomials": 2
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            },
+            {
+              "data_modulus_count": 13,
+              "log2_scale": 40.0,
+              "polynomials": 2
+            }
+          ],
+          "outputs": [
+            {
+              "data_modulus_count": 2,
+              "log2_scale": 60.00000000008111,
+              "polynomials": 2
+            }
+          ]
+        }
+      ],
+      "request_id": "122afd42c9a9c3bed048c0f470ea7346d9e2f3858015e2421a8e49fe7f368bd5",
+      "rotation_key_check": {
+        "actual_key_file_verified": true,
+        "required_steps": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ]
+      },
+      "runtime_sha256": "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156",
+      "successful_attempt": 3,
+      "topology": "acf2cc8bb3d3b484c19561018e97d82071e8576751b60c580267f2693561ff5a"
+    }
+  ],
+  "runner_sha256": "6b57ef12a597afa00bea0cbcfeddcd5fffd4b666d0b13c527efc7d5f74bdc4d8",
+  "runtime_source_sha256": "3a5dfb8751d176e50fb66f88feaa7351470b6ea6e226fa022e12c7e2aebd3332",
+  "stage2_complete": false
+}

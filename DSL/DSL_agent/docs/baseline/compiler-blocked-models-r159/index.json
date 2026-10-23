@@ -1,0 +1,1129 @@
+{
+  "binding": "04379927df2bb3222cbc5874a8cbf03626d84a365f45636c0ff6126170a4a762",
+  "compiler_modified": false,
+  "index_sha256": "d245198c5c7989c2ac74e65714c9c7ec2861339aacb809c4efe51491bbf0df5f",
+  "models_modified": false,
+  "new_compiler_trials": 0,
+  "parent": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-targeted-pipeline-diagnosis-r153.json",
+  "parent_sha256": "ed60aa4973d805ba0992ea138387913a8464a78671711a606015789b66319d3c",
+  "rows": [
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0032.json",
+      "file_sha256": "11ad3938410c75a28be8a5f66c6e53a61ce526dc371a2cd09d33c0d63f3d66dc",
+      "frozen_model_sha256": "e156be0aee814237c457e8642ec7242033ecacc2a5294ad3119a6a4516deda80",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          2
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0032",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          2
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0032"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0033.json",
+      "file_sha256": "d60db1933cf5b222d5c2740ec9049d6648dce08be1d87b38c78e4ab16c88d58a",
+      "frozen_model_sha256": "e00eb697a91ac3ebacbc1afedd8c09f785bb7f2edab52130863556df6e2c7a43",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          4
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0033",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          3
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0033"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0034.json",
+      "file_sha256": "f1d29d217b9427948903221e586e801895f98921b942b5c99de0d88b066ff711",
+      "frozen_model_sha256": "456e97c440705410f61d74837b5cd635525c27d2dad7a4294468b827e8854b08",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          6
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0034",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          4
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0034"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0035.json",
+      "file_sha256": "91aecdb76b34c60b393c64d0526734c24cd13ed8ff085cf2b4508065dcd2c4ad",
+      "frozen_model_sha256": "fb2f6be2755870ab149ed7467b1c7887f6f5688c60359e38a4586e1a57366b88",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          8
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0035",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          5
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0035"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0036.json",
+      "file_sha256": "749e82b1d278d7d798736da99fdf7b8ae1afffd745aa2efc75f635bd92acafc2",
+      "frozen_model_sha256": "55617d86cbab85f76a4119fc24636ce649b8ad421832fd3ec8a9a237c56e8e53",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          2
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0036",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          2
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0036"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0037.json",
+      "file_sha256": "3769a5b871c9f5304882c351f7368c2335df4c13b0970ddb718d408a2874305e",
+      "frozen_model_sha256": "21dc4a89ee9b18c905025ff4f9074a0c130fecf82591aa0afea9a43942b39af5",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          4
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0037",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          3
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0037"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0038.json",
+      "file_sha256": "6968911461a26027074401c12fbd8e6aad51427dd3483e5d69c275348fcb3c9c",
+      "frozen_model_sha256": "8d145f24a888d3e7af5194f75e391a35ef1d7a22e81daa6ba19b6d38854080d4",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          6
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0038",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          4
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0038"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 4,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0039.json",
+      "file_sha256": "c60b7e7ca1dc86d552c98a404bdac6cdc45844f3cdaa2511a232a90a12ad8b5e",
+      "frozen_model_sha256": "4d3762fdfc4b6ea21e84698ea4564cb1ba0953189e0b0484f8618faff5f3aeda",
+      "group": "maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          8
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0039",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          5
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0039"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0040.json",
+      "file_sha256": "4b6b71e03ac9001b17bb116b8dfa006d56a3ab63189c46731bbf5ad6f548d384",
+      "frozen_model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          2
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0040",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          1
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0040"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0041.json",
+      "file_sha256": "5623fabe0475c58137e51d704075158e448bb8afd714700d36ca5a92106bd3cc",
+      "frozen_model_sha256": "6a7bec3a9f85de5f099b2095c90a0fa77dd60f9eaae6e2afbf8dae307f570b40",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          4
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0041",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          2
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0041"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0042.json",
+      "file_sha256": "bb2c5ebd522868a1ff39de551e5aa0bf960ec41109fd2871cbc81801665ef354",
+      "frozen_model_sha256": "819b7d137d193a8008187b7cd8b937fb583da74762763c27f3136090e9e946e0",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          6
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0042",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          3
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0042"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0043.json",
+      "file_sha256": "c4be5af20159e856ba7d529be283bacdcfbfeef0364565c6e1cc36487de1b823",
+      "frozen_model_sha256": "8af9d9afaddd02d4fe328c2bf730ab5135e75565d2e15788015b84390b42c559",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          8
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0043",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          4
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0043"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0044.json",
+      "file_sha256": "2df38c663dcfbcbdd8731c33eb9e3b0775b3787ca407b6270adfc3c6419ab368",
+      "frozen_model_sha256": "41682ade40051e88b1348bc657effe9a7b95756a5cc51cf13c406ecad41c705c",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          2
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0044",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          1
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0044"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0045.json",
+      "file_sha256": "3e014585a732cf813bf645772014ce652734e9561d78824f8282902a72efbe20",
+      "frozen_model_sha256": "acad8fcf6cd18819286436c1ee8254e97bd39e1a91ef8128e993a05e60ec6578",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          4
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0045",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          2
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0045"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0046.json",
+      "file_sha256": "f5014ed0463b52a8d81115169b320ae44f639da6a4adc8ebb995729ffc2b4f9e",
+      "frozen_model_sha256": "3409dead9f6affb47a174499cdf47c2494b9a2ac7d3404a6ed3f5cfa7b6db102",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          6
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0046",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          3
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0046"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0047.json",
+      "file_sha256": "91151bfc26ff958d36f54afd2ec33a12db86760b1e12d2dd8b631f0f2208198a",
+      "frozen_model_sha256": "6183887fabc9e0f599d520685c583093619816ec0529a681291d71f56e4bbc0d",
+      "group": "max",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          8
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0047",
+      "negate_before_pool": true,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-018.json",
+      "origin_shard_sha256": "b23ba1332ee3e4d0646acf3602f6bb58e35305b91b044788f47b8bd561f59498",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          4
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0047"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0105.json",
+      "file_sha256": "5fc50e777ac142bd2420fcf1834e8b5650a02fc4315c357fe9926a99da172b47",
+      "frozen_model_sha256": "26043dd75e5b072a90e6b1f8340927eaa9d6f07615acd4e8f13cf8c6f6b3cc19",
+      "group": "relu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          3
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0105",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          3
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0105"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0106.json",
+      "file_sha256": "135d799eb12f48edbfeed8daa7680b5d0aedd65dd4dc40ed6fd6ae14cd228d98",
+      "frozen_model_sha256": "4ef81371dadcf2b19eaca89b17e1350d0e936fd62ef495f4e20ed6e84b982962",
+      "group": "relu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          4
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0106",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          4
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0106"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0107.json",
+      "file_sha256": "5f704ad1fffde4f6385389d2a504d4da358c40dde16e28220e38945909ae0bf5",
+      "frozen_model_sha256": "8671d5b309243ce1810db618d81917ef774e4d96436b31359073faff53d13463",
+      "group": "relu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          5
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0107",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          5
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0107"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 4,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0108.json",
+      "file_sha256": "fa092e109a06388c2135b245dad96775ef50bedac52fd7024a0bfa37d17cc016",
+      "frozen_model_sha256": "1ae62c7892ff1a44f29b97c9b5873cfac2793aa245600a29f7055a8975d16847",
+      "group": "relu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          6
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0108",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          6
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0108"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0109.json",
+      "file_sha256": "3f11e2e9fdaf89f9505bacbee5e5aab307becd2a2740e94fbdda7e82aae492ae",
+      "frozen_model_sha256": "d5e3a5daf37e43d18fc804054ccb4d109633d2cfa2ef283c4c11d34f990a73f5",
+      "group": "relu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          7
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0109",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          7
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0109"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0110.json",
+      "file_sha256": "f55d9a3919c1ada0809a2318aede2657a51ff5a7b01fc5816e7f3acc1585d3b4",
+      "frozen_model_sha256": "b69b00e5aa6a1a9f85d69f9745f957876927df9df4d44c4c037e44ec9a248c7b",
+      "group": "relu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          8
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0110",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          8
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0110"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0111.json",
+      "file_sha256": "b2d53b9ea7b25c675fbb12ffc6373882f673eef5c280d94b55264f51106c93ef",
+      "frozen_model_sha256": "bd04409ba0b3bd85e336c486d4eec6336de6ec9b5621d390fdef6dcb0f6b7782",
+      "group": "relu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          9
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0111",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          9
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0111"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0112.json",
+      "file_sha256": "3d6daa480b852647b63f26097049645d70709342059a485ef34a2a5b9fb2f29a",
+      "frozen_model_sha256": "9d6f9745022f3ef8f8e7726a162c4fa8f4efcda65ae0aaba0a6bba628cbaa3b2",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          2
+        ]
+      ],
+      "invalid_artifact_count": 1,
+      "model_id": "bench_helper_0112",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          2
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0112"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0113.json",
+      "file_sha256": "4322a6b7f427763b37e912ee9df80d2212069d9c612f5cf7ee5f51127b4247b0",
+      "frozen_model_sha256": "47c4e011433f006e92b2b5a635f4645e14e52436577373d5264dd9140a35f8fe",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          3
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0113",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          3
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0113"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0114.json",
+      "file_sha256": "70507309b7768c799ad580b328858a7f826058a41d602ed4505b52e4b0141009",
+      "frozen_model_sha256": "d502f55a3746262f9b863982bb22bae2d98af75192570711af28882b8f7f3984",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          4
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0114",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          4
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0114"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0115.json",
+      "file_sha256": "6e9784322afe1fd55061c909b8c6e5b35b3eb8b6cbc95854033096d2de95c418",
+      "frozen_model_sha256": "cd49edc137b67f2d5b51a4d801a134e2d6bd52f130ea9cd85e6818b3a129fb95",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          5
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0115",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          5
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0115"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0116.json",
+      "file_sha256": "21ed4afa6bd4132540ab067715844fa516d88a8ec5616c1c17266afb35e2364c",
+      "frozen_model_sha256": "d448312b1fb2e3169da3174da58d55a2e1b37b8bb31dd4cdcd339b87b5a7b79d",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          6
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0116",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          6
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0116"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0117.json",
+      "file_sha256": "b53594da4e7cac562e9597334481014719e3b7890ae12750f227346b40f15c29",
+      "frozen_model_sha256": "043467a586eaf1bcf9cb077848b651f568b51f96758ce2999bfd82633cce4d8b",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          7
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "bench_helper_0117",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          7
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0117"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0118.json",
+      "file_sha256": "d9ea2f701c4751e9d3922dee909c7af3508374787d5d52ca4e44663c74a8abfd",
+      "frozen_model_sha256": "e781f023199360a9ecc6660e1dee13ba5e24707b26745e34fef2e610a92e7863",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          8
+        ]
+      ],
+      "invalid_artifact_count": 3,
+      "model_id": "bench_helper_0118",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          8
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0118"
+    },
+    {
+      "affine_preprocess": {},
+      "chebyshev_degrees": [
+        95
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 1,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/bench_helper_0119.json",
+      "file_sha256": "c6e4f6dccb03108c06cbd0021b734937288fb1c1037f5217447fda7b65cf7c2a",
+      "frozen_model_sha256": "fc62a1a7ded0b8ead8706f6e1f4e92f1536ed02e7f5179083747336585943902",
+      "group": "silu",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          9
+        ]
+      ],
+      "invalid_artifact_count": 2,
+      "model_id": "bench_helper_0119",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-019.json",
+      "origin_shard_sha256": "55fa15e8ebde209388e30d4a92d3cf8f82b595663ff068447e1f53c57ddc0439",
+      "output_shapes": {
+        "output0": [
+          9
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_bench_helper_0119"
+    },
+    {
+      "affine_preprocess": {
+        "context_scale": -0.5,
+        "context_shift": 0.125
+      },
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 3,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/semantic_context_331124fd5981bd48a0c2971f.json",
+      "file_sha256": "d8edfec3463e8b57a2efa022660922881949c4cf369f1e062dba088dc7629251",
+      "frozen_model_sha256": "6436d4ae89fecee80b2fafdcfb977b63574ef8a0baf8b008ec76d7306e29753f",
+      "group": "affine_maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          2
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "semantic_context_331124fd5981bd48a0c2971f",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-025.json",
+      "origin_shard_sha256": "62f33081c107bb24358ea5b88af058472f043dbdb463cdd57de66bace53b8f64",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          2
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_supplement_semantic_context_331124fd5981bd48a0c2971f"
+    },
+    {
+      "affine_preprocess": {
+        "context_scale": -0.5,
+        "context_shift": 0.125
+      },
+      "chebyshev_degrees": [
+        15,
+        15,
+        27
+      ],
+      "compiler_configuration": "seal-cpu-eva-w45-v1",
+      "compiler_diagnostic_count": 2,
+      "file": "docs/baseline/compiler-blocked-models-r159/models/semantic_context_89458ebf15d877d81d6b8b2d.json",
+      "file_sha256": "7e891dc4eca138a2b7aca1fa874b06c8d5e70ee980d621a5a54f4fdf8bcb6eb2",
+      "frozen_model_sha256": "0cc2ed35c5b3385913dc292f7183cbf1526d9e9b9df82dd418d4b461c5d55573",
+      "group": "affine_maxpad",
+      "helper_call_required": false,
+      "input_shapes": [
+        [
+          1,
+          1,
+          8
+        ]
+      ],
+      "invalid_artifact_count": 0,
+      "model_id": "semantic_context_89458ebf15d877d81d6b8b2d",
+      "negate_before_pool": false,
+      "origin_shard": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/shard-026.json",
+      "origin_shard_sha256": "19aa1bc9de5d7d82c78bacfb7197fe052e811df0a771843fad192abac60d1379",
+      "output_shapes": {
+        "output0": [
+          1,
+          1,
+          5
+        ]
+      },
+      "status": "historical_compiler_capacity_or_artifact_rejection_not_reexecuted",
+      "task_id": "free_supplement_semantic_context_89458ebf15d877d81d6b8b2d"
+    }
+  ]
+}

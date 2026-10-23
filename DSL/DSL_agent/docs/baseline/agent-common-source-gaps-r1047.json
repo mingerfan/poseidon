@@ -1,0 +1,249 @@
+{
+  "actual_source_captures": 6,
+  "agent_generation": 0,
+  "audit_binding": "2b66f55a38ed2d30c3fa8cabe460b9e260b2e810f2426313263c0aaa012bc159",
+  "backend_modified": false,
+  "binding": "173874fd00a2d51aeeda1c7cc2ea93f95126e6328124aa2783434efb812cd753",
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": 0,
+  "compiler_calls": 0,
+  "confirmed": [
+    "five_source_mapping_or_contract_gaps_before_compilation",
+    "one_contiguous_view_context_passed_independent_plaintext_references",
+    "pending_backend_binding_unchanged"
+  ],
+  "created_utc": "2026-10-06T11:09:56.899047+00:00",
+  "current_151_scope_approved": false,
+  "current_151_scope_started": false,
+  "decryption": 0,
+  "download": 0,
+  "encrypted_execution": false,
+  "evidence": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-pytorch-offline-proposal-r1042.json": "5aaf64026340af03a234daec5d199630ad15569d1ba4c6c780e090411f448848",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/audit_pytorch_source_spellings.py": "93c51845a749812370cbaddc41618b1e00d5550e233135595b7c563e48d18b2e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/contiguous_view/manifest.json": "e508a6f049cbd350ebda630934a0f0106f2a51796fdd5982feae778b274cb2ff",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/contiguous_view/models.py": "1f79b3c611535ee5d4bde00e90295461081bdc6b9d3b0a3107ae6d552a864a79",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/functional_max_pool2d/manifest.json": "d91587a88c45e5e2c9c1abc56fbb766200e7d114fc45a36f917c1481c5bca3bc",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/functional_max_pool2d/models.py": "1f79b3c611535ee5d4bde00e90295461081bdc6b9d3b0a3107ae6d552a864a79",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/gelu_tanh/manifest.json": "d952f1c389a41ad2a1d5b0a5d3fc2ae0a026699f9f1f72bdb6d2c3cb92aca6c4",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/gelu_tanh/models.py": "1f79b3c611535ee5d4bde00e90295461081bdc6b9d3b0a3107ae6d552a864a79",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/index.json": "b7c65102730b05372366670e35acae6e83197477bc7ba04e32481ef870c505f0",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/multihead_attention/manifest.json": "a74f9bac7e03f06bec18965c2c7e107a43da57100caa3860c4612413dc0b1288",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/multihead_attention/models.py": "1f79b3c611535ee5d4bde00e90295461081bdc6b9d3b0a3107ae6d552a864a79",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/multihead_attention/state_0000.npy": "f08e4739f90bff27d2b8ea67c8be739ba6bca785083b70dd5d05b8e00afbf758",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/multihead_attention/state_0001.npy": "7539fdc5eb3acf68200b3d7cef9df0b020884d60871dc90d279e420ff1cc6b99",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/multihead_attention/state_0002.npy": "86c67b145bf3ab1344cd324cfc48a036089a5d9ef2cf75ecb40dea04364e0d7f",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/multihead_attention/state_0003.npy": "d7f47a94424577aa403c7bb67e12146af5ce448bde2ced4c463cab2ff8058455",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/public_division/manifest.json": "eb191bfafcf74e20b6960a6a7f76a350398ed74d56b2c02d351fa084cd686430",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/public_division/models.py": "1f79b3c611535ee5d4bde00e90295461081bdc6b9d3b0a3107ae6d552a864a79",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/relu_inplace/manifest.json": "281881ea889e715f68b22e97bc0f84189446b8326bdfc1769c9c2ab8d6e6cab8",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/pytorch-source-spellings-v1/relu_inplace/models.py": "1f79b3c611535ee5d4bde00e90295461081bdc6b9d3b0a3107ae6d552a864a79",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/operator-scope-v1.json": "4487ed48f6dfc7c54c11a84a12f0d8f1808544e9d7ee3c1c0114c1cdc51fa611",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_arithmetic_normalization.py": "69abb17e5627b7588eb37ad6f260c1c9ce34d5fbfb35a3196be5dfe849e73d9a",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_capture.py": "a8b28753c7d6fc89ee82580924edd7e9321dbab570dd01d6bf3aaaadbe3c1ca2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_static_trace.py": "9e01d0f6b6180dceb2e1c3c0cf85acd78b8941f6802e934abb25d634e8e2c015",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-source-spellings-r1046.log": "0c5cfb5a9ab8a918a2e10dcf6db8e5764680d130ea04536e91a301dd376552d5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-pytorch-source-spellings-r1046/report.json": "9c2645b2f50809c4aae0249fa0ce5910aaef603212487fa9c4681307608126ab"
+  },
+  "fixture_binding": "597518a604f38ae3fe7c5849e4130378aef1c3591a45869f33414429be3a7118",
+  "format": "poseidon-common-source-spelling-gaps-v1",
+  "frozen_benchmark_modified": false,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "http_attempts": 0,
+  "inference": [
+    "first_two_mapping_extensions_can_reuse_current_math_graph_without_backend_core_edits"
+  ],
+  "input_accepted": 1,
+  "input_gaps": 5,
+  "installation": 0,
+  "new_hecate_tracing": 0,
+  "new_unique_benchmark_model_count_claimed": false,
+  "next_directions": {
+    "contiguous_view": {
+      "action": "retain_existing_c_order_contract_and_compatibility_context",
+      "layer": "already_registered_input",
+      "source_line": 712
+    },
+    "functional_max_pool2d": {
+      "action": "add_static_functional_maxpool_mapping_with_existing_math_decomposition",
+      "layer": "registered_function_adapter",
+      "source_line": 729
+    },
+    "gelu_tanh": {
+      "action": "register_distinct_original_function_and_independent_reference_with_explicit_approximation",
+      "layer": "source_function_variant",
+      "source_line": 287
+    },
+    "multihead_attention": {
+      "action": "parse_qkv_options_and_bind_public_projection_weights_then_compose_existing_graph",
+      "layer": "module_input_adapter",
+      "source_line": 232
+    },
+    "public_division": {
+      "action": "validate_static_nonzero_finite_divisor_then_normalize_with_trusted_bound_public_reciprocal",
+      "layer": "public_arithmetic_adapter",
+      "source_line": 729
+    },
+    "relu_inplace": {
+      "action": "prove_safe_functionalization_or_reject_shared_alias_semantics",
+      "layer": "alias_and_mutation_semantics",
+      "source_line": 288
+    }
+  },
+  "paid_calls": 0,
+  "preservation": {
+    "actual_workers": [],
+    "approval_receipt_present": false,
+    "backend_output_present": false,
+    "frozen_file_counts": {
+      "case_hashes": 5248,
+      "extra_source_hashes": 5,
+      "source_hashes": 691,
+      "tool_hashes": 8
+    },
+    "git_diff_check": 0,
+    "lost_original_status_rows": [],
+    "proposal_binding": "ed3ffa719754bf75978d127e793c6c357516396e5302c3721ad40a08032f631d",
+    "protected_counts": {
+      "protected-backend": 648,
+      "protected-current-history": 14,
+      "protected-history": 6,
+      "protected-new-history": 6,
+      "protected-references": 6
+    },
+    "status_comparison": "same --short --branch format; initial header-only mismatch corrected before report writes"
+  },
+  "production_modified": false,
+  "push": 0,
+  "reference_groups": 16,
+  "reference_modified": false,
+  "rows": [
+    {
+      "cli_log_sha256": "aa4d85bcdf913d3dd179be91d21fb34c4441d1475d62662387854c0c2d5d4654",
+      "compiler_calls": 0,
+      "encrypted_execution": false,
+      "evidence_log_sha256": "34b757f2929ecc01630e79bdf89ee6ac9be9782b515dca8b83116e9533980c66",
+      "exit_code": 1,
+      "failure_layer": "model_intake",
+      "group": "transformer",
+      "hypothesis": "registered module adapter absent",
+      "id": "multihead_attention",
+      "paid_calls": 0,
+      "reference_groups": 0,
+      "seconds": 0.6268062490271404,
+      "stable_diagnostic": "ValueError: Module input arguments",
+      "status": "input_gap",
+      "target": "nn.MultiheadAttention"
+    },
+    {
+      "cli_log_sha256": "aa4d85bcdf913d3dd179be91d21fb34c4441d1475d62662387854c0c2d5d4654",
+      "compiler_calls": 0,
+      "encrypted_execution": false,
+      "evidence_log_sha256": "a2acbc03002163eedd2dd3705667e35ec4f4eff952d8b6333254cb5e38dcc637",
+      "exit_code": 1,
+      "failure_layer": "model_intake",
+      "group": "cnn",
+      "hypothesis": "functional target mapping absent",
+      "id": "functional_max_pool2d",
+      "paid_calls": 0,
+      "reference_groups": 0,
+      "seconds": 0.5739150259178132,
+      "stable_diagnostic": "ValueError: Unsupported PyTorch call: <function boolean_dispatch.<locals>.fn>",
+      "status": "input_gap",
+      "target": "F.max_pool2d"
+    },
+    {
+      "cli_log_sha256": "aa4d85bcdf913d3dd179be91d21fb34c4441d1475d62662387854c0c2d5d4654",
+      "compiler_calls": 0,
+      "encrypted_execution": false,
+      "evidence_log_sha256": "bc21b746c13c5f9754be31b261d69d1bff5310721be2d9ecb6e798b31b926df9",
+      "exit_code": 1,
+      "failure_layer": "model_intake",
+      "group": "activation",
+      "hypothesis": "original-function variant rejected",
+      "id": "gelu_tanh",
+      "paid_calls": 0,
+      "reference_groups": 0,
+      "seconds": 0.5727790299570188,
+      "stable_diagnostic": "ValueError: Exact GELU source required",
+      "status": "input_gap",
+      "target": "nn.GELU(approximate=\"tanh\")"
+    },
+    {
+      "cli_log_sha256": "aa4d85bcdf913d3dd179be91d21fb34c4441d1475d62662387854c0c2d5d4654",
+      "compiler_calls": 0,
+      "encrypted_execution": false,
+      "evidence_log_sha256": "7341b87dfa30afdb14066150a09b435aa076f9b93d8f7484843b56a680471e5c",
+      "exit_code": 1,
+      "failure_layer": "model_intake",
+      "group": "activation_alias",
+      "hypothesis": "alias/mutation contract rejects",
+      "id": "relu_inplace",
+      "paid_calls": 0,
+      "reference_groups": 0,
+      "seconds": 0.5744635660666972,
+      "stable_diagnostic": "ValueError: In-place activation not yet imported",
+      "status": "input_gap",
+      "target": "nn.ReLU(inplace=True)"
+    },
+    {
+      "cli_log_sha256": "179060d12f48f9b5cf2e1d53e1118439b8984c1a2838bfc6d517996218ad3418",
+      "compiler_calls": 0,
+      "encrypted_execution": false,
+      "exit_code": 0,
+      "group": "shape",
+      "hypothesis": "storage-identity mapping absent",
+      "id": "contiguous_view",
+      "max_decomposition_error": 0.0,
+      "max_normalization_error": 0.0,
+      "max_original_module_error": 0.0,
+      "model_sha256": "e70db24d5519f49e9ce5e50acf7e3da9ca1d0525762223864d3b3533e60217e3",
+      "original_function_accuracy_certified": false,
+      "paid_calls": 0,
+      "reference_groups": 16,
+      "seconds": 0.6237140110461041,
+      "status": "input_accepted",
+      "target": "Tensor.contiguous().view"
+    },
+    {
+      "cli_log_sha256": "aa4d85bcdf913d3dd179be91d21fb34c4441d1475d62662387854c0c2d5d4654",
+      "compiler_calls": 0,
+      "encrypted_execution": false,
+      "evidence_log_sha256": "c028bb3358fd9251f52a69aaffd3f0886b021a0f6b8126f9a90d87ab36da75d5",
+      "exit_code": 1,
+      "failure_layer": "model_intake",
+      "group": "arithmetic",
+      "hypothesis": "public-scalar division mapping absent",
+      "id": "public_division",
+      "paid_calls": 0,
+      "reference_groups": 0,
+      "seconds": 0.5770803060149774,
+      "stable_diagnostic": "ValueError: Unsupported PyTorch call: <built-in method div of type object>",
+      "status": "input_gap",
+      "target": "torch.div(x,2.0)"
+    }
+  ],
+  "runtime": {
+    "cuda": null,
+    "hip": null,
+    "numpy": "1.25.2",
+    "python": [
+      3,
+      10,
+      14
+    ],
+    "torch": "2.0.1"
+  },
+  "skipped": 0,
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "unverified": [
+    "generic_support_for_all_six_source_families",
+    "new_dsl_compilation_encrypted_and_real_agent_success",
+    "automatic_alias_functionalization",
+    "source_variant_application_accuracy"
+  ]
+}

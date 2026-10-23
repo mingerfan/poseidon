@@ -1,0 +1,296 @@
+{
+  "format": "poseidon-identity-cache-acceptance-v1",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "benchmark_before": [
+    {
+      "cached_entries": 256,
+      "cached_fact_bytes": 83378,
+      "label": "cold",
+      "manifest_sha256": "0ee9edde9d62e3d297d0bc7407e633b40d205396a968a60d13e5929c49a27a66",
+      "parse_calls": 4168,
+      "parse_seconds": 1.7681049978127703,
+      "read_bytes": 35097558,
+      "seconds": 5.862701577018015,
+      "source_reads": 5534,
+      "stages": {
+        "compilation": {
+          "python_sources": 634,
+          "sha256": "b8b0c3b41ceaded13219f78cdf0503970f2608b9650f2fce838edc918feb6f05",
+          "sources": 646
+        },
+        "execution": {
+          "python_sources": 634,
+          "sha256": "02601d99d4cf5823b3bb18e04d517b67a0d14386f72681d8bacba2e577c05740",
+          "sources": 646
+        },
+        "generation": {
+          "python_sources": 634,
+          "sha256": "6bd207cca4e79f91f8d9155919e9895fab8cc9ac68d035a91c9ef569cfa46117",
+          "sources": 646
+        },
+        "validation": {
+          "python_sources": 634,
+          "sha256": "fb585a05a5d1cb69f7b0e96466b2cac8b339e90754a9451b869cff8a7641a785",
+          "sources": 646
+        }
+      },
+      "syntax_hits": 892,
+      "syntax_misses": 4168,
+      "unparse_calls": 182011,
+      "unparse_seconds": 0.2285757792997174
+    },
+    {
+      "cached_entries": 256,
+      "cached_fact_bytes": 83378,
+      "label": "warm",
+      "manifest_sha256": "0ee9edde9d62e3d297d0bc7407e633b40d205396a968a60d13e5929c49a27a66",
+      "parse_calls": 4048,
+      "parse_seconds": 1.7673084511770867,
+      "read_bytes": 35097558,
+      "seconds": 5.780842374020722,
+      "source_reads": 5534,
+      "stages": {
+        "compilation": {
+          "python_sources": 634,
+          "sha256": "b8b0c3b41ceaded13219f78cdf0503970f2608b9650f2fce838edc918feb6f05",
+          "sources": 646
+        },
+        "execution": {
+          "python_sources": 634,
+          "sha256": "02601d99d4cf5823b3bb18e04d517b67a0d14386f72681d8bacba2e577c05740",
+          "sources": 646
+        },
+        "generation": {
+          "python_sources": 634,
+          "sha256": "6bd207cca4e79f91f8d9155919e9895fab8cc9ac68d035a91c9ef569cfa46117",
+          "sources": 646
+        },
+        "validation": {
+          "python_sources": 634,
+          "sha256": "fb585a05a5d1cb69f7b0e96466b2cac8b339e90754a9451b869cff8a7641a785",
+          "sources": 646
+        }
+      },
+      "syntax_hits": 1012,
+      "syntax_misses": 4048,
+      "unparse_calls": 179724,
+      "unparse_seconds": 0.2270256844931282
+    }
+  ],
+  "benchmark_after": [
+    {
+      "cached_entries": 634,
+      "cached_fact_bytes": 126480,
+      "label": "cold",
+      "manifest_sha256": "7e87af9e553b09e0c09ab3d1ee42d1370e9cd5adc3a87d860d592a3bf41f34f0",
+      "parse_calls": 634,
+      "parse_seconds": 0.25469268107553944,
+      "read_bytes": 35098190,
+      "seconds": 1.2679965060087852,
+      "source_reads": 5534,
+      "stages": {
+        "compilation": {
+          "python_sources": 634,
+          "sha256": "a4bb683391d2eed1611f6e7e4da401092faf4cfcc78ef51599e112dfaf2d1063",
+          "sources": 646
+        },
+        "execution": {
+          "python_sources": 634,
+          "sha256": "830e430a808154824d4ffe79d7148d6c1c47eabc5e0b8613d2d3b7a191e0d3c3",
+          "sources": 646
+        },
+        "generation": {
+          "python_sources": 634,
+          "sha256": "3a4726dbff0f581b065045d235df95b16ffbe8cdc21e15eb52f9e27d22aeb8e5",
+          "sources": 646
+        },
+        "validation": {
+          "python_sources": 634,
+          "sha256": "a335e8edc793af5fbbf018b3b7b0873bd9ddda9324c563d79b0ef6f04d99871d",
+          "sources": 646
+        }
+      },
+      "syntax_hits": 4426,
+      "syntax_misses": 634,
+      "unparse_calls": 27296,
+      "unparse_seconds": 0.03524912835564464
+    },
+    {
+      "cached_entries": 634,
+      "cached_fact_bytes": 126480,
+      "label": "warm",
+      "manifest_sha256": "7e87af9e553b09e0c09ab3d1ee42d1370e9cd5adc3a87d860d592a3bf41f34f0",
+      "parse_calls": 0,
+      "parse_seconds": 0.0,
+      "read_bytes": 35098190,
+      "seconds": 0.46565902297152206,
+      "source_reads": 5534,
+      "stages": {
+        "compilation": {
+          "python_sources": 634,
+          "sha256": "a4bb683391d2eed1611f6e7e4da401092faf4cfcc78ef51599e112dfaf2d1063",
+          "sources": 646
+        },
+        "execution": {
+          "python_sources": 634,
+          "sha256": "830e430a808154824d4ffe79d7148d6c1c47eabc5e0b8613d2d3b7a191e0d3c3",
+          "sources": 646
+        },
+        "generation": {
+          "python_sources": 634,
+          "sha256": "3a4726dbff0f581b065045d235df95b16ffbe8cdc21e15eb52f9e27d22aeb8e5",
+          "sources": 646
+        },
+        "validation": {
+          "python_sources": 634,
+          "sha256": "a335e8edc793af5fbbf018b3b7b0873bd9ddda9324c563d79b0ef6f04d99871d",
+          "sources": 646
+        }
+      },
+      "syntax_hits": 5060,
+      "syntax_misses": 0,
+      "unparse_calls": 0,
+      "unparse_seconds": 0.0
+    }
+  ],
+  "pure_cached_syntax_only": true,
+  "fresh_reads_and_hashes_preserved": true,
+  "old_algorithm_equal_on_current_bytes": true,
+  "units": {
+    "passed": 79,
+    "failed": [],
+    "errors": [],
+    "skipped": [],
+    "seconds": 26.12155865499517
+  },
+  "batch_binding": "ad0d8ee0b1448666f81976def3d00b46e6559fe8aa368575d2fbd1d8c11bec9f",
+  "frozen_sources_verified": 644,
+  "backend_files_unchanged": 648,
+  "reference_and_gate_files_unchanged": 6,
+  "rows": [
+    {
+      "id": "modules",
+      "candidate_unchanged": true,
+      "model_unchanged": true,
+      "request_unchanged": true,
+      "candidate_sha256": "6b9e1f395b113658a430a111ec0a420a0fb6cd73cca1bd1dfb54dd96ce301a69",
+      "task_id": "9effc5b7f47c4f58b648fdc5a777757b",
+      "package_binding": "a5bbf1edbc7f8bef137a4cd3669ea084ee844a377b5fdbbea90098ecb5b78925",
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-identity-cache-backend-r726/tasks/9effc5b7f47c4f58b648fdc5a777757b/program",
+      "input_groups": 14,
+      "compared_values": 28,
+      "maximum_absolute_error": 1.66508647148067e-10,
+      "all_manifest_file_hashes_checked": 26,
+      "independent_reference_checked": true,
+      "output_structure_checked": true,
+      "cache_reused_without_generation": true
+    },
+    {
+      "id": "nodes",
+      "candidate_unchanged": true,
+      "model_unchanged": true,
+      "request_unchanged": true,
+      "candidate_sha256": "188f5221649b1e6582aead98ad097f57fed356c7d1af5a8a3047a71691243860",
+      "task_id": "5100715731bf40aa83726398c3428f92",
+      "package_binding": "880e0d960ebb948eb54fd5e95ca285d28dde0bbdca81545c8f4bd1cc90a49dfc",
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-identity-cache-backend-r726/tasks/5100715731bf40aa83726398c3428f92/program",
+      "input_groups": 14,
+      "compared_values": 28,
+      "maximum_absolute_error": 9.986765193824622e-10,
+      "all_manifest_file_hashes_checked": 26,
+      "independent_reference_checked": true,
+      "output_structure_checked": true,
+      "cache_reused_without_generation": true
+    },
+    {
+      "id": "functions_nodes",
+      "candidate_unchanged": true,
+      "model_unchanged": true,
+      "request_unchanged": true,
+      "candidate_sha256": "9a169b9e5d2afb97e7ce038ae7c95390daf023105653a1fc932d699709f4192c",
+      "task_id": "02efacc438f449cfa68457ecafbf3ed7",
+      "package_binding": "16ef743546a6d8cb5ab4f31a82db224ce232d88e34a3b26f67d117f566d3ca5b",
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-identity-cache-backend-r726/tasks/02efacc438f449cfa68457ecafbf3ed7/program",
+      "input_groups": 14,
+      "compared_values": 56,
+      "maximum_absolute_error": 4.290794212991056e-10,
+      "all_manifest_file_hashes_checked": 26,
+      "independent_reference_checked": true,
+      "output_structure_checked": true,
+      "cache_reused_without_generation": true
+    }
+  ],
+  "backend_passed": 3,
+  "backend_failed": 0,
+  "backend_not_run": 0,
+  "backend_input_groups": 42,
+  "backend_compared_values": 112,
+  "backend_maximum_absolute_error": 9.986765193824622e-10,
+  "cli": {
+    "status": "passed",
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-whmj4uc6",
+    "input_groups": 4,
+    "compared_values": 8,
+    "maximum_absolute_error": 4.578960405288157e-09,
+    "built_in_failure_sequence": [
+      "response_parse",
+      "numerical_comparison",
+      "passed"
+    ],
+    "scripted_not_agent": true
+  },
+  "paid_calls": 0,
+  "http_attempts": 0,
+  "downloads": 0,
+  "installs": 0,
+  "parameter_changes": 0,
+  "backend_changes": 0,
+  "commits": 0,
+  "pushes": 0,
+  "artifact_bytes_added": 31317966,
+  "global_artifact_bytes": 24120599156,
+  "free_bytes": 49714114560,
+  "aggregate_worker_seconds": 185.4318938049837,
+  "new_input_validation": "local execution deliberately does not claim reference validation; benchmark and independent audit compare supplied outputs separately",
+  "preflight_failures_preserved": [
+    {
+      "stage": "audit-r728",
+      "cause": "audit expected an execution-only application result to claim numerical validation; corrected r729 without rerun"
+    },
+    {
+      "stage": "audit-r727",
+      "cause": "audit initially confused auxiliary physical inputs with logical tensor; corrected r728, no rerun"
+    },
+    {
+      "stage": "baseline-r722",
+      "cause": "probe compared tools identity with wrapper; corrected r723"
+    },
+    {
+      "stage": "joint-r724",
+      "cause": "two nonexistent test module names; corrected 79 tests r725"
+    }
+  ],
+  "paths": {
+    "preflight": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-identity-cache-preflight-r722",
+    "backend": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-identity-cache-backend-r726"
+  },
+  "source_sha256": {
+    "scripts/baseline/application_identity.py": "94e1dbc7039f8ee765e17273dd3ac56fafd8a9f445ddd53a0219bbb0a15363cd",
+    "scripts/baseline/test_identity_syntax_cache.py": "02a82749a50cb22a2a52f508774de882bce18052406a65aef5250b0f7d8e8178"
+  },
+  "validation_scope": "existing finite approximation inputs; three rule baseline sources, not new Agent generation; no additional unique models",
+  "remaining": [
+    "generic normalization lowering",
+    "static indexing input expansion",
+    "production dependency closure coupling",
+    "fresh Agent acceptance for new v5 input",
+    "bootstrap",
+    "CUDA execution",
+    "native x86",
+    "clean-machine install",
+    "ResNet20"
+  ],
+  "report": "docs/baseline/agent-identity-cache-acceptance-r730.md",
+  "final_audit": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-identity-cache-preflight-r722/final-audit-r729.json"
+}

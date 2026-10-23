@@ -1,0 +1,157 @@
+{
+  "binding": "f8b8cc33058e6830365742ee4dcb227315b416fdccb20d351ab3d5930a91cc8d",
+  "branch": "lhy-agent-dsl",
+  "cli": "scripts/prepare_pytorch_source.py",
+  "default_resource_profile": "general-tensors-v1",
+  "default_source_format": "poseidon-trusted-pytorch-v18",
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "first_controls": {
+    "errors": 1,
+    "failed": 1,
+    "passed": 57,
+    "reason": "factory validation ran after canonical serialization; fixed validation order, preserved first log and binding",
+    "record": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_manifest_v1/controls.json",
+    "skipped": 0
+  },
+  "format": "poseidon-source-manifest-cli-acceptance-v1",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "limits": {
+    "decomposed_nodes": 4096,
+    "general_rank": 32,
+    "input_elements": 4096,
+    "inputs": 4,
+    "intermediate_elements": 65536,
+    "manifest_bytes": 131072,
+    "original_nodes": 1024,
+    "output_elements": 4096,
+    "outputs": 4,
+    "source_bytes": 65536,
+    "source_files": 8,
+    "weights_elements": 1000000
+  },
+  "metadata_controls": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 59,
+    "record": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/source_manifest_v1/controls-v2.json",
+    "sha256": "99b25076a4dda40df03f63215463aef9fca3d59522b95833d4b5a25589ab29dd",
+    "skipped": 0,
+    "source_executed": false
+  },
+  "next_readonly_command": "python3 -B scripts/prepare_pytorch_source.py --help",
+  "numpy_checks": {
+    "dtypes": [
+      "<f4",
+      "<f8",
+      "<i4",
+      "<i8",
+      "|b1"
+    ],
+    "failed": 0,
+    "passed": 20,
+    "record": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-manifest-acceptance-v1/numpy-comparisons.json",
+    "sha256": "b5063eed2e0879f1b0158434ce8ccdf731e6b75bf706334e53d01ad58d480acd",
+    "shapes": [
+      [],
+      [
+        2,
+        2
+      ]
+    ],
+    "skipped": 0,
+    "versions": [
+      1,
+      2
+    ]
+  },
+  "operations": {
+    "backend_changes": 0,
+    "commit": false,
+    "compiler_calls": 0,
+    "decryption_calls": 0,
+    "downloads": 0,
+    "encrypted_calls": 0,
+    "http_attempts": 0,
+    "installations": 0,
+    "parameters_changed": false,
+    "pr": false,
+    "provider_calls": 0,
+    "push": false,
+    "reference_changed": false,
+    "tolerance_changed": false
+  },
+  "outstanding": [
+    "r1341 eight-case Agent evaluation pending bounded approval",
+    "six partition and two MHA new generation untested",
+    "generic model/capacity/application accuracy expansion",
+    "CPU native bootstrap",
+    "ciphertext-preserving program handoff",
+    "CUDA hardware acceptance",
+    "whole-network ResNet goal"
+  ],
+  "platform": "aarch64-linux",
+  "preserved": {
+    "historical_requests": 2,
+    "history_rewritten": false,
+    "mismatches": [],
+    "protected_files": 654,
+    "r1341_authorized": false,
+    "r1341_executed": false,
+    "r1341_proposal_sha256": "b70cf2d9d94fc6dc07c94beca32cda515f0dab1674424a8e97a11dc173b5f484"
+  },
+  "revision": "r1344",
+  "scope": "trusted-local PyTorch source manifest preparation",
+  "sdk": {
+    "changed": false,
+    "identity_manifest_sha256": "ee05605763e8f26e106c8c48167afb7017cee7c6fa946093626dc9c35bf29995",
+    "source_counts": {
+      "compilation": 625,
+      "execution": 625,
+      "generation": 631,
+      "validation": 625
+    }
+  },
+  "selectable_source_versions": [
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ],
+  "source_capture": {
+    "actual_isolated_capture": true,
+    "binding": "58fd12f293b26d5532ee8e820c0f5709cc19d7fe8d8fd35366d0a9575db3c149",
+    "cases": [
+      "einsum_matrix",
+      "einsum_public_weight",
+      "einsum_partition_composition"
+    ],
+    "failed": 0,
+    "independent_reference": true,
+    "logical_manifest_equal": true,
+    "passed": 3,
+    "prepared_request_equal": true,
+    "record": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-manifest-acceptance-v1/report.json",
+    "seconds": 66.12485766410828,
+    "sha256": "0fedcb8673b0b560eecf6595fc588f948c7cce7a1eb92cbd0ff348c331a0279c",
+    "skipped": 0
+  },
+  "source_files": {
+    "docs/baseline/operator-decomposition-and-python.md": "edc98c2d368f75057fa1a19c29d1f63a479e2766a1bcd997b96e069086872801",
+    "scripts/README.md": "efc19146acc56f375ea3874b53f1d2516fd9ecbc3b6a11d2c58bd792a55e3c38",
+    "scripts/baseline/benchmarks/tools/source_manifest_v1/acceptance.py": "38517b3199eb1891cbee96808823ddf571d3fdc4c32bdc34d2be9632b97767b5",
+    "scripts/baseline/benchmarks/tools/source_manifest_v1/controls.py": "fe7c5a8d9c508f25bef3a5d5f14bc299333ff1aa9bfe701100632eafadbcb20e",
+    "scripts/baseline/benchmarks/tools/source_manifest_v1/test_manifest.py": "6aaf30b425547d0cbd061981bbb9f9d9263cfa5b9adcdc971efadebd08b7dbbe",
+    "scripts/prepare_pytorch_source.py": "7138eda993de28f817c5f94043b85dae68e7b9beeead7221513300f4ab097cfe"
+  },
+  "status": "passed",
+  "verification_limits": "Three source models and twenty NPY parser combinations; no new compiler or encrypted validation in this batch.",
+  "versions": {
+    "numpy": "1.25.2",
+    "python": "3.10.14",
+    "torch": "2.0.1",
+    "torch_cuda": null
+  }
+}

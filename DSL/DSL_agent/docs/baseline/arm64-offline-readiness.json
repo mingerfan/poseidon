@@ -1,0 +1,32 @@
+{
+  "scope": "host_offline_policy_and_configuration_only",
+  "tested_utc": "2026-09-20T16:18:18.039105+00:00",
+  "host": "Darwin",
+  "python": "3.12.14",
+  "tests": [
+    "test_portability",
+    "test_platform_config",
+    "test_environment_gate",
+    "test_cpp_continuation",
+    "test_golden_selection",
+    "test_nix_dependency_plan.DependencyLockTests",
+    "test_python_stage.PythonWheelLockTests.test_exact_cpu_closure_within_budget",
+    "test_python_stage.PythonWheelLockTests.test_missing_or_extra_dependency_rejected",
+    "test_python_stage.PythonWheelLockTests.test_unapproved_version_rejected",
+    "test_python_stage.PythonWheelLockTests.test_budget_and_unsafe_download_rejected"
+  ],
+  "passed": 55,
+  "failed": 0,
+  "skipped": 0,
+  "includes_mock_and_synthetic_fixtures": true,
+  "arm_native_build_validated": false,
+  "encrypted_execution_validated": false,
+  "paid_api_calls": 0,
+  "source_sha256": {
+    "scripts/baseline/platform-profiles.json": "25001f83e6d7c3bf33e832454d6b4c1e617047dc47196bddefcac287599108fb",
+    "scripts/baseline/platform_config.py": "ed6272b5055a7d558e037cc0cada79be955c8c8c8d63fa5314086d0c6142c2f8",
+    "scripts/baseline/hevm_abi.py": "935cb8c6bd321fb05a8dd62db2aef6e3ee6e90c94b8cf403dc9d99da5a6b4a5e",
+    "scripts/baseline/toolchain-probe/hevm_abi.cpp": "e76468d578e3092dc65e330c1758a735b48b817c5ad284b008fbc63ec4cbcf4a",
+    "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+  }
+}

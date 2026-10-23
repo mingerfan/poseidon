@@ -1,0 +1,32 @@
+{
+  "format": "poseidon-r187-precall-recovery-audit-v1",
+  "generations": 0,
+  "http_attempts": 0,
+  "uncertain_calls": false,
+  "prior_seconds": 3.0701440419943538,
+  "candidate": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_f8ghuvq",
+  "diagnosis": "Mixed per-shard max_repairs rejected by legacy claim identity; first candidate cancelled in sandbox preflight before provider.generate",
+  "ledger_basis": "Provider checkpoints in-flight attempts before transport; terminal ledger has zero attempts and zero generations.",
+  "old_claims_preserved": true,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187/plan.json": "9e582eaeba1ead9ad62d8c6f355270d562b29601ceb12b1c67a74a319b2f4931",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187/report.json": "0c3d21a1ed448ddc32545562d4b6e2d82a529b5731f53d0fc7b19c33e09d30ce",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187/job-status.json": "b0d299bb312c2cea0c3f7af97b7e5faba5e41b43027f1b2032788b10a415d4d5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_f8ghuvq/report.json": "3446e2f3adf75810daa5ccfb748254342f34679b722306c1b266eeea4a92fe43",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/deepseek_provider.py": "4e53eebb65287e260f26c6910b6172495414246316de3ea80a2031c8067fdd15",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/run_candidate.py": "a4e9ada96cb4989fb495b83ba95f61bc8710e984626a5f068dc9281d9f4a6757",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-00/report.json": "4acf65ee77969be4e97697fa6ae46ee60d507c056e819d8854226dcd8675ac6b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-00/plan.json": "8c34d677b4f0b7b264ef4235be42f6f7702525edd38a10d91958419d6f70d87c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-00/construct_088_1/run.log": "9dbffbaa97522bdfab223226a78d343c3053dbb7293302b5d69fbd1efd2d8943",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-00/construct_088_1/launch.json": "8bf35021576a7f7cc97af2afc3579b52d55277f874645e07260660cfb3a0c40d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-00/construct_088_1/request.expected.json": "d0bbf04ec038508b6ca4a464956ab7930882465041c184097f5f107db4585198",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-00/construct_088_1/model.json": "db1a2973f992d3f14925de9fef4a4ee0e7296dc8d01d57876a05a81d8bfa48a6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-03/report.json": "7075075da91b581f0702affe32f0921e0f78787db512e75c051b1d461cd26ee9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-03/plan.json": "e39103c3910c70c337321529acf575ad46ac50547dbef8ed40aea7dd21930410",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-02/report.json": "594d93135b300fb4f1a298b673b8560d9bbc85b3bb9b74d6de8e63f2daf5bbe0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-02/plan.json": "4f393ee8579a1b1939311ac1695425b9b0e47f6d57a4284ecaf3d4b00d3373e2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-01/report.json": "a619129ef405f5124ac8614cb7041d5e94b7661942f2745b20bd06c59b488223",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r187-shard-01/plan.json": "d103940f28a3575e55d93202f48421b4644bd028bc9058d8474c21c8040a8f16"
+  },
+  "binding": "e4eb2796a5c33c68dbd47a86953572d76ddd42a4bb61b14829132d53a6c7a9ff"
+}

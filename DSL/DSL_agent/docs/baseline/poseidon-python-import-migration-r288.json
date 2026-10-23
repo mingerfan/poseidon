@@ -1,0 +1,268 @@
+{
+  "format": "poseidon-python-import-migration-v1",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "changed_core": [
+    "scripts/baseline/model_import_cli.py",
+    "scripts/baseline/trusted_pytorch_import.py",
+    "scripts/baseline/candidate_bundle.py"
+  ],
+  "new_test": "scripts/baseline/test_poseidon_model_import.py",
+  "tests": {
+    "total": 127,
+    "passed": 124,
+    "failed": 0,
+    "skipped": 3,
+    "skip_scope": "Historical SEAL physical-evidence tests",
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-python-import-r287/tests.log"
+  },
+  "imports": {
+    "planned": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "dual_reference_groups": 32,
+    "original_module_reference_groups": 16,
+    "rows": [
+      {
+        "agent_generated": false,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-n4lukj3s",
+        "id": "static_multifile_mlp",
+        "import_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-import-e2e-r287/static_multifile_mlp/imported",
+        "import_report_sha256": "24a5af5aad7ce80c60823aed23ccbe5d73906d5f759d2e9cb375301f3110abe4",
+        "manual_candidate": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-import-e2e-r287/static_multifile_mlp/program",
+        "package_binding": "9eec402febcb948e0680ec68e22b0672de4aa2e9f1b2b96430e3dc7fec7c48ef",
+        "provenance_sha256": "e720254e7f58038d282f3f4b690f1413b005d283215bec810b606254f8314604",
+        "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-107s1sa_",
+        "report_sha256": "556c6fd0d1c5679e0fc482ae8b4b053ad42a57514e4ce329b0d63e2fc58b342e",
+        "status": "passed",
+        "comparison": {
+          "atol": 1e-05,
+          "compared_values": 8,
+          "cosine_similarity": 0.9999999999999485,
+          "mae": 1.3401853511419435e-08,
+          "max_absolute_error": 4.378618663480882e-08,
+          "max_nonzero_reference_relative_error": 8.372183103295984e-06,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "reference": {
+          "agent_generated": false,
+          "approximation_accuracy_certified": false,
+          "encrypted_execution": false,
+          "max_decomposition_error": 0.0,
+          "max_original_function_approximation_error": 0.0,
+          "mode": "offline_model_import",
+          "model_sha256": "198be6339c5ef95c94c0bca6bf11e188aa4b4b417c38d5b58842e274029a7848",
+          "original_sha256": "d46c43b8892e7dbcd9c5822bcfc3e68dc56288b3da4d10d365e7bc362fe3b562",
+          "paid_calls": 0,
+          "probes": 16,
+          "reference_status": "passed",
+          "resource_profile": {
+            "axis_size": 256,
+            "constant_elements": 4096,
+            "constants": 32,
+            "expanded_nodes": 64,
+            "input_elements": 256,
+            "inputs": 4,
+            "json_bytes": 131072,
+            "name": "legacy-v1",
+            "original_nodes": 64,
+            "output_elements": 256,
+            "outputs": 4,
+            "rank": 4,
+            "sha256": "e2de24eaf8d93604d8e532b3afcdd005c99cec8b4760189947561b16ada49f58",
+            "tensor_elements": 256,
+            "total_constant_elements": 131072
+          },
+          "runtime_layout_validated": false,
+          "schema": 1,
+          "source_hashes": {
+            "benchmark_graph.py": "d2146e3f43e722ab8d9aa23464cb280d0d069081e1a8f236fa0cf7746f32bd74",
+            "benchmark_math.py": "6e88af7b9654530b1e63fb39a2c182329476d5d011f9297f0ee7d5a6a01d5f92",
+            "benchmark_torch.py": "557cef64f05f6b291227e6b9d578fb58f24114d208daaea9888f3a0703994ebe",
+            "model_decomposition.py": "f55e76e2b59f0163e748b0e494be26f55aebb67e86a5317b9e5934f7e411b407",
+            "model_import_cli.py": "d8fc879de18583e8a55e6ee33d22d744d89b8805f64ad2209ee09ae09da13716",
+            "model_resources.py": "8b874845cf48082dd4831649f27bdeff87b2380944d9ed006f078c57f0d8d5ac",
+            "model_weight_package.py": "2d584464db452396e1a8304e6c024e5949bd28a2d5a108a753a7e1f71c3516fb",
+            "operator_reference.py": "5562899476baa4a7862c85375e42c6a38eed33e5fe06f04fda6b779d4ca9378a",
+            "restricted_model_python.py": "ffee6f0b9acb0bfd470b39e30d843267af5d63c66d221121ec4fd371b9a93bfc"
+          }
+        },
+        "reload": {
+          "agent_calls": 0,
+          "compiler_calls": 0,
+          "numerically_validated": true,
+          "status": "passed",
+          "comparison": {
+            "atol": 1e-05,
+            "compared_values": 8,
+            "cosine_similarity": 0.9999999999999898,
+            "mae": 5.983419169744257e-09,
+            "max_absolute_error": 2.0436837389059548e-08,
+            "max_nonzero_reference_relative_error": 3.283383633851957e-06,
+            "passed": true,
+            "rtol": 0.0001
+          }
+        }
+      },
+      {
+        "agent_generated": false,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-3so20o1r",
+        "id": "trusted_module_mlp",
+        "import_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-import-e2e-r287/trusted_module_mlp/imported",
+        "import_report_sha256": "a1e52c70e3b2862f9be7e1376595a0446d9ad9f8643b649857043ec43d72c97f",
+        "manual_candidate": true,
+        "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-import-e2e-r287/trusted_module_mlp/program",
+        "package_binding": "03295f2779fd05bd989f767af8f0be8d77875ce74fdb0e9b686450f433433091",
+        "provenance_sha256": "ac7cb40457918bf9da3d5cbf55e9dc9f1facd80923b7b6cf98f3d5cdd0562ad9",
+        "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-6t8f2g9a",
+        "report_sha256": "8c3141be2752c798a3f85c3df69cfa0731f44fccd85b7fdd97f9838dc71b57f0",
+        "status": "passed",
+        "comparison": {
+          "atol": 1e-05,
+          "compared_values": 8,
+          "cosine_similarity": 0.9999999999999994,
+          "mae": 1.7856767614045366e-09,
+          "max_absolute_error": 8.606224094487303e-09,
+          "max_nonzero_reference_relative_error": 7.8058235716778e-08,
+          "passed": true,
+          "rtol": 0.0001
+        },
+        "reference": {
+          "agent_generated": false,
+          "approximation_accuracy_certified": false,
+          "comparison_tolerance": {
+            "atol": 1e-12,
+            "rtol": 1e-12
+          },
+          "encrypted_execution": false,
+          "format": "poseidon-trusted-pytorch-reference-v1",
+          "manifest_sha256": "e0bf6dab5b49aaa11d031f48a4bb59b85ab4c1499eb3e24396a335caf38bccca",
+          "max_decomposition_error": 3.469446951953614e-18,
+          "max_original_function_approximation_error": 3.469446951953614e-18,
+          "max_original_module_error": 3.469446951953614e-18,
+          "max_reference_tolerance_ratio": 3.389355064459528e-06,
+          "mode": "isolated_trusted_pytorch_reference",
+          "model_sha256": "c1c176d921896f9e50fdec17bf8da5f7e1a36d41504d13341388b2e403237491",
+          "original_module_checked": true,
+          "original_sha256": "64e51e9e44dec50265841b01cff0988150150ae6360d4b63c6d9dba481a73158",
+          "paid_calls": 0,
+          "probes": 16,
+          "pure_forward_checked": true,
+          "reference_status": "passed",
+          "resource_profile": {
+            "axis_size": 256,
+            "constant_elements": 4096,
+            "constants": 32,
+            "expanded_nodes": 64,
+            "input_elements": 256,
+            "inputs": 4,
+            "json_bytes": 131072,
+            "name": "legacy-v1",
+            "original_nodes": 64,
+            "output_elements": 256,
+            "outputs": 4,
+            "rank": 4,
+            "sha256": "e2de24eaf8d93604d8e532b3afcdd005c99cec8b4760189947561b16ada49f58",
+            "tensor_elements": 256,
+            "total_constant_elements": 131072
+          },
+          "runtime": {
+            "cuda": null,
+            "hip": null,
+            "numpy": "1.25.2",
+            "python": [
+              3,
+              10,
+              14
+            ],
+            "torch": "2.0.1"
+          },
+          "runtime_layout_validated": false,
+          "source_hashes": {
+            "benchmark_graph.py": "d2146e3f43e722ab8d9aa23464cb280d0d069081e1a8f236fa0cf7746f32bd74",
+            "benchmark_math.py": "6e88af7b9654530b1e63fb39a2c182329476d5d011f9297f0ee7d5a6a01d5f92",
+            "benchmark_torch.py": "557cef64f05f6b291227e6b9d578fb58f24114d208daaea9888f3a0703994ebe",
+            "model_decomposition.py": "f55e76e2b59f0163e748b0e494be26f55aebb67e86a5317b9e5934f7e411b407",
+            "model_resources.py": "8b874845cf48082dd4831649f27bdeff87b2380944d9ed006f078c57f0d8d5ac",
+            "model_weight_package.py": "2d584464db452396e1a8304e6c024e5949bd28a2d5a108a753a7e1f71c3516fb",
+            "operator_reference.py": "5562899476baa4a7862c85375e42c6a38eed33e5fe06f04fda6b779d4ca9378a",
+            "pytorch_model_capture.py": "74fd79a71891c2fd537afc1d5fabe2648c839709979a0fc2d4c7a80e1a627355",
+            "trusted_pytorch_import.py": "3f66087b0ac307f79b20d4532f4b05f7e052b5af32e6af015d8404a7ee4877f4"
+          }
+        },
+        "reload": {
+          "agent_calls": 0,
+          "compiler_calls": 0,
+          "numerically_validated": true,
+          "status": "passed",
+          "comparison": {
+            "atol": 1e-05,
+            "compared_values": 8,
+            "cosine_similarity": 0.9999999999996633,
+            "mae": 3.497732827949674e-08,
+            "max_absolute_error": 1.5569064459874937e-07,
+            "max_nonzero_reference_relative_error": 1.597352471742151e-06,
+            "passed": true,
+            "rtol": 0.0001
+          }
+        }
+      }
+    ]
+  },
+  "actual_frontend_tracing": true,
+  "actual_compile": true,
+  "actual_ciphertext_execution": true,
+  "decryption": true,
+  "initial_encrypted_groups": 8,
+  "initial_compared_values": 16,
+  "reload_encrypted_groups": 8,
+  "reload_compared_values": 16,
+  "max_absolute_error": 4.378618663480882e-08,
+  "max_absolute_error_including_reload": 1.5569064459874937e-07,
+  "original_source_reexecuted_during_reload": false,
+  "reload_generations": 0,
+  "reload_compiler_calls": 0,
+  "current_core": {
+    "proposal": "docs/baseline/poseidon-whole-models-live-proposal-r286.json",
+    "binding": "0d877eaacbb985a649e43584b59494b0f3525ca8acc564f0053ca5a4cd823de5",
+    "files": 514,
+    "mismatch": [],
+    "live_executed": false
+  },
+  "preservation": {
+    "boundary": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-python-import-boundary-r281",
+    "intermediate": [
+      "r282",
+      "r283",
+      "r284"
+    ],
+    "final": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-import-e2e-r287"
+  },
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "parameters_changed": false,
+  "reference_changed": false,
+  "models_changed": false,
+  "compiler_core_changed": false,
+  "runtime_core_changed": false,
+  "seal_execution": false,
+  "agent_successes": 0,
+  "paid_calls": 0,
+  "downloads": 0,
+  "installs": 0,
+  "commits": 0,
+  "pushes": 0,
+  "remaining": [
+    "12 original polynomial model compiler-capacity failures",
+    "Bootstrap accuracy; r235 parameter proposal pending",
+    "3 whole-model real-Agent cases; r286 approval pending",
+    "Larger physical layouts and broader PyTorch import",
+    "x86 native, clean-machine install and CUDA deferred"
+  ]
+}

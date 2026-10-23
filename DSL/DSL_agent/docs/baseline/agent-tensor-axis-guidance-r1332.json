@@ -1,0 +1,308 @@
+{
+  "active_batch": false,
+  "backend_library_changes": false,
+  "binding": "5b796f4ff77db29c29d653b545fe49167203e061b0072230701ae18c3ec70be2",
+  "branch": "lhy-agent-dsl",
+  "candidate_cases": [
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 16,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 5.7685876853064144e-08,
+        "numerically_validated": true
+      },
+      "artifact_bindings": {
+        "artifacts/bound/bundle/manifest.json": "a9ae95dafc97748b6c41f83fe2aac0657175edd436921dcf07e4b3effe6569a7",
+        "artifacts/bound/plan.json": "359992e9fd6c485e2a2e2ad2020e45f6405b85c66bd1b247b3564de52dfbc7a9",
+        "artifacts/candidate_trace.mlir": "b874f158dcac7734bf9c34e36826ee69b6e5b2048c52b497460bfed912ced134",
+        "artifacts/lowered._hecate_golden.runtime-plan.json": "c8aded2105765a1756e4134136414292d345f52afbeb471dfb762226ef8a9f6b",
+        "artifacts/lowered.ckks.mlir": "83c35c87f2d8ced42190c0ca96bf5a2657cc49cc6b438739887c791939a81107",
+        "artifacts/lowered.earth.mlir": "e33b61c80207383411bf706226b9a25ccd3175570cb4c57c6cbc026afcd0a966",
+        "artifacts/operator-spec.json": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e"
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "e71e566a2680dc734a2199b6c29d8e6494c87edcafc0ee2d89c79010da8435cc",
+      "case": "group_mean_center",
+      "compiled": true,
+      "encrypted_execution": true,
+      "independent_reference_groups": 8,
+      "model_sha256": "5e96286a5f438971a5ff19f8db602e732866ffe72bed26a28ce4496a13bb90f1",
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v2/tasks/5feb30a2872a4509b049a843a48a2d60/program",
+      "package_binding": "8a698fab814bef701864a1e47185f1b25dd3e91030918fa8827efbd4d2bb6568",
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v2/report.json",
+      "report_sha256": "50794dc68783d1b25aff55332714b74714a778985f3bf49ef2337423b5929621",
+      "request_id": "ef75ba1deab3698ceec76fc305229ff635640825bd4a97a911e276d51bc68e5a",
+      "reuse_checks": [
+        {
+          "agent_calls": 0,
+          "compared_values": 16,
+          "compiler_calls": 0,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-5b_44v2u",
+          "input_groups": 4,
+          "maximum_absolute_error": 1.4556008304245083e-07,
+          "passed": true
+        }
+      ],
+      "status": "passed",
+      "task_id": "5feb30a2872a4509b049a843a48a2d60"
+    },
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 8,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 1.1267090760380682e-08,
+        "numerically_validated": true
+      },
+      "artifact_bindings": {
+        "artifacts/bound/bundle/manifest.json": "d036e16bf3826308f2c276c6ff06e34905264964f8a665985ecb445a04e9cdd5",
+        "artifacts/bound/plan.json": "1f237cc2e7155517126c37ef077e7a9361acedef75d32d0ca1dda530e7d74a0e",
+        "artifacts/candidate_trace.mlir": "5c9f99dc781ac44412812cfe5a7180e18763d12410929853d207808f718f58d8",
+        "artifacts/lowered._hecate_golden.runtime-plan.json": "1a6886ee51fb646bd0691b1c7fac557687abc2a4f37d33f702da6ade6371e77e",
+        "artifacts/lowered.ckks.mlir": "c355f6abf921c521f1265240a5f8942a62e1b52833aa9e73c19c112e7dbd949b",
+        "artifacts/lowered.earth.mlir": "0d84d1b08b6476faba55c8a1f9c2ae1dbd832a299e9cc633b0dd3075d3add6c8",
+        "artifacts/operator-spec.json": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e"
+      },
+      "candidate_origin": "deterministic_rule_baseline",
+      "candidate_sha256": "689174570c7da0ac70f4433973ca8b49e33eb65b10ffc8b7b9d9f4b0d1db6214",
+      "case": "leading_linear_transpose_sum",
+      "compiled": true,
+      "encrypted_execution": true,
+      "independent_reference_groups": 8,
+      "model_sha256": "328543de0540d9061a87e562a61f0706228d4a98ca794a400e430a0c6b3d07fa",
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v2/tasks/a2e8e49c819f4f48892ac8a4f78e828e/program",
+      "package_binding": "32b13cfa1205c797d3ceaff55f15cc29436e5df903e2d6110cbb08a98bd23188",
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v2/report.json",
+      "report_sha256": "50794dc68783d1b25aff55332714b74714a778985f3bf49ef2337423b5929621",
+      "request_id": "a98dbf4eb1e5288458799afb0cb6f0ba54827d55edaacfbbc6e242ba2918b1d0",
+      "reuse_checks": [
+        {
+          "agent_calls": 0,
+          "compared_values": 8,
+          "compiler_calls": 0,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-u9e_56_m",
+          "input_groups": 4,
+          "maximum_absolute_error": 1.087354870032975e-08,
+          "passed": true
+        }
+      ],
+      "status": "passed",
+      "task_id": "a2e8e49c819f4f48892ac8a4f78e828e"
+    },
+    {
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 40,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 7.355916431528442e-09,
+        "numerically_validated": true
+      },
+      "artifact_bindings": {
+        "artifacts/bound/bundle/manifest.json": "54260258a9f5ab155795f1f7f1150e9278abd2e020cab7c3da72138f43bd74bf",
+        "artifacts/bound/plan.json": "f918106b8db993946cf8144dd5701d2feb92c1c02a1cb062bcd64cc9212aadb6",
+        "artifacts/candidate_trace.mlir": "1dfa296d5af4ab4609d5a2bf72053355a508f1a0d6bf28bb1a919c3897a55578",
+        "artifacts/lowered._hecate_golden.runtime-plan.json": "b116c4a7c72087940d7560f3b208058f05d18d5d382f08cfc0551ee014d610ee",
+        "artifacts/lowered.ckks.mlir": "4a6815a044516b6b0fb1911920a07a98ec1e0feb66263f09d1d4c04cf6d56bd2",
+        "artifacts/lowered.earth.mlir": "d93df8d5e4e9c324e509221f8e3d44a673983f52fd9ae04c14b102079c656dd7",
+        "artifacts/operator-spec.json": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e"
+      },
+      "candidate_origin": "historical_real_agent_source_unmodified",
+      "candidate_sha256": "292bff0b21f31c77036cd063c8e641df458058b9599cba4d5096b3fce98077da",
+      "case": "historical_masked_mha",
+      "compiled": true,
+      "current_model_generated": false,
+      "encrypted_execution": true,
+      "historical_candidate_sha256": "292bff0b21f31c77036cd063c8e641df458058b9599cba4d5096b3fce98077da",
+      "independent_reference_groups": 8,
+      "model_sha256": "89f5cb1e47c74e0f8b086da6357084d040fdad811c653428d356896e327f271d",
+      "original_package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-mha-live-delivery-recovery-v2/tasks/5384076bf9c04dc097254d1b1db30886/program",
+      "original_source_unchanged": true,
+      "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v5/tasks/976b8ca7b7904b398dda438757170175/program",
+      "package_binding": "5862668e9cf8a680b16f688301bc15ec428521eb182f6233b6e606f62e1e95e0",
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v5/report.json",
+      "report_sha256": "5db77fee1295bf7a828a1f36ab6d86a0cbdd1da42bda48d3037cc78ae158a5c7",
+      "request_id": "646adc92b5fa8c5795f7f4380ea0c9a19e6d12b0958d1ee0c4a4b84d297cc1cd",
+      "reuse_checks": [
+        {
+          "agent_calls": 0,
+          "compared_values": 40,
+          "compiler_calls": 0,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-program-execution-xgvj3hpm",
+          "input_groups": 4,
+          "maximum_absolute_error": 1.0329024580091328e-08,
+          "passed": true
+        }
+      ],
+      "status": "passed",
+      "task_id": "976b8ca7b7904b398dda438757170175"
+    }
+  ],
+  "commits": 0,
+  "compared_values": 128,
+  "compilations": 3,
+  "controls": {
+    "binding": "506971b7ba58e5284afde72dfc3ec679870efbfb2b01c9ad3b70e150ae02a125",
+    "errors": 0,
+    "failed": 0,
+    "historical_requests": [
+      {
+        "case": "self_post_linear_residual__declared_shallow_v1",
+        "request_id": "147f85356e26b914e94f6c346243b3e9ddf1c42b2dfc387375481392850973af",
+        "sha256": "45b0df496e105b2cd19a7d7f80a2f2ef5fc49cdab09f68cc46a033f31bce4964",
+        "unchanged": true
+      },
+      {
+        "case": "linear_into_separate_cross_none__declared_shallow_v1",
+        "request_id": "5eebc4fccd6b1f0ece4bd65989daed863475c982ffbf3acaf53fd349c4eb9a54",
+        "sha256": "dcb53ad285e19f2e5efac4b6c45a7d378e16eadd5564d7303a2d6aa090779c24",
+        "unchanged": true
+      }
+    ],
+    "passed": 308,
+    "skipped": 0,
+    "tests": 308
+  },
+  "date": "2026-10-09",
+  "default_guidance_unchanged": true,
+  "downloads": 0,
+  "encrypted_calls": 6,
+  "failed": 0,
+  "format": "poseidon-tensor-axis-guidance-acceptance-v1",
+  "free_disk_bytes": 45930622976,
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "historical_contract_compatibility": {
+    "binding": "2dc6fbc54140ac253ebdcdd1f4bb9aaaee670757a4880357e10b5c3a4711b4b1",
+    "cases": 12,
+    "failed": 0,
+    "skipped": 0
+  },
+  "historical_tool_attempts": [
+    {
+      "counted_as_final": false,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332/report.json",
+      "sha256": "f3fe05f349b8392e72e759b6bc17948fa03a59df85a77d2ac7fc6b259ed66576",
+      "status": "failed",
+      "successful_cases": []
+    },
+    {
+      "counted_as_final": true,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v2/report.json",
+      "sha256": "50794dc68783d1b25aff55332714b74714a778985f3bf49ef2337423b5929621",
+      "status": "failed",
+      "successful_cases": [
+        "group_mean_center",
+        "leading_linear_transpose_sum"
+      ]
+    },
+    {
+      "counted_as_final": false,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v3/report.json",
+      "sha256": "fdd3403964c7622a70499d44b1b26cbcc692ba7e74f6d7f2f6a3dbb4e4adc39b",
+      "status": "failed",
+      "successful_cases": []
+    },
+    {
+      "counted_as_final": false,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v4/report.json",
+      "sha256": "b0e937c9332e7f1b857c416d33c681821406bca1ef51e321393e46096415f2bc",
+      "status": "running",
+      "successful_cases": []
+    },
+    {
+      "counted_as_final": true,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-tensor-axis-guidance-acceptance-r1332-v5/report.json",
+      "sha256": "5db77fee1295bf7a828a1f36ab6d86a0cbdd1da42bda48d3037cc78ae158a5c7",
+      "status": "passed",
+      "successful_cases": [
+        "historical_masked_mha"
+      ]
+    }
+  ],
+  "http_attempts": 0,
+  "identity_sha256": "e01aafd08fdb9076f6a4d1fbd51350da56f73a24f3d385e6060e0625d6899871",
+  "input_groups": 24,
+  "installs": 0,
+  "interruption_recovery": {
+    "compilation": false,
+    "encrypted_execution": false,
+    "format": "poseidon-offline-interruption-recovery-v1",
+    "provider_calls": 0,
+    "rows": [
+      {
+        "automatic_replay": false,
+        "original_metadata_unchanged": true,
+        "prior_status": "running",
+        "snapshot_sha256": "919955b3ada6b3a5fa81a6b2c351377c62ac0a0a3f765ddc72dda3200ee3748a",
+        "state_after_sha256": "c40813dd520e687e3c7141b17fd2288aa7386aee960e540b90bdf9a13be6768c",
+        "status": "service_error",
+        "task": "953549d2014d4a2196381dccf422404c"
+      }
+    ]
+  },
+  "library_identity": {
+    "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+    "dacapo_commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+    "executor_sha256": "6cdd255e321025e9286d9968864c5ce0db9333017ca62e6618c6d9830178afd4",
+    "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+    "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+    "runtime_commit": "23c8b94202a14d3e322f87c50434253d56acb9f7"
+  },
+  "maximum_absolute_error": 1.4556008304245083e-07,
+  "models_reference_changed": false,
+  "new_agent_generation": false,
+  "new_artifact_bytes": 50078098,
+  "no_private_arrays_in_public_context": true,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "opt_in": true,
+  "parameters_changed": false,
+  "passed": 3,
+  "phase_plan_binding": "e290541eafc6a2766689df631ae6e802efe34d28a224e2fc9c03fc5c38a986c6",
+  "protected_sources_changed": 0,
+  "protected_sources_checked": 654,
+  "provider_calls": 0,
+  "prs": 0,
+  "pushes": 0,
+  "remaining_live": {
+    "automatic_paid_restart": false,
+    "cross": "transport_invalid_stream; earlier subtype missing; future host receipts preserve safe classification",
+    "failed": 2,
+    "report": "docs/baseline/agent-mha-feedback-live-results-r1331.json",
+    "self": "candidate numerical semantics: head/slot grouping; improved context unverified by a new generation"
+  },
+  "sdk_rebuilds": 0,
+  "skipped": 0,
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "source_transition_binding": "2516331eea14fef4b903b395883d25af8c02766b28ad3bc7d0abcc5ac6398f48",
+  "stage_source_counts": {
+    "compilation": 622,
+    "execution": 622,
+    "generation": 628,
+    "validation": 622
+  },
+  "status": "offline_acceptance_passed_new_agent_unverified",
+  "total_result_bytes": 27555264476,
+  "unverified": [
+    "v12 newly generated Agent programs",
+    "x86 native rerun",
+    "original nonlinear application accuracy",
+    "complete generic operator/scale coverage",
+    "bootstrap and CUDA unchanged"
+  ],
+  "version": "explicit-v12"
+}

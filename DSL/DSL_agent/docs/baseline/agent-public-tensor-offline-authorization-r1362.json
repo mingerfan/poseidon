@@ -1,0 +1,9 @@
+{
+  "format": "poseidon-public-tensor-offline-authorization-v1",
+  "proposal_binding": "86ec0da725c528ffc95c0bbe565ab64ea5d4fc0c5de8ea19f97bbbf4faf7b272",
+  "proposal_sha256": "7210cc7cc1374fc51158abecdd6e727c226a1375a1105ca0ea01e14440bdb499",
+  "question_item_id": "[\"request_user_input_async\",\"call_b9de7b39f3684af497c7b610cff018c3\",0]",
+  "human_reply": "批准这4项离线续验",
+  "observed_wall": 1791634562.2485049,
+  "provider_calls_allowed": 0
+}

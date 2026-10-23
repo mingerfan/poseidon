@@ -1,0 +1,68 @@
+[
+  {
+    "patch": "dacapo-augmented-operand-order.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-bootstrap-containers.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-concat-layout.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-constant-output-path.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-gcc-qualified-casts.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-minimal-mlir-link.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-native-function-calls.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-plaintext-subtraction.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-refined-function-input-types.patch",
+    "applies": true,
+    "reverse_applies": false,
+    "diagnostic": ""
+  },
+  {
+    "patch": "dacapo-seal-runtime-exceptions.patch",
+    "applies": false,
+    "reverse_applies": false,
+    "diagnostic": "error: third_party/ckks-runtime-agent/third_party/dacapo/lib/Runtime/CMakeLists.txt: No such file or directory\n"
+  },
+  {
+    "patch": "dacapo-unused-mlir-dependencies.patch",
+    "applies": false,
+    "reverse_applies": false,
+    "diagnostic": "error: patch failed: third_party/ckks-runtime-agent/third_party/dacapo/tools/frontend.cpp:5\nerror: third_party/ckks-runtime-agent/third_party/dacapo/tools/frontend.cpp: patch does not apply\n"
+  }
+]

@@ -1,0 +1,91 @@
+{
+  "binding": "9ccf183d32f37243a5060cd6958374df942b0419a205050d53bdd2b325d6309d",
+  "case": "free_supplement_semantic_context_331124fd5981bd48a0c2971f",
+  "confirmed": "All three recorded compiler attempts violate the same frozen Earth multiplication scale/level condition.",
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mfx_vm5l",
+  "follow_up": "Preserve as compiler failures in this evaluation; only a separately scoped future diagnostic or generation may test another expression.",
+  "format": "poseidon-compiler-failure-cause-v1",
+  "inference": "Candidate polynomial evaluation depth is a likely contributor; the graph contains composed Chebyshev degrees 15/15/27.",
+  "modifications": "No change to Agent output, model, reference, security parameters or running compiler.",
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "parents": {
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp": "f022d4668e0bfac7e9389a54573836c66422dbd015fc857804f14ec6d3bd6a9c",
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/profiled_SEAL_CPU.json": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mfx_vm5l/attempt-01/compile.log": "8420b94602c59892679f6446e86b18d899c908f057fc5539e10b51e75d9246e9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mfx_vm5l/attempt-02/compile.log": "65054184e2fc88cc02f336141c664c5bf419bff8ca5250b26c6d2f633e0f8ac9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mfx_vm5l/attempt-03/compile.log": "c060e2c1e3ac39f3895904404fadf77785d8497dfcfdc1c7af623bcb30df0946",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mfx_vm5l/report.json": "9816b7376affe9c80c7c5d721db7c839e7a8a8946598eaa86b49a25c3ac75c95"
+  },
+  "request_id": "f213524fcfaf9bea4e2c02497f68b8ee15eab9ac631d242a0b72527c809f8c10",
+  "rows": [
+    {
+      "attempt": 1,
+      "conclusion": "MulOp::inferReturnTypes rejects the recorded operand types at the frozen scale/level boundary",
+      "failure_layer": "compiler",
+      "level_equal": true,
+      "lhs": {
+        "kind": "ci",
+        "level": 12,
+        "scale": 90,
+        "shape": 1
+      },
+      "required": 810,
+      "rhs": {
+        "kind": "ci",
+        "level": 12,
+        "scale": 45,
+        "shape": 1
+      },
+      "scale_level_condition_satisfied": false,
+      "shape_equal": true,
+      "upper_bound": 780
+    },
+    {
+      "attempt": 2,
+      "conclusion": "MulOp::inferReturnTypes rejects the recorded operand types at the frozen scale/level boundary",
+      "failure_layer": "compiler",
+      "level_equal": true,
+      "lhs": {
+        "kind": "pl",
+        "level": 13,
+        "scale": 45,
+        "shape": 1
+      },
+      "required": 825,
+      "rhs": {
+        "kind": "ci",
+        "level": 13,
+        "scale": 75,
+        "shape": 1
+      },
+      "scale_level_condition_satisfied": false,
+      "shape_equal": true,
+      "upper_bound": 780
+    },
+    {
+      "attempt": 3,
+      "conclusion": "MulOp::inferReturnTypes rejects the recorded operand types at the frozen scale/level boundary",
+      "failure_layer": "compiler",
+      "level_equal": true,
+      "lhs": {
+        "kind": "ci",
+        "level": 13,
+        "scale": 60,
+        "shape": 1
+      },
+      "required": 840,
+      "rhs": {
+        "kind": "pl",
+        "level": 13,
+        "scale": 45,
+        "shape": 1
+      },
+      "scale_level_condition_satisfied": false,
+      "shape_equal": true,
+      "upper_bound": 780
+    }
+  ],
+  "unconfirmed": "Whether a different legal Agent DSL fits this profile is not established by these failed candidates."
+}

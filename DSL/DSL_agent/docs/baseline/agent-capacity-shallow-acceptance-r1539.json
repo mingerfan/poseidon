@@ -1,0 +1,304 @@
+{
+  "binding": "c2089540d5a706c9cd8fadeb7fed9941c3056f0a08c680e80e4844f7bec742c7",
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "controls": {
+    "api_calls": 0,
+    "binding": "8586d2688b3fd170aaf71c3085247dd22a772b9603022904a7281a5d3473971b",
+    "compiler_calls": 0,
+    "encrypted_calls": 0,
+    "errors": 0,
+    "failed": 0,
+    "format": "poseidon-shallow-packing-controls-v1",
+    "log_sha256": "91ba185ac94010b5a118665e687d8cbf3bf3a0484a500c1a920a2ff14c1754c3",
+    "modules": [
+      "test_capacity_broadcast_runs",
+      "test_capacity_layout_costs",
+      "test_capacity_shallow_packing",
+      "test_capacity_static_index_packing",
+      "test_capacity_binding_storage",
+      "test_unified_mixed_layout",
+      "test_poseidon_sandbox_policy",
+      "test_poseidon_backend_identity",
+      "test_bundle_manifest_storage",
+      "test_candidate_bundle"
+    ],
+    "passed": 112,
+    "sdk": "711489d834dcb22010d77c03138595bf8b6f360b2a44fc8b4596ab9fdf0e7baa",
+    "seconds": 17.46561074256897,
+    "skipped": 0,
+    "source_unchanged": true,
+    "tests": 112
+  },
+  "current_active_batches": 0,
+  "evidence": [
+    "scripts/baseline/benchmarks/tools/capacity_shallow_component_v1/controls-r1537b.json",
+    "scripts/baseline/benchmarks/tools/capacity_shallow_acceptance_audit_v1/report.json",
+    "scripts/baseline/benchmarks/tools/capacity_shallow_acceptance_audit_v2/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-capacity-shallow-offline-r1534/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-capacity-shallow-offline-r1536/report.json",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-capacity-shallow-offline-r1538/report.json"
+  ],
+  "format": "poseidon-capacity-shallow-acceptance-v1",
+  "git_actions": [],
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "implementation": {
+    "activation": "explicit_only",
+    "backend_identity_unchanged": true,
+    "baseline": "capacity-chunks-v11",
+    "defaults_unchanged": true,
+    "manifest_max_bytes": 131072,
+    "manifest_storage": "legacy pretty bytes retained when within limit; compact equivalent otherwise",
+    "network_changed": false,
+    "packing": "capacity-public-tensors-v10",
+    "parameters_changed": false,
+    "planning_compiler_execution_feasibility": "unknown until actual qualification"
+  },
+  "installed_downloaded": false,
+  "numeric_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "offline": {
+    "audit_added_api_compiler_encrypted_calls": 0,
+    "audit_bindings": [
+      "6e1e0d07a2cb2db05ada7aac3eb1228a9cfc6c88a1974d7b3b48ccba2851f139",
+      "f2794768dce2b063471eea151deddc442ec023c742ae4ef05b5372e5271de220"
+    ],
+    "cases": [
+      {
+        "cache_reused": true,
+        "case": "rank_axis_8",
+        "input_groups": 4,
+        "max_absolute_error": 1.1051426829222777e-08,
+        "new_inputs": null,
+        "origin": "new_rule_baseline",
+        "output_values": 1152,
+        "package_binding": "9ed641335bfba7d6771fc9d98d8a6e5e23629a16b707165164908e985b24e742",
+        "reloaded": true,
+        "repeat": null,
+        "report_binding": "97ff9a1e460100cfd8443bc8dc23891cffb63f82fee8e2aa76d2f38c2be243e6",
+        "request_id": "1e68d70616113d01ed2e298133ac05a29fd4e3e9d6cba4b926d30a2b41bd0da2",
+        "sdk": "71f8ab04d09fbc8ab2be69db755446f75ace18d607d2f2e953d1fefe614375f2"
+      },
+      {
+        "cache_reused": true,
+        "case": "broadcast_inner",
+        "input_groups": 4,
+        "max_absolute_error": 1.8395551704131208e-06,
+        "new_inputs": null,
+        "origin": "new_rule_baseline",
+        "output_values": 96,
+        "package_binding": "c12b3cfd14abf748c5219029f6e8fd4f9c2c190a88f723a221170e74b21d7e73",
+        "reloaded": true,
+        "repeat": null,
+        "report_binding": "97ff9a1e460100cfd8443bc8dc23891cffb63f82fee8e2aa76d2f38c2be243e6",
+        "request_id": "c9819d4eb19c939eff97847c94ed83aab2b2f3e9ae40144b9871ade0bcff8a1c",
+        "sdk": "71f8ab04d09fbc8ab2be69db755446f75ace18d607d2f2e953d1fefe614375f2"
+      },
+      {
+        "cache_reused": true,
+        "case": "broadcast_tail",
+        "input_groups": 4,
+        "max_absolute_error": 1.0357610520372873e-06,
+        "new_inputs": {
+          "groups": 3,
+          "maximum_absolute_error": 1.3389542693337253e-07,
+          "values": 45
+        },
+        "origin": "new_rule_baseline",
+        "output_values": 60,
+        "package_binding": "9d471e25f806b1b01128901fb5f5374aedb14029458acfc69624c7c9de597ee6",
+        "reloaded": true,
+        "repeat": {
+          "groups": 1,
+          "maximum_absolute_error": 7.024109491271524e-08,
+          "values": 15
+        },
+        "report_binding": "97ff9a1e460100cfd8443bc8dc23891cffb63f82fee8e2aa76d2f38c2be243e6",
+        "request_id": "d61d59286d8e64f7e04f78d81dc19a2e84537942d3b3051fbff211298c246058",
+        "sdk": "71f8ab04d09fbc8ab2be69db755446f75ace18d607d2f2e953d1fefe614375f2"
+      },
+      {
+        "cache_reused": true,
+        "case": "suffix_cross_chunk",
+        "input_groups": 4,
+        "max_absolute_error": 2.120304432029485e-09,
+        "new_inputs": null,
+        "origin": "new_rule_baseline",
+        "output_values": 36,
+        "package_binding": "8d03fdaeb12794cbdcd1bd4a8c02c3272ba5f5b9049bdd5e82f82ec00ec70299",
+        "reloaded": true,
+        "repeat": null,
+        "report_binding": "97ff9a1e460100cfd8443bc8dc23891cffb63f82fee8e2aa76d2f38c2be243e6",
+        "request_id": "102f132ede561988d81e9ab7e331c28f20fabe088b999df066214455e79a6d30",
+        "sdk": "71f8ab04d09fbc8ab2be69db755446f75ace18d607d2f2e953d1fefe614375f2"
+      },
+      {
+        "cache_reused": true,
+        "case": "compat_rank_permute_32",
+        "input_groups": 4,
+        "max_absolute_error": 2.166804735637129e-09,
+        "new_inputs": null,
+        "origin": "new_rule_baseline",
+        "output_values": 544,
+        "package_binding": "5f395c835e9e10fba7f06964513944fb3f4ec4d41862a1ed07b75951c58ac142",
+        "reloaded": true,
+        "repeat": null,
+        "report_binding": "97ff9a1e460100cfd8443bc8dc23891cffb63f82fee8e2aa76d2f38c2be243e6",
+        "request_id": "810e29bac2a6d1030638f30ab6cbc93bb2a0b8d25b220ac611a933bacc3fee74",
+        "sdk": "71f8ab04d09fbc8ab2be69db755446f75ace18d607d2f2e953d1fefe614375f2"
+      },
+      {
+        "cache_reused": true,
+        "case": "rank_linear_16",
+        "input_groups": 4,
+        "max_absolute_error": 3.166009780730672e-10,
+        "new_inputs": {
+          "groups": 3,
+          "maximum_absolute_error": 1.136495962009848e-09,
+          "values": 2268
+        },
+        "origin": "new_rule_baseline",
+        "output_values": 3024,
+        "package_binding": "bc6eeb81b6e1a931bf12c14f250dcd5155454baa2c6be98c5016f7654b3efea4",
+        "reloaded": true,
+        "repeat": {
+          "groups": 1,
+          "maximum_absolute_error": 2.8256806139728696e-10,
+          "values": 756
+        },
+        "report_binding": "73f4f056be81682662c64dcbab6fdd89e2310143d7904bc2e4eaf60f02d243e5",
+        "request_id": "29808480f8cd086733c5dd3213b18f55e9dbbd90fd2661811eb9de9e6d3a0ebe",
+        "sdk": "711489d834dcb22010d77c03138595bf8b6f360b2a44fc8b4596ab9fdf0e7baa"
+      },
+      {
+        "cache_reused": true,
+        "case": "suffix_three",
+        "input_groups": 4,
+        "max_absolute_error": 2.4015847088776354e-09,
+        "new_inputs": null,
+        "origin": "new_rule_baseline",
+        "output_values": 16,
+        "package_binding": "088d653a67a8cc67a1465b24ac47715111c6f85bc07142c41035884022a013d9",
+        "reloaded": true,
+        "repeat": null,
+        "report_binding": "73f4f056be81682662c64dcbab6fdd89e2310143d7904bc2e4eaf60f02d243e5",
+        "request_id": "1733888bd24591e4e376320ca0edcfe35ca8b83135a4535a66147c1b39b337ab",
+        "sdk": "711489d834dcb22010d77c03138595bf8b6f360b2a44fc8b4596ab9fdf0e7baa"
+      },
+      {
+        "cache_reused": true,
+        "case": "suffix_five",
+        "input_groups": 4,
+        "max_absolute_error": 6.014866243964079e-10,
+        "new_inputs": null,
+        "origin": "new_rule_baseline",
+        "output_values": 12,
+        "package_binding": "c396436a6b508ff12d9d4d4329349499ab5f4798cfec7d6a4fb83327e37dbde6",
+        "reloaded": true,
+        "repeat": null,
+        "report_binding": "73f4f056be81682662c64dcbab6fdd89e2310143d7904bc2e4eaf60f02d243e5",
+        "request_id": "ed4c7baa869eb741ffc2cdaec3f230ef7f72f26e6d5c3f4f55d313619f773713",
+        "sdk": "711489d834dcb22010d77c03138595bf8b6f360b2a44fc8b4596ab9fdf0e7baa"
+      },
+      {
+        "cache_reused": true,
+        "case": "linear_rows",
+        "input_groups": 4,
+        "max_absolute_error": 9.925115521114414e-10,
+        "new_inputs": null,
+        "origin": "new_rule_baseline",
+        "output_values": 36,
+        "package_binding": "63e95035f8abaed286ba3447f59dfd76b83df0339051279037348ddbcfed9f59",
+        "reloaded": true,
+        "repeat": null,
+        "report_binding": "73f4f056be81682662c64dcbab6fdd89e2310143d7904bc2e4eaf60f02d243e5",
+        "request_id": "8e1816d317c964976e10e4d84f65bc9465dea2eb124880f1cd34c05634587d0e",
+        "sdk": "711489d834dcb22010d77c03138595bf8b6f360b2a44fc8b4596ab9fdf0e7baa"
+      },
+      {
+        "cache_reused": true,
+        "case": "linear_tail",
+        "input_groups": 4,
+        "max_absolute_error": 7.916184374678892e-10,
+        "new_inputs": {
+          "groups": 3,
+          "maximum_absolute_error": 2.5909553669212215e-10,
+          "values": 30
+        },
+        "origin": "new_rule_baseline",
+        "output_values": 40,
+        "package_binding": "eb1008110160bc2222e94a8a0501f870ad8d5453d58ba1c44174e3211e36867a",
+        "reloaded": true,
+        "repeat": {
+          "groups": 1,
+          "maximum_absolute_error": 1.9871509993052427e-10,
+          "values": 10
+        },
+        "report_binding": "73f4f056be81682662c64dcbab6fdd89e2310143d7904bc2e4eaf60f02d243e5",
+        "request_id": "78e9a84bd4a5b09e29c8e7ef38ec1ea9086599f86811556c2282b244cf7620d8",
+        "sdk": "711489d834dcb22010d77c03138595bf8b6f360b2a44fc8b4596ab9fdf0e7baa"
+      }
+    ],
+    "confirmed_completed_compilations": 11,
+    "confirmed_encrypted_calls": 17,
+    "current_sdk_models": 5,
+    "historical_sdk_models": 5,
+    "latest_batch_failed": 0,
+    "latest_batch_not_run": 0,
+    "latest_batch_passed": 5,
+    "latest_batch_skipped": 0,
+    "maximum_absolute_error": 1.8395551704131208e-06,
+    "passed": 10,
+    "positive_input_groups": 52,
+    "positive_output_values": 8140,
+    "unique_models": 10
+  },
+  "phase": "explicit capacity-public-tensors-v10",
+  "provider": {
+    "new_http_attempts": 0,
+    "new_real_agent_generations": 0,
+    "next_planned_cases": 9,
+    "status": "not_started"
+  },
+  "reference_tolerance": {
+    "atol": 1e-12,
+    "rtol": 1e-12
+  },
+  "remaining": [
+    "Current Agent generation for new v10 public rules",
+    "Unverified rank, layout and capacity combinations",
+    "Original-function application accuracy",
+    "Agent-chain bootstrap",
+    "CUDA hardware acceptance",
+    "Full ResNet20"
+  ],
+  "retained_failures": [
+    {
+      "cause": "capacity_layout_costs missing in sandbox read-only inventory",
+      "failed": 5,
+      "layer": "tracing_environment",
+      "report": "97ff9a1e460100cfd8443bc8dc23891cffb63f82fee8e2aa76d2f38c2be243e6",
+      "resolved_in": "73f4f056be81682662c64dcbab6fdd89e2310143d7904bc2e4eaf60f02d243e5"
+    },
+    {
+      "cause": "pretty manifest 132743 bytes exceeds preserved 131072 byte limit",
+      "failed": 1,
+      "layer": "package_delivery",
+      "not_run": 4,
+      "numeric_pass": true,
+      "report": "e06bf1232513234c7efe1c539f442792abf4db1e5da72e124b196da6a8663691",
+      "resolved_in": "73f4f056be81682662c64dcbab6fdd89e2310143d7904bc2e4eaf60f02d243e5"
+    }
+  ],
+  "sdk": "711489d834dcb22010d77c03138595bf8b6f360b2a44fc8b4596ab9fdf0e7baa",
+  "source_origin": "rule_baseline; graph intake; not new Agent generation or repeated PyTorch source capture",
+  "storage": {
+    "free_bytes": 34339577856,
+    "per_case_batch_cap_bytes": 4294967296,
+    "reserve_bytes": 4294967296,
+    "total_cap_bytes": 51539607552,
+    "used_bytes": 40138915840
+  }
+}

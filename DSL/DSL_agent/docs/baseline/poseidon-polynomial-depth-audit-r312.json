@@ -1,0 +1,556 @@
+{
+  "format": "poseidon-polynomial-depth-diagnostics-v1",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "manual_only": true,
+  "static_preparation": [
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-compact-prepare-r297/report.json",
+      "sha256": "0fabd3980df06d0003de1d072c2b40d28e0f7d77185ff438f6fce747c1d19968",
+      "planned": 24,
+      "states": {
+        "ready": 18,
+        "blocked": 6
+      },
+      "modes": {
+        "high": {
+          "ready": 12
+        },
+        "medium": {
+          "ready": 6,
+          "blocked": 6
+        }
+      },
+      "ast_range": [
+        3194,
+        4145
+      ]
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-all-prepare-r302/report.json",
+      "sha256": "d15876d28c8c2c3dbd3e97b7605ab0e320f24d6ad26bc9e9618eed865a380cba",
+      "planned": 12,
+      "states": {
+        "blocked": 12
+      },
+      "modes": {
+        "all": {
+          "blocked": 12
+        }
+      },
+      "ast_range": [
+        4251,
+        4387
+      ]
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-deep-prepare-r304/report.json",
+      "sha256": "ad074635897b8c32a0c06de2f2b2c50debad120a614dfb93b5605861b8c235f9",
+      "planned": 12,
+      "states": {
+        "blocked": 12
+      },
+      "modes": {
+        "all": {
+          "blocked": 12
+        }
+      },
+      "ast_range": [
+        4211,
+        4347
+      ]
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-last-prepare-r306/report.json",
+      "sha256": "1266f79f0626cb9633199f062156aab751c9e0fc6653d320023340703b6a22ce",
+      "planned": 24,
+      "states": {
+        "ready": 24
+      },
+      "modes": {
+        "native": {
+          "ready": 12
+        },
+        "lane": {
+          "ready": 12
+        }
+      },
+      "ast_range": [
+        3060,
+        3196
+      ]
+    },
+    {
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-lazy-prepare-r309/report.json",
+      "sha256": "90a5b0939bfc8e615f9efe0efe3ba281abe879444f63565f537805abad30a2b7",
+      "planned": 24,
+      "states": {
+        "ready": 18,
+        "blocked": 6
+      },
+      "modes": {
+        "native": {
+          "ready": 12
+        },
+        "lane": {
+          "ready": 6,
+          "blocked": 6
+        }
+      },
+      "ast_range": [
+        3060,
+        9202
+      ]
+    }
+  ],
+  "deduplication": {
+    "key": [
+      "model_sha256",
+      "source_sha256"
+    ],
+    "unique_model_source_pairs": 72,
+    "unique_static_reference_ready_pairs": 36,
+    "unique_models": 12,
+    "count_as_new_benchmark_models": false
+  },
+  "compile": {
+    "attempts": [
+      {
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-high-r300/report.json",
+        "report_sha256": "b824d3f33651be1bda0e098ce505f59f07efff6a8d8ce53a2525fdf2129a36f1",
+        "binding": "cfc7edf976402991bcc92ef2634c8c2cbe42f9e7ea585044bcf0cbbe0ae7e141",
+        "model_id": "bench_helper_0040",
+        "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+        "candidate_sha256": "49440d0d3f68eef1bf5509b3ef872f9ddfe18b45b364532f2bb7eadcc55c917c",
+        "compiled": false,
+        "executed": false,
+        "numerical_comparison": null,
+        "failure_layer": "compiler",
+        "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mkyjyvyb/attempt-00/compile.log",
+        "compile_log_sha256": "89012db0a5d54cdca4d32520b5dc657d9936470e18a46f54b394927e2ee04838",
+        "first_failure": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %357 = \"earth.mul\"(%341, %356) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>",
+        "operand_types": [
+          {
+            "type": "ci",
+            "scale_log2": 90,
+            "earth_consumed_level": 11
+          },
+          {
+            "type": "pl",
+            "scale_log2": 45,
+            "earth_consumed_level": 11
+          }
+        ],
+        "product_scale_log2": 135,
+        "duplicate_candidate_attempt": false
+      },
+      {
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-medium-r301/report.json",
+        "report_sha256": "7a4324eb3cb17479aef368188ca7d7c4f45348c0f8789505358f85b9a359ba0d",
+        "binding": "0438cb2da3e4adde671e93e345ce964f5a69beb8734378211e60fffce972c412",
+        "model_id": "bench_helper_0040",
+        "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+        "candidate_sha256": "db310709b29ff6dcb19afac48509c44f475f972eb0bfca7ed6275be6d350f951",
+        "compiled": false,
+        "executed": false,
+        "numerical_comparison": null,
+        "failure_layer": "compiler",
+        "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-nn0fe2yb/attempt-00/compile.log",
+        "compile_log_sha256": "fa8d9082baf8b25c2ecb80e4a1bc180e8574c2bccd0a291afea636a6a53e6c61",
+        "first_failure": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %420 = \"earth.mul\"(%404, %419) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.pl<45 * 11>>) -> tensor<1x!earth.ci<0 * 0>>",
+        "operand_types": [
+          {
+            "type": "ci",
+            "scale_log2": 90,
+            "earth_consumed_level": 11
+          },
+          {
+            "type": "pl",
+            "scale_log2": 45,
+            "earth_consumed_level": 11
+          }
+        ],
+        "product_scale_log2": 135,
+        "duplicate_candidate_attempt": false
+      },
+      {
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-last-r307/report.json",
+        "report_sha256": "2d4df25a235d595dd29f47219d4e45e1900a4258656a2d4869f79526c5e869f8",
+        "binding": "039349e60e8fbb594ba2cf007c79d393de11f9b6e093ffed09dd74222edb36b7",
+        "model_id": "bench_helper_0040",
+        "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+        "candidate_sha256": "9d0ae40473a12f2d1fc23c48535e244ec1fc35022b9e0be4724a2e1e1eb675e0",
+        "compiled": false,
+        "executed": false,
+        "numerical_comparison": null,
+        "failure_layer": "compiler",
+        "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-g1hv81en/attempt-00/compile.log",
+        "compile_log_sha256": "653eee023c037057f76da0ca4f39d7c4e6e33231d026aaf1d31ecb1196ab7518",
+        "first_failure": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %193 = \"earth.mul\"(%192, %191) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.ci<60 * 11>>) -> tensor<1x!earth.ci<0 * 0>>",
+        "operand_types": [
+          {
+            "type": "ci",
+            "scale_log2": 90,
+            "earth_consumed_level": 11
+          },
+          {
+            "type": "ci",
+            "scale_log2": 60,
+            "earth_consumed_level": 11
+          }
+        ],
+        "product_scale_log2": 150,
+        "duplicate_candidate_attempt": false
+      },
+      {
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-last-r308/report.json",
+        "report_sha256": "73046e71f90d8ad010572fc51fb0bd557ce0591508863986ced8f58958d3e709",
+        "binding": "a67e3b49352a32a0e235c549455c8124b03e238fa71b04dc4d1851a05e5132b4",
+        "model_id": "bench_helper_0040",
+        "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+        "candidate_sha256": "9d0ae40473a12f2d1fc23c48535e244ec1fc35022b9e0be4724a2e1e1eb675e0",
+        "compiled": false,
+        "executed": false,
+        "numerical_comparison": null,
+        "failure_layer": "compiler",
+        "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ljxq_6br/attempt-00/compile.log",
+        "compile_log_sha256": "653eee023c037057f76da0ca4f39d7c4e6e33231d026aaf1d31ecb1196ab7518",
+        "first_failure": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %193 = \"earth.mul\"(%192, %191) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.ci<60 * 11>>) -> tensor<1x!earth.ci<0 * 0>>",
+        "operand_types": [
+          {
+            "type": "ci",
+            "scale_log2": 90,
+            "earth_consumed_level": 11
+          },
+          {
+            "type": "ci",
+            "scale_log2": 60,
+            "earth_consumed_level": 11
+          }
+        ],
+        "product_scale_log2": 150,
+        "duplicate_candidate_attempt": true
+      },
+      {
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-lazy-r310/report.json",
+        "report_sha256": "3bffbf8b21743fffcf3dbd87ddfc2698bf5de9fb33b9a7aefb9e58d9434f3ab4",
+        "binding": "0e7d4be395ed0fe9d39def4c787217d9f55e88d4b29be983190c226ff7515585",
+        "model_id": "bench_helper_0040",
+        "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+        "candidate_sha256": "7e05c05696a9e4d35496fc429c0c8d47f6b31bd0f2220fe90bba81d383a1184d",
+        "compiled": false,
+        "executed": false,
+        "numerical_comparison": null,
+        "failure_layer": "compiler",
+        "compile_log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-43jdoa38/attempt-00/compile.log",
+        "compile_log_sha256": "336bc66f31294825e7a9243e3d9eb5e1a5ec629f8c9d857774db224940c2e113",
+        "first_failure": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %216 = \"earth.mul\"(%196, %196) : (tensor<1x!earth.ci<90 * 11>>, tensor<1x!earth.ci<90 * 11>>) -> tensor<1x!earth.ci<0 * 0>>",
+        "operand_types": [
+          {
+            "type": "ci",
+            "scale_log2": 90,
+            "earth_consumed_level": 11
+          },
+          {
+            "type": "ci",
+            "scale_log2": 90,
+            "earth_consumed_level": 11
+          }
+        ],
+        "product_scale_log2": 180,
+        "duplicate_candidate_attempt": false
+      }
+    ],
+    "attempt_count": 5,
+    "unique_candidates": 4,
+    "unique_models": 1,
+    "duplicate_attempts": 1,
+    "passed": 0,
+    "failed": 5,
+    "encrypted_executions": 0,
+    "numerical_passes": 0
+  },
+  "symbolic_degree": {
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-polynomial-degree-r311/report.json",
+    "sha256": "39fb43a5369320e8bb9fbb4167f5a7b754e7a878c9986f8184a73251f5f5a76d",
+    "restriction": "First logical input element is indeterminate t; every other logical input element is zero",
+    "assumptions": [
+      "Exact declared polynomial arithmetic",
+      "Addition, public scaling and rotation do not increase degree",
+      "Ciphertext multiplication multiplies two polynomial messages",
+      "No bootstrap or alternative approximation"
+    ],
+    "caveats": [
+      "Not an encrypted execution",
+      "Not proof of impossibility for all CKKS schedules or finite-test candidates",
+      "Does not justify changing scale, model, reference, compiler or security parameters"
+    ],
+    "models": [
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0040",
+        "model_sha256": "96310b3f21b0889b0a4aba614db1429a856b359e2bbf7d751194a530f8c4d425",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0044",
+        "model_sha256": "41682ade40051e88b1348bc657effe9a7b95756a5cc51cf13c406ecad41c705c",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0032",
+        "model_sha256": "e156be0aee814237c457e8642ec7242033ecacc2a5294ad3119a6a4516deda80",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0036",
+        "model_sha256": "55617d86cbab85f76a4119fc24636ce649b8ad421832fd3ec8a9a237c56e8e53",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 28414,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "semantic_context_331124fd5981bd48a0c2971f",
+        "model_sha256": "6436d4ae89fecee80b2fafdcfb977b63574ef8a0baf8b008ec76d7306e29753f",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0035",
+        "model_sha256": "fb2f6be2755870ab149ed7467b1c7887f6f5688c60359e38a4586e1a57366b88",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0039",
+        "model_sha256": "4d3762fdfc4b6ea21e84698ea4564cb1ba0953189e0b0484f8618faff5f3aeda",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 28414,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "semantic_context_89458ebf15d877d81d6b8b2d",
+        "model_sha256": "0cc2ed35c5b3385913dc292f7183cbf1526d9e9b9df82dd418d4b461c5d55573",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0042",
+        "model_sha256": "819b7d137d193a8008187b7cd8b937fb583da74762763c27f3136090e9e946e0",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0046",
+        "model_sha256": "3409dead9f6affb47a174499cdf47c2494b9a2ac7d3404a6ed3f5cfa7b6db102",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0043",
+        "model_sha256": "8af9d9afaddd02d4fe328c2bf730ab5135e75565d2e15788015b84390b42c559",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      },
+      {
+        "leading_coefficient_nonzero": true,
+        "leading_denominator_bits": 22338,
+        "leading_numerator_bits": 21901,
+        "minimum_ciphertext_multiplication_depth": 13,
+        "model_id": "bench_helper_0047",
+        "model_sha256": "6183887fabc9e0f599d520685c583093619816ec0529a681291d71f56e4bbc0d",
+        "output_degree": 6076,
+        "polynomial_degrees": [
+          15,
+          15,
+          27
+        ],
+        "status": "degree_proven_on_symbolic_restriction"
+      }
+    ],
+    "unit_tests": {
+      "failed": 0,
+      "passed": 5
+    }
+  },
+  "parameter_capacity": {
+    "source_execution_metadata": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-n4lukj3s/attempt-00/output/execution-metadata.json",
+    "source_sha256": "f9108a8614143fede0806e8cf27aab1f79e486e377381ec8467dad3cfe407e81",
+    "q": [
+      1152921504581419009,
+      1152921504581877761,
+      1152921504583647233,
+      1152921504585547777,
+      1152921504586530817,
+      1152921504589938689,
+      1152921504592429057,
+      1152921504592822273,
+      1152921504593412097,
+      1152921504595640321,
+      1152921504595968001,
+      1152921504597016577,
+      1152921504598720513
+    ],
+    "p": [
+      1152921504606584833
+    ],
+    "data_moduli": 13,
+    "special_moduli": 1,
+    "degree": 32768,
+    "security": "tc128",
+    "qp_product_bit_length": 840,
+    "two_data_moduli_product_bit_length": 120,
+    "two_data_moduli_log2_capacity": 119.99999999993693,
+    "one_extra_existing_60_bit_q_product_bit_length": 900,
+    "tc128_limit": 881,
+    "security_table_source": "src/poseidon/basics/util/hestdparms.h",
+    "security_table_sha256": "ddd9f76b8836093ce2c71a863429d3b025cb9bd06cbdb2f9fa978fbfaecb1da5",
+    "extra_q_not_authorized_or_executed": true
+  },
+  "terminal_and_environment": [
+    {
+      "record": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-chebyshev-r296-terminal-observation.json",
+      "sha256": "b9f8aeb3d3dcfd5b73d74355a3bdb36c5d2bb438fb9afce7b2561db2a17a0872"
+    },
+    {
+      "record": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-weighted-high-r298-startup-error.json",
+      "sha256": "c527be191075e3aafde7c21960fe3e324b1c41954842ac640309f1b827d0a65d"
+    }
+  ],
+  "active_source_binding": {
+    "proposal": "docs/baseline/poseidon-whole-models-live-proposal-r286.json",
+    "binding": "0d877eaacbb985a649e43584b59494b0f3525ca8acc564f0053ca5a4cd823de5",
+    "files": 514,
+    "mismatch": [],
+    "status": "pending_approval"
+  },
+  "remaining_original_models": 12,
+  "original_models_changed": false,
+  "coefficients_changed_or_truncated": false,
+  "compiler_runtime_or_library_changed": false,
+  "security_parameters_changed": false,
+  "reference_or_tolerance_changed": false,
+  "paid_calls": 0,
+  "agent_generated_successes": 0,
+  "sdk_rebuilds": 0,
+  "installations": 0,
+  "downloads": 0,
+  "git_commit_or_push": false,
+  "conclusion": "Equivalent exact expressions retained the declared polynomial but still failed real compiler capacity checks. Degree evidence explains depth pressure; it is not a universal CKKS scheduling impossibility or compiler-bug proof.",
+  "next_actions": [
+    {
+      "action": "Real Agent generation for MLP/RMSNorm/Attention",
+      "proposal": "docs/baseline/poseidon-whole-models-live-proposal-r286.json",
+      "status": "pending_approval"
+    },
+    {
+      "action": "Independent CPU bootstrap ratio128 trial",
+      "proposal": "docs/baseline/poseidon-native-bootstrap-proposal-r235.json",
+      "status": "pending_approval"
+    },
+    {
+      "action": "Continue higher-operator and physical-layout development with existing dependencies",
+      "status": "authorized_offline_only"
+    }
+  ]
+}

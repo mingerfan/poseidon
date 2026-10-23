@@ -1,0 +1,131 @@
+{
+  "format": "poseidon-source-precision-component-phase-v1",
+  "status": "implemented_and_representatively_validated",
+  "date": "2026-10-09",
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "files": {
+    "scripts/baseline/source_precision_reference.py": "5a1476afd47931c22591768be3a1b64bcbbb30ba97c4e54253c59fa0fe4db68d",
+    "scripts/baseline/test_source_precision_reference.py": "f9495adc6e56559451d64d3c2f07d2b574acb7a364b0e88f6e7816ef075e3d73",
+    "scripts/baseline/task_source_reference.py": "200546ff376362e5b39eebd218239a80dcb73fa8662978feb0d052b0a58b330a",
+    "scripts/baseline/test_task_source_reference.py": "916da64d069e97e1a8538960240af78691ae31b658d1b50fb778e74807168d24"
+  },
+  "interface": "TaskSourceReference(Application).reference(task, samples, output_directory, expected_package_binding=..., input_dtypes=..., trust_local_code=True)",
+  "control_tests": {
+    "unique_passed": 48,
+    "unique_failed": 0,
+    "unique_skipped": 0,
+    "native_adapter": 19,
+    "source_component": 7,
+    "existing_numerical_component": 22
+  },
+  "control_evidence": {
+    "native_tests": {
+      "report_binding": "e2a5c562b286b572ce33df40cb601f393dbf8eda467b660fed2396bf5eb9cda7",
+      "report_status": "failed",
+      "accepted_subset": [
+        "test_changed_source_weight_or_manifest_rejected_before_worker",
+        "test_exact_float64_and_no_input_rounding",
+        "test_existing_output_directory_is_preserved",
+        "test_factory_parameters_and_multifile_helper",
+        "test_float32_linear_preserves_source_weight_and_input_precision",
+        "test_gelu_tanh_executes_source_variant",
+        "test_host_marker_cannot_be_read_in_sandbox",
+        "test_input_alias_mutation_uses_owned_storage",
+        "test_invalid_samples_dtypes_and_output_binding_rejected",
+        "test_nested_dictionary_tuple_list_and_none",
+        "test_no_model_import_or_worker_without_trust",
+        "test_output_structure_mismatch_is_rejected",
+        "test_public_state_mutation_is_rejected",
+        "test_random_forward_is_rejected",
+        "test_registered_integer_and_boolean_buffers_preserve_dtype",
+        "test_scalar_output_abi",
+        "test_sixteen_samples_and_report_protocol_rejections",
+        "test_source_dtype_mismatch_is_explicit_failure",
+        "test_timeout_is_controlled_and_old_limits_unchanged"
+      ],
+      "excluded": "The one queued/pending component fixture failure was later corrected",
+      "successful_native_reference_reports": 9
+    },
+    "component_tests": {
+      "report_binding": "de44b5b41189908f0d36dc1b21bc18f350f67ec17c0cdc5d02019ec7142614ed",
+      "tests": {
+        "run": 29,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "source_acceptance": {
+    "status": "passed",
+    "samples": 3,
+    "compared_values": 30,
+    "dtype": "float64",
+    "native_vs_mathematical_max_absolute_error": 1.1102230246251565e-16,
+    "approximation_max_absolute_error": 0.7657156493384427,
+    "historical_decrypted_vs_native_max_absolute_error": 0.7657156472095206,
+    "native_reference_binding": "756bae015d7213453a78e9756c1f91f567014ce514a3041fca91792775ae2167",
+    "task_reference_binding": "b4d60c40fe183eca9b97533d68c560512c2fb6a9c356bf547db7592060687181",
+    "binding": "a82201ba234f05696f363dfa3ee834df7268505bca0e48d87b48bf3342b76815",
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-source-precision-acceptance-v1/report.json"
+  },
+  "historical_ckks_evidence": {
+    "phase": "r1321",
+    "max_absolute_error": 5.218970255960187e-09,
+    "reexecuted_this_turn": false,
+    "threshold": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "conclusions": {
+    "raw_mha_source_agrees_with_independent_math_on_supplied_inputs": true,
+    "large_mha_error_is_declared_approximation": true,
+    "whole_model_application_accuracy_certified": false,
+    "original_task_package_model_weights_parameters_and_reference_preserved": true
+  },
+  "sandbox": {
+    "network_namespace_verified": true,
+    "model_imported_in_host": false,
+    "address_space_bytes": 4294967296,
+    "cpu_seconds": 150,
+    "file_bytes": 16777216,
+    "open_files": 128,
+    "wall_seconds": 180
+  },
+  "counts": {
+    "api_calls": 0,
+    "http_attempts": 0,
+    "new_compilation": 0,
+    "new_encrypted_execution": 0,
+    "installs": 0,
+    "downloads": 0,
+    "backend_changes": 0,
+    "parameters_changed": 0,
+    "commits": 0,
+    "pushes": 0
+  },
+  "preserved_failures": [
+    "Versioned approximation fields missing in test fixture",
+    "Worker JSON API required Path",
+    "Cleared worker environment selected x86 default Torch label; fixed by explicit platform and checking actual loaded versions",
+    "NaN fixture hashing failed before reaching the gate",
+    "Component queued state was incorrectly called pending in test fixture"
+  ],
+  "initial_report_correction": "Initial source_forward_executed flag was an intent field, not evidence; erratum retained, successful initial reports 0",
+  "freeze": {
+    "frozen_stage_sources": 691,
+    "protected_files": 654,
+    "pending_mha_retest_approved": false,
+    "paid_calls": 0
+  },
+  "remaining": [
+    "Combine bound native-source reference with explicit application metrics",
+    "Dataset/batched source precision evaluation beyond individual assessment",
+    "Activate parameter boundary after frozen MHA scope",
+    "Two reviewed MHA live retests await existing authorization"
+  ],
+  "binding": "36e70bd1f10d3270b920521663ca3b5accd538fe6dba417bafd33b647b80492b"
+}

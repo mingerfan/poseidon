@@ -1,0 +1,73 @@
+{
+  "after_sha256": "7bde802bea8913523f561f7b555f53437ae40a5fffc681a9a6eca063bb813706",
+  "backend_changes": 0,
+  "backend_identity_unchanged": true,
+  "before_sha256": "de6b1c4a2e02987dc51f8e55d73ac874e0aeb101e13871df3d49df9c486deec4",
+  "binding": "c25e0a4cb6136d60e56fadc417339eb1d04bed972777fc2257846a0d3907386d",
+  "commits": 0,
+  "compiler_calls": 0,
+  "conservative_stage_identities_changed": {
+    "compilation": true,
+    "execution": true,
+    "generation": true,
+    "validation": true
+  },
+  "control_binding": "878059b9bfce99c14c799f73fe7d8cf6feafcdee463400f24a092fd29db5cba1",
+  "controls": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 32,
+    "skipped": 0,
+    "tests": 32
+  },
+  "diff": [
+    "--- program_execution.py.before\n",
+    "+++ program_execution.py\n",
+    "@@ -120,7 +120,8 @@\n",
+    "                                 or ordered(package[\"manifest\"])):",
+    "         structure = copy.deepcopy(provenance[\"reference_report\"][\"capture_metadata\"][\"output_structure\"])",
+    "     result=dict(original_model=provenance[\"original\"],output_structure=structure)",
+    "-    if package is not None and package[\"manifest\"][\"format\"]==\"poseidon-trusted-pytorch-v16\":",
+    "+    from pytorch_ordered_contract import allows_none_output",
+    "+    if package is not None and allows_none_output(package[\"manifest\"]):",
+    "         result[\"output_structure_policy\"]=\"poseidon-mha-ordered-source-v1\"",
+    "     return result",
+    " "
+  ],
+  "downloads": 0,
+  "encrypted_calls": 0,
+  "evidence_hashes": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-offline-results-r1370.json": "a68382b15dfdafd38c6b63bf5e257459460dcd18ac9cdedab59b4c58addcdb1b",
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-public-expression-output-offline-proposal-r1372.json": "bf43002b956471f5a05854f9a1a25c132b715f11d3a7e13a6cef23af85293013",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_output_tree_v1/change.json": "26dde3f3decf09da8ad7dd09c66202ab7b1dde9244cc15218fff52412626e867",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_output_tree_v1/controls.json": "d1ad21cc87b05f5fff22ed30def05b83c4eab0ba8408d3141e3d3ab580d866ed",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/public_expression_output_tree_v1/controls.log": "743f6725ec527ce3edea8398b13bb4af931bd42bf33b2706c7eb134b6900b576",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/test_program_output_tree_contract.py": "cf8c7bfa77e67d5747189cc40f80440d90618b38aff8b3819b779e731be58f2e"
+  },
+  "format": "poseidon-program-static-output-repair-v1",
+  "historical_result_rewritten": false,
+  "http_attempts": 0,
+  "installations": 0,
+  "modified_source": "scripts/baseline/program_execution.py",
+  "network_changes": 0,
+  "new_test": "scripts/baseline/test_program_output_tree_contract.py",
+  "next_offline_proposal_binding": "0e0d796df8da1070f56c39209036bf1239490b1c8acbd0425e18d0042fc0e63a",
+  "old_execution_binding_rejected": true,
+  "old_sdk_identity": "b41fe9599da34b14b013ce1aad5237969897132f0f0130643c795fc780841d5a",
+  "original_audit_binding": "43f485c321dce9572e9d4abbd5b61b5122d9fb40af282f5574232b18d174145f",
+  "parameter_changes": 0,
+  "pending_current_backend_requalification": true,
+  "provider_calls": 0,
+  "public_output_policy": "registered inherited static None output; versions 16..23 only",
+  "pushes": 0,
+  "recorded_at_utc": "2026-10-10T16:26:23.591218+00:00",
+  "reused_historical_decrypted_groups": 3,
+  "reused_historical_decrypted_values": 36,
+  "sdk_identity": "e2b3e63c27e8ed49f6ddca34b2c5a5d8be366eefa9cdb1ab67d9b953b8a64992",
+  "stage_identities": {
+    "compilation": "49791308fe706ec6e42b37d6c0c8d9277dbcb84710f5a9708efdba320e404a5e",
+    "execution": "a7169161cda78145a05020af6dfb188a531224331121a3244d2bf50b7b243827",
+    "generation": "7b5d7759c7159b4dc45256c7742b71001ca019a211186e662bb068a72fd27481",
+    "validation": "739cee0bf5f0c8c381f522f8ec0a8a7fef56e52636cabb17fb085ad2ebbda7e5"
+  }
+}

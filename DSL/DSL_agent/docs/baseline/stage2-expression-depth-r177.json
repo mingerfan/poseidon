@@ -1,0 +1,62 @@
+{
+  "rows": [
+    {
+      "job": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-noncompiler-r177/execution/free_bench_helper_0112/job.json",
+      "job_sha256": "617c3fdac6d40178809636ff6303b5d97d01559d25115ea340c5277d08f6365b",
+      "operations": {
+        "cipher_cipher_multiply": 72,
+        "cipher_plain_multiply": 48,
+        "add_subtract": 191,
+        "rotation": 0
+      },
+      "cipher_mult_dependency": 8,
+      "polynomial_degree_upper": 96,
+      "ast_nodes": 2814,
+      "note": "Source DAG metric, not compiler level or an impossibility proof."
+    },
+    {
+      "job": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-noncompiler-r177/relu-split/job.json",
+      "job_sha256": "e2225036a404bd655bc30a5a8a991e0f0c05a8e5059bdf51b6b1929de14affc7",
+      "operations": {
+        "cipher_cipher_multiply": 38,
+        "cipher_plain_multiply": 30,
+        "add_subtract": 78,
+        "rotation": 0
+      },
+      "cipher_mult_dependency": 14,
+      "polynomial_degree_upper": 6076,
+      "ast_nodes": 1351,
+      "note": "Source DAG metric, not compiler level or an impossibility proof."
+    },
+    {
+      "job": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-noncompiler-r177/relu-weighted-split/job.json",
+      "job_sha256": "ea24e3af85f65dc8b7b52196a0f457ff90151e59fb5a3bfd37abd9ad61677bbd",
+      "operations": {
+        "cipher_cipher_multiply": 51,
+        "cipher_plain_multiply": 45,
+        "add_subtract": 78,
+        "rotation": 0
+      },
+      "cipher_mult_dependency": 13,
+      "polynomial_degree_upper": 6076,
+      "ast_nodes": 1603,
+      "note": "Source DAG metric, not compiler level or an impossibility proof."
+    },
+    {
+      "job": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-noncompiler-r177/deep-representatives/free_bench_helper_0040/job.json",
+      "job_sha256": "baba71d548b4442492c89e0cf6122904c4296d5cb21ca2f50cd6d38e04602a1e",
+      "operations": {
+        "cipher_cipher_multiply": 55,
+        "cipher_plain_multiply": 66,
+        "add_subtract": 175,
+        "rotation": 5
+      },
+      "cipher_mult_dependency": 14,
+      "polynomial_degree_upper": 6076,
+      "ast_nodes": 2724,
+      "note": "Source DAG metric, not compiler level or an impossibility proof."
+    }
+  ],
+  "paid_calls": 0,
+  "compiler_changed": false
+}

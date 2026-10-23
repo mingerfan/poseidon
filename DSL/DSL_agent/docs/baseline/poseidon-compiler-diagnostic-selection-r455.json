@@ -1,0 +1,12 @@
+[
+  {
+    "label": "mlp",
+    "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-agnlrylq",
+    "source_sha256": "05a2d9dbcc715d66f1ebc333002b2bdab2267511a7ddd898400133868deba23f"
+  },
+  {
+    "label": "rmsnorm",
+    "folder": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-azvig3nx",
+    "source_sha256": "35ba6efa0bbe6c4381e8ea9802b4b1fad814c0df94861c838daeae03f53616fd"
+  }
+]

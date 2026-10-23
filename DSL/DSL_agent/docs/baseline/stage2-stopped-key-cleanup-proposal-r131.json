@@ -1,0 +1,1374 @@
+{
+  "binding": "b0e8e2ba85b61ae249d8cfbfffa4eae6a93e73d466c12f9e1a9bb3a5fdac3ba3",
+  "confirmed_no_candidate_process": true,
+  "deletion_scope": "Only listed regenerated SEAL key files and their empty private-keys directories; never responses, model data, diagnostics, DSL, IR, HEVM/CST, decrypted arrays or original reports",
+  "format": "poseidon-stopped-key-cleanup-proposal-r131",
+  "new_api_calls": 0,
+  "original_random_keys_recoverable": false,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/report.json": "52258ccbbffbfaac25580699347225f6c553f2930943783d58077ea309f03d6c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/parameters.json": "b8cca641ea8cbeb0f283a7677e70a8c1e5d4e4361a0cc80321ea943189517a56",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/report.json": "c8b6b47beafdfe7d71f4e42f5df3302d9401556500535194c357bb2107555ad6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/report.json": "49718747fbc09a45e391bc1b09e23f4be8d6c3392e0907c8a9b5f55243abb447",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/report.json": "95d6c1c2e770b3e6f2face915016b0dc8fd0230f39c63018195a3abd6316038b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/report.json": "93712e90ce2794472dfd733f546f587e14fc1c845d3ff35fbfa5e10c2d745e3d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/parameters.json": "b8cca641ea8cbeb0f283a7677e70a8c1e5d4e4361a0cc80321ea943189517a56",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/report.json": "fb293e4e49191690e98591ed5fd218f5b2a987e33ca48c91197def152329a226",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/report.json": "6699c94e938d1d24eb20da1f05b74ac41551cebf2917d978af8c449d103be232",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/report.json": "7d07dffb65e916fecb7c1d0759775cc65cae957f257b5dfa4d5796d1cbcb7612",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/report.json": "76c3788c1c3412a72cc675e114058191c88cf59cee8a0e295a9f2e2904825aeb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/report.json": "049c943ced9f19349c0706ba4fcc34a3dee3ca2fec4faa2d63ea9ee4de822223",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/report.json": "73baa688f5168360ab835063891c1cd1fea0bf6b1ab1937d12f12fd32841f77f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/parameters.json": "7db4d3f573416c9d3527031f8bca324a217d580ff48e9747c3bfc10a5f0e098f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/report.json": "403db071b8c1a194732c606c80e44f85236428cf7ca067024ec1c6ff56ff37e4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/report.json": "ef321ee4b98746e6dbf43a0e270e41b84b6f965bb372f796ab6d0c806420513c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/parameters.json": "546c3142456cf84a1803662cbe91bc17f0d0ae80c022803f71cbe218cc1add95",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/report.json": "5e4b77bee3ebe3390816089c931ed6f05dfa1018e4cf8abb04a4210692454ed0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/report.json": "67d26bc7bc28f3310f8323f295ed8a1e5ee1cd8d0f733b67c3690aa7364f867a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/report.json": "0c4002a70c348e7c846fa2f1e3f42dcb8766fa6dfc8158a0d8cea32bf8c0b974",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/parameters.json": "b8cca641ea8cbeb0f283a7677e70a8c1e5d4e4361a0cc80321ea943189517a56",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/report.json": "8c88fb04b4927ce3515629dd3c1c888c1225722dde0dd2d5b7ed6c28f2702c5e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/report.json": "b464831072e105bc2a6cea7ce02eb380c8883482de0ea310ac3c6451398a350c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/report.json": "493c61a04ff78ad7600fd6f669bec92d1d156fa808da5fb5c6eecbf8b3b0b8c9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/parameters.json": "b8cca641ea8cbeb0f283a7677e70a8c1e5d4e4361a0cc80321ea943189517a56",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/report.json": "b4c97f8b7528b40ff7071b5e72b92cdf7fe24eae477ab7b15cfdc5f109a7bd3c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/parameters.json": "546c3142456cf84a1803662cbe91bc17f0d0ae80c022803f71cbe218cc1add95",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/report.json": "afac1c4d7cc1d96e431727f308aef5751a9c0b0238f75be46f3a69f5053cf2da",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/report.json": "30d2f2bf24035763f69abf76d2b53fe7c94a649422e9b82cb566609718002d60",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/report.json": "7548d0e768c450ddcd7b96b58f918fcf3dda5a0bc82bbda015cdc7b5316c4295",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/parameters.json": "b8cca641ea8cbeb0f283a7677e70a8c1e5d4e4361a0cc80321ea943189517a56",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/report.json": "fdabda3253211fc40ff3a66fb6e05e13581a2a4278d80f8e53c4bec6ee119032",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/report.json": "2a2ae24e7df2e0e5d2d11321f3221b83d11d570d0b5b7bc533cf3be947f6d3da",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/parameters.json": "546c3142456cf84a1803662cbe91bc17f0d0ae80c022803f71cbe218cc1add95",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/report.json": "7404944b16674adda63061cfdbb848f1f9071a8476d9dec181efb427cdaf1ee9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002/free_bench_composition_0004/launch.json": "e3ec0746bf1a6dc9b6e1ba26e0cdbbb0310fd0642f104522797f43336eeddb82",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002/free_bench_composition_0004/run.log": "f084ca01516e23c633671681ae537e2e4f6b75723ff1a0d38afd53c8897bfd93",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002/plan.json": "ba3ad665c6706c500e654b42469b7f46a89d233e613f18b61ac7e4d338cab442",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002/report.json": "66a0d6803592600f7798071797ad7970394ab3169af71a8bae78422d4c7dd955",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003/free_bench_composition_0070/launch.json": "721806df8d7336ba63aa7e528494f95e7823a2efa05be746fa496daf5f090dd2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003/free_bench_composition_0070/run.log": "7903c4c5193a30debd0e7dd1fcf7b919f74af3d6b002f90a302af54a82923985",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003/plan.json": "e1d25f2528eea8dddc224f7fd7fe3f4e6d50b08703241d4881d07775291d7661",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003/report.json": "046741a10719ccdc93cf9e40900e514187179732cb770902fc2b68f2f9e84bba",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007/free_bench_composition_0257/launch.json": "e10316e8795b02952dc20574ead49218848437bed7fdf948453077b9c44808d2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007/free_bench_composition_0257/run.log": "289cdd51cbb38050ca08f0d81149fdb75e47a0ac49bd198b1cd349623bce65ae",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007/plan.json": "c115b9ae94971605fac7eaf4eb1185d6c4058cbd8cfb540b5733d5199ca1edda",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007/report.json": "eb6b7448b7515304f41825409c60ac9952e500bc9b77b518210d9d182436eb72",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009/free_bench_composition_0355/launch.json": "94f463f9e475bded18bef2f41cf47bfa76a05f27228ce5e63078ed44b99b32a5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009/free_bench_composition_0355/run.log": "ff454060360cb2cf56638aa0fd6b9f045907bf3de77752e52b4ae226d4a9d238",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009/plan.json": "4b09e761ac788f57835fcb90dd8aa9c3a8dcc49039b9e0a1b565826df2cbbac8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009/report.json": "78a13181b49ea5d3c6985fa1a08129ebe27c38859166b3f9372ea3d9a3a5c7ac",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011/free_bench_graph_0082/launch.json": "857c504d2461fdb2f577fa15985e86ec258b433529820c8b5e563776269d3d15",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011/free_bench_graph_0082/run.log": "68bb61e9671d0ece4a6a4dd8637296459099727746dff5a9214fe0db35e352bb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011/plan.json": "f9fef9b631f39f3f1959f2d084ec47c5345066091287674ea42cd8848c53a796",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011/report.json": "181b9d6dab9503e66b3b588911b6643e30e2853cf97ff9841ba18fbab6bd1c60",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-012/free_bench_graph_0114/launch.json": "01f7184ad64676427667264a8d334c3de8b71fda6c1af48323f4303a700adce8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-012/free_bench_graph_0114/run.log": "08d4cd47de65f288d111429d6d7dfa7c13f2a4c43363c0f6d3c39f4b568620ce",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-012/plan.json": "a154d20ff1839c7bffd9adcb17e9c3422a1e2655270ba3f2e60e5f54c6783369",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-012/report.json": "86e0642316809c9e224d5f6390efb4daa7f2dc0cc617dc4765d2b3faa17a2407",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-013/free_bench_graph_0157/launch.json": "a98dec89569abcffb8fedaf048cc55b755580a820b10df6276086e8a5d147690",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-013/free_bench_graph_0157/run.log": "fa8f5179c33529e6c697117e1a5505b4aef81d2c03ad22fa65ff5937313001cb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-013/plan.json": "5c022093ace89c7de5cbf8956671bd1d134a86d73ca7feb24fbd71bf65b28664",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-013/report.json": "541d2320ef3f8f7184b4c3f17fe01c6fc4dd09ef5334e46faac848da24686662",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-014/free_bench_graph_0199/launch.json": "2fd674bdcc347770f09c6b1032a257ab8b6410f05e73014ed7970cc26b9bb255",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-014/free_bench_graph_0199/run.log": "ad9b2d76812777e051433fc6642ac2ac3e36a6ffae5033d9472e7032af6c017f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-014/plan.json": "24cc0e370803b3281b760886f1297fd4b70e8c839cd4f915d9b3b0d512621bf9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-014/report.json": "a42cf8104e8ce7d2790ed635dce33a24fab68ee35849cd6060d9f6bfea2660ff",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-015/free_bench_graph_0242/launch.json": "3ecc8cabe602571786950622869326a0b9bcdfd97259945d710c262958c24e2a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-015/free_bench_graph_0242/run.log": "9d39a8bbeeaf321b724b51274a96670e945ebefc0d6e4971ede6a84b3765887c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-015/plan.json": "171e46bbc04dca6915e94c4950b4309f630f0741708f203db0388595a6c69dfe",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-015/report.json": "458b09f9b25d0ddd1e0cefe34e222361dcbf534e95e5b9be9fb5f413d573fb59",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121/report.json": "07a7f7982d54d986fb9b91f0ef934bdcaf682d588686cc5ea484cf917c9ee44d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-017/free_bench_graph_0344/launch.json": "aa5af48329a3db50a0105e3de6663229fdc01505d1585c54ed8d6a3fc1b753e3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-017/free_bench_graph_0344/run.log": "ed82d11752d49cd540e0781bd8fe6d0924cf86d286572d77a1e2ddfaac293d80",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-017/plan.json": "65232ae8f633fc401a7ff0289170de295ddb47069b023d313e276b4a1853fea1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-017/report.json": "3e36c1361279e8c0d49fc3143a6837994ede67149a88cf87905d916a4a24ce0d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-018/free_bench_helper_0032/launch.json": "9349229b03056376663b5337378c5ad826b01a68f906a34d8aa330a0654149ac",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-018/free_bench_helper_0032/run.log": "9d90b2035c837edc843d5a729c2c42c8498c8194ca0acb53417ae904ff4e4ea5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-018/plan.json": "addaee8572e416ff00c1027cf1934c4fbb35c657a8b14fb3aaf21495db54a406",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-018/report.json": "7ce9cda8f10775eb7ab601c7f0953d147aa703cbbd4a6f7d779dbc21164674e4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-019/free_bench_helper_0089/launch.json": "afc4a7bcf29b97047bc996a5e2b55d36162a45528c3c6a99aea59944cdc87261",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-019/free_bench_helper_0089/run.log": "28baf12e142c76dde5698dfd809e69265a275f7d6492b204a687fbf5f3df17fc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-019/plan.json": "43cfb039e37853bfa399328e220e136ec410f69e857e749cf7d145f7f9668993",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-019/report.json": "195187cffce7f0e71985314c0802c18bab81c0b478d7cd4dc06d911bb2428304",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-020/free_bench_primitive_0028/launch.json": "45963a5ec458c4bcaa40b6f1a2a9fed84bffebd7f96abd75a9977be079b9006a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-020/free_bench_primitive_0028/run.log": "03cb13ad71ef107ed05e0ac837ad1fa59e9a68596c05158f2130daf9943e4705",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-020/plan.json": "fda122466ac0230f254f80039ccb267a1d3246088b0b60ffd5be5d0edac9753a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-020/report.json": "86cc9e8456876fe2e494c9c5174a36412de155a895905b43f77b9ecf7c447288",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-021/free_bench_primitive_0090/launch.json": "217c638139eeb4cd90c6c8ca309cd03b382c3038ede43a42bc80a65bb36b4f5a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-021/free_bench_primitive_0090/run.log": "03391f1b62c5940b7169bb761be6b8b524585af699ec60823866cdd982d92c5a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-021/plan.json": "ab034ee1786c4e8cd6360beecb991a9dca9e6cd7ea31eab1813c4e517e48934a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-021/report.json": "ee59f09b03ac8e1d98d2f00e949a564bfacfcbbccf31888aeaa3ee4e0c4cc621",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-022/free_bench_primitive_0132/launch.json": "577a731dc5a16b2c087ad3fb71327f17a8847dd4ecabcdc87d878a1944acba72",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-022/free_bench_primitive_0132/run.log": "f79388a5d3fc147e6d172ba043b824982da07d9549e7d1ddebb19fa5e9a3af18",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-022/plan.json": "4c73efca8b20a6adeeb5ca586291f98fc62994a7d9d3b09be9cb2519ad18ce01",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-022/report.json": "cd611f125dff8afe4b1942df1ff0b13cf119f66956d3aff33e52867a627b8b53",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-023/free_bench_primitive_0191/launch.json": "e999227cfb1ce093792c8911c3bd12c11cc50990b05dcd9355d340b4d0d8294e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-023/free_bench_primitive_0191/run.log": "93b4f8a435b064475f1be6d83e9a2e7f548929e746c9c6c5d5347cf29ec5c825",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-023/plan.json": "012b638a41a49fc340b6936ca264f7a665e258572da74e18f80322daa0e6b5b0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-023/report.json": "ca9a785d36ca8dc52bf0b748f38fd0e81a1891eef2e06684cb8e67b8cb69dfbb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-025/free_supplement_semantic_context_3a099c13bb07eece89bb59df/launch.json": "543fda8d78621c770f720c745116c322df6bcc5e658037c78012feaec9759cdc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-025/free_supplement_semantic_context_3a099c13bb07eece89bb59df/run.log": "c36c8995ffd6c172daca8a186b568bd12bbf87da6c6ccc704dd8cbc579a74aac",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-025/plan.json": "54b8801a1b8963ecd7147566f79942c9c1bb932b4ae426cebebc837a23545131",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-025/report.json": "8262c0803c121e7adde3bfe59e91f8ab4d7a226839fa3219162af6df9d181ab3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-026/free_supplement_semantic_context_a369ab072b7e6eed1c6efb9c/launch.json": "54391cf40bfc9fabb82901f92c9b663d95dec198eb2ecc4b1bb8bb8bd972aa20",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-026/free_supplement_semantic_context_a369ab072b7e6eed1c6efb9c/run.log": "608a5fbe6c3b2808b9c0820cb84b9feea61a423b4433f1965e7b4810ebc8076c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-026/plan.json": "a1df72f66cb9865c144fc4fb3824757b6e2c4ffdd238cd93c061c13f34c845c7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-026/report.json": "63301983b4713718bcaebc1dae02a2a789fed74c34b94ae2128d6e12e7f6f73a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125/report.json": "bd4c2937cea10b86b046c7a184500b7b72ed523cad66ea474d43a2d048e1a6c3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-027/free_gap_gap_slice6_residual/launch.json": "6e56b4e3237bc2e9150a99b4b6283179580beab6f8a495653f030187dd01cf03",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-027/free_gap_gap_slice6_residual/run.log": "789c659b37c2fb6ea79cb86f2561608418780a06ba790fd9bc7c92a7793d9762",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-027/plan.json": "2a87361922dbd25cb7437eeba10ac83c3de832781baf27c7af51d5ac3fe9ec9f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-027/report.json": "49b242bd6fabd3db8748ff48df79033aa5424f2237067dd5a821a7fbe818965d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-029/construct_023_1/launch.json": "2bc72962faa498bff33743c347ddd052b442e35add772ad3faa8f010fd39d38e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-029/construct_023_1/run.log": "0ed86a04f9125b65299c3703af5d1a310436b1c7137db90d885ec0ba578af06a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-029/plan.json": "cc4699b920f08be2c3254330fb2f55543198061fe6ea9e8ae41734bf7d4a5a8c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-029/report.json": "93098727c282cb30e1d5f559e6e041af79dea3c15fd5c7c6a652d80da7ff4712",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-030/construct_039_1/launch.json": "8d8a522cdaa8fd32bdb845407c9921faf1524f8915b0c155fe1d65d48989f509",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-030/construct_039_1/run.log": "8e61d9e2e1733ce0dfe47abd251ca452764531ed7ef4c6919ab7fcaf0bf6e78c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-030/plan.json": "bd6cacbf589991cb90ae277ab7756f95f376b7798a64ad969a6d5775d502cd4f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-030/report.json": "6dd516968eb9697b2849771a66e7564a8c6e2b625ecd0f8542d479cea66f6d38",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-031/construct_055_1/launch.json": "fa97f2b9c047c3b97e674549ead14dcb1b6da0e58ec7eff28ecff09b900a02dc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-031/construct_055_1/run.log": "e47a2c5323bedf66ca6f77c4f7f271bd16db0e198d77931637c754e34544c5db",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-031/plan.json": "aeec22964b681c1f08668be722abc29cfc28f2252fcbfde123727bb9b83656c4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-031/report.json": "85731ec947bfec3e27d84f190a3d84836d13fbdb42b2d0d21dd2829e2ec99860",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-033/construct_087_1/launch.json": "d54f0bfce6e2bf19e7f560b43562877d3424552aff7299cf2c769fc5ceb577c7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-033/construct_087_1/run.log": "e6d7ced74d589f495c03b834b73d69c6ae122e37849ccfada172bb79f1583f95",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-033/plan.json": "61b226acab3d259b8fe4b4c8c8e582b8c87d1b39dab2e7a904b827a075468b01",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-033/report.json": "3a01a2ab54b5192a23a6beef45c3ddabe6a37bf65ce599d2734aa48a989c61be",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-034/construct_103_1/launch.json": "489b8aadc462d11600d5cdb86a8ca7e03dc95570f6671efd583910786e363a88",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-034/construct_103_1/run.log": "02d43a6201f00cf0ef288c5fe4b9a854a4fd5288aeeb6b8caac5262250ae1b06",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-034/plan.json": "3eed6f924f0fec8af290de4e571e53cc1b1408d5385a3098031077161f66f423",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-034/report.json": "bc6f5e4d21710ee6b3689321de76aa69cf2abcf3bb98d69194369e6d2cd2f4c7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-035/construct_119_1/launch.json": "255b53f2dc0c301c2f9ea25471f0bd3336e77c6a6ad4ed0c1a58ef035eb4d5f0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-035/construct_119_1/run.log": "992425f56bf72de7b54540a7950f68a25512c9a0cf310d98f7e1520e26817f04",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-035/plan.json": "ee019acc630354b35903997ce5ecf3b60b88436ca16776b6c2360765077de9f6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-035/report.json": "9f6f32a9725f709818eb7dab878407aa2d6fe9c20837f791405f033ca8654ab3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-036/construct_135_1/launch.json": "d054a9e6bf679b45fd720206a3cf7e479f14ff26c4ab53636c9595bc172bac1d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-036/construct_135_1/run.log": "ff4919c4ed42dd45042a6742810eeace37887a9d709394df620a388b90fae15c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-036/plan.json": "a0547aa48ec78076e3af7ad8e489cccec92d731ce82dde61da903cbb4a36a095",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-036/report.json": "c441683c265cdd3a28e40eab20efacd4edec041a1f1cbc5c01dc8a64b0d0e287",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130/report.json": "2d6bf9c4a4aa4ae0cc3ba1a2c25f936a0a34bafe28e96d370600e577df56f3cb"
+  },
+  "reason_existing_policy_refuses": "result_retention.plan_run accepts terminal report status only; interrupted reports deliberately remain running although verified parent processes ended",
+  "replay_requires_fresh_keys": true,
+  "report_mutation_allowed": false,
+  "skipped": [],
+  "status": "awaiting_explicit_cleanup_approval",
+  "targets": [
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002",
+      "bytes": 488131594,
+      "evaluation_identity": "b5f9e4db7f3ae71f2de557c0e5c3a21b39c0f050a8254ce87f4534c8296d43b3",
+      "files": [
+        {
+          "bytes": 381696817,
+          "device": 64513,
+          "inode": 2099553,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2099549,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2099550,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2099552,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2099551,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_composition_0004",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f3wf5op1"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003",
+      "bytes": 297283048,
+      "evaluation_identity": "ae1543c40364eae318607eacde54505a5e47ed9ae1712ff85b8101e5206406d9",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 2334802,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2334798,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2334799,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2334801,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2334800,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_composition_0070",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h2eug5ou"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007",
+      "bytes": 297283048,
+      "evaluation_identity": "809bc41a68bb54493daa3ad1600df8cfd70e32fd6fef60be4e22debbfa97a560",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 2334849,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2334845,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2334846,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2334848,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2334847,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_composition_0257",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3h09izbm"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009",
+      "bytes": 297283048,
+      "evaluation_identity": "d90b69ba6693aeeae943113faba086755b925c05edf97ce0a9173eda1dff986f",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 2334725,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2334721,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2334722,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2334724,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2334723,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_composition_0355",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxx3opvl"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011",
+      "bytes": 297283048,
+      "evaluation_identity": "76b91b27d8583674a72c18aec42655c58fe62561a47f0ec0f8961e20d6d8370f",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 2099939,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2099935,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2099936,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2099938,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2099937,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_graph_0082",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8b6a66w_"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-012",
+      "bytes": 297283048,
+      "evaluation_identity": "86233ec5d79c41aa56dc13136f43b92d31edfcccbb96bbab4cfee0dcb8e61c35",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 2593632,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2593628,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2593629,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2593631,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2593630,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_graph_0114",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-eqvb82ee"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-013",
+      "bytes": 297283048,
+      "evaluation_identity": "d8f9801e877774eff96b7af744df62f9b07205542e93877d2f847a46cc6a6567",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 2334751,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2334747,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2334748,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2334750,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2334749,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_graph_0157",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-c1ssfy2a"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-014",
+      "bytes": 392707411,
+      "evaluation_identity": "f85923f67766b2552a07bfbc4f89f0c9e3c058a6975cfe334645594a30b43401",
+      "files": [
+        {
+          "bytes": 286272634,
+          "device": 64513,
+          "inode": 2334894,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2334890,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2334891,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2334893,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2334892,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_graph_0199",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uiw1mu35"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-015",
+      "bytes": 297283048,
+      "evaluation_identity": "4e2f3b4555d7df926ea7c935d7a5e983b44554d80f7b8af00692c9eb060b54b9",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 2334623,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 2334619,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 2334620,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 2334622,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 2334621,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_graph_0242",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u99548vl"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-017",
+      "bytes": 392707411,
+      "evaluation_identity": "0147b7d443a32c9975744fa0ed59175bf4957aceffd54f233e6c1614b5aa3869",
+      "files": [
+        {
+          "bytes": 286272634,
+          "device": 64513,
+          "inode": 4165524,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4165520,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4165521,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4165523,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4165522,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_graph_0344",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l7fx25v_"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-018",
+      "bytes": 297283048,
+      "evaluation_identity": "bc10d23bc2d63acc8b0bfd226e40167977fcedce09fda0af689c379d996560fd",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 4166545,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4166541,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4166542,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4166544,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4166543,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_helper_0032",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-59jgmid2"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-019",
+      "bytes": 488131594,
+      "evaluation_identity": "255f118abb2ef2a176c51a6cf98327a892553fd5eb374964e540f2e4dcce404b",
+      "files": [
+        {
+          "bytes": 381696817,
+          "device": 64513,
+          "inode": 4167570,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4167566,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4167567,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4167569,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4167568,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_helper_0089",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o5n11p4q"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-020",
+      "bytes": 297283048,
+      "evaluation_identity": "a408546d0e491a42affac900f628d0cba58b1b0bab0079b3ee23a9dd1db9c768",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 4167336,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4167332,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4167333,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4167335,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4167334,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_primitive_0028",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-kpehvdkg"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-021",
+      "bytes": 392707411,
+      "evaluation_identity": "57a35e68ad842eebbec9285277949a2f7e6795554839ef7e929f44aa46751380",
+      "files": [
+        {
+          "bytes": 286272634,
+          "device": 64513,
+          "inode": 4167576,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4167572,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4167573,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4167575,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4167574,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_primitive_0090",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5b0wbqra"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-022",
+      "bytes": 392707411,
+      "evaluation_identity": "7f8683c4caff8fa152c318a0993fa0d13318bc44b7a8e46a172d58564032231f",
+      "files": [
+        {
+          "bytes": 286272634,
+          "device": 64513,
+          "inode": 4167329,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4167325,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4167326,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4167328,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4167327,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_primitive_0132",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jpfwbaye"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-023",
+      "bytes": 297283048,
+      "evaluation_identity": "5814fd88844e559907cad25cfebb74cf26f4ec0fe878005af23790566e95a6c4",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 4167670,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4167666,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4167667,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4167669,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4167668,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_bench_primitive_0191",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-83ve8mve"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-025",
+      "bytes": 583555778,
+      "evaluation_identity": "fce7335168953883bb583e5a005ac6fb2c0c23d01dc5cf573b0ead9cea07f8e1",
+      "files": [
+        {
+          "bytes": 477121001,
+          "device": 64513,
+          "inode": 4167610,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4167606,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4167607,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4167609,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4167608,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_supplement_semantic_context_3a099c13bb07eece89bb59df",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dgko4gzs"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-026",
+      "bytes": 297283048,
+      "evaluation_identity": "f040bc427bf3dfebe8ece46a4ffc31ac7f1b4bb2686a23951178274674520ee1",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 4167604,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 4167600,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 4167601,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 4167603,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 4167602,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_supplement_semantic_context_a369ab072b7e6eed1c6efb9c",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ulrxj38o"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-027",
+      "bytes": 488131594,
+      "evaluation_identity": "42e6a8cb9116403655fdf20d50321a67c1d34bfb0617ca13bc8c11c3b5c56556",
+      "files": [
+        {
+          "bytes": 381696817,
+          "device": 64513,
+          "inode": 1633240,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633232,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633233,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633235,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633234,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/private-keys/sec.seal"
+        }
+      ],
+      "id": "free_gap_gap_slice6_residual",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-upkdeqrf"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-029",
+      "bytes": 297283048,
+      "evaluation_identity": "ea668bb9e94fd207621d5bb2d560e81db61e0fa9d38b00cc21967ee9b8ef4874",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 1633204,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633197,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633198,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633202,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633201,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/private-keys/sec.seal"
+        }
+      ],
+      "id": "construct_023_1",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-898g6ssu"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-030",
+      "bytes": 297283048,
+      "evaluation_identity": "c0fe329f4dc56733f4c820c8876d8179f302ff1e629de2ba8c09407ed82b501f",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 1633223,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633219,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633220,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633222,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633221,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/private-keys/sec.seal"
+        }
+      ],
+      "id": "construct_039_1",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g0ikvx_z"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-031",
+      "bytes": 297283048,
+      "evaluation_identity": "119fd3951416d78a4dd2e902ed8e8b0b0d859c0ddaa406c800552a1501983e5e",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 1633228,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633224,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633225,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633227,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633226,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/private-keys/sec.seal"
+        }
+      ],
+      "id": "construct_055_1",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-4buh6f15"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-033",
+      "bytes": 297283048,
+      "evaluation_identity": "72c23748a333fe4ab77428d2dda0383ab0a5711dbf17b3b7d1993acd951cf4f7",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 1633211,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633207,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633208,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633210,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633209,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/private-keys/sec.seal"
+        }
+      ],
+      "id": "construct_087_1",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-012y80mp"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-034",
+      "bytes": 297283048,
+      "evaluation_identity": "64ac54549ca010c8b6e472a7bb01ac7e96e4645eb9189b383579e7a12b12eb3d",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 1633241,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633236,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633237,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633239,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633238,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/private-keys/sec.seal"
+        }
+      ],
+      "id": "construct_103_1",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k76sjd8f"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-035",
+      "bytes": 392707411,
+      "evaluation_identity": "41118a9f8d765a6c809104a95d25de746789542a6b0bae50ec1c03ef46d3e751",
+      "files": [
+        {
+          "bytes": 286272634,
+          "device": 64513,
+          "inode": 1633216,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633212,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633213,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633215,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633214,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/private-keys/sec.seal"
+        }
+      ],
+      "id": "construct_119_1",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3c_j1592"
+    },
+    {
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-036",
+      "bytes": 297283048,
+      "evaluation_identity": "295c4df03b18f0f9240632646108f9f991fe1e5e565029a4867f575d7cdd498b",
+      "files": [
+        {
+          "bytes": 190848271,
+          "device": 64513,
+          "inode": 1633203,
+          "name": "gal.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/private-keys/gal.seal"
+        },
+        {
+          "bytes": 104,
+          "device": 64513,
+          "inode": 1633195,
+          "name": "parm.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/private-keys/parm.seal"
+        },
+        {
+          "bytes": 7340326,
+          "device": 64513,
+          "inode": 1633196,
+          "name": "pub.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/private-keys/pub.seal"
+        },
+        {
+          "bytes": 95424146,
+          "device": 64513,
+          "inode": 1633200,
+          "name": "relin.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/private-keys/relin.seal"
+        },
+        {
+          "bytes": 3670201,
+          "device": 64513,
+          "inode": 1633199,
+          "name": "sec.seal",
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/private-keys/sec.seal"
+        }
+      ],
+      "id": "construct_135_1",
+      "key_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno/private-keys",
+      "report_status_unchanged": "running",
+      "run": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-939ancno"
+    }
+  ],
+  "total_bytes": 9065299431,
+  "total_files": 130
+}

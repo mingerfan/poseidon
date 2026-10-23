@@ -1,0 +1,78 @@
+{
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_seal_execution": true,
+  "agent_calls": 0,
+  "all_dsl_semantics_covered": false,
+  "binding": "2877f9420174a36c206ef30239b3188f2a57c3d632afc9fef00db8d7a4822772",
+  "case_seconds": 1192.194365223928,
+  "compared_values": 3796,
+  "coordinator_seconds": 1269.082951288001,
+  "directed_counts": {
+    "blocked_contract": 258,
+    "not_run": 114,
+    "passed": 234
+  },
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-public-r5-directed-audit.json": "f488b4afccacb76f57f87ed59d217a067224552695b9989230ffe46fbef9010e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-public-r5-directed/report.json": "271a92c6c24416ae07b49403d1887230e35792a584fd518b69673e43ae29122d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-public-r5-plaintext/report.json": "003d2e9ebe249564890fceae069f483852639c9c9942fdfa1a99594873367bb9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-public-r5-unit.log": "d12d02ebe6281c536810ff7046c77133d4a2f5c13c8b01dc6d31becae9f1b57f"
+  },
+  "evidence_bytes": 45917807,
+  "formal_equivalence_proven": false,
+  "input_counts": {
+    "1": 27,
+    "2": 69,
+    "3": 69,
+    "4": 69
+  },
+  "max_absolute_error": 8.621560667609884e-07,
+  "max_individual_process_rss_kib": 930996,
+  "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+  "native_directed_retested": false,
+  "new_partitions": 38,
+  "output_counts": {
+    "1": 136,
+    "2": 86,
+    "3": 12
+  },
+  "periods": {
+    "4": 204,
+    "8": 30
+  },
+  "plaintext": {
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "platform": "aarch64-linux",
+  "public_partitions": 78,
+  "release": "semantic-v1-public-r5",
+  "remaining": [
+    "258 unbound directed tasks",
+    "full semantic partition audit",
+    "general chunked layout",
+    "real upstream helper integration and packing",
+    "two original compiler failures",
+    "bootstrap",
+    "separately approved live Agent evaluation"
+  ],
+  "schema": 1,
+  "source_snapshot": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-public-r5-source/frozen-source.tar.gz",
+    "sha256": "490e84da0c9d2408a0e90c29b15d786d4ed219db2bf241065238754aafcbda3e"
+  },
+  "statuses": {
+    "passed": 234
+  },
+  "unit_tests": {
+    "failed": 0,
+    "passed": 320,
+    "skipped": 14
+  },
+  "weighted_mae": 2.323329145562826e-08
+}

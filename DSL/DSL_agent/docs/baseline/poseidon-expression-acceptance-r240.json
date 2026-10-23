@@ -1,0 +1,414 @@
+{
+  "format": "poseidon-expression-acceptance-v1",
+  "backend": "poseidon_cpu",
+  "unit": {
+    "run": 42,
+    "passed": 42,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "rmsnorm": {
+    "planned": 8,
+    "passed": 5,
+    "failed": 3,
+    "not_run": 0,
+    "model_sha256": "54a051003a1ef5ccd6356c54ce09a3c2095c7e5ee4b7b2f22e47bd84d23f3d50",
+    "rows": [
+      {
+        "name": "packed-original",
+        "waterline": 45,
+        "status": "repair_budget_exhausted",
+        "request_id": "dbeef83a3b62e5e5288972a9e0f740ef5c8eb97de7628422d4be62a09f28d40c",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-p65cgax_",
+        "observed_stages": {
+          "traced": true,
+          "compiled": false,
+          "encrypted_execution": false,
+          "numerically_compared": false,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "failure": {
+          "layer": "compiler",
+          "code": "backend_rejected",
+          "owner": "candidate_or_backend",
+          "retry_policy": "diagnose",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log"
+        },
+        "compile_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %51 = \"earth.mul\"(%50, %49) : (tensor<1x!earth.ci<45 * 12>>, tensor<1x!earth.ci<75 * 12>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+        "compile_log_sha256": "d4dd5042e1afdd65d0b28f6d0689819d9a1c523b8371e891775e1c958abe2bba"
+      },
+      {
+        "name": "packed-factored",
+        "waterline": 45,
+        "status": "repair_budget_exhausted",
+        "request_id": "dbeef83a3b62e5e5288972a9e0f740ef5c8eb97de7628422d4be62a09f28d40c",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mhuutpyr",
+        "observed_stages": {
+          "traced": true,
+          "compiled": false,
+          "encrypted_execution": false,
+          "numerically_compared": false,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "failure": {
+          "layer": "compiler",
+          "code": "backend_rejected",
+          "owner": "candidate_or_backend",
+          "retry_policy": "diagnose",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log"
+        },
+        "compile_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %54 = \"earth.mul\"(%52, %53) : (tensor<1x!earth.ci<45 * 12>>, tensor<1x!earth.pl<45 * 12>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+        "compile_log_sha256": "80c3b71f22515144fafa94fd1bf562fa636120a899021d3c824d865afc5b1498"
+      },
+      {
+        "name": "packed-early-gain",
+        "waterline": 45,
+        "status": "passed",
+        "request_id": "dbeef83a3b62e5e5288972a9e0f740ef5c8eb97de7628422d4be62a09f28d40c",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kz8f265h",
+        "max_absolute_error": 2.695243916939205e-09,
+        "compared_values": 16,
+        "observed_stages": {
+          "traced": true,
+          "compiled": true,
+          "encrypted_execution": true,
+          "numerically_compared": true,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        }
+      },
+      {
+        "name": "packed-public-first",
+        "waterline": 45,
+        "status": "passed",
+        "request_id": "dbeef83a3b62e5e5288972a9e0f740ef5c8eb97de7628422d4be62a09f28d40c",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_extps00",
+        "max_absolute_error": 5.838654361549728e-09,
+        "compared_values": 16,
+        "observed_stages": {
+          "traced": true,
+          "compiled": true,
+          "encrypted_execution": true,
+          "numerically_compared": true,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        }
+      },
+      {
+        "name": "packed-original",
+        "waterline": 40,
+        "status": "repair_budget_exhausted",
+        "request_id": "a53c0bcef4e390823af08ad99752ae0c1a7d2be3904dd7bf04b4b00e56fb1a7f",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ibup8nin",
+        "observed_stages": {
+          "traced": true,
+          "compiled": false,
+          "encrypted_execution": false,
+          "numerically_compared": false,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "failure": {
+          "layer": "compiler",
+          "code": "backend_rejected",
+          "owner": "candidate_or_backend",
+          "retry_policy": "diagnose",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log"
+        },
+        "compile_diagnostic": "/app/decorated_functions.py:359:0: error: 'ckks.modswitchc' op requires unchanged ciphertext components and scale with the requested lower level\n/app/decorated_functions.py:359:0: note: see current operation: %64 = \"ckks.modswitchc\"(%60) <{downFactor = -1 : i64}> : (tensor<1x!ckks.poly<2 * 80 * 2>>) -> tensor<1x!ckks.poly<2 * 80 * 3>>\n",
+        "compile_log_sha256": "931de40a16da4dcdb2ef5b859591f0d4801bc56c1608c4116138273f2c182387"
+      },
+      {
+        "name": "packed-factored",
+        "waterline": 40,
+        "status": "passed",
+        "request_id": "a53c0bcef4e390823af08ad99752ae0c1a7d2be3904dd7bf04b4b00e56fb1a7f",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-v5_5x_iv",
+        "max_absolute_error": 7.593766236870911e-08,
+        "compared_values": 16,
+        "observed_stages": {
+          "traced": true,
+          "compiled": true,
+          "encrypted_execution": true,
+          "numerically_compared": true,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        }
+      },
+      {
+        "name": "packed-early-gain",
+        "waterline": 40,
+        "status": "passed",
+        "request_id": "a53c0bcef4e390823af08ad99752ae0c1a7d2be3904dd7bf04b4b00e56fb1a7f",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-eq8eb70s",
+        "max_absolute_error": 1.279910576412746e-07,
+        "compared_values": 16,
+        "observed_stages": {
+          "traced": true,
+          "compiled": true,
+          "encrypted_execution": true,
+          "numerically_compared": true,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        }
+      },
+      {
+        "name": "packed-public-first",
+        "waterline": 40,
+        "status": "passed",
+        "request_id": "a53c0bcef4e390823af08ad99752ae0c1a7d2be3904dd7bf04b4b00e56fb1a7f",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o8wi8m_8",
+        "max_absolute_error": 2.408930085961991e-07,
+        "compared_values": 16,
+        "observed_stages": {
+          "traced": true,
+          "compiled": true,
+          "encrypted_execution": true,
+          "numerically_compared": true,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 0.0,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        }
+      }
+    ],
+    "current_binding": {
+      "format": "poseidon-agent-component-v1",
+      "status": "passed",
+      "exit_code": 0,
+      "request_id": "dbeef83a3b62e5e5288972a9e0f740ef5c8eb97de7628422d4be62a09f28d40c",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ejiepaj9",
+      "paid_calls": 0,
+      "new_agent_generation": false,
+      "encrypted_execution": true,
+      "numerically_validated": true,
+      "observed_stages": {
+        "traced": true,
+        "compiled": true,
+        "encrypted_execution": true,
+        "numerically_compared": true,
+        "evidence_integrity_not_rejected": true
+      },
+      "validation_level": "numerical",
+      "compiled_validated": true,
+      "max_absolute_error": 4.717559232148005e-09,
+      "compared_values": 16
+    },
+    "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-expression-acceptance-r240/rmsnorm-program",
+    "package_binding": "768a423922885069169f68eddb6e2fc57c4c3134996b5f7f7591cbd7d0c1f473",
+    "reload": {
+      "status": "passed",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-x0knk20j",
+      "agent_calls": 0,
+      "compiler_calls": 0,
+      "max_absolute_error": 2.175517765934387e-09,
+      "compared_values": 16
+    },
+    "original_runner_snapshot": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-rmsnorm-expressions-r239/runner-snapshot",
+    "historical_plan_hash_note": "r239 cases.source_sha256 is the digest of candidate JSON, not source bytes; original plan preserved"
+  },
+  "attention": {
+    "planned": 4,
+    "passed": 0,
+    "failed": 4,
+    "not_run": 0,
+    "rows": [
+      {
+        "name": "packed-balanced",
+        "waterline": 45,
+        "status": "repair_budget_exhausted",
+        "request_id": "ae45f832e3a2cc1e000511281334bb15908e3811b902599a8b527eeb5a4883c1",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ozd2s88p",
+        "observed_stages": {
+          "traced": true,
+          "compiled": false,
+          "encrypted_execution": false,
+          "numerically_compared": false,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 2.7755575615628914e-17,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "failure": {
+          "layer": "compiler",
+          "code": "backend_rejected",
+          "owner": "candidate_or_backend",
+          "retry_policy": "diagnose",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log"
+        },
+        "compile_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %129 = \"earth.mul\"(%126, %128) : (tensor<1x!earth.ci<45 * 12>>, tensor<1x!earth.ci<60 * 12>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+        "compile_log_sha256": "6d83d4b8d647938329826c16cc503328389c968d4b52fd58e87309d1f1774604"
+      },
+      {
+        "name": "packed-balanced-fused",
+        "waterline": 45,
+        "status": "repair_budget_exhausted",
+        "request_id": "ae45f832e3a2cc1e000511281334bb15908e3811b902599a8b527eeb5a4883c1",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-gisxbkkg",
+        "observed_stages": {
+          "traced": true,
+          "compiled": false,
+          "encrypted_execution": false,
+          "numerically_compared": false,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 2.7755575615628914e-17,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "failure": {
+          "layer": "compiler",
+          "code": "backend_rejected",
+          "owner": "candidate_or_backend",
+          "retry_policy": "diagnose",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log"
+        },
+        "compile_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %139 = \"earth.mul\"(%138, %123) : (tensor<1x!earth.ci<90 * 12>>, tensor<1x!earth.ci<45 * 12>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+        "compile_log_sha256": "ce1d18af198eadcfd64de0477c72ff2ef6dbbeb11dba19b92288dccbf339cacc"
+      },
+      {
+        "name": "packed-balanced",
+        "waterline": 40,
+        "status": "repair_budget_exhausted",
+        "request_id": "3d5659cd9e91029b4c23d9e545036073bdac1ed4ed16241f799950582f634556",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7_lqq9g3",
+        "observed_stages": {
+          "traced": true,
+          "compiled": false,
+          "encrypted_execution": false,
+          "numerically_compared": false,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 2.7755575615628914e-17,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "failure": {
+          "layer": "compiler",
+          "code": "backend_rejected",
+          "owner": "candidate_or_backend",
+          "retry_policy": "diagnose",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log"
+        },
+        "compile_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %148 = \"earth.mul\"(%147, %125) : (tensor<1x!earth.ci<80 * 11>>, tensor<1x!earth.ci<60 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+        "compile_log_sha256": "5d401c13050934455ac136306ae85b57aa88e4ebae4942de7f0f602b2a79b2e2"
+      },
+      {
+        "name": "packed-balanced-fused",
+        "waterline": 40,
+        "status": "repair_budget_exhausted",
+        "request_id": "3d5659cd9e91029b4c23d9e545036073bdac1ed4ed16241f799950582f634556",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ye1lgwg2",
+        "observed_stages": {
+          "traced": true,
+          "compiled": false,
+          "encrypted_execution": false,
+          "numerically_compared": false,
+          "evidence_integrity_not_rejected": true
+        },
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 2.7755575615628914e-17,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "failure": {
+          "layer": "compiler",
+          "code": "backend_rejected",
+          "owner": "candidate_or_backend",
+          "retry_policy": "diagnose",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log"
+        },
+        "compile_diagnostic": "/app/decorated_functions.py:359:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:359:0: note: see current operation: %138 = \"earth.mul\"(%137, %122) : (tensor<1x!earth.ci<80 * 11>>, tensor<1x!earth.ci<60 * 11>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+        "compile_log_sha256": "9bc96bfd9714968ec46d1d5fbd2cdbd207aa1b2bb44dc0080c1a92ad7cce6148"
+      }
+    ]
+  },
+  "preflight_incidents": [
+    {
+      "layer": "developer_probe_import",
+      "diagnostic": "NameError in new runner default argument; corrected before any Attention tracing/execution"
+    }
+  ],
+  "paid_calls": 0,
+  "agent_generated": false,
+  "downloads": 0,
+  "new_dependencies": false,
+  "unchanged": [
+    "Dacapo compiler",
+    "Runtime core",
+    "Poseidon library",
+    "Agent parameters",
+    "models",
+    "reference",
+    "numeric tolerance"
+  ],
+  "numerical_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "fact": "Frozen RMSNorm approximation has manual equivalent programs accepted by Poseidon CPU; Attention equivalents remain compiler-rejected.",
+  "inference": "Layout transitions and serial public multiplication contributed to RMSNorm failures. Attention may require more depth or compiler scheduling work; bootstrap necessity is not proven.",
+  "unverified": [
+    "Poseidon real Agent generation for these models",
+    "Attention encrypted execution",
+    "native bootstrap numerical acceptance and Runtime wiring",
+    "full DSL migration"
+  ],
+  "next_approval": "docs/baseline/poseidon-native-bootstrap-proposal-r235.json",
+  "source_hashes": {
+    "scripts/baseline/rmsnorm_expression_probe.py": "b4cc8eb4247a3437a01389a7c0de8fd1d2c1e2a2a238b33060bcc43204963f90",
+    "scripts/baseline/attention_expression_probe.py": "508d30ca03289eece47290ef02f98b7673b4b5fbce4b999c584d894655a1fe17",
+    "scripts/baseline/test_rmsnorm_expression_probe.py": "11918d3cec68a7ce6dbfcd6b3c52ca9f8307cc5f37987005fa52269db08c9ac4",
+    "scripts/baseline/test_attention_expression_probe.py": "a7db436acc96c8cfc993fe7b837bca864cdf2279e1e0d3045bac74ba1dae09c2",
+    "scripts/baseline/test_packed_prefix_lowering.py": "ff03dbb433deb3f26004fedaf196e30442584be737d21d00a0342054b709b3b6"
+  }
+}

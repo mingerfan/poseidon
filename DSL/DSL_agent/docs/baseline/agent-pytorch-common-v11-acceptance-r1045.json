@@ -1,0 +1,224 @@
+{
+  "approximation_application_accuracy_certified": false,
+  "binding": "9efe35a84f7245d74cd92dda55ddc7a1d55a9a9d6a4261a79964d9ad91d29dc1",
+  "commit": 0,
+  "confirmed": [
+    "v11_production_intake",
+    "isolated_public_capture_and_plaintext_references",
+    "context_bound_application_preparation",
+    "legacy_compatibility_units",
+    "protected_backend_reference_and_history_hashes"
+  ],
+  "created_utc": "2026-10-06T10:52:39.745189+00:00",
+  "development": {
+    "branch": "lhy-agent-dsl",
+    "checkout": "/home/lhohy/Code/Poseidon",
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "platform": "aarch64-linux"
+  },
+  "download": 0,
+  "evidence": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-pytorch-offline-proposal-r1042.json": "5aaf64026340af03a234daec5d199630ad15569d1ba4c6c780e090411f448848",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-offline-prepared-r1040/launcher-without-approval.json": "727dce83837c61b1baeac0c57c3c2161afc2d268fbea3937091cd02a2fcfc2ff",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-offline-prepared-r1040/prepared.json": "c2aa950694c32a0e7396f4b348031e0af66d69f4aa5a66c47bf4cd85112f9b3a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-production-v11-r1037/final-preservation-r1045.json": "c6ec390061c003cbbd0efaac7052d81fd128111002965f20bae631d9cf259eeb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-production-v11-r1037/units-current.log": "c8fe1880d68ba3febd59b3b5dbbae9b7666e2774a81c431ca42452f05ba976a3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-v11-application-r1039/report.json": "44041797622766df750858a07d6355e323333286b30192f51d7f880575c2ab06",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-v11-public-r1038/report.json": "cb95d81422cf985c461457bdc5c5917f5371785c70344c1168452742148571f8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-v11-rejections-r1041/audit-tool-initial.py": "55d5bd0e05504c3d0ccafe7cb717f01973ee7ba7b63beffbeab28982574b4245",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-v11-rejections-r1041/diagnostic-review.json": "37dc229801796879ceab2dd4010f9431079d90ba5f91b8b96dc8292c3025abea",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-v11-rejections-r1041/progress.json": "31e8e32387a9c1b432f3f4868620f7ff98c57987fc2ec71fb09ee726586650b9"
+  },
+  "format": "poseidon-pytorch-common-v11-acceptance-v1",
+  "frozen_benchmark_modified": false,
+  "http_attempts": 0,
+  "illegal_inputs": {
+    "actual_isolated_capture_rejections": 13,
+    "actual_rejected": 14,
+    "additional_captures": 0,
+    "initial_auditor_failed": true,
+    "original_evidence_preserved": true,
+    "original_matched": 12,
+    "original_mismatched": 2,
+    "pre_capture_weight_rejections": 1,
+    "review_binding": "ebaa7a58b0af4041a0db70c8014cba4538391c3761842c265ff1fc8efa820b39",
+    "review_scope": "independent classification of retained failures and auditor correction; not a new run",
+    "reviewed_expected": 14
+  },
+  "inferences": [
+    "registered_source_spellings_reach_existing_unified_graph_and_request_preparation"
+  ],
+  "installation": 0,
+  "legacy_refresh": {
+    "fresh_pytorch_captures": 55,
+    "fresh_source_api_contexts": 6,
+    "original_cases": 118,
+    "original_models_requests_candidates_identical": true,
+    "preparation_binding": "54b57e844ff93785ae0035433f91604deb6e329c89e3ed284c9d57c17a0a385b"
+  },
+  "legacy_source_versions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "modified_owned_source_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/application_capabilities.py": "b52599197e40eb98a3892277297f8a720d543d4f4c9c03791707d556cb6dad1e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_arithmetic_normalization.py": "69abb17e5627b7588eb37ad6f260c1c9ce34d5fbfb35a3196be5dfe849e73d9a",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_model_intake.py": "168e57654d30c8641b6a746d1bcc6a8e578b54947b273be543df3abfae9796f7",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/pytorch_static_trace.py": "9e01d0f6b6180dceb2e1c3c0cf85acd78b8941f6802e934abb25d634e8e2c015",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/test_pytorch_common_intake.py": "42cd700ac1bda44a69ed70d9534158e430b8d24192817856c4d478c662c5d6e8"
+  },
+  "new_agent_generations": 0,
+  "new_compiler_calls": 0,
+  "new_decryption": 0,
+  "new_encrypted_executions": 0,
+  "new_hecate_tracing": 0,
+  "new_rules": [
+    "finite_static_alpha",
+    "eval_module_functional_spatial_dropout",
+    "projected_or_intermediate_qkv_sdpa",
+    "public_boolean_sdpa_mask",
+    "finite_additive_sdpa_mask",
+    "static_causal_sdpa_mask"
+  ],
+  "new_unique_benchmark_model_count_claimed": false,
+  "original_state_retention": "explicit_v11_only",
+  "paid_calls": 0,
+  "pending_backend": {
+    "approved": false,
+    "binding": "ed3ffa719754bf75978d127e793c6c357516396e5302c3721ad40a08032f631d",
+    "candidate_origin": "trusted_rule_baseline",
+    "cases": 151,
+    "package_reuse_cases": 25,
+    "proposal": "/home/lhohy/Code/Poseidon/docs/baseline/agent-common-pytorch-offline-proposal-r1042.json",
+    "scope": {
+      "api_calls": 0,
+      "artifact_bytes": 4294967296,
+      "backend_changes": 0,
+      "candidate_seconds": 180,
+      "compile_jobs": 2,
+      "downloads": 0,
+      "encrypted_concurrency": 1,
+      "global_bytes": 34359738368,
+      "installs": 0,
+      "link_jobs": 1,
+      "max_shard_cases": 48,
+      "parameter_changes": 0,
+      "reserve_bytes": 4294967296,
+      "shards_sequential": true,
+      "wall_seconds": 7200
+    },
+    "started": false
+  },
+  "preservation": {
+    "binding": "a16428325ccb44846f3579661165d655881df6e92c44179564a9356f2f13eca7",
+    "branch": "lhy-agent-dsl",
+    "checked_counts": {
+      "case_hashes": 5248,
+      "extra_source_hashes": 5,
+      "source_hashes": 691,
+      "tool_hashes": 8
+    },
+    "commit": 0,
+    "compiler_calls": 0,
+    "current_status_rows": 671,
+    "disk_free_bytes": 48262144000,
+    "download": 0,
+    "encrypted_execution": false,
+    "format": "poseidon-v11-final-preservation-v1",
+    "git_diff_check": 0,
+    "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+    "installation": 0,
+    "lost_original_status_rows": [],
+    "new_approval_receipt_present": false,
+    "new_backend_output_present": false,
+    "original_status_rows": 660,
+    "paid_calls": 0,
+    "private_inputs_reference_threshold_backend_parameters_unchanged": true,
+    "process_matching": "actual argv path basenames; shell heredoc excluded",
+    "proposal_binding": "ed3ffa719754bf75978d127e793c6c357516396e5302c3721ad40a08032f631d",
+    "protected_counts": {
+      "protected-backend": 648,
+      "protected-current-history": 14,
+      "protected-history": 6,
+      "protected-new-history": 6,
+      "protected-references": 6
+    },
+    "push": 0,
+    "remaining_capture_or_backend_workers": [],
+    "result_bytes": 26885558272
+  },
+  "production_application": {
+    "binding": "62f74fe9d3042028a45b792564d0c58eea421dd42beea71a51a220c792dd73fe",
+    "cancelled_after_preparation": true,
+    "failed": 0,
+    "passed": 8,
+    "queued_before_generation": true,
+    "reference_groups": 128,
+    "scope": "production context-bound application source preparation; stopped before generation and backend validation",
+    "seconds": 31.456491026096046,
+    "skipped": 0
+  },
+  "production_integrated": true,
+  "public_intake": {
+    "binding": "8116685a2a2bf7f16f47f6c47bf498853bbe236db4645e79bdc55b827a215118",
+    "failed": 0,
+    "passed": 33,
+    "reference_groups": 528,
+    "runtime": {
+      "cuda": null,
+      "hip": null,
+      "numpy": "1.25.2",
+      "python": [
+        3,
+        10,
+        14
+      ],
+      "torch": "2.0.1"
+    },
+    "scope": "public isolated model-source intake and plaintext reference; no Hecate/DSL or encrypted acceptance",
+    "seconds": 27.23054808098823,
+    "skipped": 0
+  },
+  "push": 0,
+  "recovery_snapshot": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/fixtures/common-pytorch-production-base-v1/snapshot.json",
+  "reference_group_overlap": true,
+  "reference_max_errors": {
+    "max_approximation_error": 0.9767058007951268,
+    "max_decomposition_error": 8.673617379884035e-17,
+    "max_normalization_error": 5.551115123125783e-17,
+    "max_original_module_error": 1.1102230246251565e-16
+  },
+  "source_version": "poseidon-trusted-pytorch-v11",
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "unit_tests": {
+    "errors": 0,
+    "failed": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-common-pytorch-production-v11-r1037/units-current.log",
+    "passed": 179,
+    "run": 179,
+    "sha256": "c8fe1880d68ba3febd59b3b5dbbae9b7666e2774a81c431ca42452f05ba976a3",
+    "skipped": 0
+  },
+  "unverified": [
+    "current_bound_poseidon_compilation_encrypted_execution_decryption_and_package_reuse",
+    "new_input_real_agent_generation",
+    "original_function_application_accuracy",
+    "bootstrap",
+    "ciphertext_partition_handoff",
+    "resnet20",
+    "cuda_hardware",
+    "x86_native_execution",
+    "clean_machine_installation"
+  ]
+}

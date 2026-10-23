@@ -1,0 +1,99 @@
+{
+  "format": "poseidon-spatial-source-component-checkpoint-v1",
+  "source_format": "poseidon-trusted-pytorch-v27",
+  "sdk_identity": "5bd7c37b67d6e94cd28c6ad46660c17600f90e29b4c213fa5e41cc09d57239d6",
+  "branch": "lhy-agent-dsl",
+  "head": "7588e48093631eaf8385506e3db058e7ca3cfe7e",
+  "development_checkout": "/home/lhohy/Code/Poseidon",
+  "backend_changed": false,
+  "reference_threshold_changed": false,
+  "accepted_call_scope": [
+    "Upsample",
+    "UpsamplingNearest2d",
+    "UpsamplingBilinear2d",
+    "F.interpolate",
+    "ConvTranspose1d",
+    "ConvTranspose2d",
+    "F.conv_transpose1d",
+    "F.conv_transpose2d"
+  ],
+  "compatibility": {
+    "default_source_format": "poseidon-trusted-pytorch-v18",
+    "latest": "poseidon-trusted-pytorch-v21",
+    "old_versions_unchanged": true,
+    "x86_configuration_unchanged": true
+  },
+  "staged_plaintext": {
+    "contexts": 34,
+    "groups": 544,
+    "values": 7824,
+    "maximum_difference": 6.106226635438361e-16,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-component-stage-1791728068527392953/report.json",
+    "binding": "8571549a0c595f043d6bd220cafb189f9ddc2801d8462abdc2ef161db7b1285b"
+  },
+  "production_application": {
+    "contexts": 3,
+    "unit_tests": {
+      "run": 128,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-application-r1404-1791729468155848197/report.json",
+    "binding": "b399be764daa89adf4cbe1193b451b308ad1ac89b43c2da3986cbb045261a329",
+    "reference_verified": true,
+    "compilation_verified": false,
+    "encrypted_execution": false
+  },
+  "standalone_sandbox": {
+    "contexts": 6,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-sandbox-stage-1791728344527028739/report.json",
+    "note": "Six source captures passed. That intermediate report retained a unit fixture setup error; fixed unit tests are in the final production result."
+  },
+  "overlap_note": "Contexts overlap across stages; counts are not summed as distinct models.",
+  "api_calls": 0,
+  "compilations": 0,
+  "encrypted_calls": 0,
+  "new_agent_generation": false,
+  "evidence_boundary": "Previous JSON spatial CPU acceptance retains SDK 388e891a...; no result is relabelled as new PyTorch v27 FHE evidence.",
+  "preserved_intermediate_failures": [
+    "agent-spatial-source-component-stage-1791727879552629468",
+    "agent-spatial-source-sandbox-stage-1791728344527028739"
+  ],
+  "next_action": "Frozen representative source-route offline CPU validation r1405, pending separate bounded approval.",
+  "binding": "9b600576e5bbf57770116dd8746f9256ce751e69e5971e2b7c9fe8ea072a816f",
+  "representative_source_preparation": {
+    "cases": 18,
+    "passed": 18,
+    "blocked": 0,
+    "source_versions": {
+      "pytorch_v27": 15,
+      "pytorch_v26": 2,
+      "json_v1": 1
+    },
+    "rule_candidates_static_passed": 18,
+    "result": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-spatial-source-prepare-r1405-1791730240931950094",
+    "proposal_binding": "c563ee93d44018613d6ee4affc315414efacbace38a77fb5e81a60e2e9f7e592",
+    "source_isolation": "existing bubblewrap unshare-all",
+    "compiler_calls": 0,
+    "encrypted_calls": 0,
+    "api_calls": 0
+  },
+  "offline_control_tests": {
+    "run": 14,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/trusted_spatial_intake_v1/source-controls-r1405.log",
+    "sha256": "53571f4993ea8e27d4a2f0a846679895279b8de7b5abab9bba6b755ba2164802"
+  },
+  "source_stage_comparison": {
+    "changed_files": [
+      "application_capabilities.py"
+    ],
+    "mathematical_capture_files_unchanged": true,
+    "staged_capability_sha256": "ad4b2ca066458699a66a010b30a7448d423967083a3014282175bd293fc5fbdb",
+    "production_capability_sha256": "c61c61fdfc4e2856906dd9bffe04e06c6615ef411de5ff78bf09d7fe618bf0bc",
+    "note": "Capability metadata was finalized after the staged plaintext suite. Final production tests and r1405 source preparations bind the final source closure; staged reports are not rewritten."
+  }
+}

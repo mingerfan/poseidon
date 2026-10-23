@@ -1,0 +1,581 @@
+{
+  "format": "poseidon-attention-equivalent-expression-acceptance-v1",
+  "backend": "poseidon_cpu",
+  "model_canonical_sha256": "89ca5f3dd294ff3bc065e453c76b19231501b92687b7d8a669fd5271c0710138",
+  "frozen_parameters": true,
+  "math": "Same public projection and RoPE: current q dot k is the scaled input norm. Cached-key padding follows the unchanged ABI. Separate original RoPE/KV output branch.",
+  "changed_sources": {
+    "scripts/baseline/attention_expression_probe.py": "c11d124f1787caeb487f46c9f7092d1844f050f55c9de35b7f5d03ea410aeec7",
+    "scripts/baseline/rmsnorm_expression_probe.py": "1737a026dfe78730a310ca85586c6d34745fc5d2c9d5fa1a5a688007ce6d03fb",
+    "scripts/baseline/test_attention_expression_probe.py": "081197b0e8a74dc80cfb255f30ed6a7c7dee857d649963564d16ee491463df45"
+  },
+  "original_failures": "poseidon-attention-expressions-r240/report.json retained unchanged",
+  "probes": {
+    "plan_sha256": "36c1005296fe4d34dd4ad11c2db0a8c0c17de09dcbbfaaec7b88583c8ff8e4b9",
+    "rows": [
+      {
+        "name": "packed-early-score",
+        "waterline": 45,
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 2.7755575615628914e-17,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "format": "poseidon-agent-component-v1",
+        "status": "passed",
+        "exit_code": 0,
+        "request_id": "ae45f832e3a2cc1e000511281334bb15908e3811b902599a8b527eeb5a4883c1",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1se46nq2",
+        "paid_calls": 0,
+        "new_agent_generation": false,
+        "encrypted_execution": true,
+        "numerically_validated": true,
+        "observed_stages": {
+          "traced": true,
+          "compiled": true,
+          "encrypted_execution": true,
+          "numerically_compared": true,
+          "evidence_integrity_not_rejected": true
+        },
+        "validation_level": "numerical",
+        "compiled_validated": true,
+        "max_absolute_error": 5.207172026899798e-09,
+        "compared_values": 40
+      },
+      {
+        "name": "packed-early-score",
+        "waterline": 40,
+        "plaintext": {
+          "probes": 16,
+          "references": 2,
+          "max_absolute_error": 2.7755575615628914e-17,
+          "kind": "plaintext candidate equivalence; not encrypted evidence"
+        },
+        "format": "poseidon-agent-component-v1",
+        "status": "passed",
+        "exit_code": 0,
+        "request_id": "3d5659cd9e91029b4c23d9e545036073bdac1ed4ed16241f799950582f634556",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qn_4aqdc",
+        "paid_calls": 0,
+        "new_agent_generation": false,
+        "encrypted_execution": true,
+        "numerically_validated": true,
+        "observed_stages": {
+          "traced": true,
+          "compiled": true,
+          "encrypted_execution": true,
+          "numerically_compared": true,
+          "evidence_integrity_not_rejected": true
+        },
+        "validation_level": "numerical",
+        "compiled_validated": true,
+        "max_absolute_error": 1.9166362351386024e-07,
+        "compared_values": 40
+      }
+    ],
+    "planned": 2,
+    "passed": 2,
+    "failed": 0,
+    "not_run": 0,
+    "seconds": 11.001682805013843,
+    "artifact_bytes": 5731496,
+    "paid_calls": 0,
+    "agent_generated": false
+  },
+  "application": {
+    "format": "poseidon-attention-application-v1",
+    "paid_calls": 0,
+    "agent_generated": false,
+    "original_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1se46nq2",
+    "model_sha256": "96021875c6ffec052e023259da6a7435e43f21dd521a3d2f253201dc3c518126",
+    "source_sha256": "1c2ded3eafcade5223ddd6554d2c40933376b7722e795a8831c4db9274c05326",
+    "task_id": "b9f9e66f3dad41479865a22bad3d0c6d",
+    "result": {
+      "task_id": "b9f9e66f3dad41479865a22bad3d0c6d",
+      "status": "succeeded",
+      "phase": "complete",
+      "validation_level": "numerical",
+      "generations": 1,
+      "http_attempts": 0,
+      "failure": null,
+      "package": {
+        "binding": "55e1bd6bfc3a4257c650c529497bf6a74167ec61493f0eb9271591fc1c7ad732",
+        "reused": false,
+        "task_id": "b9f9e66f3dad41479865a22bad3d0c6d"
+      },
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 40,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 6.657919660035816e-09,
+        "numerically_validated": true
+      }
+    },
+    "scripted_generations": 1,
+    "request_id": "501a68287f117c3e996114a22f42ffef1cc9495380546768d2b9ba87e5016a6b",
+    "guidance": "explicit-v10",
+    "manifest": {
+      "encrypted_execution": true,
+      "level": "numerical",
+      "numerically_validated": true
+    },
+    "package": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-attention-score-r242/application/tasks/b9f9e66f3dad41479865a22bad3d0c6d/program",
+    "reload_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-u4jb786g",
+    "reload": {
+      "backend": "poseidon_cpu",
+      "validation_level": "numerical",
+      "bundle_binding": "55e1bd6bfc3a4257c650c529497bf6a74167ec61493f0eb9271591fc1c7ad732",
+      "status": "passed",
+      "agent_calls": 0,
+      "compiler_calls": 0,
+      "compiled_artifacts_reused": true,
+      "encrypted_execution": true,
+      "numerically_validated": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-package-replay-u4jb786g",
+      "backend_identity": {
+        "format": "poseidon-backend-identity-v2",
+        "platform": {
+          "configured_platform": "aarch64-linux",
+          "system": "linux",
+          "machine": "aarch64",
+          "byteorder": "little",
+          "pointer_bits": 64,
+          "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+          "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified"
+        },
+        "build_configuration": {
+          "environment_files": {
+            "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+            "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+            "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+            "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+            "src/poseidon/tools/dacapo/poseidon-cpu-shell.nix": "38e03f4ec07fc089a14851595f7d1211fe07618875e9868bf5d205dd39274020",
+            "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1"
+          },
+          "cmake_cache_sha256": {
+            "compiler": "76c058b5d19a3e27fe299a7cbd071888494cb48c19f27df2d4d71c807b86f51d",
+            "executor": "a2b446c164db2f71b3a999a10ea097b34267bd8d34aef68129e423362f76f789",
+            "poseidon": "a96456e4ac0651827a50d58c6c80f12c2772c005cd78d2949919a6e1d2106e32"
+          }
+        },
+        "source_lock_sha256": "5e8d7adebd0cac8e9748bcddf0dc5ea408b7123095ff79199cdf47738de84647",
+        "source_lock": {
+          "format": "poseidon-runtime-source-lock-v1",
+          "poseidon_api_commit": "62dbe22559667199487edb8ecdcb06624f66e6d7",
+          "runtime": {
+            "commit": "23c8b94202a14d3e322f87c50434253d56acb9f7",
+            "archive_sha256": "9d7ee9df11d8d8a25accfd816a5a7ec7dd8b7e457f6e9adde6cf0b124c30c1d4",
+            "path": "third_party/ckks-runtime-agent"
+          },
+          "dacapo": {
+            "commit": "edcebf5de955dd2a5cd1b87726b92355276e4390",
+            "archive_sha256": "6e4acfd8362b2fd3c54613c7e0f2bb14d0fae99cca640712b5210ee8c4d37c0c",
+            "path": "third_party/ckks-runtime-agent/third_party/dacapo",
+            "patches": [
+              {
+                "file": "dacapo-plaintext-subtraction.patch",
+                "sha256": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c"
+              },
+              {
+                "file": "dacapo-concat-layout.patch",
+                "sha256": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02"
+              },
+              {
+                "file": "dacapo-bootstrap-containers.patch",
+                "sha256": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764"
+              },
+              {
+                "file": "dacapo-native-function-calls.patch",
+                "sha256": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2"
+              },
+              {
+                "file": "dacapo-refined-function-input-types.patch",
+                "sha256": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce"
+              },
+              {
+                "file": "dacapo-augmented-operand-order.patch",
+                "sha256": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad"
+              },
+              {
+                "file": "dacapo-constant-output-path.patch",
+                "sha256": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+              },
+              {
+                "file": "dacapo-minimal-mlir-link.patch",
+                "sha256": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c"
+              },
+              {
+                "file": "dacapo-gcc-qualified-casts.patch",
+                "sha256": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788"
+              },
+              {
+                "file": "dacapo-unused-mlir-dependencies.patch",
+                "sha256": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2"
+              }
+            ]
+          },
+          "integration_method": "reviewed source archives; original independent repositories preserved"
+        },
+        "runtime_dacapo_tree_sha256": "f2ef1a237d1cb6d782e1013372e9d395f4e88e7aa449b9301a1fc2956d22a23a",
+        "api_tree_sha256": "c8a3d120aae1800ce48a5d3085044b00c7f92c844a7e1531615df3a4babccbf7",
+        "runner_tree_sha256": "1485b2dc31699067f2f9074be042e6739b22a5eee54e7d7c422d47b22ca5cfa6",
+        "compiler_sha256": "0769a625753f0f1c4a707fc268cccf638cb9fae697f60e5c155d2232d9afd558",
+        "frontend_sha256": "0baecce07032d37aaecba38b64b93cbbc23fb21dac8476de85598dc9ba8d6e73",
+        "executor_sha256": "92074cb9fb7726d1d71c08aa377f68df02c7faa2b7f7079bb75fa5ffc60844d5",
+        "poseidon_library_sha256": "dcfb32471bbadf12e66835fc9b8dac4c06106582cf884862f3ac8a9612e154e4",
+        "compiler_profile_sha256": "acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037",
+        "operator_spec_sha256": "a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e"
+      },
+      "execution": {
+        "backend": "poseidon_cpu",
+        "bootstrap": false,
+        "data_moduli": 13,
+        "degree": 32768,
+        "encrypted_execution": true,
+        "executor_secret_key": false,
+        "p": [
+          1152921504606584833
+        ],
+        "q": [
+          1152921504581419009,
+          1152921504581877761,
+          1152921504583647233,
+          1152921504585547777,
+          1152921504586530817,
+          1152921504589938689,
+          1152921504592429057,
+          1152921504592822273,
+          1152921504593412097,
+          1152921504595640321,
+          1152921504595968001,
+          1152921504597016577,
+          1152921504598720513
+        ],
+        "security": "tc128",
+        "special_moduli": 1
+      },
+      "comparison": {
+        "passed": true,
+        "atol": 1e-05,
+        "rtol": 0.0001,
+        "compared_values": 40,
+        "mae": 1.2990374315152067e-09,
+        "max_absolute_error": 4.3785751135949624e-09,
+        "max_nonzero_reference_relative_error": 1.4788896921778604e-07,
+        "nonzero_reference_count": 30,
+        "cosine_similarity": 1.0000000000000002,
+        "actual": [
+          [
+            2.3869841862324034e-10,
+            -9.457131188471708e-11,
+            -3.6892248999144936e-09,
+            3.624853337596423e-10,
+            1.3379345291866518e-09,
+            -6.049130698597802e-11,
+            7.834968232647265e-10,
+            -4.576064658983974e-10,
+            2.3000055210989207e-09,
+            3.608421172316446e-10
+          ],
+          [
+            0.05735393019365348,
+            -0.11470786100340724,
+            -0.33333333181661506,
+            0.6666666650541201,
+            0.14821628065368708,
+            -0.01594223943754382,
+            0.33333333078454225,
+            -0.6666666660184865,
+            0.10000000131167863,
+            -0.20000000013181962
+          ],
+          [
+            -0.07390087986449566,
+            0.10020305744233723,
+            -0.35268892863948453,
+            0.8705860197334097,
+            0.09438238006506981,
+            0.17645860167504376,
+            -0.8065490321121751,
+            0.6877223256058036,
+            0.2992197232413575,
+            0.02388143233065019
+          ],
+          [
+            0.16346698981973015,
+            -0.16346698917071995,
+            -0.9999999967656271,
+            1.0000000024863536,
+            0.2763546551887016,
+            0.06023373535305154,
+            0.999999997946589,
+            -1.0000000001497107,
+            0.2999999970739471,
+            -0.3000000000342898
+          ]
+        ],
+        "reference": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.057353930559497626,
+            -0.11470786111899525,
+            -0.3333333333333333,
+            0.6666666666666666,
+            0.1482162850322622,
+            -0.015942241795225527,
+            0.3333333333333333,
+            -0.6666666666666666,
+            0.09999999999999999,
+            -0.19999999999999998
+          ],
+          [
+            -0.07390087919558469,
+            0.10020305749798633,
+            -0.35268892860974455,
+            0.8705860210243583,
+            0.09438238182404037,
+            0.17645860474885738,
+            -0.8065490305674929,
+            0.6877223271794817,
+            0.2992197216730568,
+            0.023881432881138243
+          ],
+          [
+            0.1634669890412555,
+            -0.1634669890412555,
+            -1.0,
+            1.0,
+            0.27635465813520727,
+            0.06023373578795137,
+            1.0,
+            -1.0,
+            0.3,
+            -0.3
+          ]
+        ],
+        "absolute_error": [
+          [
+            2.3869841862324034e-10,
+            9.457131188471708e-11,
+            3.6892248999144936e-09,
+            3.624853337596423e-10,
+            1.3379345291866518e-09,
+            6.049130698597802e-11,
+            7.834968232647265e-10,
+            4.576064658983974e-10,
+            2.3000055210989207e-09,
+            3.608421172316446e-10
+          ],
+          [
+            3.6584414664364573e-10,
+            1.1558801138455976e-10,
+            1.5167182509934207e-09,
+            1.6125465407412776e-09,
+            4.3785751135949624e-09,
+            2.35768170611661e-09,
+            2.5487910670918268e-09,
+            6.481801761992756e-10,
+            1.311678640703029e-09,
+            1.3181963853803325e-10
+          ],
+          [
+            6.689109682822547e-10,
+            5.56490964420675e-11,
+            2.973998824984392e-11,
+            1.2909486812873183e-09,
+            1.7589705525455912e-09,
+            3.073813620302346e-09,
+            1.5446821599596205e-09,
+            1.5736780767383607e-09,
+            1.5683006560074375e-09,
+            5.504880544460189e-10
+          ],
+          [
+            7.7847464585723e-10,
+            1.2946443916916905e-10,
+            3.2343728806338845e-09,
+            2.48635356747684e-09,
+            2.946505650580633e-09,
+            4.3489982448630116e-10,
+            2.053410996794014e-09,
+            1.4971068829083833e-10,
+            2.9260528999763835e-09,
+            3.428979322706027e-11
+          ]
+        ],
+        "relative_error": [
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            6.378710980655939e-09,
+            1.007672972514512e-09,
+            4.550154752980262e-09,
+            2.4188198111119164e-09,
+            2.9541795037177456e-08,
+            1.4788896921778604e-07,
+            7.64637320127548e-09,
+            9.722702642989134e-10,
+            1.3116786407030291e-08,
+            6.590981926901663e-10
+          ],
+          [
+            9.051461573439842e-09,
+            5.553632576848847e-10,
+            8.432356628566486e-11,
+            1.4828502297433495e-09,
+            1.8636640849188227e-08,
+            1.741946007494004e-08,
+            1.9151745292815893e-09,
+            2.2882463089316893e-09,
+            5.241301098866221e-09,
+            2.3050880455368278e-08
+          ],
+          [
+            4.7622743308788786e-09,
+            7.919913367737816e-10,
+            3.2343728806338845e-09,
+            2.48635356747684e-09,
+            1.066204445571186e-08,
+            7.220203409221294e-09,
+            2.053410996794014e-09,
+            1.4971068829083833e-10,
+            9.753509666587945e-09,
+            1.1429931075686758e-10
+          ]
+        ],
+        "elementwise_pass": [
+          [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ]
+        ]
+      }
+    },
+    "reuse": {
+      "task_id": "f8d4bc2499d341e39e8b870c256af227",
+      "status": "succeeded",
+      "phase": "complete",
+      "validation_level": "numerical",
+      "generations": 0,
+      "http_attempts": 0,
+      "failure": null,
+      "package": {
+        "binding": "55e1bd6bfc3a4257c650c529497bf6a74167ec61493f0eb9271591fc1c7ad732",
+        "reused": true,
+        "task_id": "b9f9e66f3dad41479865a22bad3d0c6d"
+      },
+      "acceptance": {
+        "artifact_checked": true,
+        "claim": "finite configured inputs only; no formal equivalence",
+        "compared_values": 40,
+        "compiled": true,
+        "encrypted_execution": true,
+        "input_groups": 4,
+        "level": "numerical",
+        "maximum_absolute_error": 6.657919660035816e-09,
+        "numerically_validated": true
+      }
+    },
+    "cache_provider_calls": 0
+  },
+  "tests": {
+    "run": 9,
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-attention-score-r242/unit.log"
+  },
+  "agent_generated": false,
+  "paid_calls": 0,
+  "bootstrap": false,
+  "compiler_runtime_library_changes": false,
+  "model_reference_tolerance_changes": false,
+  "new_dependencies": false,
+  "downloads": 0,
+  "numerical_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "evidence_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/poseidon-attention-score-r242",
+  "remaining": [
+    "Real Agent generation on Poseidon requires separate budget approval",
+    "Full operator and DSL migration regression is not established by this case",
+    "CPU native bootstrap accuracy and Runtime wiring remain blocked; r235 pending approval"
+  ],
+  "deferred": [
+    "x86 native execution",
+    "clean-machine installation",
+    "CUDA"
+  ]
+}

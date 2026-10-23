@@ -1,0 +1,33 @@
+{
+  "format": "poseidon-current-plan-test-authorization-v1",
+  "approved": true,
+  "human_message": "目前执行的计划内后续所有的离线和真实测试全部批准同意",
+  "human_source": "direct_user_message",
+  "scope": "Remaining offline and real-Agent tests within the current backend-preserving Agent generalization plan",
+  "exclusions": [
+    "dependency installation",
+    "large downloads",
+    "backend library changes",
+    "security or algorithm parameter changes",
+    "network environment changes",
+    "commit",
+    "push",
+    "PR"
+  ],
+  "execution_policy": {
+    "freeze_cases_sources_identity_and_budget_before_each_batch": true,
+    "max_semantic_repairs": 3,
+    "max_transport_retries": 3,
+    "api_timeout_seconds": 1200,
+    "max_output_tokens": 384000,
+    "compiler_jobs": 2,
+    "link_jobs": 1,
+    "native_concurrency": 1,
+    "native_cpu_seconds": 150,
+    "native_address_bytes": 4294967296,
+    "global_result_bytes": 34359738368,
+    "minimum_free_bytes": 4294967296,
+    "no_unknown_call_retry": true
+  },
+  "binding": "12a8ab8ea5da8f601a7db9546f895ed3a1e7c58023ec0912cd7969bc556c867d"
+}
