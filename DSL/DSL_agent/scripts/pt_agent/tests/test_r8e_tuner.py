@@ -48,8 +48,18 @@ class TunerTests(unittest.TestCase):
 
     def test_01_validate_matches_evaluate(self):
         source = R6C.read_text()
-        actual = validate(parse(source), self.ctx50)
-        feedback = evaluate(source, self.ctx50)
+        actual = validate(parse(source), self.ctx50, engine="mock")
+        feedback = evaluate(source, self.ctx50, engine="mock")
+        self.assertEqual(actual['agree'], feedback['validation']['agree'])
+        self.assertEqual(actual['max_u'], feedback['validation']['max_u'])
+        self.assertEqual(actual['feasible'], feedback['feasible'])
+        self.assertEqual(len(actual['rows']), 19)
+        self.assertTrue(all(row['obs_min'] < row['obs_max'] for row in actual['rows']))
+
+    def test_01b_validate_matches_evaluate_tensor(self):
+        source = R6C.read_text()
+        actual = validate(parse(source), self.ctx50, engine="tensor")
+        feedback = evaluate(source, self.ctx50, engine="tensor")
         self.assertEqual(actual['agree'], feedback['validation']['agree'])
         self.assertEqual(actual['max_u'], feedback['validation']['max_u'])
         self.assertEqual(actual['feasible'], feedback['feasible'])
@@ -95,7 +105,7 @@ class TunerTests(unittest.TestCase):
         source += '    return x\n'
         ctx = SimpleNamespace(weights={}, profile='qwen48')
 
-        def fake_validate(program, context, n=None):
+        def fake_validate(program, context, n=None, **kwargs):
             acts = [op for op in program.ops if op.kind == 'act']
             feasible = n is not None or all(op.attrs['deg'] >= 63 for op in acts)
             return dict(agree=200 if n is not None else 1000 if feasible else 980,
@@ -105,7 +115,7 @@ class TunerTests(unittest.TestCase):
 
         def fake_cost(program, weights, **kwargs):
             acts = [op for op in program.ops if op.kind == 'act']
-            return dict(latency_pred_us=sum(op.attrs['deg'] for op in acts), boots_pred=len(acts),
+            return dict(latency_pred_us=sum(op.attrs['deg'] for op in acts), boots_pred=len(acts), boot_nodes=[],
                         hotspots=[dict(line=op.lineno, call_lines=list(op.call_lines), latency_share=.1)
                                   for op in acts])
 
@@ -128,7 +138,7 @@ class TunerTests(unittest.TestCase):
         original = parse(source)
         ctx = SimpleNamespace(weights={}, profile='qwen48')
 
-        def fake_validate(program, context, n=None):
+        def fake_validate(program, context, n=None, **kwargs):
             acts = [op for op in program.ops if op.kind == 'act']
             total = 200 if n is not None else 1000
             return dict(agree=total, total=total, feasible=True, diverged=False, max_u=.8,
@@ -137,7 +147,7 @@ class TunerTests(unittest.TestCase):
 
         def fake_cost(program, weights, **kwargs):
             acts = [op for op in program.ops if op.kind == 'act']
-            return dict(latency_pred_us=100.0, boots_pred=len(acts),
+            return dict(latency_pred_us=100.0, boots_pred=len(acts), boot_nodes=[],
                         hotspots=[dict(line=op.lineno, call_lines=list(op.call_lines), latency_share=.1) for op in acts])
 
         with patch('pt_agent.planners.tuner.validate', side_effect=fake_validate), \

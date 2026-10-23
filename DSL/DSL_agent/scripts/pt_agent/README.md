@@ -70,6 +70,8 @@ PyTorch nn.Module ──(intake: make_fx/ATen)──► PT-Graph ──(planners
 
 **数据划分**：测试集第 9000–9999 张为循环内的留出验证集；第 8000–8999 张为冻结时的确认集；第 0–7999 张只用于最终报告。训练集只用于校准和训练。
 
+**验证引擎**：按 R8f2 §8–§9，`tuner.tune` 默认使用 `engine="tensor"` 进行 float64 张量精调，开启结果、结构化前缀及小函数三层进程内缓存；可用 `cache=False` 关闭。面向 LLM 的 `agent_tools.evaluate`、`validate` 默认使用 Mock，冻结确认、独立精确检查和最终报告也使用槽级 Mock。Tensor精调对最终程序额外执行一次完整Mock复核，核对feasible/agree后使用Mock统计形成对外反馈；搜索决策仍来自Tensor过程。冻结tag反馈全文一致性验收及当前状态见 STATUS.md。
+
 ## 4. 常用命令
 
 在 `DSL/DSL_agent/scripts` 下执行：

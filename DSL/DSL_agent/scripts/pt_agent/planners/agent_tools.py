@@ -11,11 +11,14 @@ from ..cost import PROFILES, estimate
 from ..data.cifar import heldout_set, MEAN, STD
 from ..dsl.errors import PTDSLError
 from ..dsl.parser import parse
+from ..dsl.printer import print_program
 from ..dsl.typecheck import check
 from ..intake import Graph
 from ..kernels.layout import MuxLayout, unpack_flat, unpack_mux
 from ..lower import LoweringError, decode_outputs, lower, pack_inputs
 from ..placement import PlacementError
+from ..tensor_sim import (cached_estimate, identity_token, result_cache_get,
+                          result_cache_put, run_tensor)
 
 
 FEASIBLE_MAX_U = 0.90
@@ -110,51 +113,79 @@ def _exact_check(program, ctx):
 
 
 def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
-             stop_on_divergence=True) -> dict:
+             stop_on_divergence=True, engine: str = "mock", cache: bool = True) -> dict:
     """Apply validation checks to the first n held-out images (all by default)."""
     images = ctx.val_images if n is None else ctx.val_images[:n]
     profile = PROFILES[ctx.profile]
+    if engine not in ("mock", "tensor"):
+        raise ValueError("engine must be mock or tensor")
+    if engine == "tensor" and (profile['boot_input_bound'] is not None or profile['boot_abs_error'] is not None):
+        raise ValueError("bootstrap input bounds and noise require engine='mock'")
     ops = [op for op in program.ops if op.kind == "act"]
-    if boot_nodes is None:
-        boot_nodes = estimate(program, ctx.weights, profile=ctx.profile)['boot_nodes']
+    image_id = None
+    result_key = None
+    if engine == "tensor" and cache:
+        # References distinguish live datasets and weights without reading or hashing their bytes.
+        image_id = (identity_token(ctx.val_images), identity_token(ctx.weights))
+        result_identity = (image_id, identity_token(ctx.val_exact_logits), identity_token(ctx.val_labels),
+                           ctx.profile, tuple(ctx.act_tensors), tuple(op.lineno for op in ops))
+        result_key = (print_program(program), result_identity, len(images), stop_on_divergence, engine)
+        hit, saved = result_cache_get(result_key)
+        if hit:
+            return saved
+    if engine == "mock" and boot_nodes is None:
+        boot_nodes = cached_estimate(program, ctx.weights, ctx.profile, estimate, cache=cache)['boot_nodes']
     rows = [dict(program_line=op.lineno, graph_tensor=ctx.act_tensors[index], max_u=0.0,
                  obs_min=None, obs_max=None,
                  deg=op.attrs["deg"], method=op.attrs["method"], degrees=op.attrs.get("degrees"),
                  domain=op.attrs["domain"]) for index, op in enumerate(ops)]
     validation = dict(agree=0, total=len(images), diverged=False, n_diverged=0, diverged_indices=[],
                       images_done=0, worst_acts=[], max_u=0.0,
-                      boot_input_max_abs=0.0, boot_input_bound=profile['boot_input_bound'],
+                      boot_input_max_abs=None if engine == "tensor" else 0.0,
+                      boot_input_bound=profile['boot_input_bound'],
                       top1=0.0, exact_top1=float(100*np.mean(ctx.val_exact_logits[:len(images)].argmax(axis=1)
                                                           == ctx.val_labels[:len(images)])))
     correct = 0
-    watch = set(boot_nodes)
+    watch = set(boot_nodes or ())
     noise = (profile['boot_abs_error'], 20261022) if profile['boot_abs_error'] else None
-    def run_batch(batch):
+    def run_batch(batch, batch_start):
         # Keep failed vector-batch observations separate from the per-image retries.
         observations = [dict(obs_min=None, obs_max=None, max_u=0.0) for _ in rows]
         observed = 0
 
         def observer(name, value, layout, cfg):
+            data = value.value[..., layout.index_grid()] if isinstance(layout, MuxLayout) else value.value[..., :layout.size]
+            tensor_observer(name, data, cfg)
+
+        def tensor_observer(name, data, cfg):
             nonlocal observed
             row = observations[observed]
             observed += 1
-            data = value.value[..., layout.index_grid()] if isinstance(layout, MuxLayout) else value.value[..., :layout.size]
             row["obs_min"] = float(data.min())
             row["obs_max"] = float(data.max())
             _, _, lo, hi = cfg
             row["max_u"] = float(np.max(np.abs(data*(2/(hi-lo))-(hi+lo)/(hi-lo))))
 
-        backend = MockBackend(16384, batch=len(batch), watch=watch, noise=noise)
+        def restore(records):
+            for name, minimum, maximum, cfg in records:
+                tensor_observer(name, np.asarray([minimum, maximum], dtype=np.float64), cfg)
+
+        tensor_observer.restore = restore
+        backend = MockBackend(16384, batch=len(batch), watch=watch, noise=noise) if engine == "mock" else None
         logits, error = None, None
         try:
-            backend.bind(pack_inputs(program, [batch]))
-            values, layouts = lower(program, ctx.weights, backend, observer=observer)
-            logits = decode_outputs([value.value for value in values], layouts)[0]
+            if engine == "tensor":
+                logits = run_tensor(program, ctx.weights, batch, observer=tensor_observer,
+                                    cache=cache, image_id=image_id, batch_start=batch_start)
+            else:
+                backend.bind(pack_inputs(program, [batch]))
+                values, layouts = lower(program, ctx.weights, backend, observer=observer)
+                logits = decode_outputs([value.value for value in values], layouts)[0]
             if not np.isfinite(logits).all():
                 raise BackendError("Mock arithmetic produced a nonfinite value")
         except BackendError as exc:
             logits, error = None, str(exc)
-        boot_max = max(backend.watch_max.values(), default=0.0)
+        boot_max = max(backend.watch_max.values(), default=0.0) if backend is not None else None
         del backend
         gc.collect()
         return logits, observations, boot_max, error
@@ -168,7 +199,8 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                 row["obs_max"] = (observation["obs_max"] if row["obs_max"] is None
                                   else max(row["obs_max"], observation["obs_max"]))
                 row["max_u"] = max(row["max_u"], observation["max_u"])
-        validation["boot_input_max_abs"] = max(validation["boot_input_max_abs"], boot_max)
+        if engine == "mock":
+            validation["boot_input_max_abs"] = max(validation["boot_input_max_abs"], boot_max)
         if logits is not None:
             predictions = logits.argmax(axis=1)
             validation["agree"] += int(np.sum(predictions == ctx.val_exact_logits[start:start+count].argmax(axis=1)))
@@ -177,12 +209,12 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
 
     for start in range(0, len(images), VAL_BATCH):
         batch = images[start:start+VAL_BATCH]
-        logits, observations, boot_max, error = run_batch(batch)
+        logits, observations, boot_max, error = run_batch(batch, start)
         if error is None:
             record(logits, observations, boot_max, start, len(batch))
             continue
         for offset in range(len(batch)):
-            logits, observations, boot_max, error = run_batch(batch[offset:offset+1])
+            logits, observations, boot_max, error = run_batch(batch[offset:offset+1], start+offset)
             record(logits, observations, boot_max, start+offset, 1)
             if error is not None:
                 validation["diverged_indices"].append(start+offset)
@@ -206,10 +238,12 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                               and validation["acc_drop_pp"] <= MAX_ACC_DROP_PP
                               and (validation['boot_input_bound'] is None
                                    or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
+    if result_key is not None:
+        result_cache_put(result_key, validation)
     return validation
 
 
-def evaluate(source: str, ctx: AgentContext) -> dict:
+def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: bool = True) -> dict:
     fb = dict(stage="parse", feasible=False, exact=None, cost=None, validation=None)
     lines = source.splitlines()
 
@@ -263,7 +297,7 @@ def evaluate(source: str, ctx: AgentContext) -> dict:
     if errors:
         return dict(fb, errors=errors)
     fb["stage"] = "validation"
-    validation = validate(program, ctx, boot_nodes=cost['boot_nodes'])
+    validation = validate(program, ctx, boot_nodes=cost['boot_nodes'], engine=engine, cache=cache)
     fb["validation"] = {key: value for key, value in validation.items() if key not in ("rows", "feasible", "error")}
     fb["feasible"] = fb["exact"]["ok"] and validation["feasible"]
     if "error" in validation:

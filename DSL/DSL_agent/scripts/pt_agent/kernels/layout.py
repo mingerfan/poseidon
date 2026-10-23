@@ -50,6 +50,8 @@ class MuxLayout:
 
 @dataclass(frozen=True)
 class FlatLayout:
+    """Flat values occupy [:size]; every slot in [size:n] must remain zero."""
+
     n: int
     size: int
 
