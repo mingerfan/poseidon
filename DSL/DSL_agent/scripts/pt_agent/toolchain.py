@@ -1,7 +1,7 @@
 """Trace, compile and ordinary CPU execution for pt_agent.
 
 Tracing and compilation are self-contained: paths come from pt_agent.paths, compiler profiles are shipped
-in pt_agent/profiles, and the hecate-opt command line is built here. Only two legacy paths still use the
+in pt_agent/compiler_profiles, and the hecate-opt command line is built here. Only two legacy paths still use the
 baseline SDK modules (and therefore the SDK selector): the non-trusted candidate sandbox
 (trace/compile with trusted=False) and ordinary CPU CKKS execution (execute_cpu, bind, write_inputs).
 """

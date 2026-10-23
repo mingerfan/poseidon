@@ -41,7 +41,7 @@ WORK_RESULTS = PLATFORM_DIR / "results"
 # Compiler toolchain (see DSL/DSL_agent/scripts/pt_agent/README.md for how to build it).
 HECATE_BUILD = _env_path("PT_HECATE_BUILD", WORK_RESULTS / "agent-current-dacapo-build-r1712/build")
 DACAPO_ROOT = _env_path("PT_DACAPO_ROOT", REPO / "third_party/ckks-runtime/third_party/dacapo")
-PROFILES_DIR = Path(__file__).resolve().parent / "profiles"
+PROFILES_DIR = Path(__file__).resolve().parent / "compiler_profiles"
 
 
 def pt_result(*parts: str) -> Path:

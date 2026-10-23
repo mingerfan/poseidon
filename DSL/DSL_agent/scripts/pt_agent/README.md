@@ -18,7 +18,7 @@ PyTorch nn.Module ──(intake: make_fx/ATen)──► PT-Graph ──(planners
 | `backends/`、`kernels/` | Mock / Count / Emit / DAG 后端；mux 卷积、Chebyshev 与组合 minimax 激活、池化、全连接 |
 | `lower.py`、`cost.py`、`placement.py` | lowering、代价模型（复现编译器的 depth-dp 自举放置） |
 | `planners/` | 规则规划器、LLM Agent 循环、精调工具、冻结确认 |
-| `toolchain.py`、`profiles/` | Hecate trace、`hecate-opt` 调用、随仓库提供的编译参数文件 |
+| `toolchain.py`、`compiler_profiles/` | Hecate trace、`hecate-opt` 调用、随仓库提供的编译参数文件 |
 | `experiments/`、`tests/` | 各轮实验脚本和测试 |
 
 ## 1. 环境

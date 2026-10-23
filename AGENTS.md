@@ -30,7 +30,7 @@ spec 本身有矛盾；期望值与实测不符；需要做设计选择；修正
 - Agent 冻结前可以使用内部工具循环（parse/typecheck、MockExpr 明文仿真、CountExpr 代价）。
   真实编译、CKKS 和测试集结果永不回传给 Agent。
 - 工具链与路径（2026-10-23 解耦）：pt_agent 的 trace 和编译不再导入 baseline 的 SDK 模块（poseidon_runtime_paths、
-  poseidon_runtime_compile、compiler_configuration），编译命令由 toolchain.hecate_command 生成，参数文件在 pt_agent/profiles/。
+  poseidon_runtime_compile、compiler_configuration），编译命令由 toolchain.hecate_command 生成，参数文件在 pt_agent/compiler_profiles/。
   所有位置统一由 pt_agent/paths.py 提供，可用环境变量 POSEIDON_WORK_ROOT、PT_AGENT_RESULTS_ROOT、PT_HECATE_BUILD、
   PT_DACAPO_ROOT 覆盖；新代码不得写死绝对路径，也不得重新引入对 SDK 选择文件的依赖（只有 execute_cpu 等旧路径保留）。
   依赖本机产物（历史运行目录、CIFAR 数据、编译器构建）的测试类，必须用 pt_agent/tests/_artifacts.py 的 require(...) 标记。
