@@ -15,6 +15,7 @@ import subprocess
 import sys
 import time
 from types import SimpleNamespace
+from ..paths import DACAPO_ROOT, DACAPO_UPSTREAM
 
 
 NAMES = ('resnet20', 'resnet20_silu', 'cnn_plain', 'mlp')
@@ -146,7 +147,7 @@ def _e3(out, root, repo):
     directory = out/'e3'
     directory.mkdir(parents=True, exist_ok=True)
     items = []
-    experts = repo/'third_party/dacapo'
+    experts = DACAPO_UPSTREAM
     for name in ('MLP', 'ResNet', 'AlexNet', 'VGG16', 'MobileNet', 'SqueezeNet'):
         items.append(dict(key=f'expert/{name}', model=name, artifact='expert_dsl',
                           paths=[str(experts/f'examples/benchmarks/{name}.py')], language='python'))
@@ -161,7 +162,7 @@ def _e3(out, root, repo):
                       paths=paths, language='cpp'))
     zoo = repo/'DSL/DSL_agent/scripts/pt_agent/models/zoo.py'
     sources = dict(resnet20=repo/'DSL/DSL_agent/workloads/resnet20/model_reference.py',
-                   resnet20_silu=repo/'third_party/ckks-runtime/third_party/dacapo/python/poly/poly/models/ResNet.py',
+                   resnet20_silu=DACAPO_ROOT/'python/poly/poly/models/ResNet.py',
                    cnn_plain=zoo, mlp=zoo)
     for name in NAMES:
         graph = json.loads((root/RUNS['graphs']/name/'graph/graph.json').read_text())

@@ -13,7 +13,8 @@ the pure Nix shell (see ENV_VARS):
     POSEIDON_PLATFORM      platform directory name                (default aarch64-linux)
     PT_AGENT_RESULTS_ROOT  PT-Agent results root                  (default <workspace>/pt_agent_results)
     PT_HECATE_BUILD        Hecate/DaCapo build directory with bin/hecate-opt
-    PT_DACAPO_ROOT         DaCapo source tree providing the Python Hecate frontend
+    PT_DACAPO_ROOT         DaCapo source tree: Python Hecate frontend, minimax coefficients, ResNet20-SiLU weights
+    PT_DACAPO_UPSTREAM     unmodified upstream DaCapo checkout (expert DSL examples, R9a motivation only)
 
 PT_RESULTS is deliberately not read here: it names the output directory of one outer run, and inner
 (Nix --pure) code must not depend on it.
@@ -22,7 +23,8 @@ PT_RESULTS is deliberately not read here: it names the output directory of one o
 import os
 from pathlib import Path
 
-ENV_VARS = ("POSEIDON_WORK_ROOT", "POSEIDON_PLATFORM", "PT_AGENT_RESULTS_ROOT", "PT_HECATE_BUILD", "PT_DACAPO_ROOT")
+ENV_VARS = ("POSEIDON_WORK_ROOT", "POSEIDON_PLATFORM", "PT_AGENT_RESULTS_ROOT", "PT_HECATE_BUILD", "PT_DACAPO_ROOT",
+            "PT_DACAPO_UPSTREAM")
 
 
 def _env_path(name: str, default: Path) -> Path:
@@ -41,6 +43,7 @@ WORK_RESULTS = PLATFORM_DIR / "results"
 # Compiler toolchain (see DSL/DSL_agent/scripts/pt_agent/README.md for how to build it).
 HECATE_BUILD = _env_path("PT_HECATE_BUILD", WORK_RESULTS / "agent-current-dacapo-build-r1712/build")
 DACAPO_ROOT = _env_path("PT_DACAPO_ROOT", REPO / "third_party/ckks-runtime/third_party/dacapo")
+DACAPO_UPSTREAM = _env_path("PT_DACAPO_UPSTREAM", REPO / "third_party/dacapo")
 PROFILES_DIR = Path(__file__).resolve().parent / "compiler_profiles"
 
 

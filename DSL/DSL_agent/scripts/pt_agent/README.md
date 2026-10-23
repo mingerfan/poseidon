@@ -51,10 +51,11 @@ PyTorch nn.Module ──(intake: make_fx/ATen)──► PT-Graph ──(planners
 | `POSEIDON_PLATFORM` | 平台目录名 | `aarch64-linux` |
 | `PT_AGENT_RESULTS_ROOT` | pt_agent 运行结果的根目录 | `<workspace>/pt_agent_results` |
 | `PT_HECATE_BUILD` | 含 `bin/hecate-opt` 的编译器构建目录 | `<poseidon-work>/platforms/<platform>/results/agent-current-dacapo-build-r1712/build` |
-| `PT_DACAPO_ROOT` | 提供 Python Hecate 前端的 DaCapo 源码目录 | `<repo>/third_party/ckks-runtime/third_party/dacapo` |
+| `PT_DACAPO_ROOT` | DaCapo 源码目录：Python Hecate 前端、组合 minimax 系数、ResNet20-SiLU 的模型定义和权重 | `<repo>/third_party/ckks-runtime/third_party/dacapo` |
+| `PT_DACAPO_UPSTREAM` | 未修改的上游 DaCapo 克隆（corelab-src/dacapo），只有 R9a 统计专家 DSL 代码行数时使用 | `<repo>/third_party/dacapo` |
 | `PT_RESULTS` | 单次外层运行的输出目录（只由外层读取） | 无 |
 
-`nixrun` 会把前 5 个变量转发进 Nix shell。
+`nixrun` 会把除 `PT_RESULTS` 以外的变量转发进 Nix shell。
 
 ## 3. 数据与权重（不在仓库中）
 
@@ -63,7 +64,7 @@ PyTorch nn.Module ──(intake: make_fx/ATen)──► PT-Graph ──(planners
 | CIFAR-10 | `agent-cifar-offline-records-r1804/cifar10-records/{train,test}-NNNNN.records` | 官方二进制格式：每条 1 字节标签 + 3072 字节 CHW 像素；每个文件 1000 条，NNNNN 为起始下标 |
 | 校准与加密测试的选图列表 | `agent-resnet20-original-accuracy-r1805/frozen-selections.json` | `calibration` 和 `encrypted_test` 两个列表，每项为 index、shard、row、label |
 | ResNet20 权重 | `agent-cifar-offline-records-r1804/public/resnet20-12fca82f.th` | PyTorch state_dict |
-| ResNet20-SiLU 权重 | `third_party/ckks-runtime/third_party/dacapo/examples/data/resnet20.silu.model`（子模块内） | DaCapo 提供 |
+| ResNet20-SiLU 权重与组合 minimax 系数 | `<PT_DACAPO_ROOT>/examples/data/resnet20.silu.model`、`<PT_DACAPO_ROOT>/python/poly/poly/data/sgn151527.txt`（随子模块提供） | DaCapo 提供 |
 | cnn_plain / mlp 权重 | `<PT_AGENT_RESULTS_ROOT>/models-v2/` | 用 `python3 -m pt_agent.tools.nixrun -- -m pt_agent.models.train_small --out-dir <dir> --model cnn_plain`（mlp 同理）重新训练 |
 
 **数据划分**：测试集第 9000–9999 张为循环内的留出验证集；第 8000–8999 张为冻结时的确认集；第 0–7999 张只用于最终报告。训练集只用于校准和训练。

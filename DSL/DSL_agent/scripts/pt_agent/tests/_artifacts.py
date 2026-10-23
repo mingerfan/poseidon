@@ -8,11 +8,13 @@ paths in the skip reason.
 from pathlib import Path
 import unittest
 
-from pt_agent.paths import HECATE_BUILD, RESULTS_DIR, WORK_RESULTS
+from pt_agent.paths import DACAPO_ROOT, HECATE_BUILD, RESULTS_DIR, WORK_RESULTS
 
 DATA = (WORK_RESULTS / "agent-cifar-offline-records-r1804/cifar10-records",
-        WORK_RESULTS / "agent-resnet20-original-accuracy-r1805/frozen-selections.json")
-WEIGHTS = (WORK_RESULTS / "agent-cifar-offline-records-r1804/public/resnet20-12fca82f.th",)
+        WORK_RESULTS / "agent-resnet20-original-accuracy-r1805/frozen-selections.json",
+        DACAPO_ROOT / "python/poly/poly/data/sgn151527.txt")
+WEIGHTS = (WORK_RESULTS / "agent-cifar-offline-records-r1804/public/resnet20-12fca82f.th",
+           DACAPO_ROOT / "examples/data/resnet20.silu.model")
 COMPILER = (HECATE_BUILD / "bin/hecate-opt",)
 # Ordinary CPU CKKS execution still goes through the legacy SDK selector and a baseline module that is not
 # part of this repository's history.
