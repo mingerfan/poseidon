@@ -27,6 +27,27 @@ class ModelInfo:
     split: dict
     assumptions: list = field(default_factory=list)
 
+    def __post_init__(self):
+        if any('ciphertexts' not in item or 'layout' not in item for item in self.inputs):
+            self.describe_layouts()
+
+    def describe_layouts(self, slots=16384):
+        from ..kernels.layout import KernelError, layout_blocks, layout_record, multi_mux_layout, multi_flat_layout
+
+        for entry in self.inputs:
+            shape = entry['shape']
+            try:
+                if len(shape) == 4 and shape[0] == 1:
+                    lay = multi_mux_layout(slots, *shape[1:], 1)
+                elif len(shape) == 2 and shape[0] == 1:
+                    lay = multi_flat_layout(slots, shape[1])
+                else:
+                    entry.update(ciphertexts=None, layout=dict(slots=slots, limitation='token layout deferred'))
+                    continue
+                entry.update(ciphertexts=len(layout_blocks(lay)), layout=layout_record(lay))
+            except KernelError as exc:
+                entry.update(ciphertexts=None, layout=dict(slots=slots, limitation=str(exc)))
+
     def save(self, directory):
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)

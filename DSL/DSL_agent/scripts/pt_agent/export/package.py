@@ -22,6 +22,7 @@ from ..cost import PROFILES
 from ..dsl.ir import WeightRef
 from ..dsl.typecheck import check
 from ..kernels import FlatLayout, MuxLayout
+from ..kernels.layout import layout_blocks, layout_record
 from ..kernels.poly import cheb_eval, cheb_fit, minimax_coeffs
 from ..lower import _pack_layout, lower
 
@@ -29,7 +30,7 @@ from ..lower import _pack_layout, lower
 SOURCE = Path(__file__).resolve().parents[1]
 TEMPLATES = Path(__file__).resolve().parent/"templates"
 CORE_SOURCES = {"base.py": "backends/base.py", "refresh.py": "backends/refresh.py",
-                **{name+".py": "kernels/"+name+".py" for name in ("layout", "slots", "conv", "pool", "linear")}}
+                **{name+".py": "kernels/"+name+".py" for name in ("layout", "slots", "conv", "pool", "linear", "multi")}}
 
 
 def display_name(name):
@@ -107,7 +108,7 @@ def _readme(program, interface, approximations, validation):
 程序 `{program.name}`，slots={program.header.slots}，刷新方式 `{program.header.refresh}`。
 输入：{inputs}。
 输出：{outputs}。
-接口快照见 `interfaces/default.json`。每个接口项对应一份密文。
+接口快照见 `interfaces/default.json`。每个接口项列出全部密文下标及分块布局。
 
 ## 2. 近似参数
 
@@ -217,18 +218,27 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
     schema = {name: list(weights[name].shape) for name in sorted(names)}
 
     def interface_entry(name, shape, lay, index):
+        blocks = layout_blocks(lay)
         return dict(name=name, shape=list(shape), ciphertext=index,
-                    layout=dict(kind="mux" if isinstance(lay, MuxLayout) else "flat", **asdict(lay)))
+                    ciphertexts=list(range(index, index+len(blocks))),
+                    blocks=[dict(start=start, end=end, ciphertext=index+i, layout=layout_record(block))
+                            for i, (start, end, block) in enumerate(blocks)], layout=layout_record(lay))
 
     inputs = []
-    for i, param in enumerate(program.params):
+    input_index = 0
+    for param in program.params:
         ops = [op for op in program.ops if op.kind == "pack" and op.inputs == (param.name,)]
         if len(ops) != 1:
             raise ValueError("each parameter requires one pack operation")
-        inputs.append(interface_entry(param.name, param.shape, _pack_layout(ops[0], param.shape, program.header.slots), i))
+        lay = _pack_layout(ops[0], param.shape, program.header.slots)
+        inputs.append(interface_entry(param.name, param.shape, lay, input_index))
+        input_index += len(layout_blocks(lay))
+    outputs, output_index = [], 0
+    for name, lay in zip(program.outputs, output_layouts):
+        outputs.append(interface_entry(name, checked.shapes[name], lay, output_index))
+        output_index += len(layout_blocks(lay))
     interface = dict(format="pt-agent-dsl-v1", function="_hecate_"+program.name, slots=program.header.slots,
-                     inputs=inputs, outputs=[interface_entry(name, checked.shapes[name], lay, i)
-                        for i, (name, lay) in enumerate(zip(program.outputs, output_layouts))])
+                     inputs=inputs, outputs=outputs)
     template = compile_template(mode)
     package.mkdir(parents=True)
     for path in sorted(TEMPLATES.rglob("*.py")):

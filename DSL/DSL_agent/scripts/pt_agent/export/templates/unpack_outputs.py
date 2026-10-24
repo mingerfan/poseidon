@@ -16,7 +16,7 @@ def main():
     config = json.loads((root/"config/model.json").read_text())
     runtime = importlib.import_module(config["name"]+".runtime")
     signature = json.loads(args.signature.read_text())
-    arrays = runtime.load_arrays(args.slots, signature["outputs"])
+    arrays = runtime.load_arrays(args.slots, runtime.ciphertext_entries(signature['outputs']))
     runtime.save_arrays(args.output, runtime.unpack_arrays(arrays, signature), signature["outputs"])
 
 

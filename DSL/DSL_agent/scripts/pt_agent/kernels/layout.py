@@ -102,3 +102,112 @@ def unpack_flat(x: np.ndarray, lay: FlatLayout) -> np.ndarray:
     if x.ndim < 1 or x.shape[-1] != lay.n or not 1 <= lay.size <= lay.n:
         raise KernelError("slot array differs from flat layout")
     return x[..., :lay.size]
+
+
+@dataclass(frozen=True)
+class MultiMuxLayout:
+    """Consecutive channel intervals, each with its own mux replication."""
+
+    n: int
+    C: int
+    H: int
+    W: int
+    k: int
+
+    @property
+    def blocks(self):
+        capacity = self.n//(self.k*self.k*self.H*self.W)*self.k*self.k
+        if not capacity:
+            raise KernelError("spatial tiling not supported: k²·H·W > n")
+        return tuple((start, min(start+capacity, self.C),
+                      mux_layout(self.n, min(capacity, self.C-start), self.H, self.W, self.k))
+                     for start in range(0, self.C, capacity))
+
+    def index_grid(self):
+        return [lay.index_grid() for _, _, lay in self.blocks]
+
+
+@dataclass(frozen=True)
+class MultiFlatLayout:
+    n: int
+    size: int
+
+    @property
+    def blocks(self):
+        capacity = self.n//2
+        return tuple((start, min(start+capacity, self.size),
+                      FlatLayout(self.n, min(capacity, self.size-start)))
+                     for start in range(0, self.size, capacity))
+
+    def index_grid(self):
+        return [np.arange(lay.size) for _, _, lay in self.blocks]
+
+
+def multi_mux_layout(n, C, H, W, k):
+    # Validate through the original factory without changing its behavior.
+    mux_layout(n, 1, 1, 1, 1)
+    if type(k) is not int or k < 1 or k & (k-1):
+        raise KernelError("k must be a positive power of two")
+    if any(type(value) is not int or value < 1 for value in (C, H, W)):
+        raise KernelError("C, H and W must be positive integers")
+    groups = n//(k*k*H*W)
+    if not groups:
+        raise KernelError("spatial tiling not supported: k²·H·W > n")
+    return (mux_layout(n, C, H, W, k) if C <= groups*k*k
+            else MultiMuxLayout(n, C, H, W, k))
+
+
+def multi_flat_layout(n, size):
+    mux_layout(n, 1, 1, 1, 1)
+    if type(size) is not int or size < 1:
+        raise KernelError("flat size must be a positive integer")
+    return FlatLayout(n, size) if size <= n//2 else MultiFlatLayout(n, size)
+
+
+def layout_blocks(lay):
+    if isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
+        return lay.blocks
+    return ((0, lay.C if isinstance(lay, MuxLayout) else lay.size, lay),)
+
+
+def pack_multi(x, lay):
+    x = np.asarray(x, dtype=np.float64)
+    expected = (lay.C, lay.H, lay.W) if isinstance(lay, MultiMuxLayout) else (lay.size,)
+    if x.shape != expected:
+        raise KernelError("input shape differs from multi layout")
+    pack = pack_mux if isinstance(lay, MultiMuxLayout) else pack_flat
+    return [pack(x[start:end], block) for start, end, block in lay.blocks]
+
+
+def unpack_multi(values, lay):
+    if len(values) != len(lay.blocks):
+        raise KernelError("ciphertext count differs from multi layout")
+    decoded = []
+    for value, (_, _, block) in zip(values, lay.blocks):
+        value = np.asarray(value, dtype=np.float64)
+        if isinstance(block, MuxLayout):
+            decoded.append(unpack_mux(value, block) if value.ndim == 1 else
+                           np.stack([unpack_mux(sample, block) for sample in value]))
+        else:
+            decoded.append(unpack_flat(value, block))
+    axis = -3 if isinstance(lay, MultiMuxLayout) else -1
+    return np.concatenate(decoded, axis=axis)
+
+
+def layout_record(lay):
+    from dataclasses import asdict
+
+    kind = ('multi_mux' if isinstance(lay, MultiMuxLayout) else
+            'multi_flat' if isinstance(lay, MultiFlatLayout) else
+            'mux' if isinstance(lay, MuxLayout) else 'flat')
+    record = dict(kind=kind, **asdict(lay))
+    if isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
+        record['blocks'] = [dict(start=start, end=end, layout=layout_record(block))
+                            for start, end, block in lay.blocks]
+    return record
+
+
+def layout_from_record(record):
+    fields = {key: value for key, value in record.items() if key not in ('kind', 'blocks')}
+    return {'mux': MuxLayout, 'flat': FlatLayout,
+            'multi_mux': MultiMuxLayout, 'multi_flat': MultiFlatLayout}[record['kind']](**fields)

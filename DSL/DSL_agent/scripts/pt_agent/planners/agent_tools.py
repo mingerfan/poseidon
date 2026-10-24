@@ -17,6 +17,7 @@ from ..intake import Graph
 from ..metrics import compare, passes
 from ..models.info import ModelInfo
 from ..kernels.layout import MuxLayout, unpack_flat, unpack_mux
+from ..kernels.layout import MultiMuxLayout, MultiFlatLayout, unpack_multi
 from ..lower import LoweringError, decode_outputs, lower, pack_inputs
 from ..placement import PlacementError
 from ..tensor_sim import (cached_estimate, identity_token, result_cache_get,
@@ -93,6 +94,8 @@ def build_context(graph, calibration, n_val=1000, *, samples=None, normalization
 
 
 def _unpack(value, layout):
+    if isinstance(layout, (MultiMuxLayout, MultiFlatLayout)):
+        return unpack_multi([item.value for item in value], layout)
     if isinstance(layout, MuxLayout):
         return np.stack([unpack_mux(sample, layout) for sample in value.value])
     return unpack_flat(value.value, layout).copy()
@@ -105,7 +108,7 @@ def _exact_check(program, ctx):
     def exact_observer(name, value, layout, cfg):
         collected.append(_unpack(value, layout))
 
-    backend = MockBackend(16384, batch=4)
+    backend = MockBackend(program.header.slots, batch=4)
     probe_inputs = getattr(ctx, 'val_inputs', None)
     backend.bind(pack_inputs(program, [probe_inputs[name][:4] for name in ctx.graph.inputs]
                              if probe_inputs is not None else [ctx.probe_images]))
@@ -179,7 +182,10 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
         observed = 0
 
         def observer(name, value, layout, cfg):
-            data = value.value[..., layout.index_grid()] if isinstance(layout, MuxLayout) else value.value[..., :layout.size]
+            if isinstance(layout, (MultiMuxLayout, MultiFlatLayout)):
+                data = _unpack(value, layout)
+            else:
+                data = value.value[..., layout.index_grid()] if isinstance(layout, MuxLayout) else value.value[..., :layout.size]
             tensor_observer(name, data, cfg)
 
         def tensor_observer(name, data, cfg):
@@ -196,7 +202,7 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                 tensor_observer(name, np.asarray([minimum, maximum], dtype=np.float64), cfg)
 
         tensor_observer.restore = restore
-        backend = MockBackend(16384, batch=len(batch), watch=watch, noise=noise) if engine == "mock" else None
+        backend = MockBackend(program.header.slots, batch=len(batch), watch=watch, noise=noise) if engine == "mock" else None
         logits, error = None, None
         try:
             if engine == "tensor":
