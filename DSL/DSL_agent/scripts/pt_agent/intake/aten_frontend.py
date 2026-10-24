@@ -15,7 +15,7 @@ from .torch_mapping import Mapper, Unsupported, arg, axis, pair
 
 CONTROL_FLOW_REASON = "data-dependent control flow: traced graph differs from module on other inputs"
 _ACTS = {f"aten.{name}.default": name for name in
-         ("relu", "silu", "sigmoid", "tanh", "hardswish", "exp")}
+         ("relu", "silu", "sigmoid", "tanh", "hardswish", "exp", "rsqrt", "sqrt", "reciprocal", "erf")}
 _IDENTITIES = {f"aten.{name}.default" for name in
                ("clone", "alias", "detach", "contiguous", "lift_fresh_copy")}
 _BINARIES = {"aten.add.Tensor": "add", "aten.add_.Tensor": "add",
@@ -43,6 +43,7 @@ class _AtenMapper(Mapper):
     def __init__(self, graph, module, names):
         super().__init__(graph, module)
         self.parameter_names = names
+        self.constants = {}
         self.absorbed = set()
         for node in module.graph.nodes:
             if str(node.target) == "aten.t.default" and node.args[0].op == "get_attr":
@@ -80,11 +81,26 @@ class _AtenMapper(Mapper):
                 raise Unsupported("get_attr must hold a tensor")
             name = self.parameter_names.get(value.data_ptr(), "const."+node.target)
             self.aliases[node] = self.weight(name, value)
+            self.constants[node] = value
             return
         if node in self.absorbed or not node.users:
             return
         if node.op != "call_function":
             raise Unsupported("aten op not in mapping table")
+        # Evaluate only subgraphs whose entire transitive input is static. In
+        # particular attention masks supplied as inputs never enter this table.
+        if all(value in self.constants for value in node.all_input_nodes):
+            if not any(part in str(node.target) for part in ('rand', 'empty')):
+                resolved = lambda value: torch.fx.node.map_arg(value, lambda n: self.constants[n])
+                value = node.target(*resolved(node.args), **resolved(node.kwargs))
+                self.constants[node] = value
+                if torch.is_tensor(value):
+                    self.aliases[node] = self.constant(node, value)
+                elif isinstance(value, (tuple, list)) and all(torch.is_tensor(v) for v in value):
+                    self.aliases[node] = [self.constant(node, v) for v in value]
+                else:
+                    self.static[node] = value
+                return
         if node.target is operator.getitem:
             self.getitem(node)
             return
@@ -108,6 +124,8 @@ class _AtenMapper(Mapper):
         elif target in _ACTS or target == "aten.gelu.default":
             fn = _ACTS.get(target, "gelu_tanh" if node.kwargs.get("approximate", "none") == "tanh" else "gelu")
             self.emit(node, "act", [self.activation(x)], dict(fn=fn))
+        elif target == 'aten.pow.Tensor_Scalar':
+            self.emit(node, 'act', [self.activation(x)], dict(fn='pow', exponent=float(node.args[1])))
         elif target in _BINARIES:
             if arg(node, 2, "alpha", 1) != 1:
                 raise Unsupported("add/sub requires alpha=1")
@@ -117,7 +135,14 @@ class _AtenMapper(Mapper):
                 raise Unsupported("add/sub requires alpha=1")
             self.emit(node, "sub", [self.activation(x)], dict(reverse=True, scalar=float(node.args[1])))
         elif target == "aten.div.Tensor":
-            self.divide(node, x, node.args[1])
+            denominator = node.args[1]
+            if isinstance(denominator, torch.fx.Node) and self.ref(denominator) not in self.graph.weights:
+                name = node.name+'.reciprocal'
+                self.emit(node, 'act', [self.activation(denominator)], dict(fn='reciprocal'),
+                          names=[name], shapes=[self.shape(denominator)])
+                self.emit(node, 'mul', [self.activation(x), name], {})
+            else:
+                self.divide(node, x, denominator)
         elif target == "aten.neg.default":
             self.emit(node, "mul", [self.activation(x)], dict(scalar=-1.0))
         elif target in ("aten.addmm.default", "aten.mm.default"):
@@ -138,11 +163,38 @@ class _AtenMapper(Mapper):
         elif target == "aten.t.default":
             self.emit(node, "permute", [self.ref(x)], dict(dims=(1, 0)))
         elif target == "aten.expand.default":
-            if tuple(node.meta['tensor_meta'].shape) != self.shape(x):
-                raise Unsupported("broadcast expand")
-            self.emit(node, "identity", [self.activation(x)], {})
-        elif target in ("aten.view.default", "aten._unsafe_view.default", "aten.reshape.default"):
+            if tuple(node.meta['tensor_meta'].shape) == self.shape(x):
+                self.emit(node, "identity", [self.activation(x)], {})
+            else:
+                self.emit(node, 'broadcast', [self.activation(x)], dict(shape=tuple(node.meta['tensor_meta'].shape)))
+        elif target in ("aten.view.default", "aten._unsafe_view.default", "aten.reshape.default", 'aten.unsqueeze.default', 'aten.squeeze.dim', 'aten.squeeze.default'):
             self.emit(node, "reshape", [self.activation(x)], dict(shape=tuple(int(v) for v in node.meta['tensor_meta'].shape)))
+        elif target == 'aten._to_copy.default':
+            self.emit(node, 'cast', [self.ref(x)], dict(dtype=str(node.kwargs.get('dtype', torch.float64))))
+        elif target == 'aten.copy.default':
+            source = self.ref(node.args[1])
+            dtype = node.meta['tensor_meta'].dtype
+            if node.args[1].meta['tensor_meta'].dtype != dtype:
+                name = node.name+'.cast'
+                self.emit(node, 'cast', [source], dict(dtype=str(dtype)), names=[name],
+                          shapes=[self.shape(node.args[1])])
+                source = name
+            self.emit(node, 'broadcast', [source], dict(shape=tuple(node.meta['tensor_meta'].shape)))
+        elif target == 'aten.slice_scatter.default':
+            dim = axis(arg(node, 2, 'dim', 0), len(self.shape(x)))
+            length = self.shape(x)[dim]
+            start, end, step = slice(arg(node, 3, 'start', 0), arg(node, 4, 'end', length),
+                                     arg(node, 5, 'step', 1)).indices(length)
+            self.emit(node, 'slice_scatter', [self.ref(x), self.ref(node.args[1])],
+                      dict(axis=dim, start=start, end=end, step=step))
+        elif target == 'aten.select.int':
+            dim = axis(node.args[1], len(self.shape(x)))
+            index = int(node.args[2]) % self.shape(x)[dim]
+            temporary = node.name+'.slice'
+            shape = list(self.shape(x)); shape[dim] = 1
+            self.emit(node, 'slice', [self.activation(x)], dict(axis=dim, start=index, end=index+1, step=1),
+                      names=[temporary], shapes=[shape])
+            self.emit(node, 'reshape', [temporary], dict(shape=tuple(node.meta['tensor_meta'].shape)))
         elif target == "aten.permute.default":
             self.emit(node, "permute", [self.activation(x)], dict(dims=tuple(node.args[1])))
         elif target == "aten.transpose.int":
@@ -200,10 +252,28 @@ class _AtenMapper(Mapper):
             attrs = dict(normalized_shape=tuple(node.args[1]), weight=self.get_weight(node.args[2]),
                          bias=self.get_weight(node.args[3]), eps=float(node.args[4]))
             self.tuple_result(node, "layernorm", attrs)
+        elif target in ('aten.eq.Scalar', 'aten.ne.Scalar', 'aten.lt.Scalar', 'aten.le.Scalar',
+                        'aten.gt.Scalar', 'aten.ge.Scalar', 'aten.eq.Tensor', 'aten.ne.Tensor'):
+            self.binary(node, 'compare', x, node.args[1])
+            self.graph.nodes[-1].attrs['predicate'] = target.split('.')[1]
+        elif target == 'aten.where.self':
+            inputs = []
+            for value in node.args:
+                inputs.append(self.ref(value) if isinstance(value, torch.fx.Node) else self.constant(node, value))
+            self.emit(node, 'where', inputs, {})
+        elif target in ('aten.masked_fill.Scalar', 'aten.masked_fill_.Scalar'):
+            mask = self.ref(node.args[1])
+            fill = self.constant(node, node.args[2])
+            self.emit(node, 'where', [mask, fill, self.ref(x)], {})
         elif target in _IDENTITIES:
             self.emit(node, "identity", [self.ref(x)], {})
         elif target == "aten.max_pool2d_with_indices.default":
-            raise Unsupported("max pooling has no polynomial lowering in v1")
+            kernel = pair(node.args[1])
+            attrs = dict(kernel=kernel, stride=pair(arg(node, 2, 'stride', []) or kernel),
+                         padding=pair(arg(node, 3, 'padding', [0, 0])),
+                         dilation=pair(arg(node, 4, 'dilation', [1, 1])),
+                         ceil_mode=bool(arg(node, 5, 'ceil_mode', False)))
+            self.tuple_result(node, 'maxpool', attrs)
         else:
             raise Unsupported("aten op not in mapping table")
 
@@ -214,6 +284,14 @@ def import_module_aten(module, example_inputs: tuple, name: str) -> Graph:
     try:
         with torch.no_grad():
             gm = make_fx(m, tracing_mode="real")(*inputs)
+            # Effect-only writes (e.g. writing a computed value into a view)
+            # cannot be discarded just because their returned tensor is dead.
+            # Convert observable mutations into explicit dataflow before static
+            # folding. Keep the already supported SSA-style add_ path stable.
+            if any(getattr(getattr(node.target, '_schema', None), 'is_mutable', False)
+                   and (not node.users or str(node.target) not in _BINARIES)
+                   for node in gm.graph.nodes if node.op == 'call_function'):
+                gm = make_fx(torch.func.functionalize(m), tracing_mode='real')(*inputs)
             generator = torch.Generator().manual_seed(20261022)
             for _ in range(3):
                 samples = tuple(torch.randn(value.shape, generator=generator, dtype=torch.float64)
@@ -260,4 +338,9 @@ def import_module_aten(module, example_inputs: tuple, name: str) -> Graph:
                                 reason='output must contain tensors')])
 
     graph.outputs = outputs(output.args[0])
-    return decompose.run(graph)
+    graph = decompose.run(graph)
+    graph.intake_stats = dict(original_nodes=sum(node.op == 'call_function' for node in gm.graph.nodes),
+                             folded_nodes=sum(node.op == 'call_function' and node in mapper.constants
+                                              for node in gm.graph.nodes),
+                             original_unmapped={})
+    return graph

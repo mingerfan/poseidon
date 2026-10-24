@@ -1,8 +1,12 @@
-# pt_agent 状态（最后更新：2026-10-24 / 0fcbdd57-dirty）
+# pt_agent 状态（最后更新：2026-10-24 / 0189ce11-dirty）
+
+当前U1（含§11–§12）已完成：既有373/373、新增46/46通过；HF三模型各4样本float64最大差0；四个冻结开发模型全字段逐项相同；九模型CLI导入及MLP真实编译通过，主环境freeze相同。根因为effect-only写回被跳过，首个超出规定容差的位置为n54/add_4；修复按通用算子语义生效。API/下载/安装0，累计63/300；新增Agent独立输出及真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json)。
 
 主线：`/home/lhohy/Code/Poseidon`，`lhy-agent-dsl`。
 当前按 A 线 AGENTS.md 的逐轮 spec 规则推进；PLAN.md 仅作路线图。
-当前轮次R8h2已完成：新增4项与既有362项共366/366测试通过；R8h四模型候选池规范化去重、重新确认、选中原文P2真实编译和各8000图Mock报告全部结束，报告准确率条件4/4通过。ResNet20选中R8h第1轮原始输出，325/325自举、91.625%、下降0.0875pp、报告发散0；去重前遗漏的程序现已覆盖，attempt-02未触发。API0，累计63/300、registry232条，未打tag。[完整对照](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8h2-confirm-dedup-tests-20261024T040449/REPORT.json)。
+U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环境计划脚本、profile及锁文件，修正后8/8离线检查通过，--plan成功解析30个wheel，共139798368字节（133.322113 MiB），完整包名/版本/文件名/大小/SHA256/URL见U1节。torch2.0.1、numpy1.25.2与主环境相同；wheel载荷请求/安装0，intake未创建，主hecate-2.0.1-cpu未修改。两次失败及已用128次元数据请求完整保留，按需接续16次后完成，累计144次/24817908字节；自设解析上限192次/64MiB，修正记录见U1节。§1.2–§6未执行，DeepSeek API0、累计63/300。[完整计划](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T061706/FINAL_REPORT.json)。
+历史R8h3已完成：run_agent增加tune_policy，默认new_best恢复冻结v1触发规则，all保留R8h消融；trace及REPORT记录策略，实验入口接线完成。新增7项与既有366项共373/373测试通过，失败/错误/跳过均0；R8e5四trace精调触发序列全部一致。本轮LLM0、模型实验0，累计63/300、registry240条。冻结继续使用pt-agent-freeze-v1；R8h/R8h2归为all策略消融，旧v1.1提交/tag安排由本轮决定取代。未提交、未打tag。[完整REPORT](/home/lhohy/pt_agent_results/R8h3-tune-policy-tests-20261024T053739/FINAL_REPORT.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8h3-tune-policy-tests-20261024T053739/REPORT.json)。
+历史R8h2已完成：新增4项与既有362项共366/366测试通过；R8h四模型候选池规范化去重、重新确认、选中原文P2真实编译和各8000图Mock报告全部结束，报告准确率条件4/4通过。ResNet20选中R8h第1轮原始输出，325/325自举、91.625%、下降0.0875pp、报告发散0；去重前遗漏的程序现已覆盖，attempt-02未触发。API0，累计63/300、registry232条，未打tag。[完整对照](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8h2-confirm-dedup-tests-20261024T040449/REPORT.json)。
 历史R8h实现与362/362测试已完成，四模型真实运行均已结束。MLP/CNN/SiLU通过确认、P2真实编译和8000图报告准确率条件；ResNet20六次确认均未通过，未选中冻结程序，编译与报告未执行。当轮整体验收3/4，R8h卡保留原阻塞结论；API15/30、累计63/300，未打tag。[完整对照](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/FINAL_REPORT.json)。
 历史S0已完成，按§4通过：6份Q1指定项目全部相同，20个适用破坏变体均先由MLIR verifier拒绝；Q3的3次成功导出均改动管理状态，另9次报错。check-smu原样均退出0，但5输入含不一致诊断，单独检错能力未获证明。新增编排脚本，既有模块与库保持；API0、累计48/300。[SUMMARY](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/SUMMARY.json)。
 历史R8g已完成：离线12/12通过；仅MLP真实Agent运行3轮，首轮原样输出经单次确认选择、P2真实编译及8000图Mock报告评测，top-1=56.05%、发散0；预测/编译自举24/24，预测6286530µs，与R8e7相同。总耗时180.762645秒，其中精调10.905796秒。本轮API3/8、累计48/300；冻结模块保持，未打tag。[完整对照](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/COMPARISON.json)。
@@ -22,6 +26,8 @@
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| U1 | specs/U1-model-description.md（含§11–§12） | 完成 | models/info.py、builders.py、zoo.py；data/samples.py；intake/probe、hf_frontend、onnx_frontend、graph_exec及ATen/core/coverage；metrics.py、cli.py、scripts/pt-agent；agent_tools.py、confirm.py、prompts.py、run.py；U1实验/测试、STATUS | 既有373/373＋新增46/46；HF3/3零差；四冻结模型逐项相同；CLI9/9，MLP真实编译通过；[REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json) | 按§11迁移1项旧测试；按§12及自写错误例外修正通用语义、夹具与编排；原失败及用量保留，详见本节 |
+| R8h3 | specs/R8h3-tune-policy.md | 完成 | planners/agent.py、run.py、4个实验入口、test_r8h_tune_all.py、test_r8h3_policy.py、STATUS | 373/373；R8e5四份trace触发序列一致；LLM0、模型实验0 | 按§2.1给R8h旧测试显式传all，断言保持；run.py仅参数接线及REPORT记录；冻结仍用v1 |
 | R8h2 | specs/R8h2-confirm-dedup.md | 完成 | planners/confirm.py、tests/test_r8h2_confirm_dedup.py、experiments/r8h2_reconfirm.py、STATUS | 366/366；4/4确认、P2编译及8000图Mock报告；API0、累计63；attempt-02未触发 | 同延迟保留pool原顺序；原Candidate保持，agent.py无需适配；自写编排列表读取修正见R8h2节；未打tag |
 | R8h | specs/R8h-tune-all-v11.md | 阻塞 | planners/agent.py、tests/test_r8h_tune_all.py、experiments/r8h_rerun.py、STATUS | 362/362通过；3/4模型完成真实编译和8000图报告；ResNet20确认6/6未通过；API15/30 | 提示保持r8-v4；旧测试未改；确认、数值条件及停止规则保持；未打tag |
 | S0 | specs/S0-pass-pipeline-spike.md | 完成 | experiments/s0_pipeline_spike.py、STATUS | §4通过；Q1 6/6；Q2 20/20 verifier检出；Q3 12项现象记录 | 输入扩展与额外qwen48编译已获批；原失败保留；checker诊断及EVA配置差异单列 |
@@ -79,7 +85,31 @@
 
 ## 阻塞（需要用户或 Claude 决定的问题）
 
-R8h2当前无待决定项，四模型均已完成。历史R8h确认阻塞已由R8h2解除：ResNet20去重后检查5个不同程序，第1轮原始输出通过确认、P2编译和报告准确率条件；attempt-02未触发。原R8h失败响应、源码、统计和额度保留。按spec §5，后续提交及本地pt-agent-freeze-v1.1由Claude处理；本轮未提交、未打tag。整网真实CKKS和未见模型证据继续留待后续spec。
+U1当前无需要用户或Claude决定的问题；§12诊断、通用修复及全部验收已完成。原Qwen停止已解除。根因为新导入器忽略无返回值消费者的aten.copy_写回，后续别名读取误折叠为常量；通用functionalize及copy/slice_scatter语义修正已恢复attention_mask数据依赖。首次实质差异n54/add_4，原45.860846389665554只发生于补齐位置；修复后真实位置及补齐位置均0差，HF三模型各4样本均0。[原诊断](/home/lhohy/pt_agent_results/u1-diagnose-20261024T095059528651/DIAGNOSTIC.json)、[修复核对](/home/lhohy/pt_agent_results/u1-hf-20261024T095526758515/REPORT.json)。
+
+U1已解除停止历史（2026-10-24，§11接续）：tiny Qwen2已成功导入182节点，加密输入为inputs_embeds=[1,80,32]及attention_mask=[1,80]、词表151936；与原HF float64 forward比较时，最大绝对差45.860846389665554，max(abs(Δ)/(1+abs(reference)))=19.14866087746199，未满足§7.2规定的1e-6。未放宽比较条件或改参考。ResNet18与BERT各4样本数值已通过，最大差0。按照[AGENTS.md:18](/home/lhohy/Code/Poseidon/AGENTS.md:18)“期望值与实测不符”停止；需更新spec给出差异定位/修复接续口径。当前证据属于新导入/参考执行路径，编译器及CKKS未被调用，原因尚未诊断，不标记后端阻塞。原样输入、模型信息及Graph已保留；完整管线、其余§7验收和373回归未继续。[REPORT](/home/lhohy/pt_agent_results/u1-hf-20261024T093221753299/REPORT.json)、[日志](/home/lhohy/pt_agent_results/u1-hf-20261024T093221753299/run.log)、[FINAL_REPORT](/home/lhohy/pt_agent_results/u1-hf-20261024T093221753299/FINAL_REPORT.json)。
+
+U1 MaxPool静态停止历史（已由用户新增§11授权解除，2026-10-24）：[U1 §5.3](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U1-model-description.md)要求MaxPool导入保留语义、lowering能力另报；旧[tests/test_r8a2_aten.py:141](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8a2_aten.py:141)仍强制ATen异常中包含`max pooling has no polynomial lowering in v1`，另保留transposed convolution拒绝断言。按新语义实现后，前一旧断言会失效。§7.9只允许对旧测试作接口机械调整，AGENTS的兼容例外仍要求改变断言含义时停止。因此尚未修改旧测试或ATen语义，未运行或声称发生该回归失败。已准备[最小未应用补丁](/home/lhohy/pt_agent_results/u1-upgraded-hf-check-20261024T090519/proposed-maxpool-regression-change.patch)：仅移除旧MaxPool拒绝断言，保留转置卷积拒绝；随后由新增U1测试验证MaxPool语义导入、数值和needs_composition。需要spec明确这项旧测试修订许可后接续。此为spec/测试契约冲突，新增编译器/运行库阻塞证据0。[FINAL_REPORT](/home/lhohy/pt_agent_results/u1-upgraded-hf-check-20261024T090519/FINAL_REPORT.json)。
+
+原Qwen tokenizer兼容停止已由用户授权升级解决；以下为历史记录。tokenizers0.20.3/transformers4.46.3在独立intake中安装成功，原模型文件未改，BERT/ResNet/Qwen检查均通过；无新的安装审批项。
+
+U1旧tokenizer停止历史（已由本轮升级解决，2026-10-24）：已下载公开tiny Qwen资产在当前tokenizers0.19.1下，由[HF AutoTokenizer入口](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/intake/hf_frontend.py:73)抛出`data did not match any variant of untagged enum ModelWrapper at line 757443 column 3`。[REPORT](/home/lhohy/pt_agent_results/u1-post-pillow-model-check-20261024T084755/REPORT.json)、[日志](/home/lhohy/pt_agent_results/u1-post-pillow-model-check-20261024T084755/probe.log)。已确认解析失败，推测为tokenizer资产格式与当前runtime兼容问题；本轮未升级tokenizers、切换slow tokenizer、替换/修改已批模型文件或新增下载。需spec明确加载策略后继续。Pillow单包安装和全部检查已正常收尾，ResNet原processor加载成功；原BERT安全加载成功证据复用。停止依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错……等待新的spec”，且本轮新增包授权只有Pillow。此为intake tokenizer依赖/兼容问题，新增编译器或CKKS库阻塞证据0。[汇总](/home/lhohy/pt_agent_results/u1-post-pillow-model-check-20261024T084755/FINAL_REPORT.json)。
+
+旧Pillow审批停止已由本轮用户明确授权解除；以下为历史记录。当前独立intake为30个锁定wheel，原29包版本保持，主环境保持。
+
+U1旧Pillow停止历史（已解除，新版§8第二步下载完成，2026-10-24）：intake-2.0.1-cpu未安装Pillow（PIL不存在），[load_local的AutoImageProcessor.from_pretrained](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/intake/hf_frontend.py:73)读取ResNet18仓库原processor时报`ConvNextImageProcessor requires the PIL library but it was not found in your environment`。[真实REPORT](/home/lhohy/pt_agent_results/u1-safe-hf-loading-fixed-20261024T083801/REPORT.json)、[日志](/home/lhohy/pt_agent_results/u1-safe-hf-loading-fixed-20261024T083801/probe.log)。用户要求必须调用仓库processor，本轮未自行改写预处理；未在主环境或intake安装新包。当前批准范围是固定20个模型文件，已全部下载并记录实际SHA256，总105042537字节/110MiB，可选0；无需重新批准或重下载这20项。需要新的Pillow安装spec/批准后继续。依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错……等待新的spec”及[AGENTS.md:62](/home/lhohy/Code/Poseidon/AGENTS.md:62)“安装、下载……都要单独批准”。本停止为intake Python包依赖，新增编译器/运行库阻塞证据0。受限BERT加载成功：仅一次torch.load(weights_only=True)、BertTokenizerFast、原文档4条输入输出4×2有限；5项离线通过，主环境freeze前后相同。[本轮汇总](/home/lhohy/pt_agent_results/u1-safe-hf-loading-fixed-20261024T083801/FINAL_REPORT.json)。
+
+U1原下载审批已解除，用户批准必选20文件并拒绝可选8文件；以下为元数据阶段历史：本轮元数据核实已完成并停止。必选20文件/105042537字节（100.176370MiB），可选Qwen2.5-0.5B另8文件/999597531字节（953.290492MiB），可单独批准或拒绝。原tiny Qwen候选匿名API401，提出同类公开Qwen2替代；§8明确允许候选不可用时列替代，未下载或加载。源站未提供SHA256的21个小文件标记未提供；其余7个从源站LFS元数据记录，未做模型载荷完整性校验。[逐文件清单](/home/lhohy/pt_agent_results/u1-model-candidates-20261024T082440/MODEL_FILES.json)、[REPORT](/home/lhohy/pt_agent_results/u1-model-candidates-20261024T082440/REPORT.json)。依据[新版spec §8](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U1-model-description.md)：“写入STATUS后停下来等待用户批准”。
+
+旧MaxPool范围停止已由新版§5.3解除，旧ModelSpec及旧版未完成§2–§6作废；以下旧停止内容仅保留为执行历史。独立intake环境安装结论继续有效，本轮未改环境。
+
+U1旧版停止历史（已由重写版§5.3解除，2026-10-24）：[spec §4.1](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U1-model-description.md:90)要求HF logits薄包装交给现有ATen；固定种子随机tiny ResNet（2 stage、每stage1 block、1×3×32×32）原生float64前向输出1×10成功，现有[intake/aten_frontend.py:205](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/intake/aten_frontend.py:205)抛出`aten.max_pool2d_with_indices.default: max pooling has no polynomial lowering in v1`，另有下游getitem连带错误。[CORE_OPS](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/intake/core_ops.py)未定义MaxPool，而[spec §4.2](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U1-model-description.md:102)要求将MaxPool映射到CORE_OPS。需要补充spec明确MaxPool核心语义，以及是否允许修改既有aten_frontend.py、core_ops.py；本轮未自行新增核心算子或组合实现，未改冻结Agent/lowering/kernels/cost。问题属于导入接口与spec范围，未归为编译器/运行库阻塞。依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进STATUS.md的‘阻塞’一栏，等待新的spec”停止。环境安装已按原授权正常收尾；无新增安装审批事项。[最小复现REPORT](/home/lhohy/pt_agent_results/u1-hf-interface-check-20261024T080903/REPORT.json)、[完整日志](/home/lhohy/pt_agent_results/u1-hf-interface-check-20261024T080903/probe.log)、[本轮汇总](/home/lhohy/pt_agent_results/u1-hf-interface-check-20261024T080903/FINAL_REPORT.json)。
+
+U1原安装审批已解除；下列为首次解析历史：U1等待用户批准[30项完整wheel清单](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T061706/FINAL_REPORT.json)，总载荷139798368字节（133.322113MiB），再进入§1.2下载对应wheel并离线安装独立intake环境。依据用户本轮限定及[spec §1.1](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U1-model-description.md)：“然后停下，等待用户批准。” 当前§1.1已完成并停止，未安装/创建venv，主环境保持；原两次失败及144次累计元数据尝试完整保留。§1.2–§6尚未执行，无模型权重或数据下载。
+
+R8h3无待决定项，本轮实现和373/373离线测试全部完成。冻结采用v1；R8h/R8h2作为all消融保留。原R8h2的v1.1提交/tag待办属于历史安排，已由R8h3用户决定取代。本轮LLM0、模型实验0；报告集例外按2026-10-23 AGENTS条款仅用于既有精确模型/数据划分回归。
+
+R8h2当前无待决定项，四模型均已完成。历史R8h确认阻塞已由R8h2解除：ResNet20去重后检查5个不同程序，第1轮原始输出通过确认、P2编译和报告准确率条件；attempt-02未触发。原R8h失败响应、源码、统计和额度保留。R8h2当轮spec §5曾安排由Claude处理后续提交及本地pt-agent-freeze-v1.1；该安排现由R8h3决定取代，冻结继续使用v1。R8h2未提交、未打tag。整网真实CKKS和未见模型证据继续留待后续spec。
 
 历史R8h阻塞（spec §3，现由R8h2接续解除）：ResNet20完成4轮生成及精调，独立确认6/6未通过。按候选顺序，准确率下降为0.9、0.9、1.4、1.4、0.6、0.6pp，均超过固定0.5pp；每个候选均有1张发散并按既定规则计错，确认集精确参考top-1=91.5%。终态RuntimeError: Agent status: confirm_failed；没有选中源码，未进入该模型P2编译或报告集。其余三模型已完成；新增编译器／运行库依赖阻塞证据0。当时按[AGENTS.md](/home/lhohy/Code/Poseidon/AGENTS.md)“有疑问或报错，就停下来写进STATUS.md的阻塞一栏，等待新的spec”停止接续，剩余调用与6次确认上限保持。[终态REPORT](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/models/resnet20/attempt-01/REPORT.json)、[完整对照](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/FINAL_REPORT.json)。
 
@@ -191,6 +221,24 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+当前U1 §12：本轮0、累计63/300；registry共307条，历史批次及已用额度全部保留。新增下载/安装/训练0；当前9模型导入框架验收完成，新增Agent首次独立输出0、真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json)。
+
+历史U1 §11接续：DeepSeek0，累计63/300；registry265条，原262条保留，新增输入准备、HF验收停止、汇总3条。新增下载/安装/训练/模型权重/真实编译/CKKS0，未提交、未打tag。阶段检查41项通过；HF数值2/3通过；完整373回归未执行。
+
+当前U1 HF升级：DeepSeek0，累计63/300；registry262条，原258条保留，本轮新增解析/升级/HF复核/汇总4条。仅下载两个wheel共12927432字节/20MiB，模型重下载0、slow回退0、编译/CKKS0；锁解析元数据累计162次，既往用量保留。新增12项样本/ModelInfo离线测试通过；旧373项未重跑。
+
+历史U1 Pillow接续：DeepSeek0，累计63/300；registry258条，原254条保留，本轮新增元数据计划/单包安装/模型接续/汇总4条。Pillow载荷1次GET、4356290字节/10MiB；锁解析元数据累计160次，保留原145次；无其他新增包、模型重下载、可选Qwen、编译或CKKS。初始外层命令笔误在Python解析阶段停止，下载/安装0，不计作已消费payload。
+
+历史U1必选资产与受限加载：DeepSeek0，累计63/300；registry254条，旧250条保留，新增下载、两次加载检查（含本轮新实现失败）及汇总4条。模型载荷105042537字节、HTTP38次含重定向、零重试，可选0；新增包安装0，编译/CKKS0。首次BERT实现失败及随后成功/缺Pillow的记录全部保留。
+
+历史U1新版§8第一步：DeepSeek0，累计63/300；registry250条，旧249条保留，新增1条元数据清单结果。归档16次直接源站请求（JSON14、HEAD2，含原候选401一次，零重试）；响应体元数据113303字节，权重/tokenizer载荷0，安装/测试/编译0。此前wheel元数据145次及安装证据保留。
+
+历史U1批准安装接续：DeepSeek API0、累计63/300；registry249条，原244条保留，当轮新增计划/安装/接口诊断/独立校验/汇总5条。累计元数据145次，wheel载荷29次/135609448字节、安装1次、无重试/模型权重/数据下载。下列为首次解析历史。
+
+U1 §1.1 DeepSeek API0，累计63/300；registry244条，新增3条计划（含2次失败）及1条汇总，原240条全部保留。联网仅公开PyPI JSON元数据：累计144次尝试/24817908字节，未重置128次旧尝试，新增16次完成。wheel载荷请求/安装均0；停下等待清单批准。
+
+R8h3最终API0，累计63/300、剩余237；调用账本前后均63。registry共240条，新增8条（新增测试1、既有分组5、离线汇总1、实现汇总1），原232条全部保留。新增测试只使用假客户端、历史trace及参数接线；未重跑模型实验，未新增资产、未提交或打tag。[完整REPORT](/home/lhohy/pt_agent_results/R8h3-tune-policy-tests-20261024T053739/FINAL_REPORT.json)。
+
 R8h2最终API0/8，累计63/300、剩余237；attempt-02未触发，四模型均复用R8h唯一一次生成尝试中的候选。本轮重新生成/精调/下载/训练/新权重/真实CKKS/提交/tag均0。registry共232条，新增13条（7条测试、4条模型重确认、批次及完整对照各1），原219条全部保留；原调用额度与历史证据保持。[FINAL_REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json)。
 
 R8h最终API15/30，累计63/300、剩余237；原本轮上限30、累计上限78保持，未重置或消费剩余调用。registry共219条（启动前198条），15次真实调用、4模型终态、批次和完整对照均已登记。四模型生成均已结束，MLP/CNN/SiLU完成、ResNet20确认失败；历史响应、源码、程序包及原审批拦截记录保留，未打tag。
@@ -225,12 +273,11 @@ R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry�
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| R8h2-four-models-comparison-20261024T052614-f8e9 | four-models | 完整v1对照；366/366测试、4/4模型编译及报告完成；API0；[FINAL_REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json) |
-| R8h2-four-models-reconfirm-20261024T042316-fd5d | four-models | complete=true；4模型各8000图、确认与报告准确率条件均通过；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/REPORT.json) |
-| R8h2-resnet20-attempt-01-20261024T052541-aafd | resnet20 | 8→5；选1/llm；325/325自举，91.625%，报告发散0；attempt-02未触发；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/models/resnet20/attempt-01/REPORT.json) |
-| R8h2-resnet20_silu-attempt-01-20261024T045011-d76c | resnet20_silu | 6→5；选2/tuned；148/148，91.6375%，发散1；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/models/resnet20_silu/attempt-01/REPORT.json) |
-| R8h2-cnn_plain-attempt-01-20261024T043059-3777 | cnn_plain | 4→3；选1/tuned；87/87，65.5875%，发散1；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/models/cnn_plain/attempt-01/REPORT.json) |
-
+| U1-section12-complete-20261024T111953-3f19 | section12 | 完成；[REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json) |
+| U1-sequence-acceptance-20261024T111807-35b6 | sequence | 完成；[REPORT](/home/lhohy/pt_agent_results/u1-sequence-20261024T111805608137/REPORT.json) |
+| U1-regression-acceptance-20261024T111752-6b25 | regression | 完成；17项；[REPORT](/home/lhohy/pt_agent_results/u1-regression-20261024T110118931850/REPORT.json) |
+| U1-regression-acceptance-20261024T110055-46d4 | regression | 完成；17项；[REPORT](/home/lhohy/pt_agent_results/u1-regression-20261024T110034672376/REPORT.json) |
+| U1-cli-acceptance-20261024T105948-150f | cli | 完成；[REPORT](/home/lhohy/pt_agent_results/u1-cli-20261024T105937735752/REPORT.json) |
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
 旧 T0/T2 测试输出保留原路径；旧源码副本：[before/](/home/lhohy/pt_agent_results/R1-ptdsl-unit-20261020T111834-3fa0/before/)。
@@ -2379,3 +2426,422 @@ ResNet20确认参考top-1=91.5%，选中程序top-1=91.8%；其1张确认发散�
 与spec不一致之处：无算法、参数或判据偏离；自写编排的列表字段读取修正已在上文逐项记录。冻结模块仅修改confirm.py，agent.py无需适配；旧测试修改0。原目录、响应、源码、程序包、失败证据及已用额度均保留；未改库、安全参数或资源限制，未下载新资产。
 
 未完成项：本轮§1–§4无剩余项；按§5由Claude处理后续提交及本地pt-agent-freeze-v1.1，本轮未提交、未打tag。真实CKKS本轮0，M1第5条和未见模型证据保持待后续spec；本轮结果归为已有开发候选的确认与编译/Mock评测，新增首次独立生成及完整CKKS交付成功0。新增编译器依赖阻塞0。
+
+## R8h3 精调触发策略参数化（完成）
+
+按spec §1新增run_agent(..., tune_policy="new_best")，仅接受new_best/all，非法值在提示构造、评估和请求之前抛出ValueError。new_best使用tuner and eligible and (new_llm_best or not has_tuned)，与048f737c的触发条件相同；all使用tuner and eligible。两种策略保留规范化精调缓存和tuned_reused_from，confirm.py的候选去重保持。
+
+实际入口接线：run.py增加--tune-policy、传递至run_agent，并把策略写入REPORT顶层；run_agent在正常/失败trace及返回结果记录tune_policy。r8b_dev.py、r8g_mlp_rerun.py、r8h_rerun.py、r8h2_reconfirm.py均增加参数并传递给工作进程/共享运行参数。各CLI解析默认new_best；R8h/R8h2外层按消融定义显式传all，并在批次REPORT记录。r8b_dev的resume读取原批次策略；缺失该字段的旧v1批次按new_best接续。本轮只测试接线，未启动这些实验入口的实际工作负载。
+
+新增test_r8h3_policy.py共7项通过，覆盖默认100→120→90仅在1/3轮精调、非法值、5个入口的默认与all参数，以及四份R8e5 trace的调用序列。历史产物测试类已用require(TRACES)标记；重放替换evaluate、tune、confirm_select及提示构造，不读取图像、权重或报告集，不调用真实LLM。与048f737c的触发条件核对只读源码；无完整性校验。
+
+| 模型 | R8e5 trace记录的精调轮次 | 默认new_best实测调用轮次 | 结论 |
+|---|---|---|---|
+| resnet20 | 1,2,3,4,5,6 | 1,2,3,4,5,6 | 一致 |
+| resnet20_silu | 1,2,3,4 | 1,2,3,4 | 一致 |
+| cnn_plain | 1,2 | 1,2 | 一致 |
+| mlp | 1 | 1 | 一致 |
+
+[测试REPORT](/home/lhohy/pt_agent_results/R8h3-tune-policy-tests-20261024T053739/REPORT.json)、[新增测试完整输出](/home/lhohy/pt_agent_results/R8h3-tune-policy-tests-20261024T053739/new-tests/tests.log)、[完整汇总](/home/lhohy/pt_agent_results/R8h3-tune-policy-tests-20261024T053739/FINAL_REPORT.json)。新增7项及既有366项共373/373全部通过，失败/错误/跳过均0。既有分组8/13/311/17/17串行完成；张量组1033.361847秒，原3600秒时限、4GiB内存及可信编译子进程限制保持。AGENTS于2026-10-23的报告集例外仅供原精确模型/数据读取/划分回归，新增测试和代码未读取报告集。
+
+与spec不一致之处：按§2.1对[tests/test_r8h_tune_all.py:69](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8h_tune_all.py:69)的run_agent调用显式加tune_policy="all"，原断言全部保持。run.py仅改入口接线及策略记录，精调、评价、确认算法保持；无其他旧测试修改。无额外偏离，本轮自写代码无实现错误或兼容修正。
+
+未完成项：本轮spec无剩余项。API0，累计63/300、registry240条，原证据和额度全部保留；未重跑模型实验，未新增下载/训练资产/权重，未提交或打tag。冻结仍使用pt-agent-freeze-v1，R8h/R8h2结果保留为all消融；旧v1.1安排按本轮决定取代。新增首次独立输出和真实CKKS证据0，M1及未见模型验收保持原状态。
+
+
+## U1 独立模型导入环境（本轮仅§1.1，完成并等待安装批准）
+
+本轮只完成环境解析。新增脚本[tools/intake_python_env.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tools/intake_python_env.py)、[profile](/home/lhohy/Code/Poseidon/src/poseidon/tools/dacapo/intake-python-aarch64.profile.json)、[锁文件](/home/lhohy/Code/Poseidon/src/poseidon/tools/dacapo/python-wheels-intake-aarch64.lock.json)。按§1.1要求，intake专用JSON与既有wheel锁同目录；已有baseline脚本、src文件、主profile/lock及冻结Agent保持。
+
+目标为独立intake-2.0.1-cpu：CPython3.10.14、aarch64、Nix glibc2.39；未来目录由pt_agent.paths的PLATFORM_DIR派生。复用主环境9个固定基础版本，torch=2.0.1、numpy=1.25.2；额外解析transformers 4.44.x、tokenizers 0.19.x、onnx 1.16.x、onnxruntime 1.18.x及完整依赖。选择包的Requires-Python、wheel标签、环境标记、extras和依赖闭包已由解析器检查，运行导入验证留待批准后。
+
+--plan成功退出0，30个wheel，共**139798368字节（133.322113 MiB）**。全部URL、文件名、大小和SHA256来自PyPI JSON；本阶段未获取wheel载荷，未对实际wheel文件做校验。引导工具另由固定Python的ensurepip提供pip23.0.1、setuptools65.5.0，外部下载量0，不计入30个wheel。
+
+[完整计划](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T061706/FINAL_REPORT.json)、[执行REPORT](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T061706/REPORT.json)、[完整依赖声明与标记](/home/lhohy/Code/Poseidon/src/poseidon/tools/dacapo/python-wheels-intake-aarch64.lock.json)。
+
+| 包名 | 版本 | wheel文件名 | 大小（字节） | SHA256（PyPI元数据） | 来源URL |
+|---|---|---|---:|---|---|
+| certifi | 2026.10.23 | `certifi-2026.10.23-py3-none-any.whl` | 135082 | `e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1` | [wheel](https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl) |
+| charset-normalizer | 3.5.2 | `charset_normalizer-3.5.2-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl` | 260860 | `9373ad13ef0d2c0fb761e04e55bfdee5a08b52cef2c882c8fbe9935b1517152e` | [wheel](https://files.pythonhosted.org/packages/52/fc/e518013affcc43c9f919c3ba41bffe9b4ee4aceb0a6462a6243efcca5f2d/charset_normalizer-3.5.2-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl) |
+| coloredlogs | 15.0.1 | `coloredlogs-15.0.1-py2.py3-none-any.whl` | 46018 | `612ee75c546f53e92e70049c9dbfcc18c935a2b9a53b66085ce9ef6a6e5c0934` | [wheel](https://files.pythonhosted.org/packages/a7/06/3d6badcf13db419e25b07041d9c7b4a2c331d3f4e7134445ec5df57714cd/coloredlogs-15.0.1-py2.py3-none-any.whl) |
+| filelock | 3.12.2 | `filelock-3.12.2-py3-none-any.whl` | 10923 | `cbb791cdea2a72f23da6ac5b5269ab0a0d161e9ef0100e653b69049a7706d1ec` | [wheel](https://files.pythonhosted.org/packages/00/45/ec3407adf6f6b5bf867a4462b2b0af27597a26bd3cd6e2534cb6ab029938/filelock-3.12.2-py3-none-any.whl) |
+| flatbuffers | 25.12.19 | `flatbuffers-25.12.19-py2.py3-none-any.whl` | 26661 | `7634f50c427838bb021c2d66a3d1168e9d199b0607e6329399f04846d42e20b4` | [wheel](https://files.pythonhosted.org/packages/e8/2d/d2a548598be01649e2d46231d151a6c56d10b964d94043a335ae56ea2d92/flatbuffers-25.12.19-py2.py3-none-any.whl) |
+| fsspec | 2026.9.0 | `fsspec-2026.9.0-py3-none-any.whl` | 221738 | `8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f` | [wheel](https://files.pythonhosted.org/packages/6c/c0/a98505f18594f1bce828bb159cec0fcf9860562f1a2c85913409fc8f3d9e/fsspec-2026.9.0-py3-none-any.whl) |
+| hf-xet | 1.7.0 | `hf_xet-1.7.0-cp38-abi3-manylinux_2_28_aarch64.whl` | 3990011 | `fcfd6c22418e57dd5b3aea649e813b2e2cfb2aebf317b210d90f1fe4b3018b52` | [wheel](https://files.pythonhosted.org/packages/49/0c/a2f703a5a78267556e89e03316fa0805c86b72b50829bc67665746e8ebf0/hf_xet-1.7.0-cp38-abi3-manylinux_2_28_aarch64.whl) |
+| huggingface-hub | 0.36.2 | `huggingface_hub-0.36.2-py3-none-any.whl` | 566395 | `48f0c8eac16145dfce371e9d2d7772854a4f591bcb56c9cf548accf531d54270` | [wheel](https://files.pythonhosted.org/packages/a8/af/48ac8483240de756d2438c380746e7130d1c6f75802ef22f3c6d49982787/huggingface_hub-0.36.2-py3-none-any.whl) |
+| humanfriendly | 10.0 | `humanfriendly-10.0-py2.py3-none-any.whl` | 86794 | `1697e1a8a8f550fd43c2865cd84542fc175a61dcb779b6fee18cf6b6ccba1477` | [wheel](https://files.pythonhosted.org/packages/f0/0f/310fb31e39e2d734ccaa2c0fb981ee41f7bd5056ce9bc29b2248bd569169/humanfriendly-10.0-py2.py3-none-any.whl) |
+| idna | 3.20 | `idna-3.20-py3-none-any.whl` | 69583 | `ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c` | [wheel](https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl) |
+| jinja2 | 3.1.2 | `Jinja2-3.1.2-py3-none-any.whl` | 133101 | `6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61` | [wheel](https://files.pythonhosted.org/packages/bc/c3/f068337a370801f372f2f8f6bad74a5c140f6fda3d9de154052708dd3c65/Jinja2-3.1.2-py3-none-any.whl) |
+| markupsafe | 2.1.3 | `MarkupSafe-2.1.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 26498 | `68e78619a61ecf91e76aa3e6e8e33fc4894a2bebe93410754bd28fce0a8a4f9f` | [wheel](https://files.pythonhosted.org/packages/a6/56/f1d4ee39e898a9e63470cbb7fae1c58cce6874f25f54220b89213a47f273/MarkupSafe-2.1.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| mpmath | 1.3.0 | `mpmath-1.3.0-py3-none-any.whl` | 536198 | `a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c` | [wheel](https://files.pythonhosted.org/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl) |
+| networkx | 3.1 | `networkx-3.1-py3-none-any.whl` | 2072251 | `4f33f68cb2afcf86f28a45f43efc27a9386b535d567d2127f8f61d51dec58d36` | [wheel](https://files.pythonhosted.org/packages/a8/05/9d4f9b78ead6b2661d6e8ea772e111fc4a9fbd866ad0c81906c11206b55e/networkx-3.1-py3-none-any.whl) |
+| numpy | 1.25.2 | `numpy-1.25.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 14167163 | `dfe4a913e29b418d096e696ddd422d8a5d13ffba4ea91f9f60440a3b759b0187` | [wheel](https://files.pythonhosted.org/packages/b1/39/3f88e2bfac1fb510c112dc0c78a1e7cad8f3a2d75e714d1484a044c56682/numpy-1.25.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| onnx | 1.16.2 | `onnx-1.16.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 15793170 | `a449122a49534bb9c2b6f16c8493b606ef0accda6b9dbf0c513ca4b31ebe8b38` | [wheel](https://files.pythonhosted.org/packages/c2/8f/65582450430242811ec955806a870437a9d66f9dceccd53d05dd902d76ad/onnx-1.16.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| onnxruntime | 1.18.1 | `onnxruntime-1.18.1-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl` | 6013528 | `fc706eb1df06ddf55776e15a30519fb15dda7697f987a2bbda4962845e3cec05` | [wheel](https://files.pythonhosted.org/packages/cd/ef/4f4e45d49c2587080f0252dba644620a9808e2d19591bb0b327650ace6b6/onnxruntime-1.18.1-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl) |
+| packaging | 26.3 | `packaging-26.3-py3-none-any.whl` | 129956 | `d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c` | [wheel](https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl) |
+| protobuf | 7.36.2 | `protobuf-7.36.2-cp310-abi3-manylinux2014_aarch64.whl` | 344219 | `e11e1f0180583a2af89db6a2ecd9e8dc40aa6d2988ca175bfd0e6d12ea72d74e` | [wheel](https://files.pythonhosted.org/packages/b6/ea/91fdf7c2b8bbd49cde056f00a9df6773532987e1c00fe2830b895af95c7e/protobuf-7.36.2-cp310-abi3-manylinux2014_aarch64.whl) |
+| pyyaml | 6.0.3 | `pyyaml-6.0.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl` | 740646 | `b30236e45cf30d2b8e7b3e85881719e98507abed1011bf463a8fa23e9c3e98a8` | [wheel](https://files.pythonhosted.org/packages/43/f7/0e6a5ae5599c838c696adb4e6330a59f463265bfa1e116cfd1fbb0abaaae/pyyaml-6.0.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl) |
+| regex | 2026.9.29 | `regex-2026.9.29-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl` | 793080 | `fb00027a09a8f9f08028b40dce4c933cf73e4833240ed356583fdc9cfa721566` | [wheel](https://files.pythonhosted.org/packages/7c/98/41fe60ae6ccf3e166fe7bc73495aa15e9a1a7fe3a1f9f0f95a3d64a2df0f/regex-2026.9.29-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl) |
+| requests | 2.34.2 | `requests-2.34.2-py3-none-any.whl` | 73075 | `2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0` | [wheel](https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl) |
+| safetensors | 0.8.0 | `safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 502844 | `7a46e5ff292c356d6991e60942ba7f79817682d3a2cef0702136448cb9c4d235` | [wheel](https://files.pythonhosted.org/packages/09/7d/65a7de0af421317bb36a067241e4235fff194eed60b961ed6d3f59a3fc60/safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| sympy | 1.12 | `sympy-1.12-py3-none-any.whl` | 5742435 | `c3588cd4295d0c0f603d0f2ae780587e64e2efeedb3521e46b9bb1d08d184fa5` | [wheel](https://files.pythonhosted.org/packages/d2/05/e6600db80270777c4a64238a98d442f0fd07cc8915be2a1c16da7f2b9e74/sympy-1.12-py3-none-any.whl) |
+| tokenizers | 0.19.1 | `tokenizers-0.19.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 3569431 | `453e4422efdfc9c6b6bf2eae00d5e323f263fff62b29a8c9cd526c5003f3f642` | [wheel](https://files.pythonhosted.org/packages/50/4e/2e5549a26dc6f9e434f83bebf16c2d7dc9dc3477cc0ec8b23ede4d465b90/tokenizers-0.19.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| torch | 2.0.1 | `torch-2.0.1-cp310-cp310-manylinux2014_aarch64.whl` | 74032191 | `359bfaad94d1cda02ab775dc1cc386d585712329bb47b8741607ef6ef4950747` | [wheel](https://files.pythonhosted.org/packages/21/33/4925decd863ce88ed9190a4bd872b01c146243ee68db08c72923984fe335/torch-2.0.1-cp310-cp310-manylinux2014_aarch64.whl) |
+| tqdm | 4.70.1 | `tqdm-4.70.1-py3-none-any.whl` | 80199 | `c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73` | [wheel](https://files.pythonhosted.org/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl) |
+| transformers | 4.44.2 | `transformers-4.44.2-py3-none-any.whl` | 9465369 | `1c02c65e7bfa5e52a634aff3da52138b583fc6f263c1f28d547dc144ba3d412d` | [wheel](https://files.pythonhosted.org/packages/75/35/07c9879163b603f0e464b0f6e6e628a2340cfc7cdc5ca8e7d52d776710d4/transformers-4.44.2-py3-none-any.whl) |
+| typing-extensions | 4.7.1 | `typing_extensions-4.7.1-py3-none-any.whl` | 33232 | `440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36` | [wheel](https://files.pythonhosted.org/packages/ec/6b/63cc3df74987c36fe26157ee12e09e8f9db4de771e0f3404263117e75b95/typing_extensions-4.7.1-py3-none-any.whl) |
+| urllib3 | 2.8.0 | `urllib3-2.8.0-py3-none-any.whl` | 135717 | `0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3` | [wheel](https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl) |
+
+有限解析记录：累计144次元数据尝试，其中143次完成、1次TLS证书定位失败，响应体24817908字节（23.668201 MiB）；后续接续保留此前全部128次，新增16次即完成。当前解析profile上限192次、单响应8MiB、总64MiB，每次30秒；原内存和磁盘限制保持。无wheel载荷请求、安装、模型/数据下载、LLM调用或模型实验。
+
+本轮自写代码修正及失败保留：
+
+1. 第一次计划因纯Nix环境未定位现有CA证书失败，元数据响应体0；修正为由外层定位系统已有CA bundle并只读传入，TLS验证保持。原[失败REPORT](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T061101/REPORT.json)保留。
+2. 初次resolvelib接线返回生成器，依赖解析器会立即展开全部候选，额外查询旧版本后触发自设128次请求上限。修正为返回按需候选factory，复用全部已存JSON，并将自设元数据尝试上限改为累计192；已消费128次全部保留，总64MiB未改。原[停止REPORT](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T061229/REPORT.json)保留。修正后新增16次元数据读取、31.450717秒完成；无安装和主环境写入。
+
+验证结果：初版7项离线检查通过；修正后8/8通过，覆盖传递闭包、Python版本、wheel标签、extras、平台条件、候选排除、总大小及按需加载。随后真实--plan成功；结构检查确认30项和大小汇总一致，intake目录未创建。仅验证§1.1，不执行既有373项模型回归或后续§6验收。
+
+等待用户批准：完整30项清单总载荷139798368字节；仅批准后进入§1.2，获取对应wheel并离线安装到独立intake环境，执行主venv安装前后pip freeze对照、intake --verify-existing及记录。主hecate-2.0.1-cpu当前未修改，intake当前未创建；安装器和§1.2–§6尚未执行，Transformers/ONNX支持尚未完成。DeepSeek API0，累计63/300；不提交、不打tag。
+
+## U1 固定版本后批准安装及接口停止（2026-10-24 / 0189ce11-dirty）
+
+用户批准在两处固定后直接安装并继续§2–§7；无待重复审批事项。重新--plan及独立安装/校验已完成，前端接口检查遇到MaxPool范围停止项，详见本节末和阻塞栏。
+
+差异：protobuf 7.36.2 → 4.25.9；huggingface-hub 0.36.2 → 0.24.7；移除hf-xet1.7.0。其余27项版本保持；30项→29项，139798368→135609448字节，减少4188920字节。总量129.327248MiB，批准上限为133MiB+10%=146.3MiB（按153406668字节执行）。旧锁和结果保留，新锁为python-wheels-intake-pinned-aarch64.lock.json。
+
+[新计划REPORT](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T080511/REPORT.json)、[完整差异](/home/lhohy/pt_agent_results/u1-intake-plan-20261024T080511/approved-plan-diff.json)。累计元数据145次（复用旧144次，仅新增1次）；wheel载荷与安装尚未开始。
+
+| 包名 | 版本 | wheel文件名 | 大小（字节） | SHA256（PyPI元数据） | URL |
+|---|---|---|---:|---|---|
+| certifi | 2026.10.23 | `certifi-2026.10.23-py3-none-any.whl` | 135082 | `e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1` | [wheel](https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl) |
+| charset-normalizer | 3.5.2 | `charset_normalizer-3.5.2-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl` | 260860 | `9373ad13ef0d2c0fb761e04e55bfdee5a08b52cef2c882c8fbe9935b1517152e` | [wheel](https://files.pythonhosted.org/packages/52/fc/e518013affcc43c9f919c3ba41bffe9b4ee4aceb0a6462a6243efcca5f2d/charset_normalizer-3.5.2-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl) |
+| coloredlogs | 15.0.1 | `coloredlogs-15.0.1-py2.py3-none-any.whl` | 46018 | `612ee75c546f53e92e70049c9dbfcc18c935a2b9a53b66085ce9ef6a6e5c0934` | [wheel](https://files.pythonhosted.org/packages/a7/06/3d6badcf13db419e25b07041d9c7b4a2c331d3f4e7134445ec5df57714cd/coloredlogs-15.0.1-py2.py3-none-any.whl) |
+| filelock | 3.12.2 | `filelock-3.12.2-py3-none-any.whl` | 10923 | `cbb791cdea2a72f23da6ac5b5269ab0a0d161e9ef0100e653b69049a7706d1ec` | [wheel](https://files.pythonhosted.org/packages/00/45/ec3407adf6f6b5bf867a4462b2b0af27597a26bd3cd6e2534cb6ab029938/filelock-3.12.2-py3-none-any.whl) |
+| flatbuffers | 25.12.19 | `flatbuffers-25.12.19-py2.py3-none-any.whl` | 26661 | `7634f50c427838bb021c2d66a3d1168e9d199b0607e6329399f04846d42e20b4` | [wheel](https://files.pythonhosted.org/packages/e8/2d/d2a548598be01649e2d46231d151a6c56d10b964d94043a335ae56ea2d92/flatbuffers-25.12.19-py2.py3-none-any.whl) |
+| fsspec | 2026.9.0 | `fsspec-2026.9.0-py3-none-any.whl` | 221738 | `8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f` | [wheel](https://files.pythonhosted.org/packages/6c/c0/a98505f18594f1bce828bb159cec0fcf9860562f1a2c85913409fc8f3d9e/fsspec-2026.9.0-py3-none-any.whl) |
+| huggingface-hub | 0.24.7 | `huggingface_hub-0.24.7-py3-none-any.whl` | 417514 | `a212c555324c8a7b1ffdd07266bb7e7d69ca71aa238d27b7842d65e9a26ac3e5` | [wheel](https://files.pythonhosted.org/packages/57/28/a0b0dd3cca63908045edc300360d6cd8758d4d86eee3fd2b08f00c5a41c4/huggingface_hub-0.24.7-py3-none-any.whl) |
+| humanfriendly | 10.0 | `humanfriendly-10.0-py2.py3-none-any.whl` | 86794 | `1697e1a8a8f550fd43c2865cd84542fc175a61dcb779b6fee18cf6b6ccba1477` | [wheel](https://files.pythonhosted.org/packages/f0/0f/310fb31e39e2d734ccaa2c0fb981ee41f7bd5056ce9bc29b2248bd569169/humanfriendly-10.0-py2.py3-none-any.whl) |
+| idna | 3.20 | `idna-3.20-py3-none-any.whl` | 69583 | `ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c` | [wheel](https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl) |
+| jinja2 | 3.1.2 | `Jinja2-3.1.2-py3-none-any.whl` | 133101 | `6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61` | [wheel](https://files.pythonhosted.org/packages/bc/c3/f068337a370801f372f2f8f6bad74a5c140f6fda3d9de154052708dd3c65/Jinja2-3.1.2-py3-none-any.whl) |
+| markupsafe | 2.1.3 | `MarkupSafe-2.1.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 26498 | `68e78619a61ecf91e76aa3e6e8e33fc4894a2bebe93410754bd28fce0a8a4f9f` | [wheel](https://files.pythonhosted.org/packages/a6/56/f1d4ee39e898a9e63470cbb7fae1c58cce6874f25f54220b89213a47f273/MarkupSafe-2.1.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| mpmath | 1.3.0 | `mpmath-1.3.0-py3-none-any.whl` | 536198 | `a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c` | [wheel](https://files.pythonhosted.org/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl) |
+| networkx | 3.1 | `networkx-3.1-py3-none-any.whl` | 2072251 | `4f33f68cb2afcf86f28a45f43efc27a9386b535d567d2127f8f61d51dec58d36` | [wheel](https://files.pythonhosted.org/packages/a8/05/9d4f9b78ead6b2661d6e8ea772e111fc4a9fbd866ad0c81906c11206b55e/networkx-3.1-py3-none-any.whl) |
+| numpy | 1.25.2 | `numpy-1.25.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 14167163 | `dfe4a913e29b418d096e696ddd422d8a5d13ffba4ea91f9f60440a3b759b0187` | [wheel](https://files.pythonhosted.org/packages/b1/39/3f88e2bfac1fb510c112dc0c78a1e7cad8f3a2d75e714d1484a044c56682/numpy-1.25.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| onnx | 1.16.2 | `onnx-1.16.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 15793170 | `a449122a49534bb9c2b6f16c8493b606ef0accda6b9dbf0c513ca4b31ebe8b38` | [wheel](https://files.pythonhosted.org/packages/c2/8f/65582450430242811ec955806a870437a9d66f9dceccd53d05dd902d76ad/onnx-1.16.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| onnxruntime | 1.18.1 | `onnxruntime-1.18.1-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl` | 6013528 | `fc706eb1df06ddf55776e15a30519fb15dda7697f987a2bbda4962845e3cec05` | [wheel](https://files.pythonhosted.org/packages/cd/ef/4f4e45d49c2587080f0252dba644620a9808e2d19591bb0b327650ace6b6/onnxruntime-1.18.1-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl) |
+| packaging | 26.3 | `packaging-26.3-py3-none-any.whl` | 129956 | `d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c` | [wheel](https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl) |
+| protobuf | 4.25.9 | `protobuf-4.25.9-cp37-abi3-manylinux2014_aarch64.whl` | 294191 | `999146ef02e7fa6a692477badd1528bcd7268df211852a3df2d834ba2b480791` | [wheel](https://files.pythonhosted.org/packages/54/aa/b2dba856f64c36b2a06c67be1472de98cca07a2322d0f0cbf03279a40e5b/protobuf-4.25.9-cp37-abi3-manylinux2014_aarch64.whl) |
+| pyyaml | 6.0.3 | `pyyaml-6.0.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl` | 740646 | `b30236e45cf30d2b8e7b3e85881719e98507abed1011bf463a8fa23e9c3e98a8` | [wheel](https://files.pythonhosted.org/packages/43/f7/0e6a5ae5599c838c696adb4e6330a59f463265bfa1e116cfd1fbb0abaaae/pyyaml-6.0.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl) |
+| regex | 2026.9.29 | `regex-2026.9.29-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl` | 793080 | `fb00027a09a8f9f08028b40dce4c933cf73e4833240ed356583fdc9cfa721566` | [wheel](https://files.pythonhosted.org/packages/7c/98/41fe60ae6ccf3e166fe7bc73495aa15e9a1a7fe3a1f9f0f95a3d64a2df0f/regex-2026.9.29-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl) |
+| requests | 2.34.2 | `requests-2.34.2-py3-none-any.whl` | 73075 | `2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0` | [wheel](https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl) |
+| safetensors | 0.8.0 | `safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 502844 | `7a46e5ff292c356d6991e60942ba7f79817682d3a2cef0702136448cb9c4d235` | [wheel](https://files.pythonhosted.org/packages/09/7d/65a7de0af421317bb36a067241e4235fff194eed60b961ed6d3f59a3fc60/safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| sympy | 1.12 | `sympy-1.12-py3-none-any.whl` | 5742435 | `c3588cd4295d0c0f603d0f2ae780587e64e2efeedb3521e46b9bb1d08d184fa5` | [wheel](https://files.pythonhosted.org/packages/d2/05/e6600db80270777c4a64238a98d442f0fd07cc8915be2a1c16da7f2b9e74/sympy-1.12-py3-none-any.whl) |
+| tokenizers | 0.19.1 | `tokenizers-0.19.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl` | 3569431 | `453e4422efdfc9c6b6bf2eae00d5e323f263fff62b29a8c9cd526c5003f3f642` | [wheel](https://files.pythonhosted.org/packages/50/4e/2e5549a26dc6f9e434f83bebf16c2d7dc9dc3477cc0ec8b23ede4d465b90/tokenizers-0.19.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| torch | 2.0.1 | `torch-2.0.1-cp310-cp310-manylinux2014_aarch64.whl` | 74032191 | `359bfaad94d1cda02ab775dc1cc386d585712329bb47b8741607ef6ef4950747` | [wheel](https://files.pythonhosted.org/packages/21/33/4925decd863ce88ed9190a4bd872b01c146243ee68db08c72923984fe335/torch-2.0.1-cp310-cp310-manylinux2014_aarch64.whl) |
+| tqdm | 4.70.1 | `tqdm-4.70.1-py3-none-any.whl` | 80199 | `c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73` | [wheel](https://files.pythonhosted.org/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl) |
+| transformers | 4.44.2 | `transformers-4.44.2-py3-none-any.whl` | 9465369 | `1c02c65e7bfa5e52a634aff3da52138b583fc6f263c1f28d547dc144ba3d412d` | [wheel](https://files.pythonhosted.org/packages/75/35/07c9879163b603f0e464b0f6e6e628a2340cfc7cdc5ca8e7d52d776710d4/transformers-4.44.2-py3-none-any.whl) |
+| typing-extensions | 4.7.1 | `typing_extensions-4.7.1-py3-none-any.whl` | 33232 | `440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36` | [wheel](https://files.pythonhosted.org/packages/ec/6b/63cc3df74987c36fe26157ee12e09e8f9db4de771e0f3404263117e75b95/typing_extensions-4.7.1-py3-none-any.whl) |
+| urllib3 | 2.8.0 | `urllib3-2.8.0-py3-none-any.whl` | 135717 | `0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3` | [wheel](https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl) |
+
+安装流程新增--install-approved与--verify-existing：只获取新清单中的wheel，独立新venv离线pip安装，pip check、版本与导入检查；安装前后分别记录主venv pip freeze --all并逐字对照。单进程4GiB、串行、10GiB空余准入、总载荷153406668字节，下载0重试，现有主环境及库源码保持。
+
+本轮自写代码检查修正：bootstrap对象中的source为说明文字，安装版本对照仅取pip/setuptools两项，未改变版本或验收含义。
+
+安装与测试结果：
+
+- §1.2：`--install-approved`退出0；29次wheel GET、135609448字节，低于批准的153406668字节；独立intake-2.0.1-cpu新建1次，pip离线安装、pip check及版本/导入检查通过。版本为torch2.0.1、numpy1.25.2、transformers4.44.2、tokenizers0.19.1、onnx1.16.2、onnxruntime1.18.1、protobuf4.25.9、hub0.24.7，hf-xet未安装。[安装REPORT](/home/lhohy/pt_agent_results/u1-intake-install-20261024T080644/REPORT.json)、[intake pip freeze](/home/lhohy/pt_agent_results/u1-intake-install-20261024T080644/intake-pip-freeze.txt)。
+- 主环境在安装前后各执行pip freeze --all，文本完全相同；[前](/home/lhohy/pt_agent_results/u1-intake-install-20261024T080644/main-pip-freeze-before.txt)、[后](/home/lhohy/pt_agent_results/u1-intake-install-20261024T080644/main-pip-freeze-after.txt)。随后显式`--verify-existing`退出0，pip check/版本/导入再确认通过，无联网或安装，主环境freeze仍相同。[独立校验REPORT](/home/lhohy/pt_agent_results/u1-intake-install-20261024T080942/REPORT.json)。
+- 本轮新增tests/test_u1_environment.py，`python3 -B -m unittest discover -s pt_agent/tests -p 'test_u1_environment.py' -v`：5项、0.003秒、OK，失败/错误/跳过0。覆盖固定版本/移除xet、完整清单/总量、超预算及未批版本在写入环境前被拒、无模式参数时不启动安装；未运行完整373项回归。
+- 最小接口检查：HF tiny ResNet随机初始化、原生float64前向成功；未经修改的现有ATen导入失败，主要原因为max_pool2d_with_indices无映射，下游getitem另记一条错误。报告读取/LLM/编译/CKKS/模型权重下载均0；未继续§2–§6。需要spec明确核心语义及既有映射修改范围，记录为导入范围阻塞，新增编译器依赖阻塞0。完整13行覆盖表与§6验收尚未生成。
+
+与spec不一致之处：本轮新增安装代码在运行前检查时修正[tools/intake_python_env.py:283](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tools/intake_python_env.py:283)，bootstrap对象的source是说明文字，版本对照只取pip/setuptools。按用户本轮明确要求追加protobuf4.25.x、hub0.24.x约束，保留旧锁并生成新pinned锁；其余文件、冻结模块和数值条件保持。未自行扩大U1算子修改范围。
+
+未完成项：§2 ModelSpec、§3数据适配/指标、§4前端及参考执行、§5完整覆盖、§6验收/既有373回归、§7完整框架汇报，待MaxPool语义/文件范围spec后接续。环境授权已执行，无需重复审批。主hecate环境保持，旧清单/失败/结果和API额度保留；本轮API0、累计63/300，不提交、不打tag。[FINAL_REPORT](/home/lhohy/pt_agent_results/u1-hf-interface-check-20261024T080903/FINAL_REPORT.json)。
+
+## U1 重写版 §8 第一步：模型候选元数据清单（2026-10-24 / 0189ce11-dirty）
+
+本轮只查候选存在性和文件元数据。用户只提供原样模型及--inputs；旧版ModelSpec和未完成§2–§6作废，历史记录保留；独立intake环境保留。原MaxPool停止按新版§5.3的语义与lowering能力分离处理，本轮未修改任何实现模块，也未安装、导入或运行模型。
+
+[REPORT](/home/lhohy/pt_agent_results/u1-model-candidates-20261024T082440/REPORT.json)、[逐文件JSON](/home/lhohy/pt_agent_results/u1-model-candidates-20261024T082440/MODEL_FILES.json)、[归档请求](/home/lhohy/pt_agent_results/u1-model-candidates-20261024T082440/requests.json)。待下载位置由pt_agent.paths派生为/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models，本轮未创建该缓存目录。
+
+候选核实结果：
+
+| 用途 | 候选/结果 | 拟下载文件数 | 总字节 | MiB |
+|---|---|---:|---:|---:|
+| HF CNN | microsoft/resnet-18，public metadata available | 3 | 46882138 | 44.710291 |
+| HF Transformer分类 | M-FAC/bert-tiny-finetuned-sst2，public metadata available | 5 | 17797309 | 16.972836 |
+| HF LLM验收（公开替代） | onnx-internal-testing/tiny-random-Qwen2ForCausalLM，public metadata available | 10 | 35380739 | 33.741702 |
+| HF LLM可选冒烟 | Qwen/Qwen2.5-0.5B，public metadata available（可选，单独批准） | 8 | 999597531 | 953.290492 |
+| ONNX CNN（非PyTorch来源） | mnist-12.onnx，metadata and HEAD 200 | 1 | 26143 | 0.024932 |
+| ONNX CNN | squeezenet1.1-7.onnx，metadata and HEAD 200 | 1 | 4956208 | 4.726608 |
+| ONNX Transformer | HF BERT批准下载后本机导出；本轮不执行 | 0 | 0 | 0 |
+
+原`hf-internal-testing/tiny-random-Qwen2ForCausalLM`匿名Hub API返回401；只能确认当前无法匿名访问，未将其断言为公开不存在，未使用凭证。按§8同类替代规则提出`onnx-internal-testing/tiny-random-Qwen2ForCausalLM`。其config为Qwen2ForCausalLM/model_type=qwen2，2层、hidden32、Q头4/KV头2、SiLU、rms_norm_eps=1e-6、rope_theta=1000000、vocab151936；据该Qwen2架构及参数确认覆盖RMSNorm/RoPE/SwiGLU/GQA。tokenizer_class=Qwen2Tokenizer。仅核实配置，实际加载/旧环境tokenizer兼容性/内存尚未验证。权重实际为19500872字节，加tokenizer等侧文件后总35380739字节，与spec“几MB”估算的差异已显式列出。
+
+文件选择：每个HF模型只选一种权重格式（有safetensors时选该格式；M-FAC仅有pytorch_model.bin），加仓库原有配置、processor或tokenizer侧文件；保留可选Qwen仓库LICENSE。ResNet的重复bin/TF权重、README和.gitattributes不列入；未添加任何远程Python实现。ONNX来自ONNX Model Zoo原仓库固定提交，下载URL已HEAD200。BERT ONNX本机导出和输入样本不新增下载。
+
+完整逐文件清单（SHA256仅记录源站提供值）：
+
+| 组 | 文件名 | 大小（字节） | SHA256 | URL |
+|---|---|---:|---|---|
+| resnet18 | config.json | 69548 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/microsoft/resnet-18/resolve/65a5785d9156231087c481e0c7dd33a5ff6f7e3e/config.json) |
+| resnet18 | preprocessor_config.json | 266 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/microsoft/resnet-18/resolve/65a5785d9156231087c481e0c7dd33a5ff6f7e3e/preprocessor_config.json) |
+| resnet18 | model.safetensors | 46812324 | `1cf00ee468998c23d084361b02cffadabacb5074105564c596b8079f77ecb126` | [文件](https://huggingface.co/microsoft/resnet-18/resolve/65a5785d9156231087c481e0c7dd33a5ff6f7e3e/model.safetensors) |
+| bert_tiny | config.json | 760 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/M-FAC/bert-tiny-finetuned-sst2/resolve/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/config.json) |
+| bert_tiny | pytorch_model.bin | 17564583 | `067abfb7664f144d3813c8ff7add88ef7bdd457bd6821575159a674c4a0c3441` | [文件](https://huggingface.co/M-FAC/bert-tiny-finetuned-sst2/resolve/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/pytorch_model.bin) |
+| bert_tiny | special_tokens_map.json | 112 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/M-FAC/bert-tiny-finetuned-sst2/resolve/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/special_tokens_map.json) |
+| bert_tiny | tokenizer_config.json | 346 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/M-FAC/bert-tiny-finetuned-sst2/resolve/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/tokenizer_config.json) |
+| bert_tiny | vocab.txt | 231508 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/M-FAC/bert-tiny-finetuned-sst2/resolve/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/vocab.txt) |
+| qwen_alternative | added_tokens.json | 605 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/added_tokens.json) |
+| qwen_alternative | chat_template.jinja | 2507 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/chat_template.jinja) |
+| qwen_alternative | config.json | 748 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/config.json) |
+| qwen_alternative | generation_config.json | 126 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/generation_config.json) |
+| qwen_alternative | merges.txt | 1671853 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/merges.txt) |
+| qwen_alternative | model.safetensors | 19500872 | `8fec57ebd9debed93ef977563bffd104708b3cf68d21b50e1a41eba9a062e20e` | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/model.safetensors) |
+| qwen_alternative | special_tokens_map.json | 613 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/special_tokens_map.json) |
+| qwen_alternative | tokenizer.json | 11421896 | `9c5ae00e602b8860cbd784ba82a8aa14e8feecec692e7076590d014d7b7fdafa` | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/tokenizer.json) |
+| qwen_alternative | tokenizer_config.json | 4686 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/tokenizer_config.json) |
+| qwen_alternative | vocab.json | 2776833 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/onnx-internal-testing/tiny-random-Qwen2ForCausalLM/resolve/681cc013f872d2d13a562f838fb2d5884b74d85a/vocab.json) |
+| qwen_optional（可选） | LICENSE | 11343 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/LICENSE) |
+| qwen_optional（可选） | config.json | 681 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json) |
+| qwen_optional（可选） | generation_config.json | 138 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/generation_config.json) |
+| qwen_optional（可选） | merges.txt | 1671839 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/merges.txt) |
+| qwen_optional（可选） | model.safetensors | 988097824 | `88c142557820ccad55bb59756bfcfcf891de9cc6202816bd346445188a0ed342` | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/model.safetensors) |
+| qwen_optional（可选） | tokenizer.json | 7031645 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json) |
+| qwen_optional（可选） | tokenizer_config.json | 7228 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer_config.json) |
+| qwen_optional（可选） | vocab.json | 2776833 | 未提供（源站只有Git blob ID） | [文件](https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/vocab.json) |
+| mnist | mnist-12.onnx | 26143 | `5c688690f8bacf667d4c2074af5ad0646ca328d7ab03eccf944a65b320171bdd` | [文件](https://media.githubusercontent.com/media/onnx/models/c5cae0f1942c8d7727372c7b1f6b485aa39e4421/validated/vision/classification/mnist/model/mnist-12.onnx) |
+| squeezenet | squeezenet1.1-7.onnx | 4956208 | `1eeff551a67ae8d565ca33b572fc4b66e3ef357b0eb2863bb9ff47a918cc4088` | [文件](https://media.githubusercontent.com/media/onnx/models/c5cae0f1942c8d7727372c7b1f6b485aa39e4421/validated/vision/classification/squeezenet/model/squeezenet1.1-7.onnx) |
+
+必选合计：**20文件，105042537字节，100.176370MiB**。可选Qwen0.5B单列：**8文件，999597531字节，953.290492MiB**。全部批准时合计：**28文件，1104640068字节，1053.466862MiB**。均为源站文件大小之和，不含HTTP头、缓存膨胀或运行内存；未获下载许可，不将这些数值转为已消费下载额度。
+
+SHA256可得7项（HF LFS或GitHub API返回的Git LFS pointer），不可得21项（只有Git blob ID，未冒充SHA256）。两个ONNX的HEAD只读取响应头，body0；其Git LFS pointer来自Contents API元数据，未读取ONNX载荷。未为补齐SHA而下载任何缺失的模型或tokenizer文件，也未做载荷哈希校验。小型config/tokenizer_config作为元数据读取并仅存结果目录。
+
+核对输出：5必选组与1可选组的所选文件均出现在上游列表；28条仓库/文件组合唯一；文件名、大小、稳定URL齐全；原候选401及替代均保留；两个ONNX HEAD200；config声明的Qwen2为4Q头/2KV头。归档直接源站元数据16次（14GET、2HEAD），元数据响应体113303字节，模型权重/tokenizer载荷请求0、字节0。旧wheel清单/安装结果和249条registry保留，本轮新增1条；DeepSeek0，累计63/300。
+
+改动文件：仅本STATUS；证据写入本次结果目录和registry。测试输出：只核对元数据结构及总量，不运行代码测试、模型、编译或CKKS。与spec不一致之处：无；原tiny Qwen的公开替代按§8明确允许的规则列出，未暗中替换或执行。未完成项：等待用户批准必选20文件，并单独决定可选8文件；批准后才进入§8第二步和新版§2–§7。
+
+本轮现已停下。需等待批准的直接依据为新版§8：“写入STATUS后停下来等待用户批准”。无权重、样本下载或新安装；不提交、不打tag。
+
+## U1 必选资产下载与受限HF加载（2026-10-24 / 0189ce11-dirty）
+
+用户批准固定提交URL的必选5组20文件，总载荷最多100MiB+10%=110MiB（115343360字节），可选Qwen/Qwen2.5-0.5B不批准。附加条件：BERT bin经torch.load(weights_only=True)读state_dict再装入；所有HF from_pretrained使用trust_remote_code=False、local_files_only=True。
+
+下载已结束：20文件，105042537字节（100.176370MiB），38次HTTP（含HTTPS重定向），零重试；可选下载0。未覆盖旧资产；从固定清单地址开始，响应只允许HF/CDN及原ONNX主机，历史请求与已消费载荷均保留。[下载REPORT](/home/lhohy/pt_agent_results/u1-approved-model-download-20261024T083303/REPORT.json)。
+
+逐文件实际值（下载时流式计算SHA256，本轮用户明确要求）：
+
+| 组 | 文件名 | 实际大小（字节） | 实际SHA256 | 本地文件 |
+|---|---|---:|---|---|
+| resnet18 | config.json | 69548 | `11a01bcc873444bb433140e5f30f3687356641ed923266d738eef1c3438f6d22` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/resnet18/65a5785d9156231087c481e0c7dd33a5ff6f7e3e/config.json) |
+| resnet18 | preprocessor_config.json | 266 | `fd575b890da5a949493e1d1e7a70bfcb9e4b99fe444004d2dbfa253add254741` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/resnet18/65a5785d9156231087c481e0c7dd33a5ff6f7e3e/preprocessor_config.json) |
+| resnet18 | model.safetensors | 46812324 | `1cf00ee468998c23d084361b02cffadabacb5074105564c596b8079f77ecb126` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/resnet18/65a5785d9156231087c481e0c7dd33a5ff6f7e3e/model.safetensors) |
+| bert_tiny | config.json | 760 | `ac4aaaeb9a3d8674ee05c5b700a84b4fbdd192b833d5c0534d3fd0224a377e75` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/bert_tiny/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/config.json) |
+| bert_tiny | pytorch_model.bin | 17564583 | `067abfb7664f144d3813c8ff7add88ef7bdd457bd6821575159a674c4a0c3441` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/bert_tiny/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/pytorch_model.bin) |
+| bert_tiny | special_tokens_map.json | 112 | `303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/bert_tiny/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/special_tokens_map.json) |
+| bert_tiny | tokenizer_config.json | 346 | `1a226b2d70c4a2ea07535da27e28c8c733fd501b987fec4092abe46f24c8f1fb` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/bert_tiny/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/tokenizer_config.json) |
+| bert_tiny | vocab.txt | 231508 | `07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/bert_tiny/41ad6709ec46b414749b37daf49cf5ca1c7dba7c/vocab.txt) |
+| qwen_alternative | added_tokens.json | 605 | `58b54bbe36fc752f79a24a271ef66a0a0830054b4dfad94bde757d851968060b` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/added_tokens.json) |
+| qwen_alternative | chat_template.jinja | 2507 | `cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/chat_template.jinja) |
+| qwen_alternative | config.json | 748 | `c4384abb40c3c2a20d6e45fdcef2f80c4ced2dab464405a80eee4002599cc1fa` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/config.json) |
+| qwen_alternative | generation_config.json | 126 | `9e11b3aae8a90863aee75aaf58a417a9dcfb05d08abd2b9bf0d41bba460ce9aa` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/generation_config.json) |
+| qwen_alternative | merges.txt | 1671853 | `8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/merges.txt) |
+| qwen_alternative | model.safetensors | 19500872 | `8fec57ebd9debed93ef977563bffd104708b3cf68d21b50e1a41eba9a062e20e` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/model.safetensors) |
+| qwen_alternative | special_tokens_map.json | 613 | `76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/special_tokens_map.json) |
+| qwen_alternative | tokenizer.json | 11421896 | `9c5ae00e602b8860cbd784ba82a8aa14e8feecec692e7076590d014d7b7fdafa` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/tokenizer.json) |
+| qwen_alternative | tokenizer_config.json | 4686 | `0a04a9d7d4a62b28482bdfe726c122756de85714fb64166ace92ae75b8f57614` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/tokenizer_config.json) |
+| qwen_alternative | vocab.json | 2776833 | `ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/qwen_alternative/681cc013f872d2d13a562f838fb2d5884b74d85a/vocab.json) |
+| mnist | mnist-12.onnx | 26143 | `5c688690f8bacf667d4c2074af5ad0646ca328d7ab03eccf944a65b320171bdd` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/mnist/c5cae0f1942c8d7727372c7b1f6b485aa39e4421/mnist-12.onnx) |
+| squeezenet | squeezenet1.1-7.onnx | 4956208 | `1eeff551a67ae8d565ca33b572fc4b66e3ef357b0eb2863bb9ff47a918cc4088` | [文件](/home/lhohy/poseidon-work/platforms/aarch64-linux/cache/pt-agent-models/squeezenet/c5cae0f1942c8d7727372c7b1f6b485aa39e4421/squeezenet1.1-7.onnx) |
+
+来源固定URL与源站声明大小/SHA见上一轮§8清单；本次下载REPORT同时保留每项原始URL及实际值。未下载权重清单外文件、模型代码、额外包或新样本。
+
+实现与本轮修正：新增intake/hf_frontend.py的load_local受限入口；bin先torch.load(...,map_location="cpu",weights_only=True)，仅允许纯tensor state_dict，随后将已解码state_dict交给标准Transformers装载。初版自行strict装入误拒绝旧版保存的position_ids非持久buffer，修正仅涉及本轮新文件，未修改旧测试或库。safetensors路径显式use_safetensors=True；配置、processor/tokenizer及模型的from_pretrained均强制local_files_only=True、trust_remote_code=False；不提供不安全反序列化回退。新增5项离线通过，实际检查在ResNet processor缺Pillow处停止。
+
+本轮测试与真实检查终态：
+
+- 本轮新增tests/test_u1_hf_loading.py共5项，在主环境Nix中执行，0.006秒、OK，失败/错误/跳过0；修正新实现前后各执行一次，最终5/5。覆盖bin仅weights_only、已安全解码state_dict传递、safetensors不退回bin、本地文件/禁远程代码、受限读取失败不重试、不接受非tensor字典。测试用假对象，主环境未导入实际transformers或onnx。
+- 真实BERT：在独立intake中读取已批bin，调用torch.load共1次，kwargs为map_location=cpu、weights_only=true；随后正常加载为BertForSequenceClassification及原仓库BertTokenizerFast。输入取当前U1文档4条非空原文行，原生float64 logits形状[4,2]，全部有限。此项仅证明受限加载和原生前向，PT-Graph导入/数值等价尚未验收。
+- 真实ResNet18：safetensors模型载入后，原AutoImageProcessor选择ConvNextImageProcessor，报PIL缺失；Pillow未安装、PIL探测false。按照AGENTS停止；Qwen/ONNX尚未执行加载核对。本次未绕开仓库processor、未另写归一化。
+- [主环境pip freeze前](/home/lhohy/pt_agent_results/u1-safe-hf-loading-fixed-20261024T083801/main-pip-freeze-before.txt)与[后](/home/lhohy/pt_agent_results/u1-safe-hf-loading-fixed-20261024T083801/main-pip-freeze-after.txt)完全相同。未修改主venv、intake包集、编译器或运行库；未新增安装、LLM、编译或CKKS。
+
+与spec不一致之处：本轮自写[intake/hf_frontend.py:70](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/intake/hf_frontend.py:70)的装载接线修正：初版直接strict load_state_dict误拒绝BERT旧checkpoint保存的非持久position_ids。现在保留torch.load(weights_only=True)读取，将state_dict显式传入标准from_pretrained(...,local_files_only=True,trust_remote_code=False)，pinned Transformers在state_dict已给出时跳过checkpoint读取，并按自身模型buffer规则装入。本轮新tests/test_u1_hf_loading.py:41同步断言为安全解码state_dict传递；测试的受限读取、本地与禁远程代码含义保持，旧测试未改。原[失败REPORT](/home/lhohy/pt_agent_results/u1-safe-hf-loading-20261024T083606/REPORT.json)保留。
+
+未完成项：Pillow为当前真实依赖停止项，需新增intake安装spec/批准。新版§2 ModelInfo、§4通用样本与指标/上下文接线、§5图语义与参考执行、§6入口、§7全部验收（含373项回归）尚未完成，§3只有受限本地加载部分。原20文件和实际SHA256全部保留供接续复用；不重下、不重置用量。未提交、未打tag。[FINAL_REPORT](/home/lhohy/pt_agent_results/u1-safe-hf-loading-fixed-20261024T083801/FINAL_REPORT.json)。
+
+## U1 Pillow单包批准接续（2026-10-24 / 0189ce11-dirty）
+
+用户明确批准独立intake-2.0.1-cpu仅新增Pillow10.4.x，目标cp310/aarch64 manylinux，载荷最多10MiB，条件满足即直接安装。原Pillow停止审批已解除，本轮未重复询问。
+
+[新增profile](/home/lhohy/Code/Poseidon/src/poseidon/tools/dacapo/intake-python-pillow-aarch64.profile.json)、[新增完整锁](/home/lhohy/Code/Poseidon/src/poseidon/tools/dacapo/python-wheels-intake-pillow-aarch64.lock.json)。通过现有tools/intake_python_env.py --plan --profile <Pillow profile>，固定旧29项精确版本，只新增Pillow一项；历史profile/锁保持。校验30包环境应显式使用该Pillow profile；旧29包profile保留用于历史复现。
+
+| 包名 | 版本 | wheel文件名 | 元数据大小（字节） | SHA256（源站） | URL |
+|---|---|---|---:|---|---|
+| pillow | 10.4.0 | pillow-10.4.0-cp310-cp310-manylinux_2_28_aarch64.whl | 4356290 | `6c762a5b0997f5659a5ef2266abc1d8851ad7749ad9a6a5506eb23d314e4f46b` | [wheel](https://files.pythonhosted.org/packages/b1/84/9a15cc5726cbbfe7f9f90bfb11f5d028586595907cd093815ca6644932e3/pillow-10.4.0-cp310-cp310-manylinux_2_28_aarch64.whl) |
+
+实际获取4356290字节（4.154482MiB），实际SHA256 `6c762a5b0997f5659a5ef2266abc1d8851ad7749ad9a6a5506eb23d314e4f46b`；低于10MiB。仅下载该wheel一次，离线pip install --no-index --no-deps --only-binary=:all:，无额外依赖、重试或旧模型重下载。安装前后完整包映射比较确认只增加pillow10.4.0，其余29个包及pip/setuptools版本不变。[安装REPORT](/home/lhohy/pt_agent_results/u1-pillow-add-20261024T084635/REPORT.json)、[前包映射](/home/lhohy/pt_agent_results/u1-pillow-add-20261024T084635/intake-before.json)、[后包映射](/home/lhohy/pt_agent_results/u1-pillow-add-20261024T084635/intake-after.json)。
+
+检查结果：intake pip check通过；PIL10.4.0、numpy1.25.2、torch2.0.1、transformers4.44.2、onnx1.16.2、onnxruntime1.18.1导入通过；PIL创建/resize图像通过。[主venv freeze前](/home/lhohy/pt_agent_results/u1-pillow-add-20261024T084635/main-pip-freeze-before.txt)、[后](/home/lhohy/pt_agent_results/u1-pillow-add-20261024T084635/main-pip-freeze-after.txt)文本完全相同。未修改hecate-2.0.1-cpu；新增包只有Pillow。原4GiB限制和串行保持。
+
+接续结果：复用上轮BERT weights_only安全加载及4文本前向成功证据；本轮只接续先前失败的ResNet及尚未核对的tiny Qwen，避免重跑已过项。ResNetForImageClassification与仓库ConvNextImageProcessor均加载成功，PIL停止已解决。tiny Qwen在AutoTokenizer解析抛出ModelWrapper at line757443 column3，tokenizers版本0.19.1；按AGENTS立即停止。未自行改用slow tokenizer、升包或修改tokenizer.json。确认的是解析失败，格式/版本兼容属于当前推测，尚未通过替换试验证实。
+
+[模型接续REPORT](/home/lhohy/pt_agent_results/u1-post-pillow-model-check-20261024T084755/REPORT.json)、[完整日志](/home/lhohy/pt_agent_results/u1-post-pillow-model-check-20261024T084755/probe.log)、[FINAL_REPORT](/home/lhohy/pt_agent_results/u1-post-pillow-model-check-20261024T084755/FINAL_REPORT.json)。当前问题属于intake tokenizer，新增编译器/CKKS数值阻塞0，尚未导入为PT-Graph或验收DSL。
+
+与spec不一致之处：本轮新写外层安装命令第63行把else 1写成else1，Python编译命令时即报SyntaxError，任何下载、安装或结果目录写入均未发生。按本轮自写笔误例外修正后继续，已在安装REPORT的implementation_correction保存。未修改既有Python模块、旧测试或算法；profile/锁为用户明确批准的Pillow补充。
+
+未完成项：需spec明确tiny Qwen tokenizer解析策略，随后接续新版U1 §2–§7（ModelInfo、样本、语义/前端、指标接线、CLI及完整验收/373回归）。Pillow授权已完整执行，无待重复审批事项；只读/安装/import检查已做，本轮未因环境数据变更重跑既有模型测试集合。所有旧资产/响应/结果/已消费用量保留，API0累计63/300，不提交、不打tag。
+
+## U1 tokenizers/transformers批准升级与基础实现（2026-10-24 / 0189ce11-dirty）
+
+用户确认旧tokenizer.json的merges格式需tokenizers>=0.20，明确授权tokenizers0.20.3、transformers4.46.3及其必需最小依赖差异，新增载荷最多20MiB，满足条件直接升级，无slow回退。
+
+[新增profile](/home/lhohy/Code/Poseidon/src/poseidon/tools/dacapo/intake-python-hf446-aarch64.profile.json)、[完整新锁](/home/lhohy/Code/Poseidon/src/poseidon/tools/dacapo/python-wheels-intake-hf446-aarch64.lock.json)。首先固定除请求两包以外的旧28版本求解，已成功满足全部依赖，故未放松其他固定版本、未新增第三个包。旧profile/锁保留；30包校验显式使用新的HF446 profile。
+
+| 包 | 原版本→新版本 | wheel文件名 | 大小（字节） | SHA256（源站） | URL |
+|---|---|---|---:|---|---|
+| tokenizers | 0.19.1→0.20.3 | tokenizers-0.20.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl | 2892896 | `f128d5da1202b78fa0a10d8d938610472487da01b57098d48f7e944384362514` | [wheel](https://files.pythonhosted.org/packages/e3/e8/0e9f81a09ab79f409eabfd99391ca519e315496694671bebca24c3e90448/tokenizers-0.20.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl) |
+| transformers | 4.44.2→4.46.3 | transformers-4.46.3-py3-none-any.whl | 10034536 | `a12ef6f52841fd190a3e5602145b542d03507222f2c64ebb7ee92e8788093aef` | [wheel](https://files.pythonhosted.org/packages/51/51/b87caa939fedf307496e4dbf412f4b909af3d9ca8b189fc3b65c1faa456f/transformers-4.46.3-py3-none-any.whl) |
+
+新增载荷合计12927432字节（12.328560MiB），低于20MiB；2次wheel请求、零重试。各实际大小/SHA与下载记录保留于[升级REPORT](/home/lhohy/pt_agent_results/u1-hf-upgrade-20261024T090152/REPORT.json)。只向独立intake离线pip install --no-index --no-deps --upgrade两个wheel；完整前后包映射确认仅两项版本变化，原torch2.0.1、numpy1.25.2和其余28包版本保持。pip check与导入检查通过。[前包映射](/home/lhohy/pt_agent_results/u1-hf-upgrade-20261024T090152/intake-before.json)、[后包映射](/home/lhohy/pt_agent_results/u1-hf-upgrade-20261024T090152/intake-after.json)。
+
+[主hecate freeze前](/home/lhohy/pt_agent_results/u1-hf-upgrade-20261024T090152/main-pip-freeze-before.txt)与[后](/home/lhohy/pt_agent_results/u1-hf-upgrade-20261024T090152/main-pip-freeze-after.txt)文本完全相同；主环境未安装transformers/tokenizers。原intake中Pillow10.4.0、protobuf4.25.9、hub0.24.7等保持。
+
+升级后按用户要求重跑：BERT bin仅一次torch.load(weights_only=True)、BertTokenizerFast，当前U1文档4条原文行前向输出[4,2]且有限；ResNetForImageClassification及原ConvNextImageProcessor加载；tiny Qwen2ForCausalLM及原Qwen2TokenizerFast加载，全3/3通过。受限读取探针在任何不带weights_only=True的torch.load执行前拒绝；实际BERT1次True、其余0次。所有HF入口继续local_files_only=True、trust_remote_code=False；无slow回退或模型资产修改/重下载。[HF复核REPORT](/home/lhohy/pt_agent_results/u1-upgraded-hf-check-20261024T090519/REPORT.json)。
+
+已实现并测试的基础组件：models/info.py内部ModelInfo保存/恢复（Graph通过现有save/load交换）、输出头/shape任务和指标规则；data/samples.py原样npy/npz/txt/jsonl/图片目录读取、标签、固定种子划分、223边界、输入形状一致性检查；config.py新增系统长度/分档常量，choose_sequence仅按校准/留出长度决定8倍数和最多3档，encode_texts右补齐、分类保留开头、causal LM保留末尾并产生attention_mask。未增加面向用户的描述参数。
+
+新tests/test_u1_models_samples.py：12项，0.005秒、OK，失败/错误/跳过0。覆盖元信息往返、任务/指标判定、npy/npz原样值与多输入、jsonl与目录标签、异形拒绝、222/223、划分互斥和可复现、长度/分档5%边界、padding/截断规则。不读取既有报告集，不生成随机校准输入；测试fixture仅用于检查读取/划分。完整命令为python3 -B -m pt_agent.tools.nixrun --seconds 120 -- -m unittest discover -s pt_agent/tests -p test_u1_models_samples.py -v。
+
+当前停止原因：在开始扩展ATen语义之前，核对已有回归发现test_r8a2_aten.py:141要求MaxPool因无lowering而拒绝，与新§5.3和旧测试只允许机械修改的限制冲突。旧测试、ATen、core_ops及lowering均未为此改动；这是静态冲突，未伪称已运行失败。最小未应用补丁只删除该行，保留转置卷积拒绝；计划新增U1 MaxPool成功/数学/coverage用例。待spec明确许可后继续。
+
+与spec不一致之处：本轮新组件无实现笔误或兼容修正；旧测试未修改。静态冲突如上单列，补丁未应用。未自行选择兼容分支来绕开新语义或改变旧断言。
+
+未完成项：§3完整probe/builders/HF与ONNX语义导入，§4指标和context/confirm/run接线，§5参考执行/覆盖，§6 CLI及§7全部验收/373回归；ModelInfo和样本helpers已实现但尚未完整接线，未宣称交付通过。API0/累计63，资产/历史/已用额度保留，不提交、不打tag。[FINAL_REPORT](/home/lhohy/pt_agent_results/u1-upgraded-hf-check-20261024T090519/FINAL_REPORT.json)。
+
+## U1 §11 MaxPool迁移与真实HF数值停止（2026-10-24 / 0189ce11-dirty）
+
+用户已授权按新增§11迁移ATen旧断言，前轮最小删除提案由完整三段断言迁移实现取代，未直接套用只删一行的旧提案。当前只修改一项旧测试：[test_r8a2_aten.py:136](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8a2_aten.py:136)。保留转置卷积的导入拒绝；断言组合模型错误列表不含旧MaxPool拒绝原因；另验MaxPool独立导入、torch float64参考差≤1e-12，以及check诊断包含maxpool、op_id和正行号（明确为PT-Graph语句行）。R3 FX的torch_frontend.py、torch_mapping.py及test_r3_intake_errors.py保持，内容diff检查无改动。同类旧测试尚待373回归识别，本轮未声称全部排查完成。
+
+已写入代码、尚待完整验收的接线：models/builders.py只构造及装权重；zoo.get转用builders，旧ZooModel/adapt留作历史调用兼容，新模型导入使用原样样本。ModelInfo记录source/图/输入/processor/任务/长度/划分；SampleSplits、StoredSplits与内部legacy_cifar提供延迟分区读取。agent_tools/confirm改接ModelInfo和样本源，metrics.compare实现有标签分类原字段/浮点顺序、无标签一致率、LM末个真实位置与logits误差、回归相对误差。run.py与新cli.py、scripts/pt-agent已加入接线草稿；CLI仅公开model、inputs、out、stages，内部Nix/intake worker分工。完整主流程尚未验证，不记为可交付。
+
+导入语义：ATen增加MaxPool、指定的一元函数、reshape/broadcast、mask/cast及静态子图折叠；graph_exec.py为单独torch语义解释器；hf_frontend.py保留受限bin加载和原仓库processor/tokenizer，word embedding在客户端、attention_mask保持图输入；onnx_frontend.py已加入本地结构/常量/外部数据/用户形状导入。lowering、kernels、cost、placement、tuner、冻结Agent决策源码及所有库本轮保持。ONNX跨来源规范化代码仅加入Conv+BN折叠、flatten/reshape同类、去identity，实验尚未执行。原始tracing节点数及完整lowering能力统计仍待补齐；下面覆盖只是当前核心图/KERNEL_OPS统计。
+
+阶段检查（按实际执行时点记录，后续在HF验收处停止，非最终完整回归）：
+
+| 命令范围 | 数量 | 输出 |
+|---|---:|---|
+| 迁移后的test_collect_maxpool_and_transposed_convolution | 1 | 0.068秒，OK |
+| test_r8e5_criterion、test_r8e6_confirm、test_r8e7_criterion | 15 | 1.827秒，OK |
+| test_u1_semantics、test_u1_metrics、test_u1_models_samples、test_u1_hf_loading | 25 | 0.096秒，OK |
+
+共41项阶段检查通过；测试命令/时点/来源见[UNIT_RESULTS](/home/lhohy/pt_agent_results/u1-hf-20261024T093221753299/UNIT_RESULTS.json)。原始单元测试输出由工具终端返回，未另伪造原始日志。CLI --help与新增源码语法检查通过；全§7及既有373项尚未完成，test_r8f2_feedback尚未重跑。初次非提升权限的Nix启动在调用本机Nix服务前退出1，随后使用已批准的本机环境完成上述检查；无安装/联网。
+
+真实验收输入来自CIFAR train[0:223]保存的223张png，以及当前spec和STATUS中223条非空短原文行，未读取CIFAR报告图。HF长度统计只取23校准＋20留出，确认/报告未参与；原样文本保存在运行目录，不随之后STATUS修改而变化。ONNX参考用的8张用户侧张量按代码中的resize/grayscale/除255规则准备，未用于校准或选择；ONNX模型尚未执行。[输入准备REPORT](/home/lhohy/pt_agent_results/u1-prepare-20261024T093149926313/REPORT.json)、[冻结原样输入目录](/home/lhohy/pt_agent_results/u1-prepare-20261024T093149926313/inputs)。
+
+| 模型 | 输入／任务 | 核心节点与覆盖统计 | 与原框架差异 | 结论 |
+|---|---|---|---|---|
+| microsoft/resnet-18 | pixel_values=[1,3,224,224]；classification；原ConvNextImageProcessor | 69；KERNEL_OPS计68；maxpool需后续lowering | 4样本max abs=0，max abs/(1+abs(ref))=0 | HF导入/参考核对通过，未做FHE编译 |
+| tiny BERT SST2 | inputs_embeds=[1,96,128]、attention_mask=[1,96]；classification；原BertTokenizerFast | 98；KERNEL_OPS计77；layernorm/matmul/permute/softmax共21 | 4样本max abs=0，max abs/(1+abs(ref))=0 | HF导入/参考核对通过；已本机导出ONNX但未验收 |
+| tiny Qwen2 | inputs_embeds=[1,80,32]、attention_mask=[1,80]；causal_lm；原Qwen2TokenizerFast | 182；含rsqrt/pow、mask/cast、attention等语义，未完成能力验收 | max abs=45.860846389665554；max abs/(1+abs(ref))=19.14866087746199 | §7.2数值未通过，按停止规则收尾 |
+
+BERT长度96，Qwen长度80；Qwen统计p50=34、p95=73.6，43个决策样本中截断1个、比例0.023255813953488372，未触发分档。各自shape、任务判据、processor调用、split下标、Graph和权重均留在[本轮目录](/home/lhohy/pt_agent_results/u1-hf-20261024T093221753299)。BERT继续weights_only=True受限读取，HF入口保持local_files_only=True、trust_remote_code=False，无slow回退。HF批次退出1、耗时5.033211050002137秒；全部成功项写入HF.json，失败记录保持，不重置或覆盖旧批次。
+
+本轮有标签提示原文保持："the top-1 accuracy on these images is at most 0.5 percentage points below that of the exact network"。无标签分类新文："the top-1 agreement with the exact network on these samples is at least 99.5% (agreement_pct)"。无标签causal LM新文："the next-token agreement at the last real position is at least 99% (agreement_pct), and the logits relative error is at most 1e-2 (logit_rel_err)"。提示接线尚未完成最终文本一致性验收，不宣称四个冻结程序反馈已验证。
+
+与spec不一致之处：旧测试断言的语义迁移已获§11明确授权，仅上述一项，不属于自行改变期望；本轮无另列的机械兼容适配或修正旧测试数值。实现与验收未完成项如实保留，未把导入成功计为数值成功。Qwen数值差异原因尚未知，未将其假定为后端依赖，未据此修正参考、放宽比较条件或修改模型。 本轮自写STATUS更新脚本将“最近5次”替换范围延伸到下一个二级标题，误覆盖683行历史说明；已从HEAD中同一STATUS的原历史段恢复。当前内容diff仅包含预期的状态、卡片、最近5次和新增记录变更，历史说明保留。此为文档更新范围笔误，未改动代码测试或数值条件。
+
+未完成：Qwen差异定位/修复接续；完整CLI/run阶段接线验收；四模型图/权重/校准/context/validate(mock及tensor)/confirm/estimate与反馈逐项对照；原ONNX和本机BERT导出验收；ResNet20/MLP跨来源8样本；通用划分、无标签、长度与隔离的端到端检查；373项回归及同类旧测试迁移核对。已启动批次已正常失败收尾，其余验收未启动。安装、模型下载、API、真实编译和CKKS均0；主环境隔离旧证据保留，新§7.8尚未完整执行。本轮原样DSL首次成功0，不更改M1历史结论。完整改动文件与证据见[FINAL_REPORT](/home/lhohy/pt_agent_results/u1-hf-20261024T093221753299/FINAL_REPORT.json)。
+
+## U1 §12 语义修复与完整入口验收（完成，2026-10-24 / 0189ce11-dirty）
+
+工作目录和所有权已核对：ARM Ubuntu，`/home/lhohy/Code/Poseidon`、`lhy-agent-dsl`；文件属主lhohy。按当前U1 spec及STATUS接续，保留原工作区修改与所有旧结果。API、下载、安装、训练均0；主环境和冻结决策模块保持。
+
+根因与首个不一致位置：原ATen mapper遇到无返回值消费者的`aten.copy_`直接跳过，但该算子通过别名更新了之后会读取的静态causal mask。后续读取因此误折叠成`const.slice_31.0`，丢失输入`attention_mask`的依赖。逐算子单测9/9通过，单独算子的broadcast/GQA、RoPE slice/concat、compare/where、cast和带掩码softmax均正确；新增effect-only视图写回用例覆盖组合缺陷。通用修正通过`_schema.is_mutable`识别需要functionalize的写回，再映射functional `copy`及`slice_scatter`；生产代码无模型名或节点名判断。
+
+严格区分首个非零舍入差与首个失败：原图n53/div的乘倒数形式产生2.842170943040401e-14差，归一化2.1810245460406636e-16，满足规定容差。紧随其后的n54/add_4（注意力分数加mask）首次失败，最大差1.7976931348623157e+308、归一化1.0。原HF与make_fx输出相同；原最终输出真实46个位置差0，补齐34个位置最大差45.860846389665554、归一化19.14866087746199。修复后真实及补齐位置均0，未排除补齐位置，也未调整容差。[修复前诊断](/home/lhohy/pt_agent_results/u1-diagnose-20261024T095059528651/DIAGNOSTIC.json)、[修复后诊断](/home/lhohy/pt_agent_results/u1-diagnose-20261024T095320123788/DIAGNOSTIC.json)。
+
+已完成的数值核对如下，仍属导入与参考执行开发验收，新增Agent独立输出0、真实CKKS0。
+
+| 核对 | 样本 | 最大绝对差 | max(abs(Δ)/(1+abs(ref))) | 证据 |
+|---|---:|---:|---:|---|
+| ResNet18，HF eager float64 | 4 | 0 | 0 | [HF REPORT](/home/lhohy/pt_agent_results/u1-hf-20261024T095526758515/REPORT.json) |
+| BERT tiny，HF eager float64 | 4 | 0 | 0 | 同上 |
+| tiny Qwen2，HF eager float64 | 4 | 0 | 0 | 同上 |
+| MNIST ONNX，ORT float32 | 8 | 1.3264277705093974e-06 | 1.0557386307594426e-06 | [ONNX](/home/lhohy/pt_agent_results/u1-onnx-20261024T095809187064/ONNX.json) |
+| SqueezeNet ONNX，ORT float32 | 8 | 7.995804191196498e-06 | 1.7934554596235217e-06 | [REPORT](/home/lhohy/pt_agent_results/u1-onnx-20261024T095951926915/REPORT.json) |
+| ResNet20，PyTorch与本地ONNX | 8 | 4.65310473529712e-06 | 1.7802907913282025e-06 | [CROSS](/home/lhohy/pt_agent_results/u1-cross-20261024T102916654087/CROSS.json) |
+| MLP，PyTorch与本地ONNX | 8 | 0 | 0 | 同上 |
+| BERT tiny，本地导出ONNX与ORT float32 | 8 | 9.64981573314816e-07 | 5.6975182267685e-07 | [REPORT](/home/lhohy/pt_agent_results/u1-cross-20261024T103041185062/REPORT.json) |
+
+跨来源规范化仅用于对照副本，原图和程序保持：单消费者Conv→BN按running mean/var、epsilon及affine权重折叠；flatten记为reshape；identity移除并接续输入。ResNet20多重集合为conv2d19、act19、add9、slice4、pad2、mean1、linear1，MLP为linear2、act1，两侧分别相同。
+
+本轮自写错误修正记录：诊断JSON以字符串保存非有限诊断值；补全functionalize产生的copy/slice_scatter语义；ONNX补auto_pad、推理态Dropout、空可选Pad参数及静态折叠后的重新形状推断；BERT的ONNX测试导出从误用float64改为spec规定的float32（原导出触发ORT缺Erf float64实现）；无标签新测试由纯pack空计算夹具改为确定的单位矩阵Linear，100%一致率断言保持；早期MLP对照误用了models目录的旧训练权重，该次兼容结果仅保留历史，正式逐位对照已改用冻结models-v2。另两项附加测试在Nix入口因占用退出，断言未执行，待批次边界串行接续；未调整Nix配置或锁。
+
+旧测试调整仅`tests/test_r8a2_aten.py::test_collect_maxpool_and_transposed_convolution`，按§11执行三条迁移断言；主组339项全部通过，未发现其他需要§11.3迁移的旧用例。R3 FX源码及测试保持。R8h3的既有改动保留，未列为U1新增。
+
+本节早期接续记录（以下项目现已完成）：当时待完成其余冻结三模型全字段对照；补齐全部hook保存；CLI真实接线、通用无标签样本路径；主环境freeze前后核对；打包17项及张量17项。已通过主组339/339，主环境无transformers/onnx导入。[主组REPORT](/home/lhohy/pt_agent_results/u1-regression-20261024T103209252352/REPORT.json)。MLP正式冻结权重对照各项相等，留出1000图agree=1000、top1=57.6、exact_top1=57.599999999999994、acc_drop_pp=-7.105427357601002e-15、发散0。[MLP](/home/lhohy/pt_agent_results/u1-legacy-20261024T103101011507/REPORT.json)。
+
+§4.5提示描述原文：`the top-1 accuracy on these images is at most 0.5 percentage points below that of the exact network`。有标签分类保留原文及反馈；无标签分类替换为`the top-1 agreement with the exact network on these samples is at least 99.5% (agreement_pct)`；causal LM替换为`the next-token agreement at the last real position is at least 99% (agreement_pct), and the logits relative error is at most 1e-2 (logit_rel_err)`；regression使用`the output relative error max|approx-exact| / max|exact| is at most 1e-2 (relative_error)`。无标签反馈不再添加top1/acc_drop_pp。
+
+实际CLI已完成6条：MLP经原样npz完成calibrate/plan/check/mock/count/export/compile，exact最大差4.440892098500626e-15，23个校准样本Mock全部一致，真实计划16自举；这是新通用划分上的规则程序接口验收，与冻结Agent程序逐位对照单独记录。其余HF三模型和ONNX两模型完成probe/import/info；无kernel的语义算子在graph_check中逐项列出op_id和PT-Graph语句行。两次主环境freeze相同，9个包；CLI公开参数仅model、inputs、out、stages。[CLI REPORT](/home/lhohy/pt_agent_results/u1-cli-20261024T104532576122/REPORT.json)。test报告阶段已接线，本轮未执行新真实报告集评测。
+
+通用划分与无标签验收：现有CIFAR train[0:223]用户侧张量npz按种子20261024划分为23/20/20/160，可重复；222样本按规定报错。ResNet20无标签留出20样本一致率100%、max_u=0.8281089990434782，feasible=true；确认20样本一致率95%、发散0，按99.5%条件passed=false且selected=null，未将其计为交付通过。报告160样本未参与评测或选择。[GENERIC REPORT](/home/lhohy/pt_agent_results/u1-generic-20261024T104652292655/REPORT.json)。
+
+§12完整hook补齐：同一原始输入与mask、原HF默认position_ids，eager/float64；25项层级对照、4项RoPE对照、28个hook张量已保存，全部无实质不一致。Qwen真实46位置和补齐34位置的logits仍均0差，最后真实位置token一致率100%、logit_rel_err=0。该指标为语义导入核对，未声称Qwen已具备FHE lowering。[DIAGNOSTIC](/home/lhohy/pt_agent_results/u1-diagnose-20261024T104623533819/DIAGNOSTIC.json)、[hook数据](/home/lhohy/pt_agent_results/u1-diagnose-20261024T104623533819/hook_outputs.npz)。
+
+当前U1单测42项在主环境执行、4项ONNX在独立intake执行，共46项通过；主环境中这4项按环境隔离跳过，intake实际执行均通过，transformers/onnx主环境导入均0。[主环境](/home/lhohy/pt_agent_results/u1-unit-20261024T104507435672/REPORT.json)、[intake](/home/lhohy/pt_agent_results/u1-intake-tests-20261024T104510395259/REPORT.json)。原主组339项结果复用；余34项和两模型对照现已完成，见最终汇总。
+
+冻结ResNet20全字段对照已通过，留出1000图top1=92.9、exact_top1=92.10000000000001、agree=976、acc_drop_pp=-0.7999999999999972、发散0；Mock/tensor、确认、代价和反馈均逐项相同。[REPORT](/home/lhohy/pt_agent_results/u1-legacy-20261024T103457947607/REPORT.json)。冻结SiLU全字段也已通过，留出top1=92.3、exact_top1=92.4、agree=975、acc_drop_pp=0.10000000000000853、发散0；其余项目相同。[REPORT](/home/lhohy/pt_agent_results/u1-legacy-20261024T104804682827/REPORT.json)。每模型比较各自的1000留出样本及同一保留候选的完整确认；未重新生成候选。
+
+U1九模型覆盖矩阵（均为当前真实CLI原样导入）：原始节点为ATen call_function/ONNX node数，折叠与别名消除后计CORE节点。CORE映射率及kernel覆盖率以规范化CORE节点为分母，静态折叠单独记录；下表的100%仅描述导入语义映射。API生成请求数0。
+
+| 模型 | 推断任务／输出 | 加密输入形状 | 原始→CORE | CORE映射 | 已有kernel节点 | 需组合 |
+|---|---|---|---:|---:|---:|---:|
+| bert_tiny | classification / [1, 2] | [1, 96, 128] + [1, 96] | 146→98 | 100.0% | 77/98 (78.571%) | 21 |
+| cnn_plain | classification / [1, 10] | [1, 3, 32, 32] | 24→11 | 100.0% | 11/11 (100.000%) | 0 |
+| mlp | classification / [1, 10] | [1, 3072] | 5→3 | 100.0% | 3/3 (100.000%) | 0 |
+| mnist | classification / [1, 10] | [1, 1, 28, 28] | 12→11 | 100.0% | 9/11 (81.818%) | 2 |
+| qwen_alternative | causal_lm / [1, 80, 151936] | [1, 80, 32] + [1, 80] | 307→186 | 100.0% | 136/186 (73.118%) | 50 |
+| resnet18 | classification / [1, 1000] | [1, 3, 224, 224] | 152→69 | 100.0% | 68/69 (98.551%) | 1 |
+| resnet20 | classification / [1, 10] | [1, 3, 32, 32] | 155→74 | 100.0% | 74/74 (100.000%) | 0 |
+| resnet20_silu | classification / [1, 10] | [1, 3, 32, 32] | 156→74 | 100.0% | 74/74 (100.000%) | 0 |
+| squeezenet | classification / [1, 1000] | [1, 3, 224, 224] | 66→64 | 100.0% | 61/64 (95.312%) | 3 |
+
+各模型原始未映射算子均为空。需组合汇总：ResNet18/MNIST/SqueezeNet为maxpool 1/2/3；BERT为layernorm5、permute10、matmul4、softmax2；tiny Qwen为compare1、where1、broadcast5、slice_scatter3、cast14、pow5、rsqrt5、permute10、matmul4、softmax2，共50节点。Qwen的2个silu已有kernel，未列入需组合。上述属于当前Agent lowering能力缺口，留作后续U2/U3/U4输入；本轮没有新增编译器/运行库正确性阻塞证据。三个旧模型补充CLI复用了同一份既有npz，编译0；[补充REPORT](/home/lhohy/pt_agent_results/u1-cli-20261024T105937735752/REPORT.json)。
+
+### U1最终验收与改动汇总（完成）
+
+完整结构化结果及全部证据目录：[最终REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json)。
+
+
+| §7 验收 | 结果 | 证据 |
+|---|---|---|
+| 1 四冻结模型逐位等价 | 4/4；Graph文本/weights、校准、上下文数组、Mock/tensor validate、confirm、estimate、labelled反馈均相同；每模型1000留出与同一保留候选确认 | [MLP](/home/lhohy/pt_agent_results/u1-legacy-20261024T103101011507/REPORT.json)、[ResNet20](/home/lhohy/pt_agent_results/u1-legacy-20261024T103457947607/REPORT.json)、[SiLU](/home/lhohy/pt_agent_results/u1-legacy-20261024T104804682827/REPORT.json)、[CNN](/home/lhohy/pt_agent_results/u1-legacy-20261024T105728495976/REPORT.json) |
+| 2 HF语义与模型信息 | 3/3，各4样本最大差0；仓库processor/tokenizer、本地受限加载、eager和float64 | [HF](/home/lhohy/pt_agent_results/u1-hf-20261024T095526758515/REPORT.json)、上方CLI矩阵 |
+| 3 ONNX与本地BERT导出 | 两资产及BERT均各8样本通过规定条件，task/shape已由实际CLI核对 | 上方数值表与模型信息矩阵 |
+| 4 跨来源 | ResNet20、MLP各8样本通过，规范化op多重集合相同 | [CROSS](/home/lhohy/pt_agent_results/u1-cross-20261024T102916654087/CROSS.json) |
+| 5 通用划分 | 223→23/20/20/160可复现，222按规定报错；npz原样张量 | [SPLIT](/home/lhohy/pt_agent_results/u1-cli-20261024T104532576122/SPLIT.json) |
+| 6 无标签 | ResNet20留出100%、确认95%按99.5%拒选；Qwen语义对照token100%、logits误差0 | [GENERIC](/home/lhohy/pt_agent_results/u1-generic-20261024T104652292655/REPORT.json)、[诊断](/home/lhohy/pt_agent_results/u1-diagnose-20261024T104623533819/DIAGNOSTIC.json) |
+| 7 长度、补齐、截断、分档与mask | 真实BERT/Qwen tokenizer逐ID一致；仅43个校准＋留出样本决定长度；单测覆盖分档边界，加密mask已导入 | [SEQUENCE](/home/lhohy/pt_agent_results/u1-sequence-20261024T111805608137/REPORT.json) |
+| 8 隔离 | 主环境9包完整freeze在CLI前后及最终相同；主环境测试未导入transformers/onnx | 最终REPORT及其中main-final-freeze.log |
+| 9 既有回归 | 339＋17＋17＝373，失败/错误/跳过均0；新增42主环境＋4intake＝46全部通过 | [主组](/home/lhohy/pt_agent_results/u1-regression-20261024T103209252352/REPORT.json)、[打包](/home/lhohy/pt_agent_results/u1-regression-20261024T110034672376/REPORT.json)、[张量](/home/lhohy/pt_agent_results/u1-regression-20261024T110118931850/REPORT.json)、[U1主环境](/home/lhohy/pt_agent_results/u1-unit-20261024T104507435672/REPORT.json)、[U1 intake](/home/lhohy/pt_agent_results/u1-intake-tests-20261024T104510395259/REPORT.json) |
+
+张量组耗时993.9312128799793秒，ResNet20和SiLU分别25次验证、530批logits在缓存开/关下逐位相同。原张量组3600秒及其他资源保持。BERT长度候选88、自动分档[48,80,96]，本轮静态导入最长96；Qwen长度80、单档、43个决策样本中1个截断（1/43）。实际tokenizer以额外L=8接口用例核对BERT保留开头及CLS/SEP、Qwen保留末尾，两者右侧补齐及attention_mask逐ID相同；该用例没有修改已推断的程序长度。各档程序生成仍按spec留在U4。
+
+改动文件（U1模型输入框架累计，环境安装历史另列）：config.py；models/info.py、builders.py、zoo.py；data/samples.py；metrics.py；intake/probe.py、hf_frontend.py、onnx_frontend.py、graph_exec.py、aten_frontend.py、core_ops.py、coverage.py；cli.py、run.py及scripts/pt-agent；planners/agent_tools.py、confirm.py、prompts.py；experiments/u1_*.py和tests/test_u1_*.py；旧测试只迁移test_r8a2_aten.py指定MaxPool用例；文档只更新STATUS。冻结lowering/kernels/cost/placement/tuner及Agent决策保持，R3 FX保持，库与编译器保持。
+
+与spec不一致之处／自写错误例外的逐项记录：
+
+| 文件:行 | 修正及依据 |
+|---|---|
+| intake/aten_frontend.py:291；core_ops.py:27；graph_exec.py:97；test_u1_attention_semantics.py:68 | 按§12修复effect-only写回丢失，引入通用functionalize/copy/slice_scatter语义；新增实际80×80视图写回单测；无Qwen节点特判 |
+| intake/onnx_frontend.py:29、105、241、255；test_u1_onnx.py | 补齐静态参数折叠后形状推断、auto_pad、Pad空可选输入及推理态Dropout；4项独立intake测试通过 |
+| experiments/u1_attention_diagnostic.py:176 | 非有限中间诊断值转为JSON字符串记录；真实数组、数值比较及规定容差保持 |
+| experiments/u1_cross_source.py:32 | 本轮BERT ONNX测试导出误用float64，改为§7.3规定的float32；旧ORT Erf停止保留，HF float64核对保持 |
+| tests/test_u1_pipeline.py:64 | 新夹具改用数学等价的单位矩阵Linear，保留100%无标签一致率断言，未修改冻结lowering |
+| experiments/u1_model_intake.py:255；models/builders.py | 正式比较使用冻结models-v2；早期models旧权重对照只保留为兼容历史，未计入§7.1 |
+| tests/test_r8a2_aten.py:141 | 按用户§11明确授权迁移到语义导入＋check断言；其余旧测试无本轮调整 |
+
+外层临时诊断曾补齐模块搜索路径、按Graph.nodes序列格式修正统计读取；两次并发Nix入口因占用未执行断言，后续串行完成，失败记录保持。没有放宽任何spec期望或数值条件，没有更换模型/参考取得通过，已消费额度没有重置。
+
+U1未完成项：无。开发诊断成果为语义修复、模型输入框架及本节验收；新增Agent首次独立输出0，新增真实CKKS0。后续范围为覆盖表中缺少的lowering组合及整网CKKS验收；M1第5条继续待执行。

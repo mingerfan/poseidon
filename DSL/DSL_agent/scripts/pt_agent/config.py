@@ -10,6 +10,15 @@ from .paths import HECATE_BUILD, PROFILES_DIR
 DEFAULT_HECATE_OPT = HECATE_BUILD / "bin/hecate-opt"
 DEFAULT_OPERATOR_SPEC = PROFILES_DIR / "poseidon-operator-spec-v1.json"
 
+# U1 system behaviour, inferred from inputs rather than exposed as model flags.
+SAMPLE_SPLIT_SEED = 20261024
+MIN_INPUT_SAMPLES = 223
+SEQUENCE_MULTIPLE = 8
+SEQUENCE_MAX_BUCKETS = 3
+SEQUENCE_BUCKET_PERCENTILES = (50, 90, 99)
+SEQUENCE_TRUNCATION_TRIGGER = 0.05
+SEQUENCE_RATIO_TRIGGER = 4
+
 
 @dataclass(frozen=True)
 class Config:

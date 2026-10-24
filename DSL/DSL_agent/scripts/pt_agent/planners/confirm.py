@@ -8,6 +8,7 @@ from ..analyzer import reference_forward
 from ..data.cifar import confirm_set
 from ..dsl.parser import parse
 from ..dsl.printer import print_program
+from ..metrics import passes
 from .agent_tools import AgentContext, MAX_ACC_DROP_PP, VAL_BATCH, validate
 
 
@@ -24,17 +25,26 @@ class Candidate:
 
 
 def build_confirm_context(ctx) -> AgentContext:
-    images, labels = confirm_set(normalization=ctx.normalization)
+    if getattr(ctx, 'model_info', None) is not None:
+        inputs, labels = ctx.samples.get('confirm')
+        images = inputs[ctx.graph.inputs[0]]
+        split_name = 'confirm'
+    else:
+        images, labels = confirm_set(normalization=ctx.normalization)
+        inputs = None
+        split_name = 'test[8000:9000]'
     graph = ctx.graph
     images = images.reshape((len(images), *graph.tensors[graph.inputs[0]].shape[1:]))
     logits = []
     for start in range(0, len(images), VAL_BATCH):
-        values = reference_forward(graph, {graph.inputs[0]: images[start:start+VAL_BATCH]})
+        values = reference_forward(graph, {name: value[start:start+VAL_BATCH] for name, value in inputs.items()}
+                                   if inputs is not None else {graph.inputs[0]: images[start:start+VAL_BATCH]})
         logits.append(values[graph.outputs[0]].copy())
     exact = np.concatenate(logits)
     return replace(ctx, val_images=images, val_labels=labels, val_exact_logits=exact,
-                   val_exact_top1=float(100*np.mean(exact.argmax(axis=1) == labels)),
-                   val_split="test[8000:9000]")
+                   val_exact_top1=(float(100*np.mean(exact.argmax(axis=1) == labels))
+                                   if labels is not None else None),
+                   val_split=split_name, val_inputs=inputs)
 
 
 def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EVALS) -> dict:
@@ -57,18 +67,19 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
         if len(evals) >= max_evals:
             break
         if confirm_ctx is None:
-            confirm_ctx = ctx if ctx.val_split == "test[8000:9000]" else build_confirm_context(ctx)
+            confirm_ctx = ctx if ctx.val_split in ("test[8000:9000]", 'confirm') else build_confirm_context(ctx)
         result = validate(parse(candidate.source), confirm_ctx, stop_on_divergence=False)
         boot_ok = (result["boot_input_bound"] is None
                    or result["boot_input_max_abs"] <= result["boot_input_bound"])
-        passed = (result["acc_drop_pp"] is not None
-                  and result["acc_drop_pp"] <= MAX_ACC_DROP_PP and boot_ok)
+        info = getattr(ctx, 'model_info', None)
+        passed = passes(result, info.threshold if info is not None else {'acc_drop_pp': MAX_ACC_DROP_PP}) and boot_ok
+        metric_keys = ('top1', 'exact_top1', 'acc_drop_pp') if info is None or (
+            info.task == 'classification' and ctx.val_labels is not None) else tuple(info.threshold)
         evals.append(dict(iteration=candidate.iteration, origin=candidate.origin,
                           latency_pred_us=candidate.latency_pred_us, boots_pred=candidate.boots_pred,
-                          **{key: result[key] for key in ("top1", "exact_top1", "acc_drop_pp",
-                                                        "max_u", "diverged", "n_diverged")}, passed=passed))
+                          **{key: result[key] for key in (*metric_keys, "max_u", "diverged", "n_diverged")}, passed=passed))
         print(f"CONFIRM iteration={candidate.iteration} origin={candidate.origin} "
-              f"passed={passed} top1={result['top1']} acc_drop_pp={result['acc_drop_pp']} "
+              f"passed={passed} metrics={ {key: result[key] for key in metric_keys} } "
               f"n_diverged={result['n_diverged']} max_u={result['max_u']}", flush=True)
         if passed:
             selected = candidate

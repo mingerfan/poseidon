@@ -138,8 +138,21 @@ class AtenTests(unittest.TestCase):
         with self.assertRaises(IntakeError) as caught:
             import_module(model, (torch.zeros(1, 1, 4, 4),), 'unsupported', frontend='aten')
         reasons = [entry['reason'] for entry in caught.exception.entries]
-        self.assertIn('max pooling has no polynomial lowering in v1', reasons)
+        self.assertNotIn('max pooling has no polynomial lowering in v1', reasons)
         self.assertIn('transposed convolution', reasons)
+        from pt_agent.intake.graph_exec import forward
+        from pt_agent.intake.coverage import check as check_graph
+        sample = torch.arange(16, dtype=torch.float64).reshape(1, 1, 4, 4)
+        model = nn.Sequential(nn.MaxPool2d(2)).double().eval()
+        graph = import_module(model, (sample,), 'maxpool', frontend='aten')
+        self.assertIn('maxpool', [node.op for node in graph.nodes])
+        actual = forward(graph, {graph.inputs[0]: sample.numpy()})[graph.outputs[0]]
+        self.assertLessEqual(float(np.max(np.abs(actual-model(sample).numpy()))), 1e-12)
+        checked = check_graph(graph)
+        self.assertFalse(checked['ok'])
+        self.assertIn('maxpool', checked['diags'][0]['reason'])
+        self.assertIn('op_id', checked['diags'][0])
+        self.assertGreater(checked['diags'][0]['lineno'], 0)
 
     def test_data_dependent_control_flow(self):
         class Dynamic(nn.Module):

@@ -67,21 +67,8 @@ class Mlp(nn.Module):
 def get(name: str, models_dir: Path) -> ZooModel:
     if name not in NAMES:
         raise ValueError(f'Unknown development model {name}')
+    from .builders import load
+    module = load(name, models_dir)
     normalization = IMAGENET_NORMALIZATION
-    if name == 'resnet20':
-        module = load_torch()
-    elif name == 'resnet20_silu':
-        source = DACAPO_ROOT / 'python/poly/poly/models/ResNet.py'
-        spec = importlib.util.spec_from_file_location('pt_agent_dacapo_resnet', source)
-        definition = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(definition)
-        module = definition.resnet20()
-        state = torch.load(WEIGHTS_SILU, map_location='cpu', weights_only=True)['state_dict']
-        module.load_state_dict({key.removeprefix('module.'): value for key, value in state.items()}, strict=True)
-        normalization = SILU_NORMALIZATION
-    else:
-        module = CnnPlain() if name == 'cnn_plain' else Mlp()
-        state = torch.load(Path(models_dir)/(name+'.pt'), map_location='cpu', weights_only=True)
-        module.load_state_dict(state, strict=True)
     shape = (1, 3072) if name == 'mlp' else (1, 3, 32, 32)
     return ZooModel(name, module.float().eval(), torch.zeros(shape), normalization)

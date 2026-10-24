@@ -70,7 +70,8 @@ def inside(args):
     code = run_inside(run_args)
     path = args.out / 'REPORT.json'
     report = read(path)
-    report.update(round='R8h', model=args.model, program_path=str(args.out / 'program.ptdsl'))
+    report.update(round='R8h', model=args.model, program_path=str(args.out / 'program.ptdsl'),
+                  tune_policy=args.tune_policy)
     _write(path, report)
     return code
 
@@ -118,7 +119,8 @@ def _attempt(root, batch, entry, args, recorded):
     command = [sys.executable, '-B', '-m', 'pt_agent.tools.nixrun', '--seconds', str(INNER_SECONDS), '--',
         '-m', 'pt_agent.experiments.r8h_rerun', '--inside', '--out', str(directory),
         '--model', args.model, '--models-dir', batch['models_dir'], '--budget-path', str(budget_path),
-        '--call-limit', str(batch['api_limit']), '--continuation', continuation]
+        '--call-limit', str(batch['api_limit']), '--continuation', continuation,
+        '--tune-policy', batch.get('tune_policy', 'all')]
     attempt['command'] = command
     started, process = time.monotonic(), None
     try:
@@ -239,6 +241,7 @@ def outer(args):
                 api_limit=min(before + API_BUDGET, GLOBAL_LIMIT, 300), git_rev=git_rev(),
                 models_dir=str((args.models_dir or pt_result('models-v2')).resolve()),
                 order=list(ORDER), prompt_version='r8-v4', agent_iters=6, tuner_budget_s=2400,
+                tune_policy='all',
                 max_sweeps=1, val_split='test[9000:10000]', confirm_split='test[8000:9000]',
                 test_split='test[0:8000]', max_confirm_evals=6,
                 models={name: dict(model=name, complete=False, stage='not_started', attempts=[]) for name in ORDER})
@@ -393,6 +396,7 @@ def main():
     parser.add_argument('--budget-path', type=Path)
     parser.add_argument('--call-limit', type=int)
     parser.add_argument('--continuation', choices=('agent', 'frozen', 'test'), default='agent')
+    parser.add_argument('--tune-policy', choices=('new_best', 'all'), default='new_best')
     parser.add_argument('--summary', action='store_true')
     parser.add_argument('--prepare-review', action='store_true')
     parser.add_argument('--old-v1', type=Path)

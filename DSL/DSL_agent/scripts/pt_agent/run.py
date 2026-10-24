@@ -92,6 +92,8 @@ def evaluate_batches(run_batch, images, labels, batch, *, on_progress=None,
 
 def report_test(run_batch, model, program_text, out, report, *, seconds=7200):
     """Evaluate a frozen program on report-only data, with a resumable deadline."""
+    if getattr(model, 'samples', None) is not None:
+        return report_model_test(run_batch, model.info, model.samples, out, report)
     import signal
     import numpy as np
     import torch
@@ -110,8 +112,12 @@ def report_test(run_batch, model, program_text, out, report, *, seconds=7200):
     signal.signal(signal.SIGALRM, timeout)
     signal.setitimer(signal.ITIMER_REAL, seconds)
     try:
-        images, labels = report_test_set(normalization=model.normalization)
-        images = model.adapt(images)
+        if getattr(model, 'samples', None) is not None:
+            arrays, labels = model.samples.get('report')
+            images = arrays[model.info.graph.inputs[0]]
+        else:
+            images, labels = report_test_set(normalization=model.normalization)
+            images = model.adapt(images)
         report["test_split"] = "test[0:8000]"
         if report.get("torch_top1_report") is None:
             correct = 0
@@ -142,6 +148,40 @@ def report_test(run_batch, model, program_text, out, report, *, seconds=7200):
         signal.signal(signal.SIGALRM, old_handler)
         if old_timer[0]:
             signal.setitimer(signal.ITIMER_REAL, *old_timer)
+
+
+def report_model_test(run_batch, info, samples, out, report):
+    """Generic external report stage; its results never enter the planner."""
+    import numpy as np
+    from .analyzer import reference_forward
+    from .metrics import compare, passes
+    from .planners.agent_tools import VAL_BATCH
+    arrays, labels = samples.get('report')
+    total = len(next(iter(arrays.values())))
+    exact, approximate, diverged = [], [], []
+    for start in range(0, total, VAL_BATCH):
+        batch = {name: value[start:start+VAL_BATCH] for name, value in arrays.items()}
+        reference = reference_forward(info.graph, batch)[info.graph.outputs[0]]
+        try:
+            values = run_batch(batch)
+        except Exception as exc:
+            from .backends.base import BackendError
+            if not isinstance(exc, BackendError):
+                raise
+            values = np.full_like(reference, np.nan)
+            for offset in range(len(reference)):
+                try:
+                    values[offset:offset+1] = run_batch({name: value[offset:offset+1] for name, value in batch.items()})
+                except BackendError:
+                    diverged.append(start+offset)
+        exact.append(reference); approximate.append(values)
+    metric_input = dict(values=np.concatenate(exact), task=info.task)
+    if info.task == 'causal_lm':
+        metric_input['lengths'] = arrays['attention_mask'].sum(axis=1).astype(int)
+    result = compare(metric_input, np.concatenate(approximate), labels)
+    report.update(report_metrics=result, report_pass=passes(result, info.threshold), test_split='report',
+                  n_diverged=len(diverged), diverged_indices=diverged, test_images_done=total)
+    _write(out/'REPORT.json', report)
 
 
 def _write(path, record):
@@ -235,6 +275,8 @@ def _inside(args):
     from .planners.rule import plan
     from .kernels import MuxLayout
     from .planners.agent_tools import VAL_BATCH
+    from .models.info import ModelInfo
+    from .data.samples import legacy_cifar, StoredSplits
 
     toolchain.setup_env()
     out = args.out
@@ -254,12 +296,36 @@ def _inside(args):
     report.update(complete=False, val_split="test[9000:10000]", test_split="test[0:8000]")
     report.pop("error", None)
     _write(path, report)
-    graph = program = images = labels = calibration = zm = None
+    graph = program = images = labels = calibration = zm = info = samples = None
+
+    def prepare_model():
+        nonlocal zm, graph, info, samples
+        if getattr(args, 'model_info', None) is not None:
+            from types import SimpleNamespace
+            info = ModelInfo.load(args.model_info)
+            graph = info.graph
+            samples = StoredSplits(Path(args.model_info).parent / 'samples', info,
+                                   getattr(args, 'prepare_split', None))
+            zm = SimpleNamespace(info=info, samples=samples)
+            report.update(model_info=str(args.model_info), val_split='heldout', test_split='report')
+        else:
+            zm = get(args.model, args.models_dir)
+            graph = zm.import_graph()
+            info, samples = legacy_cifar(graph, normalization=zm.normalization)
+        info.save(out)
+
+    def prepare_calibration():
+        nonlocal images, labels, calibration
+        arrays, labels = samples.get('calibration')
+        images = arrays[graph.inputs[0]]
+        calibration = calibrate(graph, arrays)
+        _write(out / 'calibration.json', calibration)
 
     def evaluate(batch, *, exact=False, candidate=None, observer=None):
         active = program if candidate is None else candidate
-        backend = MockBackend(active.header.slots, batch=len(batch))
-        backend.bind(pack_inputs(active, [batch]))
+        arrays = [batch[name] for name in graph.inputs] if isinstance(batch, dict) else [batch]
+        backend = MockBackend(active.header.slots, batch=len(arrays[0]))
+        backend.bind(pack_inputs(active, arrays))
         values, layouts = lower(active, graph.weights, backend, act_mode="exact" if exact else "program",
                                observer=observer)
         logits = decode_outputs([value.value for value in values], layouts)[0].copy()
@@ -271,17 +337,15 @@ def _inside(args):
         if "compile" in args.stages and "export" not in args.stages:
             raise RuntimeError("compile requires the export stage")
         if args.stages == ["test"]:
-            zm = get(args.model, args.models_dir)
-            graph = zm.import_graph()
+            prepare_model()
             program = parse((out/"program.ptdsl").read_text())
         elif "check" in args.stages and "plan" not in args.stages:
-            zm = get(args.model, args.models_dir)
-            graph = zm.import_graph()
-            images, labels = calibration_set(normalization=zm.normalization)
-            images = zm.adapt(images)
+            prepare_model()
+            arrays, labels = samples.get('calibration')
+            images = arrays[graph.inputs[0]]
             calibration_path = out/"calibration.json"
             calibration = (json.loads(calibration_path.read_text()) if calibration_path.exists()
-                           else calibrate(graph, {graph.inputs[0]: images}))
+                           else calibrate(graph, arrays))
             _write(calibration_path, calibration)
             report["source_lines"] = sum(bool(line.strip()) for line in (out/"program.ptdsl").read_text().splitlines())
         for stage in STAGES:
@@ -290,17 +354,17 @@ def _inside(args):
             report["stage"] = stage
             _write(path, report)
             if stage in ("validate", "plan") and graph is None:
-                zm = get(args.model, args.models_dir)
-                graph = zm.import_graph()
-                images, labels = calibration_set(normalization=zm.normalization)
-                images = zm.adapt(images)
-                calibration = calibrate(graph, {graph.inputs[0]: images})
-                _write(out / "calibration.json", calibration)
+                prepare_model()
+                prepare_calibration()
             if stage == "validate":
                 from .data.cifar import validation_set
 
-                validation_images, _ = validation_set(2000, normalization=zm.normalization)
-                validation_images = zm.adapt(validation_images)
+                if getattr(args, 'model_info', None) is not None:
+                    validation_arrays, _ = samples.get('heldout')
+                    validation_images = validation_arrays[graph.inputs[0]]
+                else:
+                    validation_images, _ = validation_set(2000, normalization=zm.normalization)
+                    validation_images = zm.adapt(validation_images)
                 act_names = [node.inputs[0] for node in graph.nodes if node.op == "act"]
                 needed = dict.fromkeys(act_names, 0.0)
                 references = []
@@ -363,12 +427,19 @@ def _inside(args):
                 del validation_images, references, candidate
                 gc.collect()
             elif stage == "plan":
+                from .intake.coverage import check as check_graph
+                supported = check_graph(graph)
+                if not supported['ok']:
+                    report['graph_check'] = supported
+                    raise RuntimeError('PT-Graph contains operations without lowering; see graph_check')
                 if args.planner == "agent":
                     from .llm import LLMClient
                     from .planners.agent import run_agent
                     from .planners.agent_tools import build_context
 
-                    ctx = build_context(graph, calibration, normalization=zm.normalization)
+                    report['tune_policy'] = getattr(args, 'tune_policy', 'new_best')
+                    ctx = build_context(info, calibration, samples=samples,
+                                        normalization=getattr(zm, 'normalization', None))
                     client = LLMClient(args.budget_path, model=args.llm_model, reasoning_effort=args.llm_reasoning,
                                        max_tokens=args.llm_max_tokens,
                                        max_total_calls=getattr(args, 'llm_call_limit', 300))
@@ -381,7 +452,8 @@ def _inside(args):
                     (out/'initial_message.json').write_text(initial_message(ctx))
                     result = run_agent(ctx, client, max_iters=args.agent_iters, trace_path=out / "agent_trace.jsonl",
                                        tuner=getattr(args, 'tuner', 'on') == 'on',
-                                       tuner_budget_s=getattr(args, 'tuner_budget_s', 2400))
+                                       tuner_budget_s=getattr(args, 'tuner_budget_s', 2400),
+                                       tune_policy=report['tune_policy'])
                     selected = result['confirm']['selected']
                     report["agent"] = dict(result, confirm=dict(result['confirm'],
                         selected=asdict(selected) if selected is not None else None))
@@ -426,16 +498,20 @@ def _inside(args):
                     raise RuntimeError("exact lowering logits difference exceeded 1e-9")
                 agree = correct = 0
                 squared = 0.0
+                all_approx, all_exact = [], []
                 for start in range(0, len(images), VAL_BATCH):
                     batch = images[start:start+VAL_BATCH]
                     logits = evaluate(batch)
                     reference = reference_forward(graph, {graph.inputs[0]: batch})[graph.outputs[0]]
-                    predictions = logits.argmax(axis=1)
-                    agree += int(np.sum(predictions == reference.argmax(axis=1)))
-                    correct += int(np.sum(predictions == labels[start:start+len(batch)]))
+                    from .metrics import compare
+                    all_approx.append(logits)
+                    all_exact.append(reference)
+                    measured = compare(dict(values=np.concatenate(all_exact), task=info.task),
+                                       np.concatenate(all_approx), labels[:start+len(batch)] if labels is not None else None)
+                    agree = measured.get('agree')
                     squared += float(np.sum((logits-reference)**2))
                     done = start+len(batch)
-                    report.update(mock_images_done=done, agree=agree, top1=100.0*correct/done,
+                    report.update(mock_images_done=done, agree=agree, top1=measured.get('top1'), mock_metrics=measured,
                                   logit_rmse=float(np.sqrt(squared/(done*logits.shape[1]))),
                                   mock_seconds=time.monotonic()-started)
                     _write(path, report)
@@ -516,6 +592,7 @@ def main():
     parser.add_argument("--budget-path", type=Path)
     parser.add_argument("--tuner", choices=('on', 'off'), default='on')
     parser.add_argument("--tuner-budget-s", type=float, default=2400)
+    parser.add_argument("--tune-policy", choices=('new_best', 'all'), default='new_best')
     parser.add_argument("--deg", type=int)
     parser.add_argument("--margin", type=float)
     parser.add_argument("--act-method", choices=("cheb", "minimax_comp"), default="cheb")
@@ -566,6 +643,7 @@ def main():
         command.extend(("--budget-path", str(Path(os.environ["PT_RESULTS"]) / "llm_calls.jsonl"),
                         "--agent-iters", str(args.agent_iters), "--llm-model", args.llm_model,
                         "--tuner", args.tuner, '--tuner-budget-s', str(args.tuner_budget_s),
+                        '--tune-policy', args.tune_policy,
                         "--llm-reasoning", args.llm_reasoning, "--llm-max-tokens", str(args.llm_max_tokens)))
     if args.deg is not None:
         command.extend(("--deg", str(args.deg)))

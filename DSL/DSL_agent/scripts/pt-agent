@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+"""Original-model entry point; all execution stages live in pt_agent.cli."""
+from pt_agent.cli import main
+
+raise SystemExit(main())

@@ -29,10 +29,11 @@ def _inside(args):
                                      final=True, agent_iters=getattr(args, 'agent_iters', 6),
                                      llm_model='deepseek-flash', llm_reasoning='high', llm_max_tokens=32768,
                                      budget_path=args.budget_path, llm_call_limit=args.call_limit,
-                                     tuner=args.tuner, tuner_budget_s=2400))
+                                     tuner=args.tuner, tuner_budget_s=2400,
+                                     tune_policy=args.tune_policy))
     report_path = args.out/'REPORT.json'
     report = json.loads(report_path.read_text())
-    report.update(round=args.round, tuner=args.tuner)
+    report.update(round=args.round, tuner=args.tuner, tune_policy=args.tune_policy)
     try:
         graph = get(args.model, args.models_dir).import_graph()
         old = json.loads(args.baseline_rule_report.read_text())
@@ -92,6 +93,7 @@ def _outer(args):
             raise ValueError('Resume requires the held-out split; retain earlier runs separately')
         args.round = result['round']
         args.tuner = result['tuner']
+        args.tune_policy = result.get('tune_policy', 'new_best')
     else:
         if path.exists():
             raise FileExistsError('Existing experiment reports must be preserved')
@@ -99,6 +101,7 @@ def _outer(args):
         result = dict(round=args.round, complete=False, stage='agent',
                       models_dir=str((args.models_dir or root/'models-v2').resolve()),
                       baseline_report=str(args.baseline_report), prompt_version=_prompt_version(), tuner=args.tuner,
+                      tune_policy=args.tune_policy,
                       val_split='test[9000:10000]', test_split='test[0:9000]',
                       api_before=base, api_budget=24, api_limit=min(base+24, 300), api_calls=0,
                       models=[dict(model=name, report_path=str(out/name/'REPORT.json'), complete=False,
@@ -159,6 +162,7 @@ def _outer(args):
         command = [sys.executable, '-B', '-m', 'pt_agent.tools.nixrun', '--seconds', '21600', '--',
                    '-m', 'pt_agent.experiments.r8b_dev', '--inside', '--round', args.round, '--out', str(case),
                    '--model', name, '--models-dir', result['models_dir'], '--tuner', args.tuner,
+                   '--tune-policy', args.tune_policy,
                    '--budget-path', str(budget_path), '--call-limit', str(call_limit),
                    '--agent-iters', str(max(1, remaining)),
                    '--baseline-rule-report', str(retained[name]['rule_report_path'])]
@@ -210,6 +214,7 @@ def _launch(args):
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     command = ['setsid', 'nohup', sys.executable, '-B', '-m', 'pt_agent.experiments.r8b_dev',
                '--worker', '--round', args.round, '--tuner', args.tuner,
+               '--tune-policy', args.tune_policy,
                '--baseline-report', str(args.baseline_report)]
     command += ['--resume' if args.resume else '--out', str(out)]
     if args.models_dir is not None:
@@ -227,6 +232,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--round', default='R8e')
     parser.add_argument('--tuner', choices=('on', 'off'), default='on')
+    parser.add_argument('--tune-policy', choices=('new_best', 'all'), default='new_best')
     parser.add_argument('--inside', action='store_true')
     parser.add_argument('--worker', action='store_true')
     parser.add_argument('--resume', type=Path)

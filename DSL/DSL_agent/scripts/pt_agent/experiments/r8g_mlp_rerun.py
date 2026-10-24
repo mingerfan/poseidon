@@ -38,7 +38,7 @@ def _run_args(args):
         stages=list(STAGES), final=True, agent_iters=6,
         llm_model="deepseek-flash", llm_reasoning="high", llm_max_tokens=32768,
         budget_path=args.budget_path, llm_call_limit=args.call_limit,
-        tuner="on", tuner_budget_s=2400,
+        tuner="on", tuner_budget_s=2400, tune_policy=getattr(args, 'tune_policy', 'new_best'),
     )
 
 
@@ -102,7 +102,7 @@ def _command(args, case, budget_path, call_limit):
     return [sys.executable, "-B", "-m", "pt_agent.tools.nixrun", "--seconds", str(INNER_SECONDS), "--",
             "-m", "pt_agent.experiments.r8g_mlp_rerun", "--inside", "--out", str(case),
             "--models-dir", str(args.models_dir), "--budget-path", str(budget_path),
-            "--call-limit", str(call_limit)]
+            "--call-limit", str(call_limit), '--tune-policy', args.tune_policy]
 
 
 def _stop(process):
@@ -147,7 +147,7 @@ def _outer(args):
             trace_path=str(case / "agent_trace.jsonl"), program_path=str(case / "program.ptdsl"),
             stages=list(STAGES), prompt_version=PROMPT_VERSION,
             llm=dict(model="deepseek-flash", reasoning_effort="high", max_tokens=32768),
-            agent_iters=6, tuner="on", tuner_budget_s=2400, max_sweeps=1,
+            agent_iters=6, tuner="on", tuner_budget_s=2400, max_sweeps=1, tune_policy=args.tune_policy,
             val_split="test[9000:10000]", confirm_split="test[8000:9000]", test_split="test[0:8000]",
             max_confirm_evals=6, api_before=api_before, api_budget=API_BUDGET,
             api_limit=min(api_before + API_BUDGET, TOTAL_API_BUDGET), api_calls=0,
@@ -223,7 +223,7 @@ def _launch(args):
     out = (args.out or pt_result("r8g-mlp-rerun-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S"))).resolve()
     out.mkdir(parents=True, exist_ok=False)
     command = ["setsid", "nohup", sys.executable, "-B", "-m", "pt_agent.experiments.r8g_mlp_rerun",
-               "--worker", "--out", str(out)]
+               "--worker", "--out", str(out), '--tune-policy', args.tune_policy]
     if args.models_dir is not None:
         command += ["--models-dir", str(args.models_dir.resolve())]
     with (out / "runner.stdout.txt").open("w") as stdout, (out / "runner.stderr.txt").open("w") as stderr:
@@ -244,6 +244,7 @@ def main():
     parser.add_argument("--models-dir", type=Path, help="Existing trained models directory; outer default is pt_result('models-v2')")
     parser.add_argument("--budget-path", type=Path, help="Inside only: existing shared llm_calls.jsonl path")
     parser.add_argument("--call-limit", type=int, help="Inside only: absolute shared API limit calculated by outer")
+    parser.add_argument('--tune-policy', choices=('new_best', 'all'), default='new_best')
     args = parser.parse_args()
     if args.inside:
         if any(value is None for value in (args.out, args.models_dir, args.budget_path, args.call_limit)):
