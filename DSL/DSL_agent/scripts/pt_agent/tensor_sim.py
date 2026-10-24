@@ -20,6 +20,8 @@ from .dsl.ir import WeightRef
 from .dsl.printer import print_program
 from .kernels.conv import fold_bn
 from .kernels.layout import FlatLayout, KernelError, MuxLayout, mux_layout
+from .kernels.layout import (MultiMuxLayout, MultiFlatLayout, layout_blocks,
+                             multi_mux_layout, multi_flat_layout)
 from .kernels.poly import cheb_eval, cheb_fit, minimax_coeffs
 from .lower import LoweringError, RawLayout, _pack_layout
 
@@ -206,7 +208,7 @@ def _conv_layout(layout, weight, stride, scale=None, shift=None):
         raise KernelError("convolution requires matching input channels and an odd square kernel")
     if type(stride) is not int or stride not in (1, 2) or layout.H % stride or layout.W % stride:
         raise KernelError("stride must be 1 or 2 and divide H and W")
-    output = mux_layout(layout.n, co, layout.H//stride, layout.W//stride, layout.k*stride)
+    output = multi_mux_layout(layout.n, co, layout.H//stride, layout.W//stride, layout.k*stride)
     if scale is not None and scale.shape != (co,):
         raise KernelError("scale must have length Co")
     if shift is not None and shift.shape != (co,):
@@ -252,7 +254,7 @@ def _metadata(program, weights):
                     raise KernelError("pack input must have RawLayout")
                 layout = _pack_layout(op, layout.shape, program.header.slots)
             elif op.kind == "conv2d":
-                if not isinstance(layout, MuxLayout):
+                if not isinstance(layout, (MuxLayout, MultiMuxLayout)):
                     raise KernelError("conv2d input must have MuxLayout")
                 w, bias = ref("w"), ref("b")
                 if (attrs["algo"] != "mpcb" or attrs["dilation"] != (1, 1) or attrs["groups"] != 1
@@ -273,14 +275,17 @@ def _metadata(program, weights):
                     raise KernelError("v1 lowering 不支持 this activation")
             elif op.kind == "add":
                 other = layouts[op.inputs[1]]
-                if isinstance(layout, MuxLayout) and isinstance(other, MuxLayout):
+                if isinstance(layout, (MultiMuxLayout, MultiFlatLayout)) or isinstance(other, (MultiMuxLayout, MultiFlatLayout)):
+                    if layout != other:
+                        raise KernelError("residual layouts must match")
+                elif isinstance(layout, MuxLayout) and isinstance(other, MuxLayout):
                     if layout != other:
                         raise KernelError("residual layouts must match")
                 elif not (isinstance(layout, FlatLayout) and layout == other):
                     raise KernelError("add requires compatible mux or identical flat layouts")
             elif op.kind == "slice":
                 uses = consumers[output]
-                if (not isinstance(layout, MuxLayout) or attrs["axis"] != 2 or attrs["start"] != 0
+                if (not isinstance(layout, (MuxLayout, MultiMuxLayout)) or attrs["axis"] != 2 or attrs["start"] != 0
                         or attrs["end"] not in (None, layout.H) or attrs["step"] != 2 or len(uses) != 1):
                     raise KernelError("slice requires the downsample slice/slice/pad chain")
                 second = uses[0]
@@ -301,33 +306,42 @@ def _metadata(program, weights):
             elif op.kind == "pad":
                 raise KernelError("standalone pad is unsupported")
             elif op.kind == "mean":
-                if not isinstance(layout, MuxLayout) or attrs["axis"] != (2, 3) or attrs["keepdim"]:
+                if not isinstance(layout, (MuxLayout, MultiMuxLayout)) or attrs["axis"] != (2, 3) or attrs["keepdim"]:
                     raise KernelError("mean requires mux, axis=(2,3), keepdim=False")
                 if layout.H & (layout.H-1) or layout.W & (layout.W-1):
                     raise KernelError("mean_mux requires power-of-two H and W")
-                layout = FlatLayout(layout.n, layout.C)
+                layout = multi_flat_layout(layout.n, layout.C)
             elif op.kind == "relayout":
-                if attrs["layout"] != "flat" or not isinstance(layout, FlatLayout):
+                if attrs['layout'] == 'flat' and isinstance(layout, MultiMuxLayout):
+                    if layout.H != 1 or layout.W != 1:
+                        raise KernelError("multi mux to flat relayout requires H = W = 1; spatial tiling not supported")
+                    layout = multi_flat_layout(layout.n, layout.C)
+                elif attrs["layout"] != "flat" or not isinstance(layout, (FlatLayout, MultiFlatLayout)):
                     raise KernelError("relayout requires an already flat input and flat target")
             elif op.kind == "linear":
-                if not isinstance(layout, FlatLayout):
+                if not isinstance(layout, (FlatLayout, MultiFlatLayout)):
                     raise KernelError("linear input must have FlatLayout")
                 w, bias = ref("w"), ref("b")
                 if w.ndim != 2 or min(w.shape) < 1 or w.shape[1] != layout.size:
                     raise KernelError("linear weight must have shape (O, lin.size)")
                 count, size = w.shape
                 ip, output_padded = 1 << (size-1).bit_length(), 1 << (count-1).bit_length()
-                if output_padded > ip or 2*ip > layout.n:
+                lout = multi_flat_layout(layout.n, count)
+                multiple = isinstance(layout, MultiFlatLayout) or isinstance(lout, MultiFlatLayout)
+                if not multiple and (output_padded > ip or 2*ip > layout.n):
                     raise KernelError("linear requires Op <= Ip and 2*Ip <= n")
                 if attrs["algo"] not in ("diag", "bsgs"):
                     raise KernelError("linear algo must be diag or bsgs")
                 if bias is not None and bias.shape != (count,):
                     raise KernelError("linear bias must have length O")
                 if attrs["algo"] == "bsgs":
-                    g = attrs["n1"] if attrs["n1"] is not None else 2**((output_padded.bit_length()-1+1)//2)
-                    if type(g) is not int or g < 1 or g & (g-1) or g > output_padded:
-                        raise KernelError("BSGS n1 must be a power of two <= Op")
-                layout = FlatLayout(layout.n, count)
+                    sides = [1 << (max(li.size, lo.size)-1).bit_length()
+                             for _, _, li in layout_blocks(layout) for _, _, lo in layout_blocks(lout)] if multiple else [output_padded]
+                    for side in sides:
+                        g = attrs["n1"] if attrs["n1"] is not None else 2**((side.bit_length()-1+1)//2)
+                        if type(g) is not int or g < 1 or g & (g-1) or g > side:
+                            raise KernelError("BSGS n1 must be a power of two <= Op")
+                layout = lout
                 extra = dict(weight=w, bias=bias)
             elif op.kind != "refresh":
                 raise KernelError(f"v1 lowering 不支持 {op.kind}")

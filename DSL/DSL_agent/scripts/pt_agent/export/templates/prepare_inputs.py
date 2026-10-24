@@ -15,7 +15,8 @@ def main():
     config = json.loads((root/"config/model.json").read_text())
     runtime = importlib.import_module(config["name"]+".runtime")
     entries = runtime.read_config()[2]["inputs"]
-    runtime.save_arrays(args.output, runtime.pack_arrays(runtime.load_arrays(args.inputs, entries)), entries)
+    runtime.save_arrays(args.output, runtime.pack_arrays(runtime.load_arrays(args.inputs, entries)),
+                        runtime.ciphertext_entries(entries))
 
 
 if __name__ == "__main__":

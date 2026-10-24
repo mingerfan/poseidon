@@ -25,7 +25,7 @@ def report(graph) -> dict:
                 original_unmapped=original.get('original_unmapped', {}), ratio_denominator='normalized_core_nodes')
 
 
-def check(graph):
+def check(graph, *, slots=16384):
     """Report kernel capability at the check boundary, after semantic import.
 
     A graph has one statement per node; line numbers refer to that statement
@@ -35,4 +35,12 @@ def check(graph):
                   reason=f'{node.op}: no lowering implementation', severity='error')
              for index, node in enumerate(graph.nodes)
              if not _supported(node)]
+    for name in graph.inputs:
+        shape = graph.tensors[name].shape
+        if len(shape) == 4 and shape[0] == 1 and shape[2]*shape[3] > slots:
+            index, node = next(((i, node) for i, node in enumerate(graph.nodes) if name in node.inputs),
+                               (0, None))
+            diags.append(dict(op_id=node.id if node is not None else name, lineno=index+1,
+                              source=node.src if node is not None else name,
+                              reason='spatial tiling not supported: k²·H·W > n', severity='error'))
     return dict(ok=not diags, diags=diags, line_kind='PT-Graph statement')

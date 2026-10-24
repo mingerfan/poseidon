@@ -1,6 +1,10 @@
-# pt_agent 状态（最后更新：2026-10-24 / 0189ce11-dirty）
+# pt_agent 状态（最后更新：2026-10-24 / 125676bd-dirty）
 
-当前U1（含§11–§12）已完成：既有373/373、新增46/46通过；HF三模型各4样本float64最大差0；四个冻结开发模型全字段逐项相同；九模型CLI导入及MLP真实编译通过，主环境freeze相同。根因为effect-only写回被跳过，首个超出规定容差的位置为n54/add_4；修复按通用算子语义生效。API/下载/安装0，累计63/300；新增Agent独立输出及真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json)。
+当前U2已完成：既有419/419唯一回归用例通过（主组381＋独立intake4＋P2/工具链17＋张量17），新增16/16结果复用，共435/435。11份单块Emit文本及常量与125676bd原文相同；四冻结模型validate/estimate/confirm逐项相同。六变体各20留出图及P2/真实编译全部通过，自举数和旋转数6/6精确；延迟误差中位1.5008%、最大7.3308%。从4096 trace接续，新trace/compile各5次、此前各1次；六个编译目录均保留RuntimePlan与PRUNED.txt。API0、累计63/300；本轮新Agent输出和真实CKKS0，M1表保持。[最终REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json)。
+
+历史U1（含§11–§12）已完成：既有373/373、新增46/46通过；HF三模型各4样本float64最大差0；四个冻结开发模型全字段逐项相同；九模型CLI导入及MLP真实编译通过，主环境freeze相同。根因为effect-only写回被跳过，首个超出规定容差的位置为n54/add_4；修复按通用算子语义生效。API/下载/安装0，累计63/300；新增Agent独立输出及真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json)。
+
+
 
 主线：`/home/lhohy/Code/Poseidon`，`lhy-agent-dsl`。
 当前按 A 线 AGENTS.md 的逐轮 spec 规则推进；PLAN.md 仅作路线图。
@@ -26,6 +30,7 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| U2 | specs/U2-multi-ciphertext-layout.md＋用户磁盘恢复接续 | 完成 | kernels/layout.py新增、kernels/multi.py；lower.py、tensor_sim.py、agent_tools.py；ModelInfo/check；export及U2测试/实验、STATUS | 新16/16＋既有419/419＝435/435；单块11/11＋四模型相同；六变体自举/旋转全部精确；P2及编译6/6 | 复用已过项目，从4096 trace接续；新5目录逐项核对后prune；旧测试保持；原停止及自写修正记录保留 |
 | U1 | specs/U1-model-description.md（含§11–§12） | 完成 | models/info.py、builders.py、zoo.py；data/samples.py；intake/probe、hf_frontend、onnx_frontend、graph_exec及ATen/core/coverage；metrics.py、cli.py、scripts/pt-agent；agent_tools.py、confirm.py、prompts.py、run.py；U1实验/测试、STATUS | 既有373/373＋新增46/46；HF3/3零差；四冻结模型逐项相同；CLI9/9，MLP真实编译通过；[REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json) | 按§11迁移1项旧测试；按§12及自写错误例外修正通用语义、夹具与编排；原失败及用量保留，详见本节 |
 | R8h3 | specs/R8h3-tune-policy.md | 完成 | planners/agent.py、run.py、4个实验入口、test_r8h_tune_all.py、test_r8h3_policy.py、STATUS | 373/373；R8e5四份trace触发序列一致；LLM0、模型实验0 | 按§2.1给R8h旧测试显式传all，断言保持；run.py仅参数接线及REPORT记录；冻结仍用v1 |
 | R8h2 | specs/R8h2-confirm-dedup.md | 完成 | planners/confirm.py、tests/test_r8h2_confirm_dedup.py、experiments/r8h2_reconfirm.py、STATUS | 366/366；4/4确认、P2编译及8000图Mock报告；API0、累计63；attempt-02未触发 | 同延迟保留pool原顺序；原Candidate保持，agent.py无需适配；自写编排列表读取修正见R8h2节；未打tag |
@@ -84,6 +89,10 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+U2当前无需要用户或Claude决定的问题，全部指定验收已完成。磁盘停止已按用户2026-10-24授权解除；从ResNet20／4096 trace接续，六个变体自举数与旋转数均精确，419回归及新增16项全部通过。新五个编译目录核对后立即调用toolchain.prune，原8192目录复用Claude已完成的清理；RuntimePlan、日志、报告和PRUNED.txt完整保留。原停止及已消费额度保持。[最终REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json)。
+
+U2历史停止（2026-10-24）：[运行器](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/toolchain.py:145)在ResNet20／4096的P2 trace启动前报告 `Trusted runner requires at least 10 GiB free disk space`。ResNet20／8192已正常完成，保留约3.4 GiB产物（trace约417 MiB、compiled约3.0 GiB，含约468 MiB程序包数据）；当前可用8089772032字节，约7.53 GiB。新目录及全部历史证据保持。按[AGENTS.md](/home/lhohy/Code/Poseidon/AGENTS.md)“有疑问或报错，就停下来写进STATUS.md的‘阻塞’一栏，等待新的spec”停止其余批次。需要用户或Claude明确保留现有证据的接续存储安排，继续沿用10 GiB准入、原内存与串行限制。剩余为4096 trace/编译、CNN与MLP共4变体及419回归；新增编译器／运行库数值阻塞证据0。[原失败REPORT](/home/lhohy/pt_agent_results/u2-models-20261024T114402811236/REPORT.json)、[完整分项REPORT](/home/lhohy/pt_agent_results/u2-models-20261024T114402811236/FINAL_REPORT.json)。
 
 U1当前无需要用户或Claude决定的问题；§12诊断、通用修复及全部验收已完成。原Qwen停止已解除。根因为新导入器忽略无返回值消费者的aten.copy_写回，后续别名读取误折叠为常量；通用functionalize及copy/slice_scatter语义修正已恢复attention_mask数据依赖。首次实质差异n54/add_4，原45.860846389665554只发生于补齐位置；修复后真实位置及补齐位置均0差，HF三模型各4样本均0。[原诊断](/home/lhohy/pt_agent_results/u1-diagnose-20261024T095059528651/DIAGNOSTIC.json)、[修复核对](/home/lhohy/pt_agent_results/u1-hf-20261024T095526758515/REPORT.json)。
 
@@ -221,6 +230,8 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+U2本轮0；累计63/300。接续新trace/compile各5次，此前各1次，合计6/6变体；0重试。新LLM输出、下载、安装、训练、真实CKKS、commit/tag/push均0；每个新编译目录完成计数核对后立即prune。原准入停止发生于进程启动前，记录保持。
+
 当前U1 §12：本轮0、累计63/300；registry共307条，历史批次及已用额度全部保留。新增下载/安装/训练0；当前9模型导入框架验收完成，新增Agent首次独立输出0、真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json)。
 
 历史U1 §11接续：DeepSeek0，累计63/300；registry265条，原262条保留，新增输入准备、HF验收停止、汇总3条。新增下载/安装/训练/模型权重/真实编译/CKKS0，未提交、未打tag。阶段检查41项通过；HF数值2/3通过；完整373回归未执行。
@@ -273,11 +284,11 @@ R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry�
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| U1-section12-complete-20261024T111953-3f19 | section12 | 完成；[REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json) |
-| U1-sequence-acceptance-20261024T111807-35b6 | sequence | 完成；[REPORT](/home/lhohy/pt_agent_results/u1-sequence-20261024T111805608137/REPORT.json) |
-| U1-regression-acceptance-20261024T111752-6b25 | regression | 完成；17项；[REPORT](/home/lhohy/pt_agent_results/u1-regression-20261024T110118931850/REPORT.json) |
-| U1-regression-acceptance-20261024T110055-46d4 | regression | 完成；17项；[REPORT](/home/lhohy/pt_agent_results/u1-regression-20261024T110034672376/REPORT.json) |
-| U1-cli-acceptance-20261024T105948-150f | cli | 完成；[REPORT](/home/lhohy/pt_agent_results/u1-cli-20261024T105937735752/REPORT.json) |
+| U2-multi-layout-complete-summary-20261024T132444-b3cd | multi-layout | 完成；435/435唯一测试、六变体验收；[REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json) |
+| U2-tensor-acceptance-20261024T132358-5529 | tensor | 17项、失败0、错误0、跳过0；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T130429400967/REPORT.json) |
+| U2-packaging-acceptance-20261024T130356-d737 | packaging | 17项、失败0、错误0、跳过0；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T130333616419/REPORT.json) |
+| U2-intake-tests-acceptance-20261024T130306-f059 | intake-tests | 4项、失败0、错误0、跳过0；[REPORT](/home/lhohy/pt_agent_results/u2-intake-tests-20261024T130303860100/REPORT.json) |
+| U2-main-acceptance-20261024T130245-61e8 | main | 385项、失败0、错误0、跳过4；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T125950815099/REPORT.json) |
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
 旧 T0/T2 测试输出保留原路径；旧源码副本：[before/](/home/lhohy/pt_agent_results/R1-ptdsl-unit-20261020T111834-3fa0/before/)。
@@ -2845,3 +2856,102 @@ U1九模型覆盖矩阵（均为当前真实CLI原样导入）：原始节点为
 外层临时诊断曾补齐模块搜索路径、按Graph.nodes序列格式修正统计读取；两次并发Nix入口因占用未执行断言，后续串行完成，失败记录保持。没有放宽任何spec期望或数值条件，没有更换模型/参考取得通过，已消费额度没有重置。
 
 U1未完成项：无。开发诊断成果为语义修复、模型输入框架及本节验收；新增Agent首次独立输出0，新增真实CKKS0。后续范围为覆盖表中缺少的lowering组合及整网CKKS验收；M1第5条继续待执行。
+
+## U2 首次验收（历史磁盘停止，已解除）
+
+工作目录 `/home/lhohy/Code/Poseidon`、分支 `lhy-agent-dsl`、基线 `125676bd`。已读本轮spec及STATUS；原PLAN、baseline和子模块既有改动保持。范围为通道与长度分块，提示r8-v4、编译器、运行时及单块kernel保持；未调用LLM。原始程序只在新结果目录中替换header的slots，原冻结源码保持。
+
+改动文件：`kernels/layout.py`只追加MultiMuxLayout／MultiFlatLayout及工厂、pack/unpack/index_grid和布局记录；新增`kernels/multi.py`；`lower.py`分派多块并按密文展开参数与输出；`tensor_sim.py`扩展布局校验、张量算式保持；`planners/agent_tools.py`聚合有效元素并使用程序slots；`models/info.py`记录密文数及布局，现有CLI的info打印该记录；`intake/coverage.py`在check阶段报告空间分块限制；`export/package.py`、`export/templates/_package/{ops,runtime}.py`及prepare_inputs.py／unpack_outputs.py支持全部块；新增`experiments/u2_multi_layout.py`和3个test_u2文件。代价与放置复用已有多输入／多输出DAG，通过lowering展开接入，cost.py／placement.py及depth-dp算法保持。
+
+| §5 项 | 本轮结果 | 证据 |
+|---|---|---|
+| 1 单块保持 | 通过；P2七程序加四冻结程序共11份Emit文本、常量顺序及数值与git 125676bd完全相同；四模型在20张留出图上的mock/tensor validate、estimate及20张确认图的单候选confirm逐项相同 | [SINGLE REPORT](/home/lhohy/pt_agent_results/u2-single-20261024T114148922250/REPORT.json)、[Emit分项](/home/lhohy/pt_agent_results/u2-single-20261024T114148922250/SINGLE_EMIT.json)、[四模型分项](/home/lhohy/pt_agent_results/u2-single-20261024T114148922250/SINGLE_MODELS.json) |
+| 2 布局 | 通过；整块边界、多一个通道、末块1通道、k=2、g=0及pack/unpack往返 | [测试日志](/home/lhohy/pt_agent_results/u2-unit-20261024T114349104872/run.log) |
+| 3 逐运算 | 通过；conv三种单/多块路径与stride2、add、下采样、mean合并/保留多块、linear四种组合（diag/bsgs、Op>Ip）、cheb/minimax/square尾槽及Mock-lowering/张量对照 | 同上；新测试16/16，0失败/错误/跳过 |
+| 4 共用旋转 | 通过；conv输入平移按输入块共享，实测45次并少于逐块对调用；linear共用输入旋转测试48次 | 同上，test_conv_shared_translations、test_linear_shared_rotations |
+| 5 真实强制分块 | 部分通过；ResNet20两变体各20留出图数值及类别通过，8192自举296/296；4096编译待执行；余四变体待执行 | [8192 REPORT](/home/lhohy/pt_agent_results/u2-models-20261024T114402811236/resnet20-8192/REPORT.json)、[4096 REPORT](/home/lhohy/pt_agent_results/u2-models-20261024T114402811236/resnet20-4096/REPORT.json) |
+| 6 P2包 | 两个ResNet20变体导出、包内NumPy与Mock完全相同、包Emit与lowering文本及常量完全相同；8192 trace/compile成功；4096 trace前资源停止 | 同上；[编译日志](/home/lhohy/pt_agent_results/u2-models-20261024T114402811236/resnet20-8192/compile.log) |
+| 7 空间限制 | 通过；3×224×224语义导入成功，check报告spatial tiling not supported及op id、行号；lowering同样附位置 | 新测试test_spatial_import_check_and_lower_error |
+| 8 419回归 | 待执行；资源停止后未启动 | 完整REPORT regression.executed=0 |
+
+每个张量的密文数取其最大分块数；已执行的输入和输出均为1份密文。预测延迟与RuntimePlan累计延迟按E6口径比较，单位µs；以下16384为已有冻结基线，未新增编译。
+
+| 模型 | slots | 最大张量密文数 | 自举预测／编译 | 旋转数 | 预测延迟µs | 延迟误差 |
+|---|---:|---:|---|---:|---:|---|
+| ResNet20（原基线） | 16384 | 1 | 226 / 226 | 2624 | 61636379 | 既有RuntimePlan 60903485µs |
+| ResNet20 | 8192 | 2 | 296 / 296 | 4142 | 82106989 | 1.520564529% |
+| ResNet20 | 4096 | 4 | 507 / 待执行 | 6534 | 140675154 | 待执行 |
+| CNN（原基线） | 16384 | 1 | 72 / 72 | 462 | 19126397 | 既有RuntimePlan 18919755µs |
+| CNN | 8192 | 待执行 | 待执行 | 待执行 | 待执行 | 待执行 |
+| CNN | 4096 | 待执行 | 待执行 | 待执行 | 待执行 | 待执行 |
+| MLP（原基线） | 16384 | 1 | 24 / 24 | 46 | 6286530 | 既有RuntimePlan 6229205µs |
+| MLP | 8192 | 待执行 | 待执行 | 待执行 | 待执行 | 待执行 |
+| MLP | 4096 | 待执行 | 待执行 | 待执行 | 待执行 | 待执行 |
+
+ResNet20／8192的Mock与张量最大绝对差4.440892098500626e-14，归一差1.5697482541654977e-14；4096分别为4.263256414560601e-14、1.3118380849455094e-14。每个变体20/20类别与原16384程序相同；4096首层16×32×32按4通道／块切为4块。8192预测延迟比原基线增加约33.21%；4096预测增加约128.23%，相应反映更多分块算术和刷新。延迟误差目前仅1个已编译样本，中位数及最大值均为1.520564529%，完整六变体统计待执行。
+
+多块linear将每对块的矩阵补零为方阵，边长为输入／输出长度中较大的2次幂，满足2×边长≤n；diag或bsgs按该方阵计算。输入副本与旋转按输入块、方阵边长和步长共用，输出块累计全部输入块后只做一次掩码及偏置。单块输入／输出继续调用原linear_flat，保留其Op≤Ip规则。单块conv同样返回原conv2d_mux，原poly／pool／slots／linear／conv文件无本轮改动。
+
+测试输出：最终新组 `Ran 16 tests in 0.933s; OK`（实际耗时以日志为准），11 Emit＋四模型兼容实验complete=true；真实模型批次complete=false、退出1，停止原因是磁盘准入。8192 trace退出0、3.01秒、峰值1102.47265625MiB；编译退出0、5.72秒、峰值879.8515625MiB。4096 trace调用次数0；原运行器在创建进程前停止。已消费trace1／compile1保留，419项回归本轮尚未执行。
+
+与spec不一致之处及自写修正：
+
+- [test_u2_kernels.py:116](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_u2_kernels.py:116)：初稿旋转公式漏乘输出组数，12项首轮11通过、1失败（实测45、公式39）；按自写错误例外修正公式，kernel算法保持。
+- [test_u2_package.py:30](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_u2_package.py:30)：新夹具把中间值命名为b，与既有包入口backend变量同名；[首次登记测试](/home/lhohy/pt_agent_results/u2-unit-20261024T114057376940/run.log)12通过／1错误。仅将新夹具中间值改为squared／convolved；旧测试和codegen保持。
+- [models/info.py:30](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/models/info.py:30)：自写接线补充保留已记录的布局，避免load时把显式4096重置为默认16384；新增保存／恢复断言通过。
+- 实现未改spec的算法、容差、提示词或确认规则；完整验收因已观察的磁盘准入未结束。使用包既有--bytecode导出减少trace文本，编译命令及配置保持。所有旧响应、源码、包、证据和已消费额度保留。
+
+未完成项：ResNet20／4096的P2 trace/compile；CNN与MLP各8192／4096的数值、包与实际编译；既有419项回归；完整六变体延迟误差汇总。需先明确保存全部现有证据的存储安排并满足现行10 GiB准入，再仅接续未执行项。U2保持阻塞，M1表保持；本轮新增Agent独立输出0、真实CKKS0、LLM0、下载/安装0、commit/tag/push0，累计API63/300。新增编译器／运行库正确性阻塞证据0。
+
+## U2 磁盘恢复接续及最终验收（完成）
+
+本次按用户2026-10-24授权从ResNet20／4096的trace接续，复用此前8192编译和4096数值、P2包及代价结果，原报告、源码、程序包和已消费额度保持。初始空闲约22 GB，收尾约20.99 GiB；原4 GiB普通进程、6 GiB可信trace、8 GiB单文件、3600秒、10 GiB磁盘准入及编译串行限制保持。
+
+本接续只修改`experiments/u2_multi_layout.py`和STATUS：新增`--resume-from`与`compile_case`，跳过已完成项目，原包在新目录中接续trace及编译；先保存自举数、旋转数、延迟及计划路径，再调用已有`toolchain.prune`清理编译目录。新编译目录5/5即时清理，原8192目录使用Claude已清理结果；全部6目录现保留RuntimePlan与PRUNED.txt，trace字节码、日志、数值结果、原程序、结构化包和外部NPZ权重保留。toolchain.py及库、参数、提示词、精调与确认规则、本轮既有测试均保持。
+
+完整实现文件清单：`kernels/layout.py`（只追加）、新增`kernels/multi.py`、`lower.py`、`tensor_sim.py`、`planners/agent_tools.py`、`models/info.py`、`intake/coverage.py`、`export/package.py`、`export/templates/_package/ops.py`、`export/templates/_package/runtime.py`、`export/templates/prepare_inputs.py`、`export/templates/unpack_outputs.py`、`experiments/u2_multi_layout.py`、`tests/test_u2_layout.py`、`tests/test_u2_kernels.py`、`tests/test_u2_package.py`、STATUS.md。cost.py及placement.py通过lowering展开后的多输入／多输出DAG工作，算法保持；CLI info复用已有打印入口展示ModelInfo新增密文数和布局。
+
+| §5 项 | 最终结果 | 证据 |
+|---|---|---|
+| 1 单块原文 | 通过并复用：7份P2程序＋4份冻结程序，共11次Emit文本及常量原文一致；四冻结模型在20张留出图上mock/tensor validate、estimate及20张确认图的confirm逐项相同 | [单块REPORT](/home/lhohy/pt_agent_results/u2-single-20261024T114148922250/REPORT.json) |
+| 2 布局 | 通过：确定分块、边界、末块、g=0、pack/unpack及布局记录 | [新增16项](/home/lhohy/pt_agent_results/u2-unit-20261024T114349104872/REPORT.json) |
+| 3 逐运算 | 通过：conv单/多块三路线及stride2、BN、残差、下采样、mean合并/保留多块、linear四组合与Op>Ip、cheb/minimax/square尾槽；Mock lowering与张量对照 | 同上；数值条件保持1e-9·(1+abs(ref)) |
+| 4 共用旋转 | 通过：conv Count45次并少于逐块对调用，linear共享旋转48次；六真实变体旋转预测与编译全部一致 | 同上及完整对比表 |
+| 5 真实模型 | 通过：3模型×2槽位变体，各20张留出图；类别20/20与原16384程序相同，自举数6/6精确；4096 ResNet20首层4块、MLP输入2块 | [完整对比](/home/lhohy/pt_agent_results/u2-models-20261024T125911245307/COMPARISON.json) |
+| 6 P2包 | 通过：6/6导出及NumPy／Mock完全相同，包Emit／lowering文本和常量完全相同；6/6真实trace/compile，复用1＋新5 | [模型REPORT](/home/lhohy/pt_agent_results/u2-models-20261024T125911245307/REPORT.json)、各目录RuntimePlan和PRUNED.txt见对比表 |
+| 7 空间限制 | 通过：语义导入保持，check及lowering报告spatial tiling not supported，并附op id和行号 | 新增测试test_spatial_import_check_and_lower_error |
+| 8 419回归 | 通过：419/419唯一用例，0失败、0错误、0未解决跳过 | 下列分组报告及最终REPORT |
+
+| 组 | 测试输出 | 结果 |
+|---|---|---|
+| 主组 | Ran 385 tests in 172.798s; OK (skipped=4) | 381通过，4项ONNX转既有intake环境执行；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T125950815099/REPORT.json) |
+| 独立intake | Ran 4 tests in 0.108s; OK | 覆盖主组4项依赖跳过；[REPORT](/home/lhohy/pt_agent_results/u2-intake-tests-20261024T130303860100/REPORT.json) |
+| P2／工具链 | Ran 17 tests in 20.849s; OK | 17通过；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T130333616419/REPORT.json) |
+| 张量／缓存 | Ran 17 tests in 1167.501s; OK | 17通过，外层1169.195秒，沿用3600秒；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T130429400967/REPORT.json) |
+| 新增U2 | Ran 16 tests in 0.933s; OK | 复用先前通过，kernel与测试未再改动；[REPORT](/home/lhohy/pt_agent_results/u2-unit-20261024T114349104872/REPORT.json) |
+
+既有回归共423次测试执行，含主组4次依赖跳过及intake4次覆盖，唯一用例419/419全部通过；加上新增16项，为435/435。ResNet20和SiLU各完成缓存开关两遍完整精调，逐项比较25次验证、530个logit批次、25条history，统计、最终source、changes和全部logit逐位一致。旧测试、断言、模型、原程序及数值条件保持。主组原驱动固定字段report_images_read=0指本轮无新增近似报告评测；既有精确模型／数据划分测试仍按AGENTS例外读取报告记录，此说明已进入最终REPORT；新增变体验收只用test[9000:9020]，近似报告集评测0。
+
+以下延迟按E6口径比较预测值与编译RuntimePlan累计值，单位µs。每个变体输出均1份密文；16384基线复用既有记录，未新增编译。
+
+| 模型 | slots | 输入／最大张量密文数 | 自举预测／编译 | 旋转预测／编译 | 预测延迟µs | 计划延迟µs | 误差 |
+|---|---:|---|---|---|---:|---:|---|
+| resnet20（基线） | 16384 | 1 / 1 | 226 / 226 | 2624 / 2624 | 61636379 | 60903485 | 1.203370% |
+| resnet20 | 8192 | 1 / 2 | 296 / 296 | 4142 / 4142 | 82106989 | 80877199 | 1.520565% |
+| resnet20 | 4096 | 1 / 4 | 507 / 507 | 6534 / 6534 | 140675154 | 138497595 | 1.572272% |
+| cnn_plain（基线） | 16384 | 1 / 1 | 72 / 72 | 462 / 462 | 19126397 | 18919755 | 1.092202% |
+| cnn_plain | 8192 | 1 / 2 | 96 / 96 | 730 / 730 | 25760924 | 25401699 | 1.414177% |
+| cnn_plain | 4096 | 1 / 4 | 168 / 168 | 1144 / 1144 | 45069589 | 44411872 | 1.480949% |
+| mlp（基线） | 16384 | 1 / 1 | 24 / 24 | 46 / 46 | 6286530 | 6229205 | 0.920262% |
+| mlp | 8192 | 1 / 1 | 24 / 24 | 46 / 46 | 6286530 | 6229205 | 0.920262% |
+| mlp | 4096 | 2 / 2 | 24 / 24 | 169 / 169 | 7481215 | 6970240 | 7.330809% |
+
+六变体延迟误差中位数1.5007565682813502%、最大7.330809269121293%（MLP／4096）。相对16384，ResNet20预测延迟增加33.21%／128.23%，CNN增加34.69%／135.64%，MLP增加0%／19.00%；MLP／8192保持单块对照。分块提高卷积旋转和刷新数量；MLP／4096旋转从46增至169，自举保持24。最大Mock／张量绝对差为4.440892098500626e-14，各变体类别均与原程序相同。全部六个变体的实际输入／输出密文数也与接口一致，MLP／4096的原生输入数为2。
+
+多块linear沿用本轮实现：每个块对补零为方阵，边长取输入／输出较大2次幂，满足2×边长≤n；按输入块、边长和旋转步长共享平移，累计全部输入块后对每个输出块只做一次掩码与偏置。单块仍调用原linear_flat，保留Op≤Ip规则。原conv/pool/linear/poly/slots文件、既有layout类和函数保持；单块Emit原文检查已证明。
+
+与spec不一致之处：本接续无新增算法、容差、期望或测试偏离；按用户明确授权增加resume及prune编排。此前自写旋转公式、夹具变量名和布局恢复接线的三处修正及原失败记录保留在上方首次批次节。原停止REPORT及FINAL_REPORT保持；此次另建完成REPORT。当前Git为125676bd-dirty，未提交、未打tag、未push。
+
+未完成项：本spec无。开发诊断／验收完成多块算术、P2包、编译放置复现与435项测试；新增Agent首次独立输出0、真实CKKS0，M1第5条及未见复杂整网交付证据保持原待后续spec状态。LLM/API、下载、安装和新训练均0，累计63/300；本接续真实trace/compile各5次、加此前各1次，共6变体，0重试；无新增编译器／运行库正确性阻塞。普通与可信资源、共享串行及数值条件保持。
+
+[最终REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json)、[完整模型对比](/home/lhohy/pt_agent_results/u2-models-20261024T125911245307/COMPARISON.json)。
