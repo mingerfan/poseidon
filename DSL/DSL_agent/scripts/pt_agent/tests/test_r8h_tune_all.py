@@ -65,7 +65,8 @@ class TuneAllTests(unittest.TestCase):
                 patch.object(agent, 'tune', side_effect=tunes) as tuning, \
                 patch.object(agent, 'confirm_select', side_effect=select) as confirm:
             trace = Path(directory) / 'trace.jsonl'
-            result = agent.run_agent(object(), client, max_iters=max_iters or len(programs), trace_path=trace)
+            result = agent.run_agent(object(), client, max_iters=max_iters or len(programs), trace_path=trace,
+                                     tune_policy="all")
             rows = [json.loads(line) for line in trace.read_text().splitlines()]
             calls = tuning.call_args_list
         self.assertEqual(confirm.call_count, 1)

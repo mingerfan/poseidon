@@ -83,8 +83,20 @@ def build_system_prompt(ctx) -> str:
     examples = "\n\n".join("# example: " + name + "\n" +
                               (EXAMPLES_DIR / index[name]["file"]).read_text().rstrip("\n")
                               for name in chosen)
-    return TEMPLATE.format(capabilities=render_capabilities(), max_u=FEASIBLE_MAX_U,
+    text = TEMPLATE.format(capabilities=render_capabilities(), max_u=FEASIBLE_MAX_U,
                            n_val=len(ctx.val_images), examples=examples)
+    info = getattr(ctx, 'model_info', None)
+    if info is not None and (ctx.val_labels is None or info.task != 'classification'):
+        descriptions = {
+            'causal_lm': ('the next-token agreement at the last real position is at least 99% (agreement_pct), '
+                          'and the logits relative error is at most 1e-2 (logit_rel_err)'),
+            'classification': 'the top-1 agreement with the exact network on these samples is at least 99.5% (agreement_pct)',
+            'regression': 'the output relative error max|approx-exact| / max|exact| is at most 1e-2 (relative_error)',
+        }
+        description = descriptions[info.task]
+        text = text.replace('the top-1 accuracy on these images is at most 0.5 percentage points below that of the exact network',
+                            description)
+    return text
 
 
 def initial_message(ctx) -> str:

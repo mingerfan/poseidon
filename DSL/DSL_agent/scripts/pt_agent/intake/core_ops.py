@@ -9,9 +9,22 @@ CORE_OPS = {
     "mul": {"inputs": (1, 2), "attrs": {"scalar": float, "const": "weight"}},
     "batchnorm": {"inputs": 1, "attrs": {"weight": "weight", "bias": "weight", "mean": "weight", "var": "weight", "eps": float}},
     "layernorm": {"inputs": 1, "attrs": {"weight": "weight?", "bias": "weight?", "normalized_shape": "tuple", "eps": float}},
-    "act": {"inputs": 1, "attrs": {"fn": str}},
+    "act": {"inputs": 1, "attrs": {"fn": str, "exponent": float}},
     "softmax": {"inputs": 1, "attrs": {"axis": int}},
     "avgpool": {"inputs": 1, "attrs": {"kernel": "pair", "stride": "pair", "padding": "pair"}},
+    # NCHW max pooling, including the original padding/dilation/ceil semantics.
+    # Semantic import does not imply that a polynomial/FHE kernel exists.
+    "maxpool": {"inputs": 1, "attrs": {"kernel": "pair", "stride": "pair", "padding": "pair", "dilation": "pair", "ceil_mode": bool}},
+    # NumPy/PyTorch broadcasting to an explicit static output shape.
+    "broadcast": {"inputs": 1, "attrs": {"shape": "tuple"}},
+    # Explicit casts and comparisons preserve framework mask semantics. These
+    # semantic operators are deliberately absent from KERNEL_OPS.
+    "cast": {"inputs": 1, "attrs": {"dtype": str}},
+    "compare": {"inputs": (1, 2), "attrs": {"predicate": str, "scalar": float, "const": "weight"}},
+    "where": {"inputs": 3, "attrs": {}},
+    # Functional view write: return a copy of the first tensor with a static
+    # slice replaced by the second. This retains input-dependent mask writes.
+    "slice_scatter": {"inputs": 2, "attrs": {"axis": int, "start": int, "end": int, "step": int}},
     "adaptive_avgpool": {"inputs": 1, "attrs": {"output_size": "pair"}},
     "flatten": {"inputs": 1, "attrs": {"start_dim": int, "end_dim": int}},
     "reshape": {"inputs": 1, "attrs": {"shape": "tuple"}},

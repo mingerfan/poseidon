@@ -15,7 +15,10 @@ from .tuner import tune
 
 
 def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path,
-              tuner: bool = True, tuner_budget_s: float = 2400) -> dict:
+              tuner: bool = True, tuner_budget_s: float = 2400,
+              tune_policy: str = "new_best") -> dict:
+    if tune_policy not in ("new_best", "all"):
+        raise ValueError('tune_policy must be "new_best" or "all"')
     started = time.monotonic()
     messages = [dict(role="system", content=build_system_prompt(ctx)), dict(role="user", content=initial_message(ctx))]
     best_program = best_iteration = first_feasible = best = None
@@ -40,7 +43,8 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
             history.append(dict(iteration=iteration, stage="llm", feasible=False, latency_pred_us=None,
                                 boots_pred=None, agree=None, max_u=None))
             with trace_path.open("a") as stream:
-                stream.write(json.dumps(dict(iteration=iteration, messages=[], fb=fb, usage={}, seconds=0, tuned=None))+"\n")
+                stream.write(json.dumps(dict(iteration=iteration, messages=[], fb=fb, usage={}, seconds=0,
+                                             tuned=None, tune_policy=tune_policy))+"\n")
             break
         usage = reply.get("usage") or {}
         prompt_tokens += usage.get("prompt_tokens", 0)
@@ -69,7 +73,7 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
                     and (validation.get('boot_input_bound') is None
                          or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
         tuned_reused_from = None
-        if tuner and eligible:
+        if tuner and eligible and (tune_policy == "all" or new_llm_best or not has_tuned):
             has_tuned = True
             parsed = parse(source)
             normalized = print_program(parsed)
@@ -119,7 +123,8 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
         with trace_path.open("a") as stream:
             stream.write(json.dumps(dict(iteration=iteration, messages=added, fb=fb, usage=usage,
                                          seconds=reply["seconds"], tuned=tuned,
-                                         tuned_reused_from=tuned_reused_from), allow_nan=False)+"\n")
+                                         tuned_reused_from=tuned_reused_from,
+                                         tune_policy=tune_policy), allow_nan=False)+"\n")
         print(f"AGENT iteration={iteration} stage={fb['stage']} feasible={fb.get('feasible', False)}", flush=True)
         if best is not None:
             stale = 0 if previous is None or previous-best["latency_pred_us"] >= .05*previous else stale+1
@@ -138,4 +143,4 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
                 frozen_source_lines=sum(bool(line.strip()) for line in best_program.splitlines()) if best_program else None,
                 iterations=len(history), llm_calls=calls, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens,
                 seconds=time.monotonic()-started, history=history, error=failed,
-                confirm=confirmation, pool_size=len(pool))
+                confirm=confirmation, pool_size=len(pool), tune_policy=tune_policy)

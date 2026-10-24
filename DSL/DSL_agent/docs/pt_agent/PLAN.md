@@ -6,6 +6,28 @@
 
 所有设计和修复都按"一类问题"来解决，不针对单个模型或单种写法打补丁。具体包括：前端按 ATen 核心算子映射；提示词的能力部分由注册表自动生成；模式标注放在数据里；kernel 支持一般的算子语义，不依赖特定模型的写法。凡是做不到通用的地方，在 PLAN 和论文中明确写为限制。
 
+## 设计原则：模型输入（用户 2026-10-24 确认，各轮 spec 必须遵守）
+
+1. **明文模型和输入样本是唯一且必需的入口，由用户提供，Agent 不能指定或修改。**
+   - 明文模型是要保持的语义本身，相当于编译器的源程序；Agent 只决定怎么用 FHE 实现它。
+   - 用户决定：模型的结构和权重、客户端预处理（tokenizer、image processor）、输入样本。
+   - Agent 决定：近似方法、阶数和定义域、布局、线性层算法、精调参数，以及在精度要求以内选用哪个候选。
+   - 输入样本同样必需：校准和验证只能用用户的样本，不能编造，也不能用随机输入代替（E4：未见数据可能超出校准范围 36%）。
+   - 内置的开发模型（`models/zoo.py`、`builders.py`）只作为测试样例，必须和用户模型走同一个入口，不能有绕过入口的路径。论文中的未见模型也一样。
+2. **只接受原样的模型文件，不要求用户另写描述文件。**
+   - 模型文件指模型本身：HF 目录、.onnx（含外部数据）、PyTorch 模块。它可以在原框架中运行，是唯一的标准答案。
+   - 描述文件指工具要求用户另写的元数据（形状、预处理、任务、FHE 参数等）。这类信息和模型自带的信息重复，容易不一致：例如归一化抄错不会报错，只会让精度悄悄变差。FHE 专属的参数，比如静态长度、slot、level，用户也不懂。
+   - **模型生态自带的描述**直接使用，因为它们由框架保存模型时生成，与权重一致，是标准答案的一部分。例如 HF 的 config.json、preprocessor_config.json、tokenizer，以及 ONNX 的 graph inputs。
+3. **推断不出的信息分两类处理。**
+   - **模型的事实**（结构、形状、预处理、任务类型）：从模型文件和输入样本推断；推断不出或有歧义时报错，说明缺什么，不猜。
+   - **部署策略**（精度容差、安全参数、哪些步骤放在客户端）：这是 FHE 服务的配置，不是对模型的描述。由系统给出默认值（例如分类的精度下降 ≤ 0.5pp），需要时由系统配置覆盖，不交给模型提供者填写。
+   - FHE 专属的决定由系统自己完成，用户不需要知道，例如静态形状、batch=1、变长序列的长度选择与分档。
+4. **推断出错的保险。**
+   - `info` 阶段完整打印推断结果和默认假设，供用户核对；
+   - 有歧义就报错；
+   - 验证始终以明文模型在用户样本上的输出为标准：即使推断错了，影响的也只是指标的选择，不会放行一个算错的程序。
+5. **论文定位**：这一条作为"零标注输入"写进贡献。用户只提供原样的模型和平时使用的输入样本；对比 Orion 要用其 API 重写模型，FHECrafter 要提供张量计算的规格说明，DaCapo 要手写 DSL。
+
 ## 0. Context
 
 目标：做一个组件化 Agent，输入明文模型，自动生成**性能感知**的 FHE DSL 程序，交给现有 Hecate/Dacapo 编译器（不改编译器）→ RuntimePlan → Poseidon 执行；同时在约 1 个月内产出 DAC 投稿。
@@ -207,7 +229,7 @@ JSON 计算图          ──► 前端 B：现有 model_import_cli（复用）
 | | R8g | **MLP 重跑**（用户 10/23 决定）：用修复后的代码按冻结协议只重跑 MLP 的 Agent（≤8 次 LLM 调用），作为冻结 v1.1 的 MLP 部分；其余 3 个模型不受尾槽缺陷影响，沿用 R8e7。spec：`specs/R8g-mlp-rerun.md` | ✅ 完成（3 次 LLM 调用，累计 48/300）：结果与 R8e7 相同，仍是 minimax、24 次自举、6.29M µs，报告集 top-1 56.05%。第 2 轮 LLM 提出了可行的 cheb 255（8.64M），但它不是新的最好结果，按规则不触发精调；而从 255 降到 127 本可得到 5.29M。这暴露了"只对新的 LLM 最好结果做精调"这条触发规则的局限 | 10/23 |
 | | R8h | **消融：对每个可行候选都精调**（用户 10/23 决定，10/24 改为消融）：精调触发由"只对新的 LLM 最好结果"改为"每个可行的 LLM 候选"（相同程序去重）；按冻结协议重跑 4 个模型。spec：`specs/R8h-tune-all-v11.md` | ✅ 完成，作为消融（用户 10/24 决定冻结仍用 v1，即方案 A）：mlp 24→16、SiLU 160→148，cnn_plain 72→87，ResNet20 去重后选出 325（v1 为 226）。结论：每个候选都精调会得到更激进的程序，在确认集上更容易发散，泛化变差 | 10/24 |
 | | R8h2 | **确认池去重 + 重新确认**：confirm 前按规范化程序文本去重，确认次数按不同程序计数；用 R8h 的候选池重新确认 4 个模型（不调用 LLM）；ResNet20 预先登记"仍失败则重跑一次"。spec：`specs/R8h2-confirm-dedup.md` | ✅ 完成：366/366；去重后重新确认 4 个模型，ResNet20 第 1 轮 LLM 原样程序（325 次自举）通过，attempt-02 未触发；LLM 0 次，累计 63/300。冻结**不**采用 v1.1，tag `pt-agent-freeze-v1` 保持为冻结版本；去重修复保留在代码中 | 10/24 |
-| | R8h3 | **恢复 v1 的默认精调触发规则**：`run_agent` 增加 `tune_policy`，默认 `"new_best"`（v1 行为），`"all"` 为 R8h 消融；后续 R9b 等默认使用 v1 行为。spec：`specs/R8h3-tune-policy.md` | ⏳ 待做 | 10/24 |
+| | R8h3 | **恢复 v1 的默认精调触发规则**：`run_agent` 增加 `tune_policy`，默认 `"new_best"`（v1 行为），`"all"` 为 R8h 消融；后续 R9b 等默认使用 v1 行为。spec：`specs/R8h3-tune-policy.md` | ✅ 完成：373/373；默认 new_best 与 R8e5 四条 trace 的精调触发序列一致；all 为 R8h 消融；LLM 0 次 | 10/24 |
 | | R10 | ~~未见模型所需的 kernel~~ → 并入 §4.B 的 U3/U4（用户 10/23 调整），未见模型评测在 U3/U4 各自完成后做 | ⤳ 并入 U3/U4 | — |
 | | R11 | **M1 第 5 条：真实 CKKS**（40 张图 + 4 组探针），需要可自举的运行时（GPU 原生 Boot 或 gy 的 CPU 回调）；同时标定该平台的延迟表、自举输入上界和精度。**用户 10/23：暂不考虑 GPU**，论文暂以编译器给出的自举数和预测延迟为主指标 | ⏸ 暂缓 | — |
 | H 论文 | — | 数据定稿、作图 → 摘要 → 全文 | ⏳ | 摘要 11/11，全文 11/18 |
@@ -258,7 +280,7 @@ JSON 计算图          ──► 前端 B：现有 model_import_cli（复用）
 
 | 轮次 | 内容 | 验收 | 目标日期 |
 |---|---|---|---|
-| U1 模型描述框架 | `ModelSpec` 注册表：每个模型声明来源，三类都必须支持（用户 10/23 确认）：PyTorch nn.Module（含 torchvision/timm）、HuggingFace Transformers（按配置构建，处理 tokenizer、注意力掩码和固定序列长度）、ONNX（覆盖 TensorFlow/Keras、JAX、scikit-learn 的导出）、权重来源、输入规格（形状、归一化、dtype）、数据适配器（CIFAR、ImageNet 子集、token 序列）、评价指标（分类 top-1；LLM 用下一 token 一致率和 logits 误差）、容差。`validate` 和 `confirm` 的"准确率下降"改为调用指标接口，现有 4 个模型的结果保持逐位不变。前端增加 `torch.export` 路径（与 make_fx 并存），用于 HuggingFace 风格的模块 | 4 个现有模型在新框架下的全部数字逐位不变；HuggingFace 和 ONNX 各至少 2 个模型能导入成 PT-Graph（各含 1 个 CNN 或 MLP、1 个 Transformer；只验证导入、与原框架前向一致和覆盖率统计，不要求能 lowering）；同一个模型分别从 PyTorch 和 ONNX 导入，得到的 PT-Graph 等价 | 10/24–27 |
+| U1 模型输入框架 | **用户只提供平时运行明文模型本来就用的东西**（用户 10/24 修正）：原样的模型（HF 目录或 Hub 名、.onnx 含外部数据、`my_module.py:build_model`），加上平时实际喂给模型的输入样本（HF：原始文本或图片，由仓库自带的 tokenizer/image processor 处理；ONNX：送进 onnxruntime 的张量；PyTorch：送进 module(x) 的张量），标签可选。例如 `pt-agent --model ./vgg16.onnx --inputs ./batch.npz`。不写描述文件，不提供形状、归一化、任务等参数。系统自动推断：HF 读 config.json（结构、层数、hidden、词表、类别数），预处理直接调用仓库的 processor/tokenizer，有 tokenizer 时 embedding 查表在客户端；ONNX 读计算图和 initializers，输入名和类型来自 graph inputs，形状以样本为准；PyTorch 沿用 ATen 前端，形状以样本为准。任务和指标由输出头决定：分类 → top-1，CausalLM → 下一个 token 一致率 + logits 误差，其他 → 输出误差。静态形状由系统决定：batch=1；图像用样本形状；文本按长度分布自动选 L（p95 向上取 8 的倍数），右侧补齐，attention_mask 作为加密输入，causal LM 输出全部位置、由客户端取最后真实位置；截断超过 5% 或补齐浪费过大时自动分档（最多 3 档）。校准、留出、确认、报告全部来自用户样本（校准 10%，其余 1:1:8，固定种子，至少 223 个样本），不用随机输入代替；无标签时用与明文模型的一致率（分类 ≥99.5%，LM ≥99%）。内部的 `ModelInfo` 自动生成，用户看不到；去掉 zoo.py 按模型名的分支，以及 agent_tools/confirm/run.py 中写死的 CIFAR 数据和基于标签的 argmax。导入层只管语义（CORE_OPS 增加 maxpool 等），能否 lowering 由 check 阶段报告 | 现有 4 个模型改走新入口（CIFAR 图像作为样本，回归测试用内部的 legacy_cifar 复现既有划分）后，所有数字逐位不变；HF 和 ONNX 各至少 2 个模型（各含 1 个 CNN 或 MLP、1 个 Transformer）导入成功、与原框架前向一致、推断的任务和形状正确，并给出算子覆盖；同一个模型从 PyTorch 和 ONNX 导入，得到的 PT-Graph 等价；无标签路径至少测 1 个模型 | ✅ 10/24 完成：既有 373 + 新增 46 项测试通过；4 个冻结模型走新入口后全部字段逐项相同（含发给 LLM 的反馈文本）；HF 3 个模型（resnet-18、bert-tiny、tiny Qwen2）与原 forward 最大差 0；ONNX 3 个模型（mnist、squeezenet、bert-tiny 导出）与 onnxruntime 最大差 ≤8e-6；resnet20/mlp 从 PyTorch 和 ONNX 导入等价；无标签路径通过；全部 9 个模型 100% 映射到 CORE_OPS。Qwen 不一致的根因：原地写入的 `aten.copy_` 被跳过，导致掩码丢失了对 attention_mask 的依赖，已通用修复 |
 | U2 多密文布局 | 布局对象改为"张量 → 密文列表"：`MuxLayout` 增加跨密文的通道分块；`FlatLayout` 增加分块（向量切成多个 n 槽块）；新增 `TokenLayout`（每个 token 一行，参考 Qwen 包的 PackedVector）。conv、linear、mean、add、act 的 kernel 支持多输入、多输出密文；代价模型、DAG、depth-dp 复现、张量解释器和 P2 包导出同步支持；单密文是多密文的特例，现有程序发出的运算序列逐字不变 | 现有 7 个程序逐字不变；一个强制拆成 2 个和 4 个密文的 ResNet20 与 Mock、张量解释器一致；编译通过，自举数与代价模型一致 | 10/27–31 |
 | U3 CNN 算子 | depthwise/分组卷积、一般 kernel 大小和步长、一般 avgpool/adaptive avgpool、maxpool（多项式 max，复用 DaCapo HE_Max 的组合 sign 思路）、concat、一般 slice/pad、独立的 batchnorm。用 DaCapo 自带权重（已批准）评测 AlexNet、VGG16、MobileNet、SqueezeNet、ResNet20-relu，与 DaCapo、Orbit 是同一批基准 | 5 个模型能导入、lowering、编译；与张量解释器一致；Agent 在冻结协议下生成，报告自举数和精度 | 11/01–05 |
 | U4 Transformer/LLM 算子 | 密文×明文的 token 矩阵乘（复用 Qwen 包验证过的打包线性层）、密文×密文 matmul（QKᵀ、AV）、softmax（exp 近似、求和、倒数）、LayerNorm/RMSNorm（均值、方差、倒数平方根）、RoPE、SwiGLU 门控乘、causal mask、残差。目标是 1–2 个 Qwen2.5 decoder block（团队包的合成权重）加一个本地训练的小 Transformer | 与张量解释器一致；编译通过；Agent 能为每个 softmax 和 norm 选择近似参数 | 11/06–12（论文中可能只作为示范） |
@@ -435,7 +457,7 @@ coverage 中 `needs_composition` 的节点交给 Agent：Agent 在 PT-DSL 里用
 | 10/26–27 | R8e 精调工具 + 4 个模型的真实运行 → 用户决定冻结（10/27 不变） | Design：Agent 循环（LLM 结构决策 + 搜索精调） |
 | 10/23–24 | R8f/R8f2 张量验证与 flat 尾槽修复 | |
 | 10/24 | S0 编译器流水线验证；R8h/R8h2 精调触发规则消融；R8h3 恢复 v1 默认 | |
-| 10/24–27 | U1 模型描述框架（PyTorch、HuggingFace、ONNX） | Related Work；Evaluation 的实验设置 |
+| 10/24–27 | U1 模型输入框架（原样模型 + 原样输入样本；PyTorch、HuggingFace、ONNX） | Related Work；Evaluation 的实验设置 |
 | 10/28–31 | U2 多密文布局 | Design：布局与 kernel 库 |
 | 11/01–05 | U3 CNN 算子 + 5 个 DaCapo 基准 | Evaluation 的已有结果 |
 | 11/05–10 | S1 DSL 管理模式（复现编译器） | 摘要 v1；Design 增加"两种管理模式" |

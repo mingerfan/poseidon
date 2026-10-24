@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "name": "intake-2.0.1-cpu",
+  "python": "3.10.14",
+  "target": "cp310-linux-aarch64",
+  "base_lock": "python-wheels-aarch64.lock.json",
+  "lock": "python-wheels-intake-pinned-aarch64.lock.json",
+  "requirements": [
+    "transformers>=4.44,<4.45",
+    "tokenizers>=0.19,<0.20",
+    "onnx>=1.16,<1.17",
+    "onnxruntime>=1.18,<1.19",
+    "protobuf>=4.25,<4.26",
+    "huggingface-hub>=0.24,<0.25"
+  ],
+  "index": "https://pypi.org/pypi",
+  "metadata_request_limit": 192,
+  "metadata_response_limit_bytes": 8388608,
+  "metadata_total_limit_bytes": 67108864,
+  "metadata_timeout_seconds": 30,
+  "plan_wall_seconds": 900,
+  "installation_approved": false
+}

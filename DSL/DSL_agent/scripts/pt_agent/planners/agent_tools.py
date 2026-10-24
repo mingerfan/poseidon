@@ -14,6 +14,8 @@ from ..dsl.parser import parse
 from ..dsl.printer import print_program
 from ..dsl.typecheck import check
 from ..intake import Graph
+from ..metrics import compare, passes
+from ..models.info import ModelInfo
 from ..kernels.layout import MuxLayout, unpack_flat, unpack_mux
 from ..lower import LoweringError, decode_outputs, lower, pack_inputs
 from ..placement import PlacementError
@@ -44,17 +46,30 @@ class AgentContext:
     profile: str = "qwen48"
     val_split: str = "test[9000:10000]"
     normalization: tuple = (MEAN, STD)
+    model_info: object = None
+    samples: object = None
+    val_inputs: object = None
 
 
-def build_context(graph, calibration, n_val=1000, *, normalization=(MEAN, STD)) -> AgentContext:
-    images, labels = heldout_set(n_val, normalization=normalization)
-    images = images.reshape((len(images), *graph.tensors[graph.inputs[0]].shape[1:]))
+def build_context(graph, calibration, n_val=1000, *, samples=None, normalization=(MEAN, STD)) -> AgentContext:
+    info = graph if isinstance(graph, ModelInfo) else None
+    if info is not None:
+        graph = info.graph
+        if samples is None:
+            raise ValueError('ModelInfo requires its original sample splits')
+        inputs, labels = samples.get('heldout', n_val)
+        images = inputs[graph.inputs[0]]
+    else:
+        # Compatibility with historical callers and their frozen reader tests.
+        images, labels = heldout_set(n_val, normalization=normalization)
+        images = images.reshape((len(images), *graph.tensors[graph.inputs[0]].shape[1:]))
+        inputs = {graph.inputs[0]: images}
     act_tensors = [node.inputs[0] for node in graph.nodes if node.op == "act"]
     needed = dict.fromkeys(act_tensors, 0.0)
     logits, probes = [], []
     for start in range(0, len(images), VAL_BATCH):
         batch = images[start:start+VAL_BATCH]
-        values = reference_forward(graph, {graph.inputs[0]: batch}, keep=True)
+        values = reference_forward(graph, {name: value[start:start+VAL_BATCH] for name, value in inputs.items()}, keep=True)
         logits.append(values[graph.outputs[0]].copy())
         if start == 0:
             probes = [values[name][:4].copy() for name in act_tensors]
@@ -68,9 +83,13 @@ def build_context(graph, calibration, n_val=1000, *, normalization=(MEAN, STD)) 
     return AgentContext(graph=graph, weights=graph.weights, calibration=calibration,
                         weight_shapes={name: value.shape for name, value in graph.weights.items()},
                         val_images=images, val_exact_logits=exact_logits, val_labels=labels,
-                        val_exact_top1=float(100*np.mean(exact_logits.argmax(axis=1) == labels)),
+                        val_exact_top1=(float(100*np.mean(exact_logits.argmax(axis=1) == labels))
+                                        if labels is not None and (info is None or info.task == 'classification') else None),
                         probe_images=images[:4], probe_act_inputs=probes, needed_margin=needed,
-                        act_tensors=act_tensors, model_name=graph.name, normalization=normalization)
+                        act_tensors=act_tensors, model_name=graph.name, normalization=normalization,
+                        model_info=info, samples=samples, val_inputs=inputs,
+                        val_split=('test[9000:10000]' if info is None or info.split.get('kind') == 'legacy_cifar'
+                                   else 'heldout'))
 
 
 def _unpack(value, layout):
@@ -87,7 +106,9 @@ def _exact_check(program, ctx):
         collected.append(_unpack(value, layout))
 
     backend = MockBackend(16384, batch=4)
-    backend.bind(pack_inputs(program, [ctx.probe_images]))
+    probe_inputs = getattr(ctx, 'val_inputs', None)
+    backend.bind(pack_inputs(program, [probe_inputs[name][:4] for name in ctx.graph.inputs]
+                             if probe_inputs is not None else [ctx.probe_images]))
     values, layouts = lower(program, ctx.weights, backend, act_mode="exact", observer=exact_observer)
     logits = decode_outputs([value.value for value in values], layouts)
     reference = ctx.val_exact_logits[:4]
@@ -139,12 +160,16 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                  obs_min=None, obs_max=None,
                  deg=op.attrs["deg"], method=op.attrs["method"], degrees=op.attrs.get("degrees"),
                  domain=op.attrs["domain"]) for index, op in enumerate(ops)]
+    labels = None if ctx.val_labels is None else ctx.val_labels[:len(images)]
+    info = getattr(ctx, 'model_info', None)
+    labelled_classification = labels is not None and (info is None or info.task == 'classification')
     validation = dict(agree=0, total=len(images), diverged=False, n_diverged=0, diverged_indices=[],
                       images_done=0, worst_acts=[], max_u=0.0,
                       boot_input_max_abs=None if engine == "tensor" else 0.0,
                       boot_input_bound=profile['boot_input_bound'],
-                      top1=0.0, exact_top1=float(100*np.mean(ctx.val_exact_logits[:len(images)].argmax(axis=1)
-                                                          == ctx.val_labels[:len(images)])))
+                      **(dict(top1=0.0, exact_top1=float(100*np.mean(ctx.val_exact_logits[:len(images)].argmax(axis=1)
+                                                          == labels))) if labelled_classification else {}))
+    outputs = np.full_like(ctx.val_exact_logits[:len(images)], np.nan)
     correct = 0
     watch = set(boot_nodes or ())
     noise = (profile['boot_abs_error'], 20261022) if profile['boot_abs_error'] else None
@@ -178,7 +203,10 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                 logits = run_tensor(program, ctx.weights, batch, observer=tensor_observer,
                                     cache=cache, image_id=image_id, batch_start=batch_start)
             else:
-                backend.bind(pack_inputs(program, [batch]))
+                inputs = getattr(ctx, 'val_inputs', None)
+                backend.bind(pack_inputs(program,
+                    [inputs[name][batch_start:batch_start+len(batch)] for name in ctx.graph.inputs]
+                    if inputs is not None else [batch]))
                 values, layouts = lower(program, ctx.weights, backend, observer=observer)
                 logits = decode_outputs([value.value for value in values], layouts)[0]
             if not np.isfinite(logits).all():
@@ -202,9 +230,7 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
         if engine == "mock":
             validation["boot_input_max_abs"] = max(validation["boot_input_max_abs"], boot_max)
         if logits is not None:
-            predictions = logits.argmax(axis=1)
-            validation["agree"] += int(np.sum(predictions == ctx.val_exact_logits[start:start+count].argmax(axis=1)))
-            correct += int(np.sum(predictions == ctx.val_labels[start:start+count]))
+            outputs[start:start+count] = logits
         validation["images_done"] = start+count
 
     for start in range(0, len(images), VAL_BATCH):
@@ -232,10 +258,17 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
     validation["max_u"] = max((row["max_u"] for row in rows), default=0.0)
     validation["rows"] = rows
     incomplete = validation["diverged"] and stop_on_divergence
-    validation["top1"] = None if incomplete else 100.0*correct/len(images)
-    validation["acc_drop_pp"] = None if incomplete else validation["exact_top1"]-validation["top1"]
+    reference = ctx.val_exact_logits[:len(images)]
+    metric_input = (dict(values=reference, task=info.task) if info is not None else reference)
+    if info is not None and info.task == 'causal_lm':
+        metric_input['lengths'] = getattr(ctx, 'val_inputs')['attention_mask'][:len(images)].sum(axis=1).astype(int)
+    measured = compare(metric_input, outputs, labels)
+    validation.update(measured)
+    if incomplete and labelled_classification:
+        validation.update(top1=None, acc_drop_pp=None)
+    threshold = info.threshold if info is not None else {'acc_drop_pp': MAX_ACC_DROP_PP}
     validation["feasible"] = (not validation["diverged"] and validation["max_u"] <= FEASIBLE_MAX_U
-                              and validation["acc_drop_pp"] <= MAX_ACC_DROP_PP
+                              and passes(validation, threshold)
                               and (validation['boot_input_bound'] is None
                                    or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
     if result_key is not None:

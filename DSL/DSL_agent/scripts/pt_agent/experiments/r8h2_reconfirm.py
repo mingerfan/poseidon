@@ -45,7 +45,8 @@ def inside(args):
         run_args.model = args.model
         code = run_inside(run_args)
         report = read(path)
-        report.update(round='R8h2', model=args.model, attempt='attempt-02', generation_attempts=2)
+        report.update(round='R8h2', model=args.model, attempt='attempt-02', generation_attempts=2,
+                      tune_policy=args.tune_policy)
         _write(path, report)
         return code
 
@@ -61,6 +62,7 @@ def inside(args):
         raise RuntimeError('Reconstructed R8h pool or recorded costs differ')
     report = dict(round='R8h2', model=args.model, attempt='attempt-01', complete=False,
         stage='confirm', api_calls=0, retuning=False, generation_attempts=1,
+        tune_policy=args.tune_policy,
         source_case=str(args.source_case), trace_path=str(args.source_case / 'agent_trace.jsonl'),
         val_split=ctx.val_split, confirm_split=confirm_ctx.val_split, test_split='test[0:8000]',
         pool_size=len(candidates), candidates=[asdict(candidate) for candidate in candidates],
@@ -130,7 +132,7 @@ def outer(args):
         models_dir=str(args.models_dir), api_before=before, api_calls=0, api_total=before,
         api_budget=8, api_limit=min(before + 8, 71, 300), resnet20_rerun_triggered=False,
         val_split='test[9000:10000]', confirm_split='test[8000:9000]', test_split='test[0:8000]',
-        max_confirm_evals=6, models={}, seconds=0, error=None)
+        max_confirm_evals=6, models={}, seconds=0, error=None, tune_policy='all')
     path = out / 'REPORT.json'
     recorded = {row['metrics'].get('global_call') for row in load() if row['mode'] == 'llm-call'}
     started = time.monotonic()
@@ -157,7 +159,8 @@ def outer(args):
         entry['attempts'].append(row)
         command = [sys.executable, '-B', '-m', 'pt_agent.tools.nixrun', '--seconds', str(INNER_SECONDS), '--',
             '-m', 'pt_agent.experiments.r8h2_reconfirm', '--inside', '--model', name,
-            '--out', str(case), '--models-dir', str(args.models_dir)]
+            '--out', str(case), '--models-dir', str(args.models_dir),
+            '--tune-policy', result['tune_policy']]
         if number == 1:
             command += ['--source-case', str(Path(old['models'][name]['report_path']).parent)]
         else:
@@ -254,6 +257,7 @@ def main():
     parser.add_argument('--model', choices=ORDER)
     parser.add_argument('--budget-path', type=Path)
     parser.add_argument('--call-limit', type=int)
+    parser.add_argument('--tune-policy', choices=('new_best', 'all'), default='new_best')
     args = parser.parse_args()
     if args.inside:
         required = (args.out, args.model, args.models_dir)
