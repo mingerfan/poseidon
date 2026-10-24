@@ -1,0 +1,86 @@
+[
+  {
+    "min_scale": 32,
+    "strategy": "greedy",
+    "boot_count": 143,
+    "rescale_q": 5111,
+    "modswitch_q": 3194
+  },
+  {
+    "min_scale": 32,
+    "strategy": "depth-dp",
+    "boot_count": 113,
+    "rescale_q": 5112,
+    "modswitch_q": 1976
+  },
+  {
+    "min_scale": 34,
+    "strategy": "greedy",
+    "boot_count": 143,
+    "rescale_q": 5123,
+    "modswitch_q": 3082
+  },
+  {
+    "min_scale": 34,
+    "strategy": "depth-dp",
+    "boot_count": 113,
+    "rescale_q": 5128,
+    "modswitch_q": 1687
+  },
+  {
+    "min_scale": 35,
+    "strategy": "greedy",
+    "boot_count": 153,
+    "rescale_q": 4160,
+    "modswitch_q": 2698
+  },
+  {
+    "min_scale": 35,
+    "strategy": "depth-dp",
+    "boot_count": 93,
+    "rescale_q": 3833,
+    "modswitch_q": 1915
+  },
+  {
+    "min_scale": 36,
+    "strategy": "greedy",
+    "boot_count": 144,
+    "rescale_q": 4587,
+    "modswitch_q": 3182
+  },
+  {
+    "min_scale": 36,
+    "strategy": "depth-dp",
+    "boot_count": 111,
+    "rescale_q": 5184,
+    "modswitch_q": 1815
+  },
+  {
+    "min_scale": 38,
+    "strategy": "greedy",
+    "boot_count": 126,
+    "rescale_q": 4740,
+    "modswitch_q": 3164
+  },
+  {
+    "min_scale": 38,
+    "strategy": "depth-dp",
+    "boot_count": 94,
+    "rescale_q": 3988,
+    "modswitch_q": 1899
+  },
+  {
+    "min_scale": 40,
+    "strategy": "greedy",
+    "boot_count": 128,
+    "rescale_q": 4732,
+    "modswitch_q": 2900
+  },
+  {
+    "min_scale": 40,
+    "strategy": "depth-dp",
+    "boot_count": 93,
+    "rescale_q": 3949,
+    "modswitch_q": 1836
+  }
+]

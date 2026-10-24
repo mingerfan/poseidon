@@ -1,0 +1,147 @@
+{
+  "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/relu-compiler-20261024/coefficient-floor-sweep/34-greedy/logical.mlir",
+  "stage": "unplaced logical CKKS; nominal scales",
+  "physical_anchor": 22,
+  "physical_lower_bound": 4,
+  "levels_per_logical_level": 1,
+  "logical_base": 19,
+  "boot_count": 143,
+  "rescale_q": 5123,
+  "modswitch_q": 3082,
+  "minimum_physical_level": 4,
+  "output_states": [
+    {
+      "components": 2,
+      "scale_log2": 60,
+      "physical_level": 17
+    }
+  ],
+  "operations": {
+    "rotatec": 1709,
+    "encode": 2376,
+    "mulcp": 2987,
+    "rescalec": 5123,
+    "addcc": 3677,
+    "addcp": 229,
+    "mulcc": 513,
+    "relinearize": 513,
+    "modswitchc": 596,
+    "negatec": 76,
+    "bootstrapc": 143
+  },
+  "boot_input_states": [
+    {
+      "level": 4,
+      "scale_log2": 63,
+      "count": 8
+    },
+    {
+      "level": 4,
+      "scale_log2": 64,
+      "count": 26
+    },
+    {
+      "level": 4,
+      "scale_log2": 68,
+      "count": 10
+    },
+    {
+      "level": 4,
+      "scale_log2": 69,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 56,
+      "count": 2
+    },
+    {
+      "level": 5,
+      "scale_log2": 60,
+      "count": 6
+    },
+    {
+      "level": 5,
+      "scale_log2": 61,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 62,
+      "count": 8
+    },
+    {
+      "level": 5,
+      "scale_log2": 63,
+      "count": 2
+    },
+    {
+      "level": 5,
+      "scale_log2": 64,
+      "count": 8
+    },
+    {
+      "level": 5,
+      "scale_log2": 66,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 68,
+      "count": 25
+    },
+    {
+      "level": 5,
+      "scale_log2": 69,
+      "count": 10
+    },
+    {
+      "level": 6,
+      "scale_log2": 46,
+      "count": 8
+    },
+    {
+      "level": 6,
+      "scale_log2": 62,
+      "count": 1
+    },
+    {
+      "level": 9,
+      "scale_log2": 59,
+      "count": 2
+    },
+    {
+      "level": 9,
+      "scale_log2": 60,
+      "count": 6
+    },
+    {
+      "level": 9,
+      "scale_log2": 69,
+      "count": 1
+    },
+    {
+      "level": 11,
+      "scale_log2": 50,
+      "count": 1
+    },
+    {
+      "level": 21,
+      "scale_log2": 60,
+      "count": 8
+    },
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 8
+    }
+  ],
+  "boot_output_states": [
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 143
+    }
+  ],
+  "state_audit_passed": true
+}

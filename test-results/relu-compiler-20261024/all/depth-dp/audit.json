@@ -1,0 +1,82 @@
+{
+  "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/relu-compiler-20261024/all/depth-dp/logical.mlir",
+  "stage": "unplaced logical CKKS; nominal scales",
+  "physical_anchor": 22,
+  "physical_lower_bound": 4,
+  "levels_per_logical_level": 1,
+  "logical_base": 19,
+  "boot_count": 94,
+  "rescale_q": 3754,
+  "modswitch_q": 1989,
+  "minimum_physical_level": 5,
+  "output_states": [
+    {
+      "components": 2,
+      "scale_log2": 45,
+      "physical_level": 18
+    }
+  ],
+  "operations": {
+    "encode": 2284,
+    "rotatec": 1709,
+    "mulcp": 2912,
+    "rescalec": 3754,
+    "addcc": 3677,
+    "addcp": 229,
+    "mulcc": 513,
+    "relinearize": 513,
+    "modswitchc": 560,
+    "negatec": 76,
+    "bootstrapc": 94
+  },
+  "boot_input_states": [
+    {
+      "level": 5,
+      "scale_log2": 61,
+      "count": 19
+    },
+    {
+      "level": 11,
+      "scale_log2": 65,
+      "count": 36
+    },
+    {
+      "level": 12,
+      "scale_log2": 60,
+      "count": 2
+    },
+    {
+      "level": 20,
+      "scale_log2": 60,
+      "count": 1
+    },
+    {
+      "level": 20,
+      "scale_log2": 65,
+      "count": 18
+    },
+    {
+      "level": 21,
+      "scale_log2": 55,
+      "count": 2
+    },
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 16
+    }
+  ],
+  "boot_output_states": [
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 94
+    }
+  ],
+  "state_audit_passed": true,
+  "mode": "all",
+  "strategy": "depth-dp",
+  "multiply_by_two": 0,
+  "multiply_by_one": 137,
+  "logical_sha256": "a8caf94cbfebde27c32aa5991c495c6183acd1b579e73edddf6d31401a473518"
+}

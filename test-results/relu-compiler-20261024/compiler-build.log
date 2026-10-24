@@ -1,0 +1,4 @@
+[1/4] Building CXX object lib/Dialect/Earth/Transforms/CMakeFiles/obj.EarthTransforms.dir/OptimizePolynomialArithmetic.cpp.o
+[2/4] Linking CXX static library lib/libEarthTransforms.a
+[3/4] Building CXX object tools/CMakeFiles/hecate-opt.dir/optimizer.cpp.o
+[4/4] Linking CXX executable bin/hecate-opt

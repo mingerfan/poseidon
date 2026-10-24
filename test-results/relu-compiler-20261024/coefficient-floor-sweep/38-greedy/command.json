@@ -1,0 +1,16 @@
+[
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-relu-20261024/hecate-opt-final",
+  "--dacapo-precompile",
+  "--boot-placement=greedy",
+  "--polynomial-optimizations=all",
+  "--coefficient-min-scale=38",
+  "--coefficient-precision-bits=24",
+  "--ckks-config=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/relu-compiler-20261024/compiler-profile.json",
+  "--waterline=40",
+  "--bootstrap-scale=45",
+  "--mlir-disable-threading",
+  "--mlir-elide-elementsattrs-if-larger=16",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-relu-20261024/traced/ResNet20.mlirbc",
+  "-o",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/relu-compiler-20261024/coefficient-floor-sweep/38-greedy/logical.mlir"
+]

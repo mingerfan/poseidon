@@ -1,0 +1,391 @@
+{
+  "cases": [
+    {
+      "mode": "none",
+      "strategy": "greedy",
+      "returncode": 0,
+      "elapsed_seconds": 0.415758695002296,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 152,
+      "rescale_q": 4856,
+      "modswitch_q": 5453,
+      "multiply_by_two": 209,
+      "multiply_by_one": 481,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 55,
+          "physical_level": 21
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2328,
+        "mulcp": 3465,
+        "rescalec": 4856,
+        "addcc": 3468,
+        "addcp": 229,
+        "modswitchc": 954,
+        "mulcc": 513,
+        "relinearize": 513,
+        "negatec": 76,
+        "bootstrapc": 152
+      }
+    },
+    {
+      "mode": "none",
+      "strategy": "depth-dp",
+      "returncode": 0,
+      "elapsed_seconds": 0.558470343996305,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 113,
+      "rescale_q": 4520,
+      "modswitch_q": 4294,
+      "multiply_by_two": 209,
+      "multiply_by_one": 454,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 45,
+          "physical_level": 18
+        }
+      ],
+      "operations": {
+        "encode": 2297,
+        "rotatec": 1709,
+        "mulcp": 3438,
+        "rescalec": 4520,
+        "addcc": 3468,
+        "addcp": 229,
+        "modswitchc": 932,
+        "mulcc": 513,
+        "relinearize": 513,
+        "negatec": 76,
+        "bootstrapc": 113
+      }
+    },
+    {
+      "mode": "none",
+      "strategy": "optimized",
+      "returncode": 0,
+      "elapsed_seconds": 361.9767960820027,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 57,
+      "rescale_q": 4187,
+      "modswitch_q": 4085,
+      "multiply_by_two": 209,
+      "multiply_by_one": 445,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 65,
+          "physical_level": 20
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2338,
+        "mulcp": 3429,
+        "rescalec": 4187,
+        "addcc": 3468,
+        "addcp": 229,
+        "modswitchc": 924,
+        "mulcc": 513,
+        "relinearize": 513,
+        "negatec": 76,
+        "bootstrapc": 57
+      }
+    },
+    {
+      "mode": "double",
+      "strategy": "greedy",
+      "returncode": 0,
+      "elapsed_seconds": 0.4208266519999597,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 128,
+      "rescale_q": 4732,
+      "modswitch_q": 2900,
+      "multiply_by_two": 0,
+      "multiply_by_one": 284,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 60,
+          "physical_level": 17
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2364,
+        "mulcp": 3059,
+        "rescalec": 4732,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 549,
+        "negatec": 76,
+        "bootstrapc": 128
+      }
+    },
+    {
+      "mode": "double",
+      "strategy": "depth-dp",
+      "returncode": 0,
+      "elapsed_seconds": 0.3624922899980447,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 93,
+      "rescale_q": 3949,
+      "modswitch_q": 1836,
+      "multiply_by_two": 0,
+      "multiply_by_one": 301,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 40,
+          "physical_level": 7
+        }
+      ],
+      "operations": {
+        "encode": 2317,
+        "rotatec": 1709,
+        "mulcp": 3076,
+        "rescalec": 3949,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 541,
+        "negatec": 76,
+        "bootstrapc": 93
+      }
+    },
+    {
+      "mode": "double",
+      "strategy": "optimized",
+      "returncode": 0,
+      "elapsed_seconds": 814.9895742190056,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 37,
+      "rescale_q": 3778,
+      "modswitch_q": 1775,
+      "multiply_by_two": 0,
+      "multiply_by_one": 107,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 40,
+          "physical_level": 7
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2293,
+        "mulcp": 2882,
+        "rescalec": 3778,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 577,
+        "negatec": 76,
+        "bootstrapc": 37
+      }
+    },
+    {
+      "mode": "double-align",
+      "strategy": "greedy",
+      "returncode": 0,
+      "elapsed_seconds": 0.370790641005442,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 128,
+      "rescale_q": 4732,
+      "modswitch_q": 2900,
+      "multiply_by_two": 0,
+      "multiply_by_one": 164,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 60,
+          "physical_level": 17
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2360,
+        "mulcp": 2939,
+        "rescalec": 4732,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 549,
+        "negatec": 76,
+        "bootstrapc": 128
+      }
+    },
+    {
+      "mode": "double-align",
+      "strategy": "depth-dp",
+      "returncode": 0,
+      "elapsed_seconds": 0.3584116540005198,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 93,
+      "rescale_q": 3949,
+      "modswitch_q": 1836,
+      "multiply_by_two": 0,
+      "multiply_by_one": 174,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 40,
+          "physical_level": 7
+        }
+      ],
+      "operations": {
+        "encode": 2314,
+        "rotatec": 1709,
+        "mulcp": 2949,
+        "rescalec": 3949,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 541,
+        "negatec": 76,
+        "bootstrapc": 93
+      }
+    },
+    {
+      "mode": "double-align",
+      "strategy": "optimized",
+      "returncode": 0,
+      "elapsed_seconds": 816.4632422720024,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 37,
+      "rescale_q": 3778,
+      "modswitch_q": 1775,
+      "multiply_by_two": 0,
+      "multiply_by_one": 104,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 40,
+          "physical_level": 7
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2295,
+        "mulcp": 2879,
+        "rescalec": 3778,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 577,
+        "negatec": 76,
+        "bootstrapc": 37
+      }
+    },
+    {
+      "mode": "all",
+      "strategy": "greedy",
+      "returncode": 0,
+      "elapsed_seconds": 0.3463808389933547,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 185,
+      "rescale_q": 4042,
+      "modswitch_q": 3154,
+      "multiply_by_two": 0,
+      "multiply_by_one": 158,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 45,
+          "physical_level": 18
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2366,
+        "mulcp": 2933,
+        "rescalec": 4042,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 605,
+        "negatec": 76,
+        "bootstrapc": 185
+      }
+    },
+    {
+      "mode": "all",
+      "strategy": "depth-dp",
+      "returncode": 0,
+      "elapsed_seconds": 0.5210646769992309,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 94,
+      "rescale_q": 3754,
+      "modswitch_q": 1989,
+      "multiply_by_two": 0,
+      "multiply_by_one": 137,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 45,
+          "physical_level": 18
+        }
+      ],
+      "operations": {
+        "encode": 2284,
+        "rotatec": 1709,
+        "mulcp": 2912,
+        "rescalec": 3754,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 560,
+        "negatec": 76,
+        "bootstrapc": 94
+      }
+    },
+    {
+      "mode": "all",
+      "strategy": "optimized",
+      "returncode": 0,
+      "elapsed_seconds": 873.4109837340002,
+      "compiler_sha256": "c298b9857baf9e2abc5e3a9888857d38181342c0ecae4ae25ee8bef73b1b109b",
+      "boot_count": 38,
+      "rescale_q": 3764,
+      "modswitch_q": 1919,
+      "multiply_by_two": 0,
+      "multiply_by_one": 137,
+      "output_states": [
+        {
+          "components": 2,
+          "scale_log2": 50,
+          "physical_level": 14
+        }
+      ],
+      "operations": {
+        "rotatec": 1709,
+        "encode": 2315,
+        "mulcp": 2912,
+        "rescalec": 3764,
+        "addcc": 3677,
+        "addcp": 229,
+        "mulcc": 513,
+        "relinearize": 513,
+        "modswitchc": 560,
+        "negatec": 76,
+        "bootstrapc": 38
+      }
+    }
+  ],
+  "compiler_tests_passed": 17,
+  "gpu_executed": false,
+  "encrypted_accuracy_validated": false
+}

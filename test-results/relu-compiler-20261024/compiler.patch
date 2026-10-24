@@ -1,0 +1,634 @@
+diff --git a/README.md b/README.md
+index aa3ba9c..74dc00c 100644
+--- a/README.md
++++ b/README.md
+@@ -107,6 +107,10 @@ hc-trace MLP
+ 
+ Runtime zero-pads short constants. Prefix ones/minus-ones remain masks; only full-slot units fold to Upscale/Negate with the encoding scale preserved. This needs parameter-managed functions, not frontend defaults. An Upscale after a single-use ciphertext/plaintext product is absorbed into the plaintext encoding scale; shared products keep their scale. Equal Encode operations share a value through CSE before placement and Waterline. Retrace sources when frontend constant rules change, and rebuild both `hecate-opt` and `HecateFrontend`.
+ 
++`--dacapo`, `--dacapo-precompile` and `--pars` default to `--polynomial-optimizations=double-align`. Before planning, full-slot constants exactly equal to two multiply ciphertexts by self-addition. After scale management, alignment is absorbed into a single-use coefficient product, including through Rescale and ModSwitch chains, when the result remains below the immediate Rescale threshold. Shared intermediates and fixed scale-management operations keep their original state. Existing traces can be reused; Boot schedules and CKKS checkpoints must be regenerated.
++
++For compiler comparisons, `none` retains the original arithmetic and `double` enables only doubling simplification. Experimental `all` also chooses encoding scales for full-slot uniform real coefficients: `--coefficient-min-scale=30` and `--coefficient-precision-bits=24` require at least 30 scale bits and 24 magnitude bits in the scalar encoding. Coefficients which cannot meet that bound below the original waterline retain their original encoding. This is a local scalar rounding constraint, not an end-to-end CKKS accuracy guarantee. Analysis and emission use the same per-operation choice. It can change Boot placement unfavorably and is not enabled by default.
++
+ ## Papers
+ 
+ - DaCapo: Automatic Bootstrapping Management for Efficient Fully Homomorphic Encryption, USENIX Security 2024.
+diff --git a/include/hecate/Dialect/Earth/Transforms/Common.h b/include/hecate/Dialect/Earth/Transforms/Common.h
+index 8a52205..3db18f6 100644
+--- a/include/hecate/Dialect/Earth/Transforms/Common.h
++++ b/include/hecate/Dialect/Earth/Transforms/Common.h
+@@ -24,6 +24,8 @@ void inferTypeForward(hecate::earth::ForwardMgmtInterface sop);
+ // Logical levels count consumed Q. Each threshold Rescale consumes one Q;
+ // Boot starts a new chain with its explicitly selected output scale.
+ int64_t bootstrapQBudget();
++int64_t plaintextScaleForMul(MulOp op, int64_t waterline);
++void prepareThresholdOperands(ForwardMgmtInterface op, int64_t waterline);
+ mlir::Value normalizeScale(mlir::Value value, mlir::OpBuilder &builder,
+                            int64_t waterline, bool replaceUses = false);
+ mlir::FailureOr<mlir::Value>
+diff --git a/include/hecate/Dialect/Earth/Transforms/Passes.td b/include/hecate/Dialect/Earth/Transforms/Passes.td
+index 0ac553e..eed5619 100644
+--- a/include/hecate/Dialect/Earth/Transforms/Passes.td
++++ b/include/hecate/Dialect/Earth/Transforms/Passes.td
+@@ -129,6 +129,23 @@ def RemoveBootstrap : Pass<"remove-bootstrap", "::mlir::func::FuncOp"> {
+     This pass removes manually inserted bootstrapping operation.
+   }];
+ }
++def OptimizePolynomialArithmetic : Pass<"optimize-polynomial-arithmetic", "::mlir::func::FuncOp"> {
++  let summary = "Simplify full-slot doubling and bound scalar coefficient encoding";
++  let options = [
++    Option<"coefficient_min_scale", "coefficient-min-scale", "int64_t", "30",
++           "Minimum scalar encoding scale; zero retains the default scale">,
++    Option<"coefficient_precision_bits", "coefficient-precision-bits", "int64_t", "24",
++           "Minimum magnitude bits in a nonzero scalar encoding coefficient">,
++    Option<"absorb_alignment", "absorb-alignment", "bool", "true",
++           "Absorb later scale alignment into coefficient encodings">
++  ];
++}
++def AbsorbCoefficientScale : Pass<"absorb-coefficient-scale", "::mlir::func::FuncOp"> {
++  let summary = "Absorb alignment through single-use Rescale and ModSwitch chains";
++  let options = [
++    Option<"waterline", "waterline", "int64_t", "40", "Scale management waterline">
++  ];
++}
+ def FlexibleBootstrap : Pass<"flexible-bootstrap", "::mlir::func::FuncOp"> {
+   let summary = "Change bootstrapping target level as required";
+   let description = [{
+diff --git a/lib/Dialect/Earth/Transforms/CMakeLists.txt b/lib/Dialect/Earth/Transforms/CMakeLists.txt
+index ebfb188..f700396 100644
+--- a/lib/Dialect/Earth/Transforms/CMakeLists.txt
++++ b/lib/Dialect/Earth/Transforms/CMakeLists.txt
+@@ -6,6 +6,7 @@ add_mlir_dialect_library(EarthTransforms
+  GreedyBootstrapPlacement.cpp
+  CodeSegmentation.cpp
+  Common.cpp
++ OptimizePolynomialArithmetic.cpp
+  UpscaleBubbling.cpp
+  EarlyModswitch.cpp
+  FlexibleBootstrap.cpp
+diff --git a/lib/Dialect/Earth/Transforms/Common.cpp b/lib/Dialect/Earth/Transforms/Common.cpp
+index 973fc90..2fba0db 100644
+--- a/lib/Dialect/Earth/Transforms/Common.cpp
++++ b/lib/Dialect/Earth/Transforms/Common.cpp
+@@ -10,6 +10,27 @@ int64_t hecate::earth::bootstrapQBudget() {
+          EarthDialect::bootstrapLevelLowerBound;
+ }
+ 
++int64_t hecate::earth::plaintextScaleForMul(MulOp op, int64_t waterline) {
++  if (auto minimum = op->getAttrOfType<IntegerAttr>("coefficient_min_scale"))
++    return std::min(waterline, minimum.getInt());
++  return waterline;
++}
++
++void hecate::earth::prepareThresholdOperands(ForwardMgmtInterface op,
++                                             int64_t waterline) {
++  OpBuilder builder(op);
++  for (auto &operand : op->getOpOperands())
++    if (auto constant = operand.get().getDefiningOp<ConstantOp>();
++        constant && !constant->getResult(0).hasOneUse())
++      operand.set(builder.clone(*constant)->getResult(0));
++  op.processOperandsEVA(waterline);
++  if (auto mul = dyn_cast<MulOp>(op.getOperation()))
++    for (Value operand : mul->getOperands())
++      if (!getScaleType(operand).isCipher())
++        operand.setType(getScaleType(operand).switchScale(
++            plaintextScaleForMul(mul, waterline)));
++}
++
+ Value hecate::earth::normalizeScale(Value value, OpBuilder &builder,
+                                     int64_t waterline, bool replaceUses) {
+   IRRewriter rewriter(builder);
+@@ -43,13 +64,7 @@ FailureOr<Value> hecate::earth::applyThresholdScale(ForwardMgmtInterface op,
+     boot.setTargetLevel(0);
+     boot.setTargetScale(bootstrapScale);
+   } else {
+-    // Encoding belongs to the consumer: sharing one mutable plaintext type
+-    // across differently scaled/leveled consumers changes earlier operands.
+-    for (auto &operand : op->getOpOperands())
+-      if (auto constant = operand.get().getDefiningOp<ConstantOp>();
+-          constant && !constant->getResult(0).hasOneUse())
+-        operand.set(builder.clone(*constant)->getResult(0));
+-    op.processOperandsEVA(waterline);
++    prepareThresholdOperands(op, waterline);
+   }
+   SmallVector<Type> types;
+   auto inference = cast<InferTypeOpInterface>(op.getOperation());
+diff --git a/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp b/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp
+index fea544c..5312a9c 100644
+--- a/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp
++++ b/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp
+@@ -47,6 +47,7 @@ struct DaCapoPlannerPass
+     pm.addNestedPass<func::FuncOp>(hecate::earth::createProactiveRescaling(
+         {waterline, output_val, bootstrap_scale}));
+     pm.addNestedPass<func::FuncOp>(hecate::earth::createEarlyModswitch());
++    pm.addNestedPass<func::FuncOp>(hecate::earth::createAbsorbCoefficientScale({waterline}));
+     pm.addPass(createCanonicalizerPass());
+     pm.addPass(createCSEPass());
+     pm.addNestedPass<func::FuncOp>(hecate::earth::createLatencyEstimator());
+diff --git a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+index acfbe66..2ff713c 100644
+--- a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
++++ b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+@@ -192,7 +192,7 @@ struct GreedyBootstrapPlacementPass
+             }
+             if (first) { valid = false; break; }
+             if (auto mul = dyn_cast<MulOp>(op)) {
+-              if (mul.isSingle()) result.scale += waterline;
++              if (mul.isSingle()) result.scale += plaintextScaleForMul(mul, waterline);
+               while (result.scale >= waterline + factor) {
+                 result.scale -= factor;
+                 ++result.level;
+@@ -272,7 +272,7 @@ struct GreedyBootstrapPlacementPass
+             if (type.isCipher()) {
+               level = std::max(level, static_cast<int64_t>(type.getLevel()));
+               scale += type.getScale();
+-            } else scale += waterline;
++            } else scale += plaintextScaleForMul(cast<MulOp>(op), waterline);
+           }
+           return level + std::max<int64_t>(0, (scale - waterline) / factor);
+         };
+@@ -295,14 +295,10 @@ struct GreedyBootstrapPlacementPass
+ 
+       for (auto [index, logical] : llvm::enumerate(logicalOperands)) {
+         auto value = resolve(logical);
+-        // A plaintext's encoding scale/level is local to its consumer.
+-        if (auto constant = value.getDefiningOp<ConstantOp>();
+-            constant && !value.hasOneUse())
+-          value = builder.clone(*constant.getOperation())->getResult(0);
+         op->setOperand(index, value);
+       }
+       if (auto forward = dyn_cast<ForwardMgmtInterface>(op)) {
+-        forward.processOperandsEVA(waterline);
++        prepareThresholdOperands(forward, waterline);
+         auto inference = cast<InferTypeOpInterface>(op);
+         SmallVector<Type> types;
+         if (failed(inference.inferReturnTypes(
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index 788bff5..8bd6fd5 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -1,5 +1,11 @@
+ find_package(Python3 REQUIRED COMPONENTS Interpreter)
+ 
++add_test(NAME DacapoPolynomialArithmetic
++  COMMAND ${Python3_EXECUTABLE}
++          ${CMAKE_CURRENT_SOURCE_DIR}/runtime-plan/check-polynomial-arithmetic.py
++          --hecate-opt $<TARGET_FILE:hecate-opt>
++          --source-dir ${PROJECT_SOURCE_DIR})
++
+ add_test(NAME DacapoThresholdGraphs
+   COMMAND ${Python3_EXECUTABLE}
+           ${CMAKE_CURRENT_SOURCE_DIR}/runtime-plan/check-threshold-graphs.py
+diff --git a/tools/optimizer.cpp b/tools/optimizer.cpp
+index 161da2f..f6ed571 100644
+--- a/tools/optimizer.cpp
++++ b/tools/optimizer.cpp
+@@ -212,6 +212,20 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+       "bootstrap-scale", cl::desc("Greedy/depth-DP Boot input/output scale; zero uses the legacy scale"),
+       cl::init(0)};
+ 
++  enum class PolynomialOptimization { None, Double, DoubleAlign, All };
++  static cl::opt<PolynomialOptimization> polynomial_optimization{
++      "polynomial-optimizations", cl::desc("Scalar polynomial arithmetic optimizations"),
++      cl::values(
++          clEnumValN(PolynomialOptimization::None, "none", "Retain original arithmetic"),
++          clEnumValN(PolynomialOptimization::Double, "double", "Replace full-slot multiply by two with addition"),
++          clEnumValN(PolynomialOptimization::DoubleAlign, "double-align", "Also absorb coefficient scale alignment"),
++          clEnumValN(PolynomialOptimization::All, "all", "Also select scalar encoding scales with precision bounds")),
++      cl::init(PolynomialOptimization::DoubleAlign)};
++  static cl::opt<int64_t> coefficient_min_scale{
++      "coefficient-min-scale", cl::desc("Minimum scalar coefficient encoding scale"), cl::init(30)};
++  static cl::opt<int64_t> coefficient_precision_bits{
++      "coefficient-precision-bits", cl::desc("Minimum nonzero scalar encoding magnitude bits"), cl::init(24)};
++
+   static cl::opt<int64_t> output_val{
+       "output-val", cl::desc("Output value upper bound  of scale management"),
+       cl::init(10)};
+@@ -578,7 +592,18 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+         addRuntimePlanExport(pm, (std::filesystem::path(dir) / stem).string());
+       });
+ 
+-  auto addDaCapoPrecompile = [&](OpPassManager &pm) {
++  auto addPolynomialOptimization = [&](OpPassManager &pm) {
++    if (polynomial_optimization == PolynomialOptimization::None)
++      return;
++    hecate::earth::OptimizePolynomialArithmeticOptions options;
++    options.coefficient_min_scale =
++        polynomial_optimization == PolynomialOptimization::All ? coefficient_min_scale.getValue() : 0;
++    options.coefficient_precision_bits = coefficient_precision_bits;
++    options.absorb_alignment = polynomial_optimization != PolynomialOptimization::Double;
++    pm.addNestedPass<func::FuncOp>(hecate::earth::createOptimizePolynomialArithmetic(options));
++  };
++
++  auto addDaCapoPrecompile = [&, addPolynomialOptimization](OpPassManager &pm) {
+     std::string dir;
+     std::string stem;
+     if (outputFilename != "-") {
+@@ -586,10 +611,10 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+       stem = outputName.stem();
+       dir = outputName.parent_path();
+     }
++    pm.addNestedPass<func::FuncOp>(hecate::earth::createRemoveBootstrap());
++    addPolynomialOptimization(pm);
+     if (enable_check_smu)
+       pm.addPass(hecate::earth::createSMUChecker());
+-
+-    pm.addNestedPass<func::FuncOp>(hecate::earth::createRemoveBootstrap());
+     if (bootstrap_strategy != BootstrapStrategy::Optimized) {
+       pm.addNestedPass<func::FuncOp>(
+           hecate::earth::createGreedyBootstrapPlacement(
+@@ -610,6 +635,7 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+     /* pm.addNestedPass<func::FuncOp>( */
+     /*     hecate::earth::createSNRRescaling({waterline, output_val})); */
+     pm.addNestedPass<func::FuncOp>(hecate::earth::createEarlyModswitch());
++    pm.addNestedPass<func::FuncOp>(hecate::earth::createAbsorbCoefficientScale({waterline}));
+     pm.addPass(mlir::createCanonicalizerPass());
+     pm.addPass(mlir::createCSEPass());
+ 
+@@ -665,7 +691,7 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+       });
+   PassPipelineRegistration<>(
+       "pars", "Perform Scale Management on bootstrapped models",
+-      [&, addRuntimePlanExport](OpPassManager &pm) {
++      [&, addRuntimePlanExport, addPolynomialOptimization](OpPassManager &pm) {
+         std::string dir;
+         std::string stem;
+         if (outputFilename != "-") {
+@@ -673,12 +699,14 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+           stem = outputName.stem();
+           dir = outputName.parent_path();
+         }
++        addPolynomialOptimization(pm);
+         if (enable_check_smu)
+           pm.addPass(hecate::earth::createSMUChecker());
+ 
+         pm.addNestedPass<func::FuncOp>(hecate::earth::createProactiveRescaling(
+             {waterline, output_val, bootstrap_scale}));
+         pm.addNestedPass<func::FuncOp>(hecate::earth::createEarlyModswitch());
++        pm.addNestedPass<func::FuncOp>(hecate::earth::createAbsorbCoefficientScale({waterline}));
+ 
+         if (enable_check_smu)
+           pm.addPass(hecate::earth::createSMUChecker());
+diff --git a/lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp b/lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp
+new file mode 100644
+index 0000000..695778b
+--- /dev/null
++++ b/lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp
+@@ -0,0 +1,156 @@
++#include "hecate/Dialect/Earth/Transforms/Common.h"
++#include "hecate/Dialect/Earth/Transforms/Passes.h"
++#include "mlir/IR/PatternMatch.h"
++#include "mlir/Interfaces/SideEffectInterfaces.h"
++#include <algorithm>
++#include <cmath>
++
++namespace hecate::earth {
++#define GEN_PASS_DEF_OPTIMIZEPOLYNOMIALARITHMETIC
++#define GEN_PASS_DEF_ABSORBCOEFFICIENTSCALE
++#include "hecate/Dialect/Earth/Transforms/Passes.h.inc"
++} // namespace hecate::earth
++
++using namespace mlir;
++using namespace hecate::earth;
++
++namespace {
++struct OptimizePolynomialArithmeticPass
++    : hecate::earth::impl::OptimizePolynomialArithmeticBase<
++          OptimizePolynomialArithmeticPass> {
++  OptimizePolynomialArithmeticPass() = default;
++  OptimizePolynomialArithmeticPass(
++      OptimizePolynomialArithmeticOptions options) {
++    coefficient_min_scale = options.coefficient_min_scale;
++    coefficient_precision_bits = options.coefficient_precision_bits;
++    absorb_alignment = options.absorb_alignment;
++  }
++
++  void runOnOperation() override {
++    auto func = getOperation();
++    if (func.isExternal() || func->hasAttr("init_level"))
++      return;
++    if (coefficient_min_scale < 0 || coefficient_precision_bits <= 0) {
++      func.emitError("invalid coefficient encoding precision limits");
++      return signalPassFailure();
++    }
++    if (absorb_alignment)
++      func->setAttr("absorb_coefficient_scale",
++                    UnitAttr::get(func.getContext()));
++    IRRewriter rewriter(func.getContext());
++    func.walk([&](MulOp mul) {
++      if (mul->hasAttr("sm_fixed"))
++        return;
++      Value cipher, plain;
++      for (Value operand : mul->getOperands()) {
++        if (getScaleType(operand).isCipher())
++          cipher = operand;
++        else
++          plain = operand;
++      }
++      if (!cipher || !plain)
++        return;
++      auto constant = plain.getDefiningOp<ConstantOp>();
++      if (!constant || constant->hasAttr("sm_fixed"))
++        return;
++      auto payload = dyn_cast<DenseFPElementsAttr>(constant.getValue());
++      // Runtime zero-pads a short payload. It must never become a full-slot
++      // doubling, nor use the scalar encoding error bound below.
++      if (!payload || !payload.isSplat() ||
++          payload.getNumElements() != EarthDialect::polynomialDegree / 2)
++        return;
++      double coefficient = payload.getSplatValue<APFloat>().convertToDouble();
++      if (!std::isfinite(coefficient))
++        return;
++      if (coefficient == 2.0 && getScaleType(cipher).getScale() == 0 &&
++          getScaleType(plain).getScale() == 0) {
++        rewriter.setInsertionPoint(mul);
++        rewriter.replaceOpWithNewOp<AddOp>(mul, cipher, cipher);
++        return;
++      }
++      if (!coefficient_min_scale || coefficient == 0 ||
++          std::abs(coefficient) == 1)
++        return;
++      // For a uniform real slot constant the only nonzero encoding
++      // coefficient is c*2^s. Require at least precision_bits magnitude bits.
++      // This is a local encoding bound, not an end-to-end CKKS error guarantee.
++      int64_t minimum = std::max<int64_t>(
++          coefficient_min_scale, std::ceil(coefficient_precision_bits -
++                                           std::log2(std::abs(coefficient))));
++      mul->setAttr("coefficient_min_scale",
++                   rewriter.getI64IntegerAttr(minimum));
++    });
++    for (auto &op : llvm::make_early_inc_range(llvm::reverse(func.front())))
++      if (isOpTriviallyDead(&op))
++        op.erase();
++  }
++};
++
++struct AbsorbCoefficientScalePass
++    : hecate::earth::impl::AbsorbCoefficientScaleBase<
++          AbsorbCoefficientScalePass> {
++  AbsorbCoefficientScalePass() = default;
++  AbsorbCoefficientScalePass(AbsorbCoefficientScaleOptions options) {
++    waterline = options.waterline;
++  }
++  void runOnOperation() override {
++    auto func = getOperation();
++    if (!func->hasAttr("absorb_coefficient_scale"))
++      return;
++    IRRewriter rewriter(func.getContext());
++    func.walk([&](UpscaleOp upscale) {
++      if (upscale->hasAttr("sm_fixed") || upscale.getUpFactor() <= 0)
++        return;
++      Value source = upscale.getValue();
++      SmallVector<Operation *> chain;
++      while (auto *op = source.getDefiningOp()) {
++        if (!isa<RescaleOp, ModswitchOp>(op))
++          break;
++        if (!source.hasOneUse() || op->hasAttr("sm_fixed"))
++          return;
++        chain.push_back(op);
++        source = op->getOperand(0);
++      }
++      auto mul = source.getDefiningOp<MulOp>();
++      if (!mul || !source.hasOneUse() || mul->hasAttr("sm_fixed"))
++        return;
++      unsigned index = getScaleType(mul.getLhs()).isCipher() ? 1 : 0;
++      Value plain = mul->getOperand(index), payloadSource = plain;
++      // EarlyModswitch can leave level-only wrappers around the coefficient.
++      // Clone its payload at the effective consumer level, without changing
++      // that shared wrapper or its other users.
++      while (auto drop = payloadSource.getDefiningOp<ModswitchOp>()) {
++        if (drop->hasAttr("sm_fixed"))
++          return;
++        payloadSource = drop.getValue();
++      }
++      auto constant = payloadSource.getDefiningOp<ConstantOp>();
++      if (!constant || constant->hasAttr("sm_fixed") ||
++          !getScaleType(mul->getOperand(1 - index)).isCipher())
++        return;
++      int64_t increase = upscale.getUpFactor();
++      // Raising a normalized result below the threshold preserves exactly the
++      // original number of immediate Rescales. Do not silently defer a drop.
++      if (getScaleType(upscale.getResult()).getScale() >=
++          waterline + EarthDialect::rescalingFactor)
++        return;
++      rewriter.setInsertionPoint(mul);
++      auto copy = rewriter.create<ConstantOp>(
++          constant.getLoc(),
++          getScaleType(plain).switchScale(getScaleType(plain).getScale() +
++                                          increase),
++          constant.getValue(), constant.getRmsVar());
++      mul->setOperand(index, copy);
++      Value product = mul.getResult();
++      product.setType(getScaleType(product).switchScale(
++          getScaleType(product).getScale() + increase));
++      for (Operation *op : chain) {
++        Value result = op->getResult(0);
++        result.setType(getScaleType(result).switchScale(
++            getScaleType(result).getScale() + increase));
++      }
++      rewriter.replaceOp(upscale, upscale.getValue());
++    });
++  }
++};
++} // namespace
+diff --git a/test/runtime-plan/check-polynomial-arithmetic.py b/test/runtime-plan/check-polynomial-arithmetic.py
+new file mode 100644
+index 0000000..21db50e
+--- /dev/null
++++ b/test/runtime-plan/check-polynomial-arithmetic.py
+@@ -0,0 +1,195 @@
++#!/usr/bin/env python3
++"""Check scalar rewrites, masks, shared results and managed scale semantics."""
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++import re
++import runpy
++import subprocess
++import tempfile
++
++CT = 'tensor<8x!earth.ci<0 * 0>>'
++PT = 'tensor<8x!earth.pl<0 * 0>>'
++
++
++def constant(name, value, length=8):
++    return (f'%{name} = "earth.constant"() {{value = dense<{value}> : tensor<{length}xf64>, '
++            f'rms_var = 1.0 : f64}} : () -> {PT}')
++
++
++def mul(name, left, right, plain=False, swap=False):
++    lt, rt = CT, PT if plain else CT
++    if swap: left, right, lt, rt = right, left, rt, lt
++    return f'%{name} = "earth.mul"(%{left}, %{right}) : ({lt}, {rt}) -> {CT}'
++
++
++def source(lines, outputs):
++    types = ', '.join([CT]*len(outputs))
++    return (f'module {{ func.func @polynomial(%x: {CT}) -> ({types}) {{\n' +
++            '\n'.join(lines) + '\nreturn ' + ', '.join('%'+v for v in outputs) +
++            f' : {types}\n}}}}\n')
++
++
++def replay(ir):
++    # This checks scaled coefficient semantics with exact 2^30 drops and ideal
++    # Boot. It does not simulate encrypted rounding/noise or claim GPU accuracy.
++    values = {'%arg0': [v*2**40 for v in [-.4,-.3,-.2,-.1,.1,.2,.3,.4]]}
++    types = {'%arg0': (2, 40, 19)}
++    kinds, payloads = {}, {}
++    counts = dict(boots=0, rescale_q=0, unit_muls=0, double_muls=0)
++    for line in ir.splitlines():
++        m = re.search(r'(%\w+) = "ckks\.(\w+)"\(([^)]*)\)', line)
++        if not m: continue
++        name, kind, inputs = m.groups()
++        inputs = re.findall(r'%\w+', inputs)
++        ts = [tuple(map(int, t)) for t in re.findall(r'!ckks.poly<(\d+) \* (\d+) \* (\d+)>', line)]
++        ty = ts[-1]
++        if kind == 'encode':
++            payload = re.search(r'payload = dense<([^>]+)>', line)[1]
++            if payload.startswith('['):
++                array = [float(v) for v in payload.strip('[]').split(',')]
++            else:
++                length = int(re.search(r'dense<[^>]+> : tensor<(\d+)xf64>', line)[1])
++                array = [float(payload)]*length
++            if len(array)==8 and len(set(array))==1 and array[0] not in (0,1,-1) and ty[1]<40:
++                assert ty[1]>=30 and ty[1]+math.log2(abs(array[0]))>=24, (array,ty)
++            payloads[name] = array
++            result = [v*2**ty[1] for v in array+[0]*(8-len(array))]
++        else:
++            data = [values[v] for v in inputs]
++            before = [types[v] for v in inputs]
++            if kind in ('mulcp','mulcc'):
++                assert before[0][2]==before[1][2]==ty[2]
++                assert ty[1]==before[0][1]+before[1][1]
++                result = [a*b for a,b in zip(*data)]
++                if kind=='mulcp':
++                    p=payloads.get(inputs[1],[])
++                    counts['unit_muls'] += p==[1]*8
++                    counts['double_muls'] += p==[2]*8
++            elif kind in ('addcc','addcp'):
++                assert before[0][1:]==before[1][1:]==ty[1:], line
++                result = [a+b for a,b in zip(*data)]
++            elif kind=='rescalec':
++                assert before[0][1]>=70 and ty[1]==before[0][1]-30
++                assert ty[2]==before[0][2]-1
++                result = [v/2**30 for v in data[0]]
++                counts['rescale_q']+=1
++            elif kind=='bootstrapc':
++                assert ty[1:]==(45,19)
++                result=[v*2**(45-before[0][1]) for v in data[0]]
++                counts['boots']+=1
++            elif kind in ('modswitchc','relinearize'):
++                assert ty[1]==before[0][1]
++                result=data[0]
++            elif kind=='negatec': result=[-v for v in data[0]]
++            else: raise AssertionError(kind)
++        values[name]=result; types[name]=ty; kinds[name]=kind
++    ret=next(l for l in ir.splitlines() if l.strip().startswith('return '))
++    outputs=re.findall(r'%\w+',ret.split(':')[0])
++    return [[v/2**types[o][1] for v in values[o]] for o in outputs], counts
++
++
++def main():
++    p=argparse.ArgumentParser();p.add_argument('--hecate-opt',type=Path,required=True)
++    p.add_argument('--source-dir',type=Path,required=True);a=p.parse_args()
++    with tempfile.TemporaryDirectory(prefix='polynomial-arithmetic-') as directory:
++        root=Path(directory)
++        config=json.loads((a.source_dir/'config.json').read_text())
++        config.update(polynomialDegree=16,rescalingFactor=30,levelLowerBound=1,
++                      levelUpperBound=19,bootstrapLevelLowerBound=1,bootstrapLevelUpperBound=19)
++        profile=root/'profile.json';profile.write_text(json.dumps(config))
++        def compile(text,mode,strategy='greedy',pipeline=None):
++            path=root/'input.mlir';out=root/'output.mlir';path.write_text(text)
++            command=[str(a.hecate_opt),f'--ckks-config={profile}',
++                     f'--polynomial-optimizations={mode}']
++            command += ([f'--pass-pipeline={pipeline}'] if pipeline else
++                        ['--dacapo-precompile',f'--boot-placement={strategy}',
++                         '--waterline=40','--bootstrap-scale=45'])
++            r=subprocess.run([*command,str(path),'-o',str(out)],text=True,capture_output=True)
++            assert r.returncode==0,r.stderr
++            return out.read_text()
++        cases=[]
++        for coefficient,length,swap in [('2.0',8,False),('2.0',8,True),
++                                         ('2.0',3,False),('2.000000000000001',8,False),
++                                         ('[2.,2.,0.,2.,2.,2.,2.,2.]',8,False)]:
++            lines=[constant('p',coefficient,length),mul('d','x','p',True,swap),mul('out','d','x')]
++            cases.append((source(lines,['out']),coefficient=='2.0' and length==8))
++        # Different source scales/levels force alignment after a real Rescale.
++        for shared in (False,True):
++            lines=[constant('p','0.125'),constant('q','0.3'),mul('square','x','x'),
++                   mul('a','x','p',True),mul('b','square','q',True),
++                   f'%sum = "earth.add"(%a,%b) : ({CT},{CT}) -> {CT}']
++            cases.append((source(lines,['sum','a'] if shared else ['sum']),False))
++        lines=[constant('p','0.000000000931322574615478515625'),mul('out','x','p',True)]
++        cases.append((source(lines,['out']),False))
++        # A scalar encoding choice must agree in segment simulation and final
++        # emission after Boot changes the running scale from 40 to 45.
++        lines=[constant('p','1.01')]
++        previous='x'
++        for i in range(24):
++            name=f'chain{i}';lines.append(mul(name,previous,'p',True));previous=name
++        cases.append((source(lines,[previous]),False))
++        for text,doubling in cases:
++            for strategy in ['greedy','depth-dp','optimized']:
++                baseline,old=replay(compile(text,'none',strategy))
++                for mode in ['double','double-align','all']:
++                    actual,counts=replay(compile(text,mode,strategy))
++                    assert len(actual)==len(baseline)
++                    for got,want in zip(actual,baseline):
++                        assert all(math.isclose(x,y,rel_tol=1e-12,abs_tol=1e-12) for x,y in zip(got,want))
++                    if doubling:
++                        assert old['double_muls']==1 and counts['double_muls']==0
++                        assert counts['rescale_q']<old['rescale_q']
++        alignment=cases[5][0]
++        _,before=replay(compile(alignment,'double'))
++        _,after=replay(compile(alignment,'double-align'))
++        assert after['unit_muls']<before['unit_muls']
++        managed=source([constant('p','2.0'),mul('out','x','p',True)],['out'])
++        managed=managed.replace('-> ('+CT+') {','-> ('+CT+') attributes {init_level = 19 : i64} {')
++        ir=compile(managed,'all',pipeline='builtin.module(func.func(optimize-polynomial-arithmetic))')
++        assert '"earth.mul"' in ir and '"earth.add"' not in ir
++        # Exercise real physical-scale propagation and RuntimePlan export too;
++        # powers of two in the logical replay alone cannot catch prime drift.
++        helpers=runpy.run_path(str(a.source_dir/'test/runtime-plan/check-threshold-graphs.py'))
++        graph=helpers['Graph']()
++        square=graph.op('mul','x','x')
++        left=graph.op('mul','x','p');right=graph.op('mul',square,'p')
++        graph.outputs=[graph.op('add',left,right),left]
++        path=root/'physical.mlir'
++        path.write_text(graph.source().replace('tensor<1xf64>','tensor<8xf64>'))
++        spec=json.loads((a.source_dir/'test/runtime-plan/lazy-physical-level-operator-spec.json').read_text())
++        for entry in spec['operators'].values():entry.update(supported=True,latency_us_by_level=[10]*46)
++        spec['context']['default_scale_log2']=40
++        spec['context']['rns_moduli']=[(1<<30)-(i+1)*32768+1 for i in range(50)]
++        spec['rescale_mode']='native'
++        spec['boot_profiles']=[dict(profile_id='polynomial',implementation='native',
++            input_level_min=4,input_level_max=49,input_components=2,output_level=22,
++            output_scale_log2=45,output_components=2,latency_us_by_input_level=[85000]*46,
++            noise_by_input_level=None,host_requirements=dict(needs_secret_key=False,needs_host_compute=False))]
++        operator=root/'spec.json';operator.write_text(json.dumps(spec))
++        for mode in ['none','double-align','all']:
++            for strategy in ['greedy','depth-dp','optimized']:
++                out=root/f'physical-{mode}-{strategy}.mlir'
++                cmd=[str(a.hecate_opt),'--dacapo',f'--boot-placement={strategy}',
++                     f'--polynomial-optimizations={mode}',f'--ckks-config={profile}',
++                     '--waterline=40','--bootstrap-scale=45','--runtime-plan-format=json',
++                     '--runtime-plan-memory=true','--runtime-plan-memory-reuse=true',
++                     '--runtime-plan-boot-profile=polynomial','--runtime-plan-boot-implementation=native',
++                     f'--runtime-plan-physical-level-operator-spec-path={operator}',
++                     '--runtime-plan-levels-per-logical-level=1','--runtime-plan-device-counts=1',
++                     '--runtime-plan-device-count=1',f'--runtime-plan-operator-spec-path={operator}',
++                     '--runtime-plan-target-id=lazy-physical-level-test',
++                     '--runtime-plan-context-id=lazy-physical-level-test',
++                     '--runtime-plan-operator-spec-id=lazy-physical-level-test-v1',
++                     '--runtime-plan-operator-spec-version=1','--runtime-plan-operator-spec-sha256=sha256:'+
++                     hashlib.sha256(operator.read_bytes()).hexdigest(),str(path),'-o',str(out)]
++                r=subprocess.run(cmd,text=True,capture_output=True)
++                assert r.returncode==0,r.stderr
++                plan=json.loads(out.with_suffix('.graph.runtime-plan.json').read_text())
++                helpers['check_plan'](plan,out.read_text(),graph,spec,0)
++        print('Scalar arithmetic: 3 strategies x 4 modes, masks, shared values, precision and managed IR passed')
++
++
++if __name__=='__main__':main()

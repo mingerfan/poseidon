@@ -1,0 +1,162 @@
+{
+  "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/relu-compiler-20261024/coefficient-floor-sweep/38-greedy/logical.mlir",
+  "stage": "unplaced logical CKKS; nominal scales",
+  "physical_anchor": 22,
+  "physical_lower_bound": 4,
+  "levels_per_logical_level": 1,
+  "logical_base": 19,
+  "boot_count": 126,
+  "rescale_q": 4740,
+  "modswitch_q": 3164,
+  "minimum_physical_level": 4,
+  "output_states": [
+    {
+      "components": 2,
+      "scale_log2": 60,
+      "physical_level": 17
+    }
+  ],
+  "operations": {
+    "rotatec": 1709,
+    "encode": 2372,
+    "mulcp": 2944,
+    "rescalec": 4740,
+    "addcc": 3677,
+    "addcp": 229,
+    "mulcc": 513,
+    "relinearize": 513,
+    "modswitchc": 628,
+    "negatec": 76,
+    "bootstrapc": 126
+  },
+  "boot_input_states": [
+    {
+      "level": 4,
+      "scale_log2": 42,
+      "count": 8
+    },
+    {
+      "level": 4,
+      "scale_log2": 46,
+      "count": 8
+    },
+    {
+      "level": 4,
+      "scale_log2": 51,
+      "count": 1
+    },
+    {
+      "level": 4,
+      "scale_log2": 60,
+      "count": 19
+    },
+    {
+      "level": 4,
+      "scale_log2": 63,
+      "count": 2
+    },
+    {
+      "level": 4,
+      "scale_log2": 64,
+      "count": 8
+    },
+    {
+      "level": 5,
+      "scale_log2": 46,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 47,
+      "count": 8
+    },
+    {
+      "level": 5,
+      "scale_log2": 51,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 52,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 60,
+      "count": 2
+    },
+    {
+      "level": 5,
+      "scale_log2": 63,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 64,
+      "count": 9
+    },
+    {
+      "level": 5,
+      "scale_log2": 65,
+      "count": 10
+    },
+    {
+      "level": 5,
+      "scale_log2": 68,
+      "count": 16
+    },
+    {
+      "level": 5,
+      "scale_log2": 69,
+      "count": 8
+    },
+    {
+      "level": 6,
+      "scale_log2": 64,
+      "count": 2
+    },
+    {
+      "level": 7,
+      "scale_log2": 62,
+      "count": 8
+    },
+    {
+      "level": 8,
+      "scale_log2": 43,
+      "count": 1
+    },
+    {
+      "level": 8,
+      "scale_log2": 62,
+      "count": 1
+    },
+    {
+      "level": 9,
+      "scale_log2": 63,
+      "count": 8
+    },
+    {
+      "level": 11,
+      "scale_log2": 53,
+      "count": 1
+    },
+    {
+      "level": 21,
+      "scale_log2": 60,
+      "count": 1
+    },
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 1
+    }
+  ],
+  "boot_output_states": [
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 126
+    }
+  ],
+  "state_audit_passed": true
+}

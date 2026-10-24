@@ -1,0 +1,28 @@
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 0.4721 seconds
+
+  ----Wall Time----  ----Name----
+    0.2250 ( 47.7%)  Parser
+    0.0772 ( 16.4%)  'func.func' Pipeline
+    0.0054 (  1.1%)    RemoveBootstrap
+    0.0475 ( 10.1%)    GreedyBootstrapPlacement
+    0.0146 (  3.1%)    EarlyModswitch
+    0.0098 (  2.1%)    AbsorbCoefficientScale
+    0.0364 (  7.7%)  Canonicalizer
+    0.0208 (  4.4%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0044 (  0.9%)  CSE
+    0.0086 (  1.8%)  Canonicalizer
+    0.0648 ( 13.7%)  'func.func' Pipeline
+    0.0273 (  5.8%)    EarthToCKKSConversion
+    0.0118 (  2.5%)    UpscaleToMulcpConversion
+    0.0104 (  2.2%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0152 (  3.2%)    Canonicalizer
+    0.0322 (  6.8%)  Output
+    0.0018 (  0.4%)  Rest
+    0.4721 (100.0%)  Total
+Depth-DP bootstrap boundaries: 57
+Number of Bootstrapping: 113

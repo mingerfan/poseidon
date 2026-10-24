@@ -1,0 +1,112 @@
+{
+  "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/relu-compiler-20261024/coefficient-floor-sweep/34-depth-dp/logical.mlir",
+  "stage": "unplaced logical CKKS; nominal scales",
+  "physical_anchor": 22,
+  "physical_lower_bound": 4,
+  "levels_per_logical_level": 1,
+  "logical_base": 19,
+  "boot_count": 113,
+  "rescale_q": 5128,
+  "modswitch_q": 1687,
+  "minimum_physical_level": 4,
+  "output_states": [
+    {
+      "components": 2,
+      "scale_log2": 64,
+      "physical_level": 8
+    }
+  ],
+  "operations": {
+    "encode": 2358,
+    "rotatec": 1709,
+    "mulcp": 3013,
+    "rescalec": 5128,
+    "addcc": 3677,
+    "addcp": 229,
+    "mulcc": 513,
+    "relinearize": 513,
+    "modswitchc": 545,
+    "negatec": 76,
+    "bootstrapc": 113
+  },
+  "boot_input_states": [
+    {
+      "level": 4,
+      "scale_log2": 68,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 62,
+      "count": 1
+    },
+    {
+      "level": 5,
+      "scale_log2": 68,
+      "count": 2
+    },
+    {
+      "level": 5,
+      "scale_log2": 69,
+      "count": 17
+    },
+    {
+      "level": 6,
+      "scale_log2": 46,
+      "count": 1
+    },
+    {
+      "level": 7,
+      "scale_log2": 63,
+      "count": 2
+    },
+    {
+      "level": 7,
+      "scale_log2": 69,
+      "count": 2
+    },
+    {
+      "level": 11,
+      "scale_log2": 64,
+      "count": 32
+    },
+    {
+      "level": 12,
+      "scale_log2": 64,
+      "count": 2
+    },
+    {
+      "level": 18,
+      "scale_log2": 50,
+      "count": 17
+    },
+    {
+      "level": 19,
+      "scale_log2": 40,
+      "count": 2
+    },
+    {
+      "level": 20,
+      "scale_log2": 60,
+      "count": 1
+    },
+    {
+      "level": 21,
+      "scale_log2": 60,
+      "count": 7
+    },
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 26
+    }
+  ],
+  "boot_output_states": [
+    {
+      "level": 22,
+      "scale_log2": 45,
+      "count": 113
+    }
+  ],
+  "state_audit_passed": true
+}
