@@ -51,7 +51,7 @@
   "coefficient-floor-sweep/40-greedy/command.json": "774057b38e31fef79e1002da867b07b1a32e837814a8f9f05b405500accc1371",
   "coefficient-floor-sweep/40-greedy/compile.log": "55851362944298a80f754ce2c8da172d42d032badd92a1d246b9bd7f3758a45c",
   "coefficient-floor-sweep/summary.json": "39d987bd527a3b8d08c44ab70f03cdb78defdb3dae8ffb332169f0c6ddc5307d",
-  "compile-comparison.py": "12c96a934427ab569e2b7e3152c651460ab475283da03da5d2c15dd161bf5839",
+  "compile-comparison.py": "104819a8e8d55cc2e8d97bb270841a77f24639177b843e8d15790e88a07d53aa",
   "compiler-build.log": "eba17aadf9f6e02f4defcee57e8aeb06e3967d4a9eae666aaff7c6f348b5db85",
   "compiler-polynomial-tests.log": "34ca6e979745f883420c807f87bddab4b6241457bd4f3327201ea8d4d8df7c3b",
   "compiler-profile.json": "1d663d48fcfe820b284c1c664164a480e38055b5ec2fd1d4f86cf22916d0146a",
@@ -108,7 +108,7 @@
   "none/optimized/logical.mlir.gz": "32d4ab2ba7bb36b791ce61c19f3f5859f82ee12c26d3fd276cddfdcb01f2bc52",
   "none/optimized/status.json": "c2219fb8a00c6e17c3bbcffe16a1fe8b2c04dea3604fb38cfd9af11ac1ebc72d",
   "provenance.json": "8901a1c9540929e7284905f6c0f91e3c47e06674513662b33d1334198f598a81",
-  "results.zh-CN.txt": "f77effde837713396b6c21df7b34a0762fa070e4027b6527eb5ec39398cbd904",
+  "results.zh-CN.txt": "4fd83ea254fae75ce601c86bd57a1cfadf4097c4dcf43b651f5b1e3f5c6ae200",
   "summarize.py": "bb7b49422e96bc2cbad577c90fb32f8aa6528b84f5002b2e5cf809750e145958",
   "summary.json": "d18be91dee097889325050edeeb33457595d7f4a20fafefe04906c63784ffb28"
 }

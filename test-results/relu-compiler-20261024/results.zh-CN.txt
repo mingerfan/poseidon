@@ -1,5 +1,9 @@
 ResNet20 ReLU 编译优化对比（2026-10-24）
 
+历史记录：以下结果及脚本对应编译器 e01f8ee。后续已删除实验 all 模式、
+系数编码 scale 选择及其参数；当前保留默认 double-align。下文的实验开关
+和 compiler.patch 仅用于复现当时的对比，不代表当前编译器的用法。
+
 全部在本地使用同一份真实 ResNet20 Earth bytecode 和同一套 profile 编译。
 N65536、32768槽、初始scale40、30bit Rescale、Boot输出level22/scale45、最低level4，预算18Q。
 保留原d13多项式：15/15/27，未修改系数、近似函数或Boot实现。

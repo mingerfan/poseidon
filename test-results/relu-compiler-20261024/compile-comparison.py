@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Compile the unchanged real ResNet20 trace; no GPU or encrypted execution."""
+"""Historical comparison using compiler e01f8ee; no GPU or encrypted execution.
+
+The experimental all mode and coefficient-scale options used here were removed
+after this experiment. Use that compiler revision to reproduce these records.
+"""
 import argparse
 import gzip
 import hashlib
