@@ -20,14 +20,16 @@ def linear_flat(b, x, lin: FlatLayout, weight: np.ndarray, bias: np.ndarray | No
         bias = np.asarray(bias, dtype=np.float64)
         if bias.shape != (O,):
             raise KernelError("linear bias must have length O")
-    Wp = np.zeros((Op, Ip), dtype=np.float64)
-    Wp[:O, :I] = weight
     xr = x+x.rotate(-Ip)
     slots = np.arange(Ip)
+    rows = slots % Op
 
     def diagonal(d):
         out = np.zeros(lin.n, dtype=np.float64)
-        out[:Ip] = Wp[slots % Op, (slots+d) % Ip]
+        columns = (slots+d) % Ip
+        valid = (rows < O) & (columns < I)
+        indices = slots[valid]
+        out[indices] = weight[rows[valid], columns[valid]]
         return out
 
     z = None

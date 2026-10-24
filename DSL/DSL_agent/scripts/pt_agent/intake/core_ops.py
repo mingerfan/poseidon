@@ -15,6 +15,7 @@ CORE_OPS = {
     # NCHW max pooling, including the original padding/dilation/ceil semantics.
     # Semantic import does not imply that a polynomial/FHE kernel exists.
     "maxpool": {"inputs": 1, "attrs": {"kernel": "pair", "stride": "pair", "padding": "pair", "dilation": "pair", "ceil_mode": bool}},
+    "maxpool_indices": {"inputs": 1, "attrs": {"kernel": "pair", "stride": "pair", "padding": "pair", "dilation": "pair", "ceil_mode": bool}},
     # NumPy/PyTorch broadcasting to an explicit static output shape.
     "broadcast": {"inputs": 1, "attrs": {"shape": "tuple"}},
     # Explicit casts and comparisons preserve framework mask semantics. These
@@ -40,4 +41,4 @@ CORE_OPS = {
 
 # User's R3 correction: uncomposed adaptive_avgpool needs composition.
 KERNEL_OPS = frozenset({"conv2d", "linear", "add", "sub", "mul", "batchnorm", "act", "avgpool",
-                        "flatten", "reshape", "slice", "pad", "mean", "sum", "concat"})
+                        "flatten", "reshape", "slice", "pad", "mean", "sum", "concat", "maxpool"})

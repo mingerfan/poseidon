@@ -11,7 +11,7 @@ from .core.pool import mean_mux
 from .core.linear import linear_flat
 from .core.cheb import cheb_eval
 from .core.layout import MultiMuxLayout, MultiFlatLayout, multi_mux_layout, multi_flat_layout
-from .core import multi
+from .core import multi, cnn
 
 
 Tensor = namedtuple("Tensor", "value layout")
@@ -37,19 +37,29 @@ def pack(b, x, *, layout, gap):
     return Tensor(value, out)
 
 
-def conv2d(bk, x, W, *, w, b, bn, bn_eps, stride, pad, dilation, groups, algo):
+def conv2d(bk, x, W, *, w, b, bn, bn_eps, stride, pad, dilation, groups, algo, post_bn=None, post_eps=1e-5, pre_bn=None, pre_eps=1e-5):
     value, layout = x
     if not isinstance(layout, (MuxLayout, MultiMuxLayout)):
         raise KernelError("conv2d input must have MuxLayout")
     weight, bias = W[w], None if b is None else W[b]
-    if (algo != "mpcb" or dilation != (1, 1) or groups != 1 or stride[0] != stride[1]
+    if pre_bn is not None:
+        pre_scale, pre_shift = fold_bn(W[pre_bn+'.weight'], W[pre_bn+'.bias'],
+            W[pre_bn+'.running_mean'], W[pre_bn+'.running_var'], pre_eps)
+        weight, bias = cnn.fold_input_bn(weight, bias, pre_scale, pre_shift, groups=groups)
+    if (algo != "mpcb" or dilation != (1, 1) or groups not in (1, layout.C) or stride[0] != stride[1]
             or pad != ((weight.shape[2]-1)//2,)*2):
         raise KernelError("conv2d requires mpcb, dilation=1, groups=1, equal strides and same padding")
     scale, shift = None, bias
     if bn is not None:
         scale, shift = fold_bn(W[bn+".weight"], W[bn+".bias"], W[bn+".running_mean"],
                                W[bn+".running_var"], bn_eps, bias)
-    return Tensor(*multi.conv2d_blocks(bk, value, layout, weight, stride=stride[0], scale=scale, shift=shift))
+    if post_bn is not None:
+        more_scale, more_shift = fold_bn(W[post_bn+'.weight'], W[post_bn+'.bias'],
+            W[post_bn+'.running_mean'], W[post_bn+'.running_var'], post_eps)
+        shift = more_shift if shift is None else more_scale*shift+more_shift
+        scale = more_scale if scale is None else more_scale*scale
+    conv = cnn.depthwise_blocks if groups > 1 and groups == layout.C and weight.shape[:2] == (layout.C, 1) else multi.conv2d_blocks
+    return Tensor(*conv(bk, value, layout, weight, stride=stride[0], scale=scale, shift=shift))
 
 
 def act(b, x, a):
@@ -125,11 +135,51 @@ def relayout(b, x, *, layout):
     return x
 
 
-def linear(bk, x, W, *, w, b, algo, n1):
-    if not isinstance(x.layout, (FlatLayout, MultiFlatLayout)):
-        raise KernelError("linear input must have FlatLayout")
-    linear = multi.linear_blocks if isinstance(x.layout, multi.MULTI) or W[w].shape[0] > x.layout.n//2 else linear_flat
-    return Tensor(*linear(bk, x.value, x.layout, W[w], None if b is None else W[b], algo=algo, n1=n1))
+def linear(bk, x, W, *, w, b, algo, n1, post_bn=None, post_eps=1e-5, pre_bn=None, pre_eps=1e-5):
+    if not isinstance(x.layout, (FlatLayout, MultiFlatLayout, MuxLayout, MultiMuxLayout)):
+        raise KernelError("linear input must have FlatLayout or a flattened mux input")
+    weight, bias = W[w], None if b is None else W[b]
+    if pre_bn is not None:
+        pre_scale, pre_shift = fold_bn(W[pre_bn+'.weight'], W[pre_bn+'.bias'],
+            W[pre_bn+'.running_mean'], W[pre_bn+'.running_var'], pre_eps)
+        weight, bias = cnn.fold_input_bn(weight, bias, pre_scale, pre_shift)
+    if post_bn is not None:
+        scale, bias = fold_bn(W[post_bn+'.weight'], W[post_bn+'.bias'],
+            W[post_bn+'.running_mean'], W[post_bn+'.running_var'], post_eps, bias)
+        weight = weight*scale[:, None]
+    if isinstance(x.layout, (MuxLayout, MultiMuxLayout)):
+        linear = cnn.flatten_linear
+    else:
+        linear = multi.linear_blocks if isinstance(x.layout, multi.MULTI) or weight.shape[0] > x.layout.n//2 else linear_flat
+    return Tensor(*linear(bk, x.value, x.layout, weight, bias, algo=algo, n1=n1))
+
+
+def avgpool(b, x, *, k, stride, pad):
+    return Tensor(*cnn.avgpool_blocks(b, x.value, x.layout, kernel=k, stride=stride, pad=pad))
+
+
+def maxpool(b, x, a, *, k, stride, pad):
+    return Tensor(*cnn.maxpool_blocks(b, x.value, x.layout, kernel=k, stride=stride, pad=pad,
+        apply=lambda value: act(b, Tensor(value, None), a).value))
+
+
+def concat(b, *inputs, axis):
+    if axis != 1:
+        raise KernelError('concat supports axis=1')
+    return Tensor(*cnn.concat_blocks([x.value for x in inputs], [x.layout for x in inputs]))
+
+
+def flatten(b, x, *, start_dim):
+    if start_dim != 1 or not isinstance(x.layout, (MuxLayout, MultiMuxLayout, FlatLayout, MultiFlatLayout)):
+        raise KernelError('flatten requires a packed tensor and start_dim=1')
+    if isinstance(x.layout, (MuxLayout, MultiMuxLayout)) and x.layout.H == x.layout.W == 1:
+        return Tensor(*multi.mean_blocks(b, x.value, x.layout))
+    return x
+
+
+def batchnorm(b, x, W, *, bn, eps):
+    scale, shift = fold_bn(W[bn+'.weight'], W[bn+'.bias'], W[bn+'.running_mean'], W[bn+'.running_var'], eps)
+    return Tensor(*cnn.batchnorm_blocks(b, x.value, x.layout, scale, shift))
 
 
 def refresh(b, x, *, enabled):

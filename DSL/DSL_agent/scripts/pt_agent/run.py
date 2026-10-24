@@ -263,7 +263,7 @@ def _compile_export(record):
 def _inside(args):
     import numpy as np
     from . import toolchain
-    from .analyzer import calibrate, reference_forward
+    from .analyzer import calibrate, reference_forward, approximation_points, approximation_values
     from .backends import CountBackend, EmitBackend, MockBackend, RefreshBackend
     from .cost import PROFILES, estimate, plan_latency
     from .backends.base import BackendError
@@ -365,15 +365,17 @@ def _inside(args):
                 else:
                     validation_images, _ = validation_set(2000, normalization=zm.normalization)
                     validation_images = zm.adapt(validation_images)
-                act_names = [node.inputs[0] for node in graph.nodes if node.op == "act"]
+                act_names = [name for node, name in approximation_points(graph)]
                 needed = dict.fromkeys(act_names, 0.0)
                 references = []
                 for start in range(0, len(validation_images), VAL_BATCH):
                     batch = validation_images[start:start+VAL_BATCH]
                     values = reference_forward(graph, {graph.inputs[0]: batch}, keep=True)
                     references.append(values[graph.outputs[0]].copy())
+                    observed_values = approximation_values(graph, values)
                     for name in act_names:
-                        value = values[name].reshape(len(batch), -1)
+                        value = observed_values[name]
+                        value = value.reshape(len(batch), -1) if value.ndim > 1 else value.reshape(1, -1)
                         limits = calibration[name]
                         ratios = np.maximum(value.max(axis=1)/limits["max"], value.min(axis=1)/limits["min"])
                         needed[name] = max(needed[name], float(ratios.max()))
@@ -387,14 +389,14 @@ def _inside(args):
                 for deg in (63, 127):
                     for margin in (1.4, 1.5, 1.75):
                         candidate = parse(plan(graph, calibration, deg=deg, margin=margin, refresh=args.refresh))
-                        names = dict(zip((op.inputs[0] for op in candidate.ops if op.kind == "act"), act_names))
+                        names = dict(zip((op.inputs[0] for op in candidate.ops if op.kind in ("act", "maxpool")), act_names))
                         row = dict(deg=deg, margin=margin, diverged=False, images_done=0, agree=0,
                                    logit_rmse=None, max_u=0.0, max_u_act=None, seconds=0.0)
                         validation["grid"].append(row)
 
                         def observer(name, value, layout, cfg):
-                            data = (value.value[..., layout.index_grid()] if isinstance(layout, MuxLayout)
-                                    else value.value[..., :layout.size])
+                            from .planners.agent_tools import _unpack
+                            data = _unpack(value, layout)
                             _, _, lo, hi = cfg
                             max_u = float(np.max(np.abs(data*(2/(hi-lo))-(hi+lo)/(hi-lo))))
                             if max_u > row["max_u"]:
@@ -446,7 +448,8 @@ def _inside(args):
                     from .planners.prompts import (PROMPT_VERSION, build_system_prompt, initial_message,
                                                    select_examples, target_features)
                     from .intake.patterns import annotate
-                    report['prompt_version'] = PROMPT_VERSION
+                    report['prompt_version'] = getattr(args, 'prompt_version', PROMPT_VERSION)
+                    ctx.prompt_version = report['prompt_version']
                     report['selected_examples'] = select_examples(target_features(graph, annotate(graph)), ctx.model_name)
                     (out/'system_prompt.txt').write_text(build_system_prompt(ctx))
                     (out/'initial_message.json').write_text(initial_message(ctx))
@@ -477,10 +480,10 @@ def _inside(args):
                 if graph is None:
                     raise RuntimeError("check requires the plan stage")
                 program = parse((out / "program.ptdsl").read_text())
-                act_tensors = [node.inputs[0] for node in graph.nodes if node.op == "act"]
+                act_tensors = [name for node, name in approximation_points(graph)]
                 report["activations"] = [dict(graph_tensor=name, program_line=op.lineno,
                                                deg=op.attrs["deg"], domain=op.attrs["domain"])
-                                          for name, op in zip(act_tensors, (op for op in program.ops if op.kind == "act"))]
+                                          for name, op in zip(act_tensors, (op for op in program.ops if op.kind in ("act", "maxpool")))]
                 checked = check(program, {name: weight.shape for name, weight in graph.weights.items()})
                 report["check"] = dict(ok=checked.ok, diags=[asdict(diag) for diag in checked.diags],
                                        n_statements=len(program.ops), source_lines=report["source_lines"])
@@ -595,6 +598,7 @@ def main():
     parser.add_argument("--tune-policy", choices=('new_best', 'all'), default='new_best')
     parser.add_argument("--deg", type=int)
     parser.add_argument("--margin", type=float)
+    parser.add_argument("--prompt-version", choices=("r8-v4", "r8-v5"), default="r8-v4")
     parser.add_argument("--act-method", choices=("cheb", "minimax_comp"), default="cheb")
     parser.add_argument("--refresh", choices=("compiler", "agent"), default="compiler")
     parser.add_argument("--stages", required=True)
@@ -638,7 +642,7 @@ def main():
     command = [sys.executable, "-B", "-m", "pt_agent.tools.nixrun", "--seconds", "10800", "--", "-m",
                "pt_agent.run", "--inside", "--out", str(out), "--model", args.model, "--planner", args.planner,
                "--models-dir", str(args.models_dir),
-               "--refresh", args.refresh, "--act-method", args.act_method, "--stages", ",".join(args.stages)]
+               "--refresh", args.refresh, "--act-method", args.act_method, "--prompt-version", args.prompt_version, "--stages", ",".join(args.stages)]
     if args.planner == "agent":
         command.extend(("--budget-path", str(Path(os.environ["PT_RESULTS"]) / "llm_calls.jsonl"),
                         "--agent-iters", str(args.agent_iters), "--llm-model", args.llm_model,

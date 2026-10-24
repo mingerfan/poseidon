@@ -165,13 +165,13 @@ def linear_blocks(b, x, lin, weight, bias, *, algo='bsgs', n1=None):
             if key not in replicas:
                 replicas[key] = value+value.rotate(-side)
             xr = replicas[key]
-            matrix = np.zeros((side, side))
-            matrix[:lo.size, :li.size] = weight[out_start:out_end, in_start:in_end]
             slots = np.arange(side)
 
             def diagonal(d):
                 u = np.zeros(lin.n)
-                u[:side] = matrix[slots, (slots+d) % side]
+                columns = (slots+d) % side
+                valid = (slots < lo.size) & (columns < li.size)
+                u[slots[valid]] = weight[out_start+slots[valid], in_start+columns[valid]]
                 return u
 
             def rotate_input(step):

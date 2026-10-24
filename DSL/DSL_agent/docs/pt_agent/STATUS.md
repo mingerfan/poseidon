@@ -1,4 +1,6 @@
-# pt_agent 状态（最后更新：2026-10-24 / 125676bd-dirty）
+# pt_agent 状态（最后更新：2026-10-24 / 5412df2b-dirty）
+
+当前U3a（含§10）已完成：435/435既有回归＋20/20本轮测试，共455/455唯一用例通过。17旧程序Emit文本/常量/顺序、四冻结模型validate/estimate/confirm及r8-v4文本相同；5变体Count相同、两变体各20图Mock对历史array_equal。9/9目标变体完成20图Mock/张量对照、1000图留出评测及P2包；两份VGG16的bn_1→fc_3折叠已证。AlexNet SiLU的Mock RSS由3734.52MiB降至476.25MiB，原4GiB保持。18项覆盖表已重算；3份本机编译自举383/383、282/282、1122/1122且已prune，6份超常量额度模型已打包，本机未编译。AlexNet ReLU/VGG16 ReLU留出准确率分别下降6.9pp/1.6pp，按spec记录。API0、累计63/300，新增Agent首次输出/真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json)。
 
 当前U2已完成：既有419/419唯一回归用例通过（主组381＋独立intake4＋P2/工具链17＋张量17），新增16/16结果复用，共435/435。11份单块Emit文本及常量与125676bd原文相同；四冻结模型validate/estimate/confirm逐项相同。六变体各20留出图及P2/真实编译全部通过，自举数和旋转数6/6精确；延迟误差中位1.5008%、最大7.3308%。从4096 trace接续，新trace/compile各5次、此前各1次；六个编译目录均保留RuntimePlan与PRUNED.txt。API0、累计63/300；本轮新Agent输出和真实CKKS0，M1表保持。[最终REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json)。
 
@@ -30,6 +32,7 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| U3a | specs/U3-cnn-operators.md（含§10） | 完成 | CNN/lower/张量/规则/P2；Mock、linear/multi逐条常量；U3测试/实验、STATUS | 435既有＋20本轮＝455/455；17旧程序/四冻结模型/5 Count一致；9变体20图＋1000图及P2完成 | 4GiB保持；3本机编译自举一致并prune；6份服务器作业未执行；新增Agent/CKKS0 |
 | U2 | specs/U2-multi-ciphertext-layout.md＋用户磁盘恢复接续 | 完成 | kernels/layout.py新增、kernels/multi.py；lower.py、tensor_sim.py、agent_tools.py；ModelInfo/check；export及U2测试/实验、STATUS | 新16/16＋既有419/419＝435/435；单块11/11＋四模型相同；六变体自举/旋转全部精确；P2及编译6/6 | 复用已过项目，从4096 trace接续；新5目录逐项核对后prune；旧测试保持；原停止及自写修正记录保留 |
 | U1 | specs/U1-model-description.md（含§11–§12） | 完成 | models/info.py、builders.py、zoo.py；data/samples.py；intake/probe、hf_frontend、onnx_frontend、graph_exec及ATen/core/coverage；metrics.py、cli.py、scripts/pt-agent；agent_tools.py、confirm.py、prompts.py、run.py；U1实验/测试、STATUS | 既有373/373＋新增46/46；HF3/3零差；四冻结模型逐项相同；CLI9/9，MLP真实编译通过；[REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json) | 按§11迁移1项旧测试；按§12及自写错误例外修正通用语义、夹具与编排；原失败及用量保留，详见本节 |
 | R8h3 | specs/R8h3-tune-policy.md | 完成 | planners/agent.py、run.py、4个实验入口、test_r8h_tune_all.py、test_r8h3_policy.py、STATUS | 373/373；R8e5四份trace触发序列一致；LLM0、模型实验0 | 按§2.1给R8h旧测试显式传all，断言保持；run.py仅参数接线及REPORT记录；冻结仍用v1 |
@@ -89,6 +92,32 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+U3a当前无须用户或Claude决定的阻塞：§10两处通用内存修正及全部验收已完成。原4GiB保持；六个超常量额度模型已生成服务器作业，执行留在U3a范围之外。旧AlexNet首图MemoryError、未采用的首份前测和全部历史结果保留。新编译器或运行库依赖阻塞证据0。[最终REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json)。
+
+以下模型源码与导入依赖停止已由用户新增§9解除；通用折叠、临时桩及四个上游模型构造/前向的4项测试通过。
+
+U3a已解除的历史停止项（2026-10-24，模型源码及导入依赖）：
+
+1. **VGG16的BN折叠要求与原始模型顺序冲突。** [spec §2.6](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U3-cnn-operators.md:88)要求“VGG16的fc_2→bn_1必须走折叠路径”；[上游VGG16.py:117](/home/lhohy/Code/Poseidon/third_party/dacapo/python/poly/poly/models/VGG16.py:117)实际依次调用fc_2、mish、bn_1（第117–119行），两层之间有非线性激活。需要spec明确按实际模型保留激活、将该BN作为独立仿射运算，或给出新的接续口径；真正相邻且唯一消费的conv/linear→BN折叠已有通用实现与测试。当前未跨激活折叠，未修改上游模型。
+2. **原始模型文件导入依赖缺失。** 新建dacapo_builders经U1的load_callable进入VGG16时，在[VGG16.py:6](/home/lhohy/Code/Poseidon/third_party/dacapo/python/poly/poly/models/VGG16.py:6)的`from torchvision import datasets, transforms`报告`ModuleNotFoundError: No module named 'torchvision'`。AlexNet、MobileNet、SqueezeNet的原文件也有相同且未被类定义/forward使用的导入；hecate-2.0.1-cpu与intake-2.0.1-cpu均未安装torchvision。本轮禁止安装，当前未过滤导入、未注入假模块、未修改third_party文件或换环境。需要spec明确保持原模型语义的加载适配策略。此次只尝试了首个VGG变体，尚未获得导入图，第二个变体未执行；VGG的顺序结论来自源码静态核对。[原失败日志](/home/lhohy/pt_agent_results/u3a-vgg-bn-review-20261024T140546969485/run.log)。
+
+按AGENTS.md的spec矛盾及报错停止规则暂停剩余工作，24项已过测试保留；435回归、9模型完整验收、真实编译与§4延迟诊断尚未完成。阻塞阶段为模型导入及模型/spec契约，新增编译器／运行库阻塞证据0。[FINAL_REPORT](/home/lhohy/pt_agent_results/u3a-vgg-bn-review-20261024T140546969485/FINAL_REPORT.json)。
+
+U3a旧测试停止已解除。用户已在2026-10-24通过spec新增§8明确授权以下四处旧测试迁移，现已全部应用并通过相关测试；下表保留原静态核对证据。
+
+U3a已解除的历史停止项（2026-10-24，旧测试断言）：§1新增maxpool及§3扩展lowering能力，§5.7要求既有435项通过，但旧测试包含以下固定口径：
+
+| 文件／用例 | 现有断言 | 与U3a能力的关系 |
+|---|---|---|
+| [test_r1_parser.py:71](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r1_parser.py:71)，test_diagnostic_code_sets | len(OPS)==26 | 新增maxpool后注册表为27项 |
+| [test_r8b_generic.py:45](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8b_generic.py:45)，test_registry_matches_lowering | 注册表等于HANDLED_OPS，且顺序固定为原10项 | 新增5类lowering运算后，需明确完整注册表与r8-v4／r8-v5测试口径；r8-v4文本及默认值仍须保持 |
+| [test_r8a2_aten.py:151](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_r8a2_aten.py:151)，test_collect_maxpool_and_transposed_convolution | MaxPool2d(2)的graph check失败，并包含op id和行号 | U3a要求此变体可lowering；转置卷积的导入拒绝断言应保持 |
+| [test_u1_semantics.py:30](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_u1_semantics.py:30)，test_pool_variants_and_kernel_boundary | 包括默认MaxPool2d(2)在内的三变体都needs_composition且check失败 | 默认变体的断言需随U3a迁移；ceil_mode=True及dilation=2继续保留能力边界，精确语义对照和FX拒绝断言保持 |
+
+这些涉及旧断言含义或期望值；[AGENTS.md](/home/lhohy/Code/Poseidon/AGENTS.md)规定“改变断言含义、期望数值或算法的修改，仍然必须停下”。原停止时仅做静态核对，未声称发生旧测试运行失败，四份旧测试当时均未修改。当前按新增§8迁移并继续验收。新增7项测试及权重受限加载已通过，其余U3a工作待继续，新增后端阻塞证据0。[REPORT](/home/lhohy/pt_agent_results/u3a-contract-review-20261024T135209239299/REPORT.json)。
+
+U3a数据划分历史停止已解除：用户2026-10-24修订§0、§5.5及AGENTS.md，所有CIFAR模型沿用固定分组，由内部legacy_cifar注入，模型仍经U1的--model入口；校准取训练集冻结图，acc_drop只在test[9000:10000]计算，本轮不读取报告集。原停止发生于实现前静态核对，测试、编译和API均未启动，历史额度保持。
 
 U2当前无需要用户或Claude决定的问题，全部指定验收已完成。磁盘停止已按用户2026-10-24授权解除；从ResNet20／4096 trace接续，六个变体自举数与旋转数均精确，419回归及新增16项全部通过。新五个编译目录核对后立即调用toolchain.prune，原8192目录复用Claude已完成的清理；RuntimePlan、日志、报告和PRUNED.txt完整保留。原停止及已消费额度保持。[最终REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json)。
 
@@ -230,6 +259,8 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+U3a本轮0、累计63/300；剩余237。§10接续trace/compile各0，复用本轮前段已完成的各3次；三份自举计数一致且已prune，六份超出常量额度的作业只生成未执行。新增Agent首次输出、下载、安装、真实CKKS、commit/tag/push均0。新实验报告集使用0；既有精确模型/数据划分回归按AGENTS例外执行。[最终REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json)。
+
 U2本轮0；累计63/300。接续新trace/compile各5次，此前各1次，合计6/6变体；0重试。新LLM输出、下载、安装、训练、真实CKKS、commit/tag/push均0；每个新编译目录完成计数核对后立即prune。原准入停止发生于进程启动前，记录保持。
 
 当前U1 §12：本轮0、累计63/300；registry共307条，历史批次及已用额度全部保留。新增下载/安装/训练0；当前9模型导入框架验收完成，新增Agent首次独立输出0、真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json)。
@@ -284,11 +315,11 @@ R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry�
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| U2-multi-layout-complete-summary-20261024T132444-b3cd | multi-layout | 完成；435/435唯一测试、六变体验收；[REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json) |
-| U2-tensor-acceptance-20261024T132358-5529 | tensor | 17项、失败0、错误0、跳过0；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T130429400967/REPORT.json) |
-| U2-packaging-acceptance-20261024T130356-d737 | packaging | 17项、失败0、错误0、跳过0；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T130333616419/REPORT.json) |
-| U2-intake-tests-acceptance-20261024T130306-f059 | intake-tests | 4项、失败0、错误0、跳过0；[REPORT](/home/lhohy/pt_agent_results/u2-intake-tests-20261024T130303860100/REPORT.json) |
-| U2-main-acceptance-20261024T130245-61e8 | main | 385项、失败0、错误0、跳过4；[REPORT](/home/lhohy/pt_agent_results/u2-regression-20261024T125950815099/REPORT.json) |
+| U3a-cnn-operators-complete-20261024T161354-68c2 | cnn-operators | U3a完成：455/455；9变体；3本机编译计数一致，6份服务器作业；[REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json) |
+| U3a-cnn-operators-complete-20261024T161322-ce4b | cnn-operators | 初份汇总保留；延迟百分比已按原诊断精确值更正为后一份REPORT；[REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161322574128/REPORT.json) |
+| U3a-tensor-acceptance-20261024T161235-915d | tensor | 17项通过；失败0，错误0，跳过0；[REPORT](/home/lhohy/pt_agent_results/u3a-regression-20261024T155028782424/REPORT.json) |
+| U3a-intake-tests-acceptance-20261024T155022-649f | intake-tests | 4项通过；失败0，错误0，跳过0；[REPORT](/home/lhohy/pt_agent_results/u3a-intake-tests-20261024T155020129686/REPORT.json) |
+| U3a-packaging-acceptance-20261024T154948-b941 | packaging | 17项通过；失败0，错误0，跳过0；[REPORT](/home/lhohy/pt_agent_results/u3a-regression-20261024T154921492312/REPORT.json) |
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
 旧 T0/T2 测试输出保留原路径；旧源码副本：[before/](/home/lhohy/pt_agent_results/R1-ptdsl-unit-20261020T111834-3fa0/before/)。
@@ -2955,3 +2986,217 @@ ResNet20／8192的Mock与张量最大绝对差4.440892098500626e-14，归一差1
 未完成项：本spec无。开发诊断／验收完成多块算术、P2包、编译放置复现与435项测试；新增Agent首次独立输出0、真实CKKS0，M1第5条及未见复杂整网交付证据保持原待后续spec状态。LLM/API、下载、安装和新训练均0，累计63/300；本接续真实trace/compile各5次、加此前各1次，共6变体，0重试；无新增编译器／运行库正确性阻塞。普通与可信资源、共享串行及数值条件保持。
 
 [最终REPORT](/home/lhohy/pt_agent_results/u2-complete-20261024T132444069767/REPORT.json)、[完整模型对比](/home/lhohy/pt_agent_results/u2-models-20261024T125911245307/COMPARISON.json)。
+
+
+## U3a CNN算子（部分实现，旧测试契约待统一，2026-10-24）
+
+基线5412df2b，分支lhy-agent-dsl。只读确认九个目标权重文件全部存在，并全部以torch.load(weights_only=True,map_location="cpu")加载为OrderedDict。未执行下载代码、未改权重或库；本轮API、编译、报告集读取均0。
+
+改动文件：新增kernels/cnn.py及tests/test_u3_kernels.py；修改kernels/layout.py（新增支持不等长分块的ConcatMuxLayout，原有MuxLayout/FlatLayout保持）、DSL的ops_spec/parser/shapes/typecheck、lower.py、tensor_sim.py、analyzer.py、planners/agent_tools.py、planners/rule.py、planners/tuner.py，以及STATUS。原有conv/pool/linear/poly/slots kernel文件保持。新增算子与校准/验证/精调接线处于部分实现状态，尚未完成全轮验收。
+
+测试输出：最近一次 `python3 -B -m pt_agent.tools.nixrun --seconds 180 -- -m unittest pt_agent.tests.test_u3_kernels -v` 为 `Ran 7 tests in 0.225s / OK`。覆盖depthwise步长1/2、三种AvgPool、两种MaxPool的cheb/minimax、2路/3路concat、4×4展平后的diag/bsgs线性层、独立及卷积折叠BN；在合法的1024/4096槽设置下比较Mock、张量及exact/PyTorch。Depthwise Count断言通过；concat无算术及不等长布局恢复通过。此前两次本轮自写实现错误的运行结果保留在REPORT和对话工具输出中。
+
+与spec不一致之处／自写修正：
+- 初版test_u3_kernels.py的槽数夹具误用了既有DSL合法范围之外的64/512；改为1024/4096，并调整张量尺寸以继续强制多块，容差和断言含义保持。初次7项测试共27个子用例错误，原因均为parser的既有槽数检查。
+- 初版kernels/cnn.py的projected_layout错误地按输出总通道重新均匀切块，导致步长2时输入块与输出块通道数不匹配；修正为保持各输入块独立投影，步长1原布局保持。第二次7项测试有7个子用例错误；修正后7/7通过。
+- 新增旧测试迁移需求尚未应用，具体四处见阻塞栏；r8-v4提示词及既有测试保持原文。未调整算法参数、比较条件、资源或确认流程。
+
+未完成项：P2模板及包内cnn接线、r8-v5版本选择与默认文本证明、run.py近似点接线收尾、DaCapo builders及固定CIFAR源的U1端到端编排、§4 MLP／4096延迟诊断、17程序原文及四冻结模型逐项对照、9模型数值/覆盖率/编译与即时prune、既有435回归。新增test_u3_kernels的7项通过属于开发算子验证；本轮Agent首次独立输出0、真实CKKS0，M1及复杂整网交付状态保持原记录。
+
+[REPORT](/home/lhohy/pt_agent_results/u3a-contract-review-20261024T135209239299/REPORT.json)。
+
+
+## U3a §8接续（部分实现，模型源码与导入依赖停止，2026-10-24）
+
+改动文件：在上节的kernel、DSL、lowering、张量、校准/验证/精调和规则实现基础上，新增models/dacapo_builders.py、tests/test_u3_integration.py；修改capabilities.py、planners/prompts.py、run.py、export/codegen.py、export/package.py、export/templates/_package/ops.py；按§8修改intake/aten_frontend.py、core_ops.py、coverage.py、graph_exec.py，以及四份指定旧测试。既有库和third_party文件保持。r8-v5注册表和运行参数选择已接入，默认版本仍r8-v4；逐字兼容证明待后续验收。
+
+测试输出：最近一次相关测试为`Ran 24 tests in 1.815s / OK`，失败0、错误0。新增12项（8个kernel、4个integration）与相关旧12项全部通过；既有435未全跑。新增覆盖§8的kernel3/stride3、kernel2/padding1，未实现ceil_mode、dilation、被使用的return_indices均在check明确报告“暂不支持”、op id及行号。P2新算子组合在单/多块下Emit文本、常量及NumPy输出与lower一致，包含线性层后相邻BN折叠。MaxPool精调夹具从预测10566529µs降到8475313µs，最终Mock复核通过；越域发散及max_u记录通过。这些是开发算子与接线测试，新增Agent首次独立输出及整网CKKS均0。
+
+§8四处旧测试的原断言与新断言：
+
+| 文件／用例 | 原断言 | 新断言 |
+|---|---|---|
+| test_r1_parser.test_diagnostic_code_sets | len(OPS)==26 | len(OPS)==27；其余诊断与非法样例保持 |
+| test_r8b_generic.test_registry_matches_lowering | 注册表固定原10算子，与HANDLED_OPS一致 | 完整15算子注册表与HANDLED_OPS一致，使用r8-v5能力文本；v4默认与提示词旧测试保持 |
+| test_r8a2_aten.test_collect_maxpool_and_transposed_convolution | MaxPool2d(2)在graph check失败并定位 | check成功，规则生成的exact Mock与图参考在原1e-12条件下一致；转置卷积导入拒绝保持 |
+| test_u1_semantics.test_pool_variants_and_kernel_boundary | 三种MaxPool都needs_composition且check失败 | 默认MaxPool2d(2)可lowering，exact Mock/参考在原1e-12条件下一致；ceil_mode/dilation继续check拒绝并明确“暂不支持”；精确语义和FX边界保持 |
+
+与spec不一致之处／自写修正：以上旧断言迁移均来自§8明确授权；原r8-v4提示词相关旧测试未修改。新增集成测试初次4项有1项失败，原实现等到整个MaxPool结束才给observer汇总，极窄domain会先溢出，导致max_u保留0；现按每次有效比较先检查并记录越域值再报告发散，Mock与tensor同步，原定义域、比较条件和调参流程保持，24项复核通过。原失败保留在对话输出及FINAL_REPORT中。此前两处自写夹具／投影修正继续保留上节记录。
+
+未完成项：VGG的独立BN接续口径及上游未使用torchvision导入的适配策略待新spec；模型builder已写入但首次原始模块导入退出1。§4 MLP4096延迟诊断、17程序Emit与四模型逐项兼容证明、CIFAR真实校准池化误差、九模型数值/准确率/代价/覆盖率/本机编译及即时prune、435回归待继续。24项通过并未替代完整验收；API累计63/300，本轮LLM、下载、安装、编译及报告集读取均0。
+
+[FINAL_REPORT](/home/lhohy/pt_agent_results/u3a-vgg-bn-review-20261024T140546969485/FINAL_REPORT.json)、[测试摘要](/home/lhohy/pt_agent_results/u3a-vgg-bn-review-20261024T140546969485/TESTS.txt)、[原失败日志](/home/lhohy/pt_agent_results/u3a-vgg-bn-review-20261024T140546969485/run.log)。
+
+## U3a §9接续（验收进行中，2026-10-24 / 5412df2b-dirty）
+
+通用BN顺序为先折入唯一消费的前驱conv/linear，再折入唯一后继linear或padding=0的conv，其余独立仿射。VGG16保留原激活位置，bn_1→fc_3在整网阶段另核对。dacapo_builders临时提供不可用torchvision桩，实际功能访问明确报错，导入后恢复sys.modules；第三方文件及权重保持。
+
+已完成证明：新增16/16测试通过（含§9的4项）；17份保留程序的Emit文本及常量与5412df2b相同，四冻结模型validate（mock/tensor）、estimate、confirm及r8-v4系统/首请求提示词逐项相同。[单测REPORT](/home/lhohy/pt_agent_results/u3a-unit-20261024T141953887631/REPORT.json)、[兼容REPORT](/home/lhohy/pt_agent_results/u3a-compat-20261024T142228567157/REPORT.json)。
+
+§4诊断完成：MLP/4096预测7481215µs、RuntimePlan为6970240µs，差510975µs（7.330809269%）。主要算术数量相同；rescale的level分布贡献478274µs，rotate贡献30311µs，mul_cc贡献2526µs，计划额外mod_switch与negate合计抵销136µs。计划含42次mod_switch，首个输入由level5降到3；3075次mul_cp在level3，模型3104次按level5计费。实际dacapo流水线在depth-dp放置后运行EarlyModswitch，当前估计没有模拟这项优化；按§4保留代价模型。六个U2变体自举数全部精确，延迟误差依次为1.5206%、1.5723%、1.4142%、1.4809%、0.9203%、7.3308%。[逐运算/level表](/home/lhohy/pt_agent_results/u3a-latency-20261024T142015806416/LATENCY.json)、[诊断及逐项延迟贡献](/home/lhohy/pt_agent_results/u3a-latency-20261024T142015806416/DIAGNOSIS.json)。
+
+已完成模型：DaCapo ResNet20的20图Mock/tensor最大差4.840572387e-14，1000留出图91.2%/精确91.6%，下降0.4pp；预测/实际自举383/383，旋转2624，预测102309380µs，延迟误差0.9559%，本机编译后已prune。[ACCEPTANCE](/home/lhohy/pt_agent_results/u3a-model-20261024T142804105549/model/ACCEPTANCE.json)。MobileNet SiLU的20图最大差6.750155990e-14，1000图91.4%/91.2%，下降-0.2pp；789次预测自举、28944旋转、233407721µs；常量1654915072字节超出本机1.5GiB编译范围，已导出服务器作业，本机未编译。[ACCEPTANCE](/home/lhohy/pt_agent_results/u3a-model-20261024T142957161385/model/ACCEPTANCE.json)。
+
+本轮自写修正：新实验的unittest discover顶层目录不适用于现有命名空间测试目录，改为按模块加载；新BN夹具的square已设method=exact，去掉额外不适用的exact覆盖模式，数学断言保持；逐图Mock循环遗漏循环引用回收，首轮第8图后在原4GiB限制内MemoryError，已加每图gc.collect，原失败目录保留；诊断登记脚本遗漏PT_RESULTS，补上外层环境后仅追加registry，已写报告保持。实现签名、数值条件、模型权重、r8-v4、精调/确认参数及原额度保持。
+
+剩余：其余模型、MaxPool校准误差、扩展覆盖表和435项回归。API本轮0、累计63/300，新Agent输出0，真实CKKS0，报告集读取0；以上均为U3a规则开发诊断。
+
+后续实现补全与接续：ATen将AdaptiveAvgPool(1)表示为keepdim=True、axes=(3,2)的mean后接reshape；首次SqueezeNet SiLU在lowering拒绝该轴序，未执行数值。规则规划器现按§2.2把这个全局池化/展平组合映射到现有axis=(2,3)的mean，新flatten分支对已是Flat/MultiFlat的值保持原样；原mean分支和原kernel文件保持。新增单块/多块Torch、Mock、tensor、P2/Emit测试，17/17通过，17旧程序及四冻结模型/提示词再次相同。[最新单测](/home/lhohy/pt_agent_results/u3a-unit-20261024T144152041415/REPORT.json)、[最新兼容证明](/home/lhohy/pt_agent_results/u3a-compat-20261024T144155514130/REPORT.json)。
+
+SqueezeNet SiLU最终20图最大差1.953992523e-14，1000图88.1%/88.1%，下降0pp；282/282自举、10315旋转、84511744µs、延迟误差2.6423%，本机编译后prune。[ACCEPTANCE](/home/lhohy/pt_agent_results/u3a-model-20261024T144305191394/model/ACCEPTANCE.json)。ReLU+MaxPool前20图最大差2.042810365e-14；原批次在320图后MemoryError（4GiB限制内），逐批gc.collect后复用原20图及320图统计，从321图接续，最终890/1000、原模型895/1000，下降0.5pp；1122/1122自举、10275旋转、300383501µs、延迟误差0.9489%，编译后prune。接续只新增结果目录，原响应/程序/证据及已用资源保留。[原停止REPORT](/home/lhohy/pt_agent_results/u3a-model-20261024T144502053782/REPORT.json)、[接续ACCEPTANCE](/home/lhohy/pt_agent_results/u3a-model-20261024T145117630480/model/ACCEPTANCE.json)。
+
+MaxPool校准已完成，两组各1000张冻结训练图：k2/s2/p0误差0.0190254993、max_u=0.6779902671；k3/s2/p1误差0.0439008705、max_u=0.7111111111。Mock与tensor逐值差0；degree127、余量1.5保持。[POOL_CALIBRATION](/home/lhohy/pt_agent_results/u3a-pool-20261024T143640832315/POOL_CALIBRATION.json)。
+
+## U3a §9最终汇报（部分完成，AlexNet本机资源阻塞）
+
+本轮[完整REPORT](/home/lhohy/pt_agent_results/u3a-blocked-summary-20261024T150252627086/REPORT.json)的complete=false。§9的通用BN折叠与临时torchvision桩已通过；剩余整轮验收按当前资源停止点保留。工作目录/分支为Poseidon、lhy-agent-dsl，git rev为5412df2b-dirty。
+
+改动文件（均在scripts/pt_agent下，文档仅本STATUS）：
+
+| 范围 | 文件 |
+|---|---|
+| 新增实现/实验 | kernels/cnn.py；models/dacapo_builders.py；experiments/u3_cnn_operators.py |
+| 新增测试 | tests/test_u3_kernels.py；tests/test_u3_integration.py；tests/test_u3_bn_import.py |
+| 布局及数值路径 | kernels/layout.py；lower.py；tensor_sim.py；analyzer.py |
+| PT-DSL | dsl/ops_spec.py；dsl/parser.py；dsl/shapes.py；dsl/typecheck.py |
+| 导入及能力检查 | intake/aten_frontend.py；intake/core_ops.py；intake/coverage.py；intake/graph_exec.py |
+| 规则/提示/验证/精调接线 | capabilities.py；planners/agent_tools.py；planners/prompts.py；planners/rule.py；planners/tuner.py；run.py；cli.py |
+| P2 | export/codegen.py；export/package.py；export/templates/_package/ops.py |
+| §8授权旧测试迁移 | tests/test_r1_parser.py；tests/test_r8b_generic.py；tests/test_r8a2_aten.py；tests/test_u1_semantics.py；原/新断言见前文§8表 |
+
+depthwise逐偏移旋转、掩码权重及累加，多块独立；Count测试的4/8通道旋转数相同，旋转和乘法均少于普通卷积的分块对角权重路径。AvgPool使用1/k²的depthwise权重。MaxPool横向后纵向合并，k2/k3分别2/4次ReLU，每次掩码乘法按额外1 level计入，差值观测进入校准、验证、精调。concat直接拼接合法且可不等长的通道块。展平全连接按mux槽位重排公共权重，副本/未用列为0，diag和bsgs均用模n旋转后SumSlots；当前显式Op×n矩阵的内存需求是AlexNet停止点。BN按§9顺序折叠，未折叠时独立仿射。原conv/pool/linear/poly/slots kernel文件、r8-v4及默认值、编译器和运行库保持。
+
+测试输出：
+
+```text
+Ran 17 tests in 1.848s
+OK
+failures=0, errors=0, skipped=0
+```
+
+17份旧程序Emit文本/常量全部相同；四冻结模型的mock/tensor validate、estimate、confirm及r8-v4系统/首请求文本逐项相同（比较使用每模型20图，保留两版返回值，未另选候选）。此前12项相关旧测试通过结果保留；435项完整回归待执行。[测试](/home/lhohy/pt_agent_results/u3a-unit-20261024T144152041415/REPORT.json)、[兼容](/home/lhohy/pt_agent_results/u3a-compat-20261024T144155514130/REPORT.json)。
+
+模型表中的密文数是最大单张量块数；延迟使用qwen48配置估计，误差相对RuntimePlan估计。准确率只用test[9000:10000]，每模型同一份程序先做20图Mock/tensor比较，再做1000图准确率记录，规则参数保持。数值已完成的5个模型最大差为1.95e-14至6.75e-14，20图类别全部相同。
+
+| 模型 | 最大密文数 | 自举预测/编译 | 旋转 | 预测秒 | 延迟误差 | acc_drop pp | 状态 |
+|---|---:|---:|---:|---:|---:|---:|---|
+| resnet20_relu | 1 | 383/383 | 2624 | 102.309380 | 0.9559% | 0.40 | 数值/P2/本机编译完成，已prune |
+| mobilenet_silu | 4 | 789/待执行 | 28944 | 233.407721 | — | -0.20 | 数值/P2完成，常量1654915072B，服务器作业待执行 |
+| mobilenet_relu | 4 | 789/待执行 | 28944 | 233.408829 | — | 0.40 | 数值/P2完成，常量1667629056B，服务器作业待执行 |
+| squeezenet_silu_avgpool | 4 | 282/282 | 10315 | 84.511744 | 2.6423% | 0.00 | 数值/P2/本机编译完成，已prune |
+| squeezenet_relu_maxpool | 4 | 1122/1122 | 10275 | 300.383501 | 0.9489% | 0.50 | 保留原320图并接续完成，已prune |
+| alexnet_silu_avgpool | 待验 | 352/待执行 | 16431 | 114.220654 | — | 待验 | 首图Mock资源停止；代价/P2/服务器作业备妥 |
+| alexnet_relu_maxpool | 待执行 | 待执行 | 待执行 | 待执行 | — | 待执行 | 错误停止后未启动 |
+| vgg16_silu_avgpool | 待执行 | 待执行 | 待执行 | 待执行 | — | 待执行 | 错误停止后未启动 |
+| vgg16_relu_maxpool | 待执行 | 待执行 | 待执行 | 待执行 | — | 待执行 | 错误停止后未启动 |
+
+服务器作业均未执行：[MobileNet SiLU](/home/lhohy/pt_agent_results/u3a-model-20261024T142957161385/model/server_jobs/MobileNetSilu_PTAgent_DSL/run.sh)、[MobileNet ReLU](/home/lhohy/pt_agent_results/u3a-model-20261024T143323741670/model/server_jobs/MobileNetRelu_PTAgent_DSL/run.sh)、[AlexNet SiLU](/home/lhohy/pt_agent_results/u3a-defer-20261024T145920354121/server_jobs/AlexNetSiluAvgpool_PTAgent_DSL/run.sh)。这些是trace/compile作业；AlexNet的20图数值一致性和1000图准确率继续待验。[AlexNet打包/代价记录](/home/lhohy/pt_agent_results/u3a-defer-20261024T145920354121/DEFERRED.json)。
+
+当前覆盖表（分母为规范化核心节点，完整U1+U3表尚未重算）：
+
+| 目标模型 | 核心节点 | 可lowering比例 | graph check | 整网数值 |
+|---|---:|---:|---|---|
+| resnet20_relu | 74 | 100% | 通过 | 完成 |
+| mobilenet_silu | 83 | 100% | 通过 | 完成 |
+| mobilenet_relu | 83 | 100% | 通过 | 完成 |
+| squeezenet_silu_avgpool | 59 | 100% | 通过 | 完成 |
+| squeezenet_relu_maxpool | 59 | 100% | 通过 | 完成 |
+| alexnet_silu_avgpool | 24 | 100% | 通过 | 资源阻塞 |
+| alexnet_relu_maxpool | 待执行 | 待执行 | 待执行 | 待执行 |
+| vgg16_silu_avgpool | 待执行 | 待执行 | 待执行 | 待执行 |
+| vgg16_relu_maxpool | 待执行 | 待执行 | 待执行 | 待执行 |
+
+§4结论：六个U2变体自举数继续全部相等。MLP/4096的mul_cp=3136、rescale=3162、add_cc=3151、add_cp=28、mul_cc=26、rotate=169、boot=24，两侧数量相同；计划另有42次mod_switch和26次relinearize，逐level表见LATENCY.json。提前modswitch使rescale及旋转在更低level计费，贡献了主要延迟差异；保留当前代价模型，完整贡献见DIAGNOSIS.json。
+
+与spec不一致之处及本轮自写修正：§8明确授权的四类旧断言已逐项迁移，原FX和r8-v4测试保持。其余算法、签名、数值条件和原期望保持。实现调试时修正了新测试的非法slots/强制多块尺寸、新投影函数的块分区遗漏、MaxPool越域先观测再执行的顺序、新BN测试的exact调用方式，以及新实验的测试加载、Mock/NumPy循环引用回收和外层登记环境参数。AdaptiveAvgPool(1)的ATen表示按§2.2补齐全局mean/展平接线；已过17新测试与17程序兼容证明。SqueezeNet的接续复用原20图及前320图整数计数，从第321图执行，原程序未改。AlexNet的完整矩阵存储需求涉及后续实现/执行路径，按停止规则保留当前代码；没有采用新的内存算法或扩大本机额度。
+
+未完成项：AlexNet SiLU的20图/1000图验证；其余三个变体；VGG16 bn_1折进fc_3的整网证明；435项完整回归；完整U1+9模型覆盖表；Count效率明细报告；3个服务器作业的执行。资源使用为API0（累计63/300）、trace3、compile3、真实CKKS0、新Agent输出0、下载/安装/报告集读取0。当前新增依赖失败证据0；本轮结果属于规则开发诊断，首次原样Agent整网及未见模型验收留待后续spec。M1表保持。
+
+## U3a §10最终结果（完成，2026-10-24 / 5412df2b-dirty）
+
+用户已批准两处通用存储修正，4GiB保持。修改前源码副本位于 /home/lhohy/pt_agent_results/u3a-s10-20261024T151320519111/before-tree；仅用于本轮前后对照。核对完成后接续未完成的四变体，旧5变体不重复整套验收。
+
+§10阶段验证：20/20本轮测试通过（原17＋内存回归3）；已完成5模型Count统计逐项相同；四冻结模型修改前后Mock validate逐项相同；resnet20_relu与squeezenet_relu_maxpool各20图对历史numeric.npz均array_equal。[测试](/home/lhohy/pt_agent_results/u3a-unit-20261024T151726568686/REPORT.json)、[一致性](/home/lhohy/pt_agent_results/u3a-memory-proof-20261024T151808946920/REPORT.json)。17旧程序Emit及AlexNet内存对照继续执行。
+
+17份旧程序Emit文本、常量值与顺序与5412df2b全部相同；四冻结模型Mock/tensor validate、estimate、确认及r8-v4两类提示文本全部相同。[兼容REPORT](/home/lhohy/pt_agent_results/u3a-compat-20261024T152017685800/REPORT.json)。AlexNet修改前对照使用保留源码直接lower，首图在4GiB内MemoryError（申请128KiB），峰值RSS3915923456字节；与历史256MiB申请失败同属常量保留导致的地址空间耗尽。[前测REPORT](/home/lhohy/pt_agent_results/u3a-memory-before-20261024T151957740993/REPORT.json)。早先151736791818测量因测试帮助函数绝对import指向当前实现，保留为无效前测，不用于修正前后比较；已修正本轮自写测量接线。
+
+AlexNet SiLU已接续完成：[REPORT](/home/lhohy/pt_agent_results/u3a-model-20261024T152205750607/REPORT.json)。复用原DSL/校准/样本，20图最大差1.4210854715202004e-14，类别相同；1000图85.0%对原模型85.0%，下降0pp；首次Mock及20图阶段峰值RSS499380224字节（476.24609375MiB），前测3915923456字节（3734.515625MiB）。P2使用默认流式Mock执行包内kernel并与lower输出array_equal，Numpy/Emit/Count/DAG/Hecate后端保持；常量3597008896字节，生成服务器作业，本机未编译。当前目标变体6/9完成；AlexNet ReLU正在执行。
+
+AlexNet ReLU已完成：[REPORT](/home/lhohy/pt_agent_results/u3a-model-20261024T152622606818/REPORT.json)。20图Mock/张量最大差1.554312234475219e-14，类别相同；1000图81.9%对原模型88.8%，下降6.9pp，按§5.5仅记录，未据此调参。目标变体7/9完成，继续VGG16 SiLU及ReLU。
+
+VGG16 SiLU已完成：[REPORT](/home/lhohy/pt_agent_results/u3a-model-20261024T153357130937/REPORT.json)。20图最大差4.263256414560601e-14、类别相同；1000图91.1%对91.1%，下降0pp、发散0；生成代码确认bn_1被折进fc_3.weight，direction=following。自举预测470、常量3402235904字节，本机未编译，P2流式Mock逐位对照及服务器作业生成完成。目标变体8/9完成。
+
+VGG16 ReLU已完成：[REPORT](/home/lhohy/pt_agent_results/u3a-model-20261024T153908485402/REPORT.json)。20图最大差3.552713678800501e-14、类别相同；1000图92.1%对93.7%，下降1.6pp、发散0；bn_1折进fc_3.weight，P2流式Mock及服务器作业完成。至此9/9变体各完成20图对照和1000图留出评测；完整覆盖表及435项回归继续。
+
+### §10模型验收与覆盖结果（已完成）
+
+九个变体各用同一份保留规则DSL，完成20张留出图Mock/张量对照和1000张test[9000:10000]准确率记录；类别对照全部相同，发散均0。旧5份完整数值结果复用，新增4份完成；没有LLM生成或报告集选择。输入/输出/最大密文数分别列出；延迟为预测值。
+
+| 模型（证据） | 密文输入/输出/最大 | 自举预测/编译 | 旋转 | 预测延迟µs | 延迟误差 | 留出top1/原模型 | acc_drop pp | 本机编译 |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| [resnet20_relu](/home/lhohy/pt_agent_results/u3a-model-20261024T142804105549/model/ACCEPTANCE.json) | 1/1/1 | 383/383 | 2624 | 102309380 | 0.9559% | 91.2%/91.6% | 0.4 | 通过，已prune |
+| [mobilenet_silu](/home/lhohy/pt_agent_results/u3a-model-20261024T142957161385/model/ACCEPTANCE.json) | 1/1/4 | 789/— | 28944 | 233407721 | — | 91.4%/91.2% | -0.2 | 本机未编译：常量>1.5GiB，已生成服务器作业 |
+| [mobilenet_relu](/home/lhohy/pt_agent_results/u3a-model-20261024T143323741670/model/ACCEPTANCE.json) | 1/1/4 | 789/— | 28944 | 233408829 | — | 91.4%/91.8% | 0.4 | 本机未编译：常量>1.5GiB，已生成服务器作业 |
+| [squeezenet_silu_avgpool](/home/lhohy/pt_agent_results/u3a-model-20261024T144305191394/model/ACCEPTANCE.json) | 1/1/4 | 282/282 | 10315 | 84511744 | 2.6423% | 88.1%/88.1% | 0.0 | 通过，已prune |
+| [squeezenet_relu_maxpool](/home/lhohy/pt_agent_results/u3a-model-20261024T145117630480/model/ACCEPTANCE.json) | 1/1/4 | 1122/1122 | 10275 | 300383501 | 0.9489% | 89.0%/89.5% | 0.5 | 通过，已prune |
+| [alexnet_silu_avgpool](/home/lhohy/pt_agent_results/u3a-model-20261024T152205750607/model/ACCEPTANCE.json) | 1/1/6 | 352/— | 16431 | 114220654 | — | 85.0%/85.0% | 0.0 | 本机未编译：常量>1.5GiB，已生成服务器作业 |
+| [alexnet_relu_maxpool](/home/lhohy/pt_agent_results/u3a-model-20261024T152622606818/model/ACCEPTANCE.json) | 1/1/6 | 1276/— | 16387 | 351679282 | — | 81.9%/88.8% | 6.9 | 本机未编译：常量>1.5GiB，已生成服务器作业 |
+| [vgg16_silu_avgpool](/home/lhohy/pt_agent_results/u3a-model-20261024T153357130937/model/ACCEPTANCE.json) | 1/1/4 | 470/— | 21038 | 148643936 | — | 91.1%/91.1% | 0.0 | 本机未编译：常量>1.5GiB，已生成服务器作业 |
+| [vgg16_relu_maxpool](/home/lhohy/pt_agent_results/u3a-model-20261024T153908485402/model/ACCEPTANCE.json) | 1/1/4 | 849/— | 21034 | 246022648 | — | 92.1%/93.7% | 1.6 | 本机未编译：常量>1.5GiB，已生成服务器作业 |
+
+三个已编译模型的证据复用，均在编译结束后prune；六个超出常量额度的模型已导出P2和服务器trace/compile作业，执行留在U3a范围之外。两份VGG16均记录bn_1折进fc_3.weight，并通过20图整网对照。
+
+| U1+U3模型 | 核心节点 | 算子可lowering比例 | graph check | 具体原因 |
+|---|---:|---:|---|---|
+| mlp | 3 | 100.0000% | 通过 | — |
+| resnet18 | 69 | 100.0000% | 未通过 | spatial tiling not supported: k²·H·W > n |
+| bert_tiny | 98 | 78.5714% | 未通过 | layernorm: no lowering implementation；matmul: no lowering implementation；permute: no lowering implementation；softmax: no lowering implementation |
+| qwen_alternative | 186 | 73.1183% | 未通过 | act: no lowering implementation；broadcast: no lowering implementation；cast: no lowering implementation；compare: no lowering implementation；matmul: no lowering implementation；permute: no lowering implementation；slice_scatter: no lowering implementation；softmax: no lowering implementation；where: no lowering implementation |
+| mnist | 11 | 100.0000% | 通过 | — |
+| squeezenet | 64 | 100.0000% | 未通过 | spatial tiling not supported: k²·H·W > n |
+| resnet20 | 74 | 100.0000% | 通过 | — |
+| resnet20_silu | 74 | 100.0000% | 通过 | — |
+| cnn_plain | 11 | 100.0000% | 通过 | — |
+| alexnet_silu_avgpool | 24 | 100.0000% | 通过 | — |
+| alexnet_relu_maxpool | 24 | 100.0000% | 通过 | — |
+| vgg16_silu_avgpool | 50 | 100.0000% | 通过 | — |
+| vgg16_relu_maxpool | 51 | 100.0000% | 通过 | — |
+| mobilenet_silu | 83 | 100.0000% | 通过 | — |
+| mobilenet_relu | 83 | 100.0000% | 通过 | — |
+| squeezenet_silu_avgpool | 59 | 100.0000% | 通过 | — |
+| squeezenet_relu_maxpool | 59 | 100.0000% | 通过 | — |
+| resnet20_relu | 74 | 100.0000% | 通过 | — |
+
+[完整覆盖证据](/home/lhohy/pt_agent_results/u3a-coverage-20261024T154442693659/COVERAGE.json)。resnet18和U1的squeezenet为224尺寸，算子支持100%，graph check报告空间布局限制；DaCapo九个CIFAR变体graph check均通过。BERT与tiny Qwen保留未实现的LLM算子边界。
+
+Depthwise统计：4/8通道均8次旋转、9次mul_cp；普通卷积分别17/21旋转、13/17次mul_cp。MaxPool按每块2/4次ReLU比较，掩码每次增加一个level；degree127示例总深度分别21/41（含投影），单块/多块口径一致。[Count明细](/home/lhohy/pt_agent_results/u3a-efficiency-20261024T154454718786/EFFICIENCY.json)。
+
+校准maxpool结果复用1000张冻结训练图：k2/s2/p0最大近似误差0.0190254993342、max_u=0.677990267124；k3/s2/p1误差0.0439008704606、max_u=0.711111111111；两者Mock/张量差0。[完整数值](/home/lhohy/pt_agent_results/u3a-pool-20261024T143640832315/POOL_CALIBRATION.json)。
+
+展平全连接按槽位到逻辑特征的映射逐条取权重，diag与BSGS顺序保持；普通/多块linear同步去掉稠密填充矩阵。卷积、池化与投影原本已逐条生成掩码，检查后保持原样。Mock去重表仅保留摘要及编号，_Plain持有当次只读数据，默认流式释放；Emit/Count/DAG/Hecate及P2的NumpyBackend保持。
+
+回归过程记录：主组397项、P2/工具链17项及独立intake ONNX4项先通过；最终张量/缓存17项也全部通过，既有唯一用例435/435完成。主组的4项ONNX跳过已由独立环境逐项补验。张量组耗时1325.205秒，峰值RSS2628169728字节，原3600秒和4GiB保持。[主组](/home/lhohy/pt_agent_results/u3a-regression-20261024T154508452314/REPORT.json)、[P2组](/home/lhohy/pt_agent_results/u3a-regression-20261024T154921492312/REPORT.json)、[ONNX组](/home/lhohy/pt_agent_results/u3a-intake-tests-20261024T155020129686/REPORT.json)。
+
+§10本轮自写实现/接线修正说明：backends/mock.py导入段在编辑时遗漏的numpy导入已恢复，20项本轮测试通过；experiments/u3_cnn_operators.py:58的前测首版误用带绝对import的历史测试帮助函数，现改为直接调用保留命名空间的MockBackend/lower，151736791818原记录保留并排除，RSS采用151957740993。没有修改算法、签名规定、数值条件或旧断言。本轮新增内存测试3项，既有17项U3测试保持。
+
+### §10最终测试输出与范围
+
+```text
+U3a unit: Ran 20 tests in 1.947s — OK
+Main regression: Ran 401 tests in 230.291s — OK (skipped=4)
+P2/toolchain: Ran 17 tests in 25.193s — OK
+Independent intake ONNX: Ran 4 tests in 0.137s — OK
+Tensor/cache: Ran 17 tests in 1325.205s — OK
+Unique existing tests: 397 + 17 + 4 + 17 = 435/435
+New/current tests: 20/20; total unique = 455/455
+R8f cache exact resnet20: validations=25, logit_batches=530, history=25
+R8f cache exact resnet20_silu: validations=25, logit_batches=530, history=25
+```
+
+[完整最终REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json)；[最后张量组](/home/lhohy/pt_agent_results/u3a-regression-20261024T155028782424/REPORT.json)。三份本机计划及已完成五变体的整套数值证据复用；§10新trace/compile0、API0。六份服务器作业的执行留待后续范围，当前U3a所列事项全部完成。原函数与规则近似的差异按表保留，AlexNet ReLU下降6.9pp、VGG16 ReLU下降1.6pp；未用留出结果修改九份程序。
+
+§4诊断仍使用原证据：MLP/4096预测7481215µs、RuntimePlan6970240µs，误差7.330809269121293%；基本运算数量相同，EarlyModswitch改变level分布，保留代价模型。六个U2变体自举数仍全部相同。[逐level与数量表](/home/lhohy/pt_agent_results/u3a-latency-20261024T142015806416/LATENCY.json)、[贡献分解](/home/lhohy/pt_agent_results/u3a-latency-20261024T142015806416/DIAGNOSIS.json)。
+
+与spec不一致之处：无算法、规定接口或数值口径偏离。§10明确授权linear/multi的存储修正；§8授权的旧断言迁移沿用先前记录，本次未再修改旧测试。自写numpy导入遗漏与前测命名空间接线已修正，详见上段；最终汇总中MLP延迟百分比改为直接读取旧诊断精确值，初份汇总161322574128保留，161354727454为最终版本。
+
+未完成项：本spec内0。范围外保留6份服务器编译作业、后续U3b的真实Agent运行及整网CKKS。当前9模型结果属于规则开发诊断，新增Agent首次独立输出0、真实CKKS0；未见模型交付证据未增加，M1表保持。未提交、未打tag、未push。

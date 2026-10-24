@@ -61,6 +61,8 @@ def plan(graph: Graph, calibration: dict, *, deg: int = 63, margin: float = 1.25
                 args.extend(("bn="+json.dumps(prefix), "bn_eps="+repr(float(bn.attrs["eps"]))))
                 output = bn.outputs[0]
                 skipped.add(bn.id)
+            if a['groups'] != 1:
+                args.append('groups='+repr(a['groups']))
             args.extend(("stride="+repr(tuple(a["stride"])), "pad="+repr(tuple(a["padding"])), 'algo="mpcb"'))
             expression = "conv2d("+", ".join(args)+")"
         elif node.op == "act":
@@ -73,6 +75,34 @@ def plan(graph: Graph, calibration: dict, *, deg: int = 63, margin: float = 1.25
                 domain = (float(calibration[node.inputs[0]]["min"])*margin,
                           float(calibration[node.inputs[0]]["max"])*margin)
                 expression = f'act({prev}, fn={json.dumps(a["fn"])}, method="cheb", deg={deg}, domain={domain!r})'
+        elif node.op in ('avgpool', 'maxpool'):
+            args = [prev, 'k='+repr(tuple(a['kernel'])), 'stride='+repr(tuple(a['stride'])), 'pad='+repr(tuple(a['padding']))]
+            if node.op == 'maxpool':
+                limits = calibration[node.outputs[0]+'::differences']
+                domain = (float(limits['min'])*1.5, float(limits['max'])*1.5)
+                if act_method == 'minimax_comp':
+                    bound = max(abs(domain[0]), abs(domain[1]))
+                    args += ['method="minimax_comp"', 'degrees=(15, 15, 27)', 'domain='+repr((-bound, bound))]
+                else:
+                    args += ['method="cheb"', 'deg=127', 'domain='+repr(domain)]
+            expression = node.op+'('+', '.join(args)+')'
+        elif node.op == 'adaptive_avgpool':
+            if tuple(a['output_size']) != (1, 1):
+                raise ValueError(f'{node.id}: adaptive avgpool requires output (1,1)')
+            expression = f'mean({prev}, axis=(2, 3))'
+        elif node.op == 'concat':
+            expression = 'concat('+', '.join(name(v) for v in node.inputs)+', axis='+repr(a['axis'])+')'
+        elif node.op in ('flatten', 'reshape'):
+            out_shape = graph.tensors[output].shape
+            if len(out_shape) != 2 or out_shape[0] != 1:
+                raise ValueError(f'{node.id}: flatten requires a (1,F) output')
+            expression = f'flatten({prev}, start_dim=1)'
+        elif node.op == 'batchnorm':
+            prefix = a['weight'].removesuffix('.weight')
+            if any(a[key] != prefix+'.'+suffix for key, suffix in
+                   (('weight','weight'), ('bias','bias'), ('mean','running_mean'), ('var','running_var'))):
+                raise ValueError(f'{node.id}: inconsistent batchnorm weight names')
+            expression = f'batchnorm({prev}, bn={json.dumps(prefix)}, eps={float(a["eps"])!r})'
         elif node.op == "add":
             expression = f"add({prev}, {name(node.inputs[1])})"
         elif node.op == "slice":
@@ -80,6 +110,12 @@ def plan(graph: Graph, calibration: dict, *, deg: int = 63, margin: float = 1.25
                           f'end={a["end"]!r}, step={a["step"]})')
         elif node.op == "pad":
             expression = f'pad({prev}, pads={tuple(a["pads"])!r})'
+        elif (node.op == "mean" and a['keepdim'] and set(a['axes']) == {2, 3}
+              and output not in graph.outputs and len(graph.consumers(output)) == 1
+              and graph.consumers(output)[0].op in ('flatten', 'reshape')):
+            # ATen represents AdaptiveAvgPool(1) as a keepdim spatial mean.
+            # The existing global-mean kernel already returns the flat vector.
+            expression = f'mean({prev}, axis=(2, 3))'
         elif node.op == "mean":
             expression = f'mean({prev}, axis={tuple(a["axes"])!r})'
         elif node.op == "linear":

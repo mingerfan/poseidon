@@ -5,7 +5,7 @@ import gc
 
 import numpy as np
 
-from ..analyzer import reference_forward
+from ..analyzer import reference_forward, approximation_points, approximation_values
 from ..backends import BackendError, MockBackend
 from ..cost import PROFILES, estimate
 from ..data.cifar import heldout_set, MEAN, STD
@@ -17,6 +17,7 @@ from ..intake import Graph
 from ..metrics import compare, passes
 from ..models.info import ModelInfo
 from ..kernels.layout import MuxLayout, unpack_flat, unpack_mux
+from ..kernels.cnn import DifferenceLayout
 from ..kernels.layout import MultiMuxLayout, MultiFlatLayout, unpack_multi
 from ..lower import LoweringError, decode_outputs, lower, pack_inputs
 from ..placement import PlacementError
@@ -50,6 +51,7 @@ class AgentContext:
     model_info: object = None
     samples: object = None
     val_inputs: object = None
+    prompt_version: str = "r8-v4"
 
 
 def build_context(graph, calibration, n_val=1000, *, samples=None, normalization=(MEAN, STD)) -> AgentContext:
@@ -65,17 +67,20 @@ def build_context(graph, calibration, n_val=1000, *, samples=None, normalization
         images, labels = heldout_set(n_val, normalization=normalization)
         images = images.reshape((len(images), *graph.tensors[graph.inputs[0]].shape[1:]))
         inputs = {graph.inputs[0]: images}
-    act_tensors = [node.inputs[0] for node in graph.nodes if node.op == "act"]
+    act_tensors = [name for node, name in approximation_points(graph)]
     needed = dict.fromkeys(act_tensors, 0.0)
     logits, probes = [], []
     for start in range(0, len(images), VAL_BATCH):
         batch = images[start:start+VAL_BATCH]
         values = reference_forward(graph, {name: value[start:start+VAL_BATCH] for name, value in inputs.items()}, keep=True)
         logits.append(values[graph.outputs[0]].copy())
+        point_values = approximation_values(graph, values)
         if start == 0:
-            probes = [values[name][:4].copy() for name in act_tensors]
+            probe_values = approximation_values(graph, {name: value[:4] for name, value in values.items()})
+            probes = [probe_values[name].copy() for name in act_tensors]
         for name in act_tensors:
-            value = values[name].reshape(len(batch), -1)
+            value = point_values[name]
+            value = value.reshape(len(batch), -1) if value.ndim > 1 else value.reshape(1, -1)
             limits = calibration[name]
             margin = np.maximum(value.max(axis=1)/limits["max"], value.min(axis=1)/limits["min"])
             needed[name] = max(needed[name], float(margin.max()))
@@ -94,6 +99,8 @@ def build_context(graph, calibration, n_val=1000, *, samples=None, normalization
 
 
 def _unpack(value, layout):
+    if isinstance(layout, DifferenceLayout):
+        return value.value
     if isinstance(layout, (MultiMuxLayout, MultiFlatLayout)):
         return unpack_multi([item.value for item in value], layout)
     if isinstance(layout, MuxLayout):
@@ -102,7 +109,7 @@ def _unpack(value, layout):
 
 
 def _exact_check(program, ctx):
-    ops = [op for op in program.ops if op.kind == "act"]
+    ops = [op for op in program.ops if op.kind in ("act", "maxpool")]
     collected = []
 
     def exact_observer(name, value, layout, cfg):
@@ -145,7 +152,7 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
         raise ValueError("engine must be mock or tensor")
     if engine == "tensor" and (profile['boot_input_bound'] is not None or profile['boot_abs_error'] is not None):
         raise ValueError("bootstrap input bounds and noise require engine='mock'")
-    ops = [op for op in program.ops if op.kind == "act"]
+    ops = [op for op in program.ops if op.kind in ("act", "maxpool")]
     image_id = None
     result_key = None
     if engine == "tensor" and cache:
@@ -182,7 +189,7 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
         observed = 0
 
         def observer(name, value, layout, cfg):
-            if isinstance(layout, (MultiMuxLayout, MultiFlatLayout)):
+            if isinstance(layout, (MultiMuxLayout, MultiFlatLayout, DifferenceLayout)):
                 data = _unpack(value, layout)
             else:
                 data = value.value[..., layout.index_grid()] if isinstance(layout, MuxLayout) else value.value[..., :layout.size]
@@ -196,6 +203,8 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
             row["obs_max"] = float(data.max())
             _, _, lo, hi = cfg
             row["max_u"] = float(np.max(np.abs(data*(2/(hi-lo))-(hi+lo)/(hi-lo))))
+            if ops[observed-1].kind == 'maxpool' and row['max_u'] > 1:
+                raise BackendError('maxpool comparison input leaves its domain')
 
         def restore(records):
             for name, minimum, maximum, cfg in records:

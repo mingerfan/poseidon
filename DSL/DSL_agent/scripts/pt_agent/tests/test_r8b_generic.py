@@ -45,8 +45,8 @@ class GenericTests(unittest.TestCase):
     def test_registry_matches_lowering(self):
         self.assertEqual({entry.op for entry in CAPABILITIES}, HANDLED_OPS)
         self.assertEqual([entry.op for entry in CAPABILITIES],
-                         ['pack', 'conv2d', 'act', 'add', 'slice', 'pad', 'mean', 'relayout', 'linear', 'refresh'])
-        rendered = render_capabilities()
+                         ['pack', 'conv2d', 'act', 'add', 'slice', 'pad', 'mean', 'relayout', 'linear', 'refresh', 'avgpool', 'maxpool', 'concat', 'flatten', 'batchnorm'])
+        rendered = render_capabilities(version="r8-v5")
         self.assertNotIn('refresh(x)', rendered)
         self.assertEqual([entry.op for entry in CAPABILITIES if not entry.in_prompt], ['refresh'])
         positions = [rendered.index('- '+entry.signature) for entry in CAPABILITIES if entry.in_prompt]

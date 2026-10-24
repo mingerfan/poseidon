@@ -19,11 +19,12 @@ from .backends import BackendError
 from .dsl.ir import WeightRef
 from .dsl.printer import print_program
 from .kernels.conv import fold_bn
+from .kernels import cnn
 from .kernels.layout import FlatLayout, KernelError, MuxLayout, mux_layout
 from .kernels.layout import (MultiMuxLayout, MultiFlatLayout, layout_blocks,
                              multi_mux_layout, multi_flat_layout)
 from .kernels.poly import cheb_eval, cheb_fit, minimax_coeffs
-from .lower import LoweringError, RawLayout, _pack_layout
+from .lower import LoweringError, RawLayout, _pack_layout, _forward_bn_target
 
 
 DEFAULT_PREFIX_BYTES = 3 * 1024**3 // 2
@@ -230,7 +231,7 @@ def _metadata(program, weights):
             consumers[name].append(op)
     layouts = {p.name: RawLayout(p.shape) for p in program.params}
     nodes, producer, ancestors = [], {}, {}
-    skipped = set()
+    skipped, input_bn = set(), {}
     for op in program.ops:
         if op.id in skipped:
             continue
@@ -257,7 +258,9 @@ def _metadata(program, weights):
                 if not isinstance(layout, (MuxLayout, MultiMuxLayout)):
                     raise KernelError("conv2d input must have MuxLayout")
                 w, bias = ref("w"), ref("b")
-                if (attrs["algo"] != "mpcb" or attrs["dilation"] != (1, 1) or attrs["groups"] != 1
+                if op.id in input_bn:
+                    w, bias = cnn.fold_input_bn(w, bias, *input_bn[op.id], groups=attrs['groups'])
+                if (attrs["algo"] != "mpcb" or attrs["dilation"] != (1, 1) or attrs["groups"] not in (1, layout.C)
                         or attrs["stride"][0] != attrs["stride"][1]
                         or attrs["pad"] != ((w.shape[2]-1)//2,)*2):
                     raise KernelError("conv2d requires mpcb, dilation=1, groups=1, equal strides and same padding")
@@ -267,8 +270,44 @@ def _metadata(program, weights):
                     scale, shift = fold_bn(weight(prefix+".weight"), weight(prefix+".bias"),
                                            weight(prefix+".running_mean"), weight(prefix+".running_var"),
                                            attrs["bn_eps"], bias)
-                layout = _conv_layout(layout, w, attrs["stride"][0], scale, shift)
+                uses = consumers[output]
+                if len(uses) == 1 and uses[0].kind == 'batchnorm' and output not in program.outputs:
+                    bn = uses[0]; prefix = bn.attrs['bn']
+                    extra_scale, extra_shift = fold_bn(weight(prefix+'.weight'), weight(prefix+'.bias'),
+                        weight(prefix+'.running_mean'), weight(prefix+'.running_var'), bn.attrs['eps'])
+                    shift = extra_shift if shift is None else extra_scale*shift+extra_shift
+                    scale = extra_scale if scale is None else extra_scale*scale
+                    output = bn.outputs[0]; skipped.add(bn.id)
+                if attrs['groups'] > 1 and attrs['groups'] == layout.C and w.shape[:2] == (layout.C, 1):
+                    _, stride, _, height, width = cnn.pool_shape(layout, w.shape[2], attrs['stride'], attrs['pad'])
+                    layout = cnn.projected_layout(layout, height, width, stride)
+                else:
+                    layout = _conv_layout(layout, w, attrs["stride"][0], scale, shift)
                 extra = dict(weight=w, scale=scale, shift=shift)
+            elif op.kind in ('avgpool', 'maxpool'):
+                if not isinstance(layout, (MuxLayout, MultiMuxLayout)):
+                    raise KernelError('pool input must have MuxLayout')
+                _, stride, _, height, width = cnn.pool_shape(layout, attrs['k'], attrs['stride'], attrs['pad'])
+                layout = cnn.projected_layout(layout, height, width, stride)
+            elif op.kind == 'concat':
+                if attrs['axis'] != 1:
+                    raise KernelError('concat supports axis=1')
+                source_layouts = [layouts[name] for name in op.inputs]
+                _, layout = cnn.concat_blocks([None if isinstance(lay, MuxLayout) else [None]*len(lay.blocks)
+                                                for lay in source_layouts], source_layouts)
+            elif op.kind == 'flatten':
+                if attrs['start_dim'] != 1 or not isinstance(layout, (MuxLayout, MultiMuxLayout, FlatLayout, MultiFlatLayout)):
+                    raise KernelError('flatten requires a packed tensor and start_dim=1')
+                if isinstance(layout, (MuxLayout, MultiMuxLayout)) and layout.H == layout.W == 1:
+                    layout = multi_flat_layout(layout.n, layout.C)
+            elif op.kind == 'batchnorm':
+                prefix = attrs['bn']
+                scale, shift = fold_bn(weight(prefix+'.weight'), weight(prefix+'.bias'),
+                    weight(prefix+'.running_mean'), weight(prefix+'.running_var'), attrs['eps'])
+                following = _forward_bn_target(op, consumers, program.outputs)
+                if following is not None:
+                    input_bn[following.id] = scale, shift
+                extra = dict(scale=scale, shift=shift, fold_forward=following is not None)
             elif op.kind == "act":
                 if attrs["method"] not in ("cheb", "minimax_comp") and not (
                         attrs["method"] == "exact" and attrs["fn"] == "square"):
@@ -319,15 +358,26 @@ def _metadata(program, weights):
                 elif attrs["layout"] != "flat" or not isinstance(layout, (FlatLayout, MultiFlatLayout)):
                     raise KernelError("relayout requires an already flat input and flat target")
             elif op.kind == "linear":
-                if not isinstance(layout, (FlatLayout, MultiFlatLayout)):
-                    raise KernelError("linear input must have FlatLayout")
+                if not isinstance(layout, (FlatLayout, MultiFlatLayout, MuxLayout, MultiMuxLayout)):
+                    raise KernelError("linear input must have FlatLayout or a flattened mux input")
                 w, bias = ref("w"), ref("b")
-                if w.ndim != 2 or min(w.shape) < 1 or w.shape[1] != layout.size:
+                if op.id in input_bn:
+                    w, bias = cnn.fold_input_bn(w, bias, *input_bn[op.id])
+                uses = consumers[output]
+                if len(uses) == 1 and uses[0].kind == 'batchnorm' and output not in program.outputs:
+                    bn = uses[0]; prefix = bn.attrs['bn']
+                    scale, shift = fold_bn(weight(prefix+'.weight'), weight(prefix+'.bias'),
+                        weight(prefix+'.running_mean'), weight(prefix+'.running_var'), bn.attrs['eps'], bias)
+                    w, bias = w*scale[:, None], shift
+                    output = bn.outputs[0]; skipped.add(bn.id)
+                mux_input = isinstance(layout, (MuxLayout, MultiMuxLayout))
+                input_size = layout.C*layout.H*layout.W if mux_input else layout.size
+                if w.ndim != 2 or min(w.shape) < 1 or w.shape[1] != input_size:
                     raise KernelError("linear weight must have shape (O, lin.size)")
                 count, size = w.shape
                 ip, output_padded = 1 << (size-1).bit_length(), 1 << (count-1).bit_length()
                 lout = multi_flat_layout(layout.n, count)
-                multiple = isinstance(layout, MultiFlatLayout) or isinstance(lout, MultiFlatLayout)
+                multiple = mux_input or isinstance(layout, MultiFlatLayout) or isinstance(lout, MultiFlatLayout)
                 if not multiple and (output_padded > ip or 2*ip > layout.n):
                     raise KernelError("linear requires Op <= Ip and 2*Ip <= n")
                 if attrs["algo"] not in ("diag", "bsgs"):
@@ -336,7 +386,7 @@ def _metadata(program, weights):
                     raise KernelError("linear bias must have length O")
                 if attrs["algo"] == "bsgs":
                     sides = [1 << (max(li.size, lo.size)-1).bit_length()
-                             for _, _, li in layout_blocks(layout) for _, _, lo in layout_blocks(lout)] if multiple else [output_padded]
+                             for _, _, li in layout_blocks(layout) for _, _, lo in layout_blocks(lout)] if multiple and not mux_input else [output_padded]
                     for side in sides:
                         g = attrs["n1"] if attrs["n1"] is not None else 2**((side.bit_length()-1+1)//2)
                         if type(g) is not int or g < 1 or g & (g-1) or g > side:
@@ -362,13 +412,15 @@ def _metadata(program, weights):
 
 
 def run_tensor(program, weights, images, *, observer=None, cache=True,
-               image_id=None, batch_start=0):
+               image_id=None, batch_start=0, act_mode="program"):
     """Evaluate one tensor batch; cache keys retain its original batch boundary.
 
     An observer normally receives ``(name, ndarray, cfg)``.  An observer with a
     ``restore`` method also accepts cached ancestor records ``(name,min,max,cfg)``;
     otherwise all operations run and ordinary observer tensors remain available.
     """
+    if act_mode not in ('program', 'exact'):
+        raise ValueError('act_mode must be program or exact')
     if len(program.params) != 1:
         raise LoweringError(None, None, "input count differs from program parameters")
     images_array = np.asarray(images, dtype=np.float64)
@@ -382,18 +434,18 @@ def run_tensor(program, weights, images, *, observer=None, cache=True,
         raise BackendError("Mock arithmetic produced a nonfinite value")
     with np.errstate(over="raise", invalid="raise"):
         try:
-            return _run(program, weights, images_array, observer, cache,
-                        identity_token(images) if image_id is None else image_id, batch_start)
+            return _run(program, weights, images_array, observer, cache and act_mode == 'program',
+                        identity_token(images) if image_id is None else image_id, batch_start, act_mode)
         except FloatingPointError as exc:
             raise BackendError("Mock arithmetic produced a nonfinite value") from exc
 
 
-def _run(program, weights, images, observer, cache, image_id, batch_start):
+def _run(program, weights, images, observer, cache, image_id, batch_start, act_mode):
     nodes, producer, ancestors, keys = _metadata(program, weights)
     namespace = identity_token(weights), image_id, batch_start, len(images)
     hits, cache_keys = {}, {}
     for index, (op, output, layout, extra) in enumerate(nodes):
-        if op.kind != "act":
+        if op.kind not in ("act", "maxpool"):
             continue
         source = op.inputs[0]
         cache_key = (keys[source], *namespace)
@@ -439,7 +491,7 @@ def _run(program, weights, images, observer, cache, image_id, batch_start):
     for index, (op, output, layout, extra) in enumerate(nodes):
         attrs = op.attrs
         if index not in needed:
-            if op.kind == "act":
+            if op.kind in ("act", "maxpool"):
                 record = restored[keys[output]]
                 observations[keys[output]] = record
                 if observer is not None:
@@ -450,7 +502,7 @@ def _run(program, weights, images, observer, cache, image_id, batch_start):
                 if op.kind == "conv2d":
                     value = F.conv2d(torch.tensor(value, dtype=torch.float64),
                                      torch.tensor(extra["weight"], dtype=torch.float64),
-                                     stride=attrs["stride"], padding=attrs["pad"]).numpy()
+                                     stride=attrs["stride"], padding=attrs["pad"], groups=attrs["groups"]).numpy()
                     if not np.isfinite(value).all():
                         raise BackendError("Mock arithmetic produced a nonfinite value")
                     if extra["scale"] is not None:
@@ -462,13 +514,16 @@ def _run(program, weights, images, observer, cache, image_id, batch_start):
                     if cache:
                         ancestor_observations = {keys[nodes[parent][1]]: observations[keys[nodes[parent][1]]]
                                                  for parent in ancestors[index]
-                                                 if nodes[parent][0].kind == "act"}
+                                                 if nodes[parent][0].kind in ("act", "maxpool")}
                         pending[cache_keys[index]] = _Entry(value, ancestor_observations)
                     record = float(value.min()), float(value.max()), cfg
                     observations[keys[output]] = record
                     if observer is not None:
                         observer(op.inputs[0], value, cfg)
-                    if attrs["method"] == "exact":
+                    if act_mode == 'exact':
+                        from .kernels.poly import EXACT
+                        value = EXACT[attrs['fn']](value)
+                    elif attrs["method"] == "exact":
                         value = value*value
                     elif attrs["method"] == "cheb":
                         lo, hi = attrs["domain"]
@@ -483,6 +538,54 @@ def _run(program, weights, images, observer, cache, image_id, batch_start):
                         for coeffs in minimax_coeffs(tuple(attrs["degrees"])):
                             sign = cheb_eval(None, sign, coeffs)
                         value = value*(sign+0.5)
+                elif op.kind == 'avgpool':
+                    value = F.avg_pool2d(torch.tensor(value, dtype=torch.float64), attrs['k'], attrs['stride'], attrs['pad'], count_include_pad=True).numpy()
+                elif op.kind == 'maxpool':
+                    cfg = ('exact',) if act_mode == 'exact' else _cfg(op)
+                    if cache:
+                        ancestor_observations = {keys[nodes[parent][1]]: observations[keys[nodes[parent][1]]]
+                            for parent in ancestors[index] if nodes[parent][0].kind in ('act', 'maxpool')}
+                        pending[cache_keys[index]] = _Entry(value, ancestor_observations)
+                    stats = cnn.DifferenceStats()
+                    if act_mode == 'exact':
+                        apply = lambda difference: np.maximum(difference, 0)
+                    elif attrs['method'] == 'cheb':
+                        lo, hi = attrs['domain']
+                        coeffs = (_fit if cache else cheb_fit)('relu', attrs['deg'], lo, hi)
+                        apply = lambda difference: cheb_eval(None, difference*(2/(hi-lo))-(hi+lo)/(hi-lo), coeffs)
+                    else:
+                        lo, hi = attrs['domain']
+                        coefficients = minimax_coeffs(tuple(attrs['degrees']))
+                        def apply(difference):
+                            sign = difference*(1.0/hi)
+                            for coefficients_ in coefficients:
+                                sign = cheb_eval(None, sign, coefficients_)
+                            return difference*(sign+0.5)
+                    def observe_difference(difference):
+                        stats.add(difference)
+                        if act_mode != 'exact':
+                            lo, hi = attrs['domain']
+                            max_u = float(np.max(np.abs(stats.value*(2/(hi-lo))-(hi+lo)/(hi-lo))))
+                            if max_u > 1:
+                                if observer is not None:
+                                    observer(op.inputs[0], stats.value, cfg)
+                                raise BackendError('maxpool comparison input leaves its domain')
+                    computed = cnn.maxpool_tensor(value, kernel=attrs['k'], stride=attrs['stride'],
+                        pad=attrs['pad'], apply=apply, observer=observe_difference)
+                    record = stats.minimum, stats.maximum, cfg
+                    observations[keys[output]] = record
+                    if observer is not None:
+                        observer(op.inputs[0], stats.value, cfg)
+                    value = (F.max_pool2d(torch.tensor(value, dtype=torch.float64), attrs['k'], attrs['stride'], attrs['pad']).numpy()
+                             if act_mode == 'exact' else computed)
+                elif op.kind == 'concat':
+                    value = np.concatenate([env[name] for name in op.inputs], axis=1)
+                elif op.kind == 'flatten':
+                    value = value.reshape(len(value), -1)
+                elif op.kind == 'batchnorm':
+                    if not extra['fold_forward']:
+                        shape = (1, -1)+(1,)*(value.ndim-2)
+                        value = value*extra['scale'].reshape(shape)+extra['shift'].reshape(shape)
                 elif op.kind == "add":
                     value = value+env[op.inputs[1]]
                 elif op.kind == "slice":

@@ -38,7 +38,7 @@ def _strict(result):
 def _changes(original, current):
     changes = []
     for old, new in zip(original.ops, current.ops):
-        if old.kind == 'act':
+        if old.kind in ('act', 'maxpool'):
             for kind in ('domain', 'deg'):
                 if old.attrs[kind] != new.attrs[kind]:
                     changes.append(dict(line=old.lineno, call_lines=list(old.call_lines), kind=kind,
@@ -101,7 +101,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
     if initial['diverged'] or not _exact_check(cur, ctx)['ok']:
         return finish(cur, initial, False)
     aligned = copy.deepcopy(cur)
-    acts = [op for op in aligned.ops if op.kind == 'act']
+    acts = [op for op in aligned.ops if op.kind in ('act', 'maxpool')]
     for op, row in zip(acts, initial['rows']):
         lo, hi = row['obs_min'], row['obs_max']
         if lo is None or hi is None:
@@ -141,7 +141,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
         ranked = {(row['line'], tuple(row.get('call_lines', ()))): rank
                   for rank, row in reversed(list(enumerate(sorted(hotspots,
                                       key=lambda row: row.get('latency_share', 0), reverse=True))))}
-        order = sorted((index for index, op in enumerate(cur.ops) if op.kind == 'act'),
+        order = sorted((index for index, op in enumerate(cur.ops) if op.kind in ('act', 'maxpool')),
                        key=lambda index: (ranked.get((cur.ops[index].lineno, cur.ops[index].call_lines), len(ranked)), index))
         for index in order:
             if time.monotonic()-started >= budget_s:

@@ -68,7 +68,7 @@ class ParserTests(unittest.TestCase):
                 self.assertEqual(caught.exception.lineno, lineno)
 
     def test_diagnostic_code_sets(self):
-        self.assertEqual(len(OPS), 26)
+        self.assertEqual(len(OPS), 27)
         for path in sorted((EXAMPLES / "invalid").glob("*.ptdsl")):
             with self.subTest(file=path.name):
                 try:

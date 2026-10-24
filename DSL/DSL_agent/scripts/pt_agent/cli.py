@@ -19,11 +19,12 @@ def _write(path, record):
     path.write_text(json.dumps(record, indent=2, ensure_ascii=False, allow_nan=False)+'\n')
 
 
-def _prepare(args):
+def _prepare(args, *, sample_source=None):
     from .data.samples import read, save_split
     from .intake.probe import import_model
     try:
-        imported = import_model(args.model, read(args.inputs))
+        imported = (import_model(args.model, read(args.inputs)) if sample_source is None
+                    else sample_source(args.model))
     except Exception as exc:
         from collections import Counter
         entries = getattr(exc, 'entries', [])

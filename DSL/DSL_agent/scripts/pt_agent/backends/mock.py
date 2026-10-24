@@ -1,5 +1,7 @@
 """Immutable float64 slot vectors for development arithmetic checks."""
 
+import hashlib
+
 import numpy as np
 
 from .base import Backend, BackendError, _Cipher, _Plain, _vector
@@ -12,7 +14,7 @@ class MockExpr(_Cipher):
 
 
 class MockBackend(Backend):
-    def __init__(self, slots, batch=None, *, watch=None, noise=None):
+    def __init__(self, slots, batch=None, *, watch=None, noise=None, stream_constants=True):
         super().__init__(slots)
         if batch is not None and (type(batch) is not int or batch < 1):
             raise BackendError("batch must be a positive integer or None")
@@ -22,6 +24,15 @@ class MockBackend(Backend):
         self.watch = set(watch or ())
         self.noise = noise
         self.watch_max = {}
+        self.stream_constants = stream_constants
+
+    def const(self, vec):
+        if not self.stream_constants:
+            return super().const(vec)
+        data = _vector(vec, self.slots, broadcast=True)
+        key = hashlib.blake2b(data.tobytes(), digest_size=16).digest()
+        index = self._constants.setdefault(key, len(self._constants))
+        return _Plain(self, data, f"k{index}")
 
     def _record_node(self, value):
         nid = self._nid

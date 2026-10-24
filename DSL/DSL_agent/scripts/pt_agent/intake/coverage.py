@@ -5,8 +5,24 @@ from collections import Counter
 from .core_ops import CORE_OPS, KERNEL_OPS
 
 
+def _pool_reason(node):
+    if node.op == 'maxpool_indices':
+        return '暂不支持 maxpool return_indices used by a consumer'
+    if node.op != 'maxpool':
+        return None
+    a = node.attrs
+    if a.get('ceil_mode', False):
+        return '暂不支持 maxpool ceil_mode=True'
+    if tuple(a.get('dilation', (1, 1))) != (1, 1):
+        return '暂不支持 maxpool dilation != 1'
+    k, s, p = tuple(a['kernel']), tuple(a['stride']), tuple(a['padding'])
+    if k[0] != k[1] or k[0] not in (2, 3) or s[0] != s[1] or s[0] not in (2, k[0]) or p[0] != p[1] or p[0] not in (0, 1):
+        return '暂不支持 this maxpool kernel/stride/padding'
+    return None
+
+
 def _supported(node):
-    return node.op in KERNEL_OPS and not (node.op == 'act' and node.attrs['fn'] in
+    return _pool_reason(node) is None and node.op in KERNEL_OPS and not (node.op == 'act' and node.attrs['fn'] in
                                          ('rsqrt', 'sqrt', 'reciprocal', 'erf', 'pow'))
 
 
@@ -32,7 +48,7 @@ def check(graph, *, slots=16384):
     listing (not to an invented DSL program or to the original Python source).
     """
     diags = [dict(op_id=node.id, lineno=index+1, source=node.src,
-                  reason=f'{node.op}: no lowering implementation', severity='error')
+                  reason=_pool_reason(node) or f'{node.op}: no lowering implementation', severity='error')
              for index, node in enumerate(graph.nodes)
              if not _supported(node)]
     for name in graph.inputs:

@@ -9,6 +9,7 @@ from ..intake.patterns import annotate
 from .agent_tools import FEASIBLE_MAX_U
 
 PROMPT_VERSION = "r8-v4"
+PROMPT_VERSIONS = ("r8-v4", "r8-v5")
 TEMPLATE = """You are an FHE compiler engineer. You write PT-DSL programs that implement a given neural network on CKKS
 homomorphic encryption. A trusted lowering turns PT-DSL into Hecate code; an unmodified compiler then inserts
 rescale/modswitch/bootstrap. Your program must compute exactly the given network (except for the polynomial
@@ -76,15 +77,18 @@ def select_examples(features: set, model_name: str, k: int = 2) -> list[str]:
     return [name for _, name in sorted(ranked)[:k]]
 
 
-def build_system_prompt(ctx) -> str:
+def build_system_prompt(ctx, *, version=None) -> str:
+    version = version or getattr(ctx, "prompt_version", PROMPT_VERSION)
     patterns = annotate(ctx.graph)
     chosen = select_examples(target_features(ctx.graph, patterns), ctx.model_name)
     index = {entry["name"]: entry for entry in json.loads((EXAMPLES_DIR / "index.json").read_text())}
     examples = "\n\n".join("# example: " + name + "\n" +
                               (EXAMPLES_DIR / index[name]["file"]).read_text().rstrip("\n")
                               for name in chosen)
-    text = TEMPLATE.format(capabilities=render_capabilities(), max_u=FEASIBLE_MAX_U,
+    text = TEMPLATE.format(capabilities=render_capabilities(version), max_u=FEASIBLE_MAX_U,
                            n_val=len(ctx.val_images), examples=examples)
+    if version == 'r8-v5':
+        text = text.replace('Every act node also lists', 'Every act and maxpool approximation point also lists')
     info = getattr(ctx, 'model_info', None)
     if info is not None and (ctx.val_labels is None or info.task != 'classification'):
         descriptions = {
@@ -101,6 +105,7 @@ def build_system_prompt(ctx) -> str:
 
 def initial_message(ctx) -> str:
     graph = ctx.graph
+    version = getattr(ctx, 'prompt_version', PROMPT_VERSION)
     patterns = annotate(graph)
     membership = {node: group for group in patterns for node in group["nodes"]}
     profile = PROFILES[ctx.profile]
@@ -128,6 +133,18 @@ def initial_message(ctx) -> str:
             row["pads"] = a["pads"]
         elif node.op == "mean":
             row["axes"] = a["axes"]
+        if version == 'r8-v5':
+            if node.op == 'conv2d':
+                row.update(groups=a['groups'], dilation=a['dilation'])
+            elif node.op in ('avgpool', 'maxpool'):
+                row.update(kernel=a['kernel'], stride=a['stride'], padding=a['padding'])
+                if node.op == 'maxpool':
+                    key = node.outputs[0]+'::differences'
+                    limits = ctx.calibration[key]
+                    row.update(calib=[limits['min'], limits['max']], needed_margin=ctx.needed_margin[key],
+                               approximation_point=key, dilation=a.get('dilation', (1, 1)), ceil_mode=a.get('ceil_mode', False))
+            elif node.op in ('flatten', 'reshape', 'concat'):
+                row.update(a)
         if node.id in membership:
             group = membership[node.id]
             row.update(pattern=group["pattern"], group=group["group"])

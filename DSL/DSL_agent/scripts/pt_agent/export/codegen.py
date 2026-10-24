@@ -3,7 +3,7 @@
 from collections import defaultdict
 import keyword
 
-from ..lower import HANDLED_OPS, LoweringError
+from ..lower import HANDLED_OPS, LoweringError, _forward_bn_target
 
 
 def generate(program) -> str:
@@ -16,12 +16,18 @@ def generate(program) -> str:
     lines = [f'"""{program.name}: generated from program.ptdsl by pt_agent.export. Do not edit."""',
              "from . import ops", "", "", "def forward(b, W, A, "
              + ", ".join(param.name for param in program.params) + "):"]
-    skipped = set()
+    skipped, aliases, input_bn = set(), {}, {}
     for op in program.ops:
         if op.id in skipped:
             continue
         a, output = op.attrs, op.outputs[0]
-        args = ["b", *op.inputs]
+        if op.kind == 'batchnorm':
+            following = _forward_bn_target(op, consumers, program.outputs)
+            if following is not None:
+                aliases[output] = aliases.get(op.inputs[0], op.inputs[0])
+                input_bn[following.id] = op
+                continue
+        args = ["b", *(aliases.get(name, name) for name in op.inputs)]
         kind, comment = op.kind, ""
         if kind not in HANDLED_OPS:
             raise LoweringError(op.id, op.lineno, f"v1 lowering 不支持 {kind}")
@@ -61,8 +67,28 @@ def generate(program) -> str:
         elif kind == "linear":
             args += ["W", f"w={a['w'].name!r}", f"b={a['b'].name if a['b'] else None!r}",
                      f"algo={a['algo']!r}", f"n1={a['n1']!r}"]
+        elif kind in ('avgpool', 'maxpool'):
+            if kind == 'maxpool':
+                args += [f"A[{output!r}]"]
+            args += [f"k={a['k']!r}", f"stride={a['stride']!r}", f"pad={a['pad']!r}"]
+        elif kind == 'concat':
+            args += [f"axis={a['axis']!r}"]
+        elif kind == 'flatten':
+            args += [f"start_dim={a['start_dim']!r}"]
+        elif kind == 'batchnorm':
+            args += ['W', f"bn={a['bn']!r}", f"eps={a['eps']!r}"]
         elif kind == "refresh":
             args += [f"enabled={program.header.refresh == 'agent'!r}"]
+        if kind in ('conv2d', 'linear'):
+            if op.id in input_bn:
+                bn = input_bn[op.id]
+                args += [f"pre_bn={bn.attrs['bn']!r}", f"pre_eps={bn.attrs['eps']!r}"]
+            uses = consumers[output]
+            if len(uses) == 1 and uses[0].kind == 'batchnorm' and output not in program.outputs:
+                bn = uses[0]
+                args += [f"post_bn={bn.attrs['bn']!r}", f"post_eps={bn.attrs['eps']!r}"]
+                output = bn.outputs[0]
+                skipped.add(bn.id)
         lines.append(f"    {output} = ops.{kind}({', '.join(args)}){comment}")
     lines.append("    return ["+", ".join(program.outputs)+"]")
     return "\n".join(lines)+"\n"

@@ -33,11 +33,25 @@ class SemanticTests(unittest.TestCase):
                        dict(kernel_size=2, dilation=2, stride=1)):
             with self.subTest(kwargs=kwargs):
                 graph = self.assert_model(nn.MaxPool2d(**kwargs), sample)
-                self.assertEqual(report(graph)['needs_composition_ops'], ['maxpool'])
-                diag = check(graph)['diags'][0]
-                self.assertEqual(diag['op_id'], graph.nodes[0].id)
-                self.assertEqual(diag['lineno'], 1)
-                self.assertIn('maxpool', diag['reason'])
+                if kwargs == dict(kernel_size=2):
+                    self.assertEqual(report(graph)['needs_composition_ops'], [])
+                    self.assertTrue(check(graph)['ok'])
+                    from pt_agent.analyzer import calibrate
+                    from pt_agent.dsl.parser import parse
+                    from pt_agent.planners.rule import plan
+                    from pt_agent.tests.test_u3_kernels import mock
+                    arrays = {graph.inputs[0]: sample.numpy()}
+                    program = parse(plan(graph, calibrate(graph, arrays)))
+                    reference = forward(graph, arrays)[graph.outputs[0]]
+                    np.testing.assert_allclose(mock(program, graph.weights, sample.numpy(), exact=True),
+                                               reference, atol=1e-12, rtol=0)
+                else:
+                    self.assertEqual(report(graph)['needs_composition_ops'], ['maxpool'])
+                    diag = check(graph)['diags'][0]
+                    self.assertEqual(diag['op_id'], graph.nodes[0].id)
+                    self.assertEqual(diag['lineno'], 1)
+                    self.assertIn('maxpool', diag['reason'])
+                    self.assertIn('暂不支持', diag['reason'])
 
     def test_unary_and_broadcast_semantics(self):
         class Functions(nn.Module):

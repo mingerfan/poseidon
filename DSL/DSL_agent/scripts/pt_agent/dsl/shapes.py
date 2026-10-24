@@ -90,7 +90,7 @@ def infer(kind: str, in_shapes: list[tuple], attrs: dict,
         if rank < 2 or len(y) < 2 or x[:-2] != y[:-2] or x[-1] != y[-2]:
             raise ShapeError("matmul requires equal batch shapes and matching contracted dimensions")
         return [x[:-2] + (x[-2], y[-1])]
-    if kind == "avgpool":
+    if kind in ("avgpool", "maxpool"):
         if rank != 4:
             raise ShapeError("avgpool requires rank 4")
         kh, kw = _pair(a["k"])

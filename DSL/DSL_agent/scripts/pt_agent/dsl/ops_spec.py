@@ -66,6 +66,10 @@ def _pool(a):
         return "k/stride must be positive and pad nonnegative"
 
 
+def _maxpool(a):
+    return _pool(a) or _act(dict(a, fn="relu"))
+
+
 def _axes(a):
     if len(a["axis"]) != len(set(a["axis"])):
         return "axis entries must be distinct"
@@ -143,6 +147,10 @@ OPS = {
         algo=AttrSpec("str", default="diag", choices=("diag", "rowsum")))),
     "avgpool": _spec("avgpool", 1, "same", dict(k=AttrSpec("int_or_pair", True),
         stride=AttrSpec("int_or_pair"), pad=AttrSpec("int_or_pair", default=0)), _pool),
+    "maxpool": _spec("maxpool", 1, "same", dict(k=AttrSpec("int_or_pair", True),
+        stride=AttrSpec("int_or_pair"), pad=AttrSpec("int_or_pair", default=0),
+        method=AttrSpec("str", True, choices=("cheb", "minimax_comp")),
+        degrees=AttrSpec("int_tuple"), deg=AttrSpec("int"), domain=AttrSpec("float_pair")), _maxpool),
     "mean": _spec("mean", 1, "same", dict(_REDUCE), _axes),
     "sum": _spec("sum", 1, "same", dict(_REDUCE), _axes),
     "add": _spec("add", 2, "binary"),

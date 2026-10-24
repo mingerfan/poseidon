@@ -273,7 +273,17 @@ class _AtenMapper(Mapper):
                          padding=pair(arg(node, 3, 'padding', [0, 0])),
                          dilation=pair(arg(node, 4, 'dilation', [1, 1])),
                          ceil_mode=bool(arg(node, 5, 'ceil_mode', False)))
-            self.tuple_result(node, 'maxpool', attrs)
+            used_indices = [user for user in node.users if user.target is operator.getitem and user.args[1] == 1 and user.users]
+            if used_indices:
+                first = next((user.name for user in node.users if user.target is operator.getitem and user.args[1] == 0), node.name+'.0')
+                second = used_indices[0].name
+                shapes = [tuple(int(dim) for dim in meta.shape) for meta in node.meta['tensor_meta']]
+                inputs = [self.activation(node.args[0])]
+                self.emit(node, 'maxpool', inputs, dict(attrs), names=[first], shapes=[shapes[0]])
+                self.emit(node, 'maxpool_indices', inputs, dict(attrs), names=[second], shapes=[shapes[1]])
+                self.aliases[node] = [first, second]
+            else:
+                self.tuple_result(node, 'maxpool', attrs)
         else:
             raise Unsupported("aten op not in mapping table")
 

@@ -1,6 +1,6 @@
 """The trusted lowering's public operator and pattern registry."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 
 @dataclass(frozen=True)
@@ -94,6 +94,41 @@ CAPABILITIES = (
     ),
 )
 
+# r8-v4 keeps the exact original registry objects and text.
+V4_CAPABILITIES = CAPABILITIES
+CAPABILITIES = tuple(
+    replace(entry,
+            signature=entry.signature.replace('stride=S', 'groups=G, stride=S'),
+            constraints=('Odd square kernel; pad equals (kernel-1)//2; stride 1 or 2; dilation 1; groups is 1 or C_in. Depthwise requires groups=C_in and C_out=C_in. Batch normalization may be folded or written separately.',))
+    if entry.op == 'conv2d' else
+    replace(entry, semantics='Packs an image or flat vector into one or more ciphertext channel/length blocks.')
+    if entry.op == 'pack' else
+    replace(entry, constraints=('Input is flat or the output of flatten on a mux tensor. Flatten before a linear layer reorders its public weight columns to the actual mux slots, with replica and unused columns zero.',))
+    if entry.op == 'linear' else entry
+    for entry in V4_CAPABILITIES
+) + (
+    Capability('avgpool', 'avgpool(x, k=K, stride=S, pad=P)',
+               'Channel-wise average pooling, with a fixed divisor K squared (count_include_pad=True).',
+               ('Square kernel; symmetric zero padding; channel blocks are independent.',),
+               'Depthwise spatial products and output projection.'),
+    Capability('maxpool', 'maxpool(x, k=K, stride=S, pad=P, method="cheb", deg=D, domain=(lo,hi)) | maxpool(x, k=K, stride=S, pad=P, method="minimax_comp", degrees=(15,15,27), domain=(-B,B))',
+               'Approximate max pooling: merge horizontal neighbors then vertical neighbors using max(a,b)=b+relu(a-b). Padding is excluded by a valid-neighbor mask. Its approximation parameters are tunable independently of act.',
+               ('Every valid internal difference must lie inside domain. Chebyshev and minimax parameters follow act with fn="relu". Kernel 2 uses 2 ReLU passes and kernel 3 uses 4; each mask multiply adds one level.',),
+               '2*(K-1) polynomial ReLU passes, masks and output projection.'),
+    Capability('concat', 'concat(a,b,...,axis=1)',
+               'Concatenates the existing ciphertext block lists in channel order, with no movement.',
+               ('Mux inputs with the same spatial shape and gap; unequal valid block channel counts are allowed.',),
+               'No homomorphic operations.'),
+    Capability('flatten', 'flatten(x,start_dim=1)',
+               'Flattens CHW logically before linear. The spatial mux slots are retained and the linear weights are reordered.',
+               ('Mux input; the next linear layer accepts C*H*W input columns. H=W=1 uses the existing flat relayout.',),
+               'No movement for H*W>1; weight reorder is public.'),
+    Capability('batchnorm', 'batchnorm(x,bn="<prefix>",eps=1e-5)',
+               'Inference batch normalization with public weight, bias, running_mean and running_var.',
+               ('First fold into a preceding conv or linear with this BN as its only consumer. Otherwise fold into the sole following linear or a following convolution with padding=0. Preserve activation order. Remaining BN uses a channel-wise affine transform.',),
+               'Folded: no extra level; standalone: 1 level.'),
+)
+
 PATTERNS = (
     Pattern(
         'conv_bn', ('conv2d', 'batchnorm'),
@@ -113,9 +148,12 @@ PATTERNS = (
 )
 
 
-def render_capabilities() -> str:
+def render_capabilities(version="r8-v4") -> str:
+    if version not in ("r8-v4", "r8-v5"):
+        raise ValueError("unknown prompt version")
+    capabilities = V4_CAPABILITIES if version == "r8-v4" else CAPABILITIES
     lines = ["Operators supported by the lowering (generated from its capability registry; anything else is rejected):"]
-    for capability in CAPABILITIES:
+    for capability in capabilities:
         if capability.in_prompt:
             lines.extend((f"- {capability.signature}",
                           f"  {capability.semantics} Constraints: {' '.join(capability.constraints)} Cost: {capability.cost}"))

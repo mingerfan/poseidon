@@ -30,7 +30,7 @@ from ..lower import _pack_layout, lower
 SOURCE = Path(__file__).resolve().parents[1]
 TEMPLATES = Path(__file__).resolve().parent/"templates"
 CORE_SOURCES = {"base.py": "backends/base.py", "refresh.py": "backends/refresh.py",
-                **{name+".py": "kernels/"+name+".py" for name in ("layout", "slots", "conv", "pool", "linear", "multi")}}
+                **{name+".py": "kernels/"+name+".py" for name in ("layout", "slots", "conv", "pool", "linear", "multi", "cnn")}}
 
 
 def display_name(name):
@@ -203,14 +203,15 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
         for value in op.attrs.values():
             if isinstance(value, WeightRef):
                 names.add(value.name)
-        if op.kind == "conv2d" and op.attrs["bn"] is not None:
+        if op.kind in ("conv2d", "batchnorm") and op.attrs["bn"] is not None:
             names.update(op.attrs["bn"]+"."+suffix for suffix in ("weight", "bias", "running_mean", "running_var"))
-        if op.kind == "act":
+        if op.kind in ("act", "maxpool"):
             a = op.attrs
-            entry = dict(op_id=op.id, lineno=op.lineno, fn=a["fn"], method=a["method"])
+            fn = a.get("fn", "relu")
+            entry = dict(op_id=op.id, lineno=op.lineno, fn=fn, method=a["method"])
             if a["method"] == "cheb":
                 entry.update(deg=a["deg"], domain=a["domain"],
-                             coefficients=cheb_fit(a["fn"], a["deg"], *a["domain"]).tolist())
+                             coefficients=cheb_fit(fn, a["deg"], *a["domain"]).tolist())
             elif a["method"] == "minimax_comp":
                 entry.update(degrees=a["degrees"], domain=a["domain"],
                              coefficients=[value.tolist() for value in minimax_coeffs(tuple(a["degrees"]))])

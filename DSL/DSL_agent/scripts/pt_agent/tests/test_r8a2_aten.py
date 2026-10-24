@@ -149,10 +149,15 @@ class AtenTests(unittest.TestCase):
         actual = forward(graph, {graph.inputs[0]: sample.numpy()})[graph.outputs[0]]
         self.assertLessEqual(float(np.max(np.abs(actual-model(sample).numpy()))), 1e-12)
         checked = check_graph(graph)
-        self.assertFalse(checked['ok'])
-        self.assertIn('maxpool', checked['diags'][0]['reason'])
-        self.assertIn('op_id', checked['diags'][0])
-        self.assertGreater(checked['diags'][0]['lineno'], 0)
+        self.assertTrue(checked['ok'])
+        from pt_agent.analyzer import calibrate
+        from pt_agent.dsl.parser import parse
+        from pt_agent.planners.rule import plan
+        from pt_agent.tests.test_u3_kernels import mock
+        arrays = {graph.inputs[0]: sample.numpy()}
+        program = parse(plan(graph, calibrate(graph, arrays)))
+        np.testing.assert_allclose(mock(program, graph.weights, sample.numpy(), exact=True), actual,
+                                   atol=1e-12, rtol=0)
 
     def test_data_dependent_control_flow(self):
         class Dynamic(nn.Module):

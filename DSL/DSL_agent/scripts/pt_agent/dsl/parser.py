@@ -233,7 +233,7 @@ class _Parser:
             if field.required and key not in supplied:
                 _fail("E_ATTR_MISSING", statement, f"{name}: missing {key}")
             attrs[key] = _convert(supplied.get(key, field.default), field, statement, key)
-        if name == "avgpool" and attrs["stride"] is None:
+        if name in ("avgpool", "maxpool") and attrs["stride"] is None:
             attrs["stride"] = attrs["k"]
         message = spec.validate(attrs)
         if message is not None:

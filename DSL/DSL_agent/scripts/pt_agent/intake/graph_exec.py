@@ -54,6 +54,8 @@ def forward(graph, inputs, *, keep=False):
                 raise ValueError(f'{node.id}: unknown act function {fn}')
         elif op == 'softmax':
             result = torch.softmax(x, dim=a['axis'])
+        elif op == 'maxpool_indices':
+            result = F.max_pool2d(x, a['kernel'], a['stride'], a['padding'], a['dilation'], a['ceil_mode'], return_indices=True)[1]
         elif op == 'maxpool':
             result = F.max_pool2d(x, a['kernel'], a['stride'], a['padding'], a['dilation'], a['ceil_mode'])
         elif op == 'avgpool':

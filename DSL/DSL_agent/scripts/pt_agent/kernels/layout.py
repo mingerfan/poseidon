@@ -128,6 +128,24 @@ class MultiMuxLayout:
 
 
 @dataclass(frozen=True)
+class ConcatMuxLayout(MultiMuxLayout):
+    """An ordered concatenation of valid, possibly unequal channel blocks."""
+
+    partition_sizes: tuple[int, ...]
+
+    @property
+    def blocks(self):
+        if not self.partition_sizes or sum(self.partition_sizes) != self.C:
+            raise KernelError("concat partitions must sum to C")
+        result, start = [], 0
+        for size in self.partition_sizes:
+            block = mux_layout(self.n, size, self.H, self.W, self.k)
+            result.append((start, start+size, block))
+            start += size
+        return tuple(result)
+
+
+@dataclass(frozen=True)
 class MultiFlatLayout:
     n: int
     size: int
@@ -209,5 +227,8 @@ def layout_record(lay):
 
 def layout_from_record(record):
     fields = {key: value for key, value in record.items() if key not in ('kind', 'blocks')}
+    if record['kind'] == 'multi_mux' and 'partition_sizes' in fields:
+        fields['partition_sizes'] = tuple(fields['partition_sizes'])
+        return ConcatMuxLayout(**fields)
     return {'mux': MuxLayout, 'flat': FlatLayout,
             'multi_mux': MultiMuxLayout, 'multi_flat': MultiFlatLayout}[record['kind']](**fields)

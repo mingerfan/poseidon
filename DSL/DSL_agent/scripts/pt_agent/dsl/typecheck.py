@@ -56,6 +56,15 @@ def check(program: Program, weights: Mapping[str, Sequence[int]]) -> CheckResult
         for vid in op.outputs:
             layouts[vid] = tag
         input_shapes = [shapes[vid] for vid in op.inputs]
+        if op.kind == "conv2d" and input_shapes[0] is not None:
+            channels = input_shapes[0][1]
+            groups = op.attrs["groups"]
+            if groups not in (1, channels):
+                emit("E_SHAPE", op, "暂不支持 this grouped convolution; groups must be 1 or C_in")
+            elif groups == channels and channels > 1:
+                shape = weights.get(op.attrs["w"].name)
+                if shape is not None and shape[0] != channels:
+                    emit("E_SHAPE", op, "暂不支持 depthwise channel multipliers; C_out must equal C_in")
         output_shapes = [None] * len(op.outputs)
         if all(shape is not None for shape in input_shapes):
             try:

@@ -16,11 +16,12 @@ from .kernels.conv import fold_bn
 from .kernels.poly import act_minimax
 from .kernels.layout import (MultiMuxLayout, MultiFlatLayout, layout_blocks, multi_mux_layout,
                              multi_flat_layout, pack_multi, unpack_multi)
-from .kernels import multi
+from .kernels import multi, cnn
 
 
 HANDLED_OPS = frozenset({
     "pack", "conv2d", "act", "add", "slice", "pad", "mean", "relayout", "linear", "refresh",
+    "avgpool", "maxpool", "concat", "flatten", "batchnorm",
 })
 
 
@@ -71,6 +72,15 @@ def _act_block(b, value, layout, attrs, act_mode):
     return value
 
 
+def _forward_bn_target(op, consumers, outputs):
+    uses = consumers[op.outputs[0]]
+    if op.outputs[0] in outputs or len(uses) != 1:
+        return None
+    following = uses[0]
+    return following if following.kind == 'linear' or (
+        following.kind == 'conv2d' and following.attrs['pad'] == (0, 0)) else None
+
+
 def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
           act_mode: str = "program", observer=None) -> tuple[list, list]:
     if act_mode not in ("program", "exact") or act_mode == "exact" and not isinstance(b, MockBackend):
@@ -92,7 +102,7 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
             consumers[vid].append(op)
     remaining = Counter(vid for op in program.ops for vid in op.inputs)
     remaining.update(program.outputs)
-    skipped = set()
+    skipped, input_bn = set(), {}
     for op in program.ops:
         if op.id in skipped:
             continue
@@ -120,7 +130,9 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                 if not isinstance(layout, (MuxLayout, MultiMuxLayout)):
                     raise KernelError("conv2d input must have MuxLayout")
                 w, bias = ref("w"), ref("b")
-                if (a["algo"] != "mpcb" or a["dilation"] != (1, 1) or a["groups"] != 1
+                if op.id in input_bn:
+                    w, bias = cnn.fold_input_bn(w, bias, *input_bn[op.id], groups=a['groups'])
+                if (a["algo"] != "mpcb" or a["dilation"] != (1, 1) or a["groups"] not in (1, layout.C)
                         or a["stride"][0] != a["stride"][1]
                         or a["pad"] != ((w.shape[2]-1)//2,)*2):
                     raise KernelError("conv2d requires mpcb, dilation=1, groups=1, equal strides and same padding")
@@ -130,7 +142,66 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                     scale, shift = fold_bn(weight(prefix+".weight"), weight(prefix+".bias"),
                                            weight(prefix+".running_mean"), weight(prefix+".running_var"),
                                            a["bn_eps"], bias)
-                value, layout = multi.conv2d_blocks(b, value, layout, w, stride=a["stride"][0], scale=scale, shift=shift)
+                uses = consumers[output]
+                if len(uses) == 1 and uses[0].kind == 'batchnorm' and output not in program.outputs:
+                    bn = uses[0]
+                    prefix = bn.attrs['bn']
+                    extra_scale, extra_shift = fold_bn(weight(prefix+'.weight'), weight(prefix+'.bias'),
+                        weight(prefix+'.running_mean'), weight(prefix+'.running_var'), bn.attrs['eps'])
+                    shift = extra_shift if shift is None else extra_scale*shift+extra_shift
+                    scale = extra_scale if scale is None else extra_scale*scale
+                    output = bn.outputs[0]
+                    handled.append(bn); skipped.add(bn.id)
+                conv = cnn.depthwise_blocks if a['groups'] > 1 and a['groups'] == layout.C and w.shape[:2] == (layout.C, 1) else multi.conv2d_blocks
+                value, layout = conv(b, value, layout, w, stride=a["stride"][0], scale=scale, shift=shift)
+            elif op.kind in ('avgpool', 'maxpool'):
+                if not isinstance(layout, (MuxLayout, MultiMuxLayout)):
+                    raise KernelError('pool input must have MuxLayout')
+                if op.kind == 'avgpool':
+                    value, layout = cnn.avgpool_blocks(b, value, layout,
+                        kernel=a['k'], stride=a['stride'], pad=a['pad'])
+                else:
+                    stats = cnn.DifferenceStats()
+                    def observe(difference, block, valid):
+                        data = difference.value[..., block.index_grid()[0]]
+                        stats.add(data[..., valid])
+                        if act_mode != 'exact':
+                            lo, hi = a['domain']
+                            max_u = float(np.max(np.abs(stats.value*(2/(hi-lo))-(hi+lo)/(hi-lo))))
+                            if max_u > 1:
+                                if observer is not None:
+                                    observer(op.inputs[0], stats, cnn.DifferenceLayout(), cfg)
+                                from .backends.base import BackendError
+                                raise BackendError('maxpool comparison input leaves its domain')
+                    cfg = (('exact',) if act_mode == 'exact' else
+                           ('minimax_comp', tuple(a['degrees']), *a['domain']) if a['method'] == 'minimax_comp'
+                           else ('cheb', a['deg'], *a['domain']))
+                    attrs = dict(a, fn='relu')
+                    value, layout = cnn.maxpool_blocks(b, value, layout,
+                        kernel=a['k'], stride=a['stride'], pad=a['pad'],
+                        apply=lambda item: _act_block(b, item, None, attrs, act_mode),
+                        observer=observe if observer is not None or isinstance(b, MockBackend) else None)
+                    if observer is not None:
+                        observer(op.inputs[0], stats, cnn.DifferenceLayout(), cfg)
+            elif op.kind == 'concat':
+                if a['axis'] != 1:
+                    raise KernelError('concat supports axis=1')
+                pairs = [env[name] for name in op.inputs]
+                value, layout = cnn.concat_blocks([pair[0] for pair in pairs], [pair[1] for pair in pairs])
+            elif op.kind == 'flatten':
+                if a['start_dim'] != 1 or not isinstance(layout, (MuxLayout, MultiMuxLayout, FlatLayout, MultiFlatLayout)):
+                    raise KernelError('flatten requires a packed tensor and start_dim=1')
+                if isinstance(layout, (MuxLayout, MultiMuxLayout)) and layout.H == layout.W == 1:
+                    value, layout = multi.mean_blocks(b, value, layout)
+            elif op.kind == 'batchnorm':
+                prefix = a['bn']
+                scale, shift = fold_bn(weight(prefix+'.weight'), weight(prefix+'.bias'),
+                    weight(prefix+'.running_mean'), weight(prefix+'.running_var'), a['eps'])
+                following = _forward_bn_target(op, consumers, program.outputs)
+                if following is not None:
+                    input_bn[following.id] = scale, shift
+                else:
+                    value, layout = cnn.batchnorm_blocks(b, value, layout, scale, shift)
             elif op.kind == "act":
                 cfg = (("exact",) if act_mode == "exact" or a["method"] == "exact"
                        else ("minimax_comp", tuple(a["degrees"]), *a["domain"])
@@ -209,11 +280,25 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                 elif a["layout"] != "flat" or not isinstance(layout, (FlatLayout, MultiFlatLayout)):
                     raise KernelError("relayout requires an already flat input and flat target")
             elif op.kind == "linear":
-                if not isinstance(layout, (FlatLayout, MultiFlatLayout)):
-                    raise KernelError("linear input must have FlatLayout")
-                w = ref('w')
-                linear = multi.linear_blocks if isinstance(layout, multi.MULTI) or w.shape[0] > layout.n//2 else linear_flat
-                value, layout = linear(b, value, layout, w, ref("b"), algo=a["algo"], n1=a["n1"])
+                if not isinstance(layout, (FlatLayout, MultiFlatLayout, MuxLayout, MultiMuxLayout)):
+                    raise KernelError("linear input must have FlatLayout or a flattened mux input")
+                w, bias = ref('w'), ref('b')
+                if op.id in input_bn:
+                    w, bias = cnn.fold_input_bn(w, bias, *input_bn[op.id])
+                uses = consumers[output]
+                if len(uses) == 1 and uses[0].kind == 'batchnorm' and output not in program.outputs:
+                    bn = uses[0]
+                    prefix = bn.attrs['bn']
+                    scale, shift = fold_bn(weight(prefix+'.weight'), weight(prefix+'.bias'),
+                        weight(prefix+'.running_mean'), weight(prefix+'.running_var'), bn.attrs['eps'], bias)
+                    w, bias = w*scale[:, None], shift
+                    output = bn.outputs[0]
+                    handled.append(bn); skipped.add(bn.id)
+                if isinstance(layout, (MuxLayout, MultiMuxLayout)):
+                    linear = cnn.flatten_linear
+                else:
+                    linear = multi.linear_blocks if isinstance(layout, multi.MULTI) or w.shape[0] > layout.n//2 else linear_flat
+                value, layout = linear(b, value, layout, w, bias, algo=a["algo"], n1=a["n1"])
             elif op.kind == "refresh":
                 if program.header.refresh == "agent":
                     value = ([item.bootstrap() for item in value] if isinstance(layout, multi.MULTI)

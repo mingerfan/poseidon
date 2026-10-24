@@ -86,6 +86,11 @@ def _evaluate(node, values, batch):
     if op == "softmax":
         result = np.exp(x-np.max(x, axis=attrs["axis"], keepdims=True))
         return result/np.sum(result, axis=attrs["axis"], keepdims=True)
+    if op == 'maxpool':
+        import torch
+        from torch.nn import functional as F
+        return F.max_pool2d(torch.from_numpy(x), attrs['kernel'], attrs['stride'],
+                            attrs['padding'], attrs.get('dilation', (1, 1)), attrs.get('ceil_mode', False)).numpy()
     if op == "avgpool":
         ph, pw = attrs["padding"]
         padded = np.pad(x, ((0, 0), (0, 0), (ph, ph), (pw, pw)))
@@ -153,6 +158,27 @@ def reference_forward(graph: Graph, inputs: dict[str, np.ndarray], *, keep: bool
     return values if keep else {name: values[name] for name in graph.outputs}
 
 
+def approximation_points(graph):
+    """Stable ordered point keys; activation keys retain the frozen spelling."""
+    return [(node, node.inputs[0] if node.op == 'act' else node.outputs[0]+'::differences')
+            for node in graph.nodes if node.op in ('act', 'maxpool')]
+
+
+def approximation_values(graph, values):
+    from .kernels.cnn import DifferenceStats, maxpool_tensor
+    result = {}
+    for node, name in approximation_points(graph):
+        if node.op == 'act':
+            result[name] = values[node.inputs[0]]
+        else:
+            stats = DifferenceStats()
+            a = node.attrs
+            maxpool_tensor(values[node.inputs[0]], kernel=a['kernel'], stride=a['stride'],
+                           pad=a['padding'], apply=lambda x: np.maximum(x, 0), observer=stats.add)
+            result[name] = stats.value
+    return result
+
+
 def calibrate(graph: Graph, inputs: dict[str, np.ndarray], batch: int = 100) -> dict[str, dict]:
     if batch <= 0:
         raise ValueError("batch must be positive")
@@ -173,4 +199,16 @@ def calibrate(graph: Graph, inputs: dict[str, np.ndarray], batch: int = 100) -> 
                 old = result[name]
                 old.update(min=min(old["min"], low), max=max(old["max"], high), absmax=max(old["absmax"], absolute),
                            p999=max(old["p999"], percentile), count=old["count"]+int(value.size))
+        pool_names = {name for node, name in approximation_points(graph) if node.op == 'maxpool'}
+        if pool_names:
+            for name, value in approximation_values(graph, values).items():
+                if name not in pool_names:
+                    continue
+                low, high = float(value.min()), float(value.max())
+                absolute = max(abs(low), abs(high))
+                if name not in result:
+                    result[name] = dict(min=low, max=high, absmax=absolute)
+                else:
+                    old = result[name]
+                    old.update(min=min(old['min'], low), max=max(old['max'], high), absmax=max(old['absmax'], absolute))
     return result
