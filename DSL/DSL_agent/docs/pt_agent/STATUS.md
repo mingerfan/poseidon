@@ -1,8 +1,12 @@
-# pt_agent 状态（最后更新：2026-10-24 / fb6d7f3c-dirty）
+# pt_agent 状态（最后更新：2026-10-24 / 0fcbdd57-dirty）
 
 主线：`/home/lhohy/Code/Poseidon`，`lhy-agent-dsl`。
 当前按 A 线 AGENTS.md 的逐轮 spec 规则推进；PLAN.md 仅作路线图。
-当前轮次R8f2 §10.4已完成：静态及输入内容比较通过，9个候选两侧evaluate、13个最终程序Mock复核、18轮反馈文本全部一致；测试341＋1＋16＝358/358通过，155行MLP历史重算完成。旧整轮重放、停止及部分运行证据保留。API0、累计45/300。[SUMMARY](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/SUMMARY.json)。
+当前轮次R8h2已完成：新增4项与既有362项共366/366测试通过；R8h四模型候选池规范化去重、重新确认、选中原文P2真实编译和各8000图Mock报告全部结束，报告准确率条件4/4通过。ResNet20选中R8h第1轮原始输出，325/325自举、91.625%、下降0.0875pp、报告发散0；去重前遗漏的程序现已覆盖，attempt-02未触发。API0，累计63/300、registry232条，未打tag。[完整对照](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json)、[测试REPORT](/home/lhohy/pt_agent_results/R8h2-confirm-dedup-tests-20261024T040449/REPORT.json)。
+历史R8h实现与362/362测试已完成，四模型真实运行均已结束。MLP/CNN/SiLU通过确认、P2真实编译和8000图报告准确率条件；ResNet20六次确认均未通过，未选中冻结程序，编译与报告未执行。当轮整体验收3/4，R8h卡保留原阻塞结论；API15/30、累计63/300，未打tag。[完整对照](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/FINAL_REPORT.json)。
+历史S0已完成，按§4通过：6份Q1指定项目全部相同，20个适用破坏变体均先由MLIR verifier拒绝；Q3的3次成功导出均改动管理状态，另9次报错。check-smu原样均退出0，但5输入含不一致诊断，单独检错能力未获证明。新增编排脚本，既有模块与库保持；API0、累计48/300。[SUMMARY](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/SUMMARY.json)。
+历史R8g已完成：离线12/12通过；仅MLP真实Agent运行3轮，首轮原样输出经单次确认选择、P2真实编译及8000图Mock报告评测，top-1=56.05%、发散0；预测/编译自举24/24，预测6286530µs，与R8e7相同。总耗时180.762645秒，其中精调10.905796秒。本轮API3/8、累计48/300；冻结模块保持，未打tag。[完整对照](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/COMPARISON.json)。
+历史R8f2 §10.4已完成：静态及输入内容比较通过，9个候选两侧evaluate、13个最终程序Mock复核、18轮反馈文本全部一致；测试341＋1＋16＝358/358通过，155行MLP历史重算完成。旧整轮重放、停止及部分运行证据保留。API0、累计45/300。[SUMMARY](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/SUMMARY.json)。
 历史P2已完成：新增结构化Hecate包与export编译入口；新增12项及既有315项分组共327/327通过。7包真实trace/编译全部通过，自举数226/160/72/24/383/288/461和11类运算计数均与原记录相同；每包test[9000:9020]输出与Mock完全相同、最大差0。每包34文件，model.py为10–59行；API0、累计45/300，整网CKKS0。冻结模块与原程序/计划保持。[SUMMARY](/home/lhohy/pt_agent_results/p2-export-20261023T075648/SUMMARY.json)。
 历史R9a2已完成：310/310测试通过；121配置各2000图复核完成、执行错误0，robust_feasible为5/12、9/10、30/31、68/68；E6 matched自举40/40一致，延迟相对误差中位0.9412328560719451%、最大1.6305665547421428%；E3专家MLP改为2/manual。API/新编译/下载/训练/新权重/CKKS0，累计45/300。 [完整SUMMARY](/home/lhohy/pt_agent_results/r9a2-20261023T004744/SUMMARY.json)。
 历史R9a：305/305测试通过；setsid nohup all完整结束（20228.307369275994秒，约5小时37分），13项工作退出均0。E1 751项、E3 26项、E4 84项、E6 40对，执行错误均0；新增真实编译26/26，复用14份历史计划。Agent冻结模块保持，API0、累计45/300；报告集/下载/训练/新权重/真实CKKS0。 [运行REPORT](/home/lhohy/pt_agent_results/r9a-20261022T152208/REPORT.json)；§8完整表格见本文件R9a节。
@@ -18,6 +22,10 @@
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| R8h2 | specs/R8h2-confirm-dedup.md | 完成 | planners/confirm.py、tests/test_r8h2_confirm_dedup.py、experiments/r8h2_reconfirm.py、STATUS | 366/366；4/4确认、P2编译及8000图Mock报告；API0、累计63；attempt-02未触发 | 同延迟保留pool原顺序；原Candidate保持，agent.py无需适配；自写编排列表读取修正见R8h2节；未打tag |
+| R8h | specs/R8h-tune-all-v11.md | 阻塞 | planners/agent.py、tests/test_r8h_tune_all.py、experiments/r8h_rerun.py、STATUS | 362/362通过；3/4模型完成真实编译和8000图报告；ResNet20确认6/6未通过；API15/30 | 提示保持r8-v4；旧测试未改；确认、数值条件及停止规则保持；未打tag |
+| S0 | specs/S0-pass-pipeline-spike.md | 完成 | experiments/s0_pipeline_spike.py、STATUS | §4通过；Q1 6/6；Q2 20/20 verifier检出；Q3 12项现象记录 | 输入扩展与额外qwen48编译已获批；原失败保留；checker诊断及EVA配置差异单列 |
+| R8g | specs/R8g-mlp-rerun.md | 完成 | experiments/r8g_mlp_rerun.py（仅编排）、STATUS | 12/12离线；3轮可行，首轮选中；P2编译退出0、自举24；8000图56.05%、发散0；API3/8 | 自写离线检查第262行修正循环误识别；冻结模块保持，未打tag；详见R8g节 |
 | R8f2 | specs/R8f2-flat-tail-fix.md（含§10.4） | 完成 | 原尾槽与最终Mock实现保持；本轮仅结果接续脚本与STATUS | 358/358；§10证明9/13/18；MLP重算155行 | 按§10.4授权时限机械接续；核心代码和旧断言保持，历史停止记录保留 |
 | R8f | specs/R8f-tensor-validate.md；R8f2含§10.4接续 | 完成 | tensor_sim.py、agent_tools.py、tuner.py、张量与缓存测试、默认引擎文档 | 复用46数值/18候选/13精调/224 history/6无缓存/9计时；完整回归358/358 | 精调tensor；evaluate、确认、精确检查及报告Mock；最终Mock复核已验证 |
 | P2 | specs/P2-hecate-package.md | 完成 | export/、run.py、toolchain.py、README.md、tests/test_p2_export.py、STATUS.md | 新增12＋既有315＝327/327；七包A/B/真实编译均通过，11类计数全部相同；[REPORT](/home/lhohy/pt_agent_results/p2-export-20261023T075648/REPORT.json) | 初次合并回归峰值失败和启动漏路径记录保留；分组执行及历史夹具说明见P2节 |
@@ -71,7 +79,16 @@
 
 ## 阻塞（需要用户或 Claude 决定的问题）
 
-当前无待用户或Claude决定的问题。R8f/R8f2已按§10.4完成；M1第5条真实CKKS保留待执行。下列为保留的历史记录。
+R8h2当前无待决定项，四模型均已完成。历史R8h确认阻塞已由R8h2解除：ResNet20去重后检查5个不同程序，第1轮原始输出通过确认、P2编译和报告准确率条件；attempt-02未触发。原R8h失败响应、源码、统计和额度保留。按spec §5，后续提交及本地pt-agent-freeze-v1.1由Claude处理；本轮未提交、未打tag。整网真实CKKS和未见模型证据继续留待后续spec。
+
+历史R8h阻塞（spec §3，现由R8h2接续解除）：ResNet20完成4轮生成及精调，独立确认6/6未通过。按候选顺序，准确率下降为0.9、0.9、1.4、1.4、0.6、0.6pp，均超过固定0.5pp；每个候选均有1张发散并按既定规则计错，确认集精确参考top-1=91.5%。终态RuntimeError: Agent status: confirm_failed；没有选中源码，未进入该模型P2编译或报告集。其余三模型已完成；新增编译器／运行库依赖阻塞证据0。当时按[AGENTS.md](/home/lhohy/Code/Poseidon/AGENTS.md)“有疑问或报错，就停下来写进STATUS.md的阻塞一栏，等待新的spec”停止接续，剩余调用与6次确认上限保持。[终态REPORT](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/models/resnet20/attempt-01/REPORT.json)、[完整对照](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/FINAL_REPORT.json)。
+
+R8h原审批阻塞已解除：用户明确回复“批准这组载荷外发并继续 R8h”，范围为[manifest](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/network-review/manifest.json)中的四模型载荷组向https://api.deepseek.com/chat/completions发送，最多30次、累计78/300、零重试。原拦截发生在进程启动前，API0；历史证据保留。用户批准后的四模型运行已结束，当前ResNet20确认阻塞另列；原拦截与批准记录保留。[批准记录](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/network-review/approval.json)。
+
+
+当前无S0待决定项；按§4已通过。S1/S2留待后续spec，check-smu的诊断／退出码差异及自带流水线重管理现象已记录。M1第5条真实CKKS保持待执行。
+
+S0历史停止（已由用户额外一次qwen48授权解除）：补充批准的P1 optimized单次编译采用原P1普通profile、boot=None，规划器自动插入1次自举；导出报`RuntimePlan Boot requires --boot-profile`，退出1、0.01秒、峰值10.3203125MiB。原earth/ckks文件保留，RuntimePlan未产生。当时等待接续口径；用户随后批准一次qwen48编译并成功，六输入Q1–Q3现已完成。编译器及既有模块保持。[失败日志](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/prepare-p1-eva_r2b-depth-dp_r2b-pars/p1-optimized/compile.log)。下列为保留的历史记录。
 
 
 历史停止项（已由§10.4解除）：完整回归的运行时限：本轮自写测试编排把17项张量测试放入同一个1200秒进程；新增最终Mock复核增加了耗时。实际运行1200.540964秒、退出124。需要新spec明确剩余16项的接续分组；已通过341项及ResNet20缓存对照应复用，全部358项完成后再做155行重算。原4GiB、串行限制和已用时间保持，尚未扩大时限、重试或启动MLP。本轮未观察到新的数值差异，未标记编译器依赖阻塞。[REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/REPORT.json)、[超时RUN](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor/RUN.json)、[完整日志](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor/tests.log)。依据AGENTS.md：“有疑问或报错，就停下来写进STATUS.md的阻塞一栏，等待新的spec。”下列保留历史记录。
@@ -174,6 +191,14 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+R8h2最终API0/8，累计63/300、剩余237；attempt-02未触发，四模型均复用R8h唯一一次生成尝试中的候选。本轮重新生成/精调/下载/训练/新权重/真实CKKS/提交/tag均0。registry共232条，新增13条（7条测试、4条模型重确认、批次及完整对照各1），原219条全部保留；原调用额度与历史证据保持。[FINAL_REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json)。
+
+R8h最终API15/30，累计63/300、剩余237；原本轮上限30、累计上限78保持，未重置或消费剩余调用。registry共219条（启动前198条），15次真实调用、4模型终态、批次和完整对照均已登记。四模型生成均已结束，MLP/CNN/SiLU完成、ResNet20确认失败；历史响应、源码、程序包及原审批拦截记录保留，未打tag。
+
+S0本轮API0，累计48/300、剩余252；registry共192条，保留此前183条及本次失败记录。新增9条阶段／汇总记录；LLM、数据集图像读取、训练、下载、真实CKKS均0。
+
+pt_agent：**48 / 300**，剩余252次。R8g本轮3/8，调用序号46–48逐次写入registry；现共183条，保留原178条及审批阻塞记录。本次只有MLP真实运行，额外连通性/重试/CKKS/训练/下载均0。[REPORT](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/REPORT.json)。
+
 R8f2 §10.4已完成，API0，累计45/300；registry共178条。替代证明9/13/18、测试358/358、MLP重算155行全部完成。[SUMMARY](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/SUMMARY.json)。本次状态脚本只读registry，历史记录保留。
 
 R8f2 §10.3本轮API0、累计45/300；registry现有175条。替代证明9/13/18全部通过；测试341项完整通过报告及1项局部通过日志，张量组1200秒超时，155行重算未启动。已用时间及所有历史行保持。[REPORT](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/REPORT.json)。
@@ -194,17 +219,17 @@ R9a2 API0，累计45/300、剩余255；310项通过，原失败测试记录及�
 
 R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry记录保留。all已完成，E1/E3/E4/E6执行错误0；新编译26/26（R20 8、SiLU 8、CNN 8、MLP 2），历史计划14份复用。M1第1–4条沿用R8e7通过结果，第5条待执行。
 
-pt_agent：**45 / 300**，剩余255次。R8e7 API0、重新生成0、重新精调0、训练0、下载0、真实CKKS0；4模型trace／真实编译各4次，2固定基线复用既有计划。4模型共8次确认，2基线各1次；全部6份程序完成8000图Mock报告。全部历史调用与82条registry记录保留。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)。
+历史R8e7时pt_agent：45 / 300，剩余255次。R8e7 API0、重新生成0、重新精调0、训练0、下载0、真实CKKS0；4模型trace／真实编译各4次，2固定基线复用既有计划。4模型共8次确认，2基线各1次；全部6份程序完成8000图Mock报告。全部历史调用与82条registry记录保留。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)。
 
 ## 最近 5 次运行（run_id、模型、结论）
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| r8f2-section104-20261023T154734-complete | dev-models | complete=true；recomputed_rows=155；api_calls=0；[证据目录](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734) |
-| r8f2-mlp-recheck-20261023T160203 | mlp | complete=true；exit_code=0；recomputed_rows=155；seconds=50.165022811997915；stage="complete"；[证据目录](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-20261023T160203) |
-| r8f2-section104-20261023T154734-regression-tensor-remaining | dev-models | successful=true；exit_code=0；tests_run=16；passed=16；failures=0；errors=0；skipped=0；seconds=661.8775016540021；[证据目录](/home/lhohy/pt_agent_results/r8f2-section104-20261023T154734/regression-tensor-remaining) |
-| r8f2-section103-20261023T141823-regression-stop | dev-models | complete=false；exit_code=124；evaluate_candidates=9；tuned_validations=13；feedback_rounds=18；api_calls=0；[证据目录](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823) |
-| r8f2-section103-20261023T141823-regression-tensor | dev-models | successful=false；exit_code=124；[证据目录](/home/lhohy/pt_agent_results/r8f2-section103-20261023T141823/regression-tensor) |
+| R8h2-four-models-comparison-20261024T052614-f8e9 | four-models | 完整v1对照；366/366测试、4/4模型编译及报告完成；API0；[FINAL_REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json) |
+| R8h2-four-models-reconfirm-20261024T042316-fd5d | four-models | complete=true；4模型各8000图、确认与报告准确率条件均通过；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/REPORT.json) |
+| R8h2-resnet20-attempt-01-20261024T052541-aafd | resnet20 | 8→5；选1/llm；325/325自举，91.625%，报告发散0；attempt-02未触发；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/models/resnet20/attempt-01/REPORT.json) |
+| R8h2-resnet20_silu-attempt-01-20261024T045011-d76c | resnet20_silu | 6→5；选2/tuned；148/148，91.6375%，发散1；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/models/resnet20_silu/attempt-01/REPORT.json) |
+| R8h2-cnn_plain-attempt-01-20261024T043059-3777 | cnn_plain | 4→3；选1/tuned；87/87，65.5875%，发散1；[REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/models/cnn_plain/attempt-01/REPORT.json) |
 
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
@@ -1984,3 +2009,373 @@ e1confirm：[逐行结果](/home/lhohy/pt_agent_results/r8f2-mlp-recheck-2026102
 R8f与R8f2本轮要求均已完成，当前无待用户或Claude决定的问题。M1第1–4条沿用R8e7；第5条整网真实CKKS 40图及4探针仍待后续任务。本轮完成开发验证和历史重算，未新增首次Agent输出的完整CKKS验收。
 
 本轮API0、真实CKKS0；累计45/300，registry现有178条，本脚本只读计数。旧超时用量、原R9a/R9a2及其他历史证据保留。
+
+## R8g MLP重跑（完成）
+
+已核对aarch64、lhy-agent-dsl、HEAD 0fcbdd57；pt_agent源码开始时干净，宿主无其他Python/Nix/编译任务。现有r8b_dev外层固定四模型、旧阶段列表缺export；按spec新增只编排的r8g_mlp_rerun.py，直接复用run._inside及其循环末尾的单次confirm_select，沿用当前P2编译和报告流程。提示、模型设置、数据范围和精调参数沿用冻结协议；启动前API45/300，单次运行上限8，零额外连通性调用和重试。
+
+R8g离线编排检查12/12通过；本轮新离线检查最初将stderr诊断解析循环误判为重试，已仅修正检查脚本第262行的循环识别，HTTP无重试要求保持，初次结果保留。首次真实启动被自动审批拦截，调用0；用户随后明确批准完整首请求与载荷范围，唯一MLP运行已完成。证据及运行目录：[R8g](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931)。
+
+
+改动文件：[experiments/r8g_mlp_rerun.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/r8g_mlp_rerun.py)与本STATUS。新入口只编排现有run._inside，固定MLP、r8-v4、deepseek-flash/high/32768、agent_iters=6、tuner=on/2400秒/max_sweeps=1；循环结束由原Agent调用一次confirm_select，MAX_CONFIRM_EVALS=6。外层记录3次API及运行结果，内层经参数接收路径。提示、精调、验证、lowering和编译器库保持原样。其余3个模型沿用R8e7；未打tag。
+
+测试输出：`Ran 12 tests in 0.017s; OK`，12通过、失败/错误/跳过0。[离线REPORT](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/r8g_offline_checks_REPORT.json)。真实运行`complete=true, stage=complete, exit_code=0`，180.7626446619979秒；单次确认选择实际评估1个候选并通过。P2导出34文件，真实trace与编译均退出0；编译0.45秒、峰值115.09765625MiB，计划1540步、自举24。精确8图最大差5.329070518200751e-15；报告8000图正确4484、发散0。完整数据：[运行REPORT](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/REPORT.json)、[模型REPORT](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/mlp/REPORT.json)、[并列COMPARISON](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/COMPARISON.json)。
+
+| 指标 | R8e7冻结MLP | R8g本次MLP |
+|---|---|---|
+| 最终来源 | R8e5第1轮LLM，R8e7重新确认 | 本次第1轮LLM原样输出 |
+| 唯一act（ReLU） | minimax_comp，degrees=(15,15,27)，domain=(-30,30) | minimax_comp，degrees=(15,15,27)，domain=(-30,30) |
+| 预测 / 真实编译自举 | 24 / 24 | 24 / 24 |
+| 预测延迟（µs） | 6286530 | 6286530 |
+| plan_latency（µs） | 6229205 | 6229205 |
+| 确认集acc_drop（pp） / 通过 | 7.105427357601002e-15 / true | 7.105427357601002e-15 / true |
+| 报告集top-1 / Torch | 56.05% / 56.0375% | 56.05% / 56.0375% |
+| 报告集acc_drop（pp） / 发散数 | -0.012499999999995737 / 0 | -0.012499999999995737 / 0 |
+| LLM调用 | 原生成3，R8e7重新确认0 | 3，本轮上限8 |
+| 总耗时（秒） | 原生成流程206.8835134860019；R8e7重新确认流程97.17476965000242 | 本次完整流程180.7626446619979 |
+| Agent耗时 / 其中精调（秒） | 90.56316425100158 / 29.08948116100146 | 94.31532651498856 / 10.905795982005657 |
+
+旧总耗时分两次历史运行记录：原R8e5包含9000图报告，后续R8e7包含重新确认、编译及8000图报告；R8g在同一次运行中完成生成、确认、P2编译和8000图报告。上述耗时按各自范围保留，未填造一个同范围的旧总耗时。预测和plan_latency均为代价估计；本轮真实CKKS执行0。旧证据：[R8e7 MLP REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/models/mlp/REPORT.json)、[R8e5 MLP REPORT](/home/lhohy/pt_agent_results/r8e5-dev-20261022T041646/mlp/REPORT.json)。
+
+新程序预测延迟 / R8f2历史最快可行预测延迟 = 6286530 / 4244994 = **1.4809278882372978**。本轮没有取得预测代价改善。按冻结协议完成3轮后，连续两轮无至少5%的改善，正常停止；共形成4个候选（3个LLM、1个tuned），确认排序首项通过后结束。
+
+| 轮次/候选 | act配置 | 内部可行 | 留出acc_drop（pp） | 预测自举 / 延迟µs | 选择情况与原因 |
+|---|---|---|---|---|---|
+| 1 / LLM | minimax_comp (15,15,27)，[-30,30] | true | -7.105427357601002e-15 | 24 / 6286530 | 最终选中，确认通过 |
+| 1 / tuned | minimax_comp (15,15,27)，[-21.989,21.989] | true | -7.105427357601002e-15 | 24 / 6286530 | 与原候选代价持平；保持先到原候选 |
+| 2 / LLM | cheb 255，[-22,22] | true | -7.105427357601002e-15 | 33 / 8639737 | 预测代价高于已有最佳；未再精调 |
+| 3 / LLM | minimax_comp (15,15,27)，[-21.989,21.989] | true | -7.105427357601002e-15 | 24 / 6286530 | 预测代价持平；未再精调 |
+
+三轮均完成1000留出图、发散0，分类一致数1000/998/1000；没有因内部可行性被拒绝的候选。精调实际执行1次、全量评估3次；末尾Mock复核统计用于对外反馈。选中源码7行，单次confirm_select仅评估首项；其后真实编译与报告集结果只用于外部报告。
+
+与spec不一致之处：实现及真实运行按spec完成。自写离线检查初稿把stderr诊断循环识别为HTTP重试，在[检查脚本第262行](/home/lhohy/pt_agent_results/r8g-mlp-rerun-20261023T161931/r8g_offline_checks.py:262)改为只检测实际HTTP调用是否位于循环中；无重试要求及既有测试均保持。初次11通过/1失败记录与修正后12通过记录一并保留。首次外发自动审批拒绝要求用户明确确认具体载荷，调用0；用户批准后完成唯一真实运行，原阻塞记录保留。
+
+未完成项：R8g无。M1第5条真实CKKS及未见复杂整网验收沿用后续任务；本轮新增首次MLP原样输出的真实编译与Mock报告证据。pt-agent-freeze-v1.1留待用户另行决定。API共48/300，registry183条；历史响应、证据和已用额度保留。
+
+
+## S0 已管理Earth流水线验证（完成，2026-10-24）
+
+判定：**按spec §4通过**。Q1覆盖dacapo-depth-dp与pars且六输入的§3.2指定比较项全部一致；Q2中删除rescale、改变level两类破坏对每个输入都由MLIR verifier检出。Q3为附带现象记录，未用于调整编译器或参数。完整证据：[SUMMARY](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/SUMMARY.json)。
+
+改动文件：仅新增[experiments/s0_pipeline_spike.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/s0_pipeline_spike.py)，并更新本STATUS。工作目录为/home/lhohy/Code/Poseidon，aarch64、lhy-agent-dsl、0fcbdd57；启动前宿主无其他Python/Nix/编译任务。编译器、Python前端、运行时及pt_agent既有模块均未修改；原R8g未提交文件保留。
+
+输入核对：指定的8个P1目录均来自EVA单测。用户明确批准改用已有R2b depth-dp/pars小程序，并补一次P1 optimized编译；首次普通profile尝试插入1次boot，导出报`RuntimePlan Boot requires --boot-profile`，退出1。用户随后批准额外一次现有qwen48配置尝试，成功且本次计划boot=0；旧失败及中间文件保留。MLP与ResNet20复用R8e7对应P2包，各重新trace/编译一次，earth、ckks、RuntimePlan及bundle全部保留，未调用prune。输入及准备证据：[inputs](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/inputs.json)、[prepared inputs](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/prepared-inputs.json)、[成功准备REPORT](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/prepare-p1-optimized_mlp_resnet20/REPORT.json)。
+
+3.1 pass清单：`--pass-pipeline`、`check-smu`、`convert-earth-to-ckks`、`convert-upscale-to-mulcp`、`emit-runtime-plan`、`cse`、`canonicalize`全部实测可用。未省略cse/canonicalize，未使用逐开关回退。[完整help及pass选项](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/help-p1-eva_r2b-depth-dp_r2b-pars/help.log)。
+
+Q1对照表（左/右为原计划/自定义流水线）：
+
+| 输入 | steps | values | 输入/输出 | boot | 常量数组比较 | bundle常量数 | 逐步op/level/scale、CKKS op序列 |
+|---|---|---|---|---|---|---|---|
+| p1-eva | 13/13 | 15/15 | 2/1（两侧相同） | 0/0 | 3/3相同 | 1/1 | 相同 |
+| r2b-depth-dp | 25/25 | 26/26 | 1/1（两侧相同） | 1/1 | 0/0相同 | 0/0 | 相同 |
+| r2b-pars | 25/25 | 26/26 | 1/1（两侧相同） | 1/1 | 0/0相同 | 0/0 | 相同 |
+| p1-optimized | 13/13 | 15/15 | 2/1（两侧相同） | 0/0 | 2/2相同 | 0/0 | 相同 |
+| mlp | 1540/1540 | 1541/1541 | 1/1（两侧相同） | 24/24 | 342/342相同 | 339/339 | 相同 |
+| resnet20 | 23575/23575 | 23576/23576 | 1/1（两侧相同） | 226/226 | 4543/4543相同 | 4540/4540 | 相同 |
+
+每类op计数（原/新完全相同）：
+
+| 输入 | op计数 |
+|---|---|
+| p1-eva | encode=3, mod_switch=2, mul_cp=2, rotate=1, add_cc=1, mul_cc=1, relinearize=1, rescale=1, add_cp=1 |
+| r2b-depth-dp | mul_cc=8, relinearize=8, rescale=8, boot=1 |
+| r2b-pars | mul_cc=8, relinearize=8, rescale=8, boot=1 |
+| p1-optimized | encode=2, mod_switch=3, mul_cp=1, rescale=2, rotate=1, add_cc=1, mul_cc=1, relinearize=1, add_cp=1 |
+| mlp | encode=342, mod_switch=41, rotate=46, add_cc=338, mul_cp=320, rescale=346, add_cp=28, boot=24, mul_cc=26, relinearize=26, negate=3 |
+| resnet20 | encode=4543, mod_switch=451, rotate=2624, mul_cp=4397, rescale=4641, add_cc=5938, add_cp=246, boot=226, mul_cc=244, relinearize=244, negate=21 |
+
+常量逐数组使用np.array_equal；未计算文件哈希。比较范围为spec所列计数、逐步op/level/scale及属性、常量数值和CKKS op序列；未额外声称完整文本或所有值ID/连接关系均已比较。
+
+Q2变体矩阵：V表示空流水线的解析／verifier已拒绝（exit=1）；对应check-smu命令与不带checker的转换导出也均exit=1，尚未运行到checker pass。—表示输入中无该操作，记录不适用。20个适用变体全部为V，静默导出0。
+
+| 输入 | 原样verifier/checker退出码 | checker不一致诊断数 | 删除rescale | downFactor+1 | 删除bootstrap | 结果level+1 |
+|---|---|---|---|---|---|---|
+| p1-eva | 0/0 | 1 | V | V | — | V |
+| r2b-depth-dp | 0/0 | 1 | V | — | V | V |
+| r2b-pars | 0/0 | 1 | V | — | V | V |
+| p1-optimized | 0/0 | 0 | V | V | — | V |
+| mlp | 0/0 | 42 | V | V | V | V |
+| resnet20 | 0/0 | 392 | V | V | V | V |
+
+check-smu原样退出0只表示进程状态。EVA、R2b两输入、MLP、ResNet20共五输入出现不一致诊断；例如ResNet20记录level/scale=(4,43)，当前值=(0,43)。源码SMUChecker.cpp的失败分支只assert，而当前Release构建启用NDEBUG；所有破坏先由verifier拒绝，本轮未证明checker自身能独立阻断错误。ResNet20原样checker耗时169.38秒并输出1056.23MiB日志；全部诊断压缩保留。[Q2 REPORT](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/q2-p1-eva_r2b-depth-dp_r2b-pars_p1-optimized_mlp_resnet20/REPORT.json)、[诊断计数、例子与压缩映射](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/archive-six-inputs/REPORT.json)。SUMMARY的q2_originals_pass字段表示原样进程退出码通过。
+
+Q3现象：
+
+| 输入 | EVA（toolchain对应普通配置） | PARS（沿用输入profile） |
+|---|---|---|
+| p1-eva | exit0；rescale 1→2，steps 13→14，values 15→16 | exit0；同样rescale 1→2，steps 13→14，values 15→16 |
+| r2b-depth-dp | exit1；配置变化后rescale推导scale26与声明43冲突 | exit1；earth.mul类型推导失败 |
+| r2b-pars | exit1；同上 | exit1；earth.mul类型推导失败 |
+| p1-optimized | exit1；同上 | exit0；rescale 2→4、upscale 0→1，steps 13→17，values 15→19 |
+| mlp | exit1；同上 | exit1；earth.mul类型推导失败 |
+| resnet20 | exit1；同上 | exit1；earth.add类型推导失败 |
+
+三次成功导出的Earth操作数、属性、类型与计划均有变化。五次qwen48输入交给EVA普通profile属于配置变化条件下的拒绝，未据此推断同配置EVA幂等性；另四次PARS在原qwen48配置下出现类型推导错误。自定义转换入口已有直接证据，自带管理流水线未表现出普遍幂等性。[Q3 REPORT](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/q3-p1-eva_r2b-depth-dp_r2b-pars_p1-optimized_mlp_resnet20/REPORT.json)。
+
+实际Q1采用两段命令，在转换及CSE之后保存CKKS以对应原printer时点；使用原profile的--ckks-config，全部emit选项来自对应mode的toolchain.compile_argv。prefix取新目录/lowered，由exporter追加函数名。实际pass字符串如下，完整参数未省略的命令保存在链接文件中：
+
+```text
+builtin.module(cse,canonicalize,func.func(convert-earth-to-ckks,convert-upscale-to-mulcp,cse))
+builtin.module(func.func(canonicalize,emit-runtime-plan{对应mode的RuntimePlan参数，prefix=新目录/lowered}))
+```
+
+[ResNet20转换完整命令](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/q1-p1-optimized_mlp_resnet20/resnet20/convert.command.txt)、[ResNet20导出完整命令](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/q1-p1-optimized_mlp_resnet20/resnet20/export.command.txt)。Q2每种变体的verify/check-smu/direct、Q3每个eva/pars目录都保存独立command.txt、argv.json、result.json和日志。压缩变体通过stdin解压输入，实际命令记录该输入；常量数值保持。只归档本轮Q1派生副本和Q2大日志，所有既有目录及本次原始准备编译文件保留。
+
+测试输出：脚本语法检查及git diff --check通过；SUMMARY `complete=true, decision=pass`。Q1 6/6，Q2 20个适用变体检出，Q3 12组现象完整。未运行既有回归测试，本轮只读编译实验；API0、报告集图像读取0、CKKS0。使用原单并发、普通进程4GiB和两模型可信编译6GiB配置，磁盘最终剩余约12.84GiB。
+
+与spec不一致之处：两次用户补充授权分别解决输入模式缺口及optimized自举profile缺项，未隐去失败或重置已消费调用；初次缺profile准备已使用一次编译，获批qwen48后额外一次。新脚本在相关实验前补齐直接pass的plan-id参数映射与Q3操作数/属性/类型比较；未修改既有模块、签名、算法或判定条件。Q3的qwen48→EVA配置差异已在表中明确。新派生大文件采用gzip保存以沿用磁盘约束，原始准备编译文件保持。
+
+未完成项：S0无。S1/S2待后续spec；check-smu独立检错能力、任意外部Earth程序的普遍正确性及真实CKKS数值验收均保留各自验证任务。本轮没有新增Agent首次输出。M1第1–4条沿用R8e7，第5条仍待执行。API累计48/300，registry192条，所有历史结果及已用额度保留。
+
+
+## R8h 每个资格候选精调及四模型v1.1重跑（实现与测试完成，整批验收阻塞）
+
+本轮结果：4个现有开发模型请求，15轮真实生成，实际精调14次、复用1次。3份选中程序通过独立确认、P2真实编译和每份8000图Mock报告准确率条件，共24000次报告输入执行；ResNet20确认6/6未通过，没有选中程序。整批complete=false；API15/30、累计63/300。四模型运行均已收尾，原预算、资源、共享串行、提示与数据划分保持，未打tag。
+
+[原始批次REPORT](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/REPORT.json)、[完整对照FINAL_REPORT](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/FINAL_REPORT.json)、[摘要SUMMARY](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/SUMMARY.json)。SUMMARY的ResNet20本轮最终程序为空；FINAL_REPORT另保留该模型的完整运行统计、逐轮结果与六次确认。
+
+代码改动：planners/agent.py按eligible触发精调，以print_program(parse(source))作为本次run_agent的缓存键复用TuneResult；trace和history记录tuned_reused_from。复用结果保留原来源行号／源码片段，原TuneResult保持原值。has_tuned、new_llm_best、llm_min只作记录；候选池、confirm_select、连续两轮5%停止规则、tuner_budget_s=2400、max_sweeps=1及其他资格条件保持。新增tests/test_r8h_tune_all.py四项假客户端测试，新增experiments/r8h_rerun.py顺序编排、--model及逐模型--resume入口；本批次未触发恢复。
+
+提示核对原文：After each feasible program, a deterministic tuner lowers activation degrees and tightens domains one at a time and reports the settings it kept ("tuned"). 原文已符合要求，prompts.py未修改，PROMPT_VERSION保持r8-v4。
+
+测试输出：新增Ran 4 tests in 0.007s，OK；旧回归按13＋311＋17＋17串行分组全部通过，合计362/362，失败/错误/跳过0，旧测试修改0。张量组沿用3600秒，其他组沿用600/1200秒，原资源设置保持。[新增REPORT](/home/lhohy/pt_agent_results/R8h-tune-all-tests-20261023T171522/REPORT.json)、[新增日志](/home/lhohy/pt_agent_results/R8h-tune-all-tests-20261023T171522/tests.log)、[完整回归REPORT](/home/lhohy/pt_agent_results/R8h-tune-all-tests-20261023T171522/REGRESSION_REPORT.json)。git diff --check通过。
+
+历史外发拦截已解除：自动审批在进程启动前要求确认四模型具体载荷与DeepSeek目的地，实际API0。离线首请求审阅共73319字节（MLP=9798、CNN=12390、SiLU=25581、ResNet20=25550）；随后用户明确批准这组载荷外发并继续R8h，按MLP→CNN→SiLU→ResNet20运行，零重试、额外连通性请求0。原停点、批准、请求、响应及用量全部保留。[manifest](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/network-review/manifest.json)、[批准](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/network-review/approval.json)、[历史APPROVAL_BLOCKED](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/APPROVAL_BLOCKED.json)。
+
+数据与判定：循环内使用test[9000:10000]，冻结时只做一次confirm_select、test[8000:9000]、最多6个候选、准确率下降上限0.5pp及原自举输入条件；报告使用test[0:8000]、准确率下降上限1pp。确认、编译和报告结果未回传LLM。独立数学条件1e-12+1e-12|ref|、CKKS条件1e-5+1e-4|ref|保持。本轮真实CKKS0；M1第1–4条继续沿用R8e7，第5条待执行。全部为现有开发模型，新增未见模型证据0。
+
+**§4 代价、规则基线与选中来源**
+
+延迟为预测值，单位µs；负减少比例表示相对规则基线自举增加。规则基线自举数为MLP=20、CNN=61、SiLU=383、ResNet20=383。数值表按显示位数四舍五入，完整原值在FINAL_REPORT中。
+
+| 模型 | 版本 | 轮次/来源 | 预测自举 | 编译自举 | 预测延迟µs | 相对规则自举减少 |
+|---|---|---|---|---|---|---|
+| mlp | 冻结v1/R8e7 | 1/llm | 24 | 24 | 6286530 | -20.000000% |
+| mlp | R8g | 1/llm | 24 | 24 | 6286530 | -20.000000% |
+| mlp | 本轮R8h | 3/llm | 16 | 16 | 4244994 | 20.000000% |
+| cnn_plain | 冻结v1/R8e7 | 2/llm | 72 | 72 | 19126397 | -18.032787% |
+| cnn_plain | 本轮R8h | 1/tuned | 87 | 87 | 23090315 | -42.622951% |
+| resnet20_silu | 冻结v1/R8e7 | 3/tuned | 160 | 160 | 44733076 | 58.224543% |
+| resnet20_silu | 本轮R8h | 2/tuned | 148 | 148 | 41644528 | 61.357702% |
+| resnet20 | 冻结v1/R8e7 | 2/tuned | 226 | 226 | 61636379 | 40.992167% |
+| resnet20 | 本轮R8h | 未选中 | — | 未编译 | — | — |
+
+**§4 确认与8000图报告**
+
+| 模型 | 版本 | 确认下降pp | 报告top-1% | 报告下降pp | 报告发散数 |
+|---|---|---|---|---|---|
+| mlp | 冻结v1/R8e7 | 0.000000 | 56.0500 | -0.012500 | 0 |
+| mlp | R8g | 0.000000 | 56.0500 | -0.012500 | 0 |
+| mlp | 本轮R8h | -0.100000 | 55.9750 | 0.062500 | 0 |
+| cnn_plain | 冻结v1/R8e7 | 0.000000 | 65.6500 | -0.037500 | 0 |
+| cnn_plain | 本轮R8h | -0.100000 | 65.5875 | 0.025000 | 1 |
+| resnet20_silu | 冻结v1/R8e7 | 0.000000 | 91.8375 | 0.662500 | 1 |
+| resnet20_silu | 本轮R8h | -0.300000 | 91.6375 | 0.862500 | 1 |
+| resnet20 | 冻结v1/R8e7 | 0.300000 | 91.2500 | 0.462500 | 1 |
+| resnet20 | 本轮R8h | 6次未通过 | 未执行 | — | — |
+
+本轮三份选中冻结源码的独立数学最大绝对差：MLP 5.329070518200751e-15，CNN 4.440892098500626e-15，SiLU 1.4210854715202004e-14。报告发散索引为MLP空、CNN [7835]、SiLU [5204]，均按原规则计错。来源llm为该轮原样LLM候选，tuned为冻结前精调程序；选中后的同一源码直接进入P2与报告。以上为开发与外部Mock评测记录，本轮独立首次原样真实CKKS通过新增0。
+
+**§4 调用、迭代、精调与耗时**
+
+四模型运行累计耗时10290.595316秒（不含离线测试和外发审阅），其中实际精调2737.463534秒；实际精调14次，复用1次。v1旧生成阶段已含当时原9000图报告，R8e7新确认／8000图报告另列，保留两段原计时。ResNet20本轮耗时只到确认失败，后续编译／报告未执行。
+
+| 模型 | 版本 | API | 轮数 | 实际精调 | 复用 | 总秒/分段秒 | 其中精调秒 |
+|---|---|---|---|---|---|---|---|
+| mlp | 冻结v1/R8e7 | 3 | 3 | 1 | 0 | 206.884；R8e7 97.175 | 29.089 |
+| mlp | R8g | 3 | 3 | 1 | 0 | 180.763 | 10.906 |
+| mlp | 本轮R8h | 5 | 5 | 4 | 1 | 607.356 | 194.390 |
+| cnn_plain | 冻结v1/R8e7 | 4 | 4 | 2 | 0 | 876.802；R8e7 305.211 | 235.980 |
+| cnn_plain | 本轮R8h | 3 | 3 | 3 | 0 | 1171.063 | 185.150 |
+| resnet20_silu | 冻结v1/R8e7 | 5 | 5 | 4 | 0 | 7511.708；R8e7 1360.632 | 5065.032 |
+| resnet20_silu | 本轮R8h | 3 | 3 | 3 | 0 | 6161.598 | 1614.090 |
+| resnet20 | 冻结v1/R8e7 | 6 | 6 | 6 | 0 | 7741.889；R8e7 1956.484 | 5229.219 |
+| resnet20 | 本轮R8h | 4 | 4 | 4 | 0 | 2350.578（至确认失败） | 743.833 |
+
+**§4 每个act的最终配置**
+
+按展开后程序的act拓扑次序从1编号；每格依次列fn / method / deg或degrees / domain。MLP的R8g配置与冻结v1相同。ResNet20本轮无选中程序，最终配置保留为空。
+
+mlp
+
+| act | 冻结v1 | 本轮R8h |
+|---|---|---|
+| 1 | relu / minimax_comp / (15, 15, 27) / (-30.0, 30.0) | relu / cheb / 63 / (-20.5, 20.0) |
+
+cnn_plain
+
+| act | 冻结v1 | 本轮R8h |
+|---|---|---|
+| 1 | relu / minimax_comp / (15, 15, 27) / (-16.0, 16.0) | relu / cheb / 255 / (-13.905, 15.213) |
+| 2 | relu / minimax_comp / (15, 15, 27) / (-14.0, 14.0) | relu / cheb / 255 / (-13.047, 7.25) |
+| 3 | relu / minimax_comp / (15, 15, 27) / (-22.0, 22.0) | relu / cheb / 127 / (-20.387, 21.75) |
+
+resnet20_silu
+
+| act | 冻结v1 | 本轮R8h |
+|---|---|---|
+| 1 | silu / cheb / 15 / (-7.172, 7.954) | silu / cheb / 15 / (-7.172, 7.954) |
+| 2 | silu / cheb / 7 / (-11.388, 8.298) | silu / cheb / 7 / (-11.39, 8.297) |
+| 3 | silu / cheb / 15 / (-12.756, 13.434) | silu / cheb / 15 / (-12.679, 13.397) |
+| 4 | silu / cheb / 15 / (-12.778, 6.602) | silu / cheb / 15 / (-12.687, 6.575) |
+| 5 | silu / cheb / 31 / (-10.541, 15.358) | silu / cheb / 31 / (-10.918, 15.472) |
+| 6 | silu / cheb / 15 / (-13.814, 9.237) | silu / cheb / 15 / (-13.809, 9.35) |
+| 7 | silu / cheb / 15 / (-9.693, 12.092) | silu / cheb / 15 / (-9.842, 12.276) |
+| 8 | silu / cheb / 15 / (-9.326, 6.936) | silu / cheb / 15 / (-9.416, 6.968) |
+| 9 | silu / cheb / 31 / (-8.741, 12.59) | silu / cheb / 31 / (-9.186, 12.855) |
+| 10 | silu / cheb / 15 / (-7.859, 5.746) | silu / cheb / 15 / (-7.912, 5.857) |
+| 11 | silu / cheb / 31 / (-7.521, 12.32) | silu / cheb / 15 / (-7.719, 12.648) |
+| 12 | silu / cheb / 15 / (-7.89, 6.19) | silu / cheb / 15 / (-8.065, 6.393) |
+| 13 | silu / cheb / 31 / (-8.859, 14.97) | silu / cheb / 15 / (-9.028, 15.404) |
+| 14 | silu / cheb / 31 / (-7.335, 8.044) | silu / cheb / 15 / (-7.555, 8.264) |
+| 15 | silu / cheb / 31 / (-10.485, 19.67) | silu / cheb / 31 / (-10.737, 20.059) |
+| 16 | silu / cheb / 15 / (-8.338, 6.653) | silu / cheb / 15 / (-8.593, 6.755) |
+| 17 | silu / cheb / 31 / (-13.525, 18.208) | silu / cheb / 31 / (-13.827, 18.584) |
+| 18 | silu / cheb / 31 / (-10.797, 10.674) | silu / cheb / 15 / (-10.921, 10.824) |
+| 19 | silu / cheb / 31 / (-28.962, 40.307) | silu / cheb / 31 / (-28.959, 40.45) |
+
+resnet20
+
+| act | 冻结v1 | 本轮R8h |
+|---|---|---|
+| 1 | relu / cheb / 31 / (-6.257, 8.44) | —（无选中程序） |
+| 2 | relu / cheb / 31 / (-6.774, 7.64) | —（无选中程序） |
+| 3 | relu / cheb / 31 / (-7.444, 10.455) | —（无选中程序） |
+| 4 | relu / cheb / 31 / (-11.262, 8.807) | —（无选中程序） |
+| 5 | relu / cheb / 31 / (-6.746, 10.617) | —（无选中程序） |
+| 6 | relu / cheb / 31 / (-10.635, 9.305) | —（无选中程序） |
+| 7 | relu / cheb / 31 / (-9.494, 11.214) | —（无选中程序） |
+| 8 | relu / cheb / 63 / (-8.079, 7.487) | —（无选中程序） |
+| 9 | relu / cheb / 63 / (-7.826, 11.609) | —（无选中程序） |
+| 10 | relu / cheb / 31 / (-6.241, 5.705) | —（无选中程序） |
+| 11 | relu / cheb / 31 / (-6.532, 11.525) | —（无选中程序） |
+| 12 | relu / cheb / 31 / (-6.08, 6.089) | —（无选中程序） |
+| 13 | relu / cheb / 31 / (-8.482, 11.265) | —（无选中程序） |
+| 14 | relu / cheb / 31 / (-5.955, 6.905) | —（无选中程序） |
+| 15 | relu / cheb / 63 / (-9.099, 13.95) | —（无选中程序） |
+| 16 | relu / cheb / 31 / (-6.584, 5.921) | —（无选中程序） |
+| 17 | relu / cheb / 31 / (-11.787, 15.499) | —（无选中程序） |
+| 18 | relu / cheb / 63 / (-8.216, 7.918) | —（无选中程序） |
+| 19 | relu / minimax_comp / (15, 15, 27) / (-33.57, 33.57) | —（无选中程序） |
+
+**§4 逐轮LLM可行性与精调前后预测延迟**
+
+延迟单位µs；未精调格保留为空。此表同时保留旧v1和MLP R8g记录；可行性取各轮原fb.feasible，精调可行性单列。资格检查沿用原eligible，部分原候选准确率未通过时仍会进入精调。
+
+| 模型 | 版本 | 轮 | 原候选可行 | 精调前µs | 精调后µs | 精调可行 | 复用来源 |
+|---|---|---|---|---|---|---|---|
+| mlp | 冻结v1/R8e7 | 1 | 是 | 6286530 | 6286530 | 是 | — |
+| mlp | 冻结v1/R8e7 | 2 | 否 | 8639734 | 未精调 | — | — |
+| mlp | 冻结v1/R8e7 | 3 | 是 | 6286530 | 未精调 | — | — |
+| mlp | R8g | 1 | 是 | 6286530 | 6286530 | 是 | — |
+| mlp | R8g | 2 | 是 | 8639737 | 未精调 | — | — |
+| mlp | R8g | 3 | 是 | 6286530 | 未精调 | — | — |
+| mlp | 本轮R8h | 1 | 是 | 6286530 | 6286530 | 是 | — |
+| mlp | 本轮R8h | 2 | 是 | 8639737 | 5288682 | 是 | — |
+| mlp | 本轮R8h | 3 | 是 | 4244994 | 4244994 | 是 | — |
+| mlp | 本轮R8h | 4 | 否 | 2709553 | 2709553 | 否 | — |
+| mlp | 本轮R8h | 5 | 是 | 4244994 | 4244994 | 是 | 第3轮 |
+| cnn_plain | 冻结v1/R8e7 | 1 | 是 | 23832805 | 23832805 | 是 | — |
+| cnn_plain | 冻结v1/R8e7 | 2 | 是 | 19126397 | 19126397 | 是 | — |
+| cnn_plain | 冻结v1/R8e7 | 3 | 是 | 19126397 | 未精调 | — | — |
+| cnn_plain | 冻结v1/R8e7 | 4 | 是 | 19126397 | 未精调 | — | — |
+| cnn_plain | 本轮R8h | 1 | 是 | 26186009 | 23090315 | 是 | — |
+| cnn_plain | 本轮R8h | 2 | 否 | 12893452 | 12893452 | 否 | — |
+| cnn_plain | 本轮R8h | 3 | 是 | 23090315 | 23090315 | 是 | — |
+| resnet20_silu | 冻结v1/R8e7 | 1 | 是 | 68591246 | 49122120 | 是 | — |
+| resnet20_silu | 冻结v1/R8e7 | 2 | 是 | 54181668 | 47587289 | 是 | — |
+| resnet20_silu | 冻结v1/R8e7 | 3 | 是 | 47587289 | 44733076 | 是 | — |
+| resnet20_silu | 冻结v1/R8e7 | 4 | 是 | 44733076 | 44733076 | 是 | — |
+| resnet20_silu | 冻结v1/R8e7 | 5 | 是 | 44733076 | 未精调 | — | — |
+| resnet20_silu | 本轮R8h | 1 | 是 | 52992248 | 42182330 | 是 | — |
+| resnet20_silu | 本轮R8h | 2 | 是 | 42182330 | 41644528 | 是 | — |
+| resnet20_silu | 本轮R8h | 3 | 是 | 41644528 | 41644528 | 是 | — |
+| resnet20 | 冻结v1/R8e7 | 1 | 否 | 103051870 | 79396859 | 是 | — |
+| resnet20 | 冻结v1/R8e7 | 2 | 是 | 83584023 | 61636379 | 是 | — |
+| resnet20 | 冻结v1/R8e7 | 3 | 是 | 65072225 | 56040119 | 是 | — |
+| resnet20 | 冻结v1/R8e7 | 4 | 是 | 56040119 | 52210668 | 是 | — |
+| resnet20 | 冻结v1/R8e7 | 5 | 是 | 52210668 | 52210668 | 是 | — |
+| resnet20 | 冻结v1/R8e7 | 6 | 否 | 40628613 | 40628613 | 否 | — |
+| resnet20 | 本轮R8h | 1 | 是 | 86919585 | 68275525 | 是 | — |
+| resnet20 | 本轮R8h | 2 | 是 | 70628729 | 59101893 | 是 | — |
+| resnet20 | 本轮R8h | 3 | 是 | 59101893 | 57264432 | 是 | — |
+| resnet20 | 本轮R8h | 4 | 是 | 57264432 | 57264432 | 是 | — |
+
+MLP第2轮原候选8639737µs，在新规则下精调至5288682µs；第5轮规范化源码与第3轮相同，复用其TuneResult，未重复精调。最终MLP选中第3轮原样cheb63，4244994µs／16次自举。CNN本轮代价高于v1，SiLU本轮自举减少且报告top-1低于v1，全部在上表保留。
+
+**ResNet20阻塞证据与剩余项**
+
+原样保留的确认结果如下；精确参考top-1=91.5%，固定确认准确率下降上限0.5pp。六个候选均未通过；每个候选均有1张发散，按原规则计错。confirm_selected为空，终态RuntimeError: Agent status: confirm_failed。
+
+| 次序 | 轮/来源 | 预测自举 | 预测延迟µs | 确认top-1% | 下降pp | 发散 | max_u | 结论 |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 3/tuned | 209 | 57264432 | 90.6000 | 0.900000 | 1 | 3.453248522405178e+220 | 未通过 |
+| 2 | 4/llm | 209 | 57264432 | 90.6000 | 0.900000 | 1 | 3.453248522405178e+220 | 未通过 |
+| 3 | 2/tuned | 216 | 59101893 | 90.1000 | 1.400000 | 1 | 3.5150638522661965e+180 | 未通过 |
+| 4 | 3/llm | 216 | 59101893 | 90.1000 | 1.400000 | 1 | 3.5150638522661965e+180 | 未通过 |
+| 5 | 1/tuned | 252 | 68275525 | 90.9000 | 0.600000 | 1 | 2.7111267241093044e+22 | 未通过 |
+| 6 | 2/llm | 261 | 70628729 | 90.9000 | 0.600000 | 1 | 2.7111267241093044e+22 | 未通过 |
+
+[ResNet20 REPORT](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/models/resnet20/attempt-01/REPORT.json)、[trace](/home/lhohy/pt_agent_results/r8h-v11-20261023T174607/models/resnet20/attempt-01/agent_trace.jsonl)。当前阻塞为确认集上的近似数值结果；该模型尚未进入真实编译，新增编译器／运行库依赖阻塞证据0。
+
+与spec不一致之处：实现、四项新测试、358项回归及固定运行协议按§1–§3执行，旧测试修改0；prompts.py原文已有逐候选精调说明，保持原样。为满足自动审批的具体载荷审阅要求，在指定新编排脚本内附加离线--prepare-review入口；只生成首请求审阅材料，API0。真实批次中ResNet20触发confirm_failed，§3整体验收及其§4最终程序指标未完成，完整失败结果已列出。
+
+未完成项：ResNet20的冻结选择、P2编译、8000图报告，以及四模型完整v1.1验收。按AGENTS.md报错停止规则等待后续spec，未追加生成或确认、未使用剩余调用、未更改0.5pp／数值条件、库或资源。本轮未打tag。整网真实CKKS继续列在M1第5条，未见模型证据未增加；R8h未计入首次独立原样CKKS交付成功。
+
+## R8h2 规范化去重与四模型重新确认（完成）
+
+只修改获授权的冻结模块planners/confirm.py。去重键采用print_program(parse(source))；同键选预测延迟最小项，同延迟保留pool原始顺序。代表项仍按原(latency_pred_us, iteration, origin)排序，最多确认6个不同程序。返回新增deduplicated和duplicates，原Candidate及其源码保持，agent.py无需适配。确认判据、确认集、提示、精调和编译器配置保持。
+
+新增test_r8h2_confirm_dedup.py的4项和既有362项共366/366全部通过，失败/错误/跳过均0。既有回归分组为4、13、311、17、17项；张量组901.513848秒，保持原3600秒时限。[测试REPORT](/home/lhohy/pt_agent_results/R8h2-confirm-dedup-tests-20261024T040449/REPORT.json)。新增experiments/r8h2_reconfirm.py复用已有候选重建及可信P2入口，前三个模型不重新生成或精调；ResNet20仅在所有不同候选确认失败时执行一次attempt-02，最多8次API、累计71/300。已有R8h结果目录只读。
+
+本轮自写代码实现修正：[experiments/r8h2_reconfirm.py:125](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/r8h2_reconfirm.py:125)，离线核对发现旧FINAL_REPORT.json的models字段为列表，已改为按model字段建立v1对照映射；TypeError发生在只读外层检查中，当时尚未启动实验、API0。未修改spec的签名、算法、判据或既有测试。脚本语法及命令行入口检查通过；实验启动后执行错误0。
+
+实验已结束：[批次REPORT](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/REPORT.json)、[§4完整对照](/home/lhohy/pt_agent_results/r8h2-reconfirm-20261024T042316/FINAL_REPORT.json)。按MLP→CNN→SiLU→ResNet20串行完成，总耗时3745.090355秒。每模型沿用21600秒Nix时限、可信P2编译限制及原数据划分。候选重建数量和预测代价均与R8h记录一致；选中源码直接保存至本轮program.ptdsl并交给P2 export/compile及Mock报告。四模型各8000图，共32000图；编译4/4退出0，预测与编译自举数4/4一致，报告准确率条件4/4通过。
+
+**去重及选择**
+
+llm表示R8h原始输出，tuned表示R8h已有精调结果；本轮重新生成与精调均0。表中轮次均指原R8h生成轮次。
+
+| 模型 | 候选去重前→后 | 被合并项→保留项 | 实际确认数 | 选中轮/来源 | 源码关系 |
+|---|---|---|---|---|---|
+| mlp | 8→5 | 3/tuned、5/llm、5/tuned→3/llm | 1 | 3/llm | 与R8h选中原文相同 |
+| cnn_plain | 4→3 | 3/llm→1/tuned | 1 | 1/tuned | 与R8h选中原文相同 |
+| resnet20_silu | 6→5 | 2/llm→1/tuned | 1 | 2/tuned | 与R8h选中原文相同 |
+| resnet20 | 8→5 | 3/llm→2/tuned；4/llm、4/tuned→3/tuned | 5 | 1/llm | R8h第1轮原始输出，此前未获确认名额 |
+
+**逐程序确认结果：test[8000:9000]**
+
+| 模型 | 确认次序 | 轮/来源 | 自举预测 | 准确率下降pp | 发散数 | max_u | 结论 |
+|---|---|---|---|---|---|---|---|
+| mlp | 1 | 3/llm | 16 | −0.1 | 0 | 0.878542334389955 | 通过 |
+| cnn_plain | 1 | 1/tuned | 87 | −0.1 | 0 | 0.8779073342436363 | 通过 |
+| resnet20_silu | 1 | 2/tuned | 148 | −0.3 | 0 | 0.9412643614780184 | 通过 |
+| resnet20 | 1 | 3/tuned | 209 | 0.9 | 1 | 3.453248522405178e+220 | 未通过 |
+| resnet20 | 2 | 2/tuned | 216 | 1.4 | 1 | 3.5150638522661965e+180 | 未通过 |
+| resnet20 | 3 | 1/tuned | 252 | 0.6 | 1 | 2.7111267241093044e+22 | 未通过 |
+| resnet20 | 4 | 2/llm | 261 | 0.6 | 1 | 2.7111267241093044e+22 | 未通过 |
+| resnet20 | 5 | 1/llm | 325 | −0.3 | 1 | 1.264502291836306e+39 | 通过 |
+
+ResNet20确认参考top-1=91.5%，选中程序top-1=91.8%；其1张确认发散仍按原规则计错并完整保留。通过判据保持准确率下降≤0.5pp及原boot输入条件，max_u没有新增判定用途。确认返回前未使用报告集结果。
+
+**与冻结v1并列：选中程序P2真实编译及Mock报告test[0:8000]**
+
+| 模型 | 版本 | 自举预测/编译 | 预测延迟µs | 报告top-1% | 较Torch下降pp | 报告发散 |
+|---|---|---|---|---|---|---|
+| mlp | v1 | 24/24 | 6286530 | 56.0500 | −0.0125 | 0 |
+| mlp | R8h2 | 16/16 | 4244994 | 55.9750 | 0.0625 | 0 |
+| cnn_plain | v1 | 72/72 | 19126397 | 65.6500 | −0.0375 | 0 |
+| cnn_plain | R8h2 | 87/87 | 23090315 | 65.5875 | 0.0250 | 1 |
+| resnet20_silu | v1 | 160/160 | 44733076 | 91.8375 | 0.6625 | 1 |
+| resnet20_silu | R8h2 | 148/148 | 41644528 | 91.6375 | 0.8625 | 1 |
+| resnet20 | v1 | 226/226 | 61636379 | 91.2500 | 0.4625 | 1 |
+| resnet20 | R8h2 | 325/325 | 86919585 | 91.6250 | 0.0875 | 0 |
+
+本轮CNN与SiLU报告发散索引分别7835、5204，与R8h相同；MLP与ResNet20报告发散0。CNN本轮自举与延迟高于v1，SiLU本轮自举减少且报告准确率低于v1；ResNet20本轮自举与延迟高于v1，报告准确率提高且报告发散减少。全部结果保留，未按报告结果重新选择。
+
+尝试次数：四模型均只有原R8h的1次Agent生成尝试；本轮各执行1次候选池重确认。ResNet20在该池第5个不同程序处通过，attempt-02未触发，无额外LLM调用。API0/8，累计63/300；registry232条，保留全部219条旧记录，新增13条测试和运行记录。
+
+与spec不一致之处：无算法、参数或判据偏离；自写编排的列表字段读取修正已在上文逐项记录。冻结模块仅修改confirm.py，agent.py无需适配；旧测试修改0。原目录、响应、源码、程序包、失败证据及已用额度均保留；未改库、安全参数或资源限制，未下载新资产。
+
+未完成项：本轮§1–§4无剩余项；按§5由Claude处理后续提交及本地pt-agent-freeze-v1.1，本轮未提交、未打tag。真实CKKS本轮0，M1第5条和未见模型证据保持待后续spec；本轮结果归为已有开发候选的确认与编译/Mock评测，新增首次独立生成及完整CKKS交付成功0。新增编译器依赖阻塞0。

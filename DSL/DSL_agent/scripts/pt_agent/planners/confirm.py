@@ -7,6 +7,7 @@ import numpy as np
 from ..analyzer import reference_forward
 from ..data.cifar import confirm_set
 from ..dsl.parser import parse
+from ..dsl.printer import print_program
 from .agent_tools import AgentContext, MAX_ACC_DROP_PP, VAL_BATCH, validate
 
 
@@ -37,15 +38,24 @@ def build_confirm_context(ctx) -> AgentContext:
 
 
 def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EVALS) -> dict:
-    ordered = sorted(candidates, key=lambda c: (c.latency_pred_us, c.iteration, c.origin))
-    selected, evals, seen = None, [], set()
+    normalized = [print_program(parse(candidate.source)) for candidate in candidates]
+    representatives = {}
+    for index, (candidate, key) in enumerate(zip(candidates, normalized)):
+        if key not in representatives or candidate.latency_pred_us < candidates[representatives[key]].latency_pred_us:
+            representatives[key] = index
+    kept = sorted(representatives.values())
+    duplicates = [dict(iteration=candidate.iteration, origin=candidate.origin,
+                       kept_iteration=candidates[representatives[key]].iteration,
+                       kept_origin=candidates[representatives[key]].origin)
+                  for index, (candidate, key) in enumerate(zip(candidates, normalized))
+                  if index != representatives[key]]
+    ordered = sorted((candidates[index] for index in kept),
+                     key=lambda c: (c.latency_pred_us, c.iteration, c.origin))
+    selected, evals = None, []
     confirm_ctx = None
     for candidate in ordered:
         if len(evals) >= max_evals:
             break
-        if candidate.source in seen:
-            continue
-        seen.add(candidate.source)
         if confirm_ctx is None:
             confirm_ctx = ctx if ctx.val_split == "test[8000:9000]" else build_confirm_context(ctx)
         result = validate(parse(candidate.source), confirm_ctx, stop_on_divergence=False)
@@ -63,4 +73,5 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
         if passed:
             selected = candidate
             break
-    return dict(selected=selected, evals=evals)
+    return dict(selected=selected, evals=evals,
+                deduplicated=dict(before=len(candidates), after=len(kept)), duplicates=duplicates)
