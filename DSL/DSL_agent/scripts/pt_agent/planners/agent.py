@@ -7,6 +7,7 @@ import time
 
 from ..llm import LLMError
 from ..dsl.parser import parse
+from ..dsl.printer import print_program
 from .agent_tools import AgentContext, evaluate
 from .confirm import Candidate, confirm_select
 from .prompts import build_system_prompt, feedback_message, initial_message
@@ -21,6 +22,7 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
     best_llm_lines = None
     llm_min = None
     has_tuned = False
+    tune_cache = {}
     history = []
     pool, records = [], {}
     calls = prompt_tokens = completion_tokens = stale = 0
@@ -66,11 +68,20 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
                     and not validation['diverged'] and fb['stage'] == 'complete'
                     and (validation.get('boot_input_bound') is None
                          or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
-        if tuner and eligible and (new_llm_best or not has_tuned):
+        tuned_reused_from = None
+        if tuner and eligible:
             has_tuned = True
-            result = tune(parse(source), ctx, budget_s=tuner_budget_s, max_sweeps=1)
+            parsed = parse(source)
+            normalized = print_program(parsed)
+            if normalized in tune_cache:
+                result, tuned_reused_from, tune_source = tune_cache[normalized]
+            else:
+                result = tune(parsed, ctx, budget_s=tuner_budget_s, max_sweeps=1)
+                tune_source = source
+                tune_cache[normalized] = (result, iteration, tune_source)
             tuned = {key: value for key, value in asdict(result).items() if key != 'program'}
-            lines = source.splitlines()
+            # A reused result retains its original source locations and snippets.
+            lines = tune_source.splitlines()
             for change in tuned['changes']:
                 change['line_text'] = lines[change['line']-1].strip()
                 change['call_texts'] = [lines[line-1].strip() for line in change['call_lines']]
@@ -81,6 +92,8 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
                                 full_evals=result.full_evals, seconds=result.seconds)
             if result.feasible:
                 candidates.append((result.source, result.cost_after, confirmation, 'tuned'))
+        row.update(has_tuned=has_tuned, new_llm_best=new_llm_best, llm_min=llm_min,
+                   tuned_reused_from=tuned_reused_from)
         for candidate, candidate_cost, confirmed, origin in candidates:
             pool.append(Candidate(candidate, origin, iteration, candidate_cost['latency_pred_us'],
                                   candidate_cost['boots_pred']))
@@ -105,7 +118,8 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
         messages.extend(added)
         with trace_path.open("a") as stream:
             stream.write(json.dumps(dict(iteration=iteration, messages=added, fb=fb, usage=usage,
-                                         seconds=reply["seconds"], tuned=tuned), allow_nan=False)+"\n")
+                                         seconds=reply["seconds"], tuned=tuned,
+                                         tuned_reused_from=tuned_reused_from), allow_nan=False)+"\n")
         print(f"AGENT iteration={iteration} stage={fb['stage']} feasible={fb.get('feasible', False)}", flush=True)
         if best is not None:
             stale = 0 if previous is None or previous-best["latency_pred_us"] >= .05*previous else stale+1
