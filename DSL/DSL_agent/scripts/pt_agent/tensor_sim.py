@@ -9,6 +9,7 @@ from collections import Counter, OrderedDict, defaultdict
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import lru_cache
+import resource
 import weakref
 
 import numpy as np
@@ -28,6 +29,7 @@ from .lower import LoweringError, RawLayout, _pack_layout, _forward_bn_target
 
 
 DEFAULT_PREFIX_BYTES = 3 * 1024**3 // 2
+POLYNOMIAL_WORKSPACE_BYTES = 256 * 1024**2
 _identities = {}
 _structures = {}
 _results = {}
@@ -36,6 +38,52 @@ _prefix = OrderedDict()
 _prefix_bytes = 0
 _prefix_limit = DEFAULT_PREFIX_BYTES
 _counts = {}
+
+
+def _prefix_capacity():
+    # Read the current soft limit: callers may set RLIMIT_AS after import.
+    address_limit = resource.getrlimit(resource.RLIMIT_AS)[0]
+    resource_limit = (DEFAULT_PREFIX_BYTES if address_limit == resource.RLIM_INFINITY
+                      else min(DEFAULT_PREFIX_BYTES, int(.2 * address_limit)))
+    return min(_prefix_limit, resource_limit)
+
+
+def _polynomial_workspace_arrays(degree):
+    """Conservative live-array bound for cheb_eval's unchanged recursion.
+
+    T uses g arrays, G at most m, and the two recursive branches retain at
+    most six arrays per level. The remaining allowance covers normalization,
+    base accumulation, recurrence temporaries and composed-ReLU intermediates.
+    """
+    g = 2**max(1, (degree+1).bit_length()//2)
+    m = 0
+    while g*2**m <= degree:
+        m += 1
+    return g+6*m+24
+
+
+def _polynomial_chunks(value, evaluate, degree):
+    """Bound polynomial temporaries without changing any element's arithmetic."""
+    arrays = _polynomial_workspace_arrays(degree)
+    # Include coefficient vectors as well as element-sized workspace arrays.
+    coefficient_bytes = (degree+1)*8*(arrays+1)
+    count = max(1, (POLYNOMIAL_WORKSPACE_BYTES-coefficient_bytes)//(8*arrays))
+    if value.size <= count:
+        return evaluate(value)
+    # Noncontiguous inputs need only a block-sized copy, never a full flatten.
+    flat = value.reshape(-1) if value.flags.c_contiguous else value.flat
+    result = np.empty(value.shape, dtype=np.float64)
+    output = result.reshape(-1)
+    for start in range(0, value.size, count):
+        output[start:start+count] = evaluate(flat[start:start+count])
+    return result
+
+
+def _minimax_relu(value, coefficients, hi):
+    sign = value*(1.0/hi)
+    for coeffs in coefficients:
+        sign = cheb_eval(None, sign, coeffs)
+    return value*(sign+0.5)
 
 
 def _count(group, event):
@@ -126,7 +174,7 @@ def set_prefix_cache_limit(nbytes):
     if type(nbytes) is not int or nbytes < 0:
         raise ValueError("prefix cache byte limit must be a nonnegative integer")
     _prefix_limit = nbytes
-    while _prefix_bytes > nbytes:
+    while _prefix_bytes > _prefix_capacity():
         _, entry = _prefix.popitem(last=False)
         _prefix_bytes -= entry.value.nbytes
         _count("prefix", "evictions")
@@ -151,7 +199,7 @@ def cache_info():
               for group in ("prefix", "result", "estimate")}
     result["prefix"].update({event: _counts.get("prefix", {}).get(event, 0)
                               for event in ("evictions", "oversize")})
-    result["prefix"].update(entries=len(_prefix), bytes=_prefix_bytes, max_bytes=_prefix_limit)
+    result["prefix"].update(entries=len(_prefix), bytes=_prefix_bytes, max_bytes=_prefix_capacity())
     result["result"]["entries"] = len(_results)
     result["estimate"]["entries"] = len(_estimates)
     info = _fit.cache_info()
@@ -176,12 +224,13 @@ def _prefix_get(key):
 
 def _prefix_put(key, entry):
     global _prefix_bytes
-    if entry.value.nbytes > _prefix_limit:
+    limit = _prefix_capacity()
+    if entry.value.nbytes > limit:
         _count("prefix", "oversize")
         return
     if key in _prefix:
         _prefix_bytes -= _prefix.pop(key).value.nbytes
-    while _prefix and _prefix_bytes + entry.value.nbytes > _prefix_limit:
+    while _prefix and _prefix_bytes + entry.value.nbytes > limit:
         _, old = _prefix.popitem(last=False)
         _prefix_bytes -= old.value.nbytes
         _count("prefix", "evictions")
@@ -529,15 +578,16 @@ def _run(program, weights, images, observer, cache, image_id, batch_start, act_m
                         lo, hi = attrs["domain"]
                         coeffs = (_fit if cache else cheb_fit)(attrs["fn"], attrs["deg"], lo, hi)
                         a, c = 2/(hi-lo), -(hi+lo)/(hi-lo)
-                        value = cheb_eval(None, value*a+c, coeffs)
+                        value = _polynomial_chunks(value,
+                            lambda part: cheb_eval(None, part*a+c, coeffs), len(coeffs)-1)
                     else:
                         lo, hi = attrs["domain"]
                         if not (hi > 0 and lo == -hi):
                             raise KernelError("minimax_comp requires a symmetric domain (-B, B)")
-                        sign = value*(1.0/hi)
-                        for coeffs in minimax_coeffs(tuple(attrs["degrees"])):
-                            sign = cheb_eval(None, sign, coeffs)
-                        value = value*(sign+0.5)
+                        coefficients = minimax_coeffs(tuple(attrs["degrees"]))
+                        value = _polynomial_chunks(value,
+                            lambda part: _minimax_relu(part, coefficients, hi),
+                            max(len(coeffs)-1 for coeffs in coefficients))
                 elif op.kind == 'avgpool':
                     value = F.avg_pool2d(torch.tensor(value, dtype=torch.float64), attrs['k'], attrs['stride'], attrs['pad'], count_include_pad=True).numpy()
                 elif op.kind == 'maxpool':
@@ -552,15 +602,16 @@ def _run(program, weights, images, observer, cache, image_id, batch_start, act_m
                     elif attrs['method'] == 'cheb':
                         lo, hi = attrs['domain']
                         coeffs = (_fit if cache else cheb_fit)('relu', attrs['deg'], lo, hi)
-                        apply = lambda difference: cheb_eval(None, difference*(2/(hi-lo))-(hi+lo)/(hi-lo), coeffs)
+                        apply = lambda difference: _polynomial_chunks(difference,
+                            lambda part: cheb_eval(None, part*(2/(hi-lo))-(hi+lo)/(hi-lo), coeffs),
+                            len(coeffs)-1)
                     else:
                         lo, hi = attrs['domain']
                         coefficients = minimax_coeffs(tuple(attrs['degrees']))
                         def apply(difference):
-                            sign = difference*(1.0/hi)
-                            for coefficients_ in coefficients:
-                                sign = cheb_eval(None, sign, coefficients_)
-                            return difference*(sign+0.5)
+                            return _polynomial_chunks(difference,
+                                lambda part: _minimax_relu(part, coefficients, hi),
+                                max(len(coeffs)-1 for coeffs in coefficients))
                     def observe_difference(difference):
                         stats.add(difference)
                         if act_mode != 'exact':

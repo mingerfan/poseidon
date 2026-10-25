@@ -1,4 +1,8 @@
-# pt_agent 状态（最后更新：2026-10-24 / 5412df2b-dirty）
+# pt_agent 状态（最后更新：2026-10-25 / 4292a9b7-dirty）
+
+当前U3b2方案A（含§6）实现与有限实验均已完成：[最终REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/REPORT.json)、[九模型SUMMARY](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/SUMMARY.json)。17/17当前测试＋4/4原缓存测试通过，四冻结模型各1000图字段/logits相同，原469完整回归证据保留。Alex规则基线与三个ReLU重跑全部收尾：报告准确率达标7/9（Agent）与7/9（规则），新三模型分别下降0.0375/0.2875/0.0125pp、发散3/7/0；完整report.feasible分别false/false/true。三个首轮漏权重诊断均在下一轮补齐。新程序均导出服务器包，本机编译/真实CKKS0。API16/20、累计129/300；4GiB、批量20、其余6模型旧结果及全部历史证据保持。
+
+当前U3b因本轮预算50/50耗尽停止，累计113/300：[终态REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/SUMMARY.json)。8/9模型正常收尾；最后AlexNet ReLU前三轮数学检查均失败，第4轮仅在本地被预算检查拒绝，额外HTTP0。Agent报告精度通过4/9，规则7/9；三份选中原文真实编译计数相等并prune，两份服务器作业已导出。14/14本轮＋455/455既有＝469/469；第9模型剩余生成、规则确认/抽查/报告未完成。真实CKKS0，M1表保持。
 
 当前U3a（含§10）已完成：435/435既有回归＋20/20本轮测试，共455/455唯一用例通过。17旧程序Emit文本/常量/顺序、四冻结模型validate/estimate/confirm及r8-v4文本相同；5变体Count相同、两变体各20图Mock对历史array_equal。9/9目标变体完成20图Mock/张量对照、1000图留出评测及P2包；两份VGG16的bn_1→fc_3折叠已证。AlexNet SiLU的Mock RSS由3734.52MiB降至476.25MiB，原4GiB保持。18项覆盖表已重算；3份本机编译自举383/383、282/282、1122/1122且已prune，6份超常量额度模型已打包，本机未编译。AlexNet ReLU/VGG16 ReLU留出准确率分别下降6.9pp/1.6pp，按spec记录。API0、累计63/300，新增Agent首次输出/真实CKKS0。[最终REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json)。
 
@@ -32,6 +36,8 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| U3b2 | specs/U3b2-weight-usage-rerun.md（方案A，含§6） | 完成（实现与有限开发实验） | dsl/typecheck.py、planners/agent_tools.py、tensor_sim.py；experiments/u3b2_weight_usage_rerun.py、tests/test_u3b2_weight_usage.py、STATUS | 当前17/17＋原缓存4/4；四冻结全字段/logits相同；规则基线及三重跑全部收尾；报告准确率7/9对7/9；三次漏权重均下一轮补齐；API16/20 | 原469证据沿用；4GiB/批量20保持；新三程序仅服务器包，原生计数/CKKS待执行；Mobile/VGG报告发散3/7且完整feasible=false，未计完整交付通过 |
+| U3b | specs/U3b-agent-cnn.md | 阻塞 | planners/agent.py、tuner.py、confirm.py、agent_tools.py；experiments/u3b_agent_cnn.py、tests/test_u3b_engines.py、STATUS | 实现/离线469/469通过；8/9模型正常收尾，报告精度4/9；真实编译282/282、1277/1277、359/359并prune；服务器作业2份；最后模型前三轮数学检查失败 | 本轮50/50、累计113/300，按spec停止；第9模型剩余生成及规则评测待后续spec，原程序/历史/已用额度保留 |
 | U3a | specs/U3-cnn-operators.md（含§10） | 完成 | CNN/lower/张量/规则/P2；Mock、linear/multi逐条常量；U3测试/实验、STATUS | 435既有＋20本轮＝455/455；17旧程序/四冻结模型/5 Count一致；9变体20图＋1000图及P2完成 | 4GiB保持；3本机编译自举一致并prune；6份服务器作业未执行；新增Agent/CKKS0 |
 | U2 | specs/U2-multi-ciphertext-layout.md＋用户磁盘恢复接续 | 完成 | kernels/layout.py新增、kernels/multi.py；lower.py、tensor_sim.py、agent_tools.py；ModelInfo/check；export及U2测试/实验、STATUS | 新16/16＋既有419/419＝435/435；单块11/11＋四模型相同；六变体自举/旋转全部精确；P2及编译6/6 | 复用已过项目，从4096 trace接续；新5目录逐项核对后prune；旧测试保持；原停止及自写修正记录保留 |
 | U1 | specs/U1-model-description.md（含§11–§12） | 完成 | models/info.py、builders.py、zoo.py；data/samples.py；intake/probe、hf_frontend、onnx_frontend、graph_exec及ATen/core/coverage；metrics.py、cli.py、scripts/pt-agent；agent_tools.py、confirm.py、prompts.py、run.py；U1实验/测试、STATUS | 既有373/373＋新增46/46；HF3/3零差；四冻结模型逐项相同；CLI9/9，MLP真实编译通过；[REPORT](/home/lhohy/pt_agent_results/u1-section12-complete-20261024T111952470042/REPORT.json) | 按§11迁移1项旧测试；按§12及自写错误例外修正通用语义、夹具与编排；原失败及用量保留，详见本节 |
@@ -92,6 +98,16 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+U3b2首次内存停止已由用户新增§6解除，两处通用修正、§6.3验证、AlexNet规则基线与三个真实重跑全部完成。本spec内无待决阻塞。后续范围保留三份服务器包的原生编译计数和真实CKKS验收，以及MobileNet/VGG16报告中发散及域外放大的通用诊断；当前未据此标记编译器或运行库故障。4GiB、批量20及数值条件保持，完整交付验收继续单独记录。以下保留修订前停止记录和已用额度。
+
+U3b2首次停止（2026-10-25）：§2的481项唯一测试全部通过后，按§3.1先补AlexNet ReLU固定规则基线。首次规则确认在tensor MaxPool调用cheb_eval时抛出MemoryError：shape=(20,256,8,8)、float64，新申请2.50MiB失败；66.781630秒、峰值RSS4078624768字节（3.798515GiB）、退出1。调用路径为experiments/u3b2_weight_usage_rerun.py:74 → planners/agent_tools.py:226 → tensor_sim.py:573 → kernels/cnn.py:188 → kernels/poly.py:88 → kernels/slots.py:5。[REPORT](/home/lhohy/pt_agent_results/u3b2-baseline-20261025T031937545569/REPORT.json)、[完整调用栈](/home/lhohy/pt_agent_results/u3b2-baseline-20261025T031937545569/run.log)。
+
+本轮编排在确认前已调用clear_caches/gc.collect；静态核对显示仍使用原批量20和原张量缓存/多项式路径。现有证据定位到外部张量评测的内存分配，具体存活对象及峰值构成尚待诊断。当前未确认可按本轮自写错误例外直接修正的编排错误，也未获得编译器/CKKS运行库失败证据。依AGENTS.md“有疑问或报错，就停下来写进STATUS.md……等待新的spec”和本spec§5的范围，停止剩余运行，等待用户或Claude给出保持4GiB的接续修订；未改变缓存策略、批量、冻结kernel、精调/确认参数或资源限制，未重试该确认。确认结果尚未落盘，Mock抽查及8000图报告未开始；按§3顺序，三个Agent重跑均未启动。
+
+本轮API0/20、累计113/300；U3b旧50次和本次失败66.781630秒完整保留。registry现445条，最后一条登记该失败；无新增网络、下载、安装、真实编译或CKKS。本轮实现/离线成果与未完成实验分开记录，下方U3b2节保留九模型历史对照。
+
+U3b当前因本轮50次调用额度耗尽停止，累计113/300。依据[当前spec §3](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U3b-agent-cnn.md)“本轮合计50次……用完就停下汇报”，最后AlexNet ReLU仅执行3次HTTP、三轮数学检查均失败；第4轮记录为本地budget_exhausted，HTTP0、实际确认0。后续spec需明确该模型剩余生成及规则确认/抽查/报告的接续范围；本轮不追加调用或重置已消费额度。新增编译器/运行库阻塞证据0。VGG16 SiLU/AlexNet SiLU已按spec导出服务器作业，本机未编译；真实CKKS仍待执行。[终态REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/SUMMARY.json)。此前具体外发审批已由用户批准解除，原拒绝与所有失败证据保留。
 
 U3a当前无须用户或Claude决定的阻塞：§10两处通用内存修正及全部验收已完成。原4GiB保持；六个超常量额度模型已生成服务器作业，执行留在U3a范围之外。旧AlexNet首图MemoryError、未采用的首份前测和全部历史结果保留。新编译器或运行库依赖阻塞证据0。[最终REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json)。
 
@@ -259,6 +275,10 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+U3b2最终16/20、累计129/300；MobileNet/VGG16/AlexNet分别5/6/5次，无重试/额外连通性请求。registry共473条，114–129号调用各登记一次；原113次及全部历史保持。项目总预算剩余171次，本轮未消费的4次未用于追加重跑。[最终REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/REPORT.json)。§2离线、§6测试和补规则基线均为API0。
+
+U3b终态50/50、累计113/300，本轮剩余0、总预算剩余187。九模型HTTP次数按顺序为6/6/6/6/6/5/6/6/3；无重试或额外连通性请求。最后模型trace的第4轮为本地预算拒绝，AGENT.llm_calls=4包含这次未发出的尝试，真实外发按预算文件与registry计3。恢复未新增LLM/精调/已执行的Agent确认；registry保留全部438条，50次本轮调用逐次登记。[终态REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/SUMMARY.json)。首次审批拒绝发生于进程启动前、消费0，离线REPORT保留。
+
 U3a本轮0、累计63/300；剩余237。§10接续trace/compile各0，复用本轮前段已完成的各3次；三份自举计数一致且已prune，六份超出常量额度的作业只生成未执行。新增Agent首次输出、下载、安装、真实CKKS、commit/tag/push均0。新实验报告集使用0；既有精确模型/数据划分回归按AGENTS例外执行。[最终REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json)。
 
 U2本轮0；累计63/300。接续新trace/compile各5次，此前各1次，合计6/6变体；0重试。新LLM输出、下载、安装、训练、真实CKKS、commit/tag/push均0；每个新编译目录完成计数核对后立即prune。原准入停止发生于进程启动前，记录保持。
@@ -313,13 +333,15 @@ R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry�
 
 ## 最近 5 次运行（run_id、模型、结论）
 
+按模型与批次运行登记；逐次API记录保留在registry。
+
 | run_id | 模型 | 结论 |
 |---|---|---|
-| U3a-cnn-operators-complete-20261024T161354-68c2 | cnn-operators | U3a完成：455/455；9变体；3本机编译计数一致，6份服务器作业；[REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161354727454/REPORT.json) |
-| U3a-cnn-operators-complete-20261024T161322-ce4b | cnn-operators | 初份汇总保留；延迟百分比已按原诊断精确值更正为后一份REPORT；[REPORT](/home/lhohy/pt_agent_results/u3a-complete-20261024T161322574128/REPORT.json) |
-| U3a-tensor-acceptance-20261024T161235-915d | tensor | 17项通过；失败0，错误0，跳过0；[REPORT](/home/lhohy/pt_agent_results/u3a-regression-20261024T155028782424/REPORT.json) |
-| U3a-intake-tests-acceptance-20261024T155022-649f | intake-tests | 4项通过；失败0，错误0，跳过0；[REPORT](/home/lhohy/pt_agent_results/u3a-intake-tests-20261024T155020129686/REPORT.json) |
-| U3a-packaging-acceptance-20261024T154948-b941 | packaging | 17项通过；失败0，错误0，跳过0；[REPORT](/home/lhohy/pt_agent_results/u3a-regression-20261024T154921492312/REPORT.json) |
+| U3b2-nine-models-agent-cnn-summary-20261025T053607-8dc6 | nine-models | 三重跑收尾，六旧结果保持；报告准确率7/9对7/9，API16；[SUMMARY](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/SUMMARY.json) |
+| U3b2-alexnet_relu_maxpool-agent-cnn-20261025T053606-acfd | alexnet_relu_maxpool | 第3轮原文；报告下降0.0125pp/发散0，完整feasible=true；服务器包；[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/alexnet_relu_maxpool/REPORT.json) |
+| U3b2-vgg16_relu_maxpool-agent-cnn-20261025T051233-bead | vgg16_relu_maxpool | 第5轮tuned；报告下降0.2875pp/发散7，完整feasible=false；服务器包；[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/vgg16_relu_maxpool/REPORT.json) |
+| U3b2-mobilenet_relu-agent-cnn-20261025T042455-9f00 | mobilenet_relu | 第4轮原文；报告下降0.0375pp/发散3，完整feasible=false；服务器包；[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/mobilenet_relu/REPORT.json) |
+| U3b2-prepare-prepare-20261025T040503-bab6 | three-models requests | 三份请求准备完成，准备阶段API0；[manifest](/home/lhohy/pt_agent_results/u3b2-prepare-20261025T040420116485/manifest.json) |
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
 旧 T0/T2 测试输出保留原路径；旧源码副本：[before/](/home/lhohy/pt_agent_results/R1-ptdsl-unit-20261020T111834-3fa0/before/)。
@@ -3200,3 +3222,353 @@ R8f cache exact resnet20_silu: validations=25, logit_batches=530, history=25
 与spec不一致之处：无算法、规定接口或数值口径偏离。§10明确授权linear/multi的存储修正；§8授权的旧断言迁移沿用先前记录，本次未再修改旧测试。自写numpy导入遗漏与前测命名空间接线已修正，详见上段；最终汇总中MLP延迟百分比改为直接读取旧诊断精确值，初份汇总161322574128保留，161354727454为最终版本。
 
 未完成项：本spec内0。范围外保留6份服务器编译作业、后续U3b的真实Agent运行及整网CKKS。当前9模型结果属于规则开发诊断，新增Agent首次独立输出0、真实CKKS0；未见模型交付证据未增加，M1表保持。未提交、未打tag、未push。
+
+## U3b Agent CNN（实现/测试完成，真实运行达到50次预算停止，2026-10-25 / 4292a9b7-dirty）
+
+当前基线为本地提交4292a9b7。新增engine_profile只控制r8-v5引擎选择；tune_policy=new_best、max_iters=6、精调2400秒/max_sweeps=1、MAX_CONFIRM_EVALS=6及原判据保持。新增validate可选输出回调用于一次执行保存Mock抽查logits，默认无回调、默认缓存及反馈字段保持。每个冻结最终程序和规则基线各核对留出20张、报告100张；任何数值/argmax/发散集合差异均留证并停。旧9模型图/权重/校准来自U3a经U1的原入口产物，生成阶段不读取规则程序或确认/报告结果。
+
+首次10项离线测试通过：[REPORT](/home/lhohy/pt_agent_results/u3b-unit-20261024T163027468279/REPORT.json)。自写测试导入段的gc遗漏已在执行前补齐；新增Mock抽查的单侧NaN/发散不一致按null保存误差，避免JSON序列化遮盖原诊断，正在复验。尚未启动LLM、编译、报告集新评测、下载或安装。
+
+U3b新增11项最终引擎测试通过：[REPORT](/home/lhohy/pt_agent_results/u3b-unit-20261024T163923756500/REPORT.json)。r8-v5配置的evaluate与精调exact检查也改为张量引擎；新增完整循环断言MockBackend从未被创建，抽查阶段另行使用Mock。r8-v4及原显式engine参数路径保持。主组421项首次通过（4项ONNX在独立环境补验），P2/工具链17和ONNX4已通过；补齐exact引擎参数后重跑涉及该接口的主组，随后执行张量/缓存17。初次与后续记录均保留，新增API仍0、累计63/300。
+
+主组最终复验：421项、174.303秒、失败/错误0、4项ONNX跳过由独立环境4项补齐。[主组](/home/lhohy/pt_agent_results/u3b-main-20261024T163953181380/REPORT.json)、[P2/工具链17项](/home/lhohy/pt_agent_results/u3b-packaging-20261024T163713273421/REPORT.json)、[ONNX4项](/home/lhohy/pt_agent_results/u3b-intake-20261024T163756181116/REPORT.json)。张量17项运行目录为 /home/lhohy/pt_agent_results/u3b-tensor-20261024T164302527296，沿用3600秒/4GiB。
+
+编排补齐§5规则基线的确认集只读统计，在Agent确认完成后执行，不参与任何选择；同表读取U3a原编译计数与旋转数。新增汇总的系统Python预检遇到缺少numpy，已按自写导入/接线错误例外把解析汇总放入固定Nix环境，外层继续登记，待回归结束后核验；没有安装依赖或改动算法。编译分流同时使用trusted现有磁盘准入条件，额度保持。
+
+最终张量/缓存17项全部通过，1288.202秒、失败/错误/跳过0：[REPORT](/home/lhohy/pt_agent_results/u3b-tensor-20261024T164302527296/REPORT.json)。两模型各25次验证、530批logits及25条history的缓存开关结果逐项相同。既有455/455＋新增11/11＝466/466唯一用例通过。九模型首请求在 /home/lhohy/pt_agent_results/u3b-prepare-20261024T170442759434 离线准备；API仍0、累计63/300。
+
+### 最终接线与测试输出
+
+planners/agent.py、agent_tools.py、tuner.py、confirm.py仅增加显式引擎参数与分支，保持原选择、精调、去重和判据；新增experiments/u3b_agent_cnn.py负责9模型顺序、模型级接续、原响应先保存、外部Mock抽查、基线确认/报告、P2导出、编译计数及prune或服务器包。tests/test_u3b_engines.py覆盖默认路径、v5完整循环无Mock创建、反馈字段、四份v4提示文本、抽查留证及顺序/预算。文档只更新本STATUS。
+
+```text
+U3b new: Ran 11 tests — OK
+Existing main: Ran 421 tests in 174.303s — OK (skipped=4)
+Existing P2/toolchain: Ran 17 tests — OK
+Independent intake ONNX: Ran 4 tests — OK
+Existing tensor/cache: Ran 17 tests in 1288.202s — OK
+Unique existing: 417 + 17 + 4 + 17 = 455/455
+Total unique: 455 + 11 = 466/466
+Summary preflight: 9 rows, denominator=9, maxpool models=3, all not_started
+```
+
+汇总预检在固定Nix环境退出0，结果已保存：[summary-preflight.json](/home/lhohy/pt_agent_results/u3b-offline-20261024T170833050920/summary-preflight.json)。该文件核验汇总入口，九模型全部为not_started；没有实际Agent模型通过记录。
+
+### §3与§5当前执行状态
+
+[完整外发清单](/home/lhohy/pt_agent_results/u3b-prepare-20261024T170442759434/manifest.json)包含9份首请求路径，合计227434字节；目的地为https://api.deepseek.com/chat/completions，固定deepseek-flash/high/32768、new_best/6轮、2400秒精调/max_sweeps=1、确认去重/MAX_CONFIRM_EVALS=6，新增≤50、累计≤113/300，零重试/额外连通性请求。首次真实启动在执行前被自动审批拒绝，消费0；用户随后明确批准本组载荷与目的地，现已启动[真实批次](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/REPORT.json)。原审批停止的离线记录保持。
+
+| 顺序 | 模型 | Agent/确认/Mock抽查/报告/P2编译 | 新API |
+|---:|---|---|---:|
+| 1 | resnet20_relu | 已收尾：确认6个均失败；规则20/100图抽查及8000图报告完成，无Agent最终程序 | 6 |
+| 2 | squeezenet_silu_avgpool | 已收尾：第6轮tuned确认/报告精度通过；4组抽查通过，自举282/282，已prune | 6 |
+| 3 | squeezenet_relu_maxpool | 已收尾：第6轮原文确认/报告精度通过，四组抽查通过，自举1277/1277并prune | 6 |
+| 4 | mobilenet_silu | 已收尾：第5轮原文确认/报告精度通过，四组抽查通过，自举359/359并prune | 6 |
+| 5 | mobilenet_relu | 已收尾：六轮生成无可确认候选；规则两组抽查、确认及8000图报告完成 | 6 |
+| 6 | vgg16_silu_avgpool | 已收尾：第2轮tuned确认通过，Agent报告精度未通过；四组抽查通过，服务器包已导出，本机未编译 | 5 |
+| 7 | vgg16_relu_maxpool | 已收尾：六轮生成无可确认候选；规则两组抽查通过，报告下降1.1375pp/发散1 | 6 |
+| 8 | alexnet_silu_avgpool | 已收尾：第6轮tuned确认/报告精度通过，四组抽查通过，服务器作业已导出，本机未编译 | 6 |
+| 9 | alexnet_relu_maxpool | 预算停止：前三轮数学检查失败、候选池0；第4轮本地预算拒绝，无额外HTTP；确认/报告/编译及规则评测未执行 | 3 |
+
+§5的终态近似参数、预测/编译计数、旋转/延迟、确认/报告准确率、调用/精调耗时和逐模型抽查见下表与最终SUMMARY；9模型分母保留。8模型完成规则程序的确认/8000图报告，第9模型因预算停止尚未执行该部分。U3a旧规则预测和留出结果继续保留。
+
+与spec不一致之处：无算法、精调/确认参数、数值口径或旧测试断言偏离。本轮自写修正包括tests/test_u3b_engines.py的gc导入遗漏、experiments/u3b_agent_cnn.py:105的非有限差异JSON留证，以及同文件outer汇总调用位置的数值环境导入接线；_exact_check张量分支已按§2覆盖，默认Mock分支保持。首次停止时的[离线REPORT](/home/lhohy/pt_agent_results/u3b-offline-20261024T170833050920/REPORT.json)继续保留；用户批准后接续真实运行，M1表保持。
+
+批准后的接续：resnet20_relu前3轮原响应与PT-DSL均已先保存；第3轮精调预测73183156µs，规则基线102309380µs。这里只记录内部开发循环进展，最终选择、确认、20/100图抽查、报告和真实编译尚待完成。阶段调用3/50、累计66/300，后续消费以实时REPORT/registry为准；未重跑已通过的466项测试。
+
+### 首次确认样本接线修正与接续
+
+六轮生成于639.004227秒后在确认数据入口停止：`ValueError: Original samples for confirm have not been prepared`。U3a只保存了calibration/heldout，当前实验context原先直接使用StoredSplits，漏接spec要求的lazy legacy_cifar；尚无候选接受确认集评测。原失败[模型REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/resnet20_relu/failures/confirm-source-01/REPORT.json)、[批次REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/failures/confirm-source-01/REPORT.json)、SUMMARY和完整日志均已另存，六份原响应/DSL/trace与六条调用记录保持。
+
+按本轮自写接线错误例外修正experiments/u3b_agent_cnn.py的context：原StoredSplits继续提供已保存的heldout，build_context后将后续访问接到既有LegacyCifar，confirm=test[8000:9000]、report=test[0:8000]，归一化沿用同一既有默认值；没有提前读取这两组。六轮恢复复用既有r8e6_reconfirm.reconstruct_candidates，逐项核对原预测代价，只把原候选交给未改的confirm_select(engine_profile=tensor)；不重新调用LLM/evaluate/tune，保留去重和一次确认口径。恢复确认开始标记阻止重复确认；新启动的其余模型使用修正后的正常入口。已用639秒从原21600秒扣除，API上限不重置。
+
+新增两项本轮测试验证lazy split绑定和六轮恢复无生成/精调且重复确认被拒绝；本轮13/13通过（2.947秒），失败/错误0。[测试REPORT](/home/lhohy/pt_agent_results/u3b-unit-20261024T172921657771/REPORT.json)。既有455结果复用，唯一用例468/468；未改冻结模块逻辑、旧测试断言、提示词或数值条件。按原批次--resume接续，API仍6/50、累计69/300。
+
+### §5逐模型结果（持续接续）
+
+| 模型 | Agent最终程序/确认下降pp | Agent报告top1/下降pp | 规则确认下降pp | 规则报告top1/下降pp | 自举Agent预测/编译；规则预测/既有编译 | Agent旋转/预测延迟；规则旋转/预测延迟µs | API/迭代/精调；精调秒/总秒 | P2编译 | Mock留出20/报告100 |
+|---|---|---|---:|---|---|---|---|---|---|
+| [resnet20_relu](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/resnet20_relu/REPORT.json) | 确认失败，无最终程序；6个被检候选下降0.7–1.8 | 未执行，无最终程序 | 0.3 | 90.7% / -0.1125 | —/—；383/383 | —/—；2624/102309380 | 6/6/5；293.833807/1147.605607 | Agent无最终程序；规则复用U3a已prune结果 | Agent无最终程序；规则两组均通过 |
+| [squeezenet_silu_avgpool](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_silu_avgpool/REPORT.json) | 第6轮tuned，下降0 | 87.275% / 0.0375（发散3） | 0 | 87.3125% / 0（发散0） | 282/282；282/282 | 10315/84512021；10315/84511744 | 6/6/1；43.573385/1061.975232 | P2真实trace/compile通过并prune | 两程序各20/100均通过；Agent报告100图两侧共同发散[50] |
+| [squeezenet_relu_maxpool](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_relu_maxpool/REPORT.json) | 第6轮llm原文，下降0.1 | 89.3375% / 0（发散0） | 1.1 | 89.1375% / 0.2（发散0） | 1277/1277；1122/1122 | 10275/337816962；10275/300383501 | 6/6/1；33.344068/1469.807990 | P2真实trace/compile通过并prune | 两程序各20/100全部通过，均无发散 |
+| [mobilenet_silu](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/mobilenet_silu/REPORT.json) | 第5轮llm原文，下降0.2（发散2） | 91.2875% / 0.1125（发散1） | 0.2（发散2） | 91.375% / 0.025（发散2） | 359/359；789/未编译 | 28944/122394160；28944/233407721 | 6/6/1；12.368272/941.417026 | 常量1298399232字节，P2真实trace/compile通过并prune | 两程序各20/100全部通过，抽查均无发散 |
+| [mobilenet_relu](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/mobilenet_relu/REPORT.json) | 六轮生成未通过检查，候选池0、实际确认0 | 无最终程序，未执行 | 0.3（发散0） | 90.975% / 0.1625（发散0） | —/—；789/未编译 | —/—；28944/233408829 | 6/6/0；0/892.955483 | Agent无最终程序；规则复用U3a服务器包 | Agent无最终程序；规则20/100均通过 |
+| [vgg16_silu_avgpool](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/vgg16_silu_avgpool/REPORT.json) | 第2轮tuned，下降0.3（发散0） | 91.6% / 0.525（发散8，报告精度未通过） | 约0（发散0） | 92.125% / 0（发散0） | 225/未编译；470/未编译 | 21038/85766527；21038/148643936 | 5/5/5；602.770454/1897.462607 | 常量3196190720字节，服务器包已导出 | 两程序各20/100全部通过，Agent报告100共同发散[67] |
+| [vgg16_relu_maxpool](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/vgg16_relu_maxpool/REPORT.json) | 六轮生成无候选，实际确认0 | 无最终程序，未执行 | 1.4（发散0） | 91.4125% / 1.1375（发散1，精度未通过） | —/—；849/未编译 | —/—；21034/246022648 | 6/6/1；9.333288/1264.944660 | Agent无最终程序；规则复用U3a服务器包 | 规则20/100均通过、抽查发散0 |
+| [alexnet_silu_avgpool](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/alexnet_silu_avgpool/REPORT.json) | 第6轮tuned，下降0.3（发散4） | 84.9875% / 0.15（发散12） | 0（发散0） | 85.1375% / 0（发散0） | 161/未编译；352/未编译 | 16431/67427988；16431/114220654 | 6/6/3；241.951803/1516.743103 | 常量3498967040字节，服务器作业已导出 | 两程序各20/100全部通过，抽查发散0 |
+| [alexnet_relu_maxpool](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/alexnet_relu_maxpool/REPORT.json) | 预算停止，3份输出数学检查失败、候选池0、实际确认0 | 未执行 | 未执行 | 未执行 | —/—；1276/未编译 | —/—；16387/351679282 | 3次HTTP/3轮完成＋1轮本地预算拒绝/0精调；0/224.898590 | 未执行，未生成最终程序 | Agent及规则均未执行 |
+
+ResNet20候选池9个、去重后9个，按原上限检查6个，另3个未检查。检查顺序为第6轮llm（232自举、下降0.8pp）、第4轮llm（242、1.2）、第4轮tuned（242、1.8）、第3轮tuned（271、0.7）、第2轮tuned（367、0.7）、第3轮llm（376、0.7），六个发散数均0。没有更换程序、增加确认名额或重跑该模型。
+
+规则基线同一原程序的留出20图最大差4.8405723873656825e-14、报告100图4.973799150320701e-14，类别及发散集合均相同；确认90.9%对91.2%，报告90.7%对90.5875%，8000图发散0。当前已收尾1/9，Agent可报告程序0、其余8模型待完成；9模型分母保留。无新增本机编译或服务器作业，API6/50、累计69/300；编排已进入第二个模型。
+
+SqueezeNet SiLU阶段结果：前5轮exact数学检查均失败，首次差异为getitem/DSL第5行，max_abs=7.25753603791901e-05、logits差0.0016594835034111632；原图conv带bias，而这些输出省略b。第6轮通过数学检查，精调43.573385秒后由一次确认选中，87.0%对87.0%、下降0pp、发散0。Agent自举预测282、旋转10315、预测84512021µs、常量771096576字节；规则282/10315/84511744µs，当前预测未减少自举。
+
+Agent程序留出20图最大差1.9095836023552692e-14，报告100图1.7763568394002505e-14，类别和发散集合相同；100图两引擎共同发散索引[50]。规则留出20图最大差1.9539925233402755e-14。Agent8000图报告87.275%对87.3125%、下降0.0375pp、发散3；结果只读，未回传或重选。正在接续规则报告及选中原文P2编译，自举数实测待完成；当前API12/50、累计75/300。
+
+SqueezeNet SiLU已完整收尾：[原文程序](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_silu_avgpool/program.ptdsl)、[真实编译REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_silu_avgpool/native/REPORT.json)。trace退出0（4.26秒/1534.949MiB），compile退出0（7.02秒/1233.930MiB），自举预测/实际282/282，核对后立即prune，RuntimePlan与日志保留。规则报告87.3125%对87.3125%、下降0pp、发散0；规则100图最大差3.4638958368304884e-14、类别/发散相同。Agent相对规则自举变化0，预测延迟增加277µs（约0.000328%）。当前2/9收尾，Agent报告精度通过1个；另外7个待完成，9模型分母保持；新本机trace/compile各1、真实CKKS0。
+
+最终10个act均为silu/cheb/deg=127；按程序顺序的domain为(-23.235,19.965)、(-12.659,3.995)、(-5.51,4.584)、(-8.455,6.8)、(-8.263,5.143)、(-8.456,5.365)、(-6.629,6.709)、(-8.048,9.107)、(-10.043,7.983)、(-13.652,30.309)。该模型没有maxpool点。第三模型SqueezeNet ReLU/MaxPool已按原顺序开始，当前没有追加参数或提示词修正。
+
+### 第三模型内存停止与本轮编排修正
+
+第三模型前5轮为3次exact失败、2次parse失败；第6轮通过并选中llm原始输出，一次确认90.1%对90.2%、下降0.1pp、发散0；预测自举1277、延迟337816962µs（规则1122/300383501µs）。原程序保存在models/squeezenet_relu_maxpool/program.ptdsl，恢复只加载AGENT.json，不重复生成/精调/确认。
+
+第一次外部内存停止在规则基线确认；第二次在Agent完整报告。两次均为float64形状(20,512,8,8)再申请5MiB失败，后者峰值RSS4071194624字节，4GiB地址空间限制保持。[首次模型失败REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_relu_maxpool/failures/baseline-memory-01/REPORT.json)、[第二次模型失败REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_relu_maxpool/failures/report-memory-02/REPORT.json)，对应批次REPORT/SUMMARY及完整日志另存同名failures目录；不覆盖原响应、源码或已用额度。
+
+按自写编排错误例外，补齐冻结Agent后、模型角色切换、Mock抽查到完整报告之间的已有clear_caches/gc清理调用；同时恢复载入AGENT.json时清除已另存的旧错误状态。仅改变本轮编排生命周期，冻结算子/验证/精调/确认算法与输入/数值条件保持。新增并加强外部阶段清理测试，本轮14/14通过（2.749秒）：[REPORT](/home/lhohy/pt_agent_results/u3b-unit-20261024T181542058607/REPORT.json)；首次14项运行（2.720秒）也保留。既有455结果复用，唯一469/469。
+
+第二次停止前，Agent留出20图最大差1.2434497875801753e-14、规则留出20图2.042810365310288e-14、Agent报告100图1.2878587085651816e-14，类别/发散集合相同且均无发散。三组已过抽查接续时直接复用，规则确认结果已保存；未完成的8000图报告不记为成功。已用654.738534秒继续从原21600秒单模型额度扣除，API保持18/50、累计81/300；若当前完整阶段在清理后仍触及4GiB，则停止并报告验证工具的具体内存位置，不扩额或修改冻结数值实现。
+
+阶段清理后，第三模型Agent8000图已完成：89.3375%对89.3375%、下降0pp、发散0。规则报告100图也完成，最大差3.197442310920451e-14、类别/发散集合相同、发散0；至此两程序四组抽查通过。规则确认89.1%对90.2%、下降1.1pp，按只读基线保留；其8000图报告仍在运行。Agent旋转10275、常量610795520字节来自第6轮tuner.cost_before原始计数，未重新运行估计或候选选择。真实编译尚待完成。
+
+第三模型最终13个近似点均为minimax_comp、degrees=(15,15,27)，其中10个relu act、3个maxpool。act域按顺序为±10、±9、±7、±6.5、±12、±8、±6.5、±6.5、±7、±75；maxpool域依次±7.5、±7.5、±5.5。规则三处maxpool均为cheb/deg=127，域分别(-5.25895903775049,4.679540163179601)、(-5.182294273564181,4.513456786881617)、(-4.23299396777197,3.433359436148762)。源程序未在报告之后修改；没有将较低预测代价但未确认的候选计为成功。
+
+第三模型已完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_relu_maxpool/REPORT.json)、[编译REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/squeezenet_relu_maxpool/native/REPORT.json)。规则报告89.1375%对89.3375%、下降0.2pp、发散0；Agent报告89.3375%、下降0pp、发散0。真实trace退出0（3.56秒/1382.609MiB），compile退出0（6.09秒/1198.938MiB），自举预测/实际1277/1277，立即prune；预测延迟与RuntimePlan误差0.334146%。Agent相对规则自举增加13.814617%、预测延迟增加12.461890%，旋转相同。此次成功进程RSS峰值3633672192字节，原失败4071194624字节记录保留；原4GiB和已用时间保持。
+
+当前完整收尾3/9，Agent报告精度通过2个、确认失败1个、其余6个待执行；规则报告精度通过3个。实际编译两份均自举相等并prune，自举少于规则的已完成Agent程序0个，中位降幅暂无样本；不将失败ResNet候选计入改善。新trace/compile各2，真实CKKS0，前三模型API18/50、累计81/300；编排已进入MobileNet SiLU。
+
+MobileNet SiLU已完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/mobilenet_silu/REPORT.json)、[编译REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/mobilenet_silu/native/REPORT.json)。数学检查6轮均通过，首轮低阶近似留出下降9.6pp；第2轮下降0.1pp但max_u=0.927845>原0.90，第3/5轮整体可行，第4轮虽下降0pp但max_u=0.962315。原new_best仅触发首轮一次精调（12.368272秒、失败），后续未改策略。选中第5轮原文，一次确认91.8%对92.0%、下降0.2pp，发散2按错误计入，最大max_u=7.048378551061876e48。
+
+Agent报告91.2875%对91.4%、下降0.1125pp、发散1；规则91.375%对91.4%、下降0.025pp、发散2。两份程序的20图最大差分别3.486794186713382e-14、6.750155989720952e-14；100图8.526512829121202e-14、8.892886427247504e-14，类别/发散集合一致，四组抽查均无发散。结果只读，未回传、重选或事后改域。
+
+原文常量1298399232字节，低于1.5GiB，按原条件本机编译；trace退出0（5.89秒/2647.648MiB），compile退出0（12.60秒/2384.625MiB），自举预测/实际359/359，立即prune，RuntimePlan与日志保留。相对规则自举789减少54.499366%、预测延迟233407721→122394160µs减少47.562077%，旋转均28944。当前收尾4/9，Agent报告精度通过3个、确认失败1个、其余5个待完成；自举少于规则1个，减少模型的中位降幅54.499366%（1个样本），9模型分母保持。新trace/compile各3，均计数相等并prune，真实CKKS0；前四模型API24/50、累计87/300，进入MobileNet ReLU。
+
+MobileNet ReLU已完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/mobilenet_relu/REPORT.json)。六轮阶段依次为exact、response、parse、exact、exact、exact；候选池0，精调0、实际Agent确认0，保留原status=confirm_failed并在汇总中区分“生成未通过检查”。第2轮响应正文为空、finish_reason=length，原响应完整保存，未重试。第1/6轮logits差0.06677826394666031，首个act/getitem、DSL第38行差2.3063844191373306e-05，act数27/27；原提示、数学容差和样本保持。
+
+规则原程序确认90.3%对90.6%、下降0.3pp、发散0；8000图报告90.975%对91.1375%、下降0.1625pp、发散0。留出20图Mock/张量最大差3.9968028886505635e-14、报告100图4.440892098500626e-14，类别及发散集合相同。API6、耗时892.955483秒；前五模型共30/50、累计93/300。当前Agent报告精度通过3/9、规则5/9，真实编译3份计数相等且已prune；VGG16 SiLU按原顺序进入生成与精调，其他模型分母保留，真实CKKS0。
+
+VGG16 SiLU生成5轮、精调5次/602.770454秒，按原提前停止规则结束。候选池8个，按顺序确认第4轮tuned（下降1.7pp）、第3轮tuned（1.0pp）均失败，第2轮tuned通过（91.3%对91.6%、下降0.3pp、发散0、max_u=1.098463627284844）；选中该份原精调程序，预测自举225、旋转21038、延迟85766527µs。规则原程序确认91.6%对91.6%、下降约0pp、发散0。两份程序留出20图最大差3.197442310920451e-14、6.039613253960852e-14，类别及发散集合相同；8000图参考已单独保存，报告100图抽查进行中，完整报告尚未取得。常量3196190720字节，后续按原1.5GiB分流生成服务器作业，本机未编译。截至该模型生成结束，API35/50、累计98/300；其他模型及原确认/精调设置保持。
+
+VGG16 SiLU后续测量：Agent报告100图Mock/张量最大差2.930988785010413e-14、类别及发散集合相同，两侧共同发散[67]。完整8000图top-1=91.6%、参考92.125%、下降0.525pp、发散8，报告精度条件未通过；程序和选中结果保持，报告未用于重选。15处act均silu/cheb，阶数7×3、15×7、31×4、63×1，逐点定义域保存在原程序和最终SUMMARY中；规则报告和服务器作业仍待完成。
+
+VGG16 SiLU已完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/vgg16_silu_avgpool/REPORT.json)、[服务器run.sh](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/vgg16_silu_avgpool/server_jobs/Vgg16SiluAvgpool_PTAgent_DSL/run.sh)。规则8000图92.125%对92.125%、下降0pp、发散0；规则100图最大差5.1514348342607263e-14，类别/发散集合相同，发散0。四组抽查通过，Agent完整报告max_u=3.089408206266979e295、发散8均原样记录；报告未参与选择。常量超1.5GiB，按原条件只导出服务器作业，本机编译/编译自举数待服务器执行。成功进程RSS峰值3203297280字节、总耗时1897.462607秒，原4GiB保持。
+
+该选中程序预测自举比规则少52.127660%、预测延迟降低42.300689%，均为预测比较；报告精度未通过的结果同时保留。当前6/9收尾，Agent报告精度通过3/9、规则6/9，自举较少2/9、中位减少53.313513%（两份选中程序，其中一份报告精度未通过）；本机实际编译仍3份、均计数相等并prune。前六模型35/50、累计98/300，VGG16 ReLU/MaxPool已启动，真实CKKS0。MobileNet SiLU最终27处act均silu/cheb，阶数15×16、31×10、63×1，逐点域保存在原文程序及最终SUMMARY。
+
+VGG16 ReLU/MaxPool已完成六轮生成：exact、exact、response、exact、validation、complete，候选池0、实际确认0；精调1次且失败。前两轮首处差异均为act0/getitem，最大差0.012617773588327053、logits差0.06838637439218376。第5轮数学检查通过但验证发散1、max_u=2.5259669643858254e20；第6轮留出精度下降35.7pp、发散0、max_u=0.7411153406502731，精调试探也未通过。原6份响应与程序保持，未重跑或更换最终程序，Agent报告/编译未执行。规则基线的确认、20/100抽查和8000图报告按原协议接续；新API6，本轮41/50、累计104/300。
+
+第7模型VGG16 ReLU已完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/vgg16_relu_maxpool/REPORT.json)。规则确认90.0%对91.4%、下降1.4pp、发散0；完整8000图报告91.4125%对92.55%、下降1.1375pp、发散1，规则报告精度条件未通过。规则留出20/报告100图最大差4.440892098500626e-14、1.0302869668521453e-13，类别及发散集合相同，抽查均发散0。精调9.333288秒、总1264.944660秒，进程峰值RSS3962306560字节，原4GiB保持。Agent无最终程序，报告和编译未执行；未重跑。当前7/9收尾、Agent报告精度通过3/9、规则6/9；API41/50、累计104/300，AlexNet SiLU/AvgPool已启动，真实CKKS0。
+
+AlexNet SiLU/AvgPool六轮生成结束，前三轮数学检查失败，第4/5轮数学和内部验证通过；第6轮原输出内部不可行，精调得到可行候选。去重确认一次即选中第6轮tuned：84.5%对84.8%、下降0.3pp、发散4，max_u=1.3470272778405252e51；发散按原规则计错。候选池5个，原确认规则保持。选中程序预测自举161、延迟67427988µs、常量3498967040字节；外部抽查与报告进行中，后续按原常量额度导出服务器作业，本机未编译。本轮API47/50、累计110/300，剩余3次保留给原顺序中的AlexNet ReLU/MaxPool。
+
+AlexNet SiLU报告阶段：Agent/规则留出20图最大差均1.4210854715202004e-14，类别/发散集合相同，发散0；Agent报告100图最大差1.7763568394002505e-14、类别/发散集合相同、发散0。完整8000图Agent top-1=84.9875%、参考85.1375%、下降0.15pp、发散12，按原规则计错后满足报告精度条件。Agent当前4/9满足报告精度条件；规则100图抽查、8000图报告及服务器包仍待完成，原选中程序保持。
+
+AlexNet SiLU已完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/alexnet_silu_avgpool/REPORT.json)、[服务器run.sh](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/models/alexnet_silu_avgpool/server_jobs/AlexNetSiluAvgpool_PTAgent_DSL/run.sh)。规则确认84.8%对84.8%、下降0pp、发散0；报告85.1375%对85.1375%、下降0pp、发散0。规则报告100图最大差1.4210854715202004e-14、类别/发散集合相同、发散0；两程序四组抽查通过。Agent报告max_u=1.445037127424502e199、发散12保留。精调3次/241.951803秒，总1516.743103秒，峰值RSS3059630080字节；原4GiB保持。7处act均silu/cheb，阶数15×5、31×2，域按程序顺序为(-19.69,18.617)、(-14.587,11.257)、(-8.948,7.052)、(-8.353,7.469)、(-9.35,10.939)、(-12.167,14.867)、(-3.479,5.889)。
+
+Agent自举预测161对规则352，减少54.261364%；预测延迟67427988对114220654µs，减少40.966904%；旋转均16431。常量3498967040字节，按原条件只导出服务器作业，本机未编译。当前8/9正常收尾，Agent报告精度通过4/9、规则7/9，预测自举较少3/9、中位减少54.261364%（3份选中程序，含VGG16 SiLU报告未通过结果）。本机原文真实编译仍3份、计数相等且已prune，服务器作业2份。前八模型47/50、累计110/300，最后AlexNet ReLU/MaxPool已启动，仅余3次调用，真实CKKS0。
+
+### §5 终态汇总（50次调用后停止，2026-10-25）
+
+[最终SUMMARY](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/SUMMARY.json)保留9行及全部逐点参数、确认候选、报告指标、调用/精调耗时、编译分流和抽查；[最终REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/REPORT.json)为complete=false、stage=error，具体原因为本轮budget_exhausted。8/9模型正常收尾，最后模型已实际生成3份源码。实现接续只修正本轮编排接线或缓存生命周期，已有响应、DSL、失败报告及全部已用时间/调用保持。
+
+本轮50次真实HTTP均已逐次登记，global_call=64–113、无缺失/重复；累计113/300、registry438条。最后模型AGENT的iterations/llm_calls=4包含第4轮本地预算拒绝，实际HTTP3、候选池0、实际确认0、精调0。前三轮首处差异均为act0/getitem、DSL第5行，max_diff=0.00024408134709785756、logits差0.0012148905225153328。没有最终程序；Agent确认/抽查/报告/编译，以及该模型规则基线的确认/抽查/报告尚未执行。最后worker耗时224.898590秒，保留原trace和原响应，未自动重跑。
+
+全体9模型作分母：Agent报告精度下降≤0.5pp为4/9，5份实际选中程序中4份通过；规则7/9，已评测8份中7份通过。ResNet20为实际6次确认失败；MobileNet ReLU/VGG16 ReLU为六轮生成无候选、实际确认0；VGG16 SiLU为确认通过后报告下降0.525pp/发散8；AlexNet ReLU为本轮预算停止。这些类别分别保留。
+
+选中程序的预测自举少于规则为3/9，中位降幅54.261364%（MobileNet SiLU、VGG16 SiLU、AlexNet SiLU；其中VGG16 SiLU报告精度未通过）。若只列报告精度通过的降自举程序，为MobileNet SiLU和AlexNet SiLU两份。预测比较如下，正值表示减少：
+
+| 选中模型 | 自举减少% | 预测延迟减少% | 预测/实际编译 |
+|---|---:|---:|---|
+| squeezenet_silu_avgpool | 0.000000 | -0.000328 | 282/282 |
+| squeezenet_relu_maxpool | -13.814617 | -12.461890 | 1277/1277 |
+| mobilenet_silu | 54.499366 | 47.562077 | 359/359 |
+| vgg16_silu_avgpool | 52.127660 | 42.300689 | 225/本机未编译/服务器作业 |
+| alexnet_silu_avgpool | 54.261364 | 40.966904 | 161/本机未编译/服务器作业 |
+
+三份真实编译为SqueezeNet SiLU 282/282、SqueezeNet ReLU 1277/1277、MobileNet SiLU 359/359，计数核对后均立即prune，RuntimePlan/日志/PRUNED.txt保留。VGG16 SiLU常量3196190720字节、AlexNet SiLU3498967040字节，按原1.5GiB条件导出服务器作业；本机未编译，实际自举数待执行。
+
+近似参数按最终选中程序统计；索引、原行号和宏调用行、每个点的完整参数均见SUMMARY.models[].approximation_points。69处act和3处maxpool共72点：
+
+| 模型 | 近似点 | 方法/阶数分布 |
+|---|---|---|
+| squeezenet_silu_avgpool | act×10 | act/silu cheb 127×10 |
+| squeezenet_relu_maxpool | act×10、maxpool×3 | act/relu minimax_comp (15,15,27)×10；maxpool/max minimax_comp (15,15,27)×3 |
+| mobilenet_silu | act×27 | act/silu cheb 15×16；act/silu cheb 31×10；act/silu cheb 63×1 |
+| vgg16_silu_avgpool | act×15 | act/silu cheb 15×7；act/silu cheb 31×4；act/silu cheb 63×1；act/silu cheb 7×3 |
+| alexnet_silu_avgpool | act×7 | act/silu cheb 15×5；act/silu cheb 31×2 |
+
+以下domain按SUMMARY近似点索引顺序排列（宏已通用展开）：
+
+- squeezenet_silu_avgpool：0:act(-23.235,19.965)、1:act(-12.659,3.995)、2:act(-5.51,4.584)、3:act(-8.455,6.8)、4:act(-8.263,5.143)、5:act(-8.456,5.365)、6:act(-6.629,6.709)、7:act(-8.048,9.107)、8:act(-10.043,7.983)、9:act(-13.652,30.309)。
+- squeezenet_relu_maxpool：0:act(-10.0,10.0)、1:maxpool(-7.5,7.5)、2:act(-9.0,9.0)、3:act(-7.0,7.0)、4:act(-6.5,6.5)、5:maxpool(-7.5,7.5)、6:act(-12.0,12.0)、7:act(-8.0,8.0)、8:act(-6.5,6.5)、9:act(-6.5,6.5)、10:maxpool(-5.5,5.5)、11:act(-7.0,7.0)、12:act(-75.0,75.0)。
+- mobilenet_silu：0:act(-38.0,33.0)、1:act(-16.0,9.0)、2:act(-16.0,10.0)、3:act(-18.0,7.5)、4:act(-9.5,6.5)、5:act(-8.0,8.5)、6:act(-8.1,6.0)、7:act(-9.2,6.7)、8:act(-4.5,5.4)、9:act(-9.2,7.0)、10:act(-4.7,8.4)、11:act(-5.5,7.7)、12:act(-6.5,8.1)、13:act(-11.2,5.9)、14:act(-3.9,3.7)、15:act(-4.4,6.8)、16:act(-4.2,7.2)、17:act(-10.2,11.0)、18:act(-6.2,8.6)、19:act(-11.4,10.3)、20:act(-8.6,8.4)、21:act(-10.5,2.6)、22:act(-4.9,6.3)、23:act(-7.2,2.0)、24:act(-0.95,0.85)、25:act(-1.4,1.0)、26:act(-3.3,7.0)。
+- vgg16_silu_avgpool：0:act(-15.476,16.175)、1:act(-25.695,17.605)、2:act(-11.643,8.377)、3:act(-11.604,11.72)、4:act(-7.956,7.751)、5:act(-9.149,10.853)、6:act(-16.052,13.509)、7:act(-9.409,9.43)、8:act(-8.498,10.228)、9:act(-4.791,12.81)、10:act(-2.137,1.638)、11:act(-1.709,1.275)、12:act(-1.947,1.765)、13:act(-7.163,4.591)、14:act(-7.922,6.356)。
+- alexnet_silu_avgpool：0:act(-19.69,18.617)、1:act(-14.587,11.257)、2:act(-8.948,7.052)、3:act(-8.353,7.469)、4:act(-9.35,10.939)、5:act(-12.167,14.867)、6:act(-3.479,5.889)。
+
+maxpool三模型分别报告：SqueezeNet ReLU最终三处均minimax_comp/(15,15,27)，domain依次±7.5/±7.5/±5.5；规则均cheb127，三域(-5.25895903775049,4.679540163179601)、(-5.182294273564181,4.513456786881617)、(-4.23299396777197,3.433359436148762)。该模型Agent报告下降0pp、规则0.2pp，自举和预测延迟分别增加13.814617%/12.461890%。VGG16 ReLU和AlexNet ReLU没有最终选中程序，保留缺口，未从失败候选挑选参数计为成功。
+
+外部核对26组全部通过（5份Agent最终程序＋8份固定规则，每份留出20和报告100图）；每引擎1560次样本核对，最大绝对差1.0302869668521453e-13，类别及发散集合相同。SqueezeNet SiLU报告100图共同发散[50]、VGG16 SiLU报告100图共同发散[67]，原样记录；共同发散样本按原规则计错。每份完整报告均使用同一冻结程序的8000张图；输入重复只作为该份程序可靠性检查，模型分母固定9。确认与报告结果均未回传给Agent。
+
+最终测试输出（最后一次14项测试通过后，代码保持，仅继续批次并更新STATUS；冻结算法、旧测试断言及提示词保持）：
+
+```text
+U3b new: Ran 14 tests in 2.749s — OK
+Existing main: Ran 421 tests in 174.303s — OK (skipped=4)
+Existing P2/toolchain: Ran 17 tests — OK
+Independent intake ONNX: Ran 4 tests — OK
+Existing tensor/cache: Ran 17 tests in 1288.202s — OK
+Unique existing: 417 + 17 + 4 + 17 = 455/455
+Total unique: 455 + 14 = 469/469
+Real run: 8/9 models normally finished; stopped at 50/50 calls
+Batch exit: 1 (budget_exhausted; extra HTTP 0)
+```
+
+与spec不一致之处：原算法/选择/精调/确认参数和r8-v4默认路径保持；按自写错误例外的修正逐项记录如下。tests/test_u3b_engines.py:5补gc导入；experiments/u3b_agent_cnn.py:87的抽查对非有限差异以null留证；:40接通lazy legacy_cifar后续数据；:216只完成原六轮结束后尚未开始的首次确认，保留cost/去重/上限、无重新生成/精调；:305、:316、:324、:331补外部阶段缓存清理，原4GiB保持；:510保留并扣除已用墙钟；:556将依赖数值环境的汇总放回Nix，外层登记。原确认样本失败和两次内存失败已另存failures，三次接续消费完整保留，未改历史响应、程序或证书。
+
+未完成项：第9模型后续生成及规则评测需后续spec指定；两份服务器作业的真实编译/自举核对待执行。报告未通过与无候选结果保留，真实CKKS0，M1表保持。没有新增编译器/运行库阻塞证据；没有下载安装、修改库/编译器/运行时、安全参数或资源扩额，未提交/打tag/push。
+
+## U3b2 权重消费检查与三模型重跑（方案A，2026-10-25）
+
+只改dsl/typecheck.py和planners/agent_tools.py的权重检查及接线；新增experiments/u3b2_weight_usage_rerun.py、tests/test_u3b2_weight_usage.py。check的可选graph参数默认None，旧调用保持；启用时从CORE_OPS声明的weight角色和实际权重输入收集消费关系，再比较DSL宏展开后的WeightRef及bn前缀四张量。未被任何图节点消费的缓冲区保持排除；被消费的非标准名字仍纳入。新诊断保存图节点id/类型/输出张量、角色、程序行和宏调用行，先于exact返回；E_WEIGHT_UNUSED超过20条时完整保留，其余原反馈行为保持。
+
+首轮11/11新测试通过，1.150秒、失败/错误/跳过0：[REPORT](/home/lhohy/pt_agent_results/u3b2-unit-20261025T015252549529/REPORT.json)、[逐条诊断](/home/lhohy/pt_agent_results/u3b2-unit-20261025T015252549529/WEIGHT_USAGE.json)。9规则＋4冻结开发＋7 P2共20项程序检查全部无E_WEIGHT_UNUSED；开发程序与P2有重合，分别按spec验证。R8f2玩具夹具的r8-v4完整evaluate JSON与反馈文本对HEAD修改前代码逐字一致。另补一项“下一轮是否修正”的统计测试，最终本轮测试复验待执行；既有469分组回归进行中，API0、累计113/300。
+
+历史exact失败共10份，启用检查后全部在typecheck返回，exact未执行；逐程序遗漏权重如下。节点/角色/行号及完整反馈见上面的WEIGHT_USAGE.json：
+
+| 模型 | U3b迭代 | 遗漏数 | 权重名 |
+|---|---:|---:|---|
+| mobilenet_relu | 1 | 27 | `pre_layer.Conv2d.bias`, `Depthwise.0.dwConv2d.bias`, `Depthwise.0.pointwiseConv2d.Conv2d.bias`, `Depthwise.1.dwConv2d.bias`, `Depthwise.1.pointwiseConv2d.Conv2d.bias`, `Depthwise.2.dwConv2d.bias`, `Depthwise.2.pointwiseConv2d.Conv2d.bias`, `Depthwise.3.dwConv2d.bias`, `Depthwise.3.pointwiseConv2d.Conv2d.bias`, `Depthwise.4.dwConv2d.bias`, `Depthwise.4.pointwiseConv2d.Conv2d.bias`, `Depthwise.5.dwConv2d.bias`, `Depthwise.5.pointwiseConv2d.Conv2d.bias`, `Depthwise.6.dwConv2d.bias`, `Depthwise.6.pointwiseConv2d.Conv2d.bias`, `Depthwise.7.dwConv2d.bias`, `Depthwise.7.pointwiseConv2d.Conv2d.bias`, `Depthwise.8.dwConv2d.bias`, `Depthwise.8.pointwiseConv2d.Conv2d.bias`, `Depthwise.9.dwConv2d.bias`, `Depthwise.9.pointwiseConv2d.Conv2d.bias`, `Depthwise.10.dwConv2d.bias`, `Depthwise.10.pointwiseConv2d.Conv2d.bias`, `Depthwise.11.dwConv2d.bias`, `Depthwise.11.pointwiseConv2d.Conv2d.bias`, `Depthwise.12.dwConv2d.bias`, `Depthwise.12.pointwiseConv2d.Conv2d.bias` |
+| mobilenet_relu | 4 | 27 | `pre_layer.Conv2d.bias`, `Depthwise.0.dwConv2d.bias`, `Depthwise.0.pointwiseConv2d.Conv2d.bias`, `Depthwise.1.dwConv2d.bias`, `Depthwise.1.pointwiseConv2d.Conv2d.bias`, `Depthwise.2.dwConv2d.bias`, `Depthwise.2.pointwiseConv2d.Conv2d.bias`, `Depthwise.3.dwConv2d.bias`, `Depthwise.3.pointwiseConv2d.Conv2d.bias`, `Depthwise.4.dwConv2d.bias`, `Depthwise.4.pointwiseConv2d.Conv2d.bias`, `Depthwise.5.dwConv2d.bias`, `Depthwise.5.pointwiseConv2d.Conv2d.bias`, `Depthwise.6.dwConv2d.bias`, `Depthwise.6.pointwiseConv2d.Conv2d.bias`, `Depthwise.7.dwConv2d.bias`, `Depthwise.7.pointwiseConv2d.Conv2d.bias`, `Depthwise.8.dwConv2d.bias`, `Depthwise.8.pointwiseConv2d.Conv2d.bias`, `Depthwise.9.dwConv2d.bias`, `Depthwise.9.pointwiseConv2d.Conv2d.bias`, `Depthwise.10.dwConv2d.bias`, `Depthwise.10.pointwiseConv2d.Conv2d.bias`, `Depthwise.11.dwConv2d.bias`, `Depthwise.11.pointwiseConv2d.Conv2d.bias`, `Depthwise.12.dwConv2d.bias`, `Depthwise.12.pointwiseConv2d.Conv2d.bias` |
+| mobilenet_relu | 5 | 27 | `pre_layer.Conv2d.bias`, `Depthwise.0.dwConv2d.bias`, `Depthwise.0.pointwiseConv2d.Conv2d.bias`, `Depthwise.1.dwConv2d.bias`, `Depthwise.1.pointwiseConv2d.Conv2d.bias`, `Depthwise.2.dwConv2d.bias`, `Depthwise.2.pointwiseConv2d.Conv2d.bias`, `Depthwise.3.dwConv2d.bias`, `Depthwise.3.pointwiseConv2d.Conv2d.bias`, `Depthwise.4.dwConv2d.bias`, `Depthwise.4.pointwiseConv2d.Conv2d.bias`, `Depthwise.5.dwConv2d.bias`, `Depthwise.5.pointwiseConv2d.Conv2d.bias`, `Depthwise.6.dwConv2d.bias`, `Depthwise.6.pointwiseConv2d.Conv2d.bias`, `Depthwise.7.dwConv2d.bias`, `Depthwise.7.pointwiseConv2d.Conv2d.bias`, `Depthwise.8.dwConv2d.bias`, `Depthwise.8.pointwiseConv2d.Conv2d.bias`, `Depthwise.9.dwConv2d.bias`, `Depthwise.9.pointwiseConv2d.Conv2d.bias`, `Depthwise.10.dwConv2d.bias`, `Depthwise.10.pointwiseConv2d.Conv2d.bias`, `Depthwise.11.dwConv2d.bias`, `Depthwise.11.pointwiseConv2d.Conv2d.bias`, `Depthwise.12.dwConv2d.bias`, `Depthwise.12.pointwiseConv2d.Conv2d.bias` |
+| mobilenet_relu | 6 | 27 | `pre_layer.Conv2d.bias`, `Depthwise.0.dwConv2d.bias`, `Depthwise.0.pointwiseConv2d.Conv2d.bias`, `Depthwise.1.dwConv2d.bias`, `Depthwise.1.pointwiseConv2d.Conv2d.bias`, `Depthwise.2.dwConv2d.bias`, `Depthwise.2.pointwiseConv2d.Conv2d.bias`, `Depthwise.3.dwConv2d.bias`, `Depthwise.3.pointwiseConv2d.Conv2d.bias`, `Depthwise.4.dwConv2d.bias`, `Depthwise.4.pointwiseConv2d.Conv2d.bias`, `Depthwise.5.dwConv2d.bias`, `Depthwise.5.pointwiseConv2d.Conv2d.bias`, `Depthwise.6.dwConv2d.bias`, `Depthwise.6.pointwiseConv2d.Conv2d.bias`, `Depthwise.7.dwConv2d.bias`, `Depthwise.7.pointwiseConv2d.Conv2d.bias`, `Depthwise.8.dwConv2d.bias`, `Depthwise.8.pointwiseConv2d.Conv2d.bias`, `Depthwise.9.dwConv2d.bias`, `Depthwise.9.pointwiseConv2d.Conv2d.bias`, `Depthwise.10.dwConv2d.bias`, `Depthwise.10.pointwiseConv2d.Conv2d.bias`, `Depthwise.11.dwConv2d.bias`, `Depthwise.11.pointwiseConv2d.Conv2d.bias`, `Depthwise.12.dwConv2d.bias`, `Depthwise.12.pointwiseConv2d.Conv2d.bias` |
+| vgg16_relu_maxpool | 1 | 13 | `conv_1_1.Conv2d.bias`, `conv_1_2.Conv2d.bias`, `conv_2_1.Conv2d.bias`, `conv_2_2.Conv2d.bias`, `conv_3_1.Conv2d.bias`, `conv_3_2.Conv2d.bias`, `conv_3_3.Conv2d.bias`, `conv_4_1.Conv2d.bias`, `conv_4_2.Conv2d.bias`, `conv_4_3.Conv2d.bias`, `conv_5_1.Conv2d.bias`, `conv_5_2.Conv2d.bias`, `conv_5_3.Conv2d.bias` |
+| vgg16_relu_maxpool | 2 | 13 | `conv_1_1.Conv2d.bias`, `conv_1_2.Conv2d.bias`, `conv_2_1.Conv2d.bias`, `conv_2_2.Conv2d.bias`, `conv_3_1.Conv2d.bias`, `conv_3_2.Conv2d.bias`, `conv_3_3.Conv2d.bias`, `conv_4_1.Conv2d.bias`, `conv_4_2.Conv2d.bias`, `conv_4_3.Conv2d.bias`, `conv_5_1.Conv2d.bias`, `conv_5_2.Conv2d.bias`, `conv_5_3.Conv2d.bias` |
+| vgg16_relu_maxpool | 4 | 13 | `conv_1_1.Conv2d.bias`, `conv_1_2.Conv2d.bias`, `conv_2_1.Conv2d.bias`, `conv_2_2.Conv2d.bias`, `conv_3_1.Conv2d.bias`, `conv_3_2.Conv2d.bias`, `conv_3_3.Conv2d.bias`, `conv_4_1.Conv2d.bias`, `conv_4_2.Conv2d.bias`, `conv_4_3.Conv2d.bias`, `conv_5_1.Conv2d.bias`, `conv_5_2.Conv2d.bias`, `conv_5_3.Conv2d.bias` |
+| alexnet_relu_maxpool | 1 | 5 | `Conv2d_1.bias`, `Conv2d_2.bias`, `Conv2d_3.bias`, `Conv2d_4.bias`, `Conv2d_5.bias` |
+| alexnet_relu_maxpool | 2 | 5 | `Conv2d_1.bias`, `Conv2d_2.bias`, `Conv2d_3.bias`, `Conv2d_4.bias`, `Conv2d_5.bias` |
+| alexnet_relu_maxpool | 3 | 5 | `Conv2d_1.bias`, `Conv2d_2.bias`, `Conv2d_3.bias`, `Conv2d_4.bias`, `Conv2d_5.bias` |
+
+三个重跑使用原U3a模型/权重/校准和CIFAR固定划分，唯一生成机制变化为权重消费检查。未完成AlexNet ReLU规则确认/20图与100图Mock抽查/8000图报告先执行；MobileNet和VGG16原固定规则证据复用并记录来源，规则结果只留在外部记录。其余6个Agent模型直接沿用U3b，不重生成、不重新确认或评测；ResNet20确认失败、VGG16 SiLU报告未通过保持。新增20次/累计133上限，零重试/额外连通性请求，原4GiB和trusted限制保持。
+
+U3b2主回归435项通过，165.318秒、失败/错误0；4项ONNX由独立intake组补验，P2/工具链与张量组串行接续。[主组REPORT](/home/lhohy/pt_agent_results/u3b2-main-20261025T015341911982/REPORT.json)。外层记录166.704秒，资源限制保持；尚未启动API或AlexNet规则报告。
+
+U3b2既有469/469全部通过：主组435项（4 ONNX跳过后独立补4）＋P2/工具链17＋张量/缓存17，唯一用例431+17+4+17=469。张量组17项998.138秒，两整网各25次验证/530批logits/25条history缓存开关一致。[P2组](/home/lhohy/pt_agent_results/u3b2-packaging-20261025T030134332804/REPORT.json)、[intake组](/home/lhohy/pt_agent_results/u3b2-intake-20261025T030155372723/REPORT.json)、[张量组](/home/lhohy/pt_agent_results/u3b2-tensor-20261025T030157700779/REPORT.json)。新增统计测试复验后接续AlexNet ReLU规则基线；API0、累计113/300。
+
+最终本轮12/12测试通过（1.080秒），包括下一轮修正统计对“引用已补齐/仍缺失/语法不可解析”的区分；本轮12＋既有469＝481/481，旧断言与算法保持。[新测试REPORT](/home/lhohy/pt_agent_results/u3b2-unit-20261025T031934801433/REPORT.json)、[完整逐条诊断](/home/lhohy/pt_agent_results/u3b2-unit-20261025T031934801433/WEIGHT_USAGE.json)。AlexNet ReLU规则基线已启动：[REPORT](/home/lhohy/pt_agent_results/u3b2-baseline-20261025T031937545569/REPORT.json)，先做确认/留出20/报告100/8000图评测；API0、累计113/300。
+
+### U3b2停止记录与当前九模型对照
+
+AlexNet ReLU规则确认首次运行退出1，66.781630秒、峰值4078624768字节（3.798515GiB）。张量MaxPool/Chebyshev计算申请shape=(20,256,8,8)的float64数组（2.50MiB）失败；完整调用栈及未完成状态保留。原批量20、4GiB、缓存和多项式路径保持；确认前已清空张量缓存并执行gc.collect。具体内存峰值构成尚未确认，未自行改变冻结实现或重试；新增编译器/CKKS依赖失败证据0。[失败REPORT](/home/lhohy/pt_agent_results/u3b2-baseline-20261025T031937545569/REPORT.json)、[日志](/home/lhohy/pt_agent_results/u3b2-baseline-20261025T031937545569/run.log)。
+
+下表保留9模型分母。三个目标ReLU模型均标注“U3b2待重跑”，当前数值来自U3b历史；其余6个按spec沿用U3b。表内延迟为预测µs；确认和报告下降以pp记；API列为U3b历史/本轮新增；预测与原生编译分别列出。当前无U3b2生成或选中程序。
+
+| 模型／来源 | Agent状态／确认下降pp | Agent报告top1／下降pp | 规则确认下降pp | 规则报告top1／下降pp | 自举Agent预测/编译；规则预测/编译 | 旋转/预测延迟µs：Agent；规则 | API旧/新；旧迭代/精调；旧精调秒/总秒 | 编译状态 | Mock留出20/报告100 |
+|---|---|---|---|---|---|---|---|---|---|
+| resnet20_relu／沿用U3b | 6次确认失败，下降0.7–1.8；无最终程序 | 待可确认程序 | 0.3 | 90.7% / -0.1125 | —/—；383/383 | —；2624/102309380 | 6/0；6/5；293.833807/1147.605607 | Agent无最终程序；规则既有编译并prune | 规则两组通过 |
+| squeezenet_silu_avgpool／沿用U3b | 第6轮tuned；0 | 87.275% / 0.0375，发散3 | 0 | 87.3125% / 0 | 282/282；282/282 | 10315/84512021；10315/84511744 | 6/0；6/1；43.573385/1061.975232 | 原生编译计数相同，已prune | 两程序两组通过；Agent报告抽查共同发散[50] |
+| squeezenet_relu_maxpool／沿用U3b | 第6轮原文；0.1 | 89.3375% / 0 | 1.1 | 89.1375% / 0.2 | 1277/1277；1122/1122 | 10275/337816962；10275/300383501 | 6/0；6/1；33.344068/1469.807990 | 原生编译计数相同，已prune | 两程序两组通过 |
+| mobilenet_silu／沿用U3b | 第5轮原文；0.2，发散2 | 91.2875% / 0.1125，发散1 | 0.2，发散2 | 91.375% / 0.025，发散2 | 359/359；789/未编译 | 28944/122394160；28944/233407721 | 6/0；6/1；12.368272/941.417026 | Agent原生计数相同并prune；规则服务器包 | 两程序两组通过 |
+| mobilenet_relu／U3b旧值，U3b2待重跑 | 旧六轮无候选，确认0次 | 待重跑 | 0.3 | 90.975% / 0.1625 | —/—；789/未编译 | —；28944/233408829 | 6/0；6/0；0/892.955483 | 旧Agent无最终程序；规则服务器包 | 规则两组通过 |
+| vgg16_silu_avgpool／沿用U3b | 第2轮tuned；0.3 | 91.6% / 0.525，发散8，未通过 | 约0 | 92.125% / 0 | 225/未编译；470/未编译 | 21038/85766527；21038/148643936 | 5/0；5/5；602.770454/1897.462607 | 服务器包，本机未编译 | 两程序两组通过；Agent报告抽查共同发散[67] |
+| vgg16_relu_maxpool／U3b旧值，U3b2待重跑 | 旧六轮无候选，确认0次 | 待重跑 | 1.4 | 91.4125% / 1.1375，发散1，未通过 | —/—；849/未编译 | —；21034/246022648 | 6/0；6/1；9.333288/1264.944660 | 旧Agent无最终程序；规则服务器包 | 规则两组通过 |
+| alexnet_silu_avgpool／沿用U3b | 第6轮tuned；0.3，发散4 | 84.9875% / 0.15，发散12 | 0 | 85.1375% / 0 | 161/未编译；352/未编译 | 16431/67427988；16431/114220654 | 6/0；6/3；241.951803/1516.743103 | 服务器包，本机未编译 | 两程序两组通过 |
+| alexnet_relu_maxpool／U3b旧值，U3b2待重跑 | 旧3份数学失败；本轮规则确认内存停止 | 待重跑 | 本轮未完成 | 待规则确认/抽查后执行 | —/—；1276/未编译 | —；16387/351679282 | 3/0；3轮＋1本地拒绝/0；0/224.898590 | 旧Agent无最终程序；规则未编译 | 本轮两组均未执行 |
+
+从保留的U3b SUMMARY九行重新计算：Agent报告精度通过4/9，规则7/9；选中程序预测自举少于规则3/9，中位减少54.26136363636363%。减少模型包含VGG16 SiLU的报告未通过结果，若同时要求报告精度通过则有2份。三模型新结果缺失，当前汇总保持历史口径，未记作U3b2重跑成果。完整原指标/参数/源程序及失败保留在[U3b SUMMARY](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/SUMMARY.json)。
+
+离线重放10份均触发E_WEIGHT_UNUSED：MobileNet第1/4/5/6轮各27个，VGG16第1/2/4轮各13个，AlexNet第1/2/3轮各5个；逐权重名已完整列在上表和WEIGHT_USAGE.json。真实三模型的触发次数、下一轮修正情况均待执行，当前新增API0，无下一轮观察值。
+
+最终测试输出：
+
+```text
+U3b2 weight usage: Ran 12 tests in 1.080s — OK
+Existing main: Ran 435 tests in 165.318s — OK (skipped=4)
+Independent intake ONNX: Ran 4 tests — OK
+Existing P2/toolchain: Ran 17 tests — OK
+Existing tensor/cache: Ran 17 tests in 998.138s — OK
+Unique existing: 431 + 4 + 17 + 17 = 469/469
+Total unique: 469 + 12 = 481/481
+AlexNet-ReLU rule confirm: exit 1, MemoryError, 66.781630s
+New Agent runs/API/native compile/CKKS: 0/0/0/0
+```
+
+与spec不一致之处：未自行调整签名要求、算法、数值条件、提示文本、精调或确认参数，旧测试未改；实现与§2完成，§3在首次规则确认报错后依AGENTS.md停止。新增编排在运行前补齐PTDSLError捕获、下一轮统计的三种状态区分及来源检查，未改spec要求或旧断言。未完成项为AlexNet ReLU规则确认/Mock两组/8000图报告，三个ReLU模型的真实Agent重跑及后续P2编译或服务器包，以及§4的新结果与真实反馈修正统计。所有历史源码/响应/结果和已用额度保留；未提交、未打tag、未push。
+
+### U3b2 §6 内存修正与接续（2026-10-25）
+
+用户已明确批准§6按自写错误例外修正tensor_sim.py：前缀缓存每次按当前RLIMIT_AS计算容量min(1.5GiB,0.2×soft limit)，无上限时保留1.5GiB，显式小容量仍有效。4GiB进程下容量858993459字节。act的Chebyshev/minimax及maxpool内部ReLU均复用原cheb_eval和逐元素顺序，沿展平维度分块；按原baby/giant步骤、递归临时数组及系数向量保守计算每块容量，中间数组预算256MiB。非逐元素算子、原批量20、提示/精调/确认/误差条件保持。
+
+§6.3当前测试通过：新测试文件17/17（含原12项和新增5项），62.276秒；四个冻结模型各1000图tensor validate全字段与logits对修改前HEAD代码相同。大Cheb激活(20,64,32,32)、127阶分3块，array_equal；非连续minimax张量(128,8192)也array_equal。额外强制小块覆盖act/maxpool两条近似分支。r8-v4反馈、9规则/4冻结/7 P2权重检查及10份漏bias重放仍通过。[测试REPORT](/home/lhohy/pt_agent_results/u3b2-unit-20261025T033607075624/REPORT.json)、[完整记录](/home/lhohy/pt_agent_results/u3b2-unit-20261025T033607075624/WEIGHT_USAGE.json)。R8f 6a–6d四项缓存测试另行串行通过，0.023秒，失败/错误/跳过0：[REPORT](/home/lhohy/pt_agent_results/u3b2-cache-20261025T033726131805/REPORT.json)。既有469项完整结果沿用此前运行，未从头重复全套。
+
+本轮自写修正：tests/test_u3b2_weight_usage.py的冻结目录引用最初遗漏models/，首份运行2项后报FileNotFoundError；已补齐路径并按原断言重跑通过，旧测试未改。[首次失败](/home/lhohy/pt_agent_results/u3b2-unit-20261025T033529373069/REPORT.json)。experiments/u3b2_weight_usage_rerun.py新增cache子项仅选择R8f原四项；基线接续传入prior_seconds=66.78162960600457，外层扣减原21600秒预算并分记本次/累计秒数，确认结束单独记录峰值RSS，原失败证据保持。
+
+规则基线正在接续：[新REPORT](/home/lhohy/pt_agent_results/u3b2-baseline-20261025T033742991906/REPORT.json)。先做确认，再Mock留出20/报告100和8000图报告；当前API0/20、累计113/300，三模型尚未调用LLM。首次修改前确认峰值4078624768字节，修改后峰值待运行完成记录。资源不扩额，4GiB、原批量和串行保持。
+
+§6修改后的AlexNet ReLU规则确认已完成1000图：top1=83.9%、参考87.8%、下降3.9pp，n_diverged=0。确认阶段峰值3805335552字节（3.543994903564453GiB），原失败峰值4078624768字节；4GiB下完成确认。规则原文/近似参数保持，确认精度下降如实保留。留出20张Mock/张量抽查接续中，随后报告100张抽查及8000图报告；新Agent输出和API仍0。
+
+AlexNet ReLU固定规则基线最终完成：complete=true、exit=0。留出20/报告100图Mock对张量的最大绝对差分别1.7541523789077473e-14/2.7977620220553945e-14，类别与发散集合相同，抽查发散均0。8000图报告top1=84.2125%、参考88.175%、下降3.9624999999999915pp、发散0，规则报告精度未通过。全过程峰值4009365504字节，确认阶段峰值3805335552字节；本次1395.179214秒，加旧66.781630秒累计1461.960844秒，旧记录和额度保留。API0，三模型尚未开始；最终非连续输入按块读取的修正复验中，[新测试REPORT](/home/lhohy/pt_agent_results/u3b2-unit-20261025T040133918596/REPORT.json)。
+
+本轮追加的非连续输入修正：tensor_sim._polynomial_chunks对非连续数组使用flat切片逐块复制，避免reshape复制整份输入。首次复验运行8项后因numpy.flatiter无size属性报AttributeError，已将循环长度改为原输入value.size；属于本轮自写笔误，算法、断言及前述已完成基线均保持。[失败REPORT](/home/lhohy/pt_agent_results/u3b2-unit-20261025T040133918596/REPORT.json)。修正后重跑原17项：[REPORT](/home/lhohy/pt_agent_results/u3b2-unit-20261025T040229773379/REPORT.json)。
+
+最终代码17/17测试通过，43.668秒；四冻结模型各1000图的字段/logits再次相同，非连续minimax与大Cheb张量array_equal，10份历史漏bias重放及v4反馈仍通过。原四项缓存测试复核通过：[REPORT](/home/lhohy/pt_agent_results/u3b2-cache-20261025T040416450369/REPORT.json)。原469完整回归结果保留，未重复全套；当前新增5项内存用例与原12项合为17项。
+
+三模型实际首请求清单已生成：[manifest](/home/lhohy/pt_agent_results/u3b2-prepare-20261025T040420116485/manifest.json)，首请求分别33245/24256/17478字节；目的地沿用https://api.deepseek.com/chat/completions，载荷类别沿用U3b，提示文本不改。按本轮明确授权启动[真实批次](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/REPORT.json)：MobileNet-ReLU→VGG16-ReLU→AlexNet-ReLU，r8-v5/tensor/new_best/max_iters=6，新增≤20/累计≤133，无重试和额外连通性请求。两份既有Mobile/VGG规则证据与补完的Alex规则证据只在外部复用，其余6模型直接沿用U3b。
+
+MobileNet ReLU真实反馈阶段已观察到E_WEIGHT_UNUSED效果：首轮E_WEIGHT_SHAPE×1、E_WEIGHT_UNUSED×27；第二轮补齐全部遗漏权重，精确检查最大logits差2.9976021664879227e-15，留出下降1.3pp；第三/四轮留出下降0.5/0.3pp，发散均0，均可行。第五轮响应契约失败，原响应保留，按原停止规则结束生成。独立确认选中第4轮llm原文、预测1084自举（规则789），源程序随后保持原样。两程序各留出20/报告100抽查通过，当前执行选中程序8000图报告；实际编译尚待执行。新增API5、累计118/300；VGG16/AlexNet尚未启动。
+
+MobileNet ReLU已完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/mobilenet_relu/REPORT.json)。选中第4轮llm原文，确认下降0.2pp/发散0；8000图报告91.1%对91.1375%，下降0.037500000000008527pp、发散3，满足原报告精度条件。四组Mock抽查全部通过，Agent留出20/报告100最大差3.4638958368304884e-14/7.016609515630989e-14，抽查发散均0。预测1084自举、309404159µs，对规则789、233408829µs，未减少。常量1952579584字节超过原本机1.5GiB准入，按原协议导出[服务器作业](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/mobilenet_relu/server_jobs/MobileNet_PTAgent_DSL/run.sh)，本机编译0、实际自举数待服务器核对。E_WEIGHT_UNUSED触发1轮/27权重，下一轮全部补齐；5次API及失败响应全部保留。当前进入VGG16 ReLU，随后AlexNet ReLU，其余6个沿用U3b。
+
+VGG16 ReLU首轮E_WEIGHT_UNUSED×13，第二轮全部补齐并通过exact；第二轮留出下降1.1pp，原精调未得到可行程序，继续原轮次。当前本轮登记8次API、累计121/300，上限20/133保持；AlexNet ReLU尚未启动，其他6模型保持旧结果。
+
+VGG16 ReLU第三/第五轮原始候选及精调结果均通过完整留出验证，原始候选准确率下降均0pp；第四轮下降1.2pp未可行。已完成第六次HTTP，当前最后一轮工具检查中，随后按原独立确认规则选择。模型API6、本轮合计11、累计124/300，未重试或扩大原预算。
+
+VGG16 ReLU六轮完成，独立确认选中第5轮tuned：887自举、253299389µs，确认下降0.5pp、passed=true；规则849自举/246022648µs，预测成本未减少。源程序自选中后保持原样，明确归于内部精调候选。Agent留出20张Mock抽查通过；报告100张抽查、8000张报告评测和导出接续中。首轮13遗漏权重均在第二轮补齐，新增触发1轮；模型API6保持，后续不追加生成。
+
+VGG16 ReLU完整收尾：[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/vgg16_relu_maxpool/REPORT.json)。选中第5轮tuned原文保持；报告92.2625%对92.55%、下降0.2874999999999943pp、发散7，满足报告精度条件。四组抽查通过，Agent留出20/报告100最大差3.197442310920451e-14/3.375077994860476e-14；预测887自举/253299389µs，规则849/246022648，未减少。常量超过原1.5GiB准入，已导出[服务器作业](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/vgg16_relu_maxpool/server_jobs/Vgg16_PTAgent_DSL/run.sh)，本机编译0，原生计数待服务器核对。进程峰值2871017472字节；E_WEIGHT_UNUSED触发1轮/13权重、下一轮补齐。API6，合计11、累计124/300，已进入AlexNet ReLU，其余6个模型沿用U3b。
+
+AlexNet ReLU首轮E_WEIGHT_UNUSED×5，第二轮全部补齐并通过exact，留出下降4.8pp、精调不可行；第三轮原始与精调候选均可行、原始留出下降0pp；第四轮下降1pp未可行；第五轮下降0pp可行，按原停止规则结束生成。独立确认选中第3轮llm原文：确认下降0pp/发散0，1464自举/396943323µs，对规则1276/351679282µs，预测成本未减少。当前完成外部抽查/8000图报告和导出，原程序保持。模型API5，本轮合计16、累计129/300；三个模型生成均结束，无额外调用或重试。
+
+报告指标分开保留：MobileNet/VGG16虽满足§4的报告准确率统计条件，完整report validate.feasible均为false；MobileNet max_u=1.1474126734163152e17、发散3，VGG16 max_u=7.030536789775779e231、发散7。发散样本按原规则计错并保留索引，域外放大和完整可行性标记留在REPORT及最终汇总中。报告结果未回传或用于重选、调整定义域/阶数。原生编译/真实CKKS验证仍分别记录，当前两模型服务器包待原生计数核对。
+
+### U3b2 最终结果（方案A＋§6）
+
+完整批次complete=true、exit=0，三个重跑均正常收尾；API分别5/6/5，共16/20、累计129/300。其余六行与U3b的全部原指标逐字段相同，仅新增来源标记。[最终REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/REPORT.json)、[完整九模型SUMMARY](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/SUMMARY.json)。以下时间为预测延迟µs；准确率下降为pp，负数表示准确率高于参考；真实编译计数与预测分开列出。
+
+| 模型／来源 | Agent选中／确认下降pp | Agent报告top1／下降pp／发散 | 规则确认下降pp | 规则报告top1／下降pp／发散 | 自举Agent预测/编译；规则预测/编译 | Agent旋转/预测延迟；规则旋转/预测延迟µs | API/迭代/精调；精调秒/总秒 | 编译状态 | Mock留出20/报告100 |
+|---|---|---|---|---|---|---|---|---|---|
+| resnet20_relu／沿用U3b | 确认6次失败，下降0.7–1.8，无最终程序 | 未执行 | 0.3 | 90.7% / -0.1125 / 0 | —/—；383/383 | —；2624/102309380 | 6/6/5；293.833807/1147.605607 | Agent无最终程序；规则既有编译并prune | 规则两组通过 |
+| squeezenet_silu_avgpool／沿用U3b | 第6轮tuned／0 | 87.275% / 0.0375 / 3 | 0 | 87.3125% / 0 / 0 | 282/282；282/282 | 10315/84512021；10315/84511744 | 6/6/1；43.573385/1061.975232 | 既有原生计数相同并prune | 两程序两组通过 |
+| squeezenet_relu_maxpool／沿用U3b | 第6轮llm原文／0.1 | 89.3375% / 0 / 0 | 1.1 | 89.1375% / 0.2 / 0 | 1277/1277；1122/1122 | 10275/337816962；10275/300383501 | 6/6/1；33.344068/1469.807990 | 既有原生计数相同并prune | 两程序两组通过 |
+| mobilenet_silu／沿用U3b | 第5轮llm原文／0.2 | 91.2875% / 0.1125 / 1 | 0.2 | 91.375% / 0.025 / 2 | 359/359；789/未编译 | 28944/122394160；28944/233407721 | 6/6/1；12.368272/941.417026 | Agent既有编译并prune；规则服务器包 | 两程序两组通过 |
+| mobilenet_relu／U3b2重跑（加入权重检查后） | 第4轮llm原文／0.2 | 91.1% / 0.0375 / 3 | 0.3 | 90.975% / 0.1625 / 0 | 1084/未编译；789/未编译 | 28944/309404159；28944/233408829 | 5/5/1；22.730939/1169.580185 | 常量1952579584字节，服务器包 | 两程序两组通过，规则复用 |
+| vgg16_silu_avgpool／沿用U3b | 第2轮tuned／0.3 | 91.6% / 0.525 / 8，准确率未达标 | 约0 | 92.125% / 0 / 0 | 225/未编译；470/未编译 | 21038/85766527；21038/148643936 | 5/5/5；602.770454/1897.462607 | 既有服务器包 | 两程序两组通过 |
+| vgg16_relu_maxpool／U3b2重跑（加入权重检查后） | 第5轮tuned／0.5 | 92.2625% / 0.2875 / 7 | 1.4 | 91.4125% / 1.1375 / 1，准确率未达标 | 887/未编译；849/未编译 | 21034/253299389；21034/246022648 | 6/6/4；783.350755/1947.455366 | 常量3280470016字节，服务器包 | 两程序两组通过，规则复用 |
+| alexnet_silu_avgpool／沿用U3b | 第6轮tuned／0.3 | 84.9875% / 0.15 / 12 | 0 | 85.1375% / 0 / 0 | 161/未编译；352/未编译 | 16431/67427988；16431/114220654 | 6/6/3；241.951803/1516.743103 | 既有服务器包 | 两程序两组通过 |
+| alexnet_relu_maxpool／U3b2重跑（加入权重检查后） | 第3轮llm原文／0 | 88.1625% / 0.0125 / 0 | 3.9 | 84.2125% / 3.9625 / 0，准确率未达标 | 1464/未编译；1276/未编译 | 16387/396943323；16387/351679282 | 5/5/2；232.003220/1412.540205 | 常量3485335552字节，服务器包 | 两程序两组通过，规则使用本轮补完证据 |
+
+九行分母保持：Agent报告准确率条件通过7/9、规则7/9；Agent无最终程序1个（保留ResNet20确认失败）、报告准确率未达标1个（保留VGG16 SiLU下降0.525pp）。选中Agent程序预测自举少于规则3/9，中位减少54.26136363636363%，仍来自MobileNet SiLU/VGG16 SiLU/AlexNet SiLU，包含VGG16 SiLU报告准确率未达标结果。三个新重跑均未减少预测自举；旧有减少结果不归为本轮新改善。
+
+报告完整可行性独立保留：八份选中Agent程序中report.feasible=true为SqueezeNet ReLU与AlexNet ReLU（以全部九模型为分母2/9），其他字段和原判据保持。新Mobile/VGG的域外放大及发散如前所列；新AlexNet max_u=0.576625404568213、发散0、report.feasible=true。应用准确率、完整报告可行性、编译及真实CKKS结果分开记录，本轮真实CKKS0，M1表保持。
+
+三次真实权重诊断均促成下一轮修正；它们与上文10份历史失败重放分开统计：
+
+| 重跑模型 | E_WEIGHT_UNUSED触发轮次 | 遗漏权重数 | 下一轮 | 结果／证据 |
+|---|---:|---:|---:|---|
+| mobilenet_relu | 1 | 27 | 2 | 全部补齐、exact通过；[WEIGHT_EVENTS](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/mobilenet_relu/WEIGHT_EVENTS.json) |
+| vgg16_relu_maxpool | 1 | 13 | 2 | 全部补齐、exact通过；[WEIGHT_EVENTS](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/vgg16_relu_maxpool/WEIGHT_EVENTS.json) |
+| alexnet_relu_maxpool | 1 | 5 | 2 | 全部补齐、exact通过；[WEIGHT_EVENTS](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/alexnet_relu_maxpool/WEIGHT_EVENTS.json) |
+
+所有权重名、消费节点/角色、源行和宏调用行保留在上述事件文件及原始trace；历史10份重放的逐个权重名已在本节前段完整列出。选中程序的逐点fn/method/deg/degrees/domain与行号保存在SUMMARY.models[].approximation_points和各program.ptdsl中；MobileNet/AlexNet分别为第4/3轮LLM原文，VGG16为第5轮内部精调产物，源类别分别记录，选中后的源码保持。
+
+§6内存结果：旧规则确认未完成时峰值4078624768字节（3.798515GiB）；修正后完成1000图确认峰值3805335552字节（3.543995GiB），补完规则基线全过程峰值4009365504字节（3.734013GiB）。三个真实重跑峰值分别2533474304、2871017472、3977383936字节，均在原4GiB内。前缀容量858993459字节，近似点256MiB中间数组预算、非连续输入逐块读取、卷积/linear/池化与原批量保持。
+
+最终验证输出：
+
+```text
+U3b2 current tests: Ran 17 tests in 43.668s — OK
+R8f cache 6a–6d: 4/4 — OK
+Frozen tensor validate: 4 models × 1000 images, all fields/logits equal
+Large Cheb/minimax chunks: array_equal; act/maxpool branches covered
+Earlier full regression: 469/469 retained, no full-suite repetition in §6
+AlexNet rule baseline: complete=true, exit=0
+Three real reruns: complete=true, exit=0
+E_WEIGHT_UNUSED: 3 events, all fixed in the next iteration
+HTTP calls: 5 + 6 + 5 = 16/20; global 129/300
+Native compile / CKKS this round: 0 / 0; three server jobs exported
+Registry: 473 rows, global calls 114–129 each recorded once
+```
+
+与spec不一致之处：无签名、算法、数值条件、提示文本、精调/确认参数或资源放宽；原测试断言未改。按本轮自写错误例外修正两处笔误：tests/test_u3b2_weight_usage.py:363附近补齐冻结产物的models/目录（校准与程序路径）；tensor_sim.py:77将flatiter.size改为value.size。前者首份2项后失败、后者首份8项后失败，均保留REPORT并以原断言重跑通过。非连续输入逐块读取属于§6分块实现；experiments/u3b2_weight_usage_rerun.py:77、:87、:323补记缓存/峰值和旧66.781630秒，不重置已用额度。前段权重检查只在v5/tensor启用，r8-v4反馈逐字比较仍通过。
+
+本spec内未完成项0。范围外待执行：三份新服务器包的真实原生编译和自举计数，真实CKKS验证；Mobile/VGG报告中的域外放大及发散需后续通用机制诊断，已知开发模型和未见模型的完整交付验收继续分开记录。未因报告结果重选或修改程序；未新增编译器/运行库故障结论；未改库、下载、安装、安全参数或资源限额，未提交、打tag、push或PR。旧失败/响应/源码/程序包和全部已消费额度保持。

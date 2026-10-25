@@ -47,7 +47,10 @@ def build_confirm_context(ctx) -> AgentContext:
                    val_split=split_name, val_inputs=inputs)
 
 
-def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EVALS) -> dict:
+def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EVALS,
+                   engine_profile: str = "mock") -> dict:
+    if engine_profile not in ("mock", "tensor"):
+        raise ValueError('engine_profile must be "mock" or "tensor"')
     normalized = [print_program(parse(candidate.source)) for candidate in candidates]
     representatives = {}
     for index, (candidate, key) in enumerate(zip(candidates, normalized)):
@@ -68,7 +71,8 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
             break
         if confirm_ctx is None:
             confirm_ctx = ctx if ctx.val_split in ("test[8000:9000]", 'confirm') else build_confirm_context(ctx)
-        result = validate(parse(candidate.source), confirm_ctx, stop_on_divergence=False)
+        result = validate(parse(candidate.source), confirm_ctx, stop_on_divergence=False,
+                          **(dict(engine="tensor") if engine_profile == "tensor" else {}))
         boot_ok = (result["boot_input_bound"] is None
                    or result["boot_input_max_abs"] <= result["boot_input_bound"])
         info = getattr(ctx, 'model_info', None)

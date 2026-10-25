@@ -108,19 +108,26 @@ def _unpack(value, layout):
     return unpack_flat(value.value, layout).copy()
 
 
-def _exact_check(program, ctx):
+def _exact_check(program, ctx, *, engine="mock"):
     ops = [op for op in program.ops if op.kind in ("act", "maxpool")]
     collected = []
 
     def exact_observer(name, value, layout, cfg):
         collected.append(_unpack(value, layout))
 
-    backend = MockBackend(program.header.slots, batch=4)
-    probe_inputs = getattr(ctx, 'val_inputs', None)
-    backend.bind(pack_inputs(program, [probe_inputs[name][:4] for name in ctx.graph.inputs]
-                             if probe_inputs is not None else [ctx.probe_images]))
-    values, layouts = lower(program, ctx.weights, backend, act_mode="exact", observer=exact_observer)
-    logits = decode_outputs([value.value for value in values], layouts)
+    backend = values = None
+    if engine == "tensor":
+        def tensor_exact_observer(name, data, cfg):
+            collected.append(np.array(data, copy=True))
+        logits = [run_tensor(program, ctx.weights, ctx.probe_images,
+            observer=tensor_exact_observer, act_mode="exact", cache=False)]
+    else:
+        backend = MockBackend(program.header.slots, batch=4)
+        probe_inputs = getattr(ctx, 'val_inputs', None)
+        backend.bind(pack_inputs(program, [probe_inputs[name][:4] for name in ctx.graph.inputs]
+                                 if probe_inputs is not None else [ctx.probe_images]))
+        values, layouts = lower(program, ctx.weights, backend, act_mode="exact", observer=exact_observer)
+        logits = decode_outputs([value.value for value in values], layouts)
     reference = ctx.val_exact_logits[:4]
     logit_diff = (float(np.max(np.abs(logits[0]-reference)))
                   if len(logits) == 1 and logits[0].shape == reference.shape else None)
@@ -144,7 +151,8 @@ def _exact_check(program, ctx):
 
 
 def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
-             stop_on_divergence=True, engine: str = "mock", cache: bool = True) -> dict:
+             stop_on_divergence=True, engine: str = "mock", cache: bool = True,
+             output_callback=None) -> dict:
     """Apply validation checks to the first n held-out images (all by default)."""
     images = ctx.val_images if n is None else ctx.val_images[:n]
     profile = PROFILES[ctx.profile]
@@ -155,7 +163,7 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
     ops = [op for op in program.ops if op.kind in ("act", "maxpool")]
     image_id = None
     result_key = None
-    if engine == "tensor" and cache:
+    if engine == "tensor" and cache and output_callback is None:
         # References distinguish live datasets and weights without reading or hashing their bytes.
         image_id = (identity_token(ctx.val_images), identity_token(ctx.weights))
         result_identity = (image_id, identity_token(ctx.val_exact_logits), identity_token(ctx.val_labels),
@@ -274,6 +282,8 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
     validation["rows"] = rows
     incomplete = validation["diverged"] and stop_on_divergence
     reference = ctx.val_exact_logits[:len(images)]
+    if output_callback is not None:
+        output_callback(outputs.copy())
     metric_input = (dict(values=reference, task=info.task) if info is not None else reference)
     if info is not None and info.task == 'causal_lm':
         metric_input['lengths'] = getattr(ctx, 'val_inputs')['attention_mask'][:len(images)].sum(axis=1).astype(int)
@@ -291,7 +301,10 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
     return validation
 
 
-def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: bool = True) -> dict:
+def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: bool = True,
+             engine_profile: str = "mock") -> dict:
+    if engine_profile == "tensor":
+        engine = "tensor"
     fb = dict(stage="parse", feasible=False, exact=None, cost=None, validation=None)
     lines = source.splitlines()
 
@@ -313,13 +326,18 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
     except PTDSLError as exc:
         return dict(fb, error=str(exc))
     fb["stage"] = "typecheck"
-    checked = check(program, ctx.weight_shapes)
+    weight_usage = engine_profile == "tensor" or getattr(ctx, "prompt_version", "r8-v4") == "r8-v5"
+    checked = check(program, ctx.weight_shapes, **(dict(graph=ctx.graph) if weight_usage else {}))
     if not checked.ok:
+        errors = [diag for diag in checked.diags if diag.severity == "error"]
+        shown = errors[:20]
+        if weight_usage:
+            shown += [diag for diag in errors[20:] if diag.code == "E_WEIGHT_UNUSED"]
         return dict(fb, errors=[error_record(diag.code, diag.lineno, diag.call_lines, diag.msg)
-                               for diag in checked.diags if diag.severity == "error"][:20])
+                               for diag in shown])
     fb["stage"] = "exact"
     try:
-        fb["exact"] = _exact_check(program, ctx)
+        fb["exact"] = _exact_check(program, ctx, **(dict(engine="tensor") if engine_profile == "tensor" else {}))
     except LoweringError as exc:
         return lower_failure(exc)
     except BackendError as exc:

@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from .errors import Diag
-from .ir import Program
+from .ir import Program, WeightRef
 from .ops_spec import OPS
 from .shapes import ShapeError, WeightError, infer
 
@@ -22,7 +22,82 @@ class CheckResult:
         return not any(d.severity == "error" for d in self.diags)
 
 
-def check(program: Program, weights: Mapping[str, Sequence[int]]) -> CheckResult:
+def referenced_weights(program: Program) -> set[str]:
+    """Collect explicit references after static macro expansion, including fused BN."""
+    def refs(value):
+        if isinstance(value, WeightRef):
+            return {value.name}
+        if isinstance(value, Mapping):
+            return set().union(*(refs(v) for v in value.values()))
+        if isinstance(value, (tuple, list)):
+            return set().union(*(refs(v) for v in value))
+        return set()
+
+    used = set()
+    for op in program.ops:
+        used.update(refs(op.attrs))
+        if op.kind in ("conv2d", "batchnorm") and op.attrs.get("bn") is not None:
+            used.update(op.attrs["bn"]+"."+suffix for suffix in
+                        ("weight", "bias", "running_mean", "running_var"))
+    return used
+
+
+def consumed_weights(graph) -> dict[str, list[tuple]]:
+    """Use the graph's weight-valued roles and constant inputs, never name suffixes."""
+    from ..intake.core_ops import CORE_OPS
+
+    consumed = {}
+    for node in graph.nodes:
+        for role, kind in CORE_OPS[node.op]["attrs"].items():
+            name = node.attrs.get(role)
+            if kind in ("weight", "weight?") and name in graph.weights:
+                consumed.setdefault(name, []).append((node, role))
+        for index, name in enumerate(node.inputs):
+            if name in graph.weights:
+                consumed.setdefault(name, []).append((node, f"input[{index}]"))
+    return consumed
+
+
+def weight_usage_diags(program: Program, graph) -> list[Diag]:
+    consumed, used = consumed_weights(graph), referenced_weights(program)
+    op_refs = {op.id: referenced_weights(Program(program.name, program.header, program.params,
+                (op,), program.outputs, program.regions)) for op in program.ops}
+
+    def corresponding(node):
+        names = {name for name, consumers in consumed.items()
+                 if any(consumer is node for consumer, role in consumers)}
+        matches = [op for op in program.ops if op.kind == node.op and names & op_refs[op.id]]
+        if len(matches) == 1:
+            return matches[0]
+        if not matches and node.op == "batchnorm":
+            producer = graph.producer(node.inputs[0])
+            if producer is not None and producer.op == "conv2d":
+                return corresponding(producer)
+        return None
+
+    diags = []
+    for name, consumers in consumed.items():
+        if name in used:
+            continue
+        details, locations = [], []
+        for node, role in consumers:
+            role = {"mean": "running_mean", "var": "running_var"}.get(role, role) if node.op == "batchnorm" else role
+            op = corresponding(node)
+            detail = f"图节点 {node.op} {node.id} ({', '.join(node.outputs)}) 的 {role}"
+            if op is not None:
+                locations.append(op)
+                detail += f"，对应程序第 {op.lineno} 行的 {op.kind}"
+            if node.op in ("conv2d", "linear") and role == "bias":
+                detail += f"；请加上 b=W[{json.dumps(name)}]"
+            details.append(detail)
+        op = locations[0] if locations else None
+        diags.append(Diag("E_WEIGHT_UNUSED", "error", op.lineno if op else 0,
+            op.id if op else None, json.dumps(name)+" 未被使用："+"；".join(details),
+            op.call_lines if op else (), op.macro_stack if op else ()))
+    return diags
+
+
+def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None) -> CheckResult:
     diags = []
     shapes = {p.name: p.shape for p in program.params}
     layouts = {p.name: "raw" if p.kind == "cipher" else "plain" for p in program.params}
@@ -86,6 +161,8 @@ def check(program: Program, weights: Mapping[str, Sequence[int]]) -> CheckResult
         for op in program.ops:
             if op.kind == "refresh":
                 emit("W_REFRESH_COMPILER", op, "Compiler refresh mode lowers this refresh to identity")
+    if graph is not None:
+        diags.extend(weight_usage_diags(program, graph))
     return CheckResult(diags, shapes, layouts)
 
 

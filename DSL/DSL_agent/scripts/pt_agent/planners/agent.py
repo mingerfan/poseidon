@@ -16,9 +16,14 @@ from .tuner import tune
 
 def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path,
               tuner: bool = True, tuner_budget_s: float = 2400,
-              tune_policy: str = "new_best") -> dict:
+              tune_policy: str = "new_best", engine_profile: str = "mock") -> dict:
     if tune_policy not in ("new_best", "all"):
         raise ValueError('tune_policy must be "new_best" or "all"')
+    if engine_profile not in ("mock", "tensor"):
+        raise ValueError('engine_profile must be "mock" or "tensor"')
+    if engine_profile == "tensor" and getattr(ctx, 'prompt_version', 'r8-v4') != 'r8-v5':
+        raise ValueError('engine_profile="tensor" requires r8-v5')
+    profile_args = dict(engine_profile="tensor") if engine_profile == "tensor" else {}
     started = time.monotonic()
     messages = [dict(role="system", content=build_system_prompt(ctx)), dict(role="user", content=initial_message(ctx))]
     best_program = best_iteration = first_feasible = best = None
@@ -58,7 +63,7 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
         except (ValueError, KeyError, TypeError):
             fb = dict(stage="response", feasible=False, error="response_not_json_with_program")
         else:
-            fb = evaluate(source, ctx)
+            fb = evaluate(source, ctx, **(dict(engine="tensor", **profile_args) if profile_args else {}))
         cost, validation = fb.get("cost") or {}, fb.get("validation") or {}
         row = dict(iteration=iteration, stage=fb["stage"], feasible=fb.get("feasible", False),
                             latency_pred_us=cost.get("latency_pred_us"), boots_pred=cost.get("boots_pred"),
@@ -80,7 +85,7 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
             if normalized in tune_cache:
                 result, tuned_reused_from, tune_source = tune_cache[normalized]
             else:
-                result = tune(parsed, ctx, budget_s=tuner_budget_s, max_sweeps=1)
+                result = tune(parsed, ctx, budget_s=tuner_budget_s, max_sweeps=1, **profile_args)
                 tune_source = source
                 tune_cache[normalized] = (result, iteration, tune_source)
             tuned = {key: value for key, value in asdict(result).items() if key != 'program'}
@@ -130,7 +135,7 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
             stale = 0 if previous is None or previous-best["latency_pred_us"] >= .05*previous else stale+1
             if stale >= 2:
                 break
-    confirmation = confirm_select(pool, ctx)
+    confirmation = confirm_select(pool, ctx, **profile_args)
     selected = confirmation['selected']
     if selected is None:
         best_program = best_iteration = best = best_llm_lines = None

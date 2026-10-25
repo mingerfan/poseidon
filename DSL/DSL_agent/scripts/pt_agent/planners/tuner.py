@@ -47,7 +47,11 @@ def _changes(original, current):
 
 
 def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
-         engine: str = "tensor", cache: bool = True) -> TuneResult:
+         engine: str = "tensor", cache: bool = True, engine_profile: str = "mock") -> TuneResult:
+    if engine_profile not in ("mock", "tensor"):
+        raise ValueError('engine_profile must be "mock" or "tensor"')
+    if engine_profile == "tensor":
+        engine = "tensor"
     started = time.monotonic()
     def cost_of(candidate):
         return cached_estimate(candidate, ctx.weights, ctx.profile, estimate, cache=cache)
@@ -85,7 +89,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
             record('rollback_cost', candidate, after, result, False)
         if engine == "tensor":
             verified = validate(candidate, ctx, boot_nodes=after['boot_nodes'],
-                                engine="mock", cache=cache)
+                                engine="tensor" if engine_profile == "tensor" else "mock", cache=cache)
             for field in ('feasible', 'agree'):
                 if verified[field] != result[field]:
                     raise RuntimeError(
@@ -98,7 +102,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
                           coarse_evals, full_evals, time.monotonic()-started, history, feasible)
 
     initial = full(cur)
-    if initial['diverged'] or not _exact_check(cur, ctx)['ok']:
+    if initial['diverged'] or not _exact_check(cur, ctx, **(dict(engine="tensor") if engine_profile == "tensor" else {}))['ok']:
         return finish(cur, initial, False)
     aligned = copy.deepcopy(cur)
     acts = [op for op in aligned.ops if op.kind in ('act', 'maxpool')]
