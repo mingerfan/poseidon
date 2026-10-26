@@ -1,6 +1,7 @@
 #include "gpu_resnet20_inference.h"
 
 #include <cuda_profiler_api.h>
+#include <cuda_runtime_api.h>
 
 #include <algorithm>
 #include <chrono>
@@ -608,6 +609,16 @@ GpuResNet20Result run_gpu_resnet20_impl(
                 std::max(result.max_logit_error,
                          std::abs(result.logits[output] - reference_logits[output]));
         }
+        double cmp_squared = 0.0;
+        std::cout.precision(17);
+        for (std::size_t i=0; i<reference_logits.size(); ++i)
+        {
+            const double error=result.logits[i]-reference_logits[i];
+            cmp_squared += error*error;
+            std::cout << "CMP_LOGIT index=" << i << " cpu=" << reference_logits[i]
+                      << " gpu=" << result.logits[i] << std::endl;
+        }
+        std::cout << "CMP_LOGITS_RMSE value=" << std::sqrt(cmp_squared/reference_logits.size()) << std::endl;
         const int plain_prediction = argmax(reference_logits);
         std::cout << "[GPU ResNet20] full_validation plain_pred=" << plain_prediction
                   << " gpu_pred=" << result.predicted_label
@@ -652,11 +663,10 @@ GpuResNet20Result run_gpu_resnet20_preloaded(
 {
     GpuCkksRuntime runtime(config);
     runtime.initialize_bootstrap();
-    runtime.initialize_direct_rotation_keys(
-        resnet20_direct_rotation_steps());
+    // Reuse bootstrap power-of-two keys: full-chain direct keys exceed 32 GiB.
     runtime.synchronize();
     runtime.enable_full_device_cache();
-    std::cout << "[GPU ResNet20] all rotation keys ready; preparing "
+    std::cout << "[GPU ResNet20] composed rotation keys ready; preparing "
                  "device-resident input/model cache\n";
     const auto direct_prepared_result = run_gpu_resnet20_impl(
         image_id, topology, weights, topology.blocks.size(), runtime,
@@ -664,7 +674,11 @@ GpuResNet20Result run_gpu_resnet20_preloaded(
     runtime.synchronize();
 
     std::cout << "[GPU ResNet20] preparation complete; starting GPU-only pass\n";
-    auto measured_result = run_gpu_resnet20_impl(
+    GpuResNet20Result measured_result;
+    std::vector<double> comparison_online_times;
+    for (int repeat=0; repeat<3; ++repeat)
+    {
+    measured_result = run_gpu_resnet20_impl(
         image_id, topology, weights, topology.blocks.size(), runtime,
         /*enable_validation=*/false, /*measure_gpu_only=*/true);
     double replay_logit_error = 0.0;
@@ -688,7 +702,74 @@ GpuResNet20Result run_gpu_resnet20_preloaded(
     {
         throw std::runtime_error("preloaded GPU replay verification failed");
     }
+
+        comparison_online_times.push_back(measured_result.gpu_only_elapsed_seconds);
+        std::cout << "CMP_ONLINE_REPEAT repeat=" << repeat
+                  << " seconds=" << measured_result.gpu_only_elapsed_seconds
+                  << " replay_max_error=" << replay_logit_error << std::endl;
+    }
+    std::sort(comparison_online_times.begin(),comparison_online_times.end());
+    measured_result.gpu_only_elapsed_seconds=comparison_online_times[1];
+    std::cout << "CMP_ONLINE_SUMMARY median_seconds=" << measured_result.gpu_only_elapsed_seconds << std::endl;
     return measured_result;
+}
+
+// Comparison harness: one context, one nonzero key, fixed images and original gates.
+void run_gpu_resnet20_repair_suite(
+    std::size_t image_count,const ResNet20GpuConfig &config,
+    const ResNet20Topology &topology,const ResNet20Weights &weights)
+{
+    GpuCkksRuntime runtime(config);
+    // Reuse native composed rotations from the bootstrap key set (32 GiB GPU).
+    runtime.enable_full_device_cache();
+    std::vector<double> message(runtime.slot_count());
+    for(std::size_t i=0;i<message.size();++i)message[i]=0.5*std::sin(0.7*i+0.3);
+    auto probe=runtime.drop_to_q_count(runtime.encrypt(message),4);
+    unsigned failures=0;
+    std::cout.precision(17);
+    for(const unsigned degree:{59u,30u,22u})
+    {
+        try {
+            runtime.comparison_bootstrap_variant(degree);
+            {auto warmup=runtime.bootstrap(probe);runtime.decrypt(warmup);}
+            for(unsigned repeat=0;repeat<3;++repeat){
+                runtime.synchronize();auto start=std::chrono::steady_clock::now();
+                auto output=runtime.bootstrap(probe);runtime.synchronize();
+                double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+                auto actual=runtime.decrypt(output);double mx=0,sum=0;
+                for(std::size_t i=0;i<actual.size();++i){double e=std::abs(actual[i]-message[i]);mx=std::max(mx,e);sum+=e*e;}
+                std::cout<<"CMP_COMPONENT request="<<degree<<" repeat="<<repeat<<" seconds="<<seconds
+                         <<" max_error="<<mx<<" rmse="<<std::sqrt(sum/actual.size())
+                         <<" input_q="<<probe.meta.q_count<<" application_output_q="<<output.meta.q_count
+                         <<" output_scale_log2="<<std::log2(output.meta.scale)<<std::endl;
+                if(!std::isfinite(sum)||mx>1e-3)throw std::runtime_error("component error exceeds 1e-3");
+            }
+            GpuResNet20Result first;
+            for(std::size_t image=0;image<image_count;++image){
+                std::cout<<"CMP_SUITE_BEGIN request="<<degree<<" image="<<image<<std::endl;
+                auto result=run_gpu_resnet20_impl(image,topology,weights,topology.blocks.size(),runtime,true,false);
+                if(result.completed_blocks!=topology.blocks.size()||!std::isfinite(result.max_logit_error)||result.max_logit_error>0.1)
+                    throw std::runtime_error("suite image did not complete all blocks within the original logit gate");
+                std::cout<<"CMP_SUITE_IMAGE request="<<degree<<" image="<<image<<" max_error="<<result.max_logit_error
+                         <<" true_label="<<result.true_label<<" predicted_label="<<result.predicted_label<<" passed=1"<<std::endl;
+                if(image==0)first=result;
+            }
+            std::vector<double> times;
+            for(unsigned repeat=0;repeat<3;++repeat){
+                auto result=run_gpu_resnet20_impl(0,topology,weights,topology.blocks.size(),runtime,false,true);
+                double replay=0;
+                if(first.logits.size()!=result.logits.size())throw std::runtime_error("online logit shape mismatch");
+                for(std::size_t i=0;i<first.logits.size();++i)replay=std::max(replay,std::abs(first.logits[i]-result.logits[i]));
+                if(!std::isfinite(replay)||replay>1e-8||first.predicted_label!=result.predicted_label)
+                    throw std::runtime_error("online replay mismatch");
+                times.push_back(result.gpu_only_elapsed_seconds);
+                std::cout<<"CMP_ONLINE_REPEAT request="<<degree<<" repeat="<<repeat<<" seconds="<<result.gpu_only_elapsed_seconds
+                         <<" replay_max_error="<<replay<<std::endl;
+            }
+            std::sort(times.begin(),times.end());std::cout<<"CMP_SUITE_COMPLETE request="<<degree<<" images="<<image_count<<" online_median="<<times[1]<<std::endl;
+        } catch(const std::exception &e){++failures;std::cout<<"CMP_SUITE_FAILED request="<<degree<<" error="<<e.what()<<std::endl;}
+    }
+    if(failures)throw std::runtime_error("one or more repair suite variants failed");
 }
 
 GpuResNet20Result run_gpu_resnet20_head_check(std::size_t image_id,

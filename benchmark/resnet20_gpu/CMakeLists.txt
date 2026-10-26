@@ -85,5 +85,6 @@ target_link_libraries(poseidon_gpu_resnet20 PRIVATE
 target_compile_options(poseidon_gpu_resnet20 PRIVATE
     $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
 target_compile_definitions(poseidon_gpu_resnet20 PRIVATE
+    POSEIDON_GPU_RESNET20_FIXED_DEGREE_BOOTSTRAP=1
     POSEIDON_GPU_RESNET20_SOURCE_DIR="${CMAKE_CURRENT_LIST_DIR}")
 set_target_properties(poseidon_gpu_resnet20 PROPERTIES CUDA_ARCHITECTURES 70)

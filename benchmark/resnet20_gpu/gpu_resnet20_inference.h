@@ -43,4 +43,8 @@ GpuResNet20Result run_gpu_resnet20_head_check(std::size_t image_id,
                                               const ResNet20Topology &topology,
                                               const ResNet20Weights &weights);
 
+void run_gpu_resnet20_repair_suite(
+    std::size_t image_count,const ResNet20GpuConfig &config,
+    const ResNet20Topology &topology,const ResNet20Weights &weights);
+
 }  // namespace poseidon::benchmark::resnet20_gpu

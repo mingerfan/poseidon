@@ -1,0 +1,13 @@
+{
+  "--topology-check": 0,
+  "--weights-check": 0,
+  "build_exit_code": 0,
+  "profile_test_exit_code": 0,
+  "full_gpu_rerun": false,
+  "historical_gpu_validation": "2026-10-22",
+  "binary_sha256": "650566956aaf616d47ac15e2ba7d58a957bf6affc2a1097fe70f8e1f217edd9f",
+  "default_degree": 22,
+  "default_double_angle": 5,
+  "parent_commit": "5785aa2247683da17ecb5c47a325fcd905545b10",
+  "description": "Fresh CMake build, CPU configuration, topology and bundled data checks. GPU comparison remains the 2026-10-22 run."
+}

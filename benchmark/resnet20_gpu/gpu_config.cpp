@@ -1,6 +1,7 @@
 #include "gpu_config.h"
 
 #include <algorithm>
+
 #include <cstdlib>
 #include <stdexcept>
 #include <string>
@@ -136,23 +137,36 @@ GpuConfig make_gpu_config()
 {
     GpuConfig config;
     config.dnum = configured_dnum();
+    config.evalmod_degree = 22;
+    config.boundary_k = 25;
+    config.double_angle = 5;
+    // Fixed-degree fits retain k=25; only the degree/double-angle pair varies.
+    const char *raw = std::getenv("POSEIDON_GPU_RESNET20_BOOTSTRAP_DEGREE");
+    if (raw == nullptr) raw = std::getenv("RESNET20_CMP_DEGREE");
+    if (raw != nullptr)
+    {
+        const std::string requested(raw);
+        if (requested != "22" && requested != "30" && requested != "59")
+            throw std::invalid_argument("POSEIDON_GPU_RESNET20_BOOTSTRAP_DEGREE must be 22, 30 or 59");
+        config.evalmod_degree = std::stoul(requested);
+        config.double_angle = config.evalmod_degree == 59 ? 2 : (config.evalmod_degree == 30 ? 4 : 5);
+        config.boundary_k = 25;
+    }
 
-    // q[0..1] is the centered q0 base. The next 32 entries reproduce the
-    // verified Q34 high-precision bootstrap chain. Application-only 32-bit
-    // primes extend that prefix to Q36. Bootstrap raises only to Q34 and then
-    // basis-extends its refreshed result back to Q36.
+
+    // Reserve the complete bootstrap budget above the application Q36 prefix.
+    // A refreshed ciphertext must never be restored by a second bare ModRaise.
+    config.evalmod_log_scale = 52;
+    config.message_ratio = 32;
     config.log_q = {32, 32};
+    config.log_q.insert(config.log_q.end(), 36, 32);
     const auto tail = verified_bootstrap_tail();
     config.log_q.insert(config.log_q.end(), tail.begin(), tail.end());
-    config.log_q.insert(
-        config.log_q.end(),
-        config.application_q_count() - config.log_q.size(),
-        config.application_prime_bits);
+    config.bootstrap_q_count = config.log_q.size();
 
     const std::size_t p_count =
         (config.log_q.size() + config.dnum - 1) / config.dnum;
-    // With the shorter Q36 chain, dnum=2 retains an 18-prime P basis so the
-    // many rotations in packed convolution do not lose precision at 2^40.
+    // Q70/dnum=2 uses P35. All compared degrees share this context.
     config.log_p.assign(p_count, 32);
     config.validate();
     return config;

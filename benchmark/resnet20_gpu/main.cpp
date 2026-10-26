@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cuda_runtime_api.h>
 #include <chrono>
 #include <cmath>
 #include <exception>
@@ -128,6 +129,49 @@ void run_hoist_check(const shared_gpu::GpuConfig &config)
     }
 }
 
+void run_bootstrap_comparison(const shared_gpu::GpuConfig &config)
+{
+    shared_gpu::GpuCkksRuntime runtime(config);
+    std::vector<double> message(runtime.slot_count());
+    for (std::size_t i=0;i<message.size();++i) message[i]=0.5*std::sin(0.7*i+0.3);
+    auto fresh=runtime.encrypt(message);
+    auto input=runtime.drop_to_q_count(fresh,4);
+    std::cout.precision(17);
+    int failures=0;
+    for (const unsigned degree : {59u,30u,22u})
+    {
+        try
+        {
+            runtime.comparison_bootstrap_variant(degree);
+            // Untimed warmup; every run reads the exact same input and secret key.
+            { auto warmup=runtime.bootstrap(input); const auto actual=runtime.decrypt(warmup);
+              double mx=0,sum=0;for(std::size_t i=0;i<message.size();++i){double e=std::abs(actual[i]-message[i]);mx=std::max(mx,e);sum+=e*e;}
+              std::cout << "REPAIR_WARMUP request=" <<degree<<" max_error="<<mx<<" rmse="<<std::sqrt(sum/message.size())<<" output_q="<<warmup.meta.q_count<<std::endl;
+              if(!std::isfinite(mx)||!std::isfinite(sum)||mx>1e-3) throw std::runtime_error("component error exceeds 1e-3");
+            }
+
+            for (int rep=0;rep<3;++rep)
+            {
+                cudaDeviceSynchronize();
+                const auto start=std::chrono::steady_clock::now();
+                auto output=runtime.bootstrap(input);
+                cudaDeviceSynchronize();
+                const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+                const auto actual=runtime.decrypt(output);
+                double mx=0,sum=0;
+                for(std::size_t i=0;i<message.size();++i){double e=std::abs(actual[i]-message[i]);mx=std::max(mx,e);sum+=e*e;}
+                if(!std::isfinite(mx)||!std::isfinite(sum)) throw std::runtime_error("nonfinite component output");
+                std::cout << "CMP_COMPONENT request="<<degree<<" repeat="<<rep
+                          <<" seconds="<<seconds<<" max_error="<<mx<<" rmse="<<std::sqrt(sum/message.size())
+                          <<" input_q="<<input.meta.q_count<<" application_output_q="<<output.meta.q_count
+                          <<" output_scale_log2="<<std::log2(output.meta.scale)<<std::endl;
+            }
+        }
+        catch(const std::exception &error){++failures;std::cout<<"CMP_COMPONENT_FAILED request="<<degree<<" error="<<error.what()<<std::endl;}
+    }
+    if(failures) throw std::runtime_error("one or more bootstrap variants failed; remaining variants were attempted");
+}
+
 void print_elapsed(std::chrono::steady_clock::duration elapsed)
 {
     const auto elapsed_ms =
@@ -156,10 +200,15 @@ int main(int argc, char **argv)
                   << " bootstrap_output_scale=2^"
                   << config.bootstrap_output_log_scale
                   << " bootstrap_Q=" << config.bootstrap_q_count << '\n'
+                  << "secret_hamming_weight=192" << std::endl
                   << "blocks=" << topology.blocks.size()
                   << " bootstrap_points=" << topology.bootstrap_point_count() << '\n';
 
-        if (argc == 2 && std::string(argv[1]) == "--smoke")
+        if (argc == 2 && std::string(argv[1]) == "--bootstrap-cmp")
+        {
+            run_bootstrap_comparison(config);
+        }
+        else if (argc == 2 && std::string(argv[1]) == "--smoke")
         {
             run_gpu_smoke(config);
         }
@@ -222,6 +271,13 @@ int main(int argc, char **argv)
                       << " predicted_label=" << result.predicted_label << '\n';
             print_elapsed(std::chrono::steady_clock::now() - start);
         }
+        else if(argc==3 && (std::string(argv[1])=="--bootstrap-suite" || std::string(argv[1])=="--repair-suite"))
+        {
+            const auto count=std::stoull(argv[2]);
+            if(count==0 || count>100) throw std::invalid_argument("suite count must be 1..100");
+            const auto weights=resnet20::load_resnet20_weights();
+            resnet20::run_gpu_resnet20_repair_suite(count,config,topology,weights);
+        }
         else if (argc == 3 && std::string(argv[1]) == "--gpu-only")
         {
             const auto image_id = static_cast<std::size_t>(std::stoull(argv[2]));
@@ -238,7 +294,7 @@ int main(int argc, char **argv)
         {
             throw std::invalid_argument(
                 "usage: poseidon_gpu_resnet20 "
-                "[--smoke|--shortcut-check|--hoist-check|--topology-check|--weights-check|"
+                "[--smoke|--shortcut-check|--hoist-check|--topology-check|--weights-check|--bootstrap-cmp|--bootstrap-suite COUNT|"
                 "--head-check IMAGE_ID|--infer IMAGE_ID [MAX_BLOCKS]|"
                 "--gpu-only IMAGE_ID]");
         }

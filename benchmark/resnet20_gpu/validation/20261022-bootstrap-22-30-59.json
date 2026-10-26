@@ -1,0 +1,6590 @@
+{
+  "scope": "native GPU ResNet20, nonzero H192, composed rotations",
+  "variants": {
+    "59": {
+      "degree": 59,
+      "double_angle": 2,
+      "component": [
+        {
+          "repeat": 0.0,
+          "seconds": 0.862585088,
+          "max_error": 2.9092595935669754e-05,
+          "rmse": 6.699579813918694e-06,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        },
+        {
+          "repeat": 1.0,
+          "seconds": 0.862925284,
+          "max_error": 2.9092595935669754e-05,
+          "rmse": 6.699579813918694e-06,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        },
+        {
+          "repeat": 2.0,
+          "seconds": 0.862920583,
+          "max_error": 2.9092595935669754e-05,
+          "rmse": 6.699579813918694e-06,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        }
+      ],
+      "images": [
+        {
+          "image": 0,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -6.606964289872401,
+              "gpu": -6.6038250812966925
+            },
+            {
+              "index": 1,
+              "cpu": 2.347348989044037,
+              "gpu": 2.355504279281667
+            },
+            {
+              "index": 2,
+              "cpu": 1.8511820890930852,
+              "gpu": 1.846910836939343
+            },
+            {
+              "index": 3,
+              "cpu": 22.457866683232584,
+              "gpu": 22.454874063096234
+            },
+            {
+              "index": 4,
+              "cpu": -5.85193567669178,
+              "gpu": -5.855786447637484
+            },
+            {
+              "index": 5,
+              "cpu": 5.613843153806373,
+              "gpu": 5.612771296172815
+            },
+            {
+              "index": 6,
+              "cpu": -3.4807083062027346,
+              "gpu": -3.4765157101049415
+            },
+            {
+              "index": 7,
+              "cpu": -7.606758672632612,
+              "gpu": -7.608276113116791
+            },
+            {
+              "index": 8,
+              "cpu": -2.0131181348360947,
+              "gpu": -2.021438953658759
+            },
+            {
+              "index": 9,
+              "cpu": -6.706661525567579,
+              "gpu": -6.7002178408183966
+            }
+          ],
+          "boot_ms": [
+            719.0,
+            717.0,
+            718.0,
+            719.0,
+            719.0,
+            719.0,
+            719.0,
+            719.0,
+            719.0,
+            720.0,
+            721.0,
+            720.0,
+            721.0,
+            722.0,
+            721.0,
+            722.0,
+            723.0,
+            724.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.808814813549004e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.929656953975129e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6098463228353685e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.270211209829496e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 3.546257378850802e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.9802970847670725e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 3.270210876786051e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 5.761836728209596e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 6.721119176244204e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.453262377090248e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 5.6840078981705566e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.851988603682064e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 6.543752685374965e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 4.930059008109028e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 6.885763605048861e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.599932840969629e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.9212158163266665e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 8.988288682573384e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 9.808589696311092e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 8.42565663960234e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00010897908186761028
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 6.01802725251864e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00012808510791516466
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00010377857343951344
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00014053617429198723
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 6.936892273424339e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.0001427647606043747
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00017397003519476623
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 0.00010571732599847991
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0003614276558075308
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00029986407321910824
+            }
+          ],
+          "declared_max_error": 0.008320818822664222,
+          "label": 3,
+          "declared_prediction": 3,
+          "completed": true,
+          "max_error": 0.008320818822664222,
+          "rmse": 0.005001776303821668,
+          "cpu_prediction": 3,
+          "gpu_prediction": 3,
+          "passed": true
+        },
+        {
+          "image": 1,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 5.273825599797693,
+              "gpu": 5.269379337181718
+            },
+            {
+              "index": 1,
+              "cpu": 13.093542540438236,
+              "gpu": 13.09049690927553
+            },
+            {
+              "index": 2,
+              "cpu": -9.879462570459584,
+              "gpu": -9.880968253997668
+            },
+            {
+              "index": 3,
+              "cpu": -3.991033495601344,
+              "gpu": -3.9869770054506763
+            },
+            {
+              "index": 4,
+              "cpu": -16.249473288261363,
+              "gpu": -16.254899378064472
+            },
+            {
+              "index": 5,
+              "cpu": -12.583710910688971,
+              "gpu": -12.586297396426094
+            },
+            {
+              "index": 6,
+              "cpu": -1.7944914262607856,
+              "gpu": -1.7877290962148686
+            },
+            {
+              "index": 7,
+              "cpu": -7.701816128901216,
+              "gpu": -7.696545702939707
+            },
+            {
+              "index": 8,
+              "cpu": 29.143546004660816,
+              "gpu": 29.143196197349475
+            },
+            {
+              "index": 9,
+              "cpu": 4.698336400513404,
+              "gpu": 4.699539912220182
+            }
+          ],
+          "boot_ms": [
+            730.0,
+            724.0,
+            727.0,
+            728.0,
+            728.0,
+            727.0,
+            738.0,
+            746.0,
+            761.0,
+            776.0,
+            784.0,
+            804.0,
+            810.0,
+            834.0,
+            910.0,
+            910.0,
+            922.0,
+            924.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.581953392684805e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.570124141252244e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6418679053860725e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.138255021972042e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 4.060851765073231e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 4.055474171504522e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 3.7919810290153524e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 5.4264127589336714e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 6.105768681570478e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.24416005766859e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 5.8235773552989256e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.975659348982128e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 5.2027477115884624e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 5.823705228623355e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 7.127675399623556e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.94905758128732e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.7462619515516455e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 7.778308105647544e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 7.456373689051186e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 7.306879669890295e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 9.240705765755503e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.606409903039303e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00010486158335544808
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 8.611304532774207e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00013771546174598873
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 6.776386684130553e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00013894118613573883
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00014570949844600056
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 9.699318729791684e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00031154626565400856
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0003208855177968123
+            }
+          ],
+          "declared_max_error": 0.0067623300459169755,
+          "label": 8,
+          "declared_prediction": 8,
+          "completed": true,
+          "max_error": 0.0067623300459169755,
+          "rmse": 0.003987191715450916,
+          "cpu_prediction": 8,
+          "gpu_prediction": 8,
+          "passed": true
+        },
+        {
+          "image": 2,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 6.3611455587964425,
+              "gpu": 6.351943211224734
+            },
+            {
+              "index": 1,
+              "cpu": 19.07124955342973,
+              "gpu": 19.06443101649567
+            },
+            {
+              "index": 2,
+              "cpu": -3.947735259510438,
+              "gpu": -3.947175930598231
+            },
+            {
+              "index": 3,
+              "cpu": -11.217158321366554,
+              "gpu": -11.221896104929257
+            },
+            {
+              "index": 4,
+              "cpu": -9.54184753239986,
+              "gpu": -9.54438817004897
+            },
+            {
+              "index": 5,
+              "cpu": -9.283954943682204,
+              "gpu": -9.272957356709796
+            },
+            {
+              "index": 6,
+              "cpu": -8.421840163283997,
+              "gpu": -8.419654046998502
+            },
+            {
+              "index": 7,
+              "cpu": -9.903901433341487,
+              "gpu": -9.902996554756662
+            },
+            {
+              "index": 8,
+              "cpu": 20.132327395029087,
+              "gpu": 20.133128929983755
+            },
+            {
+              "index": 9,
+              "cpu": 6.7573694567472735,
+              "gpu": 6.765237962821203
+            }
+          ],
+          "boot_ms": [
+            771.0,
+            1092.0,
+            1115.0,
+            933.0,
+            947.0,
+            974.0,
+            1010.0,
+            1151.0,
+            1101.0,
+            1064.0,
+            1253.0,
+            1151.0,
+            1344.0,
+            1490.0,
+            1535.0,
+            1556.0,
+            1402.0,
+            1324.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 9.0560462553263e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.117770728428454e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6063200780426787e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.1324914629655976e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 4.20549904140673e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 4.495075688780003e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 4.118978513126953e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 6.093969775839564e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 7.284511923104711e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 7.398402069610024e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 7.438331648828601e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.3671558697609345e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 5.706996955095935e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 6.056606610543511e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 7.1165597166193e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.684725490616785e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 7.240875172849492e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 8.395378300778134e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 7.016814076160095e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 8.799789056703616e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00013152003197626494
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.6629953899781094e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00012824409357358596
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.000108659153300536
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00013834991873840595
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 7.264542406712829e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00014830067656221302
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00015955010429874678
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 0.00010151191789747188
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0003975665541490203
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00040135174828223596
+            }
+          ],
+          "declared_max_error": 0.010997586972408158,
+          "label": 8,
+          "declared_prediction": 8,
+          "completed": true,
+          "max_error": 0.010997586972408158,
+          "rmse": 0.005911773027920361,
+          "cpu_prediction": 8,
+          "gpu_prediction": 8,
+          "passed": true
+        },
+        {
+          "image": 3,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 10.385673180759031,
+              "gpu": 10.382618191720425
+            },
+            {
+              "index": 1,
+              "cpu": -0.6583521257791698,
+              "gpu": -0.6680096274940401
+            },
+            {
+              "index": 2,
+              "cpu": 1.141504459949393,
+              "gpu": 1.1432069650976455
+            },
+            {
+              "index": 3,
+              "cpu": 6.809331614863299,
+              "gpu": 6.810180794848647
+            },
+            {
+              "index": 4,
+              "cpu": -10.90407357318414,
+              "gpu": -10.91189339953987
+            },
+            {
+              "index": 5,
+              "cpu": -7.965049432466715,
+              "gpu": -7.963470107504064
+            },
+            {
+              "index": 6,
+              "cpu": -8.645456759288082,
+              "gpu": -8.63995845321836
+            },
+            {
+              "index": 7,
+              "cpu": -2.418967383504378,
+              "gpu": -2.4126131198509757
+            },
+            {
+              "index": 8,
+              "cpu": 10.287172481693801,
+              "gpu": 10.282252788383737
+            },
+            {
+              "index": 9,
+              "cpu": 1.949924334043797,
+              "gpu": 1.9593308100273394
+            }
+          ],
+          "boot_ms": [
+            1499.0,
+            1265.0,
+            932.0,
+            1745.0,
+            1592.0,
+            1587.0,
+            1599.0,
+            1621.0,
+            1607.0,
+            1809.0,
+            1655.0,
+            1643.0,
+            1866.0,
+            1831.0,
+            1948.0,
+            1745.0,
+            1896.0,
+            1947.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 7.453776661239808e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 7.429941764336423e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5865573581376755e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.06442053971262e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 3.637158650932233e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 4.086112961427385e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 4.366660590609042e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 5.9701166603514516e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 6.224064961367608e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.965743994285153e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 7.145964132485028e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.339282667630007e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 4.855245736692059e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 5.760079939784446e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 6.911112592613775e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.4938011704485507e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 8.354231694866938e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 7.991944111711974e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 8.529351614347883e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 6.279645461805409e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.0001052770351714985
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.919885208293882e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.0001104142021124549
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 9.535153153268638e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.0001399938507710835
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 6.609965889884523e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.000145852544279821
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00016939106669963677
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 0.00010250795864096603
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0003385000634450394
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00039657165619805257
+            }
+          ],
+          "declared_max_error": 0.009657501714870342,
+          "label": 0,
+          "declared_prediction": 0,
+          "completed": true,
+          "max_error": 0.009657501714870342,
+          "rmse": 0.005942702148895186,
+          "cpu_prediction": 0,
+          "gpu_prediction": 0,
+          "passed": true
+        },
+        {
+          "image": 4,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -7.4194670569111905,
+              "gpu": -7.422734471948605
+            },
+            {
+              "index": 1,
+              "cpu": 1.1926507428683466,
+              "gpu": 1.193042551112374
+            },
+            {
+              "index": 2,
+              "cpu": 2.0670960093783384,
+              "gpu": 2.061679440362497
+            },
+            {
+              "index": 3,
+              "cpu": -2.410730118804548,
+              "gpu": -2.4032488165146235
+            },
+            {
+              "index": 4,
+              "cpu": -2.7913302603439996,
+              "gpu": -2.7865150074757983
+            },
+            {
+              "index": 5,
+              "cpu": -2.7190703229928475,
+              "gpu": -2.72288705987307
+            },
+            {
+              "index": 6,
+              "cpu": 25.38824236754669,
+              "gpu": 25.39538641997123
+            },
+            {
+              "index": 7,
+              "cpu": -7.629643545729246,
+              "gpu": -7.633640341699542
+            },
+            {
+              "index": 8,
+              "cpu": -2.794794170894944,
+              "gpu": -2.7956534028981457
+            },
+            {
+              "index": 9,
+              "cpu": -2.8852522390753856,
+              "gpu": -2.887813719642255
+            }
+          ],
+          "boot_ms": [
+            1102.0,
+            1495.0,
+            1736.0,
+            1741.0,
+            1661.0,
+            1828.0,
+            1738.0,
+            2077.0,
+            2096.0,
+            1837.0,
+            2143.0,
+            2329.0,
+            2709.0,
+            2171.0,
+            2276.0,
+            2139.0,
+            2637.0,
+            1833.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 9.346754405656355e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.316626953595475e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6158219048194598e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 2.943633776617688e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 3.4155212433183146e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.751598558112204e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 4.10288511944884e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 6.129748301882815e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 6.499969335418965e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.528641879055246e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 6.53023675521551e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 3.7215385998800796e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 5.333264901304091e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 4.971612824191535e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 6.058073306024897e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.362333684637676e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.693782641194578e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 7.52779275689161e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 6.434220481147009e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 7.039836802168187e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 9.485645490281067e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.4721821472744625e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 9.933867332488633e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 7.861147073981098e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00010896400148420471
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 6.229327008839408e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00014749732776354885
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00017058530826693022
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 8.660452451870939e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00029784230743853946
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00037176166565089375
+            }
+          ],
+          "declared_max_error": 0.007481302289924496,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.007481302289924496,
+          "rmse": 0.004562938577095944,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 5,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -7.752948077503602,
+              "gpu": -7.749776529118357
+            },
+            {
+              "index": 1,
+              "cpu": -3.289400543324248,
+              "gpu": -3.2895022793416495
+            },
+            {
+              "index": 2,
+              "cpu": -3.2549174422672085,
+              "gpu": -3.2582460043265113
+            },
+            {
+              "index": 3,
+              "cpu": -1.0768081970054078,
+              "gpu": -1.0855910141621867
+            },
+            {
+              "index": 4,
+              "cpu": -4.844064028165243,
+              "gpu": -4.852846342331345
+            },
+            {
+              "index": 5,
+              "cpu": 3.7140154706575212,
+              "gpu": 3.7116893176095282
+            },
+            {
+              "index": 6,
+              "cpu": 22.943830752088143,
+              "gpu": 22.950143198456146
+            },
+            {
+              "index": 7,
+              "cpu": 3.634750583718333,
+              "gpu": 3.6493807295864213
+            },
+            {
+              "index": 8,
+              "cpu": -4.310500590499738,
+              "gpu": -4.30993521495086
+            },
+            {
+              "index": 9,
+              "cpu": -5.788408961333528,
+              "gpu": -5.789873347708655
+            }
+          ],
+          "boot_ms": [
+            869.0,
+            1702.0,
+            1869.0,
+            1906.0,
+            2160.0,
+            1801.0,
+            969.0,
+            2015.0,
+            2393.0,
+            2522.0,
+            2238.0,
+            2251.0,
+            2274.0,
+            2384.0,
+            2523.0,
+            2348.0,
+            2761.0,
+            2378.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.324405890609781e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 1.286361096142219e-06
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5598215730236566e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.6063087978299366e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 3.497461225098614e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.678402638265929e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 4.0126426837998054e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 5.711656148701949e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 6.478082619444832e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.9052768702010875e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 6.381607276395584e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 5.1661029331732944e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 7.29283984241564e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 6.382140820979793e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 7.104672422587194e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 6.898773798265714e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 7.190575992208764e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00011442328931312445
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 8.57544733380472e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 7.907997501597347e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00012309901111146743
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.372326580529996e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00012682046642496433
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 9.976658927492166e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00013057894951702502
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 7.914848399348529e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.0001585055392954518
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00021533429423985229
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 0.00011434120164605793
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00036366402014291477
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0003893632370253197
+            }
+          ],
+          "declared_max_error": 0.014630145868088196,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.014630145868088196,
+          "rmse": 0.0066119477184972885,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 6,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -1.594851473758348,
+              "gpu": -1.59463591229188
+            },
+            {
+              "index": 1,
+              "cpu": 16.040019444716776,
+              "gpu": 16.04683204337649
+            },
+            {
+              "index": 2,
+              "cpu": -0.9276592311578816,
+              "gpu": -0.9271127579361834
+            },
+            {
+              "index": 3,
+              "cpu": -0.9170347227979035,
+              "gpu": -0.9097314639177638
+            },
+            {
+              "index": 4,
+              "cpu": -10.411058759550944,
+              "gpu": -10.406978307309188
+            },
+            {
+              "index": 5,
+              "cpu": 0.39736694028385544,
+              "gpu": 0.3883972489559885
+            },
+            {
+              "index": 6,
+              "cpu": 1.266182735096469,
+              "gpu": 1.2544435147955668
+            },
+            {
+              "index": 7,
+              "cpu": 0.3233959865229378,
+              "gpu": 0.32087578507997083
+            },
+            {
+              "index": 8,
+              "cpu": -12.468809991435208,
+              "gpu": -12.466632432929575
+            },
+            {
+              "index": 9,
+              "cpu": 8.210328911028206,
+              "gpu": 8.212405983483977
+            }
+          ],
+          "boot_ms": [
+            1772.0,
+            1448.0,
+            2091.0,
+            2174.0,
+            2153.0,
+            2153.0,
+            3112.0,
+            1927.0,
+            2868.0,
+            2269.0,
+            2261.0,
+            2299.0,
+            2159.0,
+            2330.0,
+            2611.0,
+            1824.0,
+            2417.0,
+            2246.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 7.804409290629311e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 7.709097872427018e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.654708506617462e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 2.960410499217893e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 3.626597505142215e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.976576392486671e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 3.4579507944540455e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 6.56956637811422e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 6.196673389995654e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.88872190595063e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 6.046404858583987e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.5024981781931206e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 4.89638943959635e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 6.043658506534044e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 9.007060814139427e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 6.929967541580845e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.6263097147677896e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00011138983248985563
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 7.648473128238353e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 6.655127812086638e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00010093379851942169
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.547595764215235e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00010445726451834697
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 9.27025930272038e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00012613989427123773
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 6.567711337480964e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00016027600702302539
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00016869755600305977
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 9.295753894577458e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0003358020996996197
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0003016004521892504
+            }
+          ],
+          "declared_max_error": 0.011739220300902131,
+          "label": 1,
+          "declared_prediction": 1,
+          "completed": true,
+          "max_error": 0.011739220300902131,
+          "rmse": 0.005919597478960973,
+          "cpu_prediction": 1,
+          "gpu_prediction": 1,
+          "passed": true
+        },
+        {
+          "image": 7,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 0.10951555717798334,
+              "gpu": 0.11403052983078946
+            },
+            {
+              "index": 1,
+              "cpu": -1.3170900483868224,
+              "gpu": -1.3117710323061518
+            },
+            {
+              "index": 2,
+              "cpu": 1.6090925296652145,
+              "gpu": 1.6223616140459949
+            },
+            {
+              "index": 3,
+              "cpu": -1.8404452452739313,
+              "gpu": -1.8278555135391
+            },
+            {
+              "index": 4,
+              "cpu": -7.552485192425943,
+              "gpu": -7.5498814802301615
+            },
+            {
+              "index": 5,
+              "cpu": 0.282354786577249,
+              "gpu": 0.2755540084224854
+            },
+            {
+              "index": 6,
+              "cpu": 24.409497028223335,
+              "gpu": 24.39349917980971
+            },
+            {
+              "index": 7,
+              "cpu": -9.826837217530377,
+              "gpu": -9.83315221625961
+            },
+            {
+              "index": 8,
+              "cpu": -6.904123064995812,
+              "gpu": -6.901027989205881
+            },
+            {
+              "index": 9,
+              "cpu": 1.0065699474357375,
+              "gpu": 0.9942600644358399
+            }
+          ],
+          "boot_ms": [
+            1882.0,
+            1730.0,
+            2725.0,
+            1842.0,
+            2139.0,
+            2613.0,
+            2610.0,
+            2444.0,
+            2403.0,
+            2480.0,
+            2413.0,
+            2206.0,
+            2388.0,
+            2312.0,
+            2573.0,
+            2541.0,
+            2223.0,
+            2500.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.018738184400958e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 1.003007157857061e-06
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5618179810768527e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.1335018929356737e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 4.4249858575842044e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.809179514821341e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 4.8019854073613755e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 7.072647479523103e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 8.181989365714515e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 7.861788001516101e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 6.869314818528163e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.656929001064722e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 5.009498717673325e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 6.110508790201086e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 7.610283632346424e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.796906221054374e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 8.861857750960475e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 9.725404658534123e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 7.202350400305202e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 7.24760396086481e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.0001064669414859408
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.310882504132308e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.0001065397574865519
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00010639914398339907
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00014282479236460421
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 7.089855418082776e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.0001831986560706933
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.0001868572156932119
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 0.00010951167337594492
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0004133649978604048
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0004802555557499866
+            }
+          ],
+          "declared_max_error": 0.01599784841362606,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.01599784841362606,
+          "rmse": 0.009450924995587598,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 8,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -6.510496295188517,
+              "gpu": -6.515653296235246
+            },
+            {
+              "index": 1,
+              "cpu": -7.259439245976705,
+              "gpu": -7.254216872986293
+            },
+            {
+              "index": 2,
+              "cpu": -4.9766377896034015,
+              "gpu": -4.993081281564795
+            },
+            {
+              "index": 3,
+              "cpu": 21.889446005714873,
+              "gpu": 21.88986736611249
+            },
+            {
+              "index": 4,
+              "cpu": 4.149041697939575,
+              "gpu": 4.141585865443053
+            },
+            {
+              "index": 5,
+              "cpu": 11.918668092943099,
+              "gpu": 11.92961725365969
+            },
+            {
+              "index": 6,
+              "cpu": 0.7661289260901396,
+              "gpu": 0.765160138860491
+            },
+            {
+              "index": 7,
+              "cpu": -2.938271872682834,
+              "gpu": -2.9365565612197244
+            },
+            {
+              "index": 8,
+              "cpu": -8.339716590418147,
+              "gpu": -8.333175497724268
+            },
+            {
+              "index": 9,
+              "cpu": -8.72295764877983,
+              "gpu": -8.717827918928547
+            }
+          ],
+          "boot_ms": [
+            842.0,
+            2736.0,
+            1962.0,
+            2625.0,
+            2239.0,
+            2496.0,
+            2272.0,
+            2526.0,
+            2640.0,
+            2657.0,
+            2750.0,
+            2590.0,
+            2386.0,
+            2573.0,
+            2484.0,
+            2871.0,
+            2948.0,
+            2803.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.141576846431436e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.143788103841254e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.4913308346516394e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.1765946458197844e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 3.7554585603766406e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.5623432774609803e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 3.8702146070658874e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 6.313034043771426e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 7.338904167105212e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.392260430130136e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 6.92053602303136e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.393700580938853e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 5.773040988182876e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 6.025285970191058e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 7.995534640003674e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.312135725403164e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 6.87886581057992e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 8.818323511049914e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 6.631089235244192e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 7.689263882446756e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00011517467811702868
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 8.005875063935648e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00011944842049541916
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00010713781604930472
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00021237180866241767
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 7.672303206415418e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00019649370490141746
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00025872817430036554
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 0.00010581964354419021
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0003160736151306201
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0003513712311093639
+            }
+          ],
+          "declared_max_error": 0.016443491961393164,
+          "label": 3,
+          "declared_prediction": 3,
+          "completed": true,
+          "max_error": 0.016443491961393164,
+          "rmse": 0.007568938066986852,
+          "cpu_prediction": 3,
+          "gpu_prediction": 3,
+          "passed": true
+        },
+        {
+          "image": 9,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -2.0277629066567804,
+              "gpu": -2.0201050696736678
+            },
+            {
+              "index": 1,
+              "cpu": 18.044254545889913,
+              "gpu": 18.039194022170758
+            },
+            {
+              "index": 2,
+              "cpu": -6.788978204876533,
+              "gpu": -6.787089333295464
+            },
+            {
+              "index": 3,
+              "cpu": -0.6806760599784387,
+              "gpu": -0.6699964951654995
+            },
+            {
+              "index": 4,
+              "cpu": -7.82919526255026,
+              "gpu": -7.830339759114501
+            },
+            {
+              "index": 5,
+              "cpu": -12.257204078342065,
+              "gpu": -12.26731644616687
+            },
+            {
+              "index": 6,
+              "cpu": 0.48745336414792895,
+              "gpu": 0.47713018909655047
+            },
+            {
+              "index": 7,
+              "cpu": -3.2259377836300267,
+              "gpu": -3.2183355097237163
+            },
+            {
+              "index": 8,
+              "cpu": 9.248321817225415,
+              "gpu": 9.250057693028282
+            },
+            {
+              "index": 9,
+              "cpu": 5.04969211319777,
+              "gpu": 5.046711253330784
+            }
+          ],
+          "boot_ms": [
+            1607.0,
+            1933.0,
+            2575.0,
+            2627.0,
+            1852.0,
+            2356.0,
+            2389.0,
+            2397.0,
+            2538.0,
+            2888.0,
+            3088.0,
+            3089.0,
+            2659.0,
+            2508.0,
+            2344.0,
+            2601.0,
+            2328.0,
+            2849.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.1165208384008446e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.518871864240552e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5615221773689356e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.0309600026048877e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 3.6045096399766816e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.9468645116405576e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 3.793892398957881e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 6.473670997877295e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 6.682554671538343e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 6.335121630396401e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 6.274328174166177e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.8331656126840775e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 5.187849471946504e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 4.9605913466683896e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 6.640106116863678e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.896695383304871e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 6.433347269206493e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 7.710818240106235e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 6.0972352946660896e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 7.353938372277671e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 9.22774419638353e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.73095476755947e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00011774757699083843
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 8.517166555416667e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00013311877140369938
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 6.838366651668211e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.0001659142505098521
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.0001827527856868346
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 9.508410166760711e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0002804377362316396
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0003468629621275945
+            }
+          ],
+          "declared_max_error": 0.01067956481293919,
+          "label": 1,
+          "declared_prediction": 1,
+          "completed": true,
+          "max_error": 0.01067956481293919,
+          "rmse": 0.006940486045392363,
+          "cpu_prediction": 1,
+          "gpu_prediction": 1,
+          "passed": true
+        }
+      ],
+      "online": [
+        {
+          "repeat": 0.0,
+          "seconds": 78.190152231,
+          "replay_max_error": 0.0
+        },
+        {
+          "repeat": 1.0,
+          "seconds": 78.217020511,
+          "replay_max_error": 0.0
+        },
+        {
+          "repeat": 2.0,
+          "seconds": 77.218263257,
+          "replay_max_error": 0.0
+        }
+      ],
+      "fit": {
+        "request": "59",
+        "actual_degree": "58",
+        "generator": "native_discrete",
+        "k": "25",
+        "ratio": "32",
+        "double_angle": "2"
+      },
+      "budget": {
+        "raised_q": 70,
+        "c2s_q": 65,
+        "evalmod_q": 48,
+        "raw_q": 43,
+        "normalized_q": 42,
+        "application_q": 36
+      },
+      "physical_q_consumed_before_application_drop": 28,
+      "declared_complete": true,
+      "images_completed": 10,
+      "images_passed": 10,
+      "cpu_gpu_prediction_agreement": 10,
+      "label_hits": 10,
+      "worst_logits_max_error": 0.016443491961393164,
+      "worst_logits_rmse": 0.009450924995587598,
+      "pooled_logits_rmse": 0.006368196619272733,
+      "component_median_seconds": 0.862920583,
+      "component_max_error": 2.9092595935669754e-05,
+      "component_rmse": 6.699579813918694e-06,
+      "online_median_seconds": 78.190152231,
+      "passed": true,
+      "online_time_reduction_percent": 0.0,
+      "component_time_reduction_percent": 0.0
+    },
+    "30": {
+      "degree": 30,
+      "double_angle": 4,
+      "component": [
+        {
+          "repeat": 0.0,
+          "seconds": 0.778869962,
+          "max_error": 9.263390356825109e-06,
+          "rmse": 9.74150049154211e-07,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        },
+        {
+          "repeat": 1.0,
+          "seconds": 0.974269584,
+          "max_error": 9.263390356825109e-06,
+          "rmse": 9.74150049154211e-07,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        },
+        {
+          "repeat": 2.0,
+          "seconds": 0.798270581,
+          "max_error": 9.263390356825109e-06,
+          "rmse": 9.74150049154211e-07,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        }
+      ],
+      "images": [
+        {
+          "image": 0,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -6.606964289872401,
+              "gpu": -6.608566916808368
+            },
+            {
+              "index": 1,
+              "cpu": 2.347348989044037,
+              "gpu": 2.3461260024456876
+            },
+            {
+              "index": 2,
+              "cpu": 1.8511820890930852,
+              "gpu": 1.853517680947355
+            },
+            {
+              "index": 3,
+              "cpu": 22.457866683232584,
+              "gpu": 22.460155581524088
+            },
+            {
+              "index": 4,
+              "cpu": -5.85193567669178,
+              "gpu": -5.851648496847382
+            },
+            {
+              "index": 5,
+              "cpu": 5.613843153806373,
+              "gpu": 5.613165309886583
+            },
+            {
+              "index": 6,
+              "cpu": -3.4807083062027346,
+              "gpu": -3.4798564782125574
+            },
+            {
+              "index": 7,
+              "cpu": -7.606758672632612,
+              "gpu": -7.606673669221639
+            },
+            {
+              "index": 8,
+              "cpu": -2.0131181348360947,
+              "gpu": -2.0137526880516083
+            },
+            {
+              "index": 9,
+              "cpu": -6.706661525567579,
+              "gpu": -6.708406403561674
+            }
+          ],
+          "boot_ms": [
+            665.0,
+            935.0,
+            875.0,
+            865.0,
+            913.0,
+            962.0,
+            1022.0,
+            998.0,
+            1129.0,
+            1161.0,
+            1179.0,
+            1086.0,
+            1361.0,
+            1573.0,
+            1318.0,
+            1439.0,
+            1811.0,
+            1634.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.808814813549004e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.929656953975129e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6096921578108723e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.4919212476240118e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.329550506326855e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.2682819028378943e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 8.77696172139203e-06
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.661264396016828e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 2.0889355662835184e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.5057424633563325e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.149220144404996e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 2.1105974646067407e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.3916574832845488e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.1505331414570514e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 3.8907603273038646e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.8616418072193996e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 2.2208532093207292e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 3.7078547579613014e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 1.843930935386016e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.885157615139771e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 4.9157536240608535e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 1.829168214526576e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.7236200355353355e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 4.9152222981428684e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 6.525608235687097e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.022389217627013e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 3.7010283708499916e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 7.730723648935456e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 3.000236234347066e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 6.428121344586452e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 9.244613811357216e-05
+            }
+          ],
+          "declared_max_error": 0.0023355918542697918,
+          "label": 3,
+          "declared_prediction": 3,
+          "completed": true,
+          "max_error": 0.0023355918542697918,
+          "rmse": 0.0013957145897049706,
+          "cpu_prediction": 3,
+          "gpu_prediction": 3,
+          "passed": true
+        },
+        {
+          "image": 1,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 5.273825599797693,
+              "gpu": 5.272648101862526
+            },
+            {
+              "index": 1,
+              "cpu": 13.093542540438236,
+              "gpu": 13.095328763675457
+            },
+            {
+              "index": 2,
+              "cpu": -9.879462570459584,
+              "gpu": -9.880987204861317
+            },
+            {
+              "index": 3,
+              "cpu": -3.991033495601344,
+              "gpu": -3.9921314618324075
+            },
+            {
+              "index": 4,
+              "cpu": -16.249473288261363,
+              "gpu": -16.25054635897277
+            },
+            {
+              "index": 5,
+              "cpu": -12.583710910688971,
+              "gpu": -12.581774758750697
+            },
+            {
+              "index": 6,
+              "cpu": -1.7944914262607856,
+              "gpu": -1.7928230983815567
+            },
+            {
+              "index": 7,
+              "cpu": -7.701816128901216,
+              "gpu": -7.702492011661354
+            },
+            {
+              "index": 8,
+              "cpu": 29.143546004660816,
+              "gpu": 29.14519011645498
+            },
+            {
+              "index": 9,
+              "cpu": 4.698336400513404,
+              "gpu": 4.696805587708078
+            }
+          ],
+          "boot_ms": [
+            1875.0,
+            2101.0,
+            1600.0,
+            2396.0,
+            2014.0,
+            2311.0,
+            2354.0,
+            1946.0,
+            2223.0,
+            2094.0,
+            2156.0,
+            2417.0,
+            2241.0,
+            2020.0,
+            2156.0,
+            2255.0,
+            2141.0,
+            2272.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.581953392684805e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.570124141252244e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6541518433208407e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.3497668156340487e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.1850772555245812e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.0953828874095406e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 9.40177843454515e-06
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.278686900681782e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 2.128258491856244e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.286039864771855e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.376978430488786e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.6029296319927666e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.6572495895771783e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.3764771032725877e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 4.935763783980168e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.8528642704174897e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 2.8178881302323017e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 4.9749686673157545e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 2.289555164980417e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.8080253779261674e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 5.226858137303246e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 2.3260037332367006e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.196996050728457e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 5.226433988760222e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 6.354033711381685e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.071986481883524e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 3.7567107251317705e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 7.939562746264728e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 3.524390451869336e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 8.2501052711903e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 7.847114382121545e-05
+            }
+          ],
+          "declared_max_error": 0.0019361519382741221,
+          "label": 8,
+          "declared_prediction": 8,
+          "completed": true,
+          "max_error": 0.0019361519382741221,
+          "rmse": 0.001459243868532625,
+          "cpu_prediction": 8,
+          "gpu_prediction": 8,
+          "passed": true
+        },
+        {
+          "image": 2,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 6.3611455587964425,
+              "gpu": 6.359916320020636
+            },
+            {
+              "index": 1,
+              "cpu": 19.07124955342973,
+              "gpu": 19.073614534461946
+            },
+            {
+              "index": 2,
+              "cpu": -3.947735259510438,
+              "gpu": -3.9472229088105832
+            },
+            {
+              "index": 3,
+              "cpu": -11.217158321366554,
+              "gpu": -11.21823778729809
+            },
+            {
+              "index": 4,
+              "cpu": -9.54184753239986,
+              "gpu": -9.541396263297761
+            },
+            {
+              "index": 5,
+              "cpu": -9.283954943682204,
+              "gpu": -9.28330254134912
+            },
+            {
+              "index": 6,
+              "cpu": -8.421840163283997,
+              "gpu": -8.422869160310864
+            },
+            {
+              "index": 7,
+              "cpu": -9.903901433341487,
+              "gpu": -9.90418874337423
+            },
+            {
+              "index": 8,
+              "cpu": 20.132327395029087,
+              "gpu": 20.132280953915597
+            },
+            {
+              "index": 9,
+              "cpu": 6.7573694567472735,
+              "gpu": 6.75702450844056
+            }
+          ],
+          "boot_ms": [
+            2299.0,
+            2187.0,
+            2021.0,
+            2144.0,
+            2211.0,
+            1855.0,
+            2158.0,
+            2175.0,
+            2336.0,
+            2123.0,
+            2554.0,
+            2045.0,
+            2493.0,
+            2036.0,
+            2981.0,
+            2034.0,
+            2244.0,
+            2028.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 9.0560462553263e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.117770728428454e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6016622304975145e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.4360813870975542e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.167091077717731e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.2365824373637355e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 1.1293686322746792e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.5661346072038413e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 2.0505774867535242e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.692682194160162e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.46532343974415e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.568530864017037e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.9324569634300917e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.466247103171144e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 4.586068368995361e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.8911117982897685e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 2.4547193650802622e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 4.825016919709525e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 2.4815984616189876e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.773483061617842e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 5.856826635950406e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 2.1217718984972277e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.1475993533328084e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 5.856059459097632e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 6.828704053315343e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.0318610344374072e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 3.910021765703153e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 8.154213727547266e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 3.5374130230886314e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 7.129707617810344e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00011723508892218237
+            }
+          ],
+          "declared_max_error": 0.0023649810322154963,
+          "label": 8,
+          "declared_prediction": 8,
+          "completed": true,
+          "max_error": 0.0023649810322154963,
+          "rmse": 0.0010209659074590953,
+          "cpu_prediction": 8,
+          "gpu_prediction": 8,
+          "passed": true
+        },
+        {
+          "image": 3,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 10.385673180759031,
+              "gpu": 10.386264058811497
+            },
+            {
+              "index": 1,
+              "cpu": -0.6583521257791698,
+              "gpu": -0.6593910231244715
+            },
+            {
+              "index": 2,
+              "cpu": 1.141504459949393,
+              "gpu": 1.1407365463249584
+            },
+            {
+              "index": 3,
+              "cpu": 6.809331614863299,
+              "gpu": 6.809599512094897
+            },
+            {
+              "index": 4,
+              "cpu": -10.90407357318414,
+              "gpu": -10.90381913111156
+            },
+            {
+              "index": 5,
+              "cpu": -7.965049432466715,
+              "gpu": -7.963597144250155
+            },
+            {
+              "index": 6,
+              "cpu": -8.645456759288082,
+              "gpu": -8.644785358534875
+            },
+            {
+              "index": 7,
+              "cpu": -2.418967383504378,
+              "gpu": -2.4201171374847696
+            },
+            {
+              "index": 8,
+              "cpu": 10.287172481693801,
+              "gpu": 10.288574062706987
+            },
+            {
+              "index": 9,
+              "cpu": 1.949924334043797,
+              "gpu": 1.9482055952909831
+            }
+          ],
+          "boot_ms": [
+            3212.0,
+            1560.0,
+            2069.0,
+            2027.0,
+            2241.0,
+            2269.0,
+            2364.0,
+            2254.0,
+            2892.0,
+            2388.0,
+            2074.0,
+            2423.0,
+            2175.0,
+            2177.0,
+            2275.0,
+            1934.0,
+            2088.0,
+            2421.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 7.453776661239808e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 7.429941764336423e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.564549005466127e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.2248038333700223e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 1.9632090782081835e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.1115769302526973e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 1.0848983986490313e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.6607960033185893e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 2.051656701268674e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.2134803009706515e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.6659695324663816e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.9317639543900943e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.6045200986528757e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.6655120987962725e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 5.0438730532424356e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 2.1379341387834858e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 1.815063874395853e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 3.5851375011275444e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 2.1442193748708038e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 2.0978865790872644e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 4.5268878499121756e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 1.9345024698169764e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.152546369989545e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 4.528605856106427e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 5.5842008575033436e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 1.4959956777723174e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 3.44250379571559e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 4.8199059115103075e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 2.4108904772203454e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 7.140989723454505e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 7.08679861106537e-05
+            }
+          ],
+          "declared_max_error": 0.0017187387528139197,
+          "label": 0,
+          "declared_prediction": 0,
+          "completed": true,
+          "max_error": 0.0017187387528139197,
+          "rmse": 0.0010466609806565907,
+          "cpu_prediction": 0,
+          "gpu_prediction": 0,
+          "passed": true
+        },
+        {
+          "image": 4,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -7.4194670569111905,
+              "gpu": -7.4186102970107655
+            },
+            {
+              "index": 1,
+              "cpu": 1.1926507428683466,
+              "gpu": 1.1919517942512825
+            },
+            {
+              "index": 2,
+              "cpu": 2.0670960093783384,
+              "gpu": 2.068709606884239
+            },
+            {
+              "index": 3,
+              "cpu": -2.410730118804548,
+              "gpu": -2.4108901208058104
+            },
+            {
+              "index": 4,
+              "cpu": -2.7913302603439996,
+              "gpu": -2.7921394902191787
+            },
+            {
+              "index": 5,
+              "cpu": -2.7190703229928475,
+              "gpu": -2.719475684181413
+            },
+            {
+              "index": 6,
+              "cpu": 25.38824236754669,
+              "gpu": 25.391092630951164
+            },
+            {
+              "index": 7,
+              "cpu": -7.629643545729246,
+              "gpu": -7.63125983243896
+            },
+            {
+              "index": 8,
+              "cpu": -2.794794170894944,
+              "gpu": -2.795781768591373
+            },
+            {
+              "index": 9,
+              "cpu": -2.8852522390753856,
+              "gpu": -2.8859276228176496
+            }
+          ],
+          "boot_ms": [
+            2085.0,
+            2391.0,
+            2283.0,
+            2447.0,
+            2586.0,
+            2173.0,
+            2519.0,
+            2357.0,
+            2426.0,
+            2475.0,
+            2721.0,
+            2677.0,
+            2025.0,
+            2344.0,
+            2347.0,
+            2511.0,
+            1985.0,
+            2194.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 9.346754405656355e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.316626953595475e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5997245772999e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.4961049505008567e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.1225355879391644e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.451480479687517e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 1.0256077275078851e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.6598543717389354e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 2.306998469174884e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 1.9604942239858508e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.369109167993163e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.5454832706514668e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.619418058251311e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.369803787924876e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 4.0470784189540476e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.9555902094122585e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 2.0180277504715238e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 4.3083719467984505e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 1.9903850706251905e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.7502827908537702e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 4.8269522544559795e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 2.022030408100131e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.249187552799293e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 4.8280459075438625e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 6.0365488017938285e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 1.7197440864924474e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 4.066653870077319e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 5.703541580082648e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 2.4031838973637837e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 6.793551564978836e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 7.563330827932424e-05
+            }
+          ],
+          "declared_max_error": 0.002850263404472031,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.002850263404472031,
+          "rmse": 0.001297648316917215,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 5,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -7.752948077503602,
+              "gpu": -7.751686032076966
+            },
+            {
+              "index": 1,
+              "cpu": -3.289400543324248,
+              "gpu": -3.2899518937011045
+            },
+            {
+              "index": 2,
+              "cpu": -3.2549174422672085,
+              "gpu": -3.254952228496112
+            },
+            {
+              "index": 3,
+              "cpu": -1.0768081970054078,
+              "gpu": -1.076928113760072
+            },
+            {
+              "index": 4,
+              "cpu": -4.844064028165243,
+              "gpu": -4.844555738845631
+            },
+            {
+              "index": 5,
+              "cpu": 3.7140154706575212,
+              "gpu": 3.7138345498194307
+            },
+            {
+              "index": 6,
+              "cpu": 22.943830752088143,
+              "gpu": 22.94360567302445
+            },
+            {
+              "index": 7,
+              "cpu": 3.634750583718333,
+              "gpu": 3.635340745711244
+            },
+            {
+              "index": 8,
+              "cpu": -4.310500590499738,
+              "gpu": -4.309577974050015
+            },
+            {
+              "index": 9,
+              "cpu": -5.788408961333528,
+              "gpu": -5.78961442944145
+            }
+          ],
+          "boot_ms": [
+            2266.0,
+            2198.0,
+            2347.0,
+            2170.0,
+            2302.0,
+            2008.0,
+            2242.0,
+            2035.0,
+            2164.0,
+            1899.0,
+            2316.0,
+            2111.0,
+            2530.0,
+            2042.0,
+            2136.0,
+            2068.0,
+            2130.0,
+            1995.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.324405890609781e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 1.286361096142219e-06
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.550524475416257e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.5278277364312587e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.2378992272524545e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.2002493121752306e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 9.967932873864577e-06
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.4706176942407574e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 1.9489869820261962e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.233279753038886e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.3509088039743173e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.3818074857131421e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.3218838181414203e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.353817981167906e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 4.195555533596622e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 2.00538110976152e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 2.5081493058371623e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 4.446600842642964e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 2.3136893432734035e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.6710088110553217e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 5.171914210957236e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 1.5967729033988104e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.833493566886975e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 5.1724026935656784e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 5.9104808690015054e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.1383859406271552e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 5.239199742107688e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 6.712031531033377e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 2.9172263937695536e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 7.907562901321441e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 8.152959618784594e-05
+            }
+          ],
+          "declared_max_error": 0.0012620454266354386,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.0012620454266354386,
+          "rmse": 0.0006992977895639966,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 6,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -1.594851473758348,
+              "gpu": -1.596292553469754
+            },
+            {
+              "index": 1,
+              "cpu": 16.040019444716776,
+              "gpu": 16.040650383948314
+            },
+            {
+              "index": 2,
+              "cpu": -0.9276592311578816,
+              "gpu": -0.9288749061928303
+            },
+            {
+              "index": 3,
+              "cpu": -0.9170347227979035,
+              "gpu": -0.9164502271095152
+            },
+            {
+              "index": 4,
+              "cpu": -10.411058759550944,
+              "gpu": -10.41095937163816
+            },
+            {
+              "index": 5,
+              "cpu": 0.39736694028385544,
+              "gpu": 0.39654482390589485
+            },
+            {
+              "index": 6,
+              "cpu": 1.266182735096469,
+              "gpu": 1.2677200051442588
+            },
+            {
+              "index": 7,
+              "cpu": 0.3233959865229378,
+              "gpu": 0.32356260957866845
+            },
+            {
+              "index": 8,
+              "cpu": -12.468809991435208,
+              "gpu": -12.467709453607462
+            },
+            {
+              "index": 9,
+              "cpu": 8.210328911028206,
+              "gpu": 8.209649075136923
+            }
+          ],
+          "boot_ms": [
+            2157.0,
+            2090.0,
+            2215.0,
+            2318.0,
+            2367.0,
+            2574.0,
+            2140.0,
+            2166.0,
+            2265.0,
+            2233.0,
+            2136.0,
+            2439.0,
+            2271.0,
+            2057.0,
+            2488.0,
+            2336.0,
+            2053.0,
+            2468.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 7.804409290629311e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 7.709097872427018e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6603106573382107e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.394156808245256e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.0935902162819847e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.0602632193854739e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 1.3605811738428078e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.1551631640786004e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 1.9064193501353022e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.6265290266237404e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.187355599158087e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.2146956546310247e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.5917867878662006e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.189026100274342e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 5.1088988956046744e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.4890063693836705e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 2.449575569749788e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 5.7691606773633414e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 1.7396200982074117e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.7221267742034696e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 6.371501063993923e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 1.7872419870492914e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 2.8529119011161397e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 6.372240469226798e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 5.56395575303896e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.1579548658601927e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 3.9389385195605364e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 5.7181743481002356e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 2.396421167746507e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 7.597973206252898e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 6.329875311110456e-05
+            }
+          ],
+          "declared_max_error": 0.0015372700477898071,
+          "label": 1,
+          "declared_prediction": 1,
+          "completed": true,
+          "max_error": 0.0015372700477898071,
+          "rmse": 0.0009510190396038428,
+          "cpu_prediction": 1,
+          "gpu_prediction": 1,
+          "passed": true
+        },
+        {
+          "image": 7,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 0.10951555717798334,
+              "gpu": 0.11189724646372262
+            },
+            {
+              "index": 1,
+              "cpu": -1.3170900483868224,
+              "gpu": -1.3187243782506095
+            },
+            {
+              "index": 2,
+              "cpu": 1.6090925296652145,
+              "gpu": 1.6090838434052657
+            },
+            {
+              "index": 3,
+              "cpu": -1.8404452452739313,
+              "gpu": -1.8394372150908145
+            },
+            {
+              "index": 4,
+              "cpu": -7.552485192425943,
+              "gpu": -7.552235650779083
+            },
+            {
+              "index": 5,
+              "cpu": 0.282354786577249,
+              "gpu": 0.2825580557236962
+            },
+            {
+              "index": 6,
+              "cpu": 24.409497028223335,
+              "gpu": 24.409191573952356
+            },
+            {
+              "index": 7,
+              "cpu": -9.826837217530377,
+              "gpu": -9.827052111832423
+            },
+            {
+              "index": 8,
+              "cpu": -6.904123064995812,
+              "gpu": -6.903751970661077
+            },
+            {
+              "index": 9,
+              "cpu": 1.0065699474357375,
+              "gpu": 1.0044725784869228
+            }
+          ],
+          "boot_ms": [
+            2530.0,
+            2325.0,
+            2278.0,
+            1951.0,
+            2169.0,
+            2466.0,
+            2829.0,
+            2368.0,
+            2056.0,
+            2262.0,
+            2055.0,
+            2363.0,
+            2312.0,
+            2066.0,
+            1969.0,
+            1827.0,
+            2271.0,
+            2102.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.018738184400958e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 1.003007157857061e-06
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5538158532761868e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.4178290320895903e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.1663595663412583e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.1947587882128394e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 1.2324180002307302e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.8123958547704034e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 1.9920773942269307e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.2447448052310623e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.8977837080408397e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.697749905395056e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.9483671721354364e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.897629766654812e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 4.6258828246185154e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.895843935304474e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 1.8923451069100808e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 4.0749052285234816e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 2.022255974472309e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.8181570745383498e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 4.894182206149553e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 1.8141933959808093e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.073325721471287e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 4.8938616978359134e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 6.088640786448135e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.2386483077549424e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 3.563062941030343e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 6.972347539953294e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 2.5010734236652604e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 8.236122341669441e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 9.568957746339257e-05
+            }
+          ],
+          "declared_max_error": 0.0023816892857392857,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.0023816892857392857,
+          "rmse": 0.0011890928064498634,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 8,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -6.510496295188517,
+              "gpu": -6.509070905910563
+            },
+            {
+              "index": 1,
+              "cpu": -7.259439245976705,
+              "gpu": -7.259996935070264
+            },
+            {
+              "index": 2,
+              "cpu": -4.9766377896034015,
+              "gpu": -4.97675523063228
+            },
+            {
+              "index": 3,
+              "cpu": 21.889446005714873,
+              "gpu": 21.888797851664286
+            },
+            {
+              "index": 4,
+              "cpu": 4.149041697939575,
+              "gpu": 4.148596416305848
+            },
+            {
+              "index": 5,
+              "cpu": 11.918668092943099,
+              "gpu": 11.91941018022662
+            },
+            {
+              "index": 6,
+              "cpu": 0.7661289260901396,
+              "gpu": 0.7669569725816134
+            },
+            {
+              "index": 7,
+              "cpu": -2.938271872682834,
+              "gpu": -2.9379340706470485
+            },
+            {
+              "index": 8,
+              "cpu": -8.339716590418147,
+              "gpu": -8.340118824046941
+            },
+            {
+              "index": 9,
+              "cpu": -8.72295764877983,
+              "gpu": -8.72416809849856
+            }
+          ],
+          "boot_ms": [
+            2190.0,
+            2065.0,
+            2251.0,
+            2047.0,
+            2361.0,
+            2260.0,
+            2272.0,
+            2273.0,
+            2142.0,
+            2445.0,
+            2014.0,
+            2241.0,
+            2129.0,
+            2368.0,
+            2129.0,
+            2502.0,
+            2390.0,
+            2344.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.141576846431436e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.143788103841254e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.4856048811625064e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.4250712512733216e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.168526777320337e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 1.3144248430173658e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 1.0697166938765379e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.644692285329626e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 2.232369193816766e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.576367869517801e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.637893751837532e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.71960703915508e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.763290215304851e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.6377527271178305e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 4.342860323235803e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.8985918403675167e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 1.852689129096599e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 4.394643329293929e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 1.7619203021565673e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.3568707928247534e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 4.9344309756567395e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 1.862171459601769e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.178565729142907e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 4.935166383533002e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 5.342552911688503e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.132206008310933e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 3.757098013026927e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 6.291296669976715e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 2.8923138984199293e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 8.911720700643944e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 7.315527882414182e-05
+            }
+          ],
+          "declared_max_error": 0.0014253892779541033,
+          "label": 3,
+          "declared_prediction": 3,
+          "completed": true,
+          "max_error": 0.0014253892779541033,
+          "rmse": 0.0007715159543497538,
+          "cpu_prediction": 3,
+          "gpu_prediction": 3,
+          "passed": true
+        },
+        {
+          "image": 9,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -2.0277629066567804,
+              "gpu": -2.0284969491282685
+            },
+            {
+              "index": 1,
+              "cpu": 18.044254545889913,
+              "gpu": 18.045680659998872
+            },
+            {
+              "index": 2,
+              "cpu": -6.788978204876533,
+              "gpu": -6.788911277163368
+            },
+            {
+              "index": 3,
+              "cpu": -0.6806760599784387,
+              "gpu": -0.6799803469574128
+            },
+            {
+              "index": 4,
+              "cpu": -7.82919526255026,
+              "gpu": -7.828137430775657
+            },
+            {
+              "index": 5,
+              "cpu": -12.257204078342065,
+              "gpu": -12.256434097136179
+            },
+            {
+              "index": 6,
+              "cpu": 0.48745336414792895,
+              "gpu": 0.4874975123953578
+            },
+            {
+              "index": 7,
+              "cpu": -3.2259377836300267,
+              "gpu": -3.2271298304345426
+            },
+            {
+              "index": 8,
+              "cpu": 9.248321817225415,
+              "gpu": 9.246878835488381
+            },
+            {
+              "index": 9,
+              "cpu": 5.04969211319777,
+              "gpu": 5.048958873034548
+            }
+          ],
+          "boot_ms": [
+            3197.0,
+            2231.0,
+            2073.0,
+            2445.0,
+            2323.0,
+            2069.0,
+            2145.0,
+            2012.0,
+            2187.0,
+            2029.0,
+            2711.0,
+            2342.0,
+            2374.0,
+            2059.0,
+            2408.0,
+            1969.0,
+            2371.0,
+            2408.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.1165208384008446e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.518871864240552e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5689816256606324e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 1.3896512832220487e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 2.1903403374712305e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 9.827470634222145e-06
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 1.1032562883718164e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 3.4842541250315606e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 2.1967427115047664e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 2.057586578942919e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 3.131778563633843e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 1.8799523360263012e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 1.460730038409068e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 3.133038287466729e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 4.400732884059233e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 1.798789219395816e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 2.401866517469462e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 4.4352756664246124e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 2.3044290344442775e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 1.5179462406134797e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 4.782493345229302e-05
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 1.627179138279089e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 3.403540215516504e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 4.7818717889851984e-05
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 5.926101912830106e-05
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 2.0384318941055884e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 4.0286406974072986e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 6.74249624765394e-05
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 2.356319244934367e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 6.850793095216842e-05
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 8.786889772409196e-05
+            }
+          ],
+          "declared_max_error": 0.0014429817370338327,
+          "label": 1,
+          "declared_prediction": 1,
+          "completed": true,
+          "max_error": 0.0014429817370338327,
+          "rmse": 0.000938922623606237,
+          "cpu_prediction": 1,
+          "gpu_prediction": 1,
+          "passed": true
+        }
+      ],
+      "online": [
+        {
+          "repeat": 0.0,
+          "seconds": 71.408414793,
+          "replay_max_error": 0.0
+        },
+        {
+          "repeat": 1.0,
+          "seconds": 71.303292874,
+          "replay_max_error": 0.0
+        },
+        {
+          "repeat": 2.0,
+          "seconds": 71.604092635,
+          "replay_max_error": 0.0
+        }
+      ],
+      "fit": {
+        "request": "30",
+        "actual_degree": "30",
+        "generator": "cosine_bessel",
+        "k": "25",
+        "ratio": "32",
+        "double_angle": "4"
+      },
+      "budget": {
+        "raised_q": 70,
+        "c2s_q": 65,
+        "evalmod_q": 45,
+        "raw_q": 40,
+        "normalized_q": 39,
+        "application_q": 36
+      },
+      "physical_q_consumed_before_application_drop": 31,
+      "declared_complete": true,
+      "images_completed": 10,
+      "images_passed": 10,
+      "cpu_gpu_prediction_agreement": 10,
+      "label_hits": 10,
+      "worst_logits_max_error": 0.002850263404472031,
+      "worst_logits_rmse": 0.001459243868532625,
+      "pooled_logits_rmse": 0.0011037836067930612,
+      "component_median_seconds": 0.798270581,
+      "component_max_error": 9.263390356825109e-06,
+      "component_rmse": 9.74150049154211e-07,
+      "online_median_seconds": 71.408414793,
+      "passed": true,
+      "online_time_reduction_percent": 8.67339075893402,
+      "component_time_reduction_percent": 7.491999063835042
+    },
+    "22": {
+      "degree": 22,
+      "double_angle": 5,
+      "component": [
+        {
+          "repeat": 0.0,
+          "seconds": 0.769834922,
+          "max_error": 2.1803551064912338e-05,
+          "rmse": 1.5341150455074071e-06,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        },
+        {
+          "repeat": 1.0,
+          "seconds": 0.826220804,
+          "max_error": 2.1803551064912338e-05,
+          "rmse": 1.5341150455074071e-06,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        },
+        {
+          "repeat": 2.0,
+          "seconds": 0.794779013,
+          "max_error": 2.1803551064912338e-05,
+          "rmse": 1.5341150455074071e-06,
+          "input_q": 4.0,
+          "application_output_q": 36.0,
+          "output_scale_log2": 40.0
+        }
+      ],
+      "images": [
+        {
+          "image": 0,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -6.606964289872401,
+              "gpu": -6.606448214586889
+            },
+            {
+              "index": 1,
+              "cpu": 2.347348989044037,
+              "gpu": 2.346957166331296
+            },
+            {
+              "index": 2,
+              "cpu": 1.8511820890930852,
+              "gpu": 1.8490513186397712
+            },
+            {
+              "index": 3,
+              "cpu": 22.457866683232584,
+              "gpu": 22.456446619604844
+            },
+            {
+              "index": 4,
+              "cpu": -5.85193567669178,
+              "gpu": -5.852035650521126
+            },
+            {
+              "index": 5,
+              "cpu": 5.613843153806373,
+              "gpu": 5.61379756725033
+            },
+            {
+              "index": 6,
+              "cpu": -3.4807083062027346,
+              "gpu": -3.4853474025339857
+            },
+            {
+              "index": 7,
+              "cpu": -7.606758672632612,
+              "gpu": -7.6042621711211655
+            },
+            {
+              "index": 8,
+              "cpu": -2.0131181348360947,
+              "gpu": -2.012086480096068
+            },
+            {
+              "index": 9,
+              "cpu": -6.706661525567579,
+              "gpu": -6.702075896485976
+            }
+          ],
+          "boot_ms": [
+            760.0,
+            862.0,
+            898.0,
+            926.0,
+            931.0,
+            975.0,
+            1039.0,
+            1048.0,
+            1165.0,
+            1250.0,
+            1346.0,
+            1357.0,
+            1599.0,
+            1422.0,
+            1345.0,
+            1596.0,
+            1611.0,
+            1609.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.808814813549004e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.929656953975129e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.626084007362195e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.2216733542440174e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.2430254934329734e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.2521995621544175e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.4699424944717857e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 9.060566132643166e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.347522288334794e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 6.830328277947304e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 8.405562699414365e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 5.857902635901177e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 3.575934401069819e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 8.405910239538128e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 9.742393889610552e-05
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.862593657459918e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 6.808234985368825e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 9.928639979883691e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 5.5818022664581325e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 5.3824010526146854e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00012095969004061874
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.1183848352150466e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 8.972417481917716e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00012096234904547531
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00016010468840922665
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 5.016868162899257e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00010830539444351209
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00018111996892425375
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 8.792211059813551e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00016237336192972615
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00020555459988214064
+            }
+          ],
+          "declared_max_error": 0.004639096331251036,
+          "label": 3,
+          "declared_prediction": 3,
+          "completed": true,
+          "max_error": 0.004639096331251036,
+          "rmse": 0.002384003674801649,
+          "cpu_prediction": 3,
+          "gpu_prediction": 3,
+          "passed": true
+        },
+        {
+          "image": 1,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 5.273825599797693,
+              "gpu": 5.2724228005761535
+            },
+            {
+              "index": 1,
+              "cpu": 13.093542540438236,
+              "gpu": 13.09178010112031
+            },
+            {
+              "index": 2,
+              "cpu": -9.879462570459584,
+              "gpu": -9.879077518177796
+            },
+            {
+              "index": 3,
+              "cpu": -3.991033495601344,
+              "gpu": -3.989795286922288
+            },
+            {
+              "index": 4,
+              "cpu": -16.249473288261363,
+              "gpu": -16.248682669508295
+            },
+            {
+              "index": 5,
+              "cpu": -12.583710910688971,
+              "gpu": -12.586460372988135
+            },
+            {
+              "index": 6,
+              "cpu": -1.7944914262607856,
+              "gpu": -1.7982457199091941
+            },
+            {
+              "index": 7,
+              "cpu": -7.701816128901216,
+              "gpu": -7.698956612540535
+            },
+            {
+              "index": 8,
+              "cpu": 29.143546004660816,
+              "gpu": 29.14455309898055
+            },
+            {
+              "index": 9,
+              "cpu": 4.698336400513404,
+              "gpu": 4.701664406852505
+            }
+          ],
+          "boot_ms": [
+            1878.0,
+            1895.0,
+            2103.0,
+            2027.0,
+            2064.0,
+            2284.0,
+            2356.0,
+            2314.0,
+            2249.0,
+            2036.0,
+            2112.0,
+            1936.0,
+            2441.0,
+            2395.0,
+            1959.0,
+            1580.0,
+            2684.0,
+            1962.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.581953392684805e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.570124141252244e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6344947761840556e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.495019164183322e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.5004181648304895e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.303810090517917e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.6795966793481674e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 8.665241864169726e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.281123731090578e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 6.664095089413749e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 9.313932550883419e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.9574681579712954e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 4.914107226093242e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 9.311899759664732e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00010934895498103392
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.3372090233427816e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 6.686743871900033e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00011033378291784579
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 5.754926378900849e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 4.717298269055897e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00012689662651280131
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 6.069027786871975e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 0.00010851050143379642
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00012690372808690786
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00015599584678603617
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 5.414617023475482e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00010939986664537313
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.0001929561113257934
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 9.465725591153995e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00019569768425883177
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00023132344919343795
+            }
+          ],
+          "declared_max_error": 0.003754293648408513,
+          "label": 8,
+          "declared_prediction": 8,
+          "completed": true,
+          "max_error": 0.003754293648408513,
+          "rmse": 0.0022203942155068156,
+          "cpu_prediction": 8,
+          "gpu_prediction": 8,
+          "passed": true
+        },
+        {
+          "image": 2,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 6.3611455587964425,
+              "gpu": 6.363477634139189
+            },
+            {
+              "index": 1,
+              "cpu": 19.07124955342973,
+              "gpu": 19.067270785638414
+            },
+            {
+              "index": 2,
+              "cpu": -3.947735259510438,
+              "gpu": -3.946103759278789
+            },
+            {
+              "index": 3,
+              "cpu": -11.217158321366554,
+              "gpu": -11.217519747145115
+            },
+            {
+              "index": 4,
+              "cpu": -9.54184753239986,
+              "gpu": -9.541463367889529
+            },
+            {
+              "index": 5,
+              "cpu": -9.283954943682204,
+              "gpu": -9.284430101545716
+            },
+            {
+              "index": 6,
+              "cpu": -8.421840163283997,
+              "gpu": -8.424177359707404
+            },
+            {
+              "index": 7,
+              "cpu": -9.903901433341487,
+              "gpu": -9.903503168330623
+            },
+            {
+              "index": 8,
+              "cpu": 20.132327395029087,
+              "gpu": 20.133904588072873
+            },
+            {
+              "index": 9,
+              "cpu": 6.7573694567472735,
+              "gpu": 6.75813183330985
+            }
+          ],
+          "boot_ms": [
+            1746.0,
+            2064.0,
+            2179.0,
+            2059.0,
+            2173.0,
+            2255.0,
+            2458.0,
+            2141.0,
+            2019.0,
+            2254.0,
+            2311.0,
+            2358.0,
+            1958.0,
+            2290.0,
+            2309.0,
+            2014.0,
+            2381.0,
+            2201.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 9.0560462553263e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.117770728428454e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.600648661338356e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.246648655191864e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.1506155043568036e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.311109622028581e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.7143759552466314e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 9.430915468097711e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.022824574703582e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 6.512284791774375e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 9.05309883851152e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.452855973960824e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 4.382975783479362e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 9.053581673369032e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00011968158432039064
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.8859955932685495e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.19852130826462e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00012886006232385588
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 6.0787130775044954e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 3.866944059521468e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00016136191647114946
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 5.516987449486686e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 7.909260895284931e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.0001613634520481813
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.0001668000023351962
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 5.5237464466303715e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00010337244221782921
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00019765052989375448
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 7.994922289197848e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00018088105521722742
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00028289903769654345
+            }
+          ],
+          "declared_max_error": 0.003978767791316784,
+          "label": 8,
+          "declared_prediction": 8,
+          "completed": true,
+          "max_error": 0.003978767791316784,
+          "rmse": 0.0018200221308542924,
+          "cpu_prediction": 8,
+          "gpu_prediction": 8,
+          "passed": true
+        },
+        {
+          "image": 3,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 10.385673180759031,
+              "gpu": 10.384159695093555
+            },
+            {
+              "index": 1,
+              "cpu": -0.6583521257791698,
+              "gpu": -0.6581713100810104
+            },
+            {
+              "index": 2,
+              "cpu": 1.141504459949393,
+              "gpu": 1.1433700458236373
+            },
+            {
+              "index": 3,
+              "cpu": 6.809331614863299,
+              "gpu": 6.806987214329321
+            },
+            {
+              "index": 4,
+              "cpu": -10.90407357318414,
+              "gpu": -10.90387666194363
+            },
+            {
+              "index": 5,
+              "cpu": -7.965049432466715,
+              "gpu": -7.966466940666349
+            },
+            {
+              "index": 6,
+              "cpu": -8.645456759288082,
+              "gpu": -8.64775955288914
+            },
+            {
+              "index": 7,
+              "cpu": -2.418967383504378,
+              "gpu": -2.417030204217789
+            },
+            {
+              "index": 8,
+              "cpu": 10.287172481693801,
+              "gpu": 10.28759909568997
+            },
+            {
+              "index": 9,
+              "cpu": 1.949924334043797,
+              "gpu": 1.9528299856785818
+            }
+          ],
+          "boot_ms": [
+            2327.0,
+            2567.0,
+            2538.0,
+            2055.0,
+            2108.0,
+            2065.0,
+            2257.0,
+            2485.0,
+            2178.0,
+            2193.0,
+            2304.0,
+            2218.0,
+            2691.0,
+            2586.0,
+            2309.0,
+            1953.0,
+            2199.0,
+            2136.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 7.453776661239808e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 7.429941764336423e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.583170872250823e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 2.59408804873882e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 4.3528121671007614e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 2.701972629996774e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.6050629246444348e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 8.393374080954696e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.0385919969159676e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.760069432817275e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 9.136370723928852e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 5.4074188352385213e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 4.764009239981333e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 9.136496676466141e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00011476024071779486
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.7836035636318894e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.067349240864272e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 9.137563109096192e-05
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 5.390433997996824e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 5.069176346750477e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.0001184142694423615
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.4764662681479224e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 7.036989391374926e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00011841588795580976
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00014578342760226612
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 4.722375108603093e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 9.039580587912738e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00011833019406803924
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 5.8519234303618106e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.000165370919532698
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00018584968475952868
+            }
+          ],
+          "declared_max_error": 0.002905651634784734,
+          "label": 0,
+          "declared_prediction": 0,
+          "completed": true,
+          "max_error": 0.002905651634784734,
+          "rmse": 0.0017614878401165097,
+          "cpu_prediction": 0,
+          "gpu_prediction": 0,
+          "passed": true
+        },
+        {
+          "image": 4,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -7.4194670569111905,
+              "gpu": -7.418715850783024
+            },
+            {
+              "index": 1,
+              "cpu": 1.1926507428683466,
+              "gpu": 1.1949867880511698
+            },
+            {
+              "index": 2,
+              "cpu": 2.0670960093783384,
+              "gpu": 2.0635296090481132
+            },
+            {
+              "index": 3,
+              "cpu": -2.410730118804548,
+              "gpu": -2.411758501900195
+            },
+            {
+              "index": 4,
+              "cpu": -2.7913302603439996,
+              "gpu": -2.7917849662207948
+            },
+            {
+              "index": 5,
+              "cpu": -2.7190703229928475,
+              "gpu": -2.7203433379277904
+            },
+            {
+              "index": 6,
+              "cpu": 25.38824236754669,
+              "gpu": 25.382525978798483
+            },
+            {
+              "index": 7,
+              "cpu": -7.629643545729246,
+              "gpu": -7.627606037452575
+            },
+            {
+              "index": 8,
+              "cpu": -2.794794170894944,
+              "gpu": -2.792325927123186
+            },
+            {
+              "index": 9,
+              "cpu": -2.8852522390753856,
+              "gpu": -2.880895544660304
+            }
+          ],
+          "boot_ms": [
+            2188.0,
+            2206.0,
+            2247.0,
+            2279.0,
+            2175.0,
+            2201.0,
+            2304.0,
+            2295.0,
+            2409.0,
+            2043.0,
+            2132.0,
+            2180.0,
+            1930.0,
+            2273.0,
+            2057.0,
+            2161.0,
+            1939.0,
+            2234.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 9.346754405656355e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.316626953595475e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6133613178075388e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.6956358667353945e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.658237669994848e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.69862547873398e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.7590503502879227e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 9.767246929986984e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.6931699986740095e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.582986661010342e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 9.067304147942264e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.6319125372585104e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 3.879547791813768e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 9.066827898871529e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00011228105117998266
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 5.7777339724802285e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.510397202925996e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00011882877538351572
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 5.475515449589619e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 4.4714408079273016e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00012787504227648738
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.782702911001156e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 7.923520857144178e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00012790652968504637
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.0001493306831613049
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 4.22080838542796e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 8.557785102835096e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00014160789495322804
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 6.531117575528031e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00021006297621481516
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00023628522715352096
+            }
+          ],
+          "declared_max_error": 0.005716388748208345,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.005716388748208345,
+          "rmse": 0.0028901051736983097,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 5,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -7.752948077503602,
+              "gpu": -7.756530537186922
+            },
+            {
+              "index": 1,
+              "cpu": -3.289400543324248,
+              "gpu": -3.288857855030502
+            },
+            {
+              "index": 2,
+              "cpu": -3.2549174422672085,
+              "gpu": -3.2530234362961905
+            },
+            {
+              "index": 3,
+              "cpu": -1.0768081970054078,
+              "gpu": -1.0764225369237235
+            },
+            {
+              "index": 4,
+              "cpu": -4.844064028165243,
+              "gpu": -4.846125170430122
+            },
+            {
+              "index": 5,
+              "cpu": 3.7140154706575212,
+              "gpu": 3.7152713936137856
+            },
+            {
+              "index": 6,
+              "cpu": 22.943830752088143,
+              "gpu": 22.944432739751278
+            },
+            {
+              "index": 7,
+              "cpu": 3.634750583718333,
+              "gpu": 3.6356123668504714
+            },
+            {
+              "index": 8,
+              "cpu": -4.310500590499738,
+              "gpu": -4.312068060915014
+            },
+            {
+              "index": 9,
+              "cpu": -5.788408961333528,
+              "gpu": -5.786832187488249
+            }
+          ],
+          "boot_ms": [
+            1927.0,
+            2086.0,
+            2110.0,
+            2150.0,
+            2192.0,
+            2195.0,
+            2322.0,
+            2320.0,
+            2931.0,
+            2278.0,
+            2023.0,
+            2013.0,
+            2118.0,
+            1886.0,
+            2422.0,
+            2129.0,
+            2156.0,
+            2017.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.324405890609781e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 1.286361096142219e-06
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.542431431269091e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.342309601529758e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.2666426059687355e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.236604806877751e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.4753361899190057e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 9.220931777841057e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.309396767333094e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.385361873855906e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 8.269885098739944e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 4.515099410734146e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 3.97782274054459e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 8.270695969046261e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00011379025642976187
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.819073538574886e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 8.348725488067921e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00011935321799013028
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 5.50394720713835e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 5.245575059657781e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00012454439176382828
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.8279252966954705e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 9.970591351975491e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.00012454766655887713
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00014626393536807183
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 5.172542080281867e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.00010981304675883145
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00015828786549866927
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 6.936883436253413e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.000272546447224839
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0002728248971139574
+            }
+          ],
+          "declared_max_error": 0.0035824596833204936,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.0035824596833204936,
+          "rmse": 0.0016952406545122306,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 6,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -1.594851473758348,
+              "gpu": -1.5948931531146404
+            },
+            {
+              "index": 1,
+              "cpu": 16.040019444716776,
+              "gpu": 16.039597492316112
+            },
+            {
+              "index": 2,
+              "cpu": -0.9276592311578816,
+              "gpu": -0.924664044324444
+            },
+            {
+              "index": 3,
+              "cpu": -0.9170347227979035,
+              "gpu": -0.9160297007447654
+            },
+            {
+              "index": 4,
+              "cpu": -10.411058759550944,
+              "gpu": -10.411183579241374
+            },
+            {
+              "index": 5,
+              "cpu": 0.39736694028385544,
+              "gpu": 0.39739546222346744
+            },
+            {
+              "index": 6,
+              "cpu": 1.266182735096469,
+              "gpu": 1.2619781456222858
+            },
+            {
+              "index": 7,
+              "cpu": 0.3233959865229378,
+              "gpu": 0.32311099857949116
+            },
+            {
+              "index": 8,
+              "cpu": -12.468809991435208,
+              "gpu": -12.469644228799211
+            },
+            {
+              "index": 9,
+              "cpu": 8.210328911028206,
+              "gpu": 8.212147216730454
+            }
+          ],
+          "boot_ms": [
+            879.0,
+            2204.0,
+            2310.0,
+            2160.0,
+            2378.0,
+            2065.0,
+            1993.0,
+            2275.0,
+            2319.0,
+            2136.0,
+            1902.0,
+            2126.0,
+            2159.0,
+            2225.0,
+            2079.0,
+            2172.0,
+            2197.0,
+            2271.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 7.804409290629311e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 7.709097872427018e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.6544430758064508e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 2.80971198678287e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 4.66692865560038e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 2.808959921173776e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.1690366576493543e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 8.079576151028695e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 4.9137629966243546e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 7.179547756787537e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 8.706444995951537e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 3.019305068292441e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 3.904403138457052e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 8.705344718721447e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00012848491027273035
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.3324602708565314e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 6.227784091809505e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00014804418529953955
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 4.990669142615825e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 3.794972324731166e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00015143754777889595
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.633038852118812e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 6.349951371323673e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.000151433762741765
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00013746409064741352
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 5.198993680063241e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 9.053254022012985e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00013809940164752777
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 6.0799197299144306e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00017024540347482936
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.0001690230106120693
+            }
+          ],
+          "declared_max_error": 0.004204589474183118,
+          "label": 1,
+          "declared_prediction": 1,
+          "completed": true,
+          "max_error": 0.004204589474183118,
+          "rmse": 0.00178715881578735,
+          "cpu_prediction": 1,
+          "gpu_prediction": 1,
+          "passed": true
+        },
+        {
+          "image": 7,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": 0.10951555717798334,
+              "gpu": 0.10997298146851589
+            },
+            {
+              "index": 1,
+              "cpu": -1.3170900483868224,
+              "gpu": -1.3181269919319847
+            },
+            {
+              "index": 2,
+              "cpu": 1.6090925296652145,
+              "gpu": 1.6094741185608412
+            },
+            {
+              "index": 3,
+              "cpu": -1.8404452452739313,
+              "gpu": -1.8398772415411213
+            },
+            {
+              "index": 4,
+              "cpu": -7.552485192425943,
+              "gpu": -7.550712653629748
+            },
+            {
+              "index": 5,
+              "cpu": 0.282354786577249,
+              "gpu": 0.2807772673554275
+            },
+            {
+              "index": 6,
+              "cpu": 24.409497028223335,
+              "gpu": 24.405932573110334
+            },
+            {
+              "index": 7,
+              "cpu": -9.826837217530377,
+              "gpu": -9.826299215339533
+            },
+            {
+              "index": 8,
+              "cpu": -6.904123064995812,
+              "gpu": -6.904068876914235
+            },
+            {
+              "index": 9,
+              "cpu": 1.0065699474357375,
+              "gpu": 1.0089110732171833
+            }
+          ],
+          "boot_ms": [
+            2496.0,
+            2271.0,
+            1993.0,
+            2267.0,
+            2100.0,
+            2112.0,
+            2144.0,
+            2062.0,
+            2085.0,
+            2391.0,
+            1984.0,
+            2096.0,
+            2185.0,
+            1959.0,
+            1958.0,
+            2123.0,
+            1829.0,
+            2231.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.018738184400958e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 1.003007157857061e-06
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5704970093645696e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.339908397539254e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.3482921187904264e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.031314853010371e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.2041276684899372e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 9.476751661027794e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 4.463163584827144e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.548083967480723e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 0.00010239839739354262
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 5.319238605383265e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 4.232724068952212e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 0.00010240032857674469
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00010932690038549476
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.850221890579168e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.099307754767406e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.000108819486820462
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 5.502045610598916e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 3.9703797877557734e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00012933696614664258
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.222584312790073e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 6.361984886472114e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.0001293401415378287
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00015464045944593718
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 4.958921958579318e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 7.43789494537378e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00017925966705843732
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 6.14631493904838e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.0001751889501428825
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00022494840218314355
+            }
+          ],
+          "declared_max_error": 0.0035644551130005198,
+          "label": 6,
+          "declared_prediction": 6,
+          "completed": true,
+          "max_error": 0.0035644551130005198,
+          "rmse": 0.0016081598423380652,
+          "cpu_prediction": 6,
+          "gpu_prediction": 6,
+          "passed": true
+        },
+        {
+          "image": 8,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -6.510496295188517,
+              "gpu": -6.514128131359342
+            },
+            {
+              "index": 1,
+              "cpu": -7.259439245976705,
+              "gpu": -7.259030543490281
+            },
+            {
+              "index": 2,
+              "cpu": -4.9766377896034015,
+              "gpu": -4.974227440141544
+            },
+            {
+              "index": 3,
+              "cpu": 21.889446005714873,
+              "gpu": 21.886916993752802
+            },
+            {
+              "index": 4,
+              "cpu": 4.149041697939575,
+              "gpu": 4.148131614167744
+            },
+            {
+              "index": 5,
+              "cpu": 11.918668092943099,
+              "gpu": 11.920610568823419
+            },
+            {
+              "index": 6,
+              "cpu": 0.7661289260901396,
+              "gpu": 0.7647623174590713
+            },
+            {
+              "index": 7,
+              "cpu": -2.938271872682834,
+              "gpu": -2.937425788489467
+            },
+            {
+              "index": 8,
+              "cpu": -8.339716590418147,
+              "gpu": -8.340899452938405
+            },
+            {
+              "index": 9,
+              "cpu": -8.72295764877983,
+              "gpu": -8.719004094264132
+            }
+          ],
+          "boot_ms": [
+            2057.0,
+            1921.0,
+            2349.0,
+            2232.0,
+            2308.0,
+            1959.0,
+            2048.0,
+            1888.0,
+            2107.0,
+            2533.0,
+            2131.0,
+            1569.0,
+            2032.0,
+            2176.0,
+            1949.0,
+            2059.0,
+            2396.0,
+            1644.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 8.141576846431436e-07
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 8.143788103841254e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.479444168007605e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.455865425021007e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.3287167010696024e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.5222268554731956e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 3.3085112705104336e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 9.722942561829484e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.7319490629675895e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 7.27244928821584e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 9.245221128084224e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 5.294693094771638e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 3.8441870263348533e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 9.245627213131779e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00012035694499322111
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.5967718576352123e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.2290150848772685e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00011315214082672706
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 4.714780918520581e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 4.17523918926823e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00011951755572334882
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.70132380199946e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 8.067582508589077e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.0001195109165548075
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.00013318773586957176
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 4.09860527988571e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 0.0001007753076607415
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.0001651665919217421
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 6.025228226130136e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00028723151676880027
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00020724841230605577
+            }
+          ],
+          "declared_max_error": 0.003953554515698343,
+          "label": 3,
+          "declared_prediction": 3,
+          "completed": true,
+          "max_error": 0.003953554515698343,
+          "rmse": 0.002231090706521899,
+          "cpu_prediction": 3,
+          "gpu_prediction": 3,
+          "passed": true
+        },
+        {
+          "image": 9,
+          "logits": [
+            {
+              "index": 0,
+              "cpu": -2.0277629066567804,
+              "gpu": -2.0294628665305687
+            },
+            {
+              "index": 1,
+              "cpu": 18.044254545889913,
+              "gpu": 18.042899927797073
+            },
+            {
+              "index": 2,
+              "cpu": -6.788978204876533,
+              "gpu": -6.787471355772196
+            },
+            {
+              "index": 3,
+              "cpu": -0.6806760599784387,
+              "gpu": -0.6827588229066363
+            },
+            {
+              "index": 4,
+              "cpu": -7.82919526255026,
+              "gpu": -7.830425958228303
+            },
+            {
+              "index": 5,
+              "cpu": -12.257204078342065,
+              "gpu": -12.258181624829719
+            },
+            {
+              "index": 6,
+              "cpu": 0.48745336414792895,
+              "gpu": 0.4865222202866905
+            },
+            {
+              "index": 7,
+              "cpu": -3.2259377836300267,
+              "gpu": -3.2231008159263927
+            },
+            {
+              "index": 8,
+              "cpu": 9.248321817225415,
+              "gpu": 9.25017395508555
+            },
+            {
+              "index": 9,
+              "cpu": 5.04969211319777,
+              "gpu": 5.051714530946205
+            }
+          ],
+          "boot_ms": [
+            2794.0,
+            1605.0,
+            2221.0,
+            1974.0,
+            2089.0,
+            1971.0,
+            2267.0,
+            2428.0,
+            2106.0,
+            2265.0,
+            1903.0,
+            2045.0,
+            1654.0,
+            2183.0,
+            2208.0,
+            2362.0,
+            2034.0,
+            2066.0
+          ],
+          "stage_errors": [
+            {
+              "stage": "stem.conv1_bn1",
+              "max_error": 1.1165208384008446e-06
+            },
+            {
+              "stage": "stem.relu",
+              "max_error": 9.518871864240552e-07
+            },
+            {
+              "stage": "layer1.0.conv1_bn1",
+              "max_error": 2.5575675858674485e-06
+            },
+            {
+              "stage": "layer1.0.conv2_bn2",
+              "max_error": 3.132694838414718e-05
+            },
+            {
+              "stage": "layer1.0.output",
+              "max_error": 5.250655020976047e-05
+            },
+            {
+              "stage": "layer1.1.conv1_bn1",
+              "max_error": 3.0048970049521145e-05
+            },
+            {
+              "stage": "layer1.1.conv2_bn2",
+              "max_error": 2.0182759866933797e-05
+            },
+            {
+              "stage": "layer1.1.output",
+              "max_error": 8.699117967087e-05
+            },
+            {
+              "stage": "layer1.2.conv1_bn1",
+              "max_error": 5.024028685333146e-05
+            },
+            {
+              "stage": "layer1.2.conv2_bn2",
+              "max_error": 5.893858659894555e-05
+            },
+            {
+              "stage": "layer1.2.output",
+              "max_error": 8.217013397635205e-05
+            },
+            {
+              "stage": "layer2.0.conv1_bn1",
+              "max_error": 5.021138867945807e-05
+            },
+            {
+              "stage": "layer2.0.conv2_bn2",
+              "max_error": 3.925898205602192e-05
+            },
+            {
+              "stage": "layer2.0.shortcut",
+              "max_error": 8.217000971284805e-05
+            },
+            {
+              "stage": "layer2.0.output",
+              "max_error": 0.00010229036168887644
+            },
+            {
+              "stage": "layer2.1.conv1_bn1",
+              "max_error": 4.5378024513445525e-05
+            },
+            {
+              "stage": "layer2.1.conv2_bn2",
+              "max_error": 5.31497507815018e-05
+            },
+            {
+              "stage": "layer2.1.output",
+              "max_error": 0.00010101863550674925
+            },
+            {
+              "stage": "layer2.2.conv1_bn1",
+              "max_error": 5.2538685923489425e-05
+            },
+            {
+              "stage": "layer2.2.conv2_bn2",
+              "max_error": 4.005978798414869e-05
+            },
+            {
+              "stage": "layer2.2.output",
+              "max_error": 0.00011469102028775031
+            },
+            {
+              "stage": "layer3.0.conv1_bn1",
+              "max_error": 4.0121992326398737e-05
+            },
+            {
+              "stage": "layer3.0.conv2_bn2",
+              "max_error": 8.651210293391179e-05
+            },
+            {
+              "stage": "layer3.0.shortcut",
+              "max_error": 0.0001146963310273781
+            },
+            {
+              "stage": "layer3.0.output",
+              "max_error": 0.0001485196640635504
+            },
+            {
+              "stage": "layer3.1.conv1_bn1",
+              "max_error": 4.845510602486183e-05
+            },
+            {
+              "stage": "layer3.1.conv2_bn2",
+              "max_error": 9.433591083559886e-05
+            },
+            {
+              "stage": "layer3.1.output",
+              "max_error": 0.00015563062173436833
+            },
+            {
+              "stage": "layer3.2.conv1_bn1",
+              "max_error": 6.004676502581463e-05
+            },
+            {
+              "stage": "layer3.2.conv2_bn2",
+              "max_error": 0.00018911985803711506
+            },
+            {
+              "stage": "layer3.2.output",
+              "max_error": 0.00022895806529545093
+            }
+          ],
+          "declared_max_error": 0.0028369677036339525,
+          "label": 1,
+          "declared_prediction": 1,
+          "completed": true,
+          "max_error": 0.0028369677036339525,
+          "rmse": 0.0017389525933633053,
+          "cpu_prediction": 1,
+          "gpu_prediction": 1,
+          "passed": true
+        }
+      ],
+      "online": [
+        {
+          "repeat": 0.0,
+          "seconds": 68.510075152,
+          "replay_max_error": 0.0
+        },
+        {
+          "repeat": 1.0,
+          "seconds": 68.408482798,
+          "replay_max_error": 0.0
+        },
+        {
+          "repeat": 2.0,
+          "seconds": 68.73741288,
+          "replay_max_error": 0.0
+        }
+      ],
+      "fit": {
+        "request": "22",
+        "actual_degree": "22",
+        "generator": "cosine_bessel",
+        "k": "25",
+        "ratio": "32",
+        "double_angle": "5"
+      },
+      "budget": {
+        "raised_q": 70,
+        "c2s_q": 65,
+        "evalmod_q": 43,
+        "raw_q": 38,
+        "normalized_q": 37,
+        "application_q": 36
+      },
+      "physical_q_consumed_before_application_drop": 33,
+      "declared_complete": true,
+      "images_completed": 10,
+      "images_passed": 10,
+      "cpu_gpu_prediction_agreement": 10,
+      "label_hits": 10,
+      "worst_logits_max_error": 0.005716388748208345,
+      "worst_logits_rmse": 0.0028901051736983097,
+      "pooled_logits_rmse": 0.002050300693244749,
+      "component_median_seconds": 0.794779013,
+      "component_max_error": 2.1803551064912338e-05,
+      "component_rmse": 1.5341150455074071e-06,
+      "online_median_seconds": 68.510075152,
+      "passed": true,
+      "online_time_reduction_percent": 12.380174232685714,
+      "component_time_reduction_percent": 7.896621235189616
+    }
+  },
+  "parameters": {
+    "N": 65536,
+    "slots": 32768,
+    "Q": 70,
+    "P": 35,
+    "H": 192,
+    "application_q": 36,
+    "application_scale_log2": 40,
+    "work_scale_log2": 52,
+    "k": 25,
+    "message_ratio": 32
+  },
+  "images_requested": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "bootstrap_per_image": 18,
+  "same_key_and_inputs": true,
+  "historical_numbers_excluded": true,
+  "all_passed": true,
+  "suite_status": {
+    "exit_code": 0,
+    "process_elapsed": 3139.763278722763
+  },
+  "log_sha256": "dcd8f762dea92034eddffdb87a72b428e7a61b242d10c122ac1788dc5dc87aa7"
+}

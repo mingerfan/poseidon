@@ -127,7 +127,7 @@ ParametersLiteral make_parameters(const GpuConfig &config)
         config.log_n,
         config.log_slots,
         config.log_scale,
-        /*hamming_weight=*/0,
+        /*hamming_weight=*/192,
         config.q0_level,
         Modulus(0),
         {},
@@ -135,6 +135,24 @@ ParametersLiteral make_parameters(const GpuConfig &config)
         sec_level_type::none);
     parameters.set_log_modulus(config.log_q, config.log_p);
     return parameters;
+}
+
+// cos(omega*z)=J0(omega)+2*sum((-1)^j*J_(2j)(omega)*T_(2j)(z)).
+// Offset is applied once by the existing GPU EvalMod evaluator, not in this fit.
+Polynomial comparison_cosine_polynomial(const EvalModPoly &owner,unsigned degree)
+{
+    auto polynomial=owner.sine_poly();
+    if(degree==59) return polynomial;
+    polynomial.data().assign(degree+1,std::complex<double>(0,0));
+    const double omega=2*std::acos(-1.0)*owner.k();
+    for(unsigned i=0;i<=degree;i+=2) {
+        const double coefficient=(i==0 ? 1.0 : 2.0)*((i/2)%2 ? -1.0 : 1.0)*std::cyl_bessel_j(i,omega);
+        polynomial.data()[i]=owner.sqrt_2pi()*coefficient;
+    }
+    polynomial.max_degree()=degree;
+    polynomial.basis_type()=Chebyshev;
+    polynomial.lead()=true;
+    return polynomial;
 }
 
 LinearMatrixGroup make_dynamic_dft_group(
@@ -1132,15 +1150,20 @@ void GpuCkksRuntime::initialize_bootstrap()
         impl_->config.double_angle,
         impl_->config.boundary_k,
         /*arcsine_degree=*/0,
-        impl_->config.evalmod_degree);
+        59);
+    const auto candidate_polynomial=comparison_cosine_polynomial(eval_mod_poly,impl_->config.evalmod_degree);
+    std::cout << "CMP_FIT request=" << impl_->config.evalmod_degree
+              << " actual_degree=" << candidate_polynomial.degree()
+              << " generator=" << (impl_->config.evalmod_degree==59 ? "native_discrete" : "cosine_bessel")
+              << " k=" << impl_->config.boundary_k
+              << " ratio=" << impl_->config.message_ratio
+              << " double_angle=" << impl_->config.double_angle << std::endl;
     const double c2s_scaling =
         eval_mod_poly.q_div() /
         (eval_mod_poly.k() * eval_mod_poly.sc_fac() * eval_mod_poly.q_diff());
-    const double bootstrap_native_scale = std::exp2(
-        static_cast<double>(impl_->config.bootstrap_output_log_scale));
-    const double s2c_scaling =
-        bootstrap_native_scale /
-        (eval_mod_poly.scaling_factor() / eval_mod_poly.message_ratio());
+    // C2S maps the message by 1/message_ratio; bootstrap.output_ratio
+    // restores it once. S2C must not introduce application_scale/work_scale.
+    const double s2c_scaling = 1.0;
     const double raised_scale = evalmod_scale;
 
     auto coeff_to_slot = make_dynamic_dft_group(
@@ -1181,7 +1204,7 @@ void GpuCkksRuntime::initialize_bootstrap()
         impl_->gpu_relin_keys.get(),
         parms_id_zero,
         /*logical_rescale_count=*/1,
-        /*polynomial_override=*/nullptr,
+        /*polynomial_override=*/&candidate_polynomial,
         /*include_input_offset=*/true,
         std::numeric_limits<std::uint32_t>::max(),
         std::numeric_limits<double>::quiet_NaN(),
@@ -1218,6 +1241,17 @@ void GpuCkksRuntime::initialize_bootstrap()
         s2c_minimum_scale,
         evalmod_scale / raw_s2c_output_scale);
 
+    const auto s2c_counts=dft_rescale_counts(slot_to_coeff);
+    const auto s2c_consumed=std::accumulate(s2c_counts.begin(),s2c_counts.end(),std::size_t{0});
+    if(evalmod_data.output_q_count<=s2c_consumed+1 ||
+       evalmod_data.output_q_count-s2c_consumed-1<impl_->config.application_q_count())
+        throw std::runtime_error("bootstrap Q budget cannot return a valid application ciphertext");
+    std::cout << "REPAIR_BUDGET request=" << impl_->config.evalmod_degree
+              << " raised_q=" << impl_->config.bootstrap_q_count
+              << " c2s_q=" << c2s_output_q_count << " evalmod_q=" << evalmod_data.output_q_count
+              << " raw_q=" << evalmod_data.output_q_count-s2c_consumed
+              << " normalized_q=" << evalmod_data.output_q_count-s2c_consumed-1
+              << " application_q=" << impl_->config.application_q_count() << std::endl;
     auto host_galois_keys = make_bootstrap_galois_keys(
         impl_->context, impl_->keygen, coeff_to_slot, slot_to_coeff);
     auto uploaded_galois = gpu::GpuUploader::upload_galois_keys(
@@ -1276,8 +1310,26 @@ void GpuCkksRuntime::initialize_bootstrap()
     data->plus_i_plaintext = gpu::GpuUploader::upload_plaintext(
         plus_i, impl_->device_id);
     data->eval_mod = std::move(evalmod_data);
+    std::cout << "CMP_LEVELS request=" << impl_->config.evalmod_degree
+              << " raised_q=" << impl_->config.bootstrap_q_count
+              << " c2s_output_q=" << c2s_output_q_count
+              << " evalmod_output_q=" << evalmod_data.output_q_count
+              << std::endl;
     impl_->bootstrap_data = std::move(data);
     impl_->bootstrap_workspace = std::make_unique<gpu::GpuBootstrapWorkspace>();
+}
+
+void GpuCkksRuntime::comparison_bootstrap_variant(std::uint32_t degree)
+{
+    if (degree != 22 && degree != 30 && degree != 59)
+        throw std::invalid_argument("bootstrap degree must be 22, 30 or 59");
+    impl_->bootstrap_workspace.reset();
+    impl_->bootstrap_data.reset();
+    impl_->gpu_bootstrap_galois_keys.reset();
+    impl_->config.evalmod_degree = degree;
+    impl_->config.double_angle = degree == 59 ? 2 : (degree==30 ? 4 : 5);
+    impl_->config.boundary_k = 25;
+    initialize_bootstrap();
 }
 
 bool GpuCkksRuntime::bootstrap_ready() const noexcept
@@ -1335,9 +1387,14 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::bootstrap(
         *impl_->bootstrap_workspace,
         result);
 
+    if (std::getenv("RESNET20_CMP_LEVEL_LOG"))
+        std::cout << "CMP_RAW_BOOT request=" << impl_->config.evalmod_degree
+                  << " input_q=" << source.meta.q_count
+                  << " raw_output_q=" << result.meta.q_count
+                  << " raw_scale_log2=" << std::log2(result.meta.scale) << std::endl;
     // Normalize the refreshed ciphertext to the configured bootstrap output
     // scale. For ResNet20 this is the 2^40 application scale, while EvalMod
-    // uses its independent 2^45 internal scale.
+    // uses its independent 2^52 internal scale.
     const double target_scale = std::exp2(
         static_cast<double>(impl_->config.bootstrap_output_log_scale));
     DeviceCiphertext normalized;
@@ -1384,23 +1441,7 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::bootstrap(
     }
     else if (normalized.meta.q_count < impl_->config.application_q_count())
     {
-        const auto q0_parms_id = impl_->context.crt_context()->parms_id_map().at(
-            impl_->config.q0_level);
-        DeviceCiphertext prepared;
-        impl_->gpu_evaluator.bootstrap_prepare_modraise_input(
-            normalized,
-            prepared,
-            q0_parms_id,
-            target_scale);
-        impl_->gpu_parameters.configure_bootstrap_raise_target(
-            impl_->context,
-            static_cast<std::size_t>(impl_->config.q0_level + 1),
-            impl_->config.application_q_count());
-        DeviceCiphertext raised;
-        impl_->gpu_evaluator.raise_modulus(
-            prepared, impl_->application_parms_id, raised);
-        raised.meta.scale = target_scale;
-        application_level = std::move(raised);
+        throw std::runtime_error("bootstrap has insufficient output Q; a second bare modraise is invalid");
     }
     else
     {

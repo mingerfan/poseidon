@@ -1711,8 +1711,15 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                         node.polynomial,
                         target_level,
                         requested_scale);
+#if defined(POSEIDON_GPU_RESNET20_FIXED_DEGREE_BOOTSTRAP)
+                // A leaf cannot restore Q primes consumed by its basis.
+                const std::size_t leaf_q_count = std::min(
+                    static_cast<std::size_t>(leaf_level) + 1,
+                    leaf_input_q_counts[node.node_id]);
+#else
                 const std::size_t leaf_q_count =
                     static_cast<std::size_t>(leaf_level) + 1;
+#endif
                 node_valid[node.node_id] = true;
                 node_q_counts[node.node_id] = leaf_q_count;
                 node_scales[node.node_id] = leaf_scale;

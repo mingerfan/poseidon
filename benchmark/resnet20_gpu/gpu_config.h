@@ -15,16 +15,16 @@ struct GpuConfig
     // logical profile is represented by several <=32-bit physical primes.
     std::uint32_t log_scale = 40;
     std::uint32_t application_log_scale = 40;
-    std::uint32_t evalmod_log_scale = 45;
-    // Bootstrap works on the verified Q34 prefix and returns directly to the
-    // application scale. These are parameters rather than runtime constants.
+    std::uint32_t evalmod_log_scale = 52;
+    // Bootstrap has a Q70 working budget and returns a genuine Q36 ciphertext
+    // at the application scale, with no second modulus raise.
     std::uint32_t bootstrap_output_log_scale = 40;
-    std::uint32_t bootstrap_q_count = 34;
+    std::uint32_t bootstrap_q_count = 70;
     std::uint32_t q0_level = 1;
     std::uint32_t message_ratio = 32;
     std::uint32_t boundary_k = 25;
-    std::uint32_t evalmod_degree = 59;
-    std::uint32_t double_angle = 2;
+    std::uint32_t evalmod_degree = 22;
+    std::uint32_t double_angle = 5;
     std::uint32_t dnum = 2;
     // Seventeen logical application levels cover convolution plus the
     // 14-level degree-[15,15,27] ReLU. At scale 2^40, one 32-bit rescale

@@ -134,6 +134,7 @@ public:
     void initialize_all_evaluation_keys();
     void initialize_bootstrap();
     bool bootstrap_ready() const noexcept;
+    void comparison_bootstrap_variant(std::uint32_t degree);
     DeviceCiphertext square_relinearize_rescale(
         const DeviceCiphertext &source) const;
     DeviceCiphertext multiply_relinearize_rescale(
