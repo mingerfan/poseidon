@@ -107,6 +107,16 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
                 $<TARGET_FILE:poseidon_runtime_cpu_api_tests> --mpi
                 ${MPIEXEC_POSTFLAGS}
         )
+        set_tests_properties(poseidon_runtime_cpu_api_mpi_2_tests
+            poseidon_runtime_cpu_api_mpi_4_tests PROPERTIES TIMEOUT 60)
+        foreach(failure IN ITEMS compute receive)
+            add_test(NAME poseidon_runtime_cpu_worker_mpi_${failure}_error
+                COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                    ${MPIEXEC_PREFLAGS} $<TARGET_FILE:poseidon_runtime_cpu_api_tests>
+                    --mpi-worker-${failure}-error ${MPIEXEC_POSTFLAGS})
+            set_tests_properties(poseidon_runtime_cpu_worker_mpi_${failure}_error
+                PROPERTIES WILL_FAIL TRUE TIMEOUT 30)
+        endforeach()
     endif()
 endif()
 

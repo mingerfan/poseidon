@@ -11,15 +11,19 @@
 #include <array>
 #include <cmath>
 #include <complex>
+#include <chrono>
+#include <condition_variable>
 #include <cstdio>
 #include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <thread>
 
 namespace
 {
@@ -150,6 +154,7 @@ void test_single_process_host_add_plain()
     decryptor.decrypt(result_cipher, result_plain);
     std::vector<std::complex<double>> result;
     encoder.decode(result_plain, result);
+    const auto sequential_result = result;
 
     const std::vector<double> expected{1.5, 1.0, 5.0, 7.0};
     for (std::size_t i = 0; i < expected.size(); ++i)
@@ -176,6 +181,53 @@ void test_single_process_host_add_plain()
             require(std::abs(result[i].real() - input[i]) < 1e-5,
                     "Release changed caller-owned Host input");
     }
+    class WorkerApi : public PoseidonCpuApi {
+    public:
+        using PoseidonCpuApi::PoseidonCpuApi;
+        const std::thread::id main = std::this_thread::get_id();
+        bool fail_compute = false;
+        Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs) {
+            require(std::this_thread::get_id() != main, "CPU evaluator ran on main");
+            if (fail_compute) throw std::runtime_error("injected local CPU worker failure");
+            return PoseidonCpuApi::compute(op, inputs);
+        }
+        Value encode_plaintext(const fhegpu::ValueDesc &desc, const std::vector<double> &slots) {
+            require(std::this_thread::get_id() != main, "CPU Encode ran on main");
+            return PoseidonCpuApi::encode_plaintext(desc, slots);
+        }
+    };
+    WorkerApi worker_api(context_id, context);
+    fhegpu::SequentialRuntime<WorkerApi> worker(0, 1, 0, worker_api,
+        fhegpu::DeviceExecutionMode::PerDeviceWorkers);
+    auto online_plan = loaded_plan;
+    online_plan.plan.format_version = 3;
+    online_plan.plan.initialization.clear();
+    online_plan.plan.execution = {
+        {0, fhegpu::EncodeOp{fhegpu::InlineEncodePayload{{0.5, -1.0, 2.0, 3.0}}, 1}},
+        {1, fhegpu::FenceOp{}},
+        {2, fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP, {0, 1}, 2,
+                            {fhegpu::PlaceKind::Host, 0, 0}, {}}}};
+    for (const auto *candidate : std::array<const fhegpu::LoadedRuntimePlan *, 3>{
+             &loaded_plan, &release_plan, &online_plan}) {
+        const auto computed = worker.run(*candidate, resources, inputs);
+        decryptor.decrypt(computed.values.at(2).value.ciphertext(), result_plain);
+        std::vector<std::complex<double>> worker_result;
+        encoder.decode(result_plain, worker_result);
+        require(worker_result == sequential_result, "CPU worker differs from Sequential");
+    }
+    worker_api.fail_compute = true;
+    bool failed = false;
+    try { worker.run(loaded_plan, resources, inputs); }
+    catch (const std::runtime_error &e) {
+        failed = std::string(e.what()).find("injected local CPU worker failure") != std::string::npos;
+    }
+    require(failed, "CPU worker exception was lost");
+    worker_api.fail_compute = false;
+    const auto recovered = worker.run(loaded_plan, resources, inputs);
+    decryptor.decrypt(recovered.values.at(2).value.ciphertext(), result_plain);
+    std::vector<std::complex<double>> recovered_result;
+    encoder.decode(result_plain, recovered_result);
+    require(recovered_result == sequential_result, "CPU runtime could not run again after worker failure");
 }
 
 void test_decrypt_reencrypt_boot()
@@ -390,16 +442,19 @@ void test_runtime_reuse()
         PoseidonCpuApi ordinary(spec.spec.context_id, context, {}, rotations);
         fhegpu::SequentialRuntime<PoseidonCpuApi> base(0, 1, 0, ordinary);
         const auto expected = decode(base.run({baseline, spec.source_sha256}, {spec, {}, false}, inputs).values.at(4).value);
-        ObservedApi api(spec.spec.context_id, context, {}, rotations);
-        fhegpu::SequentialRuntime<ObservedApi> runtime(0, 1, 0, api);
-        for (int iteration = 0; iteration < 3; ++iteration) {
-            api.pointers.clear();
-            const auto actual = decode(runtime.run({plan, spec.source_sha256}, {spec, {}, false}, inputs).values.at(4).value);
-            for (std::size_t i = 0; i < actual.size(); ++i)
-                require(std::abs(actual[i] - expected[i]) < 1e-5, "CPU reuse result differs from ordinary computation");
-            require(decode(inputs.at(0)) == original, "CPU reuse changed caller input");
+        for (auto mode : {fhegpu::DeviceExecutionMode::Sequential,
+                          fhegpu::DeviceExecutionMode::PerDeviceWorkers}) {
+            ObservedApi api(spec.spec.context_id, context, {}, rotations);
+            fhegpu::SequentialRuntime<ObservedApi> runtime(0, 1, 0, api, mode);
+            for (int iteration = 0; iteration < 3; ++iteration) {
+                api.pointers.clear();
+                const auto actual = decode(runtime.run({plan, spec.source_sha256}, {spec, {}, false}, inputs).values.at(4).value);
+                for (std::size_t i = 0; i < actual.size(); ++i)
+                    require(std::abs(actual[i] - expected[i]) < 1e-5, "CPU reuse result differs from ordinary computation");
+                require(decode(inputs.at(0)) == original, "CPU reuse changed caller input");
+            }
+            require(api.reuses == 9, "CPU reuse chain was not executed");
         }
-        require(api.reuses == 9, "CPU reuse chain was not executed");
     }
 }
 
@@ -967,9 +1022,20 @@ void test_mpi_rejects_plan_digest_mismatch(int rank, int world_size)
     int all_rejected = 0;
     MPI_Allreduce(&local_rejected, &all_rejected, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
     require(all_rejected == 1, "MPI plan digest mismatch was not rejected by every rank");
+    std::thread wrong_thread([&] {
+        try { api.communicate_async({}, {}, {}); }
+        catch (const std::runtime_error &e) {
+            rejected = std::string(e.what()).find("initialization thread") != std::string::npos;
+            return;
+        }
+        rejected = false;
+    });
+    wrong_thread.join();
+    require(rejected, "worker MPI post was not rejected before entering MPI");
 }
 
-void test_mpi_runtime(int rank, int world_size)
+void test_mpi_runtime(int rank, int world_size,
+                      fhegpu::DeviceExecutionMode mode, bool release, int failure = 0)
 {
     constexpr std::uint32_t degree = 4096;
     const std::string context_id = "poseidon-cpu-mpi-test-context";
@@ -992,15 +1058,97 @@ void test_mpi_runtime(int rank, int world_size)
     encryptor.encrypt(input_plain, input_cipher);
 
     const auto operator_spec = make_operator_spec(context, context_id);
-    const auto plan = make_mpi_plan(operator_spec, world_size, level, scale_log2);
+    auto plan = make_mpi_plan(operator_spec, world_size, level, scale_log2);
+    if (release) {
+        plan.format_version = 2;
+        std::vector<fhegpu::Instruction> execution;
+        for (const auto &instruction : plan.execution) {
+            execution.push_back(instruction);
+            if (const auto *action = std::get_if<fhegpu::CommAction>(&instruction.body))
+                execution.push_back({0, fhegpu::ReleaseOp{action->inputs.front()}});
+        }
+        plan.execution = std::move(execution);
+        std::size_t ordinal = 0;
+        for (auto *phase : {&plan.initialization, &plan.execution, &plan.finalization})
+            for (auto &instruction : *phase) instruction.ordinal = ordinal++;
+    }
     const fhegpu::LoadedRuntimePlan loaded_plan{
         plan, "sha256:2222222222222222222222222222222222222222222222222222222222222222"};
     const fhegpu::RuntimeResources resources{operator_spec, std::nullopt, false};
 
-    PoseidonCpuApi api(context_id, context, MPI_COMM_WORLD);
+    class CheckedApi : public PoseidonCpuApi {
+    public:
+        using PoseidonCpuApi::PoseidonCpuApi;
+        struct CommHandle {
+            PoseidonCpuApi::CommHandle inner;
+            fhegpu::TransferId id;
+            bool sending;
+        };
+        const std::thread::id main = std::this_thread::get_id();
+        bool worker = false, release = false;
+        int failure = 0;
+        std::mutex mutex;
+        std::condition_variable condition;
+        bool computing = false, communicated = false, released = false;
+
+        Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs) {
+            require((std::this_thread::get_id() != main) == worker, "CPU compute thread mismatch");
+            if (failure == 1 && rank() == 1)
+                throw std::runtime_error("injected MPI Host compute failure");
+            if (worker && !failure && rank() == 0 && op.kind == fhegpu::ComputeKind::AddCP) {
+                std::unique_lock<std::mutex> lock(mutex);
+                computing = true;
+                condition.notify_all();
+                require(condition.wait_for(lock, std::chrono::seconds(5), [&] { return communicated; }),
+                        "main did not complete MPI while Host evaluator call was pending");
+            }
+            return PoseidonCpuApi::compute(op, inputs);
+        }
+        Value encode_plaintext(const fhegpu::ValueDesc &d, const std::vector<double> &slots) {
+            require((std::this_thread::get_id() != main) == worker, "CPU Encode thread mismatch");
+            return PoseidonCpuApi::encode_plaintext(d, slots);
+        }
+        CommHandle communicate_async(const fhegpu::CommAction &a, const std::vector<Value> &inputs,
+                                     const std::vector<fhegpu::ValueDesc> &descs) {
+            require(std::this_thread::get_id() == main, "MPI post left initialization thread");
+            return {PoseidonCpuApi::communicate_async(a, inputs, descs), a.id,
+                    a.sources.front().rank == rank()};
+        }
+        std::vector<std::optional<Value>> wait(CommHandle &h) {
+            require(std::this_thread::get_id() == main, "MPI wait left initialization thread");
+            if (failure == 2 && rank() == 0 && h.id >= 3)
+                throw std::runtime_error("injected MPI Host receive failure");
+            if (worker && !failure && rank() == 0 && h.id == 3) {
+                std::unique_lock<std::mutex> lock(mutex);
+                require(condition.wait_for(lock, std::chrono::seconds(5), [&] { return computing; }),
+                        "MPI did not rendezvous with Host computation");
+            }
+            if (worker && release && h.sending && h.id >= 3) {
+                std::unique_lock<std::mutex> lock(mutex);
+                require(condition.wait_for(lock, std::chrono::seconds(5), [&] { return released; }),
+                        "sender Release did not execute before MPI send completion");
+            }
+            auto outputs = PoseidonCpuApi::wait(h.inner);
+            if (worker && !failure && rank() == 0 && h.id == 3) {
+                std::lock_guard<std::mutex> lock(mutex);
+                communicated = true;
+                condition.notify_all();
+            }
+            return outputs;
+        }
+        void collect_completed() {
+            std::lock_guard<std::mutex> lock(mutex);
+            released = true;
+            condition.notify_all();
+        }
+    };
+    CheckedApi api(context_id, context, MPI_COMM_WORLD);
+    api.worker = mode == fhegpu::DeviceExecutionMode::PerDeviceWorkers;
+    api.release = release;
+    api.failure = failure;
     require(api.rank() == rank && api.world_size() == world_size,
             "Poseidon CPU Api MPI identity mismatch");
-    fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(api.rank(), api.world_size(), 0, api);
+    fhegpu::SequentialRuntime<CheckedApi> runtime(api.rank(), api.world_size(), 0, api, mode);
     std::unordered_map<fhegpu::ValueId, PoseidonCpuValue> inputs;
     if (rank == 0)
     {
@@ -1037,7 +1185,9 @@ void test_mpi_runtime(int rank, int world_size)
 int main(int argc, char **argv)
 {
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
-    if (argc == 2 && std::string(argv[1]) == "--mpi")
+    if (argc == 2 && (std::string(argv[1]) == "--mpi" ||
+                     std::string(argv[1]) == "--mpi-worker-compute-error" ||
+                     std::string(argv[1]) == "--mpi-worker-receive-error"))
     {
         int provided = MPI_THREAD_SINGLE;
         MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
@@ -1051,8 +1201,18 @@ int main(int argc, char **argv)
         {
             try
             {
-                test_mpi_rejects_plan_digest_mismatch(rank, world_size);
-                test_mpi_runtime(rank, world_size);
+                const int failure = std::string(argv[1]) == "--mpi-worker-compute-error" ? 1 :
+                    std::string(argv[1]) == "--mpi-worker-receive-error" ? 2 : 0;
+                if (failure) {
+                    test_mpi_runtime(rank, world_size,
+                        fhegpu::DeviceExecutionMode::PerDeviceWorkers, true, failure);
+                } else {
+                    test_mpi_rejects_plan_digest_mismatch(rank, world_size);
+                    for (auto mode : {fhegpu::DeviceExecutionMode::Sequential,
+                                      fhegpu::DeviceExecutionMode::PerDeviceWorkers})
+                        for (bool release : {false, true})
+                            test_mpi_runtime(rank, world_size, mode, release);
+                }
             }
             catch (const std::exception &error)
             {

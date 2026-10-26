@@ -80,6 +80,9 @@ public:
     std::string name() const;
     int rank() const noexcept;
     int world_size() const noexcept;
+    // Encode/evaluation finish synchronously. One Host worker owns these calls;
+    // MPI construction, preflight, communication, abort and destruction stay on
+    // the thread that initialized MPI (MPI_THREAD_FUNNELED).
     Value encode_plaintext(const fhegpu::ValueDesc &output_desc, const std::vector<double> &slots);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
     bool supports_reuse(const fhegpu::ComputeOp &op) const;

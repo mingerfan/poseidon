@@ -6,6 +6,8 @@
 
 - Runtime 固定在 `third_party/ckks-runtime` submodule；打开 `POSEIDON_BUILD_CKKS_RUNTIME_API` 时默认从该目录构建，本地联调可用 `POSEIDON_CKKS_RUNTIME_SOURCE_DIR` 覆盖。不打开该选项时不检查也不构建 Runtime。
 - `PoseidonCpuApi` 支持单进程 Host 执行，也可选通过 MPI 在多进程间执行显式 Transfer。
+- 纯 CPU 可使用 `SequentialRuntime<PoseidonCpuApi>(rank, world_size, 0, api, DeviceExecutionMode::PerDeviceWorkers)`：主线程负责 MPI，一个 Host worker 按计划队列顺序同步执行 Encode 和计算，算子内部仍可使用 OpenMP。模型入口 `poseidon_runtime_cpu_mlp_e2e` 默认选择此模式，设置 `POSEIDON_RUNTIME_CPU_EXECUTOR=sequential` 可使用原顺序路径；报告中的 `executor` 记录所选模式。
+- CPU MPI 保持 `MPI_THREAD_FUNNELED`，构造、preflight、通信、wait、abort 和析构均在初始化 MPI 的线程执行。线程 trace 使用 `rank-N-main`、`rank-N-cpu-worker` 区分执行线程，`cpu.encoder.Encode` 和 `cpu.evaluator.*` 标记后端调用。通信仍逐组阻塞完成，独立计算可与主线程通信同时进行；这不保证任意计划的重叠比例或性能提升。
 - `PoseidonGpuApi` 支持单进程单卡和多卡，使用 RuntimePlan 已分配的设备并执行显式 CUDA 拷贝；每个值仍是位于一张卡上的完整对象，不支持多 shard 算子。
 - CPU/GPU Api 都支持计划中明确写出的 `decrypt_reencrypt` Host Boot；`PoseidonGpuApi` 还支持预先配置 profile 的原生单卡 GPU Boot。MPI/NCCL GPU 通信通过独立的实验性构建选项接入，首期只传输完整的单设备对象。
 - Runtime 核心不依赖 Poseidon；Api 实现放在 Poseidon 仓库。
@@ -17,7 +19,7 @@
 - 同进程 CUDA 拷贝、CPU MPI 通信、MPI/NCCL bootstrap、跨 rank Host-to-Device staging 和 Host `decrypt_reencrypt` Boot 已接入 RuntimePlan 执行路径。
 - `GpuBootstrapProfileBuilder` 可确定性生成并上传当前 degree-22、baby-4、三次二倍角的 native Boot profile；RuntimePlan 通过 profile id 和静态 Device place 调用优化后的 `GpuEvaluator::bootstrap`。
 - 拷贝由 RuntimePlan 的 Transfer/Replicate 驱动，算子不会在失败后临时搬运数据或切换后端。
-- 多 rank `PerDeviceWorkers` 为每个 MPI rank 使用一个有序通信提交线程；它只提交跨 rank NCCL，不逐条等待完成。device worker 负责本地计算和同 rank CUDA copy；initialization 仍顺序执行。
+- 多 rank GPU `PerDeviceWorkers` 为每个 MPI rank 使用一个有序通信提交线程；它只提交跨 rank NCCL，不逐条等待完成。device worker 负责本地计算和同 rank CUDA copy；GPU initialization 仍顺序执行。
 - CUDA copy 和 NCCL 接收在提交后立即发布带完成 event 的 Device 输出。后续计算或通信在自己的 stream 上等待 event，CPU 只在 Host 物化、错误检查和最终收尾时等待完成。
 
 原生 Boot 的最小接入方式如下：

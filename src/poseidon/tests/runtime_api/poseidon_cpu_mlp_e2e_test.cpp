@@ -473,7 +473,13 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             loaded_spec.spec.context_id, context, relin_keys, galois_keys,
             public_key, secret_key);
     }
-    fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(rank, world_size, 0, *api);
+    const char *executor_env = std::getenv("POSEIDON_RUNTIME_CPU_EXECUTOR");
+    const std::string executor = executor_env ? executor_env : "host-worker";
+    if (executor != "host-worker" && executor != "sequential")
+        throw std::invalid_argument("POSEIDON_RUNTIME_CPU_EXECUTOR must be host-worker or sequential");
+    fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(rank, world_size, 0, *api,
+        executor == "host-worker" ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
+                                  : fhegpu::DeviceExecutionMode::Sequential);
     const fhegpu::RuntimeResources resources{
         loaded_spec, std::filesystem::path(paths[2]), false,
         runtime_bundle_options_from_env()};
@@ -663,6 +669,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             {"format_version", 1},
             {"passed", passed},
             {"model", model},
+            {"executor", executor},
             {"require_python_match", require_python_match},
             {"world_size", world_size},
             {"context_mode", gpu_equivalent_context
@@ -705,6 +712,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         write_json(paths[5], report);
 
         std::cout << (passed ? "PASS" : "FAIL")
+                  << " executor=" << executor
                   << " world_size=" << world_size
                   << " transfers=" << count_transfers(loaded_plan.plan)
                   << " final_rank=" << final_rank

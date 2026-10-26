@@ -10,6 +10,7 @@
 #include "poseidon/runtime_api/rescale_normalization.h"
 #include "poseidon/runtime_api/rotation_key_basis.h"
 #include "runtime/utils/sha256.hpp"
+#include "runtime/thread_trace.hpp"
 
 #include <algorithm>
 #include <array>
@@ -22,12 +23,29 @@
 #include <limits>
 #include <stdexcept>
 #include <string_view>
+#include <thread>
 #include <utility>
 
 namespace poseidon::runtime_api
 {
 namespace
 {
+
+class CpuOperatorTrace
+{
+public:
+    explicit CpuOperatorTrace(std::string name) : name_(std::move(name)),
+        start_(fhegpu::ThreadTrace::enabled() ? fhegpu::ThreadTrace::timestamp_ns() : 0) {}
+    ~CpuOperatorTrace()
+    {
+        if (start_)
+            fhegpu::ThreadTrace::record_duration(name_.c_str(), this, start_,
+                                                fhegpu::ThreadTrace::timestamp_ns());
+    }
+private:
+    std::string name_;
+    std::uint64_t start_;
+};
 
 const Ciphertext &require_ciphertext(const std::vector<PoseidonCpuValue> &inputs, std::size_t index)
 {
@@ -239,12 +257,21 @@ void require_same_string(MPI_Comm communicator, int world_size, std::string_view
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
 struct PoseidonCpuApi::MpiState
 {
+    const std::thread::id main_thread = std::this_thread::get_id();
     MPI_Comm communicator = MPI_COMM_NULL;
     int tag_upper_bound = -1;
     std::shared_ptr<std::ofstream> trace;
 
+    void require_main_thread() const
+    {
+        if (std::this_thread::get_id() != main_thread)
+            throw std::runtime_error("Poseidon CPU MPI calls require the MPI initialization thread");
+    }
+
     ~MpiState()
     {
+        // Destruction also calls MPI; fail before MPI if ownership is violated.
+        if (std::this_thread::get_id() != main_thread) std::terminate();
         int finalized = 0;
         if (communicator != MPI_COMM_NULL && MPI_Finalized(&finalized) == MPI_SUCCESS && !finalized)
         {
@@ -398,6 +425,10 @@ PoseidonCpuApi::PoseidonCpuApi(std::string context_id, PoseidonContext context,
     {
         throw std::runtime_error("Poseidon CPU MPI mode requires MPI_THREAD_FUNNELED");
     }
+    int is_main = 0;
+    check_mpi(MPI_Is_thread_main(&is_main), "MPI_Is_thread_main");
+    if (!is_main)
+        throw std::runtime_error("Poseidon CPU MPI construction requires the MPI initialization thread");
 
     auto state = std::make_unique<MpiState>();
     check_mpi(MPI_Comm_dup(communicator, &state->communicator), "MPI_Comm_dup");
@@ -481,6 +512,7 @@ int PoseidonCpuApi::mpi_tag(fhegpu::TransferId id, int part) const
 PoseidonCpuApi::Value PoseidonCpuApi::encode_plaintext(const fhegpu::ValueDesc &output_desc,
                                                        const std::vector<double> &slots)
 {
+    CpuOperatorTrace trace("cpu.encoder.Encode");
     require_local_host_place(output_desc.place, "Poseidon CPU Encode");
     if (output_desc.kind != fhegpu::ValueKind::Plaintext || output_desc.components != 1)
     {
@@ -512,6 +544,7 @@ bool PoseidonCpuApi::supports_reuse(const fhegpu::ComputeOp &op) const
 PoseidonCpuApi::Value PoseidonCpuApi::compute_reuse(
     const fhegpu::ComputeOp &op, Value input, const std::vector<Value> &other_inputs)
 {
+    CpuOperatorTrace trace("cpu.evaluator.reuse." + fhegpu::to_string(op.kind));
     require_local_host_place(op.place, "Poseidon CPU compute_reuse");
     if (!supports_reuse(op) || op.reuse_input != 0 || !other_inputs.empty())
         throw std::invalid_argument("unsupported Poseidon CPU compute_reuse");
@@ -538,6 +571,7 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute_reuse(
 PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
                                               const std::vector<Value> &inputs)
 {
+    CpuOperatorTrace trace("cpu.evaluator." + fhegpu::to_string(op.kind));
     require_local_host_place(op.place, "Poseidon CPU compute");
     Ciphertext output;
 
@@ -686,6 +720,7 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
     if (mpi_ != nullptr)
     {
+        mpi_->require_main_thread();
         if (action.inputs.size() != 1 || action.sources.size() != 1 ||
             action.outputs.size() != action.destinations.size() ||
             action.outputs.size() != action.output_types.size())
@@ -796,6 +831,9 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
 
 std::vector<std::optional<PoseidonCpuApi::Value>> PoseidonCpuApi::wait(CommHandle &handle)
 {
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_) mpi_->require_main_thread();
+#endif
     if (handle.state == nullptr)
     {
         throw std::runtime_error("Poseidon CPU Api has no communication handle to wait for");
@@ -957,6 +995,7 @@ void PoseidonCpuApi::preflight(std::string_view plan_source_sha256,
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
     if (mpi_ != nullptr)
     {
+        mpi_->require_main_thread();
         const int local_skip = skip_artifact_digest_checks ? 1 : 0;
         std::vector<int> skip_values(static_cast<std::size_t>(world_size_));
         check_mpi(MPI_Allgather(&local_skip, 1, MPI_INT, skip_values.data(), 1, MPI_INT,
@@ -1044,6 +1083,7 @@ void PoseidonCpuApi::preflight(std::string_view plan_source_sha256,
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
     if (mpi_ != nullptr)
     {
+        mpi_->require_main_thread();
         std::fprintf(stderr, "[rank %d] Poseidon CPU MPI abort: %s\n", rank_, reason.c_str());
         std::fflush(stderr);
         MPI_Abort(mpi_->communicator, exit_code);
