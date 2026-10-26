@@ -16,6 +16,7 @@ class Header:
     l_max: int | None = None
     boot_out_level: int | None = None
     lineno: int = 0
+    manage: str = "compiler"
 
 
 @dataclass(frozen=True)
@@ -89,6 +90,8 @@ def canonical(program: Program) -> dict:
             regions.append([op.region, program.regions[op.region].level_budget])
     header = asdict(program.header)
     header.pop("lineno")
+    if header["manage"] == "compiler":
+        header.pop("manage")
     return dict(header=header,
                 params=[[p.name, p.kind, list(p.shape)] for p in program.params],
                 ops=ops, outputs=[ids[x] for x in program.outputs], regions=regions)

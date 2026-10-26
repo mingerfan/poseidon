@@ -99,6 +99,10 @@ def weight_usage_diags(program: Program, graph) -> list[Diag]:
 
 def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None) -> CheckResult:
     diags = []
+    if program.header.manage == "dsl" and (program.header.refresh != "compiler" or
+                                           program.header.placement != "depth-dp"):
+        diags.append(Diag("E_MANAGEMENT", "error", program.header.lineno, None,
+                          '暂不支持：manage="dsl" requires refresh="compiler", placement="depth-dp"'))
     shapes = {p.name: p.shape for p in program.params}
     layouts = {p.name: "raw" if p.kind == "cipher" else "plain" for p in program.params}
     plain = {p.name for p in program.params if p.kind == "plain"}

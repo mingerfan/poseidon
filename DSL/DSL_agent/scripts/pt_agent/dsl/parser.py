@@ -156,7 +156,7 @@ class _Parser:
             _fail("E_HEADER", decorator, "Expected @fhe.program(keyword=value)")
         values = {}
         for kw in decorator.keywords:
-            if kw.arg not in ("slots", "refresh", "placement", "l_max", "boot_out_level") or kw.arg in values:
+            if kw.arg not in ("slots", "refresh", "placement", "l_max", "boot_out_level", "manage") or kw.arg in values:
                 _fail("E_HEADER", decorator, "Unknown, expanded or duplicate header keyword")
             try:
                 values[kw.arg] = self.literal(kw.value, _Scope({}))
@@ -167,6 +167,8 @@ class _Parser:
             _fail("E_HEADER", decorator, "slots must be a power of two in [1024,65536]")
         if values.get("refresh", "compiler") not in ("compiler", "agent"):
             _fail("E_HEADER", decorator, "refresh must be compiler or agent")
+        if values.get("manage", "compiler") not in ("compiler", "dsl"):
+            _fail("E_HEADER", decorator, "manage must be compiler or dsl")
         if values.get("placement", "depth-dp") not in ("depth-dp", "optimized", "greedy"):
             _fail("E_HEADER", decorator, "Unsupported placement")
         for key in ("l_max", "boot_out_level"):

@@ -35,6 +35,8 @@ BOOT_CONFIG_DIR = PROFILES_DIR / "qwen48"
 COMPILE_MODES = ("eva", "dacapo-optimized", "dacapo-depth-dp", "pars")
 BOOT_PROFILES = (None, "qwen48")
 TRUSTED_LIMITS = dict(mem_gib=6, fsize_gib=8, wall_seconds=3600, min_free_gib=10)
+EARTH_TAIL_PASSES = 'canonicalize,cse,cse,canonicalize'
+FRONTEND_PASSES = 'builtin.module(cse,canonicalize,func.func(privatize-constant),canonicalize)'
 
 
 def setup_env() -> None:
@@ -154,12 +156,18 @@ def trusted_run(run_dir: Path, argv: list[str], log: Path, *, env_extra: dict | 
     command = ["/usr/bin/time", "-f", "%M %e", "-o", str(time_path), *argv]
     started = time.monotonic()
     timed_out = False
+    ir_io = None
     with log.open("w") as stream:
         try:
-            completed = subprocess.run(command, cwd=run_dir, env={**os.environ, **(env_extra or {})},
+            from .manage.streams import run as stream_run
+            # A package's Python driver owns its --input argument. Only the
+            # optimizer itself accepts MLIR on stdin (S1 §11).
+            runner = stream_run if Path(argv[0]).name=='hecate-opt' else subprocess.run
+            completed = runner(command, cwd=run_dir, env={**os.environ, **(env_extra or {})},
                                        stdout=stream, stderr=subprocess.STDOUT, preexec_fn=limits,
                                        timeout=TRUSTED_LIMITS["wall_seconds"])
             exit_code = completed.returncode
+            ir_io = getattr(completed,'ir_io',None)
         except subprocess.TimeoutExpired:
             exit_code, timed_out = -9, True
     seconds = time.monotonic()-started
@@ -178,8 +186,11 @@ def trusted_run(run_dir: Path, argv: list[str], log: Path, *, env_extra: dict | 
     with log.open("rb") as stream:
         stream.seek(max(0, log.stat().st_size-3200))
         tail = stream.read().decode(errors="replace")[-800:]
-    return dict(exit=exit_code, seconds=seconds, peak_rss_mib=peak_rss_mib,
-                timeout=timed_out, log_tail=tail)
+    result = dict(exit=exit_code, seconds=seconds, peak_rss_mib=peak_rss_mib,
+                  timeout=timed_out, log_tail=tail)
+    if ir_io is not None:
+        result['ir_io'] = ir_io
+    return result
 
 
 def new_run_dir(tag: str) -> Path:
@@ -232,6 +243,48 @@ def compile_argv(mode: str, boot: str | None, run_dir: Path) -> list[str]:
     return argv
 
 
+def frontend_preprocess_argv(mode: str, boot: str | None, run_dir: Path) -> list[str]:
+    """frontend.cpp:124–131 save(); share the compiler profile/paths with compile_argv."""
+    original = compile_argv(mode,boot,run_dir)
+    config = next(a for a in original if a.startswith('--ckks-config='))
+    return [original[0],'/out/raw.earth.mlir',config,'--mlir-disable-threading','--verify-each',
+            '--mlir-print-op-generic','--mlir-print-debuginfo',
+            '--pass-pipeline='+FRONTEND_PASSES,'-o','/out/preprocessed.earth.mlir']
+
+
+def managed_compile_argv(mode: str, boot: str | None, run_dir: Path) -> list[list[str]]:
+    """S0's conversion/export pipelines; every profile/plan option comes from compile_argv."""
+    if mode != "dacapo-depth-dp":
+        raise ValueError('暂不支持：managed compilation requires dacapo-depth-dp')
+    original = compile_argv(mode, boot, run_dir)
+    config = next(a for a in original if a.startswith('--ckks-config='))
+    options = [a.removeprefix('--runtime-plan-') for a in original if a.startswith('--runtime-plan-')]
+    options = [('plan-'+a) if a.startswith(('format=', 'id=')) else a for a in options]
+    options += ['pretty=false', 'report-io=false', 'prefix=/out/lowered']
+    common = [original[0], config, '--mlir-disable-threading', '--verify-each']
+    return [[common[0], '/out/managed.mlir', *common[1:],
+             '--pass-pipeline=builtin.module('+EARTH_TAIL_PASSES+
+             ',func.func(convert-earth-to-ckks,convert-upscale-to-mulcp,cse))',
+             '-o', '/out/managed.ckks.mlir'],
+            [common[0], '/out/managed.ckks.mlir', *common[1:],
+             '--pass-pipeline=builtin.module(func.func(canonicalize,emit-runtime-plan{'+
+             ' '.join(options)+'}))', '-o', '/out/lowered.mlir']]
+
+
+def management_profile(mode='dacapo-depth-dp', boot='qwen48') -> dict:
+    """Resolve the management parameters from the same arguments and JSON as compilation."""
+    argv = compile_argv(mode, boot, Path('.'))
+    config = next(a.split('=', 1)[1] for a in argv if a.startswith('--ckks-config='))
+    path = BOOT_CONFIG_DIR/'compiler-config.json' if config.endswith('boot-compiler-config.json') else host_paths()['profile']
+    result = json.loads(path.read_text())
+    # S1 §8: this management profile describes the tested aarch64 GCC build.
+    # It is metadata for Earth emission, not a CKKS/security configuration change.
+    result['rms_accumulation'] = 'fma'
+    for name in ('waterline', 'output-val'):
+        result[name.replace('-', '_')] = int(next(a.split('=', 1)[1] for a in argv if a.startswith('--'+name+'=')))
+    return result
+
+
 def trace(run_dir: Path, seconds: int = 600, *, trusted=False) -> dict:
     """inside Nix. Trace emitted source through the selected runner."""
     setup_env()
@@ -250,6 +303,11 @@ def trace(run_dir: Path, seconds: int = 600, *, trusted=False) -> dict:
                              LD_LIBRARY_PATH=os.environ["HECATE_PYTHON_LIBRARY_PATH"]))
         mlir = run_dir / "candidate_trace.mlir"
         result.update(mlir=mlir.is_file(), mlir_bytes=mlir.stat().st_size if mlir.is_file() else 0)
+        if result['exit']==0 and result['mlir']:
+            from .manage.streams import compress_ir
+            actual = compress_ir(mlir)
+            if actual != mlir:
+                result.update(mlir_path=str(actual),compressed_bytes=actual.stat().st_size)
         return result
     _legacy_sdk_env()
     from poseidon_candidate_sandbox import run
@@ -294,14 +352,19 @@ def plan_stats(run_dir: Path, function="golden") -> dict:
                 inputs=len(plan["external_inputs"]), outputs=len(plan["final_outputs"]))
 
 
-def prune(run_dir: Path):
+def prune(run_dir: Path, *, keep=()):
     """Remove only the intermediates approved in R6b §4, retaining plans and logs."""
     run_dir = Path(run_dir)
     deleted = []
     names = {"candidate_trace.mlir", "trace_model.mlir", "constants.npz", "lowered.mlir",
-             "lowered.earth.mlir", "lowered.ckks.mlir"}
+             "lowered.earth.mlir", "lowered.ckks.mlir", "managed.mlir", "managed.ckks.mlir", "normalized.earth.mlir",
+             "raw.earth.mlir", "preprocessed.earth.mlir"}
+    names.update(name+'.gz' for name in tuple(names) if name.endswith('.mlir'))
+    keep = set(keep)|{name+'.gz' for name in keep if name.endswith('.mlir')}
     names.update(path.name for path in run_dir.glob("lowered._hecate_*.bundle"))
     for name in sorted(names):
+        if name in keep:
+            continue
         path = run_dir / name
         if path.is_symlink() or path.is_file():
             path.unlink()

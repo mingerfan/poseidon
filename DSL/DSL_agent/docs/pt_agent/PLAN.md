@@ -287,10 +287,10 @@ JSON 计算图          ──► 前端 B：现有 model_import_cli（复用）
 | U5 非线性自动拟合 | 在可信库中自动生成近似，不需要新 DSL：`method` 增加 remez（任意函数单段 minimax）、composite（组合 sign，用于 relu/max，阶数拆分自动搜索）、newton（倒数、倒数平方根，用于 softmax 和 norm，初值多项式加迭代次数）。参数仍写在 PT-DSL 的 act/softmax/layernorm 上，系数在 lowering 时生成并写入 P2 包的 config | 每种方法在给定定义域上的最大误差达到要求；与张量解释器一致；可以作为 Agent 的新旋钮 | 与 U4 一起，11/03–08 |
 
 | S0 编译器流水线验证（半天，不改编译器） | 确认两件事：①hecate-opt 能否用单独注册的 pass 组成"跳过 scale 管理"的流水线，并单独调用 RuntimePlan 导出；②`check-smu` 能否完整检查外部写出的已管理 earth MLIR。做法：取现有一份编译记录中编译器自己产生的 `lowered.earth.mlir`（已管理），送进自定义流水线，检查导出的 RuntimePlan 与原流水线导出的是否一致；再人为删掉一个 rescale 或 modswitch，确认 `check-smu` 能报错 | 两项都成立才继续 S1；任何一项需要改编译器就停下，由用户决定 | ✅ 10/23 通过：①自定义流水线 `cse,canonicalize,convert-earth-to-ckks,convert-upscale-to-mulcp,cse` → `canonicalize,emit-runtime-plan{...}` 对 6 个输入（含 mlp 24 次、ResNet20 226 次自举、23575 步）导出的 RuntimePlan 与原流水线逐步相同，常量逐个相同；②删 rescale、改 downFactor、删 bootstrap、改 level 共 20 个破坏变体，全部被 MLIR 类型校验（verifier）在解析阶段拒绝，没有一个被静默导出；`check-smu` 在 Release 构建中只有 assert（NDEBUG 下不生效），不能当检查器用；③自带的 eva/pars 流水线对已管理的输入不幂等（会改动管理或报错），S1 必须用自定义流水线 |
-| S1 DSL 管理模式（复现编译器） | ①P2 包增加 `config/management.json` 和 `earth_backend.py`，`trace_model.py`、`compile_model.py` 增加 `--mode managed`，`model.py`、ops 和 kernel 不变；②pt_agent 新增 scale/level 管理器组件，**第一版逐条复现编译器的管理**（waterline rescaling、early modswitch、depth-dp 自举放置），由我们写出已管理的 earth MLIR，编译走 S0 验证过的自定义流水线；MLIR verifier 负责局部类型一致性，pt_agent 另需自建全局约束检查（每个 level 的 scale 不超过模数容量、自举输入 level 不低于 boot_in_level、scale 不低于 waterline），因为 `check-smu` 在 Release 构建中不生效；③PT-DSL header 增加管理模式（与 refresh="compiler"/"agent" 并列），代价模型和 Mock 支持该模式的 level/scale 语义 | 对现有 7 个程序，managed 模式导出的 RuntimePlan 与 compiler 模式的自举数和各类运算计数相同（理想情况下逐条相同）；`check-smu` 通过；compiler 模式完全不受影响 | 11/05–10 |
+| S1 DSL 管理模式（复现编译器） | ①P2 包增加 `config/management.json` 和 `earth_backend.py`，`trace_model.py`、`compile_model.py` 增加 `--mode managed`，`model.py`、ops 和 kernel 不变；②pt_agent 新增 scale/level 管理器组件，**第一版逐条复现编译器的管理**（waterline rescaling、early modswitch、depth-dp 自举放置），由我们写出已管理的 earth MLIR，编译走 S0 验证过的自定义流水线；MLIR verifier 负责局部类型一致性，pt_agent 另需自建全局约束检查（每个 level 的 scale 不超过模数容量、自举输入 level 不低于 boot_in_level、scale 不低于 waterline），因为 `check-smu` 在 Release 构建中不生效；③PT-DSL header 增加管理模式（与 refresh="compiler"/"agent" 并列），代价模型和 Mock 支持该模式的 level/scale 语义 | 对现有 7 个程序，managed 模式导出的 RuntimePlan 与 compiler 模式的自举数和各类运算计数相同（理想情况下逐条相同）；`check-smu` 通过；compiler 模式完全不受影响 | ✅ 10/26 完成（本机 19/20，1 例为服务器作业）：pt_agent 写出前端形态的未管理 IR，由 hecate-opt 执行与前端 save() 相同的预处理（cse、canonicalize、privatize-constant），管理器逐条移植 GreedyBootstrapPlacement(depth-dp) 与 EarlyModswitch，检查器检查类型规则、depth-dp 不变量和函数边界，写出已管理 IR 后走编译器尾部序列与转换。集合 M 中 19 个程序（冻结 4 个、基线 2 个、U2 多块 6 个、U3 本机 2 个、小程序 5 个）的阶段 0 输入、已管理 IR 和完整 RuntimePlan 与编译器逐项相同；SqueezeNet-ReLU+MaxPool 因磁盘准入（10 GiB + 临时文件）导出为服务器作业。compiler 模式输出和冻结模型全部不变；486 + 34 项测试通过。移植中的关键细节：前端 save() 的预处理会合并重复子表达式；尾部序列为 canonicalize,cse,cse,canonicalize；常量 rms_var 按 FMA 逐项累加；超大 IR 压缩存放，经 stdin 或临时文件交给 hecate-opt |
 | S2 联合优化（研究） | 在 S1 的基础上，让近似决策（每层的方法、阶数）与 level 分配、自举位置一起选，作为 Agent 和精调的新旋钮；与"compiler 模式 + 同一近似"对比自举数和预测延迟 | 在至少 ResNet20 上找到比编译器管理更少自举或更低预测延迟、且精度满足冻结协议的程序；否则如实报告为负结果 | DAC 之后；如果 S1 提前完成，可以先做 ResNet20 的初步结果 |
 
-**顺序与论文范围（10/23 用户确认把 DSL 管理模式放在 U1–U3 之后）**：S0 → R8h/R8h2（消融，冻结仍为 v1）→ R8h3 → U1 → U2 → U3 → S1 → R9b → U5/U4 → S2（S0 由用户 10/23 提前到 R8f2 之后；R8h 由用户 10/23 排在 S0 之后）。11/18 前能完整做完的是 U1–U3（CNN 通用性，与 DaCapo、Orbit 同一批基准），这是 DAC 版本通用性的主证据。S1 能按时完成的话，论文写成"同一份 PT-DSL 既能交给编译器管理，也能由 DSL 层管理，两者导出相同的 RuntimePlan"。R9b 是论文核心对照，必须在全文截止前完成，安排在 S1 之后。U4/U5 和 S2 大概率排不进 DAC 版本，作为未来工作；如果 S0 不通过，S1 和 S2 取消，时间还给 R9b 和 U5。
+**顺序与论文范围（10/25 用户再次调整）**：S0 ✅ → R8h/R8h2/R8h3 ✅ → U1 ✅ → U2 ✅ → U3a/U3b/U3b2 ✅ → **S1（DSL 管理自举与 rescale）** → **R9b（核心对照与消融）** → 论文（11/07–10 数据定稿，11/11 摘要，11/18 全文）→ DAC 之后：U5、U4、S2、GPU。**备选项（不在当前计划内）**：D1"只给模型、没有输入样本"的模式（L0 档：基于 BN 统计或合成输入的无数据校准，加大安全余量，报告中注明未用真实数据验证），以及配套的"无数据校准 vs 真实数据校准"对比实验，用户 10/25 决定暂不列入。
 
 ### 4.C 是否把 rescale、自举等编译器优化信息放进 DSL（Claude 2026-10-23 评估）
 
@@ -457,11 +457,11 @@ coverage 中 `needs_composition` 的节点交给 Agent：Agent 在 PT-DSL 里用
 | 10/26–27 | R8e 精调工具 + 4 个模型的真实运行 → 用户决定冻结（10/27 不变） | Design：Agent 循环（LLM 结构决策 + 搜索精调） |
 | 10/23–24 | R8f/R8f2 张量验证与 flat 尾槽修复 | |
 | 10/24 | S0 编译器流水线验证；R8h/R8h2 精调触发规则消融；R8h3 恢复 v1 默认 | |
-| 10/24–27 | U1 模型输入框架（原样模型 + 原样输入样本；PyTorch、HuggingFace、ONNX） | Related Work；Evaluation 的实验设置 |
-| 10/28–31 | U2 多密文布局 | Design：布局与 kernel 库 |
-| 11/01–05 | U3 CNN 算子 + 5 个 DaCapo 基准 | Evaluation 的已有结果 |
-| 11/05–10 | S1 DSL 管理模式（复现编译器） | 摘要 v1；Design 增加"两种管理模式" |
-| 11/10–13 | R9b 三组对照与消融 | 摘要 11/11 提交 |
+| 10/24 ✅ | U1 模型输入框架（原样模型 + 原样输入样本；PyTorch、HuggingFace、ONNX） | Related Work；Evaluation 的实验设置 |
+| 10/24 ✅ | U2 多密文布局 | Design：布局与 kernel 库 |
+| 10/24–25 ✅ | U3a/U3b/U3b2 CNN 算子 + 9 个 DaCapo 变体（Agent 与规则基线） | Evaluation 的已有结果 |
+| 10/25–26 ✅ | S1 DSL 管理模式（复现编译器的 depth-dp 管理，19/20 本机逐项一致） | Design 增加"两种管理模式" |
+| 11/01–06 | R9b 三组对照与消融（含 A6 规则程序进入候选池、A7 定义域安全余量） | 摘要 v1 |
 | 11/13 以后 | U5/U4、S2（排不进 DAC 的写入未来工作） | 11/14–16 写全文 |
 | 11/17–18 | — | 内部审读，**11/18 提交** |
 

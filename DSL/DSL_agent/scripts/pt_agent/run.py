@@ -202,12 +202,17 @@ def _defaults():
     return 63, 1.25
 
 
-def _server_job(out, package, weights):
+def _server_job(out, package, weights, *, mode='compiler'):
     from . import toolchain
 
     import shutil
 
     package, weights = Path(package), Path(weights)
+    management = json.loads((package/'config/management.json').read_text()) if (package/'config/management.json').exists() else {}
+    managed = mode=='managed' or management.get('mode')=='dsl'
+    trace_mode = ' --mode managed --hecate-opt "$HECATE_BUILD/bin/hecate-opt"' if managed else ''
+    compile_mode = ' --mode managed' if managed else ''
+    input_name = 'managed.mlir' if managed else 'trace_model.mlir'
     path = out / "server_jobs" / package.name / "run.sh"
     path.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(package, path.parent/package.name)
@@ -223,9 +228,9 @@ def _server_job(out, package, weights):
                     'test "$(df -Pk . | awk \'NR==2 {print $4}\')" -ge 10485760\n'
                     'ulimit -v 6291456\nulimit -f 8388608\n'
                     'timeout 3600 python3 -B '+shlex.quote(package.name+"/trace_model.py")+
-                    ' --weights '+shlex.quote(weights.name)+' --output-dir trace\n'
+                    ' --weights '+shlex.quote(weights.name)+' --output-dir trace'+trace_mode+'\n'
                     'timeout 3600 python3 -B '+shlex.quote(package.name+"/compile_model.py")+
-                    ' --hecate-opt "$HECATE_BUILD/bin/hecate-opt" --input trace/trace_model.mlir --output-dir compiled\n')
+                    ' --hecate-opt "$HECATE_BUILD/bin/hecate-opt" --input trace/'+input_name+' --output-dir compiled'+compile_mode+'\n')
     path.chmod(0o755)
     return path
 
@@ -237,19 +242,25 @@ def _compile_export(record):
     from hecate_python_env import VENV
 
     package, weights = Path(record["package"]), Path(record["weights"])
+    management = json.loads((package/'config/management.json').read_text()) if (package/'config/management.json').exists() else {}
+    managed = record.get('mode') == 'managed' or management.get('mode') == 'dsl'
+    mode_args = ['--mode', 'managed'] if managed else []
+    trace_mode_args = [*mode_args,'--hecate-opt',str(toolchain.host_paths()['hecate_opt'])] if managed else []
     directory = package.parent
     trace_dir, compile_dir = directory/"trace", directory/"compiled"
     traced = toolchain.trusted_run(directory, [str(VENV/"bin/python"), "-B", str(package/"trace_model.py"),
-        "--weights", str(weights), "--output-dir", str(trace_dir)], directory/"trace.log",
+        "--weights", str(weights), "--output-dir", str(trace_dir), *trace_mode_args], directory/"trace.log",
         env_extra=toolchain.package_trace_env())
-    mlir = trace_dir/"trace_model.mlir"
+    mlir = trace_dir/('managed.mlir' if managed else 'trace_model.mlir')
+    from .manage.streams import resolve
+    mlir = resolve(mlir)
     traced.update(mlir=mlir.is_file(), mlir_bytes=mlir.stat().st_size if mlir.is_file() else 0)
     result = dict(trace=traced, compile=None, plan=None, plan_latency=None)
     if traced["exit"] != 0 or not traced["mlir"]:
         return result
     compiled = toolchain.trusted_run(directory, [str(VENV/"bin/python"), "-B", str(package/"compile_model.py"),
         "--hecate-opt", str(toolchain.host_paths()["hecate_opt"]), "--input", str(mlir),
-        "--output-dir", str(compile_dir)], directory/"compile.log",
+        "--output-dir", str(compile_dir), *mode_args], directory/"compile.log",
         env_extra=dict(LD_LIBRARY_PATH=os.environ["HECATE_PYTHON_LIBRARY_PATH"]))
     name = json.loads((package/"config/model.json").read_text())["name"]
     plan_path = compile_dir/f"lowered._hecate_{name}.runtime-plan.json"
@@ -553,11 +564,15 @@ def _inside(args):
                 report["export"] = dict(package=str(package), weights=str(directory/"weights"/(program.name+".npz")),
                     model_lines=len((package/program.name/"model.py").read_text().splitlines()),
                     files=sum(path.is_file() for path in package.rglob("*")))
-                report["server_job"] = str(_server_job(out, package, Path(report["export"]["weights"])))
+                report["server_job"] = str(_server_job(out, package, Path(report["export"]["weights"]),
+                                                      mode=getattr(args,'mode','compiler')))
             elif stage == "compile":
                 if report["export"] is None:
                     raise RuntimeError("compile requires the export stage")
-                report.update(_compile_export(report["export"]))
+                export_record = dict(report['export'])
+                if getattr(args, 'mode', 'compiler') == 'managed' or program.header.manage == 'dsl':
+                    export_record['mode'] = 'managed'
+                report.update(_compile_export(export_record))
                 _write(path, report)
                 if report["trace"]["exit"] != 0 or not report["trace"]["mlir"]:
                     raise RuntimeError("trusted trace failed")
@@ -601,6 +616,7 @@ def main():
     parser.add_argument("--prompt-version", choices=("r8-v4", "r8-v5"), default="r8-v4")
     parser.add_argument("--act-method", choices=("cheb", "minimax_comp"), default="cheb")
     parser.add_argument("--refresh", choices=("compiler", "agent"), default="compiler")
+    parser.add_argument('--mode', choices=('compiler', 'managed'), default='compiler')
     parser.add_argument("--stages", required=True)
     parser.add_argument("--final", action="store_true")
     parser.add_argument("--inside", action="store_true")
@@ -643,6 +659,8 @@ def main():
                "pt_agent.run", "--inside", "--out", str(out), "--model", args.model, "--planner", args.planner,
                "--models-dir", str(args.models_dir),
                "--refresh", args.refresh, "--act-method", args.act_method, "--prompt-version", args.prompt_version, "--stages", ",".join(args.stages)]
+    if args.mode == 'managed':
+        command.extend(('--mode', 'managed'))
     if args.planner == "agent":
         command.extend(("--budget-path", str(Path(os.environ["PT_RESULTS"]) / "llm_calls.jsonl"),
                         "--agent-iters", str(args.agent_iters), "--llm-model", args.llm_model,

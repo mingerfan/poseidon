@@ -1,4 +1,6 @@
-# pt_agent 状态（最后更新：2026-10-25 / 4292a9b7-dirty）
+# pt_agent 状态（最后更新：2026-10-26 / b7662b94-dirty）
+
+S1代码与全部本机检查已收尾，整体仍有1例服务器待验收：M本机19/20的阶段0、管理IR与完整RuntimePlan相同；22程序默认compiler输出及四冻结模型数值/代价/确认逐项相同；四个独立P2包（含多密文）通过。既有486项唯一回归（要求481＋后增5）、本轮34项及三路径2项全部通过，4项ONNX在独立intake补齐。最后SqueezeNet-ReLU/maxpool在10GiB＋临时大小准入停止，已导出双模式服务器作业，尚未执行，保持“本机未完成”。API0、累计129/300；新增Agent首次输出、真实CKKS和未见模型证据均0，M1表保持。[最终SUMMARY](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/SUMMARY.json)。
 
 当前U3b2方案A（含§6）实现与有限实验均已完成：[最终REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/REPORT.json)、[九模型SUMMARY](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/SUMMARY.json)。17/17当前测试＋4/4原缓存测试通过，四冻结模型各1000图字段/logits相同，原469完整回归证据保留。Alex规则基线与三个ReLU重跑全部收尾：报告准确率达标7/9（Agent）与7/9（规则），新三模型分别下降0.0375/0.2875/0.0125pp、发散3/7/0；完整report.feasible分别false/false/true。三个首轮漏权重诊断均在下一轮补齐。新程序均导出服务器包，本机编译/真实CKKS0。API16/20、累计129/300；4GiB、批量20、其余6模型旧结果及全部历史证据保持。
 
@@ -36,6 +38,7 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| S1 | specs/S1-dsl-managed-mode.md（含§6–§11.4） | 阻塞 | manage/、DSL、toolchain、run、P2、S1实验/测试、STATUS | 既有486/486＋当前34/34＋三路径2/2；兼容22/4、P2四包通过；M19/20 | 只余ReLU/maxpool服务器实际验收；本机未完成，作业已导出；所有历史/用量保持 |
 | U3b2 | specs/U3b2-weight-usage-rerun.md（方案A，含§6） | 完成（实现与有限开发实验） | dsl/typecheck.py、planners/agent_tools.py、tensor_sim.py；experiments/u3b2_weight_usage_rerun.py、tests/test_u3b2_weight_usage.py、STATUS | 当前17/17＋原缓存4/4；四冻结全字段/logits相同；规则基线及三重跑全部收尾；报告准确率7/9对7/9；三次漏权重均下一轮补齐；API16/20 | 原469证据沿用；4GiB/批量20保持；新三程序仅服务器包，原生计数/CKKS待执行；Mobile/VGG报告发散3/7且完整feasible=false，未计完整交付通过 |
 | U3b | specs/U3b-agent-cnn.md | 阻塞 | planners/agent.py、tuner.py、confirm.py、agent_tools.py；experiments/u3b_agent_cnn.py、tests/test_u3b_engines.py、STATUS | 实现/离线469/469通过；8/9模型正常收尾，报告精度4/9；真实编译282/282、1277/1277、359/359并prune；服务器作业2份；最后模型前三轮数学检查失败 | 本轮50/50、累计113/300，按spec停止；第9模型剩余生成及规则评测待后续spec，原程序/历史/已用额度保留 |
 | U3a | specs/U3-cnn-operators.md（含§10） | 完成 | CNN/lower/张量/规则/P2；Mock、linear/multi逐条常量；U3测试/实验、STATUS | 435既有＋20本轮＝455/455；17旧程序/四冻结模型/5 Count一致；9变体20图＋1000图及P2完成 | 4GiB保持；3本机编译自举一致并prune；6份服务器作业未执行；新增Agent/CKKS0 |
@@ -98,6 +101,49 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+S1当前仅余服务器实际验收：SqueezeNet-ReLU/maxpool本机解压前空闲14,230,802,432字节，准入需10GiB＋3,855,658,106＝14,593,076,346字节，差362,273,914字节；临时输入未创建，预处理原生调用0。按§11.4已导出[服务器run.sh](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T062316234215/server_jobs/u3a-squeezenet_relu_maxpool/run.sh)，compiler/managed两模式顺序执行，脚本语法与命令预览通过，服务器实际执行0。需取得两模式产物后完成阶段0、管理IR/检查器/切点与完整RuntimePlan比较；该例保持本机未完成，M分母20保留。其余本轮本机验收全部完成，无新增审批请求，未扩大资源。[最终SUMMARY](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/SUMMARY.json)。以下为过程及历史记录。
+
+
+S1当前剩余：SqueezeNet-ReLU/maxpool的M验收本机未完成，已按用户§11.4导出[服务器入口](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T062316234215/server_jobs/u3a-squeezenet_relu_maxpool/run.sh)与[REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T062316234215/REPORT.json)。本机解压前空闲14,230,802,432字节，需10GiB＋3,855,658,106＝14,593,076,346字节，准入停止，临时输入0、预处理原生调用0。服务器双模式脚本语法及命令预览通过，实际执行0；阶段0、管理IR和RuntimePlan完整比较待服务器产物。当前继续可执行的默认模式兼容、四P2包及回归；无新增审批请求。此前stdin缓冲停止已由临时文件输入成功接续，SiLU完整通过。以下为历史停止证据。
+
+
+S1输入缓冲问题已由用户§11.4明确接续：>1GiB压缩输入使用一个临时常规文件，准入10GiB＋预计大小，输出gzip、finally删除；当前正在实现和验证，无新待用户决定事项。以下为历史停止证据。
+
+S1当前停止项（§11.3接续，2026-10-26）：固定位置修复及严格压缩证明已通过（32项当前测试、2项MLP/CNN文本测试；4条完整IR/RuntimePlan均相同）。SqueezeNet-SiLU原trace成功，约1.92GB文本压至16,166,805字节；我方raw IR输出2,397,613,997字节的等价压缩文本。预处理调用exit134，首行`LLVM ERROR: out of memory`，耗时3.51秒、RSS2294.53125MiB。符号化调用栈为`getNewUninitMemBuffer ← getMemoryBufferForStream ← getSTDIN ← getFileOrSTDIN ← openInputFileImpl ← mlir::openInputFile ← main`；源码在openInputFile之后才调用MlirOptMain，失败发生在输入缓冲阶段，管理pass、阶段0和后续编译均未执行。[SUMMARY/调用栈](/home/lhohy/pt_agent_results/s1-section113-input-buffer-stop-20261026T060008028328/SUMMARY.json)、[PREPROCESS](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_silu_avgpool-20261026T055523724173/preprocessed/PREPROCESS.json)、[原生日志](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_silu_avgpool-20261026T055523724173/preprocessed/preprocess.log)。
+
+分类为本机编译器stdin输入缓冲资源停止。原生6GiB地址空间、8GiB文件和3600秒限制保持；0.25秒采样的磁盘最低空闲11,626,680,320字节，采样结束14,338,441,216字节。实际失败申请的字节数及raw gzip实际大小未登记，保留统计缺口。首次失败已收尾并清理全部本次中间IR，未重试，第二个SqueezeNet未启动。
+
+已提交接续口径澄清：是否给大IR增加单个临时常规文件输入例外，由现有hecate-opt走文件缓冲路径，输出仍gzip，用后删除并照常准入；按当时空闲减去raw文本大小预计还余约11.94GB，须以实际准入为准；另一选择为导出剩余服务器作业。§11当前明确stdin，AGENTS.md要求报错或设计选择时等spec；当前未应用例外、未更改库或扩大资源。18例完整结果、旧停止证据与全部已用额度保持。P2/兼容/既有回归尚未启动。以下为历史停止记录。
+
+
+S1 §11当前停止项（2026-10-26）：预处理文本逐字等价未通过。MLP、CNN plain的普通与压缩路径均已完成（共4条），阶段0、管理IR、完整RuntimePlan全部相同；`managed`与尾部序列输出文本也完全相同。两模型预处理输出各5行位置不同：原路径为raw.earth.mlir文件名，管道路径为`<stdin>`，覆盖函数参数位置及模块/函数/return的位置别名。首处分别在第1行第14列。压缩验收按failfast执行CNN一项失败，MLP一项未运行；随后只读诊断确认MLP相同的5行差异。30项当前单测均通过。[SUMMARY及完整差异](/home/lhohy/pt_agent_results/s1-section11-stopped-20261026T055001916892/SUMMARY.json)、[验收REPORT](/home/lhohy/pt_agent_results/s1-compression-20261026T054714535513/REPORT.json)。
+
+已按AGENTS.md“期望值与实测不符；需要做设计选择”停止并提交澄清：是否由raw发射器对模块、函数、参数和return显式写固定位置，或由spec另定位置比较口径。未应用位置修正、未放宽文本比较、未启动剩余SqueezeNet/P2/兼容/回归。已消费的12份文本证明文件清理，保留逐行差异、各侧RuntimePlan、全部报告/日志/源码；清理后空闲14,356,631,552字节，10GiB准入及其他限制保持。集合M18个完整通过结果保留。以下为历史停止记录。
+
+
+S1历史停止项（§8接续，2026-10-26）：ResNet20原模式trace/编译成功，两侧A/B/C检查器通过、64个切点与代价模型相同、compiler基准尾部序列幂等；IR运算数compiler=23331、DSL=23349。首处顺序差异为0起计operation307：compiler=`modswitch(%280,downFactor=1)`，DSL=`modswitch(%257,downFactor=4)`，结果类型均Cipher(scale=43,level=4)。compiler归一后226次自举，DSL发射前管理摘要226次；运算数不同的停止分支未额外保存归一后DSL自举计数，保留这一统计范围。比较器依§3.2停止，ResNet20 managed RuntimePlan及其余17个M程序、目标P2编译和旧回归当时均未执行。[ResNet20 REPORT](/home/lhohy/pt_agent_results/s1-resnet20-20261026T043833899058/REPORT.json)。
+
+本轮只确认上述管理IR复现差异，具体原因待下一份接续spec明确。原模式编译成功，当前登记为S1管理器复现验收停止。临时MLIR、常量NPZ和bundle均已prune，保留管理值摘要、原模式计划、首差异、日志及源脚本；原资源限制保持。§8 RMS问题已解除，14项离线及3项全部常量测试通过，CNN完整IR/RuntimePlan通过。以下保留§7历史停止记录。
+
+S1历史停止项（§7接续，2026-10-25）：CNN plain规范化后两侧均4685运算、自举72，切点21个完全相同。首个差异为0起计运算172的constant.rms_var：compiler=`0.13461690297668655`，DSL=`0.13461690297668372`，绝对差`2.831068712794149e-15`；类型均Plain(scale=43,level=3)。两侧同一个A/B/C检查器全部通过，原样compiler基准再次经过指定序列后完全相同。按§7.5停止；CNN managed RuntimePlan及后续模型、五小程序最终重跑、目标P2编译和旧回归当时均未启动。[CNN REPORT](/home/lhohy/pt_agent_results/s1-cnn_plain-20261025T184900572487/REPORT.json)。
+
+只读定位结果：16处RMS属性不同，全部4685个运算的种类、引用、scale/level及其他属性相同，全部829个常量的载荷np.array_equal。现有[earth_emit.py:20](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/manage/earth_emit.py:20)先算data*data，再用np.cumsum累计；C++源[EarthOps.td:147](/home/lhohy/Code/Poseidon/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.td:147)为rms += dval*dval。用现有libm.fma逐元素计算再sqrt，16/16与编译器属性精确相同，指向浮点融合与当前分步计算的差异。此操作仅生成诊断，没有调用额外编译pass、修改管理器或发射器、调容差或重跑候选。[DIAGNOSIS](/home/lhohy/pt_agent_results/s1-cnn_plain-20261025T184900572487/DIAGNOSIS.json)、[FMA_PROOF](/home/lhohy/pt_agent_results/s1-cnn_plain-20261025T184900572487/FMA_PROOF.json)。需要后续spec给出RMS属性复现的接续条款；当前停止点属于DSL发射器复现，原编译器编译成功，未登记为编译器/运行库故障。
+
+S1首次MLP IR停止已由用户§7解除并通过：两处入口改用编译器Earth尾部序列，基准文件原样使用，另做幂等检查。以下为保留的首次停止记录：
+
+S1首次IR停止项（2026-10-25）：集合M的首个冻结模型MLP在§3.2失败，规范化后编译器IR为1514运算、DSL IR为1517运算；自举均24，切点均`[2,5,8,11,13,16,19]`。两侧同一个A/B/C检查器均通过。首个0起计差异为运算1094：编译器执行`mul(%1081,%1080)`、结果(scale=86,level=3)，DSL在该位置增加`modswitch(%1075,downFactor=1)`、结果(scale=43,level=3)，与DSL已有%1081完全重复；位置属于原MLP第5行的minimax ReLU展开。完整计数差为modswitch 41→43、constant 342→343，其余mul346/rescale346/add366/rotate46/bootstrap24/negate3均相同。[原失败REPORT](/home/lhohy/pt_agent_results/s1-mlp-20261025T181607368492/REPORT.json)、[首差异邻域](/home/lhohy/pt_agent_results/s1-mlp-20261025T181607368492/DIAGNOSIS.json)、[三处精确重复](/home/lhohy/pt_agent_results/s1-mlp-20261025T181607368492/DUPLICATES.json)。
+
+源码核对：[optimizer.cpp:598](/home/lhohy/Code/Poseidon/third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp:598)在EarlyModswitch后执行`canonicalize,cse,cse,canonicalize`；当前spec的直接入口及比较只要求`cse,canonicalize`。现有DSL输出保留两条重复modswitch（1081/1094、1128/1164）和一个重复常量（4/1274，np.array_equal通过）。顺序差异是源码和输出支持的排查方向，尚未执行额外pass或修改管理算法验证因果。需要后续spec明确规范化顺序与接续范围；本轮不自行替换流水线、不把去重后的结果计为本次通过。
+
+按S1§3.2“如果不同构，停下来汇报第一个差异的位置”，已停止剩余14个程序、MLP managed RuntimePlan导出、4份P2原生编译和481旧回归。原模式6次trace/编译均成功，五个小程序的managed计划通过；本轮不登记为编译器或运行库故障。六个目录均已prune，失败REPORT、管理值摘要、首差异/重复诊断、源码脚本、原计划与日志保留。无LLM/报告集/CKKS调用，累计API129/300。§6此前两个口径问题均已解除，以下保留首次只读停止记录：
+
+S1（2026-10-25）首次在实现前只读核对中发现两处检查器口径冲突，依据AGENTS.md“spec本身有矛盾……仍然必须停下”，当时暂停后续实现与测试：
+
+1. §1.2要求level在`[levelLowerBound, levelUpperBound]`内，但所用qwen48 profile给出lower=1、upper=8、bootstrap lower=1/upper=5；已有合法depth-dp IR的函数输入、首个mul结果和bootstrap结果分别为`ci<43 * 0>`、`ci<86 * 0>`和`ci<43 * 0>`。Earth的level字段记录消耗层数，RuntimePlan层数则转换成剩余层数，须明确检查哪个层数及对应容量规则。证据：[原样IR](/home/lhohy/poseidon-work/platforms/aarch64-linux/results/pt-agent-r2b-c3-boot-auto-dacapo-depth-dp-20261020T125516-3739/lowered.earth.mlir:2)、[profile](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/compiler_profiles/qwen48/compiler-config.json)、[bootstrap默认targetLevel=0](/home/lhohy/Code/Poseidon/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.td:235)。按字面检查会拒绝§3要求逐项一致的合法原样IR。
+2. §1.2要求移植SMUChecker断言，§3.4要求全部原样已管理IR通过。现有SMU分析构造器在遇upscale/rescale/bootstrap/modswitch时已有`assert(0 && "Currently not supported")`，verify遇它们返回false；SMUChecker还对同组值要求完全相同的level/scale。S0原样输入的现有诊断：MLP42处、ResNet20 392处，例子均为记录(4,43)、当前(0,43)；该轮Q1计划比较通过。须明确在已管理图中移植哪些SMU约束，以及如何处理管理操作两侧的分组。证据：[分析构造器](/home/lhohy/Code/Poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp:239)、[verify](/home/lhohy/Code/Poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp:387)、[SMU一致性与assert](/home/lhohy/Code/Poseidon/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/SMUChecker.cpp:44)、[S0 SUMMARY](/home/lhohy/pt_agent_results/s0-pipeline-spike-20261023T164814/SUMMARY.json)。本轮未自行增加分组算法、跳过约束或修改编译器。
+
+首次只读停止时仅修改STATUS；当时S1 §3.1–§3.7均待执行，无新增测试或编译目录。该停止已由用户§6修订解除；原历史481项及后续5项内存测试证据保持，未计作本轮回归通过。
 
 U3b2首次内存停止已由用户新增§6解除，两处通用修正、§6.3验证、AlexNet规则基线与三个真实重跑全部完成。本spec内无待决阻塞。后续范围保留三份服务器包的原生编译计数和真实CKKS验收，以及MobileNet/VGG16报告中发散及域外放大的通用诊断；当前未据此标记编译器或运行库故障。4GiB、批量20及数值条件保持，完整交付验收继续单独记录。以下保留修订前停止记录和已用额度。
 
@@ -275,6 +321,25 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 300
 
+S1最终本机收尾：本轮新增API0、累计129/300、剩余171；registry当前545条，所有既有及失败记录保持。当前20程序M矩阵19本机通过/1服务器待验收；最后失败后依§11.4只导出作业，没有本机重试或服务器执行。新Agent首次独立输出、真实CKKS、报告集近似评测、未见模型新增证据均0。[最终SUMMARY](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/SUMMARY.json)。
+
+
+S1 §11.3接续及输入缓冲停止收尾：API0，累计129/300，剩余171；新增当前测试、压缩等价、SqueezeNet-SiLU、停止汇总4条登记，registry从523增至527条。32项当前测试及2项压缩文本证明通过；4条MLP/CNN对照原生计划相同；SqueezeNet预处理1次exit134、无后续原模式/managed编译。本段原trace5次、hecate-opt30次（含测试5、对照24、失败预处理1），无重试；全部历史与消费用量保持。新Agent首次输出、真实CKKS和报告集读取均0。
+
+
+S1 §11压缩及停止收尾：新增API0，累计129/300、剩余171；新增当前测试、压缩验收、停止汇总3条登记，registry从520增至523条。当前测试30/30通过；4条MLP/CNN真实流水线trace4次、原模式编译4次、managed两段导出8次；连同当前测试的3次原生pass，共27次hecate-opt。阶段0/IR/计划4/4相同，预处理文本等价失败。LLM、报告集读取、新Agent首次输出、真实CKKS0，全部历史和用量保持。
+
+
+S1 §9–§10接续及磁盘停止收尾：API0、累计129/300、剩余171；registry从490增至520条，全部旧记录保留。本段新增原生trace25次、hecate-opt147次，原模式RuntimePlan导出19次、managed导出18次；新增Agent首次独立输出、真实CKKS及报告集读取均0。§11尚未新增运行。
+
+S1 §8接续及停止收尾：新增API0，累计129/300、剩余171；新增5条登记（离线、RMS参照/测试、CNN、ResNet20、停止汇总），registry共490条，原485条保持。RMS重建7份已清理参照，CNN接续复用其中一份；本次原模式trace/编译各8次、指定规范化4次、managed转换/计划导出2次，共14次hecate-opt。累计S1原模式trace16次、hecate-opt50次；全部已启动目录按允许规则清理。新Agent输出、报告集读取及真实CKKS均0。
+
+S1 §7接续及停止收尾：新增API0，累计129/300、剩余171；新增4条运行登记（离线1、M程序2、停止汇总1），registry共485条。此前481条及本次所有历史/用量保持；新增下载、安装、LLM、报告集读取和真实CKKS均0。
+
+S1 §6实现及首次IR停止收尾：新增0，当时累计129/300，新增8条运行登记，registry481条；该阶段报告、原473条及全部历史用量保留。
+
+S1首次只读核对及STATUS更新：新增0，当时累计129/300，未新增运行或API记录。
+
 U3b2最终16/20、累计129/300；MobileNet/VGG16/AlexNet分别5/6/5次，无重试/额外连通性请求。registry共473条，114–129号调用各登记一次；原113次及全部历史保持。项目总预算剩余171次，本轮未消费的4次未用于追加重跑。[最终REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/REPORT.json)。§2离线、§6测试和补规则基线均为API0。
 
 U3b终态50/50、累计113/300，本轮剩余0、总预算剩余187。九模型HTTP次数按顺序为6/6/6/6/6/5/6/6/3；无重试或额外连通性请求。最后模型trace的第4轮为本地预算拒绝，AGENT.llm_calls=4包含这次未发出的尝试，真实外发按预算文件与registry计3。恢复未新增LLM/精调/已执行的Agent确认；registry保留全部438条，50次本轮调用逐次登记。[终态REPORT](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u3b-agent-20261024T170907/SUMMARY.json)。首次审批拒绝发生于进程启动前、消费0，离线REPORT保留。
@@ -337,11 +402,11 @@ R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry�
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| U3b2-nine-models-agent-cnn-summary-20261025T053607-8dc6 | nine-models | 三重跑收尾，六旧结果保持；报告准确率7/9对7/9，API16；[SUMMARY](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/SUMMARY.json) |
-| U3b2-alexnet_relu_maxpool-agent-cnn-20261025T053606-acfd | alexnet_relu_maxpool | 第3轮原文；报告下降0.0125pp/发散0，完整feasible=true；服务器包；[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/alexnet_relu_maxpool/REPORT.json) |
-| U3b2-vgg16_relu_maxpool-agent-cnn-20261025T051233-bead | vgg16_relu_maxpool | 第5轮tuned；报告下降0.2875pp/发散7，完整feasible=false；服务器包；[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/vgg16_relu_maxpool/REPORT.json) |
-| U3b2-mobilenet_relu-agent-cnn-20261025T042455-9f00 | mobilenet_relu | 第4轮原文；报告下降0.0375pp/发散3，完整feasible=false；服务器包；[REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/models/mobilenet_relu/REPORT.json) |
-| U3b2-prepare-prepare-20261025T040503-bab6 | three-models requests | 三份请求准备完成，准备阶段API0；[manifest](/home/lhohy/pt_agent_results/u3b2-prepare-20261025T040420116485/manifest.json) |
+| S1-20-programs-local-checks-complete-server-pending-20261026T071428-12d5 | 20-programs | 本机检查收尾：M19/20，服务器1待验收；既有486＋S1 34＋三路径2通过；[SUMMARY.json](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/SUMMARY.json) |
+| S1-unit-managed-20261026T071257-2aac | unit | 最终S1 34/34通过；[REPORT.json](/home/lhohy/pt_agent_results/s1-unit-20261026T071255108526/REPORT.json) |
+| S1-regression-managed-20261026T071240-311a | regression（intake） | intake组4/4通过；[REPORT.json](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/intake/REPORT.json) |
+| S1-regression-managed-20261026T071237-b7d6 | regression（tensor） | tensor组17/17通过；[REPORT.json](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/tensor/REPORT.json) |
+| S1-regression-managed-20261026T064439-ed16 | regression（weight） | weight组17/17通过；[REPORT.json](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/weight/REPORT.json) |
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
 旧 T0/T2 测试输出保留原路径；旧源码副本：[before/](/home/lhohy/pt_agent_results/R1-ptdsl-unit-20261020T111834-3fa0/before/)。
@@ -3572,3 +3637,477 @@ Registry: 473 rows, global calls 114–129 each recorded once
 与spec不一致之处：无签名、算法、数值条件、提示文本、精调/确认参数或资源放宽；原测试断言未改。按本轮自写错误例外修正两处笔误：tests/test_u3b2_weight_usage.py:363附近补齐冻结产物的models/目录（校准与程序路径）；tensor_sim.py:77将flatiter.size改为value.size。前者首份2项后失败、后者首份8项后失败，均保留REPORT并以原断言重跑通过。非连续输入逐块读取属于§6分块实现；experiments/u3b2_weight_usage_rerun.py:77、:87、:323补记缓存/峰值和旧66.781630秒，不重置已用额度。前段权重检查只在v5/tensor启用，r8-v4反馈逐字比较仍通过。
 
 本spec内未完成项0。范围外待执行：三份新服务器包的真实原生编译和自举计数，真实CKKS验证；Mobile/VGG报告中的域外放大及发散需后续通用机制诊断，已知开发模型和未见模型的完整交付验收继续分开记录。未因报告结果重选或修改程序；未新增编译器/运行库故障结论；未改库、下载、安装、安全参数或资源限额，未提交、打tag、push或PR。旧失败/响应/源码/程序包和全部已消费额度保持。
+
+## S1 DSL管理模式（2026-10-25，含§6–§7；当前在CNN RMS属性比较停止）
+
+以下先保留首次只读停止状态；§6接续的实现、测试及当前停止结果在本节后半。
+
+核对环境：`/home/lhohy/Code/Poseidon`、aarch64、分支`lhy-agent-dsl`、HEAD `b7662b94`；开始时pt_agent与STATUS无未提交修改，无运行批次。仓库另有PLAN、baseline及子模块等既有修改，本轮全部保留。磁盘空闲14745133056字节，原资源限制保持。只读取当前S1、STATUS、AGENTS、相关实现及既有S0产物，未读取旧流程任务文档、PLAN或其他轮次spec。
+
+| §3验收项 | 本轮状态 | 证据或剩余工作 |
+|---|---|---|
+| 1 compiler模式不变 | 待执行 | 尚未修改任何实现；未以此替代旧程序Emit、常量、命令和四冻结模型验证 |
+| 2 已管理IR逐项比较 | 待执行 | 管理器及发射器尚未实现，集合M没有本轮比较结果 |
+| 3 RuntimePlan比较 | 待执行 | 本轮真实编译0；S0的6份相同结果仅作历史证据 |
+| 4 全局检查与6类破坏 | 阻塞 | §1.2的层数含义及SMU约束移植范围待修订，详见当前阻塞栏 |
+| 5 共用depth_dp切点 | 待执行 | 已读取placement.depth_dp，未复制或修改切点算法 |
+| 6 至少4份managed P2包 | 待执行 | 未新增包、trace或编译目录 |
+| 7 既有481项回归 | 待执行 | 未启动本轮测试；原481项和后续5项内存测试记录保留 |
+
+已定位待移植源码：GreedyBootstrapPlacement.cpp:48–79记录原始使用次数与深度，:104–167做深度推迟/切点/稳定排序，:174–193做normalize/refresh，:235–258按当前实际使用次数克隆常量并调用processOperandsEVA及inferReturnTypes；EarlyModswitch.cpp:46–99做反向移动及downFactor合并；Common.cpp:44–109细化输出、bootstrap输入与函数属性，:113–140细化输入。上述源码本轮只读，逐条移植尚未开始。
+
+与spec不一致之处：实现0项，未自行改变任何检查规则；按照AGENTS.md的spec矛盾停止要求，仅更新STATUS并等待检查器口径修订。未完成项为S1全部实现及§3验收。API0、累计129/300；新增Agent首次输出、完整交付通过、真实CKKS均0；M1表、registry、最近5次运行及历史证据保持。没有新增编译目录或管理MLIR，prune调用0。
+
+### §6 接续实现与首次IR停止结果（历史）
+
+新增`manage/{__init__,ir,greedy,check,earth_emit}.py`：记录可信lowering的算术DAG、按编译器规则细化输入/输出、插入upscale/rescale/modswitch/bootstrap、反向EarlyModswitch、A/B/C检查、generic Earth文本与已有compiler IR读取。层数均按Earth消耗层数；不移植SMUChecker。切点直接调用现有`placement.depth_dp`，该源文件未修改。RMS按EarthOps.td:145–157的顺序double累加及sqrt计算；常量写入DenseElementsAttr，读取比较使用np.array_equal。
+
+修改`dsl/ir.py`、`parser.py`、`printer.py`、`typecheck.py`：新增可选manage，默认compiler时省略打印及canonical字段；dsl仅接受compiler/depth-dp组合，其他组合在check报告“暂不支持”。`toolchain.py`新增`managed_compile_argv`和同源`management_profile`，参数从原compile_argv提取，原compile_argv未修改；prune覆盖managed及规范化Earth临时文件。`run.py`新增`--mode managed`，编译阶段根据外部模式或header选择P2 managed入口，解析后的DSL保持原文。
+
+P2修改`export/package.py`及两个trace/compile模板，新增独立`core/manage/`、同一份`core/placement.py`、management.json及两阶段命令模板。model.py、ops.py和kernel源码未修改。metadata生成用不保留常量载荷的记录方式，实际managed trace再记录真实常量并检查/发射；两种记录共用同一管理器。独立包中仅机械改写相对base导入，并把placement的DagBackend类型注解导入改成typing.Any，DP算法源文保持。默认compiler命令和Emit实现未修改；全部历史输出的兼容性仍待§3.1验证。
+
+新增`tests/test_s1_manage.py`、`experiments/s1_managed.py`。离线唯一10项全部通过，涵盖header默认原文/显式compiler、dsl往返及不支持组合、五单元程序管理/读写、切点共用、RMS、常量私有编码、六类负例的运算/PT-DSL定位、源码明确的mul容量规则、命令参数复用和独立P2 managed trace（不导入hecate）。[离线REPORT](/home/lhohy/pt_agent_results/s1-unit-20261025T181504569916/REPORT.json)、[完整输出](/home/lhohy/pt_agent_results/s1-unit-20261025T181504569916/run.log)：
+
+```text
+Ran 10 tests in 0.379s
+OK
+failures=0, errors=0, skipped=0
+```
+
+### §3 验收矩阵（§7前历史，当前结果见下文）
+
+| 项 | 当前结果 |
+|---|---|
+| 1 compiler模式兼容 | header打印及命令提取单测通过；7 P2、U2/U3旧Emit/常量/命令、四冻结模型validate/estimate/confirm的完整对照待执行 |
+| 2 IR逐项一致 | 小程序5/5相同；冻结MLP不同构，按规定停止；集合M其余14个未执行 |
+| 3 RuntimePlan一致 | 小程序5/5：步数、运算计数、自举数、values、输入输出、逐步状态/属性及常量均相同；MLP managed计划及其余14个待执行 |
+| 4 检查器（§6） | 六类负例均在编译前被拦截，错误含运算号/PT-DSL op id/行号；5个小程序和MLP的两侧合法IR全部通过；14个未执行 |
+| 5 切点共用 | 已执行6/6与placement.depth_dp相同；无第二份DP实现；其余14个待执行 |
+| 6 P2至少4份编译 | 独立小包managed trace单测通过；4份目标包的真实编译/计划对照待执行 |
+| 7 既有481回归 | 0/481本轮执行；原证据保留，另有U3b2§6新增5项历史内存测试，本轮均未计通过 |
+
+§3.2／§3.3逐程序结果如下；运算数来自规范化Earth IR，自举数为compiler/DSL。停止项和待执行项保留在20份分母中。[完整SUMMARY](/home/lhohy/pt_agent_results/s1-stopped-summary-20261025T182018770180/SUMMARY.json)。
+
+| 程序 | Earth运算数 compiler/DSL | 自举数 compiler/DSL | IR结论 | RuntimePlan结论 |
+|---|---|---|---|---|
+| unit-add | 2/2 | 0/0 | 相同 | 相同 |
+| unit-chain | 22/22 | 2/2 | 相同 | 相同 |
+| unit-residual | 24/24 | 2/2 | 相同 | 相同 |
+| unit-constants | 17/17 | 1/1 | 相同 | 相同 |
+| unit-no-final-mul | 6/6 | 0/0 | 相同 | 相同 |
+| mlp | 1514/1517 | 24/24 | 不同构，停止 | 待执行 |
+| resnet20 | — | — | 待执行 | 待执行 |
+| resnet20_silu | — | — | 待执行 | 待执行 |
+| cnn_plain | — | — | 待执行 | 待执行 |
+| R6c | — | — | 待执行 | 待执行 |
+| R7c-B | — | — | 待执行 | 待执行 |
+| U2 resnet20/8192 | — | — | 待执行 | 待执行 |
+| U2 resnet20/4096 | — | — | 待执行 | 待执行 |
+| U2 cnn_plain/8192 | — | — | 待执行 | 待执行 |
+| U2 cnn_plain/4096 | — | — | 待执行 | 待执行 |
+| U2 mlp/8192 | — | — | 待执行 | 待执行 |
+| U2 mlp/4096 | — | — | 待执行 | 待执行 |
+| U3a resnet20_relu | — | — | 待执行 | 待执行 |
+| U3a squeezenet_silu_avgpool | — | — | 待执行 | 待执行 |
+| U3a squeezenet_relu_maxpool | — | — | 待执行 | 待执行 |
+
+五个小程序报告：[add](/home/lhohy/pt_agent_results/s1-unit-add-20261025T181513548691/REPORT.json)、[chain](/home/lhohy/pt_agent_results/s1-unit-chain-20261025T181531422311/REPORT.json)、[residual](/home/lhohy/pt_agent_results/s1-unit-residual-20261025T181537075628/REPORT.json)、[constants](/home/lhohy/pt_agent_results/s1-unit-constants-20261025T181542413150/REPORT.json)、[no-final-mul](/home/lhohy/pt_agent_results/s1-unit-no-final-mul-20261025T181547801812/REPORT.json)。
+
+首差异证据：MLP两侧共有的前1094个运算（0–1093）管理结构及类型相同；运算1094起DSL增加重复modswitch。只读检查发现重复对1081/1094与1128/1164，以及相同常量4/1274。编译器本轮原模式成功，自举24；DSL原IR、编译器原IR及各自cse/canonicalize后的IR均通过同一检查器。当前证据保留规范化顺序差异这一排查方向，未据此直接断定全部管理语义一致，也未运行额外CSE、改流水线、修补程序或重跑该模型。[REPORT](/home/lhohy/pt_agent_results/s1-mlp-20261025T181607368492/REPORT.json)、[DIAGNOSIS](/home/lhohy/pt_agent_results/s1-mlp-20261025T181607368492/DIAGNOSIS.json)、[DUPLICATES](/home/lhohy/pt_agent_results/s1-mlp-20261025T181607368492/DUPLICATES.json)。
+
+### 移植语义与源码位置
+
+| 细节 | 对应源码 | 当前实现 |
+|---|---|---|
+| 减法展开、前端私有常量 | tools/frontend.cpp:191–225、:128–132；PrivatizeConstant.cpp:24–32 | RecordingBackend记录negate/add或负常量，每次Plain使用记录私有编码，载荷数组共享 |
+| 深度推迟和稳定排序 | GreedyBootstrapPlacement.cpp:48–79、:104–167 | schedule推迟rotate/negate；切点调用placement.depth_dp |
+| refresh、normalize、局部scale/level对齐 | GreedyBootstrapPlacement.cpp:174–258；EarthOps.td:358–375、:456–468 | 同源waterline/factor/lastBootLevel；局部Plain编码、upscale、modswitch、bootstrap、rescale |
+| 边界属性与整数除法 | Common.cpp:8–41、:44–140 | refineReturnValues输出/自举输入、arg_scale/init_level/res_scale；除法向0截断 |
+| EarlyModswitch反向合并 | EarlyModswitch.cpp:45–99 | 跟随反向迭代访问新插入的modswitch，传播共同downFactor并调整用户属性 |
+| A/B/C与容量规则 | EarthDialect.cpp:203–335（mul容量在:325–328）；GreedyBootstrapPlacement.cpp:198–225 | 无SMU分组；只加入源码明确的mul lhs容量条件，无全局物理level区间检查 |
+
+与spec不一致之处：S1完整验收尚未达到，按§3.2在首个非同构结果停止。未更改spec规定的流水线顺序、算法、数值条件或旧测试断言；没有本轮测试报错后的算法修补。代码编写时补齐命令模板中字面大括号转义、P2元数据记录中的空载荷处理、SSA往返测试的名字归一化，以及诊断数据的JSON可序列化表示，均在本轮新增代码范围内，已通过上述离线测试。独立包复制仅有前述import机械适配，源placement及kernel保持。
+
+未完成项：默认compiler模式完整兼容；MLP非同构的后续spec与原样接续；其余14个M程序；MLP managed RuntimePlan；至少4份目标P2 managed编译；481既有回归。现有实现与测试作为开发初稿保留，未标记S1完成或通用交付通过。本轮新增Agent首次输出0、真实CKKS0，M1表不变。
+
+有限执行账：6次原模式trace、6次原模式编译、12次指定IR规范化、10次managed转换/计划导出，共28次hecate-opt调用；5份managed计划完成，MLP managed调用0。6个已启动程序均已prune，保留计划、日志、源脚本、值摘要及首差异报告；[MLP PRUNED](/home/lhohy/pt_agent_results/s1-mlp-20261025T181607368492/PRUNED.json)。本轮API0、累计129/300；registry新增8条、总481条。4GiB普通进程与已批6GiB可信子进程限制、8GiB单文件、1小时可信墙钟、10GiB磁盘准入及编译串行保持；未下载安装、修改编译器/前端/运行时、放宽资源或容差，未提交/打tag/push/PR。
+
+### §7 尾部序列接续与当前停止结果
+
+本次接续修改四个文件：`toolchain.py`新增EARTH_TAIL_PASSES并将managed转换前缀改为module级`canonicalize,cse,cse,canonicalize`；`experiments/s1_managed.py`共用该序列，比较原样`lowered.earth.mlir`与DSL规范化结果，单独记录compiler基准再次运行该序列的幂等性；`tests/test_s1_manage.py`新增序列及嵌套层级断言；`STATUS.md`更新当前状态。管理器、检查器、RMS实现、compiler模式原命令、编译器/前端/运行时均未修改。P2命令模板从managed_compile_argv自动取得新序列。
+
+比较器同时补齐不同运算数时的首处差异信息，属于本轮诊断字段补全；未改变比较条件。五个小程序及首次MLP失败全部保留；S0的六个输入未重跑。[离线REPORT](/home/lhohy/pt_agent_results/s1-unit-20261025T184737542500/REPORT.json)：
+
+```text
+Ran 10 tests in 0.386s
+OK
+failures=0, errors=0, skipped=0
+```
+
+MLP在新序列下完整通过：两侧1514个Earth运算、24次自举、切点`[2,5,8,11,13,16,19]`；顺序、引用、类型、属性及常量相同。RuntimePlan两侧1540步、1541值、1输入/1输出，逐步op/level/scale/属性、计数及常量均相同。compiler原样基准的尾部序列幂等检查通过；两侧A/B/C检查均通过，编译后已prune。[MLP REPORT](/home/lhohy/pt_agent_results/s1-mlp-20261025T184754559145/REPORT.json)。
+
+下一模型CNN plain在IR比较停止。两侧计数完全相同：constant829、modswitch120、rotate462、mul973、rescale973、add1247、bootstrap72、negate9，共4685运算。21个切点完全相同。基准原样比较且幂等，两侧同一检查器通过。首差异operation172为Plain(scale=43,level=3)的constant.rms_var，compiler与DSL分别为0.13461690297668655和0.13461690297668372。按§7.5停止，没有导出CNN managed RuntimePlan或启动下一个模型。[CNN REPORT](/home/lhohy/pt_agent_results/s1-cnn_plain-20261025T184900572487/REPORT.json)。
+
+只读诊断：除RMS属性外全部结构/引用/类型/属性相同，829个常量的数值载荷全部np.array_equal；共16个rms_var不同。使用现有libm.fma对每个常量逐项累计，再除长度并sqrt，可精确重现16/16编译器RMS；现有发射器的data*data及np.cumsum分步计算可重现DSL值。首差异绝对值2.831068712794149e-15，另两例编译器值0.24234758528970834与0.093261328141639也被FMA精确重现。该证据指向浮点运算融合，未检查本地二进制具体指令；未把诊断结果写回候选、发射器或参考，未放宽比较。[DIAGNOSIS](/home/lhohy/pt_agent_results/s1-cnn_plain-20261025T184900572487/DIAGNOSIS.json)、[16项FMA_PROOF](/home/lhohy/pt_agent_results/s1-cnn_plain-20261025T184900572487/FMA_PROOF.json)。
+
+当前新序列的完整20程序矩阵如下；旧序列五小程序仅保留历史通过记录，按§7要求仍需最终重跑。原始§6报告和用量不重置。[§7终态SUMMARY](/home/lhohy/pt_agent_results/s1-section7-stopped-summary-20261025T185231100205/SUMMARY.json)。
+
+| 程序 | Earth运算数 compiler/DSL | 自举数 compiler/DSL | §7 IR | §7 RuntimePlan |
+|---|---|---|---|---|
+| mlp | 1514/1514 | 24/24 | 相同 | 相同 |
+| cnn_plain | 4685/4685 | 72/72 | 不同：16处rms_var，停止 | 待执行 |
+| resnet20 | — | — | 待执行 | 待执行 |
+| resnet20_silu | — | — | 待执行 | 待执行 |
+| R6c | — | — | 待执行 | 待执行 |
+| R7c-B | — | — | 待执行 | 待执行 |
+| U2 resnet20/8192 | — | — | 待执行 | 待执行 |
+| U2 resnet20/4096 | — | — | 待执行 | 待执行 |
+| U2 cnn_plain/8192 | — | — | 待执行 | 待执行 |
+| U2 cnn_plain/4096 | — | — | 待执行 | 待执行 |
+| U2 mlp/8192 | — | — | 待执行 | 待执行 |
+| U2 mlp/4096 | — | — | 待执行 | 待执行 |
+| U3a resnet20_relu | — | — | 待执行 | 待执行 |
+| U3a squeezenet_silu_avgpool | — | — | 待执行 | 待执行 |
+| U3a squeezenet_relu_maxpool | — | — | 待执行 | 待执行 |
+| unit-add | — | — | 旧序列通过；§7待重跑 | 待执行 |
+| unit-chain | — | — | 旧序列通过；§7待重跑 | 待执行 |
+| unit-residual | — | — | 旧序列通过；§7待重跑 | 待执行 |
+| unit-constants | — | — | 旧序列通过；§7待重跑 | 待执行 |
+| unit-no-final-mul | — | — | 旧序列通过；§7待重跑 | 待执行 |
+
+与spec不一致之处：CNN的RMS属性尚未满足逐项相同要求，依§7.5在首差异停止；本次对规范化顺序的改动严格采用§7指定序列和module/func嵌套层级。管理器仍只做GreedyBootstrapPlacement/EarlyModswitch，没有移植CSE或增加额外pass；没有修改RMS算法、旧断言或数值条件。未完成项：RMS复现接续条款、CNN managed计划、其他13个模型、五小程序最终重跑、四份目标P2包编译、默认compiler完整兼容与481旧回归。新序列验收进度1/20通过、1/20停止、18/20待执行，未标记S1完成。
+
+本次有限执行：原模式trace2、原模式编译2、指定规范化4、managed转换/导出2，共8次hecate-opt；MLP managed计划1份，CNN managed调用0。两例目录均已prune，保留计划、日志、管理摘要和差异诊断；[CNN PRUNED](/home/lhohy/pt_agent_results/s1-cnn_plain-20261025T184900572487/PRUNED.json)。累计S1原模式trace8、hecate-opt36，所有旧批次与额度保持。API0、累计129/300；本次registry新增4条、总485条。没有报告集读取、新Agent生成、真实CKKS、安装/下载、库修改、资源扩额或git提交/推送，M1表保持。
+
+### §8 FMA修复、全部常量验证及ResNet20停止（2026-10-26）
+
+核对工作目录、aarch64、分支lhy-agent-dsl、HEAD b7662b94及运行任务后接续，普通进程4GiB、可信子进程6GiB、单文件8GiB、可信墙钟3600秒、磁盘准入10GiB、编译串行保持。保留原MLP完整通过、CNN RMS失败、五小程序历史及所有已消费用量。
+
+改动文件：
+
+- `manage/earth_emit.py:22`：新增RMSCalculator，按EarthOps.td:145–157、§8规定顺序调用系统libm.fma，再除长度和math.sqrt；separate先乘后加；找不到fma时报错。按常量载荷复用计算，emit记录耗时及命中/计算次数。
+- `toolchain.py:255`：management_profile明确记录rms_accumulation="fma"；该字段属于发射配置，沿用原编译器配置文件与命令。`prune:331`新增可选keep，用于各阶段只保留下一步所需的已管理IR、compiler参照或bundle，默认清理行为保持。
+- `export/templates/trace_model.py:63`：P2 managed trace记录相同profile、发射耗时和缓存统计；core/manage由既有复制入口取得相同FMA实现，独立包测试覆盖。
+- `experiments/s1_managed.py:105`：新增七份RMS参照重建及测试入口；CNN接续直接复用新参照。先消费compiler原样基准及幂等结果，再发射/规范化DSL IR；每阶段使用相同prune规则清理已消费文件，编译流水线及比较条件保持。停止时清理允许的中间文件并保留报告/计划/日志。
+- `tests/test_s1_rms.py`新增4项离线测试及3项参照测试；本机产物测试用require标记。`tests/test_s1_manage.py:108`的现有本轮顺序累计测试显式选择separate，:202新增P2 profile/发射统计断言。
+- `STATUS.md`更新任务卡、当前阻塞、完整矩阵、API和最近5次运行。其余既有S1改动继续保留，源码库/前端/运行时及切点实现保持。
+
+#### 测试与常量证明
+
+```text
+S1 offline: Ran 14 tests in 0.189s — OK
+S1 compiler RMS: Ran 3 tests in 11.223s — OK
+failures=0, errors=0, skipped=0
+All compiler constants: 1173/1173 float64 patterns equal
+Historical FMA_PROOF: 16/16 equal
+Separate accumulation: 16 CNN constants differ; MLP/small constants equal
+Missing libm fma: explicit RuntimeError verified
+Standalone P2 managed trace/profile: passed
+Existing 481 regressions: 0 executed in this continuation
+```
+
+RMS参照覆盖：MLP342、CNN829、unit-constants2，其余四个小程序没有常量，共1173；统计覆盖全部编译器常量，保留零常量程序。历史MLIR已按授权清理，本次为§8.3重建这七份原模式参照；原通过记录保持。参照测试完清理MLP/小程序，CNN参照直接用于随后完整验收并清理，额外原模式重编译0。[离线REPORT](/home/lhohy/pt_agent_results/s1-unit-20261026T043627985647/REPORT.json)、[RMS REPORT](/home/lhohy/pt_agent_results/s1-rms-20261026T043637386857/REPORT.json)、[全部1173项及separate差异](/home/lhohy/pt_agent_results/s1-rms-20261026T043637386857/RMS_CHECKS.json)。
+
+CNN plain完整通过：4685/4685个Earth运算、72/72自举、21个切点，原样compiler基准幂等；管理器及两侧IR检查通过。RuntimePlan均4763步、4764值、1输入/1输出，全部逐步状态、属性、运算计数和常量相同。发射5.543002805秒，缓存命中151、计算826次；总运行20.599080545秒。[CNN REPORT](/home/lhohy/pt_agent_results/s1-cnn_plain-20261026T043731147374/REPORT.json)。
+
+ResNet20按§3.2停止：原模式trace退出0、6.04秒、723.5703125MiB；编译退出0、9.48秒、1441.10546875MiB，自举226。管理摘要226次、64个切点与代价模型相同，compiler基准幂等，两侧检查器通过。发射30.833218138秒，缓存命中103、计算4540次；总运行92.837395579秒。规范化IR运算数23331/23349；首处顺序差异operation307：compiler的modswitch使用引用280、downFactor=1，DSL使用引用257、downFactor=4，结果均Cipher(43,4)。这处顺序差异与运算数差共同保留，具体成因尚未确定。依spec立即停止后续managed转换/计划导出和下一个模型。[ResNet20 REPORT](/home/lhohy/pt_agent_results/s1-resnet20-20261026T043833899058/REPORT.json)。
+
+#### 当前§3验收矩阵
+
+| 项 | 结果 |
+|---|---|
+| 1 compiler模式兼容 | header及命令单测通过；对b7662b94的完整Emit/常量/命令、四冻结模型validate/estimate/confirm对照待执行 |
+| 2 已管理IR | MLP/CNN相同，ResNet20不同，17个待执行 |
+| 3 RuntimePlan | MLP/CNN相同，ResNet20及其余17个待执行 |
+| 4 检查器 | 六类破坏测试通过；MLP/CNN/ResNet20的管理器结果及compiler原IR通过；剩余集合待执行 |
+| 5 共用切点 | MLP/CNN/ResNet20与同一placement.depth_dp相同，保留五小程序历史结果；剩余集合待执行 |
+| 6 至少4份P2 managed原生编译 | 独立包managed trace测试通过；目标4份原生编译/计划对照待执行 |
+| 7 既有481回归 | 因§3.2停止，0/481执行；U3b2后增5项内存测试同样待执行 |
+
+完整集合M仍保留20份分母，§7已过MLP继续复用；五小程序的本次RMS参照测试只验证常量，最终新序列IR/计划比较仍待执行。[完整SUMMARY](/home/lhohy/pt_agent_results/s1-section8-stopped-summary-20261026T044145220700/SUMMARY.json)。
+
+| 程序 | Earth运算数 compiler/DSL | 自举数 compiler/DSL | IR结论 | RuntimePlan结论 |
+|---|---|---|---|---|
+| mlp | 1514/1514 | 24/24 | 相同（保留§7） | 相同 |
+| cnn_plain | 4685/4685 | 72/72 | 相同 | 相同 |
+| resnet20 | 23331/23349 | 226/226（DSL发射前摘要） | 不同，停止 | 待执行 |
+| resnet20_silu | — | — | 待执行 | 待执行 |
+| R6c | — | — | 待执行 | 待执行 |
+| R7c-B | — | — | 待执行 | 待执行 |
+| U2 resnet20/8192 | — | — | 待执行 | 待执行 |
+| U2 resnet20/4096 | — | — | 待执行 | 待执行 |
+| U2 cnn_plain/8192 | — | — | 待执行 | 待执行 |
+| U2 cnn_plain/4096 | — | — | 待执行 | 待执行 |
+| U2 mlp/8192 | — | — | 待执行 | 待执行 |
+| U2 mlp/4096 | — | — | 待执行 | 待执行 |
+| U3a resnet20_relu | — | — | 待执行 | 待执行 |
+| U3a squeezenet_silu_avgpool | — | — | 待执行 | 待执行 |
+| U3a squeezenet_relu_maxpool | — | — | 待执行 | 待执行 |
+| unit-add | — | — | 旧序列历史通过；新序列待执行 | 待执行 |
+| unit-chain | — | — | 旧序列历史通过；新序列待执行 | 待执行 |
+| unit-residual | — | — | 旧序列历史通过；新序列待执行 | 待执行 |
+| unit-constants | — | — | 旧序列历史通过；新序列待执行 | 待执行 |
+| unit-no-final-mul | — | — | 旧序列历史通过；新序列待执行 | 待执行 |
+
+与spec不一致之处：§8指定算法、平台字段、float64位模式比较和缺fma报错均按条款实现，数值比较保持；本次没有修改旧轮次测试断言。本轮S1顺序累计单测按新增模式显式传separate；七份已清理的参照为完成指定测试重新生成，CNN完整验收复用该新参照；其余追加代码用于发射计时、必要的阶段清理与停止报告。实际验收差异为上述ResNet20 IR，按§3.2停下，尚未修改管理算法或新增pass来修复。
+
+未完成项：ResNet20差异的接续spec及managed RuntimePlan；其余12个模型和五小程序新序列完整验收；compiler模式完整兼容；至少4份目标P2原生编译；481既有回归及后增5项内存测试。S1保持阻塞，本轮完成RMS开发修复及CNN外部编译对照；新增Agent首次独立输出0、真实CKKS0、未见整网新增证据0，M1表保持。
+
+有限用量：本次原模式trace/编译各8次（RMS参照7，ResNet20接续1），CNN复用参照；指定规范化4次，CNN managed转换/导出2次，共14次hecate-opt。S1累计trace16、hecate-opt50；ResNet20 managed调用0。全部已启动目录完成允许的清理，保留RuntimePlan、日志、报告、管理摘要及源脚本；收尾磁盘空闲14695006208字节。API0、累计129/300；本次registry新增5条，总490条。现有资源及串行限制保持，历史响应/源码/程序包/证书/已消费用量保持；下载、安装、库修改、资源扩额和git提交/推送0。
+
+
+## S1 §9–§10：共享输入DAG定位与接入（2026-10-26；§11接续前结果）
+
+§9分阶段证据：[ResNet20诊断](/home/lhohy/pt_agent_results/s1-resnet20-20261026T045019457776/REPORT.json)。阶段c与原模式IR相同；阶段a/b中compiler各21个negate、Python原记录图各57个。重复构造`-x`的最小例在输入共享前a/b有差异，显式复用值后相同，定位至frontend save()的预处理。依用户§10调用现有pass并读回共享DAG，Greedy/Early算法及冻结代价模型保持。新[最小例REPORT](/home/lhohy/pt_agent_results/s1-input-proof-20261026T050641674655/REPORT.json)的重复构造与显式复用两种输入，在阶段0/a/b均完全相同。
+
+改动文件：`manage/earth_emit.py`共用原始与管理IR发射；新增`manage/mlir_read.py`严格读取函数、常量、共享操作数和位置；`toolchain.frontend_preprocess_argv`提供唯一前端预处理命令；`export/package.py`和P2的`trace_model.py`接入`--hecate-opt`及实际预处理后的管理摘要；`run.py`传递managed参数；`manage/greedy.py`增加阶段观察回调；新增`experiments/s1_stages.py`及`tests/test_s1_stages.py`、`test_s1_frontend.py`。`experiments/s1_managed.py`接入阶段0、按消费顺序清理与外层失败报告。`experiments/s1_acceptance.py`与`tests/test_s1_compat.py`准备默认模式兼容、P2和回归，尚未执行。原S1 header/parser/printer/checker、管理流程与P2双段命令继续保留；编译器、前端和运行库源码保持。
+
+当前已执行测试输出：[run.log](/home/lhohy/pt_agent_results/s1-unit-20261026T050755915284/run.log)。
+
+```
+Ran 23 tests in 0.303s
+OK
+```
+
+23/23通过，失败/错误/跳过均0。包括P2独立managed trace、小例原生a/b比较、严格解析与未知运算拒绝。另2项新常量流比较测试尚未启动：请求运行时Nix已有作业占用整次调用的互斥锁，30秒等待后退出，Python测试执行0；[失败REPORT](/home/lhohy/pt_agent_results/s1-unit-20261026T052343934389/REPORT.json)和日志保留。之后所有Nix调用串行。
+
+集合M现阶段结果（各例`REPORT.json`均在[总SUMMARY](/home/lhohy/pt_agent_results/s1-section10-resource-stop-20261026T053717632075/SUMMARY.json)列出；运算数为管理后Earth，非RuntimePlan步数）：
+
+| 程序 | 阶段0运算数 | Earth compiler/managed | 自举 compiler/managed | 阶段0 / IR / 完整RuntimePlan |
+|---|---:|---:|---:|---|
+| unit-add | 1 | 2/2 | 0/0 | 通过 / 通过 / 通过 |
+| unit-chain | 9 | 22/22 | 2/2 | 通过 / 通过 / 通过 |
+| unit-residual | 10 | 24/24 | 2/2 | 通过 / 通过 / 通过 |
+| unit-constants | 9 | 17/17 | 1/1 | 通过 / 通过 / 通过 |
+| unit-no-final-mul | 3 | 6/6 | 0/0 | 通过 / 通过 / 通过 |
+| resnet20 | 18113 | 23331/23331 | 226/226 | 通过 / 通过 / 通过 |
+| resnet20_silu | 16962 | 21628/21628 | 160/160 | 通过 / 通过 / 通过 |
+| cnn_plain | 3668 | 4685/4685 | 72/72 | 通过 / 通过 / 通过 |
+| mlp | 1109 | 1514/1514 | 24/24 | 通过 / 通过 / 通过 |
+| R6c | 23690 | 31190/31190 | 383/383 | 通过 / 通过 / 通过 |
+| R7c-B | 19510 | 25296/25296 | 288/288 | 通过 / 通过 / 通过 |
+| u2-resnet20-8192 | 30731 | 39101/39101 | 296/296 | 通过 / 通过 / 通过 |
+| u2-resnet20-4096 | 56048 | 70903/70903 | 507/507 | 通过 / 通过 / 通过 |
+| u2-cnn_plain-8192 | 6262 | 7955/7955 | 96/96 | 通过 / 通过 / 通过 |
+| u2-cnn_plain-4096 | 11563 | 14672/14672 | 168/168 | 通过 / 通过 / 通过 |
+| u2-mlp-8192 | 1109 | 1514/1514 | 24/24 | 通过 / 通过 / 通过 |
+| u2-mlp-4096 | 9677 | 12899/12899 | 24/24 | 通过 / 通过 / 通过 |
+| u3a-resnet20_relu | 23690 | 31190/31190 | 383/383 | 通过 / 通过 / 通过 |
+| u3a-squeezenet_silu_avgpool | — | — | — | 磁盘准入停止，三项未执行 |
+| u3a-squeezenet_relu_maxpool | — | — | — | 待执行 |
+
+18例的管理器、compiler输出均通过同一A/B/C检查器，切点与自举计数和冻结代价模型18/18相等；原模式Earth尾部序列幂等。SqueezeNet-SiLU的282仅为旧代价预测，尚无本段实际编译自举计数。
+
+停止证据：SqueezeNet-SiLU原trace退出0，8.02秒，RSS896.8046875MiB，输出1,923,338,498字节。新raw IR与原trace同时在盘上，下一次预处理尚未启动即触发原10GiB准入检查。检查当时的实际空闲字节及raw IR大小未登记，保留这个统计缺口。原/managed编译0；临时trace和raw IR清理后，停止汇总时空闲14,371,811,328字节。源程序、历史计划、日志、报告、管理摘要、原脚本和已消费用量保持。§11已经明确压缩与stdin接续，无资源扩额。
+
+与spec不一致之处／本轮自写错误修正：
+- `experiments/s1_managed.py`：修正本轮测试模块名及namespace发现方式，改为完整模块名加载；保留首次跳过与ImportError证据，最终23项零跳过。
+- `toolchain.py:243`、`s1_stages.py:40`：新预处理文件名由frontend改为preprocessed，避开既有路径映射对/frontend的限制，原映射不改；保留首次失败证据。
+- `experiments/s1_managed.py:407`：内层启动失败时由外层生成REPORT并登记，修正本轮缺文件异常；原Nix锁与等待时限保持。
+- 本轮S1测试按新增MLIR读取及P2 `--hecate-opt`接口作机械适配，旧轮次测试和断言含义保持。§9诊断过程中读取到的一份正在写入的管理b阶段快照未参与比较，范围已写入其STRUCTURE_SCOPE.json。
+
+未完成：§11压缩实现及MLP/CNN文本等价测试、最后2个M程序、22程序默认compiler模式兼容与4冻结模型validate/estimate/confirm、至少4个目标P2包原生编译、481项既有回归及后增5项内存测试、2项新常量流比较测试。既有M1表保持；新增Agent首次独立输出、真实CKKS、未见模型证据均0。API129/300、registry520条，历史额度保持。
+
+
+## S1 §11：压缩中间IR与stdin（2026-10-26，文本等价停止）
+
+改动文件：新增`manage/streams.py`，按256MiB选择gzip、1MiB分块读写、压缩格式检查、管道两端失败传播、输出成功后发布及失败时删除部分文件。`manage/earth_emit.py`先精确计算文本大小，大IR直接写gzip流，原始/管理IR共用；`manage/mlir_read.py`直接读取gzip流。`toolchain.py`为原生pass接入管道、trace后立即压缩大IR、prune扩展到gzip；P2两个模板与`run.py`接入压缩文件；`experiments/s1_managed.py`、`s1_stages.py`、`s1_acceptance.py`接入两模型对照与消费后清理；新增`tests/test_s1_streams.py`。新包复制该标准库流工具，沿用单一管理实现；原模式完整编译保留-o位置参数以保持调试文件和RuntimePlan位置，预处理及尾部pass用-o -。未修改编译器、前端、运行库、profile安全参数或资源限制。
+
+当前测试输出：[run.log](/home/lhohy/pt_agent_results/s1-unit-20261026T054638905733/run.log)、[REPORT](/home/lhohy/pt_agent_results/s1-unit-20261026T054638905733/REPORT.json)。
+
+```
+Ran 30 tests in 0.217s
+OK
+```
+
+包含此前23项、本段完成的2项常量流比较及5项压缩/管道检查；失败、错误、跳过均0。压缩验收各模型两条真实流水线均完成，再调用2项文本证明测试，failfast在CNN预处理文本处停止：执行1、失败1、未执行1。[压缩REPORT](/home/lhohy/pt_agent_results/s1-compression-20261026T054714535513/REPORT.json)。
+
+| 模型 | 路径 | 阶段0 | Earth运算数 | 自举数 | 管理IR / 完整RuntimePlan | 预处理 / managed / 尾部文本 |
+|---|---|---|---:|---:|---|---|
+| mlp | 普通 | 相同 | 1514 | 24 | 相同 / 相同 | 5行位置不同 / 相同 / 相同（停止后只读诊断） |
+| mlp | gzip/stdin | 相同 | 1514 | 24 | 相同 / 相同 | 同上 |
+| cnn_plain | 普通 | 相同 | 4685 | 72 | 相同 / 相同 | 5行位置不同 / 相同 / 相同 |
+| cnn_plain | gzip/stdin | 相同 | 4685 | 72 | 相同 / 相同 | 同上 |
+
+首差异为预处理第1行第14列：普通路径`#loc2 = loc(".../preprocessed/raw.earth.mlir":2:29)`，管道路径`#loc2 = loc("<stdin>":2:29)`。其余4行是同类函数参数或模块/函数/return的位置别名。所有差异片段及行列保存在[停止SUMMARY](/home/lhohy/pt_agent_results/s1-section11-stopped-20261026T055001916892/SUMMARY.json)，没有过滤位置或修改比较断言。已消费的12份文本均删除，RuntimePlan、日志、报告、源程序和全部旧证据保持。
+
+与spec不一致之处／自写实现修正：`manage/streams.py`在接入测试前将输出-o定位改为最后一个，保留/usr/bin/time自身的-o；将stderr独立写日志，避免混入压缩IR；使用进程组在任一端出错时收尾。`manage/earth_emit.py`修正本轮提取行发射函数的缩进；`s1_acceptance.py`删除本轮多余的错误glob。签名、pass顺序、数值与文本比较要求保持。当前实测偏差为上列预处理调试位置，等待接续spec；P2大文件驱动的外层自动管道识别还需核对限定范围，尚未执行目标包验收。
+
+未完成：位置口径接续、两模型压缩文本等价通过、最后两个SqueezeNet、22程序compiler模式兼容/4冻结模型数值与代价回归、至少4个managed P2包、481项既有回归和后增5项内存测试。此前18例完整验收保留，当前新增4条MLP/CNN对照归入压缩开发验证。新增Agent首次独立输出0、真实CKKS0、未见模型证据0，M1表保持。API129/300、registry523条。用户要求的10GiB准入、4/6GiB内存、8GiB文件、3600秒及串行执行保持；无下载、安装、库修改、扩额或git操作。
+
+
+## S1 §11.3接续（2026-10-26，进行中）
+
+已依修订为模块、函数、参数及return显式写loc(unknown)，PT-DSL运算位置保持。新增同一raw IR文件/stdin预处理文本单测；修正本轮trusted_run自动管道匹配，限定到hecate-opt，Python包驱动保留自己的--input参数，并补对应单测。旧预处理位置停止、源程序、日志和用量保留。
+
+[当前测试REPORT](/home/lhohy/pt_agent_results/s1-unit-20261026T055246997048/REPORT.json)：32/32，失败/错误/跳过0；[压缩等价REPORT](/home/lhohy/pt_agent_results/s1-compression-20261026T055307019022/REPORT.json)：2/2，MLP/CNN普通与gzip的三类文本逐字相同，4条阶段0、管理IR、完整RuntimePlan比较全部相同；已消费的12份文本证明文件已删除，证据保留于报告。
+
+SqueezeNet-SiLU本次目录：[运行中REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_silu_avgpool-20261026T055523724173/REPORT.json)。原trace退出0、7.77秒、896.8125MiB，原文本1,922,469,938字节，gzip16,166,805字节；正在执行后续比较。已通过18例保留，尚未重跑。API129/300，已有登记525条，当前进行中的模型尚未新增终态登记。
+
+
+### S1 §11.3本次终态（2026-10-26）
+
+改动文件：`manage/earth_emit.py:90`、`:98`按修订给结构显式loc(unknown)，所有earth运算PT-DSL位置保持。`tests/test_s1_streams.py`新增同一raw IR文件/stdin预处理逐字比较，并验证已有PT-DSL位置信息；`toolchain.py:164`修正本轮压缩接线，仅向hecate-opt启用自动stdin处理，Python包驱动自己的--input参数保留，并补单测。文档只更新STATUS。冻结模型、既有测试断言、原始响应/DSL、库和profile保持。
+
+测试输出：[当前run.log](/home/lhohy/pt_agent_results/s1-unit-20261026T055246997048/run.log)。
+
+```
+Ran 32 tests in 0.207s
+OK
+```
+
+[两模型压缩run.log](/home/lhohy/pt_agent_results/s1-compression-20261026T055307019022/run.log)：
+
+```
+Ran 2 tests in 0.891s
+OK
+```
+
+MLP/CNN各普通与gzip两条流水线完整完成；两模型预处理、已管理IR、尾部输出文本全部逐字相同。各路径阶段0、管理IR及RuntimePlan均相同；MLP1514运算/24自举，CNN4685运算/72自举。已消费的12份证明文本删除，逐项结论与各侧计划/日志保留。历史§11的文件名/stdin位置差异由用户本次固定位置规则消除，旧失败REPORT保持。
+
+SqueezeNet-SiLU本次原trace成功：7.77秒、896.8125MiB、1,922,469,938字节，gzip16,166,805字节。raw发射46.448098424007185秒、2,397,613,997解压后字节、FMA缓存命中3232/未命中5888。预处理输入缓冲阶段exit134；阶段0、管理IR比较、原/managed RuntimePlan均未执行；282仍为代价预测。第二个SqueezeNet未启动。磁盘采样最低11,626,680,320字节；RSS峰值2294.53125MiB为原生time记录，具体失败分配大小未记录。[终态SUMMARY](/home/lhohy/pt_agent_results/s1-section113-input-buffer-stop-20261026T060008028328/SUMMARY.json)。
+
+与spec不一致之处：固定位置、严格文本要求和资源均按§11.3落实；本轮自写接线例外修正为trusted_run原生进程识别（仅hecate-opt启用IR管道），没有改动算法、profile或旧断言。执行时发现SqueezeNet在现有6GiB限制内读stdin的缓冲申请失败，依AGENTS停止；未添加临时解压输入、额外pass或重试。首次STATUS更新命令的相对路径错误已按正确工作目录修正，测试本身正常运行，源码和结果文件未受影响。
+
+未完成：输入缓冲接续规范、最后两例M验收、22程序默认compiler兼容及4冻结模型validate/estimate/confirm、至少4个目标P2包原生验收、481既有测试及后增5项内存回归。本次§11.3验收没有改变M既有18例结果；首次独立Agent输出、真实CKKS、未见整网新增证据均0，M1表保持。API129/300、registry527条。已启动批次全部收尾、允许中间文件已清理；无下载、安装、库修改、扩额、commit、push或tag。
+
+
+### S1 §11.4接续记录（2026-10-26，进行中）
+
+`manage/streams.py`按解压后>1GiB选择单个临时常规文件，≤1GiB保持stdin；记录原始字节数（当前进程写入时保留，跨进程时分块计数），解压前检查10GiB＋预计大小，finally删除，进程内互斥与既有Nix串行限制保持。输出继续gzip。`toolchain.py`记录实际输入路线与临时清理结果；P2复用同一复制模块。新增准入及成功/失败清理测试，扩展同一raw的三路径原生文本比较；MLP/CNN实验扩展为普通/stdin/强制临时文件三路。
+
+[当前测试REPORT](/home/lhohy/pt_agent_results/s1-unit-20261026T060711429662/REPORT.json)：34/34，失败/错误/跳过0，0.383秒；首次自写异常映射遗漏的28项失败记录保留于[首次REPORT](/home/lhohy/pt_agent_results/s1-unit-20261026T060604073458/REPORT.json)。修正为尺寸预读发现损坏gzip时沿用现有RuntimeError，旧断言保持。
+
+[三路径REPORT](/home/lhohy/pt_agent_results/s1-compression-20261026T060814499476/REPORT.json)：2/2，1.932秒；两模型三类文本逐字相同，6条完整IR和RuntimePlan均相同；临时输入均删除，18份消费完的证明文本删除。M此前18例保持。
+
+SqueezeNet-SiLU新目录：[运行中REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_silu_avgpool-20261026T061111346652/REPORT.json)，预处理[PREPROCESS](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_silu_avgpool-20261026T061111346652/preprocessed/PREPROCESS.json)：已退出0、12.59秒、2893.390625MiB；输入临时文件原始大小2,397,613,997字节，准入前空闲14,282,240,000字节，finally删除成功，正在接续比较。API129/300，已终态登记530条，当前模型待收尾登记。
+
+
+### S1 §11.4两例本机收尾与服务器接续（2026-10-26）
+
+| M程序 | 阶段0运算数 | Earth compiler/managed | 自举 compiler/managed | IR / 完整RuntimePlan | 当前范围 |
+|---|---:|---:|---:|---|---|
+| SqueezeNet-SiLU/avgpool | 43424 | 50483/50483 | 282/282 | 相同 / 相同 | 本机完整通过 |
+| SqueezeNet-ReLU/maxpool | 未执行 | 未执行 | 预测1122；新实际未执行 | 待服务器验收 | 本机解压前准入停止，已导出作业 |
+
+SiLU：[完整REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_silu_avgpool-20261026T061111346652/REPORT.json)，272.956866530003秒，两个managed原生阶段均0，切点/自举预测与预处理DAG相同。所有临时解压前均按10GiB＋原始大小准入；0.25秒运行采样观测最低空闲7,718,252,544字节，最大同时1个临时输入、最大2,410,898,125字节，采样结束空闲14,267,428,864字节。运行中的编译器调试IR/bundle占用另由消费后的prune回收；临时输入finally删除，所有本次IR/bundle已清理，日志、RuntimePlan及报告保留。原编译器输入文件路径模式没有修改，managed与尾部文本输出使用gzip。
+
+ReLU/maxpool：[本机停止REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T061719216803/REPORT.json)。trace退出0、9.03秒、926.2734375MiB，原文本1,916,721,060字节、gzip16,447,896字节。raw原始大小3,855,658,106字节；准入要求14,593,076,346，实有14,230,802,432，差362,273,914字节。未尝试临时解压/预处理，最后一例未计入M通过数。0.25秒采样最低空闲11,510,214,656、临时文件最大0个，结束14,267,654,144字节；全部本次中间IR已清理，停止用量保留。
+
+按§11.4新增`experiments/s1_acceptance.server_case`与实验`--part server`，复用P2导出和现有`run._server_job`生成compiler/managed两份有限作业及串行入口。模型、DSL、权重和参数来自原资产；脚本bash语法及两模式编译命令预览通过，API/原生编译/服务器执行0。输出[服务器REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T062316234215/REPORT.json)明确local_completed=false、acceptance_complete=false；服务器阶段0/IR/RuntimePlan比较仍待产物，未宣称整例通过。现有6GiB、8GiB、3600秒和解压前准入均保留。
+
+当前M计19/20：前18例保留，加本次SiLU；默认模式兼容/P2/既有回归进行中。API129/300，终态registry533条，全部旧记录保持；当前兼容批次尚未登记终态。
+
+
+### S1默认模式兼容与P2包验收（2026-10-26）
+
+[兼容REPORT](/home/lhohy/pt_agent_results/s1-compat-20261026T062351944116/REPORT.json)：22程序（P2原7＋U2六变体＋U3九模型）的Emit文本、逐条常量数值/顺序、默认打印和编译命令与b7662b94全部相同；四冻结模型各20留出图的Mock/张量validate、estimate（含manage=dsl相等）及20确认图的confirm均逐项相同。旧源码只读归档用于对照，库/模型/权重保持，未读取报告集。
+
+| 独立P2包 | 两模式trace/compile | 阶段0 | 完整RuntimePlan | 证据 |
+|---|---|---|---|---|
+| mlp | 全部退出0 | 相同 | 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-mlp-20261026T062947205199/REPORT.json) |
+| cnn_plain | 全部退出0 | 相同 | 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-cnn_plain-20261026T063104686027/REPORT.json) |
+| resnet20 | 全部退出0 | 相同 | 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-resnet20-20261026T063240933999/REPORT.json) |
+| u2-cnn_plain-8192 | 全部退出0 | 相同 | 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-u2-cnn_plain-8192-20261026T063557571159/REPORT.json) |
+
+四包均在独立的compiler和managed目录调用包自带入口，managed trace不导入hecate前端或pt_agent，管理模块及placement共用源码副本。所有本次消费完的IR/NPZ/bundle均prune；保留各模式RuntimePlan、管理摘要、包和日志。API0、真实CKKS0。
+
+既有回归根目录：[REGRESSION](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/REGRESSION.json)。主组435执行，431通过、4ONNX跳过待独立intake；包装17/17通过；当前其余组进行中。每组实际跳过数以其REPORT的skipped字段为准，外层控制器的skips字段暂为null，最终汇总将从原REPORT读取准确数值，原运行记录保持。
+
+
+### S1实现文件与C++语义对应（最终源码，2026-10-26）
+
+本轮源码/测试共25文件，文档仅STATUS：
+
+| 范围 | 文件（相对scripts/pt_agent） | 用途 |
+|---|---|---|
+| 新管理组件 | manage/__init__.py、ir.py、greedy.py、check.py、earth_emit.py、mlir_read.py、streams.py | 记录共享DAG、管理、A/B/C检查、原始/管理IR读写、有限压缩与临时输入 |
+| DSL接口 | dsl/ir.py、parser.py、printer.py、typecheck.py | 可选manage字段、默认compiler原文及组合检查 |
+| 工具与入口 | toolchain.py、run.py | 单源预处理和管理命令、可信执行、managed编译与服务器入口 |
+| P2包 | export/package.py、export/templates/trace_model.py、compile_model.py | 独立管理代码与profile、--mode/--hecate-opt接入、同源流工具 |
+| 实验 | experiments/s1_managed.py、s1_stages.py、s1_acceptance.py | M/阶段0/a/b/c、兼容与包、三路径证明、资源fallback、回归 |
+| 本轮测试 | tests/test_s1_manage.py、test_s1_rms.py、test_s1_stages.py、test_s1_frontend.py、test_s1_compat.py、test_s1_streams.py | 默认接口、六负例、RMS、逐pass共享图、独立包及三路径生命周期 |
+
+| C++语义细节 | 对应源码位置 | Python处理 |
+|---|---|---|
+| 使用次数按操作数槽计数；rotate/negate推迟深度、稳定排序、切点刷新、常量私有化 | GreedyBootstrapPlacement.cpp:33、:57、:76、:101、:161、:174、:244、:271 | greedy.schedule/manage，切点仅调用placement.depth_dp；保留插入顺序和lastBootLevel口径 |
+| 输入/输出边界细化及C++整数除法向零截断 | Common.cpp:8、:44、:113 | greedy中的refine边界与math.trunc；Earth层数0为顶层 |
+| EarlyModswitch反向遍历及动态use-list，按操作数槽维护、合并modswitch | EarlyModswitch.cpp:36–99 | greedy.early_modswitch；新增节点参与同一反向顺序 |
+| 每种运算类型推导及明确的乘法容量约束 | EarthDialect.cpp:182–335；EarthOps.td:165–233、:358、:456 | greedy.infer与check A/B/C；按§6免去SMU分组，保留源中明确的容量规则 |
+| 平台RMS顺序累计的FMA收缩 | EarthOps.td:145–157 | earth_emit.RMSCalculator按数组顺序libm.fma，再除n、math.sqrt；profile显式fma/separate |
+| save()输入预处理，共享DAG与常量私有化 | tools/frontend.cpp:124–134 | frontend_preprocess_argv调用原pass；mlir_read读回，Python不移植CSE/canonicalize |
+| Earth尾部canonicalize,cse,cse,canonicalize与两段转换 | tools/optimizer.cpp:598–626 | 原hecate-opt执行同序列，原基准保持并另做幂等验证 |
+
+以上C++文件均只读，库/前端/运行时源码保持；默认编译命令和计算Emit由22程序兼容实测覆盖。§11.3只固定结构位置，PT-DSL节点位置保持；§11.4只改变输入传递，三路径的三类文本与RuntimePlan实测相同。
+
+
+### S1集合M当前完整矩阵（19/20本机通过，最后1例服务器待验收）
+
+下表计管理后的Earth运算，RuntimePlan另逐步比较；已通过18例依§11.3保留，SiLU为§11.4本次完整结果。现有编译器、库与CPP源码保持。最后一例未计入通过数，预测1122只作历史代价记录。
+
+| 程序 | 阶段0运算数 | Earth compiler/managed | 自举 compiler/managed | 阶段0 / IR / 完整RuntimePlan | 证据 |
+|---|---:|---:|---:|---|---|
+| resnet20 | 18113 | 23331/23331 | 226/226 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-resnet20-20261026T051009224945/REPORT.json) |
+| resnet20_silu | 16962 | 21628/21628 | 160/160 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/resnet20_silu/REPORT.json) |
+| cnn_plain | 3668 | 4685/4685 | 72/72 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-replay-20261026T050854067488/cnn_plain/REPORT.json) |
+| mlp | 1109 | 1514/1514 | 24/24 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-replay-20261026T050854067488/mlp/REPORT.json) |
+| R6c | 23690 | 31190/31190 | 383/383 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/R6c/REPORT.json) |
+| R7c-B | 19510 | 25296/25296 | 288/288 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/R7c-B/REPORT.json) |
+| u2-resnet20-8192 | 30731 | 39101/39101 | 296/296 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/u2-resnet20-8192/REPORT.json) |
+| u2-resnet20-4096 | 56048 | 70903/70903 | 507/507 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/u2-resnet20-4096/REPORT.json) |
+| u2-cnn_plain-8192 | 6262 | 7955/7955 | 96/96 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/u2-cnn_plain-8192/REPORT.json) |
+| u2-cnn_plain-4096 | 11563 | 14672/14672 | 168/168 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/u2-cnn_plain-4096/REPORT.json) |
+| u2-mlp-8192 | 1109 | 1514/1514 | 24/24 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/u2-mlp-8192/REPORT.json) |
+| u2-mlp-4096 | 9677 | 12899/12899 | 24/24 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/u2-mlp-4096/REPORT.json) |
+| u3a-resnet20_relu | 23690 | 31190/31190 | 383/383 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-remaining-20261026T051615428259/u3a-resnet20_relu/REPORT.json) |
+| u3a-squeezenet_silu_avgpool | 43424 | 50483/50483 | 282/282 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_silu_avgpool-20261026T061111346652/REPORT.json) |
+| u3a-squeezenet_relu_maxpool | — | — | — | 待服务器验收 | [REPORT](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T061719216803/REPORT.json) |
+| unit-add | 1 | 2/2 | 0/0 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-replay-20261026T050854067488/unit-add/REPORT.json) |
+| unit-chain | 9 | 22/22 | 2/2 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-replay-20261026T050854067488/unit-chain/REPORT.json) |
+| unit-residual | 10 | 24/24 | 2/2 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-replay-20261026T050854067488/unit-residual/REPORT.json) |
+| unit-constants | 9 | 17/17 | 1/1 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-replay-20261026T050854067488/unit-constants/REPORT.json) |
+| unit-no-final-mul | 3 | 6/6 | 0/0 | 相同 / 相同 / 相同 | [REPORT](/home/lhohy/pt_agent_results/s1-section10-replay-20261026T050854067488/unit-no-final-mul/REPORT.json) |
+
+19例切点与自举数和冻结代价模型逐项相同，Python管理与原编译器两侧通过同一A/B/C检查器；6类负例在编译前拦截。最后一例服务器入口及未完成比较见本节前的接续记录。此矩阵记录开发对照，新Agent首次输出0、真实CKKS0、未见模型新增证据0；M1表保持。
+
+
+## S1最终本机交付状态（2026-10-26 / b7662b94-dirty）
+
+[完整SUMMARY](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/SUMMARY.json)、[回归汇总](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/REGRESSION_SUMMARY.json)。S1整体保留阻塞状态，唯一剩余为服务器上的ReLU/maxpool完整对照；代码、所有可在本机执行的授权检查及服务器包均已收尾。没有把资源停止计为通过。
+
+| §3项目 | 结果 | 范围／证据 |
+|---|---|---|
+| 1 默认compiler不变 | 通过 | 22程序Emit文本、逐条常量/顺序、打印/编译命令；四冻结模型20留出图Mock/张量、estimate及20确认图confirm逐项相同；兼容REPORT见上 |
+| 2 阶段0与已管理IR | 19/20通过，1待服务器 | 前18例保留＋本次SiLU；逐程序完整矩阵见上；最后一例未执行 |
+| 3 完整RuntimePlan | 19/20通过，1待服务器 | 每份逐步op/scale/level、值、边界、常量及统计相同；最后一例未执行 |
+| 4 检查器 | 19例两侧通过、6类负例通过 | A/B/C及源码明确乘法容量；未移植SMU；第20例两侧检查待服务器 |
+| 5 单一切点实现 | 19例相同，1待服务器 | 管理器调用同一placement.depth_dp；冻结estimate保持；19例原始/预处理后切点与自举数均相同 |
+| 6 独立P2包 | 4/4通过 | MLP、CNN、ResNet20、多密文CNN/8192；两模式trace/编译、阶段0、RuntimePlan全部相同，已prune |
+| 7 既有回归及本轮 | 全部通过 | 既有481＋后增5＝486唯一用例；本轮34、三路径2；历史3项RMS证明保留 |
+
+| 测试组 | 实际执行 | 通过 | 跳过与补齐 | 输出／证据 |
+|---|---:|---:|---|---|
+| 既有主组 | 435 | 431 | 4项ONNX由独立intake补齐 | [REPORT](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/main/REPORT.json)，301.947秒unittest、外层304.38469770300435秒 |
+| 包装/工具链 | 17 | 17 | 0 | [REPORT](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/packaging/REPORT.json) |
+| 权重/内存 | 17 | 17 | 0 | [REPORT](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/weight/REPORT.json) |
+| 张量/三层缓存 | 17 | 17 | 0 | [REPORT](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/tensor/REPORT.json)，外层1678.027802798024秒，小于3600秒 |
+| 独立intake ONNX | 4 | 4 | 与主组4个跳过名称完全对应 | [REPORT](/home/lhohy/pt_agent_results/s1-regression-20261026T063740985388/intake/REPORT.json) |
+| S1最终源码 | 34 | 34 | 0 | [REPORT](/home/lhohy/pt_agent_results/s1-unit-20261026T071255108526/REPORT.json)，unittest0.371秒 |
+| MLP/CNN三路径文本 | 2 | 2 | 0 | [REPORT](/home/lhohy/pt_agent_results/s1-compression-20261026T060814499476/REPORT.json)，6条真实流水线、三类文本逐字相同 |
+
+既有组实际490次条目执行含4个环境跳过；独立intake补齐同名4项，因此唯一既有通过486，不重复计算为490。主组/其余组失败和错误均0。控制器原REGRESSION.json的skips字段为null，最终汇总从各组原REPORT.skipped读取，原文件保持。[准确回归汇总](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/REGRESSION_SUMMARY.json)。
+
+| P2程序 | RuntimePlan步骤 compiler/managed | 自举 compiler/managed | 完整比较 |
+|---|---:|---:|---|
+| mlp | 1540/1540 | 24/24 | 相同 |
+| cnn_plain | 4763/4763 | 72/72 | 相同 |
+| resnet20 | 23575/23575 | 226/226 | 相同 |
+| u2-cnn_plain-8192 | 8059/8059 | 96/96 | 相同 |
+
+改动文件：源码/测试25文件、文档仅STATUS，完整清单与C++语义对应表见上。管理器/检查器、原始及已管理IR发射与读取、单源工具命令、DSL manage字段、run/P2入口、有限流式与临时输入均按spec落地。placement、编译器、前端、运行时、原模型/权重及冻结Agent模块保持；原library修改未撤销、未混入Agent创新。
+
+与spec不一致之处：未改动规定算法、数值条件、期望值或旧测试断言；S1整体最后一例未完成，已按§11.4的资源fallback导出服务器包。自写实现层修正已逐条保留：测试模块namespace发现、preprocessed命名避开旧路径sentinel、Nix启动失败外层报告、gzip管道stderr与time的-o识别、仅对原生优化器匹配IR管道、gzip尺寸预读异常类型、STATUS命令工作目录/缩进/glob笔误，以及最终汇总跳过字段读取。全部首次失败报告和用量保留；旧轮测试无需兼容适配或断言修改。
+
+未完成：在准备好的服务器实际运行[串行双模式作业](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T062316234215/server_jobs/u3a-squeezenet_relu_maxpool/run.sh)，取得产物后完成第20例阶段0、管理IR/检查器/切点及完整RuntimePlan比较。作业目前只完成导出、语法与命令预览，server_executed=false、acceptance_complete=false。原整网CKKS验收及未见模型工作保持原计划待后续spec；本轮独立Agent生成/首次原样输出0，真实CKKS0，未见整网新增证据0，M1第5条仍待执行。
+
+API0、累计129/300、剩余171；registry545条。全部已启动本机批次收尾，消费完的IR/NPZ/bundle及临时输入清理，历史响应/源码/程序包/证书/报告与消费额度保留。普通4GiB、可信6GiB、单文件8GiB、3600秒、单编译及10GiB＋临时文件大小准入保持。无下载、安装、资源扩额、库修改、commit、push或tag。

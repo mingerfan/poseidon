@@ -24,6 +24,8 @@ def print_program(program: Program) -> str:
     settings = ", ".join(f"{name}={_literal(getattr(header, name))}"
                          for name in ("slots", "refresh", "placement", "l_max", "boot_out_level")
                          if getattr(header, name) is not None)
+    if header.manage != "compiler":
+        settings += ", manage="+_literal(header.manage)
     params = ", ".join(p.name + ": " + ("Cipher" if p.kind == "cipher" else "Plain")
                        + "[" + ", ".join(map(str, p.shape)) + "]" for p in program.params)
     lines = [f"@fhe.program({settings})", f"def {program.name}({params}):"]

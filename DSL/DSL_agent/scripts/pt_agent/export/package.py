@@ -53,6 +53,59 @@ def compile_template(mode):
     return result
 
 
+def managed_compile_template():
+    substitutions = {'/hecate-opt': '{hecate_opt}', '/out/managed.mlir': '{input}',
+                     '/out/boot-compiler-config.json': '{package}/config/compiler-config.json',
+                     '/out/': '{output_dir}/'}
+    result = []
+    for command in toolchain.managed_compile_argv('dacapo-depth-dp', 'qwen48', Path('.')):
+        argv = []
+        for arg in command:
+            arg = arg.replace('{', '{{').replace('}', '}}')
+            for old, new in substitutions.items():
+                arg = arg.replace(old, new)
+            argv.append(arg)
+        result.append(argv)
+    return result
+
+
+def frontend_preprocess_template():
+    result = []
+    substitutions = {'/hecate-opt':'{hecate_opt}', '/out/raw.earth.mlir':'{input}',
+                     '/out/boot-compiler-config.json':'{package}/config/compiler-config.json',
+                     '/out/':'{output_dir}/'}
+    for arg in toolchain.frontend_preprocess_argv('dacapo-depth-dp','qwen48',Path('.')):
+        arg = arg.replace('{','{{').replace('}','}}')
+        for old,new in substitutions.items():
+            arg = arg.replace(old,new)
+        result.append(arg)
+    return result
+
+
+def _management_files(program, weights, code, module, package):
+    """Ship the same manager and the sole placement implementation, without SDK imports."""
+    profile = toolchain.management_profile()
+    record = dict(mode=program.header.manage, profile=profile, cuts=None, boots=None, values=[],
+                  source_lines={}, input_dag='pending-frontend-preprocess')
+    for node in ast.walk(ast.parse(code)):
+        if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name):
+            op = program.producer(node.targets[0].id)
+            if op is not None:
+                record['source_lines'][str(node.lineno)] = dict(id=op.id, lineno=op.lineno)
+    _dump(package/'config/management.json', record)
+    _dump(package/'config/managed_compile_argv.json', managed_compile_template())
+    _dump(package/'config/frontend_preprocess_argv.json', frontend_preprocess_template())
+    target = module/'core/manage'
+    target.mkdir()
+    for source in sorted((SOURCE/'manage').glob('*.py')):
+        text = source.read_text().replace('from ..backends.base import', 'from ..base import')
+        (target/source.name).write_text(text)
+    # placement imports DagBackend solely for its annotation. The standalone
+    # package uses the recording backend's duck-typed view of the identical DAG.
+    (module/'core/placement.py').write_text((SOURCE/'placement.py').read_text().replace(
+        'from .backends.dag import DagBackend', 'from typing import Any as DagBackend'))
+
+
 def _check_imports(text, label):
     for node in ast.walk(ast.parse(text)):
         if isinstance(node, ast.ImportFrom) and node.level:
@@ -265,6 +318,7 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
     _dump(package/"config/weight_schema.json", schema)
     _dump(package/"config/compile_argv.json", template)
     _dump(package/"interfaces/default.json", interface)
+    _management_files(program, weights, code, module, package)
     for name in ("compiler-config.json", "operator-spec.json"):
         shutil.copyfile(toolchain.BOOT_CONFIG_DIR/name, package/"config"/name)
     git_rev = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=SOURCE, text=True).strip()
