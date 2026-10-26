@@ -16,7 +16,7 @@ from .kernels.conv import fold_bn
 from .kernels.poly import act_minimax
 from .kernels.layout import (MultiMuxLayout, MultiFlatLayout, layout_blocks, multi_mux_layout,
                              multi_flat_layout, pack_multi, unpack_multi)
-from .kernels import multi, cnn
+from .kernels import multi, cnn, approx
 
 
 HANDLED_OPS = frozenset({
@@ -46,7 +46,10 @@ def _pack_layout(op, shape, slots):
 
 def _act_block(b, value, layout, attrs, act_mode):
     if act_mode == 'exact':
-        value = b.apply_exact(value, attrs['fn'])
+        value = (_new_exact_activation(b,value,layout,attrs['fn']) if attrs['method'] in approx.NEW_METHODS
+                 else b.apply_exact(value, attrs['fn']))
+    elif attrs['method'] in approx.NEW_METHODS:
+        value = approx.activation(b,value,attrs)
     elif attrs['method'] == 'cheb':
         value = act_cheb(b, value, attrs['fn'], attrs['deg'], attrs['domain'])
     elif attrs['method'] == 'minimax_comp':
@@ -58,7 +61,9 @@ def _act_block(b, value, layout, attrs, act_mode):
     if isinstance(layout, FlatLayout):
         if act_mode == 'exact':
             from .kernels.poly import EXACT
-            tail = EXACT[attrs['fn']](np.zeros(1))[0]
+            tail = 0.0 if attrs['method'] in approx.NEW_METHODS else EXACT[attrs['fn']](np.zeros(1))[0]
+        elif attrs['method'] in approx.NEW_METHODS:
+            tail = approx.activation(None,np.zeros(1),attrs)[0]
         elif attrs['method'] == 'cheb':
             tail = act_cheb(None, np.zeros(1), attrs['fn'], attrs['deg'], attrs['domain'])[0]
         elif attrs['method'] == 'minimax_comp':
@@ -70,6 +75,21 @@ def _act_block(b, value, layout, attrs, act_mode):
             correction[layout.size:] = -tail
             value = value+b.const(correction)
     return value
+
+
+def _new_exact_activation(b,value,layout,fn):
+    """Evaluate new mathematical targets only on the layout's valid slots."""
+    from .backends.mock import MockExpr
+    if isinstance(layout,FlatLayout):
+        output = np.zeros_like(value.value)
+        output[..., :layout.size] = approx.function(fn,value.value[..., :layout.size])
+    elif isinstance(layout,MuxLayout):
+        output = np.zeros_like(value.value)
+        grid = layout.index_grid()
+        output[...,grid] = approx.function(fn,value.value[...,grid])
+    else:
+        output = approx.function(fn,value.value)
+    return MockExpr(b,output)
 
 
 def _forward_bn_target(op, consumers, outputs):
@@ -174,6 +194,7 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                                 from .backends.base import BackendError
                                 raise BackendError('maxpool comparison input leaves its domain')
                     cfg = (('exact',) if act_mode == 'exact' else
+                           approx.configuration(a) if a['method'] in approx.NEW_METHODS else
                            ('minimax_comp', tuple(a['degrees']), *a['domain']) if a['method'] == 'minimax_comp'
                            else ('cheb', a['deg'], *a['domain']))
                     attrs = dict(a, fn='relu')
@@ -204,6 +225,7 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                     value, layout = cnn.batchnorm_blocks(b, value, layout, scale, shift)
             elif op.kind == "act":
                 cfg = (("exact",) if act_mode == "exact" or a["method"] == "exact"
+                       else approx.configuration(a) if a['method'] in approx.NEW_METHODS
                        else ("minimax_comp", tuple(a["degrees"]), *a["domain"])
                        if a["method"] == "minimax_comp" else ("cheb", a["deg"], *(a["domain"] or ())))
                 if observer is not None:
@@ -212,7 +234,10 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                     value, layout = multi.act_blocks(b, value, layout,
                         lambda item, block: _act_block(b, item, block, a, act_mode))
                 elif act_mode == "exact":
-                    value = b.apply_exact(value, a["fn"])
+                    value = (_new_exact_activation(b,value,layout,a['fn']) if a['method'] in approx.NEW_METHODS
+                             else b.apply_exact(value,a['fn']))
+                elif a['method'] in approx.NEW_METHODS:
+                    value = approx.activation(b,value,a)
                 elif a["method"] == "cheb":
                     value = act_cheb(b, value, a["fn"], a["deg"], a["domain"])
                 elif a["method"] == "exact" and a["fn"] == "square":
@@ -225,8 +250,9 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                     tail = 0.0
                     if act_mode == "exact":
                         from .kernels.poly import EXACT
-
-                        tail = EXACT[a["fn"]](np.zeros(1))[0]
+                        tail = 0.0 if a['method'] in approx.NEW_METHODS else EXACT[a["fn"]](np.zeros(1))[0]
+                    elif a['method'] in approx.NEW_METHODS:
+                        tail = approx.activation(None,np.zeros(1),a)[0]
                     elif a["method"] == "cheb":
                         tail = act_cheb(None, np.zeros(1), a["fn"], a["deg"], a["domain"])[0]
                     elif a["method"] == "minimax_comp":

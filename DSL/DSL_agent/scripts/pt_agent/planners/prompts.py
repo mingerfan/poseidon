@@ -9,7 +9,7 @@ from ..intake.patterns import annotate
 from .agent_tools import FEASIBLE_MAX_U
 
 PROMPT_VERSION = "r8-v4"
-PROMPT_VERSIONS = ("r8-v4", "r8-v5")
+PROMPT_VERSIONS = ("r8-v4", "r8-v5", "r8-v6")
 TEMPLATE = """You are an FHE compiler engineer. You write PT-DSL programs that implement a given neural network on CKKS
 homomorphic encryption. A trusted lowering turns PT-DSL into Hecate code; an unmodified compiler then inserts
 rescale/modswitch/bootstrap. Your program must compute exactly the given network (except for the polynomial
@@ -87,7 +87,7 @@ def build_system_prompt(ctx, *, version=None) -> str:
                               for name in chosen)
     text = TEMPLATE.format(capabilities=render_capabilities(version), max_u=FEASIBLE_MAX_U,
                            n_val=len(ctx.val_images), examples=examples)
-    if version == 'r8-v5':
+    if version in ('r8-v5','r8-v6'):
         text = text.replace('Every act node also lists', 'Every act and maxpool approximation point also lists')
     info = getattr(ctx, 'model_info', None)
     if info is not None and (ctx.val_labels is None or info.task != 'classification'):
@@ -133,7 +133,7 @@ def initial_message(ctx) -> str:
             row["pads"] = a["pads"]
         elif node.op == "mean":
             row["axes"] = a["axes"]
-        if version == 'r8-v5':
+        if version in ('r8-v5','r8-v6'):
             if node.op == 'conv2d':
                 row.update(groups=a['groups'], dilation=a['dilation'])
             elif node.op in ('avgpool', 'maxpool'):

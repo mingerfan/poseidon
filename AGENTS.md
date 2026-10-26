@@ -44,7 +44,7 @@ spec 本身有矛盾；期望值与实测不符；需要做设计选择；修正
   （如 test_r3_resnet20 的 test_first_500_argmax 与 test_frozen_data、test_r8e4_split 的划分检查），不算违反；
   前提是这些测试不评估任何近似程序或候选、结果不用于任何选择。各 spec 中"本轮不读取报告集"指本轮新增的代码、
   实验和新增测试，不包括这类既有回归测试。
-- DeepSeek 调用总预算 300 次。每次调用在 $PT_RESULTS/registry.jsonl 记一行，预算用完就停。
+- DeepSeek 调用总预算 450 次（用户 2026-10-26 批准由 300 提高；截至此时已用 129 次）。每次调用在 $PT_RESULTS/registry.jsonl 记一行，预算用完就停。
 - 可信 lowering 生成的 Hecate 代码可以在 hecate 前端里 trace；LLM 输出只解析，永不执行。
 - 不写 rNNNN 文档、handoff 文件、批次冻结台账和 SHA 绑定。结果只写 $PT_RESULTS/registry.jsonl
   （字段：run_id, round, model, mode, git_rev, metrics, artifacts_dir, ts）和各次运行的目录。

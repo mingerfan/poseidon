@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .errors import Diag
 from .ir import Program, WeightRef
-from .ops_spec import OPS
+from .ops_spec import OPS, new_approx_error
 from .shapes import ShapeError, WeightError, infer
 
 
@@ -117,6 +117,10 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None)
                           op.call_lines, op.macro_stack))
 
     for op in program.ops:
+        if op.kind in ('act','maxpool'):
+            message = new_approx_error(dict(op.attrs,fn=op.attrs.get('fn','relu')))
+            if message:
+                emit('E_APPROX',op,message)
         for index, vid in enumerate(op.inputs):
             if vid in plain and not (op.kind in ("add", "sub", "mul") and index == 1):
                 emit("E_KIND", op, "Plain parameters apply only to the second add/sub/mul input")

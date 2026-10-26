@@ -8,6 +8,7 @@ from ..cost import estimate
 from ..dsl.ir import Program
 from ..dsl.printer import print_program
 from ..tensor_sim import cached_estimate
+from ..kernels import approx
 from .agent_tools import _exact_check, validate
 
 
@@ -39,11 +40,49 @@ def _changes(original, current):
     changes = []
     for old, new in zip(original.ops, current.ops):
         if old.kind in ('act', 'maxpool'):
-            for kind in ('domain', 'deg'):
+            fields=(('domain','degrees') if old.attrs['method']=='composite' else
+                    ('domain','iters','deg0') if old.attrs['method']=='newton' else ('domain','deg'))
+            for kind in fields:
                 if old.attrs[kind] != new.attrs[kind]:
                     changes.append(dict(line=old.lineno, call_lines=list(old.call_lines), kind=kind,
                                         old=old.attrs[kind], new=new.attrs[kind]))
     return changes
+
+
+def _new_settings(attrs):
+    method=attrs['method']
+    if method=='remez':
+        degree=next((d for d in LADDER if d < attrs['deg']),None)
+        return [] if degree is None else [dict(attrs=dict(deg=degree))]
+    if method=='newton':
+        result=[]
+        if attrs['iters']>0:
+            result.append(dict(attrs=dict(iters=attrs['iters']-1)))
+        degree=next((d for d in LADDER if d < attrs['deg0']),None)
+        if degree is not None:
+            result.append(dict(attrs=dict(deg0=degree)))
+        return result
+    from ..backends import CountBackend
+    from ..kernels.poly import cheb_eval
+    import numpy as np
+    b=CountBackend(8)
+    depth=approx.activation(b,b.input(0),attrs).depth
+    if depth <= 3:
+        return []
+    sign=np.linspace(attrs['eps'],1.0,2**16)
+    for c in approx.fitted_coefficients(attrs):
+        sign=cheb_eval(None,sign,c)
+    target=float(np.max(np.abs(sign-0.5)))
+    try:
+        found=approx.search_composite(depth-1,attrs['eps'],target)
+    except approx.CompositeSearchError as exc:
+        if exc.attempted and len(exc.exclusions)==exc.attempted:
+            raise
+        # Converged candidates can all miss the current error/depth budget.
+        # Keep the current program and expose the search result in history.
+        return [dict(attrs=None,search=dict(error=str(exc),attempted=exc.attempted,
+                         excluded=len(exc.exclusions),exclusions=exc.exclusions))]
+    return [dict(attrs=dict(degrees=tuple(found['degrees'])),search=found)]
 
 
 def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
@@ -110,7 +149,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
         lo, hi = row['obs_min'], row['obs_max']
         if lo is None or hi is None:
             continue
-        if op.attrs['method'] == 'minimax_comp':
+        if op.attrs['method'] in ('minimax_comp','composite'):
             bound = max(abs(lo), abs(hi)) / TARGET_U
             domain = (-bound, bound)
         else:
@@ -118,7 +157,9 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
             domain = (center-half, center+half)
         op.attrs['domain'] = tuple(round(value, 3) for value in domain)
     # Degenerate rounded domains cannot be executed; reject this whole alignment.
-    if all(op.attrs['domain'][0] < op.attrs['domain'][1] for op in acts):
+    if all(op.attrs['domain'][0] < op.attrs['domain'][1] and not (
+            op.attrs['method'] in approx.NEW_METHODS and op.attrs.get('fn') in ('inv','rsqrt')
+            and op.attrs['domain'][0] <= 0) for op in acts):
         aligned_result = full(aligned)
         aligned_cost = cost_of(aligned)
     else:
@@ -151,6 +192,33 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
             if time.monotonic()-started >= budget_s:
                 break
             op = cur.ops[index]
+            if op.attrs['method'] in approx.NEW_METHODS:
+                for setting in _new_settings(op.attrs):
+                    if time.monotonic()-started >= budget_s:
+                        break
+                    updates=setting['attrs']
+                    if updates is None:
+                        record('skip_search',cur,current_cost,{},False,act=index,line=op.lineno,
+                               call_lines=list(op.call_lines),kind='degrees',search=setting['search'])
+                        continue
+                    trial=copy.deepcopy(cur)
+                    trial.ops[index].attrs.update(updates)
+                    cost=cost_of(trial)
+                    field=next(iter(updates))
+                    detail=dict(act=index,line=op.lineno,call_lines=list(op.call_lines),kind=field,
+                                old=cur.ops[index].attrs[field],new=updates[field],sweep=sweep)
+                    if 'search' in setting:
+                        detail['search']=setting['search']
+                    if cost['latency_pred_us'] >= current_cost['latency_pred_us']:
+                        record('skip_cost',trial,cost,{},False,**detail)
+                        continue
+                    result=validation(trial,N_COARSE,cost)
+                    coarse_evals += 1
+                    record('coarse',trial,cost,result,_strict(result),**detail)
+                    if _strict(result):
+                        accepted.append((index,dict(updates)))
+                        cur,current_cost=trial,cost
+                continue
             if op.attrs['method'] != 'cheb':
                 continue
             degree = next((degree for degree in LADDER if degree < op.attrs['deg']), None)
@@ -180,7 +248,10 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
                 middle = (low+high+1)//2
                 trial = copy.deepcopy(base)
                 for index, degree in accepted[:middle]:
-                    trial.ops[index].attrs['deg'] = degree
+                    if isinstance(degree,dict):
+                        trial.ops[index].attrs.update(degree)
+                    else:
+                        trial.ops[index].attrs['deg'] = degree
                 result = full(trial)
                 cost = cost_of(trial)
                 record('prefix', trial, cost, result, _strict(result), prefix=middle, sweep=sweep)

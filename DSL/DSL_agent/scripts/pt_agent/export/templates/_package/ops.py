@@ -72,6 +72,9 @@ def act(b, x, a):
         c = -(hi+lo)/(hi-lo)
         u = value*scale+c
         value = cheb_eval(b, u, a["coefficients"])
+    elif a['method'] in ('remez','composite','newton'):
+        from .core.approx import evaluate
+        value=evaluate(b,value,a['fn'],a['method'],a['domain'],a['coefficients'],iters=a.get('iters',0))
     elif a["method"] == "exact" and a["fn"] == "square":
         value = value*value
     elif a["method"] == "minimax_comp":
@@ -88,6 +91,9 @@ def act(b, x, a):
         tail = 0.0
         if a["method"] == "cheb":
             tail = cheb_eval(None, np.zeros(1)*scale+c, a["coefficients"])[0]
+        elif a['method'] in ('remez','composite','newton'):
+            tail=evaluate(None,np.zeros(1),a['fn'],a['method'],a['domain'],a['coefficients'],
+                          iters=a.get('iters',0))[0]
         elif a["method"] == "minimax_comp":
             zero = np.zeros(1)
             s = zero*(1.0/hi)

@@ -148,10 +148,23 @@ PATTERNS = (
 )
 
 
+V6_CAPABILITIES = tuple(
+    replace(entry,
+        signature=entry.signature+' | act(x,fn=F,method="remez",deg=D,domain=(lo,hi)) | act(x,fn="relu",method="composite",degrees=(d1,d2,...),eps=E,domain=(-B,B)) | act(x,fn=F,method="newton",deg0=D,iters=I,domain=(lo,hi))',
+        semantics=entry.semantics+' Remez fits the declared function directly in a Chebyshev basis; at equal degree its maximum error is no larger than cheb, up to the documented float64 floor. Composite fits odd Chebyshev sign stages. Newton uses a Remez initializer and the fixed inv or rsqrt iteration.',
+        constraints=entry.constraints+('Remez supports relu, silu, gelu, sigmoid, tanh, exp, inv, rsqrt, hardswish and square, with positive deg. Composite is for relu only: all degrees positive and odd, 0<eps<1, and a symmetric domain. Newton is for inv/rsqrt only: deg0>0, iters>=0, 0<lo<hi. Nonconvergent explicit fits report an error; choose another setting or method.',),
+        cost=entry.cost+' Remez has the same evaluation depth as equal-degree cheb. Newton adds 2 levels per inv iteration or 3 per rsqrt iteration; x_half is computed in parallel with the initializer. Composite depth and operations are predicted from its emitted stages.')
+    if entry.op=='act' else
+    replace(entry,signature=entry.signature+' | maxpool(x,k=K,stride=S,pad=P,method="remez",deg=D,domain=(lo,hi)) | maxpool(x,k=K,stride=S,pad=P,method="composite",degrees=(d1,d2,...),eps=E,domain=(-B,B))',
+            constraints=entry.constraints+('Remez and composite use the same relu fitting parameters as act. Newton is unavailable for maxpool.',))
+    if entry.op=='maxpool' else entry
+    for entry in CAPABILITIES)
+
+
 def render_capabilities(version="r8-v4") -> str:
-    if version not in ("r8-v4", "r8-v5"):
+    if version not in ("r8-v4", "r8-v5", "r8-v6"):
         raise ValueError("unknown prompt version")
-    capabilities = V4_CAPABILITIES if version == "r8-v4" else CAPABILITIES
+    capabilities = V4_CAPABILITIES if version == "r8-v4" else V6_CAPABILITIES if version=='r8-v6' else CAPABILITIES
     lines = ["Operators supported by the lowering (generated from its capability registry; anything else is rejected):"]
     for capability in capabilities:
         if capability.in_prompt:

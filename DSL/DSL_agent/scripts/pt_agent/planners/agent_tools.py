@@ -178,6 +178,11 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                  obs_min=None, obs_max=None,
                  deg=op.attrs["deg"], method=op.attrs["method"], degrees=op.attrs.get("degrees"),
                  domain=op.attrs["domain"]) for index, op in enumerate(ops)]
+    for row,op in zip(rows,ops):
+        if op.attrs['method']=='composite':
+            row['eps']=op.attrs['eps']
+        elif op.attrs['method']=='newton':
+            row.update(deg0=op.attrs['deg0'],iters=op.attrs['iters'])
     labels = None if ctx.val_labels is None else ctx.val_labels[:len(images)]
     info = getattr(ctx, 'model_info', None)
     labelled_classification = labels is not None and (info is None or info.task == 'classification')
@@ -326,7 +331,7 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
     except PTDSLError as exc:
         return dict(fb, error=str(exc))
     fb["stage"] = "typecheck"
-    weight_usage = engine_profile == "tensor" or getattr(ctx, "prompt_version", "r8-v4") == "r8-v5"
+    weight_usage = engine_profile == "tensor" or getattr(ctx, "prompt_version", "r8-v4") in ("r8-v5","r8-v6")
     checked = check(program, ctx.weight_shapes, **(dict(graph=ctx.graph) if weight_usage else {}))
     if not checked.ok:
         errors = [diag for diag in checked.diags if diag.severity == "error"]

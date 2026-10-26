@@ -24,6 +24,7 @@ from ..dsl.typecheck import check
 from ..kernels import FlatLayout, MuxLayout
 from ..kernels.layout import layout_blocks, layout_record
 from ..kernels.poly import cheb_eval, cheb_fit, minimax_coeffs
+from ..kernels import approx
 from ..lower import _pack_layout, lower
 
 
@@ -148,8 +149,10 @@ def _readme(program, interface, approximations, validation):
     title = display_name(program.name)+"_PTAgent_DSL"
     rows = ["| 值名 | 函数 | 方法 | 阶数 | 定义域 |", "|---|---|---|---|---|"]
     for name, item in approximations.items():
+        degree = (f"deg0={item['deg0']}, iters={item['iters']}" if item['method']=='newton'
+                  else item.get('degrees',item.get('deg','exact')))
         rows.append(f"| {name} | {item['fn']} | {item['method']} | "
-                    f"{item.get('degrees', item.get('deg', 'exact'))} | {item.get('domain', '')} |")
+                    f"{degree} | {item.get('domain', '')} |")
     inputs = "; ".join(f"{item['name']} {item['shape']} {item['layout']}" for item in interface['inputs'])
     outputs = "; ".join(f"{item['name']} {item['shape']} {item['layout']}" for item in interface['outputs'])
     state = (f"已原生编译，自举 {validation['boots']} 次；CKKS 和 GPU 尚未验证。" if
@@ -268,6 +271,17 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
             elif a["method"] == "minimax_comp":
                 entry.update(degrees=a["degrees"], domain=a["domain"],
                              coefficients=[value.tolist() for value in minimax_coeffs(tuple(a["degrees"]))])
+            elif a['method'] in approx.NEW_METHODS:
+                coefficients=approx.fitted_coefficients(a)
+                entry.update(domain=a['domain'],coefficients=(
+                    [value.tolist() for value in coefficients] if a['method']=='composite' else coefficients.tolist()))
+                if a['method']=='remez':
+                    entry['deg']=a['deg']
+                elif a['method']=='composite':
+                    entry.update(degrees=a['degrees'],eps=a['eps'])
+                else:
+                    entry.update(deg0=a['deg0'],iters=a['iters'],
+                                 iteration='inv_y_2_minus_xy' if fn=='inv' else 'rsqrt_x_half')
             approximations[op.outputs[0]] = entry
     schema = {name: list(weights[name].shape) for name in sorted(names)}
 
@@ -309,6 +323,10 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
         (core/name).write_text(text)
     (core/"cheb.py").write_text('"""Copied Chebyshev evaluator."""\n\nimport numpy as np\n'
                                 'from .layout import KernelError\nfrom .slots import accumulate\n\n\n'+inspect.getsource(cheb_eval))
+    new_approximations=any(a['method'] in approx.NEW_METHODS for a in approximations.values())
+    if new_approximations:
+        (core/'approx.py').write_text('"""Coefficient-only U5 evaluator; fitting is external."""\n'
+            'from .cheb import cheb_eval\n\n'+inspect.getsource(approx.evaluate))
     (core/"__init__.py").write_text('"""Arithmetic used by this package."""\n'
         'from .layout import FlatLayout, MuxLayout, KernelError, pack_flat, pack_mux, unpack_flat, unpack_mux\n'
         'from .refresh import RefreshBackend\nfrom .cheb import cheb_eval\n')
@@ -332,6 +350,8 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
     copied = {str(Path(program.name)/"core"/name): "DSL/DSL_agent/scripts/pt_agent/"+source
               for name, source in CORE_SOURCES.items()}
     copied[str(Path(program.name)/"core/cheb.py")] = "DSL/DSL_agent/scripts/pt_agent/kernels/poly.py:cheb_eval"
+    if new_approximations:
+        copied[str(Path(program.name)/'core/approx.py')]='DSL/DSL_agent/scripts/pt_agent/kernels/approx.py:evaluate'
     _dump(package/"provenance.json", dict(ptdsl_source=source_path(info.get("program_path", "program.ptdsl")),
           pt_agent_git_rev=git_rev, dirty=dirty, freeze_tag=tag or None,
           agent_run_dir=source_path(info.get("run_dir")), copied_sources=copied))

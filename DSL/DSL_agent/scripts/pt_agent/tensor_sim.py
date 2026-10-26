@@ -20,7 +20,7 @@ from .backends import BackendError
 from .dsl.ir import WeightRef
 from .dsl.printer import print_program
 from .kernels.conv import fold_bn
-from .kernels import cnn
+from .kernels import cnn, approx
 from .kernels.layout import FlatLayout, KernelError, MuxLayout, mux_layout
 from .kernels.layout import (MultiMuxLayout, MultiFlatLayout, layout_blocks,
                              multi_mux_layout, multi_flat_layout)
@@ -243,6 +243,8 @@ def _prefix_put(key, entry):
 
 def _cfg(op):
     attrs = op.attrs
+    if attrs['method'] in approx.NEW_METHODS:
+        return approx.configuration(attrs)
     if attrs["method"] == "exact":
         return ("exact",)
     if attrs["method"] == "minimax_comp":
@@ -358,7 +360,7 @@ def _metadata(program, weights):
                     input_bn[following.id] = scale, shift
                 extra = dict(scale=scale, shift=shift, fold_forward=following is not None)
             elif op.kind == "act":
-                if attrs["method"] not in ("cheb", "minimax_comp") and not (
+                if attrs["method"] not in ("cheb", "minimax_comp", *approx.NEW_METHODS) and not (
                         attrs["method"] == "exact" and attrs["fn"] == "square"):
                     raise KernelError("v1 lowering 不支持 this activation")
             elif op.kind == "add":
@@ -571,7 +573,13 @@ def _run(program, weights, images, observer, cache, image_id, batch_start, act_m
                         observer(op.inputs[0], value, cfg)
                     if act_mode == 'exact':
                         from .kernels.poly import EXACT
-                        value = EXACT[attrs['fn']](value)
+                        value = (approx.function(attrs['fn'],value) if attrs['method'] in approx.NEW_METHODS
+                                 else EXACT[attrs['fn']](value))
+                    elif attrs['method'] in approx.NEW_METHODS:
+                        coefficients = approx.fitted_coefficients(attrs)
+                        value = _polynomial_chunks(value,
+                            lambda part: approx.activation(None,part,attrs,coefficients=coefficients),
+                            approx.degree_bound(attrs))
                     elif attrs["method"] == "exact":
                         value = value*value
                     elif attrs["method"] == "cheb":
@@ -599,6 +607,11 @@ def _run(program, weights, images, observer, cache, image_id, batch_start, act_m
                     stats = cnn.DifferenceStats()
                     if act_mode == 'exact':
                         apply = lambda difference: np.maximum(difference, 0)
+                    elif attrs['method'] in approx.NEW_METHODS:
+                        coefficients = approx.fitted_coefficients(attrs)
+                        apply = lambda difference: _polynomial_chunks(difference,
+                            lambda part: approx.activation(None,part,attrs,coefficients=coefficients),
+                            approx.degree_bound(attrs))
                     elif attrs['method'] == 'cheb':
                         lo, hi = attrs['domain']
                         coeffs = (_fit if cache else cheb_fit)('relu', attrs['deg'], lo, hi)

@@ -75,9 +75,39 @@ def _axes(a):
         return "axis entries must be distinct"
 
 
-def _act(a):
+def new_approx_error(a):
     fn, method = a["fn"], a["method"]
     degrees, deg, domain = a["degrees"], a["deg"], a["domain"]
+    extras = (a.get('eps'),a.get('deg0'),a.get('iters'))
+    if method in ('remez','composite','newton'):
+        if domain is None or not domain[0] < domain[1]:
+            return f'{method} requires domain=(lo,hi) with lo < hi'
+        if method == 'remez':
+            if deg is None or deg < 1 or degrees is not None or any(v is not None for v in extras):
+                return 'remez requires positive deg, domain, and degrees=eps=deg0=iters=None'
+        elif method == 'composite':
+            if (fn != 'relu' or not degrees or any(d < 1 or d % 2 == 0 for d in degrees)
+                    or deg is not None or a.get('eps') is None or not 0 < a['eps'] < 1
+                    or a.get('deg0') is not None or a.get('iters') is not None
+                    or domain[0] != -domain[1] or domain[1] <= 0):
+                return 'composite requires relu, positive odd degrees, 0 < eps < 1 and domain=(-B,B); other relu methods: cheb, remez, minimax_comp'
+        elif (fn not in ('inv','rsqrt') or a.get('deg0') is None or a['deg0'] < 1
+              or a.get('iters') is None or a['iters'] < 0 or deg is not None or degrees is not None
+              or a.get('eps') is not None or domain[0] <= 0):
+            return 'newton requires inv/rsqrt, positive deg0, nonnegative iters and 0 < lo < hi; other functions may use remez or cheb'
+        if fn in ('inv','rsqrt') and domain[0] <= 0:
+            return 'inv/rsqrt requires a positive domain'
+        return None
+    if any(v is not None for v in extras):
+        return 'eps/deg0/iters apply to composite/newton only'
+    return None
+
+
+def _act(a):
+    fn,method = a['fn'],a['method']
+    degrees,deg,domain = a['degrees'],a['deg'],a['domain']
+    if method in ('remez','composite','newton'):
+        return None  # U5 mathematical parameter checks belong to typecheck.
     if method == "minimax_comp":
         if (fn != "relu" or degrees is None or tuple(degrees) not in MINIMAX_SETS
                 or deg is not None or domain is None or domain[0] != -domain[1] or domain[1] <= 0):
@@ -149,8 +179,9 @@ OPS = {
         stride=AttrSpec("int_or_pair"), pad=AttrSpec("int_or_pair", default=0)), _pool),
     "maxpool": _spec("maxpool", 1, "same", dict(k=AttrSpec("int_or_pair", True),
         stride=AttrSpec("int_or_pair"), pad=AttrSpec("int_or_pair", default=0),
-        method=AttrSpec("str", True, choices=("cheb", "minimax_comp")),
-        degrees=AttrSpec("int_tuple"), deg=AttrSpec("int"), domain=AttrSpec("float_pair")), _maxpool),
+        method=AttrSpec("str", True, choices=("cheb", "minimax_comp", "remez", "composite", "newton")),
+        degrees=AttrSpec("int_tuple"), deg=AttrSpec("int"), domain=AttrSpec("float_pair"),
+        eps=AttrSpec("float"),deg0=AttrSpec("int"),iters=AttrSpec("int")), _maxpool),
     "mean": _spec("mean", 1, "same", dict(_REDUCE), _axes),
     "sum": _spec("sum", 1, "same", dict(_REDUCE), _axes),
     "add": _spec("add", 2, "binary"),
@@ -163,8 +194,9 @@ OPS = {
                        lambda a: None if a["eps"] > 0 else "eps must be positive"),
     "act": _spec("act", 1, "same", dict(
         fn=AttrSpec("str", True, choices=("relu", "silu", "gelu", "sigmoid", "tanh", "exp", "inv", "rsqrt", "hardswish", "square")),
-        method=AttrSpec("str", True, choices=("minimax_comp", "cheb", "exact")),
-        degrees=AttrSpec("int_tuple"), deg=AttrSpec("int"), domain=AttrSpec("float_pair")), _act),
+        method=AttrSpec("str", True, choices=("minimax_comp", "cheb", "exact", "remez", "composite", "newton")),
+        degrees=AttrSpec("int_tuple"), deg=AttrSpec("int"), domain=AttrSpec("float_pair"),
+        eps=AttrSpec("float"),deg0=AttrSpec("int"),iters=AttrSpec("int")), _act),
     "poly": _spec("poly", 1, "same", dict(coeffs=AttrSpec("float_tuple", True),
         basis=AttrSpec("str", default="power", choices=("power", "cheb")), domain=AttrSpec("float_pair")), _poly),
     "softmax": _spec("softmax", 1, "same", dict(axis=AttrSpec("int", default=-1),

@@ -613,7 +613,7 @@ def main():
     parser.add_argument("--tune-policy", choices=('new_best', 'all'), default='new_best')
     parser.add_argument("--deg", type=int)
     parser.add_argument("--margin", type=float)
-    parser.add_argument("--prompt-version", choices=("r8-v4", "r8-v5"), default="r8-v4")
+    parser.add_argument("--prompt-version", choices=("r8-v4", "r8-v5", "r8-v6"), default="r8-v4")
     parser.add_argument("--act-method", choices=("cheb", "minimax_comp"), default="cheb")
     parser.add_argument("--refresh", choices=("compiler", "agent"), default="compiler")
     parser.add_argument('--mode', choices=('compiler', 'managed'), default='compiler')

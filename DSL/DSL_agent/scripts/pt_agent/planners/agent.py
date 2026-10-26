@@ -21,8 +21,8 @@ def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path
         raise ValueError('tune_policy must be "new_best" or "all"')
     if engine_profile not in ("mock", "tensor"):
         raise ValueError('engine_profile must be "mock" or "tensor"')
-    if engine_profile == "tensor" and getattr(ctx, 'prompt_version', 'r8-v4') != 'r8-v5':
-        raise ValueError('engine_profile="tensor" requires r8-v5')
+    if engine_profile == "tensor" and getattr(ctx, 'prompt_version', 'r8-v4') not in ('r8-v5','r8-v6'):
+        raise ValueError('engine_profile="tensor" requires r8-v5 or r8-v6')
     profile_args = dict(engine_profile="tensor") if engine_profile == "tensor" else {}
     started = time.monotonic()
     messages = [dict(role="system", content=build_system_prompt(ctx)), dict(role="user", content=initial_message(ctx))]
