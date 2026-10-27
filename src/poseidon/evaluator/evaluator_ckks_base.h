@@ -191,6 +191,13 @@ public:
     void eval_mod(const Ciphertext &ciph, Ciphertext &result, const EvalModPoly &eva_poly,
                   const RelinKeys &relin_keys, const CKKSEncoder &encoder);
 
+    // Evaluate one frozen polynomial on every slot using the existing PS engine.
+    // Chebyshev inputs are already normalized by the caller. Supports complex
+    // coefficients, both parities, in-place evaluation and an explicit output scale.
+    void evaluate_frozen_polynomial(const Polynomial &polynomial, const Ciphertext &input,
+                                   Ciphertext &output, double target_scale,
+                                   const RelinKeys &relin_keys, const CKKSEncoder &encoder);
+
     // old version
     void bootstrap(const Ciphertext &ciph, Ciphertext &result, const RelinKeys &relin_keys,
                    const GaloisKeys &galois_keys, const CKKSEncoder &encoder,

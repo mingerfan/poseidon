@@ -389,6 +389,48 @@ void EvaluatorCkksBase::slot_to_coeff(const Ciphertext &ciph_real, const Ciphert
     dft(result, matrix_group, result, galois_keys);
 }
 
+void EvaluatorCkksBase::evaluate_frozen_polynomial(const Polynomial &polynomial,
+    const Ciphertext &input, Ciphertext &output, double target_scale,
+    const RelinKeys &relin_keys, const CKKSEncoder &encoder)
+{
+    if (polynomial.data().size() < 2 || !input.is_valid() || !input.is_ntt_form() ||
+        !std::isfinite(target_scale) || target_scale <= 0 ||
+        input.level() < static_cast<unsigned>(bit_len(polynomial.degree())))
+        throw std::invalid_argument("invalid frozen polynomial input or insufficient levels");
+    if (polynomial.basis_type() != Chebyshev && polynomial.basis_type() != Monomial)
+        throw std::invalid_argument("unsupported frozen polynomial basis");
+    // Reconstruct validity/decomposition metadata from the frozen coefficients.
+    // A caller may have populated data() on a default Polynomial instance.
+    Polynomial copy(polynomial.data(), polynomial.a(), polynomial.b(),
+                    static_cast<int>(polynomial.degree()), polynomial.basis_type(), true);
+    copy.is_even() = copy.is_odd() = false;
+    for (std::size_t i = 0; i < copy.data().size(); ++i)
+    {
+        const auto coefficient = copy[i];
+        if (!std::isfinite(coefficient.real()) || !std::isfinite(coefficient.imag()))
+            throw std::invalid_argument("nonfinite frozen polynomial coefficient");
+        if (coefficient != std::complex<double>{})
+            (i % 2 ? copy.is_odd() : copy.is_even()) = true;
+    }
+    if (copy.data().back() == std::complex<double>{})
+        throw std::invalid_argument("frozen polynomial must have a nonzero leading coefficient");
+    copy.lead() = true;
+    PolynomialVector vector({copy}, {});
+    const auto saved_min_scale = min_scale_;
+    min_scale_ = target_scale;
+    try
+    {
+        evaluate_polynomial(vector, input, output, copy.basis_type() == Chebyshev,
+                            false, target_scale, target_scale, relin_keys, encoder);
+    }
+    catch (...)
+    {
+        min_scale_ = saved_min_scale;
+        throw;
+    }
+    min_scale_ = saved_min_scale;
+}
+
 void EvaluatorCkksBase::evaluate_polynomial(const PolynomialVector& poly_vec, const Ciphertext& ct_basis, Ciphertext& ct_res,
     bool is_chev, bool is_lazy, double target_scale, double min_scale, const RelinKeys& relin_key, const CKKSEncoder& encoder)
 {

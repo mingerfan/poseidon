@@ -328,6 +328,12 @@ if(POSEIDON_USE_SPDLOG)
     endif()
 endif()
 
+option(POSEIDON_BUILD_TRIDENT_RESNET20 "Build the Trident CPU ResNet20 application and tests" OFF)
+if(POSEIDON_BUILD_TRIDENT_RESNET20)
+    enable_testing()
+    add_subdirectory(Trident/resnet20)
+endif()
+
 option(POSEIDON_BUILD_CPU_TESTS "Build CPU regression tests" OFF)
 if(POSEIDON_BUILD_CPU_TESTS)
     enable_testing()
