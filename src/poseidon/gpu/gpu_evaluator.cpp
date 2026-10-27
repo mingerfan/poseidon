@@ -5172,11 +5172,36 @@ void GpuEvaluator::bootstrap(
     const GpuCiphertextData *raised_for_c2s = &workspace.raised;
     {
         NvtxRange range("ModRaise");
-        bootstrap_prepare_modraise_input(
-            source_ciphertext,
-            workspace.modraise_input,
-            bootstrap_data.q0_parms_id,
-            bootstrap_data.q0_over_message_ratio);
+        if (bootstrap_data.slot_to_coeff_first)
+        {
+            if (source_ciphertext.meta.q_count != bootstrap_data.input_q_count ||
+                !(source_ciphertext.meta.scale > 0.0) ||
+                std::abs(std::log2(source_ciphertext.meta.scale / bootstrap_data.input_scale)) > 1e-8 ||
+                !use_double_hoist)
+                throw std::invalid_argument("S2C-first Boot requires its declared input Q/scale and double-hoist mode");
+            dft_double_hoist(source_ciphertext,
+                bootstrap_data.slot_to_coeff_matrix_qp, galois_keys,
+                workspace.slot_to_coeff_double_hoist, workspace.scratch0);
+            if (workspace.scratch0.meta.parms_id != bootstrap_data.q0_parms_id)
+                throw std::runtime_error("S2C-first Boot S2C output level differs from q0");
+            // Match the manual scheduler: scale the Q2 result by a rounded
+            // integer, without consuming another Q before ModRaise.
+            const double multiplier = std::round(
+                bootstrap_data.q0_over_message_ratio / workspace.scratch0.meta.scale);
+            if (!std::isfinite(multiplier) || multiplier < 1.0 || multiplier > std::ldexp(1.0, 53))
+                throw std::runtime_error("S2C-first Boot preparation multiplier is outside [1, 2^53]");
+            multiply_scalar(workspace.scratch0, static_cast<std::uint64_t>(multiplier),
+                workspace.modraise_input);
+            workspace.modraise_input.meta.scale = workspace.scratch0.meta.scale * multiplier;
+        }
+        else
+        {
+            bootstrap_prepare_modraise_input(
+                source_ciphertext,
+                workspace.modraise_input,
+                bootstrap_data.q0_parms_id,
+                bootstrap_data.q0_over_message_ratio);
+        }
 
         raise_modulus(workspace.modraise_input, workspace.raised);
 
@@ -5262,7 +5287,7 @@ void GpuEvaluator::bootstrap(
         }
     }
 
-    if (bootstrap_data.slot_to_coeff_input_scale > 0.0)
+    if (!bootstrap_data.slot_to_coeff_first && bootstrap_data.slot_to_coeff_input_scale > 0.0)
     {
         workspace.eval_mod_real.meta.scale =
             bootstrap_data.slot_to_coeff_input_scale;
@@ -5272,7 +5297,26 @@ void GpuEvaluator::bootstrap(
 
     {
         NvtxRange range("StC");
-        if (use_double_hoist)
+        if (bootstrap_data.slot_to_coeff_first)
+        {
+            if (!bootstrap_data.project_real || bootstrap_data.output_ratio != 32)
+                throw std::invalid_argument("manual S2C-first Boot requires real projection and ratio 32");
+            multiply_plain(workspace.eval_mod_imag, bootstrap_data.plus_i_plaintext,
+                workspace.scratch0);
+            add(workspace.eval_mod_real, workspace.scratch0, workspace.scratch1);
+            // Match the manual order. Scaling after conjugation would also
+            // amplify its key-switch rounding noise by 16.
+            multiply_scalar(workspace.scratch1, 16, workspace.scratch0);
+            conjugate(workspace.scratch0, galois_keys, workspace.scratch1);
+            add(workspace.scratch0, workspace.scratch1, destination_ciphertext);
+            destination_ciphertext.meta.scale *= bootstrap_data.output_scale_multiplier;
+            if (std::abs(std::log2(destination_ciphertext.meta.scale /
+                    bootstrap_data.slot_to_coeff_output_scale)) > 1e-8)
+                throw std::runtime_error("manual S2C-first Boot output scale disagrees with its coefficient fold");
+            destination_ciphertext.meta.scale = bootstrap_data.slot_to_coeff_output_scale;
+            return;
+        }
+        else if (use_double_hoist)
         {
             slot_to_coeff_double_hoist(
                 workspace.eval_mod_real,

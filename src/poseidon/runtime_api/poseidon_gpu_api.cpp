@@ -59,7 +59,8 @@ fhegpu::BootProfile make_native_boot_profile(
         profile.input_level_min < 0 ||
         profile.input_level_min > profile.input_level_max ||
         profile.input_components <= 0 || profile.output_level < 0 ||
-        profile.output_scale_log2 <= 0 || profile.output_components <= 0)
+        profile.output_scale_log2 <= 0 || profile.output_components <= 0 ||
+        (profile.input_scale_log2 && *profile.input_scale_log2 <= 0))
     {
         throw std::invalid_argument(
             "Poseidon GPU native Boot profile metadata is invalid");
@@ -70,6 +71,7 @@ fhegpu::BootProfile make_native_boot_profile(
     result.input_level_min = profile.input_level_min;
     result.input_level_max = profile.input_level_max;
     result.input_components = profile.input_components;
+    result.input_scale_log2 = profile.input_scale_log2;
     result.output_level = profile.output_level;
     result.output_scale_log2 = profile.output_scale_log2;
     result.output_components = profile.output_components;

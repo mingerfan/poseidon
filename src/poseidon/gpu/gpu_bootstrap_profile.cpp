@@ -547,6 +547,108 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     return result;
 }
 
+GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
+    const PoseidonContext &context, KeyGenerator &key_generator, int cuda_device_id)
+{
+    const auto parameters = context.parameters_literal();
+    if (!parameters || parameters->log_n() != 16 || parameters->log_slots() != 15 ||
+        parameters->q().size() != 50 || parameters->p().size() != 25 ||
+        parameters->q0_level() != 1)
+        throw std::invalid_argument("manual ResNet20 Boot requires N65536, Q50/P25, q0 level 1 and 32768 slots");
+    gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
+    CKKSEncoder encoder(context);
+    constexpr double working_scale = double(std::uint64_t{1} << 45);
+    constexpr double application_scale = double(std::uint64_t{1} << 40);
+    EvalModPoly polynomial(context, CosDiscrete, working_scale, 0, 5, 2, 25, 0, 59);
+    GpuBootstrapProfileConfig config;
+    const double c2s_scaling = polynomial.q_div() /
+        (polynomial.k() * polynomial.sc_fac() * polynomial.q_diff());
+    if (std::abs(25 * context.crt_context()->q0() * c2s_scaling / working_scale - 1) > 1e-12)
+        throw std::invalid_argument("manual ResNet20 Boot integer-period contract failed");
+    auto c2s = make_coeff_to_slot_matrix_group(context, encoder, c2s_scaling,
+        config, working_scale, working_scale);
+    auto s2c = make_slot_to_coeff_matrix_group(context, encoder, 5, 1.0,
+        config, application_scale, working_scale);
+    const std::vector<std::uint32_t> expected_drops{1, 1, 2};
+    if (dft_stage_rescale_counts(c2s) != expected_drops ||
+        dft_stage_rescale_counts(s2c) != expected_drops)
+        throw std::invalid_argument("manual ResNet20 Boot requires S2C/C2S drop pattern 1,1,2");
+    const double c2s_scale = planned_dft_output_scale(context, working_scale, c2s);
+    const auto c2s_id = context.crt_context()->parms_id_map().at(45);
+    polynomial.set_level_start(45);
+    GpuEvalModUploadOptions options;
+    options.dynamic_rescale = true;
+    options.polynomial_log_split = 3;
+    options.flat_bsgs_b8 = false;
+    options.virtual_degree_bound = false;
+    options.lead_leaf_resplit = false;
+    const auto native = GpuUploader::upload_eval_mod_high_precision(
+        polynomial, encoder, c2s_id, cuda_device_id, nullptr, parms_id_zero, 1,
+        nullptr, true, std::numeric_limits<std::uint32_t>::max(), NAN, NAN,
+        true, c2s_scale, true, options);
+    if (native.output_q_count != 31 || polynomial.double_angle() != 2)
+        throw std::invalid_argument("manual ResNet20 Boot requires degree59/DA2 output Q31");
+    const double alpha = application_scale / native.output_scale;
+    if (!(alpha > 0 && alpha < 1))
+        throw std::invalid_argument("manual ResNet20 Boot output fold is invalid");
+    const double seed = std::pow(alpha, 0.25);
+    Polynomial coefficients = polynomial.sine_poly();
+    for (auto &coefficient : coefficients.data()) coefficient *= seed;
+
+    RelinKeys cpu_relin;
+    key_generator.create_relin_keys(cpu_relin);
+    auto relin = std::make_shared<GpuRelinKeysData>(
+        GpuUploader::upload_relin_keys(cpu_relin, cuda_device_id));
+    auto eval_mod = GpuUploader::upload_eval_mod_high_precision(
+        polynomial, encoder, c2s_id, cuda_device_id, relin.get(), parms_id_zero, 1,
+        &coefficients, true, std::numeric_limits<std::uint32_t>::max(),
+        polynomial.sqrt_2pi() * seed, NAN, true, c2s_scale, false, options);
+    if (eval_mod.output_q_count != native.output_q_count ||
+        std::abs(eval_mod.output_scale / native.output_scale - 1) > 1e-12)
+        throw std::runtime_error("manual ResNet20 output fold changed the Q/scale schedule");
+    auto cpu_rotations = make_galois_keys(context, key_generator, c2s, s2c);
+    auto rotations = std::make_shared<GpuGaloisKeysData>(
+        GpuUploader::upload_double_hoist_galois_keys(cpu_rotations, cuda_device_id));
+    GpuUploader::prepare_key_views_for_q_counts(*rotations,
+        merge_q_counts(required_dft_key_q_counts(50, c2s, true),
+            merge_q_counts(required_dft_key_q_counts(6, s2c, false), {31})));
+    GpuBootstrapData data;
+    data.linear_transform_mode = GpuLinearTransformMode::DoubleHoistBsgs;
+    data.allow_environment_linear_transform_override = false;
+    data.slot_to_coeff_first = true;
+    data.input_q_count = 6;
+    data.input_scale = application_scale;
+    data.output_scale_multiplier = alpha;
+    data.slot_to_coeff_output_scale = application_scale;
+    data.q0_parms_id = context.crt_context()->parms_id_map().at(1);
+    data.q0_over_message_ratio = std::exp2(std::round(std::log2(
+        context.crt_context()->q0() / 32)));
+    data.raised_scale_override = working_scale;
+    data.project_real = true;
+    data.output_ratio = 32;
+    data.eval_mod = std::move(eval_mod);
+    data.coeff_to_slot_matrix_qp = GpuUploader::upload_linear_matrix_group_qp(
+        c2s, context, cuda_device_id, 1, true);
+    data.slot_to_coeff_matrix_qp = GpuUploader::upload_linear_matrix_group_qp(
+        s2c, context, cuda_device_id, 1, true);
+    Plaintext minus_i, plus_i;
+    encoder.encode(std::complex<double>(0, -1), c2s_id, 1.0, minus_i);
+    encoder.encode(std::complex<double>(0, 1), data.eval_mod.output_parms_id, 1.0, plus_i);
+    data.minus_i_plaintext = GpuUploader::upload_plaintext(minus_i, cuda_device_id);
+    data.plus_i_plaintext = GpuUploader::upload_plaintext(plus_i, cuda_device_id);
+    GpuBootstrapProfile result;
+    result.profile_id = "poseidon-resnet20-manual-q50-scale40";
+    result.cuda_device_id = cuda_device_id;
+    result.input_level_min = result.input_level_max = 5;
+    result.input_scale_log2 = 40;
+    result.output_level = 30;
+    result.output_scale_log2 = 40;
+    result.bootstrap_data = std::move(data);
+    result.relin_keys = std::move(relin);
+    result.galois_keys = std::move(rotations);
+    return result;
+}
+
 std::size_t GpuBootstrapData::allocated_bytes() const
 {
     std::size_t bytes = 0;

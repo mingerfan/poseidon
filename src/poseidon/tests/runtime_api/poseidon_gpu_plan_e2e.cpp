@@ -2,12 +2,14 @@
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/gpu/gpu_bootstrap_profile.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 #include "runtime/plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
+#include "manual_bootstrap_reference.h"
 
 #include <nlohmann/json.hpp>
 
@@ -15,6 +17,7 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -51,6 +54,19 @@ std::uint32_t exact_log2(std::uint64_t value)
 
 poseidon::PoseidonContext make_context(const fhegpu::OperatorSpec &spec)
 {
+    if (const char *path = std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50")) {
+        std::ifstream stream(path);
+        const auto fixture = Json::parse(stream);
+        if (spec.poly_degree != fixture.at("poly_degree") ||
+            spec.rns_moduli != fixture.at("rns_moduli").get<std::vector<std::uint64_t>>())
+            throw std::runtime_error("manual Boot fixture differs from OperatorSpec");
+        std::vector<poseidon::Modulus> q, p;
+        for (auto value : spec.rns_moduli) q.emplace_back(value);
+        for (const auto &value : fixture.at("p_moduli")) p.emplace_back(value.get<std::uint64_t>());
+        poseidon::ParametersLiteral parameters(CKKS, 16, 15, 40, 192, 1,
+            poseidon::Modulus(0), q, p, poseidon::sec_level_type::none);
+        return poseidon::PoseidonContext(parameters);
+    }
     std::vector<int> modulus_bits = spec.rns_moduli_log2;
     modulus_bits.insert(modulus_bits.end(), 2, spec.max_modulus_log2);
     const auto moduli = poseidon::CoeffModulus::Create(spec.poly_degree, modulus_bits);
@@ -150,23 +166,44 @@ int main(int argc, char **argv)
         poseidon::Decryptor decryptor(context, key_generator.secret_key());
         poseidon::CKKSEncoder encoder(context);
 
-        const std::vector<double> input{-0.75, -0.5, -0.25, 0.125,
-                                        0.25, 0.5, 0.75, 0.875};
+        std::vector<double> input{-0.75, -0.5, -0.25, 0.125,
+                                  0.25, 0.5, 0.75, 0.875};
+        const bool manual = std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50");
+        if (manual) {
+            input.resize(loaded_spec.spec.poly_degree / 2);
+            for (std::size_t i = 0; i < input.size(); ++i) input[i] = double(i % 17 + 1) / 32;
+        }
         std::vector<double> expected;
         expected.reserve(input.size());
         for (double value : input)
         {
             expected.push_back(value * value * value * value + value);
         }
+        auto identity_expected = expected;
+        if (manual) {
+            identity_expected = poseidon::test::manual_plan_reference(plan, context, input, false);
+            expected = poseidon::test::manual_plan_reference(plan, context, input);
+        }
 
         const fhegpu::ValueId input_id = plan.external_inputs.front();
         const auto &input_desc = find_value(plan, input_id);
         poseidon::Plaintext plaintext;
-        encoder.encode(input, std::ldexp(1.0, input_desc.scale_log2), plaintext);
+        encoder.encode(input, context.crt_context()->parms_id_map().at(input_desc.level),
+            std::exp2(input_desc.scale_log2), plaintext);
         poseidon::Ciphertext ciphertext;
         encryptor.encrypt(plaintext, ciphertext);
 
         PoseidonGpuApi api(loaded_spec.spec.context_id, context, kCudaDevice, relin_keys);
+        if (std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50")) {
+            auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build_resnet20_manual(
+                context, key_generator, kCudaDevice);
+            const auto &declared = loaded_spec.spec.boot_profiles.at(0);
+            if (declared.profile_id != profile.profile_id || declared.input_level_min != 5 ||
+                declared.input_level_max != 5 || declared.input_scale_log2 != 40 ||
+                declared.output_level != 30 || declared.output_scale_log2 != 40)
+                throw std::runtime_error("manual Boot profile differs from OperatorSpec");
+            api.configure_native_bootstrap(0, std::move(profile));
+        }
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 1, api);
         const fhegpu::RuntimeResources resources{loaded_spec, std::nullopt, false};
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
@@ -184,6 +221,7 @@ int main(int argc, char **argv)
         encoder.decode(result_plaintext, decoded);
 
         double max_abs_error = 0.0;
+        double max_identity_error = 0.0;
         double max_imaginary = 0.0;
         std::vector<double> actual;
         actual.reserve(expected.size());
@@ -192,15 +230,18 @@ int main(int argc, char **argv)
             actual.push_back(decoded.at(index).real());
             max_abs_error = std::max(
                 max_abs_error, std::abs(decoded.at(index).real() - expected[index]));
+            max_identity_error = std::max(max_identity_error,
+                std::abs(decoded.at(index).real() - identity_expected[index]));
             max_imaginary = std::max(max_imaginary,
                                      std::abs(decoded.at(index).imag()));
         }
-        const bool passed = max_abs_error <= kTolerance &&
-                            max_imaginary <= kTolerance;
+        const double tolerance = manual ? 1e-4 : kTolerance;
+        const bool passed = max_abs_error <= tolerance &&
+                            max_imaginary <= tolerance;
         const Json report{
             {"format_version", 1},
             {"passed", passed},
-            {"expression", "x^4 + x"},
+            {"expression", manual ? "scalar plan with manual Boot sine map" : "x^4 + x"},
             {"cuda_device", kCudaDevice},
             {"plan_sha256", loaded_plan.source_sha256},
             {"operator_spec_sha256", loaded_spec.source_sha256},
@@ -208,8 +249,9 @@ int main(int argc, char **argv)
             {"input_scale_log2", input_desc.scale_log2},
             {"output_level", output_desc.level},
             {"output_scale_log2", output_desc.scale_log2},
-            {"tolerance", kTolerance},
+            {"tolerance", tolerance},
             {"max_abs_error", max_abs_error},
+            {"max_identity_error", max_identity_error},
             {"max_imaginary", max_imaginary},
             {"input", input},
             {"expected", expected},

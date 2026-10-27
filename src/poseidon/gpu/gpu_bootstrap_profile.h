@@ -58,6 +58,7 @@ struct GpuBootstrapProfile
     int input_level_min = 0;
     int input_level_max = 0;
     int input_components = 2;
+    std::optional<int> input_scale_log2;
     int output_level = 0;
     int output_scale_log2 = 0;
     int output_components = 2;
@@ -80,6 +81,11 @@ public:
         KeyGenerator &key_generator,
         int cuda_device_id,
         const GpuBootstrapProfileConfig &config = {});
+    // Manual ResNet20 Q50/P25: Q6/scale40 -> S2C -> raise -> C2S ->
+    // degree59/DA2 with folded coefficients -> Q31/scale40.
+    static GpuBootstrapProfile build_resnet20_manual(
+        const PoseidonContext &context, KeyGenerator &key_generator,
+        int cuda_device_id);
 };
 
 } // namespace gpu

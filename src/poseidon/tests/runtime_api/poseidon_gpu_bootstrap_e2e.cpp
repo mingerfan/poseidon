@@ -6,6 +6,8 @@
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 #include "runtime/runtime.hpp"
+#include "manual_bootstrap_reference.h"
+#include "nlohmann/json.hpp"
 
 #include <cuda_runtime_api.h>
 
@@ -15,6 +17,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -72,15 +75,25 @@ poseidon::PoseidonContext make_context(std::size_t degree)
         log_n,
         log_n - 1,
         kLogScale,
-        /*hamming_weight=*/0,
+        /*hamming_weight=*/std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50") ? 192 : 0,
         kQ0Level,
         poseidon::Modulus(0),
         {},
         {},
         poseidon::sec_level_type::none);
-    parameters.set_log_modulus(
-        std::vector<std::uint32_t>(50, 30),
-        std::vector<std::uint32_t>(8, 30));
+    if (const char *fixture = std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50")) {
+        std::ifstream input(fixture);
+        const auto json = nlohmann::json::parse(input);
+        if (degree != json.at("poly_degree").get<std::size_t>())
+            throw std::runtime_error("manual Q50 fixture degree mismatch");
+        std::vector<poseidon::Modulus> q, p;
+        for (const auto &value : json.at("rns_moduli")) q.emplace_back(value.get<std::uint64_t>());
+        for (const auto &value : json.at("p_moduli")) p.emplace_back(value.get<std::uint64_t>());
+        parameters.set_modulus(q, p);
+    } else {
+        parameters.set_log_modulus(std::vector<std::uint32_t>(50, 30),
+            std::vector<std::uint32_t>(8, 30));
+    }
     return poseidon::PoseidonContext(parameters);
 }
 
@@ -111,6 +124,7 @@ fhegpu::LoadedOperatorSpec make_operator_spec(
     for (const auto &modulus : parameters->q())
     {
         spec.rns_moduli_log2.push_back(modulus.bit_count());
+        spec.rns_moduli.push_back(modulus.value());
     }
     spec.max_modulus_log2 = *std::max_element(
         spec.rns_moduli_log2.begin(), spec.rns_moduli_log2.end());
@@ -168,7 +182,8 @@ fhegpu::LoadedRuntimePlan make_plan(
 {
     const auto host = host_place();
     const auto device = device_place();
-    const int input_level = loaded_spec.spec.level_upper_bound;
+    const int input_level = profile.input_scale_log2
+        ? profile.input_level_max : loaded_spec.spec.level_upper_bound;
 
     fhegpu::RuntimePlan plan;
     plan.plan_id = 1;
@@ -216,7 +231,8 @@ std::vector<std::complex<double>> make_message(std::size_t slot_count)
     {
         result[index] = {
             static_cast<double>((index % 17) + 1) / 32.0,
-            static_cast<double>((index % 11) + 1) / 64.0};
+            std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50") ? 0.0 :
+                static_cast<double>((index % 11) + 1) / 64.0};
     }
     return result;
 }
@@ -237,7 +253,8 @@ int main()
     try
     {
         const std::size_t degree = env_size_or(
-            "POSEIDON_RUNTIME_BOOTSTRAP_DEGREE", 16384);
+            "POSEIDON_RUNTIME_BOOTSTRAP_DEGREE",
+            std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50") ? 65536 : 16384);
         auto context = make_context(degree);
         poseidon::KeyGenerator key_generator(context);
         poseidon::PublicKey public_key;
@@ -261,11 +278,16 @@ int main()
             profile_config.linear_transform_mode =
                 poseidon::gpu::GpuLinearTransformMode::ClassicBsgs;
         }
-        auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(
-            context, key_generator, kCudaDevice, profile_config);
-        if (profile.input_level_min != static_cast<int>(kQ0Level + 1) ||
-            profile.output_level != 22 || profile.output_scale_log2 != 45)
+        const bool manual = std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50");
+        auto profile = manual
+            ? poseidon::gpu::GpuBootstrapProfileBuilder::build_resnet20_manual(context, key_generator, kCudaDevice)
+            : poseidon::gpu::GpuBootstrapProfileBuilder::build(context, key_generator, kCudaDevice, profile_config);
+        if (!manual && (profile.input_level_min != static_cast<int>(kQ0Level + 1) ||
+            profile.output_level != 22 || profile.output_scale_log2 != 45))
             throw std::runtime_error("validated scale45 Boot contract changed");
+        if (manual && (profile.input_level_min != 5 || profile.input_level_max != 5 ||
+            profile.input_scale_log2 != 40 || profile.output_level != 30 || profile.output_scale_log2 != 40))
+            throw std::runtime_error("manual Q6/scale40 -> Q31/scale40 contract changed");
         if (const char *raw =
                 std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_RATIO"))
         {
@@ -297,7 +319,8 @@ int main()
         const auto message = make_message(
             std::size_t{1} << context.parameters_literal()->log_slots());
         poseidon::Plaintext plaintext;
-        encoder.encode(message, std::ldexp(1.0, kLogScale), plaintext);
+        encoder.encode(message, context.crt_context()->parms_id_map().at(
+            loaded_plan.plan.values.front().level), std::ldexp(1.0, kLogScale), plaintext);
         poseidon::Ciphertext ciphertext;
         encryptor.encrypt(plaintext, ciphertext);
 
@@ -316,12 +339,15 @@ int main()
         encoder.decode(output_plaintext, decoded);
 
         double max_abs_error = 0.0;
+        double max_identity_error = 0.0;
         for (std::size_t index = 0; index < message.size(); ++index)
         {
-            max_abs_error = std::max(
-                max_abs_error, std::abs(decoded.at(index) - message[index]));
+            const auto reference = manual ? std::complex<double>(
+                poseidon::test::manual_bootstrap_reference(context, message[index].real()), 0) : message[index];
+            max_abs_error = std::max(max_abs_error, std::abs(decoded.at(index) - reference));
+            max_identity_error = std::max(max_identity_error, std::abs(decoded.at(index) - message[index]));
         }
-        if (max_abs_error > kTolerance)
+        if (max_abs_error > (manual ? 1e-4 : kTolerance))
         {
             std::cerr << "[INFO] output size=" << output.size()
                       << " scale=" << output.scale()
@@ -345,6 +371,7 @@ int main()
                   << " output_level=" << boot_profile.output_level
                   << " output_scale_log2=" << boot_profile.output_scale_log2
                   << " max_abs_error=" << max_abs_error << '\n';
+        if (manual) std::cout << "[INFO] manual arcsine_degree=0 max_identity_error=" << max_identity_error << '\n';
         return 0;
     }
     catch (const std::exception &error)
