@@ -1,0 +1,17 @@
+{
+  "cuda_device": 0,
+  "expression": "single ReLU, no Boot, actual-prime context",
+  "format_version": 1,
+  "input_level": 30,
+  "input_scale_log2": 40.0,
+  "max_abs_error": 8.967705763529565e-07,
+  "max_identity_error": 8.967705763529565e-07,
+  "max_imaginary": 9.227257466647083e-07,
+  "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+  "output_level": 8,
+  "output_scale_log2": 40.000000000992664,
+  "passed": true,
+  "plan_sha256": "sha256:0a20ab657dce4830edb36836c581720b171cb78c4490ec30454f3a7ad9d0065d",
+  "tolerance": 0.0001,
+  "remote_full_report": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/budget25/relu-grid/p1-40.1-p2-50/gpu-report.json"
+}

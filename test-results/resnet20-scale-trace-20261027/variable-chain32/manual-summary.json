@@ -1,0 +1,61 @@
+{
+  "name": "manual",
+  "exit_code": 1,
+  "seconds": 29.98129731800873,
+  "stdout": "FAIL max_abs_error=0.0336309 max_imaginary=1.26208e-05\nreport=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/variable-chain32/gpu/manual-report.json\n",
+  "stderr": "GPU_POOL_RESERVE cuda_device=0 initial_bytes=30380536576 maximum_bytes=30380536576\n",
+  "report": {
+    "cuda_device": 0,
+    "expression": "single ReLU, no Boot, actual-prime context",
+    "format_version": 1,
+    "input_level": 30,
+    "input_scale_log2": 40.0,
+    "max_abs_error": 0.03363088304365802,
+    "max_identity_error": 0.03363088304365802,
+    "max_imaginary": 1.2620776017861276e-05,
+    "operator_spec_sha256": "sha256:fee27c026807be9ee9bc9ca3848c5a37e7b0f2cd7a4dd4f3ab52745100f7e1f0",
+    "output_level": 5,
+    "output_scale_log2": 44.845572038296936,
+    "passed": false,
+    "plan_sha256": "sha256:f842436098168819f5f134ae4aa9d494baa409d4fb341fe617df15794ead62a5",
+    "tolerance": 0.0001
+  },
+  "samples": {
+    "input": [
+      -0.75,
+      -0.5,
+      -0.25,
+      -0.125,
+      0.0,
+      0.125,
+      0.25,
+      0.5,
+      0.75,
+      0.875
+    ],
+    "expected": [
+      1.4512532167998415e-05,
+      6.117575317099444e-06,
+      5.197047515698161e-06,
+      5.521619070830708e-06,
+      0.0,
+      0.12500552161907083,
+      0.25000519704751567,
+      0.5000061175753171,
+      0.750014512532168,
+      0.8749671687982243
+    ],
+    "actual": [
+      -0.02394686401283746,
+      -0.010283253096367712,
+      -0.006380395818991455,
+      -0.002964162795534575,
+      3.492552247408298e-09,
+      0.12203586759568835,
+      0.243620219988298,
+      0.48971699466017304,
+      0.7260531629169049,
+      0.8413492092211968
+    ]
+  }
+}

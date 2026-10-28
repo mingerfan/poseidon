@@ -1,0 +1,56 @@
+{
+  "scope": "Full actual traced ResNet20 planning counts; no encrypted full-network inference.",
+  "input": {
+    "path": "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+    "sha256": "d29b1693f705976e75aa02b146251040811418ded92ed2dfe3ce2e6e21350816",
+    "size": 583441562
+  },
+  "host": "188Server",
+  "ordinary_q_budget": 23,
+  "reserved_alignment_q": 2,
+  "waterline": 40,
+  "compiler_sha256": "1853f463615e608b76da4e675ca20ae5b777d86ecfd60eb70a912a2cbd1acb69",
+  "results": [
+    {
+      "scale": "threshold",
+      "placement": "greedy",
+      "boots": 182,
+      "rescales": 4811
+    },
+    {
+      "scale": "target",
+      "placement": "local-greedy",
+      "boots": 139,
+      "rescales": 1633
+    },
+    {
+      "scale": "threshold",
+      "placement": "previous-optimized",
+      "boots": 27,
+      "rescales": 4397
+    },
+    {
+      "scale": "target",
+      "placement": "reuse-previous-optimized-schedule",
+      "boots": 27,
+      "rescales": 1599
+    }
+  ],
+  "greedy_boot_reduction": 0.23626373626373626,
+  "fixed_schedule_rescale_reduction": 0.6363429611098477,
+  "deletion_trials": 27,
+  "successful_deletions": 0,
+  "checks": {
+    "all_exported_boot_contracts_and_cpp_verification_passed": true,
+    "all_three_final_plans_byte_identical_after_strict_floor_restored": true,
+    "previous_gpu_boot_plans_byte_identical": true,
+    "target_checks": 11,
+    "native_planning_checks": 25,
+    "manual_boot_alignment_checks": 9
+  },
+  "limitations": [
+    "Target local greedy uses arithmetic-tree frontiers; threshold greedy uses single multiplications.",
+    "No new DaCapo optimized search with target scales.",
+    "Deletion tests do not establish an optimum."
+  ]
+}

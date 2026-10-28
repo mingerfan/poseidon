@@ -1,0 +1,7161 @@
+{
+  "strategy": "target",
+  "placement": "greedy",
+  "input": "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+  "command": [
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/hecate-opt-wrapper",
+    "--dacapo",
+    "--boot-placement=greedy",
+    "--ckks-config=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/compiler.json",
+    "--waterline=40",
+    "--bootstrap-scale=40",
+    "--mlir-print-debuginfo",
+    "--mlir-pretty-debuginfo",
+    "--mlir-print-local-scope",
+    "--mlir-disable-threading",
+    "--runtime-plan-id=1",
+    "--runtime-plan-format=json",
+    "--runtime-plan-target-id=poseidon-ckks-gpu",
+    "--runtime-plan-capability-version=1",
+    "--runtime-plan-operator-spec-id=poseidon-resnet20-manual-q50",
+    "--runtime-plan-operator-spec-version=1",
+    "--runtime-plan-operator-spec-sha256=sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+    "--runtime-plan-context-id=poseidon-resnet20-manual-q50",
+    "--runtime-plan-ntt=true",
+    "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+    "--runtime-plan-boot-implementation=native",
+    "--runtime-plan-inline-payload-max-bytes=0",
+    "--native-target-scale-planning",
+    "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/operator-spec.json",
+    "--runtime-plan-levels-per-logical-level=1",
+    "--runtime-plan-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/operator-spec.json",
+    "--runtime-plan-device-counts=1",
+    "--runtime-plan-intra-rank-communication-cost=1000",
+    "--runtime-plan-inter-rank-communication-cost=10000",
+    "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+    "-o",
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/automatic-boot-count/target/resnet20.optimized.mlirbc",
+    "--emit-bytecode"
+  ],
+  "state": "passed",
+  "compiler_sha256": "1853f463615e608b76da4e675ca20ae5b777d86ecfd60eb70a912a2cbd1acb69",
+  "operator_spec_sha256": "f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+  "pid": 4045531,
+  "returncode": 0,
+  "seconds": 22.07900755398441,
+  "peak_child_rss_kib": 1217184,
+  "boots": 139,
+  "values": 17421,
+  "counts": {
+    "transfer": 2625,
+    "encode": 2624,
+    "rotate": 1709,
+    "mul_cp": 3278,
+    "add_cc": 3677,
+    "rescale": 1633,
+    "add_cp": 229,
+    "mul_cc": 513,
+    "relinearize": 513,
+    "mod_switch": 404,
+    "negate": 76,
+    "boot": 139
+  },
+  "plan_path": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/automatic-boot-count/target/resnet20.optimized._hecate_ResNet20.runtime-plan.json",
+  "plan_sha256": "5c658d140fc84cf76570d00cb8d22acc648078ca54f202dd868c50cd19ec9f04",
+  "boot_contracts_passed": true,
+  "validation": {
+    "returncode": 0,
+    "output": "PASS Q=50 values=17421\n"
+  },
+  "boot_details": [
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "370"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 5504,
+        "output": "371",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "370",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "371",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "312"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 5532,
+        "output": "313",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "312",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "313",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "337"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 5535,
+        "output": "338",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "337",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "338",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "349"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 5537,
+        "output": "350",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "349",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "350",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "818"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 5889,
+        "output": "819",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "818",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "819",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "824"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 5890,
+        "output": "825",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "824",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "825",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1126"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6140,
+        "output": "1127",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1126",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1127",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1129"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6141,
+        "output": "1130",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1129",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1130",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1132"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6144,
+        "output": "1133",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1132",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1133",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1135"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6147,
+        "output": "1136",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1135",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1136",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1123"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6149,
+        "output": "1124",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1123",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1124",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1138"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6151,
+        "output": "1139",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1138",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1139",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1141"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6155,
+        "output": "1142",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1141",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1142",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1144"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6157,
+        "output": "1145",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1144",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1145",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1147"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6159,
+        "output": "1148",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1147",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1148",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1519"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6462,
+        "output": "1520",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1519",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.00000000099983
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1520",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1531"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6466,
+        "output": "1532",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1531",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1532",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1545"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6471,
+        "output": "1546",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1545",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1546",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1563"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6472,
+        "output": "1564",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1563",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1564",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1829"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6709,
+        "output": "1830",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1829",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1830",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1836"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6710,
+        "output": "1837",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1836",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1837",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1843"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6715,
+        "output": "1844",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1843",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1844",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1850"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6722,
+        "output": "1851",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1850",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1851",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1822"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6726,
+        "output": "1823",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1822",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1823",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1857"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6731,
+        "output": "1858",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1857",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1858",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1864"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6735,
+        "output": "1865",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1864",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1865",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1871"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6738,
+        "output": "1872",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1871",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1872",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "1878"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 6740,
+        "output": "1879",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1878",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "1879",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "2430"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7152,
+        "output": "2431",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2430",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2431",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "2377"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7180,
+        "output": "2378",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2377",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2378",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "2401"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7183,
+        "output": "2402",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2401",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2402",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "2412"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7185,
+        "output": "2413",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2412",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2413",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "2861"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7534,
+        "output": "2862",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2861",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2862",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "2867"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7535,
+        "output": "2868",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2867",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "2868",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3131"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7789,
+        "output": "3132",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3131",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3132",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3134"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7790,
+        "output": "3135",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3134",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3135",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3137"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7793,
+        "output": "3138",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3137",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3138",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3140"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7796,
+        "output": "3141",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3140",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3141",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3128"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7798,
+        "output": "3129",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3128",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3129",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3143"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7800,
+        "output": "3144",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3143",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3144",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3146"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7804,
+        "output": "3147",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3146",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3147",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3149"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7806,
+        "output": "3150",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3149",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3150",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3152"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 7808,
+        "output": "3153",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3152",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3153",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3704"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 8220,
+        "output": "3705",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3704",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3705",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3651"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 8248,
+        "output": "3652",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3651",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3652",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3675"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 8251,
+        "output": "3676",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3675",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3676",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "3686"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 8253,
+        "output": "3687",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3686",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "3687",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "4135"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 8602,
+        "output": "4136",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "4135",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "4136",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "4141"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 8603,
+        "output": "4142",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "4141",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "4142",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "4402"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 8852,
+        "output": "4403",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "4402",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "4403",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "5416"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 9530,
+        "output": "5417",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5416",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5417",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "5363"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 9558,
+        "output": "5364",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5363",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5364",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "5387"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 9561,
+        "output": "5388",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5387",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5388",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "5398"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 9563,
+        "output": "5399",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5398",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5399",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "5934"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10073,
+        "output": "5935",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5934",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5935",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "5940"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10074,
+        "output": "5941",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5940",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "5941",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6199"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10324,
+        "output": "6200",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6199",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6200",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6202"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10325,
+        "output": "6203",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6202",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6203",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6205"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10328,
+        "output": "6206",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6205",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6206",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6208"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10331,
+        "output": "6209",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6208",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6209",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6196"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10333,
+        "output": "6197",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6196",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6197",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6211"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10335,
+        "output": "6212",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6211",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6212",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6214"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10339,
+        "output": "6215",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6214",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6215",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6217"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10341,
+        "output": "6218",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6217",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6218",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6220"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10343,
+        "output": "6221",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6220",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6221",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6854"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10821,
+        "output": "6855",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6854",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6855",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6801"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10849,
+        "output": "6802",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6801",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6802",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6825"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10852,
+        "output": "6826",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6825",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6826",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "6836"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 10854,
+        "output": "6837",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6836",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "6837",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7367"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11269,
+        "output": "7368",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7367",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7368",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7373"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11270,
+        "output": "7374",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7373",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7374",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7637"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11524,
+        "output": "7638",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7637",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7638",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7640"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11525,
+        "output": "7641",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7640",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7641",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7643"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11528,
+        "output": "7644",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7643",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7644",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7646"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11531,
+        "output": "7647",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7646",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7647",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7634"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11533,
+        "output": "7635",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7634",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7635",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7649"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11535,
+        "output": "7650",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7649",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7650",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7652"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11539,
+        "output": "7653",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7652",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7653",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7655"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11541,
+        "output": "7656",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7655",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7656",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "7658"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 11543,
+        "output": "7659",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7658",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "7659",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "8292"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 12021,
+        "output": "8293",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8292",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8293",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "8239"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 12049,
+        "output": "8240",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8239",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8240",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "8263"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 12052,
+        "output": "8264",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8263",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8264",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "8274"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 12054,
+        "output": "8275",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8274",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8275",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "8805"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 12469,
+        "output": "8806",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8805",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8806",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "8811"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 12470,
+        "output": "8812",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8811",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "8812",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "9072"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 12719,
+        "output": "9073",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "9072",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "9073",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "10249"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 13527,
+        "output": "10250",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10249",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10250",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "10196"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 13555,
+        "output": "10197",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10196",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10197",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "10220"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 13558,
+        "output": "10221",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10220",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10221",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "10231"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 13560,
+        "output": "10232",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10231",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10232",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "10913"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14186,
+        "output": "10914",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10913",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10914",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "10919"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14187,
+        "output": "10920",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10919",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "10920",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11178"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14437,
+        "output": "11179",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11178",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11179",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11181"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14438,
+        "output": "11182",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11181",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11182",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11184"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14441,
+        "output": "11185",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11184",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11185",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11187"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14444,
+        "output": "11188",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11187",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11188",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11175"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14446,
+        "output": "11176",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11175",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11176",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11190"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14448,
+        "output": "11191",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11190",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11191",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11193"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14452,
+        "output": "11194",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11193",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11194",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11196"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14454,
+        "output": "11197",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11196",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11197",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11199"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 14456,
+        "output": "11200",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11199",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11200",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11979"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15048,
+        "output": "11980",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11979",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11980",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11926"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15076,
+        "output": "11927",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11926",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11927",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11950"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15079,
+        "output": "11951",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11950",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11951",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "11961"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15081,
+        "output": "11962",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11961",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "11962",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12638"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15610,
+        "output": "12639",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12638",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12639",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12644"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15611,
+        "output": "12645",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12644",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12645",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12908"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15865,
+        "output": "12909",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12908",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12909",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12911"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15866,
+        "output": "12912",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12911",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12912",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12914"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15869,
+        "output": "12915",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12914",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12915",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12917"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15872,
+        "output": "12918",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12917",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12918",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12905"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15874,
+        "output": "12906",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12905",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12906",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12920"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15876,
+        "output": "12921",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12920",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12921",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12923"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15880,
+        "output": "12924",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12923",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12924",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12926"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15882,
+        "output": "12927",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12926",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12927",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "12929"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 15884,
+        "output": "12930",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12929",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "12930",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "13709"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 16476,
+        "output": "13710",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13709",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13710",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "13656"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 16504,
+        "output": "13657",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13656",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13657",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "13680"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 16507,
+        "output": "13681",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13680",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13681",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "13691"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 16509,
+        "output": "13692",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13691",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "13692",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14368"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17038,
+        "output": "14369",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14368",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14369",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14374"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17039,
+        "output": "14375",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14374",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000014
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14375",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14647"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17307,
+        "output": "14648",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14647",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14648",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14652"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17308,
+        "output": "14653",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14652",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14653",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14658"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17311,
+        "output": "14659",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14658",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14659",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14664"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17313,
+        "output": "14665",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14664",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14665",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14670"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17315,
+        "output": "14671",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14670",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14671",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14676"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17318,
+        "output": "14677",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14676",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14677",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14682"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17321,
+        "output": "14683",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14682",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14683",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14688"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17324,
+        "output": "14689",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14688",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14689",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14694"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17327,
+        "output": "14695",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14694",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14695",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14700"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17330,
+        "output": "14701",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14700",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14701",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14706"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17334,
+        "output": "14707",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14706",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14707",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14712"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17337,
+        "output": "14713",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14712",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14713",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14718"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17339,
+        "output": "14719",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14718",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14719",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14724"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17341,
+        "output": "14725",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14724",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14725",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14730"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17343,
+        "output": "14731",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14730",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14731",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    },
+    {
+      "instruction": {
+        "attrs": {
+          "implementation": "native",
+          "operator_profile": "poseidon-resnet20-manual-q50-scale40",
+          "target_components": 2,
+          "target_level": 30,
+          "target_scale_log2": 40
+        },
+        "inputs": [
+          "14736"
+        ],
+        "kind": "compute",
+        "op": "boot",
+        "ordinal": 17345,
+        "output": "14737",
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      },
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14736",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "14737",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    }
+  ]
+}

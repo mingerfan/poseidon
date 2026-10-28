@@ -1,0 +1,64 @@
+{
+  "name": "relu-boot",
+  "plan": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-tests/relu-boot/mlp.optimized.relu_boot.runtime-plan.json",
+  "validation": "PASS Q=50 values=356",
+  "counts": {
+    "transfer": 55,
+    "encode": 54,
+    "add_cc": 43,
+    "mul_cc": 27,
+    "relinearize": 27,
+    "add_cp": 11,
+    "rescale": 66,
+    "mod_switch": 16,
+    "mul_cp": 51,
+    "negate": 4,
+    "boot": 1
+  },
+  "boots": [
+    {
+      "before": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "299",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "after": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "300",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      }
+    }
+  ],
+  "output": {
+    "components": 2,
+    "context": "poseidon-resnet20-manual-q50",
+    "id": "300",
+    "kind": "ciphertext",
+    "level": 30,
+    "ntt": true,
+    "place": {
+      "index": 0,
+      "kind": "device",
+      "rank": 0
+    },
+    "scale_log2": 40.0
+  }
+}

@@ -1,0 +1,12 @@
+/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/40-q1-optimized-cc-double-rescale/input.mlir:1:10: error: no feasible DaCapo plan for the threshold Q budget
+module { func.func @graph(%x: tensor<1x!earth.ci<0 * 0>>, %y: tensor<1x!earth.ci<0 * 0>>) -> (tensor<1x!earth.ci<0 * 0>>) {
+         ^
+/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/40-q1-optimized-cc-double-rescale/input.mlir:1:10: note: see current operation:
+"func.func"() <{function_type = (tensor<1x!earth.ci<0 * 0>>, tensor<1x!earth.ci<0 * 0>>) -> tensor<1x!earth.ci<0 * 0>>, sym_name = "graph"}> ({
+^bb0(%arg0: tensor<1x!earth.ci<0 * 0>>, %arg1: tensor<1x!earth.ci<0 * 0>>):
+  %0 = "earth.constant"() <{rms_var = 1.010000e+00 : f64, value = dense<1.010000e+00> : tensor<1xf64>}> {opid0 = 3 : i64, smu0 = 0 : i64} : () -> tensor<1x!earth.pl<0 * 0>>
+  %1 = "earth.mul"(%arg0, %0) {opid0 = 4 : i64, smu0 = 1 : i64} : (tensor<1x!earth.ci<0 * 0>>, tensor<1x!earth.pl<0 * 0>>) -> tensor<1x!earth.ci<0 * 0>>
+  %2 = "earth.mul"(%arg1, %0) {opid0 = 5 : i64, smu0 = 1 : i64} : (tensor<1x!earth.ci<0 * 0>>, tensor<1x!earth.pl<0 * 0>>) -> tensor<1x!earth.ci<0 * 0>>
+  %3 = "earth.mul"(%1, %2) {opid0 = 6 : i64, smu0 = 2 : i64} : (tensor<1x!earth.ci<0 * 0>>, tensor<1x!earth.ci<0 * 0>>) -> tensor<1x!earth.ci<0 * 0>>
+  "func.return"(%3) : (tensor<1x!earth.ci<0 * 0>>) -> ()
+}) {absorb_coefficient_scale, opid0 = 1 : i64, opid1 = 2 : i64, selected_set = 1 : i64, smu0 = 0 : i64, smu1 = 0 : i64, smu_attached = true} : () -> ()

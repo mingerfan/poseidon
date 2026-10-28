@@ -1,0 +1,23 @@
+[
+  {
+    "name": "manual",
+    "input_q": 6,
+    "input_scale": 44.845572038296936,
+    "accepted": false,
+    "reason": "insufficient Q/encoding precision"
+  },
+  {
+    "name": "refine-1-4",
+    "input_q": 6,
+    "input_scale": 55.7137595001543,
+    "accepted": false,
+    "reason": "insufficient Q/encoding precision"
+  },
+  {
+    "name": "refine-2-15",
+    "input_q": 6,
+    "input_scale": 42.826130636383375,
+    "accepted": false,
+    "reason": "insufficient Q/encoding precision"
+  }
+]

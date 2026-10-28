@@ -1,0 +1,11 @@
+{
+  "full_q_budget": 15,
+  "target_scale": 11,
+  "actual_prime": 25,
+  "manual_boot": 9,
+  "native_artifact": 18,
+  "threshold_graphs": 540,
+  "all_passed": true,
+  "threshold_valid_plans": 495,
+  "threshold_expected_rejections": 45
+}

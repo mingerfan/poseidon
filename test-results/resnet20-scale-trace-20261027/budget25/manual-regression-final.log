@@ -1,0 +1,5 @@
+greedy 1 manual Boot input/output contracts passed
+depth-dp 2 manual Boot input/output contracts passed
+optimized 1 manual Boot input/output contracts passed
+scaled-depth-dp 2 manual Boot input/output contracts passed
+9 manual Boot alignment checks passed

@@ -1,0 +1,1370 @@
+[
+  {
+    "case": "40-q1-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-cc-double-rescale",
+    "oracle_feasible_rejected": true,
+    "minimum_depth_cut_boots": 2,
+    "compiler_error": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/40-q1-optimized-cc-double-rescale/input.mlir:1:10: error: no feasible DaCapo plan for the threshold Q budget"
+  },
+  {
+    "case": "40-q1-optimized-cc-scale60",
+    "oracle_feasible_rejected": true,
+    "minimum_depth_cut_boots": 4,
+    "compiler_error": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/40-q1-optimized-cc-scale60/input.mlir:1:10: error: no feasible DaCapo plan for the threshold Q budget"
+  },
+  {
+    "case": "40-q1-optimized-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 8,
+    "boots": 3,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 5,
+    "boots": 3,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 24,
+    "boots": 8,
+    "rescale_q": 9,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-mixed-0",
+    "minimum_depth_cut_boots": 14,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-mixed-1",
+    "minimum_depth_cut_boots": 18,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-mixed-2",
+    "minimum_depth_cut_boots": 15,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-mixed-3",
+    "minimum_depth_cut_boots": 14,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-mixed-4",
+    "minimum_depth_cut_boots": 16,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q1-optimized-mixed-5",
+    "minimum_depth_cut_boots": 17,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-cc-scale60",
+    "oracle_feasible_rejected": true,
+    "minimum_depth_cut_boots": 2,
+    "compiler_error": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/40-q2-optimized-cc-scale60/input.mlir:1:10: error: no feasible DaCapo plan for the threshold Q budget"
+  },
+  {
+    "case": "40-q2-optimized-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 3,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 12,
+    "boots": 4,
+    "rescale_q": 9,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-mixed-0",
+    "minimum_depth_cut_boots": 6,
+    "boots": 3,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-mixed-1",
+    "minimum_depth_cut_boots": 8,
+    "boots": 3,
+    "rescale_q": 8,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-mixed-2",
+    "minimum_depth_cut_boots": 6,
+    "boots": 3,
+    "rescale_q": 8,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-mixed-3",
+    "minimum_depth_cut_boots": 6,
+    "boots": 3,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-mixed-4",
+    "minimum_depth_cut_boots": 7,
+    "boots": 4,
+    "rescale_q": 8,
+    "modswitch_q": 3,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q2-optimized-mixed-5",
+    "minimum_depth_cut_boots": 7,
+    "boots": 3,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-optimized-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-optimized-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 6,
+    "boots": 2,
+    "rescale_q": 12,
+    "modswitch_q": 2,
+    "double_rescales": 3
+  },
+  {
+    "case": "40-q4-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "40-q4-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "40-q4-optimized-mixed-0",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 10,
+    "modswitch_q": 8,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-optimized-mixed-1",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 10,
+    "modswitch_q": 3,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-optimized-mixed-2",
+    "minimum_depth_cut_boots": 4,
+    "boots": 4,
+    "rescale_q": 10,
+    "modswitch_q": 2,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-optimized-mixed-3",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 10,
+    "modswitch_q": 3,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-optimized-mixed-4",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 10,
+    "modswitch_q": 6,
+    "double_rescales": 2
+  },
+  {
+    "case": "40-q4-optimized-mixed-5",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 11,
+    "modswitch_q": 5,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q1-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-cc-double-rescale",
+    "oracle_feasible_rejected": true,
+    "minimum_depth_cut_boots": 2,
+    "compiler_error": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/45-q1-optimized-cc-double-rescale/input.mlir:1:10: error: no feasible DaCapo plan for the threshold Q budget"
+  },
+  {
+    "case": "45-q1-optimized-cc-scale60",
+    "oracle_feasible_rejected": true,
+    "minimum_depth_cut_boots": 4,
+    "compiler_error": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/45-q1-optimized-cc-scale60/input.mlir:1:10: error: no feasible DaCapo plan for the threshold Q budget"
+  },
+  {
+    "case": "45-q1-optimized-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 8,
+    "boots": 3,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 5,
+    "boots": 3,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 24,
+    "boots": 8,
+    "rescale_q": 9,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-mixed-0",
+    "minimum_depth_cut_boots": 14,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-mixed-1",
+    "minimum_depth_cut_boots": 18,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-mixed-2",
+    "minimum_depth_cut_boots": 15,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-mixed-3",
+    "minimum_depth_cut_boots": 14,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-mixed-4",
+    "minimum_depth_cut_boots": 16,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q1-optimized-mixed-5",
+    "minimum_depth_cut_boots": 17,
+    "boots": 7,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-cc-scale60",
+    "oracle_feasible_rejected": true,
+    "minimum_depth_cut_boots": 2,
+    "compiler_error": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/single-state-main-20261028/pruning-audit/45-q2-optimized-cc-scale60/input.mlir:1:10: error: no feasible DaCapo plan for the threshold Q budget"
+  },
+  {
+    "case": "45-q2-optimized-shared-square",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 5,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 12,
+    "boots": 4,
+    "rescale_q": 9,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 2,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-mixed-0",
+    "minimum_depth_cut_boots": 9,
+    "boots": 6,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-mixed-1",
+    "minimum_depth_cut_boots": 11,
+    "boots": 3,
+    "rescale_q": 8,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-mixed-2",
+    "minimum_depth_cut_boots": 9,
+    "boots": 3,
+    "rescale_q": 8,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-mixed-3",
+    "minimum_depth_cut_boots": 9,
+    "boots": 4,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-mixed-4",
+    "minimum_depth_cut_boots": 9,
+    "boots": 6,
+    "rescale_q": 8,
+    "modswitch_q": 4,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q2-optimized-mixed-5",
+    "minimum_depth_cut_boots": 10,
+    "boots": 5,
+    "rescale_q": 8,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q4-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q4-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q4-optimized-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q4-optimized-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q4-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q4-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 1,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q4-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 6,
+    "boots": 2,
+    "rescale_q": 12,
+    "modswitch_q": 2,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q4-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q4-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q4-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q4-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q4-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q4-optimized-mixed-0",
+    "minimum_depth_cut_boots": 3,
+    "boots": 3,
+    "rescale_q": 11,
+    "modswitch_q": 6,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q4-optimized-mixed-1",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 11,
+    "modswitch_q": 3,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q4-optimized-mixed-2",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 11,
+    "modswitch_q": 3,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q4-optimized-mixed-3",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 10,
+    "modswitch_q": 4,
+    "double_rescales": 2
+  },
+  {
+    "case": "45-q4-optimized-mixed-4",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 10,
+    "modswitch_q": 10,
+    "double_rescales": 2
+  },
+  {
+    "case": "45-q4-optimized-mixed-5",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 11,
+    "modswitch_q": 5,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q18-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 5,
+    "modswitch_q": 4,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 12,
+    "modswitch_q": 10,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q18-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q18-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 1,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q18-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 3,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "45-q18-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "45-q18-optimized-mixed-0",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 12,
+    "modswitch_q": 12,
+    "double_rescales": 4
+  },
+  {
+    "case": "45-q18-optimized-mixed-1",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 11,
+    "modswitch_q": 15,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q18-optimized-mixed-2",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 11,
+    "modswitch_q": 12,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q18-optimized-mixed-3",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 12,
+    "modswitch_q": 13,
+    "double_rescales": 4
+  },
+  {
+    "case": "45-q18-optimized-mixed-4",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 11,
+    "modswitch_q": 14,
+    "double_rescales": 3
+  },
+  {
+    "case": "45-q18-optimized-mixed-5",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 11,
+    "modswitch_q": 16,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q3-optimized-cp-double-rescale",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q3-optimized-cc-scale60",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-shared-square",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-unequal-depth-residual",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-equal-nominal-residual",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-depth-zero-unary-fanout",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q3-optimized-exhausted-input",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-exhausted-shared-input",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-one-q-before-double-rescale",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q3-optimized-mixed-0",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-mixed-1",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-mixed-2",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-mixed-3",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-mixed-4",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q3-optimized-mixed-5",
+    "expected_infeasible": true
+  },
+  {
+    "case": "120-q4-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-optimized-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-optimized-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q4-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 2,
+    "boots": 1,
+    "rescale_q": 9,
+    "modswitch_q": 3,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q4-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 8,
+    "modswitch_q": 2,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q4-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 18,
+    "boots": 9,
+    "rescale_q": 36,
+    "modswitch_q": 2,
+    "double_rescales": 18
+  },
+  {
+    "case": "120-q4-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q4-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q4-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 2,
+    "boots": 2,
+    "rescale_q": 8,
+    "modswitch_q": 0,
+    "double_rescales": 4
+  },
+  {
+    "case": "120-q4-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q4-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q4-optimized-mixed-0",
+    "minimum_depth_cut_boots": 9,
+    "boots": 8,
+    "rescale_q": 32,
+    "modswitch_q": 2,
+    "double_rescales": 16
+  },
+  {
+    "case": "120-q4-optimized-mixed-1",
+    "minimum_depth_cut_boots": 11,
+    "boots": 8,
+    "rescale_q": 32,
+    "modswitch_q": 4,
+    "double_rescales": 16
+  },
+  {
+    "case": "120-q4-optimized-mixed-2",
+    "minimum_depth_cut_boots": 9,
+    "boots": 8,
+    "rescale_q": 32,
+    "modswitch_q": 4,
+    "double_rescales": 16
+  },
+  {
+    "case": "120-q4-optimized-mixed-3",
+    "minimum_depth_cut_boots": 9,
+    "boots": 8,
+    "rescale_q": 32,
+    "modswitch_q": 0,
+    "double_rescales": 16
+  },
+  {
+    "case": "120-q4-optimized-mixed-4",
+    "minimum_depth_cut_boots": 10,
+    "boots": 8,
+    "rescale_q": 32,
+    "modswitch_q": 2,
+    "double_rescales": 16
+  },
+  {
+    "case": "120-q4-optimized-mixed-5",
+    "minimum_depth_cut_boots": 11,
+    "boots": 8,
+    "rescale_q": 32,
+    "modswitch_q": 2,
+    "double_rescales": 16
+  },
+  {
+    "case": "120-q6-optimized-cp-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-optimized-cc-double-rescale",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-optimized-cc-scale60",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-optimized-shared-square",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-optimized-unequal-depth-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 6,
+    "modswitch_q": 3,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-optimized-equal-nominal-residual",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 5,
+    "modswitch_q": 4,
+    "double_rescales": 1
+  },
+  {
+    "case": "120-q6-optimized-depth-zero-unary-fanout",
+    "minimum_depth_cut_boots": 6,
+    "boots": 2,
+    "rescale_q": 16,
+    "modswitch_q": 5,
+    "double_rescales": 5
+  },
+  {
+    "case": "120-q6-optimized-unary-only",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q6-optimized-exhausted-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 4,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q6-optimized-exhausted-shared-input",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 6,
+    "modswitch_q": 0,
+    "double_rescales": 3
+  },
+  {
+    "case": "120-q6-optimized-one-q-before-double-rescale",
+    "minimum_depth_cut_boots": 1,
+    "boots": 1,
+    "rescale_q": 5,
+    "modswitch_q": 0,
+    "double_rescales": 2
+  },
+  {
+    "case": "120-q6-optimized-dead-branch",
+    "minimum_depth_cut_boots": 0,
+    "boots": 0,
+    "rescale_q": 0,
+    "modswitch_q": 0,
+    "double_rescales": 0
+  },
+  {
+    "case": "120-q6-optimized-mixed-0",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 16,
+    "modswitch_q": 5,
+    "double_rescales": 6
+  },
+  {
+    "case": "120-q6-optimized-mixed-1",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 15,
+    "modswitch_q": 9,
+    "double_rescales": 5
+  },
+  {
+    "case": "120-q6-optimized-mixed-2",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 15,
+    "modswitch_q": 8,
+    "double_rescales": 5
+  },
+  {
+    "case": "120-q6-optimized-mixed-3",
+    "minimum_depth_cut_boots": 3,
+    "boots": 2,
+    "rescale_q": 17,
+    "modswitch_q": 6,
+    "double_rescales": 7
+  },
+  {
+    "case": "120-q6-optimized-mixed-4",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 15,
+    "modswitch_q": 6,
+    "double_rescales": 5
+  },
+  {
+    "case": "120-q6-optimized-mixed-5",
+    "minimum_depth_cut_boots": 4,
+    "boots": 2,
+    "rescale_q": 15,
+    "modswitch_q": 8,
+    "double_rescales": 5
+  }
+]

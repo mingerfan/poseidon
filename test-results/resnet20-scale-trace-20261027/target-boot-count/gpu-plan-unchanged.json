@@ -1,0 +1,7 @@
+{
+  "byte_identical_to_both_previously_gpu_tested_plans": true,
+  "plans": [
+    "65035ca9da87c0bb82c17dcc3670209eb28721989d4652e3ec174936baa1d3ae",
+    "6bf7dc8f4c8777eed00d546634ae9e7b4ea9594972554b571e203285f779e41a"
+  ]
+}

@@ -1,0 +1,16 @@
+all-25-q passed
+one-q-alignment passed
+two-q-alignment passed
+no-q-scale41 passed
+one-q-scale71 passed
+two-q-scale179 passed
+shared-branch-rescale passed
+double-frontier passed
+rotate-frontier passed
+terminal-below-boot-level passed
+initial-q34 passed
+shifted-anchor-25-q passed
+shifted threshold greedy passed
+shifted threshold depth-dp passed
+shifted threshold optimized passed
+15 full-Q budget checks passed

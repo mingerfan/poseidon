@@ -1,0 +1,4 @@
+Stem rotation keys ready: 25
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=30380536576 maximum_bytes=30380536576
+PASS max_abs_error=4.50228e-06 max_imaginary=9.51959e-06
+report=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/budget25/stem-gpu/gpu-report.json

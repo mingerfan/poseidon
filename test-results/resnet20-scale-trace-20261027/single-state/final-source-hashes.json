@@ -1,0 +1,20 @@
+{
+  "README.md": "38924d021788cc8c0a707bda913833d48e2e4a8a85c473cc3c3e2869ec82916a",
+  "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "713767ad62a0353be4ce39d5006257b9b8dac77f14125ecfcbf0a80e37879cf7",
+  "include/hecate/Dialect/Earth/IR/EarthOps.td": "dc0e80f411a2f9069b29efdad4b53bb5ca11eee422c5aaae99f420961c967f1e",
+  "include/hecate/Dialect/Earth/Transforms/Common.h": "d223b36da5e08ec149288dfa1396699fe72df34299cc765d52e07b8d4334f5ee",
+  "include/hecate/Support/BootstrapInputAlignment.h": "814dd13c0d9f4d78914c80cebc4bdcf29bf5a23eb8107ced142de88fe7b9066e",
+  "lib/Conversion/EarthToCKKS/EarthToCKKS.cpp": "d86af23963f0b3b82b206fea13854972383921d1e6b1bc16080b006d1f0cc003",
+  "lib/Dialect/CKKS/Transforms/MaterializePhysicalLevels.cpp": "93061f944ae6343b6cef5870c9a1222ac62e9daee168f108955f117c3b61c84f",
+  "lib/Dialect/Earth/IR/EarthDialect.cpp": "2e9693561d2a9228878b404886993b56737430279acd5279ceb057a9b5189863",
+  "lib/Dialect/Earth/Transforms/BypassDetection.cpp": "3e7fc2913e52ec036b64ad5e60cb2147335b817495763c6ee491f43617270a9c",
+  "lib/Dialect/Earth/Transforms/CMakeLists.txt": "9ef2ae169b318d4161f9edf2fd61f9244f5a8df056c25a7e1c10eef82c4779e8",
+  "lib/Dialect/Earth/Transforms/Common.cpp": "99b38f3ed6fd9d08def87b90fc43715199fb9ebeb0ecbdfb38d3493186941b11",
+  "lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp": "2dd2febd5acb7c38d33d05fd2c625a215384f66f0e8e4634f752f7377f9c7a7e",
+  "lib/Dialect/Earth/Transforms/EarlyModswitch.cpp": "d226f74305284a7afd72380b242cf9e8de67f17405540b50a1e0c537013daa1c",
+  "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "f857342a548930538694e2c9f2c9849c34c6bc84556b01d7477ca3698a29b407",
+  "lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp": "736624de07db7993cc647bf2d731bf658d78f4c843447967c7223387acdeedaf",
+  "lib/Dialect/Earth/Transforms/RemoveBootstrap.cpp": "3efbf1e1fcce78906206130fe6db554922bf23126ef68a4388eaff39011cba16",
+  "lib/Dialect/Earth/Transforms/TargetScalePlanning.cpp": "5093668a537f22739916b8074bb1a205b051880dbcc870a0b20954cf7cb16abb",
+  "test/runtime-plan/check-threshold-graphs.py": "3d22e0590c3c95285a253e45d98f34a44e215085fb6712d9c9b86682a70f6b1d"
+}

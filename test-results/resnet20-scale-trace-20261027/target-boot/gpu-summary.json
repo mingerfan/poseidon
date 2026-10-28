@@ -1,0 +1,256 @@
+{
+  "reference": "Same scalar polynomial and the native manual Boot sine map; not ideal ReLU or an exact identity Boot.",
+  "cases": [
+    {
+      "passed": true,
+      "plan_sha256": "sha256:65035ca9da87c0bb82c17dcc3670209eb28721989d4652e3ec174936baa1d3ae",
+      "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+      "input_level": 30,
+      "input_scale_log2": 40.0,
+      "output_level": 30,
+      "output_scale_log2": 40.0,
+      "tolerance": 0.0001,
+      "max_abs_error": 2.4191228244707652e-05,
+      "max_identity_error": 0.004529908567618701,
+      "max_imaginary": 4.512431190152828e-06,
+      "name": "relu-boot",
+      "physical_cuda_device": 2,
+      "slots": 32768,
+      "samples": [
+        {
+          "input": -0.75,
+          "expected": 1.4511631893948423e-05,
+          "actual": 1.894766450204369e-05
+        },
+        {
+          "input": -0.5,
+          "expected": 6.117195817909323e-06,
+          "actual": 1.3329346879725756e-06
+        },
+        {
+          "input": -0.25,
+          "expected": 5.196725120759189e-06,
+          "actual": 6.7616818671262235e-06
+        },
+        {
+          "input": -0.125,
+          "expected": 5.52127654133898e-06,
+          "actual": 8.321071167466387e-06
+        },
+        {
+          "input": 0.0,
+          "expected": 0.0,
+          "actual": 7.457787564169038e-07
+        },
+        {
+          "input": 0.125,
+          "expected": 0.1249847455387547,
+          "actual": 0.12498379541076898
+        },
+        {
+          "input": 0.25,
+          "expected": 0.24988553358226295,
+          "actual": 0.2498851129815157
+        },
+        {
+          "input": 0.5,
+          "expected": 0.4991421972158357,
+          "actual": 0.49914037289391494
+        },
+        {
+          "input": 0.75,
+          "expected": 0.7471586353710723,
+          "actual": 0.7471532222497664
+        },
+        {
+          "input": 0.875,
+          "expected": 0.8704543183685751,
+          "actual": 0.8704580578010706
+        }
+      ],
+      "boot_alignment": {
+        "source_q": 8,
+        "target_q": 6,
+        "scale_log2": 40.000000000992856,
+        "modswitches": 1,
+        "upscales": 0,
+        "rescales": 0
+      },
+      "boot_count": 1,
+      "boot_input": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "299",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "boot_output": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "300",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      },
+      "counts": {
+        "transfer": 55,
+        "encode": 54,
+        "add_cc": 43,
+        "mul_cc": 27,
+        "relinearize": 27,
+        "add_cp": 11,
+        "rescale": 66,
+        "mod_switch": 16,
+        "mul_cp": 51,
+        "negate": 4,
+        "boot": 1
+      }
+    },
+    {
+      "passed": true,
+      "plan_sha256": "sha256:6bf7dc8f4c8777eed00d546634ae9e7b4ea9594972554b571e203285f779e41a",
+      "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+      "input_level": 30,
+      "input_scale_log2": 40.0,
+      "output_level": 7,
+      "output_scale_log2": 40.000000000992856,
+      "tolerance": 0.0001,
+      "max_abs_error": 2.3499755013145496e-05,
+      "max_identity_error": 0.004527753391438405,
+      "max_imaginary": 2.3066556581766226e-06,
+      "name": "relu-boot-relu",
+      "physical_cuda_device": 2,
+      "slots": 32768,
+      "samples": [
+        {
+          "input": -0.75,
+          "expected": 7.378713801607618e-06,
+          "actual": 5.175910632963393e-06
+        },
+        {
+          "input": -0.5,
+          "expected": 3.0804373186675774e-06,
+          "actual": 2.1100297196707807e-06
+        },
+        {
+          "input": -0.25,
+          "expected": 2.6141240436220108e-06,
+          "actual": 2.5901946254097696e-06
+        },
+        {
+          "input": -0.125,
+          "expected": 2.7784299156751684e-06,
+          "actual": 4.834242357226737e-06
+        },
+        {
+          "input": 0.0,
+          "expected": 0.0,
+          "actual": -1.179060399369991e-06
+        },
+        {
+          "input": 0.125,
+          "expected": 0.12499018310916146,
+          "actual": 0.12499118017675004
+        },
+        {
+          "input": 0.25,
+          "expected": 0.2498922795480593,
+          "actual": 0.2498996958087063
+        },
+        {
+          "input": 0.5,
+          "expected": 0.49911763631244427,
+          "actual": 0.49911789584329425
+        },
+        {
+          "input": 0.75,
+          "expected": 0.7471429978787628,
+          "actual": 0.7471353173001731
+        },
+        {
+          "input": 0.875,
+          "expected": 0.8704289208762267,
+          "actual": 0.8704301961527856
+        }
+      ],
+      "boot_alignment": {
+        "source_q": 8,
+        "target_q": 6,
+        "scale_log2": 40.000000000992856,
+        "modswitches": 1,
+        "upscales": 0,
+        "rescales": 0
+      },
+      "boot_count": 1,
+      "boot_input": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "299",
+        "kind": "ciphertext",
+        "level": 5,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000992856
+      },
+      "boot_output": {
+        "components": 2,
+        "context": "poseidon-resnet20-manual-q50",
+        "id": "300",
+        "kind": "ciphertext",
+        "level": 30,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.0
+      },
+      "counts": {
+        "transfer": 66,
+        "encode": 65,
+        "add_cc": 86,
+        "mul_cc": 54,
+        "relinearize": 54,
+        "add_cp": 22,
+        "rescale": 132,
+        "mod_switch": 31,
+        "mul_cp": 102,
+        "negate": 8,
+        "boot": 1
+      }
+    }
+  ],
+  "run": {
+    "returncode": 0,
+    "seconds": 340.30255257198587
+  },
+  "checks": {
+    "target_whole_relu_unchanged": true,
+    "threshold_whole_relu_unchanged": true,
+    "target_checks": 8,
+    "native_planning_checks": 25,
+    "manual_boot_alignment_checks": 9,
+    "encrypted_cases": 2,
+    "all_32768_slots_passed": true,
+    "actual_gpu_device": 2,
+    "final_compiler_regenerates_gpu_tested_plans": true
+  }
+}

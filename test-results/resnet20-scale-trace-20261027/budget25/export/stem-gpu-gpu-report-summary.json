@@ -1,0 +1,17 @@
+{
+  "cuda_device": 0,
+  "expression": "packed stem with rotations, no Boot",
+  "format_version": 1,
+  "input_level": 33,
+  "input_scale_log2": 40.0,
+  "max_abs_error": 4.5022836887669004e-06,
+  "max_identity_error": 4.5022836887669004e-06,
+  "max_imaginary": 9.519593969007108e-06,
+  "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+  "output_level": 30,
+  "output_scale_log2": 40.00000000100001,
+  "passed": true,
+  "plan_sha256": "sha256:f6b8d362a4ffa408552e6d1b58537f04fd81ec9ab29922b7afb85181b240bff9",
+  "tolerance": 0.0001,
+  "remote_full_report": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/budget25/stem-gpu/gpu-report.json"
+}

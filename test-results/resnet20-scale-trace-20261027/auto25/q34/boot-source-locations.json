@@ -1,0 +1,232 @@
+{
+  "boots": 37,
+  "source_counts": {
+    "ResNet20.py:111": 18,
+    "ResNet20.py:79": 18,
+    "MPCB.py:241": 1
+  },
+  "details": [
+    {
+      "index": 1,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "438"
+    },
+    {
+      "index": 2,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "1008"
+    },
+    {
+      "index": 3,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "1100"
+    },
+    {
+      "index": 4,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "1647"
+    },
+    {
+      "index": 5,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "1726"
+    },
+    {
+      "index": 6,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "2269"
+    },
+    {
+      "index": 7,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "2348"
+    },
+    {
+      "index": 8,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "2895"
+    },
+    {
+      "index": 9,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "2974"
+    },
+    {
+      "index": 10,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "3517"
+    },
+    {
+      "index": 11,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "3596"
+    },
+    {
+      "index": 12,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "4143"
+    },
+    {
+      "index": 13,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "4222"
+    },
+    {
+      "index": 14,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "5199"
+    },
+    {
+      "index": 15,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "5278"
+    },
+    {
+      "index": 16,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "5904"
+    },
+    {
+      "index": 17,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "5983"
+    },
+    {
+      "index": 18,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "6608"
+    },
+    {
+      "index": 19,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "6687"
+    },
+    {
+      "index": 20,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "7316"
+    },
+    {
+      "index": 21,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "7395"
+    },
+    {
+      "index": 22,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "8020"
+    },
+    {
+      "index": 23,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "8099"
+    },
+    {
+      "index": 24,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "8728"
+    },
+    {
+      "index": 25,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "8807"
+    },
+    {
+      "index": 26,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "9947"
+    },
+    {
+      "index": 27,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "10026"
+    },
+    {
+      "index": 28,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "10798"
+    },
+    {
+      "index": 29,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "10877"
+    },
+    {
+      "index": 30,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "11648"
+    },
+    {
+      "index": 31,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "11727"
+    },
+    {
+      "index": 32,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "12502"
+    },
+    {
+      "index": 33,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "12581"
+    },
+    {
+      "index": 34,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "13352"
+    },
+    {
+      "index": 35,
+      "source": "ResNet20.py",
+      "line": 111,
+      "logical_id": "13431"
+    },
+    {
+      "index": 36,
+      "source": "ResNet20.py",
+      "line": 79,
+      "logical_id": "14206"
+    },
+    {
+      "index": 37,
+      "source": "MPCB.py",
+      "line": 241,
+      "logical_id": "14297"
+    }
+  ]
+}

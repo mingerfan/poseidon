@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-tests/gpu/target_boot_gpu",
+    "/home/xuming/poseidon-manual-boot-20261026/alignment-tests/operator-spec.json",
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-tests",
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-tests/relu-boot/mlp.optimized.relu_boot.runtime-plan.json",
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-tests/relu-boot-relu/mlp.optimized.relu_boot_relu.runtime-plan.json"
+  ],
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "2",
+    "POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50": "/home/xuming/poseidon-manual-boot-20261026/src/third_party/ckks-runtime/tests/fixtures/resnet20-manual-q50.json"
+  }
+}

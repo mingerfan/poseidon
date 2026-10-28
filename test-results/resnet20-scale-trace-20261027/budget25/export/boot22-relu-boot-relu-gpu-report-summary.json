@@ -1,0 +1,17 @@
+{
+  "cuda_device": 0,
+  "expression": "scalar plan with manual Boot sine map",
+  "format_version": 1,
+  "input_level": 30,
+  "input_scale_log2": 40.0,
+  "max_abs_error": 2.5290857258247756e-05,
+  "max_identity_error": 0.004531904332129355,
+  "max_imaginary": 2.049336832848387e-06,
+  "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+  "output_level": 8,
+  "output_scale_log2": 40.00000000099265,
+  "passed": true,
+  "plan_sha256": "sha256:5320e59bb18acf1c57a5961aae2fa37b8cc56000b9080f42c78803edc2fe5844",
+  "tolerance": 0.0001,
+  "remote_full_report": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/budget25/boot22/relu-boot-relu-gpu-report.json"
+}

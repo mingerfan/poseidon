@@ -1,0 +1,5003 @@
+{
+  "comparisons": {
+    "target": {
+      "matched_core_nodes": 57,
+      "coefficient_values_identical": true,
+      "core_dependencies_identical": true,
+      "rescale_count_changes": [
+        {
+          "raw": "136",
+          "label": "P1(d15) T2：T1 × T1",
+          "baseline": [
+            {
+              "id": "4",
+              "from_q": 31,
+              "to_q": 30,
+              "from_scale": 80.0,
+              "to_scale": 50.00035226212769
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "138",
+          "label": "P1(d15) T2：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "6",
+              "from_q": 31,
+              "to_q": 30,
+              "from_scale": 80.0,
+              "to_scale": 50.00035226212769
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "139",
+          "label": "P1(d15) T3：T1 × T2",
+          "baseline": [
+            {
+              "id": "10",
+              "from_q": 30,
+              "to_q": 29,
+              "from_scale": 90.00035226212769,
+              "to_scale": 60.003349245508474
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "141",
+          "label": "P1(d15) T3：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "15",
+              "from_q": 30,
+              "to_q": 29,
+              "from_scale": 90.00035226212769,
+              "to_scale": 60.003349245508474
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "144",
+          "label": "P1(d15) H7：商项 × T2",
+          "baseline": [
+            {
+              "id": "23",
+              "from_q": 30,
+              "to_q": 29,
+              "from_scale": 100.00070452425538,
+              "to_scale": 70.00370150763617
+            },
+            {
+              "id": "24",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 70.00370150763617,
+              "to_scale": 40.007757738523814
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "146",
+          "label": "P1(d15) H14：T1 × c0",
+          "baseline": [
+            {
+              "id": "27",
+              "from_q": 31,
+              "to_q": 30,
+              "from_scale": 80.0,
+              "to_scale": 50.00035226212769
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "147",
+          "label": "P1(d15) H7：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "26",
+              "from_q": 30,
+              "to_q": 29,
+              "from_scale": 100.03150136640784,
+              "to_scale": 70.03449834978862
+            },
+            {
+              "id": "27",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 70.03449834978862,
+              "to_scale": 40.03855458067627
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "150",
+          "label": "P1(d15) T4：T2 × T2",
+          "baseline": [
+            {
+              "id": "37",
+              "from_q": 30,
+              "to_q": 29,
+              "from_scale": 100.00070452425538,
+              "to_scale": 70.00370150763617
+            },
+            {
+              "id": "38",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 70.00370150763617,
+              "to_scale": 40.007757738523814
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "152",
+          "label": "P1(d15) T4：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "33",
+              "from_q": 30,
+              "to_q": 29,
+              "from_scale": 100.00070452425538,
+              "to_scale": 70.00370150763617
+            },
+            {
+              "id": "34",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 70.00370150763617,
+              "to_scale": 40.007757738523814
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "153",
+          "label": "P1(d15) H3：商项 × T4",
+          "baseline": [
+            {
+              "id": "43",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 90.01551547704763,
+              "to_scale": 60.02293113169129
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "155",
+          "label": "P1(d15) H6：T1 × c0",
+          "baseline": [
+            {
+              "id": "46",
+              "from_q": 31,
+              "to_q": 30,
+              "from_scale": 80.0,
+              "to_scale": 50.00035226212769
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "157",
+          "label": "P1(d15) H6：T3 × c1",
+          "baseline": [
+            {
+              "id": "49",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 110.0,
+              "to_scale": 80.00405623088764
+            },
+            {
+              "id": "50",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 80.00405623088764,
+              "to_scale": 50.0114718855313
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "158",
+          "label": "P1(d15) H6：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "45",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 110.04225608831243,
+              "to_scale": 80.04631231920007
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "159",
+          "label": "P1(d15) H3：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "49",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 80.04631231920008,
+              "to_scale": 50.05372797384374
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "162",
+          "label": "P1(d15) T8：T4 × T4",
+          "baseline": [
+            {
+              "id": "61",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 80.01551547704763,
+              "to_scale": 50.02293113169129
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "164",
+          "label": "P1(d15) T8：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "55",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 80.01551547704763,
+              "to_scale": 50.02293113169129
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "165",
+          "label": "P1(d15) H1：商项 × T8",
+          "baseline": [
+            {
+              "id": "66",
+              "from_q": 27,
+              "to_q": 26,
+              "from_scale": 110.04586226338257,
+              "to_scale": 80.0570000892451
+            },
+            {
+              "id": "67",
+              "from_q": 26,
+              "to_q": 25,
+              "from_scale": 80.0570000892451,
+              "to_scale": 50.06920315884753
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "167",
+          "label": "P1(d15) H5：T1 × c0",
+          "baseline": [
+            {
+              "id": "70",
+              "from_q": 31,
+              "to_q": 30,
+              "from_scale": 80.0,
+              "to_scale": 50.00035226212769
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "169",
+          "label": "P1(d15) H5：T3 × c1",
+          "baseline": [
+            {
+              "id": "73",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 110.0,
+              "to_scale": 80.00405623088764
+            },
+            {
+              "id": "74",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 80.00405623088764,
+              "to_scale": 50.0114718855313
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "170",
+          "label": "P1(d15) H5：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "64",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 120.05742948147989,
+              "to_scale": 90.06148571236753
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "171",
+          "label": "P1(d15) H2：商项 × T4",
+          "baseline": [
+            {
+              "id": "82",
+              "from_q": 27,
+              "to_q": 26,
+              "from_scale": 90.01922962405511,
+              "to_scale": 60.030367449917634
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "173",
+          "label": "P1(d15) H4：T1 × c0",
+          "baseline": [
+            {
+              "id": "85",
+              "from_q": 31,
+              "to_q": 30,
+              "from_scale": 80.0,
+              "to_scale": 50.00035226212769
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "175",
+          "label": "P1(d15) H4：T3 × c1",
+          "baseline": [
+            {
+              "id": "88",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 110.0,
+              "to_scale": 80.00405623088764
+            },
+            {
+              "id": "89",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 80.00405623088764,
+              "to_scale": 50.0114718855313
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "176",
+          "label": "P1(d15) H4：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "73",
+              "from_q": 29,
+              "to_q": 28,
+              "from_scale": 160.0651872200037,
+              "to_scale": 130.06924345089135
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "177",
+          "label": "P1(d15) H2：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "76",
+              "from_q": 28,
+              "to_q": 27,
+              "from_scale": 130.06924345089135,
+              "to_scale": 100.07665910553501
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "178",
+          "label": "P1(d15) H1：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "80",
+              "from_q": 27,
+              "to_q": 26,
+              "from_scale": 100.07665910553503,
+              "to_scale": 70.08779693139755
+            },
+            {
+              "id": "81",
+              "from_q": 26,
+              "to_q": 25,
+              "from_scale": 70.08779693139755,
+              "to_scale": 40.100000000999984
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "181",
+          "label": "P2(d15) T2：T1 × T1",
+          "baseline": [
+            {
+              "id": "107",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 120.13840631769506,
+              "to_scale": 90.15309801908184
+            },
+            {
+              "id": "108",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 90.15309801908184,
+              "to_scale": 60.16832355767713
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "183",
+          "label": "P2(d15) T2：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "87",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 80.20000000199997,
+              "to_scale": 50.21469170338675
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "184",
+          "label": "P2(d15) T3：T1 × T2",
+          "baseline": [
+            {
+              "id": "114",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 120.23752671652466,
+              "to_scale": 90.25506783503725
+            },
+            {
+              "id": "115",
+              "from_q": 22,
+              "to_q": 21,
+              "from_scale": 90.25506783503725,
+              "to_scale": 60.2785037102563
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "186",
+          "label": "P2(d15) T3：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "96",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 90.31469170438673,
+              "to_scale": 60.32991724298202
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "188",
+          "label": "P2(d15) H15：T1 × c0",
+          "baseline": [
+            {
+              "id": "123",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 100.06920315884753,
+              "to_scale": 70.08389486023431
+            },
+            {
+              "id": "124",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 70.08389486023431,
+              "to_scale": 40.0991203988296
+            }
+          ],
+          "variant": [
+            {
+              "id": "99",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 80.1556863634518,
+              "to_scale": 50.17037806483859
+            }
+          ],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "189",
+          "label": "P2(d15) H7：商项 × T2",
+          "baseline": [
+            {
+              "id": "127",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 100.26744395650672,
+              "to_scale": 70.28498507501932
+            },
+            {
+              "id": "128",
+              "from_q": 22,
+              "to_q": 21,
+              "from_scale": 70.28498507501932,
+              "to_scale": 40.30842095023837
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "191",
+          "label": "P2(d15) H14：T1 × c0",
+          "baseline": [
+            {
+              "id": "131",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 100.06920315884753,
+              "to_scale": 70.08389486023431
+            },
+            {
+              "id": "132",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 70.08389486023431,
+              "to_scale": 40.0991203988296
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "192",
+          "label": "P2(d15) H7：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "105",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 100.38506976822534,
+              "to_scale": 70.40029530682062
+            },
+            {
+              "id": "106",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 70.40029530682062,
+              "to_scale": 40.41783642533322
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "195",
+          "label": "P2(d15) T4：T2 × T2",
+          "baseline": [
+            {
+              "id": "140",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 120.33664711535425,
+              "to_scale": 90.35418823386685
+            },
+            {
+              "id": "141",
+              "from_q": 22,
+              "to_q": 21,
+              "from_scale": 90.35418823386685,
+              "to_scale": 60.3776241090859
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "197",
+          "label": "P2(d15) T4：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "112",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 100.4293834067735,
+              "to_scale": 70.44460894536878
+            },
+            {
+              "id": "113",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 70.44460894536878,
+              "to_scale": 40.46215006388138
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "198",
+          "label": "P2(d15) H3：商项 × T4",
+          "baseline": [
+            {
+              "id": "146",
+              "from_q": 21,
+              "to_q": 20,
+              "from_scale": 100.68604505932427,
+              "to_scale": 70.70983896780972
+            },
+            {
+              "id": "147",
+              "from_q": 20,
+              "to_q": 19,
+              "from_scale": 70.70983896780972,
+              "to_scale": 40.73488669290852
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "200",
+          "label": "P2(d15) H6：T1 × c0",
+          "baseline": [
+            {
+              "id": "150",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 100.06920315884753,
+              "to_scale": 70.08389486023431
+            },
+            {
+              "id": "151",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 70.08389486023431,
+              "to_scale": 40.0991203988296
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "202",
+          "label": "P2(d15) H6：T3 × c1",
+          "baseline": [
+            {
+              "id": "154",
+              "from_q": 21,
+              "to_q": 20,
+              "from_scale": 100.2785037102563,
+              "to_scale": 70.30229761874175
+            },
+            {
+              "id": "155",
+              "from_q": 20,
+              "to_q": 19,
+              "from_scale": 70.30229761874175,
+              "to_scale": 40.32734534384055
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "203",
+          "label": "P2(d15) H6：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "122",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 110.86244537070212,
+              "to_scale": 80.87998648921472
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "204",
+          "label": "P2(d15) H3：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "126",
+              "from_q": 22,
+              "to_q": 21,
+              "from_scale": 80.8799864892146,
+              "to_scale": 50.90342236443365
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "207",
+          "label": "P2(d15) T8：T4 × T4",
+          "baseline": [
+            {
+              "id": "166",
+              "from_q": 21,
+              "to_q": 20,
+              "from_scale": 120.7552482181718,
+              "to_scale": 90.77904212665725
+            },
+            {
+              "id": "167",
+              "from_q": 20,
+              "to_q": 19,
+              "from_scale": 90.77904212665725,
+              "to_scale": 60.804089851756046
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "209",
+          "label": "P2(d15) T8：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "132",
+              "from_q": 22,
+              "to_q": 21,
+              "from_scale": 80.92430012776276,
+              "to_scale": 50.94773600298181
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "210",
+          "label": "P2(d15) H1：商项 × T8",
+          "baseline": [
+            {
+              "id": "172",
+              "from_q": 19,
+              "to_q": 18,
+              "from_scale": 101.53897654466456,
+              "to_scale": 71.56545853859234
+            },
+            {
+              "id": "173",
+              "from_q": 18,
+              "to_q": 17,
+              "from_scale": 71.56545853859234,
+              "to_scale": 41.59247875115703
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "212",
+          "label": "P2(d15) H5：T1 × c0",
+          "baseline": [
+            {
+              "id": "176",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 100.06920315884753,
+              "to_scale": 70.08389486023431
+            },
+            {
+              "id": "177",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 70.08389486023431,
+              "to_scale": 40.0991203988296
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "214",
+          "label": "P2(d15) H5：T3 × c1",
+          "baseline": [
+            {
+              "id": "180",
+              "from_q": 21,
+              "to_q": 20,
+              "from_scale": 100.2785037102563,
+              "to_scale": 70.30229761874175
+            },
+            {
+              "id": "181",
+              "from_q": 20,
+              "to_q": 19,
+              "from_scale": 70.30229761874175,
+              "to_scale": 40.32734534384055
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "215",
+          "label": "P2(d15) H5：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "140",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 121.34803130980261,
+              "to_scale": 91.3655724283152
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "216",
+          "label": "P2(d15) H2：商项 × T4",
+          "baseline": [
+            {
+              "id": "189",
+              "from_q": 19,
+              "to_q": 18,
+              "from_scale": 100.70496945292645,
+              "to_scale": 70.73145144685422
+            },
+            {
+              "id": "190",
+              "from_q": 18,
+              "to_q": 17,
+              "from_scale": 70.73145144685422,
+              "to_scale": 40.758471659418916
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "218",
+          "label": "P2(d15) H4：T1 × c0",
+          "baseline": [
+            {
+              "id": "193",
+              "from_q": 25,
+              "to_q": 24,
+              "from_scale": 100.06920315884753,
+              "to_scale": 70.08389486023431
+            },
+            {
+              "id": "194",
+              "from_q": 24,
+              "to_q": 23,
+              "from_scale": 70.08389486023431,
+              "to_scale": 40.0991203988296
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "220",
+          "label": "P2(d15) H4：T3 × c1",
+          "baseline": [
+            {
+              "id": "197",
+              "from_q": 21,
+              "to_q": 20,
+              "from_scale": 100.2785037102563,
+              "to_scale": 70.30229761874175
+            },
+            {
+              "id": "198",
+              "from_q": 20,
+              "to_q": 19,
+              "from_scale": 70.30229761874175,
+              "to_scale": 40.32734534384055
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "221",
+          "label": "P2(d15) H4：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "148",
+              "from_q": 23,
+              "to_q": 22,
+              "from_scale": 161.81018137368403,
+              "to_scale": 131.8277224921966
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "222",
+          "label": "P2(d15) H2：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "151",
+              "from_q": 22,
+              "to_q": 21,
+              "from_scale": 131.82772249219659,
+              "to_scale": 101.85115836741564
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "223",
+          "label": "P2(d15) H1：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "153",
+              "from_q": 21,
+              "to_q": 20,
+              "from_scale": 101.85115836741547,
+              "to_scale": 71.87495227590091
+            },
+            {
+              "id": "154",
+              "from_q": 20,
+              "to_q": 19,
+              "from_scale": 71.87495227590091,
+              "to_scale": 41.90000000099971
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "226",
+          "label": "P3(d27) T2：T1 × T1",
+          "baseline": [
+            {
+              "id": "215",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 83.51694331883783,
+              "to_scale": 53.54575904506244
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "228",
+          "label": "P3(d27) T2：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "160",
+              "from_q": 19,
+              "to_q": 18,
+              "from_scale": 83.80000000199942,
+              "to_scale": 53.826481995927196
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "229",
+          "label": "P3(d27) T3：T1 × T2",
+          "baseline": [
+            {
+              "id": "221",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 95.30423070448136,
+              "to_scale": 65.33412481249744
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "231",
+          "label": "P3(d27) T3：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "169",
+              "from_q": 18,
+              "to_q": 17,
+              "from_scale": 95.7264819969269,
+              "to_scale": 65.7535022094916
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "234",
+          "label": "P3(d27) T4：T2 × T2",
+          "baseline": [
+            {
+              "id": "232",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 107.09151809012488,
+              "to_scale": 77.12141219814094
+            },
+            {
+              "id": "233",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 77.12141219814094,
+              "to_scale": 47.15490674486003
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "236",
+          "label": "P3(d27) T4：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "175",
+              "from_q": 18,
+              "to_q": 17,
+              "from_scale": 107.65296399185439,
+              "to_scale": 77.67998420441909
+            },
+            {
+              "id": "176",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 77.67998420441909,
+              "to_scale": 47.70879993064369
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "237",
+          "label": "P3(d27) T5：T1 × T4",
+          "baseline": [
+            {
+              "id": "239",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 88.91337840427894,
+              "to_scale": 58.947413792631174
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "240",
+          "label": "P3(d27) T7：T3 × T4",
+          "baseline": [
+            {
+              "id": "244",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 112.91337840427894,
+              "to_scale": 82.94741379263118
+            },
+            {
+              "id": "245",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 82.94741379263118,
+              "to_scale": 52.98596409685298
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "242",
+          "label": "P3(d27) T5：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "190",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 129.9025759579115,
+              "to_scale": 99.93247006592756
+            },
+            {
+              "id": "191",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 99.93247006592756,
+              "to_scale": 69.96596461264664
+            },
+            {
+              "id": "192",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 69.96596461264664,
+              "to_scale": 40.000000000998874
+            }
+          ],
+          "extra_rescales_in_baseline": -3
+        },
+        {
+          "raw": "243",
+          "label": "P3(d27) T7：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "197",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 113.4623021401353,
+              "to_scale": 83.49219624815137
+            },
+            {
+              "id": "198",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 83.49219624815137,
+              "to_scale": 53.52569079487046
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        },
+        {
+          "raw": "245",
+          "label": "P3(d27) H7：T1 × c0",
+          "baseline": [
+            {
+              "id": "259",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 81.75847165941892,
+              "to_scale": 51.78728738564352
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "247",
+          "label": "P3(d27) H7：T3 × c1",
+          "baseline": [
+            {
+              "id": "262",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 111.75847165941892,
+              "to_scale": 81.791966206138
+            },
+            {
+              "id": "263",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 81.791966206138,
+              "to_scale": 51.82600159449023
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "248",
+          "label": "P3(d27) H7：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "205",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 165.24849462649456,
+              "to_scale": 135.27731035271916
+            },
+            {
+              "id": "206",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 135.27731035271916,
+              "to_scale": 105.30720446073522
+            },
+            {
+              "id": "207",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 105.30720446073522,
+              "to_scale": 75.3406990074543
+            },
+            {
+              "id": "208",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 75.3406990074543,
+              "to_scale": 45.374734395806534
+            }
+          ],
+          "extra_rescales_in_baseline": -4
+        },
+        {
+          "raw": "251",
+          "label": "P3(d27) T8：T4 × T4",
+          "baseline": [
+            {
+              "id": "271",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 94.30981348972006,
+              "to_scale": 64.3438488780723
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "253",
+          "label": "P3(d27) T8：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "214",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 95.41759986128739,
+              "to_scale": 65.44749396930345
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "254",
+          "label": "P3(d27) H3：商项 × T8",
+          "baseline": [
+            {
+              "id": "276",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 116.16985047256253,
+              "to_scale": 86.20840077678433
+            },
+            {
+              "id": "277",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 86.20840077678433,
+              "to_scale": 56.249666828258796
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "256",
+          "label": "P3(d27) H6：T1 × c0",
+          "baseline": [
+            {
+              "id": "280",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 81.75847165941892,
+              "to_scale": 51.78728738564352
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "258",
+          "label": "P3(d27) H6：T3 × c1",
+          "baseline": [
+            {
+              "id": "283",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 111.75847165941892,
+              "to_scale": 81.791966206138
+            },
+            {
+              "id": "284",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 81.791966206138,
+              "to_scale": 51.82600159449023
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "260",
+          "label": "P3(d27) H6：T5 × c2",
+          "baseline": [
+            {
+              "id": "287",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 110.94741379263118,
+              "to_scale": 80.98596409685298
+            },
+            {
+              "id": "288",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 80.98596409685298,
+              "to_scale": 51.02723014832745
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "262",
+          "label": "P3(d27) H6：T7 × c3",
+          "baseline": [
+            {
+              "id": "291",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 92.98596409685298,
+              "to_scale": 63.02723014832745
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "263",
+          "label": "P3(d27) H6：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "228",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 230.69598859580026,
+              "to_scale": 200.72480432202485
+            },
+            {
+              "id": "229",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 200.72480432202485,
+              "to_scale": 170.75469843004092
+            },
+            {
+              "id": "230",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 170.75469843004092,
+              "to_scale": 140.78819297676
+            },
+            {
+              "id": "231",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 140.78819297676,
+              "to_scale": 110.82222836511224
+            }
+          ],
+          "extra_rescales_in_baseline": -4
+        },
+        {
+          "raw": "266",
+          "label": "P3(d27) H3：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "237",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 110.82222836510999,
+              "to_scale": 80.8607786693318
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "269",
+          "label": "P3(d27) T16：T8 × T8",
+          "baseline": [
+            {
+              "id": "311",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 128.6876977561446,
+              "to_scale": 98.72624806036639
+            },
+            {
+              "id": "312",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 98.72624806036639,
+              "to_scale": 68.76751411184085
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "271",
+          "label": "P3(d27) T16：基底校正",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "243",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 130.8949879386069,
+              "to_scale": 100.92848248532599
+            },
+            {
+              "id": "244",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 100.92848248532599,
+              "to_scale": 70.96251787367822
+            },
+            {
+              "id": "245",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 70.96251787367822,
+              "to_scale": 41.001068177900024
+            }
+          ],
+          "extra_rescales_in_baseline": -3
+        },
+        {
+          "raw": "272",
+          "label": "P3(d27) H1：商项 × T16",
+          "baseline": [
+            {
+              "id": "317",
+              "from_q": 11,
+              "to_q": 10,
+              "from_scale": 132.5935157063311,
+              "to_scale": 102.63623224935868
+            },
+            {
+              "id": "318",
+              "from_q": 10,
+              "to_q": 9,
+              "from_scale": 102.63623224935868,
+              "to_scale": 72.68112726775604
+            },
+            {
+              "id": "319",
+              "from_q": 9,
+              "to_q": 8,
+              "from_scale": 72.68112726775604,
+              "to_scale": 40.69040280861765
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 3
+        },
+        {
+          "raw": "274",
+          "label": "P3(d27) H5：T1 × c0",
+          "baseline": [
+            {
+              "id": "322",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 81.75847165941892,
+              "to_scale": 51.78728738564352
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "276",
+          "label": "P3(d27) H5：T3 × c1",
+          "baseline": [
+            {
+              "id": "325",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 111.75847165941892,
+              "to_scale": 81.791966206138
+            },
+            {
+              "id": "326",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 81.791966206138,
+              "to_scale": 51.82600159449023
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "278",
+          "label": "P3(d27) H5：T5 × c2",
+          "baseline": [
+            {
+              "id": "329",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 110.94741379263118,
+              "to_scale": 80.98596409685298
+            },
+            {
+              "id": "330",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 80.98596409685298,
+              "to_scale": 51.02723014832745
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "281",
+          "label": "P3(d27) H5：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "258",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 206.24956280439912,
+              "to_scale": 176.2783785306237
+            },
+            {
+              "id": "259",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 176.2783785306237,
+              "to_scale": 146.30827263863978
+            },
+            {
+              "id": "260",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 146.30827263863978,
+              "to_scale": 116.34176718535886
+            },
+            {
+              "id": "261",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 116.34176718535886,
+              "to_scale": 86.3758025737111
+            }
+          ],
+          "extra_rescales_in_baseline": -4
+        },
+        {
+          "raw": "284",
+          "label": "P3(d27) H2：商项 × T8",
+          "baseline": [
+            {
+              "id": "349",
+              "from_q": 11,
+              "to_q": 10,
+              "from_scale": 128.16985047256253,
+              "to_scale": 98.21256701559012
+            },
+            {
+              "id": "350",
+              "from_q": 10,
+              "to_q": 9,
+              "from_scale": 98.21256701559012,
+              "to_scale": 68.25746203398748
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "286",
+          "label": "P3(d27) H4：T1 × c0",
+          "baseline": [
+            {
+              "id": "353",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 81.75847165941892,
+              "to_scale": 51.78728738564352
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "288",
+          "label": "P3(d27) H4：T3 × c1",
+          "baseline": [
+            {
+              "id": "356",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 111.75847165941892,
+              "to_scale": 81.791966206138
+            },
+            {
+              "id": "357",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 81.791966206138,
+              "to_scale": 51.82600159449023
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "290",
+          "label": "P3(d27) H4：T5 × c2",
+          "baseline": [
+            {
+              "id": "360",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 110.94741379263118,
+              "to_scale": 80.98596409685298
+            },
+            {
+              "id": "361",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 80.98596409685298,
+              "to_scale": 51.02723014832745
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 2
+        },
+        {
+          "raw": "292",
+          "label": "P3(d27) H4：T7 × c3",
+          "baseline": [
+            {
+              "id": "364",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 92.98596409685298,
+              "to_scale": 63.02723014832745
+            }
+          ],
+          "variant": [],
+          "extra_rescales_in_baseline": 1
+        },
+        {
+          "raw": "293",
+          "label": "P3(d27) H4：叶项求和",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "277",
+              "from_q": 17,
+              "to_q": 16,
+              "from_scale": 271.69705677370484,
+              "to_scale": 241.72587249992944
+            },
+            {
+              "id": "278",
+              "from_q": 16,
+              "to_q": 15,
+              "from_scale": 241.72587249992944,
+              "to_scale": 211.7557666079455
+            },
+            {
+              "id": "279",
+              "from_q": 15,
+              "to_q": 14,
+              "from_scale": 211.7557666079455,
+              "to_scale": 181.7892611546646
+            },
+            {
+              "id": "280",
+              "from_q": 14,
+              "to_q": 13,
+              "from_scale": 181.7892611546646,
+              "to_scale": 151.82329654301682
+            }
+          ],
+          "extra_rescales_in_baseline": -4
+        },
+        {
+          "raw": "296",
+          "label": "P3(d27) H2：加余项",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "286",
+              "from_q": 13,
+              "to_q": 12,
+              "from_scale": 151.82329654301455,
+              "to_scale": 121.86184684723635
+            }
+          ],
+          "extra_rescales_in_baseline": -1
+        },
+        {
+          "raw": "299",
+          "label": "尾部 P3 输出 + 0.5",
+          "baseline": [],
+          "variant": [
+            {
+              "id": "292",
+              "from_q": 12,
+              "to_q": 11,
+              "from_scale": 121.86184684723182,
+              "to_scale": 91.90311289870628
+            },
+            {
+              "id": "293",
+              "from_q": 11,
+              "to_q": 10,
+              "from_scale": 91.90311289870628,
+              "to_scale": 61.94582944173388
+            }
+          ],
+          "extra_rescales_in_baseline": -2
+        }
+      ]
+    }
+  },
+  "cases": {
+    "manual": {
+      "core": {
+        "136:mul_cc": {
+          "id": "2",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.0,
+            40.0
+          ],
+          "product_scale": 80.0,
+          "nearest_core_parents": []
+        },
+        "143:mul_cp": {
+          "id": "19",
+          "kind": "mul_cp",
+          "coefficient": -4.027020120063623,
+          "input_scales": [
+            40.0,
+            40.0
+          ],
+          "product_scale": 80.0,
+          "nearest_core_parents": []
+        },
+        "139:mul_cc": {
+          "id": "8",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.0,
+            50.00035226212769
+          ],
+          "product_scale": 90.00035226212769,
+          "nearest_core_parents": [
+            "136:mul_cc"
+          ]
+        },
+        "144:mul_cc": {
+          "id": "21",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.00035226212769,
+            50.00035226212769
+          ],
+          "product_scale": 100.00070452425538,
+          "nearest_core_parents": [
+            "136:mul_cc",
+            "143:mul_cp"
+          ]
+        },
+        "150:mul_cc": {
+          "id": "35",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.00035226212769,
+            50.00035226212769
+          ],
+          "product_scale": 100.00070452425538,
+          "nearest_core_parents": [
+            "136:mul_cc"
+          ]
+        },
+        "146:mul_cp": {
+          "id": "26",
+          "kind": "mul_cp",
+          "coefficient": 2.243187978526648,
+          "input_scales": [
+            40.0,
+            40.0
+          ],
+          "product_scale": 80.0,
+          "nearest_core_parents": []
+        },
+        "155:mul_cp": {
+          "id": "45",
+          "kind": "mul_cp",
+          "coefficient": 1.1583708205212988,
+          "input_scales": [
+            40.0,
+            40.0
+          ],
+          "product_scale": 80.0,
+          "nearest_core_parents": []
+        },
+        "157:mul_cp": {
+          "id": "48",
+          "kind": "mul_cp",
+          "coefficient": -0.24378614014677616,
+          "input_scales": [
+            61.0,
+            49.0
+          ],
+          "product_scale": 110.0,
+          "nearest_core_parents": [
+            "139:mul_cc"
+          ]
+        },
+        "167:mul_cp": {
+          "id": "69",
+          "kind": "mul_cp",
+          "coefficient": 0.3887889417813593,
+          "input_scales": [
+            40.0,
+            40.0
+          ],
+          "product_scale": 80.0,
+          "nearest_core_parents": []
+        },
+        "169:mul_cp": {
+          "id": "72",
+          "kind": "mul_cp",
+          "coefficient": -0.3410318227220213,
+          "input_scales": [
+            61.0,
+            49.0
+          ],
+          "product_scale": 110.0,
+          "nearest_core_parents": [
+            "139:mul_cc"
+          ]
+        },
+        "153:mul_cc": {
+          "id": "41",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.007757738523814,
+            40.007757738523814
+          ],
+          "product_scale": 90.01551547704763,
+          "nearest_core_parents": [
+            "144:mul_cc",
+            "146:mul_cp",
+            "150:mul_cc"
+          ]
+        },
+        "162:mul_cc": {
+          "id": "59",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.007757738523814,
+            40.007757738523814
+          ],
+          "product_scale": 80.01551547704763,
+          "nearest_core_parents": [
+            "150:mul_cc"
+          ]
+        },
+        "173:mul_cp": {
+          "id": "84",
+          "kind": "mul_cp",
+          "coefficient": 1.3110156470890746,
+          "input_scales": [
+            40.0,
+            40.0
+          ],
+          "product_scale": 80.0,
+          "nearest_core_parents": []
+        },
+        "175:mul_cp": {
+          "id": "87",
+          "kind": "mul_cp",
+          "coefficient": -0.4655444582206114,
+          "input_scales": [
+            61.0,
+            49.0
+          ],
+          "product_scale": 110.0,
+          "nearest_core_parents": [
+            "139:mul_cc"
+          ]
+        },
+        "171:mul_cc": {
+          "id": "80",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.0114718855313,
+            40.007757738523814
+          ],
+          "product_scale": 90.01922962405511,
+          "nearest_core_parents": [
+            "150:mul_cc",
+            "167:mul_cp",
+            "169:mul_cp"
+          ]
+        },
+        "165:mul_cc": {
+          "id": "64",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            60.02293113169129,
+            50.02293113169129
+          ],
+          "product_scale": 110.04586226338257,
+          "nearest_core_parents": [
+            "153:mul_cc",
+            "155:mul_cp",
+            "157:mul_cp",
+            "162:mul_cc"
+          ]
+        },
+        "181:mul_cc": {
+          "id": "105",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            60.06920315884753,
+            60.06920315884753
+          ],
+          "product_scale": 120.13840631769506,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "188:mul_cp": {
+          "id": "122",
+          "kind": "mul_cp",
+          "coefficient": -4.114425161403915,
+          "input_scales": [
+            60.06920315884753,
+            40.0
+          ],
+          "product_scale": 100.06920315884753,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "184:mul_cc": {
+          "id": "112",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            60.06920315884753,
+            60.16832355767713
+          ],
+          "product_scale": 120.23752671652466,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "181:mul_cc"
+          ]
+        },
+        "191:mul_cp": {
+          "id": "130",
+          "kind": "mul_cp",
+          "coefficient": 0.9368078518022722,
+          "input_scales": [
+            60.06920315884753,
+            40.0
+          ],
+          "product_scale": 100.06920315884753,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "195:mul_cc": {
+          "id": "138",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            60.16832355767713,
+            60.16832355767713
+          ],
+          "product_scale": 120.33664711535425,
+          "nearest_core_parents": [
+            "181:mul_cc"
+          ]
+        },
+        "189:mul_cc": {
+          "id": "125",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.0991203988296,
+            60.16832355767713
+          ],
+          "product_scale": 100.26744395650672,
+          "nearest_core_parents": [
+            "181:mul_cc",
+            "188:mul_cp"
+          ]
+        },
+        "200:mul_cp": {
+          "id": "149",
+          "kind": "mul_cp",
+          "coefficient": 0.13312678038183748,
+          "input_scales": [
+            60.06920315884753,
+            40.0
+          ],
+          "product_scale": 100.06920315884753,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "212:mul_cp": {
+          "id": "175",
+          "kind": "mul_cp",
+          "coefficient": -0.058402193560527074,
+          "input_scales": [
+            60.06920315884753,
+            40.0
+          ],
+          "product_scale": 100.06920315884753,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "202:mul_cp": {
+          "id": "153",
+          "kind": "mul_cp",
+          "coefficient": -0.45988074662238737,
+          "input_scales": [
+            60.2785037102563,
+            40.0
+          ],
+          "product_scale": 100.2785037102563,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "184:mul_cc"
+          ]
+        },
+        "198:mul_cc": {
+          "id": "144",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.30842095023837,
+            60.3776241090859
+          ],
+          "product_scale": 100.68604505932427,
+          "nearest_core_parents": [
+            "189:mul_cc",
+            "191:mul_cp",
+            "195:mul_cc"
+          ]
+        },
+        "207:mul_cc": {
+          "id": "164",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            60.3776241090859,
+            60.3776241090859
+          ],
+          "product_scale": 120.7552482181718,
+          "nearest_core_parents": [
+            "195:mul_cc"
+          ]
+        },
+        "214:mul_cp": {
+          "id": "179",
+          "kind": "mul_cp",
+          "coefficient": -0.5604853121853565,
+          "input_scales": [
+            60.2785037102563,
+            40.0
+          ],
+          "product_scale": 100.2785037102563,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "184:mul_cc"
+          ]
+        },
+        "218:mul_cp": {
+          "id": "192",
+          "kind": "mul_cp",
+          "coefficient": 0.776581119170959,
+          "input_scales": [
+            60.06920315884753,
+            40.0
+          ],
+          "product_scale": 100.06920315884753,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "220:mul_cp": {
+          "id": "196",
+          "kind": "mul_cp",
+          "coefficient": -0.6818409776001578,
+          "input_scales": [
+            60.2785037102563,
+            40.0
+          ],
+          "product_scale": 100.2785037102563,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "184:mul_cc"
+          ]
+        },
+        "216:mul_cc": {
+          "id": "187",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.32734534384055,
+            60.3776241090859
+          ],
+          "product_scale": 100.70496945292645,
+          "nearest_core_parents": [
+            "195:mul_cc",
+            "212:mul_cp",
+            "214:mul_cp"
+          ]
+        },
+        "210:mul_cc": {
+          "id": "170",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.73488669290852,
+            60.804089851756046
+          ],
+          "product_scale": 101.53897654466456,
+          "nearest_core_parents": [
+            "198:mul_cc",
+            "200:mul_cp",
+            "202:mul_cp",
+            "207:mul_cc"
+          ]
+        },
+        "226:mul_cc": {
+          "id": "213",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            41.758471659418916,
+            41.758471659418916
+          ],
+          "product_scale": 83.51694331883783,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "234:mul_cc": {
+          "id": "230",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            53.54575904506244,
+            53.54575904506244
+          ],
+          "product_scale": 107.09151809012488,
+          "nearest_core_parents": [
+            "226:mul_cc"
+          ]
+        },
+        "229:mul_cc": {
+          "id": "219",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            41.758471659418916,
+            53.54575904506244
+          ],
+          "product_scale": 95.30423070448136,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "226:mul_cc"
+          ]
+        },
+        "237:mul_cc": {
+          "id": "237",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            41.758471659418916,
+            47.15490674486003
+          ],
+          "product_scale": 88.91337840427894,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "234:mul_cc"
+          ]
+        },
+        "245:mul_cp": {
+          "id": "258",
+          "kind": "mul_cp",
+          "coefficient": -0.017732734281918773,
+          "input_scales": [
+            41.758471659418916,
+            40.0
+          ],
+          "product_scale": 81.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "240:mul_cc": {
+          "id": "242",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            65.75847165941892,
+            47.15490674486003
+          ],
+          "product_scale": 112.91337840427894,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "234:mul_cc"
+          ]
+        },
+        "247:mul_cp": {
+          "id": "261",
+          "kind": "mul_cp",
+          "coefficient": -0.009084094344113463,
+          "input_scales": [
+            65.75847165941892,
+            46.0
+          ],
+          "product_scale": 111.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "251:mul_cc": {
+          "id": "269",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            47.15490674486003,
+            47.15490674486003
+          ],
+          "product_scale": 94.30981348972006,
+          "nearest_core_parents": [
+            "234:mul_cc"
+          ]
+        },
+        "256:mul_cp": {
+          "id": "279",
+          "kind": "mul_cp",
+          "coefficient": -0.19732584204806608,
+          "input_scales": [
+            41.758471659418916,
+            40.0
+          ],
+          "product_scale": 81.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "258:mul_cp": {
+          "id": "282",
+          "kind": "mul_cp",
+          "coefficient": -0.1411166195583439,
+          "input_scales": [
+            65.75847165941892,
+            46.0
+          ],
+          "product_scale": 111.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "274:mul_cp": {
+          "id": "321",
+          "kind": "mul_cp",
+          "coefficient": -0.7891229650354679,
+          "input_scales": [
+            41.758471659418916,
+            40.0
+          ],
+          "product_scale": 81.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "276:mul_cp": {
+          "id": "324",
+          "kind": "mul_cp",
+          "coefficient": -0.7274113735381116,
+          "input_scales": [
+            65.75847165941892,
+            46.0
+          ],
+          "product_scale": 111.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "260:mul_cp": {
+          "id": "286",
+          "kind": "mul_cp",
+          "coefficient": -0.05267573691161687,
+          "input_scales": [
+            65.94741379263118,
+            45.0
+          ],
+          "product_scale": 110.94741379263118,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "237:mul_cc"
+          ]
+        },
+        "278:mul_cp": {
+          "id": "328",
+          "kind": "mul_cp",
+          "coefficient": -0.32554529142034655,
+          "input_scales": [
+            65.94741379263118,
+            45.0
+          ],
+          "product_scale": 110.94741379263118,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "237:mul_cc"
+          ]
+        },
+        "254:mul_cc": {
+          "id": "274",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            51.82600159449023,
+            64.3438488780723
+          ],
+          "product_scale": 116.16985047256253,
+          "nearest_core_parents": [
+            "245:mul_cp",
+            "247:mul_cp",
+            "251:mul_cc"
+          ]
+        },
+        "262:mul_cp": {
+          "id": "290",
+          "kind": "mul_cp",
+          "coefficient": -0.026312988130283786,
+          "input_scales": [
+            52.98596409685298,
+            40.0
+          ],
+          "product_scale": 92.98596409685298,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "240:mul_cc"
+          ]
+        },
+        "269:mul_cc": {
+          "id": "309",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            64.3438488780723,
+            64.3438488780723
+          ],
+          "product_scale": 128.6876977561446,
+          "nearest_core_parents": [
+            "251:mul_cc"
+          ]
+        },
+        "280:mul_cp": {
+          "id": "332",
+          "kind": "mul_cp",
+          "coefficient": -0.18601751738208003,
+          "input_scales": [
+            52.98596409685298,
+            40.0
+          ],
+          "product_scale": 92.98596409685298,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "240:mul_cc"
+          ]
+        },
+        "286:mul_cp": {
+          "id": "352",
+          "kind": "mul_cp",
+          "coefficient": -0.04285789400849802,
+          "input_scales": [
+            41.758471659418916,
+            40.0
+          ],
+          "product_scale": 81.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "288:mul_cp": {
+          "id": "355",
+          "kind": "mul_cp",
+          "coefficient": -0.7747926099066248,
+          "input_scales": [
+            65.75847165941892,
+            46.0
+          ],
+          "product_scale": 111.75847165941892,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "290:mul_cp": {
+          "id": "359",
+          "kind": "mul_cp",
+          "coefficient": -0.18128174370012556,
+          "input_scales": [
+            65.94741379263118,
+            45.0
+          ],
+          "product_scale": 110.94741379263118,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "237:mul_cc"
+          ]
+        },
+        "284:mul_cc": {
+          "id": "347",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            63.82600159449023,
+            64.3438488780723
+          ],
+          "product_scale": 128.16985047256253,
+          "nearest_core_parents": [
+            "251:mul_cc",
+            "274:mul_cp",
+            "276:mul_cp",
+            "278:mul_cp",
+            "280:mul_cp"
+          ]
+        },
+        "292:mul_cp": {
+          "id": "363",
+          "kind": "mul_cp",
+          "coefficient": -0.2454684691347467,
+          "input_scales": [
+            52.98596409685298,
+            40.0
+          ],
+          "product_scale": 92.98596409685298,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "240:mul_cc"
+          ]
+        },
+        "272:mul_cc": {
+          "id": "315",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            63.82600159449023,
+            68.76751411184085
+          ],
+          "product_scale": 132.5935157063311,
+          "nearest_core_parents": [
+            "254:mul_cc",
+            "256:mul_cp",
+            "258:mul_cp",
+            "260:mul_cp",
+            "262:mul_cp",
+            "269:mul_cc"
+          ]
+        },
+        "300:mul_cc": {
+          "id": "392",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.0,
+            68.82600159449024
+          ],
+          "product_scale": 108.82600159449024,
+          "nearest_core_parents": [
+            "272:mul_cc",
+            "284:mul_cc",
+            "286:mul_cp",
+            "288:mul_cp",
+            "290:mul_cp",
+            "292:mul_cp"
+          ]
+        }
+      },
+      "rescales": {
+        "136": [
+          {
+            "id": "4",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.0,
+            "to_scale": 50.00035226212769
+          }
+        ],
+        "143": [
+          {
+            "id": "20",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.0,
+            "to_scale": 50.00035226212769
+          }
+        ],
+        "139": [
+          {
+            "id": "10",
+            "from_q": 30,
+            "to_q": 29,
+            "from_scale": 90.00035226212769,
+            "to_scale": 60.003349245508474
+          }
+        ],
+        "144": [
+          {
+            "id": "23",
+            "from_q": 30,
+            "to_q": 29,
+            "from_scale": 100.00070452425538,
+            "to_scale": 70.00370150763617
+          },
+          {
+            "id": "24",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 70.00370150763617,
+            "to_scale": 40.007757738523814
+          }
+        ],
+        "146": [
+          {
+            "id": "27",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.0,
+            "to_scale": 50.00035226212769
+          }
+        ],
+        "150": [
+          {
+            "id": "37",
+            "from_q": 30,
+            "to_q": 29,
+            "from_scale": 100.00070452425538,
+            "to_scale": 70.00370150763617
+          },
+          {
+            "id": "38",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 70.00370150763617,
+            "to_scale": 40.007757738523814
+          }
+        ],
+        "155": [
+          {
+            "id": "46",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.0,
+            "to_scale": 50.00035226212769
+          }
+        ],
+        "157": [
+          {
+            "id": "49",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 110.0,
+            "to_scale": 80.00405623088764
+          },
+          {
+            "id": "50",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 80.00405623088764,
+            "to_scale": 50.0114718855313
+          }
+        ],
+        "167": [
+          {
+            "id": "70",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.0,
+            "to_scale": 50.00035226212769
+          }
+        ],
+        "169": [
+          {
+            "id": "73",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 110.0,
+            "to_scale": 80.00405623088764
+          },
+          {
+            "id": "74",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 80.00405623088764,
+            "to_scale": 50.0114718855313
+          }
+        ],
+        "153": [
+          {
+            "id": "43",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 90.01551547704763,
+            "to_scale": 60.02293113169129
+          }
+        ],
+        "162": [
+          {
+            "id": "61",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 80.01551547704763,
+            "to_scale": 50.02293113169129
+          }
+        ],
+        "173": [
+          {
+            "id": "85",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.0,
+            "to_scale": 50.00035226212769
+          }
+        ],
+        "175": [
+          {
+            "id": "88",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 110.0,
+            "to_scale": 80.00405623088764
+          },
+          {
+            "id": "89",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 80.00405623088764,
+            "to_scale": 50.0114718855313
+          }
+        ],
+        "171": [
+          {
+            "id": "82",
+            "from_q": 27,
+            "to_q": 26,
+            "from_scale": 90.01922962405511,
+            "to_scale": 60.030367449917634
+          }
+        ],
+        "165": [
+          {
+            "id": "66",
+            "from_q": 27,
+            "to_q": 26,
+            "from_scale": 110.04586226338257,
+            "to_scale": 80.0570000892451
+          },
+          {
+            "id": "67",
+            "from_q": 26,
+            "to_q": 25,
+            "from_scale": 80.0570000892451,
+            "to_scale": 50.06920315884753
+          }
+        ],
+        "181": [
+          {
+            "id": "107",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 120.13840631769506,
+            "to_scale": 90.15309801908184
+          },
+          {
+            "id": "108",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 90.15309801908184,
+            "to_scale": 60.16832355767713
+          }
+        ],
+        "188": [
+          {
+            "id": "123",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 100.06920315884753,
+            "to_scale": 70.08389486023431
+          },
+          {
+            "id": "124",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 70.08389486023431,
+            "to_scale": 40.0991203988296
+          }
+        ],
+        "191": [
+          {
+            "id": "131",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 100.06920315884753,
+            "to_scale": 70.08389486023431
+          },
+          {
+            "id": "132",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 70.08389486023431,
+            "to_scale": 40.0991203988296
+          }
+        ],
+        "184": [
+          {
+            "id": "114",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 120.23752671652466,
+            "to_scale": 90.25506783503725
+          },
+          {
+            "id": "115",
+            "from_q": 22,
+            "to_q": 21,
+            "from_scale": 90.25506783503725,
+            "to_scale": 60.2785037102563
+          }
+        ],
+        "195": [
+          {
+            "id": "140",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 120.33664711535425,
+            "to_scale": 90.35418823386685
+          },
+          {
+            "id": "141",
+            "from_q": 22,
+            "to_q": 21,
+            "from_scale": 90.35418823386685,
+            "to_scale": 60.3776241090859
+          }
+        ],
+        "189": [
+          {
+            "id": "127",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 100.26744395650672,
+            "to_scale": 70.28498507501932
+          },
+          {
+            "id": "128",
+            "from_q": 22,
+            "to_q": 21,
+            "from_scale": 70.28498507501932,
+            "to_scale": 40.30842095023837
+          }
+        ],
+        "200": [
+          {
+            "id": "150",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 100.06920315884753,
+            "to_scale": 70.08389486023431
+          },
+          {
+            "id": "151",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 70.08389486023431,
+            "to_scale": 40.0991203988296
+          }
+        ],
+        "212": [
+          {
+            "id": "176",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 100.06920315884753,
+            "to_scale": 70.08389486023431
+          },
+          {
+            "id": "177",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 70.08389486023431,
+            "to_scale": 40.0991203988296
+          }
+        ],
+        "202": [
+          {
+            "id": "154",
+            "from_q": 21,
+            "to_q": 20,
+            "from_scale": 100.2785037102563,
+            "to_scale": 70.30229761874175
+          },
+          {
+            "id": "155",
+            "from_q": 20,
+            "to_q": 19,
+            "from_scale": 70.30229761874175,
+            "to_scale": 40.32734534384055
+          }
+        ],
+        "214": [
+          {
+            "id": "180",
+            "from_q": 21,
+            "to_q": 20,
+            "from_scale": 100.2785037102563,
+            "to_scale": 70.30229761874175
+          },
+          {
+            "id": "181",
+            "from_q": 20,
+            "to_q": 19,
+            "from_scale": 70.30229761874175,
+            "to_scale": 40.32734534384055
+          }
+        ],
+        "198": [
+          {
+            "id": "146",
+            "from_q": 21,
+            "to_q": 20,
+            "from_scale": 100.68604505932427,
+            "to_scale": 70.70983896780972
+          },
+          {
+            "id": "147",
+            "from_q": 20,
+            "to_q": 19,
+            "from_scale": 70.70983896780972,
+            "to_scale": 40.73488669290852
+          }
+        ],
+        "207": [
+          {
+            "id": "166",
+            "from_q": 21,
+            "to_q": 20,
+            "from_scale": 120.7552482181718,
+            "to_scale": 90.77904212665725
+          },
+          {
+            "id": "167",
+            "from_q": 20,
+            "to_q": 19,
+            "from_scale": 90.77904212665725,
+            "to_scale": 60.804089851756046
+          }
+        ],
+        "218": [
+          {
+            "id": "193",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 100.06920315884753,
+            "to_scale": 70.08389486023431
+          },
+          {
+            "id": "194",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 70.08389486023431,
+            "to_scale": 40.0991203988296
+          }
+        ],
+        "220": [
+          {
+            "id": "197",
+            "from_q": 21,
+            "to_q": 20,
+            "from_scale": 100.2785037102563,
+            "to_scale": 70.30229761874175
+          },
+          {
+            "id": "198",
+            "from_q": 20,
+            "to_q": 19,
+            "from_scale": 70.30229761874175,
+            "to_scale": 40.32734534384055
+          }
+        ],
+        "216": [
+          {
+            "id": "189",
+            "from_q": 19,
+            "to_q": 18,
+            "from_scale": 100.70496945292645,
+            "to_scale": 70.73145144685422
+          },
+          {
+            "id": "190",
+            "from_q": 18,
+            "to_q": 17,
+            "from_scale": 70.73145144685422,
+            "to_scale": 40.758471659418916
+          }
+        ],
+        "210": [
+          {
+            "id": "172",
+            "from_q": 19,
+            "to_q": 18,
+            "from_scale": 101.53897654466456,
+            "to_scale": 71.56545853859234
+          },
+          {
+            "id": "173",
+            "from_q": 18,
+            "to_q": 17,
+            "from_scale": 71.56545853859234,
+            "to_scale": 41.59247875115703
+          }
+        ],
+        "226": [
+          {
+            "id": "215",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 83.51694331883783,
+            "to_scale": 53.54575904506244
+          }
+        ],
+        "234": [
+          {
+            "id": "232",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 107.09151809012488,
+            "to_scale": 77.12141219814094
+          },
+          {
+            "id": "233",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 77.12141219814094,
+            "to_scale": 47.15490674486003
+          }
+        ],
+        "229": [
+          {
+            "id": "221",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 95.30423070448136,
+            "to_scale": 65.33412481249744
+          }
+        ],
+        "237": [
+          {
+            "id": "239",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 88.91337840427894,
+            "to_scale": 58.947413792631174
+          }
+        ],
+        "245": [
+          {
+            "id": "259",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 81.75847165941892,
+            "to_scale": 51.78728738564352
+          }
+        ],
+        "247": [
+          {
+            "id": "262",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 111.75847165941892,
+            "to_scale": 81.791966206138
+          },
+          {
+            "id": "263",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 81.791966206138,
+            "to_scale": 51.82600159449023
+          }
+        ],
+        "240": [
+          {
+            "id": "244",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 112.91337840427894,
+            "to_scale": 82.94741379263118
+          },
+          {
+            "id": "245",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 82.94741379263118,
+            "to_scale": 52.98596409685298
+          }
+        ],
+        "251": [
+          {
+            "id": "271",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 94.30981348972006,
+            "to_scale": 64.3438488780723
+          }
+        ],
+        "256": [
+          {
+            "id": "280",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 81.75847165941892,
+            "to_scale": 51.78728738564352
+          }
+        ],
+        "258": [
+          {
+            "id": "283",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 111.75847165941892,
+            "to_scale": 81.791966206138
+          },
+          {
+            "id": "284",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 81.791966206138,
+            "to_scale": 51.82600159449023
+          }
+        ],
+        "274": [
+          {
+            "id": "322",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 81.75847165941892,
+            "to_scale": 51.78728738564352
+          }
+        ],
+        "276": [
+          {
+            "id": "325",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 111.75847165941892,
+            "to_scale": 81.791966206138
+          },
+          {
+            "id": "326",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 81.791966206138,
+            "to_scale": 51.82600159449023
+          }
+        ],
+        "260": [
+          {
+            "id": "287",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 110.94741379263118,
+            "to_scale": 80.98596409685298
+          },
+          {
+            "id": "288",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 80.98596409685298,
+            "to_scale": 51.02723014832745
+          }
+        ],
+        "278": [
+          {
+            "id": "329",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 110.94741379263118,
+            "to_scale": 80.98596409685298
+          },
+          {
+            "id": "330",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 80.98596409685298,
+            "to_scale": 51.02723014832745
+          }
+        ],
+        "254": [
+          {
+            "id": "276",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 116.16985047256253,
+            "to_scale": 86.20840077678433
+          },
+          {
+            "id": "277",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 86.20840077678433,
+            "to_scale": 56.249666828258796
+          }
+        ],
+        "262": [
+          {
+            "id": "291",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 92.98596409685298,
+            "to_scale": 63.02723014832745
+          }
+        ],
+        "280": [
+          {
+            "id": "333",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 92.98596409685298,
+            "to_scale": 63.02723014832745
+          }
+        ],
+        "269": [
+          {
+            "id": "311",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 128.6876977561446,
+            "to_scale": 98.72624806036639
+          },
+          {
+            "id": "312",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 98.72624806036639,
+            "to_scale": 68.76751411184085
+          }
+        ],
+        "286": [
+          {
+            "id": "353",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 81.75847165941892,
+            "to_scale": 51.78728738564352
+          }
+        ],
+        "288": [
+          {
+            "id": "356",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 111.75847165941892,
+            "to_scale": 81.791966206138
+          },
+          {
+            "id": "357",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 81.791966206138,
+            "to_scale": 51.82600159449023
+          }
+        ],
+        "290": [
+          {
+            "id": "360",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 110.94741379263118,
+            "to_scale": 80.98596409685298
+          },
+          {
+            "id": "361",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 80.98596409685298,
+            "to_scale": 51.02723014832745
+          }
+        ],
+        "292": [
+          {
+            "id": "364",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 92.98596409685298,
+            "to_scale": 63.02723014832745
+          }
+        ],
+        "284": [
+          {
+            "id": "349",
+            "from_q": 11,
+            "to_q": 10,
+            "from_scale": 128.16985047256253,
+            "to_scale": 98.21256701559012
+          },
+          {
+            "id": "350",
+            "from_q": 10,
+            "to_q": 9,
+            "from_scale": 98.21256701559012,
+            "to_scale": 68.25746203398748
+          }
+        ],
+        "272": [
+          {
+            "id": "317",
+            "from_q": 11,
+            "to_q": 10,
+            "from_scale": 132.5935157063311,
+            "to_scale": 102.63623224935868
+          },
+          {
+            "id": "318",
+            "from_q": 10,
+            "to_q": 9,
+            "from_scale": 102.63623224935868,
+            "to_scale": 72.68112726775604
+          },
+          {
+            "id": "319",
+            "from_q": 9,
+            "to_q": 8,
+            "from_scale": 72.68112726775604,
+            "to_scale": 40.69040280861765
+          }
+        ],
+        "300": [
+          {
+            "id": "394",
+            "from_q": 8,
+            "to_q": 7,
+            "from_scale": 108.82600159449024,
+            "to_scale": 76.83563167121173
+          },
+          {
+            "id": "395",
+            "from_q": 7,
+            "to_q": 6,
+            "from_scale": 76.83563167121173,
+            "to_scale": 44.845572038296936
+          }
+        ]
+      }
+    },
+    "target": {
+      "core": {
+        "136:mul_cc": {
+          "id": "2",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.0,
+            40.0
+          ],
+          "product_scale": 80.0,
+          "nearest_core_parents": []
+        },
+        "143:mul_cp": {
+          "id": "17",
+          "kind": "mul_cp",
+          "coefficient": -4.027020120063623,
+          "input_scales": [
+            40.0,
+            40.030796842152455
+          ],
+          "product_scale": 80.03079684215245,
+          "nearest_core_parents": []
+        },
+        "139:mul_cc": {
+          "id": "8",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.0,
+            50.00035226212769
+          ],
+          "product_scale": 90.00035226212769,
+          "nearest_core_parents": [
+            "136:mul_cc"
+          ]
+        },
+        "150:mul_cc": {
+          "id": "29",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.00035226212769,
+            50.00035226212769
+          ],
+          "product_scale": 100.00070452425538,
+          "nearest_core_parents": [
+            "136:mul_cc"
+          ]
+        },
+        "144:mul_cc": {
+          "id": "19",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.031149104280146,
+            50.00035226212769
+          ],
+          "product_scale": 100.03150136640784,
+          "nearest_core_parents": [
+            "136:mul_cc",
+            "143:mul_cp"
+          ]
+        },
+        "146:mul_cp": {
+          "id": "22",
+          "kind": "mul_cp",
+          "coefficient": 2.243187978526648,
+          "input_scales": [
+            40.0,
+            60.03150136640784
+          ],
+          "product_scale": 100.03150136640784,
+          "nearest_core_parents": []
+        },
+        "155:mul_cp": {
+          "id": "39",
+          "kind": "mul_cp",
+          "coefficient": 1.1583708205212988,
+          "input_scales": [
+            40.0,
+            70.04225608831243
+          ],
+          "product_scale": 110.04225608831243,
+          "nearest_core_parents": []
+        },
+        "167:mul_cp": {
+          "id": "59",
+          "kind": "mul_cp",
+          "coefficient": 0.3887889417813593,
+          "input_scales": [
+            40.0,
+            80.05742948147989
+          ],
+          "product_scale": 120.05742948147989,
+          "nearest_core_parents": []
+        },
+        "157:mul_cp": {
+          "id": "41",
+          "kind": "mul_cp",
+          "coefficient": -0.24378614014677616,
+          "input_scales": [
+            60.003349245508474,
+            50.038906842803954
+          ],
+          "product_scale": 110.04225608831243,
+          "nearest_core_parents": [
+            "139:mul_cc"
+          ]
+        },
+        "169:mul_cp": {
+          "id": "61",
+          "kind": "mul_cp",
+          "coefficient": -0.3410318227220213,
+          "input_scales": [
+            60.003349245508474,
+            60.05408023597141
+          ],
+          "product_scale": 120.05742948147989,
+          "nearest_core_parents": [
+            "139:mul_cc"
+          ]
+        },
+        "173:mul_cp": {
+          "id": "68",
+          "kind": "mul_cp",
+          "coefficient": 1.3110156470890746,
+          "input_scales": [
+            40.0,
+            120.06518722000371
+          ],
+          "product_scale": 160.0651872200037,
+          "nearest_core_parents": []
+        },
+        "175:mul_cp": {
+          "id": "70",
+          "kind": "mul_cp",
+          "coefficient": -0.4655444582206114,
+          "input_scales": [
+            60.003349245508474,
+            100.06183797449523
+          ],
+          "product_scale": 160.0651872200037,
+          "nearest_core_parents": [
+            "139:mul_cc"
+          ]
+        },
+        "153:mul_cc": {
+          "id": "35",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.03855458067627,
+            40.007757738523814
+          ],
+          "product_scale": 80.04631231920008,
+          "nearest_core_parents": [
+            "144:mul_cc",
+            "146:mul_cp",
+            "150:mul_cc"
+          ]
+        },
+        "162:mul_cc": {
+          "id": "51",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.007757738523814,
+            40.007757738523814
+          ],
+          "product_scale": 80.01551547704763,
+          "nearest_core_parents": [
+            "150:mul_cc"
+          ]
+        },
+        "171:mul_cc": {
+          "id": "65",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            90.06148571236753,
+            40.007757738523814
+          ],
+          "product_scale": 130.06924345089135,
+          "nearest_core_parents": [
+            "150:mul_cc",
+            "167:mul_cp",
+            "169:mul_cp"
+          ]
+        },
+        "165:mul_cc": {
+          "id": "56",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.05372797384374,
+            50.02293113169129
+          ],
+          "product_scale": 100.07665910553503,
+          "nearest_core_parents": [
+            "153:mul_cc",
+            "155:mul_cp",
+            "157:mul_cp",
+            "162:mul_cc"
+          ]
+        },
+        "181:mul_cc": {
+          "id": "83",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.100000000999984,
+            40.100000000999984
+          ],
+          "product_scale": 80.20000000199997,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "188:mul_cp": {
+          "id": "98",
+          "kind": "mul_cp",
+          "coefficient": -4.114425161403915,
+          "input_scales": [
+            40.100000000999984,
+            40.05568636245182
+          ],
+          "product_scale": 80.1556863634518,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "184:mul_cc": {
+          "id": "89",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.100000000999984,
+            50.21469170338675
+          ],
+          "product_scale": 90.31469170438673,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "181:mul_cc"
+          ]
+        },
+        "195:mul_cc": {
+          "id": "108",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.21469170338675,
+            50.21469170338675
+          ],
+          "product_scale": 100.4293834067735,
+          "nearest_core_parents": [
+            "181:mul_cc"
+          ]
+        },
+        "189:mul_cc": {
+          "id": "100",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.17037806483859,
+            50.21469170338675
+          ],
+          "product_scale": 100.38506976822534,
+          "nearest_core_parents": [
+            "181:mul_cc",
+            "188:mul_cp"
+          ]
+        },
+        "191:mul_cp": {
+          "id": "103",
+          "kind": "mul_cp",
+          "coefficient": 0.9368078518022722,
+          "input_scales": [
+            40.100000000999984,
+            60.285069767225394
+          ],
+          "product_scale": 100.38506976822538,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "200:mul_cp": {
+          "id": "118",
+          "kind": "mul_cp",
+          "coefficient": 0.13312678038183748,
+          "input_scales": [
+            40.100000000999984,
+            70.76244536970214
+          ],
+          "product_scale": 110.86244537070212,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "202:mul_cp": {
+          "id": "120",
+          "kind": "mul_cp",
+          "coefficient": -0.45988074662238737,
+          "input_scales": [
+            60.32991724298202,
+            50.53252812772007
+          ],
+          "product_scale": 110.86244537070209,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "184:mul_cc"
+          ]
+        },
+        "212:mul_cp": {
+          "id": "136",
+          "kind": "mul_cp",
+          "coefficient": -0.058402193560527074,
+          "input_scales": [
+            40.100000000999984,
+            81.24803130880262
+          ],
+          "product_scale": 121.34803130980261,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "214:mul_cp": {
+          "id": "138",
+          "kind": "mul_cp",
+          "coefficient": -0.5604853121853565,
+          "input_scales": [
+            60.32991724298202,
+            61.01811406682056
+          ],
+          "product_scale": 121.34803130980258,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "184:mul_cc"
+          ]
+        },
+        "198:mul_cc": {
+          "id": "114",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.41783642533322,
+            40.46215006388138
+          ],
+          "product_scale": 80.8799864892146,
+          "nearest_core_parents": [
+            "189:mul_cc",
+            "191:mul_cp",
+            "195:mul_cc"
+          ]
+        },
+        "207:mul_cc": {
+          "id": "128",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.46215006388138,
+            40.46215006388138
+          ],
+          "product_scale": 80.92430012776276,
+          "nearest_core_parents": [
+            "195:mul_cc"
+          ]
+        },
+        "218:mul_cp": {
+          "id": "144",
+          "kind": "mul_cp",
+          "coefficient": 0.776581119170959,
+          "input_scales": [
+            40.100000000999984,
+            121.71018137268406
+          ],
+          "product_scale": 161.81018137368403,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp"
+          ]
+        },
+        "220:mul_cp": {
+          "id": "146",
+          "kind": "mul_cp",
+          "coefficient": -0.6818409776001578,
+          "input_scales": [
+            60.32991724298202,
+            101.480264130702
+          ],
+          "product_scale": 161.81018137368403,
+          "nearest_core_parents": [
+            "165:mul_cc",
+            "171:mul_cc",
+            "173:mul_cp",
+            "175:mul_cp",
+            "184:mul_cc"
+          ]
+        },
+        "216:mul_cc": {
+          "id": "141",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            91.3655724283152,
+            40.46215006388138
+          ],
+          "product_scale": 131.82772249219659,
+          "nearest_core_parents": [
+            "195:mul_cc",
+            "212:mul_cp",
+            "214:mul_cp"
+          ]
+        },
+        "210:mul_cc": {
+          "id": "133",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            50.90342236443365,
+            50.94773600298181
+          ],
+          "product_scale": 101.85115836741547,
+          "nearest_core_parents": [
+            "198:mul_cc",
+            "200:mul_cp",
+            "202:mul_cp",
+            "207:mul_cc"
+          ]
+        },
+        "226:mul_cc": {
+          "id": "156",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            41.90000000099971,
+            41.90000000099971
+          ],
+          "product_scale": 83.80000000199942,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "229:mul_cc": {
+          "id": "162",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            41.90000000099971,
+            53.826481995927196
+          ],
+          "product_scale": 95.7264819969269,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "226:mul_cc"
+          ]
+        },
+        "234:mul_cc": {
+          "id": "171",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            53.826481995927196,
+            53.826481995927196
+          ],
+          "product_scale": 107.65296399185439,
+          "nearest_core_parents": [
+            "226:mul_cc"
+          ]
+        },
+        "237:mul_cc": {
+          "id": "180",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            41.90000000099971,
+            88.00257595691178
+          ],
+          "product_scale": 129.9025759579115,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "234:mul_cc"
+          ]
+        },
+        "240:mul_cc": {
+          "id": "184",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            65.7535022094916,
+            47.70879993064369
+          ],
+          "product_scale": 113.4623021401353,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "234:mul_cc"
+          ]
+        },
+        "274:mul_cp": {
+          "id": "249",
+          "kind": "mul_cp",
+          "coefficient": -0.7891229650354679,
+          "input_scales": [
+            41.90000000099971,
+            164.3495628033994
+          ],
+          "product_scale": 206.24956280439912,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "276:mul_cp": {
+          "id": "251",
+          "kind": "mul_cp",
+          "coefficient": -0.7274113735381116,
+          "input_scales": [
+            65.7535022094916,
+            140.49606059490696
+          ],
+          "product_scale": 206.24956280439858,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "251:mul_cc": {
+          "id": "210",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            47.70879993064369,
+            47.70879993064369
+          ],
+          "product_scale": 95.41759986128739,
+          "nearest_core_parents": [
+            "234:mul_cc"
+          ]
+        },
+        "256:mul_cp": {
+          "id": "219",
+          "kind": "mul_cp",
+          "coefficient": -0.19732584204806608,
+          "input_scales": [
+            41.90000000099971,
+            188.79598859480055
+          ],
+          "product_scale": 230.69598859580026,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "258:mul_cp": {
+          "id": "221",
+          "kind": "mul_cp",
+          "coefficient": -0.1411166195583439,
+          "input_scales": [
+            65.7535022094916,
+            164.94248638630808
+          ],
+          "product_scale": 230.6959885957997,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "286:mul_cp": {
+          "id": "269",
+          "kind": "mul_cp",
+          "coefficient": -0.04285789400849802,
+          "input_scales": [
+            41.90000000099971,
+            229.79705677270513
+          ],
+          "product_scale": 271.69705677370484,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "288:mul_cp": {
+          "id": "271",
+          "kind": "mul_cp",
+          "coefficient": -0.7747926099066248,
+          "input_scales": [
+            65.7535022094916,
+            205.94355456421266
+          ],
+          "product_scale": 271.6970567737043,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "245:mul_cp": {
+          "id": "201",
+          "kind": "mul_cp",
+          "coefficient": -0.017732734281918773,
+          "input_scales": [
+            41.90000000099971,
+            123.34849462549485
+          ],
+          "product_scale": 165.24849462649456,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp"
+          ]
+        },
+        "247:mul_cp": {
+          "id": "203",
+          "kind": "mul_cp",
+          "coefficient": -0.009084094344113463,
+          "input_scales": [
+            65.7535022094916,
+            99.4949924170024
+          ],
+          "product_scale": 165.248494626494,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc"
+          ]
+        },
+        "280:mul_cp": {
+          "id": "255",
+          "kind": "mul_cp",
+          "coefficient": -0.18601751738208003,
+          "input_scales": [
+            53.52569079487046,
+            62.81607639048676
+          ],
+          "product_scale": 116.34176718535721,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "240:mul_cc"
+          ]
+        },
+        "269:mul_cc": {
+          "id": "239",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            65.44749396930345,
+            65.44749396930345
+          ],
+          "product_scale": 130.8949879386069,
+          "nearest_core_parents": [
+            "251:mul_cc"
+          ]
+        },
+        "278:mul_cp": {
+          "id": "253",
+          "kind": "mul_cp",
+          "coefficient": -0.32554529142034655,
+          "input_scales": [
+            40.000000000998874,
+            46.375802572711414
+          ],
+          "product_scale": 86.37580257371029,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "237:mul_cc"
+          ]
+        },
+        "260:mul_cp": {
+          "id": "223",
+          "kind": "mul_cp",
+          "coefficient": -0.05267573691161687,
+          "input_scales": [
+            40.000000000998874,
+            70.82222836411256
+          ],
+          "product_scale": 110.82222836511144,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "237:mul_cc"
+          ]
+        },
+        "290:mul_cp": {
+          "id": "273",
+          "kind": "mul_cp",
+          "coefficient": -0.18128174370012556,
+          "input_scales": [
+            40.000000000998874,
+            111.82329654201715
+          ],
+          "product_scale": 151.82329654301603,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "229:mul_cc",
+            "237:mul_cc"
+          ]
+        },
+        "254:mul_cc": {
+          "id": "216",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            45.374734395806534,
+            65.44749396930345
+          ],
+          "product_scale": 110.82222836510999,
+          "nearest_core_parents": [
+            "245:mul_cp",
+            "247:mul_cp",
+            "251:mul_cc"
+          ]
+        },
+        "262:mul_cp": {
+          "id": "226",
+          "kind": "mul_cp",
+          "coefficient": -0.026312988130283786,
+          "input_scales": [
+            53.52569079487046,
+            57.29653757024012
+          ],
+          "product_scale": 110.82222836511058,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "240:mul_cc"
+          ]
+        },
+        "292:mul_cp": {
+          "id": "275",
+          "kind": "mul_cp",
+          "coefficient": -0.2454684691347467,
+          "input_scales": [
+            53.52569079487046,
+            98.29760574814469
+          ],
+          "product_scale": 151.82329654301515,
+          "nearest_core_parents": [
+            "210:mul_cc",
+            "216:mul_cc",
+            "218:mul_cp",
+            "220:mul_cp",
+            "240:mul_cc"
+          ]
+        },
+        "284:mul_cc": {
+          "id": "266",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            86.3758025737111,
+            65.44749396930345
+          ],
+          "product_scale": 151.82329654301455,
+          "nearest_core_parents": [
+            "251:mul_cc",
+            "274:mul_cp",
+            "276:mul_cp",
+            "278:mul_cp",
+            "280:mul_cp"
+          ]
+        },
+        "272:mul_cc": {
+          "id": "246",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            80.8607786693318,
+            41.001068177900024
+          ],
+          "product_scale": 121.86184684723182,
+          "nearest_core_parents": [
+            "254:mul_cc",
+            "256:mul_cp",
+            "258:mul_cp",
+            "260:mul_cp",
+            "262:mul_cp",
+            "269:mul_cc"
+          ]
+        },
+        "300:mul_cc": {
+          "id": "295",
+          "kind": "mul_cc",
+          "coefficient": null,
+          "input_scales": [
+            40.0,
+            61.94582944173388
+          ],
+          "product_scale": 101.94582944173388,
+          "nearest_core_parents": [
+            "272:mul_cc",
+            "284:mul_cc",
+            "286:mul_cp",
+            "288:mul_cp",
+            "290:mul_cp",
+            "292:mul_cp"
+          ]
+        }
+      },
+      "rescales": {
+        "138": [
+          {
+            "id": "6",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.0,
+            "to_scale": 50.00035226212769
+          }
+        ],
+        "143": [
+          {
+            "id": "18",
+            "from_q": 31,
+            "to_q": 30,
+            "from_scale": 80.03079684215245,
+            "to_scale": 50.031149104280146
+          }
+        ],
+        "141": [
+          {
+            "id": "15",
+            "from_q": 30,
+            "to_q": 29,
+            "from_scale": 90.00035226212769,
+            "to_scale": 60.003349245508474
+          }
+        ],
+        "152": [
+          {
+            "id": "33",
+            "from_q": 30,
+            "to_q": 29,
+            "from_scale": 100.00070452425538,
+            "to_scale": 70.00370150763617
+          },
+          {
+            "id": "34",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 70.00370150763617,
+            "to_scale": 40.007757738523814
+          }
+        ],
+        "147": [
+          {
+            "id": "26",
+            "from_q": 30,
+            "to_q": 29,
+            "from_scale": 100.03150136640784,
+            "to_scale": 70.03449834978862
+          },
+          {
+            "id": "27",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 70.03449834978862,
+            "to_scale": 40.03855458067627
+          }
+        ],
+        "158": [
+          {
+            "id": "45",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 110.04225608831243,
+            "to_scale": 80.04631231920007
+          }
+        ],
+        "170": [
+          {
+            "id": "64",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 120.05742948147989,
+            "to_scale": 90.06148571236753
+          }
+        ],
+        "176": [
+          {
+            "id": "73",
+            "from_q": 29,
+            "to_q": 28,
+            "from_scale": 160.0651872200037,
+            "to_scale": 130.06924345089135
+          }
+        ],
+        "159": [
+          {
+            "id": "49",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 80.04631231920008,
+            "to_scale": 50.05372797384374
+          }
+        ],
+        "164": [
+          {
+            "id": "55",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 80.01551547704763,
+            "to_scale": 50.02293113169129
+          }
+        ],
+        "177": [
+          {
+            "id": "76",
+            "from_q": 28,
+            "to_q": 27,
+            "from_scale": 130.06924345089135,
+            "to_scale": 100.07665910553501
+          }
+        ],
+        "178": [
+          {
+            "id": "80",
+            "from_q": 27,
+            "to_q": 26,
+            "from_scale": 100.07665910553503,
+            "to_scale": 70.08779693139755
+          },
+          {
+            "id": "81",
+            "from_q": 26,
+            "to_q": 25,
+            "from_scale": 70.08779693139755,
+            "to_scale": 40.100000000999984
+          }
+        ],
+        "183": [
+          {
+            "id": "87",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 80.20000000199997,
+            "to_scale": 50.21469170338675
+          }
+        ],
+        "188": [
+          {
+            "id": "99",
+            "from_q": 25,
+            "to_q": 24,
+            "from_scale": 80.1556863634518,
+            "to_scale": 50.17037806483859
+          }
+        ],
+        "186": [
+          {
+            "id": "96",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 90.31469170438673,
+            "to_scale": 60.32991724298202
+          }
+        ],
+        "197": [
+          {
+            "id": "112",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 100.4293834067735,
+            "to_scale": 70.44460894536878
+          },
+          {
+            "id": "113",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 70.44460894536878,
+            "to_scale": 40.46215006388138
+          }
+        ],
+        "192": [
+          {
+            "id": "105",
+            "from_q": 24,
+            "to_q": 23,
+            "from_scale": 100.38506976822534,
+            "to_scale": 70.40029530682062
+          },
+          {
+            "id": "106",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 70.40029530682062,
+            "to_scale": 40.41783642533322
+          }
+        ],
+        "203": [
+          {
+            "id": "122",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 110.86244537070212,
+            "to_scale": 80.87998648921472
+          }
+        ],
+        "215": [
+          {
+            "id": "140",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 121.34803130980261,
+            "to_scale": 91.3655724283152
+          }
+        ],
+        "221": [
+          {
+            "id": "148",
+            "from_q": 23,
+            "to_q": 22,
+            "from_scale": 161.81018137368403,
+            "to_scale": 131.8277224921966
+          }
+        ],
+        "204": [
+          {
+            "id": "126",
+            "from_q": 22,
+            "to_q": 21,
+            "from_scale": 80.8799864892146,
+            "to_scale": 50.90342236443365
+          }
+        ],
+        "209": [
+          {
+            "id": "132",
+            "from_q": 22,
+            "to_q": 21,
+            "from_scale": 80.92430012776276,
+            "to_scale": 50.94773600298181
+          }
+        ],
+        "222": [
+          {
+            "id": "151",
+            "from_q": 22,
+            "to_q": 21,
+            "from_scale": 131.82772249219659,
+            "to_scale": 101.85115836741564
+          }
+        ],
+        "223": [
+          {
+            "id": "153",
+            "from_q": 21,
+            "to_q": 20,
+            "from_scale": 101.85115836741547,
+            "to_scale": 71.87495227590091
+          },
+          {
+            "id": "154",
+            "from_q": 20,
+            "to_q": 19,
+            "from_scale": 71.87495227590091,
+            "to_scale": 41.90000000099971
+          }
+        ],
+        "228": [
+          {
+            "id": "160",
+            "from_q": 19,
+            "to_q": 18,
+            "from_scale": 83.80000000199942,
+            "to_scale": 53.826481995927196
+          }
+        ],
+        "231": [
+          {
+            "id": "169",
+            "from_q": 18,
+            "to_q": 17,
+            "from_scale": 95.7264819969269,
+            "to_scale": 65.7535022094916
+          }
+        ],
+        "236": [
+          {
+            "id": "175",
+            "from_q": 18,
+            "to_q": 17,
+            "from_scale": 107.65296399185439,
+            "to_scale": 77.67998420441909
+          },
+          {
+            "id": "176",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 77.67998420441909,
+            "to_scale": 47.70879993064369
+          }
+        ],
+        "281": [
+          {
+            "id": "258",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 206.24956280439912,
+            "to_scale": 176.2783785306237
+          },
+          {
+            "id": "259",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 176.2783785306237,
+            "to_scale": 146.30827263863978
+          },
+          {
+            "id": "260",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 146.30827263863978,
+            "to_scale": 116.34176718535886
+          },
+          {
+            "id": "261",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 116.34176718535886,
+            "to_scale": 86.3758025737111
+          }
+        ],
+        "242": [
+          {
+            "id": "190",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 129.9025759579115,
+            "to_scale": 99.93247006592756
+          },
+          {
+            "id": "191",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 99.93247006592756,
+            "to_scale": 69.96596461264664
+          },
+          {
+            "id": "192",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 69.96596461264664,
+            "to_scale": 40.000000000998874
+          }
+        ],
+        "243": [
+          {
+            "id": "197",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 113.4623021401353,
+            "to_scale": 83.49219624815137
+          },
+          {
+            "id": "198",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 83.49219624815137,
+            "to_scale": 53.52569079487046
+          }
+        ],
+        "263": [
+          {
+            "id": "228",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 230.69598859580026,
+            "to_scale": 200.72480432202485
+          },
+          {
+            "id": "229",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 200.72480432202485,
+            "to_scale": 170.75469843004092
+          },
+          {
+            "id": "230",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 170.75469843004092,
+            "to_scale": 140.78819297676
+          },
+          {
+            "id": "231",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 140.78819297676,
+            "to_scale": 110.82222836511224
+          }
+        ],
+        "293": [
+          {
+            "id": "277",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 271.69705677370484,
+            "to_scale": 241.72587249992944
+          },
+          {
+            "id": "278",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 241.72587249992944,
+            "to_scale": 211.7557666079455
+          },
+          {
+            "id": "279",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 211.7557666079455,
+            "to_scale": 181.7892611546646
+          },
+          {
+            "id": "280",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 181.7892611546646,
+            "to_scale": 151.82329654301682
+          }
+        ],
+        "248": [
+          {
+            "id": "205",
+            "from_q": 17,
+            "to_q": 16,
+            "from_scale": 165.24849462649456,
+            "to_scale": 135.27731035271916
+          },
+          {
+            "id": "206",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 135.27731035271916,
+            "to_scale": 105.30720446073522
+          },
+          {
+            "id": "207",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 105.30720446073522,
+            "to_scale": 75.3406990074543
+          },
+          {
+            "id": "208",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 75.3406990074543,
+            "to_scale": 45.374734395806534
+          }
+        ],
+        "253": [
+          {
+            "id": "214",
+            "from_q": 16,
+            "to_q": 15,
+            "from_scale": 95.41759986128739,
+            "to_scale": 65.44749396930345
+          }
+        ],
+        "280": [
+          {
+            "id": "256",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 116.34176718535721,
+            "to_scale": 86.37580257370945
+          }
+        ],
+        "271": [
+          {
+            "id": "243",
+            "from_q": 15,
+            "to_q": 14,
+            "from_scale": 130.8949879386069,
+            "to_scale": 100.92848248532599
+          },
+          {
+            "id": "244",
+            "from_q": 14,
+            "to_q": 13,
+            "from_scale": 100.92848248532599,
+            "to_scale": 70.96251787367822
+          },
+          {
+            "id": "245",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 70.96251787367822,
+            "to_scale": 41.001068177900024
+          }
+        ],
+        "266": [
+          {
+            "id": "237",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 110.82222836510999,
+            "to_scale": 80.8607786693318
+          }
+        ],
+        "296": [
+          {
+            "id": "286",
+            "from_q": 13,
+            "to_q": 12,
+            "from_scale": 151.82329654301455,
+            "to_scale": 121.86184684723635
+          }
+        ],
+        "299": [
+          {
+            "id": "292",
+            "from_q": 12,
+            "to_q": 11,
+            "from_scale": 121.86184684723182,
+            "to_scale": 91.90311289870628
+          },
+          {
+            "id": "293",
+            "from_q": 11,
+            "to_q": 10,
+            "from_scale": 91.90311289870628,
+            "to_scale": 61.94582944173388
+          }
+        ],
+        "300": [
+          {
+            "id": "297",
+            "from_q": 10,
+            "to_q": 9,
+            "from_scale": 101.94582944173388,
+            "to_scale": 71.99072446013125
+          },
+          {
+            "id": "298",
+            "from_q": 9,
+            "to_q": 8,
+            "from_scale": 71.99072446013125,
+            "to_scale": 40.000000000992856
+          }
+        ]
+      }
+    }
+  },
+  "labels": {
+    "138": "P1(d15) T2：基底校正",
+    "141": "P1(d15) T3：基底校正",
+    "142": "P1(d15) encode／raw-142",
+    "145": "P1(d15) encode／raw-145",
+    "147": "P1(d15) H7：加余项",
+    "152": "P1(d15) T4：基底校正",
+    "154": "P1(d15) encode／raw-154",
+    "156": "P1(d15) encode／raw-156",
+    "158": "P1(d15) H6：叶项求和",
+    "159": "P1(d15) H3：加余项",
+    "164": "P1(d15) T8：基底校正",
+    "166": "P1(d15) encode／raw-166",
+    "168": "P1(d15) encode／raw-168",
+    "170": "P1(d15) H5：叶项求和",
+    "172": "P1(d15) encode／raw-172",
+    "174": "P1(d15) encode／raw-174",
+    "176": "P1(d15) H4：叶项求和",
+    "177": "P1(d15) H2：加余项",
+    "178": "P1(d15) H1：加余项",
+    "183": "P2(d15) T2：基底校正",
+    "186": "P2(d15) T3：基底校正",
+    "187": "P2(d15) encode／raw-187",
+    "190": "P2(d15) encode／raw-190",
+    "192": "P2(d15) H7：加余项",
+    "197": "P2(d15) T4：基底校正",
+    "199": "P2(d15) encode／raw-199",
+    "201": "P2(d15) encode／raw-201",
+    "203": "P2(d15) H6：叶项求和",
+    "204": "P2(d15) H3：加余项",
+    "209": "P2(d15) T8：基底校正",
+    "211": "P2(d15) encode／raw-211",
+    "213": "P2(d15) encode／raw-213",
+    "215": "P2(d15) H5：叶项求和",
+    "217": "P2(d15) encode／raw-217",
+    "219": "P2(d15) encode／raw-219",
+    "221": "P2(d15) H4：叶项求和",
+    "222": "P2(d15) H2：加余项",
+    "223": "P2(d15) H1：加余项",
+    "228": "P3(d27) T2：基底校正",
+    "231": "P3(d27) T3：基底校正",
+    "236": "P3(d27) T4：基底校正",
+    "242": "P3(d27) T5：基底校正",
+    "243": "P3(d27) T7：基底校正",
+    "244": "P3(d27) encode／raw-244",
+    "246": "P3(d27) encode／raw-246",
+    "248": "P3(d27) H7：叶项求和",
+    "253": "P3(d27) T8：基底校正",
+    "255": "P3(d27) encode／raw-255",
+    "257": "P3(d27) encode／raw-257",
+    "259": "P3(d27) encode／raw-259",
+    "261": "P3(d27) encode／raw-261",
+    "263": "P3(d27) H6：叶项求和",
+    "264": "P3(d27) H6：叶项求和",
+    "265": "P3(d27) H6：叶项求和",
+    "266": "P3(d27) H3：加余项",
+    "271": "P3(d27) T16：基底校正",
+    "273": "P3(d27) encode／raw-273",
+    "275": "P3(d27) encode／raw-275",
+    "277": "P3(d27) encode／raw-277",
+    "279": "P3(d27) encode／raw-279",
+    "281": "P3(d27) H5：叶项求和",
+    "282": "P3(d27) H5：叶项求和",
+    "283": "P3(d27) H5：叶项求和",
+    "285": "P3(d27) encode／raw-285",
+    "287": "P3(d27) encode／raw-287",
+    "289": "P3(d27) encode／raw-289",
+    "291": "P3(d27) encode／raw-291",
+    "293": "P3(d27) H4：叶项求和",
+    "294": "P3(d27) H4：叶项求和",
+    "295": "P3(d27) H4：叶项求和",
+    "296": "P3(d27) H2：加余项",
+    "297": "P3(d27) H1：加余项",
+    "299": "尾部 P3 输出 + 0.5",
+    "135": "P1(d15) T3：倍增（折成加法）",
+    "136": "P1(d15) T2：T1 × T1",
+    "139": "P1(d15) T3：T1 × T2",
+    "143": "P1(d15) H15：T1 × c0",
+    "149": "P1(d15) T4：倍增（折成加法）",
+    "140": "P1(d15) T3：减去 T1",
+    "144": "P1(d15) H7：商项 × T2",
+    "150": "P1(d15) T4：T2 × T2",
+    "146": "P1(d15) H14：T1 × c0",
+    "155": "P1(d15) H6：T1 × c0",
+    "157": "P1(d15) H6：T3 × c1",
+    "167": "P1(d15) H5：T1 × c0",
+    "161": "P1(d15) T8：倍增（折成加法）",
+    "169": "P1(d15) H5：T3 × c1",
+    "153": "P1(d15) H3：商项 × T4",
+    "162": "P1(d15) T8：T4 × T4",
+    "173": "P1(d15) H4：T1 × c0",
+    "175": "P1(d15) H4：T3 × c1",
+    "171": "P1(d15) H2：商项 × T4",
+    "165": "P1(d15) H1：商项 × T8",
+    "180": "P2(d15) T3：倍增（折成加法）",
+    "181": "P2(d15) T2：T1 × T1",
+    "188": "P2(d15) H15：T1 × c0",
+    "184": "P2(d15) T3：T1 × T2",
+    "194": "P2(d15) T4：倍增（折成加法）",
+    "191": "P2(d15) H14：T1 × c0",
+    "195": "P2(d15) T4：T2 × T2",
+    "185": "P2(d15) T3：减去 T1",
+    "189": "P2(d15) H7：商项 × T2",
+    "200": "P2(d15) H6：T1 × c0",
+    "212": "P2(d15) H5：T1 × c0",
+    "202": "P2(d15) H6：T3 × c1",
+    "206": "P2(d15) T8：倍增（折成加法）",
+    "198": "P2(d15) H3：商项 × T4",
+    "207": "P2(d15) T8：T4 × T4",
+    "214": "P2(d15) H5：T3 × c1",
+    "218": "P2(d15) H4：T1 × c0",
+    "220": "P2(d15) H4：T3 × c1",
+    "216": "P2(d15) H2：商项 × T4",
+    "210": "P2(d15) H1：商项 × T8",
+    "225": "P3(d27) T5：倍增（折成加法）",
+    "226": "P3(d27) T2：T1 × T1",
+    "233": "P3(d27) T4：倍增（折成加法）",
+    "229": "P3(d27) T3：T1 × T2",
+    "234": "P3(d27) T4：T2 × T2",
+    "230": "P3(d27) T7：减去 T1",
+    "237": "P3(d27) T5：T1 × T4",
+    "239": "P3(d27) T7：倍增（折成加法）",
+    "241": "P3(d27) T5：减去 T3",
+    "245": "P3(d27) H7：T1 × c0",
+    "250": "P3(d27) T8：倍增（折成加法）",
+    "240": "P3(d27) T7：T3 × T4",
+    "247": "P3(d27) H7：T3 × c1",
+    "251": "P3(d27) T8：T4 × T4",
+    "256": "P3(d27) H6：T1 × c0",
+    "258": "P3(d27) H6：T3 × c1",
+    "274": "P3(d27) H5：T1 × c0",
+    "276": "P3(d27) H5：T3 × c1",
+    "260": "P3(d27) H6：T5 × c2",
+    "278": "P3(d27) H5：T5 × c2",
+    "254": "P3(d27) H3：商项 × T8",
+    "268": "P3(d27) T16：倍增（折成加法）",
+    "262": "P3(d27) H6：T7 × c3",
+    "269": "P3(d27) T16：T8 × T8",
+    "280": "P3(d27) H5：T7 × c3",
+    "286": "P3(d27) H4：T1 × c0",
+    "288": "P3(d27) H4：T3 × c1",
+    "290": "P3(d27) H4：T5 × c2",
+    "284": "P3(d27) H2：商项 × T8",
+    "292": "P3(d27) H4：T7 × c3",
+    "272": "P3(d27) H1：商项 × T16",
+    "300": "尾部 尾部：x × (P3 + 0.5)"
+  }
+}

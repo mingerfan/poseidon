@@ -1,0 +1,4274 @@
+{
+  "source": "scale-trace.json",
+  "validation": {
+    "manual_operations": 218,
+    "compiler_operations": 479,
+    "matched_mathematical_multiplications": 57,
+    "matched_correction_scale_alignments": 5,
+    "matched_result_checkpoints": 41,
+    "multiplication_rows": 99,
+    "manual_multiplications": 62,
+    "compiler_multiplications": 99,
+    "all_original_dependencies_checked": true,
+    "matched_multiplication_dependencies_equal": true,
+    "coefficient_absolute_tolerance": 1e-12,
+    "source_operations_and_numeric_values_unchanged": true
+  },
+  "order": [
+    {
+      "manual": "M000",
+      "compiler": "0",
+      "alignment": "input",
+      "stage": "输入",
+      "label": "ReLU 输入",
+      "topological_row": 1
+    },
+    {
+      "compiler": "396",
+      "alignment": "auxiliary",
+      "stage": "输入",
+      "label": "transfer",
+      "topological_row": 2
+    },
+    {
+      "compiler": "1",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：倍增（折成加法）",
+      "topological_row": 3
+    },
+    {
+      "manual": "M001",
+      "compiler": "2",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "T2：T1 × T1",
+      "topological_row": 4
+    },
+    {
+      "manual": "M002",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T2：乘积加倍",
+      "topological_row": 5
+    },
+    {
+      "manual": "M003",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T2：减去常数 1",
+      "topological_row": 6
+    },
+    {
+      "compiler": "3",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T2：T1 × T1",
+      "topological_row": 7
+    },
+    {
+      "compiler": "4",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T2：T1 × T1",
+      "topological_row": 8
+    },
+    {
+      "compiler": "5",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T2：基底校正",
+      "topological_row": 9
+    },
+    {
+      "compiler": "397",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 10
+    },
+    {
+      "manual": "M004",
+      "compiler": "6",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "T2 完成",
+      "topological_row": 11
+    },
+    {
+      "compiler": "34",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T4：倍增（折成加法）",
+      "topological_row": 12
+    },
+    {
+      "manual": "M005",
+      "compiler": "35",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 13
+    },
+    {
+      "manual": "M006",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T4：乘积加倍",
+      "topological_row": 14
+    },
+    {
+      "manual": "M007",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T4：减去常数 1",
+      "topological_row": 15
+    },
+    {
+      "compiler": "36",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 16
+    },
+    {
+      "compiler": "37",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 17
+    },
+    {
+      "compiler": "38",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 18
+    },
+    {
+      "compiler": "39",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T4：基底校正",
+      "topological_row": 19
+    },
+    {
+      "compiler": "404",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 20
+    },
+    {
+      "manual": "M008",
+      "compiler": "40",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "T4 完成",
+      "topological_row": 21
+    },
+    {
+      "manual": "M009",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：T2 × T1／右支路 ModSwitch",
+      "topological_row": 22
+    },
+    {
+      "compiler": "7",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 23
+    },
+    {
+      "manual": "M010",
+      "compiler": "8",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 24
+    },
+    {
+      "manual": "M011",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：乘积加倍",
+      "topological_row": 25
+    },
+    {
+      "manual": "M012",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：T1 × 1 对齐／源支路 ModSwitch",
+      "topological_row": 26
+    },
+    {
+      "manual": "M013",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：T1 × 1 对齐／编码",
+      "topological_row": 27
+    },
+    {
+      "compiler": "11",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：减去 T1",
+      "topological_row": 28
+    },
+    {
+      "compiler": "12",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：减去 T1",
+      "topological_row": 29
+    },
+    {
+      "compiler": "13",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：基底校正",
+      "topological_row": 30
+    },
+    {
+      "compiler": "398",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 31
+    },
+    {
+      "manual": "M014",
+      "compiler": "14",
+      "alignment": "scale_alignment",
+      "stage": "P1(d15)",
+      "label": "T3：校正支路 ×1 对齐",
+      "topological_row": 32
+    },
+    {
+      "manual": "M015",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：减去 T1",
+      "topological_row": 33
+    },
+    {
+      "compiler": "15",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：基底校正",
+      "topological_row": 34
+    },
+    {
+      "compiler": "399",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 35
+    },
+    {
+      "compiler": "9",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 36
+    },
+    {
+      "compiler": "10",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 37
+    },
+    {
+      "compiler": "16",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／T3：基底校正",
+      "topological_row": 38
+    },
+    {
+      "manual": "M016",
+      "compiler": "17",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "T3 完成",
+      "topological_row": 39
+    },
+    {
+      "compiler": "58",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T8：倍增（折成加法）",
+      "topological_row": 40
+    },
+    {
+      "manual": "M017",
+      "compiler": "59",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "T8：T4 × T4",
+      "topological_row": 41
+    },
+    {
+      "manual": "M018",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T8：乘积加倍",
+      "topological_row": 42
+    },
+    {
+      "manual": "M019",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T8：减去常数 1",
+      "topological_row": 43
+    },
+    {
+      "compiler": "60",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T8：T4 × T4",
+      "topological_row": 44
+    },
+    {
+      "compiler": "61",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T8：T4 × T4",
+      "topological_row": 45
+    },
+    {
+      "compiler": "62",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "T8：基底校正",
+      "topological_row": 46
+    },
+    {
+      "compiler": "409",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 47
+    },
+    {
+      "manual": "M020",
+      "compiler": "63",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "T8 完成",
+      "topological_row": 48
+    },
+    {
+      "manual": "M021",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H15：T1 × c0／编码",
+      "topological_row": 49
+    },
+    {
+      "compiler": "18",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-142",
+      "topological_row": 50
+    },
+    {
+      "compiler": "400",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 51
+    },
+    {
+      "manual": "M022",
+      "compiler": "19",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H15：T1 × c0",
+      "topological_row": 52
+    },
+    {
+      "manual": "M023",
+      "compiler": "20",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H15 完成",
+      "topological_row": 53
+    },
+    {
+      "manual": "M024",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H14：T1 × c0／编码",
+      "topological_row": 54
+    },
+    {
+      "compiler": "25",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-145",
+      "topological_row": 55
+    },
+    {
+      "compiler": "401",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 56
+    },
+    {
+      "manual": "M025",
+      "compiler": "26",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H14：T1 × c0",
+      "topological_row": 57
+    },
+    {
+      "manual": "M026",
+      "compiler": "27",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H14 完成",
+      "topological_row": 58
+    },
+    {
+      "manual": "M027",
+      "compiler": "21",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H7：T2 × 商项",
+      "topological_row": 59
+    },
+    {
+      "manual": "M028",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H7：加余项",
+      "topological_row": 60
+    },
+    {
+      "compiler": "22",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H7：商项 × T2",
+      "topological_row": 61
+    },
+    {
+      "compiler": "23",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H7：商项 × T2",
+      "topological_row": 62
+    },
+    {
+      "compiler": "24",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H7：商项 × T2",
+      "topological_row": 63
+    },
+    {
+      "compiler": "28",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H7：加余项",
+      "topological_row": 64
+    },
+    {
+      "compiler": "30",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H7：加余项",
+      "topological_row": 65
+    },
+    {
+      "compiler": "31",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H7：加余项",
+      "topological_row": 66
+    },
+    {
+      "compiler": "402",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 67
+    },
+    {
+      "compiler": "29",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H7：加余项",
+      "topological_row": 68
+    },
+    {
+      "compiler": "403",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 69
+    },
+    {
+      "compiler": "32",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H7：加余项",
+      "topological_row": 70
+    },
+    {
+      "manual": "M029",
+      "compiler": "33",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H7 完成",
+      "topological_row": 71
+    },
+    {
+      "manual": "M030",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：T1 × c0／源支路 ModSwitch",
+      "topological_row": 72
+    },
+    {
+      "manual": "M031",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：T1 × c0／编码",
+      "topological_row": 73
+    },
+    {
+      "compiler": "44",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-154",
+      "topological_row": 74
+    },
+    {
+      "compiler": "405",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 75
+    },
+    {
+      "manual": "M032",
+      "compiler": "45",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H6：T1 × c0",
+      "topological_row": 76
+    },
+    {
+      "manual": "M033",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：T3 × c1／编码",
+      "topological_row": 77
+    },
+    {
+      "compiler": "47",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-156",
+      "topological_row": 78
+    },
+    {
+      "compiler": "406",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 79
+    },
+    {
+      "manual": "M034",
+      "compiler": "48",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H6：T3 × c1",
+      "topological_row": 80
+    },
+    {
+      "manual": "M035",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：叶项求和",
+      "topological_row": 81
+    },
+    {
+      "compiler": "46",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：T1 × c0",
+      "topological_row": 82
+    },
+    {
+      "compiler": "49",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：T3 × c1",
+      "topological_row": 83
+    },
+    {
+      "compiler": "50",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：T3 × c1",
+      "topological_row": 84
+    },
+    {
+      "compiler": "51",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：叶项求和",
+      "topological_row": 85
+    },
+    {
+      "compiler": "52",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H6：叶项求和",
+      "topological_row": 86
+    },
+    {
+      "compiler": "407",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 87
+    },
+    {
+      "compiler": "53",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H6：叶项求和",
+      "topological_row": 88
+    },
+    {
+      "manual": "M036",
+      "compiler": "54",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H6 完成",
+      "topological_row": 89
+    },
+    {
+      "manual": "M037",
+      "compiler": "41",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H3：T4 × 商项",
+      "topological_row": 90
+    },
+    {
+      "manual": "M038",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H3：加余项",
+      "topological_row": 91
+    },
+    {
+      "compiler": "42",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H3：商项 × T4",
+      "topological_row": 92
+    },
+    {
+      "compiler": "43",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H3：商项 × T4",
+      "topological_row": 93
+    },
+    {
+      "compiler": "55",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H3：加余项",
+      "topological_row": 94
+    },
+    {
+      "compiler": "408",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 95
+    },
+    {
+      "compiler": "56",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H3：加余项",
+      "topological_row": 96
+    },
+    {
+      "manual": "M039",
+      "compiler": "57",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H3 完成",
+      "topological_row": 97
+    },
+    {
+      "manual": "M040",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：T1 × c0／源支路 ModSwitch",
+      "topological_row": 98
+    },
+    {
+      "manual": "M041",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：T1 × c0／编码",
+      "topological_row": 99
+    },
+    {
+      "compiler": "68",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-166",
+      "topological_row": 100
+    },
+    {
+      "compiler": "410",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 101
+    },
+    {
+      "manual": "M042",
+      "compiler": "69",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H5：T1 × c0",
+      "topological_row": 102
+    },
+    {
+      "manual": "M043",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：T3 × c1／编码",
+      "topological_row": 103
+    },
+    {
+      "compiler": "71",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-168",
+      "topological_row": 104
+    },
+    {
+      "compiler": "411",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 105
+    },
+    {
+      "manual": "M044",
+      "compiler": "72",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H5：T3 × c1",
+      "topological_row": 106
+    },
+    {
+      "manual": "M045",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：叶项求和",
+      "topological_row": 107
+    },
+    {
+      "compiler": "70",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：T1 × c0",
+      "topological_row": 108
+    },
+    {
+      "compiler": "73",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：T3 × c1",
+      "topological_row": 109
+    },
+    {
+      "compiler": "74",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：T3 × c1",
+      "topological_row": 110
+    },
+    {
+      "compiler": "75",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：叶项求和",
+      "topological_row": 111
+    },
+    {
+      "compiler": "76",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H5：叶项求和",
+      "topological_row": 112
+    },
+    {
+      "compiler": "412",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 113
+    },
+    {
+      "compiler": "77",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H5：叶项求和",
+      "topological_row": 114
+    },
+    {
+      "manual": "M046",
+      "compiler": "78",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H5 完成",
+      "topological_row": 115
+    },
+    {
+      "manual": "M047",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：T1 × c0／源支路 ModSwitch",
+      "topological_row": 116
+    },
+    {
+      "manual": "M048",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：T1 × c0／编码",
+      "topological_row": 117
+    },
+    {
+      "compiler": "83",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-172",
+      "topological_row": 118
+    },
+    {
+      "compiler": "413",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 119
+    },
+    {
+      "manual": "M049",
+      "compiler": "84",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H4：T1 × c0",
+      "topological_row": 120
+    },
+    {
+      "manual": "M050",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：T3 × c1／编码",
+      "topological_row": 121
+    },
+    {
+      "compiler": "86",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "encode／raw-174",
+      "topological_row": 122
+    },
+    {
+      "compiler": "414",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 123
+    },
+    {
+      "manual": "M051",
+      "compiler": "87",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H4：T3 × c1",
+      "topological_row": 124
+    },
+    {
+      "manual": "M052",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 125
+    },
+    {
+      "compiler": "85",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：T1 × c0",
+      "topological_row": 126
+    },
+    {
+      "compiler": "88",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：T3 × c1",
+      "topological_row": 127
+    },
+    {
+      "compiler": "89",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：T3 × c1",
+      "topological_row": 128
+    },
+    {
+      "compiler": "90",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 129
+    },
+    {
+      "compiler": "91",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 130
+    },
+    {
+      "compiler": "92",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 131
+    },
+    {
+      "compiler": "415",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 132
+    },
+    {
+      "compiler": "93",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H4：叶项求和",
+      "topological_row": 133
+    },
+    {
+      "manual": "M053",
+      "compiler": "94",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H4 完成",
+      "topological_row": 134
+    },
+    {
+      "compiler": "79",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H2：商项 × T4",
+      "topological_row": 135
+    },
+    {
+      "manual": "M054",
+      "compiler": "80",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H2：T4 × 商项",
+      "topological_row": 136
+    },
+    {
+      "manual": "M055",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H2：加余项",
+      "topological_row": 137
+    },
+    {
+      "compiler": "81",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H2：商项 × T4",
+      "topological_row": 138
+    },
+    {
+      "compiler": "82",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H2：商项 × T4",
+      "topological_row": 139
+    },
+    {
+      "compiler": "96",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H2：加余项",
+      "topological_row": 140
+    },
+    {
+      "compiler": "417",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 141
+    },
+    {
+      "compiler": "97",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H2：加余项",
+      "topological_row": 142
+    },
+    {
+      "compiler": "98",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H2：加余项",
+      "topological_row": 143
+    },
+    {
+      "manual": "M056",
+      "compiler": "99",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H2 完成",
+      "topological_row": 144
+    },
+    {
+      "manual": "M057",
+      "compiler": "64",
+      "alignment": "multiplication",
+      "stage": "P1(d15)",
+      "label": "H1：T8 × 商项",
+      "topological_row": 145
+    },
+    {
+      "manual": "M058",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H1：加余项",
+      "topological_row": 146
+    },
+    {
+      "compiler": "101",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H1：加余项",
+      "topological_row": 147
+    },
+    {
+      "compiler": "418",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 148
+    },
+    {
+      "compiler": "102",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H1：加余项",
+      "topological_row": 149
+    },
+    {
+      "compiler": "65",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H1：商项 × T8",
+      "topological_row": 150
+    },
+    {
+      "compiler": "66",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H1：商项 × T8",
+      "topological_row": 151
+    },
+    {
+      "compiler": "67",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H1：商项 × T8",
+      "topological_row": 152
+    },
+    {
+      "compiler": "95",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "H2：加余项",
+      "topological_row": 153
+    },
+    {
+      "compiler": "416",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "transfer",
+      "topological_row": 154
+    },
+    {
+      "compiler": "100",
+      "alignment": "auxiliary",
+      "stage": "P1(d15)",
+      "label": "×1 scale 对齐／H1：加余项",
+      "topological_row": 155
+    },
+    {
+      "manual": "M059",
+      "compiler": "103",
+      "alignment": "checkpoint",
+      "stage": "P1(d15)",
+      "label": "H1 完成",
+      "topological_row": 156
+    },
+    {
+      "compiler": "104",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：倍增（折成加法）",
+      "topological_row": 157
+    },
+    {
+      "manual": "M060",
+      "compiler": "105",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "T2：T1 × T1",
+      "topological_row": 158
+    },
+    {
+      "manual": "M061",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T2：乘积加倍",
+      "topological_row": 159
+    },
+    {
+      "manual": "M062",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T2：减去常数 1",
+      "topological_row": 160
+    },
+    {
+      "compiler": "106",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T2：T1 × T1",
+      "topological_row": 161
+    },
+    {
+      "compiler": "107",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T2：T1 × T1",
+      "topological_row": 162
+    },
+    {
+      "compiler": "108",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T2：T1 × T1",
+      "topological_row": 163
+    },
+    {
+      "compiler": "109",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T2：基底校正",
+      "topological_row": 164
+    },
+    {
+      "compiler": "419",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 165
+    },
+    {
+      "manual": "M063",
+      "compiler": "110",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "T2 完成",
+      "topological_row": 166
+    },
+    {
+      "compiler": "137",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T4：倍增（折成加法）",
+      "topological_row": 167
+    },
+    {
+      "manual": "M064",
+      "compiler": "138",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 168
+    },
+    {
+      "manual": "M065",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T4：乘积加倍",
+      "topological_row": 169
+    },
+    {
+      "manual": "M066",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T4：减去常数 1",
+      "topological_row": 170
+    },
+    {
+      "compiler": "139",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 171
+    },
+    {
+      "compiler": "140",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 172
+    },
+    {
+      "compiler": "141",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T4：T2 × T2",
+      "topological_row": 173
+    },
+    {
+      "compiler": "142",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T4：基底校正",
+      "topological_row": 174
+    },
+    {
+      "compiler": "424",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 175
+    },
+    {
+      "manual": "M067",
+      "compiler": "143",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "T4 完成",
+      "topological_row": 176
+    },
+    {
+      "manual": "M068",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：T2 × T1／右支路 ModSwitch",
+      "topological_row": 177
+    },
+    {
+      "compiler": "111",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 178
+    },
+    {
+      "manual": "M069",
+      "compiler": "112",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 179
+    },
+    {
+      "manual": "M070",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：乘积加倍",
+      "topological_row": 180
+    },
+    {
+      "manual": "M071",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：T1 × 1 对齐／源支路 ModSwitch",
+      "topological_row": 181
+    },
+    {
+      "manual": "M072",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：T1 × 1 对齐／编码",
+      "topological_row": 182
+    },
+    {
+      "compiler": "116",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：减去 T1",
+      "topological_row": 183
+    },
+    {
+      "compiler": "117",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：减去 T1",
+      "topological_row": 184
+    },
+    {
+      "compiler": "118",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：基底校正",
+      "topological_row": 185
+    },
+    {
+      "compiler": "420",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 186
+    },
+    {
+      "manual": "M073",
+      "compiler": "119",
+      "alignment": "scale_alignment",
+      "stage": "P2(d15)",
+      "label": "T3：校正支路 ×1 对齐",
+      "topological_row": 187
+    },
+    {
+      "manual": "M074",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：减去 T1",
+      "topological_row": 188
+    },
+    {
+      "compiler": "113",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 189
+    },
+    {
+      "compiler": "114",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 190
+    },
+    {
+      "compiler": "115",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T3：T1 × T2",
+      "topological_row": 191
+    },
+    {
+      "manual": "M075",
+      "compiler": "120",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "T3 完成",
+      "topological_row": 192
+    },
+    {
+      "compiler": "163",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T8：倍增（折成加法）",
+      "topological_row": 193
+    },
+    {
+      "manual": "M076",
+      "compiler": "164",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "T8：T4 × T4",
+      "topological_row": 194
+    },
+    {
+      "manual": "M077",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T8：乘积加倍",
+      "topological_row": 195
+    },
+    {
+      "manual": "M078",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T8：减去常数 1",
+      "topological_row": 196
+    },
+    {
+      "compiler": "165",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T8：T4 × T4",
+      "topological_row": 197
+    },
+    {
+      "compiler": "166",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T8：T4 × T4",
+      "topological_row": 198
+    },
+    {
+      "compiler": "167",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T8：T4 × T4",
+      "topological_row": 199
+    },
+    {
+      "compiler": "168",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "T8：基底校正",
+      "topological_row": 200
+    },
+    {
+      "compiler": "429",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 201
+    },
+    {
+      "manual": "M079",
+      "compiler": "169",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "T8 完成",
+      "topological_row": 202
+    },
+    {
+      "manual": "M080",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H15：T1 × c0／编码",
+      "topological_row": 203
+    },
+    {
+      "compiler": "121",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-187",
+      "topological_row": 204
+    },
+    {
+      "compiler": "421",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 205
+    },
+    {
+      "manual": "M081",
+      "compiler": "122",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H15：T1 × c0",
+      "topological_row": 206
+    },
+    {
+      "compiler": "123",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H15：T1 × c0",
+      "topological_row": 207
+    },
+    {
+      "manual": "M082",
+      "compiler": "124",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H15 完成",
+      "topological_row": 208
+    },
+    {
+      "manual": "M083",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H14：T1 × c0／编码",
+      "topological_row": 209
+    },
+    {
+      "compiler": "129",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-190",
+      "topological_row": 210
+    },
+    {
+      "compiler": "422",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 211
+    },
+    {
+      "manual": "M084",
+      "compiler": "130",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H14：T1 × c0",
+      "topological_row": 212
+    },
+    {
+      "compiler": "131",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H14：T1 × c0",
+      "topological_row": 213
+    },
+    {
+      "manual": "M085",
+      "compiler": "132",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H14 完成",
+      "topological_row": 214
+    },
+    {
+      "manual": "M086",
+      "compiler": "125",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H7：T2 × 商项",
+      "topological_row": 215
+    },
+    {
+      "manual": "M087",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H7：加余项",
+      "topological_row": 216
+    },
+    {
+      "compiler": "126",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H7：商项 × T2",
+      "topological_row": 217
+    },
+    {
+      "compiler": "127",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H7：商项 × T2",
+      "topological_row": 218
+    },
+    {
+      "compiler": "128",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H7：商项 × T2",
+      "topological_row": 219
+    },
+    {
+      "compiler": "133",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H7：加余项",
+      "topological_row": 220
+    },
+    {
+      "compiler": "134",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H7：加余项",
+      "topological_row": 221
+    },
+    {
+      "compiler": "423",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 222
+    },
+    {
+      "compiler": "135",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H7：加余项",
+      "topological_row": 223
+    },
+    {
+      "manual": "M088",
+      "compiler": "136",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H7 完成",
+      "topological_row": 224
+    },
+    {
+      "manual": "M089",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：T1 × c0／源支路 ModSwitch",
+      "topological_row": 225
+    },
+    {
+      "manual": "M090",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：T1 × c0／编码",
+      "topological_row": 226
+    },
+    {
+      "compiler": "148",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-199",
+      "topological_row": 227
+    },
+    {
+      "compiler": "425",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 228
+    },
+    {
+      "manual": "M091",
+      "compiler": "149",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H6：T1 × c0",
+      "topological_row": 229
+    },
+    {
+      "manual": "M092",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：T3 × c1／编码",
+      "topological_row": 230
+    },
+    {
+      "compiler": "152",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-201",
+      "topological_row": 231
+    },
+    {
+      "compiler": "426",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 232
+    },
+    {
+      "manual": "M093",
+      "compiler": "153",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H6：T3 × c1",
+      "topological_row": 233
+    },
+    {
+      "manual": "M094",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：叶项求和",
+      "topological_row": 234
+    },
+    {
+      "compiler": "150",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：T1 × c0",
+      "topological_row": 235
+    },
+    {
+      "compiler": "151",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：T1 × c0",
+      "topological_row": 236
+    },
+    {
+      "compiler": "154",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：T3 × c1",
+      "topological_row": 237
+    },
+    {
+      "compiler": "155",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：T3 × c1",
+      "topological_row": 238
+    },
+    {
+      "compiler": "156",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：叶项求和",
+      "topological_row": 239
+    },
+    {
+      "compiler": "157",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H6：叶项求和",
+      "topological_row": 240
+    },
+    {
+      "compiler": "427",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 241
+    },
+    {
+      "compiler": "158",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H6：叶项求和",
+      "topological_row": 242
+    },
+    {
+      "manual": "M095",
+      "compiler": "159",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H6 完成",
+      "topological_row": 243
+    },
+    {
+      "manual": "M096",
+      "compiler": "144",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H3：T4 × 商项",
+      "topological_row": 244
+    },
+    {
+      "manual": "M097",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H3：加余项",
+      "topological_row": 245
+    },
+    {
+      "compiler": "145",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H3：商项 × T4",
+      "topological_row": 246
+    },
+    {
+      "compiler": "146",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H3：商项 × T4",
+      "topological_row": 247
+    },
+    {
+      "compiler": "147",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H3：商项 × T4",
+      "topological_row": 248
+    },
+    {
+      "compiler": "160",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H3：加余项",
+      "topological_row": 249
+    },
+    {
+      "compiler": "428",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 250
+    },
+    {
+      "compiler": "161",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H3：加余项",
+      "topological_row": 251
+    },
+    {
+      "manual": "M098",
+      "compiler": "162",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H3 完成",
+      "topological_row": 252
+    },
+    {
+      "manual": "M099",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：T1 × c0／源支路 ModSwitch",
+      "topological_row": 253
+    },
+    {
+      "manual": "M100",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：T1 × c0／编码",
+      "topological_row": 254
+    },
+    {
+      "compiler": "174",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-211",
+      "topological_row": 255
+    },
+    {
+      "compiler": "430",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 256
+    },
+    {
+      "manual": "M101",
+      "compiler": "175",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H5：T1 × c0",
+      "topological_row": 257
+    },
+    {
+      "manual": "M102",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：T3 × c1／编码",
+      "topological_row": 258
+    },
+    {
+      "compiler": "178",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-213",
+      "topological_row": 259
+    },
+    {
+      "compiler": "431",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 260
+    },
+    {
+      "manual": "M103",
+      "compiler": "179",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H5：T3 × c1",
+      "topological_row": 261
+    },
+    {
+      "manual": "M104",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：叶项求和",
+      "topological_row": 262
+    },
+    {
+      "compiler": "176",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：T1 × c0",
+      "topological_row": 263
+    },
+    {
+      "compiler": "177",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：T1 × c0",
+      "topological_row": 264
+    },
+    {
+      "compiler": "180",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：T3 × c1",
+      "topological_row": 265
+    },
+    {
+      "compiler": "181",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：T3 × c1",
+      "topological_row": 266
+    },
+    {
+      "compiler": "182",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：叶项求和",
+      "topological_row": 267
+    },
+    {
+      "compiler": "183",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H5：叶项求和",
+      "topological_row": 268
+    },
+    {
+      "compiler": "432",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 269
+    },
+    {
+      "compiler": "184",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H5：叶项求和",
+      "topological_row": 270
+    },
+    {
+      "manual": "M105",
+      "compiler": "185",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H5 完成",
+      "topological_row": 271
+    },
+    {
+      "manual": "M106",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：T1 × c0／源支路 ModSwitch",
+      "topological_row": 272
+    },
+    {
+      "manual": "M107",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：T1 × c0／编码",
+      "topological_row": 273
+    },
+    {
+      "compiler": "191",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-217",
+      "topological_row": 274
+    },
+    {
+      "compiler": "433",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 275
+    },
+    {
+      "manual": "M108",
+      "compiler": "192",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H4：T1 × c0",
+      "topological_row": 276
+    },
+    {
+      "manual": "M109",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：T3 × c1／编码",
+      "topological_row": 277
+    },
+    {
+      "compiler": "195",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "encode／raw-219",
+      "topological_row": 278
+    },
+    {
+      "compiler": "434",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 279
+    },
+    {
+      "manual": "M110",
+      "compiler": "196",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H4：T3 × c1",
+      "topological_row": 280
+    },
+    {
+      "manual": "M111",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 281
+    },
+    {
+      "compiler": "193",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：T1 × c0",
+      "topological_row": 282
+    },
+    {
+      "compiler": "194",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：T1 × c0",
+      "topological_row": 283
+    },
+    {
+      "compiler": "197",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：T3 × c1",
+      "topological_row": 284
+    },
+    {
+      "compiler": "198",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：T3 × c1",
+      "topological_row": 285
+    },
+    {
+      "compiler": "199",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 286
+    },
+    {
+      "compiler": "200",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 287
+    },
+    {
+      "compiler": "201",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H4：叶项求和",
+      "topological_row": 288
+    },
+    {
+      "compiler": "435",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 289
+    },
+    {
+      "compiler": "202",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H4：叶项求和",
+      "topological_row": 290
+    },
+    {
+      "manual": "M112",
+      "compiler": "203",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H4 完成",
+      "topological_row": 291
+    },
+    {
+      "compiler": "186",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H2：商项 × T4",
+      "topological_row": 292
+    },
+    {
+      "manual": "M113",
+      "compiler": "187",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H2：T4 × 商项",
+      "topological_row": 293
+    },
+    {
+      "manual": "M114",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H2：加余项",
+      "topological_row": 294
+    },
+    {
+      "compiler": "188",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H2：商项 × T4",
+      "topological_row": 295
+    },
+    {
+      "compiler": "189",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H2：商项 × T4",
+      "topological_row": 296
+    },
+    {
+      "compiler": "190",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H2：商项 × T4",
+      "topological_row": 297
+    },
+    {
+      "compiler": "204",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H2：加余项",
+      "topological_row": 298
+    },
+    {
+      "compiler": "436",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 299
+    },
+    {
+      "compiler": "205",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H2：加余项",
+      "topological_row": 300
+    },
+    {
+      "manual": "M115",
+      "compiler": "206",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H2 完成",
+      "topological_row": 301
+    },
+    {
+      "manual": "M116",
+      "compiler": "170",
+      "alignment": "multiplication",
+      "stage": "P2(d15)",
+      "label": "H1：T8 × 商项",
+      "topological_row": 302
+    },
+    {
+      "manual": "M117",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H1：加余项",
+      "topological_row": 303
+    },
+    {
+      "compiler": "171",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H1：商项 × T8",
+      "topological_row": 304
+    },
+    {
+      "compiler": "172",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H1：商项 × T8",
+      "topological_row": 305
+    },
+    {
+      "compiler": "173",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H1：商项 × T8",
+      "topological_row": 306
+    },
+    {
+      "compiler": "207",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H1：加余项",
+      "topological_row": 307
+    },
+    {
+      "compiler": "209",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "H1：加余项",
+      "topological_row": 308
+    },
+    {
+      "compiler": "437",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 309
+    },
+    {
+      "compiler": "208",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H1：加余项",
+      "topological_row": 310
+    },
+    {
+      "compiler": "438",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "transfer",
+      "topological_row": 311
+    },
+    {
+      "compiler": "210",
+      "alignment": "auxiliary",
+      "stage": "P2(d15)",
+      "label": "×1 scale 对齐／H1：加余项",
+      "topological_row": 312
+    },
+    {
+      "manual": "M118",
+      "compiler": "211",
+      "alignment": "checkpoint",
+      "stage": "P2(d15)",
+      "label": "H1 完成",
+      "topological_row": 313
+    },
+    {
+      "compiler": "212",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：倍增（折成加法）",
+      "topological_row": 314
+    },
+    {
+      "manual": "M119",
+      "compiler": "213",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "T2：T1 × T1",
+      "topological_row": 315
+    },
+    {
+      "manual": "M120",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T2：乘积加倍",
+      "topological_row": 316
+    },
+    {
+      "manual": "M121",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T2：减去常数 1",
+      "topological_row": 317
+    },
+    {
+      "compiler": "214",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T2：T1 × T1",
+      "topological_row": 318
+    },
+    {
+      "compiler": "215",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T2：T1 × T1",
+      "topological_row": 319
+    },
+    {
+      "compiler": "216",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T2：基底校正",
+      "topological_row": 320
+    },
+    {
+      "compiler": "439",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 321
+    },
+    {
+      "manual": "M122",
+      "compiler": "217",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "T2 完成",
+      "topological_row": 322
+    },
+    {
+      "compiler": "229",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T4：倍增（折成加法）",
+      "topological_row": 323
+    },
+    {
+      "manual": "M123",
+      "compiler": "230",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "T4：T2 × T2",
+      "topological_row": 324
+    },
+    {
+      "manual": "M124",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T4：乘积加倍",
+      "topological_row": 325
+    },
+    {
+      "manual": "M125",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T4：减去常数 1",
+      "topological_row": 326
+    },
+    {
+      "compiler": "231",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T4：T2 × T2",
+      "topological_row": 327
+    },
+    {
+      "compiler": "232",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T4：T2 × T2",
+      "topological_row": 328
+    },
+    {
+      "compiler": "233",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T4：T2 × T2",
+      "topological_row": 329
+    },
+    {
+      "compiler": "234",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T4：基底校正",
+      "topological_row": 330
+    },
+    {
+      "compiler": "442",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 331
+    },
+    {
+      "manual": "M126",
+      "compiler": "235",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "T4 完成",
+      "topological_row": 332
+    },
+    {
+      "manual": "M127",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：T2 × T1／右支路 ModSwitch",
+      "topological_row": 333
+    },
+    {
+      "compiler": "218",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：T1 × T2",
+      "topological_row": 334
+    },
+    {
+      "manual": "M128",
+      "compiler": "219",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "T3：T1 × T2",
+      "topological_row": 335
+    },
+    {
+      "manual": "M129",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：乘积加倍",
+      "topological_row": 336
+    },
+    {
+      "manual": "M130",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：T1 × 1 对齐／源支路 ModSwitch",
+      "topological_row": 337
+    },
+    {
+      "manual": "M131",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：T1 × 1 对齐／编码",
+      "topological_row": 338
+    },
+    {
+      "compiler": "222",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：减去 T1",
+      "topological_row": 339
+    },
+    {
+      "compiler": "223",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：减去 T1",
+      "topological_row": 340
+    },
+    {
+      "compiler": "224",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：基底校正",
+      "topological_row": 341
+    },
+    {
+      "compiler": "440",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 342
+    },
+    {
+      "manual": "M132",
+      "compiler": "225",
+      "alignment": "scale_alignment",
+      "stage": "P3(d27)",
+      "label": "T3：校正支路 ×1 对齐",
+      "topological_row": 343
+    },
+    {
+      "manual": "M133",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：减去 T1",
+      "topological_row": 344
+    },
+    {
+      "compiler": "220",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：T1 × T2",
+      "topological_row": 345
+    },
+    {
+      "compiler": "221",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：T1 × T2",
+      "topological_row": 346
+    },
+    {
+      "compiler": "226",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T3：基底校正",
+      "topological_row": 347
+    },
+    {
+      "compiler": "441",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 348
+    },
+    {
+      "compiler": "227",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／T3：基底校正",
+      "topological_row": 349
+    },
+    {
+      "manual": "M134",
+      "compiler": "228",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "T3 完成",
+      "topological_row": 350
+    },
+    {
+      "compiler": "268",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T8：倍增（折成加法）",
+      "topological_row": 351
+    },
+    {
+      "manual": "M135",
+      "compiler": "269",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "T8：T4 × T4",
+      "topological_row": 352
+    },
+    {
+      "manual": "M136",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T8：乘积加倍",
+      "topological_row": 353
+    },
+    {
+      "manual": "M137",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T8：减去常数 1",
+      "topological_row": 354
+    },
+    {
+      "compiler": "270",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T8：T4 × T4",
+      "topological_row": 355
+    },
+    {
+      "compiler": "271",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T8：T4 × T4",
+      "topological_row": 356
+    },
+    {
+      "compiler": "272",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T8：基底校正",
+      "topological_row": 357
+    },
+    {
+      "compiler": "449",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 358
+    },
+    {
+      "manual": "M138",
+      "compiler": "273",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "T8 完成",
+      "topological_row": 359
+    },
+    {
+      "manual": "M139",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：T4 × T1／右支路 ModSwitch",
+      "topological_row": 360
+    },
+    {
+      "compiler": "236",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：T1 × T4",
+      "topological_row": 361
+    },
+    {
+      "manual": "M140",
+      "compiler": "237",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "T5：T1 × T4",
+      "topological_row": 362
+    },
+    {
+      "manual": "M141",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：乘积加倍",
+      "topological_row": 363
+    },
+    {
+      "manual": "M142",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：T3 × 1 对齐／编码",
+      "topological_row": 364
+    },
+    {
+      "compiler": "246",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：减去 T3",
+      "topological_row": 365
+    },
+    {
+      "compiler": "247",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：减去 T3",
+      "topological_row": 366
+    },
+    {
+      "compiler": "250",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：基底校正",
+      "topological_row": 367
+    },
+    {
+      "compiler": "444",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 368
+    },
+    {
+      "manual": "M143",
+      "compiler": "251",
+      "alignment": "scale_alignment",
+      "stage": "P3(d27)",
+      "label": "T5：校正支路 ×1 对齐",
+      "topological_row": 369
+    },
+    {
+      "manual": "M144",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：减去 T3",
+      "topological_row": 370
+    },
+    {
+      "compiler": "238",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：T1 × T4",
+      "topological_row": 371
+    },
+    {
+      "compiler": "239",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：T1 × T4",
+      "topological_row": 372
+    },
+    {
+      "compiler": "248",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T5：基底校正",
+      "topological_row": 373
+    },
+    {
+      "compiler": "443",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 374
+    },
+    {
+      "compiler": "249",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／T5：基底校正",
+      "topological_row": 375
+    },
+    {
+      "manual": "M145",
+      "compiler": "252",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "T5 完成",
+      "topological_row": 376
+    },
+    {
+      "compiler": "240",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：倍增（折成加法）",
+      "topological_row": 377
+    },
+    {
+      "compiler": "241",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：倍增（折成加法）",
+      "topological_row": 378
+    },
+    {
+      "manual": "M146",
+      "compiler": "242",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "T7：T3 × T4",
+      "topological_row": 379
+    },
+    {
+      "manual": "M147",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：乘积加倍",
+      "topological_row": 380
+    },
+    {
+      "manual": "M148",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：T1 × 1 对齐／源支路 ModSwitch",
+      "topological_row": 381
+    },
+    {
+      "manual": "M149",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：T1 × 1 对齐／编码",
+      "topological_row": 382
+    },
+    {
+      "compiler": "253",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：基底校正",
+      "topological_row": 383
+    },
+    {
+      "compiler": "254",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：基底校正",
+      "topological_row": 384
+    },
+    {
+      "compiler": "445",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 385
+    },
+    {
+      "manual": "M150",
+      "compiler": "255",
+      "alignment": "scale_alignment",
+      "stage": "P3(d27)",
+      "label": "T7：校正支路 ×1 对齐",
+      "topological_row": 386
+    },
+    {
+      "manual": "M151",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：减去 T1",
+      "topological_row": 387
+    },
+    {
+      "compiler": "243",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：T3 × T4",
+      "topological_row": 388
+    },
+    {
+      "compiler": "244",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：T3 × T4",
+      "topological_row": 389
+    },
+    {
+      "compiler": "245",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T7：T3 × T4",
+      "topological_row": 390
+    },
+    {
+      "manual": "M152",
+      "compiler": "256",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "T7 完成",
+      "topological_row": 391
+    },
+    {
+      "compiler": "308",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T16：倍增（折成加法）",
+      "topological_row": 392
+    },
+    {
+      "manual": "M153",
+      "compiler": "309",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "T16：T8 × T8",
+      "topological_row": 393
+    },
+    {
+      "manual": "M154",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T16：乘积加倍",
+      "topological_row": 394
+    },
+    {
+      "manual": "M155",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T16：减去常数 1",
+      "topological_row": 395
+    },
+    {
+      "compiler": "310",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T16：T8 × T8",
+      "topological_row": 396
+    },
+    {
+      "compiler": "311",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T16：T8 × T8",
+      "topological_row": 397
+    },
+    {
+      "compiler": "312",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T16：T8 × T8",
+      "topological_row": 398
+    },
+    {
+      "compiler": "313",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "T16：基底校正",
+      "topological_row": 399
+    },
+    {
+      "compiler": "459",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 400
+    },
+    {
+      "manual": "M156",
+      "compiler": "314",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "T16 完成",
+      "topological_row": 401
+    },
+    {
+      "manual": "M157",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：T1 × c0／源支路 ModSwitch",
+      "topological_row": 402
+    },
+    {
+      "manual": "M158",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：T1 × c0／编码",
+      "topological_row": 403
+    },
+    {
+      "compiler": "257",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-244",
+      "topological_row": 404
+    },
+    {
+      "compiler": "446",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 405
+    },
+    {
+      "manual": "M159",
+      "compiler": "258",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H7：T1 × c0",
+      "topological_row": 406
+    },
+    {
+      "manual": "M160",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：T3 × c1／编码",
+      "topological_row": 407
+    },
+    {
+      "compiler": "260",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-246",
+      "topological_row": 408
+    },
+    {
+      "compiler": "447",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 409
+    },
+    {
+      "manual": "M161",
+      "compiler": "261",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H7：T3 × c1",
+      "topological_row": 410
+    },
+    {
+      "manual": "M162",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：叶项求和",
+      "topological_row": 411
+    },
+    {
+      "compiler": "259",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：T1 × c0",
+      "topological_row": 412
+    },
+    {
+      "compiler": "262",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：T3 × c1",
+      "topological_row": 413
+    },
+    {
+      "compiler": "263",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：T3 × c1",
+      "topological_row": 414
+    },
+    {
+      "compiler": "264",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：叶项求和",
+      "topological_row": 415
+    },
+    {
+      "compiler": "265",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H7：叶项求和",
+      "topological_row": 416
+    },
+    {
+      "compiler": "448",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 417
+    },
+    {
+      "compiler": "266",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H7：叶项求和",
+      "topological_row": 418
+    },
+    {
+      "manual": "M163",
+      "compiler": "267",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "H7 完成",
+      "topological_row": 419
+    },
+    {
+      "manual": "M164",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T1 × c0／源支路 ModSwitch",
+      "topological_row": 420
+    },
+    {
+      "manual": "M165",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T1 × c0／编码",
+      "topological_row": 421
+    },
+    {
+      "compiler": "278",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-255",
+      "topological_row": 422
+    },
+    {
+      "compiler": "450",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 423
+    },
+    {
+      "manual": "M166",
+      "compiler": "279",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H6：T1 × c0",
+      "topological_row": 424
+    },
+    {
+      "manual": "M167",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T3 × c1／源支路 ModSwitch",
+      "topological_row": 425
+    },
+    {
+      "manual": "M168",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T3 × c1／编码",
+      "topological_row": 426
+    },
+    {
+      "compiler": "281",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-257",
+      "topological_row": 427
+    },
+    {
+      "compiler": "451",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 428
+    },
+    {
+      "manual": "M169",
+      "compiler": "282",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H6：T3 × c1",
+      "topological_row": 429
+    },
+    {
+      "manual": "M170",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T5 × c2／编码",
+      "topological_row": 430
+    },
+    {
+      "compiler": "285",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-259",
+      "topological_row": 431
+    },
+    {
+      "compiler": "452",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 432
+    },
+    {
+      "manual": "M171",
+      "compiler": "286",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H6：T5 × c2",
+      "topological_row": 433
+    },
+    {
+      "manual": "M172",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T7 × c3／编码",
+      "topological_row": 434
+    },
+    {
+      "compiler": "289",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-261",
+      "topological_row": 435
+    },
+    {
+      "compiler": "453",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 436
+    },
+    {
+      "manual": "M173",
+      "compiler": "290",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H6：T7 × c3",
+      "topological_row": 437
+    },
+    {
+      "manual": "M174",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 438
+    },
+    {
+      "manual": "M175",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 439
+    },
+    {
+      "manual": "M176",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 440
+    },
+    {
+      "compiler": "280",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T1 × c0",
+      "topological_row": 441
+    },
+    {
+      "compiler": "283",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T3 × c1",
+      "topological_row": 442
+    },
+    {
+      "compiler": "284",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T3 × c1",
+      "topological_row": 443
+    },
+    {
+      "compiler": "287",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T5 × c2",
+      "topological_row": 444
+    },
+    {
+      "compiler": "288",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T5 × c2",
+      "topological_row": 445
+    },
+    {
+      "compiler": "291",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：T7 × c3",
+      "topological_row": 446
+    },
+    {
+      "compiler": "292",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 447
+    },
+    {
+      "compiler": "293",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 448
+    },
+    {
+      "compiler": "294",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 449
+    },
+    {
+      "compiler": "297",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 450
+    },
+    {
+      "compiler": "300",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 451
+    },
+    {
+      "compiler": "302",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 452
+    },
+    {
+      "compiler": "454",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 453
+    },
+    {
+      "compiler": "295",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H6：叶项求和",
+      "topological_row": 454
+    },
+    {
+      "compiler": "296",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 455
+    },
+    {
+      "compiler": "455",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 456
+    },
+    {
+      "compiler": "298",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H6：叶项求和",
+      "topological_row": 457
+    },
+    {
+      "compiler": "299",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H6：叶项求和",
+      "topological_row": 458
+    },
+    {
+      "compiler": "456",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 459
+    },
+    {
+      "compiler": "301",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H6：叶项求和",
+      "topological_row": 460
+    },
+    {
+      "compiler": "457",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 461
+    },
+    {
+      "compiler": "303",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H6：叶项求和",
+      "topological_row": 462
+    },
+    {
+      "manual": "M177",
+      "compiler": "304",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "H6 完成",
+      "topological_row": 463
+    },
+    {
+      "manual": "M178",
+      "compiler": "274",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H3：T8 × 商项",
+      "topological_row": 464
+    },
+    {
+      "manual": "M179",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H3：加余项",
+      "topological_row": 465
+    },
+    {
+      "compiler": "275",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H3：商项 × T8",
+      "topological_row": 466
+    },
+    {
+      "compiler": "276",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H3：商项 × T8",
+      "topological_row": 467
+    },
+    {
+      "compiler": "277",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H3：商项 × T8",
+      "topological_row": 468
+    },
+    {
+      "compiler": "305",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H3：加余项",
+      "topological_row": 469
+    },
+    {
+      "compiler": "458",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 470
+    },
+    {
+      "compiler": "306",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H3：加余项",
+      "topological_row": 471
+    },
+    {
+      "manual": "M180",
+      "compiler": "307",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "H3 完成",
+      "topological_row": 472
+    },
+    {
+      "manual": "M181",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T1 × c0／源支路 ModSwitch",
+      "topological_row": 473
+    },
+    {
+      "manual": "M182",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T1 × c0／编码",
+      "topological_row": 474
+    },
+    {
+      "compiler": "320",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-273",
+      "topological_row": 475
+    },
+    {
+      "compiler": "460",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 476
+    },
+    {
+      "manual": "M183",
+      "compiler": "321",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H5：T1 × c0",
+      "topological_row": 477
+    },
+    {
+      "manual": "M184",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T3 × c1／源支路 ModSwitch",
+      "topological_row": 478
+    },
+    {
+      "manual": "M185",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T3 × c1／编码",
+      "topological_row": 479
+    },
+    {
+      "compiler": "323",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-275",
+      "topological_row": 480
+    },
+    {
+      "compiler": "461",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 481
+    },
+    {
+      "manual": "M186",
+      "compiler": "324",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H5：T3 × c1",
+      "topological_row": 482
+    },
+    {
+      "manual": "M187",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T5 × c2／编码",
+      "topological_row": 483
+    },
+    {
+      "compiler": "327",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-277",
+      "topological_row": 484
+    },
+    {
+      "compiler": "462",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 485
+    },
+    {
+      "manual": "M188",
+      "compiler": "328",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H5：T5 × c2",
+      "topological_row": 486
+    },
+    {
+      "manual": "M189",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T7 × c3／编码",
+      "topological_row": 487
+    },
+    {
+      "compiler": "331",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-279",
+      "topological_row": 488
+    },
+    {
+      "compiler": "463",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 489
+    },
+    {
+      "manual": "M190",
+      "compiler": "332",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H5：T7 × c3",
+      "topological_row": 490
+    },
+    {
+      "manual": "M191",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 491
+    },
+    {
+      "manual": "M192",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 492
+    },
+    {
+      "manual": "M193",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 493
+    },
+    {
+      "compiler": "322",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T1 × c0",
+      "topological_row": 494
+    },
+    {
+      "compiler": "325",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T3 × c1",
+      "topological_row": 495
+    },
+    {
+      "compiler": "326",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T3 × c1",
+      "topological_row": 496
+    },
+    {
+      "compiler": "329",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T5 × c2",
+      "topological_row": 497
+    },
+    {
+      "compiler": "330",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T5 × c2",
+      "topological_row": 498
+    },
+    {
+      "compiler": "333",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：T7 × c3",
+      "topological_row": 499
+    },
+    {
+      "compiler": "334",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 500
+    },
+    {
+      "compiler": "335",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 501
+    },
+    {
+      "compiler": "336",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 502
+    },
+    {
+      "compiler": "339",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 503
+    },
+    {
+      "compiler": "343",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 504
+    },
+    {
+      "compiler": "464",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 505
+    },
+    {
+      "compiler": "337",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H5：叶项求和",
+      "topological_row": 506
+    },
+    {
+      "compiler": "338",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 507
+    },
+    {
+      "compiler": "465",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 508
+    },
+    {
+      "compiler": "340",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H5：叶项求和",
+      "topological_row": 509
+    },
+    {
+      "compiler": "341",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H5：叶项求和",
+      "topological_row": 510
+    },
+    {
+      "compiler": "342",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H5：叶项求和",
+      "topological_row": 511
+    },
+    {
+      "compiler": "466",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 512
+    },
+    {
+      "compiler": "344",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H5：叶项求和",
+      "topological_row": 513
+    },
+    {
+      "manual": "M194",
+      "compiler": "345",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "H5 完成",
+      "topological_row": 514
+    },
+    {
+      "manual": "M195",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T1 × c0／源支路 ModSwitch",
+      "topological_row": 515
+    },
+    {
+      "manual": "M196",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T1 × c0／编码",
+      "topological_row": 516
+    },
+    {
+      "compiler": "351",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-285",
+      "topological_row": 517
+    },
+    {
+      "compiler": "467",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 518
+    },
+    {
+      "manual": "M197",
+      "compiler": "352",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H4：T1 × c0",
+      "topological_row": 519
+    },
+    {
+      "manual": "M198",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T3 × c1／源支路 ModSwitch",
+      "topological_row": 520
+    },
+    {
+      "manual": "M199",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T3 × c1／编码",
+      "topological_row": 521
+    },
+    {
+      "compiler": "354",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-287",
+      "topological_row": 522
+    },
+    {
+      "compiler": "468",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 523
+    },
+    {
+      "manual": "M200",
+      "compiler": "355",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H4：T3 × c1",
+      "topological_row": 524
+    },
+    {
+      "manual": "M201",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T5 × c2／编码",
+      "topological_row": 525
+    },
+    {
+      "compiler": "358",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-289",
+      "topological_row": 526
+    },
+    {
+      "compiler": "469",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 527
+    },
+    {
+      "manual": "M202",
+      "compiler": "359",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H4：T5 × c2",
+      "topological_row": 528
+    },
+    {
+      "manual": "M203",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T7 × c3／编码",
+      "topological_row": 529
+    },
+    {
+      "compiler": "362",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "encode／raw-291",
+      "topological_row": 530
+    },
+    {
+      "compiler": "470",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 531
+    },
+    {
+      "manual": "M204",
+      "compiler": "363",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H4：T7 × c3",
+      "topological_row": 532
+    },
+    {
+      "manual": "M205",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 533
+    },
+    {
+      "manual": "M206",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 534
+    },
+    {
+      "manual": "M207",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 535
+    },
+    {
+      "compiler": "353",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T1 × c0",
+      "topological_row": 536
+    },
+    {
+      "compiler": "356",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T3 × c1",
+      "topological_row": 537
+    },
+    {
+      "compiler": "357",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T3 × c1",
+      "topological_row": 538
+    },
+    {
+      "compiler": "360",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T5 × c2",
+      "topological_row": 539
+    },
+    {
+      "compiler": "361",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T5 × c2",
+      "topological_row": 540
+    },
+    {
+      "compiler": "364",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：T7 × c3",
+      "topological_row": 541
+    },
+    {
+      "compiler": "365",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 542
+    },
+    {
+      "compiler": "366",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 543
+    },
+    {
+      "compiler": "367",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 544
+    },
+    {
+      "compiler": "370",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 545
+    },
+    {
+      "compiler": "371",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 546
+    },
+    {
+      "compiler": "374",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 547
+    },
+    {
+      "compiler": "376",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 548
+    },
+    {
+      "compiler": "377",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 549
+    },
+    {
+      "compiler": "471",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 550
+    },
+    {
+      "compiler": "368",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H4：叶项求和",
+      "topological_row": 551
+    },
+    {
+      "compiler": "369",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 552
+    },
+    {
+      "compiler": "472",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 553
+    },
+    {
+      "compiler": "372",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H4：叶项求和",
+      "topological_row": 554
+    },
+    {
+      "compiler": "373",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H4：叶项求和",
+      "topological_row": 555
+    },
+    {
+      "compiler": "473",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 556
+    },
+    {
+      "compiler": "375",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H4：叶项求和",
+      "topological_row": 557
+    },
+    {
+      "compiler": "474",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 558
+    },
+    {
+      "compiler": "378",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H4：叶项求和",
+      "topological_row": 559
+    },
+    {
+      "manual": "M208",
+      "compiler": "379",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "H4 完成",
+      "topological_row": 560
+    },
+    {
+      "compiler": "346",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：商项 × T8",
+      "topological_row": 561
+    },
+    {
+      "manual": "M209",
+      "compiler": "347",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H2：T8 × 商项",
+      "topological_row": 562
+    },
+    {
+      "manual": "M210",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：加余项",
+      "topological_row": 563
+    },
+    {
+      "compiler": "348",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：商项 × T8",
+      "topological_row": 564
+    },
+    {
+      "compiler": "349",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：商项 × T8",
+      "topological_row": 565
+    },
+    {
+      "compiler": "350",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：商项 × T8",
+      "topological_row": 566
+    },
+    {
+      "compiler": "380",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：加余项",
+      "topological_row": 567
+    },
+    {
+      "compiler": "382",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：加余项",
+      "topological_row": 568
+    },
+    {
+      "compiler": "383",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H2：加余项",
+      "topological_row": 569
+    },
+    {
+      "compiler": "475",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 570
+    },
+    {
+      "compiler": "381",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H2：加余项",
+      "topological_row": 571
+    },
+    {
+      "compiler": "476",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 572
+    },
+    {
+      "compiler": "384",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H2：加余项",
+      "topological_row": 573
+    },
+    {
+      "manual": "M211",
+      "compiler": "385",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "H2 完成",
+      "topological_row": 574
+    },
+    {
+      "manual": "M212",
+      "compiler": "315",
+      "alignment": "multiplication",
+      "stage": "P3(d27)",
+      "label": "H1：T16 × 商项",
+      "topological_row": 575
+    },
+    {
+      "compiler": "316",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H1：商项 × T16",
+      "topological_row": 576
+    },
+    {
+      "compiler": "317",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H1：商项 × T16",
+      "topological_row": 577
+    },
+    {
+      "compiler": "318",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H1：商项 × T16",
+      "topological_row": 578
+    },
+    {
+      "compiler": "319",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H1：商项 × T16",
+      "topological_row": 579
+    },
+    {
+      "compiler": "386",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "H1：加余项",
+      "topological_row": 580
+    },
+    {
+      "compiler": "477",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "transfer",
+      "topological_row": 581
+    },
+    {
+      "compiler": "387",
+      "alignment": "auxiliary",
+      "stage": "P3(d27)",
+      "label": "×1 scale 对齐／H1：加余项",
+      "topological_row": 582
+    },
+    {
+      "manual": "M213",
+      "compiler": "388",
+      "alignment": "checkpoint",
+      "stage": "P3(d27)",
+      "label": "H1 完成",
+      "topological_row": 583
+    },
+    {
+      "manual": "M214",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "P3 输出 + 0.5",
+      "topological_row": 584
+    },
+    {
+      "manual": "M215",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "尾部：x × (P3 + 0.5)／左支路 ModSwitch",
+      "topological_row": 585
+    },
+    {
+      "compiler": "389",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "P3 输出 + 0.5",
+      "topological_row": 586
+    },
+    {
+      "compiler": "391",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "尾部：x × (P3 + 0.5)",
+      "topological_row": 587
+    },
+    {
+      "compiler": "478",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "transfer",
+      "topological_row": 588
+    },
+    {
+      "compiler": "390",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "P3 输出 + 0.5",
+      "topological_row": 589
+    },
+    {
+      "manual": "M216",
+      "compiler": "392",
+      "alignment": "multiplication",
+      "stage": "尾部",
+      "label": "尾部：x × (P3 + 0.5)",
+      "topological_row": 590
+    },
+    {
+      "compiler": "393",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "尾部：x × (P3 + 0.5)",
+      "topological_row": 591
+    },
+    {
+      "compiler": "394",
+      "alignment": "auxiliary",
+      "stage": "尾部",
+      "label": "尾部：x × (P3 + 0.5)",
+      "topological_row": 592
+    },
+    {
+      "manual": "M217",
+      "compiler": "395",
+      "alignment": "checkpoint",
+      "stage": "尾部",
+      "label": "ReLU 输出",
+      "topological_row": 593
+    }
+  ]
+}

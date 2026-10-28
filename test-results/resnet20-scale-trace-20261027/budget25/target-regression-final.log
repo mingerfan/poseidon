@@ -1,0 +1,11 @@
+linear passed
+nested-plain passed
+unit-coefficients passed
+shared-basis passed
+explicit-boot passed
+boot-scale-rejection passed
+automatic-boot passed
+external plaintext rejection passed
+fixed schedule passed
+fixed schedule does not insert extra Boots passed
+11 target scale checks passed

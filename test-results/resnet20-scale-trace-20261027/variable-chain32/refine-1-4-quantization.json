@@ -1,0 +1,253 @@
+{
+  "name": "refine-1-4",
+  "model": "Constant plaintext coefficient rounding only; no encryption/rescale rounding or noise modeled",
+  "samples": [
+    {
+      "input": -0.75,
+      "intended": 1.4512532167998415e-05,
+      "quantized": -0.2207473215725958
+    },
+    {
+      "input": -0.5,
+      "intended": 6.117575317099444e-06,
+      "quantized": -0.1757168814085065
+    },
+    {
+      "input": -0.25,
+      "intended": 5.197047515698161e-06,
+      "quantized": -0.08640652982732239
+    },
+    {
+      "input": -0.125,
+      "intended": 5.521619070830708e-06,
+      "quantized": -0.010211115621561198
+    },
+    {
+      "input": 0.0,
+      "intended": 0.0,
+      "quantized": 0.0
+    },
+    {
+      "input": 0.125,
+      "intended": 0.12500552161907083,
+      "quantized": 0.1147888843784388
+    },
+    {
+      "input": 0.25,
+      "intended": 0.25000519704751567,
+      "quantized": 0.1635934701726776
+    },
+    {
+      "input": 0.5,
+      "intended": 0.5000061175753171,
+      "quantized": 0.3242831185914935
+    },
+    {
+      "input": 0.75,
+      "intended": 0.750014512532168,
+      "quantized": 0.5292526784274042
+    },
+    {
+      "input": 0.875,
+      "intended": 0.8749671687982243,
+      "quantized": 0.7858383566501445
+    }
+  ],
+  "low_scale_units": [
+    {
+      "id": "15",
+      "intended": 1.0,
+      "quantized": 1.0969062239406362,
+      "scale_log2": 0.8665598070197973
+    },
+    {
+      "id": "28",
+      "intended": 1.0,
+      "quantized": 1.0,
+      "scale_log2": 8.0
+    },
+    {
+      "id": "31",
+      "intended": 1.0,
+      "quantized": 0.8990518203090967,
+      "scale_log2": 0.15352382147428756
+    },
+    {
+      "id": "52",
+      "intended": 1.0,
+      "quantized": 0.6747157680762149,
+      "scale_log2": 0.5676482169402917
+    },
+    {
+      "id": "57",
+      "intended": 1.0,
+      "quantized": 0.9550232186475606,
+      "scale_log2": 0.06639228632484873
+    },
+    {
+      "id": "78",
+      "intended": 1.0,
+      "quantized": 0.6747157680762149,
+      "scale_log2": 0.5676482169402917
+    },
+    {
+      "id": "94",
+      "intended": 1.0,
+      "quantized": 0.6747157680762149,
+      "scale_log2": 0.5676482169402917
+    },
+    {
+      "id": "100",
+      "intended": 1.0,
+      "quantized": 0.8583764090122468,
+      "scale_log2": 0.22031766822061627
+    },
+    {
+      "id": "103",
+      "intended": 1.0,
+      "quantized": 1.0,
+      "scale_log2": 9.0
+    },
+    {
+      "id": "105",
+      "intended": 1.0,
+      "quantized": 0.9253633604444582,
+      "scale_log2": 0.11190811804115697
+    },
+    {
+      "id": "122",
+      "intended": 1.0,
+      "quantized": 1.0,
+      "scale_log2": 1.0
+    },
+    {
+      "id": "124",
+      "intended": 1.0,
+      "quantized": 0.7196842773744366,
+      "scale_log2": 0.47456395411398944
+    },
+    {
+      "id": "140",
+      "intended": 1.0,
+      "quantized": 0.7196842773744366,
+      "scale_log2": 0.47456395411398944
+    },
+    {
+      "id": "163",
+      "intended": 1.0,
+      "quantized": 0.8728528249935841,
+      "scale_log2": 0.19618967877796223
+    },
+    {
+      "id": "166",
+      "intended": 1.0,
+      "quantized": 1.0,
+      "scale_log2": 4.0
+    },
+    {
+      "id": "168",
+      "intended": 1.0,
+      "quantized": 0.6932741253813869,
+      "scale_log2": 0.5285021781231833
+    },
+    {
+      "id": "191",
+      "intended": 1.0,
+      "quantized": 0.8728528249935841,
+      "scale_log2": 0.19618967877796223
+    },
+    {
+      "id": "209",
+      "intended": 1.0,
+      "quantized": 0.8728528249935841,
+      "scale_log2": 0.19618967877796223
+    },
+    {
+      "id": "212",
+      "intended": 1.0,
+      "quantized": 1.0,
+      "scale_log2": 5.0
+    },
+    {
+      "id": "214",
+      "intended": 1.0,
+      "quantized": 0.736508306426968,
+      "scale_log2": 0.44122629865078977
+    },
+    {
+      "id": "217",
+      "intended": 1.0,
+      "quantized": 0.9945365448157656,
+      "scale_log2": 6.030271523226034
+    },
+    {
+      "id": "257",
+      "intended": 1.0,
+      "quantized": 1.1739994308432329,
+      "scale_log2": 1.3535307916938422
+    },
+    {
+      "id": "271",
+      "intended": 1.0,
+      "quantized": 0.8850881890583033,
+      "scale_log2": 0.17610688423596343
+    },
+    {
+      "id": "302",
+      "intended": 1.0,
+      "quantized": 0.8850881890583033,
+      "scale_log2": 0.17610688423596343
+    },
+    {
+      "id": "309",
+      "intended": 1.0,
+      "quantized": 1.0,
+      "scale_log2": 5.0
+    },
+    {
+      "id": "311",
+      "intended": 1.0,
+      "quantized": 0.7825499380126156,
+      "scale_log2": 0.35374527507937614
+    },
+    {
+      "id": "344",
+      "intended": 1.0,
+      "quantized": 0.8850881890583033,
+      "scale_log2": 0.17610688423596343
+    },
+    {
+      "id": "352",
+      "intended": 1.0,
+      "quantized": 0.7825499380126156,
+      "scale_log2": 0.35374527507937614
+    },
+    {
+      "id": "377",
+      "intended": 1.0,
+      "quantized": 0.8850881890583033,
+      "scale_log2": 0.17610688423596343
+    },
+    {
+      "id": "385",
+      "intended": 1.0,
+      "quantized": 1.0,
+      "scale_log2": 5.0
+    },
+    {
+      "id": "387",
+      "intended": 1.0,
+      "quantized": 0.7825499380126156,
+      "scale_log2": 0.35374527507937614
+    },
+    {
+      "id": "393",
+      "intended": 1.0,
+      "quantized": 0.9927334933005806,
+      "scale_log2": 4.010521627383781
+    }
+  ],
+  "max_abs_gpu_vs_quantized_model": 2.134424375466182e-06,
+  "max_abs_gpu_vs_quantized_model_all_slots": 8.690408961342655e-06,
+  "max_abs_quantization_error": 0.2207618341047638
+}

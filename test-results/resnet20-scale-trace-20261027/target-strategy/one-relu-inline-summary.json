@@ -1,0 +1,1035 @@
+{
+  "counts": {
+    "transfer": 55,
+    "encode": 54,
+    "add_cc": 43,
+    "mul_cc": 27,
+    "relinearize": 27,
+    "add_cp": 11,
+    "rescale": 66,
+    "mod_switch": 15,
+    "mul_cp": 51,
+    "negate": 4
+  },
+  "total_q_consumed": 23,
+  "stages": [
+    {
+      "id": "81",
+      "q": 25,
+      "scale": 40.100000000999984,
+      "consumed_q": 6,
+      "total_consumed_q": 6
+    },
+    {
+      "id": "154",
+      "q": 19,
+      "scale": 41.90000000099971,
+      "consumed_q": 6,
+      "total_consumed_q": 12
+    },
+    {
+      "id": "289",
+      "q": 12,
+      "scale": 121.86184684723182,
+      "consumed_q": 7,
+      "total_consumed_q": 19
+    },
+    {
+      "id": "298",
+      "q": 8,
+      "scale": 40.000000000992856,
+      "consumed_q": 4,
+      "total_consumed_q": 23
+    }
+  ],
+  "unit_multiplications": 21,
+  "unit_plain_scale_sum": 330.04667787526785,
+  "rescale_prime_divisions": 66,
+  "rescale_total_log2": 1980.4821472231847,
+  "output_modulus_log2": 255.90840739024034,
+  "output_modulus_minus_scale": 215.9084073892475,
+  "multiplications": [
+    {
+      "id": "2",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 30,
+      "input_scales": [
+        40.0,
+        40.0
+      ],
+      "scale": 80.0
+    },
+    {
+      "id": "17",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -4.027020120063623,
+      "level": 30,
+      "input_scales": [
+        40.0,
+        40.030796842152455
+      ],
+      "scale": 80.03079684215245
+    },
+    {
+      "id": "8",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 29,
+      "input_scales": [
+        40.0,
+        50.00035226212769
+      ],
+      "scale": 90.00035226212769
+    },
+    {
+      "id": "12",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 29,
+      "input_scales": [
+        40.0,
+        50.00035226212769
+      ],
+      "scale": 90.00035226212769
+    },
+    {
+      "id": "29",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 29,
+      "input_scales": [
+        50.00035226212769,
+        50.00035226212769
+      ],
+      "scale": 100.00070452425538
+    },
+    {
+      "id": "19",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 29,
+      "input_scales": [
+        50.031149104280146,
+        50.00035226212769
+      ],
+      "scale": 100.03150136640784
+    },
+    {
+      "id": "22",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": 2.243187978526648,
+      "level": 29,
+      "input_scales": [
+        40.0,
+        60.03150136640784
+      ],
+      "scale": 100.03150136640784
+    },
+    {
+      "id": "24",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 29,
+      "input_scales": [
+        100.03150136640784,
+        0.0
+      ],
+      "scale": 100.03150136640784
+    },
+    {
+      "id": "39",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": 1.1583708205212988,
+      "level": 28,
+      "input_scales": [
+        40.0,
+        70.04225608831243
+      ],
+      "scale": 110.04225608831243
+    },
+    {
+      "id": "59",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": 0.3887889417813593,
+      "level": 28,
+      "input_scales": [
+        40.0,
+        80.05742948147989
+      ],
+      "scale": 120.05742948147989
+    },
+    {
+      "id": "41",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.24378614014677616,
+      "level": 28,
+      "input_scales": [
+        60.003349245508474,
+        50.038906842803954
+      ],
+      "scale": 110.04225608831243
+    },
+    {
+      "id": "43",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 28,
+      "input_scales": [
+        110.04225608831243,
+        0.0
+      ],
+      "scale": 110.04225608831243
+    },
+    {
+      "id": "61",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.3410318227220213,
+      "level": 28,
+      "input_scales": [
+        60.003349245508474,
+        60.05408023597141
+      ],
+      "scale": 120.05742948147989
+    },
+    {
+      "id": "62",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 28,
+      "input_scales": [
+        120.05742948147989,
+        0.0
+      ],
+      "scale": 120.05742948147989
+    },
+    {
+      "id": "68",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": 1.3110156470890746,
+      "level": 28,
+      "input_scales": [
+        40.0,
+        120.06518722000371
+      ],
+      "scale": 160.0651872200037
+    },
+    {
+      "id": "70",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.4655444582206114,
+      "level": 28,
+      "input_scales": [
+        60.003349245508474,
+        100.06183797449523
+      ],
+      "scale": 160.0651872200037
+    },
+    {
+      "id": "71",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 28,
+      "input_scales": [
+        160.0651872200037,
+        0.0
+      ],
+      "scale": 160.0651872200037
+    },
+    {
+      "id": "35",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 27,
+      "input_scales": [
+        40.03855458067627,
+        40.007757738523814
+      ],
+      "scale": 80.04631231920008
+    },
+    {
+      "id": "51",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 27,
+      "input_scales": [
+        40.007757738523814,
+        40.007757738523814
+      ],
+      "scale": 80.01551547704763
+    },
+    {
+      "id": "47",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 27,
+      "input_scales": [
+        80.04631231920007,
+        0.0
+      ],
+      "scale": 80.04631231920007
+    },
+    {
+      "id": "65",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 27,
+      "input_scales": [
+        90.06148571236753,
+        40.007757738523814
+      ],
+      "scale": 130.06924345089135
+    },
+    {
+      "id": "74",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 27,
+      "input_scales": [
+        130.06924345089135,
+        0.0
+      ],
+      "scale": 130.06924345089135
+    },
+    {
+      "id": "56",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 26,
+      "input_scales": [
+        50.05372797384374,
+        50.02293113169129
+      ],
+      "scale": 100.07665910553503
+    },
+    {
+      "id": "78",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 26,
+      "input_scales": [
+        100.07665910553501,
+        0.0
+      ],
+      "scale": 100.07665910553501
+    },
+    {
+      "id": "83",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 24,
+      "input_scales": [
+        40.100000000999984,
+        40.100000000999984
+      ],
+      "scale": 80.20000000199997
+    },
+    {
+      "id": "98",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -4.114425161403915,
+      "level": 24,
+      "input_scales": [
+        40.100000000999984,
+        40.05568636245182
+      ],
+      "scale": 80.1556863634518
+    },
+    {
+      "id": "89",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 23,
+      "input_scales": [
+        40.100000000999984,
+        50.21469170338675
+      ],
+      "scale": 90.31469170438673
+    },
+    {
+      "id": "93",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 23,
+      "input_scales": [
+        40.100000000999984,
+        50.21469170338678
+      ],
+      "scale": 90.31469170438676
+    },
+    {
+      "id": "108",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 23,
+      "input_scales": [
+        50.21469170338675,
+        50.21469170338675
+      ],
+      "scale": 100.4293834067735
+    },
+    {
+      "id": "100",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 23,
+      "input_scales": [
+        50.17037806483859,
+        50.21469170338675
+      ],
+      "scale": 100.38506976822534
+    },
+    {
+      "id": "103",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": 0.9368078518022722,
+      "level": 23,
+      "input_scales": [
+        40.100000000999984,
+        60.285069767225394
+      ],
+      "scale": 100.38506976822538
+    },
+    {
+      "id": "118",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": 0.13312678038183748,
+      "level": 22,
+      "input_scales": [
+        40.100000000999984,
+        70.76244536970214
+      ],
+      "scale": 110.86244537070212
+    },
+    {
+      "id": "120",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.45988074662238737,
+      "level": 22,
+      "input_scales": [
+        60.32991724298202,
+        50.53252812772007
+      ],
+      "scale": 110.86244537070209
+    },
+    {
+      "id": "136",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.058402193560527074,
+      "level": 22,
+      "input_scales": [
+        40.100000000999984,
+        81.24803130880262
+      ],
+      "scale": 121.34803130980261
+    },
+    {
+      "id": "138",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.5604853121853565,
+      "level": 22,
+      "input_scales": [
+        60.32991724298202,
+        61.01811406682056
+      ],
+      "scale": 121.34803130980258
+    },
+    {
+      "id": "114",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 21,
+      "input_scales": [
+        40.41783642533322,
+        40.46215006388138
+      ],
+      "scale": 80.8799864892146
+    },
+    {
+      "id": "128",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 21,
+      "input_scales": [
+        40.46215006388138,
+        40.46215006388138
+      ],
+      "scale": 80.92430012776276
+    },
+    {
+      "id": "144",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": 0.776581119170959,
+      "level": 22,
+      "input_scales": [
+        40.100000000999984,
+        121.71018137268406
+      ],
+      "scale": 161.81018137368403
+    },
+    {
+      "id": "146",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.6818409776001578,
+      "level": 22,
+      "input_scales": [
+        60.32991724298202,
+        101.480264130702
+      ],
+      "scale": 161.81018137368403
+    },
+    {
+      "id": "124",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 21,
+      "input_scales": [
+        80.87998648921472,
+        0.0
+      ],
+      "scale": 80.87998648921472
+    },
+    {
+      "id": "141",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 21,
+      "input_scales": [
+        91.3655724283152,
+        40.46215006388138
+      ],
+      "scale": 131.82772249219659
+    },
+    {
+      "id": "149",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 21,
+      "input_scales": [
+        131.8277224921966,
+        0.0
+      ],
+      "scale": 131.8277224921966
+    },
+    {
+      "id": "133",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 20,
+      "input_scales": [
+        50.90342236443365,
+        50.94773600298181
+      ],
+      "scale": 101.85115836741547
+    },
+    {
+      "id": "156",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 18,
+      "input_scales": [
+        41.90000000099971,
+        41.90000000099971
+      ],
+      "scale": 83.80000000199942
+    },
+    {
+      "id": "162",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 17,
+      "input_scales": [
+        41.90000000099971,
+        53.826481995927196
+      ],
+      "scale": 95.7264819969269
+    },
+    {
+      "id": "171",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 17,
+      "input_scales": [
+        53.826481995927196,
+        53.826481995927196
+      ],
+      "scale": 107.65296399185439
+    },
+    {
+      "id": "167",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 17,
+      "input_scales": [
+        41.90000000099971,
+        53.826481995927836
+      ],
+      "scale": 95.72648199692755
+    },
+    {
+      "id": "179",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 15,
+      "input_scales": [
+        47.70879993064369,
+        40.29377602626809
+      ],
+      "scale": 88.00257595691178
+    },
+    {
+      "id": "180",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 15,
+      "input_scales": [
+        41.90000000099971,
+        88.00257595691178
+      ],
+      "scale": 129.9025759579115
+    },
+    {
+      "id": "184",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 15,
+      "input_scales": [
+        65.7535022094916,
+        47.70879993064369
+      ],
+      "scale": 113.4623021401353
+    },
+    {
+      "id": "187",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 15,
+      "input_scales": [
+        65.7535022094916,
+        64.14907374842014
+      ],
+      "scale": 129.90257595791172
+    },
+    {
+      "id": "249",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.7891229650354679,
+      "level": 16,
+      "input_scales": [
+        41.90000000099971,
+        164.3495628033994
+      ],
+      "scale": 206.24956280439912
+    },
+    {
+      "id": "251",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.7274113735381116,
+      "level": 16,
+      "input_scales": [
+        65.7535022094916,
+        140.49606059490696
+      ],
+      "scale": 206.24956280439858
+    },
+    {
+      "id": "195",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 15,
+      "input_scales": [
+        41.90000000099971,
+        71.56230213913733
+      ],
+      "scale": 113.46230214013704
+    },
+    {
+      "id": "210",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 15,
+      "input_scales": [
+        47.70879993064369,
+        47.70879993064369
+      ],
+      "scale": 95.41759986128739
+    },
+    {
+      "id": "219",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.19732584204806608,
+      "level": 16,
+      "input_scales": [
+        41.90000000099971,
+        188.79598859480055
+      ],
+      "scale": 230.69598859580026
+    },
+    {
+      "id": "221",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.1411166195583439,
+      "level": 16,
+      "input_scales": [
+        65.7535022094916,
+        164.94248638630808
+      ],
+      "scale": 230.6959885957997
+    },
+    {
+      "id": "269",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.04285789400849802,
+      "level": 16,
+      "input_scales": [
+        41.90000000099971,
+        229.79705677270513
+      ],
+      "scale": 271.69705677370484
+    },
+    {
+      "id": "271",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.7747926099066248,
+      "level": 16,
+      "input_scales": [
+        65.7535022094916,
+        205.94355456421266
+      ],
+      "scale": 271.6970567737043
+    },
+    {
+      "id": "201",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.017732734281918773,
+      "level": 16,
+      "input_scales": [
+        41.90000000099971,
+        123.34849462549485
+      ],
+      "scale": 165.24849462649456
+    },
+    {
+      "id": "203",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.009084094344113463,
+      "level": 16,
+      "input_scales": [
+        65.7535022094916,
+        99.4949924170024
+      ],
+      "scale": 165.248494626494
+    },
+    {
+      "id": "255",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.18601751738208003,
+      "level": 13,
+      "input_scales": [
+        53.52569079487046,
+        62.81607639048676
+      ],
+      "scale": 116.34176718535721
+    },
+    {
+      "id": "239",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 14,
+      "input_scales": [
+        65.44749396930345,
+        65.44749396930345
+      ],
+      "scale": 130.8949879386069
+    },
+    {
+      "id": "253",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.32554529142034655,
+      "level": 12,
+      "input_scales": [
+        40.000000000998874,
+        46.375802572711414
+      ],
+      "scale": 86.37580257371029
+    },
+    {
+      "id": "262",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 12,
+      "input_scales": [
+        86.3758025737111,
+        0.0
+      ],
+      "scale": 86.3758025737111
+    },
+    {
+      "id": "223",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.05267573691161687,
+      "level": 12,
+      "input_scales": [
+        40.000000000998874,
+        70.82222836411256
+      ],
+      "scale": 110.82222836511144
+    },
+    {
+      "id": "233",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 12,
+      "input_scales": [
+        110.82222836511224,
+        0.0
+      ],
+      "scale": 110.82222836511224
+    },
+    {
+      "id": "264",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 12,
+      "input_scales": [
+        86.37580257370945,
+        0.0
+      ],
+      "scale": 86.37580257370945
+    },
+    {
+      "id": "273",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.18128174370012556,
+      "level": 12,
+      "input_scales": [
+        40.000000000998874,
+        111.82329654201715
+      ],
+      "scale": 151.82329654301603
+    },
+    {
+      "id": "281",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 12,
+      "input_scales": [
+        151.82329654301682,
+        0.0
+      ],
+      "scale": 151.82329654301682
+    },
+    {
+      "id": "216",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 12,
+      "input_scales": [
+        45.374734395806534,
+        65.44749396930345
+      ],
+      "scale": 110.82222836510999
+    },
+    {
+      "id": "226",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.026312988130283786,
+      "level": 12,
+      "input_scales": [
+        53.52569079487046,
+        57.29653757024012
+      ],
+      "scale": 110.82222836511058
+    },
+    {
+      "id": "275",
+      "kind": "mul_cp",
+      "unit": false,
+      "plaintext": -0.2454684691347467,
+      "level": 12,
+      "input_scales": [
+        53.52569079487046,
+        98.29760574814469
+      ],
+      "scale": 151.82329654301515
+    },
+    {
+      "id": "266",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 12,
+      "input_scales": [
+        86.3758025737111,
+        65.44749396930345
+      ],
+      "scale": 151.82329654301455
+    },
+    {
+      "id": "284",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 12,
+      "input_scales": [
+        151.82329654301682,
+        0.0
+      ],
+      "scale": 151.82329654301682
+    },
+    {
+      "id": "246",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 11,
+      "input_scales": [
+        80.8607786693318,
+        41.001068177900024
+      ],
+      "scale": 121.86184684723182
+    },
+    {
+      "id": "288",
+      "kind": "mul_cp",
+      "unit": true,
+      "plaintext": 1.0,
+      "level": 11,
+      "input_scales": [
+        121.86184684723635,
+        0.0
+      ],
+      "scale": 121.86184684723635
+    },
+    {
+      "id": "295",
+      "kind": "mul_cc",
+      "unit": false,
+      "plaintext": null,
+      "level": 9,
+      "input_scales": [
+        40.0,
+        61.94582944173388
+      ],
+      "scale": 101.94582944173388
+    }
+  ],
+  "plaintext_replay": [
+    {
+      "input": -0.75,
+      "output": 1.4512532167998415e-05
+    },
+    {
+      "input": -0.25,
+      "output": 5.197047515698161e-06
+    },
+    {
+      "input": 0.0,
+      "output": 0.0
+    },
+    {
+      "input": 0.25,
+      "output": 0.25000519704751567
+    },
+    {
+      "input": 0.75,
+      "output": 0.750014512532168
+    }
+  ],
+  "unit_scales": [
+    50.00035226212769,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    50.21469170338678,
+    0.0,
+    0.0,
+    53.826481995927836,
+    40.29377602626809,
+    64.14907374842014,
+    71.56230213913733,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "cpp_validation": "PASS Q=50 values=354"
+}

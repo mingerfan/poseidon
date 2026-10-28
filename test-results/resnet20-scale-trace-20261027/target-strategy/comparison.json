@@ -1,0 +1,54 @@
+{
+  "branch": "experiment/native-scale-planning",
+  "scope": "One actual traced 15/15/27 ReLU. Same manual Q50/P25 primes, all primes <=32 bits; input Q31/s40; no Boot executed.",
+  "baseline": {
+    "q_consumed": 25,
+    "rescales": 94,
+    "unit_multiplications": 42,
+    "output_q": 6,
+    "output_scale": 44.845572038296936,
+    "gpu_max_abs_error": 0.03363088304365802
+  },
+  "target": {
+    "q_consumed": 23,
+    "rescales": 66,
+    "unit_multiplications": 21,
+    "precision_alignments": 6,
+    "exact_identity_type_adjustments": 15,
+    "output_q": 8,
+    "output_scale": 40.000000000992856,
+    "gpu_max_abs_error": 8.801080642051318e-07
+  },
+  "manual_reference": {
+    "q_consumed": 22,
+    "rescale_prime_divisions": 55,
+    "unit_multiplications": 5,
+    "output_q": 9,
+    "output_scale": 40
+  },
+  "checks": {
+    "branch": "experiment/native-scale-planning",
+    "same_57_mathematical_multiplications": true,
+    "identical_coefficient_values_and_core_dependencies": true,
+    "threshold_whole_relu_plan_unchanged": true,
+    "production_q_budget": 23,
+    "production_target_plan_validated": "PASS Q=50 values=354",
+    "boot_input_alignment": {
+      "input_q": 8,
+      "input_scale_log2": 40.000000000992856,
+      "output_q": 6,
+      "output_scale_log2": 40,
+      "modswitches": 1,
+      "rescales": 0,
+      "encoded_one_multiplications": 0
+    },
+    "target_policy_checks": 6,
+    "existing_native_planning_checks": 25,
+    "existing_manual_boot_alignment_checks": 9,
+    "existing_threshold_graph_checks": 540,
+    "existing_threshold_valid_plans": 495,
+    "existing_threshold_expected_rejections": 45,
+    "encrypted_gpu_plan_sha256": "sha256:23970e2a4604ce311f0d32038258e37725176649b05a11e457a9de6d8cfd18fa",
+    "existing_native_artifact_checks": 18
+  }
+}

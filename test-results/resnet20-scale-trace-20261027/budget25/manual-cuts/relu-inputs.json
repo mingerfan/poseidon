@@ -1,0 +1,268 @@
+[
+  {
+    "name": "%167",
+    "kind": "add",
+    "args": [
+      "%165",
+      "%166"
+    ],
+    "opid": 135,
+    "scale": 60.003349245508474,
+    "nominal_scale": 61,
+    "consumed_q": 2,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%971",
+    "kind": "add",
+    "args": [
+      "%969",
+      "%970"
+    ],
+    "opid": 637,
+    "scale": 52.26128863967399,
+    "nominal_scale": 53,
+    "consumed_q": 13,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%1781",
+    "kind": "add",
+    "args": [
+      "%1779",
+      "%1780"
+    ],
+    "opid": 1140,
+    "scale": null,
+    "nominal_scale": 63,
+    "consumed_q": 20,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%2508",
+    "kind": "add",
+    "args": [
+      "%2506",
+      "%2507"
+    ],
+    "opid": 1642,
+    "scale": 62.231457400237744,
+    "nominal_scale": 63,
+    "consumed_q": 12,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%3251",
+    "kind": "add",
+    "args": [
+      "%3248",
+      "%3250"
+    ],
+    "opid": 2145,
+    "scale": null,
+    "nominal_scale": 67,
+    "consumed_q": 20,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%3975",
+    "kind": "add",
+    "args": [
+      "%3973",
+      "%3974"
+    ],
+    "opid": 2647,
+    "scale": 62.231457400237744,
+    "nominal_scale": 63,
+    "consumed_q": 12,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%4714",
+    "kind": "add",
+    "args": [
+      "%4711",
+      "%4713"
+    ],
+    "opid": 3150,
+    "scale": null,
+    "nominal_scale": 67,
+    "consumed_q": 20,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%5963",
+    "kind": "add",
+    "args": [
+      "%5961",
+      "%5962"
+    ],
+    "opid": 4057,
+    "scale": 62.231457400237744,
+    "nominal_scale": 63,
+    "consumed_q": 12,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%6799",
+    "kind": "add",
+    "args": [
+      "%6797",
+      "%6798"
+    ],
+    "opid": 4642,
+    "scale": null,
+    "nominal_scale": 67,
+    "consumed_q": 20,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%7621",
+    "kind": "add",
+    "args": [
+      "%7619",
+      "%7620"
+    ],
+    "opid": 5226,
+    "scale": 62.231457400237744,
+    "nominal_scale": 63,
+    "consumed_q": 12,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%8458",
+    "kind": "add",
+    "args": [
+      "%8455",
+      "%8457"
+    ],
+    "opid": 5811,
+    "scale": null,
+    "nominal_scale": 67,
+    "consumed_q": 20,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%9280",
+    "kind": "add",
+    "args": [
+      "%9278",
+      "%9279"
+    ],
+    "opid": 6395,
+    "scale": 62.231457400237744,
+    "nominal_scale": 63,
+    "consumed_q": 12,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%10117",
+    "kind": "add",
+    "args": [
+      "%10114",
+      "%10116"
+    ],
+    "opid": 6980,
+    "scale": null,
+    "nominal_scale": 67,
+    "consumed_q": 20,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%11562",
+    "kind": "add",
+    "args": [
+      "%11560",
+      "%11561"
+    ],
+    "opid": 8051,
+    "scale": 62.231457400237744,
+    "nominal_scale": 63,
+    "consumed_q": 12,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%12576",
+    "kind": "add",
+    "args": [
+      "%12574",
+      "%12575"
+    ],
+    "opid": 8782,
+    "scale": null,
+    "nominal_scale": 67,
+    "consumed_q": 20,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%13647",
+    "kind": "add",
+    "args": [
+      "%13645",
+      "%13646"
+    ],
+    "opid": 9512,
+    "scale": 40.014821131039774,
+    "nominal_scale": 41,
+    "consumed_q": 4,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%14655",
+    "kind": "add",
+    "args": [
+      "%14652",
+      "%14654"
+    ],
+    "opid": 10243,
+    "scale": 62.246278531277525,
+    "nominal_scale": 63,
+    "consumed_q": 12,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  },
+  {
+    "name": "%15668",
+    "kind": "add",
+    "args": [
+      "%15666",
+      "%15667"
+    ],
+    "opid": 10973,
+    "scale": 60.003349245508474,
+    "nominal_scale": 61,
+    "consumed_q": 2,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py",
+    "line": 552
+  },
+  {
+    "name": "%16741",
+    "kind": "add",
+    "args": [
+      "%16738",
+      "%16740"
+    ],
+    "opid": 11704,
+    "scale": 53.0,
+    "nominal_scale": 53,
+    "consumed_q": 13,
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py",
+    "line": 135
+  }
+]

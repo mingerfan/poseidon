@@ -1,0 +1,9 @@
+Preparing native manual Boot resources
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=30380536576 maximum_bytes=30380536576
+Native manual Boot resources ready
+Running relu-boot
+PASS max_abs_error=3.70497e-05 max_imaginary=3.97014e-06
+report=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/budget25/boot22/relu-boot-gpu-report.json
+Running relu-boot-relu
+PASS max_abs_error=2.52909e-05 max_imaginary=2.04934e-06
+report=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/budget25/boot22/relu-boot-relu-gpu-report.json

@@ -1,0 +1,11 @@
+{
+  "target_whole_relu_unchanged": true,
+  "threshold_whole_relu_unchanged": true,
+  "target_checks": 8,
+  "native_planning_checks": 25,
+  "manual_boot_alignment_checks": 9,
+  "encrypted_cases": 2,
+  "all_32768_slots_passed": true,
+  "actual_gpu_device": 2,
+  "final_compiler_regenerates_gpu_tested_plans": true
+}
