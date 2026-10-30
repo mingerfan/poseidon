@@ -10,7 +10,7 @@ from .core.conv import add_mux, conv2d_mux, downsample_pad_mux, fold_bn
 from .core.pool import mean_mux
 from .core.linear import linear_flat
 from .core.cheb import cheb_eval
-from .core.layout import MultiMuxLayout, MultiFlatLayout, multi_mux_layout, multi_flat_layout
+from .core.layout import MultiMuxLayout, MultiFlatLayout, multi_mux_layout, multi_flat_layout, TokenLayout, ScoreLayout
 from .core import multi, cnn
 
 
@@ -28,13 +28,34 @@ def pack(b, x, *, layout, gap):
     if not isinstance(lin, RawLayout):
         raise KernelError("pack input must have RawLayout")
     shape = lin.shape
-    if layout == "mux" and len(shape) == 4 and shape[0] == 1:
+    if layout=='token' and len(shape)==3 and shape[0]==1:
+        out=TokenLayout(b.slots,*shape[1:])
+    elif layout=='score' and len(shape)==4 and shape[0]==1:
+        out=ScoreLayout(b.slots,shape[2],shape[1],shape[3])
+    elif layout == "mux" and len(shape) == 4 and shape[0] == 1:
         out = multi_mux_layout(b.slots, *shape[1:], gap)
     elif layout == "flat" and len(shape) == 2 and shape[0] == 1:
         out = multi_flat_layout(b.slots, shape[1])
     else:
         raise KernelError("pack requires mux (1,C,H,W) or flat (1,F)")
+    if isinstance(out,(TokenLayout,ScoreLayout)) and not isinstance(value,list):value=[value]
     return Tensor(value, out)
+
+
+def token(b,W,A,inputs,*,input_names,kind,attrs,output):
+    from types import SimpleNamespace
+    from .core.token_dispatch import dispatch
+    attrs=dict(attrs)
+    for key,value in list(attrs.items()):
+        if isinstance(value,dict) and ('weight' in value or 'value' in value):
+            attrs[key]=SimpleNamespace(name=value.get('weight',value.get('value')))
+    if kind=='act':attrs.update(A[output])
+    for role in ('rsqrt','exp','inv','step_inv','final_inv'):
+        entry=A.get(output+'::'+role)
+        if entry is not None:
+            attrs.update({role+'_'+key:value for key,value in entry.items() if key!='fn'})
+    op=SimpleNamespace(kind=kind,attrs=attrs,inputs=input_names,outputs=(output,))
+    return Tensor(*dispatch(op,inputs,W,b))
 
 
 def conv2d(bk, x, W, *, w, b, bn, bn_eps, stride, pad, dilation, groups, algo, post_bn=None, post_eps=1e-5, pre_bn=None, pre_eps=1e-5):
@@ -153,6 +174,10 @@ def linear(bk, x, W, *, w, b, algo, n1, post_bn=None, post_eps=1e-5, pre_bn=None
         scale, bias = fold_bn(W[post_bn+'.weight'], W[post_bn+'.bias'],
             W[post_bn+'.running_mean'], W[post_bn+'.running_var'], post_eps, bias)
         weight = weight*scale[:, None]
+    Ip=1<<(weight.shape[1]-1).bit_length()
+    if isinstance(x.layout,FlatLayout) and 2*Ip<=bk.slots and weight.shape[0]/Ip>=4:
+        from .core.transformer import tall_linear
+        return Tensor(*tall_linear(bk,x.value,x.layout,weight,bias))
     if isinstance(x.layout, (MuxLayout, MultiMuxLayout)):
         linear = cnn.flatten_linear
     else:

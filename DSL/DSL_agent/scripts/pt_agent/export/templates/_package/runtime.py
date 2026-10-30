@@ -10,7 +10,8 @@ from .ops import RawLayout, Tensor
 from .core.layout import FlatLayout, MuxLayout, pack_flat, pack_mux, unpack_flat, unpack_mux
 from .core.refresh import RefreshBackend
 from .core.layout import (MultiMuxLayout, MultiFlatLayout, layout_from_record,
-                          layout_blocks, pack_multi, unpack_multi)
+                          layout_blocks, pack_multi, unpack_multi, TokenLayout, ScoreLayout,
+                          pack_sequence,unpack_sequence)
 from .core.multi import values_list
 
 
@@ -36,7 +37,12 @@ def pack_arrays(arrays):
         if array.ndim != len(entry["shape"]) or list(array.shape[1:]) != entry["shape"][1:]:
             raise ValueError("input array shape differs from parameter")
         lay = layout(entry)
-        if isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
+        if entry.get('kind')=='mask' and not np.isin(array,(0,1)).all():
+            raise ValueError('Mask input values must be 0 or 1')
+        if isinstance(lay,(TokenLayout,ScoreLayout)):
+            blocks=[pack_sequence(sample,lay) for sample in array]
+            packed.extend(np.stack([sample[i] for sample in blocks]) for i in range(len(lay.blocks)))
+        elif isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
             blocks = [pack_multi(sample, lay) for sample in array]
             packed.extend(np.stack([sample[i] for sample in blocks]) for i in range(len(lay.blocks)))
         else:
@@ -55,7 +61,9 @@ def unpack_arrays(arrays, interface=None):
         lay = layout(entry)
         count = len(layout_blocks(lay))
         array = np.asarray(arrays[index])
-        if isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
+        if isinstance(lay,(TokenLayout,ScoreLayout)):
+            value=unpack_sequence(arrays[index:index+count],lay)
+        elif isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
             value = unpack_multi(arrays[index:index+count], lay)
         elif isinstance(lay, FlatLayout):
             value = unpack_flat(array, lay)
@@ -78,7 +86,8 @@ def invoke(backend, weights):
         index += count
         inputs.append(Tensor(values if count > 1 else values[0], RawLayout(tuple(item['shape']), config['slots'])))
     outputs = model.forward(active, weights, approximations, *inputs)
-    active.output([value for item in outputs for value in values_list(item.value, item.layout)])
+    active.output([value for item in outputs for value in
+                   (item.value if isinstance(item.layout,(TokenLayout,ScoreLayout)) else values_list(item.value,item.layout))])
     return outputs
 
 

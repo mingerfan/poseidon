@@ -141,6 +141,10 @@ class HFInputs:
             with torch.no_grad():
                 embeddings = self.local.module.get_input_embeddings()(ids).cpu().numpy()
             arrays = dict(inputs_embeds=embeddings, attention_mask=np.asarray(encoded['attention_mask'], dtype=np.float64))
+            if 'sel' in getattr(getattr(self.info,'graph',None),'inputs',()):
+                mask=arrays['attention_mask'];sel=np.zeros_like(mask)
+                sel[np.arange(len(mask)),mask.sum(axis=1).astype(int)-1]=1
+                arrays['sel']=sel
         return arrays, labels
 
 
@@ -173,6 +177,9 @@ def import_local(source, samples):
     graph = import_module(wrapper, tuple(torch.from_numpy(value) for value in arrays.values()),
                           str(local.config.model_type).replace('-', '_'), frontend='aten')
     rename_inputs(graph, list(arrays))
+    from .transformer import normalize
+    causal=task=='causal_lm'
+    graph=normalize(graph,last_position=causal,strict=False) if local.input_kind=='tokens' else graph
     handling = dict(mode='repository processor/tokenizer', kind=local.input_kind,
                     processor=type(local.processor).__name__,
                     calls=dict(return_tensors='np', **(dict(padding='max_length', truncation=True,
@@ -180,6 +187,9 @@ def import_local(source, samples):
     if sequence:
         handling.update(embedding_boundary='client word embedding lookup',
                         embedding_class=type(local.module.get_input_embeddings()).__name__)
+        if causal and 'sel' in graph.inputs:
+            handling.update(selection_boundary='client encrypted one-hot at last real token',
+                            selection_input='sel',single_lm_head=True)
     config_fields = ('architectures', 'model_type', 'num_hidden_layers', 'hidden_size', 'vocab_size', 'num_labels', 'id2label')
     info = model_info(dict(type='hf', path=str(source), local_path=local.source,
                           config={key: getattr(local.config, key, None) for key in config_fields}), graph,

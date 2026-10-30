@@ -46,10 +46,11 @@ def _prepare(args, *, sample_source=None):
 
 
 def _prepare_split(args):
-    from .data.samples import read, save_split, SampleSplits
+    from .data.samples import read, read_selected_text, save_split, SampleSplits, split_version
     from .models.info import ModelInfo
     info = ModelInfo.load(args.out)
-    raw = read(args.inputs)
+    raw = (read_selected_text(args.inputs,info.split['sample_ids'],info.split[args.split])
+           if split_version(info)=='split-v2' else read(args.inputs))
     if info.source['type'] == 'hf':
         from .intake.hf_frontend import HFInputs, load_local
         source = HFInputs(load_local(info.source['local_path'], attn_implementation='eager'), raw, info)
@@ -97,12 +98,14 @@ def _main_stages(args):
                    '--out', str(args.out), '--_split', split, '--_intake-python', args.intake_python]
         subprocess.run(command, check=True, timeout=600)
 
-    # Reuse the existing deterministic stage entry. This U1 intake command has
-    # no LLM invocation; a future generation round can supply the frozen planner.
+    if getattr(args,'planner','rule')=='agent' and not info.source.get('intake',{}).get('transformer_normalized'):
+        raise ValueError('U1 agent entry currently requires a normalized token model')
     options = SimpleNamespace(out=args.out, stages=stages, model=info.graph.name,
         model_info=args.out/'model_info.json', prepare_split=prepare_missing,
-        models_dir=args.out, planner='rule', deg=args.deg, margin=args.margin,
-        refresh='compiler', act_method='cheb', final='test' in stages)
+        models_dir=args.out, planner=getattr(args,'planner','rule'), deg=args.deg, margin=args.margin,
+        refresh='compiler', act_method='cheb', final='test' in stages,
+        budget_path=getattr(args,'budget_path',None),agent_iters=getattr(args,'agent_iters',8),
+        prompt_version=getattr(args,'prompt_version','r8-v8'))
     return _inside(options)
 
 
@@ -112,6 +115,10 @@ def _nix_worker(args, worker):
                '--inputs', str(args.inputs), '--out', str(args.out),
                '--stages', ','.join(args.stages), '--_intake-python', args.intake_python,
                '--_deg', str(args.deg), '--_margin', str(args.margin)]
+    if getattr(args,'planner','rule')=='agent':
+        command.extend(['--planner','agent','--agent-iters',str(args.agent_iters),
+                        '--prompt-version',args.prompt_version,
+                        '--_budget-path',str(args.budget_path)])
     with (args.out/(worker+'.log')).open('w') as log:
         result = subprocess.run(command, cwd=Path(__file__).resolve().parent.parent,
                                 stdout=log, stderr=subprocess.STDOUT, timeout=3720)
@@ -124,6 +131,10 @@ def main(argv=None):
     parser.add_argument('--inputs', required=True, type=Path)
     parser.add_argument('--out', type=Path)
     parser.add_argument('--stages', default='probe,import,info')
+    parser.add_argument('--planner',choices=('rule','agent'),default='rule')
+    parser.add_argument('--agent-iters',type=int,choices=range(1,9),default=8)
+    parser.add_argument('--prompt-version',choices=('r8-v7','r8-v8','r8-v9'),default='r8-v8')
+    parser.add_argument('--_budget-path',dest='budget_path',type=Path,help=argparse.SUPPRESS)
     parser.add_argument('--_worker', choices=('prepare', 'main', 'split'), help=argparse.SUPPRESS)
     parser.add_argument('--_split', dest='split', help=argparse.SUPPRESS)
     parser.add_argument('--_intake-python', dest='intake_python', default=str(PLATFORM_DIR/'venvs/intake-2.0.1-cpu/bin/python'), help=argparse.SUPPRESS)
@@ -135,6 +146,8 @@ def main(argv=None):
         parser.error('unknown stage')
     if not args.inputs.exists():
         parser.error('original --inputs path does not exist')
+    if args.planner=='agent' and args.budget_path is None:
+        args.budget_path=RESULTS_DIR/'llm_calls.jsonl'
     from .models.info import source_kind
     kind = source_kind(args.model)
     if args._worker:
@@ -152,9 +165,15 @@ def main(argv=None):
     args.out = args.out or RESULTS_DIR/('u1-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%f'))
     args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=False)
+    if args.planner=='agent':
+        from .experiments.r8g_mlp_rerun import _calls
+        _write(args.out/'api-accounting.json',dict(api_before=len(_calls(args.budget_path))))
     status = _nix_worker(args, 'prepare')
     if status == 0:
         status = _nix_worker(args, 'main')
+    if args.planner=='agent':
+        from .experiments.a1_transformer_agent import account_calls
+        account_calls(args.budget_path,args.out,model=str(args.model))
     if 'info' in args.stages and (args.out/'model_info.json').exists():
         print((args.out/'model_info.json').read_text(),flush=True)
     from .registry import append, git_rev, new_run_id

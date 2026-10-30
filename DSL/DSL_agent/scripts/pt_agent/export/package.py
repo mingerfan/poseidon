@@ -70,17 +70,26 @@ def managed_compile_template():
     return result
 
 
-def frontend_preprocess_template():
+def _frontend_template(command):
     result = []
     substitutions = {'/hecate-opt':'{hecate_opt}', '/out/raw.earth.mlir':'{input}',
                      '/out/boot-compiler-config.json':'{package}/config/compiler-config.json',
                      '/out/':'{output_dir}/'}
-    for arg in toolchain.frontend_preprocess_argv('dacapo-depth-dp','qwen48',Path('.')):
+    for arg in command:
         arg = arg.replace('{','{{').replace('}','}}')
         for old,new in substitutions.items():
             arg = arg.replace(old,new)
         result.append(arg)
     return result
+
+
+def frontend_preprocess_template(*, bytecode=False):
+    return _frontend_template(toolchain.frontend_preprocess_argv(
+        'dacapo-depth-dp','qwen48',Path('.'),bytecode=bytecode))
+
+
+def frontend_structure_template():
+    return _frontend_template(toolchain.frontend_structure_argv('dacapo-depth-dp','qwen48',Path('.')))
 
 
 def _management_files(program, weights, code, module, package):
@@ -95,7 +104,8 @@ def _management_files(program, weights, code, module, package):
                 record['source_lines'][str(node.lineno)] = dict(id=op.id, lineno=op.lineno)
     _dump(package/'config/management.json', record)
     _dump(package/'config/managed_compile_argv.json', managed_compile_template())
-    _dump(package/'config/frontend_preprocess_argv.json', frontend_preprocess_template())
+    _dump(package/'config/frontend_preprocess_argv.json', frontend_preprocess_template(bytecode=True))
+    _dump(package/'config/frontend_structure_argv.json', frontend_structure_template())
     target = module/'core/manage'
     target.mkdir()
     for source in sorted((SOURCE/'manage').glob('*.py')):
@@ -111,7 +121,8 @@ def _check_imports(text, label):
     for node in ast.walk(ast.parse(text)):
         if isinstance(node, ast.ImportFrom) and node.level:
             target = node.module or ""
-            if node.level != 1 or target.split(".")[0]+".py" not in CORE_SOURCES:
+            targets=[target.split('.')[0]] if target else [alias.name for alias in node.names]
+            if node.level != 1 or any(value+'.py' not in set(CORE_SOURCES)|{'transformer.py','token_dispatch.py','approx.py','cheb.py'} for value in targets):
                 raise ValueError(f"Non-core import in {label}: {target}")
         elif isinstance(node, (ast.Import, ast.ImportFrom)):
             modules = [alias.name for alias in node.names] if isinstance(node, ast.Import) else [node.module]
@@ -229,14 +240,34 @@ trace 和 compile 均要求新的输出目录。多个输入或输出使用按�
 '''
 
 
-def export_package(program_text, program, weights, out_dir, *, run_info=None) -> Path:
+def export_package(program_text, program, weights, out_dir, *, run_info=None,
+                   model_info=None, prompt_version=None) -> Path:
+    if prompt_version in ('r8-v8','r8-v9','r8-v10') and model_info is None:
+        raise ValueError('r8-v8 export requires the original ModelInfo for its interface check')
+    if model_info is not None:
+        from ..dsl.interface import require_interface
+        require_interface(program, model_info)
+    checked = None
+    if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+        checked = check(program, {name: value.shape for name, value in weights.items()},
+                        prompt_version=prompt_version)
+        if not checked.ok:
+            raise ValueError('PT-DSL typecheck failed: '+str(checked.diags))
     # Run the frozen lowering checks before writing any package file.
     _, output_layouts = lower(program, weights, CountBackend(program.header.slots, boot_out_level=5))
     code = generate(program)
-    checked = check(program, {name: value.shape for name, value in weights.items()})
+    checked = checked or check(program, {name: value.shape for name, value in weights.items()},
+                              prompt_version=prompt_version)
     if not checked.ok:
         raise ValueError("PT-DSL typecheck failed: "+str(checked.diags))
     core_texts = {name: (SOURCE/source).read_text() for name, source in CORE_SOURCES.items()}
+    from ..transformer_lower import uses_transformer
+    token_program=uses_transformer(program) or any(op.kind=='linear' and
+        (lambda shape:2*(1<<(shape[1]-1).bit_length())<=program.header.slots and
+         shape[0]/(1<<(shape[1]-1).bit_length())>=4)(weights[op.attrs['w'].name].shape) for op in program.ops)
+    if token_program:
+        from .transformer_package import core_texts as token_sources
+        core_texts.update(token_sources())
     for name, text in core_texts.items():
         _check_imports(text, name)
     info = dict(run_info or {})
@@ -283,6 +314,9 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
                     entry.update(deg0=a['deg0'],iters=a['iters'],
                                  iteration='inv_y_2_minus_xy' if fn=='inv' else 'rsqrt_x_half')
             approximations[op.outputs[0]] = entry
+    if token_program:
+        from .transformer_package import points
+        approximations.update(points(program))
     schema = {name: list(weights[name].shape) for name in sorted(names)}
 
     def interface_entry(name, shape, lay, index):
@@ -299,7 +333,9 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
         if len(ops) != 1:
             raise ValueError("each parameter requires one pack operation")
         lay = _pack_layout(ops[0], param.shape, program.header.slots)
-        inputs.append(interface_entry(param.name, param.shape, lay, input_index))
+        item=interface_entry(param.name, param.shape, lay, input_index)
+        if token_program:item['kind']=param.kind
+        inputs.append(item)
         input_index += len(layout_blocks(lay))
     outputs, output_index = [], 0
     for name, lay in zip(program.outputs, output_layouts):
@@ -323,7 +359,7 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None) ->
         (core/name).write_text(text)
     (core/"cheb.py").write_text('"""Copied Chebyshev evaluator."""\n\nimport numpy as np\n'
                                 'from .layout import KernelError\nfrom .slots import accumulate\n\n\n'+inspect.getsource(cheb_eval))
-    new_approximations=any(a['method'] in approx.NEW_METHODS for a in approximations.values())
+    new_approximations=token_program or any(a['method'] in approx.NEW_METHODS for a in approximations.values())
     if new_approximations:
         (core/'approx.py').write_text('"""Coefficient-only U5 evaluator; fitting is external."""\n'
             'from .cheb import cheb_eval\n\n'+inspect.getsource(approx.evaluate))

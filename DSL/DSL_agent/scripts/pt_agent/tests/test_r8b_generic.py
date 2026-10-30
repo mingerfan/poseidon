@@ -43,7 +43,11 @@ class GenericTests(unittest.TestCase):
             cls.contexts[name] = build_context(graph, calibration, n_val=50)
 
     def test_registry_matches_lowering(self):
-        self.assertEqual({entry.op for entry in CAPABILITIES}, HANDLED_OPS)
+        from pt_agent.capabilities import V7_CAPABILITIES
+        frozen_v5={'pack','conv2d','act','add','slice','pad','mean','relayout','linear','refresh',
+                   'avgpool','maxpool','concat','flatten','batchnorm'}
+        self.assertEqual({entry.op for entry in CAPABILITIES}, frozen_v5)
+        self.assertEqual({entry.op for entry in V7_CAPABILITIES}, HANDLED_OPS)
         self.assertEqual([entry.op for entry in CAPABILITIES],
                          ['pack', 'conv2d', 'act', 'add', 'slice', 'pad', 'mean', 'relayout', 'linear', 'refresh', 'avgpool', 'maxpool', 'concat', 'flatten', 'batchnorm'])
         rendered = render_capabilities(version="r8-v5")

@@ -113,6 +113,8 @@ class Backend:
         self.op_context = None
         self._inputs = []
         self._constants = {}
+        # Keep the original object alive for every identity-cache entry.
+        self._constant_objects = {}
         self._outputs = None
 
     def input(self, index: int):
@@ -123,12 +125,24 @@ class Backend:
         return value
 
     def const(self, vec):
+        return self._const(vec, keep_data=self._keep_const_data)
+
+    def _const(self, vec, *, keep_data):
+        readonly = isinstance(vec, np.ndarray) and not vec.flags.writeable
+        if readonly:
+            previous = self._constant_objects.get(id(vec))
+            if previous is not None and previous[0] is vec:
+                return previous[1]
         data = _vector(vec, self.slots, broadcast=True)
         key = hashlib.blake2b(data.tobytes(), digest_size=16).digest()
         if key not in self._constants:
             self._constants[key] = _Plain(self, data if self._keep_const_data else None,
                                           f"k{len(self._constants)}")
-        return self._constants[key]
+        named = self._constants[key]
+        result = _Plain(self, data, named.name) if keep_data and named.data is None else named
+        if readonly:
+            self._constant_objects[id(vec)] = (vec, result)
+        return result
 
     def _operand(self, value):
         if isinstance(value, _Value):

@@ -53,6 +53,8 @@ def infer(kind: str, in_shapes: list[tuple], attrs: dict,
         return [x]
     if kind == "softmax":
         _axis(a["axis"], rank)
+        if a.get('mask') is not None and (len(in_shapes) != 2 or in_shapes[1] != (1, x[-1])):
+            raise ShapeError('softmax key Mask must have shape [1,Lk]')
         return [x]
     if kind == "conv2d":
         if rank != 4 or x[0] != 1:
@@ -87,6 +89,17 @@ def infer(kind: str, in_shapes: list[tuple], attrs: dict,
         return [x[:-1] + (w[0],)]
     if kind == "matmul":
         y = in_shapes[1]
+        if a['transpose_b'] is not None:
+            h, kv = a['heads'], a['kv_heads']
+            if h is None or kv is None:
+                raise ShapeError('attention matmul requires heads and kv_heads')
+            if a['transpose_b']:
+                if rank != 3 or len(y) != 3 or x[-1] % h or y[-1] % kv or x[-1]//h != y[-1]//kv:
+                    raise ShapeError('Q/K token head dimensions differ')
+                return [(1, h, x[1], y[1])]
+            if rank != 4 or len(y) != 3 or x[1] != h or x[-1] != y[1] or y[-1] % kv:
+                raise ShapeError('P/V attention dimensions differ')
+            return [(1, x[2], h*(y[-1]//kv))]
         if rank < 2 or len(y) < 2 or x[:-2] != y[:-2] or x[-1] != y[-2]:
             raise ShapeError("matmul requires equal batch shapes and matching contracted dimensions")
         return [x[:-2] + (x[-2], y[-1])]
@@ -111,6 +124,11 @@ def infer(kind: str, in_shapes: list[tuple], attrs: dict,
             raise ShapeError("Scalar reductions are outside PT-DSL v1")
         return [result]
     if kind in ("add", "sub", "mul"):
+        if 'constant' in attrs:
+            shape = weight(attrs['constant'])
+            if len(shape) > rank or any(u not in (1, v) for u, v in zip(shape, x[rank-len(shape):])):
+                raise ShapeError('public operand must broadcast to the input shape')
+            return [x]
         if x != in_shapes[1]:
             raise ShapeError(f"{kind} requires equal tensor shapes")
         return [x]
@@ -122,13 +140,21 @@ def infer(kind: str, in_shapes: list[tuple], attrs: dict,
             raise ShapeError("batchnorm requires rank >= 2")
         bn(a["bn"], x[1])
         return [x]
-    if kind == "layernorm":
+    if kind in ('layernorm', 'rmsnorm'):
         if rank < 1:
             raise ShapeError("layernorm requires rank >= 1")
         for key in ("w", "b"):
-            if a[key] is not None:
+            if a.get(key) is not None:
                 expected(a[key], (x[-1],))
         return [x]
+    if kind == 'shuffle':
+        if rank != 3 or len(a['index']) != x[-1] or max(a['index']) >= x[-1]:
+            raise ShapeError('shuffle index/sign must describe the last token dimension')
+        return [x]
+    if kind == 'select':
+        if rank != 3 or in_shapes[1] != (1, x[1]):
+            raise ShapeError('select requires [1,L,D] and Mask[1,L]')
+        return [(1, 1, x[-1])]
     if kind == "flatten":
         start = _axis(a["start_dim"], rank)
         return [x[:start] + (prod(x[start:]),)]

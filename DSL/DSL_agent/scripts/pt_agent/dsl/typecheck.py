@@ -97,15 +97,17 @@ def weight_usage_diags(program: Program, graph) -> list[Diag]:
     return diags
 
 
-def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None) -> CheckResult:
+def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None,
+          prompt_version=None) -> CheckResult:
     diags = []
     if program.header.manage == "dsl" and (program.header.refresh != "compiler" or
                                            program.header.placement != "depth-dp"):
         diags.append(Diag("E_MANAGEMENT", "error", program.header.lineno, None,
                           '暂不支持：manage="dsl" requires refresh="compiler", placement="depth-dp"'))
     shapes = {p.name: p.shape for p in program.params}
-    layouts = {p.name: "raw" if p.kind == "cipher" else "plain" for p in program.params}
+    layouts = {p.name: 'plain' if p.kind == 'plain' else 'raw' for p in program.params}
     plain = {p.name for p in program.params if p.kind == "plain"}
+    masks = {p.name for p in program.params if p.kind == 'mask'}
 
     def wshape(name):
         if name not in weights:
@@ -113,10 +115,20 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None)
         return tuple(weights[name])
 
     def emit(code, op, msg):
+        if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+            from .constraints import explanation
+            msg += ' '+explanation(code, op.kind)
         diags.append(Diag(code, "warning" if code.startswith("W_") else "error", op.lineno, op.id, msg,
                           op.call_lines, op.macro_stack))
 
     for op in program.ops:
+        if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+            from .methods import approximation_roles, supported_methods
+            for role, fn, method in approximation_roles(op):
+                supported = supported_methods(fn)
+                if method not in supported:
+                    emit('E_METHOD_UNSUPPORTED', op,
+                         f'{role or op.kind}: {fn} does not support {method}; supported methods: '+', '.join(supported))
         if op.kind in ('act','maxpool'):
             message = new_approx_error(dict(op.attrs,fn=op.attrs.get('fn','relu')))
             if message:
@@ -124,7 +136,18 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None)
         for index, vid in enumerate(op.inputs):
             if vid in plain and not (op.kind in ("add", "sub", "mul") and index == 1):
                 emit("E_KIND", op, "Plain parameters apply only to the second add/sub/mul input")
+            if (prompt_version in ('r8-v8','r8-v9','r8-v10') and vid in masks
+                    and not (op.kind == 'pack' or op.kind in ('softmax', 'select') and index == 1)):
+                emit('E_KIND', op, 'A packed Mask is used only as softmax mask= or the select mask')
         tags = [layouts[vid] for vid in op.inputs]
+        if op.kind == 'pack' and op.inputs[0] in masks:
+            masks.update(op.outputs)
+            if op.attrs['layout'] != 'flat':
+                emit('E_KIND', op, 'Mask inputs require flat packing')
+        if op.kind == 'select' and op.inputs[1] not in masks:
+            emit('E_KIND', op, 'select requires a Mask as its second input')
+        if op.kind == 'softmax' and op.attrs['mask'] is not None and op.inputs[1] not in masks:
+            emit('E_KIND', op, 'softmax mask requires a Mask value')
         if op.kind == "pack":
             if tags[0] != "raw":
                 emit("E_LAYOUT_REPACK", op, "pack requires a raw Cipher parameter")
@@ -133,9 +156,12 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None)
             if "raw" in tags:
                 emit("E_LAYOUT_UNPACKED", op, "Pack all raw tensor inputs before this operation")
             nonplain = [tag for tag in tags if tag != "plain"]
-            if OPS[op.kind].layout == "binary" and len(set(nonplain)) > 1:
+            if (OPS[op.kind].layout == "binary" and len(set(nonplain)) > 1
+                    and not (op.kind == 'matmul' and op.attrs['transpose_b'] is not None)):
                 emit("E_LAYOUT_MISMATCH", op, "Binary inputs require matching nonplain layout labels")
             tag = op.attrs["layout"] if op.kind == "relayout" else tags[0]
+            if op.kind == 'matmul' and op.attrs['transpose_b'] is not None:
+                tag = 'score' if op.attrs['transpose_b'] else 'token'
         for vid in op.outputs:
             layouts[vid] = tag
         input_shapes = [shapes[vid] for vid in op.inputs]
@@ -171,6 +197,13 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None)
                 emit("W_REFRESH_COMPILER", op, "Compiler refresh mode lowers this refresh to identity")
     if graph is not None:
         diags.extend(weight_usage_diags(program, graph))
+    if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+        # Header and post-pass diagnostics do not pass through emit().
+        from .constraints import explanation
+        diags = [Diag(d.code, d.severity, d.lineno, d.op_id,
+                      d.msg+' '+explanation(d.code, program.ops[d.op_id].kind if d.op_id is not None else '*'),
+                      d.call_lines, d.macro_stack)
+                 if d.code in ('E_MANAGEMENT', 'W_UNUSED', 'E_WEIGHT_UNUSED') else d for d in diags]
     return CheckResult(diags, shapes, layouts)
 
 

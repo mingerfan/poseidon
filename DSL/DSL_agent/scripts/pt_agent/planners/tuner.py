@@ -4,7 +4,7 @@ import copy
 from dataclasses import dataclass
 import time
 
-from ..cost import estimate
+from ..cost import estimate, estimate_normalized
 from ..dsl.ir import Program
 from ..dsl.printer import print_program
 from ..tensor_sim import cached_estimate
@@ -87,13 +87,22 @@ def _new_settings(attrs):
 
 def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
          engine: str = "tensor", cache: bool = True, engine_profile: str = "mock") -> TuneResult:
+    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10'):
+        from ..dsl.interface import require_interface
+        require_interface(program, ctx.model_info)
+    from ..transformer_lower import uses_transformer
+    if uses_transformer(program):
+        from .transformer_tuner import tune as token_tune
+        return token_tune(program,ctx,budget_s=budget_s,max_sweeps=max_sweeps,engine=engine,
+                          cache=cache,engine_profile=engine_profile)
     if engine_profile not in ("mock", "tensor"):
         raise ValueError('engine_profile must be "mock" or "tensor"')
     if engine_profile == "tensor":
         engine = "tensor"
     started = time.monotonic()
+    estimator = estimate_normalized if getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10') else estimate
     def cost_of(candidate):
-        return cached_estimate(candidate, ctx.weights, ctx.profile, estimate, cache=cache)
+        return cached_estimate(candidate, ctx.weights, ctx.profile, estimator, cache=cache)
 
     def validation(candidate, n=None, cost=None):
         if engine == "mock":

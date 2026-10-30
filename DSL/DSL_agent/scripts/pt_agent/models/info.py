@@ -32,12 +32,14 @@ class ModelInfo:
             self.describe_layouts()
 
     def describe_layouts(self, slots=16384):
-        from ..kernels.layout import KernelError, layout_blocks, layout_record, multi_mux_layout, multi_flat_layout
+        from ..kernels.layout import KernelError, layout_blocks, layout_record, multi_mux_layout, multi_flat_layout, TokenLayout
 
         for entry in self.inputs:
             shape = entry['shape']
             try:
-                if len(shape) == 4 and shape[0] == 1:
+                if len(shape)==3 and shape[0]==1:
+                    lay=TokenLayout(slots,*shape[1:])
+                elif len(shape) == 4 and shape[0] == 1:
                     lay = multi_mux_layout(slots, *shape[1:], 1)
                 elif len(shape) == 2 and shape[0] == 1:
                     lay = multi_flat_layout(slots, shape[1])

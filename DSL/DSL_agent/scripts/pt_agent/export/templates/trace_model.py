@@ -59,6 +59,7 @@ def main():
 
         backend = manager.RecordingBackend(config['slots'], owner_resolver=owner)
         runtime.invoke(backend, weights)
+        constants = {value.name:value.data for value in backend._constants.values()}
         args.output_dir.mkdir(parents=True)
         raw_metrics = {}
         raw = manager.emit_raw(backend,args.output_dir/'raw.earth.mlir',management['profile'],
@@ -73,10 +74,20 @@ def main():
         if status.returncode:
             raise subprocess.CalledProcessError(status.returncode,status.args)
         raw.unlink()
-        shared = manager.load_graph(args.output_dir/'preprocessed.earth.mlir',config['slots'])
+        command = [arg.format(**substitutions) for arg in
+                   json.loads((ROOT/'config/frontend_structure_argv.json').read_text())]
+        status = streams.run(command,cwd=args.output_dir)
+        if status.returncode:
+            raise subprocess.CalledProcessError(status.returncode,status.args)
+        structure = streams.compress_ir(args.output_dir/'preprocessed.structure.mlir')
+        shared = manager.load_graph(structure,config['slots'],constants=constants,profile=management['profile'])
         del backend
         function = manager.manage(shared, management['profile'], name=config['name'])
         manager.check(function)
+        sizes = manager.constant_sizes(function)
+        (args.output_dir/'constant_sizes.json').write_text(json.dumps(sizes,indent=2)+'\n')
+        if sizes['estimated_cst_bytes']>8*1024**3:
+            raise ValueError('Estimated .cst exceeds 8 GiB: '+str(sizes))
         emit_metrics = {}
         managed = manager.emit(function, args.output_dir/'managed.mlir', metrics=emit_metrics)
         summary = dict(function.summary(),input_dag='frontend-preprocessed')
@@ -96,6 +107,7 @@ def main():
                          management_completed=True,
                          management_emit=emit_metrics,
                          frontend_emit=raw_metrics, frontend_preprocessing_completed=True,
+                         frontend_preprocess_format='bytecode-and-structure',constant_sizes=sizes,
                          weights_binding=dict(file=args.weights.name, bytes=args.weights.stat().st_size))
         (args.output_dir/'signature.json').write_text(json.dumps(signature, indent=2)+'\n')
         print(str(managed))

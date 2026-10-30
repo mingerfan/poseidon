@@ -15,6 +15,11 @@ from .poly import EXACT, cheb_eval
 MAX_ITERATIONS = 50
 RELATIVE_CONVERGENCE = 1e-6
 NEW_METHODS = frozenset(('remez','composite','newton'))
+REMEZ_FUNCTIONS = dict(EXACT, inv=lambda x: 1.0/x, rsqrt=lambda x: 1.0/np.sqrt(x),
+                       hardswish=lambda x: x*np.minimum(np.maximum(x+3.0, 0.0), 6.0)/6.0,
+                       square=lambda x: x*x)
+NEWTON_FUNCTIONS = frozenset(('inv', 'rsqrt'))
+COMPOSITE_FUNCTIONS = frozenset(('relu',))
 
 
 def tolerance(amplitude, maximum_target):
@@ -40,16 +45,8 @@ class ApproximationError(KernelError):
 
 def function(fn, value):
     """The declared mathematical targets; no calibration or random inputs."""
-    if fn in EXACT:
-        return EXACT[fn](value)
-    if fn == 'inv':
-        return 1.0/value
-    if fn == 'rsqrt':
-        return 1.0/np.sqrt(value)
-    if fn == 'hardswish':
-        return value*np.minimum(np.maximum(value+3.0, 0.0), 6.0)/6.0
-    if fn == 'square':
-        return value*value
+    if fn in REMEZ_FUNCTIONS:
+        return REMEZ_FUNCTIONS[fn](value)
     raise KernelError(f"Unknown approximation function {fn!r}")
 
 
@@ -146,7 +143,7 @@ def _single_exchange(reference, point, error, amplitude):
     return result
 
 
-def _exchange(target, degree, *, odd=False, interval=(-1.0,1.0)):
+def _exchange(target, degree, *, odd=False, interval=(-1.0,1.0), w=None):
     count = (degree+1)//2+1 if odd else degree+2
     reference = np.cos(np.linspace(np.pi, 0.0, count))
     if odd:
@@ -161,7 +158,7 @@ def _exchange(target, degree, *, odd=False, interval=(-1.0,1.0)):
             basis = np.polynomial.chebyshev.chebvander(reference,degree)[:,1::2]
         else:
             basis = np.polynomial.chebyshev.chebvander(reference, degree)
-        matrix = np.column_stack((basis, signs))
+        matrix = np.column_stack((basis, signs if w is None else signs/w(reference)))
         try:
             solution = np.linalg.solve(matrix, target(reference))
         except np.linalg.LinAlgError as exc:
@@ -174,7 +171,8 @@ def _exchange(target, degree, *, odd=False, interval=(-1.0,1.0)):
             expanded[1::2] = coefficients
             coefficients = expanded
         def error(value):
-            return target(value)-np.polynomial.chebyshev.chebval(value, coefficients)
+            difference = target(value)-np.polynomial.chebyshev.chebval(value, coefficients)
+            return difference if w is None else w(value)*difference
         (points, errors), maximum = _extrema(error, grid)
         ratio = ((maximum-abs(amplitude))/abs(amplitude) if amplitude else
                  (0.0 if maximum == 0.0 else np.inf))
@@ -205,14 +203,31 @@ def _remez(fn, deg, domain):
     return _exchange(lambda u: function(fn, ((hi-lo)*u+(hi+lo))/2), deg)
 
 
-def remez(fn, deg, domain):
+@lru_cache(maxsize=None)
+def _relative_remez(fn, deg, domain):
+    _parameters(fn,deg,domain)
+    if fn not in ('exp','inv','rsqrt'):
+        raise KernelError('relative Remez requires exp, inv or rsqrt')
+    lo,hi=domain
+    def target(u):
+        return function(fn,((hi-lo)*u+(hi+lo))/2)
+    return _exchange(target,deg,w=lambda u:1/target(u))
+
+
+def _fit_result(fn,deg,domain,fit):
+    if fit=='absolute':return _remez(fn,deg,tuple(domain))
+    if fit=='relative':return _relative_remez(fn,deg,tuple(domain))
+    raise KernelError('fit must be absolute or relative')
+
+
+def remez(fn, deg, domain, *, fit='absolute'):
     """Fit the target in Chebyshev basis with the specified strict exchange."""
-    return _remez(fn, deg, tuple(domain))[0]
+    return _fit_result(fn,deg,domain,fit)[0]
 
 
-def remez_report(fn, deg, domain):
+def remez_report(fn, deg, domain, *, fit='absolute'):
     """Return the exchange's numerical evidence, including alternating extrema."""
-    return _remez(fn, deg, tuple(domain))[1]
+    return _fit_result(fn,deg,domain,fit)[1]
 
 
 def act_remez(b, x, fn, deg, domain, *, coefficients=None):
@@ -329,7 +344,7 @@ def search_composite(max_depth,eps,target_error):
 
 def newton(b, x, fn, deg0, iters, domain, *, coefficients=None):
     """U5 §6: identical explicit order for NumPy, Mock and emitted arithmetic."""
-    if fn not in ('inv', 'rsqrt') or domain[0] <= 0:
+    if fn not in NEWTON_FUNCTIONS or domain[0] <= 0:
         raise KernelError('newton requires inv/rsqrt and a positive domain')
     if type(iters) is not int or iters < 0:
         raise KernelError('newton iters must be a nonnegative integer')
@@ -366,11 +381,11 @@ def evaluate(b,x,fn,method,domain,coefficients,*,iters=0):
 def fitted_coefficients(attrs):
     method,domain,fn = attrs['method'],attrs['domain'],attrs.get('fn','relu')
     if method == 'remez':
-        return remez(fn,attrs['deg'],domain)
+        return remez(fn,attrs['deg'],domain,fit=attrs.get('fit') or 'absolute')
     if method == 'composite':
         return composite_coeffs(tuple(attrs['degrees']),attrs['eps'])
     if method == 'newton':
-        return remez(fn,attrs['deg0'],domain)
+        return remez(fn,attrs['deg0'],domain,fit=attrs.get('fit') or 'absolute')
     raise KernelError(f'Unknown fitted method {method!r}')
 
 
@@ -385,7 +400,8 @@ def configuration(attrs):
     parameters = (attrs['deg'] if method == 'remez' else
                   (tuple(attrs['degrees']),attrs['eps']) if method == 'composite' else
                   (attrs['deg0'],attrs['iters']))
-    return method,parameters,*attrs['domain']
+    result = (method,parameters,*attrs['domain'])
+    return result+('relative',) if attrs.get('fit')=='relative' else result
 
 
 def degree_bound(attrs):

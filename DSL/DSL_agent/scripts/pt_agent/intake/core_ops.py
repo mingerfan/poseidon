@@ -3,14 +3,17 @@
 CORE_OPS = {
     "conv2d": {"inputs": 1, "attrs": {"weight": "weight", "bias": "weight?", "stride": "pair", "padding": "pair", "dilation": "pair", "groups": int}},
     "linear": {"inputs": 1, "attrs": {"weight": "weight", "bias": "weight?"}},
-    "matmul": {"inputs": 2, "attrs": {}},
+    "matmul": {"inputs": 2, "attrs": {'transpose_b':bool,'heads':int,'kv_heads':int,'scale':float}},
     "add": {"inputs": (1, 2), "attrs": {"scalar": float, "const": "weight"}},
     "sub": {"inputs": (1, 2), "attrs": {"scalar": float, "const": "weight", "reverse": bool}},
     "mul": {"inputs": (1, 2), "attrs": {"scalar": float, "const": "weight"}},
     "batchnorm": {"inputs": 1, "attrs": {"weight": "weight", "bias": "weight", "mean": "weight", "var": "weight", "eps": float}},
     "layernorm": {"inputs": 1, "attrs": {"weight": "weight?", "bias": "weight?", "normalized_shape": "tuple", "eps": float}},
     "act": {"inputs": 1, "attrs": {"fn": str, "exponent": float}},
-    "softmax": {"inputs": 1, "attrs": {"axis": int}},
+    "softmax": {"inputs": (1,2), "attrs": {"axis": int,'keep':str,'mask':str}},
+    'rmsnorm': {'inputs':1,'attrs':{'weight':'weight','eps':float}},
+    'shuffle': {'inputs':1,'attrs':{'index':'tuple','sign':'tuple'}},
+    'select': {'inputs':2,'attrs':{}},
     "avgpool": {"inputs": 1, "attrs": {"kernel": "pair", "stride": "pair", "padding": "pair"}},
     # NCHW max pooling, including the original padding/dilation/ceil semantics.
     # Semantic import does not imply that a polynomial/FHE kernel exists.
@@ -41,4 +44,5 @@ CORE_OPS = {
 
 # User's R3 correction: uncomposed adaptive_avgpool needs composition.
 KERNEL_OPS = frozenset({"conv2d", "linear", "add", "sub", "mul", "batchnorm", "act", "avgpool",
-                        "flatten", "reshape", "slice", "pad", "mean", "sum", "concat", "maxpool"})
+                        "flatten", "reshape", "slice", "pad", "mean", "sum", "concat", "maxpool",
+                        'layernorm','rmsnorm','softmax','matmul','shuffle','select'})

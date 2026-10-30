@@ -7,7 +7,7 @@ from .layout import (FlatLayout, KernelError, MuxLayout, MultiFlatLayout, MultiM
 from .conv import conv2d_mux
 from .pool import mean_mux
 from .linear import linear_flat
-from .slots import accumulate, sum_slots
+from .slots import accumulate, sum_slots, vector
 
 
 MULTI = (MultiMuxLayout, MultiFlatLayout)
@@ -167,12 +167,16 @@ def linear_blocks(b, x, lin, weight, bias, *, algo='bsgs', n1=None):
             xr = replicas[key]
             slots = np.arange(side)
 
-            def diagonal(d):
-                u = np.zeros(lin.n)
-                columns = (slots+d) % side
-                valid = (slots < lo.size) & (columns < li.size)
-                u[slots[valid]] = weight[out_start+slots[valid], in_start+columns[valid]]
-                return u
+            def diagonal(d, roll=None):
+                def build():
+                    u = np.zeros(lin.n)
+                    columns = (slots+d) % side
+                    valid = (slots < lo.size) & (columns < li.size)
+                    u[slots[valid]] = weight[out_start+slots[valid], in_start+columns[valid]]
+                    return u if roll is None else np.roll(u, roll)
+                return vector(b, ('multi.diagonal', id(weight), lin.n, out_start,
+                                  out_end, in_start, in_end, side, d, roll),
+                              build, owners=(weight,))
 
             def rotate_input(step):
                 rotation_key = (*key, step)
@@ -195,19 +199,26 @@ def linear_blocks(b, x, lin, weight, bias, *, algo='bsgs', n1=None):
                     for i in range(g):
                         d = g*j+i
                         if d < side:
-                            u = np.roll(diagonal(d), g*j)
+                            u = diagonal(d, g*j)
                             if np.any(u):
                                 inner = accumulate(inner, R[i]*b.const(u))
                     if inner is not None:
                         y = accumulate(y, inner.rotate(g*j))
         if y is None:
             y = inputs[0][0]*b.const(np.zeros(lin.n))
-        mask = np.zeros(lin.n)
-        mask[:lo.size] = 1
+        def build_mask():
+            mask = np.zeros(lin.n)
+            mask[:lo.size] = 1
+            return mask
+        mask = vector(b, ('multi.mask', lin.n, lo.size), build_mask)
         y = y*b.const(mask)
         if bias is not None:
-            offset = np.zeros(lin.n)
-            offset[:lo.size] = bias[out_start:out_end]
+            def build_bias():
+                offset = np.zeros(lin.n)
+                offset[:lo.size] = bias[out_start:out_end]
+                return offset
+            offset = vector(b, ('multi.bias', id(bias), lin.n, out_start, out_end),
+                            build_bias, owners=(bias,))
             y = y+b.const(offset)
         outputs.append(y)
     return _result(outputs, lout)

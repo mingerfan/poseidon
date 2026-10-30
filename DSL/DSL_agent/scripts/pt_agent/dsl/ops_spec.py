@@ -8,7 +8,7 @@ from ..kernels.poly import MINIMAX_SETS
 
 
 ATTR_TYPES = ("int", "float", "str", "bool", "weight", "int_or_pair", "int_tuple",
-              "float_tuple", "float_pair", "axis")
+              "float_tuple", "float_pair", "axis", "tensor")
 
 
 @dataclass(frozen=True)
@@ -130,13 +130,66 @@ def _poly(a):
 
 
 def _softmax(a):
-    if not 1 <= a["exp_deg"] <= 255 or not 1 <= a["inv_deg"] <= 255 or a["inv_domain"][0] <= 0:
-        return "softmax requires degrees in [1,255] and a positive inv_domain"
+    if a['axis'] != -1:
+        return 'softmax requires axis=-1'
+    if not math.isfinite(a['shift']):
+        return 'softmax shift must be finite'
+    if not math.isfinite(a['inv_scale']) or a['inv_scale'] <= 0:
+        return 'softmax inv_scale must be finite and positive'
+    if a['steps'] < 0:
+        return 'softmax steps must be nonnegative'
+    error = _point(a, 'exp', 'exp') or _point(a, 'inv', 'inv')
+    if error:return error
+    if a['steps'] > 0 or any(a.get('step_inv_'+key) is not None for key in
+                              ('method','domain','deg','degrees','eps','deg0','iters','fit')):
+        if a['step_inv_method'] is None or a['step_inv_domain'] is None:
+            return 'softmax steps>0 requires explicit step_inv_method and step_inv_domain'
+        error = _point(a, 'step_inv', 'inv')
+        if error:return error
+    final = any(a.get('final_inv_'+key) is not None for key in
+                ('method','domain','deg','degrees','eps','deg0','iters','fit'))
+    if final:
+        if a['steps'] <= 0 or a['final_inv_method'] is None or a['final_inv_domain'] is None:
+            return 'final_inv requires steps>0, final_inv_method and final_inv_domain'
+        error = _point(a, 'final_inv', 'inv')
+        if error:return error
+    if a.get('inv_budget') is not None:
+        if not final or a['steps'] <= 0 or a['inv_budget'] not in (0.5, 0.25, 0.1):
+            return 'inv_budget requires steps>0, final_inv and a budget in (0.5,0.25,0.1)'
 
 
 def _layernorm(a):
-    if not a["eps"] > 0 or not 1 <= a["rsqrt_deg"] <= 255 or a["rsqrt_domain"][0] <= 0:
-        return "layernorm requires eps>0, rsqrt_deg in [1,255] and a positive rsqrt_domain"
+    if not a['eps'] > 0:
+        return 'normalization requires eps>0'
+    return _point(a, 'rsqrt', 'rsqrt')
+
+
+def _point(a, prefix, fn):
+    attrs = dict(fn=fn, **{key: a.get(prefix+'_'+key) for key in
+                 ('method', 'domain', 'deg', 'degrees', 'eps', 'deg0', 'iters')})
+    if a.get(prefix+'_fit')=='relative' and attrs['method'] not in ('remez','newton'):
+        return 'relative fit requires remez or a newton initializer'
+    return new_approx_error(attrs) or _act(attrs)
+
+
+def _point_fields(prefix, required=True):
+    return {prefix+'_'+key: spec for key, spec in dict(
+        method=AttrSpec('str', required, choices=('cheb', 'remez', 'newton', 'composite')),
+        domain=AttrSpec('float_pair', required), deg=AttrSpec('int'), degrees=AttrSpec('int_tuple'),
+        eps=AttrSpec('float'), deg0=AttrSpec('int'), iters=AttrSpec('int'),
+        fit=AttrSpec('str',choices=('absolute','relative'))).items()}
+
+
+def _attention(a):
+    if (a['heads'] is not None and (a['heads'] < 1 or a['kv_heads'] is None
+            or a['kv_heads'] < 1 or a['heads'] % a['kv_heads'])
+            or a['scale'] is not None and not math.isfinite(a['scale'])):
+        return 'attention requires positive divisible heads/kv_heads and a finite scale'
+
+
+def _shuffle(a):
+    if len(a['index']) != len(a['sign']) or min(a['index']) < 0 or any(s not in (-1, 1) for s in a['sign']):
+        return 'shuffle requires equal index/sign lengths, nonnegative indices, and signs +/-1'
 
 
 def _reshape(a):
@@ -159,7 +212,7 @@ def _spec(name, inputs, layout, attrs=None, validate=_none, outputs="one"):
     return OpSpec(name, inputs, outputs, attrs or {}, validate, layout)
 
 
-_LAYOUT = dict(layout=AttrSpec("str", True, choices=("flat", "mux", "rep")),
+_LAYOUT = dict(layout=AttrSpec("str", True, choices=("flat", "mux", "rep", "token", "score")),
                gap=AttrSpec("int", default=1), period=AttrSpec("int"), copies=AttrSpec("int"))
 _REDUCE = dict(axis=AttrSpec("axis", True), keepdim=AttrSpec("bool", default=False))
 OPS = {
@@ -174,7 +227,9 @@ OPS = {
         w=AttrSpec("weight", True), b=AttrSpec("weight"),
         algo=AttrSpec("str", default="bsgs", choices=("bsgs", "diag", "rowsum")), n1=AttrSpec("int")), _linear),
     "matmul": _spec("matmul", 2, "binary", dict(
-        algo=AttrSpec("str", default="diag", choices=("diag", "rowsum")))),
+        algo=AttrSpec("str", default="diag", choices=("diag", "rowsum")),
+        transpose_b=AttrSpec('bool'), heads=AttrSpec('int'), kv_heads=AttrSpec('int'),
+        scale=AttrSpec('float')), _attention),
     "avgpool": _spec("avgpool", 1, "same", dict(k=AttrSpec("int_or_pair", True),
         stride=AttrSpec("int_or_pair"), pad=AttrSpec("int_or_pair", default=0)), _pool),
     "maxpool": _spec("maxpool", 1, "same", dict(k=AttrSpec("int_or_pair", True),
@@ -200,11 +255,18 @@ OPS = {
     "poly": _spec("poly", 1, "same", dict(coeffs=AttrSpec("float_tuple", True),
         basis=AttrSpec("str", default="power", choices=("power", "cheb")), domain=AttrSpec("float_pair")), _poly),
     "softmax": _spec("softmax", 1, "same", dict(axis=AttrSpec("int", default=-1),
-        exp_deg=AttrSpec("int", True), exp_domain=AttrSpec("float_pair", True),
-        inv_deg=AttrSpec("int", True), inv_domain=AttrSpec("float_pair", True)), _softmax),
+        keep=AttrSpec('str', default='all', choices=('all', 'causal')), mask=AttrSpec('tensor'),
+        shift=AttrSpec('float', default=0.0), inv_scale=AttrSpec('float', default=1.0),
+        steps=AttrSpec('int', default=0), **_point_fields('step_inv', required=False),
+        **_point_fields('final_inv', required=False), inv_budget=AttrSpec('float'),
+        **_point_fields('exp'), **_point_fields('inv')), _softmax),
     "layernorm": _spec("layernorm", 1, "same", dict(w=AttrSpec("weight"), b=AttrSpec("weight"),
-        eps=AttrSpec("float", default=1e-5), rsqrt_deg=AttrSpec("int", True),
-        rsqrt_domain=AttrSpec("float_pair", True)), _layernorm),
+        eps=AttrSpec("float", True), **_point_fields('rsqrt')), _layernorm),
+    'rmsnorm': _spec('rmsnorm', 1, 'same', dict(w=AttrSpec('weight', True),
+        eps=AttrSpec('float', True), **_point_fields('rsqrt')), _layernorm),
+    'shuffle': _spec('shuffle', 1, 'same', dict(index=AttrSpec('int_tuple', True),
+        sign=AttrSpec('int_tuple', True)), _shuffle),
+    'select': _spec('select', 2, 'same'),
     "flatten": _spec("flatten", 1, "same", dict(start_dim=AttrSpec("int", default=1))),
     "reshape": _spec("reshape", 1, "same", dict(shape=AttrSpec("int_tuple", True)), _reshape),
     "permute": _spec("permute", 1, "same", dict(dims=AttrSpec("int_tuple", True))),
@@ -217,7 +279,7 @@ OPS = {
     "pad": _spec("pad", 1, "same", dict(pads=AttrSpec("int_tuple", True)), _pad),
     "refresh": _spec("refresh", 1, "same"),
 }
-RESERVED_NAMES = frozenset({"W", "fhe", "region", "Cipher", "Plain"}) | frozenset(OPS)
+RESERVED_NAMES = frozenset({"W", "fhe", "region", "Cipher", "Plain", "Mask"}) | frozenset(OPS)
 
 
 def describe_markdown() -> str:

@@ -7,7 +7,7 @@ import numpy as np
 
 from ..analyzer import reference_forward, approximation_points, approximation_values
 from ..backends import BackendError, MockBackend
-from ..cost import PROFILES, estimate
+from ..cost import PROFILES, estimate, estimate_normalized
 from ..data.cifar import heldout_set, MEAN, STD
 from ..dsl.errors import PTDSLError
 from ..dsl.parser import parse
@@ -27,6 +27,7 @@ from ..tensor_sim import (cached_estimate, identity_token, result_cache_get,
 
 FEASIBLE_MAX_U = 0.90
 VAL_BATCH = 20
+MOCK_VAL_BATCH = 10
 MAX_ACC_DROP_PP = 0.5
 
 
@@ -55,6 +56,9 @@ class AgentContext:
 
 
 def build_context(graph, calibration, n_val=1000, *, samples=None, normalization=(MEAN, STD)) -> AgentContext:
+    if isinstance(graph,ModelInfo) and getattr(graph.graph,'intake_stats',{}).get('transformer_normalized'):
+        from ..transformer_validation import context
+        return context(graph,calibration,samples=samples,n_val=n_val,normalization=normalization)
     info = graph if isinstance(graph, ModelInfo) else None
     if info is not None:
         graph = info.graph
@@ -109,6 +113,10 @@ def _unpack(value, layout):
 
 
 def _exact_check(program, ctx, *, engine="mock"):
+    from ..transformer_lower import uses_transformer
+    if uses_transformer(program):
+        from ..transformer_validation import exact_check
+        return exact_check(program,ctx,engine=engine)
     ops = [op for op in program.ops if op.kind in ("act", "maxpool")]
     collected = []
 
@@ -154,6 +162,14 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
              stop_on_divergence=True, engine: str = "mock", cache: bool = True,
              output_callback=None) -> dict:
     """Apply validation checks to the first n held-out images (all by default)."""
+    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10'):
+        from ..dsl.interface import require_interface
+        require_interface(program, ctx.model_info)
+    from ..transformer_lower import uses_transformer
+    if uses_transformer(program):
+        from ..transformer_validation import validate as token_validate
+        return token_validate(program,ctx,n,engine=engine,stop_on_divergence=stop_on_divergence,
+                              output_callback=output_callback)
     images = ctx.val_images if n is None else ctx.val_images[:n]
     profile = PROFILES[ctx.profile]
     if engine not in ("mock", "tensor"):
@@ -168,12 +184,15 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
         image_id = (identity_token(ctx.val_images), identity_token(ctx.weights))
         result_identity = (image_id, identity_token(ctx.val_exact_logits), identity_token(ctx.val_labels),
                            ctx.profile, tuple(ctx.act_tensors), tuple(op.lineno for op in ops))
+        if getattr(ctx, 'prompt_version', None) == 'r8-v10':
+            result_identity += ('r8-v10',)
         result_key = (print_program(program), result_identity, len(images), stop_on_divergence, engine)
         hit, saved = result_cache_get(result_key)
         if hit:
             return saved
     if engine == "mock" and boot_nodes is None:
-        boot_nodes = cached_estimate(program, ctx.weights, ctx.profile, estimate, cache=cache)['boot_nodes']
+        estimator = estimate_normalized if getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10') else estimate
+        boot_nodes = cached_estimate(program, ctx.weights, ctx.profile, estimator, cache=cache)['boot_nodes']
     rows = [dict(program_line=op.lineno, graph_tensor=ctx.act_tensors[index], max_u=0.0,
                  obs_min=None, obs_max=None,
                  deg=op.attrs["deg"], method=op.attrs["method"], degrees=op.attrs.get("degrees"),
@@ -215,7 +234,9 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
             row["obs_min"] = float(data.min())
             row["obs_max"] = float(data.max())
             _, _, lo, hi = cfg
-            row["max_u"] = float(np.max(np.abs(data*(2/(hi-lo))-(hi+lo)/(hi-lo))))
+            from ..domain_criteria import maximum_u
+            row["max_u"] = maximum_u(data, (lo,hi), fn=ops[observed-1].attrs.get('fn'),
+                version=getattr(ctx,'prompt_version','r8-v4'))
             if ops[observed-1].kind == 'maxpool' and row['max_u'] > 1:
                 raise BackendError('maxpool comparison input leaves its domain')
 
@@ -261,8 +282,9 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
             outputs[start:start+count] = logits
         validation["images_done"] = start+count
 
-    for start in range(0, len(images), VAL_BATCH):
-        batch = images[start:start+VAL_BATCH]
+    batch_size = min(VAL_BATCH, MOCK_VAL_BATCH) if engine == "mock" else VAL_BATCH
+    for start in range(0, len(images), batch_size):
+        batch = images[start:start+batch_size]
         logits, observations, boot_max, error = run_batch(batch, start)
         if error is None:
             record(logits, observations, boot_max, start, len(batch))
@@ -301,6 +323,11 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                               and passes(validation, threshold)
                               and (validation['boot_input_bound'] is None
                                    or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
+    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10'):
+        from ..domain_criteria import summarize
+        for row in rows:
+            row.update(domain_source='calibrated', analytic_domain=None, u_limit=FEASIBLE_MAX_U)
+        validation.update(summarize(rows))
     if result_key is not None:
         result_cache_put(result_key, validation)
     return validation
@@ -330,9 +357,16 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
         program = parse(source)
     except PTDSLError as exc:
         return dict(fb, error=str(exc))
+    version = getattr(ctx, 'prompt_version', 'r8-v4')
+    if version in ('r8-v8','r8-v9','r8-v10'):
+        from ..dsl.interface import check_interface
+        interface = check_interface(program, ctx.model_info)
+        if not interface['ok']:
+            return dict(fb, stage='interface', interface=interface, errors=interface['errors'])
     fb["stage"] = "typecheck"
     weight_usage = engine_profile == "tensor" or getattr(ctx, "prompt_version", "r8-v4") in ("r8-v5","r8-v6")
-    checked = check(program, ctx.weight_shapes, **(dict(graph=ctx.graph) if weight_usage else {}))
+    checked = check(program, ctx.weight_shapes, **(dict(graph=ctx.graph) if weight_usage else {}),
+                    **(dict(prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10') else {}))
     if not checked.ok:
         errors = [diag for diag in checked.diags if diag.severity == "error"]
         shown = errors[:20]
@@ -340,6 +374,18 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
             shown += [diag for diag in errors[20:] if diag.code == "E_WEIGHT_UNUSED"]
         return dict(fb, errors=[error_record(diag.code, diag.lineno, diag.call_lines, diag.msg)
                                for diag in shown])
+    if version in ('r8-v9','r8-v10'):
+        from ..margin import check_margin
+        margin = check_margin(program, ctx)
+        if not margin['ok']:
+            return dict(fb, stage='margin', margin=margin, errors=margin['errors'])
+    if version in ('r8-v7','r8-v8','r8-v9','r8-v10'):
+        from .approximation_failures import program_failures
+        numerical=program_failures(program)
+        if numerical:
+            return dict(fb,stage='approximation',errors=[dict(item,code='E_APPROX_NUMERICAL',
+                        line_text=line_text(item['line']),call_texts=[line_text(v) for v in item['call_lines']])
+                        for item in numerical])
     fb["stage"] = "exact"
     try:
         fb["exact"] = _exact_check(program, ctx, **(dict(engine="tensor") if engine_profile == "tensor" else {}))
@@ -351,7 +397,8 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
         return fb
     fb["stage"] = "cost"
     try:
-        cost = estimate(program, ctx.weights, profile=ctx.profile)
+        estimator = estimate_normalized if version in ('r8-v7','r8-v8','r8-v9','r8-v10') else estimate
+        cost = estimator(program, ctx.weights, profile=ctx.profile)
         fb["cost"] = {key: cost[key] for key in ("latency_pred_us", "boots_pred", "max_depth", "ops_total", "rot_keys",
                                                "placement_model", "placement_exact", "barriers", "boot_share")}
         fb["cost"]["hotspots"] = [dict(row, line_text=line_text(row['line']),
@@ -371,6 +418,8 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
     validation = validate(program, ctx, boot_nodes=cost['boot_nodes'], engine=engine, cache=cache)
     fb["validation"] = {key: value for key, value in validation.items() if key not in ("rows", "feasible", "error")}
     fb["feasible"] = fb["exact"]["ok"] and validation["feasible"]
+    if version in ('r8-v8','r8-v9','r8-v10') and validation.get('analytic_domain_violation'):
+        fb['stop'] = 'analytic_domain_violation'
     if "error" in validation:
         fb["error"] = validation["error"]
     if not validation["diverged"]:

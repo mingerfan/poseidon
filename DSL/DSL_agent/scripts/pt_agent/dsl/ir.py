@@ -9,6 +9,11 @@ class WeightRef:
 
 
 @dataclass(frozen=True)
+class ValueRef:
+    name: str
+
+
+@dataclass(frozen=True)
 class Header:
     slots: int
     refresh: str = "compiler"
@@ -67,6 +72,8 @@ def canonical(program: Program) -> dict:
     def value(v):
         if isinstance(v, WeightRef):
             return {"weight": v.name}
+        if isinstance(v, ValueRef):
+            return {'value': ids[v.name]}
         if isinstance(v, (tuple, list)):
             return [value(x) for x in v]
         if isinstance(v, dict):

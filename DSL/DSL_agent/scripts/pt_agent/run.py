@@ -272,6 +272,11 @@ def _compile_export(record):
 
 
 def _inside(args):
+    if getattr(args,'model_info',None) is not None:
+        record=json.loads(Path(args.model_info).read_text())
+        if record.get('source',{}).get('intake',{}).get('transformer_normalized'):
+            from .transformer_run import inside
+            return inside(args)
     import numpy as np
     from . import toolchain
     from .analyzer import calibrate, reference_forward, approximation_points, approximation_values
@@ -533,8 +538,12 @@ def _inside(args):
                 del logits, reference
                 gc.collect()
             elif stage == "count":
-                if args.refresh == "agent":
-                    report["count"] = estimate(program, graph.weights)
+                if args.refresh == "agent" or getattr(args,'prompt_version','r8-v4')=='r8-v7':
+                    if getattr(args,'prompt_version','r8-v4')=='r8-v7':
+                        from .cost import estimate_normalized
+                        report["count"] = estimate_normalized(program, graph.weights)
+                    else:
+                        report["count"] = estimate(program, graph.weights)
                 else:
                     backend = CountBackend(program.header.slots)
                     lower(program, graph.weights, backend)

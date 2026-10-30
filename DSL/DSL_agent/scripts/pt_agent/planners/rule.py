@@ -9,6 +9,10 @@ from ..intake import Graph
 def plan(graph: Graph, calibration: dict, *, deg: int = 63, margin: float = 1.25,
          slots: int = 16384, placement: str = "depth-dp", refresh: str = "compiler",
          act_method: str = "cheb") -> str:
+    if getattr(graph,'intake_stats',{}).get('transformer_normalized'):
+        from .transformer_rule import plan as token_plan
+        if refresh!='compiler':raise ValueError('token rule uses compiler refresh')
+        return token_plan(graph,calibration,slots=slots,placement=placement)
     if margin < 1.1:
         raise ValueError("rule planner requires margin >= 1.1")
     if refresh not in ("compiler", "agent"):

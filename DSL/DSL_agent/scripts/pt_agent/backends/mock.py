@@ -1,6 +1,7 @@
 """Immutable float64 slot vectors for development arithmetic checks."""
 
 import hashlib
+import gc
 
 import numpy as np
 
@@ -15,6 +16,8 @@ class MockExpr(_Cipher):
 
 class MockBackend(Backend):
     def __init__(self, slots, batch=None, *, watch=None, noise=None, stream_constants=True):
+        from ..cost import release_estimate_caches
+        release_estimate_caches()
         super().__init__(slots)
         if batch is not None and (type(batch) is not int or batch < 1):
             raise BackendError("batch must be a positive integer or None")
@@ -61,6 +64,15 @@ class MockBackend(Backend):
         if not isinstance(inputs, list):
             raise BackendError("bind requires a list of slot vectors")
         self._bound = [self._value(value) for value in inputs]
+
+    def release_batch(self):
+        """Drop batch ownership and collect unreachable arithmetic closures."""
+        self._bound = None
+        self._inputs.clear()
+        self._outputs = None
+        self._constants.clear()
+        self._constant_objects.clear()
+        gc.collect()
 
     def _make_input(self, index):
         if self._bound is None or index >= len(self._bound):

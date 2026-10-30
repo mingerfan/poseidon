@@ -137,6 +137,11 @@ def _evaluate(node, values, batch):
 
 
 def reference_forward(graph: Graph, inputs: dict[str, np.ndarray], *, keep: bool = False) -> dict[str, np.ndarray]:
+    if getattr(graph, 'intake_stats', {}).get('transformer_normalized'):
+        from .intake.graph_exec import forward
+        result=forward(graph,inputs,keep=keep)
+        return {name: value.detach().cpu().numpy() if hasattr(value,'detach') else value
+                for name,value in result.items()}
     values = dict(graph.weights)
     for name in graph.inputs:
         array = np.asarray(inputs[name], dtype=np.float64)
@@ -160,8 +165,15 @@ def reference_forward(graph: Graph, inputs: dict[str, np.ndarray], *, keep: bool
 
 def approximation_points(graph):
     """Stable ordered point keys; activation keys retain the frozen spelling."""
-    return [(node, node.inputs[0] if node.op == 'act' else node.outputs[0]+'::differences')
-            for node in graph.nodes if node.op in ('act', 'maxpool')]
+    result=[]
+    for node in graph.nodes:
+        if node.op in ('act','maxpool'):
+            result.append((node,node.inputs[0] if node.op=='act' else node.outputs[0]+'::differences'))
+        elif node.op in ('layernorm','rmsnorm'):
+            result.append((node,node.outputs[0]+'::rsqrt'))
+        elif node.op=='softmax':
+            result.extend((node,node.outputs[0]+'::'+role) for role in ('exp','inv'))
+    return result
 
 
 def approximation_values(graph, values):
@@ -170,6 +182,19 @@ def approximation_values(graph, values):
     for node, name in approximation_points(graph):
         if node.op == 'act':
             result[name] = values[node.inputs[0]]
+        elif node.op in ('layernorm','rmsnorm'):
+            x=values[node.inputs[0]]
+            centered=x if node.op=='rmsnorm' else x-x.mean(-1,keepdims=True)
+            result[name]=((centered*centered).mean(-1,keepdims=True)+node.attrs['eps']).reshape(1,-1)
+        elif node.op=='softmax':
+            x=values[node.inputs[0]];a=node.attrs
+            keep=np.ones(x.shape,dtype=bool)
+            if a.get('keep')=='causal':
+                keep &= np.arange(x.shape[-1])[None,:] <= np.arange(x.shape[-2])[:,None]
+            if a.get('mask') is not None:
+                keep &= values[a['mask']].reshape((len(x),)+(1,)*(x.ndim-2)+(x.shape[-1],)).astype(bool)
+            result[name]=(x[keep].reshape(1,-1) if name.endswith('::exp') else
+                          (np.exp(x)*keep).sum(-1,keepdims=True).reshape(1,-1))
         else:
             stats = DifferenceStats()
             a = node.attrs
@@ -199,7 +224,7 @@ def calibrate(graph: Graph, inputs: dict[str, np.ndarray], batch: int = 100) -> 
                 old = result[name]
                 old.update(min=min(old["min"], low), max=max(old["max"], high), absmax=max(old["absmax"], absolute),
                            p999=max(old["p999"], percentile), count=old["count"]+int(value.size))
-        pool_names = {name for node, name in approximation_points(graph) if node.op == 'maxpool'}
+        pool_names = {name for node, name in approximation_points(graph) if node.op != 'act'}
         if pool_names:
             for name, value in approximation_values(graph, values).items():
                 if name not in pool_names:

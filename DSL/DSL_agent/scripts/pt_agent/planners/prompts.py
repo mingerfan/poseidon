@@ -9,7 +9,13 @@ from ..intake.patterns import annotate
 from .agent_tools import FEASIBLE_MAX_U
 
 PROMPT_VERSION = "r8-v4"
-PROMPT_VERSIONS = ("r8-v4", "r8-v5", "r8-v6")
+PROMPT_VERSIONS = ("r8-v4", "r8-v5", "r8-v6", 'r8-v7', 'r8-v8', 'r8-v9', 'r8-v10')
+
+LINEAR_U_EXPLANATION = '(u maps the declared domain to [-1,1])'
+LOG_U_EXPLANATION = ('(for calibrated inv/rsqrt points with domain lo>0, '
+                     'u=2*(ln(x)-ln(lo))/(ln(hi)-ln(lo))-1; nonpositive or nonfinite observations '
+                     'give max |u|=inf. Other calibrated points and all analytical points keep '
+                     'the linear mapping of the declared domain to [-1,1])')
 TEMPLATE = """You are an FHE compiler engineer. You write PT-DSL programs that implement a given neural network on CKKS
 homomorphic encryption. A trusted lowering turns PT-DSL into Hecate code; an unmodified compiler then inserts
 rescale/modswitch/bootstrap. Your program must compute exactly the given network (except for the polynomial
@@ -87,8 +93,31 @@ def build_system_prompt(ctx, *, version=None) -> str:
                               for name in chosen)
     text = TEMPLATE.format(capabilities=render_capabilities(version), max_u=FEASIBLE_MAX_U,
                            n_val=len(ctx.val_images), examples=examples)
-    if version in ('r8-v5','r8-v6'):
+    if version in ('r8-v5','r8-v6','r8-v7','r8-v8','r8-v9','r8-v10'):
         text = text.replace('Every act node also lists', 'Every act and maxpool approximation point also lists')
+    if version in ('r8-v7','r8-v8','r8-v9','r8-v10'):
+        text=text.replace('calib = [min, max] observed on calibration images and needed_margin = the factor by which the exact network\nexceeds calib on validation images; a domain must cover calib widened by needed_margin, plus room for the error\nof the approximations before it.',
+                          'calib = [min, max] observed on calibration samples. Derive approximation domains only from calibration and the registered analytical formulas. Heldout samples judge feasibility and never change domains or margins.')
+        text+='\nAll inputs, including encrypted attention and selection masks, are listed in inputs. Preserve every input and weight role. Use explicit approximation parameters for each registered norm/softmax point.\n'
+    if version in ('r8-v8','r8-v9','r8-v10'):
+        text = text.replace('Parameters are annotated as Cipher[d0, d1, ...] with the network input shape.',
+                            'Parameters use the exact DSL type and shape in inputs: Cipher[...] or Mask[...].')
+        text = text.replace('no activation input leaves its domain (max |u| <= 0.9, where u is\nthe input mapped to [-1, 1])',
+                            'calibrated points have max |u| <= 0.90 and analytical inverse points have max |u| <= 1 (u maps the declared domain to [-1,1])')
+        text += ('\nOnly softmax inv, step_inv and final_inv whose declared domain contains the '
+                 'analytical bound are analytical points. For exp_domain=(a,b), the initial '
+                 'inverse bound is (exp(a)/inv_scale, Lk*exp(b)/inv_scale). Repeated inverse '
+                 'bounds follow the registered rho formula; without final_inv use the legacy '
+                 '(1/(1.5*Lk),1.5) bound. All exp, act and rsqrt points remain calibrated. '
+                 'Feedback reports max_u_calibrated and max_u_analytic separately.\n'
+                 'If feedback stage is length: The previous response reached the output limit '
+                 '(N tokens) before writing a program. Shorten the reasoning and output the complete program directly.\n')
+    if version in ('r8-v9','r8-v10'):
+        text = text.replace(
+            'calib = [min, max] observed on calibration samples. Derive approximation domains only from calibration and the registered analytical formulas.',
+            'calib = [lo, hi] observed on calibration samples. Every calibrated point must declare a domain containing M = [min(1.5*lo, lo/1.5), max(1.5*hi, hi/1.5)]. For softmax exp, compute M on raw scores, then transform each endpoint by (value-shift)*2**(-steps). This minimum domain is checked before execution; analytical inverse domains retain their registered formulas.')
+    if version == 'r8-v10':
+        text = text.replace(LINEAR_U_EXPLANATION, LOG_U_EXPLANATION)
     info = getattr(ctx, 'model_info', None)
     if info is not None and (ctx.val_labels is None or info.task != 'classification'):
         descriptions = {
@@ -133,7 +162,7 @@ def initial_message(ctx) -> str:
             row["pads"] = a["pads"]
         elif node.op == "mean":
             row["axes"] = a["axes"]
-        if version in ('r8-v5','r8-v6'):
+        if version in ('r8-v5','r8-v6','r8-v7','r8-v8','r8-v9','r8-v10'):
             if node.op == 'conv2d':
                 row.update(groups=a['groups'], dilation=a['dilation'])
             elif node.op in ('avgpool', 'maxpool'):
@@ -149,10 +178,35 @@ def initial_message(ctx) -> str:
             group = membership[node.id]
             row.update(pattern=group["pattern"], group=group["group"])
         nodes.append(row)
-    return json.dumps(dict(task="Write the PT-DSL program for this network.", network=graph.name,
+        if version in ('r8-v7','r8-v8','r8-v9','r8-v10'):
+            row.update(attributes=dict(a))
+            row.pop('needed_margin',None)
+            from ..analyzer import approximation_points
+            points=[key for other,key in approximation_points(graph) if other is node]
+            if points:
+                row['approximation_points']=[dict(name=key,calib=ctx.calibration[key]) for key in points]
+    message=dict(task="Write the PT-DSL program for this network.", network=graph.name,
                            patterns=patterns, model=ctx.model_name, target=target,
                            input=dict(name=graph.inputs[0], shape=graph.tensors[graph.inputs[0]].shape),
-                           nodes=nodes, output=graph.outputs[0]), separators=(",", ":"))
+                           nodes=nodes, output=graph.outputs[0])
+    if version in ('r8-v7','r8-v8','r8-v9','r8-v10'):
+        message['inputs']=[dict(name=name,shape=graph.tensors[name].shape,kind=graph.tensors[name].kind)
+                           for name in graph.inputs]
+        if ctx.model_info is not None:
+            message.update(metric=ctx.model_info.metric,threshold=ctx.model_info.threshold)
+    if version in ('r8-v8','r8-v9','r8-v10'):
+        from ..dsl.interface import inputs
+        message['inputs'] = inputs(ctx.model_info)
+    if version in ('r8-v9','r8-v10'):
+        from ..margin import minimum_domain
+        for row in nodes:
+            for point in row.get('approximation_points', []):
+                # Softmax inv is specified analytically, not by raw exp sums.
+                if row['op'] == 'softmax' and not point['name'].endswith('::exp'):
+                    continue
+                limits = point['calib']
+                point['min_domain'] = minimum_domain(limits['min'], limits['max'])
+    return json.dumps(message,separators=(",", ":"))
 
 
 def feedback_message(fb, iteration, best, *, tuned=None) -> str:

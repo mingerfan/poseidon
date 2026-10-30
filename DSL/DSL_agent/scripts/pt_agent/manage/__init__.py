@@ -2,5 +2,5 @@
 
 from .greedy import RecordingBackend, manage
 from .check import ManagementError, check
-from .earth_emit import emit, emit_raw
+from .earth_emit import emit, emit_raw, constant_sizes
 from .mlir_read import read, load_graph

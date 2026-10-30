@@ -51,6 +51,14 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
                    engine_profile: str = "mock") -> dict:
     if engine_profile not in ("mock", "tensor"):
         raise ValueError('engine_profile must be "mock" or "tensor"')
+    from .. import domain_criteria as criteria
+    v8=criteria.enabled(ctx)
+    if v8:
+        from ..dsl.interface import require_interface
+        for candidate in candidates:
+            require_interface(parse(candidate.source),ctx.model_info)
+            from ..margin import require_margin
+            require_margin(parse(candidate.source),ctx)
     normalized = [print_program(parse(candidate.source)) for candidate in candidates]
     representatives = {}
     for index, (candidate, key) in enumerate(zip(candidates, normalized)):
@@ -77,11 +85,21 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
                    or result["boot_input_max_abs"] <= result["boot_input_bound"])
         info = getattr(ctx, 'model_info', None)
         passed = passes(result, info.threshold if info is not None else {'acc_drop_pp': MAX_ACC_DROP_PP}) and boot_ok
+        token_agent=getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10')
+        if token_agent:
+            if v8:criteria.require_analytic_coverage(result)
+            passed=passed and result['feasible'] and not result['diverged'] and (
+                criteria.domain_ok(result) if v8 else result['max_u']<=0.90)
         metric_keys = ('top1', 'exact_top1', 'acc_drop_pp') if info is None or (
             info.task == 'classification' and ctx.val_labels is not None) else tuple(info.threshold)
         evals.append(dict(iteration=candidate.iteration, origin=candidate.origin,
                           latency_pred_us=candidate.latency_pred_us, boots_pred=candidate.boots_pred,
                           **{key: result[key] for key in (*metric_keys, "max_u", "diverged", "n_diverged")}, passed=passed))
+        if token_agent:
+            evals[-1].update({key:result[key] for key in ('agreement_pct','logit_rel_err','relative_error','agree','total')
+                             if key in result})
+        if v8:
+            evals[-1].update({key:result[key] for key in ('max_u_calibrated','max_u_analytic','worst_acts')})
         print(f"CONFIRM iteration={candidate.iteration} origin={candidate.origin} "
               f"passed={passed} metrics={ {key: result[key] for key in metric_keys} } "
               f"n_diverged={result['n_diverged']} max_u={result['max_u']}", flush=True)

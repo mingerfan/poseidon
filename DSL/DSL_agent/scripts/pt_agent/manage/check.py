@@ -1,6 +1,6 @@
 """S1 §6 A/B/C checks in Earth consumed levels; no SMU grouping."""
 
-from .greedy import infer
+from .greedy import infer, timed_stage
 
 
 class ManagementError(ValueError):
@@ -10,6 +10,11 @@ class ManagementError(ValueError):
 
 
 def check(function):
+    with timed_stage("check", nodes=len(function.nodes)):
+        return _check(function)
+
+
+def _check(function):
     """EarthDialect.cpp:203–335; GreedyBootstrapPlacement.cpp:40–45,83–90,
     198–225; Common.cpp:44–140. These are independent A/B/C checks, not a
     replay of placement. No physical levelLower/UpperBound is used.

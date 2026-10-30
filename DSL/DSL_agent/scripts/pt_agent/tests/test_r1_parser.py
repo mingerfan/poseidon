@@ -14,6 +14,26 @@ EXAMPLES = Path(__file__).parents[1] / "examples"
 
 
 class ParserTests(unittest.TestCase):
+    def test_softmax_repeated_normalization_fields(self):
+        from pt_agent.dsl.printer import print_program
+        from pt_agent.dsl.ir import canonical
+        text='''@fhe.program(slots=8192)
+def sm(x: Cipher[1,3,8]):
+ a=pack(x,layout="token")
+ p=softmax(a,steps=2,exp_method="remez",exp_domain=(-1,1),exp_deg=7,inv_method="newton",inv_domain=(0.01,1),inv_deg0=15,inv_iters=2,step_inv_method="remez",step_inv_domain=(0.05,1.5),step_inv_deg=63)
+ return p
+'''
+        program=parse(text)
+        self.assertTrue(check(program,{}).ok)
+        self.assertEqual(program.ops[1].attrs['steps'],2)
+        self.assertEqual(program.ops[1].attrs['step_inv_domain'],(.05,1.5))
+        self.assertEqual(canonical(program),canonical(parse(print_program(program))))
+        for old,new in [('steps=2','steps=-1'),('steps=2','steps=1.5'),
+                        ('step_inv_method="remez",',''),('step_inv_domain=(0.05,1.5),',''),
+                        ('step_inv_domain=(0.05,1.5)','step_inv_domain=(-1,1)'),
+                        ('step_inv_deg=63','step_inv_deg0=7,step_inv_iters=2')]:
+            with self.subTest(change=old),self.assertRaises(PTDSLError):parse(text.replace(old,new))
+
     def test_mlp_records(self):
         p = parse((EXAMPLES / "mlp.ptdsl").read_text())
         self.assertEqual([op.kind for op in p.ops], ["pack", "linear", "act", "linear"])
@@ -68,7 +88,7 @@ class ParserTests(unittest.TestCase):
                 self.assertEqual(caught.exception.lineno, lineno)
 
     def test_diagnostic_code_sets(self):
-        self.assertEqual(len(OPS), 27)
+        self.assertEqual(len(OPS), 30)
         for path in sorted((EXAMPLES / "invalid").glob("*.ptdsl")):
             with self.subTest(file=path.name):
                 try:

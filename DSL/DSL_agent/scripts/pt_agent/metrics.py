@@ -22,10 +22,13 @@ def compare(exact_outputs, approx_outputs, labels_or_None):
     valid = np.isfinite(approx).reshape(total, -1).all(axis=1)
     if task == 'causal_lm':
         lengths = np.asarray(record['lengths'], dtype=np.int64)
-        if lengths.shape != (total,) or np.any(lengths < 1) or np.any(lengths > exact.shape[1]):
+        selected=record.get('selected_last',False)
+        if (lengths.shape != (total,) or np.any(lengths < 1)
+                or not selected and np.any(lengths > exact.shape[1]) or selected and exact.shape[1]!=1):
             raise ValueError('LM metrics require each original nonpadding sequence length')
-        exact = exact[np.arange(total), lengths-1]
-        approx = approx[np.arange(total), lengths-1]
+        indices=np.zeros(total,dtype=int) if selected else lengths-1
+        exact = exact[np.arange(total), indices]
+        approx = approx[np.arange(total), indices]
     if task in ('classification', 'causal_lm'):
         reference = exact.argmax(axis=1)
         predictions = np.where(valid, approx.argmax(axis=1), -1)

@@ -31,7 +31,19 @@ def forward(graph, inputs, *, keep=False):
         elif op == 'linear':
             result = F.linear(x, w('weight'), w('bias'))
         elif op == 'matmul':
-            result = torch.matmul(x, args[1])
+            if a.get('transpose_b') is not None:
+                h,kv=a['heads'],a['kv_heads'];y=args[1]
+                if a['transpose_b']:
+                    n,l,d=x.shape;k=y.shape[1];dh=d//h
+                    q=x.reshape(n,l,h,dh).transpose(1,2)
+                    k=y.reshape(n,k,kv,dh).transpose(1,2).repeat_interleave(h//kv,dim=1)
+                    result=q@k.transpose(-1,-2)
+                    if a.get('scale') is not None:result=result*a['scale']
+                else:
+                    n,h,l,k=x.shape;dh=y.shape[-1]//kv
+                    v=y.reshape(n,k,kv,dh).transpose(1,2).repeat_interleave(h//kv,dim=1)
+                    result=(x@v).transpose(1,2).reshape(n,l,h*dh)
+            else:result = torch.matmul(x, args[1])
         elif op in ('add', 'sub', 'mul'):
             y = args[1] if len(args) > 1 else w('const') if 'const' in a else a['scalar']
             result = x+y if op == 'add' else x*y if op == 'mul' else y-x if a.get('reverse') else x-y
@@ -39,6 +51,12 @@ def forward(graph, inputs, *, keep=False):
             result = F.batch_norm(x, w('mean'), w('var'), w('weight'), w('bias'), training=False, eps=a['eps'])
         elif op == 'layernorm':
             result = F.layer_norm(x, a['normalized_shape'], w('weight'), w('bias'), a['eps'])
+        elif op == 'rmsnorm':
+            result=x*torch.rsqrt((x*x).mean(-1,keepdim=True)+a['eps'])*w('weight')
+        elif op == 'shuffle':
+            result=x[...,a['index']]*torch.tensor(a['sign'],dtype=torch.float64)
+        elif op == 'select':
+            result=(x*args[1][...,None]).sum(dim=1,keepdim=True)
         elif op == 'act':
             fn = a['fn']
             functions = dict(relu=F.relu, silu=F.silu, sigmoid=torch.sigmoid, tanh=torch.tanh,
@@ -53,7 +71,14 @@ def forward(graph, inputs, *, keep=False):
             else:
                 raise ValueError(f'{node.id}: unknown act function {fn}')
         elif op == 'softmax':
-            result = torch.softmax(x, dim=a['axis'])
+            if 'keep' in a:
+                keep_mask=torch.ones_like(x,dtype=torch.bool)
+                if a['keep']=='causal':
+                    keep_mask &= torch.arange(x.shape[-1])[None,:] <= torch.arange(x.shape[-2])[:,None]
+                if len(args)>1:
+                    keep_mask &= args[1].reshape((len(args[1]),)+(1,)*(x.ndim-2)+(x.shape[-1],)).bool()
+                result=torch.softmax(x.masked_fill(~keep_mask,float('-inf')),dim=-1)
+            else:result = torch.softmax(x, dim=a['axis'])
         elif op == 'maxpool_indices':
             result = F.max_pool2d(x, a['kernel'], a['stride'], a['padding'], a['dilation'], a['ceil_mode'], return_indices=True)[1]
         elif op == 'maxpool':

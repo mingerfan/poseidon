@@ -8,6 +8,7 @@ import numpy as np
 
 from .backends import MockBackend
 from .backends.base import Backend
+from .config import LINEAR_TALL_MIN_RATIO
 from .dsl.ir import Program
 from .kernels import (FlatLayout, KernelError, MuxLayout, act_cheb, add_mux, conv2d_mux,
                       downsample_pad_mux, linear_flat, mean_mux, mux_layout, pack_flat,
@@ -15,13 +16,15 @@ from .kernels import (FlatLayout, KernelError, MuxLayout, act_cheb, add_mux, con
 from .kernels.conv import fold_bn
 from .kernels.poly import act_minimax
 from .kernels.layout import (MultiMuxLayout, MultiFlatLayout, layout_blocks, multi_mux_layout,
-                             multi_flat_layout, pack_multi, unpack_multi)
+                             multi_flat_layout, pack_multi, unpack_multi, TokenLayout, ScoreLayout,
+                             pack_sequence, unpack_sequence)
 from .kernels import multi, cnn, approx
 
 
 HANDLED_OPS = frozenset({
     "pack", "conv2d", "act", "add", "slice", "pad", "mean", "relayout", "linear", "refresh",
     "avgpool", "maxpool", "concat", "flatten", "batchnorm",
+    'layernorm', 'rmsnorm', 'softmax', 'matmul', 'shuffle', 'select', 'mul', 'sub', 'scale', 'bias',
 })
 
 
@@ -37,6 +40,10 @@ class RawLayout:
 
 
 def _pack_layout(op, shape, slots):
+    if op.attrs['layout'] == 'token' and len(shape) == 3 and shape[0] == 1:
+        return TokenLayout(slots, *shape[1:])
+    if op.attrs['layout'] == 'score' and len(shape) == 4 and shape[0] == 1:
+        return ScoreLayout(slots, shape[2], shape[1], shape[3])
     if op.attrs["layout"] == "mux" and len(shape) == 4 and shape[0] == 1:
         return multi_mux_layout(slots, *shape[1:], op.attrs["gap"])
     if op.attrs["layout"] == "flat" and len(shape) == 2 and shape[0] == 1:
@@ -120,6 +127,7 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
     for op in program.ops:
         for vid in op.inputs:
             consumers[vid].append(op)
+    consumers['__ops__'] = program.ops
     remaining = Counter(vid for op in program.ops for vid in op.inputs)
     remaining.update(program.outputs)
     skipped, input_bn = set(), {}
@@ -142,10 +150,21 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
 
         try:
             value, layout = env[op.inputs[0]]
-            if op.kind == "pack":
+            if (op.kind != 'pack' and (isinstance(layout, (TokenLayout, ScoreLayout))
+                    or op.kind in ('layernorm', 'rmsnorm', 'softmax', 'matmul', 'shuffle', 'select',
+                                   'sub', 'mul', 'scale', 'bias') or 'constant' in a
+                    or op.kind=='linear' and isinstance(layout,FlatLayout) and a['w'].name in weights
+                    and 2*(1<<(layout.size-1).bit_length())<=layout.n
+                    and weights[a['w'].name].shape[0]/(1<<(layout.size-1).bit_length())>=LINEAR_TALL_MIN_RATIO)):
+                from .transformer_lower import dispatch
+                value, layout = dispatch(op, env, weights, b, exact=act_mode == 'exact',
+                                         observer=observer, consumers=consumers)
+            elif op.kind == "pack":
                 if not isinstance(layout, RawLayout):
                     raise KernelError("pack input must have RawLayout")
                 layout = _pack_layout(op, layout.shape, program.header.slots)
+                if isinstance(layout,(TokenLayout,ScoreLayout)) and not isinstance(value,list):
+                    value=[value]
             elif op.kind == "conv2d":
                 if not isinstance(layout, (MuxLayout, MultiMuxLayout)):
                     raise KernelError("conv2d input must have MuxLayout")
@@ -341,7 +360,8 @@ def lower(program: Program, weights: Mapping[str, np.ndarray], b: Backend, *,
                     env.pop(vid, None)
     values, layouts = zip(*(env[vid] for vid in program.outputs))
     layouts = list(layouts)
-    values = [item for value, lay in zip(values, layouts) for item in multi.values_list(value, lay)]
+    values = [item for value, lay in zip(values, layouts)
+              for item in (value if isinstance(lay, (TokenLayout, ScoreLayout)) else multi.values_list(value, lay))]
     b.output(values)
     return values, layouts
 
@@ -360,7 +380,12 @@ def pack_inputs(program: Program, arrays: list[np.ndarray]) -> list[np.ndarray]:
             if array.ndim != len(param.shape) or array.shape[1:] != param.shape[1:]:
                 raise KernelError("input array shape differs from parameter")
             layout = _pack_layout(op, param.shape, program.header.slots)
-            if isinstance(layout, multi.MULTI):
+            if param.kind == 'mask' and not np.isin(array, (0, 1)).all():
+                raise KernelError('Mask input values must be 0 or 1')
+            if isinstance(layout, (TokenLayout, ScoreLayout)):
+                blocks = [pack_sequence(sample, layout) for sample in array]
+                packed.extend(np.stack([sample[i] for sample in blocks]) for i in range(len(layout.blocks)))
+            elif isinstance(layout, multi.MULTI):
                 blocks = [pack_multi(sample, layout) for sample in array]
                 packed.extend(np.stack([sample[i] for sample in blocks]) for i in range(len(layout.blocks)))
             else:
@@ -379,7 +404,9 @@ def decode_outputs(values_np: list[np.ndarray], layouts: list) -> list[np.ndarra
     for layout in layouts:
         count = len(layout_blocks(layout))
         value = values_np[index]
-        if isinstance(layout, multi.MULTI):
+        if isinstance(layout, (TokenLayout, ScoreLayout)):
+            decoded.append(unpack_sequence(values_np[index:index+count], layout))
+        elif isinstance(layout, multi.MULTI):
             decoded.append(unpack_multi(values_np[index:index+count], layout))
         elif isinstance(layout, FlatLayout):
             decoded.append(unpack_flat(value, layout))

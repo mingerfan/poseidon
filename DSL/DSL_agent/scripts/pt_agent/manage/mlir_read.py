@@ -6,7 +6,7 @@ import struct
 
 import numpy as np
 
-from .ir import Function, Node, Type
+from .ir import Function, Node, Type, shared_type
 from .streams import open_text
 
 
@@ -17,23 +17,48 @@ VALUE = re.compile(r'%[A-Za-z0-9_]+')
 
 
 def _types(text):
-    return [Type(k=='ci',int(s),int(l)) for k,s,l in TYPE.findall(text)]
+    return [shared_type(k=='ci',int(s),int(l)) for k,s,l in TYPE.findall(text)]
 
 
 def _number(text):
     return struct.unpack('>d',bytes.fromhex(text[2:]))[0] if text.startswith('0x') else float(text)
 
 
-def read(path, profile, *, locations=None, allowed=None):
-    """Read generic/custom function wrappers and reject every unknown operation."""
+def _dense(text):
+    dense = re.search(r'dense<(.*?)> : tensor<(\d+)xf64>',text)
+    if dense is None:
+        raise ValueError('unsupported dense Earth constant')
+    payload,size = dense[1],int(dense[2])
+    if payload.startswith('"0x'):
+        data = np.frombuffer(bytes.fromhex(payload[3:-1]),dtype='<f8').copy()
+    elif payload.startswith('['):
+        data = np.array([_number(v.strip()) for v in payload.strip('[]').split(',')])
+    else:
+        data = np.full(size,_number(payload))
+    if data.size!=size:
+        raise ValueError('dense constant size differs')
+    data.flags.writeable = False
+    return data
+
+
+def read(path, profile, *, locations=None, allowed=None, structure_only=False, constants=None):
+    """Read Earth; diagnostic structure_only never supplies executable payloads."""
     allowed = MANAGED_OPS if allowed is None else allowed
+    if structure_only and constants is not None:
+        raise ValueError('Choose diagnostic structure_only or payload-restoring constants')
     locations = locations or {}
     mapping, inputs, nodes, outputs, attrs, pending, aliases = {},[],[],[],{},[],{}
+    payload_aliases = {}
     name, results = None,[]
     with open_text(path) as stream:
         for line in stream:
             text = line.strip()
             if not text:
+                continue
+            payload_alias = re.match(r'(#ptk\d+) = (dense<.*)',text)
+            if payload_alias:
+                if not structure_only and constants is None:
+                    payload_aliases[payload_alias[1]] = _dense(payload_alias[2])
                 continue
             alias = re.match(r'(#loc\w*) = (.*)',text)
             if alias:
@@ -67,19 +92,13 @@ def read(path, profile, *, locations=None, allowed=None):
                 if len(result)!=1:
                     raise ValueError('Earth operations require one result')
                 properties,data = {},None
+                const_key = None
                 if kind=='constant':
-                    dense = re.search(r'value = dense<(.*?)> : tensor<(\d+)xf64>',text)
-                    if dense is None:
-                        raise ValueError('unsupported dense Earth constant')
-                    payload,size = dense[1],int(dense[2])
-                    if payload.startswith('"0x'):
-                        data = np.frombuffer(bytes.fromhex(payload[3:-1]),dtype='<f8').copy()
-                    elif payload.startswith('['):
-                        data = np.array([_number(v.strip()) for v in payload.strip('[]').split(',')])
-                    else:
-                        data = np.full(size,_number(payload))
-                    if data.size!=size:
-                        raise ValueError('dense constant size differs')
+                    payload_alias = re.search(r'value = (#pt(k\d+))',text)
+                    if payload_alias:
+                        const_key = payload_alias[2]
+                    if not structure_only and constants is None:
+                        data = payload_aliases[payload_alias[1]] if payload_alias else _dense(text)
                     rms = re.search(r'rms_var = ([^ ]+) : f64',text)
                     if rms is None:
                         raise ValueError('Earth constant lacks rms_var')
@@ -94,6 +113,7 @@ def read(path, profile, *, locations=None, allowed=None):
                         properties['offset'] = [int(v) for v in offset[1].split(',')]
                 owner = locations.get(nid)
                 node = Node(nid,kind,args,result[0],properties,data,getattr(owner,'id',None),getattr(owner,'lineno',0))
+                node.const_key = const_key
                 nodes.append(node)
                 pending.append((node,text[-240:]))
                 continue
@@ -123,18 +143,50 @@ def read(path, profile, *, locations=None, allowed=None):
                     return found
         return None
 
+    def location_parts(text,seen=None):
+        seen = set() if seen is None else seen
+        yield text
+        for alias in re.findall(r'#loc\w*',text):
+            if alias not in seen and alias in aliases:
+                seen.add(alias)
+                yield from location_parts(aliases[alias],seen)
+
+    input_count = sum(k<0 for k in mapping.values())
+    del mapping, payload_aliases
+    calculator = None
+    if constants is not None:
+        from .earth_emit import RMSCalculator
+        calculator = RMSCalculator(profile['rms_accumulation'])
     for node,loc in pending:
         owner = owner_text(loc)
         if owner:
             node.op_id,node.lineno = owner
-    if name is None or not outputs or len(inputs)!=sum(k<0 for k in mapping.values()):
+        if node.kind=='constant':
+            keys = set(re.findall(r'ptdsl-const-(k\d+)', ' '.join(location_parts(loc))))
+            if len(keys)>1:
+                raise ValueError('Earth constant has ambiguous ptdsl-const NameLoc: '+str(sorted(keys)))
+            if keys:
+                node.const_key = next(iter(keys))
+            if constants is not None:
+                if not keys:
+                    raise ValueError('Earth constant lacks ptdsl-const NameLoc at node '+str(node.id))
+                if node.const_key not in constants:
+                    raise ValueError('Unknown constant NameLoc '+node.const_key)
+                node.data = constants[node.const_key]
+                expected,actual = calculator(node.data),node.attrs['rms_var']
+                if struct.pack('>d',expected)!=struct.pack('>d',actual):
+                    raise ValueError('Earth constant rms_var differs at node '+str(node.id)+
+                                     ' '+node.const_key+': '+repr(expected)+' != '+repr(actual))
+    if name is None or not outputs or len(inputs)!=input_count:
         raise ValueError('missing Earth function, block arguments or return')
+    del calculator, pending, aliases
     return Function(name,inputs,nodes,outputs,results,attrs,dict(profile))
 
 
-def load_graph(path, slots, *, locations=None):
+def load_graph(path, slots, *, locations=None, constants=None, profile=None):
     """Return the preprocessed shared DAG in the recording backend's interface."""
-    return graph_backend(read(path,{},locations=locations,allowed=RAW_OPS),slots,locations=locations)
+    return graph_backend(read(path,profile or {},locations=locations,allowed=RAW_OPS,constants=constants),
+                         slots,locations=locations)
 
 
 def graph_backend(function, slots, *, locations=None):

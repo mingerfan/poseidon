@@ -47,7 +47,7 @@ def check(graph, *, slots=16384):
     A graph has one statement per node; line numbers refer to that statement
     listing (not to an invented DSL program or to the original Python source).
     """
-    diags = [dict(op_id=node.id, lineno=index+1, source=node.src,
+    diags = list(getattr(graph, 'lowering_errors', ()))+[dict(op_id=node.id, lineno=index+1, source=node.src,
                   reason=_pool_reason(node) or f'{node.op}: no lowering implementation', severity='error')
              for index, node in enumerate(graph.nodes)
              if not _supported(node)]

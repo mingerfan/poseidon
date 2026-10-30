@@ -243,13 +243,24 @@ def compile_argv(mode: str, boot: str | None, run_dir: Path) -> list[str]:
     return argv
 
 
-def frontend_preprocess_argv(mode: str, boot: str | None, run_dir: Path) -> list[str]:
+def frontend_preprocess_argv(mode: str, boot: str | None, run_dir: Path, *, bytecode=False) -> list[str]:
     """frontend.cpp:124–131 save(); share the compiler profile/paths with compile_argv."""
     original = compile_argv(mode,boot,run_dir)
     config = next(a for a in original if a.startswith('--ckks-config='))
     return [original[0],'/out/raw.earth.mlir',config,'--mlir-disable-threading','--verify-each',
             '--mlir-print-op-generic','--mlir-print-debuginfo',
-            '--pass-pipeline='+FRONTEND_PASSES,'-o','/out/preprocessed.earth.mlir']
+            '--pass-pipeline='+FRONTEND_PASSES,
+            *(['--emit-bytecode'] if bytecode else []),
+            '-o','/out/preprocessed.mlirbc' if bytecode else '/out/preprocessed.earth.mlir']
+
+
+def frontend_structure_argv(mode: str, boot: str | None, run_dir: Path) -> list[str]:
+    """U4 §7.6: print structure from the already preprocessed bytecode, without passes."""
+    original = compile_argv(mode,boot,run_dir)
+    config = next(a for a in original if a.startswith('--ckks-config='))
+    return [original[0],'/out/preprocessed.mlirbc',config,'--mlir-disable-threading','--verify-each',
+            '--mlir-print-op-generic','--mlir-print-debuginfo',
+            '--mlir-elide-elementsattrs-if-larger=1','-o','/out/preprocessed.structure.mlir']
 
 
 def managed_compile_argv(mode: str, boot: str | None, run_dir: Path) -> list[list[str]]:
@@ -358,7 +369,8 @@ def prune(run_dir: Path, *, keep=()):
     deleted = []
     names = {"candidate_trace.mlir", "trace_model.mlir", "constants.npz", "lowered.mlir",
              "lowered.earth.mlir", "lowered.ckks.mlir", "managed.mlir", "managed.ckks.mlir", "normalized.earth.mlir",
-             "raw.earth.mlir", "preprocessed.earth.mlir"}
+             "raw.earth.mlir", "preprocessed.earth.mlir", "preprocessed.structure.mlir",
+             "preprocessed.mlirbc", "trace_model.mlirbc", "candidate_trace.mlirbc"}
     names.update(name+'.gz' for name in tuple(names) if name.endswith('.mlir'))
     keep = set(keep)|{name+'.gz' for name in keep if name.endswith('.mlir')}
     names.update(path.name for path in run_dir.glob("lowered._hecate_*.bundle"))

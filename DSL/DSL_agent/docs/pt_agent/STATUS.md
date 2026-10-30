@@ -1,4 +1,23 @@
-# pt_agent 状态（最后更新：2026-10-26 / afcc7654-dirty）
+# pt_agent 状态（最后更新：2026-10-29 / 62ecf194-dirty）
+
+A1 §6.18进行中：原187项＋新增11项全部通过（198/198）；44份保存输出与四项基线重评完成，BERT首次内部可行为原第35次，Qwen为原第2次。BERT已完成确认、report100及三方编译／完整RuntimePlan；Qwen正在逐原会话重放。本节API0，真实账本244/450保持；所有结果为事后重评，原Agent当时收到r8-v9反馈。[BERT汇总](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/bert/REPORT.json)。
+
+历史：A1 §6.17实现与离线验证完成；Qwen已按§3.2用满40/40，5个会话均confirm_failed、候选池0，按§3.3停止。187/187通过，BERT R0／r8-v9冻结程序heldout20等价（agree／首个越界／u相同，logits最大差0）；Mock通用缓存释放及批次10生效，tensor仍20。五次接续精调均完成Mock收尾，最高峰值2837729280字节，未再触限。Qwen内部完整可行输出0，新增完整交付通过0；report100、R0/R1成本／报告和native三方未执行。API本轮新增38、累计244/450；BERT38/40已结束、Qwen40/40，无在途请求。BERT r8-v9保留“v8-6.14，无精度余量”，report98/100原样不重跑。[最终REPORT](/home/lhohy/pt_agent_results/A1-transformers-s617-summary-20261029T105741-caa3/REPORT.json)。
+
+
+历史§6.16停止记录（现由§6.17接续）：[最终REPORT](/home/lhohy/pt_agent_results/A1-transformers-v9-resource-stop-20261029T074420-0c56/REPORT.json)。§6.16批次释放／等价与r8-v9实现均完成，177/177通过。BERT三方8839自举／97切点、完整RuntimePlan相同并prune；report100=98/100未达99.5%，原样保留。Qwen第2次精调收尾Mock在唯一批次20条内发生MemoryError，峰值RSS4079927296字节（4GiB地址空间触限），未得到TuneResult、确认或冻结程序。已停止，无重试、资源扩额或源码修正。API新增6、累计206/450，BERT38/40、Qwen2/40，余2＋38保留。
+
+历史r8-v7停止：第37次调用的DSL将首参改为v，模型样本映射仍用inputs_embeds；类型检查后，transformer_tensor.py:26按参数名取值抛KeyError。按§1.7第4条停止，相关冻结边界保持，待接续spec。31/31离线测试证据保留；BERT37/40（剩3）、Qwen0/40，本轮37/80、累计166/450。无可行／确认冻结程序，首次完整交付通过0；report、真实编译和CKKS新增0。两R1静态预测为BERT11251自举／89切点／深度261，Qwen36928／115／336。[本次REPORT](/home/lhohy/pt_agent_results/A1-transformers-input-binding-stop-20261027T154151-1acf/REPORT.json)、[绑定诊断](/home/lhohy/pt_agent_results/A1-transformers-input-binding-stop-20261027T154151-1acf/INPUT_BINDING_DIAGNOSTIC.json)。
+
+U4（含§7.10.5）完成：内存修正后，3个M3回归程序与BERT的完整Function逐字段相同，节点顺序、类型、attrs、编号、切点和边界保持。547个唯一测试用例全部有通过证据（U4/parser84、S1 34、main429；4项ONNX由既有intake补齐）。BERT与Qwen的预测／compiler／managed自举及切点分别15399／110、54752／138，完整RuntimePlan状态和2642／2140次常量比较全部相同；BERT另与§11.8保留计划相同。Qwen普通Python记录峰值3353.70MiB（约3.28GiB），4/6GiB与其他限制保持；managed IR1017493809字节，按已报告的stdin路线编译完成。API新增0、累计129/450，registry746条。新增Agent首次输出与真实CKKS均0，M1第5条保持待执行。[本轮REPORT](/home/lhohy/pt_agent_results/u4-memory710-complete-20261027T102158237896/REPORT.json)。
+
+已结案的§7.10.5过程记录：按新条款直接实施§7.10.2内存修正，BERT／Qwen关闭tracemalloc，仅小回归使用快照。已加入Node／Type与recording对象slots、冻结类型复用、临时表释放、稀疏users／before及显式栈；正在进行逐字段Function与测试验证。旧诊断原样保留作为修正前数据；4/6GiB和其他资源保持。
+
+历史U4 §7.10.1停止（2026-10-27／62ecf194-dirty）：已新增逐阶段VmRSS／VmHWM、Node实例数和诊断专用tracemalloc记录。修正前BERT诊断在early_modswitch触发MemoryError，RSS峰值4096942080字节（3907.15MiB），失败时1202893个Node；§7.10.1要求的BERT完整诊断尚未完成。按AGENTS.md实测不符规则停止，尚未应用slots、表／遍历及引用释放修正，Qwen新诊断／预检／managed编译均0。本轮未跑离线回归；历史615项证据、BERT §11.8完整通过及Qwen compiler通过均保留。资源保持原值，已有服务器作业保持未执行；API0、累计129/450，registry731条。[本次REPORT](/home/lhohy/pt_agent_results/u4-memory710-stopped-20261027T091313390406/REPORT.json)。
+
+历史§11.8收尾记录（后由§7.10.5完成）：实现和指定测试完成，U4a新版验收完成，U4b在managed内存预检停止。最终测试本轮581项通过、按spec复用34项，共615项有通过证据；兼容22程序／四模型／12提示词相同。BERT新版两模式完整RuntimePlan相同，15399自举／110切点。Qwen规划、逐算子、20条留出（next-token100%）、域覆盖、exact选择、成本和真实compiler均通过（54752自举／138切点）；managed预检在普通进程4GiB地址空间限制内的early_modswitch发生MemoryError，尚未得到managed IR大小，managed编译0，完整双模式比较待接续。API新增0、累计129/450，registry729条，资源及原历史保持。[本轮REPORT](/home/lhohy/pt_agent_results/u4-section118-stopped-20261027T084721590783/REPORT.json)。
+
+用户追加授权（2026-10-27）：§7.9.5完成后，S1最后一例SqueezeNet-ReLU/maxpool改用§7.6共享载荷路径在本机补跑。先报告解压后的IR大小，再按≤1GiB stdin／>1GiB单临时文件及10GiB余量规则准入；通过后完成阶段0、管理IR、切点和完整RuntimePlan比较。该追加授权现已落实，当前S1本机验收20/20，完整新汇总见本轮结果。原服务器作业、历史停止及消费保留。
 
 U5（含§6–§8）完成：新增25项＋既有486项＋S1 34项，共545/545唯一用例通过，失败、错误和未覆盖跳过均0。最终分组执行549次，主组4项ONNX由intake同名用例补齐。张量组17/17通过，ResNet20和SiLU各25次验证、530个logits批次及完整history一致。22旧程序Emit/常量与afcc7654相同，四冻结模型的Mock/tensor验证、代价、确认及8份旧提示词逐项相同；旧方法、默认值及规则规划器保持。
 
@@ -6,7 +25,7 @@ U5（含§6–§8）完成：新增25项＋既有486项＋S1 34项，共545/545�
 
 本轮API0，累计129；registry581条，所有历史和消费保留。新增Agent首次输出、真实CKKS、报告集评测、下载、安装、库修改及资源扩额均0。M1与S1遗留服务器待验收范围保持。[最终SUMMARY](/home/lhohy/pt_agent_results/u5-complete-20261026T110026006154/SUMMARY.json)。
 
-S1代码与全部本机检查已收尾，整体仍有1例服务器待验收：M本机19/20的阶段0、管理IR与完整RuntimePlan相同；22程序默认compiler输出及四冻结模型数值/代价/确认逐项相同；四个独立P2包（含多密文）通过。既有486项唯一回归（要求481＋后增5）、本轮34项及三路径2项全部通过，4项ONNX在独立intake补齐。最后SqueezeNet-ReLU/maxpool在10GiB＋临时大小准入停止，已导出双模式服务器作业，尚未执行，保持“本机未完成”。API0、累计129/300；新增Agent首次输出、真实CKKS和未见模型证据均0，M1表保持。[最终SUMMARY](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/SUMMARY.json)。
+历史S1的19/20收尾记录（本轮已补齐20/20）：既有代码和19例本机结果保留；最后1例SqueezeNet-ReLU/maxpool已由用户授权在§7.9.5完成后改走共享载荷本机补跑，当前验收19/20：M本机19/20的阶段0、管理IR与完整RuntimePlan相同；22程序默认compiler输出及四冻结模型数值/代价/确认逐项相同；四个独立P2包（含多密文）通过。既有486项唯一回归（要求481＋后增5）、本轮34项及三路径2项全部通过，4项ONNX在独立intake补齐。最后SqueezeNet-ReLU/maxpool在10GiB＋临时大小准入停止，已导出双模式服务器作业，尚未执行，保持“本机未完成”。API0、累计129/300；新增Agent首次输出、真实CKKS和未见模型证据均0，M1表保持。[最终SUMMARY](/home/lhohy/pt_agent_results/s1-final-local-checks-20261026T071428925546/SUMMARY.json)。
 
 当前U3b2方案A（含§6）实现与有限实验均已完成：[最终REPORT](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/REPORT.json)、[九模型SUMMARY](/home/lhohy/pt_agent_results/u3b2-agent-20261025T040525/SUMMARY.json)。17/17当前测试＋4/4原缓存测试通过，四冻结模型各1000图字段/logits相同，原469完整回归证据保留。Alex规则基线与三个ReLU重跑全部收尾：报告准确率达标7/9（Agent）与7/9（规则），新三模型分别下降0.0375/0.2875/0.0125pp、发散3/7/0；完整report.feasible分别false/false/true。三个首轮漏权重诊断均在下一轮补齐。新程序均导出服务器包，本机编译/真实CKKS0。API16/20、累计129/300；4GiB、批量20、其余6模型旧结果及全部历史证据保持。
 
@@ -44,8 +63,10 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| A1 | specs/A1-agent-transformer.md（§6.18） | 进行中 | 统一u／r8-v10接线、a1_v10_replay、测试、STATUS | 197/197；44输出＋4基线重评；BERTreport100双引擎100/100、三方8933自举／95切点及完整计划相同 | BERT阶段完成；Qwen首原会话精调运行中，随后逐会话确认／报告／native；API0、累计244/450；原在线记录保持 |
+| U4 | specs/U4-transformer-operators.md（含§7.10.5／§11.8） | 完成（U4a／U4b指定验收） | manage/{ir,greedy,earth_emit,mlir_read}.py；experiments/u4_relative_acceptance.py、u4_bert_managed.py；test_u4_management_memory.py；STATUS | 547唯一测试通过；3回归＋BERT完整Function相同；BERT15399/110、Qwen54752/138三方相同且完整计划／载荷相同 | Python峰值3353.70MiB；原限制、冻结DSL及旧包保持；API0、CKKS0；首次Agent输出0 |
 | U5 | specs/U5-nonlinear-fitting.md（含§6–§8） | 完成 | kernels/approx.py；DSL/lower/tensor/P2/tuner/r8-v6入口；U5实验/测试；STATUS | 545/545唯一测试；22程序及4模型兼容；拟合表、四模型小研究、双模式编译完成；[SUMMARY](/home/lhohy/pt_agent_results/u5-complete-20261026T110026006154/SUMMARY.json) | 同阶SiLU未满足精度条件、宽域低阶Newton误差放大均如实保留；自写修正见U5记录；API0 |
-| S1 | specs/S1-dsl-managed-mode.md（含§6–§11.4） | 阻塞 | manage/、DSL、toolchain、run、P2、S1实验/测试、STATUS | 既有486/486＋当前34/34＋三路径2/2；兼容22/4、P2四包通过；M19/20 | 只余ReLU/maxpool服务器实际验收；本机未完成，作业已导出；所有历史/用量保持 |
+| S1 | 原S1及用户2026-10-27共享载荷本机补跑 | 完成 | 既有manage/、toolchain、P2、S1实验/测试；U4共享载荷接续入口与STATUS | 既有S1测试和兼容保留；M20/20本机阶段0／管理IR／切点／完整RuntimePlan相同；最后ReLU/maxpool1122自举／95切点；[REPORT](/home/lhohy/pt_agent_results/u4-s1-complete20-20261027T055957409761/REPORT.json) | 原19结果直接复用；旧服务器作业和全部历史消费保留；CKKS0 |
 | U3b2 | specs/U3b2-weight-usage-rerun.md（方案A，含§6） | 完成（实现与有限开发实验） | dsl/typecheck.py、planners/agent_tools.py、tensor_sim.py；experiments/u3b2_weight_usage_rerun.py、tests/test_u3b2_weight_usage.py、STATUS | 当前17/17＋原缓存4/4；四冻结全字段/logits相同；规则基线及三重跑全部收尾；报告准确率7/9对7/9；三次漏权重均下一轮补齐；API16/20 | 原469证据沿用；4GiB/批量20保持；新三程序仅服务器包，原生计数/CKKS待执行；Mobile/VGG报告发散3/7且完整feasible=false，未计完整交付通过 |
 | U3b | specs/U3b-agent-cnn.md | 阻塞 | planners/agent.py、tuner.py、confirm.py、agent_tools.py；experiments/u3b_agent_cnn.py、tests/test_u3b_engines.py、STATUS | 实现/离线469/469通过；8/9模型正常收尾，报告精度4/9；真实编译282/282、1277/1277、359/359并prune；服务器作业2份；最后模型前三轮数学检查失败 | 本轮50/50、累计113/300，按spec停止；第9模型剩余生成及规则评测待后续spec，原程序/历史/已用额度保留 |
 | U3a | specs/U3-cnn-operators.md（含§10） | 完成 | CNN/lower/张量/规则/P2；Mock、linear/multi逐条常量；U3测试/实验、STATUS | 435既有＋20本轮＝455/455；17旧程序/四冻结模型/5 Count一致；9变体20图＋1000图及P2完成 | 4GiB保持；3本机编译自举一致并prune；6份服务器作业未执行；新增Agent/CKKS0 |
@@ -108,6 +129,151 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+§6.18已授权离线事后重评，当前无新增待决定问题；以下保留原r8-v9停止结论。Qwen40/40已用满，40次输出中内部完整可行0，5个会话的确认池均为空，未得到冻结程序。依据[A1 §3.3](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/A1-agent-transformer.md:173)：“某个模型用完40次调用仍没有通过confirm的程序”时停止。16次完成完整内部评测，均因校准u等条件失败；另有8次parse、6次margin、6次approximation、1次typecheck、1次exact、1次length和1次发散验证。后续改进及任何追加Qwen调用须由新的spec明确；当前不调整判据、不重置额度。资源停止已解除，新增编译器／运行库依赖阻塞证据0。[最终REPORT](/home/lhohy/pt_agent_results/A1-transformers-s617-summary-20261029T105741-caa3/REPORT.json)。
+
+**§6.17已授权接续；以下为保留的旧停止现场。Qwen第2次精调的最终Mock复核触及4GiB地址空间限制。** [STOP](/home/lhohy/pt_agent_results/A1-qwen-session-20261029T073107-137f/steps/003-tune/STOP.json)、[完整汇总](/home/lhohy/pt_agent_results/A1-transformers-v9-resource-stop-20261029T074420-0c56/REPORT.json)。softmax重复平方归一化中的inv多项式经cheb_eval到MockExpr._value时，无法分配(20,16384) float64的2.50MiB数组。峰值RSS4079927296字节；本次heldout仅20条、Mock批次20，发生在单批内部。traceback明确从transformer_tuner.py的finish()进入Mock；未进入多遍扫描，未产生TuneResult。该证据指向外部开发评测的Mock内存；新增编译器/运行库依赖阻塞证据0。
+
+按本轮用户明确要求“再遇到停止条件（触限、等价不过）时停止汇报”，现停止后续API及测试，等待新的接续spec；未放宽4/6GiB、3600秒、8GiB文件或10GiB磁盘准入，未重试、未降低批次、未改冻结文件。SESSION停在iteration2/phase=tune、calls2、pool0、cache0；两份请求／响应、原文及已用额度全部保留。尚未执行Qwen确认、report100、R0/R1的report/native和双模式对照。
+
+独立的候选数值结论：Qwen第2次Tensor留出20/20、logit_rel_err=0.0002567884，但校准u=0.9937949055>0.90，完整不可行；该数值结果保留。BERT流程已收尾，report98/100未达99.5%，无追加调用。
+
+A1 §6.16停止范围已由用户／Claude澄清：旧诊断运行保持终止，整轮继续。已通过gc.get_referrers及闭包单元定位并释放批次间引用，R0批次20释放验收与R0/冻结程序heldout20前后等价均完成。该旧问题已解决；原诊断失败记录保留，当前停止项见本节开头。
+
+本次已完成BERT冻结程序确认、report100和双模式编译记录；其报告精度97/100低于99.5%，完整交付通过未成立。R0张量100/100，但校准u=0.9482332987369476，Mock未完成；R0成本／双模式、R1 report／成本／双模式及Qwen均待接续。当前无本轮运行进程，空闲23804321792字节；API200/450、BERT34/40、Qwen0/40。2400秒搜索预算已获用户明确，最终Mock在原3600秒进程内收尾，原预算文字问题已解除。
+
+以下保留此前阶段的历史记录，其“待决／尚未执行”仅表示当时状态。
+
+本次其余验证已完成：158/158；第18/19/20次单遍的改动、接受序列、最终程序、完整成本均相同；完整新规则6遍、27项接受、355项剔除、coarse/full=37/29，20/20，校准u=0.888451573160008、解析u=0.9949472460489259，最终8937自举、2366299456µs、深度300，峰值3037110272字节。相对原三段链4116.656502秒／9297自举／2455657116µs，单次2463.303021秒，节省40.16%时间、预测延迟降低3.64%。[完整汇总](/home/lhohy/pt_agent_results/A1-transformers-s614-offline-20261028T175017-92cc/REPORT.json)。
+
+此前两项接续口径已获用户批准并实现：旧夹具显式v8-6.11、断言保持；第33次切换时旧cache按规则存档，新cache为空，其他会话状态及全部用量保持。迁移本身尚未执行。旧第32次正常完成，外层已受控结束，待以新外层从同一检查点接续。BERT32/40、Qwen0/40、累计198/450；API新增0。
+
+历史A1 §6.12①参考比较停止（现已按精确参考补充完成）：在声明域上用100001点几何网格测得final_inv最大相对误差3.5786682782701362e-6；旧两位有效数字参考3.6e-6与1e-3比较要求不匹配。新精确参考3.5786682783811585e-6，相对差约3.10e-11，通过。inv=0.9697875035498709、step_inv=0.34512760125894737各自与精确参考相同；400行不等式及28个越界行预算检查均通过。原失败报告保持。[原REPORT](/home/lhohy/pt_agent_results/A1-bert-budget-diagnostic-20261028T124955-9239/REPORT.json)、[原逐行数据](/home/lhohy/pt_agent_results/A1-bert-budget-diagnostic-20261028T124955-9239/DIAGNOSTIC.json)。
+
+历史A1第21次停止（现由§6.12接续）：依据spec §6.7及§6.9，留出局部样本7、10、11、14、15的首个越界均为第12行`_softmax::step_inv[0]`（event_index=3，解析点），此前无u>1或非有限值记录。声明域[0.004166666666666667,3.375]；观测最小3.4061196661003554e-5，首点最大u=1.0024519785236128，后续final_inv最大u=1.0024707328953906。exact通过、20/20分类一致、非有限发散0；按原解析域规则停止。第21次无精调；`010-confirm`仅错误收尾，evals=[]，6份pool保留，未做确认或冻结。[原逐样本REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T110734-9ce8/steps/009-evaluate/REPORT.json)、[原汇总](/home/lhohy/pt_agent_results/A1-transformers-s611-stop-20261028T123153-bb2b/REPORT.json)。
+
+此前接续口径均已落实：Qwen旧停止按§6.9逐样本复查；Qwen10次候选片段低于3.8GiB；BERT旧／新2400秒预算测速完成。§6.11旧测试通过tune_rule参数保留，起点与最终Mock不计入对准的1成本＋1验证限制，history保留domain和result。以下旧停止现场继续保留。
+
+历史A1 §6.10 Qwen精调停止（2026-10-28；现已按补充复查通过）：四次成本评估的对照先执行旧版Qwen R1；39.805457秒后，定义域对准后的验证在第46行 `_softmax_1::inv` 触发§6.7。域 `[7.564022697821732e-5,1]`，观测 `[-1.5355029525729433e110,1.8447322638551718e110]`，u=`3.6897436207553086e110`；峰值819544064字节。尚未运行新版tune，BERT对照和正式2400秒测速均未执行。旧代码抛错发生在加速前实现；现有证据未包含逐样本首个越界点，未判断§6.9能否放行。需明确该停止的处理与§6.10→§6.9执行顺序。按AGENTS报错停止规则，后续实验暂停，未改分类／判据。[完整汇总](/home/lhohy/pt_agent_results/A1-transformers-speed-stop-20261028T072124-ff90/REPORT.json)。
+
+历史A1 §6.11 接续口径（2026-10-28；现已由补充统一）：①原64项中的 `tests/test_a1_session_steps.py:97` 以r8-v8断言不可行原文更新llm_min、后续可行原文不触发tune，与§6.11新定义冲突；需指定该旧测试的迁移方式。②当前 `planners/transformer_tuner.py` 先计算原程序成本和验证，再计算对准后的成本和验证，最后Mock复核并追加result行；§6.11要求“1次成本＋1次验证、history仅domain”，需统一计数起点及最终Mock/result处理。该节尚未修改；已发出精确问题。§6.10随后遇到上述Qwen停止，API新增0。
+
+当前A1原解析点停止已由§6.9修订；依用户顺序先执行§6.10速度优化。本轮重计算和接续使用已保存资产，API新增0。以下为保留的历史停止记录。
+
+历史A1按§6.7停止（2026-10-28）：BERT第14次响应（第二会话第6轮）进入validation，解析点u>1，最终max_u_analytic=inf，20条样本全部发散；error=analytic_domain_violation。现有记录显示第11行softmax的exp输入范围已超出声明域，随后inv输入出现负值、step_inv失控。停止依据为[A1 §6.7](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/A1-agent-transformer.md:259)：“任何解析点出现 u > 1”；§6.6要求BERT停止时先汇报、Qwen保持未启动。
+
+[第14次原文](/home/lhohy/pt_agent_results/A1-bert-session-20261028T033706-5ca7/sources/iteration-6.ptdsl)、[会话REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T033706-5ca7/REPORT.json)、[完整停止汇总](/home/lhohy/pt_agent_results/A1-transformers-s68-stop-20261028T060310-e9da/REPORT.json)。
+
+需要用户／Claude提供新的接续spec，明确这次解析点越界后的处理及允许调整范围。当前没有改提示、反馈、解析域分类或停止判据；没有改编译器／运行库，也没有将此现场标成编译器依赖阻塞。第二会话保留3份候选，停止分支跳过确认计算；终态confirm步骤只保存selected=None／evals=[]。没有改选第13次开发精调程序计为最终结果。BERT14/40、Qwen0/40、累计180/450，剩26＋40；report、编译、真实CKKS新增0。所有本轮执行进程退出，相关共享锁无持有者，磁盘剩余25,086,558,208字节。以下保留历史停止现场。
+
+A1历史阻塞（r8-v8，2026-10-27；已由§6.8提供接续口径）：单个会话的API、内部检查和精调共用3600秒墙钟，入口见[experiments/a1_transformer_agent.py:273](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/a1_transformer_agent.py:273)。首轮精调含最终Mock用时2591.850667秒、26次粗评／2次完整评估、0接受；全部8次API共421.265600秒。第7轮已内部可行，第8轮仍在内部计算时会话到期，以124退出，实际总3600.547074秒。没有AGENT.json／FROZEN.json，确认0、report0、真实编译0、CKKS0。[原始超时REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T165801-fd6d/REPORT.json)、[汇总](/home/lhohy/pt_agent_results/A1-transformers-v8-wall-stop-20261027T180318-3a77/REPORT.json)。
+
+停止依据：[A1 §5](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/A1-agent-transformer.md:199)保留3600秒限制；[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)规定“有疑问或报错，就停下来写进 STATUS.md 的‘阻塞’一栏，等待新的 spec”。需Claude／用户提供接续spec，指定如何在现有限制下接续已保存的第7轮候选与第8轮未完成阶段、确认及后续验收。冻结的提示、反馈、tuner、confirm保持；当前已无会话／API子进程或Nix锁持有者。编译器依赖故障新增0；现有证据定位在Agent会话的时间分配。
+
+本版本客户端实际8/40，Qwen0/40，全局174/450；8次响应、8份原文和registry全局167–174八条记录齐备。超时原REPORT缺省llm_calls=0保持原件，当前汇总按持久消费记8。剩余32＋40次保持；没有开启Qwen或继续新批次。以下保留历史停止现场。
+
+A1历史阻塞为模型输入名与DSL参数名的绑定：第37次响应为`def bert(v: Cipher[1,40,128], attention_mask: Mask[1,40])`，原样本键为`inputs_embeds`与`attention_mask`；类型检查未拦截，随后[transformer_tensor.py:26](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/transformer_tensor.py:26)读取`arrays[p.name]`触发`KeyError: v`。Mock入口也按程序参数名取值，见[transformer_validation.py:89](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/transformer_validation.py:89)。[A1 §1.7第4条](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/A1-agent-transformer.md:90)规定“其他异常类型（如TypeError、KeyError、IndexError）……仍然要停下”；§3.1冻结相关模块，当前没有扩大捕获、改绑定、改源码或重跑。需接续spec明确输入绑定／检查及反馈语义、允许文件与冻结版本接续。[完整现场](/home/lhohy/pt_agent_results/A1-transformers-input-binding-stop-20261027T154151-1acf/INPUT_BINDING_DIAGNOSTIC.json)。实际BERT37/40、剩3，Qwen0/40、剩40；累计166/450。全部进程已收尾，当前新增编译器依赖故障证据0。下方历史审批及数值公式停止保持已解决状态。
+
+A1 §1.7当前停止（2026-10-27）：新增的极宽exp／inv实测在[transformer_rule.py:131](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/transformer_rule.py:131)抛出`ZeroDivisionError: float division by zero`。当前inv域为[1.0633910054776077e-265,1]，ratio=9.403878675378334e264；float64下q=(r-1)/(r+1)=1，log(q)=0；下一条理论次数诊断的(r+1)/(r-1)同样为1，acosh=0。错误发生在既有required理论诊断，前面的规定异常和非有限系数已进入候选拒绝处理。
+
+依据[A1 §1.7第4条](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/A1-agent-transformer.md:90)“只捕获第1条列出的异常和非有限值检查。其他异常类型……仍然要停下”，未捕获ZeroDivisionError、未修改或略去理论公式、未继续Qwen prepare。需要补充极宽域下不可表示的理论诊断值如何记录或计算；本轮未改变拟合方法、判据、阶梯或资源。[原日志](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T125718-eb96/run.log)、[数值诊断](/home/lhohy/pt_agent_results/A1-transformers-s17-stopped-20261027T125937-3213/THEORY_DIAGNOSTIC.json)、[汇总](/home/lhohy/pt_agent_results/A1-transformers-s17-stopped-20261027T125937-3213/REPORT.json)。
+
+下方KernelError历史停止已由用户追加的A1 §1.7接续；保留当时的现象、请求和证据。
+
+A1（2026-10-27）：Qwen R1有限候选搜索在既有[transformer_rule.py:48](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/transformer_rule.py:48)的`_relative_profile → cheb_eval`路径停止，异常为`KernelError: Chebyshev coefficients reduce to a constant`，抛出位置为[kernels/poly.py:110](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/kernels/poly.py:110)。首个softmax为n15，校准分数范围[-232.51723682006593,171.9213304311596]；k从0开始，k=0的exp解析域为[-520.6971856612585,85.96066521557978]。原日志未保存触发拟合的role／fit／degree，未通过额外拟合重跑定位，也未放宽判据、改内核或临时跳过候选。
+
+请补充该类KernelError候选的诊断和排除／接续口径。当前A1只规定在可行候选中比较延迟，尚无本次异常的处理条款；依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进STATUS.md的阻塞一栏，等待新的spec”，本轮已停止。该停止来自pt_agent既有拟合诊断路径；真实编译尚未启动，本轮新增编译器／运行库故障证据0。[STOP](/home/lhohy/pt_agent_results/A1-qwen-prepare-20261027T123519-ad8a/STOP.json)、[原日志](/home/lhohy/pt_agent_results/A1-qwen-prepare-20261027T123519-ad8a/run.log)、[汇总](/home/lhohy/pt_agent_results/A1-transformers-stopped-20261027T124002-9e3f/REPORT.json)。
+
+本轮§7.10无待决阻塞。§7.10.5授权的内存修正及全部指定验证完成；Qwen已在原4GiB限制内完成预检、managed编译和完整双模式RuntimePlan比较。下方各次停止作为历史保留。M1第5条真实CKKS仍待后续spec，当前轮新增CKKS0。
+
+已由§7.10.5解除的历史停止（U4 §7.10.1，2026-10-27／62ecf194-dirty）：修正前BERT诊断从预检入口开启tracemalloc，达到early_modswitch调用处后触发MemoryError，未完成spec要求的“在 BERT 上完整跑一次”。保持普通Python地址空间soft4GiB／hard6GiB、原生6GiB、墙钟3600秒、单文件8GiB、磁盘10GiB准入。RSS峰值4096942080字节，失败时RSS4004126720字节／VmSize4204683264字节，存活1202893个Node（预处理455365节点＋管理后747527节点及return owner）。已完成的快照按行记录前20项及总量；schedule及后续快照受同一MemoryError影响，明确记为未取得。
+
+[逐阶段内存与分配记录](/home/lhohy/pt_agent_results/u4-bert-relative-preflight-20261027T090431684286/memory-stages.json)、[原日志](/home/lhohy/pt_agent_results/u4-bert-relative-preflight-20261027T090431684286/run.log)、[停止REPORT](/home/lhohy/pt_agent_results/u4-memory710-stopped-20261027T091313390406/REPORT.json)。失败现场保留预处理图、455365项schedule users／depths及747568项types、747527项by_id；表中大小均为浅层大小，未重复相加估算进程内存。
+
+需要接续spec明确BERT诊断的采集范围或其他接续口径；本轮未自行改变tracemalloc范围、资源或管理算法。依据[U4 §7.10.1](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U4-transformer-operators.md:631)及[AGENTS.md:18](/home/lhohy/Code/Poseidon/AGENTS.md:18)“期望值与实测不符；需要做设计选择”停止。§7.10.2–§7.10.4及Qwen诊断尚未启动；原§11.8 BERT成功和Qwen compiler成功保持，新增编译器／CKKS数值故障证据0。
+
+已由§7.10授权接续的历史停止（§11.8 U4b managed，2026-10-27／62ecf194-dirty）：新版Qwen的compiler真实编译和预处理DAG已核对54752自举／138切点；随后大小预检调用manage(recovered)时，在[manage/greedy.py:386](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/manage/greedy.py:386)的early_modswitch内发生MemoryError。预检普通Python进程RLIMIT_AS soft=4GiB、hard=6GiB，可信原生子进程仍6GiB；墙钟3600秒、文件8GiB、磁盘准入10GiB均保持。本次229.453603秒退出1，未到墙钟上限，磁盘仍约26.0GB；管理进程峰值RSS未单独采集，未把地址空间限制值当作实测RSS。managed IR大小尚未得到，managed编译0，完整RuntimePlan比较未执行。[失败REPORT](/home/lhohy/pt_agent_results/u4-qwen-relative-preflight-20261027T083705727832/REPORT.json)、[原堆栈](/home/lhohy/pt_agent_results/u4-qwen-relative-preflight-20261027T083705727832/run.log)、[STOP](/home/lhohy/pt_agent_results/u4-qwen-relative-preflight-20261027T083705727832/STOP.json)。
+
+共享预处理bytecode182922111字节、结构文本134001625字节、235617个常量运算和2007个恢复载荷均保留；原compiler bytecode、计划和常量bundle保留供接续。失败后的manage源码、算法和限制均保持；当前归为pt_agent外部managed评测的本地资源停止，新增编译器／CKKS数值故障证据0。依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进STATUS.md的阻塞一栏，等待新的spec”及第18行的设计选择规则停止；需接续spec明确内存处理或后续执行范围。
+
+已按原限制封装[未执行接续作业](/home/lhohy/pt_agent_results/u4-section118-stopped-20261027T084721590783/server_jobs/qwen-managed-preflight/run.sh)，bash -n通过；[JOB.json](/home/lhohy/pt_agent_results/u4-section118-stopped-20261027T084721590783/server_jobs/qwen-managed-preflight/JOB.json)列出现有输入和4/6GiB等原限制，未启动服务器任务、未重试、未扩大资源。
+
+已由§11.8给出接续方法的历史U4b停止（2026-10-27）：n15的初始inv域[0.0029219819796907592,1]、比值342.2334589845186；全部19个合法候选不可行。直接Remez最小相对误差为63阶的0.18670952505737115，目标1e-3；newton deg0=7/15/31的初始相对误差分别79.99037053208221／33.655504389146145／5.95789566887486，1–5轮均失效。已完成其余全部点，随后停下；k保持8，margin和候选范围保持。诊断公式给出的相对minimax理论阶数为70，最优常数初值的理论迭代数11；两项仅为理论模型，未生成或使用这些候选，也未证明当前绝对误差Remez在70阶可行。需要接续spec决定后续方法。[完整候选](/home/lhohy/pt_agent_results/u4-qwen-wide-20261027T070852687880/REPORT.json)、[STOP](/home/lhohy/pt_agent_results/u4-qwen-wide-20261027T070852687880/STOP.json)。
+
+已由§11.8更正的历史口径冲突：planners/transformer_rule.py:65在exp_ladder=True时沿用7/15/31/63；§11.7写exp仅15/31/63，同时要求BERT程序文本不变。保存的两处BERT exp均为7阶，当前逐字比较通过。两个Qwen exp的15/31/63候选均已在完整表中计算且可行，但现有选择器选7；未据此生成程序，也未修改旧选择器。需明确阶梯修正与BERT原文保留的接续口径。当前63项测试通过覆盖规则上限、域公式、完整不可行分类和原文保留；exp阶梯冲突单列，未计U4b验收通过。
+
+本次为近似规划及spec口径停止；真实编译、运行库诊断及CKKS调用均0，新增后端故障证据0。依据[spec §11.7](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U4-transformer-operators.md:276)“把整张表算完，再按§11.3停下汇报”及[AGENTS.md:18](/home/lhohy/Code/Poseidon/AGENTS.md:18)的spec矛盾停止规则收尾；其余Qwen逐算子、20条留出／next-token、选择向量全位置比较、P2双模式／RuntimePlan与lm_head成本待接续。
+
+已由§11.7解除的历史U4b停止（2026-10-27／62ecf194-dirty，Asia/Taipei）：tiny Qwen2的U1入口导入和校准成功，图检查通过、55/55结构可lowering；规则规划在`_softmax`（图节点n15）计算反复平方次数时停止。校准分数[-232.51723682006593,171.9213304311596]，平移及1.5余量后的exp域[-520.6971856612585,85.96066521557978]，宽度606.6578508768382，需要k=10；第2个`_softmax_1`（n42）宽度385.5223302789843，需要k=9。两者均超过[spec §11.6](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U4-transformer-operators.md:258)明确要求的“若 k > 8，判为不可行并停下”。依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进 STATUS.md 的"阻塞"一栏，等待新的 spec”收尾，等待接续条款决定宽域处理。当前未扩大steps、未改变margin／定义域／方法上限，未重试。Qwen DSL尚未生成、Mock/tensor留出、代价和编译均未执行；新增编译器／运行库故障证据0。[STOP](/home/lhohy/pt_agent_results/u4-qwen-prepare-20261027T064721360265/STOP.json)、[原REPORT](/home/lhohy/pt_agent_results/u4-qwen-prepare-20261027T064721360265/REPORT.json)、[calibration](/home/lhohy/pt_agent_results/u4-qwen-prepare-20261027T064721360265/model/calibration.json)。
+
+历史停止时U4a完整结果与S1 20/20保持，确认属于规则规划范围停止；其后§11.7已补做三类分数诊断，结果见本轮表。此处未登记后端故障。其余候选目录保持原样，全部历史与调用消费保留。
+
+历史阶段记录：§7.9.5的R6c、第3例、BERT managed及SqueezeNet-ReLU后续均通过，原磁盘停止已解除。
+
+历史清理后接续记录：磁盘停止已由用户批准的44个private-keys清理解除；本轮实测空闲27697115136字节，R6c原所需12377705872字节，准入满足。按本次明确顺序继续，以下停止记录均作为历史保留。其余候选目录不删除。
+
+历史授权等待（已由本机20/20补验解除）：S1最后一例的执行方式已由用户明确：§7.9.5完成后改走§7.6共享载荷路径本机补跑，无新增设计待决。当前前置为R6c及§7.9.5磁盘接续；本次实测空闲11838382080字节，R6c原需求12377705872字节，资源停止保持。后续先给出本例共享载荷IR的解压大小再准入，现有19例和服务器作业保留，本例当前待执行。
+
+
+U4历史停止（用户已批准清理并接续，§7.9.5，2026-10-27／62ecf194-dirty）：R6c参考trace及compiler编译成功，完整旧/新Function82836节点相同，383自举／76边界，原compiler归一化成功；随后managed归一化在创建临时文件前再次停止。所需空闲12377705872字节，实测11859394560字节，差518311312字节（494.300MiB）。本次保留managed.mlir.gz、参考bundle、RuntimePlan及全部日志，停止后未prune、未删除文件。[REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/REPORT.json)、[STOP](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/STOP.json)。初始空闲满足单个临时文件预算；重建上次已清理的参考产物后，运行时余量再次不足。第4步只读清单已完成：18158目录、扫描错误0；必须保留111目录／11328443966字节，保留273目录／2822848032字节，候选清理17774目录／58151972191字节（分配空间60679020544字节）。[DISK_INVENTORY](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/inventory-status-references/DISK_INVENTORY.json)逐目录列出大小、修改时间、分类及引用来源；现行编译器目录和本次停止证据均在必须保留项。实际清理由用户逐项批准，引用依据为[spec §7.9.5.4](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U4-transformer-operators.md:519)“是否删除由用户逐项批准”。资源、流程、调用历史保持。第3例、BERT managed与后续任务尚未启动。
+
+
+U4历史停止（已获§7.9.5接续授权，§7.9.3.2，2026-10-27／62ecf194-dirty）：M3第2例R6c的新旧完整Function82836节点相同，自举383／切点76，A/B/C检查器通过，原compiler真实编译exit0（11.75秒，1886.671875MiB），managed IR已发射。随后s1_managed.case_inside→normalize(candidate)→trusted_run→streams.run→_temporary_input→admit在创建临时文件、启动hecate-opt前停止。gzip中的managed IR为1640287632字节，按>1GiB规则需10GiB＋输入大小＝12377705872字节，实际11885137920字节，差492567952字节（469.749405MiB）。该步原生归一化调用0、managed编译尾段0，完整IR／RuntimePlan比较待执行。[R6c REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-20261027T044209517968/R6c/REPORT.json)、[调用栈](/home/lhohy/pt_agent_results/u4-manage-m3-20261027T044209517968/R6c/run.log)、[批次STOP](/home/lhohy/pt_agent_results/u4-manage-m3-20261027T044209517968/STOP.json)。
+
+M3第1例u2-resnet20-4096已完整通过（189168节点／507自举），第3例未启动，分母3保持；其余16个本机旧基线及原1例server pending保持。新BERT managed、U4a剩余回归与U4b均未启动。失败收尾沿用原prune范围，删除本次bundle与消费IR，保留Function比较、RuntimePlan、全部日志、报告和已用额度；本次遗留进程0。当前是临时文件磁盘准入停止，新增编译器／运行库缺陷证据0。
+
+用户已通过§7.9.5明确磁盘接续口径，当前按上述顺序执行；以下为原停止记录：需用户或Claude补充原资源内的磁盘接续口径。依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进 STATUS.md 的"阻塞"一栏，等待新的 spec”；当前没有重试或改变临时文件路由、10GiB准入及其他限制。原测试授权持续有效，不重复申请它。此前§7.9对Python复杂度修正的授权及已通过结果保持。
+
+U4已由§7.9接续的历史阻塞（2026-10-27／62ecf194-dirty）：BERT managed外层按3600秒限制退出124，实测3601.038473秒；最后未完成阶段为Python management，内部depth-dp已完成0.967607秒。此前Python记录、别名IR发射、bytecode预处理、无pass结构打印和结构/RMS读取均成功。managed IR、managed RuntimePlan尚未生成，编译尾段和参考bundle恢复编译均0；已有19个本机回归及原1例server pending保持，原compiler模式检查点和20条数值结果保持。当前证据确认Python管理阶段耗时停止，具体热点尚未定位，新增编译器／运行库数值故障证据0。[STOP](/home/lhohy/pt_agent_results/u4-bert-managed76-20261027T030724861581/STOP.json)、[原REPORT](/home/lhohy/pt_agent_results/u4-bert-managed76-20261027T030724861581/REPORT.json)、[阶段日志](/home/lhohy/pt_agent_results/u4-bert-managed76-20261027T030724861581/managed/trace-stages.json)。
+
+需要用户或Claude补充spec：明确Python管理器耗时诊断与保持原资源的接续范围。依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进 STATUS.md 的"阻塞"一栏，等待新的 spec”。当前仅收尾证据，未重试、未修改管理算法或增加时限；U4a剩余兼容/全部回归及U4b停止接续。原测试授权和已消费额度保持，无重复测试审批请求。确认本次遗留进程0，结构文本68729525字节与bytecode243136331字节保留，空闲12878417920字节；GNU time文件为空，最终RSS峰值缺项明确保留。
+
+U4历史资源停止已由用户明确批准清理顺序接续（2026-10-27）：仅在本轮回归驱动中，成功的原生参考trace之后、压缩之前，按原prune范围释放已消费constants.npz并保留其余文件。共享载荷6/6测试已通过（含此前未执行的RuntimePlan字段一致性项）；只补SqueezeNet-SiLU，18例通过结果复用，原服务器待验收项和全部历史消费保留。原资源与测试授权保持，当前无新增待决问题。
+
+U4已获用户批准接续的历史资源停止（§7.6.4，2026-10-27／62ecf194-dirty）：有限集合20成员中18例已通过完整新路径；SqueezeNet-SiLU在原生参考trace成功后的compress_ir磁盘检查停止，free=10562703360字节、required=10737418240字节，差174714880字节（166.621094MiB）。原生trace耗时6.96秒、峰值896.84375MiB；该例预处理hecate-opt、真实编译与新managed流程均0。旧SqueezeNet-ReLU服务器待验收记录保留分母20。本次属于资源准入，新增编译器／运行库数值阻塞证据0。已消费trace、失败报告、日志和原18例全部保留；失败目录按现行prune删除candidate_trace.mlir和已用constants.npz，清理后空闲13256634368字节。[STOP](/home/lhohy/pt_agent_results/u4-shared-regression-20261026T161932685192/STOP.json)、[FINAL_REPORT](/home/lhohy/pt_agent_results/u4-shared-regression-20261026T161932685192/FINAL_REPORT.json)。
+
+需要补充失败后的执行顺序：建议仅在本轮experiments/u4_managed_payloads.py中，让成功的参考trace先按现行prune范围释放已消费constants.npz，再压缩candidate_trace.mlir；保留trace作阶段0对照，资源、算法、参考、数值条件保持。18例不重跑，只补失败1例，随后按原§7.6/BERT managed→U4a回归→U4b接续。另一选择是将该例转服务器。当前未应用此顺序、未重试，也未运行后续BERT；已提交异步接续问题。依据[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进STATUS.md的"阻塞"一栏，等待新的spec”。原测试与清理授权持续有效，本问题不重复申请它们。
+
+U4历史接续：用户已确认Nix metadata恢复，修正后的6项测试现全部通过；§7.8.3检查点完成，按原资源与测试授权进入§7.6共享载荷回归。原错误及已用额度保留。
+
+U4已解除的历史停止（§7.8，2026-10-26／62ecf194-dirty）：已采纳ciphertext_counts的布局声明口径，lower.py保持，逐行可达/不可达统计已写入成本报告。全部既有程序比较正常收尾，27/27通过；BERT为15399自举／110边界／深度323且逐行计数相同。当前剩余启动失败：新增测试夹具128已改为合法1024后，六项重跑在baseline/hecate_python_env.py:107的Nix离线metadata解析退出1，30.381235秒，尚未进入Nix测试Python。现有加载器捕获stderr后只打印CalledProcessError，具体环境原因未确认，未推断为锁冲突或编译器故障。按[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进STATUS.md的"阻塞"一栏，等待新的spec”停止；环境恢复后的接续范围为重跑修正后的启用范围测试，再按§7.8.3和§7.6继续。原19项中18通过、1个新夹具错误，以及本次启动失败均保留；已过27程序和BERT核对无需重复。[失败REPORT](/home/lhohy/pt_agent_results/u4-cost78-unit-final-20261026T160724958322/REPORT.json)、[run.log](/home/lhohy/pt_agent_results/u4-cost78-unit-final-20261026T160724958322/run.log)、[汇总](/home/lhohy/pt_agent_results/u4-cost78-stopped-20261026T160902383091/REPORT.json)。
+
+U4历史接续启动（§7.8，2026-10-26／62ecf194-dirty）：用户明确授权成本DAG的减法展开、有序值编号与输出可达性。先实现显式选择的新DAG，保留默认旧路径；通过单元与BERT精确核对后，比较4冻结、9个U3、7个P2和20个S1程序，再按规则确定启用范围。共享载荷与BERT managed在这些验收之后。原编译与诊断产物保留，原资源保持。以下为§7.7历史停止：
+
+U4历史阻塞（§7.7.1，2026-10-26／62ecf194-dirty）：值编号后的DAG预测28982次自举，仍比真实15399多13583；前端预处理图的depth-dp为110边界／15399，与已保存RuntimePlan一致。值编号图存在278343个最终输出不可达的算术节点。只统计可达部分并以add+sub对照前端add后，各PT-DSL行的加性、mul_cc、mul_cp和rotate计数全部一致；前端另含860个显式negate，来自减法展开。首个字面差异为第7行layernorm（add2240→2480、sub240→0、neg0→80）；首个非此表示差异为第22行linear（mul_cp5160→129、rot920→647、add5160→168）。因此未将原因归为仅缺少CSE，未启用§7.7.2成本修正。按[当前spec §7.7.1第4条](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/U4-transformer-operators.md:384)“只诊断，不扩展修正，停下汇报”停止，等待减法表示、输出可达性／DCE的通用接续规范。原编译通过结果保持，检查点完整满足待定。[四图REPORT](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T150825422995/REPORT.json)、[可达性REPORT](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T151515842632/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T150825422995/SUMMARY.json)。
+
+以下为§7.7接续记录：
+
+U4历史接续（§7.7，2026-10-26／62ecf194-dirty）：按用户新条款先执行四图只读诊断；仅当值编号后自举等于15399才进入成本模型修正、冻结/U3/P2比较，再接续共享载荷。原编译结果保留并复用，资源与测试授权保持。以下为历史停止：
+
+U4历史阻塞（§7.6.5第1步，2026-10-26／62ecf194-dirty）：compiler bytecode trace及真实编译均退出0，原生RuntimePlan包含522,418步、41输入、1输出、15,399次boot；冻结预测为37,462次，差−22,063。§7.4仍要求预测与真实自举数相等。按[AGENTS.md:18](/home/lhohy/Code/Poseidon/AGENTS.md:18)“期望值与实测不符；需要做设计选择”的停止规则，未启动共享载荷实现、§7.6.4回归或BERT managed，也未调整预测／验证口径。[REPORT](/home/lhohy/pt_agent_results/u4-bert-compiler76-20261026T144521066801/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u4-bert-compiler76-20261026T144521066801/SUMMARY.json)。需补充计数差异的诊断与接续范围；本次为代价模型一致性停止，编译器数值故障未确认。
+
+以下为§7.6接续记录：
+
+U4历史接续（§7.6，2026-10-26／62ecf194-dirty）：用户已明确属性别名／NameLoc、bytecode预处理与结构文本恢复、rms_var逐位核对及.cst规模预估。先执行原包compiler --bytecode；随后实现并通过§7.6.4回归，再执行BERT managed。原资源与测试授权保持。以下为§7.5历史停止：
+
+U4历史阻塞（§7.5，2026-10-26／62ecf194-dirty）：managed原包已实际执行，图记录与raw发射完成；预处理在创建临时输入前被磁盘检查拒绝。raw文本54,064,749,752字节（50.351722GiB）、gzip215,145,743字节（205.178969MiB）；按现行S1临时文件规则需空闲64,802,167,992字节（60.351722GiB），实有13,830,471,680字节（12.880630GiB）。预处理hecate-opt、depth-dp、编译尾段均0，尚无RuntimePlan。总trace292.23秒、GNU time峰值2735.5703125MiB，无超时。已按既有prune清理raw gzip，保留日志、阶段大小/RSS、源码、包和权重，空闲恢复14,045,073,408字节（13.080494GiB）。[REPORT](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/SUMMARY.json)。
+
+静态核对：manage/greedy.py:46–50对每次明文使用新建constant节点；manage/earth_emit.py:101–110、133–134逐节点写入完整载荷。因此§7.5“每个常量只写一次”的体积预期未成立。原管理器/发射器/前端与pass顺序保持，未增加CSE或新输入格式。需要补充取得共享常量IR的通用接续规则；停止依据为[AGENTS.md:18](/home/lhohy/Code/Poseidon/AGENTS.md:18)“期望值与实测不符；需要做设计选择”。按指定顺序停在managed，compiler bytecode与FIFO均未执行，后者的触发条件尚未发生。新双模式服务器作业已更新并经bash语法检查，原资源限制保持，实际执行0。[清单](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/SERVER_JOBS.json)。
+
+以下为历史资源停止：
+
+U4历史资源停止（2026-10-26／62ecf194-dirty）：BERT的20条Mock/张量与§11.3–§11.5判定已通过；真实前端在写`trace_model.mlir`到8,589,934,592字节时退出1，日志为`Cannot write frontend output: File too large`。耗时61.61秒、峰值RSS897.16796875MiB，原8GiB单文件限制生效，编译调用0。已按现行prune规则删除截断的中间IR并写PRUNED.txt，空闲恢复13.1255GiB；源DSL、P2包、权重、日志、原REPORT与消费保留。[STOP](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/STOP.json)、[原REPORT](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/REPORT.json)。
+
+§7.4的服务器fallback已落实为两份compiler/managed作业，bash语法检查均0；保留内存6GiB、单文件8GiB、墙钟3600秒、保护空间10GiB，服务器执行0。[清单](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/SERVER_JOBS.json)。当前作业仍包含这次触及的8GiB限制，实际执行需先在spec明确服务器资源/IR输入输出策略；未自行扩大额度、改前端、重试或转另一条未批准路径。停止依据为[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)的报错停止和第18行设计选择规则；已提交补充问题。当前归属本机文件额度，编译器正确性与RuntimePlan尚待验证，未登记后端数值故障。
+
+U4原§11数值停止项已由用户§11.4–§11.6解决；以下为保留的历史停止证据：
+
+1. 第一个softmax的inv经公开平移/缩放后的定义域为(2.3656912005248113e-08,1.5)，比值63406415.835982144。有限参数搜索中既有U5 Remez求解器50轮未收敛：max|err|=21003297.038404178、|E|=20968484.195974432、差34812.84242974594，现行允许量20.96848419597443，τ=6.007062423045505e-07。§11没有给出此搜索中未收敛候选的处理规则；当前停止，未排除候选后继续、未调整拟合器或数值判据。失败具体degree未被该次异常记录，STOP明确写null，未推测或重试。[REPORT](/home/lhohy/pt_agent_results/u4-points-choices-20261026T123231747385/REPORT.json)、[STOP](/home/lhohy/pt_agent_results/u4-points-choices-20261026T123231747385/STOP.json)、[日志](/home/lhohy/pt_agent_results/u4-points-choices-20261026T123231747385/run.log)。
+2. 同次公开变换的exact对照已完成；第二个softmax的inv在留出20条上有2行S/scale超过1.5，最大2.137078367799165，max_u=1.8494415976565755。域来自校准与原1.5余量，未用留出结果改域，等待覆盖规则。两组exact输出均有限并通过1e-12+1e-12|ref|，该结果记录为公开变换数学检查。
+
+停止依据：[AGENTS.md:14](/home/lhohy/Code/Poseidon/AGENTS.md:14)“有疑问或报错，就停下来写进STATUS.md”，以及第18行“期望值与实测不符；需要做设计选择”。已通过异步问题请求补充spec。有限搜索尚未覆盖全部允许参数，所需最小阶数/深度待定；未填写“需要>63阶”的结论。当前归为数值拟合/定义域接续，编译器与运行库未执行、未登记后端故障。
+
+以下保留原停止证据（原停止已获§11接续授权）：
+
+U4a数值停止（2026-10-26／62ecf194-dirty）：同一份规则DSL在20条留出样本的张量执行中报`BackendError: Mock arithmetic produced a nonfinite value`。日志同时记录`kernels/poly.py:105`及`kernels/approx.py:359`乘法溢出；这些堆栈行属于既有多项式/rsqrt计算，当前证据尚未定位首个失真DSL运算及其输入。独立精确参考20×2个logits全部有限，范围[-2.185882258809718, 2.091172147609084]。Mock对照、整网P2、原生编译及U4b未启动，未登记编译器/运行库故障。[原REPORT](/home/lhohy/pt_agent_results/u4-bert-evaluate-20261026T120311989343/REPORT.json)、[原日志](/home/lhohy/pt_agent_results/u4-bert-evaluate-20261026T120311989343/run.log)、[补充STOP](/home/lhohy/pt_agent_results/u4-bert-evaluate-20261026T120311989343/STOP.json)。
+
+当前首个softmax的显式配置为exp remez15、domain=(-13.638372141837925,16.038868456273015)；inv newton deg0=7/iters=2、domain=(0.005295142364346268,335745.9986644651)。第二个inv domain=(0.2426610891631933,54618.58899981914)。这些值来自§5固定规则及校准；宽域与溢出的因果尚待首点诊断，未自行调整阶数、方法、定义域或添加平移。需要后续spec给出逐点诊断和固定规则可调整范围；依据[AGENTS.md:18](/home/lhohy/Code/Poseidon/AGENTS.md:18)“期望值与实测不符；需要做设计选择”时停止。原三项接口/配置/旧断言停止项已由§10解决，历史[核对REPORT](/home/lhohy/pt_agent_results/u4-contract-review-20261026T112259477226/REPORT.json)保留。
 
 U5当前无待用户或Claude决定的问题：§6–§8实现及全部验收完成，545/545唯一测试通过；原停止证据、失败报告与已消费额度保留。S1服务器遗留及整网真实CKKS保持下列原范围。
 
@@ -331,6 +497,103 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 450
 
+§6.18当前：新增0，累计按真实账本保持244/450；BERT38/40、Qwen40/40。spec的236为较早计数，保留最后8次已消费调用，不回退额度。本轮首请求均只保存，后续精调／确认全用已有响应。
+
+§6.17最终：累计244/450，本轮新增38；Qwen40/40已结束、剩0，BERT38/40已结束、余2不调用。40份Qwen请求与响应、全部历史消费保留，无在途请求、零重试；本轮恢复／诊断／离线验证API0。Qwen累计输入1887301／输出1239889／合计3127190 tokens。
+
+**历史§6.16停止用量：当时新增6，累计206/450。** BERT本版本4次、当前协议38/40（余2，已结束）；Qwen本版本2次、2/40（余38，资源停止）。40次额度不重置；无在途请求，无重试。Qwen输入61230／输出74301／共135531 tokens；BERT输入259325／输出77640／共336965 tokens。
+
+A1 Qwen r8-v9第2次：累计**206/450**、BERT38/40、Qwen2/40；输入42277／输出22310 tokens，126.610秒、finish_reason=stop。留出20/20，logit_rel_err=0.0002567884、校准u=0.9937949055>0.90、解析u=0.9914750127，完整不可行，按冻结流程精调中；零重试。
+
+A1 Qwen r8-v9第1次：累计**205/450**，BERT38/40已结束、Qwen1/40。输入18953／输出51991 tokens，278.339秒、finish_reason=stop；近似预检中127阶rsqrt Remez未收敛，结构化不可行反馈后继续第2次，零重试。
+
+A1 r8-v9 BERT会话收尾：新增**4**，累计**204/450**；BERT38/40、余2停止，Qwen0/40。第35–38次无重试；第37次tuned确认后冻结，BERT不再调用。先report100与双模式，再按既定顺序Qwen。
+
+A1 r8-v9第38次：累计**204/450**、BERT38/40、Qwen0/40，余2＋40。本版本新增4次，零重试；第37次精调2遍收敛、598.187秒，8839自举。第38次原文同成本可行，进入精调。
+
+A1 r8-v9第37次：累计**203/450**、BERT37/40、Qwen0/40；本版本新增3次、零重试。输入87518／输出4492 tokens，20.866秒、finish_reason=stop；抄回第36次tuned，内部可行、9079自举，旧结果未收敛故继续精调而非输出缓存复用。
+
+A1 r8-v9第36次：累计**202/450**、BERT36/40、Qwen0/40；新增版本2次，零重试。本次输入21424／输出34584 tokens，194.671秒、finish_reason=stop。原文内部可行，进入精调；余BERT4、Qwen40。
+
+A1 r8-v9第35次：累计**201/450**、BERT35/40、Qwen0/40；本版本新增1次，finish_reason=stop、输入17692／输出35798 tokens、172.613秒。内部不可行，精调进行中；无重试。
+
+A1 §6.15冻结时：新增**0**，累计**200/450**；BERT34/40，r8-v9硬上限继承已用34次，只余6次；Qwen0/40。两模型均split-v2、v8-6.14，max_tokens65536，零重试。旧v8历史、候选与缓存仅保留为开发记录，新会话pool/cache为空。
+
+A1 §6.16本轮：新增**0**，累计**200/450**；BERT34/40、Qwen0/40。诊断完成80条后第5批内存失败，按spec停止；未开始r8-v9或新增外发，原剩余额度6＋40保持。
+
+A1当前停止：新增**2**，累计**200/450**；BERT34/40（已冻结后停止，余6）、Qwen0/40（余40）。第33/34次为v8-6.14，重试0。R0 Mock资源失败后无新增调用，所有请求、响应、原检查点、pool及归档cache保留。
+
+A1 §6.14本次接续：新增2次，累计**200/450**；r8-v8 BERT34/40（剩6，已冻结后停止）、Qwen0/40（剩40），全局剩250。split-v1为1–21、split-v2为22–34；22–32用v8-6.11、33–34用v8-6.14。无重试。新规则两次均内部不可行，未触发精调，cache保持0；原pool内第32次精调程序通过确认并冻结。
+
+A1 §6.14接续起点：累计**198/450**；r8-v8 BERT32/40（剩8）、Qwen0/40（剩40），全局剩252。split-v1为1–21，split-v2为22–32共11次。2400秒搜索预算已由用户明确；已迁移同一SESSION至v8-6.14，归档旧cache3项、新cache0，保留pool4项及全部历史计数，新外层已启动第33次。实际新调用按调用记录追加，零重试。
+
+A1 §6.12完成：新增**0**，仍**187/450**；r8-v8 BERT21/40（剩19）、Qwen0/40（剩40），全局剩263。第21次复用原响应，四次旧精调复用；新增离线重判、测试、恢复和确认均未调用API。registry885条，历史及已用额度保留。
+
+A1 §6.12①离线复核：API新增0，仍**187/450**；BERT21/40、Qwen0/40，剩BERT19、Qwen40。未接续第22次。
+
+A1本次停止：**187/450**，r8-v8 BERT21/40、Qwen0/40；剩BERT19、Qwen40、全局263。从第15次恢复后新增7次调用，重试0。第21次输入175880／输出5481 token、26.969953秒、finish_reason=stop；r8-v8累计输入1199408／输出290673，共1490081 tokens。registry874条，全部历史及已消费额度保留。本次汇总新增API0。
+
+A1第三会话第20次：**186/450**，BERT20/40、Qwen0/40，剩BERT20、Qwen40、全局264。响应17.993462秒、输入127661／输出3637 token、finish_reason=stop；内部评估继续。
+
+A1第三会话第19次：**185/450**，BERT19/40、Qwen0/40，剩BERT21、Qwen40、全局265。响应已保存，原文内部可行，成本2674624525µs更新llm_min并触发精调。
+
+A1第三会话第18次：**184/450**，BERT18/40、Qwen0/40，剩BERT22、Qwen40、全局266。输入21075／输出41169 token，229.219039秒，HTTP200／stop；原文20/20，校准u=0.8922932394362314、解析u=0.9939388848625117、exact最大差4.440892098500626e-16。预测12666自举／95切点／274深度／3319860634µs。第17次不可行原文成本3040948916µs较低，但未写入llm_min；第18次因此new_llm_best=true并进入精调，符合§6.11。
+
+A1第三会话第17次：**183/450**，BERT17/40、Qwen0/40，剩BERT23、Qwen40、全局267。输入17401／输出35450 token，179.074144秒，HTTP200／stop；精确最大差4.440892098500626e-16，20/20一致，但第30行rsqrt校准u=1.0609897780775652导致不可行。按默认v8-6.11执行一次对准及正常Mock收尾。
+
+A1 §6.11第16次已完成：**182/450**，r8-v8 BERT16/40、Qwen0/40；输入190186／输出3332 token、13.820167秒、HTTP200／stop。原文20/20、校准u=0.8859216934520258、解析u=0.99688676162861、exact最大差8.604228440844963e-16；按新最快可行原文触发精调，剩BERT24、Qwen40、全局268。
+
+A1 §6.11接续：**181/450**，r8-v8 BERT15/40、Qwen0/40。第15次HTTP200、finish_reason=stop，输入139207／输出3803 token、14.923925秒；原文20/20留出一致，10789自举／97切点／深度281／预测2839968813µs，按新规则触发精调。当前余量BERT25、Qwen40、全局269。证据：`A1-bert-s611-recovery-20261028T101830/steps/001-evaluate/REPORT.json`；外层运行`A1-bert-session-20261028T102109-3e4e`。
+
+A1 §6.8停止快照：**180/450**，r8-v8 BERT14/40、Qwen0/40；本节新增6次（9–14），原8次和旧r8-v7的37次保持。r8-v8输入452968／输出190928／合计643896 token，API共870.309958秒，14个响应均stop，API错误0、length反馈0。registry840条，全局167–180十四条API记录齐备。剩BERT26、Qwen40、全局270；停止后未再调用。
+
+A1 §6.8最新：**179/450**，r8-v8 BERT13/40、Qwen0/40；输入365569／输出179604／合计545173 token。第13次原文内部可行，当前独立tune进行中。
+
+A1 §6.8最新完成用量：**178/450**，r8-v8 BERT12/40（第13次请求进行中）、Qwen0/40；输入332191／输出163467／合计495658 token。第12次原文内部可行，仍待会话末确认。
+
+A1 §6.8当前完成用量：**176/450**，r8-v8 BERT10/40（第11次请求进行中）、Qwen0/40。累计输入279047／输出150357／合计429404 token。第10次response stop、API152.572650秒；validation发散并按冻结条件跳过tune。
+
+A1 §6.8最新：**175/450**，r8-v8 BERT9/40、Qwen0/40。恢复8次时未新增API；确认0/3后按预登记分支开启新会话，第9次response已保存，finish_reason=stop，用时118.415647秒，输入17401／输出23103／合计40504 token。当前累计r8-v8 BERT输入258022／输出115770／合计373792。
+
+最新A1 r8-v8停止快照：**174/450**，本版本BERT8/40、Qwen0/40，剩32＋40。输入token240621、输出token92667、合计333288；8次均finish_reason=stop，HTTP错误0、length反馈0。原r8-v7 BERT37次单列保留。原始超时REPORT的llm_calls=0为缺省，当前按8份持久请求、8份响应及registry的167–174八条API记账。registry830条。[完整REPORT](/home/lhohy/pt_agent_results/A1-transformers-v8-wall-stop-20261027T180318-3a77/REPORT.json)。
+
+A1 r8-v8运行中（2026-10-27T17:14Z）：已完成累计167/450，本版本BERT1/40、Qwen0/40。首个响应已保存、第一轮尚在内部评估；原r8-v7的37次及历史消费保持。
+
+A1 r8-v8冻结快照：累计166/450；本版本BERT0/40、Qwen0/40，最多新增80、累计最多246。持久计数按（模型，r8-v8）分目录；原r8-v7 BERT37/40及原剩余额度全部保持。
+
+A1最终停止快照：BERT37/40（剩3）、Qwen0/40（剩40），本轮37/80（剩43）、累计166/450（剩284）。37次响应与37条API记录齐备；输入token468409、输出token655637、合计1124046。第五原REPORT的llm_calls=0为异常分支缺省，保留原件；以持久客户端和逐次调用台账计数。registry805→806，[完整REPORT](/home/lhohy/pt_agent_results/A1-transformers-input-binding-stop-20261027T154151-1acf/REPORT.json)。
+
+A1第五会话启动前：BERT32/40、Qwen0/40、本轮32/80，累计161/450。前三会话与第四会话均无确认程序；最后8次BERT调用仍沿用同一持久计数，全部历史消费保持。
+
+A1第三会话第7轮进行中：23次调用已全部追加registry，BERT23/40、Qwen0/40、本轮23/80、累计152/450；registry787条。当前等待内部检查及精调结束，尚无可行或冻结程序；不重置任何额度。
+
+A1本次真实会话启动被自动审批拒绝，实际API新增0；BERT0/40、Qwen0/40、累计129/450。registry760→761，仅追加本次审批停止记录，历史额度保持。[REPORT](/home/lhohy/pt_agent_results/A1-transformers-network-approval-20261027T133722-07e5/REPORT.json)。
+
+A1 §1.8冻结时：真实API新增0，BERT0/40、Qwen0/40、累计129/450；registry757→760（31项测试、Qwen prepare、r8-v7冻结）。原失败、全部响应／程序及已消费额度保持；§3将共用各模型持久40次计数，单会话max_iters=8、零重试。
+
+A1 §1.7接续：真实API新增0，BERT0/40、Qwen0/40，本轮0/80，累计129/450。registry755→757（一次离线测试与一次停止汇总）；原21项及所有历史用量保留。Qwen prepare重跑0，report／真实编译／CKKS／下载／安装／资源扩额／commit／tag新增均0。
+
+A1停止点：BERT0/40、Qwen0/40，本轮0/80；累计129/450、剩余321。registry746→755，保留6次离线测试记录（含本轮自写修正前的错误与跳过）、BERT／Qwen准备各一次和停止汇总。真实编译、CKKS、report评测、下载、安装、commit和tag新增均0。原响应、程序、包和已消费额度保持。
+
+本轮§7.10.5新增API0，累计129/450、剩余321；registry731→746，全部旧消费保留。新增BERT参考恢复编译1次、BERT／Qwen managed各1次（原两段流水线），Qwen compiler复用旧结果；重试0。下载／安装／报告集评测／新Agent输出／真实CKKS／库修改／资源扩额／提交／tag均0。[完整消费及证据](/home/lhohy/pt_agent_results/u4-memory710-complete-20261027T102158237896/REPORT.json)。
+
+本轮清理后接续API新增0，累计129/450、剩余321；registry677→698。M3、BERT、S1补验及全部U4a回归通过，Qwen一次U1准备在规划阶段停止，未重跑。新增Agent首次输出0、真实CKKS0、报告集评测0、下载0、安装0、资源扩额0；用户批准的44个private-keys由Claude清理已记入KEY_CLEANUP，其余候选目录保持。[FINAL_REPORT](/home/lhohy/pt_agent_results/u4-qwen-prepare-20261027T064721360265/FINAL_REPORT.json)。
+
+U4 §7.9.5新增API0，累计129/450；registry675→677，新增R6c接续尝试与只读盘点两条。R6c上次已prune的产物通过原冻结程序重建，新增参考trace1／编译1，R6c两次累计各2，原消费保留；本次managed归一化／编译尾段0。停止后删除0，首次Agent输出／CKKS／报告评测／下载／安装／资源扩额／提交/tag均0。[FINAL_REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/FINAL_REPORT.json)。
+
+
+U4 §7.9本轮新增API0，累计129/450，registry667→675。包含计时预检、M3准备、BERT栈确认诊断、SqueezeNet旧实现诊断、修正后4项测试、2个M3成员尝试及批次停止。BERT诊断确认后主动收尾的exit130保持；M3的磁盘停止和未启动第三例均保留。新BERT managed／CKKS／首次Agent输出／下载／安装／报告集／库修改／资源扩额／提交/tag均0。
+
+U4 §7.6历史收尾：API新增0，累计129/450；registry639→667。6项启用测试、25项载荷/S1测试和最新载荷6项均通过；19个本机成员完整通过，原1例server pending保持。SqueezeNet-SiLU失败与成功补跑均保留。BERT managed本次新增可信trace驱动1、预处理1、结构打印1，管理阶段超时后停止；编译尾段／参考恢复编译／CKKS／首次Agent输出／报告集／下载／安装／库修改／资源扩额／提交/tag均0。原compiler证据及全部已用额度保持。
+
+U4 §7.8：新增API0，累计129/450，剩余321；registry603→639，27程序、两个BERT成本核对、单元/定向测试、Nix启动失败和停止汇总均保留。新增真实编译／trace／CKKS／报告样本／下载／安装／库修改／资源扩额／提交／tag均0；§7.6依赖与U4b待执行。
+
+U4 §11.4–§11.6接续：新增API0，累计129/450，剩余321；registry594条，原590条加38项测试、新旧诊断、Mock对照及本机trace失败4条保留。38/38测试通过，31项U4＋7项R1；真实前端1次、编译0、CKKS0。报告集读取、下载、安装、库修改、资源扩额、提交与tag均0；服务器作业只准备、未执行。
+
+历史U4 §11接续：registry590条，原586条及17项测试、调整前诊断、25项测试、参数搜索停止4条完整保留。25/25唯一U4用例通过；原12/17项是阶段测试，未重复计入唯一数。
+
+历史U4 §10接续：registry586条，原582条及新增CLI准备/外层准备/单测/数值失败4条完整保留。12项新增测试通过；BERT数值执行失败已收尾。
+
 U5最终：本次新增API0、累计129、当前registry581条，原558条及§8接续的23条全部保留；最终测试545/545。混合程序真实双模式编译完成，真实CKKS0；无下载、安装、库修改、资源扩额或提交。
 
 U5 §7本次接续新增API0、累计129/450、剩余321；registry558条，原550＋8条测试/拟合/汇总全部保留。平滑40/40、核心8/8、锚点通过；自动搜索1组完成后因29阶未收敛停止。真实编译、CKKS、数据集读取、下载、安装及扩额0。
@@ -418,15 +681,124 @@ R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry�
 
 ## 最近 5 次运行（run_id、模型、结论）
 
+| run_id | 模型 | 结论 |
+|---|---|---|
+| A1-qwen-log-step-20261029T143159-6efa | qwen | 步骤evaluate完成，下步tune；本节API0 |
+| A1-qwen-log-step-20261029T143157-db09 | qwen | 步骤evaluate完成，下步evaluate；本节API0 |
+| A1-qwen-log-step-20261029T143154-7901 | qwen | 步骤evaluate完成，下步evaluate；本节API0 |
+| A1-qwen-log-step-20261029T143152-4890 | qwen | 步骤evaluate完成，下步evaluate；本节API0 |
+| A1-qwen-log-step-20261029T143149-08ca | qwen | 步骤evaluate完成，下步evaluate；本节API0 |
+
+§6.17结束时的最近运行快照：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| A1-transformers-s617-summary-20261029T105741-caa3 | A1 / 最终汇总 | 实现／187测试／BERT等价完成；Qwen40/40、内部可行0，按§3.3停止 |
+| A1-qwen-s617-continuation-20261029T090457-484c | Qwen / 后4会话 | 串行到40次，无确认程序，预算消费全部保留 |
+| A1-qwen-session-20261029T102252-2f9b | Qwen / 第33–40次 | confirm_failed、pool0；第40次20/20但校准u失败 |
+| A1-qwen-api-244-20261029T105424-53e7 | Qwen / 第40次 | 已用40/40，logit_rel_err约1.75e-5、校准u0.993795，完整不可行 |
+| A1-qwen-api-243-20261029T105005-a177 | Qwen / 第39次 | margin拒绝，原请求／响应保留 |
+
+§6.17前快照保留：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| A1-transformers-v9-resource-stop-20261029T074420-0c56 | A1 / summary | 按资源条款停止；API206/450；177测试通过；新增完整交付通过0 |
+| A1-qwen-session-20261029T073107-137f/steps/003-tune | Qwen / Mock | 单批20条、MemoryError、峰值4079927296字节；原证据及检查点保留 |
+| A1-qwen-session-20261029T073107-137f/steps/002-evaluate | Qwen / raw2 | 20/20、logit_rel_err0.0002567884；校准u0.993795未达要求 |
+| A1-bert-v9-summary-20261029T073228-685e | BERT / comparison | 四行与旧v8并列；新report98/100未达要求；API4次 |
+| A1-bert-evaluate-20261029T071008-1f22/managed | BERT / native | 三方8839/97、完整RuntimePlan与1988常量相同，已prune |
+
+
+
+§6.16前快照保留：
+
+| A1-transformers-s614-stop-20261029T023259-ec82 | transformers | 按§3.3资源停止；API200/450、Qwen0 |
+| A1-bert-evaluate-20261029T015622-6426 | bert / R0 | 张量100/100；Mock申请2.50MiB失败，峰值3.807GiB，exit1 |
+| A1-bert-postfreeze-metrics-20261029T015554-d87b | bert / metrics | 首可行第26次留出20/20，四程序逆点深度完成 |
+| A1-bert-evaluate-20261029T014049-8be3/managed | bert / managed | 三方9095自举、95切点、完整RuntimePlan一致并prune |
+| A1-bert-evaluate-20261029T014049-8be3 | bert / frozen report | 双引擎一致；97/100，报告精度未通过 |
+
+资源停止前快照保留：
+
+| A1-bert-evaluate-20261029T015622-6426 | bert / R0 | report100张量100/100，Mock运行中；API0 |
+| A1-bert-postfreeze-metrics-20261029T015554-d87b | bert / metrics | 首可行第26次留出20/20、logit_rel_err=0.00028055；四程序逆点深度完成 |
+| A1-bert-evaluate-20261029T014049-8be3/managed | bert / managed | 三方9095自举、95切点、完整RuntimePlan一致并prune |
+| A1-bert-evaluate-20261029T014049-8be3/compiler | bert / compiler | 真实编译9095自举、95边界，与预测一致 |
+| A1-bert-evaluate-20261029T014049-8be3 | bert / frozen report | 双引擎一致；97/100、logit_rel_err=0.18529，报告精度未通过 |
+
+上一份接续快照保留：
+
+| A1-bert-session-20261029T013849-02e0 | bert / split-v2 | 第33/34次完成，选中第32次精调候选，确认20/20并冻结；累计200/450 |
+| A1-bert-session-step-20261029T013828-ea53 | bert / migration | 迁移完成；旧cache3项归档、新cache0、pool4项保持，API0 |
+| A1-bert-unit-20261028T174745-59fe | bert / offline | 158/158、失败/错误/跳过0 |
+| A1-bert-tune-pruning-20261028T170540-fdec | bert / split-v1 | 6遍收敛、8937自举，2463.303秒符合已澄清预算 |
+| A1-bert-tune-pruning-20261028T165525-f437 | bert / split-v1 | 第20次单遍四项等价，602.090秒，剔除64项 |
+
+接续前最近5次快照：
+
+| A1-transformers-s614-offline-20261028T175017-92cc | transformers / offline | 验证结果保存，预算口径待统一；API0 |
+| A1-bert-unit-20261028T174745-59fe | bert / offline | 158/158、失败/错误/跳过0 |
+| A1-bert-tune-pruning-20261028T170540-fdec | bert / split-v1 | 6遍收敛，8937自举，含Mock2463.303秒，预算问题另列 |
+| A1-bert-tune-pruning-20261028T165525-f437 | bert / split-v1 | 第20次单遍四项等价，602.090秒，剔除64项 |
+| A1-bert-tune-pruning-20261028T164040-5368 | bert / split-v1 | 第19次单遍四项等价，850.293秒，剔除54项 |
+
+前一份最近运行快照保留：
+
+
+当前最近5项模型／批次记录；运行中项显式标记，逐次API另在registry保留。
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| A1-bert-session-20261028T151626-8cdc | bert / split-v2 | 运行中：31原文/精调及32原文可行；32精调中，未确认冻结 |
+| A1-bert-session-20261028T140041-f6a5 | bert / split-v2 | 22–28次正常收尾，确认0/4，未冻结，余12次 |
+| A1-transformers-s613-offline-20261028T135945-ae39 | transformers / offline | 离线完成；当时口径待澄清的原REPORT保留，用户现已明确并继续 |
+| A1-qwen-baselines-20261028T135542-9029 | qwen / split-v2 | R0/R1重评完成，20/20，接口正常，无解析停止，feasible=false |
+| A1-qwen-prepare-v2-20261028T135355-6529 | qwen / split-v2 | 新prepare完成，83/20/20/100，11点校准比较 |
+
+以下保留此前最近5项快照。
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| A1-bert-session-step-20261028T101924-26df | bert | 规则迁移通过；第15次前持久化，API0 |
+| A1-bert-session-step-20261028T101900-2aa9 | bert | 第14次保存响应重评一致，普通发散，API0 |
+| A1-bert-session-step-20261028T101832-ab44 | bert | 第9–13次状态／trace恢复一致，旧tune复用 |
+| A1-bert-decision-replay-20261028T101822-9f36 | bert | 14次触发条件只读回放完成 |
+| A1-bert-unit-20261028T101746-4fe9 | offline | 131/131通过，5.869秒 |
+
+以下保留此前最近5项快照。
+
+
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| A1-transformers-speed-stop-20261028T072124-ff90 | transformers | 本轮汇总：86项通过，静态一致，Qwen旧tune解析点停止 |
+| A1-offline-speed-tune-20261028T071914-0129 | qwen R1 | 旧版定义域对准验证停止；新版和正式时限测速未执行 |
+| A1-bert-unit-20261028T071855-0d4e | offline | 86/86通过；原64项未改 |
+| A1-bert-unit-20261028T071754-0317 | offline | 新夹具缺normalized，失败证据保留；随后补齐并通过 |
+| A1-offline-speed-compare-20261028T070942-addd | offline | 16/16直接静态补充一致，2份新增完整成本/DAG对照 |
+
+以下保留此前的最近5项快照。
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| A1-transformers-s68-stop-20261028T060310-e9da | transformers | 第14次解析点越界按§6.7停止；BERT14/40、Qwen0；[REPORT](/home/lhohy/pt_agent_results/A1-transformers-s68-stop-20261028T060310-e9da/REPORT.json) |
+| A1-bert-session-20261028T033706-5ca7 | bert | 第12／13次原文及13精调内部可行；14触发停止，未冻结；[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T033706-5ca7/REPORT.json) |
+| A1-bert-session-20261028T025117-861c | bert | 7轮恢复及第7轮重评一致；第8轮原响应评估／精调完成，确认0/3，API新增0；[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T025117-861c/REPORT.json) |
+| A1-bert-unit-20261028T025013-0c82 | bert | A1回归与新增分步等价64/64；[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261028T025013-0c82/REPORT.json) |
+| A1-transformers-v8-wall-stop-20261027T180318-3a77 | transformers | 原3600秒停止现场保留；[REPORT](/home/lhohy/pt_agent_results/A1-transformers-v8-wall-stop-20261027T180318-3a77/REPORT.json) |
+
+以下保留此前的最近5项快照。
+
 按模型与批次运行登记；逐次API记录保留在registry。
 
 | run_id | 模型 | 结论 |
 |---|---|---|
-| u5-complete-20261026T110026006154 | nonlinear-fitting | U5完成；545/545唯一用例；拟合、兼容、研究与双模式编译全部收尾；[证据](/home/lhohy/pt_agent_results/u5-complete-20261026T110026006154/SUMMARY.json) |
-| u5-tensor-20261026T102944095071 | tensor | 17/17通过；失败/错误0；[证据](/home/lhohy/pt_agent_results/u5-tensor-20261026T102944095071/REPORT.json) |
-| u5-s1-20261026T102941962296 | s1 | 34/34通过；失败/错误0；[证据](/home/lhohy/pt_agent_results/u5-s1-20261026T102941962296/REPORT.json) |
-| u5-intake-20261026T102939429174 | intake | 4/4通过；失败/错误0；[证据](/home/lhohy/pt_agent_results/u5-intake-20261026T102939429174/REPORT.json) |
-| u5-weight-20261026T102820620664 | weight | 17/17通过；失败/错误0；[证据](/home/lhohy/pt_agent_results/u5-weight-20261026T102820620664/REPORT.json) |
+| A1-transformers-input-binding-stop-20261027T154151-1acf | BERT＋Qwen | 输入名绑定KeyError停止；37次调用，剩3＋40；[REPORT](/home/lhohy/pt_agent_results/A1-transformers-input-binding-stop-20261027T154151-1acf/REPORT.json) |
+| A1-bert-session-20261027T152756-9b83 | BERT | 第五会话第5轮KeyError；实际5次调用；[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T152756-9b83/REPORT.json) |
+| A1-bert-session-20261027T151426-9206 | BERT | 第四会话8轮，无可行候选，confirm_failed；[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T151426-9206/REPORT.json) |
+| A1-qwen-cost-20261027T151304-32b9 | Qwen R1 | 静态36928自举／115切点／深度336；[REPORT](/home/lhohy/pt_agent_results/A1-qwen-cost-20261027T151304-32b9/REPORT.json) |
+| A1-bert-session-20261027T141903-a85d | BERT | 数学／留出局部通过，max_u未通过；精调0接受；[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T141903-a85d/REPORT.json) |
 
 正式结果目录：`PT_RESULTS=/home/lhohy/pt_agent_results`；单测使用临时目录。
 旧 T0/T2 测试输出保留原路径；旧源码副本：[before/](/home/lhohy/pt_agent_results/R1-ptdsl-unit-20261020T111834-3fa0/before/)。
@@ -4427,3 +4799,2351 @@ ResNet20的18/18降阶版本全部可行。SiLU同阶替换的下降为0.6000000
 与spec不一致之处：无未解决偏离。按§6–§8落实顺序、浮点项和奇Chebyshev基；按自写错误例外修正单极值交换遗漏、JSON／报告归属、槽数和变量夹具、可降深度测试夹具及新实验路径传递，逐项文件行号见上文。旧测试未改，数值条件、库、安全参数和资源保持，未提交或打tag。
 
 未完成项：U5无。整网真实CKKS、复杂未见模型及S1保留的服务器案例属于原后续范围，状态保持。API本轮0、累计129，registry581；全部已启动任务收尾，历史报告／源码／程序包和消费记录保留。
+
+## U4 实现前核对汇报（2026-10-26 / 62ecf194）
+
+改动文件：仅本STATUS的当前状态、U4轮次卡、阻塞、API与最近运行记录；pt_agent源码及旧测试保持。当前分支lhy-agent-dsl、aarch64、HEAD62ecf194与spec指定基线一致；原U5源码已在该提交，未自行提交、切分支或重置任何内容。
+
+测试输出：仅静态源码/spec对照，无本轮测试、模型执行或编译。U4a为实现前阻塞，U4b未开始；BERT/Qwen覆盖率、数值一致性、代价及编译均待执行，未填写通过值。原545项结果属于U5，保持历史归属。
+
+与spec不一致之处：没有应用实现变更。三项尚缺接口/配置/旧断言接续条款见当前阻塞栏，按AGENTS的设计选择及旧断言停止规则等待修订；未将这些静态问题归为后端错误。
+
+未完成项：U4a与U4b全部实现、§7验收及既有回归。API本次0、累计129/450；registry582，历史与消费保持。本次编译、CKKS、报告集读取、下载、安装、库修改、资源扩额和提交均0。
+
+## U4 §10 接续汇报：U4a数值停止（2026-10-26 / 62ecf194-dirty）
+
+改动文件（均在scripts/pt_agent内，文档仅本STATUS）：
+
+- 新增内核与接线：`kernels/transformer.py`、`transformer_lower.py`、`transformer_tensor.py`、`transformer_validation.py`、`transformer_cost.py`、`transformer_run.py`。
+- 新增前端与规则：`intake/masks.py`、`intake/transformer.py`、`planners/transformer_rule.py`、`planners/transformer_tuner.py`。
+- 新增P2与实验测试：`export/transformer_codegen.py`、`export/transformer_package.py`、`experiments/u4_transformer.py`、`tests/test_u4_kernels.py`、`test_u4_frontend.py`、`test_u4_pipeline.py`。
+- 扩展现有入口：`config.py`、`kernels/layout.py`、`lower.py`、`tensor_sim.py`、`analyzer.py`、`cost.py`、`metrics.py`、`models/info.py`、`run.py`；`dsl/{ir,ops_spec,parser,printer,shapes,typecheck}.py`；`intake/{core_ops,coverage,graph_exec,hf_frontend,probe}.py`；`planners/{rule,tuner,agent_tools,prompts}.py`、`capabilities.py`；`export/{codegen,package}.py`、`export/templates/_package/{ops,runtime}.py`。旧单块布局类和单块kernel源码保持，仅新增Token/Score类及分派；第三方库、编译器及运行时未修改。本工作区原有其他目录改动保持。
+- 旧测试迁移按§10.3：`test_r1_parser.py:71`的`len(OPS)==27`改为30；`test_r8b_generic.py:45`起原`CAPABILITIES==HANDLED_OPS`改为`CAPABILITIES==冻结15项快照`并增加`V7_CAPABILITIES==HANDLED_OPS`，原15项有序名单保留。r8-v4/v5/v6提示文本逐字对照及完整kernel/代价/参考完整性检查仍待执行。
+
+已写入的部分实现包含：Token/Score布局与分块、Mask参数和三新算子、norm/softmax/matmul字段、按通道head/GQA视图映射、mask二值表达式检查、tall linear、逐token运算；张量解释器、近似点校准/验证及精调入口、规则规划器、r8-v7入口、完整系数P2及管理模式接线。尚未完成全部§7覆盖和端到端验收；后续代价细分及部分精调/管理接线仍待验证。U4b有共享基础代码，未进入其里程碑验收。
+
+测试输出：
+
+| 批次 | 结果 | 证据 |
+|---|---|---|
+| 新增离线测试 | `Ran 12 tests ... OK`；failures=0、errors=0、skipped=0 | [REPORT](/home/lhohy/pt_agent_results/u4-bert-unit-20261026T120028209301/REPORT.json)、[日志](/home/lhohy/pt_agent_results/u4-bert-unit-20261026T120028209301/run.log) |
+| 保留BERT语义图单测 | 2张既有校准样本，规范化图与原语义图满足1e-9；原图逐样本执行；5个LN/2个softmax | 同上frontend组 |
+| BERT U1 CLI | exit0；223条Markdown原文、23校准/20留出；L40；36/36可lowering；规则DSL解析/类型检查通过 | [REPORT](/home/lhohy/pt_agent_results/u4-bert-prepare-20261026T115827230385/REPORT.json) |
+| BERT留出数值 | 精确参考20×2有限，min=-2.185882258809718、max=2.091172147609084；近似张量执行报非有限值，20条完整结果0；Mock未启动 | [STOP](/home/lhohy/pt_agent_results/u4-bert-evaluate-20261026T120311989343/STOP.json) |
+
+新增测试已覆盖布局打包往返与尾槽、高矩阵3/4/5及非整块输出与旋转复用、单/多块LN、MHA/GQA的QK和PV、单/多块softmax掩码、shuffle/加密选择、一般前端视图和非法掩码、DSL往返与部分非法参数、张量/Mock、P2 Emit/常量及NumPy一致。其他§7逐项覆盖仍待补齐，现有545项回归尚未运行，U5的545通过保持历史归属。
+
+与spec不一致之处：旧断言两处按用户§10.3迁移；当前首个实际停止项为BERT近似程序数值溢出。未调整§5固定近似规则、任何数值判据或模型，未继续U4b。按本轮自写错误例外已修正以下实现问题，相关早期失败保留在对话输出，最终12项通过记录独立保留：
+
+- `intake/graph_exec.py:71`附近：新增softmax局部掩码变量遮蔽`keep`形参，改为`keep_mask`。
+- `tests/test_u4_frontend.py:64`：新BERT对照夹具改为按U1批量语义逐样本执行原图，再拼接；比较容差保持。
+- `export/transformer_codegen.py:27`与`export/templates/_package/ops.py:44`：用显式`input_names`保留重复操作数的次序，修正字典去重使`matmul(n,n)`丢失第二个输入的问题。
+- `tests/test_u4_pipeline.py:56`：EmitBackend.render返回(文本,常量字典)，新测试分别比较文本/键/数组，避免直接比较NumPy数组触发布尔歧义。
+- `kernels/transformer.py`的PV输出位移：修正自写rotate偏移符号，按`lo-h*dh`将head结果放到对应输出区间；该修正在首次算子测试前完成，MHA/GQA单/多块均通过。
+
+未完成项：首个非有限运算/近似点定位与接续；完整U4a原样数值、原始HF一致率、全部逐算子/非法参数测试、22旧程序Emit/常量、四冻结模型及旧提示对照、完整代价表、整网P2与compiler/managed RuntimePlan、原生自举计数、545项回归；U4b及Qwen端到端。首次独立Agent输出新增0；真实编译/CKKS0。API累计129/450，registry586；原响应、源码、程序包、失败证据及全部消费保持。没有资源、安装、下载、提交或tag的新增申请。
+
+## U4 §11 接续汇报：逐点诊断完成，inv候选拟合停止（2026-10-26 / 62ecf194-dirty）
+
+改动文件：本次只更新以下10份pt_agent源码/测试与本STATUS；此前U4部分实现及其他成员的已有改动保持。分支lhy-agent-dsl、HEAD62ecf194、aarch64；全部运行已结束，无本轮遗留测试进程。
+
+| 用途 | 文件 |
+|---|---|
+| 逐点exact/单点近似钩子；公开变换张量语义 | [transformer_tensor.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/transformer_tensor.py:20) |
+| 诊断、原始/调整分布、外层结果登记 | [u4_point_diagnosis.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/u4_point_diagnosis.py:250) |
+| shift默认0、inv_scale默认1及合法性 | [ops_spec.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/dsl/ops_spec.py:132) |
+| 单块/多块softmax；lowering与P2共用相同运算顺序 | [kernels/transformer.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/kernels/transformer.py:255)、[transformer_lower.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/transformer_lower.py:51) |
+| 变换后近似点的exact对照 | [transformer_validation.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/transformer_validation.py:75) |
+| 校准驱动的平移/缩放、有限参数选择及显式失败 | [transformer_rule.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/transformer_rule.py:104) |
+| 只补充r8-v7字段说明 | [capabilities.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/capabilities.py:182) |
+| 新增5项诊断与8项变换/选择/P2测试 | [test_u4_point_diagnosis.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_u4_point_diagnosis.py:12)、[test_u4_adjustments.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/tests/test_u4_adjustments.py:24) |
+
+测试输出：`Ran 25 tests in 1.583s — OK`，failures=0、errors=0、skipped=0。包含原12项、新5项诊断及新8项变换测试；阶段17项与最终25项按25个唯一用例计。[测试REPORT](/home/lhohy/pt_agent_results/u4-bert-unit-20261026T122957660286/REPORT.json)、[完整输出](/home/lhohy/pt_agent_results/u4-bert-unit-20261026T122957660286/run.log)。
+
+新增覆盖：诊断钩子对默认/精确输出array_equal，Newton误差递推与符号；公开平移/缩放的张量/Mock、单/多块与掩码、P2 Emit文本/常量及NumPy执行；中性值的Emit/常量保持；选择器的Count深度最小性及1–5次完整枚举；新字段非法值拒绝；r8-v4/v5/v6无新增字段。后者只是本次字段范围检查，四冻结模型与完整旧提示快照验收仍待执行。
+
+§11.1调整前逐点表：23条校准、20条留出，各12个近似点。实际全近似轨迹在第14条已执行运算后因非有限值停止；每个单点试验均把其余近似点换成exact，保存全部下游层误差。表中“输入”来自exact前缀，“最终/下游”分别是单点近似后的最终输出相对L∞及所有下游层相对L∞的最大值。完整输入分位数、按行最大分数/跨度和逐层明细见[原始REPORT](/home/lhohy/pt_agent_results/u4-points-before-20261026T122200347904/REPORT.json)。
+
+调整前校准（23条）：
+
+| 行/点 | 实际输入范围 | 定义域 | max_u / 域外数 | 最大绝对误差 | 最大逐元素相对误差 | 单点最终/最大下游L∞ |
+|---|---|---|---|---|---|---|
+| 7/rsqrt | (0.0037200636, 0.032140012) | (0.0024800424, 0.048210017) | 0.94576769 / 0 | 7.8391605e-06 | 1.4053761e-06 | 1.7410964e-07 / 1.7047514e-06 |
+| 11/exp | (-9.0922481, 10.692579) | (-13.638372, 16.038868) | 0.69362893 / 0 | 623.17894 | 5493239.2 | 0.79007954 / 392.86409 |
+| 11/inv | (0.0079427135, 223830.67) | (0.0052951424, 335746) | 0.99999998 / 0 | 2.0184639e+23 | 4.5179411e+28 | 1.2905729 / 2.2022618e+28 |
+| 16/rsqrt | (2.0510028, 9.9941404) | (1.3673352, 14.991211) | 0.89963684 / 0 | 8.0229995e-10 | 2.5363518e-09 | 2.3944143e-10 / 3.1156887e-09 |
+| 18/act | (-10.062029, 5.1357794) | (-15.093044, 7.7036691) | 0.77471404 / 0 | 9.4146912e-14 | inf | 9.088047e-15 / 7.7388537e-14 |
+| 21/rsqrt | (1.4099921, 4.85023) | (0.93999474, 7.2753449) | 0.85162703 / 0 | 7.0576878e-12 | 1.3728073e-11 | 2.3313155e-12 / 1.5344966e-11 |
+| 25/exp | (-4.5558953, 10.28437) | (-6.833843, 15.426556) | 0.79533631 / 0 | 37.120649 | 2702.24 | 0.52250637 / 693.79841 |
+| 25/inv | (0.36399163, 36412.393) | (0.24266109, 54618.589) | 0.99999556 / 0 | 1.7842734e+14 | 6.4969662e+18 | 1.5132212 / 6.1130312e+18 |
+| 30/rsqrt | (4.6737991, 10.2105) | (3.1158661, 15.31575) | 0.74459871 / 0 | 2.3314684e-15 | 6.8826425e-15 | 1.949179e-16 / 8.1885288e-15 |
+| 32/act | (-5.7750622, 3.7064781) | (-8.6625932, 5.5597172) | 0.73938987 / 0 | 5.9507954e-14 | 6.972152e-07 | 9.3560591e-15 / 1.1518068e-13 |
+| 35/rsqrt | (1.4138699, 3.1229601) | (0.94257991, 4.6844402) | 0.74809858 / 0 | 5.1070259e-15 | 8.3670036e-15 | 1.949179e-15 / 9.4653842e-15 |
+| 38/act | (-3.9936462, 5.079632) | (-5.9904694, 7.619448) | 0.70656352 / 0 | 3.3362202e-13 | 1.4127964e-08 | 6.0034712e-14 / 3.3364785e-13 |
+
+调整前留出（20条）：
+
+| 行/点 | 实际输入范围 | 定义域 | max_u / 域外数 | 最大绝对误差 | 最大逐元素相对误差 | 单点最终/最大下游L∞ |
+|---|---|---|---|---|---|---|
+| 7/rsqrt | (0.0037200636, 0.032140012) | (0.0024800424, 0.048210017) | 0.94576769 / 0 | 7.8391605e-06 | 1.4053761e-06 | 7.1176803e-07 / 2.5997121e-06 |
+| 11/exp | (-9.4663569, 10.692579) | (-13.638372, 16.038868) | 0.71884076 / 0 | 623.17893 | 6289918.8 | 1.2023408 / 527.85231 |
+| 11/inv | (0.036261725, 230500.5) | (0.0052951424, 335746) | 0.99999982 / 0 | 3.8537558e+23 | 8.4437274e+28 | 1.2375083 / 3.6699875e+28 |
+| 16/rsqrt | (1.95087, 8.286389) | (1.3673352, 14.991211) | 0.91433645 / 0 | 5.0424365e-10 | 1.3559797e-09 | 9.2990021e-11 / 1.0421623e-09 |
+| 18/act | (-10.4155, 5.9102081) | (-15.093044, 7.7036691) | 0.84265618 / 0 | 8.0824236e-14 | inf | 1.2850025e-14 / 1.0053127e-13 |
+| 21/rsqrt | (1.4181951, 4.3232617) | (0.93999474, 7.2753449) | 0.84903744 / 0 | 7.0584649e-12 | 1.3719725e-11 | 3.4072376e-12 / 1.5236427e-11 |
+| 25/exp | (-4.3570816, 9.9747788) | (-6.833843, 15.426556) | 0.77747376 / 0 | 37.120649 | 1246.3477 | 0.51157462 / 438.57365 |
+| 25/inv | (0.28383791, 77816.137) | (0.24266109, 54618.589) | 1.8494416 / 2 | 3.7822244e+29 | 2.9431809e+34 | 1.9804774 / 1.4249137e+34 |
+| 30/rsqrt | (4.3068008, 10.791735) | (3.1158661, 15.31575) | 0.80476293 / 0 | 2.3314684e-15 | 6.9296206e-15 | 4.0632491e-16 / 8.3948777e-15 |
+| 32/act | (-5.5063341, 3.5314341) | (-8.6625932, 5.5597172) | 0.71477446 / 0 | 4.7961635e-14 | 1.3652502e-07 | 5.7393394e-15 / 1.0314804e-13 |
+| 35/rsqrt | (1.5051746, 2.952977) | (0.94257991, 4.6844402) | 0.69929679 / 0 | 5.2180482e-15 | 8.5260418e-15 | 2.5395307e-15 / 1.0438343e-14 |
+| 38/act | (-4.4029675, 4.5685444) | (-5.9904694, 7.619448) | 0.76671396 / 0 | 3.3362202e-13 | 1.6038075e-09 | 8.1785586e-14 / 3.3369382e-13 |
+
+两组首个失真点均为第11行exp：全近似前缀的最大逐元素相对误差>1。第18行GELU的相对误差inf对应exact参考零值；其最大绝对误差约1e-13、单点最终误差约1e-14，按原值记录。
+
+原始softmax与norm专项：
+
+| 分组 | 行 | exact S范围 | S_max/S_min | 当前exp近似下S范围 |
+|---|---|---|---|---|
+| calibration | 11 | (0.0079427135, 223830.67) | 28180629 | (-17448.807, 216706.93) |
+| calibration | 25 | (0.36399163, 36412.393) | 100036.35 | (-1096.4037, 36251.74) |
+| heldout | 11 | (0.036261725, 230500.5) | 6356578.4 | (-19940.608, 229605.97) |
+| heldout | 25 | (0.28383791, 77816.137) | 274156.95 | (-822.24589, 77590.91) |
+
+第一个inv的域比值为63406415.83598214，第二个为225081.77634976042。原deg0=7在原始、公开平移及再缩放三个定义域上的Newton初值均存在|1-x*y0|≥1的点；模型所需迭代数为null（发散），未填有限深度。第一个inv初始最大相对误差约3.164673e7，第二个约1.092679e5。变换保留域比值，原始7阶初始化的收敛问题保持；15/31阶与其余允许候选的完整搜索在本次停止项之后仍待完成。
+
+| norm行 | 原deg0=7达到1e-3的模型迭代数 | 初始化深度 | 目标总深度 |
+|---|---|---|---|
+| 7 | 2 | 5 | 11 |
+| 16 | 1 | 5 | 8 |
+| 21 | 1 | 5 | 8 |
+| 30 | 0 | 5 | 5 |
+| 35 | 0 | 5 | 5 |
+
+这张表中的0次表示原7阶Remez初值已达到诊断目标；新规划规则的Newton候选仍严格枚举1–5次，纯Remez独立计数。
+
+§11.2已实施的通用调整：softmax的shift取校准最大分数；inv_scale取平移后的校准S上界。exp域平移原1.5余量域，inv域为(S_min/(1.5*S_max),1.5)。所有参数只用校准值；留出分布仅记录。候选公式比较max_x|p(x)/f(x)-1|；inv按e→e²、rsqrt按z→z(1.5−0.5z²)递推，Count给出每个候选的乘法深度，选满足1e-3的最小深度。诊断包含端点、相对误差驻点及均匀/几何网格；保留具体失败点证据，未声称区间严格证明。
+
+| softmax行 | shift | inv_scale | 平移exp域 | 缩放inv域 |
+|---|---|---|---|---|
+| 11 | 10.692578970848675 | 5.083836116985494 | (-24.330951, 5.3462895) | (2.3656912e-08, 1.5) |
+| 25 | 10.284370339525992 | 1.2439528778134474 | (-17.118213, 5.1421852) | (6.6642445e-06, 1.5) |
+
+公开变换exact对照：校准23条和留出20条的完整输出最大绝对差均8.881784197001252e-16，通过1e-12+1e-12|ref|；全部输出有限。这一项使用exact点，只验证公开变换数学语义。未运行调整后完整近似网络。
+
+公开变换后的留出近似点输入（其余运算exact）：
+
+| 行/点 | 输入范围 | 定义域 | max_u | 域外数 |
+|---|---|---|---|---|
+| 7/rsqrt | (0.0037200636, 0.032140012) | (0.0024800424, 0.048210017) | 0.94576769 | 0 |
+| 11/exp | (-20.158936, 0) | (-24.330951, 5.3462895) | 0.71884076 | 0 |
+| 11/inv | (1.6200517e-07, 1.0297986) | (2.3656912e-08, 1.5) | 0.99999982 | 0 |
+| 16/rsqrt | (1.95087, 8.286389) | (1.3673352, 14.991211) | 0.91433645 | 0 |
+| 18/act | (-10.4155, 5.9102081) | (-15.093044, 7.7036691) | 0.84265618 | 0 |
+| 21/rsqrt | (1.4181951, 4.3232617) | (0.93999474, 7.2753449) | 0.84903744 | 0 |
+| 25/exp | (-14.641452, -0.30959155) | (-17.118213, 5.1421852) | 0.77747376 | 0 |
+| 25/inv | (7.795091e-06, 2.1370784) | (6.6642445e-06, 1.5) | 1.8494416 | 2 |
+| 30/rsqrt | (4.3068008, 10.791735) | (3.1158661, 15.31575) | 0.80476293 | 0 |
+| 32/act | (-5.5063341, 3.5314341) | (-8.6625932, 5.5597172) | 0.71477446 | 0 |
+| 35/rsqrt | (1.5051746, 2.952977) | (0.94257991, 4.6844402) | 0.69929679 | 0 |
+| 38/act | (-4.4029675, 4.5685444) | (-5.9904694, 7.619448) | 0.76671396 | 0 |
+
+有限候选搜索的已完成部分：第7行rsqrt选择remez15，诊断最大相对误差0.0005778150674635718，深度6；原newton7/2深度11。第11行exp的15/31/63阶诊断最大相对误差分别522014458.37918574、0.7668050707670002、0.0006046569642814692，选择63阶、深度8。之后第11行inv的Remez拟合50轮未收敛，原生异常向外传播，外层exit1。报告保留上述两个已完成点；后续点未填写候选通过结论。
+
+§11.3当前判定：尚未达到接续Mock的条件。第一个inv搜索未完成，第二个inv在公开变换后的exact留出分布仍有2行越域，且完整近似网络未执行。未给出“允许候选全部不合格”或“所需degree>63”的结论。原始REPORT的stop_required=false属于候选集合尚未遍历到终态；另存[STOP.json](/home/lhohy/pt_agent_results/u4-points-choices-20261026T123231747385/STOP.json)明确记录本次异常停止，原REPORT/日志保持。[部分候选REPORT](/home/lhohy/pt_agent_results/u4-points-choices-20261026T123231747385/REPORT.json)。
+
+与spec不一致之处：实际Remez未收敛及留出域外值触发AGENTS停止规则，故§11.2有限搜索与§11.3接续尚未完成。本次未改旧轮测试断言、U5拟合算法、原有字段语义或数值判据。新诊断遗漏了失败候选具体degree的异常字段，STOP以null标出；补齐具体候选证据仍为未完成项，未通过猜测填表。其余当前代码编写中的候选枚举循环整理在首次测试前完成，1–5候选、深度与误差规则保持。
+
+未完成项：未收敛候选处理及第二inv域覆盖的spec补充；第一个inv及后续点的有限候选表、调整后完整近似网络与Mock优先对照；完整U4a、原始HF一致率、22旧程序Emit/常量、四冻结模型及旧提示全量比较、全部代价/编译自举统计、整网P2及compiler/managed RuntimePlan、既有545项回归；U4b/Qwen端到端。新增Agent首次独立输出、真实编译与真实CKKS通过数均0。
+
+预算与证据：API新增0、累计129/450；registry590条，原586条与本次4条全部保留。只使用既有23校准/20留出，无确认或报告样本新增读取，无下载、安装、库修改、资源扩额、提交或tag。停止后只整理已有证据与STATUS，未启动新实验。
+
+## U4 §11.4–§11.6 阶段记录（2026-10-26 / 62ecf194-dirty）
+
+阶段开始记录：新softmax实现、指定单测、整网exact恒等式和完整逐点诊断完成，§11.3–§11.5判定通过，随后启动20条留出Mock对照。该批次已正常收尾，后续本机trace资源停止见下一节；U4a与U4b验收状态分别保留。
+
+改动文件：dsl/ops_spec.py、kernels/transformer.py、transformer_lower.py、transformer_tensor.py、transformer_validation.py、planners/transformer_rule.py、planners/transformer_tuner.py、capabilities.py、export/transformer_package.py、export/templates/_package/ops.py、experiments/u4_point_diagnosis.py、experiments/u4_transformer.py、新增experiments/u4_acceptance.py、新增tests/test_u4_squared_softmax.py、tests/test_r1_parser.py，以及本STATUS。所有代码均位于pt_agent，编译器/运行库/第三方源码保持。
+
+测试输出：`Ran 38 tests in 2.000s — OK`，failures=0、errors=0、skipped=0。31项U4加7项R1 parser；新增R1字段用例及6项squared_softmax测试。覆盖固定种子随机分数的k=0..6恒等式、mask/causal、多块及零尾槽、steps=0的Emit/常量相同、解析界覆盖、失败候选上下文与无重试、共享参数更新、P2 Emit/常量/NumPy及Mock/张量对照。[测试REPORT](/home/lhohy/pt_agent_results/u4-bert-unit-20261026T131740957384/REPORT.json)。
+
+§11.4：全部12点的旧有限搜索表已补齐，两个旧inv均infeasible；未收敛候选标记reason=nonconvergent，记录method/degree/iters、50轮、max_error和abs_E；未使用其系数。初值拟合失败在同degree的newton 1–5轮候选间复用失败记录，无重试。前次缺失的failed_degree=31，新的31阶Remez失败数值与原STOP完全对应；原STOP的null保持历史原样，[补充记录](/home/lhohy/pt_agent_results/u4-points-squared-20261026T132023740575/REPORT.json)的previous_stop_resolution明确列出。
+
+旧域的解析相对minimax诊断：inv残差多项式的最优误差为sech((d+1)·acosh((r+1)/(r−1)))，据此目标1e-3的所需degree分别30262/1803；最优常数初始化的Newton模型所需28/20轮。仅作为诊断记录，规划器仍只使用指定U5 Remez初值与有限候选。[旧完整候选表](/home/lhohy/pt_agent_results/u4-points-squared-20261026T132023740575/legacy-choices/REPORT.json)。
+
+§11.5–§11.6：定义域与参数选择只用校准和key数上界；exp域宽度缩至≤1，初始inv域使用[e^a/(Lk·e^b),1]，step_inv用[1/(1.5·Lk),1.5]。校准与留出分别保存exact前缀及全近似前缀输入的outside、max_u、极值与对应sample_index/coordinates/row；没有根据留出改域或截断。
+
+| 校准/留出 | 样本数 | exact恒等式最大绝对差 | 数学判定 | 近似点 | 覆盖失败 | 非有限值 |
+|---|---|---|---|---|---|---|
+| calibration | 23 | 1.9984014443252818e-15 | 通过1e-12+1e-12·abs(ref) | 22 | 0 | 0 |
+| heldout | 20 | 1.0547118733938987e-15 | 通过1e-12+1e-12·abs(ref) | 22 | 0 | 0 |
+
+softmax逐运算深度（Count原运算，不做密态数值替代）：
+
+| 行 | steps | 原乘法深度 | 新乘法深度 | 增加 | 新exp | 新inv/共享step_inv |
+|---|---|---|---|---|---|---|
+| 11 | 5 | 22 | 87 | 65 | remez7 | remez63/remez63 |
+| 25 | 5 | 22 | 87 | 65 | remez7 | remez63/remez63 |
+
+留出新旧逐点对照：最大误差基于exact前缀实际输入；max_u/outside基于完整近似执行的实际输入。新增10个step_inv分步列出，同一softmax的5步共享系数。全部分位数、输入/域、逐层单点影响及两组完整表见[新REPORT](/home/lhohy/pt_agent_results/u4-points-squared-20261026T132023740575/REPORT.json)。
+
+| 行/点 | 旧最大绝对误差 | 旧最大相对误差 | 新最大绝对误差 | 新最大相对误差 | 新max_u/outside |
+|---|---|---|---|---|---|
+| 7/rsqrt | 7.839161e-06 | 1.405376e-06 | 0.002631572 | 0.0004053585 | 0.9457677/0 |
+| 11/exp | 623.1789 | 6289919 | 3.099361e-10 | 5.778256e-10 | 0.7187935/0 |
+| 11/inv | 3.853756e+23 | 8.443727e+28 | 0.0001736508 | 0.0001192184 | 0.9418814/0 |
+| 11/step_inv[0] | — | — | 4.815606e-05 | 1.460347e-05 | 0.9887351/0 |
+| 11/step_inv[1] | — | — | 4.815606e-05 | 1.459897e-05 | 0.9886593/0 |
+| 11/step_inv[2] | — | — | 4.815602e-05 | 1.880275e-05 | 0.9883332/0 |
+| 11/step_inv[3] | — | — | 4.815605e-05 | 2.550707e-05 | 0.9868964/0 |
+| 11/step_inv[4] | — | — | 4.815605e-05 | 3.310981e-05 | 0.9845518/0 |
+| 16/rsqrt | 5.042436e-10 | 1.35598e-09 | 8.352859e-06 | 2.254433e-05 | 0.9143727/0 |
+| 18/act | 8.082424e-14 | inf | 7.993606e-14 | inf | 0.8426829/0 |
+| 21/rsqrt | 7.058465e-12 | 1.371972e-11 | 1.287174e-06 | 2.515789e-06 | 0.8490308/0 |
+| 25/exp | 37.12065 | 1246.348 | 3.455003e-11 | 5.325659e-11 | 0.777402/0 |
+| 25/inv | 3.782224e+29 | 2.943181e+34 | 2.895409e-05 | 1.929682e-05 | 0.9383695/0 |
+| 25/step_inv[0] | — | — | 4.815161e-05 | 1.46011e-05 | 0.9887492/0 |
+| 25/step_inv[1] | — | — | 4.815606e-05 | 1.458946e-05 | 0.9887045/0 |
+| 25/step_inv[2] | — | — | 4.8154e-05 | 1.454245e-05 | 0.988528/0 |
+| 25/step_inv[3] | — | — | 4.815605e-05 | 1.731976e-05 | 0.987835/0 |
+| 25/step_inv[4] | — | — | 4.815604e-05 | 2.251898e-05 | 0.9851514/0 |
+| 30/rsqrt | 2.331468e-15 | 6.929621e-15 | 7.158743e-05 | 0.0002128466 | 0.8047051/0 |
+| 32/act | 4.796163e-14 | 1.36525e-07 | 4.796163e-14 | 1.343367e-07 | 0.7147188/0 |
+| 35/rsqrt | 5.218048e-15 | 8.526042e-15 | 0.0001366507 | 0.0002225682 | 0.6992706/0 |
+| 38/act | 3.33622e-13 | 1.603807e-09 | 3.33733e-13 | 1.603983e-09 | 0.7665202/0 |
+
+第18行GELU参考含零值，相对误差inf继续原样记录；新最大绝对误差7.993605777301127e-14。rsqrt按目标1e-3的最小深度选择，部分误差随深度下降而增加，表中完整记录。第一个inv和前四个step_inv的单点误差在后续exact归一化中抵消，最终step_inv仍有约1e-6的单点最终影响；各层明细保留。
+
+完整近似网络对exact参考的最终最大绝对差：校准0.000621011751634315，留出0.0008237207016077441。该项为近似误差记录；Mock/张量同一DSL的一致性正在独立验收。
+
+当前新增Agent首次独立输出0，真实编译0，真实CKKS0，API0，累计129/450；所有旧程序、失败响应、证据与消费保留。未下载安装、修改库或改变资源。
+
+## U4a §7.4 接续结果：数值通过，trace文件额度停止（2026-10-26 / 62ecf194-dirty）
+
+改动文件：继续复用上一节列出的DSL、kernel、张量、P2与规划/诊断接线；新增[外部验收入口u4_acceptance.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/u4_acceptance.py)，包含代价/P2/双模式/服务器fallback与后续兼容、分组回归入口。本次已执行native部分至trace失败；compat/regression入口尚未运行。文档仅更新本STATUS；未修改编译器、库或第三方内容。
+
+测试输出及外部结果：
+
+| 检查 | 结果 | 证据 |
+|---|---|---|
+| 本轮＋指定R1 | 38/38，通过；失败/错误/跳过0 | [REPORT](/home/lhohy/pt_agent_results/u4-bert-unit-20261026T131740957384/REPORT.json) |
+| 新旧逐点诊断 | 原12点＋新增10个step_inv，23校准/20留出覆盖与有限性均通过；exact数学恒等式通过 | [REPORT](/home/lhohy/pt_agent_results/u4-points-squared-20261026T132023740575/REPORT.json) |
+| Mock优先对照 | 20条完整结束；最大差2.220446049250313e-15，类别20/20一致，输出有限 | [REPORT](/home/lhohy/pt_agent_results/u4-bert-evaluate-20261026T132222090792/REPORT.json) |
+| 对精确参考 | 同20条一致率100%（20/20），只记录；未读报告集 | 同上 |
+| 整网P2导出 | 源DSL与完整系数、public weights、接口、compiler/managed入口已导出 | [P2包](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/compiler/Bert_PTAgent_DSL/) |
+| 本机真实前端 | 1次，exit1；trace达到8589934592字节（8GiB）时报File too large；61.61秒，RSS897.16796875MiB | [STOP](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/STOP.json)、[日志](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/compiler/trace.log) |
+| 编译/CKKS | 调用0，RuntimePlan与编译自举数待验收 | [原REPORT](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/REPORT.json) |
+| 服务器fallback | 两份作业、bash语法退出均0，服务器执行0；限制保持原值，执行需先明确文件/IR策略 | [清单](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/SERVER_JOBS.json) |
+
+BERT端到端当前表（规则程序，新增Agent首次生成0）：
+
+| L | 输入/输出密文 | 自举预测/编译 | 旋转预测 | 旋转key数 | 预测延迟 | 估算常量 | 留出一致率 |
+|---|---|---|---|---|---|---|
+| 40 | 41/1 | 37462/待执行 | 145591 | 215 | 9725006147 µs | 328073216 B（312.875 MiB） | 100%（20/20） |
+
+入口仍使用已完成的U1 CLI导入结果：BERT L40、规范化36/36节点可lowering。新程序来自同一份calibration与通用规划器，保存于独立[program.ptdsl](/home/lhohy/pt_agent_results/u4-points-squared-20261026T132023740575/program.ptdsl)；原失败程序与原校准/权重/样本保持。U4b的tiny Qwen完整CLI/规划/验收及新覆盖率重算未执行。
+
+BERT预测代价分解：
+
+| 组 | 延迟µs | 占比 | 自举预测 |
+|---|---|---|---|
+| other | 457287867 | 4.7022% | 1780 |
+| norm | 476230720 | 4.8970% | 1840 |
+| attention_projections | 74472000 | 0.7658% | 240 |
+| attention_A | 1677665680 | 17.2511% | 6400 |
+| softmax | 5294386356 | 54.4410% | 20640 |
+| attention_B | 1679186080 | 17.2667% | 6400 |
+| FFN | 65777444 | 0.6764% | 162 |
+
+本模型为文本分类，未包含LM head；该项记为不适用。预测值尚未得到真实编译核对。
+
+每个程序值的预测密文数（完整shape/layout见P2接口与原REPORT）：
+
+| 值 | 密文数 |
+|---|---|
+| inputs_embeds | 40 |
+| attention_mask | 1 |
+| v_inputs_embeds | 40 |
+| v_attention_mask | 1 |
+| v_add | 40 |
+| v_add_2 | 40 |
+| v_getitem | 40 |
+| v_addmm | 40 |
+| v_addmm_1 | 40 |
+| v_bmm | 40 |
+| v_softmax | 40 |
+| v_addmm_2 | 40 |
+| v_bmm_1 | 40 |
+| v_addmm_3 | 40 |
+| v_add_2_2 | 40 |
+| v_getitem_3 | 40 |
+| v_addmm_4 | 40 |
+| v_gelu | 40 |
+| v_addmm_5 | 40 |
+| v_add_3 | 40 |
+| v_getitem_6 | 40 |
+| v_addmm_6 | 40 |
+| v_addmm_7 | 40 |
+| v_bmm_2 | 40 |
+| v_softmax_1 | 40 |
+| v_addmm_8 | 40 |
+| v_bmm_3 | 40 |
+| v_addmm_9 | 40 |
+| v_add_5 | 40 |
+| v_getitem_9 | 40 |
+| v_addmm_10 | 40 |
+| v_gelu_1 | 40 |
+| v_addmm_11 | 40 |
+| v_add_6 | 40 |
+| v_getitem_12 | 40 |
+| v_addmm_12_tokens | 1 |
+| v_addmm_12 | 1 |
+| v_tanh | 1 |
+| v_addmm_13 | 1 |
+| v_addmm_13_flat | 1 |
+
+资源收尾：按现行R6b/U4 prune规则删除本次截断trace_model.mlir，写[PRUNED.txt](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/compiler/trace/PRUNED.txt)；空闲恢复13.125511169433594GiB。删除对象为新生成的中间IR，原始DSL/P2包/权重/日志/报告及全部历史保留。当前未重试trace、未调用编译器、未增加文件或内存额度。
+
+服务器作业：
+
+- [compiler run.sh](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/compiler/server_jobs/Bert_PTAgent_DSL/run.sh)
+- [managed run.sh](/home/lhohy/pt_agent_results/u4-bert-native-20261026T133137097241/managed/server_jobs/Bert_PTAgent_DSL/run.sh)
+
+两份作业来自同一现有P2包，继续使用6GiB内存、8GiB单文件、3600秒、10GiB保护空间。原trace的完整大小尚未知，当前8GiB为截断大小；不推算其完整输出或自行选新额度。两份作业尚待具体服务器资源/IR接续口径后执行。
+
+与spec不一致之处：数值接续按§11.3–§11.6通过；实际前端输出触及原8GiB限制，§7.4真实编译/自举核对/双模式RuntimePlan尚未完成。没有更改数值判据、校准/留出划分或旧方法行为。只在test_r1_parser新增本spec要求的字段用例，其余旧断言保持。本轮自写机械遗漏已修正：u4_transformer的内层命令补传--model（不改变模型/样本/指标）；新增u4_acceptance异常路径补齐既有prune收尾，本次失败已由外层按同一函数清理；这些修正未触发额外原生重试。
+
+未完成项：服务器资源/IR策略spec补充；BERT原生编译、自举数、compiler/managed RuntimePlan；U4a全部旧程序Emit/常量、四冻结模型与r8-v4/v5/v6逐字比较、既有545项完整回归；U4b/Qwen所有端到端验收。现有38项测试与逐点/Mock结果分别保留，不以这些结果计为完整交付。
+
+当前计数：新首次独立Agent输出0；真实前端1，编译0，CKKS0；API0、累计129/450，registry594条（原590＋本次4条）。下载/安装/训练/库修改/资源扩额/提交/tag均0。已运行批次全部收尾；停止后的动作仅为既有prune、服务器作业准备和记录，没有继续模型测试。
+
+
+## U4 §7.5 接续启动（2026-10-26／62ecf194-dirty）
+
+复用既有BERT规则程序、P2包、权重及20条Mock/张量通过证据，不重跑数值集合。新增experiments/u4_native_continuation.py，仅包装原包入口采集阶段耗时、0.2秒采样RSS和IR大小；原包复制到新运行目录，历史包保持。managed先执行；仅其通过后执行compiler --bytecode，按原口径比较完整RuntimePlan和37462次预测自举。compile_model现有入口已直接接受.mlirbc，无需修改。新服务器作业仅将compiler改为bytecode，managed命令及6GiB/8GiB/3600秒/10GiB保持。
+
+当前阶段：语法检查、两份服务器脚本bash语法与.mlirbc命令预览通过；[managed运行](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/REPORT.json)已完成图记录，正在发射raw IR。首次接续脚本遗漏子进程PYTHONPATH，导致入口模块未加载，原管理/前端/编译均未执行；按本轮自写错误例外补齐仓库scripts路径后在新目录接续，[失败记录](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135032785866/REPORT.json)保留。本次API/CKKS/下载/安装0。
+
+
+## U4 §7.5 执行结果：managed预处理磁盘检查停止（2026-10-26／62ecf194-dirty）
+
+改动文件：新增experiments/u4_native_continuation.py；文档仅STATUS.md。本入口在新目录复制既有同一P2包和权重，调用原trace_model.py/compile_model.py，包中运算、系数、管理算法与配置保持。包装函数只记录阶段耗时、0.2秒采样RSS及IR大小。compile_model原来已直接接受.mlirbc，本轮未改该模板、run.py、toolchain或任何kernel。新服务器compiler脚本增加--bytecode并选trace_model.mlirbc；managed命令保持，旧作业与包保留。
+
+验证输出：脚本语法通过；两份新run.sh的bash -n均0；.mlirbc的compile_model --dry-run退出0。已有38项测试和BERT20条Mock/张量通过证据原样复用，本次未重跑。一次实际managed运行退出1；此前一次本轮路径遗漏启动失败另行保留。
+
+| 模式／阶段 | 结果 | 耗时秒 | RSS MiB | IR体积 |
+|---|---|---:|---:|---|
+| managed图记录 | 完成 | 43.435928 | 1909.335938（采样） | 尚未发射 |
+| managed raw发射 | 完成 | 246.883669 | 2732.992188（采样） | 文本54,064,749,752字节；gzip215,145,743字节 |
+| managed前端预处理 | 磁盘检查拒绝，hecate-opt未启动 | 0.000370（仅检查） | 1965.222656（Python采样） | preprocessed未产生 |
+| managed图读取／depth-dp／管理／编译尾段 | 未执行 | — | — | managed未产生 |
+| compiler bytecode trace／编译 | 未执行 | — | — | bytecode未产生 |
+| managed trace合计 | 退出1；timeout=false | 292.23 | 2735.570313（GNU time） | raw已按规则prune |
+
+[原始REPORT](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/REPORT.json)、[阶段记录](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/managed/trace-stages.json)、[停止堆栈](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/managed/trace.log)、[收尾证明](/home/lhohy/pt_agent_results/u4-bert-native75-20261026T135055542125/managed/trace/PRUNED.txt)。
+
+资源检查要求空闲=10GiB+临时文件54,064,749,752字节=64,802,167,992字节，实际13,830,471,680字节；临时文件未创建、优化器原生调用0。停止归为本机中间IR体积／磁盘准入，未确认编译器数值故障。私有常量节点逐次写出完整载荷的源码证据解释了raw文本的增长；未按模型特判、去重或改pass。本次未执行bytecode和FIFO，未作资源扩额或服务器规避。
+
+保留预测：37,462次自举、9,725.006147秒、max_depth=323、旋转145,591次、215个旋转键、2,503个不同常量／328,073,216字节；实际自举、compiler/managed RuntimePlan均待验收。以下为原代价结果，只作观察，本轮未优化：
+
+| 类别 | 预测自举 | 预测延迟秒 |
+|---|---:|---:|
+| other | 1780 | 457.287867 |
+| norm | 1840 | 476.230720 |
+| attention_projections | 240 | 74.472000 |
+| attention_A | 6400 | 1677.665680 |
+| softmax | 20640 | 5294.386356 |
+| attention_B | 6400 | 1679.186080 |
+| FFN | 162 | 65.777444 |
+
+两个softmax各自的Count深度22→87来自既有§11.6记录；全图max_depth=323。原代价报告未保存逐类别深度分解，SUMMARY明确记为待补，不从延迟或自举数推算。BERT分类模型的lm_head不适用。
+
+与spec不一致之处：§7.5对“每个常量只写一次”的体积预期与实测不符，故managed尚未完成§7.4。需补充通用IR输入/共享规则后接续，未自行选择方案。本轮自写机械遗漏：experiments/u4_native_continuation.py:194–195、208–209补齐可信子进程PYTHONPATH中的仓库scripts路径；首次模块未加载、原管理与编译均0，失败记录和registry保留。未修改旧测试、数值要求、引用模型或可信任务资源。外层Nix监督器时限曾误填14460秒，收尾时已改回既有3600秒（experiments/u4_native_continuation.py:259）；已执行任务的可信子进程始终为3600秒，实际运行294.416122秒，保留原argv记录，未重跑。
+
+未完成项：managed预处理、管理与编译；compiler bytecode和完整RuntimePlan比较；按类别的深度统计；U4a旧程序Emit/常量、四模型和旧提示词兼容及全部既有回归；U4b/Qwen端到端验收。U4a和U4b保持未完成，首次独立Agent交付新增0、真实CKKS0。API新增0、累计129/450；registry由594增至596，两次接续运行均保留；下载/安装/库修改/资源扩额/commit/tag0。
+
+
+## U4 §7.6 接续启动（2026-10-26／62ecf194-dirty）
+
+已重新读取spec与STATUS，核对Ubuntu aarch64／lhy-agent-dsl，未发现运行中的测试。先以原包trace_model.py --bytecode运行compiler模式；不先改管理器，不重跑既有20条数值检查。原6GiB/8GiB/3600秒/10GiB与单编译并发保持。
+
+
+## U4 §7.6.5 第1步结果：compiler bytecode及编译通过，自举计数差异停止（2026-10-26／62ecf194-dirty）
+
+本次仓库仅更新STATUS.md；按新顺序，先运行原BERT P2包的trace_model.py --bytecode，再运行原compile_model.py。管理器、mlir_read、PT-DSL、核函数、提示词、编译配置和库均保持。§7.6.1–§7.6.3的新代码尚未实现。
+
+| 阶段 | 退出 | 耗时秒 | 峰值RSS MiB | 结果 |
+|---|---:|---:|---:|---|
+| compiler bytecode trace | 0 | 48.33 | 905.37890625 | trace_model.mlirbc 242,987,623字节（231.731055MiB） |
+| hecate-opt真实编译 | 0 | 19.90 | 973.03515625 | RuntimePlan 154,260,732字节，522,418步 |
+| 自举数一致性 | 未通过 | — | — | 预测37,462，真实15,399，差−22,063 |
+
+编译产物大小：lowered.earth.mlir 563,020,642字节；lowered.ckks.mlir 571,236,004字节；lowered.mlir 571,236,005字节。编译日志记录Depth-DP boundaries=110、Number of Bootstrapping=15399；真实计划也记录15399，两个来源一致。计划为41输入、1输出、522,459个值。原预测max_depth=323、barriers=107、37,462次自举与9,725.006147秒仍保留，未根据实测改写。
+
+| RuntimePlan运算 | 数量 |
+|---|---:|
+| encode | 2642 |
+| add_cp | 10290 |
+| mul_cp | 100188 |
+| rescale | 118032 |
+| rotate | 72051 |
+| add_cc | 143654 |
+| mod_switch | 23614 |
+| negate | 860 |
+| boot | 15399 |
+| mul_cc | 17844 |
+| relinearize | 17844 |
+
+[REPORT](/home/lhohy/pt_agent_results/u4-bert-compiler76-20261026T144521066801/REPORT.json)、[SUMMARY](/home/lhohy/pt_agent_results/u4-bert-compiler76-20261026T144521066801/SUMMARY.json)、[编译日志](/home/lhohy/pt_agent_results/u4-bert-compiler76-20261026T144521066801/compile.log)、[RuntimePlan](/home/lhohy/pt_agent_results/u4-bert-compiler76-20261026T144521066801/compiled/lowered._hecate_bert.runtime-plan.json)。
+
+静态线索：cost.py:33–36直接在DagBackend上调用depth_dp；backends/dag.py:24–38逐次记录算术操作。原DaCapo前端tools/frontend.cpp:128–132在save时先执行cse、canonicalize、privatize-constant、canonicalize。当前未逐阶段定位首个图差异，尚无证据将计数差异具体归结到某个pass或后端错误。未修改代价算法、放宽§7.4判据或新增CSE实现。
+
+收尾：bytecode、lowered三份MLIR和lowered._hecate_bert.bundle已按既有prune及本轮中间文件清理，保留RuntimePlan、P2包、权重、日志、REPORT/STOP、原DSL与所有历史。[PRUNED](/home/lhohy/pt_agent_results/u4-bert-compiler76-20261026T144521066801/compiled/PRUNED.txt)。完整RuntimePlan常量载荷比较尚未执行，bundle已清理这一事实保留；后续若需要重新编译须依新spec接续，原调用数保持。空闲恢复13,889,994,752字节（12.936066GiB）。原6GiB/8GiB/3600秒/10GiB限制均保持，无超时或文件上限错误。
+
+与spec不一致之处：§7.4要求真实自举数与预测相等，本次实测15399对37462，故完整验收未通过；编译进程本身已成功。按AGENTS.md第18行已停止，等待计数差异诊断与接续规范。本次未改实现、测试或旧断言，未使用新增自写错误例外。
+
+未完成项：§7.6.1属性别名/NameLoc共享载荷、§7.6.2预处理bytecode/结构模式/rms_var核对、§7.6.3 .cst预估、§7.6.4回归与小程序逐节点比较、BERT managed与双模式RuntimePlan；U4a其余兼容/既有回归，U4b端到端。原20条Mock/张量与38项测试结果复用，未重新执行。新首次Agent输出0、真实CKKS0、API0（累计129/450）、报告集读取0；registry由596增至597；新增bytecode前端1、真实编译1，均已收尾。安装/下载/库改动/资源扩额/commit/tag0。
+
+
+## U4 §7.7 诊断接续启动（2026-10-26／62ecf194-dirty）
+
+新增experiments/u4_cse_diagnosis.py与4项单测；mlir_read.read新增仅用于诊断的structure_only选项（常量data=None，原默认路径保持）。值编号保留操作数顺序、步长和Backend.const的k身份；实现暂留诊断入口，未接入成本模型。bytecode诊断trace按既有P2 source_lines标注PT-DSL归属，只修改本次内存中的调试位置，第三方文件及算术/pass不改；原包与历史保留。先运行新增4项与S1前端解析6项，再执行一次trace和无pass结构输出。
+
+
+## U4 §7.7.1 执行结果：四图、逐行计数与可达性诊断（2026-10-26／62ecf194-dirty）
+
+改动文件：experiments/u4_cse_diagnosis.py新增有限诊断入口；tests/test_u4_cse_diagnosis.py新增4项测试；manage/mlir_read.py:27新增可选structure_only（常量data=None，仅作结构诊断，不生成替代载荷）；文档仅STATUS。原reader默认行为保持，成本模型、核函数、编译器、第三方文件和提示词未改。值编号限于诊断代码，按op、保持顺序的操作数id、旋转步长、Backend.const的既有k名复用节点；不做交换律归一化或新哈希核验。PT-DSL归属来自包内既有source_lines，本次trace只在内存中标记调试位置，算术与前端pass序列保持。
+
+离线验证：首次及本轮机械修正后最终两次均10/10（本轮4项＋S1前端相关6项），失败/错误/跳过0；唯一用例10项。测试覆盖相同旋转、不同步长、同一mul_cp/常量、不同常量、交换cipher操作数不合并、原始重复节点保留；结构读取不恢复载荷，默认读取仍拒绝省略载荷，原有6项解析语义通过。[最终REPORT](/home/lhohy/pt_agent_results/u4-cse-unit-final-20261026T151529973133/REPORT.json)。
+
+原程序及旧RuntimePlan复用，原37,462预测未回写。重新trace一次成功，bytecode242,989,565字节，46.60秒、905.371094MiB；其中PT-DSL调试归属标记与原包不同。无pass结构输出成功，68,496,368字节（低于256MiB，保留文本），1.19秒、577.371094MiB。没有新增完整编译、LLM、报告集或CKKS执行。
+
+### 四图对照
+
+以下add在RuntimePlan列合并add_cc+add_cp；原始和值编号的sub在前端构建时展开为add＋negate／取负公开常量。只统计算术时不含输入、常量与管理运算。
+
+| 图 | add | sub | neg | mul_cc | mul_cp | rot | 算术总数 | depth-dp边界 | 自举 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 原始DAG | 264603 | 12897 | 0 | 34224 | 186496 | 145591 | 643811 | 107 | 37462 |
+| 有序值编号DAG | 264443 | 12897 | 0 | 34224 | 174015 | 136791 | 622370 | 113 | 28982 |
+| 前端预处理图 | 153944 | 0 | 860 | 17844 | 100188 | 72051 | 344887 | 110 | 15399 |
+| 已保存RuntimePlan | 153944 | 0 | 860 | 17844 | 100188 | 72051 | 344887 | 110（编译日志） | 15399 |
+
+原始和值编号均41个输入；前端有110,478个私有constant节点，RuntimePlan有2,642个encode。RuntimePlan完整522,418步还含rescale118032、mod_switch23614、relinearize17844和boot15399，这些是管理后运算，单列保留。前端所有算术均找到PT-DSL归属，unattributed={}。结构图只通过S1 placement_view与唯一的placement.depth_dp统计，没有运行管理器改写或新增pass。[完整四图及逐行计数](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T150825422995/REPORT.json)。
+
+### 首个差异与canonicalize观察
+
+首个字面计数差异在PT-DSL第7行、op4 layernorm：值编号为add2240/sub240/neg0，前端为add2480/sub0/neg80。DaCapo tools/frontend.cpp:208–225明确将sub构造成add与NegateOp，或对公开常量取负；这解释了该处运算表示差异，未将它误报为未知canonicalize模式。
+
+首个其余算术类别的差异在第22行、op19 linear：值编号为add5160/mul_cp5160/rot920，前端为168/129/647。本行是最后一层query投影；对应key/value投影仍保留全部token，而最终分类只消费CLS输出。
+
+补充的只读输出可达性统计（未改变DAG、未重新运行placement）：值编号图622,370个算术节点中，278,343个不参与最终输出。可达部分为add147170、sub6774、mul_cc17844、mul_cp100188、rot72051，合计344,027；统一add+sub后得到153944，与前端add一致，前端再多860个显式negate。逐PT-DSL行的加性、两类乘法和旋转计数均相同（所有classes_equal=true，first_remaining_count_difference=null）。这些数值确认前端的输出不可达运算消除／DCE参与差异；尚未实现对应成本模型规范化，未推算新自举数。[可达性REPORT](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T151515842632/REPORT.json)。
+
+### 逐行去重率与热点
+
+所有PT-DSL行的raw/numbered计数、比值及移除量在四图REPORT的line_deduplication中逐项保存。纯值编号移除21,441个算术节点；最多的4行均为matmul，每行4,680个：
+
+| PT-DSL行 | kernel | 原始→值编号 | 原始/值编号 |
+|---|---|---:|---:|
+| 10 | matmul A，Q·Kᵀ | 59240→54560 | 1.0857771261 |
+| 13 | matmul B，P·V | 67120→62440 | 1.0749519539 |
+| 24 | matmul A，Q·Kᵀ | 59240→54560 | 1.0857771261 |
+| 27 | matmul B，P·V | 67120→62440 | 1.0749519539 |
+| 9、12、23、26 | linear | 各11240→10560 | 各1.0643939394 |
+| 25 | softmax | 98521→98520 | 1.0000101502 |
+
+其他有算术的行纯值编号比值为1；pack/slice/flatten等原始算术0的行比值记null。比值按原始/值编号定义，不混入DCE移除量。核函数保持，观察结果未用于调参。
+
+### 停止判定、保留产物与自写修正
+
+纯值编号仍为28,982次自举，距真实15,399差13,583。依据§7.7.1第4条“只诊断，不扩展修正，停下汇报”，未进入§7.7.2。按§7.7.3，U4a检查点记“compiler编译通过，自举预测仍有13583次差异，原因包含CSE以外的输出不可达运算消除与减法表示”，完整检查点未满足。成本模型和r8-v7反馈未改，没有运行冻结/U3/P2成本比较；§7.6共享载荷和BERT managed保持待执行。
+
+按§7.7.4保留本次[bytecode](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T150634679916/trace/trace_model.mlirbc)和[结构文本](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T150825422995/preprocessed.structure.mlir)，留到§7.6.2。此前REPORT/STOP、原P2包、源DSL、权重和已消费次数均保留；当前磁盘空闲约12.625801GiB，未扩大资源。
+
+与spec不一致之处：实测原因超出纯CSE，按条件停止。本轮自写机械错误两项已修：①experiments/u4_cse_diagnosis.py:28将NumPy依赖的DAG导入移到Nix内，避免外层系统Python缺少NumPy；首次启动原生调用0，[记录](/home/lhohy/pt_agent_results/u4-cse-launch-error-20261026T150716926412/REPORT.json)。②同文件:120为无pass命令补上原包必填--ckks-config（参数值保持）；首次调用在EarthDialect::setCKKSParameters读取JSON时退出134，0.09秒／7.832031MiB，尚未读取IR；help已确认elide与emit-bytecode选项存在。修正后在新目录复用现有bytecode接续，没有重新trace，[失败记录](/home/lhohy/pt_agent_results/u4-cse-diagnosis-20261026T150634679916/REPORT.json)。两项均按AGENTS自写错误例外处理，未改旧测试、数值条件、算法或资源。
+
+未完成项：减法表示与输出可达性／DCE的成本模型接续规范；§7.7.2冻结/U3/P2比较及单元验收、§7.7.3完整检查点、§7.7.4与§7.6.1–§7.6.4、BERT managed及完整RuntimePlan比较；U4a剩余兼容/既有回归，U4b端到端。API新增0、累计129/450；真实CKKS、首次Agent输出、报告集读取和新增完整编译均0。本轮诊断trace1、无pass调用2（含必填参数遗漏1）、help1；registry597→603，六条新增记录均保留。
+
+
+## U4 §7.8 接续启动（2026-10-26／62ecf194-dirty）
+
+新增成本专用backends/cost_dag.py，cost.estimate增加显式frontend_normalize选项（暂默认false）；Mock、tensor、Emit、包导出保持。常量表沿用Backend.const的k名，载荷只保留在调用方活跃Plain上，成本记录仅保存身份，不累计所有数组。新增5项单测；接下来先核对BERT规范化计数、15399次自举、110边界与深度323。
+
+
+## U4 §7.8 执行结果：成本核对通过，Nix启动停止（2026-10-26／62ecf194-dirty）
+
+新增CostDag只供成本模型，依次复现减法表示、有序值编号、输出祖先保留。负明文沿用Backend.const的k名；节点保留首次语句归属。cost输出中的自举、延迟、boot_nodes、hotspots与statement_costs取自规范化图；ciphertext_counts维持布局声明，未新增活跃密文映射，lower.py无本节改动。Agent工具、精调成本缓存与run的r8-v7计数入口选择此路径；U4 Token程序自动选择。27程序有21项输出改变，按spec限制启用范围，旧版本入口保持。Mock、张量执行、Emit、包导出在本节保持。
+
+BERT采用同一份已保存DSL和权重，仅重新计算成本；复用已保存RuntimePlan。预测／实际自举15399／15399，边界110，max_depth323，预测延迟4024041543µs。add153944、neg860、mul_cp100188、mul_cc17844、rotate72051；各PT-DSL行与前端计数全部相同。输入41，算术344887；第22行v_addmm_6的ciphertext_counts仍40。[完整REPORT](/home/lhohy/pt_agent_results/u4-cost78-bert-20261026T160710137144/REPORT.json)。
+
+减法表示及值编号后的节点624012，输出可达344928，不可达279084，删除比例44.724139920%。这里包含41个输入；此前纯值编号诊断移除21441／643811个算术节点（3.330325204%），两种统计的减法表示及输入口径各自保留。未改kernel消除重复或死计算。
+
+| PT-DSL行／算子 | 值编号后节点 | 输出可达 | 不可达 |
+|---|---:|---:|---:|
+| 输入／input | 41 | 41 | 0 |
+| 5／add | 40 | 40 | 0 |
+| 6／add | 40 | 40 | 0 |
+| 7／layernorm | 5200 | 5200 | 0 |
+| 8／linear | 11240 | 11240 | 0 |
+| 9／linear | 10560 | 10560 | 0 |
+| 10／matmul | 54560 | 54560 | 0 |
+| 11／softmax | 99081 | 99081 | 0 |
+| 12／linear | 10560 | 10560 | 0 |
+| 13／matmul | 62440 | 62440 | 0 |
+| 14／linear | 11240 | 11240 | 0 |
+| 15／add | 40 | 40 | 0 |
+| 16／layernorm | 5200 | 5200 | 0 |
+| 17／linear | 15880 | 15880 | 0 |
+| 18／act | 12360 | 12360 | 0 |
+| 19／linear | 11400 | 11400 | 0 |
+| 20／add | 40 | 40 | 0 |
+| 21／layernorm | 5200 | 5200 | 0 |
+| 22／linear | 11240 | 944 | 10296 |
+| 23／linear | 10560 | 10560 | 0 |
+| 24／matmul | 54560 | 1481 | 53079 |
+| 25／softmax | 99080 | 2477 | 96603 |
+| 26／linear | 10560 | 10560 | 0 |
+| 27／matmul | 62440 | 1678 | 60762 |
+| 28／linear | 11240 | 281 | 10959 |
+| 29／add | 40 | 1 | 39 |
+| 30／layernorm | 4440 | 111 | 4329 |
+| 31／linear | 15880 | 397 | 15483 |
+| 32／act | 12360 | 309 | 12051 |
+| 33／linear | 11400 | 285 | 11115 |
+| 34／add | 40 | 1 | 39 |
+| 35／layernorm | 4440 | 111 | 4329 |
+| 37／linear | 281 | 281 | 0 |
+| 38／act | 309 | 309 | 0 |
+| 39／linear | 20 | 20 | 0 |
+
+既有程序比较覆盖4冻结、9U3、7P2和20S1，共40集合成员；相同源码复用后27个程序，全部完成，已有原生计数均保持。全部27项的statement_costs在两侧均未提供，按原样比较为相同；U4的statement_costs由规范化图单独计算。下表的自举数在修正前后相同，延迟单位µs，“变化”列同时涉及boot_nodes、counts等，完整字段见各case报告。S1减法只读核对4例通过，无earth.sub；旧S1最后1例仍为服务器/资源待验收，未发现减法表示差异。[比较REPORT](/home/lhohy/pt_agent_results/u4-cost78-regression-20261026T155739033591/REPORT.json)、[S1只读REPORT](/home/lhohy/pt_agent_results/u4-cost78-s1-readonly-20261026T155716206057/REPORT.json)。
+
+| 程序 | 自举前／后 | 延迟前→后 | 输出变化 |
+|---|---:|---:|---|
+| resnet20 | 226／226 | 61636379→61636442 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| resnet20_silu | 160／160 | 44733076→44733133 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| cnn_plain | 72／72 | 19126397→19126424 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| mlp | 24／24 | 6286530→6286539 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| unit-add | 0／0 | 3→3 | 无 |
+| unit-chain | 2／2 | 519427→519427 | 无 |
+| unit-residual | 2／2 | 519430→519430 | 无 |
+| unit-constants | 1／1 | 260508→260508 | 无 |
+| unit-no-final-mul | 0／0 | 2496→2496 | 无 |
+| R6c | 383／383 | 102309380→102309437 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| R7c-B | 288／288 | 77354667→77354724 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| rule-agent | 461／461 | 122015392→122015392 | 无 |
+| u2-resnet20-8192 | 296／296 | 82106989→82107073 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| u2-resnet20-4096 | 507／507 | 140675154→140675298 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| u2-cnn_plain-8192 | 96／96 | 25760924→25760960 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| u2-cnn_plain-4096 | 168／168 | 45069589→45069652 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| u2-mlp-8192 | 24／24 | 6286530→6286539 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| u2-mlp-4096 | 24／24 | 7481215→7481224 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| resnet20_relu | 383／383 | 102309380→102309437 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| mobilenet_silu | 789／789 | 233407721→233407460 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| mobilenet_relu | 789／789 | 233408829→233408946 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| squeezenet_silu_avgpool | 282／282 | 84511744→84511509 | boot_nodes、boot_share、counts、hotspots、latency_pred_us、ops_total |
+| squeezenet_relu_maxpool | 1122／1122 | 300383501→300383780 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| alexnet_silu_avgpool | 352／352 | 114220654→114220705 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| alexnet_relu_maxpool | 1276／1276 | 351679282→351679597 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| vgg16_silu_avgpool | 470／470 | 148643936→148644005 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+| vgg16_relu_maxpool | 849／849 | 246022648→246022825 | boot_nodes、boot_share、counts、latency_pred_us、ops_total |
+
+测试：最初新增5/5核心单元通过；定向19项执行中18通过（5新核心、7旧反馈、6旧DAG/placement），1项新启用范围夹具用slots=128触发合法范围检查。按自写错误例外仅将该夹具改为1024，未改变算法、旧断言或规范；六项重跑在Nix离线metadata解析退出1，执行测试0。BERT成本补充统计同时正常收尾，未中断既有批次。当前缺少修正后启用范围用例的通过证据；§7.8.3最终结案及§7.6共享载荷、BERT managed、其余U4a回归和U4b保留待执行。
+
+与spec不一致之处：tests/test_u4_cost_normalization.py:80的新测试槽位夹具128写错，已改1024；重跑因Nix环境解析失败未启动，依AGENTS报错停止，尚未满足全部单元验收。未将Nix故障归为编译器/运行库数值阻塞；没有重试、修改baseline加载器或扩大资源。已有5项核心通过及27程序结果保留。
+
+交付分类：本节为开发诊断与成本模型修正；新增首次Agent原样输出0、真实CKKS0。BERT原有compiler编译及20留出Mock/张量证据保持；完整managed及U4b尚待接续，未见模型交付证据没有增加。API0、累计129/450，registry639；原历史源码、响应、程序包、报告、原生计划及消费保持。[本轮汇总](/home/lhohy/pt_agent_results/u4-cost78-stopped-20261026T160902383091/REPORT.json)。
+
+## U4 §7.8.3检查点结案与§7.6接续（2026-10-27／62ecf194-dirty）
+
+修正后6项测试通过，1.389058秒，错误/失败/跳过0；复用已完成的BERT逐行核对和27源程序／40集合成员比较，未重跑这些集合或重新编译。compiler模式BERT自举15399与预测相同，110边界、深度323；此前20条留出Mock/张量参考结果保持。按§7.7.3与§7.8.3，U4a 11/02检查点满足，实际CKKS留待后续。用户已复核Nix metadata恢复，本次启动成功；若再失败将保存stderr原文至STOP。下一步按§7.6实施别名/NameLoc、bytecode预处理和结构载荷恢复、.cst估算，先回归再运行BERT managed；资源与已消费额度保持。
+
+
+## U4 §7.6 实现与回归阶段（2026-10-27／62ecf194-dirty）
+
+已接入常量k名、属性别名、NameLoc、bytecode预处理、省略载荷的结构导出与RMS逐位核对。raw/managed常量节点位置与数量保持，读取后按k名共享原数组；缺失NameLoc或RMS不符直接报错。managed发射前报告常量节点、(载荷/类型/RMS)组合数及.cst预估，超过8GiB即停止；原编译尾段与资源保持。P2 managed入口使用两次预处理调用；原文本预处理接口作为三小程序的对照路径保留。streams避免将bytecode当文本gzip输出，prune覆盖消费后的新中间格式。
+
+新增5项共享载荷测试与20项相关S1单元共25/25通过，另补了一项RuntimePlan流式记录与S1字段一致的测试，待下一次单元执行。[25项REPORT](/home/lhohy/pt_agent_results/u4-shared-payload-unit-20261026T161634579255/REPORT.json)。3个小程序旧文本/新结构图逐节点相同（含类型、边、RMS和载荷）；5个小程序及MLP、CNN plain、ResNet20、ResNet20-SiLU共9例完整RuntimePlan已通过并prune，自举保持0/2/2/1/0及24/72/226/160。当前串行继续剩余11成员，原SqueezeNet-ReLU服务器待验收项保留分母20；U3现有managed三项包含在该集合中。[有限清单](/home/lhohy/pt_agent_results/u4-shared-regression-20261026T161932685192/MANIFEST.json)、[进行中REPORT](/home/lhohy/pt_agent_results/u4-shared-regression-20261026T161932685192/REPORT.json)。
+
+S1旧常量bundle已prune，回归沿用原完整协议，在新目录重新产生原生参考并同时核对保存的RuntimePlan状态、统计和载荷描述；所有新参考与managed实际载荷数组按S1口径比较，未改历史结果。BERT managed仍等待本集合完成；已新增独立验收脚本，保留从现有bytecode恢复已清理常量bundle的比较入口（不重新trace、不为§7.8检查点重编译）。原编译产物和三份运行证据保持，后续完整载荷比较单独记录调用。当前无API、CKKS或报告集新增。
+
+
+## U4 §7.6.4阶段结果：18例通过，参考trace压缩资源停止（2026-10-27／62ecf194-dirty）
+
+6项启用范围测试已全部通过，Nix一次性环境停止解除。§7.8.3以保存的compiler RuntimePlan结案：BERT15399自举／110边界／深度323；检查点结案没有重新trace或编译。新增NameLoc/共享载荷/结构恢复及相关S1测试25/25通过，另外新增的流式RuntimePlan字段等价测试尚未执行。此前27源程序／40集合成员成本结果复用，未重跑。
+
+§7.6具体代码：manage/ir.py的Node追加const_key，greedy保留Backend.const身份及取负明文身份；earth_emit以属性别名共享载荷、保留NameLoc，并在发射前报告编码组合和.cst估计；mlir_read恢复共享数组并核对NameLoc与RMS位模式，保留旧完整文本及诊断结构模式；toolchain新增bytecode/无pass结构命令，streams保持bytecode二进制输出，prune覆盖新中间格式；P2 trace模板改走两步结构管线并写constant_sizes.json；新增有限回归驱动和BERT managed独立验收入口。原编译尾段、库、安全参数、单块Emit、r8-v4–v6和数值条件保持。
+
+三小程序chain、residual、constants旧文本/新结构图逐节点相同，含类型、边、rms_var和实际载荷；同载荷N次私有节点仅写一次dense数据的单元测试通过。S1原生参考的旧bundle已清理，回归沿用完整S1协议在新目录恢复参考，比较实际常量数组，同时核对已保存RuntimePlan的状态、统计和载荷描述；所有18例切点和自举检查均相同。[25项测试](/home/lhohy/pt_agent_results/u4-shared-payload-unit-20261026T161634579255/REPORT.json)、[批次最终报告](/home/lhohy/pt_agent_results/u4-shared-regression-20261026T161932685192/FINAL_REPORT.json)。
+
+| 集合成员 | 状态 | 自举（预测／真实） | 常量编码组合／预估.cst字节 |
+|---|---|---:|---:|
+| unit-chain | 完整通过 | 2／2 | 0／0 |
+| unit-residual | 完整通过 | 2／2 | 0／0 |
+| unit-constants | 完整通过 | 1／1 | 2／16384 |
+| unit-add | 完整通过 | 0／0 | 0／0 |
+| unit-no-final-mul | 完整通过 | 0／0 | 0／0 |
+| mlp | 完整通过 | 24／24 | 342／44826624 |
+| cnn_plain | 完整通过 | 72／72 | 829／108658688 |
+| resnet20 | 完整通过 | 226／226 | 4543／595460096 |
+| resnet20_silu | 完整通过 | 160／160 | 4219／552992768 |
+| R6c | 完整通过 | 383／383 | 6211／814088192 |
+| R7c-B | 完整通过 | 288／288 | 4994／654573568 |
+| u2-resnet20-8192 | 完整通过 | 296／296 | 7474／489816064 |
+| u2-resnet20-4096 | 完整通过 | 507／507 | 13306／436011008 |
+| u2-cnn_plain-8192 | 完整通过 | 96／96 | 1442／94502912 |
+| u2-cnn_plain-4096 | 完整通过 | 168／168 | 2669／87457792 |
+| u2-mlp-8192 | 完整通过 | 24／24 | 342／22413312 |
+| u2-mlp-4096 | 完整通过 | 24／24 | 3158／103481344 |
+| u3a-resnet20_relu | 完整通过 | 383／383 | 6211／814088192 |
+| u3a-squeezenet_silu_avgpool | 参考trace后磁盘准入停止 | 282／待执行 | 待执行 |
+| u3a-squeezenet_relu_maxpool | 原服务器待验收，本批未进入 | 1122／本批待执行 | 保持原记录 |
+
+本批耗时1456.831151秒，未重置任何已消费次数。停止调用链为u4_managed_payloads.inside→原S1 case_inside→toolchain.trace→compress_ir→admit；原生trace已以0退出，随后压缩前检查free=10562703360、required=10737418240，差174714880字节（166.621094MiB）。该例没有开始新raw发射、bytecode预处理、结构读取、管理或编译。原trace源码、6.96秒／896.84375MiB日志和失败报告保留；按现行prune释放candidate_trace.mlir、constants.npz后，空闲13256634368字节。原Nix启动成功，故本次STOP归类资源准入；新增数值失败和编译器依赖故障证据0。
+
+与spec不一致之处：§7.6.4预期19个本机基线及1个保留服务器项，本次仅18个本机基线通过，SqueezeNet-SiLU被原10GiB准入拒绝，依AGENTS停止。新驱动复用S1协议异常记录时，旧round=S1覆盖了U4归属；仅将新驱动except分支改为显式保留round=U4/section=7.6.4。历史失败REPORT保持，新FINAL_REPORT以U4汇总更正归属。无算法、签名、容差或旧测试断言修改；该机械修正遵循本轮自写错误例外，未触发重跑。
+
+待补充的具体接续顺序已在阻塞栏列出；原资源与测试授权保持。BERT managed及常量bundle比较的代码入口已准备，实际调用0；原BERT compiler记录及checkpoint保持有效。U4a剩余兼容、545项既有回归与新增测试，以及U4b尚未运行。新增首次Agent输出、真实CKKS及未见模型证据0；API0、累计129/450，registry662。源DSL、权重、原响应、程序包、历史报告和旧消费均保留。
+
+## U4 §7.6.4单例接续启动（2026-10-27／62ecf194-dirty）
+
+用户已批准仅调整本轮回归驱动的清理顺序，释放成功参考trace已消费的constants.npz后再压缩；工具链、库和资源保持。新增TRACE_CLEANUP.json记录删除项、trace/NPZ大小和前后空闲空间；原trace保留用于阶段0比较。6/6共享载荷测试已通过，失败/错误/跳过0，[REPORT](/home/lhohy/pt_agent_results/u4-shared-payload-final-unit-20261027T025915829185/REPORT.json)。只补原SqueezeNet-SiLU失败项，后续按BERT managed、U4a回归和U4b顺序推进。原18例和资源失败报告完整保留，未重置额度。
+
+本轮自写错误修正（2026-10-27）：首次清理封装已删除已用constants.npz（773174634字节），free从10560839680增至11334017024，trace压缩成功（1922773934→16229759字节）。原S1协议随后再次请求压缩同一路径；封装对已移除的非gzip原路径直接stat，触发FileNotFoundError。仅在新驱动加path.is_file()检查，让已有gzip走原compress_ir解析，未改算法、资源、旧断言或工具链；按自写错误例外继续同一例。首次记录与新增trace消费保留：[REPORT](/home/lhohy/pt_agent_results/u4-shared-u3a-squeezenet_silu_avgpool-20261027T025931579352/REPORT.json)、[TRACE_CLEANUP](/home/lhohy/pt_agent_results/u4-shared-u3a-squeezenet_silu_avgpool-20261027T025931579352/compiler/TRACE_CLEANUP.json)。
+
+
+## U4 §7.6.4回归结案（2026-10-27／62ecf194-dirty）
+
+19个本机成员全部完成阶段0、RMS/载荷恢复、管理IR和完整RuntimePlan比较，自举及切点、已保存基线状态和载荷描述均相同。18例复用，新增仅SqueezeNet-SiLU补跑；原SqueezeNet-ReLU服务器待验收项保持。该例恢复9119个常量、5888个独立载荷，bytecode603832702字节；最终282次自举与预测/原生基线一致。按用户批准的清理顺序释放773174634字节NPZ后，trace压缩成功；第一次新封装漏检查文件存在性的记录保留，修正后完整通过。6/6共享载荷测试通过，包含RuntimePlan流式字段与S1原记录相同的验证。[RESUMED_REPORT](/home/lhohy/pt_agent_results/u4-shared-regression-20261026T161932685192/RESUMED_REPORT.json)、[单例REPORT](/home/lhohy/pt_agent_results/u4-shared-u3a-squeezenet_silu_avgpool-20261027T030021742529/REPORT.json)。现在按§7.7.4运行BERT managed，先核对其15399自举与全部110切点，再完成真实尾段与完整RuntimePlan比较；原资源和剩余范围保持。
+
+## U4 BERT managed 接续运行与已确认成本（2026-10-27／62ecf194-dirty）
+
+本次继续使用已完成20条留出Mock/张量对照的同一份规则程序，输入L=40、D=128；声明布局为每token一个密文，attention_mask另占1个，完整逐值密文数保留在成本报告。原compiler模式15399自举／110切点及检查点保持，以下成本统计均来自已完成的§7.8报告。当前managed尚在Python管理阶段，未进入编译尾段。
+
+共享载荷路径的raw为793018466字节（gzip12856593字节），预处理bytecode243136331字节、结构文本68729525字节；结构读取及RMS核对已用31.560645秒完成。记录、发射、两次前端调用均已成功，depth-dp内部阶段0.967607秒；管理结果尚未返回，当前尚无本次managed自举汇总或RuntimePlan相同的结论。[阶段记录](/home/lhohy/pt_agent_results/u4-bert-managed76-20261027T030724861581/managed/trace-stages.json)。
+
+| 成本部分 | 自举数 | 预测延迟（µs） | 延迟占比 |
+|---|---:|---:|---:|
+| other | 882 | 226719384 | 5.634% |
+| norm | 1294 | 334379194 | 8.310% |
+| attention_projections | 121 | 41979001 | 1.043% |
+| attention_A | 240 | 86519941 | 2.150% |
+| softmax | 9418 | 2419339840 | 60.122% |
+| attention_B | 3360 | 882047506 | 21.919% |
+| FFN | 84 | 33056677 | 0.821% |
+
+总预测延迟4024041543µs、旋转72051次、乘法深度323；本分类中BERT没有lm_head，输出分类头归other。完整逐行与逐值统计：[成本REPORT](/home/lhohy/pt_agent_results/u4-cost78-bert-20261026T160710137144/REPORT.json)。当前新增首次Agent输出0、真实CKKS0、API0、报告集0；U4a兼容与既有回归、U4b均待本次managed收尾。
+
+## U4 本次接续收尾：单例通过，BERT管理超时（2026-10-27／62ecf194-dirty）
+
+改动文件：experiments/u4_managed_payloads.py:90在成功参考trace后、压缩前使用原prune规则释放已消费constants.npz，保留其余文件并写TRACE_CLEANUP.json；:92增加path.is_file()以兼容原S1协议对同一路径的重复压缩调用。其余共享载荷实现和BERT验收入口沿用已准备代码；STATUS原地更新。编译器、前端库、运行库、安全参数及原资源保持。
+
+测试输出：共享载荷6/6通过，失败/错误/跳过0；SqueezeNet-SiLU的50483项管理IR运算相同、50795步完整RuntimePlan的状态和常量载荷相同，自举282，旧保存基线也相同。18例通过结果复用，本集合19本机通过＋原1服务器待验收，分母20。随后BERT managed整体3601.038473秒退出124；记录54.379490秒、raw发射60.672556秒、预处理10.114626秒、结构打印1.488155秒、RMS/结构读取31.560645秒均完成，内部depth-dp0.967607秒，Python management未返回。新编译尾段0、参考恢复编译0，尚无本次managed IR或RuntimePlan。
+
+与spec不一致之处：首次新清理封装对已压缩并移除的逻辑原路径直接stat，发生FileNotFoundError，按自写错误例外只补path.is_file()；原失败与trace消费保留。最新6项单测外层报告的section字段沿用旧助手的7.8.2，实际执行test_u4_managed_payloads的6项；原JSON保持，此处说明归属。预期BERT managed完整验收未完成，因原3600秒时限停止；未改变算法、数值条件、旧断言或资源。具体管理热点未定位，未把此停止归为编译器／运行库缺陷。
+
+未完成项：BERT managed输出、规模预估与编译及完整RuntimePlan比较；U4a旧程序/提示/四冻结模型兼容、全部既有回归及U4b tiny Qwen2。§7.8原compiler 15399自举／110边界／深度323检查点和原20条Mock/张量证据保持。新增首次Agent输出0、真实CKKS0、API0；registry667，全部历史和已用额度保持。本次进程已全部退出，预处理结构与bytecode、包、权重及日志保留；最终GNU time峰值缺项保留，未重试。依AGENTS.md:14等待后续spec明确管理器耗时诊断和接续。
+
+[单例REPORT](/home/lhohy/pt_agent_results/u4-shared-u3a-squeezenet_silu_avgpool-20261027T030021742529/REPORT.json)、[集合接续REPORT](/home/lhohy/pt_agent_results/u4-shared-regression-20261026T161932685192/RESUMED_REPORT.json)、[BERT原REPORT](/home/lhohy/pt_agent_results/u4-bert-managed76-20261027T030724861581/REPORT.json)、[BERT STOP](/home/lhohy/pt_agent_results/u4-bert-managed76-20261027T030724861581/STOP.json)。
+
+## U4 §7.9诊断与有限复核启动（2026-10-27／62ecf194-dirty）
+
+已按用户新增§7.9启动，原3600秒失败记录及其结构/bytecode保持。分段计时始终收集schedule、depth_dp、main_loop、bootstrap_inputs、early_modswitch、check和managed_emit，独立写trace-stages.json，不加入Function字段或IR；可信入口同时保留原RSS采样。旧manage与旧EarlyModswitch完整保留在tests/_u4_legacy_manage.py，只作测试参照。新增4项测试涵盖12个固定种子随机共享图／多输出、3个S1小程序、完整Function比较及Emit文本/计时日志，计时改动预检4/4通过（修正复杂度后将重新执行）。该预检复用旧外层助手，section字段仍为7.8.2，实际测试模块为test_u4_management_performance；历史JSON保持，新驱动按7.9归属记录。[预检REPORT](/home/lhohy/pt_agent_results/u4-manage-instrumentation-20261027T042501187347/REPORT.json)。
+
+BERT诊断仅用保存的bytecode和结构文本；无pass重新打印bytecode后读图，455365个节点与保存结构逐节点相同。schedule=1.756723秒、depth_dp=1.151482秒／15399自举、main_loop=3.948213秒；旧bootstrap_inputs进入时732128节点／15399自举，仍在运行，600秒重复栈采样已启用，整次上限1200秒。新增native trace／编译／LLM均0。[进行中REPORT](/home/lhohy/pt_agent_results/u4-manage-diagnostic-bert-20261027T042551025675/REPORT.json)、[分段计时](/home/lhohy/pt_agent_results/u4-manage-diagnostic-bert-20261027T042551025675/trace-stages.json)。
+
+M3从已通过19个成员按真实自举数降序选取，固定为u2-resnet20-4096(507)、R6c(383)、u3a-resnet20_relu(383)。新清单引用各自上一轮§7.6.4报告，旧清单和基线保持。将逐节点比较旧/新完整Function，并沿原S1协议比较管理IR、完整RuntimePlan和保存基线；只跑这3项，其余16项不重跑，原server pending保留。[有限清单](/home/lhohy/pt_agent_results/u4-manage-m3-prepare-20261027T043048763608/MANIFEST.json)。
+
+## U4 §7.9热点确认、复杂度修正与首例复核（2026-10-27／62ecf194-dirty）
+
+600秒栈采样指向greedy.py旧第370行result.insert(result.index(n), created)，栈顶为dataclass生成的__eq__。按20分钟上限内的诊断目的，确认后主动SIGINT收尾，整次706.058526秒，bootstrap_inputs段676.405552秒未完成；原exit130及KeyboardInterrupt计时、栈与源码片段均保留，未将其记为完整管理成功。[DIAGNOSIS](/home/lhohy/pt_agent_results/u4-manage-diagnostic-bert-20261027T042551025675/DIAGNOSIS.json)、[栈](/home/lhohy/pt_agent_results/u4-manage-diagnostic-bert-20261027T042551025675/stacks.log)。
+
+SqueezeNet-SiLU旧实现对照完整结束99.135809秒，自举282、50个切点；其输入DAG43424节点，插入段开始62718节点，EarlyModswitch后132928节点。所有check及managed发射正常；消费后的IR按原prune规则清理，日志、大小和计时保留。[REPORT](/home/lhohy/pt_agent_results/u4-manage-diagnostic-squeeze-20261027T043739127461/REPORT.json)。
+
+| 旧实现阶段 | SqueezeNet-SiLU 秒 | BERT 秒 | BERT状态 |
+|---|---:|---:|---|
+| schedule | 0.132260 | 1.756723 | 完成 |
+| depth_dp | 0.091692 | 1.151482 | 完成 |
+| main_loop | 0.232315 | 3.948213 | 完成 |
+| bootstrap_inputs | 3.393419 | 676.405552 | 采样确认后中断 |
+| early_modswitch | 0.757502 | 未执行 | 未执行 |
+| check | 0.534437 | 未执行 | 未执行 |
+| managed_emit | 6.494846 | 未执行 | 未执行 |
+
+check列为两次调用合计，managed_emit包含其内部check，分段列不相加。插入循环的线性扫描/移动规模上界N×B分别为62718×282与732128×15399；前者已完成3.393秒，后者676.406秒未返回，具体扫描/移动条数未单独计数。修正保留refine及next_id的调用顺序，用bootstrap id→新modswitch映射后一次重建result；未改放置、EarlyModswitch、类型推导、depth-dp或check内容。
+
+修正后4项测试全部通过，包含12个固定种子共享输入/多输出图与3个S1小程序的全部Function/Node字段、载荷、边界和切点；计时写在独立JSON，Emit文本相同。[REPORT](/home/lhohy/pt_agent_results/u4-manage-diagnostic-tests-20261027T044043018376/REPORT.json)。该轮新驱动section正确为7.9.3.1，原助手章节误标的历史预检保持。
+
+M3首例u2-resnet20-4096已完成，旧/新Function189168节点逐项相同，原生管理IR、完整RuntimePlan和上一轮保存基线相同，自举507、64个切点。其插入段仅0.0224秒；旧完整manage参照11.309秒（该参照未单独拆分旧插入段）。后续R6c及u3a-resnet20_relu继续串行，其他16例不重跑，原1个server pending保持。[批次REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-20261027T044209517968/REPORT.json)。
+
+与spec不一致之处：无算法或数值语义偏离。诊断在首个600秒样本确认后主动结束，实际706秒，保留原退出130，仍在获批1200秒上限内；旧助手预检section误标已在前节说明。当前未重试、未扩大资源、未调用LLM；BERT完整managed与后续U4a/U4b依M3结果接续。
+
+## U4 §7.9本轮收尾：复杂度修正通过，M3磁盘准入停止（2026-10-27／62ecf194-dirty）
+
+改动文件：manage/greedy.py:45增加独立计时上下文，:250起记录schedule/depth_dp/main_loop/bootstrap_inputs/early_modswitch，:365将bootstrap输入modswitch插入改为映射＋一次重建，保持refine／next_id及最终节点顺序；manage/check.py:12只包装计时，原检查内容保持；manage/earth_emit.py:189增加managed_emit与独立日志写出。experiments/u4_native_continuation.py把内部时段接入原RSS记录；新增u4_manage_performance.py、u4_management_regression.py组织有限诊断/复核；新增tests/_u4_legacy_manage.py保留完整旧manage和EarlyModswitch，以及test_u4_management_performance.py四项验证；STATUS原地更新。库、编译器、depth-dp、放置和类型推导语义保持。
+
+测试输出：修正后4/4通过，失败/错误/跳过0，包含12个固定种子随机共享图/多输出、3个S1小程序、全部Function/Node字段及载荷和Emit文本相同。旧BERT诊断在600秒栈确认后主动结束，总706.058526秒，旧插入段676.405552秒未返回；旧SqueezeNet插入段3.393秒完成。M3第1例完整通过，第2例完整Function已相同并通过check，第3例未启动。分母3及另16个保留基线、1个旧服务器项均保留。
+
+| M3成员 | 完整Function | 新插入段秒 | 管理IR／RuntimePlan | 自举 |
+|---|---|---:|---|---:|
+| u2-resnet20-4096 | 189168节点全部相同 | 0.0224 | 两者与上一轮基线完整一致 | 507 |
+| R6c | 82836节点全部相同 | 0.008121 | 发射/check通过；归一化前磁盘准入停止，完整比较待执行 | 新管理383、原compiler383 |
+| u3a-resnet20_relu | 未执行 | 未执行 | 未执行 | 原基线383 |
+
+磁盘停止细节：R6c managed发射6.389018秒完成，待归一化输入解压大小1640287632字节，现行临时文件路由需12377705872字节空闲，实际11885137920，差492567952字节（469.749405MiB）。预检在临时文件创建和原生调用之前失败；该例managed归一化0、managed编译尾段0。参考compiler成功11.75秒／1886.671875MiB／383自举／76边界；具体失败不涉及编译器或运行库执行。收尾沿用原prune并确认进程全退，保留所有源程序、权重、比较记录、RuntimePlan、日志和已用额度。
+
+与spec不一致之处：没有算法或数值语义偏离；§7.9.3预期3例及BERT完整验收，本次只完成1例全流程、1例Function检查后资源停止，依AGENTS未继续。BERT独立诊断在第一份600秒样本确认后主动SIGINT收尾，实际706秒，位于获批1200秒内，原exit130保持；计时预检旧助手的章节字段沿用7.8.2、R6c原STOP复用旧助手7.6.4上下文，原JSON保留，修正后单测报告及批次FINAL_REPORT明确为7.9。未重试、未改变限制、未做模型特判或跳过检查。
+
+未完成项：R6c完整管理IR／RuntimePlan比较、第3成员、新BERT managed规模估计／编译／完整RuntimePlan、U4a剩余兼容/545项既有回归和U4b。11/02原compiler检查点仍有效。新增API、真实CKKS、首次Agent输出、报告集、下载、安装、库修改、资源扩额、提交/tag均0。当前需后续spec明确磁盘接续；旧19成员和原1服务器项的历史结果保持。[FINAL_REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-20261027T044209517968/FINAL_REPORT.json)。
+
+## U4 §7.9.5接续结果：R6c再次准入停止与只读磁盘清单（2026-10-27／62ecf194-dirty）
+
+改动文件：
+
+- `experiments/u4_management_regression.py:52`：M3当前接续启用停止保留现场。
+- `experiments/u4_managed_payloads.py:132`：启用该选项时保留IR、参考bundle及其他文件；成功分支继续使用原prune规则。
+- `experiments/u4_disk_inventory.py`：只读扫描两个指定结果根目录，统计每个目录的文件大小、分配空间及修改时间；检查现行配置/P2包/服务器脚本、STATUS/PLAN和冻结tag/结果引用；本次活动停止目录明确保留。全部路径经paths模块传入，系统Python执行，内层Nix未读取registry。
+- `STATUS.md`：更新当前任务卡、阻塞、API用量、最近5次和本节。
+
+测试与运行输出：本次三个实验模块语法检查通过、diff检查通过；此前新旧管理测试4/4及第一例完整比较直接复用，未重跑。R6c接续运行197.673779秒、exit1；参考trace exit0／8.41秒／740.128906MiB，原compiler编译exit0／13.66秒／1886.617188MiB，383自举／76边界；阶段0的23690运算相同，完整Function82836节点的全部字段相同，输入modswitch插入0.010199秒。原compiler归一化exit0／8.07秒。managed IR发射后，解压大小1640287632字节，采用原>1GiB临时文件路线；需空闲12377705872字节，实际11859394560，差518311312字节（494.300186MiB）。预检发生在创建临时文件和启动hecate-opt之前，该步原生调用0、managed尾段0。[REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/REPORT.json)、[完整Function对照](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/FUNCTION_COMPARISON.json)。
+
+初次只读扫描保留在[初始清单](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/DISK_INVENTORY.json)。随后把本次新停止写入STATUS并显式保护活动证据，另存[当前清单](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/inventory-status-references/DISK_INVENTORY.json)，初始清单保持。扫描错误0、停止后删除0；清单按引用判定保留，候选项留待用户逐项批准。
+
+| 范围／分类 | 目录数 | 文件大小（字节） | 分配空间（字节） |
+|---|---:|---:|---:|
+| poseidon-work结果根目录 | 17800 | 58482053150 | 61011062784 |
+| pt_agent_results根目录 | 358 | 13821211039 | 13866430464 |
+| 必须保留（当前配置／包／服务器作业／活动现场） | 111 | 11328443966 | 11350192128 |
+| 保留（STATUS／PLAN／冻结tag及结果） | 273 | 2822848032 | 2848280576 |
+| 候选清理（需逐项批准） | 17774 | 58151972191 | 60679020544 |
+
+与spec不一致之处：上次停止的旧清理分支已删除待归一化IR和参考bundle，本次先按原入口重建必要产物，因此新增参考trace／编译各1次，R6c两次累计各2次；旧消费保留。清单首次扫描早于本次新停止链接写入STATUS，第二份已纳入引用并显式保护活动停止目录；两份结果保留。算法、pass顺序、数值条件与资源限制保持。预期的R6c完整比较及后续成员因§7.9.5第3步停止规则尚待完成。
+
+未完成项：R6c归一化、managed编译尾段、完整IR／RuntimePlan比较；第3例u3a-resnet20_relu；BERT managed运行前的解压大小与路由检查、管理/编译/完整RuntimePlan；U4a剩余兼容及545项既有回归；U4b。BERT尚未到运行前检查，未给出缺乏测量或估算的大小。M3第一例、其他16本机和原1服务器待验收项保持；11/02 compiler模式检查点保持通过。当前停止原因是磁盘余量，新增编译器／运行库缺陷证据0；新增Agent首次输出、真实CKKS、API、报告集评测、下载、安装、库修改及资源扩额均0。[FINAL_REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/FINAL_REPORT.json)。
+
+## S1最后一例本机补跑追加授权（2026-10-27／62ecf194-dirty）
+
+改动文件：仅本STATUS。按用户指令，把SqueezeNet-ReLU/maxpool本机补跑排在§7.9.5完成之后；当前R6c磁盘停止保持，未启动提前测试。
+
+已核对冻结输入存在：模型为[/home/lhohy/pt_agent_results/u3a-model-20261024T145117630480/model](/home/lhohy/pt_agent_results/u3a-model-20261024T145117630480/model)，程序为[program.ptdsl](/home/lhohy/pt_agent_results/u3a-model-20261024T145117630480/model/program.ptdsl)。历史集合中的成员名为`u3a-squeezenet_relu_maxpool`；旧成本预测1122仅作历史记录，实际共享路径结果按本次新运行报告。原[服务器作业](/home/lhohy/pt_agent_results/s1-u3a-squeezenet_relu_maxpool-20261026T062316234215/server_jobs/u3a-squeezenet_relu_maxpool/run.sh)和原19/20汇总保持。
+
+执行与验收次序（本次用户授权）：
+
+1. §7.9.5完成后，复用原模型、权重和程序，新增独立运行目录，走§7.6属性别名／共享载荷、bytecode和结构文本恢复路径；保留既有19例结果。
+2. 在重步骤前先报告待输入IR解压大小和可用空间；≤1GiB走stdin，>1GiB按单临时文件路线要求空闲≥10GiB＋输入大小；原内存6GiB、单文件8GiB、墙钟3600秒、编译并发1保持。若准入不足，遵循现行停止和只读清单规则，保留现场。
+3. 准入通过后，完成阶段0前端图比较、管理IR比较、depth-dp全部切点／自举数比较、compiler与managed完整RuntimePlan比较（含状态、常量载荷）；使用S1现有比较口径和检查器。
+4. 全部通过后保存新汇总，将S1回归记为20/20；更新当前任务卡，历史19/20报告和服务器作业保留。已消费中间产物仅在成功后按原prune规则处理。
+
+测试输出：本轮运行检查确认无在途测试／编译；原模型元数据和程序文件均存在；只改文档，未启动trace、编译或测试。API仍129/450，registry仍677条；新API、CKKS、首次Agent输出、报告集读取、下载、安装、资源扩额及删除均0。
+
+与spec不一致之处：本例的执行地点及路径依据本次用户追加指令变更为共享载荷本机补跑，前置明确为§7.9.5完成。原spec文件、编译器、已有代码、模型、权重及历史报告保持。
+
+未完成项：§7.9.5磁盘接续与完整验收；本例共享载荷IR解压大小与准入、阶段0／管理IR／切点／完整RuntimePlan；S1的20/20新汇总。本次仅记录授权及验收条件，尚未把本例计为通过。
+
+## U4清理后接续启动（2026-10-27／62ecf194-dirty，Asia/Taipei）
+
+用户确认Claude按批准范围删除44个旧private-keys/，总文件大小15847940558字节；清理记录为[KEY_CLEANUP](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T050536954627/inventory-status-references/KEY_CLEANUP.txt)。用户报清理后空闲27686629376字节，本轮实测27697115136字节，测试与资源限制保持。其余候选目录保持原样。当前R6c停止现场的managed.mlir.gz和参考bundle均存在；复用它们从归一化、managed编译尾段与完整比较接续，原失败报告和消费保持。顺序为R6c→M3第3例→BERT managed（先给出IR解压大小）→SqueezeNet-ReLU本机共享载荷补验／S1 20/20→U4a兼容和既有545项回归→U4b。已有第一例及其他通过结果直接复用。
+
+R6c接续已完整通过（2026-10-27，Asia/Taipei）：复用保留managed IR完成归一化和两段managed编译；独立参考Earth文本按原compiler入口恢复。管理IR31190运算相同，完整RuntimePlan31646步／31647值／383自举／6208常量blob相同，逐步状态、实际常量载荷及旧基线相同。成功后原停止输入与参考bundle、以及新运行消费中间产物均按原prune规则清理，原报告和RuntimePlan保留。新参考trace／compile各1、归一化1、managed尾段2；R6c历史参考trace／compile累计各3，消费保持。[REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-R6c-20261027T053711141608/REPORT.json)。接续第三例u3a-resnet20_relu。
+
+M3第3例u3a-resnet20_relu完整通过：Function、管理IR、全部切点及完整RuntimePlan、旧基线比较均相同；自举383，成功后已prune。[REPORT](/home/lhohy/pt_agent_results/u4-manage-m3-u3a-resnet20_relu-20261027T053956247383/REPORT.json)。M3现为3/3（第一例复用，R6c及第3例接续完成）；其余16个旧本机成员保留。进入BERT IR大小预检，尚未启动新BERT完整managed。
+
+BERT managed运行前大小已报告：结构预检估算903250988字节（≤1GiB），stdin；三个小程序估算／实际大小逐项相同。管理结构1592382节点／15399自举／110切点，预计.cst为346292224字节。预检只处理结构与格式大小，未做编译或数值验收。[REPORT](/home/lhohy/pt_agent_results/u4-managed-ir-size-20261027T054415217066/REPORT.json)。现在按原3600秒上限接续完整BERT managed，真实测得大小另记，所有数值和完整RuntimePlan检查保持。
+
+BERT managed／§7.9.5接续完成（2026-10-27，Asia/Taipei）：完整trace与两段managed编译退出均0；实测managed IR903250988字节与结构预估一致，stdin。管理21.69秒、bootstrap输入插入0.24秒；15399自举、110切点与compiler全部相同；完整RuntimePlan522418步／522459值／41输入／1输出的状态及实际常量载荷完全一致，恢复参考与原compiler记录相同；成功后prune已消费产物。20条数值Mock/tensor证据原样复用，最大差2.220446049250313e-15、类别20/20一致；整网CKKS仍0。[REPORT](/home/lhohy/pt_agent_results/u4-bert-managed76-20261027T054549459401/REPORT.json)。下一步按授权先测SqueezeNet-ReLU共享载荷IR大小，再完成S1第20例；U4a兼容及545项既有回归在其后。
+
+SqueezeNet-ReLU/maxpool共享载荷大小预检通过：raw IR解压后1656238259字节（>1GiB），按单临时文件路线所需空闲12393656499字节；实测27706634240字节，准入通过。本步骤native调用0，仅测量原始共享IR；后续managed IR在发射时记录实际大小并照常准入。[大小REPORT](/home/lhohy/pt_agent_results/u4-shared-u3a-squeezenet_relu_maxpool-20261027T055150953262/REPORT.json)。现启动原S1阶段0／管理IR／切点／完整RuntimePlan本机比较，20/20待全部通过后记录；原服务器作业和19个旧结果保持。
+
+S1最后一例本机验收完成，当前M20/20：SqueezeNet-ReLU共享raw1656238259字节，managed1677451434字节，均按>1GiB单临时文件规则通过准入；阶段061249运算相同，管理IR71515运算相同，1122自举／95切点一致，完整RuntimePlan72787步／72788值及6280常量blob相同。耗时308.392927秒；成功后prune本例和大小预检的已消费中间文件，原服务器作业、旧19个结果及历史停止保持。[单例REPORT](/home/lhohy/pt_agent_results/u4-shared-u3a-squeezenet_relu_maxpool-20261027T055354277959/REPORT.json)、[S1 20/20汇总](/home/lhohy/pt_agent_results/u4-s1-complete20-20261027T055957409761/REPORT.json)。进入U4a剩余兼容及545项既有回归。
+
+U4a剩余兼容检查通过：22份旧程序的Emit文本／常量／默认DSL打印及编译命令保持，4个冻结模型的Mock与tensor验证／代价／确认逐项相同，12组r8-v4/v5/v6系统与首输入提示逐字相同。仅留出20与确认20样本，未读报告集。当前执行本轮test_u4与parser，再串行完成既有回归。[REPORT](/home/lhohy/pt_agent_results/u4-bert-compat-20261027T060033593751/REPORT.json)。
+
+本轮U4与指定parser测试58/58通过，失败／错误／跳过0（51项U4＋7项parser）；开始既有回归主组429项，之后packaging、weight、intake、S1、U5和tensor各组串行执行，主环境ONNX跳过须由独立intake四项补齐。[测试REPORT](/home/lhohy/pt_agent_results/u4-bert-unit-20261027T060404324128/REPORT.json)。
+
+U4a既有回归主组429项结束：425通过、4项ONNX在主环境跳过、失败／错误0；四项由后续独立intake组补齐，当前尚未计全覆盖。耗时309.474698秒。继续packaging、weight、intake、S1、U5五组串行，之后tensor组。[主组REPORT](/home/lhohy/pt_agent_results/u4-bert-main-20261027T060458553241/REPORT.json)。
+
+U4a回归进度：packaging17/17、weight17/17、intake4/4、S1 34/34、U5 25/25均通过，失败／错误／跳过0。独立intake已补齐主组4项ONNX；当前最后tensor17项在原3600秒／4GiB限制下执行，完整回归结论待其收尾。
+
+张量组阶段结果：ResNet20完整精调缓存对照通过，开启／关闭缓存的25次验证、530个logits批次、25条完整history及最终source逐项一致。当前SiLU同项正在执行，其余张量单测随后；整个17项组尚未结案。
+
+## U4a里程碑完成与U4b接续（2026-10-27／62ecf194-dirty，Asia/Taipei）
+
+U4a完整通过：唯一597/597（既有545＋新增52），实际执行601次含4项主环境ONNX跳过，独立intake同名4项均通过、未覆盖跳过0。分组为unit58、main429（425通过）、packaging17、weight17、intake4、S1 34、U5 25、tensor17；失败／错误0。tensor组实测1803.681秒，ResNet20／SiLU各25次验证、530个logit批次、25条完整history及最终source相同。兼容22程序、四冻结模型和12组r8-v4/v5/v6提示逐字相同。BERT图36/36可lowering；20条留出Mock/tensor最大差2.220446049250313e-15，15399预测／原compiler／managed自举一致，110切点和完整RuntimePlan一致。S1本机20/20已补齐。[U4a REPORT](/home/lhohy/pt_agent_results/u4a-complete-20261027T064631349675/REPORT.json)。
+
+现在进入U4b：补足RMSNorm、RoPE、SwiGLU、GQA因果＋padding掩码、最后位置选择与高矩阵head的逐算子／P2证明，再用已有tiny Qwen2和原样Markdown样本走U1入口。LLM、报告集、下载、安装及资源扩额均0。一次只读检查把Graph序列化节点列表按dict读取而报TypeError；改为读取已有intake.coverage字段，主模型图、源码和验收结果保持。
+
+## 本轮最终汇报：U4a完成，U4b规则范围停止（2026-10-27／62ecf194-dirty，Asia/Taipei）
+
+改动文件：
+
+- [u4_management_regression.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/u4_management_regression.py:75)：新增`--resume`，复用保留的R6c managed IR与参考bundle，从归一化和尾段接续；独立恢复已清理的compiler Earth文本，比较完整IR、RuntimePlan和旧基线，成功后按原规则prune。
+- [u4_managed_ir_size.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/u4_managed_ir_size.py:19)：新增共享别名IR大小估算，读取保留结构图，不提供可执行载荷；3个小程序的估算／实测大小相同，BERT估算与完整trace实测同为903250988字节。
+- [u4_bert_managed.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/u4_bert_managed.py:74)：接入`--ir-size-report`前置准入，完整trace后另记实际大小与路线；真实managed编译和完整RuntimePlan／常量检查保持。
+- [u4_managed_payloads.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/u4_managed_payloads.py:79)：新增显式`--attempt-pending`与`--size-only`，按用户授权本机补SqueezeNet-ReLU；先实际测量共享raw IR、保留原服务器记录，再做完整S1比较和切点／自举检查。原未授权pending分支保持。
+- 本STATUS原地更新；本轮manage算法、原kernel、编译器、运行库、安全配置、r8-v4/v5/v6与默认值保持。
+
+测试输出：
+
+| 组 | 执行 | 通过 | 主环境跳过 |
+|---|---:|---:|---:|
+| U4＋parser | 58 | 58 | 0 |
+| 既有主组 | 429 | 425 | 4 |
+| packaging | 17 | 17 | 0 |
+| weight | 17 | 17 | 0 |
+| intake（补齐同名ONNX） | 4 | 4 | 0 |
+| S1 | 34 | 34 | 0 |
+| U5 | 25 | 25 | 0 |
+| tensor | 17 | 17 | 0 |
+
+共601次执行、597/597唯一用例通过（既有545＋新增52），失败／错误／未覆盖跳过0。tensor实际1803.681秒，原3600秒限制保持；两个模型各25验证／530批次／25历史逐项相同。22程序Emit及常量、4冻结模型的验证／代价／确认、12组旧提示逐字相同。[U4a完整REPORT](/home/lhohy/pt_agent_results/u4a-complete-20261027T064631349675/REPORT.json)。
+
+M3 3/3；R6c管理IR31190运算、383自举／76切点、完整RuntimePlan及旧基线相同。BERT managed完整trace208.7秒／4617.5078125MiB，编译35.04秒／2029.30078125MiB；管理21.69秒、输入插入0.24秒。SqueezeNet-ReLU补验308.392927秒，管理IR71515运算、1122自举／95切点，完整RuntimePlan72787步／72788值及6280个常量blob相同。每例通过后均按原规则prune已消费中间产物，原服务器作业、报告、RuntimePlan和消费保持。
+
+| 模型 | L | 声明输入密文 | 结构可lowering | 预测／compiler／managed自举 | 旋转 | 预测延迟µs | 留出数值 | 原模型一致率 | 状态 |
+|---|---:|---|---:|---|---:|---:|---|---|---|
+| BERT-tiny | 40 | embedding40＋mask1，共41 | 36/36 | 15399／15399／15399 | 72051 | 4024041543 | 20条，Mock/tensor最大差2.220446049250313e-15 | 20/20，100% | 双模式完整RuntimePlan一致 |
+| tiny Qwen2 | 32 | embedding32＋mask1＋sel1，共34 | 55/55 | 待执行 | 待执行 | 待执行 | 待执行 | 待执行 | 规则规划需10/9步，上限8 |
+
+BERT每个PT-DSL值的密文块数及完整逐行代价已在[U4a REPORT](/home/lhohy/pt_agent_results/u4a-complete-20261027T064631349675/REPORT.json)的`bert.cost.ciphertext_counts`、`cost_breakdown`及[原成本REPORT](/home/lhohy/pt_agent_results/u4-cost78-bert-20261026T160710137144/REPORT.json)中保留。分解为other226719384µs／882自举、norm334379194／1294、attention_projections41979001／121、attention_A86519941／240、softmax2419339840／9418、attention_B882047506／3360、FFN33056677／84；BERT没有lm_head。Qwen成本与lm_head分解待规划成功后执行。BERT与Qwen结构覆盖率分别100%，Qwen的数字仅表示导入图注册能力，数值和编译验收待执行。
+
+U4b停止点（仅校准数据的静态范围核对，未额外运行模型）：
+
+| 图节点／exp近似点 | 校准范围 | 平移及余量后的exp范围 | 宽度 | 必需k | 现行上限 |
+|---|---|---|---:|---:|---:|
+| n15／_softmax::exp | [-232.51723682006593,171.9213304311596] | [-520.6971856612585,85.96066521557978] | 606.6578508768382 | 10 | 8 |
+| n42／_softmax_1::exp | [-132.89098017993683,124.12390667271937] | [-323.46037694262463,62.06195333635968] | 385.5223302789843 | 9 | 8 |
+
+原错误为`ValueError: softmax width 606.6578508768382 requires steps=10>8`，调用链`transformer_run.inside → rule.plan → transformer_rule.plan → squared_softmax_adjustments`。223条既有Markdown句子进入U1入口，输入模型、原样样本和资产保持；样本准备／图导入／校准成功，在plan停止。模型图、calibration、样本和原日志保留，未生成Qwen DSL、未继续Mock/tensor、成本、P2或编译。该停止未归入编译器／运行库依赖阻塞。原[REPORT](/home/lhohy/pt_agent_results/u4-qwen-prepare-20261027T064721360265/REPORT.json)、[STOP](/home/lhohy/pt_agent_results/u4-qwen-prepare-20261027T064721360265/STOP.json)和[最终汇总](/home/lhohy/pt_agent_results/u4-qwen-prepare-20261027T064721360265/FINAL_REPORT.json)保留。
+
+与spec不一致之处：上次停止收尾已清理compiler Earth文本，本轮为R6c完整IR比较按原入口新增参考trace／compile各1，R6c两次旧尝试与本轮累计各3，消费保持。SqueezeNet-ReLU执行地点按本次用户追加授权改为本机共享载荷。一次只读汇总脚本把Graph节点列表按dict读取导致TypeError；已按实际序列化列表读取并核对BERT36／Qwen55节点，验收数据和源码保持。全部数值、算法上限与资源保持；Qwen宽域不符合既定k≤8，因此按明确停止规则收尾，尚待新spec。
+
+未完成项：U4b新增RMSNorm／RoPE／SwiGLU／GQA因果＋padding／高矩阵head的专门逐算子补验，Qwen完整规则程序、20条留出数值／next-token一致率、最后选择向量与全位置exact logits比较、P2导出／双模式编译／完整RuntimePlan／成本分解。本轮首次Agent交付0、真实CKKS0；已完成的是外部开发与编译管理验收。LLM0、累计129/450，registry698，下载／安装／库修改／资源扩额／commit／tag均0；其余候选目录删除0。原测试授权保持，等待宽域处理的接续spec。
+
+
+### U4b §11.7接续（2026-10-27）
+
+规则仅将平方次数改为min(k0,8)。62/62测试通过：[REPORT](/home/lhohy/pt_agent_results/u4-qwen-unit-20261027T070656994280/REPORT.json)。旧U4a、M3、S1结果复用，BERT只重新比较规则程序原文。r8-v7现有文本未写宽度≤1，提示词无需改动。
+
+本轮自写修正：tests/test_u4_wide_softmax.py的新图夹具漏填kind，补为tokens后继续；原55项执行中的错误报告保留：[首轮REPORT](/home/lhohy/pt_agent_results/u4-qwen-unit-20261027T070604177649/REPORT.json)。数值、算法和旧断言保持。
+
+
+#### U4b §11.7 最终结果
+
+[测试63/63](/home/lhohy/pt_agent_results/u4-qwen-unit-20261027T070836652175/REPORT.json)；[完整汇总](/home/lhohy/pt_agent_results/u4-qwen-wide-20261027T070852687880/FINAL_REPORT.json)；[只读分数表](/home/lhohy/pt_agent_results/u4-qwen-wide-20261027T070852687880/SCORE_RANGES.json)。BERT仅重建规则文本作比较，无数值或编译重跑。r8-v7现有文本没有宽度≤1陈述，提示词未改。旧U4a、M3 3/3、S1 20/20及597项回归证据保留。
+
+| softmax | k0 / k | 缩放后exp宽度 | 首步inv比值 | exp现有选择 / 深度 | inv选择 / 深度 | step_inv / 深度 |
+|---|---|---|---|---|---|---|
+| n15 | 10 / 8 | 2.3697572299876493 | 342.2334589845186 | remez7 / 5（阶梯冲突） | infeasible | remez63 / 8 |
+| n42 | 9 / 8 | 1.5059466026522825 | 144.2694173659632 | remez7 / 5（阶梯冲突） | newton31、3轮 / 13 | remez63 / 8 |
+
+所有许可exp候选均已计算：n15的15/31/63阶深度为6/7/8，相对误差1.7763568394002505e-15／1.7763568394002505e-15／2.886579864025407e-15；n42相应误差7.771561172376096e-16／1.3322676295501878e-15／8.881784197001252e-16。5个rsqrt搜索点均可行，所选阶数依次15/15/63/63/63，深度6/6/8/8/8。2个act沿用固定cheb127，未进入此次inv/rsqrt/exp有限选择表；完整Qwen DSL未写出。
+
+只读分数均为平移前exact值，23条校准样本；不用于修改规则。key补齐统计包含所有query，query补齐统计包含所有key，两列存在交集；valid/valid记录全部对应位置（含静态因果随后排除的未来key）。
+
+| 节点 | query/key均有效：min / max（个数） | key补齐：min / max（个数） | query补齐：min / max（个数） |
+|---|---|---|---|
+| n15 | -232.51723682006593 / 172.117993571906（10868） | -81.4442275933663 / 69.76882415066967（69248） | -156.93220330809385 / 126.62674110901574（69248） |
+| n42 | -156.91662720581982 / 124.12390667271937（10868） | -155.31158253253523 / 144.15725274034224（69248） | -155.31158253253523 / 144.15725274034224（69248） |
+
+本轮自写修正共2项：tests/test_u4_wide_softmax.py:46新增夹具补kind=tokens；外层汇总脚本首次追加registry漏设PT_RESULTS，写入前被配置检查拒绝，补齐后只追加1条终态记录。算法、目标、原文、旧断言保持。所有失败报告保留。当前registry703条，API129/450；Qwen留出／报告、真实编译、CKKS、下载安装和库改动均0。
+
+
+### U4 §11.8接续（2026-10-27）
+
+范围：approx.py可选权函数与relative拟合；PT-DSL role_fit、Transformer系数分派／P2、双fit规则、r8-v7；本轮测试及实验入口、STATUS。默认absolute与既有资源保持，BERT原版保留作新旧对照。旧测试按本条新增候选集合更新不收敛搜索次数4→8、候选数19→38；BERT原文测试改为显式absolute-only回归，新双fit规划另做数值和原生验收。
+
+§11.8测试阶段：U4/parser [70/70](/home/lhohy/pt_agent_results/u4-bert-unit-20261027T074354860362/REPORT.json)；main [429项](/home/lhohy/pt_agent_results/u4-bert-main-20261027T074431774555/REPORT.json)（425通过、4项ONNX按原分组补齐）；U5 [25/25](/home/lhohy/pt_agent_results/u4-bert-u5-20261027T075056458342/REPORT.json)。本轮自写修正：approx.py加权分支首次误把maximum_target也加权，改变了spec要求保持的原收敛尺度；恢复为原target(grid)的最大绝对值后，原判据保持，测试通过。首轮错误[REPORT](/home/lhohy/pt_agent_results/u4-bert-unit-20261027T074220784251/REPORT.json)保留，未改容差或算法。
+
+§11.8指定回归完成：新增rsqrt闭式理论用例后[U4/parser71/71](/home/lhohy/pt_agent_results/u4-bert-unit-20261027T075419706216/REPORT.json)；[S1 34/34](/home/lhohy/pt_agent_results/u4-bert-s1-20261027T075141334546/REPORT.json)、[packaging17/17](/home/lhohy/pt_agent_results/u4-bert-packaging-20261027T075250855383/REPORT.json)、[intake4/4](/home/lhohy/pt_agent_results/u4-bert-intake-20261027T075500373586/REPORT.json)均通过。main kernel测试未见差异，按§11.8复用原tensor17项结果；weight17项也保持既有证据，不重复执行。
+
+§11.8兼容[22程序／4模型／12提示词](/home/lhohy/pt_agent_results/u4-bert-compat-20261027T075548221294/REPORT.json)全部相同。BERT新规划通过parse/typecheck，19个展开近似点均从absolute切到relative，方法／阶数／深度保持；程序另存：[规划REPORT](/home/lhohy/pt_agent_results/u4-bert-relative-20261027T075952464009/REPORT.json)。正在按原20条留出样本做Mock/tensor验证；选择只使用原校准，原BERT程序未修改。
+
+BERT §11.8数值／成本阶段通过：[20条Mock/tensor](/home/lhohy/pt_agent_results/u4-bert-evaluate-20261027T080052720478/REPORT.json)最大差1.4432899320127035e-15、类别相同、明文参考一致率100%；[域覆盖](/home/lhohy/pt_agent_results/u4-bert-relative-coverage-20261027T080703701977/REPORT.json)的exact及all_approx各22点均outside=0，最大max_u分别0.9887490966343044／0.9887490283180157。[成本新旧表](/home/lhohy/pt_agent_results/u4-bert-relative-cost-20261027T080845270266/REPORT.json)自举15399、深度323、延迟4024041543µs、切点110、常量328204288字节均保持。compiler bytecode与真实编译进行中，后续managed运行前报告IR大小。
+
+BERT §11.8原生阶段：[compiler](/home/lhohy/pt_agent_results/u4-bert-relative-compiler-20261027T080956082560/REPORT.json)bytecode trace／真实编译退出0，15399自举／110边界与预测相同；[共享IR预检](/home/lhohy/pt_agent_results/u4-bert-relative-preflight-20261027T081302291661/REPORT.json)逐项切点相同，managed IR预计903250907字节（≤1GiB，stdin），2642种编码约346292224字节，预检空闲26531729408字节。已先在对话报告大小，随后启动managed；原资源不变。
+
+#### §11.8 U4a 新版验收完成（2026-10-27）
+
+BERT新规则程序已原文保存并完成20条Mock/tensor、独立域覆盖、成本、P2 compiler bytecode和managed两种原生路径。预测／compiler／managed均15399自举、110切点；预处理DAG与预测切点列表相同，C++边界数相同；两模式完整RuntimePlan的522418步、522459值、41输入／1输出、全部状态及2504个常量载荷逐项相同。[managed完整REPORT](/home/lhohy/pt_agent_results/u4-bert-relative-managed-20261027T081631489742/REPORT.json)。成功后各目录按原范围prune，保留报告、计划、程序、权重和日志。
+
+| BERT版本 | 20条参考一致率 | Mock/tensor最大差 | 自举数 | 切点 | 深度 | 预测延迟µs | 双模式完整计划 |
+|---|---|---|---|---|---|---|---|
+| §11.6 absolute（历史） | 100% | 2.220446049250313e-15 | 15399 | 110 | 323 | 4024041543 | 已通过，原证据保留 |
+| §11.8 relative（新版） | 100% | 1.4432899320127035e-15 | 15399 | 110 | 323 | 4024041543 | 相同，常量2504/2504 |
+
+managed实际IR 903250907字节与预检相同，按≤1GiB走stdin；原资源保持。新增Agent首次输出和真实CKKS均0，当前为规则程序及编译接口验收。随后按原顺序进入U4b；Qwen沿用原23条校准及已保存三类分数诊断。
+
+自写记录修正：外层STATUS追加脚本首次字符串换行漏用三引号，写入前语法检查失败；修正引号后补记，未改变已完成运行和原报告。Qwen仅启动一次，未重置消费。
+
+U4b §11.8规划已成功：[REPORT](/home/lhohy/pt_agent_results/u4-qwen-relative-20261027T082037934497/REPORT.json)。11个搜索点、双fit358候选完整，parse/typecheck通过；n15初始inv选relative newton31、2轮、深度11，k=8；n42初始inv选relative remez63、深度8。两处exp均relative remez7／深度5，step_inv均relative remez63／深度8，rsqrt依次7/15/63/63/63。Qwen原模型／校准／分数诊断保持，程序另存，后续逐算子验证进行中。
+
+U4b数值阶段：新增解码器逐算子[5/5测试](/home/lhohy/pt_agent_results/u4-decoder-unit-20261027T082104579767/REPORT.json)通过，覆盖单／多块RMSNorm、RoPE、SwiGLU、GQA双掩码及选择后单次高矩阵head。[20条留出](/home/lhohy/pt_agent_results/u4-qwen-evaluate-20261027T082221002519/REPORT.json)Mock/tensor最大差5.506706202140776e-13、token一致、next-token对参考20/20=100%，logit_rel_err=0.008348142027299872；[域覆盖](/home/lhohy/pt_agent_results/u4-qwen-relative-coverage-20261027T082632906314/REPORT.json)exact及all_approx各27点均outside=0，max_u分别0.9955432060577819／0.9955370022518191。正在用2条校准样本进行全位置exact与选择向量路径比较；原DSL保持。
+
+U4b最后位置选择[REPORT](/home/lhohy/pt_agent_results/u4-decoder-selection-20261027T082809421026/REPORT.json)通过：2条原校准样本、真实长度4/5，全部位置shape=(2,32,151936)，选择输出=(2,1,151936)，两条Mock exact路径array_equal、最大差0；独立参考最大差2.842170943040401e-14，在数学容差内。全位置诊断副本独立保存，原规则程序未改，成本和P2均使用原程序。
+
+§11.8 Qwen成本与覆盖：[成本](/home/lhohy/pt_agent_results/u4-qwen-relative-cost-20261027T083024109200/REPORT.json)预测54752自举、138切点、深度391、旋转86383、延迟14095730699µs、常量263061504字节；分解包含lm_head（206226µs、0自举），softmax为10833950542µs／42176自举。[当前覆盖表](/home/lhohy/pt_agent_results/u4-decoder-inventory-20261027T083304525364/REPORT.json)BERT36/36、Qwen55/55，check均通过。[Qwen compiler](/home/lhohy/pt_agent_results/u4-qwen-relative-compiler-20261027T083347723142/REPORT.json)已真实完成，54752自举／138边界与预测相同，1090571步、1090605值、34输入／19输出。随后进行managed预检，运行前报告IR大小。
+
+#### §11.8收尾：改动文件、测试及未完成项
+
+全部源码改动位于DSL/DSL_agent/scripts/pt_agent；文档仅本STATUS。
+
+| 文件 | 本轮改动 |
+|---|---|
+| kernels/approx.py | 可选w的_exchange；relative exp/inv/rsqrt；fitted_coefficients按fit分派，默认系数array_equal，原收敛尺度保持 |
+| dsl/ops_spec.py；kernels/transformer.py | role_fit枚举、验证及系数属性传递；默认absolute旧Emit相同 |
+| planners/transformer_rule.py | absolute/relative×原阶梯，原选择键后追加fit；act cheb127、k≤8等保持 |
+| capabilities.py | 仅r8-v7增加fit说明；旧三版本逐字兼容 |
+| tests/test_u4_relative_fit.py；tests/test_u4_decoder.py | 8项相对拟合及P2证明；5项单／多块解码器运算等价 |
+| tests/test_u4_squared_softmax.py:87；tests/test_u4_wide_softmax.py:84 | 两fit候选计数4→8／19→38；BERT同文回归明确为absolute-only，新双fit另做完整验收 |
+| experiments/u4_wide_softmax.py | 双模型重规划、fit表及BERT逐点新旧选择；Qwen复用原分数诊断 |
+| experiments/u4_relative_acceptance.py | 覆盖／成本、compiler、共享载荷大小预检、managed及完整RuntimePlan比较；失败保留现场 |
+| experiments/u4_decoder_acceptance.py | 逐算子、exact全位置诊断、当前U1覆盖表；原程序保持 |
+| docs/pt_agent/STATUS.md | 阶段、证据、当前停止和最近5次运行 |
+
+最终测试：U4/parser71/71＋decoder5/5；main429项（425通过、4项由intake同名补齐）；U5 25/25；S1 34/34；packaging17/17；共581个本轮唯一用例。tensor17因main kernel无差异按§11.8复用，weight17按无改动范围复用，共615个当前用例均有通过证据。最终断言失败／错误0、未覆盖跳过0；第一轮自写错误的50项测试报告保留，未计成通过。兼容22旧程序、四模型与12组提示词相同。
+
+与spec不一致及自写修正：kernels/approx.py:155首次误将maximum_target加权，恢复原尺度后全部测试通过；外层STATUS追加脚本一次三引号遗漏在写入前失败，已补记，Qwen生成仅1次。旧测试迁移按§11.8显式两fit与BERT重规划要求执行，除上述计数及absolute-only范围外，原断言保持。
+
+| 模型／版本 | L | 输入／输出密文 | 覆盖 | 20条一致率 | 自举：预测／compiler／managed | 切点 | 深度 | 预测延迟µs | 完整双模式计划 |
+|---|---|---|---|---|---|---|---|---|---|
+| BERT §11.6历史absolute | 40 | 41／1 | 36/36 | 100% | 15399／15399／15399 | 110 | 323 | 4024041543 | 原证据通过并保留 |
+| BERT §11.8 relative | 40 | 41／1 | 36/36 | 100% | 15399／15399／15399 | 110 | 323 | 4024041543 | 全部状态／2504载荷相同 |
+| Qwen §11.8 relative | 32 | 34／19 | 55/55 | next-token100% | 54752／54752／待执行 | 138 | 391 | 14095730699 | managed内存停止，待比较 |
+
+Qwen成本分解：norm543555712µs／2112自举，attention_A1094659328／4224，attention_B1098931424／4224，softmax10833950542／42176，attention_projections67735424／256，FFN53334784／192，lm_head206226／0，other403357259／1568。完整每张量布局声明密文数和逐行成本见[成本REPORT](/home/lhohy/pt_agent_results/u4-qwen-relative-cost-20261027T083024109200/REPORT.json)。
+
+本轮未完成项仅当前U4b的managed IR大小、managed编译、三方最终核对及完整双模式RuntimePlan比较；其余已完成内容无需重复生成。后续需从保留的预处理／compiler证据接续。新增Agent首次原样交付0、真实CKKS0、API0（累计129/450），报告集／下载／安装／库源码修改／资源扩额均0；registry729条，所有已消费运行和历史保持。M1真实CKKS与未见模型证据仍属后续范围。
+
+
+### U4 §7.10.1 本轮诊断停止（2026-10-27）
+
+改动文件：manage/ir.py新增Node实例计数；manage/greedy.py的timed_stage始终记录进入／退出的VmRSS、VmHWM、VmSize和Node数，tracemalloc开启时记录按行分组的前20项和总量，并保存失败现场的浅层表信息；experiments/u4_relative_acceptance.py新增--diagnostic开关及预检阶段边界，正常验收保持不开启tracemalloc。STATUS原地更新。修正前源码保存在[before/](/home/lhohy/pt_agent_results/u4-memory710-baseline-20261027T090342939925/before)。未添加未来slots断言测试，避免在修正前停止时留下尚未实现功能的失败用例。
+
+测试输出：新增离线测试0；3个改动Python文件的AST语法检查通过；BERT诊断1次退出1。真实前端预处理／bytecode结构读取完成；预处理placement与历史15399自举／110切点相同。RSS是退出阶段实测值，VmHWM是进程累计历史峰值，未将二者解释为阶段内独立峰值。
+
+| 阶段 | 完成 | 退出RSS MiB | 累计VmHWM MiB | Node实例 |
+|---|---|---|---|---|
+| model_read | 通过 | 253.47 | 253.47 | 0 |
+| recording | 通过 | 1968.50 | 1968.50 | 853535 |
+| shared_preprocess | 通过 | 3008.59 | 3757.93 | 455365 |
+| frontend_summary | 通过 | 3019.06 | 3757.93 | 455365 |
+| management | 未完成 | 3818.63 | 3907.15 | 1202893 |
+| schedule | 通过 | 3025.91 | 3757.93 | 910730 |
+| depth_dp | 通过 | 3278.34 | 3846.57 | 910730 |
+| main_loop | 通过 | 3759.82 | 3907.15 | 1187493 |
+| bootstrap_inputs | 通过 | 3815.43 | 3907.15 | 1202893 |
+| early_modswitch | 未完成 | 3818.63 | 3907.15 | 1202893 |
+
+完整表还包含VmSize及进程RSS／存活Node数量之比；该比值包含解释器、数组及表开销，未当作Node对象本体大小。失败现场记录到manage调用帧及其已有表；early_modswitch内部表未取得，无法确认其建立到了哪一步。
+
+与spec不一致之处：BERT诊断未完整结束，Qwen诊断与后续修正、输出一致性及回归尚未执行。自写记录实现修正一项：Node计数从__post_init__移到__new__，覆盖deepcopy构造的实例；不改变Node字段、管理算法、编号或输出。各阶段快照分配失败均明确记录，未以其他数值替代。
+
+未完成项：补充BERT诊断接续口径后，完成§7.10.1，再执行§7.10.2获批内存修正、3例＋BERT Function／RuntimePlan比较、U4/parser＋S1＋main测试，以及Qwen预检大小报告、managed编译、三方自举／切点和完整双模式RuntimePlan核对。原程序、响应、包、历史用量、服务器作业和原资源保持。
+
+
+### U4 §7.10.5 验证阶段（2026-10-27）
+
+U4/parser 82/82、S1 34/34通过。三个M3成员完整Function与修正前源码相同，节点189168／82836／82836；R6c 11阶段tracemalloc快照齐全。BERT1592382节点完整相同，15399自举／110切点；IR903250907字节、stdin，与原记录相同。关闭tracemalloc后，管理阶段VmHWM1982.60MiB，退出RSS1599.39MiB；额外同时保留前后Function作独立比较时累计VmHWM3113.72MiB。原诊断开启tracemalloc的峰值3907.15MiB保留，两种采集范围在最终表中分别标注。main测试进行中。
+
+[U4/parser](/home/lhohy/pt_agent_results/u4-bert-unit-20261027T093416597332/REPORT.json)、[S1](/home/lhohy/pt_agent_results/u4-bert-s1-20261027T094917830929/REPORT.json)、[BERT Function／大小预检](/home/lhohy/pt_agent_results/u4-bert-relative-preflight-20261027T094638050303/REPORT.json)。本轮尚未完成BERT RuntimePlan复核与Qwen managed；原程序及库保持。
+
+
+### U4 §7.10.2–§7.10.5 完成汇报（2026-10-27／62ecf194-dirty）
+
+改动文件与用途：
+
+| 文件 | 本轮内容 |
+|---|---|
+| manage/ir.py | Node、Type使用slots；共享相同冻结Type；types表按迭代填充 |
+| manage/greedy.py | RecordingBackend／RecordedExpr的记录字段使用slots；原基类保持；复用冻结类型；及时释放阶段表；early_modswitch只为实际项建users／before，显式栈保持顺序 |
+| manage/earth_emit.py | 常量表和大小统计按生成器遍历；raw节点复用冻结类型；Emit内容保持 |
+| manage/mlir_read.py | 复用冻结类型，及时释放SSA映射、待处理位置和RMS临时缓存 |
+| experiments/u4_relative_acceptance.py | 复用冻结共享输入；释放recording／front；三例与BERT完整Function比较；tracemalloc仅用于小程序；正常流程始终记录RSS／VmHWM／VmSize／Node数；新P2包及完整双模式验收 |
+| experiments/u4_bert_managed.py | 计划比较先将一侧保留为同字段紧凑状态，再释放完整JSON；另一侧逐条生成状态；全部比较项目、顺序及报告字段保持 |
+| tests/test_u4_management_memory.py | 8项新测试，覆盖slots／复制／冻结类型／计数／快照／失败记录及状态、attrs、载荷、长度、缺步、blob数量差异 |
+| docs/pt_agent/STATUS.md | 当前完成状态、具体结果、内存表、消费与剩余项 |
+
+测试输出：U4/parser最终84/84、S1 34/34、main 429项中425通过和4项环境分组跳过；同4项在已安装intake环境全部通过，547唯一用例无失败／错误／未覆盖跳过。初次82项及最终84项均保留，共633次测试执行，未重复累计为唯一用例。
+
+四份完整Function的节点序列、参数、结果类型、attrs、编号、常量、位置、切点和边界全部相同：
+
+| 程序 | 管理节点 | 自举 | 切点 | 完整Function |
+|---|---|---|---|---|
+| u2-resnet20-4096 | 189168 | 507 | 64 | 相同 |
+| R6c | 82836 | 383 | 76 | 相同 |
+| u3a-resnet20_relu | 82836 | 383 | 76 | 相同 |
+| BERT | 1592382 | 15399 | 110 | 相同 |
+
+逐阶段退出RSS（MiB）：前列为保留的tracemalloc开启诊断；后两列关闭tracemalloc并复用已保存的共享输入。VmHWM是累计历史峰值；完整进入／退出数据、VmSize及Node数见REPORT的memory字段和各次memory-stages.json。RSS包含解释器、数组和临时表；表中两个采集范围分别标注。
+
+| 阶段 | BERT修正前／tracemalloc开 | BERT修正后／关 | Qwen修正后／关 |
+|---|---|---|---|
+| model_read | 253.47 | 201.25 | 235.06 |
+| recording | 1968.50 | 795.82 | 732.11 |
+| shared_preprocess | 3008.59 | 868.71 | 1119.00 |
+| frontend_summary | 3019.06 | 865.21 | 1111.89 |
+| schedule | 3025.91 | 1008.04 | 1327.11 |
+| depth_dp | 3278.34 | 989.63 | 1341.54 |
+| main_loop | 3759.82 | 1206.70 | 1751.18 |
+| bootstrap_inputs | 3815.43 | 1213.66 | 1775.42 |
+| early_modswitch | 3818.63（失败） | 1613.39 | 2562.82 |
+| management | 3818.63（失败） | 1599.39 | 2431.17 |
+| size_preflight | 未执行 | 1590.76 | 2465.07 |
+
+关键Node数：BERT修正前recording853535，修正后仍853535；管理完成后1592382。Qwen recording906064，共享图876622，管理完成后3145312；记录过程在共享输入消费后及时释放。R6c共11阶段快照完整；Node对象本体每次分配104字节（recording23804次、管理时106526次），args／attrs、共享类型和载荷数组另外计入，分配行号及前20项保留在原JSON。
+
+| 过程 | 记录到的累计RSS峰值MiB | 说明 |
+|---|---|---|
+| BERT修正前诊断 | 3907.15 | tracemalloc开，在early_modswitch停止，原记录保留 |
+| BERT修正后管理 | 1982.60 | tracemalloc关，预检过程的管理阶段 |
+| BERT同时保留前后Function作对照 | 3113.72 | 完整Function对照时额外保留原Function，全部计入4GiB限制 |
+| BERT完整managed验收 | 2525.00 | 含完整计划比较；与§11.8相同 |
+| Qwen修正后预检 | 3352.88 | 全阶段通过 |
+| Qwen完整managed验收 | 3353.70 | 普通Python全过程，约3.28GiB；原生编译峰值2740.13MiB |
+
+完整计划比较的内存表示另做独立验证：原比较器源码保留在结果目录；BERT522418条真实状态逐条相同，新旧比较器全部结果字段相同。没有修改状态字段、比较条件或容差。
+
+| 模型 | managed IR字节／路线 | 预测／compiler／managed自举 | 切点三方 | RuntimePlan步／值 | 常量比较／不同载荷 | 完整双模式结果 |
+|---|---|---|---|---|---|---|
+| bert | 903250907／stdin | 15399/15399/15399 | 110/110/110 | 522418／522459 | 2642／2504 | 相同 |
+| qwen | 1017493809／stdin | 54752/54752/54752 | 138/138/138 | 1090571／1090605 | 2140／2007 | 相同 |
+
+BERT20条与Qwen20条的既有数值结果复用，原程序未修改；Qwen next-token20/20保持。本轮未新增数学路线、参数、安全配置、LLM生成或真实CKKS证据。旧诊断、源码副本、原响应、程序包、证书及已用额度保留；编译消费完的中间产物仅沿原prune规则清理，历史共享输入保持。服务器作业保持未执行。
+
+与spec不一致之处：范围、算法、顺序、编号及输出无变化。自写实现修正一项：experiments/u4_bert_managed.py:62，为payload描述的zip_longest补未配对元素哨兵，保持原列表长度不同的判定；差异测试及真实BERT对照通过。没有改旧测试的算法、期望值或断言含义。
+
+未完成项：本轮§7.10及U4b指定验收无剩余。M1第5条真实CKKS、首次Agent整网交付及未见模型证据仍按原计划保留，当前新增数均0；未以规则程序开发验收替代首次Agent原样交付。
+
+[完整REPORT](/home/lhohy/pt_agent_results/u4-memory710-complete-20261027T102158237896/REPORT.json)；[Qwen managed](/home/lhohy/pt_agent_results/u4-qwen-relative-managed-20261027T101309756974/REPORT.json)；[BERT managed](/home/lhohy/pt_agent_results/u4-bert-relative-managed-20261027T100031653085/REPORT.json)；[比较器逐状态证明](/home/lhohy/pt_agent_results/u4-bert-relative-plan-proof-20261027T101051985336/REPORT.json)。API0、累计129/450，registry746条；提交、tag和资源扩额0。
+
+## A1 近似优化与token Agent（2026-10-27，停止点）
+
+本轮实现文件清单如下，当前尚未执行r8-v7的最终冻结。该清单记录实现范围，后续须在接续spec下完成准备并登记正式冻结；commit／tag仍由Claude按用户授权处理。
+
+| 范围 | 文件（均相对scripts/pt_agent） | 已落实内容 |
+|---|---|---|
+| DSL | dsl/ops_spec.py | 可选final_inv_*和inv_budget，steps／方法／域／ρ合法性检查；缺省字段不写入打印文本 |
+| 执行 | kernels/transformer.py、transformer_lower.py、transformer_tensor.py、transformer_validation.py | 末次归一化使用final_inv；独立tensor、Mock与Emit结构相同；诊断角色::final_inv |
+| P2 | export/transformer_package.py、export/templates/_package/ops.py | 保存并使用完整final_inv系数，包内计算顺序一致 |
+| 规则 | planners/transformer_rule.py | softmax_budget默认关闭；R1固定ρ=.25；k=0…8经现有规范化静态成本比较；定义域来自校准与解析式 |
+| 精调 | planners/transformer_tuner.py | 按图顺序尝试k、ρ及各拟合点移动；校准域重算；预测延迟下降且coarse/full均满足ModelInfo判据、max_u≤.90、不发散后接受 |
+| Agent | planners/agent.py、planners/transformer_session.py、planners/confirm.py | v7允许tensor；原文先保存再评估；每模型40次持久硬计数、单会话≤8轮；确认保留v7的max_u和不发散条件 |
+| 提示 | planners/prompts.py、capabilities.py | v7说明误差抵消、final_inv／ρ／k范围，提供所有输入及校准点；v4～v6文本对照相同 |
+| 入口 | cli.py、transformer_run.py | U1 token模型可选Agent；单会话返回候选后确认冻结；report访问排序在冻结之后、原生编译之前 |
+| 外部实验 | experiments/a1_transformer_agent.py、experiments/u4_relative_acceptance.py | R0复用、R1／请求准备、API外层记账、报告隔离、复用两模式验收与IR预检；U4读取器增加可选model_dir，旧默认保持 |
+| 测试 | tests/test_a1_softmax.py、tests/test_a1_agent.py、tests/test_a1_tuner.py | 21项；精确标量抵消、域、k选择、P2、历史Emit／提示、假客户端和两级精调接受条件 |
+| 文档 | docs/pt_agent/STATUS.md | 本轮范围、停止、证据、预算与剩余任务 |
+
+最新离线输出：`Ran 21 tests`、`OK`，失败0／错误0／跳过0。覆盖mask与causal、k=1…8及三档ρ的逐行标量抵消；验证final_inv缺省的Emit／常量顺序与保留U4 P2内核相同；r8-v4～v6能力表、system及initial文本与历史源码相同。假客户端包含成功、不可行反馈、解析失败、预算耗尽，持久预算跨客户端与失败调用保留；U1完整离线流程只在FROZEN存在后读取合成report，原生步骤用假执行器核对顺序。本轮真实report样本访问0。[最新测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T123236-905b/REPORT.json)、[完整测试输出](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T123236-905b/run.log)。
+
+BERT复用U4的模型、权重、calibration和heldout；R0复制原文并确认原件保持，R1 typecheck通过，首请求只写入本地。两处softmax的选择如下，成本为各softmax片段的静态预测值，整网R1成本及数值尚未评测。
+
+| 点 | R1 k | ρ | 可行k | softmax片段预测延迟（µs） |
+|---|---:|---:|---|---:|
+| _softmax | 3 | .25 | 3、4、5、6、7、8 | 1296146938 |
+| _softmax_1 | 2 | .25 | 2、3、4、5、6、7、8 | 1028539978 |
+
+[BERT完整候选表](/home/lhohy/pt_agent_results/A1-bert-prepare-20261027T123333-7967/R1/CHOICES.json)、[R1程序](/home/lhohy/pt_agent_results/A1-bert-prepare-20261027T123333-7967/R1/program.ptdsl)、[准备REPORT](/home/lhohy/pt_agent_results/A1-bert-prepare-20261027T123333-7967/REPORT.json)。准备耗时94.966357秒；未将局部拟合可行记为整网数值通过。
+
+Qwen准备在既有_relative_profile／cheb_eval路径停止，具体错误及校准范围见阻塞栏。该次耗时2.711907秒，进程峰值RSS311021568字节（约296.61MiB）；退出1。Qwen R0和复用模型资料保留，R1完整程序、完整候选表与首请求尚未产出；未改拟合算法或异常排除规则，未继续其余批次。[原始REPORT](/home/lhohy/pt_agent_results/A1-qwen-prepare-20261027T123519-ad8a/REPORT.json)。
+
+| 模型 | R0 | R1 | Agent首个可行 | Agent精调冻结 |
+|---|---|---|---|---|
+| BERT | 原文保留；本轮report／编译待执行 | 程序与静态选择已准备；整网数值待执行 | 未运行真实LLM | 未运行 |
+| Qwen | 原文保留；本轮report／编译待执行 | 准备停止 | 未运行真实LLM | 未运行 |
+
+与spec不一致之处：以下自写实现错误按AGENTS.md例外直接修正，原失败记录保留。tests/test_a1_agent.py:45将新夹具的内部TensorInfo.kind由cipher改为act，修复校准遗漏；planners/transformer_tuner.py:131改为更新冻结Op内的可变attrs映射，修复FrozenInstanceError；planners/agent.py:81恢复编辑时误缩进的eligible原位置。新Emit回归起初引用的历史源码快照未含U4未跟踪模块，已在tests/test_a1_softmax.py:134改用实际保留的U4 P2内核，并继续使用历史capabilities／prompts；最终21项无跳过。experiments/u4_relative_acceptance.py:23–24为新入口增加可选model_dir机械接线。没有改旧测试的算法、期望值或断言含义。当前Qwen的既有数值异常未按自写笔误处理，等待接续spec。
+
+未完成项：Qwen候选异常的处理口径；Qwen R1及请求准备；r8-v7正式冻结清单；两模型真实Agent会话、精调、确认与原文冻结；冻结后160条report的一次Mock／tensor评测；R0／R1对应报告与双模式编译、IR大小预报、三方自举／切点及完整RuntimePlan比较；§4的完整两模型四行表、成本分解和会话摘要。本轮开发离线诊断21项通过，首次真实Agent原样输出通过0、真实CKKS0。API为BERT0/40、Qwen0/40，累计129/450；所有历史消费保持。
+
+[A1停止汇总](/home/lhohy/pt_agent_results/A1-transformers-stopped-20261027T124002-9e3f/REPORT.json)。
+
+### A1 §1.7 接续（2026-10-27）
+
+已按用户补充条款修改7类文件（含本STATUS）：新增planners/approximation_failures.py；更新planners/transformer_rule.py、planners/transformer_tuner.py、planners/agent_tools.py、transformer_validation.py；新增tests/test_a1_degenerate.py。规则候选记录role、fn、fit、method、degree或deg0／iters、domain、target、k、rho、reason、异常类型与消息；三类规定异常和非有限值记为degenerate／nonfinite。原R0调用保留旧的nonconvergent记录方式，已有可行系数及方法保持。精调移动增加数值预检，退化时拒绝；v7 Agent增加结构化E_APPROX_NUMERICAL反馈。没有修改拟合器、Chebyshev求值器或编译器，也没有捕获其他异常。
+
+本次离线输出：`Ran 15 tests`，`FAILED (errors=1)`；通过14、断言失败0、错误1、跳过0。原9项Agent测试在本次通过，新增测试5通过／1错误；余下12项原测试因failfast未执行，原21/21历史证据保留。新通过范围为：规定异常白名单及其他异常传播、非有限系数／误差拒绝、完整上下文与k=0…8搜索继续、程序反馈字段、假Agent拒绝退化程序后继续并保留2次调用计数。所有客户端均为离线录制，真实API调用0。
+
+新增实测`test_99_actual_extreme_exp_and_inverse_are_infeasible`在inv的既有required理论诊断触发ZeroDivisionError。只读复核使用与规则相同的运算顺序：inv域[1.0633910054776077e-265,1]，r=9.403878675378334e264，q=1、log(q)=0，acosh参数=1、acosh=0。原公式和异常传播保持；尚未将这类理论诊断标为空、改用其他公式或忽略。按§1.7第4条等待接续规范，Qwen prepare重跑0，未进入r8-v7冻结和§3真实运行。
+
+与spec不一致之处：本次没有额外改动或直接修正既有理论诊断。数值异常白名单按§1.7实现；白名单以外的ZeroDivisionError按条款停止。6个新增用例中5个通过，实测用例未完成，当前A1继续标为阻塞。
+
+未完成项：明确不可表示的inv理论次数诊断的记录／计算方式；通过完整§1.7测试并完成原12项接续验证；从Qwen prepare接续，随后执行原§3／§4。BERT R1和首请求、U4的两份R0及原21项证据全部保留。真实API为BERT0/40、Qwen0/40、累计129/450；report、原生编译与CKKS新增0，资源限制保持。registry755→757。
+
+[本次测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T125718-eb96/REPORT.json)、[完整输出](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T125718-eb96/run.log)、[理论诊断数值](/home/lhohy/pt_agent_results/A1-transformers-s17-stopped-20261027T125937-3213/THEORY_DIAGNOSTIC.json)、[停止汇总](/home/lhohy/pt_agent_results/A1-transformers-s17-stopped-20261027T125937-3213/REPORT.json)。
+
+### A1 §1.8完成与r8-v7冻结（2026-10-27）
+
+按§1.8新增planners/transformer_rule.py的inverse_theory，使用指定log1p／对数域／acosh稳定等价式；结果≤2^53保留整数，更大阶数记浮点并标approximate=true。只有下界非正、r非有限或r≤1时记录null和reason，保留domain、可表示的ratio及公式；理论诊断保持只记录。新增tests/test_a1_theory.py的4项测试，覆盖两组旧比值、9.4e264／1.7e308、null及零迭代情况；未扩大§1.7异常白名单。
+
+从BERT单元组完整重跑：31/31，失败0、错误0、跳过0；极宽exp／inv退化用例及旧21项全部通过。[测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T132649-ade6/REPORT.json)。Qwen从新prepare目录接续完成（92.552882秒），R0保持原文，R1选择k=7／6、ρ=.25，完整退化候选和9组k结果保存；每点k=0记录42个退化或非有限候选。[Qwen REPORT](/home/lhohy/pt_agent_results/A1-qwen-prepare-20261027T132722-12c2/REPORT.json)、[候选表](/home/lhohy/pt_agent_results/A1-qwen-prepare-20261027T132722-12c2/R1/CHOICES.json)。BERT原prepare和R1继续复用，未重复生成。
+
+r8-v7冻结于2026-10-27T13:31:40Z，版本62ecf194-dirty。以下15份文件（相对scripts/pt_agent）在本次真实运行中保持；此后提示词、能力、反馈格式、tuner和confirm不再修改：
+
+- capabilities.py
+- planners/prompts.py
+- planners/agent.py
+- planners/agent_tools.py
+- planners/confirm.py
+- planners/tuner.py
+- planners/transformer_tuner.py
+- planners/transformer_rule.py
+- planners/transformer_session.py
+- planners/approximation_failures.py
+- transformer_validation.py
+- planners/examples/cnn_plain_small.ptdsl
+- planners/examples/index.json
+- planners/examples/mlp_flat.ptdsl
+- planners/examples/residual_small.ptdsl
+
+[完整冻结文件清单和协议](/home/lhohy/pt_agent_results/A1-transformers-v7-freeze-20261027T133140-e3c6/FROZEN_V7_FILES.json)记录两份首请求、模型路径及持久调用计数目录。BERT首请求29358字节、Qwen31283字节，目的地api.deepseek.com/chat/completions；DeepSeek thinking enabled／reasoning high、32768 tokens、600秒、零重试。每模型最多40次，本轮合计80，累计上限450；会话max_iters=8、new_best、tensor profile、精调2400秒。commit／tag仍交Claude处理，本轮未执行。
+
+额外代码接线：experiments/a1_transformer_agent.py的外层使用非阻塞预算读取，轮询每次已完成的调用并追加registry；内层继续只接收显式路径，不读取registry。该接线不改变模型反馈或生成机制。
+
+当前§3真实运行尚未启动，API累计129/450、两模型新增0。冻结前真实report访问0，真实CKKS0；下一步先运行BERT会话，再按确认结果接续，Qwen按顺序进行。原4/6GiB、3600秒、8GiB、10GiB资源要求保持。
+
+
+### A1 §3外发确认停止（2026-10-27）
+
+BERT会话命令在进程创建前被自动审批拒绝，理由为需要明确确认本次具体载荷与DeepSeek目的地。没有通过其他入口重试。已完成只读核对：两个首请求JSON可解析，R0／R1冻结标记齐备，客户端预留各0；完整首请求原文继续保存在各prepare目录，后续请求范围与硬预算集中写入本次manifest。等待该组外发确认后，从BERT真实session接续；Qwen按原顺序执行。
+
+与spec不一致之处：§1.8及冻结机制无新增偏离；临时记录脚本首次漏传PT_RESULTS，补齐后接续登记，保留原manifest及REPORT；§3真实运行尚未执行。未完成项仍为真实生成、精调、确认、冻结后160条report、R0／R1与Agent双模式编译及§4完整对照。首次Agent原样通过和真实CKKS新增均0。[manifest](/home/lhohy/pt_agent_results/A1-transformers-network-approval-20261027T133722-07e5/manifest.json)、[REPORT](/home/lhohy/pt_agent_results/A1-transformers-network-approval-20261027T133722-07e5/REPORT.json)。
+
+### A1 §3已批准接续（2026-10-27）
+
+用户明确批准本次manifest、两份首请求与DeepSeek目的地；BERT首会话于13:50:27启动。当前生成机制继续使用已冻结r8-v7，每模型40次持久硬计数及全局450预算保持，先BERT后Qwen；本节接续上方历史审批停止。
+
+本轮自写外层记录入口在首次轮询时漏设PT_RESULTS，原会话继续运行；仅将experiments/a1_transformer_agent.py的外层PT_RESULTS初始化提前到registry导入与轮询之前，语法检查通过。原会话由外层接管并继续逐次记账，未重新发起首请求，未修改冻结文件、判据或反馈格式。[外层错误记录](/home/lhohy/pt_agent_results/A1-bert-session-20261027T135027-2940/SUPERVISOR_ERROR.json)与原会话目录保留。该修正按AGENTS.md本轮自写接线错误例外执行，完成时在偏离项列出。
+
+
+### A1 BERT首会话收尾（2026-10-27）
+
+A1-bert-session-20261027T135027-2940完整结束：8次调用、8轮，status=confirm_failed，pool_size=0，确认实际评测0。反馈为response 1轮、typecheck 6轮、approximation 1轮；最后一轮原文已通过类型／布局检查，近似预检拒绝cheb的inv／rsqrt参数。首个可行与冻结程序均无；数值验证、report、真实编译和CKKS均未启动。耗时599.070677秒，prompt_tokens=121714、completion_tokens=115746。原响应、逐轮DSL、反馈和外层接管记录保留。[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T135027-2940/REPORT.json)。
+
+外层已补记8次API及会话结果，registry761→770，累计137/450；BERT8/40、Qwen0/40、本轮8/80。依据§3.2前会话未确认后开启A1-bert-session-20261027T140045-18a9，沿用同一calls目录、同一冻结机制与原资源。尚未达到§3.3停止条件。
+
+
+### A1 BERT第二会话收尾（2026-10-27）
+
+A1-bert-session-20261027T140045-18a9完整结束：8轮，status=confirm_failed，pool_size=0，确认实际评测0。response 4轮、typecheck 4轮；原始DSL仍有掩码打包布局错误。首个可行及冻结程序均无，数值验证／report／编译／CKKS均0。耗时992.590283秒，prompt_tokens=83140、completion_tokens=181948。[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T140045-18a9/REPORT.json)。
+
+当前BERT16/40、Qwen0/40、本轮16/80，累计145/450；registry770→779。首会话外层接线修正后，本次逐次调用与会话记录正常收尾。补R1整网静态成本后按§3.2开启第三会话，原持久计数、冻结机制与资源保持。
+
+
+### A1 R1静态成本与第三会话（2026-10-27）
+
+BERT已冻结R1的整网静态成本完成：boots_pred=11251，barriers=89，max_depth=261，rot=68731，latency_pred_us=2959577960，const_bytes=329515008。R0保留U4记录15399自举／110切点／深度323，原文保持。成本为静态预测，R1本轮数值评测与compiler／managed尚未执行。[REPORT](/home/lhohy/pt_agent_results/A1-bert-cost-20261027T141756-965b/REPORT.json)，耗时37.769575秒。
+
+BERT第三会话A1-bert-session-20261027T141903-a85d已启动，复用原calls目录；会话前BERT16/40，累计145/450，R1成本追加后registry780条。Agent使用的冻结机制及反馈保持，R1程序未进入提示。
+
+
+### A1 BERT第三会话收尾（2026-10-27）
+
+A1-bert-session-20261027T141903-a85d完整结束：8轮，confirm_failed，pool_size=0，确认评估0。反馈response 2轮、typecheck 4轮、exact 1轮、complete 1轮；第6轮省略模型要求的attention_mask输入，精确最大差0.9862392859826264。第7轮恢复Mask及flat pack后，精确最大差5.551115123125783e-16、20条留出一致率100%、发散0；max_u=0.9894355930230727超过0.90要求，原始程序feasible=false。max_u诊断含GELU 0.9894355930230727、step_inv 0.9886932151072366。
+
+第7轮精调2418.012998秒、coarse_evals=45、full_evals=2，接受修改0，feasible=false；前后成本均15789自举／107切点／深度312／latency_pred_us=4121713414。最后第8轮响应为空，无冻结程序。本会话耗时3182.032690832042秒，prompt_tokens=117946、completion_tokens=135443；BERT24/40、本轮24/80、累计153/450，全部调用与响应保留。数学和局部一致率通过单独记录，首次整网原样交付通过0、真实CKKS0。[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T141903-a85d/REPORT.json)。
+
+Qwen R1只补整网静态成本，不读report、不改生成机制；随后按§3.2用BERT原持久calls目录开启第四会话，剩16次，资源和其他停止规则保持。
+
+
+### A1 Qwen R1静态成本与第四会话（2026-10-27）
+
+Qwen已冻结R1静态预测完成：36928自举／115切点／深度336／79459旋转／latency_pred_us=9519698819／const_bytes=271450112，耗时39.363378秒；R0保留U4的54752／138／391记录，R0原文保持。仅为静态预测，Qwen R1数值、report及真实编译尚未执行。[REPORT](/home/lhohy/pt_agent_results/A1-qwen-cost-20261027T151304-32b9/REPORT.json)。
+
+BERT按原§3.2开启第四会话，复用既有calls目录和冻结机制，模型剩16/40、本轮剩56/80、全局累计153/450；Qwen真实Agent0。第三会话数学及局部留出通过与整体max_u未通过分别保留，不计首次完整交付通过。
+
+
+### A1 BERT第四会话收尾与第五会话（2026-10-27）
+
+A1-bert-session-20261027T151426-9206完整结束：8轮、confirm_failed、pool_size=0、确认评测0；反馈response 3、typecheck 3、parse 1、approximation 1。最后一轮通过类型／布局后，cheb的inv／step_inv／final_inv预检按§1.7拒绝。耗时791.453958秒，prompt_tokens=91294、completion_tokens=154335。[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261027T151426-9206/REPORT.json)。
+
+BERT32/40、Qwen0/40、本轮32/80、累计161/450，历史及当前调用全部保留。第五会话A1-bert-session-20261027T152756-9b83已启动，复用相同calls目录；本会话最多8次，之后即达到40次模型上限，按§3.3判定停止；尚未进入报告或真实编译。
+
+
+### A1最终停止与§4阶段汇报（2026-10-27）
+
+实现／离线准备完成，37次真实调用后因KeyError按§1.7停止；五会话原始响应、源码、反馈、未完成REPORT及全部消费保留。最后进程退出1、347.154566秒、峰值262.273MiB；现存会话及网络子进程已全部收尾。这是Agent评测入口的输入绑定问题，当前真实编译调用0，未归入编译器依赖阻塞。[完整REPORT](/home/lhohy/pt_agent_results/A1-transformers-input-binding-stop-20261027T154151-1acf/REPORT.json)。
+
+| 会话 | 实际调用 | 终态 | token（输入／输出） | 墙钟秒 |
+|---|---:|---|---|---:|
+| 1 | 8 | confirm_failed | 121714／115746 | 599.070677 |
+| 2 | 8 | confirm_failed | 83140／181948 | 992.590283 |
+| 3 | 8 | confirm_failed | 117946／135443 | 3182.032691 |
+| 4 | 8 | confirm_failed | 91294／154335 | 791.453958 |
+| 5 | 5 | exception | 54315／68165 | 347.154566 |
+
+全部37次的终态分布：response=11、typecheck=19、approximation=2、exact=1、complete=1、parse=2、exception_input_binding=1。11次finish_reason=length且正文为空；其余26次返回程序文本。第五会话最后一次在写入该轮反馈前异常，已单独计入exception_input_binding。37次调用已逐次入registry；最后一份REPORT的缺省0不用于消费统计。
+
+**bert四行对照（A1原生和report尚未执行）**
+
+| 行 | k／ρ | 自举（预测／本轮compiler／managed） | 切点／深度／旋转／预测延迟µs | heldout（agree／logit_rel_err／max_u） | confirm／report160 | 调用／token／墙钟 |
+|---|---|---|---|---|---|---|
+| R0 | [5, 5]／无 | 15399／待／待 | 110／323／72051／4024041543 | U4历史20条：100.0%／未记录／0.9887490283180157 | 待／待 | 0／0／复用U4；本轮未重算 |
+| R1 | [3, 2]／0.25 | 11251／待／待 | 89／261／68731／2959577960 | 待执行 | 待／待 | 0／0／本轮静态37.769575秒，数值／编译待执行 |
+| Agent first feasible | 未产出 | 未执行 | 未产出 | 无可行程序 | 未执行 | 本模型共37次／1124046 token／5912.302174秒 |
+| Agent tuned frozen | 未产出 | 未执行 | 未产出 | 无可行程序 | 未执行 | 本模型共37次／1124046 token／5912.302174秒 |
+
+R0行只复用历史U4的heldout20与成本证据，原文保持；历史双模式RuntimePlan相同的证明保留，未记为本轮report160或重新编译通过。BERT第23次程序单列为开发诊断：精确差5.551115123125783e-16，20/20、无发散，max_u=0.9894355930230727；2418.012998秒精调、45粗评／2完整评估、0接受，仍feasible=false。它未进入上表的“首个可行”或“精调冻结”行。
+
+| 成本组 | R0预测自举／延迟µs（历史） | R1预测自举／延迟µs |
+|---|---|---|
+| attention_A | 240／86519941 | 240／86519941 |
+| attention_B | 3360／882047506 | 3360／882122451 |
+| softmax | 9418／2419339840 | 5271／1355084031 |
+| norm | 1294／334379194 | 1294／334380468 |
+| FFN | 84／33056677 | 84／33026403 |
+| lm_head | 0／0 | 0／0 |
+| other | 882／226719384 | 881／226465665 |
+| attention_projections | 121／41979001 | 121／41979001 |
+
+| softmax点 | R0已存各点深度 | R1 exp／inv／step_inv／final_inv深度 |
+|---|---|---|
+| _softmax | {'_softmax::exp': 5, '_softmax::inv': 8, '_softmax::step_inv': 8} | 5／8／7／8 |
+| _softmax_1 | {'_softmax_1::exp': 5, '_softmax_1::inv': 8, '_softmax_1::step_inv': 8} | 6／13／7／8 |
+
+**qwen四行对照（A1原生和report尚未执行）**
+
+| 行 | k／ρ | 自举（预测／本轮compiler／managed） | 切点／深度／旋转／预测延迟µs | heldout（agree／logit_rel_err／max_u） | confirm／report160 | 调用／token／墙钟 |
+|---|---|---|---|---|---|---|
+| R0 | [8, 8]／无 | 54752／待／待 | 138／391／86383／14095730699 | U4历史20条：100.0%／0.008348142027299872／0.9955370022518191 | 待／待 | 0／0／复用U4；本轮未重算 |
+| R1 | [7, 6]／0.25 | 36928／待／待 | 115／336／79459／9519698819 | 待执行 | 待／待 | 0／0／本轮静态39.363378秒，数值／编译待执行 |
+| Agent first feasible | 未产出 | 未执行 | 未产出 | 无可行程序 | 未执行 | 未开始，0次／0 token |
+| Agent tuned frozen | 未产出 | 未执行 | 未产出 | 无可行程序 | 未执行 | 未开始，0次／0 token |
+
+Qwen原R0程序、R1准备与静态成本均保留；因A1异常停止，Qwen真实LLM请求0，未将其移出目标模型数2的范围。
+
+| 成本组 | R0预测自举／延迟µs（历史） | R1预测自举／延迟µs |
+|---|---|---|
+| attention_A | 4224／1094659328 | 4416／1144373728 |
+| attention_B | 4224／1098931424 | 4288／1115808256 |
+| softmax | 42176／10833950542 | 24128／6199408486 |
+| norm | 2112／543555712 | 2112／543555712 |
+| FFN | 192／53334784 | 192／53397888 |
+| lm_head | 0／206226 | 0／206226 |
+| other | 1568／403357259 | 1632／419570123 |
+| attention_projections | 256／67735424 | 160／43378400 |
+
+| softmax点 | R0已存各点深度 | R1 exp／inv／step_inv／final_inv深度 |
+|---|---|---|
+| _softmax | {'_softmax::exp': 5, '_softmax::inv': 11, '_softmax::step_inv': 8} | 6／8／6／8 |
+| _softmax_1 | {'_softmax_1::exp': 5, '_softmax_1::inv': 8, '_softmax_1::step_inv': 8} | 6／15／6／8 |
+
+与spec不一致之处：本轮自写外层记账入口漏设PT_RESULTS，已在experiments/a1_transformer_agent.py:243提前初始化，保留原失败和接管记录；语法检查与后续三次完整会话收尾证明记账恢复。原31项测试及此前自写夹具等修正记录继续保留。本次KeyError按§1.7停止，没有增加捕获、修改绑定或改变已冻结反馈；没有修复冻结模块后冒充本轮首发成功。
+
+未完成项：需接续spec明确参数名与模型输入的绑定／检查及错误反馈语义、允许文件和冻结版本接续；BERT剩3次、Qwen剩40次仍保留，不重置也不追加。两模型首个可行／确认冻结程序、冻结后report160 Mock/tensor、R0／R1同组报告和双模式编译、managed IR大小预报、三方自举／切点及完整RuntimePlan比较均待执行。首次完整原样交付通过0，真实CKKS0，未见模型证据0。M1表保持原状；新库修改、资源扩额、下载、安装、commit、tag均0。
+
+
+### A1 §6 r8-v8 离线接续（2026-10-27，进行中）
+
+输入接口由 model_info.inputs 和 dsl/interface.py 注册表产生；parse 后先返回结构化 interface 反馈，再做 typecheck。精调、确认、报告与带 model_info 的导出复用同一检查。新增 dsl/methods.py，从 poly.EXACT、approx.REMEZ_FUNCTIONS／NEWTON_FUNCTIONS 等实际内核表生成方法支持；r8-v8 在拟合前给 E_METHOD_UNSUPPORTED。dsl/constraints.py 的说明自动进入能力表，包含公开同形状 add、向量 bias、Mask flat 及原有 select 用法。cheb 支持集保持原样。
+
+新 domain_criteria.py 按每个 softmax 自身的 exp_domain、inv_scale、Lk 和 rho 核对解析域包含关系；未包含的 inverse 仍归校准点。评估、精调、确认、报告统一记录 max_u_calibrated／max_u_analytic；解析点越界携带停止信息。r8-v4～v7 分支保持；U1 Agent 可选择 r8-v8，r8-v7 继续可复现。客户端新增模型／版本目录隔离，r8-v8 为每模型40次、65536输出token，其他协议参数保持。
+
+离线测试53/53，失败0、错误0、跳过0；包括完整旧31项、两份r8-v7首请求system与摘要原文复现、实际CNN旧判据、四份规则程序接口、目标权重名隔离，以及新接口／方法／来源／length／API拒绝不回退测试。[测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T160822-915b/REPORT.json)。
+
+26份旧程序全部回放：typecheck→interface 12、typecheck→typecheck 7、approximation→typecheck 2、exact→interface 1、complete→complete 1、parse→parse 2、旧输入绑定异常→interface 1。第37次改名程序得到E_INTERFACE，未进入执行。第23次原文数学最大差5.551115123125783e-16、20/20、无发散，max_u_calibrated=0.9894355930230727、max_u_analytic=0.9886932151072366，feasible=false；按spec另启动一次开发精调，原文和旧结果保持。[回放REPORT](/home/lhohy/pt_agent_results/A1-bert-replay-20261027T160313-a92e/REPORT.json)。
+
+| 模型／基线 | heldout | agreement_pct | logit_rel_err | max_u_calibrated | max_u_analytic | feasible |
+|---|---:|---:|---:|---:|---:|---|
+| BERT R0 | 20 | 100 | 0.00034560653508840694 | 0.9457676853764468 | 0.9887490283180157 | false |
+| BERT R1 | 20 | 100 | 0.0003900464213968063 | 0.9457676853764468 | 0.9984634482165243 | false |
+| Qwen R0 | 20 | 100 | 0.008348142027299872 | 0.9955370022518191 | 0.9898855802459958 | false |
+| Qwen R1 | 20 | 100 | 0.00812830705963064 | 0.9955378636948435 | 0.9988129539019559 | false |
+
+四份接口均通过、发散均0、解析点越界均0；最差校准点来自rsqrt。规则程序原文及数值判据保持，不通过仍原样保留。[BERT重评](/home/lhohy/pt_agent_results/A1-bert-baselines-20261027T160510-c936/REPORT.json)、[Qwen重评](/home/lhohy/pt_agent_results/A1-qwen-baselines-20261027T160623-880b/REPORT.json)。未访问report。
+
+本轮编排修正：在开发精调持有Nix launcher.lock时，提前启动的两项本地首请求准备各在30秒锁等待后退出1，stderr为空；锁由精调进程855542持有，现有入口为flock --exclusive --timeout 30。两份STOP／日志保留；改为精调正常结束后串行准备，不改锁、等待时间、代码算法或资源。受影响目录为A1-bert-requests-20261027T160922-4668与A1-qwen-requests-20261027T161000-4bfb；未调用API。该编排错误按本轮自写实现错误例外处理。
+
+当前运行：[第23次开发精调](/home/lhohy/pt_agent_results/A1-bert-tune-diagnostic-20261027T160859-e386/BEFORE.json)，2400秒原预算、4GiB／3600秒限制，结束后最终Mock复核。此项为开发诊断，后续不记为新Agent结果。r8-v8正式冻结清单与真实BERT仍待该诊断收尾；Qwen真实Agent保持0。累计166/450，r8-v7的37次完整保留；r8-v8新增0/80。
+
+
+### A1 §6.5 r8-v8正式冻结（2026-10-27）
+
+冻结时间：2026-10-27T16:56:56.521409+00:00；源码版本：62ecf194-dirty。以下36份文件（相对scripts/pt_agent）在真实运行期间保持；提示词、能力表、反馈、tuner、confirm不再修改，commit／tag交Claude按用户授权处理。
+
+- capabilities.py
+- domain_criteria.py
+- dsl/interface.py
+- dsl/methods.py
+- dsl/constraints.py
+- dsl/typecheck.py
+- dsl/errors.py
+- dsl/ops_spec.py
+- kernels/approx.py
+- kernels/poly.py
+- kernels/transformer.py
+- transformer_lower.py
+- transformer_tensor.py
+- transformer_validation.py
+- planners/prompts.py
+- planners/agent.py
+- planners/agent_tools.py
+- planners/confirm.py
+- planners/tuner.py
+- planners/transformer_tuner.py
+- planners/transformer_rule.py
+- planners/transformer_session.py
+- planners/approximation_failures.py
+- planners/examples/cnn_plain_small.ptdsl
+- planners/examples/index.json
+- planners/examples/mlp_flat.ptdsl
+- planners/examples/residual_small.ptdsl
+- cli.py
+- transformer_run.py
+- export/package.py
+- export/transformer_package.py
+- export/templates/_package/ops.py
+- experiments/a1_transformer_agent.py
+- experiments/a1_v8_replay.py
+- experiments/u4_relative_acceptance.py
+- tests/test_a1_v8.py
+
+最终离线54/54，无失败、错误或跳过；新补的axis=-1说明和导出前静态拒绝测试通过。r8-v7两份首请求原文复现、r8-v4～v6提示和实际CNN判据均通过；R0/R1源文件保持。第23次开发诊断总2666.243436秒（tuner连最终Mock为2619.311788秒），46次粗评／2次完整评估，接受0，成本仍15789自举／107切点／深度312／4121713414µs。最终Mock20/20，max_u_calibrated=0.9894355930230729、max_u_analytic=0.9886932151072366，feasible=false；未记为Agent新结果。
+
+[冻结REPORT](/home/lhohy/pt_agent_results/A1-transformers-v8-freeze-20261027T165656-db1b/REPORT.json)；[请求范围与预算](/home/lhohy/pt_agent_results/A1-transformers-v8-freeze-20261027T165656-db1b/manifest.json)；[最终测试](/home/lhohy/pt_agent_results/A1-bert-unit-20261027T165429-93f3/REPORT.json)；[开发精调](/home/lhohy/pt_agent_results/A1-bert-tune-diagnostic-20261027T160859-e386/REPORT.json)。
+
+两份本地首请求均成功串行准备：[BERT](/home/lhohy/pt_agent_results/A1-bert-requests-20261027T165515-3cd2/first-request.pretty.json)、[Qwen](/home/lhohy/pt_agent_results/A1-qwen-requests-20261027T165546-2d5e/first-request.pretty.json)。DeepSeek deepseek-flash／thinking enabled／reasoning high／65536 tokens／600秒／零重试；每模型40次、会话8轮、tensor／new_best、精调2400秒。调用根目录固定为A1-transformers-v8-freeze-20261027T165656-db1b/calls，再按模型和r8-v8分目录。旧37次及全部响应、原文、程序包、证据与消费保持。
+
+与spec不一致之处：两次本地准备提前碰到本轮精调持有的Nix锁，已保留失败并在锁释放后串行完成；锁、时限、预算和算法保持。当前轮自写入口的导出检查顺序与bias轴说明已补齐并验证。未完成：先BERT真实r8-v8生成／精调／确认／冻结，随后160条report及双模式编译和三方完整计划比较；BERT停止时不开始Qwen。真实API仍166/450、report和CKKS新增0。
+
+
+### A1 r8-v8 BERT首会话已启动（2026-10-27）
+
+本轮外发按用户§6授权执行，首会话为A1-bert-session-20261027T165801-fd6d，固定调用根目录及r8-v8冻结36文件保持。首响应finish_reason=stop，用时146.607275秒，prompt_tokens=17401、completion_tokens=32700；客户端原响应和解析出的原文均先保存。输入为inputs_embeds:Cipher[1,40,128]及attention_mask:Mask[1,40]，名字／顺序／类型与模型一致；当前仍在第一轮内部评估，尚无确认结果。
+
+已完成API累计167/450；本版本BERT1/40、Qwen0/40，原r8-v7的37次保持。源码[iteration-1.ptdsl](/home/lhohy/pt_agent_results/A1-bert-session-20261027T165801-fd6d/sources/iteration-1.ptdsl)、[原响应](/home/lhohy/pt_agent_results/A1-transformers-v8-freeze-20261027T165656-db1b/calls/bert/r8-v8/call-001.response.json)均保留。未启动report、原生编译或真实CKKS，不记为首次原样交付通过。
+
+
+### A1 §6 r8-v8真实会话停止与§4阶段汇报（2026-10-27）
+
+本轮改动文件（相对scripts/pt_agent；详细冻结依赖清单仍为上节36文件）：
+
+| 范围 | 改动文件 |
+|---|---|
+| 接口／静态约束 | dsl/interface.py、dsl/methods.py、dsl/constraints.py、dsl/typecheck.py、dsl/errors.py |
+| 内核支持表／提示 | kernels/approx.py、capabilities.py、planners/prompts.py |
+| 来源判据／数值 | domain_criteria.py、transformer_validation.py |
+| Agent／精调／确认 | planners/agent.py、planners/agent_tools.py、planners/confirm.py、planners/tuner.py、planners/transformer_tuner.py、planners/transformer_session.py |
+| 实际入口／导出 | cli.py、transformer_run.py、export/package.py |
+| 有限实验 | experiments/a1_transformer_agent.py、experiments/a1_v8_replay.py、experiments/u4_relative_acceptance.py |
+| 测试 | tests/test_a1_v8.py |
+| 文档 | docs/pt_agent/STATUS.md |
+
+测试：最终`Ran 54 tests in 4.287s`、`OK`，失败0、错误0、跳过0。26份旧程序的回放、两模型R0／R1接口和留出重评均已完成；第23次程序开发精调最终Mock不可行、0接受，单列开发成果。r8-v7两份首请求文本与旧版本提示／判定回归通过，R0源文件保持；真实运行后未修改冻结代码。证据继续复用上节链接。
+
+BERT实际8次调用，333288 token（输入240621／输出92667），API总421.265600秒；会话总3600.547074秒。逐轮如下：
+
+| 轮 | 反馈 | 数学最大差 | heldout agree／max_u_calibrated／max_u_analytic | 结果 |
+|---:|---|---|---|---|
+| 1 | complete | 6.38378239159465e-16 | 20/20／1.063768700596587／0.9676694381758529 | 不可行；精调26粗评／2完整、0接受，最终Mock一致 |
+| 2 | parse | 待 | 待 | inverse定义域含非正值 |
+| 3 | validation | 已通过exact | 0/20／1.3295077431041266e17／0.9676694381758529 | 非有限值／发散 |
+| 4 | validation | 已通过exact | 0/20／6.6130666899605e23／0.9676694381758529 | 非有限值／发散 |
+| 5 | complete | 已通过exact | 20/20／0.9873420911861631／0.9676697975869658 | 不可行 |
+| 6 | complete | 6.661338147750939e-16 | 20/20／0.9344779431440176／0.9863583977952812 | 不可行 |
+| 7 | complete | 6.661338147750939e-16 | 20/20／0.8997862159399623／0.9863583977952812 | 首个内部可行原文，未确认 |
+| 8 | interrupted | 未落盘 | 未落盘 | 原响应／源码保留；内部计算到会话结束仍未返回 |
+
+8个响应均为stop，length=0；接口、方法静态检查未产生新的异常。完整反馈7轮，另1轮中断；所有8次留在消费和请求范围内。首个可行为第7轮原始程序，未经过人工补丁；确认评估0、最终冻结0、report160访问0、真实编译0、CKKS0。进程与Nix锁已释放。[原始会话](/home/lhohy/pt_agent_results/A1-bert-session-20261027T165801-fd6d/REPORT.json)、[完整反馈](/home/lhohy/pt_agent_results/A1-bert-session-20261027T165801-fd6d/agent_trace.jsonl)、[第7轮原文](/home/lhohy/pt_agent_results/A1-bert-session-20261027T165801-fd6d/sources/iteration-7.ptdsl)。
+
+**BERT（开发模型）四行对照**。自举列为预测／本轮compiler／managed；heldout为20条；原有U4原生证据保留，本轮原生与report均待执行。
+
+| 行 | k／ρ | 自举 | 切点／深度／旋转 | 预测延迟µs | heldout agreement／logit_rel_err | max_u_calibrated／analytic | confirm／report160 |
+|---|---|---|---|---:|---|---|---|
+| R0 | [5,5]／无 | 15399／待／待 | 110／323／72051 | 4024041543 | 100%／0.00034560653508840694 | 0.9457676853764468／0.9887490283180157 | 待／待 |
+| R1 | [3,2]／.25 | 11251／待／待 | 89／261／68731 | 2959577960 | 100%／0.0003900464213968063 | 0.9457676853764468／0.9984634482165243 | 待／待 |
+| Agent首个内部可行 | [4,4]／.1 | 13529／待／待 | 102／295／未落盘 | 3542380019 | 100%／未落盘 | 0.8997862159399623／0.9863583977952812 | 未执行／未执行 |
+| Agent最终冻结 | 未产出 | 未执行 | 未产出 | 待 | 待 | 待 | 未执行／未执行 |
+
+第7轮已记录旋转密钥种数215、总运算333512；旋转操作次数未落盘。首个内部可行用到第7次调用，本模型最终消耗为8次／333288 token／3600.547074秒；R0和R1 LLM消耗均0。R0／R1的当前feasible均false，校准点未满足0.90。第7轮内部可行与完整交付成功分别记录，当前完整交付成功0。
+
+**Qwen（r8-v8干净评测）四行对照**。真实Agent按停止规则保持0次，当前未新增跨模型Agent生成证据。
+
+| 行 | k／ρ | 自举 | 切点／深度／旋转 | 预测延迟µs | heldout agreement／logit_rel_err | max_u_calibrated／analytic | confirm／report160 |
+|---|---|---|---|---:|---|---|---|
+| R0 | [8,8]／无 | 54752／待／待 | 138／391／86383 | 14095730699 | 100%／0.008348142027299872 | 0.9955370022518191／0.9898855802459958 | 待／待 |
+| R1 | [7,6]／.25 | 36928／待／待 | 115／336／79459 | 9519698819 | 100%／0.00812830705963064 | 0.9955378636948435／0.9988129539019559 | 待／待 |
+| Agent首个内部可行 | 未开始 | 未执行 | 待 | 待 | 待 | 待 | 待／待 |
+| Agent最终冻结 | 未开始 | 未执行 | 待 | 待 | 待 | 待 | 待／待 |
+
+Qwen的两份规则基线feasible均false，原因仍为校准点；报告集未访问。两模型R0／R1的完整静态成本分解（attention_A、attention_B、softmax、norm、FFN、lm_head、other、attention_projections）复用既有成本记录，已收录当前完整REPORT的comparisons字段；softmax各inv点深度沿用上节A1 §4既有表。Agent第7轮的完整分解、旋转数、近似输出logit_rel_err及逐点深度未落盘，待接续验收。未追加计算以补写缺失结果。
+
+与spec不一致之处：本轮提前启动的两项本地准备遇到自身精调持有的Nix锁，原失败保留，锁释放后串行准备完成。 STATUS任务卡更新曾误匹配历史R7c表中的A1行，已按HEAD恢复原parse／false／null记录；历史运行产物保持。当前轮新写代码的bias轴说明、导出前接口／静态方法检查顺序已在冻结前补齐并通过测试。超时原REPORT的llm_calls缺省为0，原件保持；当前汇总按持久客户端、8个响应和8条API登记记实际8次。未修改算法、容差、旧测试含义、库或资源限制，冻结后仅更新文档和汇总。
+
+未完成项：需要接续spec安排第7轮候选／第8轮未完成阶段的恢复、独立确认与最终程序冻结；随后两模型按原顺序完成160条report、compiler／managed、三方自举／切点和完整RuntimePlan比较，以及§4未落盘字段。当前代码实现及离线开发诊断完成；Agent完整原样交付通过0、真实CKKS0、r8-v8 Qwen新生成0。当前阻塞由会话墙钟触发，编译器依赖故障新增0。API为BERT8/40、Qwen0/40、累计174/450，剩32＋40；旧37次与全部历史证据保持。新下载、安装、commit、tag及资源扩额0。
+
+[本轮完整REPORT](/home/lhohy/pt_agent_results/A1-transformers-v8-wall-stop-20261027T180318-3a77/REPORT.json)。
+
+
+### A1 §6.8 冻结清单附录：分步编排（2026-10-28）
+
+**r8-v8 决策行为不变**。仅追加三个编排文件的本轮修改：`planners/agent.py`、`planners/transformer_session.py`、`experiments/a1_transformer_agent.py`（均位于scripts/pt_agent）。原36文件清单保留；其中上述3个编排文件按§6.8更新，其余33个依赖本轮未修改。新增`tests/test_a1_session_steps.py`验证分步编排，文档仅写本STATUS；commit／tag未执行。
+
+每个LLM＋evaluate、tune、confirm各用一个受限进程；外层只串接、记账，内层每步原子保存SESSION.json，包含messages／history／pool／records／best／first_feasible／llm_min／has_tuned／tune_cache及调用计数。TuneResult同时保存程序文本。4／6GiB、3600秒、tuner传入2400秒、8GiB文件及10GiB磁盘准入保持。旧r8-v4到r8-v7入口继续原流程。
+
+测试：`Ran 64 tests in 7.376s`，`OK`，失败／错误／跳过均0；新增10项，覆盖成功、不可行、预算耗尽、length、interface、跨步骤精调缓存、stale停止和解析域停止，逐项比较trace、pool、候选顺序、消息和冻结结果。非有限诊断与tuple键的状态存取也通过。[测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261028T025013-0c82/REPORT.json)。
+
+接下来从原会话A1-bert-session-20261027T165801-fd6d恢复；先独立重评第7轮，cost／validation／feasible一致才重建7轮状态，第一轮精调按trace复用。第8轮读取已有响应，API仍8/40。提示、反馈、eligible／new_llm_best／tune条件、tuner、confirm判据与容差均保持。`llm_min`计入不可行成本且第7轮未触发精调的局限保留；两模型R0／R1校准rsqrt不可行仍原样报告。当前未读report、未新增API、未运行CKKS；编译器依赖阻塞新增0。
+
+
+A1 §6.8 BERT恢复进度（2026-10-28）：[新会话](/home/lhohy/pt_agent_results/A1-bert-session-20261028T025117-861c)已恢复前7轮，逐行trace一致；[第7轮重评](/home/lhohy/pt_agent_results/A1-bert-session-20261028T025117-861c/ROUND7_REEVALUATION.json)的cost／validation／feasible三项均true。第一轮tune记录复用，无重跑。第8轮读取原call-008响应，在42.869515秒内完成独立evaluate：exact最大差6.661338147750939e-16，20/20，max_u_calibrated=0.8979038175828256、max_u_analytic=0.9890486836407468；预测11275自举／98切点／深度287、2964897080µs。按原new_llm_best条件进入独立tune；完整结果尚未返回，状态保存在SESSION.json。BERT仍8/40、Qwen0/40、累计174/450；原第7轮为首个可行结果，尚无确认／冻结／report或新增编译。
+
+
+### A1 §6.8 恢复会话完成、继续第9次调用（2026-10-28）
+
+[恢复REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T025117-861c/REPORT.json)：完整执行并正常退出，status=confirm_failed；没有FROZEN.json。独立进程耗时：恢复49.003997秒、evaluate 42.869515秒、tune 2579.567153秒、confirm 4.551422秒；每个均在3600秒内。会话总2676.015893秒，累计模型调用仍8/40，API新增0；原超时报告未修改。
+
+第8轮精调6次粗评／7次完整评估，5次接受，最终Mock可行：20/20，max_u_calibrated=0.8987851582835645、max_u_analytic=0.9890918958104457。自举11275→10115，预测延迟2964897080→2665325520µs，切点98→100、深度287→291，旋转70411。接受内容依次为第7行rsqrt降阶、第11行softmax k 4→3、该softmax exp改7阶absolute remez、step_inv改relative newton(7,2)、第16行rsqrt 15→7；第二个softmax k仍4，ρ仍.1。最终程序作为开发精调成果保留于trace和SESSION的TuneResult，无确认通过记录。
+
+确认按预测延迟顺序评估3份，均agreement=100%、无发散，解析点均在范围内；校准点失败：
+
+| 候选 | 自举／预测µs | max_u_calibrated／analytic | 首个校准失败证据 | 结论 |
+|---|---|---|---|---|
+| 第8轮tuned | 10115／2665325520 | 1.2040535981767524／0.9765811870583615 | 第16行getitem_3::rsqrt，定义域[1.5,10.5]、观测上界11.418241191795387 | 未通过 |
+| 第8轮原文 | 11275／2964897080 | 1.234193107248564／0.9773675758736465 | 同点观测上界11.553868982618537 | 未通过 |
+| 第7轮原文 | 13529／3542380019 | 1.2177883473813986／0.9735716648786981 | 同点观测上界11.480047563216294 | 未通过 |
+
+此结果进入§6.8明确规定的confirm失败分支；当前无需新的设计决定。已按§3.2开启[A1-bert-session-20261028T033706-5ca7](/home/lhohy/pt_agent_results/A1-bert-session-20261028T033706-5ca7)，从持久客户端第9次请求继续，40次上限、冻结r8-v8及全部判据保持。新会话从原始冻结提示建立，不传入确认结果，不依据确认重写域或margin。Qwen保持0次；report、原生编译及CKKS仍新增0。
+
+
+A1第二个r8-v8会话首轮（全局模型调用9）已完成LLM＋evaluate：数学最大差1.2212453270876722e-15，24/24近似点映射一致；heldout 20/20，无发散，max_u_calibrated=0.9975919867653524、max_u_analytic=0.9211717520511604，feasible=false；预测延迟4564777102µs。按原eligible／首次tune条件进入独立tune；本轮不修改该策略。状态位于A1-bert-session-20261028T033706-5ca7/SESSION.json，当前无待决定项。BERT9/40、累计175/450；Qwen0、report／原生编译／CKKS新增0。
+
+
+第二个r8-v8会话第1轮（模型调用9）tune已正常完成：37次粗评／2次完整评估、0接受；最终Mock为20/20、max_u_calibrated=0.9975919867653484、max_u_analytic=0.9211717520511604，feasible=false，与tensor判定一致。tuner记录2648.997899秒、独立步骤2651.881419秒，均保留原2400参数预算和3600进程时限；峰值内存观测约3.23GiB。已自动顺序启动第10次请求；未新增确认、report、编译或CKKS。
+
+
+第二会话第2轮（模型调用10）已完成，stage=validation、feasible=false，agree=0，max_u=1.7583063510967546e101，数值发散；预测12836自举、3362802480µs。虽然new_llm_best=true并更新llm_min，diverged使eligible=false，未启动tune。该结果属于已登记的内部不可行反馈路径，现已顺序进入第11次请求；当前无新的设计问题或后端阻塞证据。报告集／编译／CKKS继续未执行。
+
+
+第二会话第3／4轮（模型调用11／12）：11为complete但校准点max_u=0.9446425986976708，不可行；12为complete且feasible=true，20/20、max_u_calibrated=0.8864296275124102、max_u_analytic=0.9869480483172302，预测17516自举／4564777102µs。两者均未tune：已有has_tuned=true，llm_min仍为第10次发散程序的3362802480µs，故new_llm_best=false。该已知局限按§6.8只记录。第12次是第二会话首个内部可行原文（本版本全程首个仍为第7次），确认／冻结尚待会话结束。当前已顺序进入第13次调用，无report访问或编译。
+
+
+第二会话第5轮（模型调用13）原文内部可行：exact最大差5.551115123125783e-16、20/20近似点映射；heldout 20/20，max_u_calibrated=0.8846270623494908、max_u_analytic=0.986927941905996；预测12332自举／100切点／深度294／3233700613µs、总运算319274、旋转密钥种数215。当前latency低于原llm_min=3362802480，new_llm_best=true，按冻结条件进入[007-tune](/home/lhohy/pt_agent_results/A1-bert-session-20261028T033706-5ca7/steps/007-tune)。第12次及第13次均已进入候选池流程；最终确认仍未执行，原文、历史响应和所有消费保留。
+
+
+第二会话第5轮（模型调用13）tune已正常结束：6次粗评／8次完整评估，6次接受，tuner记录2588.625155秒，最终Mock可行，20/20、max_u_calibrated=0.8857691892703492、max_u_analytic=0.9928638995408986。自举12332→10789、切点100→97、深度294→281、预测延迟3233700613→2839968813µs。新的tuned候选已进入pool，尚未确认；现已顺序进入第14次请求，Prompt／反馈格式／判定均保持。报告集与原生编译仍未执行。
+
+
+### A1 §6.8 最终停止汇报（2026-10-28 / 62ecf194-dirty）
+
+改动文件：scripts/pt_agent下的`planners/agent.py`、`planners/transformer_session.py`、`experiments/a1_transformer_agent.py`；新增`tests/test_a1_session_steps.py`；文档仅本STATUS。原36文件冻结清单保留，三编排文件的附录注明“r8-v8 决策行为不变”。没有新增commit／tag。
+
+测试输出：`Ran 64 tests in 7.376s`，`OK`；失败0、错误0、跳过0。新增10项覆盖分步／一次性运行的trace、pool、候选顺序、消息和冻结结果；包括成功、不可行、预算耗尽、length、interface、精调缓存、stale及解析点停止。r8-v4到r8-v7继续原入口，相关回归通过。原前7轮trace重建一致、第8轮消息上下文与原请求一致；第7轮cost／validation／feasible重评全部一致。第一轮旧tune只复用记录，没有重跑；第8轮原响应未新增API。
+
+分步执行证据：恢复会话4步，共2676.015893秒；后续会话9步，共5981.759822秒。13个步骤均在原3600秒内，最长2651.881419秒。提示、反馈文本、eligible／new_llm_best／tune条件、tuner及confirm判定保持。状态在每步后原子写入，包含messages、history、pool、records、best、first_feasible、llm_min、has_tuned、tune_cache（含程序文本）及调用计数。原超时REPORT、响应、源码、程序包及已消费额度保持。
+
+第14次停止的已有逐点记录（同为第11行softmax，按运算顺序）：
+
+| 点 | 来源 | 声明域 | 观测值 | u | 结论 |
+|---|---|---|---|---:|---|
+| exp | calibrated | [-3.041368889085825,0.6682861856780424] | 最小-5.04688791764336 | 2.081242858507644 | 超出声明域 |
+| inv | analytic | [0.0006121491910850458,1.0] | 最小-0.006595873713267246 | 1.0144248759848702 | 解析点u>1 |
+| step_inv[0] | analytic | [0.009375,2.34375] | 最大647363.457232319 | 554634.3502392024 | 解析点u>1 |
+| final_inv | analytic | [0.009375,2.34375] | 最大inf | inf | 非有限／停止 |
+
+第14次独立数学检查最大差7.494005416219807e-16，通过；近似执行20/20发散、agree=0。以上是已有记录中的越界链条，不将它解释为已确认的编译器内部问题。依§6.7停止，第二会话候选pool保留3份，确认评估0、selected=None；report、原生编译及CKKS没有执行。未从保留池中改选程序绕过停止条件。
+
+逐次记录（模型调用号；每次均为原响应，tuned单列）：
+
+| 调用 | 反馈 | 原文内部可行 | heldout agree／cal u／analytic u | 精调／后续 |
+|---:|---|---|---|---|
+| 1–7 | 复用旧7轮trace并重建 | 第7次可行 | 第7次20/20／0.8997862159399623／0.9863583977952812 | 第1次旧tune复用；第7次重评一致 |
+| 8 | complete | 通过 | 20/20／0.8979038175828256／0.9890486836407468 | 6粗评／7完整、5接受；原文及tuned确认均未通过 |
+| 9 | complete | 未通过 | 20/20／0.9975919867653524／0.9211717520511604 | 37粗评／2完整、0接受，最终Mock不可行 |
+| 10 | validation | 未通过 | 0/20／1.7583063510967546e101／0 | 发散；跳过tune |
+| 11 | complete | 未通过 | 20/20／0.9446425986976708／0.9869480483172297 | 非new_llm_best，未tune |
+| 12 | complete | 通过 | 20/20／0.8864296275124102／0.9869480483172302 | 非new_llm_best，未tune |
+| 13 | complete | 通过 | 20/20／0.8846270623494908／0.986927941905996 | 6粗评／8完整、6接受，最终Mock可行 |
+| 14 | validation | 未通过 | 0/20／2.081242858507644／inf | §6.7停止；未tune、未确认 |
+
+第13次的6项接受：第7行 rsqrt {'deg': 15}；第11行 softmax {'kind': 'steps', 'old': {'steps': 4, 'rho': 0.25}, 'new': {'steps': 3, 'rho': 0.25}}；第16行 rsqrt {'deg': 15}；第18行 act {'deg': 31}；第21行 rsqrt {'deg': 15}；第25行 softmax {'kind': 'inv_budget', 'old': {'steps': 4, 'rho': 0.25}, 'new': {'steps': 4, 'rho': 0.5}}。完整old／new、接受和拒绝记录保留在REPORT及原trace。
+
+**BERT（开发模型）四行对照**。本轮compiler／managed及report均未执行；缺值保留。
+
+| 行 | k／ρ | 预测自举／切点／深度／旋转 | 预测延迟µs | heldout agreement／logit_rel_err | cal u／analytic u | confirm／report |
+|---|---|---|---:|---|---|---|
+| R0 | [5, 5]／无 | 15399/110/323/72051 | 4024041543 | 100.0%／0.00034560653508840694 | 0.9457676853764468／0.9887490283180157 | 未执行／未执行 |
+| R1 | [3, 2]／0.25 | 11251/89/261/68731 | 2959577960 | 100.0%／0.0003900464213968063 | 0.9457676853764468／0.9984634482165243 | 未执行／未执行 |
+| Agent首个内部可行 | [4, 4]／0.1 | 13529/102/295/缺记录 | 3542380019 | 100.0%／缺记录 | 0.8997862159399623／0.9863583977952812 | 20/20；未通过／未执行 |
+| Agent最终冻结 | 未产出 | 未产出 | — | 未产出 | 未产出 | 未执行／未执行 |
+
+**Qwen（r8-v8干净评测，Agent未启动）四行对照**。本轮compiler／managed及report均未执行；缺值保留。
+
+| 行 | k／ρ | 预测自举／切点／深度／旋转 | 预测延迟µs | heldout agreement／logit_rel_err | cal u／analytic u | confirm／report |
+|---|---|---|---:|---|---|---|
+| R0 | [8, 8]／无 | 54752/138/391/86383 | 14095730699 | 100.0%／0.008348142027299872 | 0.9955370022518191／0.9898855802459958 | 未执行／未执行 |
+| R1 | [7, 6]／0.25 | 36928/115/336/79459 | 9519698819 | 100.0%／0.00812830705963064 | 0.9955378636948435／0.9988129539019559 | 未执行／未执行 |
+| Agent首个内部可行 | 未启动 | 未产出 | — | 未执行 | 未执行 | 未执行／未执行 |
+| Agent最终冻结 | 未产出 | 未产出 | — | 未产出 | 未产出 | 未执行／未执行 |
+
+四份R0／R1基线仍因校准rsqrt超过0.90而不可行，原样报告；没有根据确认或报告结果改域、改margin或改参考。首个内部可行仍为第7次，但其确认校准u=1.2177883473813986，未通过。第二会话第12、13次及13精调只算内部开发成果；第14次停止后没有最终冻结程序。
+
+第13次开发精调（明确未冻结）：k=[3, 4]、ρ=[0.25, 0.5]；10789自举／97切点／深度281／68811次旋转／2839968813µs；heldout最终Mock 20/20、cal u=0.8857691892703492、analytic u=0.9928638995408986。其logit_rel_err及confirm／report未评；未加入最终冻结行。
+
+已有静态成本分解（每格为自举数／预测µs；全部复用既有记录）：
+
+| 组 | BERT R0 | BERT R1 | 第13次开发精调 | Qwen R0 | Qwen R1 |
+|---|---|---|---|---|---|
+| attention_A | 240／86519941 | 240／86519941 | 240／86519941 | 4224／1094659328 | 4416／1144373728 |
+| attention_B | 3360／882047506 | 3360／882122451 | 3360／882087774 | 4224／1098931424 | 4288／1115808256 |
+| softmax | 9418／2419339840 | 5271／1355084031 | 5292／1360540867 | 42176／10833950542 | 24128／6199408486 |
+| norm | 1294／334379194 | 1294／334380468 | 1266／327341176 | 2112／543555712 | 2112／543555712 |
+| FFN | 84／33056677 | 84／33026403 | 43／21993404 | 192／53334784 | 192／53397888 |
+| lm_head | 0／0 | 0／0 | 0／0 | 0／206226 | 0／206226 |
+| other | 882／226719384 | 881／226465665 | 467／119506650 | 1568／403357259 | 1632／419570123 |
+| attention_projections | 121／41979001 | 121／41979001 | 121／41979001 | 256／67735424 | 160／43378400 |
+
+softmax逐点深度沿用既有记录（exp／inv／step_inv／final_inv）：
+
+| 模型／softmax | R0 | R1 |
+|---|---|---|
+| BERT／第1处 | 5／8／8／无 | 5／8／7／8 |
+| BERT／第2处 | 5／8／8／无 | 6／13／7／8 |
+| Qwen／第1处 | 5／11／8／无 | 6／8／6／8 |
+| Qwen／第2处 | 5／8／8／无 | 6／15／6／8 |
+
+第7次原文的旋转数、近似logit_rel_err、完整分解和逐点深度仍缺记录；§6.8要求确认通过后补齐，本次停止后未追加数值计算。第13次开发精调的逐点深度也未补算，未从总深度或延迟推断。
+
+额度与耗时：本节新增6次真实API（9–14），原8次不重计；本版本BERT14/40、Qwen0/40，累计180/450。r8-v8输入452968、输出190928、合计643896 token，API870.309958秒；14份请求／响应与registry167–180十四条记录齐全，14个finish_reason均stop，API错误0、length反馈0。剩BERT26、Qwen40、全局270，全部保留。registry840条。
+
+与spec不一致之处：本轮没有新增决策、签名、判据或参数差异，没有修改旧测试。冻结tuner仍接收2400秒参数；含最终Mock的实际tuner记录为2576.881947／2648.997899／2588.625155秒，原实现行为原样保留并公开记录；每个进程均在3600秒内，没有放宽资源。原第1次2591.850667秒只复用记录，未再次消耗本节计算。
+
+未完成项：需新的接续spec处理第14次的解析点越界停止；BERT最终确认／冻结、report160、R0／R1同组报告和双模式编译、managed IR大小预报、三方自举／切点与完整RuntimePlan仍未完成。Qwen真实Agent保持0，继续等待BERT。首次完整原样交付通过0，冻结0，真实CKKS0；CKKS另行安排，本轮没有运行。编译器依赖阻塞证据新增0；本次停止点是候选域覆盖和已冻结的解析点停止策略。源码、历史响应、原超时报告、程序包和已消费额度保持；下载、安装、库修改、资源扩额、commit、tag均0。
+
+[完整REPORT](/home/lhohy/pt_agent_results/A1-transformers-s68-stop-20261028T060310-e9da/REPORT.json)。
+
+
+### A1 §6.10 速度优化开始（2026-10-28）
+
+工作目录／分支已核对为 Poseidon／lhy-agent-dsl，源码基准62ecf194-dirty。修改前pt_agent代码保存在 `/tmp/a1-s610-before/pt_agent`，供完整结果与DAG编号对照。必做范围为kernel公开只读向量复用、Backend.const身份快速路径、CostDag单次转换；可选lowering前缀复用暂未启用。先进行无API验证，随后处理§6.9。其他历史改动原样保留。
+
+
+A1 §6.10 首批速度与等价性（2026-10-28）：原64项加本轮常量身份7项／kernel复用8项，共79项在Nix通过，失败0；新增实验入口6项纯Python测试通过。两个首批程序的estimate完整结果、规范化前后DAG全部逐项相同。BERT第13次：43.944076→18.987256秒（下降56.79%），峰值642449408→1143635968字节；Qwen R1：31.525258→23.403340秒（下降25.76%），峰值682045440→1066676224字节。观测序列化时间从estimate时间扣除，峰值含观察器。数据来自 [速度对照目录](/home/lhohy/pt_agent_results/A1-offline-speed-compare-20261028T063059-811a)，该目录继续补齐68例，已通过两例复用。正式2400秒精调与按评估次数的决策等价仍待执行，lowering前缀复用未启用。
+
+本轮自写接入修正：初始kernel缓存helper作为新模块导入时，P2导出检查拒绝`public_vectors`；现移入已有导出模块kernels/slots.py，原断言保持，79项通过。初次旧版对照因/tmp快照层级不足，toolchain.py导入的parents[4]触发IndexError，尚未执行estimate；现按原checkout层级布置旧源码副本及现有资源链接，重新对照两例均通过。两个原失败REPORT保留，未修改冻结旧代码。
+
+用户已统一§6.9调用范围：加速和测试阶段API新增0；全部通过后，按原40次模型预算从第15次继续。当前BERT14/40、Qwen0/40、累计180/450，尚未新增请求。
+
+A1 §6.10 静态对照完成：主集合68/68与补充直接静态路径16/16均一致。合并后44份程序取得完整成本与DAG对照，其余24份的解析／检查／既有估计错误相同，未把拒绝程序计为成功成本结果。完整证据：`A1-offline-speed-compare-20261028T063059-811a/REPORT.json` 和 `A1-offline-speed-compare-20261028T070942-addd/REPORT.json`。
+
+本轮离线86/86通过（原64＋常量7＋公开向量8＋实验入口7），失败／错误／跳过均0，证据 `A1-bert-unit-20261028T071855-0d4e/REPORT.json`。新增实验测试最初漏传normalized必填字段，已只补夹具字段，断言保持；原失败 `A1-bert-unit-20261028T071754-0317` 保留。固定4次成本评估的新旧tune对照正在串行执行，正式2400秒时间对照待执行。
+
+
+A1 §6.10 本次收尾（2026-10-28）：[REPORT](/home/lhohy/pt_agent_results/A1-transformers-speed-stop-20261028T072124-ff90/REPORT.json)。主68例与补充16例合并为44份完整成本／DAG一致、19份类型检查拒绝一致、2份既有estimate错误一致、3份解析拒绝一致。固定次数精调尚未得到一组完整新旧结果，§6.10保持未完成；可选lowering前缀复用未启用。§6.9、§6.11及第14次响应重评／第15次API均未执行。原程序、响应、超时报告、旧精调结果及消费保持。
+
+与spec不一致之处：无算法、容差或判据调整。本轮自写的三个接入／夹具错误已按例外修正并保留失败证据（P2 helper位置、旧源码副本目录层级、normalized必填字段）。本次外层汇总登记最初遗漏ts，registry在写入前拒绝；补齐时间字段后仅追加一次，报告原件保持。registry现851条。测试API0、报告集0、编译0、CKKS0；BERT14/40、Qwen0/40、累计180/450。
+
+
+### A1 §6.9 接续实现（2026-10-28）
+
+按用户补充先做逐样本分类。修改范围：domain_criteria.py、transformer_validation.py、transformer_tensor.py、transformer_lower.py，以及experiments/a1_transformer_agent.py的内部REPORT接线和单响应回放入口。每个样本在实际执行事件发生时记录首个u>1或非有限点；校准点0.90<u≤1仍按原可行性规则拒绝，但不充当首个越界点。内部链记录engine、样本索引、点、来源、域及观测范围；原LLM反馈不增加链字段。该阶段随后已完成，结果见下方。
+
+测速更新：改前副本将共同包含§6.9，原无加速快照另存、原件保持。Qwen只测10次候选（起点和对准不计入），记录成本／验证时间和VmHWM，外层每0.2秒按worker PID及启动标识监测3.8GiB限制。BERT仍按第13次原文做改前／改后各2400秒。此前68份静态等价、86项测试及单次estimate时间继续复用。API保持180/450。
+
+A1 §6.9 已通过：原64＋原加速22＋新增分类11＋测速入口新增4，共101/101，6.691秒，失败/错误/跳过0（`A1-bert-unit-20261028T073622-97d4/REPORT.json`）。BERT第14次完整evaluate回放通过，除已批准的解析停止分类及stop字段外，整份反馈与原记录一致；20个样本的首越界均为校准点，反馈字段未增加（`A1-bert-violation-replay-20261028T073916-7ac9/REPORT.json`）。
+
+Qwen原对准步骤复查通过：样本11首越界为第6行rsqrt，u=1.1954220251540253；样本17首越界为第32行rsqrt，u=1.1215815252225492，之后第46行exp u=76245915.8005998、inv u=3.6897436207553086e110及后续非有限。两处首点均calibrated，其余18样本没有记录到越界；现有批量异常统计仍为20条diverged，保持原数值行为。分类analytic_domain_violation=false，拒绝对准并允许测速继续。证据 `A1-offline-speed-alignment-20261028T073713-62f6/REPORT.json`，worker25.135191秒、峰值1171292160字节。外层聚合最初重复传case导致TypeError，已修本轮自写代码并补resume测试；原worker与COMPARISON保留，--resume仅汇总，未重算。
+
+冻结清单附录（§6.9）：domain_criteria.py、transformer_validation.py、transformer_tensor.py、transformer_lower.py、experiments/a1_transformer_agent.py；新增tests/test_a1_violation_order.py。只改停止分类，r8-v8提示词、反馈格式和可行性判据保持；内部链在REPORT单独记录。各引擎沿其既有实际执行顺序观察，未改数值运算。commit/tag均0。
+
+测速改前代码另存`/tmp/a1-s610-before-s69/checkout/DSL/DSL_agent/scripts/pt_agent`，从原无加速快照复制并仅同步四个§6.9核心文件；原快照保持。Qwen10候选改前／改后对照已启动，3.8GiB与原4GiB/3600秒限制保持。正式BERT2400秒、§6.11及会话恢复尚待执行；API仍180/450。
+
+
+A1 §6.10 Qwen片段完成：前10次候选的history、changes、最终片段状态逐项相同；起点与对准另计，各12次成本调用/12次未命中、4次粗评/2次完整验证，0接受。片段墙钟806.612683→302.233671秒，峰值834232320→1228136448字节（0.777→1.144GiB），均低于3.8GiB。未做Qwen2400秒精调；未生成Agent候选、未冻结。完整证据 `A1-offline-speed-tune-20261028T074019-b9ff/REPORT.json`。
+| 候选 | 改前成本＋验证秒 | 改后成本＋验证秒 | 改前进程峰值MiB | 改后进程峰值MiB |
+|---:|---:|---:|---:|---:|
+| 1 | 79.407077 | 42.262516 | 795.586 | 1161.211 |
+| 2 | 68.794129 | 15.612779 | 795.586 | 1161.211 |
+| 3 | 65.234191 | 14.567723 | 795.586 | 1161.211 |
+| 4 | 64.776537 | 15.296777 | 795.586 | 1161.211 |
+| 5 | 67.919798 | 15.879209 | 795.586 | 1161.211 |
+| 6 | 71.633438 | 16.678938 | 795.586 | 1161.211 |
+| 7 | 65.597457 | 16.168233 | 795.586 | 1161.211 |
+| 8 | 67.838496 | 16.858365 | 795.586 | 1161.211 |
+| 9 | 61.937870 | 14.308096 | 795.586 | 1161.211 |
+| 10 | 99.189597 | 14.259162 | 795.586 | 1171.242 |
+
+逐候选时间覆盖成本调用及需要的粗评／完整验证；片段墙钟另含起点、对准、拟合与候选生成。峰值为该进程截至该候选的VmHWM。加速版无需额外清缓存即可完成，lowering前缀复用未启用。BERT第13次原文的4次成本预算等价已启动；随后各一次正式2400秒。API新增0、累计180/450。
+
+
+A1 §6.10 BERT固定次数对照完成：第13次程序、各4次成本调用（2个候选）、2次粗评／4次完整验证，history、changes和完整TuneResult逐项相同，均接受2项、最终Mock可行。墙钟215.998709→192.756569秒，峰值2689662976→2809032704字节（约2.505→2.616GiB）；两侧均未走完扫描，按次数测试正常收尾。证据 `A1-offline-speed-tune-20261028T075926-40a9/REPORT.json`。下一步为BERT改前／改后各一次正式2400秒测速；§6.11尚未实施，API保持180/450。
+
+
+正式测速前新增内部越界链观察器：每次验证保存程序、phase、候选号、逐样本链与结果／异常摘要，原返回结果保持；验证耗时在序列化前截取，写盘开销另记，2400秒仍按真实墙钟。`test_a1_speed` 15/15通过（0.075秒），证据 `A1-offline-speed-observer-unit-20261028T081358-47ab/REPORT.json`。本轮唯一测试累计105项有通过证据（原101＋resume1＋观察器3）。正式BERT两侧串行目录为 `A1-offline-speed-tune-20261028T081411-b486`，先改前；当前尚未收尾，API新增0。
+
+
+BERT正式测速改前已完成：墙钟2609.327096秒（最终Mock180.300528秒）、66次成本调用／66次未命中、6粗评／8完整、6接受，最终可行；10789自举、2839968813µs。扫描未走完，预算检查触发2次；峰值2970628096字节，诊断序列化0.026596秒。证据 `A1-offline-speed-tune-20261028T081411-b486/case-042/before/REPORT.json`。加速版已串行启动，尚未收尾。期间系统日期时钟跳变曾使外部文件时间差误显3600秒，已用进程单调时钟／CPU时间核实并更正监视显示；实际timeout、2400秒精调计时与资源配置均未改变。API0。
+
+
+### A1 §6.10 完成（2026-10-28）
+
+正式BERT第13次程序对照均最终Mock可行；测速结果仅用于开发报告，旧会话精调与候选池保持。
+
+| 实现 | 墙钟秒 | 成本调用 | 粗评／完整 | 接受 | 走完整轮 | 峰值字节 | 最终自举／预测µs |
+|---|---:|---:|---|---:|---|---:|---|
+| 改前（含§6.9） | 2609.327096 | 66 | 6／8 | 6 | 否，时间预算截断 | 2970628096 | 10789／2839968813 |
+| 加速（含§6.9） | 1744.668340 | 94 | 11／13 | 11 | 是 | 3007438848 | 10773／2835801593 |
+
+两侧均保持2400秒精调预算及3600秒进程限制。最终Mock收尾计入实际墙钟；诊断序列化开销分别0.026596／0.062134秒。完整证据 `A1-offline-speed-tune-20261028T081411-b486/REPORT.json`。固定次数的BERT4次成本和Qwen10候选对照严格相同；时间预算允许加速后扫描更多候选，未把正式两侧的不同候选数要求为相同。Qwen片段及单次estimate数据见上表与既有记录，未运行Qwen完整2400秒。可选lowering前缀复用未启用。
+
+冻结清单附录（§6.10）：backends/base.py、backends/cost_dag.py、kernels/slots.py、kernels/linear.py、kernels/multi.py、kernels/transformer.py；观察入口experiments/a1_speed.py；本轮常量身份／向量／观察器测试。**实现加速，判定规则不变，tuner 在同一预算内可走得更远**。无commit／tag。§6.11现开始实现，API保持180/450。
+
+
+### A1 §6.11 实现、离线回放和恢复完成（2026-10-28）
+
+131/131测试通过，5.869秒，失败／错误／跳过0：`A1-bert-unit-20261028T101746-4fe9/REPORT.json`。原64项保留，其中指定旧测试仅显式选择 `v8-pre-6.11`，原断言保持；新增同输入默认规则镜像。新对准测试按调用数验证起点、对准与最终Mock分开计数，失败只有domain/result，退化及预检失败对准调用0，允许可行对准成本增加；可行起点的新旧固定预算结果相同。r8-v4～v7保持原文本与行为，拒绝非默认内部规则。
+
+冻结清单附录：**§6.11 决策修订**。修改 `planners/agent.py`、`planners/transformer_tuner.py`、`planners/transformer_session.py`、`experiments/a1_transformer_agent.py`；参数化 `tests/test_a1_session_steps.py`，新增 `tests/test_a1_agent_rule.py`、`tests/test_a1_tune_rule.py`、`tests/test_a1_recovery_rule.py`。提示词、反馈字段及CNN tuner保持；tune_rule只在trace／SESSION／REPORT记录。commit/tag均0，按用户决定由Claude后续处理。
+
+14次只读触发回放：旧实际1、8、9、13触发；固定既有反馈的新规则为1、7、8、9、12、13。第1／9次旧不可行精调合计5240.848566秒；原记录未保留对准后的可行性、成本或分段耗时，且新规则增加第7／12次触发，因此净节省秒数记null，不将87.35分钟记为已节省。逐行表与条件式返回位置见 `A1-bert-decision-replay-20261028T101822-9f36/DECISIONS.json`；未重跑这些精调。
+
+第二会话恢复目录：`A1-bert-s611-recovery-20261028T101830`。前5轮trace、messages与决策history逐项一致，仅trace新增tune_rule元数据；第9／13次精调按原结果复用。保存的第14次请求上下文相同，响应重评除批准的停止分类外整份反馈相同，记录普通发散且不再停止，未触发精调。规则切换前后：第13次后llm_min=3233700613；第14次旧规则后=2592782653；第15次前新规则重算=3233700613。三个值及会话第7轮／模型第15次边界已原子写入SESSION；旧响应、旧停止REPORT和缓存全部保留。恢复／重评／迁移REPORT分别为 `A1-bert-session-step-20261028T101832-ab44`、`A1-bert-session-step-20261028T101900-2aa9`、`A1-bert-session-step-20261028T101924-26df`。上述过程API新增0。
+
+与spec不一致之处：指定旧测试按补充参数化，原断言未改；本轮自写外层alignment汇总的重复case参数及全复用resume局部变量已修正并补测试，旧worker结果复用。没有改动算法、数值条件或资源限制。尚待第15次起真实会话、确认／冻结、report160及两模式编译；Qwen待BERT通过后启动。
+
+
+### A1 §6.11 第15次精调完成（2026-10-28）
+
+第15次原文内部可行；精调1359.858042秒（外层1361.952600秒），10次粗评／11次完整评估、接受9项，最终Mock20/20、校准max_u=0.8859216934520258、解析max_u=0.99688676162861。自举10789→9761、切点97→91、深度281→267、旋转68771、预测延迟2839968813→2575641024µs。softmax参数移动为第11行ρ=0.25→0.5、第25行k=4→3，另含7个逐点降阶；完整原文与history保存在会话trace中。结果属于开发精调，确认待会话末尾执行。证据：`A1-bert-s611-recovery-20261028T101830/steps/002-tune/REPORT.json`及`agent_trace.jsonl`。第16次已按原预算启动，旧结果和额度均保留。
+
+
+### A1 第二会话完成、按协议接续第17次（2026-10-28）
+
+第16次精调1299.534012秒，10粗评／11完整、9项接受，最终Mock20/20可行；预测9093自举、89切点、深度257、2401761558µs。第二会话7份候选规范化去重为5份，确认0/5，全部n_diverged=0；不生成FROZEN，也未读report或编译。按速度排序的确认记录如下：
+
+| 模型调用／来源 | agreement_pct | 校准max_u | 解析max_u | 通过 |
+|---|---:|---:|---:|---|
+| 16／tuned | 95 | 1.068864307885893 | 0.9982557444957613 | 否 |
+| 15／tuned | 100 | 1.0688606660466162 | 0.9941708595640284 | 否 |
+| 13／tuned | 100 | 1.0669458789387518 | 0.9896165362502437 | 否 |
+| 13／llm | 100 | 0.9297928038562004 | 0.9727130460957772 | 否 |
+| 12／llm | 100 | 1.0786850856946326 | 0.9726679724778096 | 否 |
+
+最快候选第16行rsqrt的声明域为[1.4,11.1]，确认观测上界11.433991893246581；按原校准点u≤0.90判定失败。没有修改域、margin或样本；确认信息不回传给Agent。会话证据：`A1-bert-session-20261028T102109-3e4e/REPORT.json`、`A1-bert-s611-recovery-20261028T101830/AGENT.json`。按§3.2允许分支开启第三会话`A1-bert-session-20261028T110734-9ce8`，从第17次开始，剩24次；原预算、历史响应和失败保持。
+
+第7次首个可行原文补报完成：heldout20的logit_rel_err=0.00015657043303867848，7项旧验证字段逐项相同；同时记录各softmax点独立深度。2.348814秒，峰值316592128字节，API0／report0／选择影响0。证据：`A1-bert-first-feasible-metrics-20261028T110711-db8f/REPORT.json`。完整静态成本直接复用case-036：70411旋转、13529自举、102切点、深度295、3542380019µs，成本分解保持。
+
+
+### A1 §6.11 首次真实不可行起点提前返回（2026-10-28）
+
+第三会话第1轮（模型第17次）：定义域对准未通过，206.132725秒完成正常Mock收尾；coarse_evals=0、full_evals=2、changes=[]、feasible=false、history严格为domain/result，llm_min保持空。起点／最终Mock的20/20、校准u=1.0609897780775652一致，原成本保持3040948916µs；没有执行降阶或softmax扫描。证据：`A1-bert-session-20261028T110734-9ce8/steps/002-tune/REPORT.json`及`agent_trace.jsonl`。第18次已接续，API不重置。
+
+监视脚本的本轮自写修正：首次evaluate结束前SESSION尚不存在，补存在性分支后继续只读监视；额外的打印规范化核对误用了缺numpy的系统Python，未改产品代码或运行状态。该额外核对未重跑，既有通过证据`test_a1_tune_rule.py:92/106/124`覆盖返回source等于原程序规范化打印；正常tuner沿用finish()打印，原响应文件独立保留。
+
+
+### A1 §4 阶段对照（截至第二会话；第三会话进度另列）
+
+| BERT阶段 | k／ρ | 预测自举／切点／深度／旋转 | 预测µs | heldout agreement／logit_rel_err | heldout校准u／解析u | 确认 |
+|---|---|---|---:|---|---|---|
+| R0 | [5,5]／未设置 | 15399／110／323／72051 | 4024041543 | 100%／0.00034560653508840694 | 0.9457676853764468／0.9887490283180157 | 未执行；heldout不可行 |
+| R1 | [3,2]／[0.25,0.25] | 11251／89／261／68731 | 2959577960 | 100%／0.0003900464213968063 | 0.9457676853764468／0.9984634482165243 | 未执行；heldout不可行 |
+| 首个可行原文（第7次） | [4,4]／[0.1,0.1] | 13529／102／295／70411 | 3542380019 | 100%／0.00015657043303867848 | 0.8997862159399623／0.9863583977952812 | 100%，校准u=1.2177883473813986，失败 |
+| 精调并冻结 | 尚无 | — | — | — | — | 两次会话均失败 |
+
+上述四行在A1的report160、compiler／managed及完整RuntimePlan均未执行；历史U4结果保留原轮次身份。确认记录未保存logit_rel_err，明确记为缺失。R0/R1留出证据`A1-bert-baselines-20261027T160510-c936/BASELINES.json`；成本复用`A1-offline-speed-compare-20261028T063059-811a`的case-000、001、036。第7次inv独立深度均7，step_inv与final_inv均8，完整逐点表见补报。
+
+第7次成本分解：attention_A 240自举／86519941µs；attention_B 3360／882122451；softmax 7923／2034879489；norm 1383／357433341；FFN 41／21472698；attention_projections 121／41983481；other 461／117968618；lm_head 0。
+
+第二会话去重保留：第15次LLM原文与第13次tuned重复，第16次LLM原文与第15次tuned重复，7份缩为5份实际确认。第15次tuned的k=[3,3]、ρ=[0.5,0.5]；第16次tuned进一步为k=[2,2]，ρ保持。两次会话累计16调用、980424 tokens；第一会话输入240621／输出92667，第二输入541740／输出105396。第7次首个可行原文累计282783 tokens。恢复AGENT的seconds仅记录恢复过程，不作为完整历史会话墙钟；旧中断计时继续保留。
+
+
+### A1 第18次精调完成（2026-10-28）
+
+1385.708903秒、12次粗评／13次完整评估、11项接受；最终Mock20/20，校准u=0.8923391329881946、解析u=0.9968854125429771。预测自举12666→10144、切点95→94、深度274→275、旋转68811、延迟3319860634→2674624525µs；原定义域对准未采纳，后续既定扫描正常完成。证据`A1-bert-session-20261028T110734-9ce8/agent_trace.jsonl`及`steps/004-tune/REPORT.json`。第19次已返回、评估中，累计185/450、BERT19/40，确认仍待本会话结束。
+
+只读复核：第18次11项接受由4项softmax移动、7项逐点阶数调整组成，最终k=[3,4]、ρ=[0.5,0.25]。第17次未接受程序变更，返回source沿用既有打印规范化；原始LLM文本独立保存。第17次对准后完整验证统计未单独持久化，history记录accepted=false，REPORT保留逐样本越界链；不据此填造对准后的最差u。第17次206秒是本程序实测，旧约2600秒来自其他程序及加速前实现，不作为同程序净节省值。
+
+### A1 第19次精调完成（2026-10-28）
+
+1392.692946秒（独立步骤1395.476326秒）、11次粗评／11次完整评估、9项接受；最终Mock20/20，校准u=0.8889593347458893、解析u=0.9968854125429771，feasible=true。预测自举10144→9475、切点94→96、深度275→279、延迟2674624525→2501372847µs；保留全部history和原文。证据`A1-bert-session-20261028T110734-9ce8/steps/006-tune/REPORT.json`及trace第3行。第20次按原协议接续，尚未确认。只读汇总曾误用tuned.cost字段，已改读既有cost_before/cost_after；产品代码与运行均未改。
+
+### A1 第20次精调完成（2026-10-28）
+
+1338.254652秒、5次粗评／5次完整评估、3项接受；最终Mock20/20、校准u=0.8909119324539445、解析u=0.9949301751107362，feasible=true。预测自举9475→9297、切点96→100、深度279→291、旋转68811、延迟2501372847→2455657116µs。证据`A1-bert-session-20261028T110734-9ce8/steps/008-tune/REPORT.json`及trace第4行。第21次已按原协议请求，确认与冻结待会话结束。
+
+### A1 第21次解析域停止及本轮收尾（2026-10-28）
+
+第三会话外层退出1，4905.586072秒；Agent状态error，原因analytic_domain_violation。第21次exact最大差9.159339953157541e-16，heldout20/20、非有限发散0；校准max_u=0.9992093231654837、解析max_u=1.0024707328953906。第12行首个softmax的step_inv[0]为以下样本的第一个越界点（局部样本编号，domain_source=analytic，event_index=3），此前近似点没有更早u>1或非有限值：
+
+| 样本 | 首点观测最小值 | 首点u | 后续越界 |
+|---|---:|---:|---|
+| 7 | 0.00020939846194888102 | 1.002347946524431 | final_inv |
+| 10 | 0.0010634390901359957 | 1.0018412227895361 | 无 |
+| 11 | 0.000034061196661003554 | 1.0024519785236128 | final_inv |
+| 14 | 0.00004835763208412768 | 1.0024434960897401 | final_inv |
+| 15 | 0.00004168068451702176 | 1.0024474576902742 | final_inv |
+
+声明域统一为[0.004166666666666667,3.375]，均从下界越出，另15个样本没有观测越界。第20→21次原文静态对照仅3行变化：首个softmax k从3到2、exp域扩大且7→15阶，首个inv从relative Remez31换成relative Newton(deg0=7,iters=4)，域下界由0.0006121491910850458变为0.000014989065285843031；其余两处是后方softmax和GELU。此静态差异仅记录候选变化，尚未确定根因；未运行额外数值诊断、未修改拟合参数、域、样本或判据。
+
+第21次tuned=null。随后010-confirm仅执行错误收尾：selected=null、evals=[]；pool_size=6。报告中的deduplicated before=6/after=0来自停止分支，实际确认评测0次。没有FROZEN、没有第22次请求，Qwen0；BERT还剩19次。前两会话确认0/3、0/5保持，第三会话候选及全部原始响应保留。
+
+| 第15次起真实精调 | 秒 | 粗评／完整评估 | 接受数 | 最终Mock／自举 |
+|---|---:|---|---:|---|
+| 15 | 1359.858042 | 10／11 | 9 | 可行／9761 |
+| 16 | 1299.534012 | 10／11 | 9 | 可行／9093 |
+| 17 | 206.132725 | 0／2 | 0 | 不可行／11579；仅domain/result |
+| 18 | 1385.708903 | 12／13 | 11 | 可行／10144 |
+| 19 | 1392.692946 | 11／11 | 9 | 可行／9475 |
+| 20 | 1338.254652 | 5／5 | 3 | 可行／9297 |
+| 21 | 未精调 | — | — | 首个解析点越界，停止 |
+
+开发诊断已完成：131/131；44份完整成本/DAG一致、其余24份按原拒绝/错误分类一致；BERT固定次数完整结果相同、Qwen10候选history/changes相同；单次estimate BERT43.944→18.987秒、Qwen31.525→23.403秒。BERT完整精调2609.327→1744.668秒，粗评/完整6/8→11/13，峰值2.767→2.801GiB，由未完成扫描变为完成；Qwen片段806.613→302.234秒，峰值0.777→1.144GiB，满足3.8GiB要求。可选lowering前缀复用未启用。以上是开发及实现等价证据，新增首次原样完整交付通过0。
+
+本轮汇总：[REPORT](/home/lhohy/pt_agent_results/A1-transformers-s611-stop-20261028T123153-bb2b/REPORT.json)、[STOP](/home/lhohy/pt_agent_results/A1-transformers-s611-stop-20261028T123153-bb2b/STOP.json)；第三会话[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T110734-9ce8/REPORT.json)。187/450、registry874条；r8-v8 BERT21次共1490081 tokens，历史r8-v7 BERT37次共1124046 tokens单列。首轮可行原文第7次的成本／heldout误差与深度已补齐；旧confirm缺logit_rel_err保持明确缺失。最终冻结行、report160、compiler/managed、三方计数/切点/完整RuntimePlan及Qwen接续待新spec。
+
+本轮自写汇总修正：只读摘录将tuned.cost改为既有cost_before/cost_after；汇总报告已写好后，registry追加因漏PT_RESULTS被拒，补既有环境变量并按run_id检查后追加一次，未重复测试或API。原指定旧测试仅参数化选择v8-pre-6.11、断言不变；其余此前自写修正见§6.10／§6.11记录。无编译器、运行库、安全参数、容差或资源修改，无commit/tag。当前全部运行进程已退出，磁盘空闲24203198464字节。
+
+### A1 §6.12①离线复核与参考比较停止（2026-10-28）
+
+本轮只在`experiments/a1_transformer_agent.py`新增`budget-diagnostic`入口，复用原tensor算术、多项式求值、既有样本源和可信运行限制；尚未改domain_criteria、反馈、tuner或会话恢复。运行`A1-bert-budget-diagnostic-20261028T124955-9239`，外层2.907833秒，退出1，未出现异常；complete=false来自以下明确的参考误差比较。
+
+同一20条heldout上，指定样本7、10、11、14、15共400行（每样本2 heads×40 queries；row按head/query行优先，head=row//40、query=row%40）已逐行记录x、c、n_row、sum_p_squared与c_squared_over_n。400行均满足sum_p_squared+1e-12≥c_squared_over_n；28个解析输入越界行的c全部超出[0.5,1.5]，没有反例。指定样本全部行中c_min=0.031032076823093658。
+
+| 第12行逆 | 几何网格点数 | 声明域内最大相对误差 | spec参考 | 相对参考的差 | 要求≤1e-3 |
+|---|---:|---:|---:|---:|---|
+| inv | 100001 | 0.9697875035498709 | 0.970 | 0.0002190685052877393 | 通过 |
+| step_inv[0] | 100001 | 0.34512760125894737 | 0.345 | 0.00036985872158665586 | 通过 |
+| final_inv | 100001 | 3.5786682782701362e-6 | 3.6e-6 | 0.005925478258295447 | 未通过 |
+
+三项最大误差均在各自声明域的下界取得。final_inv原参数为relative Newton、deg0=31、iters=3，域[0.004166666666666667,3.375]；未调整系数、参数、运算顺序、参考值或比较规则。按§6.12①“复核结果不一致时停止汇报”，②预算归属规则、③五类测试及原131项重跑、④1–21离线重判／会话恢复／第22次均未执行。此前131项通过证据保留，未计为本轮重跑。与spec不一致之处：无擅自变更；本轮未完成部分由①停止条件触发。
+
+[REPORT](/home/lhohy/pt_agent_results/A1-bert-budget-diagnostic-20261028T124955-9239/REPORT.json)、[逐行DIAGNOSTIC](/home/lhohy/pt_agent_results/A1-bert-budget-diagnostic-20261028T124955-9239/DIAGNOSTIC.json)。API0，累计187/450，BERT21/40、Qwen0/40，6份候选与全部历史保持；未读report、未真实编译、未CKKS、未提交。等待补充final_inv精确参考值或比较口径后接续。
+
+### A1 §6.12（含精确参考补充）离线完成与保存响应恢复（2026-10-28）
+
+①按用户补充复用原100001点及400行诊断，不重算已通过样本。精确参考依次为0.9697875035498709、0.34512760125894737、3.5786682783811585e-6；原实测相对差依次0、0、约3.10e-11，均在1e-3内。28个step_inv越界行的上一级c均不在[0.5,1.5]内，c_min=0.031032076823093658，原失败报告保留。
+
+②只在r8-v8验证中为两引擎实际逆输出增加标量范围观测，记录c=x·inv(x)。step_inv/final_inv为首个解析越界时，检查同一softmax上一级c是否满足R；预算失败将首因改记上一级逆、kind=budget，并保留下游越界链。反馈仅在该情形增加预算说明，含行号/role、ρ/R、样本c范围、声明域最大相对误差和point_fields目标；不据域内目标误差做预执行拒绝。域来源端点使用spec的1e-9相对舍入口径；u计算及0.90/1.0判据保持。无ρ的R为[√(2/3),√(3/2)]。prompt未修改。
+
+冻结清单附录：**§6.12 预算归属修订**。改动`domain_criteria.py`、`transformer_tensor.py`、`transformer_lower.py`、`transformer_validation.py`、`kernels/transformer.py`、`planners/transformer_session.py`、`experiments/a1_transformer_agent.py`；新增`tests/test_a1_budget.py`。既有Agent触发、tuner算法、confirm判据、r8-v4～v7路径和编译器/运行库保持。commit/tag均0。
+
+③最终原131项＋新增7项，共138/138通过，8.644秒，失败/错误/跳过0；[测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261028T131648-0ae6/REPORT.json)。包含两引擎合成预算失败、预算满足但解析越界仍停止、上下端点舍入、无ρ范围、第21次实际5样本及c_min、恢复四次旧精调/6候选、21次旧反馈比较。首次136项通过；恢复测试曾发现本轮JSON表示适配错误，修正后138项通过，增加第21次请求上下文校验和首因比较修正后最终重跑通过。旧测试源码及断言保持。
+
+④离线重判21次，复用原exact与静态成本、不重跑精调；第1–20次反馈逐项相同，可行性无变化。只有第21次反馈与首因变化：移除stop，analytic_domain_violation从true变false，max_u_calibrated从0.9992093231654837变为0.8909146630164984；max_u_analytic仍为1.0024707328953906，feasible仍false。第12行inv按舍入口径判为analytic，其u=0.9992093231654837≤1；step_inv的5个首因改为上一级inv预算失败，后续链保留。新反馈中声明域最大相对误差0.9697875035498709、目标0.5；R=[0.5,1.5]。
+
+| 留出局部样本 | 首因 | 样本c_min | 样本c_max |
+|---|---|---:|---:|
+| 7 | 第12行inv／budget | 0.0863125938822217 | 1.0 |
+| 10 | 第12行inv／budget | 0.1481626283313178 | 1.0 |
+| 11 | 第12行inv／budget | 0.03343915154714792 | 1.0000000000000002 |
+| 14 | 第12行inv／budget | 0.031032076823093658 | 1.0 |
+| 15 | 第12行inv／budget | 0.03874043595180713 | 1.0 |
+
+[离线REPLAY](/home/lhohy/pt_agent_results/A1-bert-budget-replay-20261028T131528-8fa2/REPLAY.json)。未留存旧逐样本记录的调用，其旧首因明确记unknown；有记录且首因变化的调用只有21。全部旧源码、响应、会话和已消费额度保持。
+
+恢复目录：`A1-bert-s612-recovery-20261028T131400`。前4轮（模型17–20）trace、messages、pool、records、tune_cache与原第20次后状态核对通过，四次精调复用、6份候选保留、tune_rule仍v8-6.11。第21次使用保存响应，在请求messages一致检查通过后按真实evaluate重评；结果与离线重判一致，tuned=null、failed=null。旧终态未修改，新状态按冻结停滞规则stale=2进入confirm，未手动更换触发或终止规则。[恢复REPORT](/home/lhohy/pt_agent_results/A1-bert-session-step-20261028T131339-d50e/REPORT.json)、[第21次重评REPORT](/home/lhohy/pt_agent_results/A1-bert-session-step-20261028T131421-db8d/REPORT.json)。
+
+随后按原协议首次对这6份候选确认，规范化去重为4份，均20/20且非有限发散0；未通过原因均为第16行rsqrt校准域覆盖，原域[0.62,11.43]，未扩域或改margin。确认结果未回传Agent。
+
+| 模型调用／来源 | 自举 | agreement_pct | 校准u | 解析u | 通过 |
+|---|---:|---:|---:|---:|---|
+| 20／tuned | 9297 | 100 | 1.0086181603452609 | 0.9927262779153397 | 否 |
+| 19／tuned | 9475 | 100 | 1.0086173395349354 | 0.9941705850267484 | 否 |
+| 18／tuned | 10144 | 100 | 1.0086139685776963 | 0.9941705850267484 | 否 |
+| 18／llm | 12666 | 100 | 1.008702269178583 | 0.9896092125308712 | 否 |
+
+[确认REPORT](/home/lhohy/pt_agent_results/A1-bert-session-step-20261028T131609-cd1c/REPORT.json)、[会话AGENT](/home/lhohy/pt_agent_results/A1-bert-s612-recovery-20261028T131400/AGENT.json)。status=confirm_failed、error=null、未冻结。第21次重评及本次确认没有§6.7停止。第22次尚未调用，因此22次以后的停止情况尚未观测；本轮沿用用户最新“API零新增”。
+
+与spec不一致之处及本轮自写修正：恢复trace的JSON列表与检查点元组、line_text/call_texts展示注释造成直接比较失败，已先核对去展示注释后的内容，再复用原检查点typed records及cache；首因比较也统一JSON表示，修正了仅由tuple/list造成的第17次伪变化，前次回放保留。补丁工具曾拒绝同一文件重复操作，合并后应用，未产生部分修改。数值算法、阈值、旧断言与资源保持；API零新增范围下，第22次真实请求留待下一批。
+
+本轮[最终REPORT](/home/lhohy/pt_agent_results/A1-bert-s612-complete-20261028T131948-0c1b/REPORT.json)。registry885条；BERT21/40、Qwen0/40、累计187/450，全局剩263。新增首次原样完整交付通过0；新增report样本、真实编译、CKKS均0。下一批为BERT第22次起的新会话（剩19次），通过确认冻结后再做report160、compiler/managed三方计数/切点与完整RuntimePlan，Qwen在BERT验收后接续。
+
+
+### A1 §6.13 split-v2：扩大校准并从第22次接续（2026-10-28）
+
+改动文件：`data/samples.py`新增确定性索引迁移与按选定索引读取文本；`cli.py`仅为split-v2选择已批准的样本；`planners/agent.py`与`planners/transformer_session.py`传播版本并拒绝跨划分恢复；`experiments/a1_transformer_agent.py`新增prepare-v2、逐点校准对照、版本与report100编排；新增`tests/test_a1_split_v2.py`。旧metadata无version时解释为split-v1，旧文件和响应保持。
+
+冻结清单附录：**§6.13 只调整样本划分、由校准派生的统计及版本元数据。** prompt、能力表、反馈、tuner、confirm和tune_rule=v8-6.11保持；两模型系统提示词与旧冻结文本相同。SESSION／trace／REPORT传播split-v2，model_info中记split.version。commit/tag均0。
+
+测试：原138项＋新增7项，共145/145通过，8.664秒，失败/错误/跳过0。[测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261028T134903-1f20/REPORT.json)。覆盖前60索引原序移入、两两不交、并集223、heldout/confirm逐项不变、只读取被选文本、旧检查点拒绝、空pool/cache及trace版本。未修改旧断言。
+
+两个新prepare均complete=true；calibration83、heldout20、confirm20、report100。旧23个校准索引后接旧report的前60个；未重新抽样。仅生成calibration.npz和heldout.npz，确认／剩余报告样本未在prepare中物化。
+
+| 模型 | 新prepare | 秒 |
+|---|---|---:|
+| BERT | [A1-bert-prepare-v2-20261028T135014-01b9](/home/lhohy/pt_agent_results/A1-bert-prepare-v2-20261028T135014-01b9/REPORT.json) | 96.855529 |
+| Qwen | [A1-qwen-prepare-v2-20261028T135355-6529](/home/lhohy/pt_agent_results/A1-qwen-prepare-v2-20261028T135355-6529/REPORT.json) | 94.993196 |
+
+旧目录A1-bert-prepare-20261027T123333-7967和A1-qwen-prepare-20261027T132722-12c2保持。模型、权重和原始223句不变，不新增数据或下载。下列比例定义为(new−old)/abs(old)，只比较旧／新校准，不引用confirm观测。
+
+BERT逐点校准（[完整数值](/home/lhohy/pt_agent_results/A1-bert-prepare-v2-20261028T135014-01b9/CALIBRATION_CHANGES.json)）：
+
+| 点 | 旧min | 旧max | 新min | 新max | min变化 | max变化 |
+|---|---:|---:|---:|---:|---:|---:|
+| getitem::rsqrt | 0.00372006357817 | 0.0321400115106 | 0.0035592592331 | 0.0321400115106 | -4.32262357% | 0% |
+| _softmax::exp | -9.09224809456 | 10.6925789708 | -10.140819393 | 10.7025304744 | -11.5325856% | 0.0930692547% |
+| _softmax::inv | 0.00794271354652 | 223830.665776 | 0.00794271354652 | 223830.665776 | 0% | 0% |
+| getitem_3::rsqrt | 2.0510027912 | 9.99414036218 | 2.00996120498 | 10.0411769916 | -2.00104975% | 0.470642073% |
+| addmm_4 | -10.0620294948 | 5.13577941673 | -10.5948908384 | 5.41521931255 | -5.29576408% | 5.44104162% |
+| getitem_6::rsqrt | 1.40999210547 | 4.85022996009 | 1.40287073532 | 4.85022996009 | -0.50506454% | 0% |
+| _softmax_1::exp | -4.55589532894 | 10.2843703395 | -4.92657341913 | 10.6454754186 | -8.13622929% | 3.5112026% |
+| _softmax_1::inv | 0.363991633745 | 36412.3926665 | 0.363991633745 | 79766.7786011 | 0% | 119.064919% |
+| getitem_9::rsqrt | 4.67379909639 | 10.2105000257 | 4.34250620223 | 10.8437308163 | -7.08829985% | 6.20176083% |
+| addmm_10 | -5.7750621654 | 3.70647811817 | -6.7633435101 | 4.05806453941 | -17.1129127% | 9.48572769% |
+| getitem_12::rsqrt | 1.41386987052 | 3.12296012786 | 1.41386987052 | 3.29814030721 | 0% | 5.60942734% |
+| addmm_12 | -3.99364623779 | 5.07963201513 | -4.82372983263 | 5.28240698065 | -20.7851058% | 3.99192235% |
+
+Qwen逐点校准（[完整数值](/home/lhohy/pt_agent_results/A1-qwen-prepare-v2-20261028T135355-6529/CALIBRATION_CHANGES.json)）：
+
+| 点 | 旧min | 旧max | 新min | 新max | min变化 | max变化 |
+|---|---:|---:|---:|---:|---:|---:|
+| mul_4::rsqrt | 0.562976995779 | 1.88782479679 | 0.397617674264 | 2.21480943683 | -29.3723052% | 17.320709% |
+| _softmax::exp | -232.51723682 | 171.921330431 | -232.51723682 | 205.55590373 | 0% | 19.5639327% |
+| _softmax::inv | 3.75671457635e-44 | 4.61833176288e+74 | 1.0074773008e-77 | 1.8697980941e+89 | -100% | 4.04864395e+16% |
+| mul_10::rsqrt | 389.193683635 | 3153.57541099 | 326.38864999 | 3376.95378203 | -16.1372181% | 7.08333691% |
+| mm_1 | -22.9083494385 | 22.1013439146 | -23.8155862506 | 22.5541741973 | -3.96028887% | 2.04888121% |
+| mul_13::rsqrt | 1444.39640215 | 150086.47617 | 888.343842524 | 181205.050062 | -38.4972269% | 20.7337628% |
+| _softmax_1::exp | -132.89098018 | 124.123906673 | -157.376948397 | 146.530374815 | -18.4256058% | 18.0516943% |
+| _softmax_1::inv | 2.43150741207e-49 | 8.05986449252e+53 | 2.43150741207e-49 | 4.33843618364e+63 | 0% | 5.38276566e+11% |
+| mul_19::rsqrt | 1640.47039217 | 158987.706382 | 1640.47039217 | 197535.091241 | 0% | 24.2455129% |
+| mm_5 | -19.3741828233 | 20.0871013925 | -19.3741828233 | 20.312272151 | 0% | 1.12097188% |
+| mul_22::rsqrt | 1926.2120775 | 164830.463836 | 1926.2120775 | 225263.343002 | 0% | 36.663659% |
+
+重点getitem_3::rsqrt：min由2.0510027912011033变为2.0099612049788425（−2.00104975%）；max由9.994140362178221变为10.041176991580501（+0.470642073%）。Qwen没有该键，逐点表保留其原有11个键。
+
+四项新基线按相同heldout20重评，complete=true、接口正常、无解析停止、无非有限或发散，agreement均100%。
+
+| 模型／基线 | logit_rel_err | calibrated_u | analytic_u | feasible |
+|---|---:|---:|---:|---|
+| BERT R0 | 0.0004227481113461656 | 0.9412169703822777 | 0.9887490370413321 | false |
+| BERT R1 | 0.0004647049529574716 | 0.9412169703822777 | 0.9986363765599661 | false |
+| Qwen R0 | 0.0015536403152673875 | 0.9937970192445198 | 0.9912461967863797 | false |
+| Qwen R1 | 0.002273057003897215 | 0.9937971413799208 | 0.999260115699492 | false |
+
+[BERT重评](/home/lhohy/pt_agent_results/A1-bert-baselines-20261028T135228-cf57/REPORT.json)、[Qwen重评](/home/lhohy/pt_agent_results/A1-qwen-baselines-20261028T135542-9029/REPORT.json)。用户已明确“重评流程完成即可，保留不可行结果并继续Agent”。此前待澄清的[离线REPORT](/home/lhohy/pt_agent_results/A1-transformers-s613-offline-20261028T135945-ae39/REPORT.json)保持历史原文，不改写其中当时的awaiting状态。
+
+BERT全新会话`A1-bert-session-20261028T140041-f6a5`从模型第22次开始，使用新model目录，pool与tune_cache初始为空；旧6份候选只保留开发记录。第22次已完成，第23次进行中；预算继续按(bert,r8-v8)累计，188/450，Qwen0/40。后续先BERT确认冻结与report100／两模式验收，再Qwen。
+
+与spec不一致之处：无签名、算法、判据或旧断言变更。本轮自写代码中prepare失败REPORT的版本曾引用源split-v1，已在实际prepare前修正为目标split-v2；成功路径和两份实际REPORT均为v2。基线口径采用用户最新澄清。
+
+未完成：split-v2 Agent确认／冻结、首个可行与最终程序对照、report100、compiler/managed三方自举／切点及完整RuntimePlan、成本分解；Qwen真实调用待BERT验收。新增首次原样完整交付通过0、真实编译0、CKKS0。
+
+
+### A1 §6.13 第26次原文内部可行（2026-10-28）
+
+22–26次均split-v2，新候选与cache从空开始。第22次数值发散；第23次20/20但校准u=1.2705361347975388，精调221.041792秒，coarse=0/full=2、changes=[]、仍不可行；第24次20/20但校准u=0.9670006969704414；第25次错误权重名由E_WEIGHT_MISSING/E_WEIGHT_UNUSED反馈，未进入数值检查。全部原响应及源码保留。
+
+第26次原文（会话第5轮）首次内部可行：exact最大差7.771561172376096e-16，20/20一致，calibrated_u=0.8732205694991095，analytic_u=0.9886265968792063；预测10916自举、97切点、深度281、2873534835µs。当前按默认v8-6.11触发精调，原始来源[iteration-5.ptdsl](/home/lhohy/pt_agent_results/A1-bert-session-20261028T140041-f6a5/sources/iteration-5.ptdsl)，状态[SESSION.json](/home/lhohy/pt_agent_results/A1-bert-session-20261028T140041-f6a5/SESSION.json)。这项只记首次原文的内部数学／留出结果；确认、report与真实编译仍待执行，完整交付通过保持0。
+
+累计192/450，BERT26/40、Qwen0/40，剩14＋40；资源、提示与判据保持。
+
+
+### A1 §6.13 第26次精调完成、第27次接续（2026-10-28）
+
+第26次精调返回可行，内部用时1892.611816秒（步骤总1895.699934秒），15次粗评、17次完整评估、15项变化。heldout20/20，校准u=0.8988197895196297、解析u=0.988369645340517；预测9684自举、98切点、深度285、70411旋转、2558179872µs。原文对应10916自举、97切点、281深度、2873534835µs，分别保留。
+
+变化包括rsqrt/act降阶、softmax逆的近似方法／阶数选择，以及第26行softmax步数移动；完整参数与history见[第5轮trace](/home/lhohy/pt_agent_results/A1-bert-session-20261028T140041-f6a5/agent_trace.jsonl)，[精调步骤REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T140041-f6a5/steps/007-tune/REPORT.json)。未进行确认或report，二者进入新pool，未复用旧6份候选。
+
+第27次已启动。已完成的22–26次在registry中均标split-v2／r8-v8（全局188–192），原记录保持；当前registry896条。API新增5次，Qwen0/40，真实编译／CKKS0。
+
+
+### A1 §6.13 第27次原文可行并精调（2026-10-28）
+
+第27次原文exact最大差4.440892098500626e-16，20/20，校准u=0.8732205694991095、解析u=0.9908709922247976。预测10500自举、91切点、深度265、2765778510µs，刷新可行原文llm_min，按v8-6.11触发精调。第26次精调的2558179872µs仍为当前整体best；触发继续遵守冻结的原文比较规则。[原始源码](/home/lhohy/pt_agent_results/A1-bert-session-20261028T140041-f6a5/sources/iteration-6.ptdsl)。累计193/450，BERT27/40、Qwen0/40，未确认冻结。
+
+
+### A1 §6.13 首个split-v2会话收尾与第29次接续（2026-10-28）
+
+22–28次会话已正常收尾，总4487.643837秒，7次API，输入351403／输出121265 token，confirm_failed、未冻结；[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T140041-f6a5/REPORT.json)、[AGENT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T140041-f6a5/AGENT.json)。第27次精调1621.375394秒、11粗评／12完整评估、10项变化，得到可行候选：9629自举、93切点、深度274、2541936314µs。第28次为普通发散反馈，不触发解析首因停止；原响应和完整越界链保留。达到原停滞规则后进入确认，未改max_iters或选择规则。
+
+四候选无重复；确认均20/20、非有限与发散0，但校准点u超过0.90，故全部未通过。以下只报告候选确认指标，不与新旧校准观测对照。
+
+| 模型调用／来源 | 自举 | agreement_pct | calibrated_u | analytic_u | 通过 |
+|---|---:|---:|---:|---:|---|
+| 27／tuned | 9629 | 100 | 1.0379788212391219 | 0.9956720012312786 | 否 |
+| 26／tuned | 9684 | 100 | 1.089660688038327 | 0.9788698267675169 | 否 |
+| 27／llm | 10500 | 100 | 0.9906392740725118 | 0.9894214213668331 | 否 |
+| 26／llm | 10916 | 100 | 0.9946200282345894 | 0.9792499422809872 | 否 |
+
+尚未冻结，不读取report、不进行编译。按§3.2，在同一split-v2 model目录启动新会话[A1-bert-session-20261028T151626-8cdc](/home/lhohy/pt_agent_results/A1-bert-session-20261028T151626-8cdc)，从第29次调用起，pool/cache为空，既有候选与确认结果不传入；预算余12次含在途调用，不重置已消费次数。累计已完成194/450，Qwen0/40。两会话均不依据确认结果改提示、域、margin、规则或数据。
+
+
+### A1 §6.13 第29次起点对准／精调（2026-10-28）
+
+第29次为新会话第一轮，原文exact最大差4.440892098500626e-16，20/20，校准u=0.9944748253485896、解析u=0.9914989510285945，feasible=false。预测11120自举、92切点、深度266、2924782883µs。按冻结v8-6.11流程进入起点对准；对准后可行才继续正常精调，仍不可行则依§6.11提前返回。当前步骤尚未结束，未对确认结果做任何适配。累计195/450，BERT29/40、Qwen0/40。
+
+
+### A1 §6.13 第29–31次接续（2026-10-28）
+
+第29次按v8-6.11在对准后仍不可行，206.381213秒提前返回，coarse=0/full=2、changes=[]；第30次完整评测不可行，校准u=2.0194862213756024，未触发额外精调。均为普通候选结果，无解析首因停止。
+
+第31次（新会话第3轮）原文内部可行：数学最大差3.0531133177191805e-16，20/20，校准u=0.8369588061687951、解析u=0.997130242634199；预测11120自举、92切点、深度266、2924782883µs。已按冻结条件进入精调。[原文](/home/lhohy/pt_agent_results/A1-bert-session-20261028T151626-8cdc/sources/iteration-3.ptdsl)。累计197/450，BERT31/40、Qwen0/40，未确认冻结。
+
+
+### A1 §6.13 第31次精调完成、第32次接续（2026-10-28）
+
+第31次精调1613.051171秒、13次粗评／15次完整评估、13项变化，结果可行；20/20，校准u=0.8369588061687951、解析u=0.9963974727169376。预测10000自举、91切点、深度270、2636759655µs（原文11120／92／266／2924782883µs）。原文与精调两份均入新pool，未确认冻结；[trace](/home/lhohy/pt_agent_results/A1-bert-session-20261028T151626-8cdc/agent_trace.jsonl)。当前第32次在途，已完成197/450，Qwen0/40。
+
+
+### A1 §6.13 第32次原文可行并精调（2026-10-28）
+
+第32次原文数学最大差8.326672684688674e-16，20/20，校准u=0.8369588061687951、解析u=0.9963974727169376；预测10000自举、91切点、深度270、2636759655µs。刷新可行原文llm_min后，按冻结规则进入精调；这与第31次精调结果的成本相同，未据此跳过步骤。[原文](/home/lhohy/pt_agent_results/A1-bert-session-20261028T151626-8cdc/sources/iteration-4.ptdsl)。累计198/450，BERT32/40、Qwen0/40。
+
+
+### A1 §6.14 接收与旧会话调度暂停（2026-10-28）
+
+新指令到达时BERT已实际完成32次、Qwen0次、累计198/450。用户已明确“从第33次切换，保留全部历史和已用额度”，旧22–32次v8-6.11不改写、不重新计数。外层调度PID1025073已SIGSTOP，正在执行的`A1-bert-session-20261028T151626-8cdc/steps/007-tune`继续按旧代码正常结束；调度不会进入第33次。当前没有终止精调、没有修改预算文件，也没有新增API。
+
+只读核对发现：旧规则夹具省略参数时显式断言v8-6.11；现有`migrate_tune_rule`只处理pre-6.11→6.11，未定义本次已有状态的cache切换。两项具体接续提议已列在阻塞栏。§6.14的dominated剔除、多遍收敛及输出缓存实现尚未修改，待统一后继续；离线验证使用原split-v1 model与18/19/20原起点，资源和判据保持。
+
+### A1 §6.14 实现与接续口径落实（2026-10-28）
+
+用户已批准两项接续细节；第33次起切换新规则，22–32次旧历史和全部调用保留。实现新增v8-6.14：仅softmax近似候选先做单点CountBackend比较；被支配时记录当前／候选深度与各运算数，结构移动及其他点照旧。Agent最多8遍扫描，无改动时收敛；仅收敛输出增加规范化缓存键。旧规则的TuneResult及反馈保持原字段，新规则以派生结果增加sweeps/converged。原旧规则夹具tests/test_a1_agent_rule.py:26显式固定v8-6.11，全部断言原样保留；新默认另测。迁移入口保留原pre→6.11逻辑，新增6.11→6.14时按规则存档旧cache、其他会话状态保持。当前未执行真实迁移、未恢复API。
+
+第32次旧规则收尾：1377.909241秒、coarse/full=11/11、9项改动，最终9095自举、预测2404362097µs、内部可行。新离线unit已启动，原138项＋split-v2七项＋新增§6.14测试；随后按原split-v1模型目录依次回放18/19/20，再对18做完整新规则。
+
+§6.14离线unit：156/156，failures/errors/skipped均0，测试9.230秒（外层11.913893秒）。[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261028T162552-dc56/REPORT.json)。第18次单遍剔除回放已启动，使用原split-v1校准，未读取报告集，真实API新增0。
+
+### A1 §6.14 第18次回放与本轮脚本表示修正（2026-10-28）
+
+第18次新规则单遍：690.036582秒（原1385.708903秒）、剔除46项、接受11项，coarse/full=12/13，峰值2940342272字节（约2.738GiB）。接受序列、最终程序与完整成本原样相同；最终10144自举、2674624525µs、深度275。第一次COMPARISON的changes=false来自本轮脚本直接比较内存中的DSL Ref（mask对象）与历史JSON字典；同次保存的TUNER经asdict后，11条改动逐项与历史相同。依据AGENTS自写错误例外，比较入口统一使用同一asdict表示，断言含义及算法保持，增加Mask表示单测。
+
+保留[原误报REPORT](/home/lhohy/pt_agent_results/A1-bert-tune-pruning-20261028T162633-8093/REPORT.json)、[原比较](/home/lhohy/pt_agent_results/A1-bert-tune-pruning-20261028T162633-8093/COMPARISON.json)及完整TUNER/程序；不重跑已完成精调，只在新目录复核保存结果。修正后unit和保存结果复核进行中；尚未启动19/20或多遍实验，API新增0。
+
+§6.14修正后unit：157/157，failures/errors/skipped=0。[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261028T163958-e662/REPORT.json)。第18次保存结果复核：changes、accepted_sequence、final_program、cost四项均true；未重跑精调。[复核REPORT](/home/lhohy/pt_agent_results/A1-bert-pruning-recheck-20261028T164030-d273/REPORT.json)。第19次单遍回放已启动，仍使用原split-v1，新增API0。
+
+### A1 §6.14 第19次单遍回放通过（2026-10-28）
+
+原1392.692946秒→850.292668秒；剔除54项、接受9项、coarse/full=11/11，峰值2916057088字节。changes／accepted_sequence／final_program／cost全部true；最终9475自举、2501372847µs、深度279。API新增0。[REPORT](/home/lhohy/pt_agent_results/A1-bert-tune-pruning-20261028T164040-5368/REPORT.json)。第20次已按顺序接续；外层真实会话仍暂停，第33次尚未调用。
+
+### A1 §6.14 第20次单遍回放通过、多遍实验启动（2026-10-28）
+
+原1338.254652秒→602.090277秒；剔除64项、接受3项、coarse/full=5/5，峰值2869338112字节。changes／accepted_sequence／final_program／cost四项全部true；最终9297自举、2455657116µs、深度291。[REPORT](/home/lhohy/pt_agent_results/A1-bert-tune-pruning-20261028T165525-f437/REPORT.json)。三次单遍均已通过，剔除规则的指定等价验证完成。
+
+第18次完整新规则实验已启动：max_sweeps=8、budget_s=2400，使用同一split-v1原起点，不重跑准备或基线。[运行目录](/home/lhohy/pt_agent_results/A1-bert-tune-pruning-20261028T170540-fdec)。另为Qwen首次新规则精调增加外部峰值记录与3.8GiB停止检查；检查只作用于首次，正常4GiB及其他阶段保持，实时运行时继续监测。外层会话仍暂停，BERT32/40、Qwen0/40、累计198/450。
+
+§6.14单遍汇总（同一split-v1原起点，接受序列、最终程序、完整成本均相同）：
+
+| 模型调用起点 | 原精调秒 | 剔除后秒 | 剔除数 | 接受数 | coarse/full | 最终自举 | 一致性 |
+|---|---:|---:|---:|---:|---|---:|---|
+| 18 | 1385.708903 | 690.036582 | 46 | 11 | 12/13 | 10144 | 四项通过；保存结果复核，原误报保留 |
+| 19 | 1392.692946 | 850.292668 | 54 | 9 | 11/11 | 9475 | 四项通过 |
+| 20 | 1338.254652 | 602.090277 | 64 | 3 | 5/5 | 9297 | 四项通过 |
+
+合计4116.656502→2142.419527秒，节省约48.0%；独立多遍实验结果待完成，不把这三次回放当成新的Agent首次交付。
+
+§6.14编排接续：已确认第32次内层退出、SESSION处于evaluate/iteration5/calls4、全局198；仅向处于暂停态的旧外层PID1025073发送SIGTERM/SIGCONT结束，未终止计算中的子任务（当前多遍实验是独立进程，继续）。原第32次REPORT、trace和检查点保持，新增[PAUSE_REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261028T151626-8cdc/PAUSE_REPORT.json)记录受控暂停与真实1377.909241秒。验证通过后以新外层读取同一SESSION，不把离线等待写入第32次精调耗时。API新增0。
+
+### A1 §6.14 完整多遍、最后测试及待决口径（2026-10-28 / 62ecf194-dirty）
+
+完整新规则结果：6遍，逐遍接受11/9/3/3/1/0项，converged=true；27项改动、355项dominated剔除、coarse/full=37/29，最终Mock 20/20，校准u=0.888451573160008、解析u=0.9949472460489259。自举8937（原三段9297）、预测2366299456µs（原2455657116µs）、深度300（原291），峰值3037110272字节。总2463.303021秒，其中搜索在2400内结束；最终Mock收尾使整体多63.303021秒，§6.8“含Mock”口径待用户统一。
+
+最后unit：[158/158 REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261028T174745-59fe/REPORT.json)，失败/错误/跳过均0。三次指定单遍全部等价，不重跑已完成数据集、prepare或基线；全程API0、报告样本0、真实CKKS0。
+
+冻结清单附录（未commit/tag，v8-6.14尚未激活）：`planners/transformer_tuner.py`、`planners/agent.py`、`planners/transformer_session.py`、`experiments/a1_transformer_agent.py`、`tests/test_a1_convergent.py`、`tests/test_a1_agent_rule.py`。触发公式、可行性与确认判据、prompt及旧版本行为保持；新规则的局部剔除、多遍扫描及收敛输出缓存按§6.14实施。Qwen首次实际扫描的3.8GiB检查跨会话记录，0遍提前返回不消费首次标记，后续阶段仍用原4GiB。
+
+与spec不一致／适配：用户已统一从第33次切换，22–32次旧规则和全部消费保留；旧夹具`tests/test_a1_agent_rule.py:26`显式v8-6.11、断言不改；本轮比较脚本曾将内存Ref与历史JSON直接比较，现统一asdict表示、补单测，原误报和复核结果全部保留。算法、候选程序、数值判据及历史源码未因该修正改变。当前实测预算差异仅记录，尚未改动其语义。
+
+开发诊断已完成三次等价及六遍收敛；新增首次原样输出的真实编译/数值验收0。BERT最终确认/冻结、report100、R0/R1对照、双模式编译和三方核对仍待接续，Qwen真实Agent保持0；新增编译器依赖阻塞证据0。下一步先统一预算口径，再在同一SESSION归档旧cache、记录第33次切换点，启用新外层；保留已有候选、所有历史和全部已用额度。
+
+
+### A1 §6.14 搜索预算澄清与第33次接续（2026-10-29 / 62ecf194-dirty）
+
+用户明确2400秒为搜索预算，Mock收尾受原3600秒进程限制。代码沿用已经验证的搜索预算实现，本次澄清无需重复测试或精调。158/158、三次单遍四项相同、六遍收敛结果复用；原待决REPORT及全部历史保留。宿主无遗留Agent／编译进程，SESSION为evaluate/iteration5/calls4，BERT32/40、Qwen0/40、累计198/450，磁盘空闲24055341056字节。下一步使用已有迁移入口归档旧cache，核对其余状态保持，再以新外层读取同一SESSION继续。提示词、数值条件和编译器保持原样，commit/tag新增0。
+
+迁移已完成：[REPORT](/home/lhohy/pt_agent_results/A1-bert-session-step-20261029T013828-ea53/REPORT.json)。原SESSION的phase=evaluate、iteration=5、calls=4、llm_min=2636759655、has_tuned=true、stale=0、pool4项保持，v8-6.11的3项cache归档，v8-6.14新cache为空，切换点明确为模型第33次。新外层[A1-bert-session-20261029T013849-02e0](/home/lhohy/pt_agent_results/A1-bert-session-20261029T013849-02e0)已读取同一SESSION接续。
+
+预算澄清另存[REPORT](/home/lhohy/pt_agent_results/A1-transformers-s614-budget-clarification-20261029T013935-4035/REPORT.json)，原待决报告保留。此次记录命令漏传PT_RESULTS，追加registry前报错；补齐外层环境参数后将同一新报告正常追加，未重复计算或API调用。此为本轮自写记录命令修正。
+
+
+### A1 BERT第33–34次与确认冻结（2026-10-29）
+
+第33次：内部complete、20/20，校准u=0.9067166920024814、解析u=1.0022981572753609，kind=budget按§6.12拒绝；预测8601自举、2277836981µs。第34次：20/20，校准u=0.9067184410792608、解析u=0.9963974727169376，预测9091自举、2403318858µs，内部不可行。两次均未触发精调，stale规则正常进入确认，新规则cache0。
+
+确认4项去重后仍4项，按成本顺序第一项通过：第32次v8-6.11的tuned候选，20/20、校准u=0.8720825153140206、解析u=0.9947456024527617，9095预测自举、2404362097µs。其余候选未再确认。原检查点[AGENT.json](/home/lhohy/pt_agent_results/A1-bert-session-20261028T151626-8cdc/AGENT.json)及[FROZEN.json](/home/lhohy/pt_agent_results/A1-bert-session-20261028T151626-8cdc/FROZEN.json)已写出；不将选中来源归为v8-6.14精调。BERT停于34/40，未使用6次额度；Qwen0/40、累计200/450。
+
+report100已在[A1-bert-evaluate-20261029T014049-8be3](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T014049-8be3)启动。确认之后首次读取report，结果用于外部报告；随后逐项做冻结程序、R0/R1的数值报告及compiler/managed验收。首次原样DSL真实编译／CKKS验收尚未完成，新增编译器依赖阻塞0。
+
+冻结后report100的张量侧已完成：agree=97/100、logit_rel_err=0.18529319755371712、max_u_calibrated=1.3465015685546284、max_u_analytic=0.9964095890994972、n_diverged=0。Mock侧仍在运行，尚无最终双引擎结论。此处按原样报告；未用report改变定义域、候选或任何选择。
+
+
+### A1 BERT冻结程序report100与成本（2026-10-29）
+
+[报告REPORT](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T014049-8be3/REPORT.json)：Mock／tensor最大差1.5543122344752192e-15，双引擎比较通过；两侧均97/100，低于model_info的99.5%一致率要求。logit_rel_err分别0.18529319755371737／0.18529319755371712；校准u=1.3465015685546284、解析u=0.9964095890994972，发散0。此为报告精度未通过，完整交付通过尚未成立。耗时642.593299秒、峰值3122786304字节。冻结后没有更换候选、修改定义域或回传报告结果。
+
+[成本REPORT](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T014049-8be3/cost/REPORT.json)：9095自举、95切点、深度276、预测2404362097µs，与原精调成本一致；耗时8.167969秒。compiler真实trace／编译已串行启动，随后按spec完成双模式和R0/R1记录。
+
+BERT冻结程序compiler真实编译通过：[REPORT](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T014049-8be3/compiler/REPORT.json)。9095自举／95边界与预测相同，383769个RuntimePlan步骤；bytecode241778417字节，耗时25.158092秒，按既有规则prune并保留双模式比较所需bundle。managed预检通过：[REPORT](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T014049-8be3/preflight/REPORT.json)，解压后IR699363828字节、stdin路线，运行前已向用户报告；managed编译和完整RuntimePlan比较现已启动。
+
+BERT冻结程序managed完成：[REPORT](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T014049-8be3/managed/REPORT.json)。预测／compiler／managed自举9095／9095／9095，95个切点一致；完整383769步状态、统计及1994个bundle常量比较通过，RuntimePlan.equal=true，已按原规则prune。耗时64.921522秒、峰值1782042624字节。
+
+§4补充[REPORT](/home/lhohy/pt_agent_results/A1-bert-postfreeze-metrics-20261029T015554-d87b/REPORT.json)：split-v2首个内部可行原输出为第26次，留出20/20、logit_rel_err=0.00028054554370274205、校准u=0.8732205694991095、解析u=0.9886265968792063。未在该原输出上读取confirm/report；四份程序的softmax逆局部深度已记录（首可行10点、最终8点、R0 12点、R1 7点），API0。R0报告对照已启动。
+
+R0报告评测[A1-bert-evaluate-20261029T015622-6426](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T015622-6426)：张量100/100、logit_rel_err=0.00047542047392477475、校准u=0.9482332987369476、解析u=0.9887547038861484。Mock尚未完成，2026-10-29 10:25（Asia/Taipei）采样峰值3200160KiB，磁盘空闲23805243392字节，维持原3600秒时限及内存限制，未并行启动其他重任务。
+
+
+### A1 §6.14 本次接续结案：资源停止（2026-10-29 / 62ecf194-dirty）
+
+[汇总REPORT](/home/lhohy/pt_agent_results/A1-transformers-s614-stop-20261029T023259-ec82/REPORT.json)、[完整成本补充](/home/lhohy/pt_agent_results/A1-transformers-s614-stop-20261029T023259-ec82/DETAILS.json)。本轮先落实用户澄清的2400秒搜索预算，再迁移旧SESSION并完成第33/34次；BERT已确认冻结并结束调用。资源停止发生于独立R0报告评测，新增API0。前述运行中按宿主时间推算的“29分钟”不再使用；最终耗时以运行器629.434091秒为准。全部本轮计算／编译进程已退出。
+
+可用的BERT对照如下；“待”明确表示未执行或未记录，原始程序及结果均保留：
+
+| 程序 | k / ρ（两处softmax） | 预测/compiler/managed自举 | 切点 / 深度 / 旋转 | 预测延迟µs | heldout | confirm | report100 |
+|---|---|---|---|---:|---|---|---|
+| R0（split-v2冻结基线） | 5/5；无ρ | 待/待/待 | 待 | 待 | 20/20；rel=0.0004227481；校准u=0.941217、解析u=0.988749，不可行 | 未使用 | 张量100/100；rel=0.0004754205；校准u=0.948233，Mock内存失败 |
+| R1（split-v2冻结基线） | 3/2；ρ=0.25 | 待/待/待 | 待 | 待 | 20/20；rel=0.0004647050；校准u=0.941217、解析u=0.998636，不可行 | 未使用 | 待 |
+| Agent首个内部可行原输出（第26次） | 4/4；ρ=0.5 | 10916/未编译/未编译 | 97 / 281 / 70411 | 2873534835 | 20/20；rel=0.0002805455；校准u=0.873221、解析u=0.988627 | 原输出未确认 | 原输出未读report |
+| Agent精调冻结（第32次tuned） | 3/3；ρ=0.5 | 9095/9095/9095 | 95 / 276 / 68771 | 2404362097 | 最终Mock20/20；校准u=0.893007、解析u=0.996397；rel未记录 | 20/20；校准u=0.872083、解析u=0.994746；rel未记录 | 双引擎97/100；rel=0.1852932；校准u=1.346502、解析u=0.996410，精度未通过 |
+
+最终程序来源为第32次v8-6.11的9项精调，1377.909241秒、粗评／完整评估11/11；当前SESSION已在第33次切换v8-6.14。第33/34次均不可行、精调0、缓存复用0，新cache0，旧cache3项按规则归档。离线split-v1完整新规则的6遍收敛、8937自举仅列为开发实验，不计入split-v2最终程序。
+
+最终冻结程序成本分解（预测µs / 自举）：attention_A=86519941/240；attention_B=882122451/3360；softmax=1065204575/4145；norm=252736068/974；FFN=31816377/83；other=43983684/172；attention_projections=41979001/121。BERT无lm_head成本条目。首可行程序完整分解及逐行成本见DETAILS，未追加成本估计。
+
+softmax逆局部深度见[逐点REPORT](/home/lhohy/pt_agent_results/A1-bert-postfreeze-metrics-20261029T015554-d87b/REPORT.json)：R0两处均inv=8、五个step_inv各8；R1第11行inv=8、step_inv=7/7、final_inv=8，第25行inv=15、step_inv=7、final_inv=8；第26次原输出两处inv=7、step_inv=6/6/6、final_inv=8；最终程序第12行inv=13、step_inv=6/6、final_inv=14，第26行inv=15、step_inv=6/6、final_inv=14。
+
+消耗分段：split-v1第1–21次，输入1199408／输出290673 tokens、API1384.333716秒；split-v2第22–32次v8-6.11，输入495015／输出219901 tokens、API1138.756948秒；第33–34次v8-6.14，输入305627／输出8970 tokens、API46.605207秒。本次新增2次、累计200/450；BERT34/40、Qwen0/40。历史会话墙钟、精调时间、逐轮反馈和移动均保留在原SESSION、trace、AGENT和各REPORT中；原暂停时间不加入第32次精调。
+
+改动文件：已有§6.14的transformer_tuner.py、agent.py、transformer_session.py、a1_transformer_agent.py、test_a1_convergent.py、test_a1_agent_rule.py；本次澄清后只更新STATUS与外部结果，没有新改算法模块。测试复用158/158、失败／错误／跳过0；未重复完整套件。开发诊断三次单遍接受序列／最终程序／完整成本相同，完整新规则6遍收敛已按批准的搜索预算认可。
+
+与spec不一致及自写修正：2400秒按用户最新澄清作为搜索预算，Mock收尾计入3600，覆盖§6.8原“含Mock”文字；旧夹具显式v8-6.11为已批准参数化适配，原断言保留。此前比较适配器统一Ref的序列化表示，原失败保存。此次外层记录命令漏传PT_RESULTS后补齐；只读汇总按rows字典读取，完整成本改为复用已有tuned.cost_before，原REPORT和registry记录保留，另写DETAILS；未改程序、测试断言或数值判据。
+
+未完成项：R0 Mock报告完成、R0成本与双模式编译、R1报告／成本／双模式编译、Qwen真实Agent与全套验收、最终对照中尚缺的logit字段。需要新的接续spec指定R0 Mock内存问题的诊断与修正范围。没有扩大资源、改库、重试、改写历史或打tag／commit。A1未完成；真实CKKS执行0，新增编译器依赖阻塞证据0。
+
+
+### A1 §6.16 诊断接续（2026-10-29 / 62ecf194-dirty）
+
+已核对目录aarch64／lhy-agent-dsl／62ecf194，启动前无遗留Agent或编译进程。新增experiments/a1_mock_memory.py，A1实验入口增加mock-memory／mock-memory-unit；只增加观测，不改Mock或数值算法。两项测试通过：[REPORT](/home/lhohy/pt_agent_results/A1-bert-mock-memory-unit-20261029T025917-56aa/REPORT.json)，0失败／错误／跳过，确认共享数组只计一次且观测不保留后端／节点。R0原report100、原Mock批次20诊断已启动，重步骤保持串行；失败前及每批起止写batches.jsonl。API新增0，仍200/450。
+
+
+### A1 §6.16 诊断再次触限并停止（2026-10-29 / 62ecf194-dirty）
+
+结论：证据支持跨批次保留状态累积。第一批正常完成，之后各批末RSS单调上升；存活Mock后端从1增至4，第5批失败时为5。节点数组规模在GC作用下有波动，后续仍增长；后端常量缓存和观测缓存的采样规模较小。公开向量缓存的批末／异常展开后采样均为0，这些采样不代表核内峰值。
+
+| 批次 | 结论 | RSS GiB | 存活Mock后端 | 存活Mock节点 | 节点数组MiB | 后端常量缓存字节 | 观测缓存字节 |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 1（0–19） | 完成 | 2.787868 | 1 | 234 | 585 | 266817 | 138281 |
+| 2（20–39） | 完成 | 2.810558 | 2 | 192 | 480 | 533634 | 242477 |
+| 3（40–59） | 完成 | 3.291477 | 3 | 384 | 960 | 800451 | 356157 |
+| 4（60–79） | 完成 | 3.294643 | 4 | 430 | 1075 | 1067268 | 451369 |
+| 5（80–99） | 内存分配失败 | 3.807392 | 5 | 804 | 2007.5 | 1122171 | 499245 |
+
+失败位置：softmax反复平方归一化的逆近似初值Chebyshev求值，MockExpr复制shape=(20,16384)、float64数组时申请2.50MiB失败；内存和3600秒限制保持，未重试。原STOP及931.851220秒报告保留。
+
+停止依据为[A1 §6.16①](/home/lhohy/Code/Poseidon/DSL/DSL_agent/docs/pt_agent/specs/A1-agent-transformer.md:623)的明确条款：“诊断中再次触到上限时，记录到当时为止的数据并停止，不放宽限制。”因此本轮停在诊断阶段；已经授权的每批释放修正、必要时Mock批次10、heldout20前后等价、r8-v8对照补全及后续r8-v9工作均尚未执行，等待接续指令。没有追加审批或扩大范围。
+
+改动文件：新增experiments/a1_mock_memory.py、tests/test_a1_mock_memory.py，A1实验入口增加mock-memory和mock-memory-unit。只增加观测与结果记录；Mock后端、kernels和批次策略保持。新增测试2/2、0失败／错误／跳过；语法检查3文件通过，原158项结果保留，本轮尚未重跑。没有改旧断言。
+
+本轮自写记录修正：通用异常出口最初将report_images默认记0；原REPORT保留，另存DIAGNOSIS明确实际使用report100、完成80条、第5批失败，并在新诊断入口补齐异常前的report_images=100元数据。修正只影响此新增入口的记录，未重跑诊断、未改变数值或限制。与spec算法／数值条件的偏离0。
+
+用量与剩余：API新增0，累计200/450；BERT34/40、Qwen0/40，原r8-v8程序report97/100保持。r8-v9的代码、请求重建和冻结尚未开始；BERT35–40、Qwen40均未外发。停止后无本轮运行进程，空闲23795519488字节；新增编译器依赖阻塞证据0。原程序、响应、证据、已用额度及失败报告均保留。
+
+
+### A1 §6.16补充：引用链与释放验收接续（2026-10-29 / 62ecf194-dirty）
+
+按用户澄清直接推进，未重新询问已授权释放方案。目录aarch64／lhy-agent-dsl／62ecf194，无遗留重任务。增加gc.get_referrers和Chebyshev递归闭包捕获检查，保存heldout20的Mock输出与逐样本首个越界，作为前后比较基准；R0先行[A1-bert-mock-before-20261029T032604-0a4b](/home/lhohy/pt_agent_results/A1-bert-mock-before-20261029T032604-0a4b)。当前尚未改批内计算或生产释放逻辑；API新增0，仍200/450。
+
+
+### A1 §6.16 引用链确认与边界释放实现（2026-10-29）
+
+修正前R0 heldout20：[REPORT](/home/lhohy/pt_agent_results/A1-bert-mock-before-20261029T032604-0a4b/REPORT.json)，20/20、logit_rel_err=0.00042274811134575924、198.753599秒；[gc引用记录](/home/lhohy/pt_agent_results/A1-bert-mock-before-20261029T032604-0a4b/REFERRERS.json)确认后端输入／输出节点的循环引用，另有28个cheb_eval.rec递归闭包自引用并捕获G／T中的Mock节点，后端身份缓存0项。冻结程序修正前[REPORT](/home/lhohy/pt_agent_results/A1-bert-mock-before-20261029T032952-c297/REPORT.json)：20/20、logit_rel_err=0.09965867037450409、148.893601秒。两份输出与首个越界均已保存，不重复计算原基准。
+
+生产修正仅在批次边界：MockBackend新增release_batch，释放其输入／输出／绑定／常量持有并回收不可达循环；transformer_validation.execute在finally中调用。批内计算、kernel、Count／Emit、系数及判据保持。每个程序通用，Mock批次仍20、tensor不变。
+
+原158项＋已有2项＋新增2项生命周期测试，共162/162，失败／错误／跳过0：[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T033418-249b/REPORT.json)。本轮自写测试夹具误用slots8（解析器最小1024），按自写错误例外改为1024，原断言不变；首次53项时遇此错误的REPORT保留在A1-bert-unit-20261029T033331-02cf。
+
+R0 report100批次20释放验收已启动，逐批检查存活后端≤1及后续RSS≤首批＋0.3GiB。随后执行两份heldout20前后等价并复用报告结果补齐旧对照。API新增0，仍200/450。
+
+
+### A1 §6.16 批次收尾与采样位置修正（2026-10-29）
+
+首次释放验收[A1-bert-mock-release-check-20261029T033536-a960](/home/lhohy/pt_agent_results/A1-bert-mock-release-check-20261029T033536-a960)计算完report100，Mock100/100、logit_rel_err=0.00047542047392438476、峰值2996326400字节，存活后端与节点均0；rss_growth=false，因此未计验收通过，原REPORT／RELEASE_CHECK与输出保留。批末RSS采样在验证循环完成收尾之前，后续批次计算前已降回约0.42GiB；此为本轮实现的清理／观测位置遗漏，按自写错误例外修正。
+
+修正只在批次边界：验证循环在execute返回后回收不可达状态，再调用可选batch_callback记录实际批末；观测器在统计临时引用释放后读取RSS。批内算术、tensor批次、系数、旧断言及首批＋0.3GiB标准保持。没有采用更小Mock批次，峰值仍低于3.8GiB。
+
+新增报告复用入口只接受相同程序、完整100条且release_checks全过的Mock报告，避免补齐R0对照时重复Mock；失败报告拒绝复用。冻结后heldout／confirm的logit统计入口仅用于报告。原158项及本轮新增6项合计164/164，0失败／错误／跳过：[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T035259-6820/REPORT.json)。修正后的R0原批次20 report100验收新目录已启动，API保持200/450。
+
+
+### A1 §6.16 R0原批次20释放验收通过（2026-10-29）
+
+[完整REPORT](/home/lhohy/pt_agent_results/A1-bert-mock-release-check-20261029T035422-baf7/REPORT.json)：五批均完成，batch_count／live_backends／rss_growth全true；批末RSS依次266465280、266575872、266706944、266809344、266915840字节，后端与Mock节点每批均0，总增幅450560字节（440KiB），远低于首批＋0.3GiB。全程峰值2999492608字节、耗时856.064684秒，needs_batch10=false；Mock保持20、tensor保持20。
+
+该结果直接作为R0 report100的Mock结论：100/100、logit_rel_err=0.00047542047392438476、校准u=0.9482332987369476、解析u=0.9887547038861484。资源释放验收通过；校准u超过0.90的基线不可行结果保持，未调整任何判据。补齐R0报告时复用此输出，不重复Mock100。
+
+R0前后heldout20等价已启动[A1-bert-mock-equivalence-20261029T040852-bd2c](/home/lhohy/pt_agent_results/A1-bert-mock-equivalence-20261029T040852-bd2c)，原基准来自032604-0a4b。API仍200/450，真实CKKS新增0。
+
+
+### A1 §6.16 两程序heldout20等价完成（2026-10-29）
+
+R0[REPORT](/home/lhohy/pt_agent_results/A1-bert-mock-equivalence-20261029T040852-bd2c/REPORT.json)：agree／first_violation／u／logits四项true，max_abs_diff=0，226.536891秒。冻结程序[REPORT](/home/lhohy/pt_agent_results/A1-bert-mock-equivalence-20261029T041331-07ea/REPORT.json)：四项true，max_abs_diff=0，178.623493秒。原20样本顺序、批内运算及全部数值一致，等价按1e-12＋1e-12|reference|验证，旧基准保留。
+
+冻结后补充统计[REPORT](/home/lhohy/pt_agent_results/A1-bert-frozen-metrics-20261029T051054-2968/REPORT.json)：tensor heldout20/20、logit_rel_err=0.09965867037450468；confirm20/20、logit_rel_err=0.16700499909492317。只用于报告，affects_selection=false；原AGENT／FROZEN／confirm记录不改，r8-v8 report97/100保持。
+
+164/164测试通过、R0五批资源验收与两个程序数值等价完成，继续§6.16③的R0／R1对照补全；R0报告复用035422-baf7的Mock100输出，仅读取同组tensor结果做比较，不重复Mock。API仍200/450。
+
+
+### A1 §6.16 R0对照补全（2026-10-29）
+
+[R0完整验收](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T051117-f039)：复用已通过释放验收的Mock100图结果，Tensor/Mock最大差3.4416913763379853e-15；一致100/100，logit_rel_err=0.00047542047392438476。校准u=0.9482332987，原不可行结论保留。成本15399自举／110切点／深度323，预测延迟4024041543µs；compiler、managed均精确核对，完整RuntimePlan相同，已prune。managed输入IR903775363字节、stdin路线在运行前已报告。
+
+[冻结后补充统计](/home/lhohy/pt_agent_results/A1-bert-frozen-metrics-20261029T051054-2968/REPORT.json)：heldout和confirm均20/20，logit_rel_err分别0.09965867037450468和0.16700499909492317；无选择用途，原冻结与确认记录不改。R1接续目录为 /home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T052128-0f82。
+
+
+### A1 §6.16完成与R1对照（2026-10-29）
+
+[R1完整验收](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T052128-0f82/REPORT.json)：Mock和Tensor均100/100，logit_rel_err分别0.0005852362570766441和0.0005852362570770341，最大差2.248201624865942e-15；校准u=0.9482332987369476、解析u=0.9985188436758765，完整可行性false。峰值2275274752字节。成本11275自举／90切点／深度263／预测延迟2966775836µs；compiler和managed完全核对，445470步RuntimePlan和2516常量全部相同并prune。managed IR868668897字节，stdin路线已先报告。
+
+§6.16全部要求已完成；进入§6.15，冻结前API零新增，累计200/450。
+
+
+### A1 §6.15 r8-v9冻结（2026-10-29 13:53 Asia/Taipei / 62ecf194-dirty）
+
+离线验证[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T055249-a6fc/REPORT.json)：177/177，原158项＋6项批次释放＋13项余量测试，旧测试／断言未修改。新增覆盖M四类符号、exp变换、相对舍入、全部报错、执行前拒绝、接口顺序、v8行为、精调对准与非法移动、六次剩余额度及原样trace编号。
+
+[BERT诊断](/home/lhohy/pt_agent_results/A1-bert-margin-audit-20261029T055018-a1db/REPORT.json)、[Qwen诊断](/home/lhohy/pt_agent_results/A1-qwen-margin-audit-20261029T055109-0af8/REPORT.json)：四个R0/R1均满足M；BERT22–34次原文13份及精调6份均有不足。第32次tuned包含第16、18、30行等不足，旧report97/100及确认结论保持。analyzer.approximation_values实测证明_softmax::exp是未平移、未缩放scores。
+
+[BERT首请求](/home/lhohy/pt_agent_results/A1-bert-margin-requests-20261029T055034-62c8/first-request.pretty.json)、[Qwen首请求](/home/lhohy/pt_agent_results/A1-qwen-margin-requests-20261029T055125-7c43/first-request.pretty.json)：各REQUEST_DIFF.json确认v8请求与原件相同，新请求只改校准说明并给校准点增加min_domain。能力表／示例／其他反馈保持；默认版本不变。
+
+冻结文件清单（相对scripts/pt_agent）：margin.py、domain_criteria.py、dsl/typecheck.py、capabilities.py、planners/prompts.py、planners/agent_tools.py、planners/agent.py、planners/confirm.py、planners/tuner.py、planners/transformer_tuner.py、planners/transformer_session.py、transformer_validation.py、transformer_run.py、cli.py、export/package.py、experiments/a1_transformer_agent.py、experiments/a1_v9_margin.py、experiments/u4_relative_acceptance.py、tests/test_a1_margin.py。§6.16清单继续包括backends/mock.py、experiments/a1_mock_memory.py、tests/test_a1_mock_memory.py。commit/tag待用户批准后由Claude处理。
+
+版本差异限于§6.15；v8及以前判定／提示保持，v8-6.14算法原样复用。ModelBudgetClient为v9 BERT保留34次偏移，第35–40次硬限制跨重启保持；SESSION和trace记录版本／模型调用号。旧OUTPUT_TOKENS登记值保留，v9通过别名复用v8的65536配置，旧断言未改。
+
+本轮自写实现修正：test_a1_margin.py的多行with上下文加括号；数值、算法和旧断言未变。§6.16自写夹具slots、批次观测时序和RSS采样修正已在前节逐项记录。无额外方案、下载、库修改或资源扩额。
+
+接续：BERT r8-v9 split-v2新会话，pool/cache空，最多第35–40次；冻结后report100、成本、compiler/managed与三方及完整RuntimePlan比较。BERT结束后Qwen40次。真实CKKS0；资源、容差保持。
+
+
+BERT r8-v9运行目录：/home/lhohy/pt_agent_results/A1-bert-session-20261029T055416-4780；调用目录：/home/lhohy/pt_agent_results/A1-transformers-v9-calls-20261029T0554/bert/r8-v9。首请求call-035已保存并外发，API总账当前200条、另1次在途；该预留计入剩余额度，零重试。
+
+
+### A1 r8-v9第35–36次（2026-10-29）
+
+[会话](/home/lhohy/pt_agent_results/A1-bert-session-20261029T055416-4780/SESSION.json)：第35次接口、M、exact通过，留出20/20，校准u=0.9899967408不可行；精调226.741秒、峰值3165814784字节、coarse=0/full=2、sweeps=0、converged=false、changes=0，history仅domain和result，未复用。第36次原文为本版本首个内部可行程序，20/20、校准u=0.873183796295646、解析u=0.9926884234837772；10925自举、88切点、深度261、预测2871696942µs，new_llm_best=true，按v8-6.14进入多遍精调。此处仅内部评测，真实编译／CKKS与确认尚未执行。累计202/450、BERT36/40、Qwen0/40。
+
+
+### A1 r8-v9第36次精调完成（2026-10-29 14:48 Asia/Taipei）
+
+[步骤REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261029T055416-4780/steps/004-tune/REPORT.json)：5遍、converged=false，coarse32/full28，接受26项，未复用；2588.212964秒，峰值2765996032字节。含2400秒搜索及最终Mock，符合已批准预算口径。预测自举10925→9079、切点88→95、深度261→278、延迟2871696942→2400965419µs。最终Mock留出20/20，校准u=0.8755109803682324、解析u=0.9909536291994657。尚未确认，无报告集访问和真实编译。第37次已开始；不收敛结果按冻结规则只缓存起点，不登记输出程序复用。
+
+
+### A1 r8-v9第37次收敛、第38次进行中
+
+[第37次精调REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261029T055416-4780/steps/006-tune/REPORT.json)：598.186890614秒、2遍、converged=true、接受1项、coarse5/full3、未复用、峰值2590314496字节；8839自举／97切点／深度284／预测2339961499µs。第38次原文留出20/20，校准u=0.8755109802866499、解析u=0.9909536293397956，同成本，按冻结流程进入精调；尚未确认或读取新程序report。
+
+
+### A1 r8-v9 BERT确认与冻结（2026-10-29 15:10 Asia/Taipei）
+
+[会话REPORT](/home/lhohy/pt_agent_results/A1-bert-session-20261029T055416-4780/REPORT.json)：complete=true，4轮（模型第35–38次），首个内部可行第36次；选中第37次tuned，8839自举、2339961499µs。pool6份、去重后5份，第一个确认候选20/20、n_diverged=0，校准u=0.855108369527021、解析u=0.9894397757341276，通过确认后冻结。剩2次不继续调用。
+
+第38次精调481.973496788秒、1遍收敛、0改动、coarse2/full2、未复用、峰值3073638400字节。第35–38次完整trace均保留，确认结果未回传Agent。新report目录 /home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T071008-1f22；正在执行一次冻结后Mock/tensor report100。尚未新增真实CKKS。
+
+
+BERT r8-v9冻结后report100张量初步结果：98/100、logit_rel_err=0.1188550060841412、校准u=0.8942478816741241、解析u=0.990963541161317、无发散，feasible=false（分类一致率低于99.5%）。Mock对照进行中，尚未记整项完成。按§6.15保留结果，BERT不追加调用；后续继续原定成本、双模式与Qwen。
+
+
+### A1 r8-v9 BERT report100完成及补充统计
+
+[report100](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T071008-1f22/REPORT.json)：两引擎均98/100、无发散，最大差1.7486012637846216e-15，748.920569秒、峰值2241536000字节。Mock logit_rel_err=0.1188550060841408，校准u=0.8942478816741241、解析u=0.990963541161317；域判据满足，一致率低于99.5%，feasible=false，结果保留。
+
+[仅报告的补充统计](/home/lhohy/pt_agent_results/A1-bert-postfreeze-v9-metrics-20261029T072436-e2fb/REPORT.json)：首个可行原文（第36次）heldout logit_rel_err=0.0007764026843586524；最终冻结程序heldout=0.08488997320008057、confirm=0.13475491349998472，两者20/20，未用于选择。各softmax的逆点内在深度／运算计数已记入该报告；成本分解从已保存完整cost复用。
+
+本轮自写报告编排修正：临时外层命令漏传PT_RESULTS，导致数值统计成功后registry.append报ValueError。已仅补记原REPORT，无重算／源码变化；原错误及恢复写入[BOOKKEEPING_RECOVERY](/home/lhohy/pt_agent_results/A1-bert-postfreeze-v9-metrics-20261029T072436-e2fb/BOOKKEEPING_RECOVERY.json)。r8-v9冻结的决策文件保持。
+
+
+### A1 BERT r8-v9完整收尾与Qwen接续（2026-10-29 15:32 Asia/Taipei）
+
+[BERT四行及旧v8对照REPORT](/home/lhohy/pt_agent_results/A1-bert-v9-summary-20261029T073228-685e/REPORT.json)包含结构、完整成本分解、逆点深度、各集一致率与logit_rel_err、API与精调消耗。baseline结果／成本／深度直接复用既有冻结证据；v9的M检查全部通过，未重跑基线。未执行的raw确认／report／编译和baseline确认明确记null。
+
+| 程序 | k / ρ（两softmax） | 自举预测/compiler/managed | 切点 / 深度 / 旋转 | heldout一致 / logit_rel_err | confirm一致 / logit_rel_err | report一致 / logit_rel_err | report校准u / 解析u |
+|---|---|---|---|---|---|---|---|
+| R0 | 5,5 / 无 | 15399 / 15399 / 15399 | 110 / 323 / 72051 | 20/20 / 0.0004227481 | 未执行 | 100/100 / 0.0004754205 | 0.948233 / 0.988755 |
+| R1 | 3,2 / 0.25,0.25 | 11275 / 11275 / 11275 | 90 / 263 / 68731 | 20/20 / 0.0004647050 | 未执行 | 100/100 / 0.0005852363 | 0.948233 / 0.998519 |
+| r8-v9首可行原文（第36次） | 3,3 / 0.1,0.1 | 10925 / 未执行 / 未执行 | 88 / 261 / 68771 | 20/20 / 0.0007764027 | 未执行 | 未执行 | 未执行 |
+| r8-v9冻结tuned（第37次） | 3,3 / 0.1,0.1 | 8839 / 8839 / 8839 | 97 / 284 / 68771 | 20/20 / 0.0848899732 | 20/20 / 0.1347549135 | 98/100 / 0.1188550061 | 0.894248 / 0.990964 |
+
+旧r8-v8第32次tuned保持9095自举／95切点，report97/100、logit_rel_err=0.1852931976、校准u=1.346502；新版本98/100仍未达99.5%，不计完整报告通过。R0/R1报告一致率通过、校准u超0.90，完整可行性仍false。真实CKKS本轮0次，未新增完整交付通过。
+
+v9 BERT调用4次（模型第35–38次），总输入259325／输出77640／合计336965 tokens，当前协议总BERT38/40，余2不追加。会话4375.692秒；各次精调详见上表引用，0/5/2/1遍、均未复用，精调总计3895.115秒，约占会话89.0%。
+
+BERT managed IR695662601字节、stdin路线已先报告；[managed REPORT](/home/lhohy/pt_agent_results/A1-bert-evaluate-20261029T071008-1f22/managed/REPORT.json)完整RuntimePlan相同，81.964秒，已prune。
+
+Qwen首会话 /home/lhohy/pt_agent_results/A1-qwen-session-20261029T073107-137f 已按既定授权启动；fresh pool/cache，split-v2/r8-v9/v8-6.14，最多40次。首个实际多遍精调3.8GiB停止条件保持，其他资源／容差保持；所有报告、compiler/managed结果均不回传Agent。
+
+
+Qwen r8-v9第1次：接口、M和typecheck通过，近似预检返回E_APPROX_NUMERICAL（rsqrt、relative Remez、degree127，50轮不收敛）；按§1.7记为候选不可行并反馈，未进入数值执行或精调，非整轮停止项。当前第2次请求进行中，原响应和完整拟合轨迹保留。
+
+
+Qwen第2次数值预检通过并完成内部评测：20/20、logit_rel_err=0.000256788397441486，无发散，校准u=0.9937949055119596、解析u=0.991475012708667；校准域判据未通过。预测55744自举／144切点／深度407／14351107183µs，evaluate峰值1356763136字节；正在按v8-6.14精调。
+
+
+### A1本轮停止结论（2026-10-29 15:44 Asia/Taipei / 62ecf194-dirty）
+
+开发诊断完成：跨批次循环引用定位及通用释放、R0原批次20释放验收、R0／冻结程序heldout20前后等价、R0/R1对照补全、r8-v9最小余量／接口／精调／请求／预算接线，177/177测试通过。BERT新冻结程序真实compiler/managed均通过，完整RuntimePlan相同；旧v8程序、报告与额度保持。
+
+首次输出与数值：BERT v9首请求不可行，第36次为首个内部可行原文；最终第37次tuned确认通过，report98/100未通过。本轮未执行真实CKKS，新增完整交付通过0。Qwen首请求拟合未收敛，第2次原文因校准u超0.90不可行，收尾Mock又发生资源停止；未产生可行或确认冻结程序。
+
+| Qwen对照行 | 现有heldout证据 | 后续验收状态 |
+|---|---|---|
+| R0（复用） | 20/20、logit_rel_err0.0015536403，校准u0.9937970192，完整不可行 | M检查通过；本轮report、成本/native未执行 |
+| R1（复用） | 20/20、logit_rel_err0.0022730570，校准u0.9937971414，完整不可行 | M检查通过；本轮report、成本/native未执行 |
+| 首个可行原文 | 尚无；第2次候选20/20、相对误差0.0002567884，校准u0.9937949055 | 数值不可行，不计入此行通过 |
+| 精调并冻结 | 尚无 | final Mock触限，确认、report、P2和双模式未执行 |
+
+Qwen预测第2次原文55744自举／144切点／深度407／14351107183µs仅为内部Count结果，真实编译0；未替代CKKS或完整验收。请求2份、响应2份，原源码、SESSION.pending及全部消费保留；原有基线和数据未变。
+
+未完成：Qwen精调最终Mock、剩余Agent会话、确认／冻结、report100及两基线report、成本明细和compiler/managed三方／完整RuntimePlan比较。当前仅资源停止证据，不扩展为编译器依赖阻塞。后续需按新spec接续，当前不启动任何重跑。
+
+与spec不一致之处：无算法／阈值／判据／资源调整，旧测试及断言未改。本轮自写夹具slots、批次结束观测／RSS采样、多行with括号和外层记录目录遗漏已修正，原因／旧失败／恢复分别在上文与BOOKKEEPING_RECOVERY保留；最后QwenMemoryError按spec停止，未作修改。无commit/tag、下载、安装或库修改。
+
+
+### A1 §6.17：单批内存诊断与新精调规则（2026-10-29）
+
+本轮遵循顺序：三项独立零API诊断 → 通用estimate缓存释放 → 复测批次20 → 仅在超过3.8GiB的实证后采用Mock批次10。tensor仍为20；BERT原Agent、确认与report不重跑，保留“精调规则v8-6.14，无精度余量”。
+
+| Qwen第2次原文 heldout20 诊断 | Mock前RSS / 释放后RSS | 峰值RSS（字节） | 结论 / 证据 |
+|---|---|---|---|
+| 批次20，无estimate | 296337408 | 4088197120 | MemoryError；[REPORT](/home/lhohy/pt_agent_results/A1-qwen-mock-case20-20261029T080355-11a0/REPORT.json) |
+| 先一次estimate，再批次20 | 1269706752 | 4079681536 | MemoryError；[REPORT](/home/lhohy/pt_agent_results/A1-qwen-mock-estimate20-20261029T080542-73a0/REPORT.json) |
+| 批次10，无estimate | 296382464 | 2526232576 | 20条完成；[REPORT](/home/lhohy/pt_agent_results/A1-qwen-mock-case10-20261029T080800-8ecf/REPORT.json) |
+| 修正a后：estimate缓存释放、批次20 | 705351680（释放后） | 4084867072 | 仍MemoryError且大于3.8GiB，按②b将通用Mock验证批次改为10；[REPORT](/home/lhohy/pt_agent_results/A1-qwen-mock-release20-20261029T081445-3c4f/REPORT.json) |
+
+estimate侧原CostDag有1994个常量条目／1493个身份缓存条目，按容器及直接ndarray统计196401866字节（不递归Plain属性或DAG）；释放后存活CostDag为0。成本结果2135458字节、1条结果仍保留。MockBackend的统一构造入口释放estimate侧常量／核缓存和不可达循环，批内运算顺序保持。单次诊断触限后未重试该项，继续其余诊断。
+
+[定义域对准诊断](/home/lhohy/pt_agent_results/A1-qwen-alignment-diagnostic-20261029T081251-688f/REPORT.json)：无numerical_errors；原文与对准后均20/20、无发散。对准后logit_rel_err=0.00025229627604110344、max_u_calibrated=0.9937948824593659、max_u_analytic=0.991475012708667，校准u仍超过0.90，故未接受；该诊断只省略最终Mock，未计精调或数值验收通过。
+
+新规则v8-6.17仅为精调改动增加logit_rel_err≤0.01（与任务条件取较严值），起点、确认、报告判据保持。新测试证明causal_lm与v8-6.14接受行为一致，分类0.0099接受／0.0101拒绝；旧默认与旧规则保持，Qwen显式选择新规则。原177＋新增10，共187/187通过，失败／错误／跳过均0，[测试REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T082021-73ff/REPORT.json)。旧测试与断言未修改。
+
+BERT v9旧记录保存了最终Mock的agree／u，未保存该次heldout logits。批次改为10前，按同一冻结原文保存了批次20输出：[参考](/home/lhohy/pt_agent_results/A1-bert-mock-before-20261029T081710-a425/REPORT.json)。20/20、max_u=0.9909536293397957、校准u=0.8755109802866499、解析u=0.9909536293397957均与原tune最终Mock记录相同；该输出仅用于批次等价验证。R0使用§6.16已存输出。两项批次10等价验证进行中；尚未恢复API，累计206/450、Qwen2/40。
+
+
+§6.17②等价性通过：[R0](/home/lhohy/pt_agent_results/A1-bert-mock-equivalence-20261029T082054-5f34/REPORT.json)、[r8-v9冻结程序](/home/lhohy/pt_agent_results/A1-bert-mock-equivalence-20261029T082520-f942/REPORT.json)。两项agree、首个越界和逐点／全局u均相同，logits最大差0；R0批次10峰值1568878592字节，265.244079秒。BERT原冻结成果与report98/100保持。
+
+本轮实现文件清单（决策变更仅为§6.17精调精度余量）：cost.py、backends/mock.py、planners/agent_tools.py、transformer_validation.py、planners/transformer_tuner.py、planners/agent.py、planners/transformer_session.py、experiments/a1_transformer_agent.py、experiments/a1_mock_single_batch.py、tests/test_a1_single_batch.py。提示词、能力表、模型／权重／数据、既有程序与报告保持；无commit/tag、库修改、安装或下载。普通Mock10／tensor20的差异已通过新增测试。
+
+现按④从Qwen第2次待精调检查点恢复到新目录；恢复及该次重调不增加API，用v8-6.17。通过3.8GiB峰值检查后继续原40次预算，所有外部报告和native结果保留在评测流程。
+
+
+Qwen恢复检查已完成：[RECOVERY步骤](/home/lhohy/pt_agent_results/A1-qwen-session-20261029T082910-a199/steps/001-recover/REPORT.json)。新SESSION保持split-v2、iteration2、calls2，消息、历史、候选池、计数及第2次原文保留；原v8-6.14缓存按规则存档，新v8-6.17缓存为空。保存响应与pending内容一致，恢复过程API0；旧SESSION和原停止REPORT未改。重调在独立进程执行，2400秒搜索／3600秒进程及3.8GiB停止检查保持。
+
+
+§6.17④：Qwen第2次重调完成，[步骤REPORT](/home/lhohy/pt_agent_results/A1-qwen-session-20261029T082910-a199/steps/002-tune/REPORT.json)。385.241884秒、峰值2804461568字节（约2.61GiB），通过3.8GiB检查，API仍为2次；成本55744自举／144切点／14351107183µs保留。Mock收尾20/20、校准u=0.9937949055119597、解析u=0.991475012708667，仍不可行；定义域对准未接受，coarse/full=0/2、sweeps=0、converged=false，未进行扫描。该结果与v8-6.14在causal_lm上的判定一致。已继续第3次起的原预算，BERT无新增调用。
+
+[本轮离线完整汇总](/home/lhohy/pt_agent_results/A1-transformers-s617-offline-20261029T083436-770f/REPORT.json)已登记诊断、缓存保留、187项测试、BERT两项等价结果和原报告路径；complete仅指离线工作，Qwen最终验收尚未完成。
+
+
+Qwen首会话8轮已完成：[REPORT](/home/lhohy/pt_agent_results/A1-qwen-session-20261029T082910-a199/REPORT.json)，2018.713136秒，status=confirm_failed；pool=0、确认evals=[]，未冻结程序，剩32/40。第3–6次均20/20但完整不可行（校准u分别约0.993795、0.993797、0.994040、0.993794；第5次logit_rel_err=0.0734744也超出任务条件）；第7次exact logits最大差19.465239053096003，拒绝；第8次parse拒绝。没有将局部一致率记为交付通过。
+
+按§3.2开启后续串行会话，最多用满原40次，冻结或任一步错误即停止：[接续清单](/home/lhohy/pt_agent_results/A1-qwen-s617-continuation-20261029T090457-484c/REPORT.json)。第二会话为A1-qwen-session-20261029T090457-4f95；新会话fresh pool/cache，所有旧请求、响应、状态及已用额度保留，不重置预算、不重试HTTP。
+
+
+Qwen第二会话完成：[REPORT](/home/lhohy/pt_agent_results/A1-qwen-session-20261029T090457-4f95/REPORT.json)，1087.898663秒、confirm_failed、pool0，未冻结。第9–13次分别parse／margin／approximation／approximation／parse拒绝，第14次完整评测后精调仍不可行，第15次margin拒绝，第16次完整不可行（20/20、logit_rel_err0.0022627710、校准u0.9937920868、解析u0.9918702034）。第14次精调峰值2698031104字节、288.664586秒，通过资源检查；sweeps0、full2，未进入扫描。
+
+第三会话A1-qwen-session-20261029T092305-1f29按原协议启动，第17次在途；完成调用220/450，Qwen16/40，BERT38/40保持不再调用。当前尚无Qwen可行候选或冻结程序，report及native未启动。
+
+
+Qwen第三会话完成：[REPORT](/home/lhohy/pt_agent_results/A1-qwen-session-20261029T092305-1f29/REPORT.json)，1536.062819秒、confirm_failed、pool0，未冻结。第17/18次parse，第19次typecheck，第20次approximation，第22次margin，第23次非正inv/rsqrt域被parse拒绝；第21、24次完整评测均20/20但校准u失败。第21次logit_rel_err0.0016088600／校准u0.9937929897；第24次0.0028502307／0.9964862985。第21次精调284.681199秒、峰值2706755584字节，通过资源检查；sweeps0、full2，仍不可行。
+
+第四会话A1-qwen-session-20261029T094842-01c5已启动。当前24/40次完成、余16，累计228/450；API及所有历史记录继续保留，未产生Qwen冻结程序，report／native仍未执行。
+
+
+Qwen第四会话完成：[REPORT](/home/lhohy/pt_agent_results/A1-qwen-session-20261029T094842-01c5/REPORT.json)，2050.897949秒、confirm_failed、pool0。第25次margin；第26次达到65536输出上限，length反馈；第27次20/20但logit_rel_err0.0580821和校准u均失败，精调258.181194秒、峰值2588987392字节，通过资源检查，sweeps0/full2，仍不可行。第28次20条全部发散，首问题按§6.12归为上游inv行和预算违约（c范围0.715376–1.400536超出R），候选拒绝、analytic_stop=false；第29次approximation拒绝；第30次完整不可行（20/20、logit_rel_err0.0053278022／校准u0.9957058050）；第31次非正inv/rsqrt域parse拒绝；第32次完整不可行（20/20、logit_rel_err0.0035532586／校准u0.9924207975）。
+
+最后一组第33–40次已在A1-qwen-session-20261029T102252-2f9b启动；已完成32/40、剩8、累计236/450。各次原文、响应、失败、精调及确认空池证据保留；当前仍无Qwen冻结程序，report/native均未执行。
+
+
+### A1 §6.17最终汇报（2026-10-29 / 62ecf194-dirty）
+
+[完整REPORT](/home/lhohy/pt_agent_results/A1-transformers-s617-summary-20261029T105741-caa3/REPORT.json)；原报告、响应、源码、程序包和已消费额度保留。完成实现与指定离线验证；Qwen达到§3.3停止条件，整体验收未完成。
+
+改动文件：scripts/pt_agent/{cost.py,backends/mock.py,planners/agent_tools.py,transformer_validation.py,planners/transformer_tuner.py,planners/agent.py,planners/transformer_session.py,experiments/a1_transformer_agent.py,experiments/a1_mock_single_batch.py,tests/test_a1_single_batch.py}，文档仅本STATUS。统一Mock构造入口释放estimate常量／核缓存，成本结果保留；观察到修正a后的批次20仍达4084867072字节并触限后，才采用通用Mock批次10，tensor20保持。v8-6.17仅为精调改动增加logit_rel_err≤0.01或任务更严条件，起点／确认／报告判定保持。Qwen与v8-6.14在causal_lm上接受行为等价，BERT旧v9保留“v8-6.14，无精度余量”。
+
+测试：原177＋新增10＝187/187，失败／错误／跳过0。BERT R0与v9冻结程序的agree、首个越界、逐点／全局u相同，logits最大差0；两份等价REPORT及诊断原数据见本节前面的链接。本轮未改旧测试、提示词、能力表、编译器、运行库、模型、权重或原数据划分；无安装、下载、commit、tag。
+
+Qwen共1个模型、40次调用、5个会话；每个完整内部评测使用同一20条留出输入。40次含反馈迭代，5个会话首轮为第1／9／17／25／33次，分别approximation／parse／parse／margin／margin，首次内部完整可行0/5；模型数仍为1。外部原样编译与CKKS均未执行，首次完整交付通过0。所有失败和未评测项保留在分母说明中；输入复用与模型泛化分开记录。
+
+| Qwen输出阶段 | 次数 | 结论 |
+|---|---|---|
+| 完整内部评测 | 16 | 内部可行0；均有校准u等失败，部分还违反logit_rel_err或一致率条件 |
+| parse / margin / approximation | 8 / 6 / 6 | 候选拒绝，原文保留 |
+| typecheck / exact / length | 1 / 1 / 1 | 候选拒绝，length仍消费调用 |
+| validation发散 | 1 | 第28次20条发散，按§6.12定位上游inv行和预算违约，候选拒绝 |
+
+五次Mock收尾均通过3.8GiB检查，精调没有接受对准改动，均sweeps0／converged=false／无复用／coarse0/full2。
+
+| 模型调用 | 记录精调秒数 | 进程峰值RSS字节 | 遍数 / 收敛 / 复用 |
+|---|---|---|---|
+| 2 | 382.209500 | 2804461568 | 0 / false / 无 |
+| 14 | 285.628265 | 2698031104 | 0 / false / 无 |
+| 21 | 281.778660 | 2706755584 | 0 / false / 无 |
+| 27 | 255.228012 | 2588987392 | 0 / false / 无 |
+| 35 | 290.466973 | 2837729280 | 0 / false / 无 |
+
+本轮接续会话墙钟合计8631.413927秒；记录精调合计1495.311409秒，占17.3241%。40次LLM请求自身耗时、每次tokens和每次完整成本见REPORT；原第2次失败进程另行保留，不从消费中扣除。
+
+BERT四行复用既有冻结结果，本轮仅按§6.17做两项留出等价验证；第37次tuned明确标注“v8-6.14，无精度余量”。
+
+| BERT程序 | k / ρ | 自举预测/compiler/managed | 切点 / 深度 / 旋转 / 延迟µs | heldout 一致/rel | confirm 一致/rel | report 一致/rel |
+|---|---|---|---|---|---|---|
+| R0 | 5,5 / 无 | 15399/15399/15399 | 110 / 323 / 72051 / 4024041543 | 20/20 / 0.0004227481 | 未执行 | 100/100 / 0.0004754205 |
+| R1 | 3,2 / .25,.25 | 11275/11275/11275 | 90 / 263 / 68731 / 2966775836 | 20/20 / 0.0004647050 | 未执行 | 100/100 / 0.0005852363 |
+| 首可行原文36 | 3,3 / .1,.1 | 10925/未执行/未执行 | 88 / 261 / 68771 / 2871696942 | 20/20 / 0.0007764027 | 未执行 | 未执行 |
+| 冻结tuned37 | 3,3 / .1,.1 | 8839/8839/8839 | 97 / 284 / 68771 / 2339961499 | 20/20 / 0.0848899732 | 20/20 / 0.1347549135 | 98/100 / 0.1188550061 |
+
+BERT report校准u／解析u：R0=0.9482332987/0.9887547039，R1=0.9482332987/0.9985188437，冻结程序=0.8942478817/0.9909635412。R0/R1校准u失败，冻结程序report一致率失败，完整交付通过仍0；成本分解和softmax逆点深度从既有REPORT复用，未重算。
+
+| Qwen程序 | k / ρ | 自举预测/compiler/managed、切点、深度、旋转、延迟 | heldout 一致 / logit_rel_err / 校准u / 解析u | confirm / report |
+|---|---|---|---|---|
+| R0（复用） | 8,8 / 无 | 本轮未执行 | 20/20 / .0015536403 / .9937970192 / .9912461968 | 未执行 |
+| R1（复用） | 7,6 / .25,.25 | 本轮未执行 | 20/20 / .0022730570 / .9937971414 / .9992601157 | 未执行 |
+| Agent首个可行原文 | 无 | 无 | 无 | 无 |
+| Agent精调并冻结 | 无 | 无 | 无 | 无 |
+
+仅作开发诊断的第35次原文：20/20，logit_rel_err=1.7466415833650434e-5，校准u=0.9937572089699965，仍完整不可行；其已保存完整Count成本（55360自举）与attention_A/B、softmax、norm、FFN、lm_head、other分解纳入最终REPORT，未选作可行或冻结程序。第40次同为20/20、logit_rel_err=1.7466415336502324e-5，校准u=0.9937951552007172，仍失败。未用局部通过、执行结束或API成功替代交付通过。
+
+与spec不一致之处：无未经授权的算法、判据、资源或旧断言变更。自写实现自查修正cost.py:33的末尾局部backend引用释放，确保gc回收DAG；自写汇总读取空R0 CHOICES时误用next导致StopIteration，已按空表处理并改用只读AST提取结构，未重跑数值/API或改原文件。缓存大小诊断按容器及直接ndarray计量，未递归Plain属性／DAG；完整进程RSS另行实测。
+
+未完成项：Qwen通过confirm的冻结程序、report100、R0/R1的report／成本与native、compiler/managed三方自举及切点、完整RuntimePlan。按§3.3在40次无确认程序时停止，不追加调用、不调整判据。真实CKKS本轮0次（沿用A1范围）；新增编译器／运行库依赖阻塞证据0。当前无遗留本轮执行或编译进程，磁盘空闲22868942848字节，原资源和共享锁保持。
+
+
+### A1 §6.18：r8-v10对数u与离线事后重评（2026-10-29）
+
+A1 §6.18进行中：统一对数u及r8-v10接线已实现，原187项与新增9项全部通过（196/196，旧断言不改）。正在生成首请求差异和离线逐程序重评；本轮API0，原会话／报告／冻结记录保持。账本与§6.17最终记录均为244/450，§6.18预算行236按历史笔误记录，已消费额度不回退。
+
+测试：[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T112546-1a18/REPORT.json)。主目录、aarch64、lhy-agent-dsl／62ecf194均已核对；本轮不改库、编译器、模型、权重、划分、旧响应或旧程序。M、§6.12归因及v8-6.17保持；默认提示版本保持r8-v4。
+
+§6.18②–③首阶段完成：196/196测试通过；BERT/Qwen两份REQUEST_DIFF各4项均通过（旧请求保持、仅u说明变化、出现一次、图摘要保持），请求只保存。BERT35–38次4项均可行，第35次由false变true；Qwen1–40次中12项由false变true（2、3、4、6、14、16、21、30、32、35、36、40）。其他拒绝原因保持。复用1份Qwen已有完整观测，19份缺行完整评测各补一次tensor20；24份其他阶段拒绝保持，四份基线均复用完整观测。BERT R0/R1校准u分别0.8157256111464016／0.8157644000726931，Qwen分别0.8628487506847／0.8628209898104，四项heldout均由不可行变可行。
+
+[结果目录](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab)。所有结果标注“事后重评：r8-v10判据，Agent当时收到的是r8-v9反馈”；已启动BERT原会话的v8-6.17离线精调，后续按Qwen5个原会话分别重放。原线上结果保持。
+
+本轮文件清单（其余脏文件保留）：domain_criteria.py、transformer_validation.py、margin.py、capabilities.py、dsl/typecheck.py、planners/{agent_tools,agent,confirm,prompts,tuner,transformer_tuner,transformer_session}.py、transformer_run.py、tensor_sim.py、export/package.py、experiments/{a1_transformer_agent,u4_relative_acceptance,a1_v10_replay}.py、tests/test_a1_log_u.py及STATUS.md。既有版本的默认值与线性运算顺序保留；仅r8-v10对数点反馈记录fn／u_scale，其他点字段保持。
+
+§6.18编排修正（本轮自写错误例外）：最终197项回归曾在BERT精调占用Nix launcher.lock时启动，30秒等待后metadata查询退出1，尚未执行任何测试；[原始日志](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T113719-ab62/run.log)、[REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T113719-ab62/REPORT.json)保留。已核对nix_portable.sh:43的flock --exclusive --timeout 30和精调进程的实际父链；这次由本轮调度顺序引起。仅暂停外层驱动PID1141023，当前精调继续正常收尾；锁释放后顺序运行尚未启动的最终回归，完成后恢复原会话状态，不改判据、测试断言或资源限制，不增加API。
+
+§6.18最终离线测试：[197/197 REPORT](/home/lhohy/pt_agent_results/A1-bert-unit-20261029T121228-6932/REPORT.json)，0失败／错误／跳过，13.224220秒。Nix锁等待失败未启动测试；当前精调完成后已串行重跑并恢复原外层调度，历史失败日志保留。BERT第35次精调完成：6遍、converged=false、coarse/full=39/23，2581.785176秒含Mock收尾（外层2583.973816秒），峰值1735909376字节；heldout20/20、校准u0.8146987738788947、解析u0.9902010086886476，预测8933自举／2364898924µs。后续输出继续按冻结触发条件处理。
+
+BERT R0/R1已复用同一程序的完整report／cost／compiler／preflight／managed证据，在新目录重算报告u：两种引擎均100/100并可行；校准u分别约0.8184965931／0.8186027047。原RuntimePlan完整比较与15399／11275自举证明保持，不重复编译。[R0复用](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/bert/baselines/R0/reuse/REPORT.json)、[R1复用](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/bert/baselines/R1/reuse/REPORT.json)。
+
+### A1 §6.18：BERT阶段完成（事后重评）
+
+[BERT完整REPORT](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/bert/REPORT.json)。本次重放按stale=2在原第37次后结束；3份保存响应组成5项候选，第35次tuned先通过confirm20/20后冻结。原第38次只列入独立重评表，未进入重放候选池。
+
+| 程序 | k／ρ | 预测自举／切点／深度 | report100（Mock、tensor） | logit_rel_err（tensor） |
+|---|---|---|---|---|
+| R0 | 5/None；5/None | 15399／110／323 | 100/100、100/100 | 0.00047542047392477475 |
+| R1 | 3/0.25；2/0.25 | 11275／90／263 | 100/100、100/100 | 0.0005852362570770341 |
+| first_feasible | 3/0.1；3/0.1 | 10925／88／261 | — | — |
+| frozen | 3/0.1；3/0.1 | 8933／95／280 | 100/100、100/100 | 0.011115008690599225 |
+
+冻结程序heldout／confirm logit_rel_err分别0.007693320121940639／0.007051266959771936；报告约0.011115，按原分类agreement判据为100/100通过，v8-6.17的1e-2用于精调移动接受。Mock/tensor报告最大差2.0539125955565396e-15；预测/compiler/managed=8933、切点95，完整383431步状态、统计及2052项常量全部相同，已prune。运行前已报告IR714178437字节／stdin、空闲21924982784字节，资源与容差保持。四行成本分解及softmax逆点深度已列入REPORT；R0/R1深度与保留参考的12／7点逐项一致。
+
+原线上r8-v9的第37次tuned程序仍为8839自举、report98/100，标注v8-6.14且无精度余量；本轮采用r8-v10判据与v8-6.17重放，旧记录未改。r8-v10真实在线会话0，真实CKKS0，新增首次完整交付证明0。Qwen五个原会话依次处理；当前第1原会话已保存2份输出，精调进行中，外层后续调度暂停以先收尾当前会话及外部验收。
+
+§6.18后续兼容复核：[198/198 REPORT](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/final-tests-198/REPORT.json)。本轮统一u函数的线性分支已恢复调用方原有NumPy浮点错误设置；原ViolationOrder／budget局部忽略上下文保持，公式、数值要求及旧断言均不改。这是本轮自写实现修正，增加一项边界测试。
+
+Qwen第1原会话重放完成：原第1–6次组成6个候选，确认均失败，无冻结程序，因而未运行该会话的report/native。两次精调分别为第2次（2遍、未收敛、2590.461322秒、36352自举、峰值2914009088字节）与第4次（3遍、未收敛、2548.684918秒、33664自举）；确认中tuned的logit_rel_err约0.038且校准u约0.9444，原文的logit_rel_err约0.00127–0.00181、校准u0.9438756–0.9443782，均未通过。确认数据只用于接受／拒绝，未参与后续参数选择。第2原会话现精调原第14次，仍为API0。
+
+缺行的原第28次发散拒绝已补一次tensor20：发散20保持，已观察校准点max_u=0.6792664351291586，解析max_u=4.9079313402009376e48，预算归因仍在，原拒绝不变。后续未完成的点保留空观测，不作为完整数值通过。[恢复REPORT](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/qwen/call-028-observation-recovered/REPORT.json)。新诊断脚本返回值漏做json_safe，导致首次包装报告序列化失败；OBSERVATION已成功保存。已按自写错误例外修正，并从原OBSERVATION恢复，未再执行模型、未覆盖失败REPORT或原响应／trace。
+
+
+### A1 §6.18：Qwen 剩余重放与冻结程序验收（Claude 接续执行，2026-10-29 UTC 16:20–19:50）
+
+codex 额度用完后，由 Claude 按原调用方式（`--part log-step`，每步一个进程）跑完 Qwen 第 2 原会话剩余部分以及第 3–5 原会话；API 0，tune_rule v8-6.17，3.8 GiB 检查保持。各次精调峰值 2585452544–2959118336 字节。
+
+| 重放会话 | 结果 | 确认未过原因 |
+|---|---|---|
+| 01（原 1–6） | 未冻结 | 原文：确认集第 32 行 rsqrt 校准 u≈0.944；tuned：另有 logit_rel_err≈0.038 |
+| 02（原 9–16） | 未冻结 | 同上（u≈0.944）；tuned logit_rel_err=0.01426 |
+| 03（原 17–24） | 未冻结 | u≈0.944 |
+| 04（原 25–32） | **冻结原第 30 次原文** | 两个 tuned 与原第 32 次 u 0.92–0.944 未过；原第 30 次确认 20/20、logit_rel_err 0.00482、校准 u 0.7922 通过 |
+| 05（原 33–40） | 未冻结（stale 后在第 5 轮结束） | u≈0.929–0.944 |
+
+冻结程序验收（[目录](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/qwen/acceptance-session-04)）：report100 tensor／Mock 均 100/100，logit_rel_err 0.00791999，校准 u 0.7922、解析 u 0.9954，feasible=true；预测／compiler／managed 自举 56800/56800/56800，切点 159，深度 448，预测延迟 14622482227 µs；managed IR 994541502 字节（stdin），完整 RuntimePlan（1107637 步、1892 常量）相同，已 prune。
+
+Qwen 基线成本（Count，[目录](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/qwen/baselines)）：R0 54848 自举／14120002955 µs／深度 392；R1 36512 自举／9412982371 µs／深度 344。冻结程序比 R0 多 3.6%、比 R1 多 55.6%。Qwen R0/R1 的 report100 与 compiler/managed 尚未执行。

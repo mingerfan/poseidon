@@ -183,7 +183,7 @@ def multi_flat_layout(n, size):
 
 
 def layout_blocks(lay):
-    if isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
+    if isinstance(lay, (MultiMuxLayout, MultiFlatLayout, TokenLayout, ScoreLayout)):
         return lay.blocks
     return ((0, lay.C if isinstance(lay, MuxLayout) else lay.size, lay),)
 
@@ -215,11 +215,13 @@ def unpack_multi(values, lay):
 def layout_record(lay):
     from dataclasses import asdict
 
-    kind = ('multi_mux' if isinstance(lay, MultiMuxLayout) else
+    kind = ('token' if isinstance(lay, TokenLayout) else
+            'score' if isinstance(lay, ScoreLayout) else
+            'multi_mux' if isinstance(lay, MultiMuxLayout) else
             'multi_flat' if isinstance(lay, MultiFlatLayout) else
             'mux' if isinstance(lay, MuxLayout) else 'flat')
     record = dict(kind=kind, **asdict(lay))
-    if isinstance(lay, (MultiMuxLayout, MultiFlatLayout)):
+    if isinstance(lay, (MultiMuxLayout, MultiFlatLayout, TokenLayout, ScoreLayout)):
         record['blocks'] = [dict(start=start, end=end, layout=layout_record(block))
                             for start, end, block in lay.blocks]
     return record
@@ -230,5 +232,73 @@ def layout_from_record(record):
     if record['kind'] == 'multi_mux' and 'partition_sizes' in fields:
         fields['partition_sizes'] = tuple(fields['partition_sizes'])
         return ConcatMuxLayout(**fields)
-    return {'mux': MuxLayout, 'flat': FlatLayout,
+    return {'mux': MuxLayout, 'flat': FlatLayout, 'token': TokenLayout, 'score': ScoreLayout,
             'multi_mux': MultiMuxLayout, 'multi_flat': MultiFlatLayout}[record['kind']](**fields)
+
+
+@dataclass(frozen=True)
+class TokenLayout:
+    """Each token owns consecutive flat blocks, each of capacity n/2."""
+
+    n: int
+    L: int
+    D: int
+
+    def __post_init__(self):
+        if self.n < 2 or self.n & (self.n-1) or min(self.L, self.D) < 1:
+            raise KernelError('invalid TokenLayout dimensions')
+
+    @property
+    def token(self):
+        return multi_flat_layout(self.n, self.D)
+
+    @property
+    def blocks(self):
+        return tuple((t*self.D+start, t*self.D+end, block)
+                     for t in range(self.L) for start, end, block in layout_blocks(self.token))
+
+
+@dataclass(frozen=True)
+class ScoreLayout:
+    """One query ciphertext, with consecutive head/key intervals."""
+
+    n: int
+    L: int
+    H: int
+    Lk: int
+
+    def __post_init__(self):
+        if (self.n < 2 or self.n & (self.n-1) or min(self.L, self.H, self.Lk) < 1
+                or self.H*self.Lk > self.n):
+            raise KernelError('attention heads/keys do not fit ScoreLayout')
+
+    @property
+    def blocks(self):
+        size = self.H*self.Lk
+        return tuple((t*size, (t+1)*size, FlatLayout(self.n, size)) for t in range(self.L))
+
+
+def pack_sequence(value, layout):
+    value = np.asarray(value, dtype=np.float64)
+    if isinstance(layout, TokenLayout):
+        if value.shape != (layout.L, layout.D):
+            raise KernelError('input shape differs from TokenLayout')
+        return [pack_flat(value[t, start:end], block) for t in range(layout.L)
+                for start, end, block in layout_blocks(layout.token)]
+    if value.shape != (layout.H, layout.L, layout.Lk):
+        raise KernelError('input shape differs from ScoreLayout')
+    return [pack_flat(value[:, t, :].reshape(-1), FlatLayout(layout.n, layout.H*layout.Lk))
+            for t in range(layout.L)]
+
+
+def unpack_sequence(values, layout):
+    if len(values) != len(layout.blocks):
+        raise KernelError('ciphertext count differs from sequence layout')
+    if isinstance(layout, TokenLayout):
+        count = len(layout_blocks(layout.token))
+        return np.stack([np.concatenate([np.asarray(values[t*count+i])[..., :block.size]
+                        for i, (_, _, block) in enumerate(layout_blocks(layout.token))], axis=-1)
+                        for t in range(layout.L)], axis=-2)
+    return np.stack([np.asarray(value)[..., :layout.H*layout.Lk].reshape(
+                     np.asarray(value).shape[:-1]+(layout.H, layout.Lk))
+                     for value in values], axis=-2)

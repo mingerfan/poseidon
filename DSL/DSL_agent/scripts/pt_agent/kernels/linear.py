@@ -3,7 +3,7 @@
 import numpy as np
 
 from .layout import FlatLayout, KernelError
-from .slots import accumulate, sum_slots
+from .slots import accumulate, sum_slots, vector
 
 
 def linear_flat(b, x, lin: FlatLayout, weight: np.ndarray, bias: np.ndarray | None, *, algo="bsgs", n1=None):
@@ -24,13 +24,16 @@ def linear_flat(b, x, lin: FlatLayout, weight: np.ndarray, bias: np.ndarray | No
     slots = np.arange(Ip)
     rows = slots % Op
 
-    def diagonal(d):
-        out = np.zeros(lin.n, dtype=np.float64)
-        columns = (slots+d) % Ip
-        valid = (rows < O) & (columns < I)
-        indices = slots[valid]
-        out[indices] = weight[rows[valid], columns[valid]]
-        return out
+    def diagonal(d, roll=None):
+        def build():
+            out = np.zeros(lin.n, dtype=np.float64)
+            columns = (slots+d) % Ip
+            valid = (rows < O) & (columns < I)
+            indices = slots[valid]
+            out[indices] = weight[rows[valid], columns[valid]]
+            return out if roll is None else np.roll(out, roll)
+        return vector(b, ('linear.diagonal', id(weight), lin, O, d, roll),
+                      build, owners=(weight,))
 
     z = None
     if algo == "diag":
@@ -48,17 +51,24 @@ def linear_flat(b, x, lin: FlatLayout, weight: np.ndarray, bias: np.ndarray | No
             for i in range(g):
                 d = g*j+i
                 if d < Op:
-                    u = np.roll(diagonal(d), g*j)
+                    u = diagonal(d, g*j)
                     if np.any(u):
                         inner = accumulate(inner, R[i]*b.const(u))
             if inner is not None:
                 z = accumulate(z, inner.rotate(g*j))
     y = sum_slots(b, z, Ip//Op, Op)
-    mask = np.zeros(lin.n, dtype=np.float64)
-    mask[:O] = 1
+    def build_mask():
+        mask = np.zeros(lin.n, dtype=np.float64)
+        mask[:O] = 1
+        return mask
+    mask = vector(b, ('linear.mask', lin.n, O), build_mask)
     y = y*b.const(mask)
     if bias is not None:
-        offset = np.zeros(lin.n, dtype=np.float64)
-        offset[:O] = bias
+        def build_bias():
+            offset = np.zeros(lin.n, dtype=np.float64)
+            offset[:O] = bias
+            return offset
+        offset = vector(b, ('linear.bias', id(bias), lin.n, O),
+                        build_bias, owners=(bias,))
         y = y+b.const(offset)
     return y, FlatLayout(lin.n, O)

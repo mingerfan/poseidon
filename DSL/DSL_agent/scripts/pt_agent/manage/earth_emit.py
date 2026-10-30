@@ -9,8 +9,10 @@ import time
 
 import numpy as np
 
+from ..backends.base import Backend
 from .check import check
-from .ir import Function, Node, Type
+from .greedy import timed_stage, write_timings
+from .ir import Function, Node, Type, shared_type
 from .streams import output_path, text_writer
 
 
@@ -74,6 +76,40 @@ def float_text(value):
     return '0x'+struct.pack('>d', float(value)).hex().upper()
 
 
+def constant_table(function):
+    """Carry Backend.const names through private encodings and management."""
+    def constants():
+        return (n for n in function.nodes if n.kind=='constant')
+    if any(n.const_key is None for n in constants()):
+        if any(n.const_key is not None for n in constants()):
+            raise ValueError('Mixed named and unnamed Earth constant payloads')
+        # Legacy full-text readers have no NameLoc key. Reuse the existing
+        # Backend.const identity once when emitting those legacy graphs.
+        backend = Backend(len(next(constants()).data))
+        backend._keep_const_data = False
+        for n in constants():
+            n.const_key = backend.const(n.data).name
+    table = {}
+    for n in constants():
+        table.setdefault(n.const_key,n.data)
+    return table
+
+
+def constant_sizes(function, calculator=None):
+    """U4 §7.6.3: estimate private encodings before writing managed IR."""
+    table = constant_table(function)
+    calculator = calculator or RMSCalculator(function.profile['rms_accumulation'])
+    combinations = set()
+    count = 0
+    for n in (n for n in function.nodes if n.kind=='constant'):
+        count += 1
+        value = n.attrs['rms_var'] if 'rms_var' in n.attrs else calculator(n.data)
+        combinations.add((n.const_key,n.type,struct.pack('>d',value)))
+    slots = len(next(iter(table.values()))) if table else 0
+    return dict(constant_ops=count,distinct_payloads=len(table),
+                encoding_combinations=len(combinations),estimated_cst_bytes=len(combinations)*slots*8)
+
+
 def _emit(function, path, *, metrics=None, unmanaged=False, compressed=False):
     """tools/frontend.cpp:147–150 and compiler debug-printer generic syntax."""
     started = time.monotonic()
@@ -82,6 +118,12 @@ def _emit(function, path, *, metrics=None, unmanaged=False, compressed=False):
     path = Path(path)
     types = function.types()
     calculator = RMSCalculator(function.profile['rms_accumulation'])
+    payloads = constant_table(function)
+    sizes = constant_sizes(function,calculator)
+    if metrics is not None:
+        metrics.update(sizes)
+    if not unmanaged and sizes['estimated_cst_bytes']>8*1024**3:
+        raise ValueError('Estimated .cst exceeds 8 GiB: '+str(sizes))
 
     def value(a):
         return f'%arg{-a-1}' if a < 0 else f'%v{a}'
@@ -98,16 +140,18 @@ def _emit(function, path, *, metrics=None, unmanaged=False, compressed=False):
     footer = ('    return '+', '.join(value(v) for v in function.outputs)+' : '+results+
               ' loc(unknown)\n  } loc(unknown)\n} loc(unknown)\n')
 
+    def alias(key,data, *, measure=False):
+        payload = '' if measure else np.asarray(data,dtype='<f8').tobytes().hex().upper()
+        return f'#pt{key} = dense<"0x{payload}"> : tensor<{len(data)}xf64>\n'
+
     def line(n, *, measure=False):
         args = ', '.join(value(v) for v in n.args)
         props = ''
         if n.kind == 'constant':
             data = np.asarray(n.data, dtype='<f8')
-            # Constant payload is encoded directly as DenseElementsAttr.
-            payload = '' if measure else data.tobytes().hex().upper()
             rms_value = 0 if measure else n.attrs['rms_var'] if 'rms_var' in n.attrs else calculator(data)
             attr = (f' {{rms_var = {float_text(rms_value)} : f64, '
-                    f'value = dense<"0x{payload}"> : tensor<{data.size}xf64>}}')
+                    f'value = #pt{n.const_key}}}')
         else:
             attr = ''
             if n.attrs:
@@ -120,15 +164,19 @@ def _emit(function, path, *, metrics=None, unmanaged=False, compressed=False):
         # PT-DSL ownership is diagnostic location data, not an operation attribute.
         line = max(1, n.lineno)
         loc = f' loc("ptdsl-op-{n.op_id}":{line}:0)'
+        if n.kind=='constant':
+            loc = f' loc("ptdsl-const-{n.const_key}"("ptdsl-op-{n.op_id}":{line}:0))'
         return (f'    %v{n.id} = "earth.{n.kind}"({args}){props}{attr} : '
                 f'({operands}) -> {type_text(n.type)}{loc}\n')
 
     # The dense payload has exactly 16 ASCII hex characters per float64. Size
     # this text without materializing it or calculating RMS a second time.
-    size = len(header)+len(footer)+sum(len(line(n,measure=True))+
-        (np.asarray(n.data).size*16 if n.kind=='constant' else 0) for n in function.nodes)
+    size = (len(header)+len(footer)+sum(len(line(n,measure=True)) for n in function.nodes)+
+            sum(len(alias(key,data,measure=True))+len(data)*16 for key,data in payloads.items()))
     path = output_path(path,size,compressed=compressed)
     with text_writer(path) as stream:
+        for key,data in payloads.items():
+            stream.write(alias(key,data))
         stream.write(header)
         for n in function.nodes:
             stream.write(line(n))
@@ -141,7 +189,11 @@ def _emit(function, path, *, metrics=None, unmanaged=False, compressed=False):
 
 
 def emit(function, path, *, metrics=None, compressed=False):
-    return _emit(function, path, metrics=metrics, compressed=compressed)
+    try:
+        with timed_stage("managed_emit", nodes=len(function.nodes)):
+            return _emit(function, path, metrics=metrics, compressed=compressed)
+    finally:
+        write_timings(Path(path).parent/"trace-stages.json")
 
 
 def emit_raw(recorded, path, profile, *, name='golden', metrics=None, compressed=False):
@@ -151,10 +203,10 @@ def emit_raw(recorded, path, profile, *, name='golden', metrics=None, compressed
     for n in recorded.nodes:
         if n.kind not in allowed:
             raise ValueError('unsupported unmanaged Earth operation '+n.kind)
-        nodes.append(replace(n,args=list(n.args),attrs=dict(n.attrs),type=Type(n.kind!='constant',0,0)))
-    inputs = [Type(True,0,0) for _ in recorded._inputs]
+        nodes.append(replace(n,args=list(n.args),attrs=dict(n.attrs),type=shared_type(n.kind!='constant',0,0)))
+    inputs = [shared_type(True,0,0) for _ in recorded._inputs]
     outputs = [v.nid for v in recorded._outputs]
-    f = Function(name,inputs,nodes,outputs,[Type(True,0,0) for _ in outputs],{},profile)
+    f = Function(name,inputs,nodes,outputs,[shared_type(True,0,0) for _ in outputs],{},profile)
     return _emit(f,path,metrics=metrics,unmanaged=True,compressed=compressed)
 
 

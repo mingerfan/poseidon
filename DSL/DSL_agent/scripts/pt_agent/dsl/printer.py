@@ -2,7 +2,7 @@
 
 import json
 
-from .ir import Program, WeightRef
+from .ir import Program, WeightRef, ValueRef
 
 
 def _literal(value):
@@ -26,7 +26,7 @@ def print_program(program: Program) -> str:
                          if getattr(header, name) is not None)
     if header.manage != "compiler":
         settings += ", manage="+_literal(header.manage)
-    params = ", ".join(p.name + ": " + ("Cipher" if p.kind == "cipher" else "Plain")
+    params = ", ".join(p.name + ": " + {'cipher':'Cipher', 'mask':'Mask', 'plain':'Plain'}[p.kind]
                        + "[" + ", ".join(map(str, p.shape)) + "]" for p in program.params)
     lines = [f"@fhe.program({settings})", f"def {program.name}({params}):"]
     names = {p.name: p.name for p in program.params}
@@ -36,13 +36,16 @@ def print_program(program: Program) -> str:
             region = program.regions[op.region]
             lines.append(f"    with region({_literal(region.name)}, level_budget={region.level_budget}):")
         active_region = op.region
-        args = [names[x] for x in op.inputs]
+        args = [names[x] for x in (op.inputs[:1] if op.kind == 'softmax' else op.inputs)]
+        if 'constant' in op.attrs:
+            args.append(_literal(op.attrs['constant']))
         outputs = []
         for vid in op.outputs:
             names[vid] = f"v{index}"
             outputs.append(names[vid])
             index += 1
-        args += [f"{key}={_literal(value)}" for key, value in op.attrs.items() if value is not None]
+        args += [f"{key}="+(names[value.name] if isinstance(value, ValueRef) else _literal(value))
+                 for key, value in op.attrs.items() if value is not None and key != 'constant']
         indent = "        " if op.region is not None else "    "
         lines.append(indent + ", ".join(outputs) + f" = {op.kind}(" + ", ".join(args) + ")")
     lines.append("    return " + ", ".join(names[x] for x in program.outputs))

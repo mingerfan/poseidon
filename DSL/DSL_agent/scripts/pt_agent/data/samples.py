@@ -24,6 +24,32 @@ def split_indices(count):
                 report=order[calibration+2*heldout:].tolist())
 
 
+def calibration_split_v2(split):
+    """A1 §6.13: move the first 60 report indices without inspecting samples."""
+    import copy
+    result=copy.deepcopy(split)
+    if result.get('version','split-v1')!='split-v1':
+        raise ValueError('split-v2 requires an original split-v1 partition')
+    names=('calibration','heldout','confirm','report')
+    if [len(result[name]) for name in names]!=[23,20,20,160]:
+        raise ValueError('A1 split-v2 requires the original 223-sample partition')
+    combined=[index for name in names for index in result[name]]
+    if len(set(combined))!=223:
+        raise ValueError('The four source partitions must be disjoint')
+    result['calibration']=result['calibration']+result['report'][:60]
+    result['report']=result['report'][60:]
+    result['version']='split-v2'
+    return result
+
+
+def split_version(info):
+    return getattr(info,'split',{}).get('version','split-v1')
+
+
+def report_count(info):
+    return 100 if split_version(info)=='split-v2' else 160
+
+
 @dataclass
 class Samples:
     kind: str
@@ -39,6 +65,8 @@ class Samples:
 
     def select(self, indices):
         indices = list(indices)
+        if any(self.items[i] is None for i in indices):
+            raise ValueError('Sample content is outside the requested selection')
         labels = None if self.labels is None else np.asarray(self.labels)[indices]
         return [self.items[i] for i in indices], labels
 
@@ -119,6 +147,36 @@ def read(source):
         if len(signatures) != 1:
             raise ValueError(f'Input sample shapes differ: {sorted(signatures)}')
     return Samples(selected_kind, items, ids, None if all(v is None for v in labels) else np.asarray(labels))
+
+
+def read_selected_text(source, sample_ids, indices):
+    """Parse only the requested stored text IDs; leave other sample slots empty."""
+    path=Path(source).resolve();items=[None]*len(sample_ids);chosen={};labels={}
+    for index in indices:
+        stem,line=sample_ids[index].rsplit(':',1)
+        file=path/stem if path.is_dir() else path
+        if file.suffix.lower() not in ('.txt','.jsonl'):
+            raise ValueError('Selected text reading requires TXT or JSONL input')
+        chosen.setdefault(file,{})[int(line)]=index
+    for file,lines in chosen.items():
+        with file.open() as stream:
+            for number,line in enumerate(stream):
+                if number in lines:
+                    index=lines[number]
+                    value=json.loads(line) if file.suffix.lower()=='.jsonl' else line.rstrip('\r\n')
+                    text=value.get('text') if isinstance(value,dict) else value
+                    if not isinstance(text,str):raise ValueError('Selected sample requires a text field')
+                    items[index]=text;labels[index]=value.get('label') if isinstance(value,dict) else None
+                if number>=max(lines):break
+    if any(items[index] is None for index in indices):raise ValueError('Selected input sample is missing')
+    values=[labels[index] for index in indices]
+    if any(value is None for value in values) and not all(value is None for value in values):
+        raise ValueError('Selected input samples have partially missing labels')
+    result=None
+    if any(value is not None for value in values):
+        result=np.zeros(len(sample_ids),dtype=np.asarray(values).dtype)
+        for index,value in labels.items():result[index]=value
+    return Samples('text',items,list(sample_ids),result)
 
 
 def choose_sequence(lengths, max_position_embeddings):

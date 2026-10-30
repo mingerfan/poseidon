@@ -7,6 +7,10 @@ from ..lower import HANDLED_OPS, LoweringError, _forward_bn_target
 
 
 def generate(program) -> str:
+    from ..transformer_lower import uses_transformer
+    if uses_transformer(program):
+        from .transformer_codegen import generate as token_generate
+        return token_generate(program)
     if not program.name.isidentifier() or keyword.iskeyword(program.name):
         raise ValueError("PT-DSL function name must be a Python identifier")
     consumers = defaultdict(list)

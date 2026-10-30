@@ -161,15 +161,79 @@ V6_CAPABILITIES = tuple(
     for entry in CAPABILITIES)
 
 
+V5_CAPABILITIES = CAPABILITIES
+V7_CAPABILITIES = tuple(
+    replace(entry,signature=entry.signature+' / pack(x,layout="token") / pack(x,layout="score")',
+            semantics=entry.semantics+' TokenLayout uses one ciphertext per token, splitting D>slots/2 into consecutive blocks; ScoreLayout uses one ciphertext per query with head/key intervals.')
+    if entry.op=='pack' else
+    replace(entry,semantics=entry.semantics+' Token linear acts on every token. A single input block uses the tall route at O/nextpow2(I)>=4, sharing input rotations across output blocks of slots/2.')
+    if entry.op=='linear' else entry for entry in V6_CAPABILITIES
+) + (
+    Capability('sub','sub(x,y) / sub(x,W[...])','Elementwise subtraction.',('Matching token/score layouts or a public broadcast constant.',),'No level.'),
+    Capability('mul','mul(x,y) / mul(x,W[...])','Elementwise multiplication; position-dependent public constants are allowed.',('Matching layouts; public constants broadcast to the full logical tensor.',),'One multiplication level.'),
+    Capability('scale','scale(x,c=C)','Public scalar multiplication.',('Finite scalar.',),'One plaintext multiplication.'),
+    Capability('bias','bias(x,b=W[...])','Public last-axis affine offset.',('Weight broadcasts to the input tensor.',),'No multiplication.'),
+    Capability('layernorm','layernorm(x,w=W[...],b=W[...],eps=E,rsqrt_method=M,rsqrt_domain=(lo,hi),rsqrt_deg0=D,rsqrt_iters=I)',
+        'Last-token-axis mean, centered variance plus eps, rsqrt, then gamma/beta.',
+        ('Method/domain are explicit. U5 cheb/remez use rsqrt_deg; newton uses rsqrt_deg0/rsqrt_iters. Positive variance domain. Optional rsqrt_fit="absolute"|"relative" selects remez fitting or the newton initializer; default absolute.',),
+        'Reductions, squares and an independent rsqrt approximation point.'),
+    Capability('rmsnorm','rmsnorm(x,w=W[...],eps=E,rsqrt_method=M,rsqrt_domain=(lo,hi),rsqrt_deg0=D,rsqrt_iters=I)',
+        'x*rsqrt(mean(x*x)+eps)*gamma; float64 arithmetic.',('Explicit method and positive domain; the same rsqrt knobs and rsqrt_fit="absolute"|"relative" as layernorm.',),'Independent rsqrt approximation point.'),
+    Capability('softmax','softmax(x,axis=-1,keep="all"|"causal",mask=am|None,shift=C,inv_scale=S,steps=K,exp_method=M,exp_domain=(lo,hi),exp_deg=D,inv_method=M,inv_domain=(lo,hi),inv_deg0=D,inv_iters=I,step_inv_method=M,step_inv_domain=(lo,hi),step_inv_deg=D,final_inv_method=M,final_inv_domain=(lo,hi),final_inv_deg=D,inv_budget=R)',
+        'Initially normalize(exp((scores-shift)*2**(-steps))*mask), using inv(sum/inv_scale)/inv_scale. Then repeat steps times: q=p*p; p=q*step_inv(sum(q)). This is the same softmax function. Mask[1,Lk] contains encrypted 0/1. No encrypted max subtraction.',
+        ('Only keep_static[i,j]*m[j]. Public shift defaults to 0; positive inv_scale defaults to 1; steps is an integer in 0..8. steps>0 requires explicit shared step_inv_method/domain and U5 step_inv_deg or step_inv_deg0/iters. Optional final_inv_* replaces only the last squaring inverse, observed as ::final_inv. Omitting it preserves the shared inverse at every step. Optional inv_budget is 0.5, 0.25 or 0.1 and requires steps>0 and final_inv; it has no arithmetic effect. Optional exp_fit, inv_fit, step_inv_fit and final_inv_fit are "absolute"|"relative" for remez or a newton initializer; default absolute. A row scalar c in [1-rho,1+rho] from an intermediate inverse cancels in the next exact normalization; only the final inverse error remains. From exp calibration (lo,hi), use shift=hi, (a,b)=((1.5*lo-hi)/2**K,(1.5*hi-hi)/2**K), exp_domain=(a,b), inv_scale=n*exp(b), inv_domain=(exp(a)/inv_scale,1), where n is Lk. With a final inverse, step_inv_domain=final_inv_domain=((1-rho)**2/(1.5*n),1.5*(1+rho)**2). Initial and intermediate inverse relative error targets are rho, final inverse target 1e-3; K=0 initial inverse target 1e-3. Exp target is 1e-3/2**K. Use the existing degree ladder <=63 and Newton iterations <=5. Compare K=0..8 by predicted latency. Domains use calibration only; heldout judges candidates without changing domains.',),
+        'Exp, initial inv and each step_inv[i] are approximation points; repeated steps share one fitted inverse. Token/head reductions, masks and each squaring add depth.'),
+    Capability('matmul','matmul(a,b,transpose_b=T,heads=H,kv_heads=K,scale=C|None)',
+        'True computes Q*K.T into ScoreLayout; false computes P*V into TokenLayout. kvmap(h)=floor(h/(H/K)).',
+        ('Head split/merge, K transpose and GQA expand are folded by the frontend. H is divisible by K. Fold a public scale into Q projection when available.',),
+        'Quadratic in sequence length; dot products and broadcasting require rotations.'),
+    Capability('shuffle','shuffle(x,index=(...),sign=(...))','Static last-axis signed gather, including rotate_half.',
+        ('Index length D; signs +/-1; no token movement.',),'One rotated/masked term per distinct shift.'),
+    Capability('select','select(h,sel)','Sum sel[t]*h[t] across tokens before a single LM head.',
+        ('sel: Mask[1,L] is the client encrypted one-hot last real position.',),'Encrypted mask broadcasts, products and sum.'),
+)
+
+
 def render_capabilities(version="r8-v4") -> str:
-    if version not in ("r8-v4", "r8-v5", "r8-v6"):
+    if version in ('r8-v9','r8-v10'):
+        version = 'r8-v8'
+    if version not in ("r8-v4", "r8-v5", "r8-v6", 'r8-v7', 'r8-v8'):
         raise ValueError("unknown prompt version")
-    capabilities = V4_CAPABILITIES if version == "r8-v4" else V6_CAPABILITIES if version=='r8-v6' else CAPABILITIES
+    capabilities = {'r8-v4':V4_CAPABILITIES,'r8-v5':V5_CAPABILITIES,'r8-v6':V6_CAPABILITIES,
+                    'r8-v7':V7_CAPABILITIES,'r8-v8':V7_CAPABILITIES}[version]
+    if version == 'r8-v8':
+        capabilities = tuple(
+            replace(entry, semantics='Element-wise sum. The second operand can be a ciphertext with the same layout or a public W[...] tensor with the same logical shape as the first operand. Use bias only for a last-dimension vector.')
+            if entry.op == 'add' else
+            replace(entry, signature='bias(x,b=W[...],axis=-1)',
+                    semantics='Add a public vector along the last logical dimension; specify axis=-1.',
+                    constraints=('The weight is a vector with exactly the last-dimension width. A full logical tensor uses add(x,W[...]).',))
+            if entry.op == 'bias' else
+            replace(entry, constraints=('Method and domain are explicit. Use rsqrt_deg for a supported polynomial method or rsqrt_deg0/rsqrt_iters for newton; the variance domain is positive. rsqrt_fit selects absolute or relative fitting.',))
+            if entry.op in ('layernorm', 'rmsnorm') else entry for entry in capabilities)
     lines = ["Operators supported by the lowering (generated from its capability registry; anything else is rejected):"]
     for capability in capabilities:
         if capability.in_prompt:
             lines.extend((f"- {capability.signature}",
                           f"  {capability.semantics} Constraints: {' '.join(capability.constraints)} Cost: {capability.cost}"))
+            if version == 'r8-v8':
+                from .dsl.constraints import for_op
+                lines.extend('  Check: '+text for text in for_op(capability.op))
+    if version == 'r8-v8':
+        from .dsl.interface import INPUT_KINDS, SIGNATURE_RULE
+        from .dsl.methods import method_table
+        from .dsl.constraints import for_op
+        from .dsl.ops_spec import OPS
+        lines.extend(('Input signature: '+SIGNATURE_RULE,
+                      'Mask inputs can only use pack(..., layout="flat").',
+                      'Input kinds (generated from the interface registry):'))
+        for kind, spec in INPUT_KINDS.items():
+            lines.append(f"- {kind}: {spec['dsl_type']}; pack layouts: {', '.join(spec['pack_layouts'])}")
+        lines.extend(('Approximation function/method support (generated from the kernels):', method_table()))
+        represented = {entry.op for entry in capabilities if entry.in_prompt}
+        for name in sorted(OPS.keys()-represented):
+            lines.append('Static checks for '+name+' (use only supported lowering patterns):')
+            lines.extend('  Check: '+text for text in for_op(name))
     lines.append('Lowering patterns. Groups of input nodes carrying "pattern": "<name>" must be written in this form:')
     lines.extend(f"- {pattern.name}: {pattern.description} Write: {pattern.dsl_form}" for pattern in PATTERNS)
     return "\n".join(lines)

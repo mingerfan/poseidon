@@ -4,7 +4,7 @@ import ast
 import re
 
 from .errors import PTDSLError
-from .ir import Header, Op, Param, Program, Region, WeightRef
+from .ir import Header, Op, Param, Program, Region, WeightRef, ValueRef
 from .ops_spec import OPS, RESERVED_NAMES
 
 
@@ -57,6 +57,8 @@ def _convert(value, spec, node, name):
         good = type(value) is bool
     elif t == "weight":
         good = isinstance(value, WeightRef)
+    elif t == 'tensor':
+        good = isinstance(value, ValueRef)
     elif t == "int_or_pair":
         if _integer(value):
             value = (value, value)
@@ -186,13 +188,13 @@ class _Parser:
             self.name(arg.arg, arg, entry_param=True)
             annotation = arg.annotation
             if not (isinstance(annotation, ast.Subscript) and isinstance(annotation.value, ast.Name)
-                    and annotation.value.id in ("Cipher", "Plain")):
-                _fail("E_PARAM", arg, "Expected Cipher[...] or Plain[...]")
+                    and annotation.value.id in ("Cipher", "Plain", "Mask")):
+                _fail("E_PARAM", arg, "Expected Cipher[...], Mask[...] or Plain[...]")
             nodes = annotation.slice.elts if isinstance(annotation.slice, ast.Tuple) else [annotation.slice]
             if not nodes or any(not isinstance(n, ast.Constant) or not _integer(n.value) or n.value < 1 for n in nodes):
                 _fail("E_PARAM", arg, "Tensor dimensions must be positive integer constants")
             result.append(Param(arg.arg, annotation.value.id.lower(), tuple(n.value for n in nodes), arg.lineno))
-        if not any(p.kind == "cipher" for p in result):
+        if not any(p.kind in ('cipher', 'mask') for p in result):
             _fail("E_PARAM", fn, "At least one Cipher parameter is required")
         return tuple(result)
 
@@ -210,8 +212,13 @@ class _Parser:
     def operator(self, call, statement, target_nodes, tuple_target, scope, region):
         name = call.func.id
         spec = OPS[name]
-        inputs = []
-        for node in call.args:
+        inputs, constant = [], None
+        for index, node in enumerate(call.args):
+            if name in ('add', 'sub', 'mul') and index == 1 and isinstance(node, ast.Subscript):
+                constant = self.literal(node, scope)
+                if not isinstance(constant, WeightRef):
+                    _fail('E_WEIGHT_REF', node, 'Use a public W[...] operand')
+                continue
             if not isinstance(node, ast.Name):
                 _fail("E_EXPR", node, "Operator inputs must be tensor names")
             if node.id not in scope.env:
@@ -221,7 +228,7 @@ class _Parser:
                 _fail("E_MACRO", node, "A literal macro parameter cannot be a tensor input")
             inputs.append(value.vid)
         if (spec.inputs == "2+" and len(inputs) < 2
-                or spec.inputs != "2+" and len(inputs) != spec.inputs):
+                or spec.inputs != "2+" and len(inputs)+(constant is not None) != spec.inputs):
             _fail("E_ARITY", statement, f"{name} requires {spec.inputs} inputs")
         supplied = {}
         for kw in call.keywords:
@@ -229,7 +236,13 @@ class _Parser:
                 _fail("E_EXPR", statement, "Expanded keywords are forbidden")
             if kw.arg not in spec.attrs or kw.arg in supplied:
                 _fail("E_ATTR_UNKNOWN", statement, f"{name}: unknown or duplicate attribute {kw.arg}")
-            supplied[kw.arg] = self.literal(kw.value, scope)
+            if spec.attrs[kw.arg].type == 'tensor' and isinstance(kw.value, ast.Name):
+                value = scope.env.get(kw.value.id)
+                if not isinstance(value, _Tensor):
+                    _fail('E_ATTR_TYPE', kw.value, 'mask requires a Mask value')
+                supplied[kw.arg] = ValueRef(value.vid)
+            else:
+                supplied[kw.arg] = self.literal(kw.value, scope)
         attrs = {}
         for key, field in spec.attrs.items():
             if field.required and key not in supplied:
@@ -240,6 +253,10 @@ class _Parser:
         message = spec.validate(attrs)
         if message is not None:
             _fail("E_ATTR_VALUE", statement, message)
+        if constant is not None:
+            attrs['constant'] = constant
+        if isinstance(attrs.get('mask'), ValueRef):
+            inputs.append(attrs['mask'].name)
         expected = len(attrs["sizes"]) if spec.outputs == "split" else 1
         if (len(target_nodes) != expected or tuple_target != (spec.outputs == "split")):
             _fail("E_TARGET", statement, f"{name} requires {'a tuple of' if spec.outputs == 'split' else ''} {expected} target(s)")

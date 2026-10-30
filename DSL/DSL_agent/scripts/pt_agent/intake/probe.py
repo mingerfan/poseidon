@@ -54,7 +54,7 @@ def model_info(source, graph, *, split, has_labels, handling=None, architectures
                                   architectures=architectures, vocab_size=vocab_size)
     metric, threshold = metric_for(task, has_labels=has_labels)
     kinds = ('image' if handling and handling.get('kind') == 'image' else 'features')
-    inputs = [dict(name=name, kind='mask' if name == 'attention_mask' else kinds,
+    inputs = [dict(name=name, kind='mask' if name == 'attention_mask' or graph.tensors[name].kind=='mask' else kinds,
                    shape=list(graph.tensors[name].shape), dtype=(dtypes or {}).get(name, 'float64'))
               for name in graph.inputs]
     if handling and handling.get('embedding_boundary'):
@@ -84,6 +84,9 @@ def import_torch(module, samples, *, name, source, split=None, preserve_input_na
         # npy has no named keys; preserve the model's inferred argument name.
         if tuple(tensors) != ('input',):
             rename_inputs(graph, list(tensors))
+    if any(len(graph.tensors[v].shape)==3 for v in graph.inputs):
+        from .transformer import normalize
+        graph=normalize(graph,strict=False)
     info = model_info(dict(type='torch', path=str(source)), graph, split=split,
                       has_labels=samples.labels is not None,
                       dtypes={key: str(value.dtype) for key, value in zip(graph.inputs, tensors.values())})

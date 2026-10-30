@@ -472,6 +472,10 @@ def run_tensor(program, weights, images, *, observer=None, cache=True,
     """
     if act_mode not in ('program', 'exact'):
         raise ValueError('act_mode must be program or exact')
+    from .transformer_lower import uses_transformer
+    if uses_transformer(program):
+        from .transformer_tensor import run
+        return run(program, weights, images, observer=observer, act_mode=act_mode)
     if len(program.params) != 1:
         raise LoweringError(None, None, "input count differs from program parameters")
     images_array = np.asarray(images, dtype=np.float64)
@@ -629,7 +633,8 @@ def _run(program, weights, images, observer, cache, image_id, batch_start, act_m
                         stats.add(difference)
                         if act_mode != 'exact':
                             lo, hi = attrs['domain']
-                            max_u = float(np.max(np.abs(stats.value*(2/(hi-lo))-(hi+lo)/(hi-lo))))
+                            from .domain_criteria import maximum_u
+                            max_u = maximum_u(stats.value, (lo, hi), fn='relu')
                             if max_u > 1:
                                 if observer is not None:
                                     observer(op.inputs[0], stats.value, cfg)

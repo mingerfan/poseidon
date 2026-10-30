@@ -190,7 +190,7 @@ def _run(argv, *, cwd=None, env=None, stdout=None, stderr=None, preexec_fn=None,
             if input_path is not None:
                 raise ValueError('Expected one compressed IR input')
             input_path, command[i] = path, str(file_input) if file_input is not None else '-'
-    if input_path is not None and output_index is not None and any(
+    if input_path is not None and output_index is not None and '--emit-bytecode' not in command and any(
             arg.startswith('--pass-pipeline=') for arg in command):
         output = output_path(command[output_index], compressed=True)
         command[output_index] = '-'
