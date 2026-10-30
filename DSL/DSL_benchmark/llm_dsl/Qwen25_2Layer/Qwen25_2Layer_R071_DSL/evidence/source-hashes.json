@@ -1,0 +1,17 @@
+{
+  "/home/gy/qwen-ckks/experiments/qwen_round_060_1792066029772055400/cache64-degree10p2_pair13_silu_canonical_fold2.json": "f671cbd15f88ace2d0f97745fcfe8bb533d3fb3eccda2c1ab09d401cd986a4cf",
+  "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_071_1792076524381482200/package/config/operator-spec.json": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b",
+  "/home/gy/qwen-ckks/experiments/qwen_round_060_1792066029772055400/compiled-degree10p2_pair13_silu_canonical_fold2/compiled._hecate_qwen25_2layer.bundle/manifest.json": "c73fb85eb66898fe50598ca9cfc2c43df86ba95bc06eed3379ac4b180b590ca5",
+  "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_071_1792076524381482200/ckks-fixture.json": "e006a30489b004e1d5da30220ffa1a4a12678367da7dd38a0b953e2f5e3f6cd1",
+  "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_071_1792076524381482200/native_probe.cpp": "54ed1657da70fbd07d4dd9be66f172108dd02a7c40bb70369708dcdc0f0fc9a2",
+  "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_071_1792076524381482200/mock_probe.cpp": "119ab1376f0c81191c5366862264cb0022dda0ab8f082123678e8bb6f3d28b62",
+  "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_071_1792076524381482200/native-probe": "cb7a519c0904ff757b95fb1b17ff6fc689c87988b5c2c5f6a94213eb7aead876",
+  "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_070_1792074789450659900/parallel-build/poseidon/libposeidon_shared.so": "dd93e62b9e4299d20b699453b327dd3c2b328ff1639c2e72091a855c6db56e1b",
+  "/home/gy/qwen-ckks/experiments/qwen_round_070_1792074789450659900/cpu-partition.json": "267eebaae680fb090bf835555950402ac6c2777528f659570bd4d6aa639da580",
+  "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_071_1792076524381482200/cpu-partition.json": "267eebaae680fb090bf835555950402ac6c2777528f659570bd4d6aa639da580",
+  "/home/gy/qwen-ckks/build/poseidon/libposeidon_shared.so": "f35ad5c9b20662f1390737aac02a8199f943ae6b8622c3cb71e9e3a0601340da",
+  "/home/gy/qwen-ckks/experiments/locked_validation_1791809879994647100/poseidon_cpu_api.cpp": "7592b7ac58603b5dacf6074aed76aa633b9cfc567ad40e9a1a430b25c8a7f896",
+  "/home/gy/qwen-ckks/experiments/locked_validation_1791809879994647100/cpu_bootstrap_reference.json": "61d4ea3fd6da240708690d1aedc872c6b01b125b6c9bf9a7d6f00e5f4ae8c93a",
+  "/home/gy/qwen-ckks/experiments/locked_toolchain_1791806679823388000/runtime-build/libruntime_plan_json.a": "23bb60fa3c53123f172c7c3f7050178a6231e816283aa2614bc9c7ad692e8ae0",
+  "/home/gy/qwen-ckks/experiments/locked_toolchain_1791806679823388000/runtime-build/libruntime_core.a": "d12aa80230355356f2f478610fe54511d604640e265ee473515cabf312a68c75"
+}

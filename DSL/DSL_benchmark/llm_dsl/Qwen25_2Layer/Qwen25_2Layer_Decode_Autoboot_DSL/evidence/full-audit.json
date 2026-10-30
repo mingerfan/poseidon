@@ -1,0 +1,25 @@
+{
+  "plan": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/full/compiled._hecate_qwen2layer_decode.runtime-plan.json",
+  "ckks_executed": false,
+  "values": 99117,
+  "boots": 604,
+  "outputs": 157,
+  "max_level": 5,
+  "operations": {
+    "encode": 6421,
+    "mul_cc": 723,
+    "relinearize": 723,
+    "rescale": 12250,
+    "mul_cp": 11527,
+    "rotate": 30238,
+    "add_cc": 35362,
+    "add_cp": 316,
+    "mod_switch": 940,
+    "boot": 604,
+    "negate": 11
+  },
+  "retained_all_coeff_bytes": 379144634368,
+  "retained_plain_coeff_bytes": 16739467264,
+  "baseline_retained_all_coeff_bytes": 1168738615296,
+  "note": "No releases or input reuse; coefficient estimate excludes keys and workspaces. Not CKKS RSS."
+}

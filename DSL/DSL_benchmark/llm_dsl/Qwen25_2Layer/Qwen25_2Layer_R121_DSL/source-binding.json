@@ -1,0 +1,330 @@
+{
+  "round": "round_121_paper_batch4_full_ckks",
+  "selected": "round_120_down256_short",
+  "files": {
+    "frozen/model/bounded_cpu_encodes.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/bounded_cpu_encodes.py",
+      "sha256": "b7bbb09f09dc357681b2035505f8d1fcb2a205933d20760f0bad14ca9d0fcf2a"
+    },
+    "frozen/model/combined_runtime.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/combined_runtime.py",
+      "sha256": "4620bbe62c5febba2f1f5a63a5cf93cc469dc759a22dfdd226c5a12737f63dcd"
+    },
+    "frozen/model/defer_cpu_encodes.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/defer_cpu_encodes.py",
+      "sha256": "4e1336652827206067a484e1daf2b0a74a707ffd536665cd532d3cb2a5006511"
+    },
+    "frozen/model/packed_attention.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/packed_attention.py",
+      "sha256": "5c411fa733154f65186e8bc76ff426b86ceae47af83bc9d3d33dcbe207aa1c6a"
+    },
+    "frozen/model/packed_attention_fused.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/packed_attention_fused.py",
+      "sha256": "3a186283a73f40ab5bbbaee95c9534c04ee312fe107b66aa7b862d5436a17ea5"
+    },
+    "frozen/model/trace_combined_model.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/trace_combined_model.py",
+      "sha256": "47990a3792654108d7c85ad63045db788c0c91f8ee67b217baf59054da74aaac"
+    },
+    "frozen/model/package/check_outputs.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/check_outputs.py",
+      "sha256": "8470b5844676dc51d06f52a2de5e7ea3339ecaaef0ba6512428a81b2e5f16b5f"
+    },
+    "frozen/model/package/compile_qwen24.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/compile_qwen24.py",
+      "sha256": "9234b3d3015ff525f555da3262fb9b713eab824add3f85fab65ee49279df80a2"
+    },
+    "frozen/model/package/manifest.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/manifest.json",
+      "sha256": "3f3d8ec5a038d0b2f4160242865e8dcc9124792ae80ab597693af908f452d6ba"
+    },
+    "frozen/model/package/prepare_fixture.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/prepare_fixture.py",
+      "sha256": "b7e8011c85687f4548483344278e9a6baba02679942d3cd5867c8fd0f0fd8902"
+    },
+    "frozen/model/package/prepare_inputs.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/prepare_inputs.py",
+      "sha256": "1761ad490108dab28d06bc3cb4bde43ccf99dd263fd929da76304c4b81bc011f"
+    },
+    "frozen/model/package/provenance.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/provenance.json",
+      "sha256": "dee07ae21cc8b3f1ad7272995296e975d6cf8498ce0ab167ba3fd4a98e8a4c81"
+    },
+    "frozen/model/package/README.md": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/README.md",
+      "sha256": "e3f73624f9c4da7a286d4e549277e67397b8013cca625bca515a414e2076e164"
+    },
+    "frozen/model/package/trace_qwen24.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/trace_qwen24.py",
+      "sha256": "0b6e1b80caea8b27c2299d74a19dd345d52eeb11eac1ad51ac5ca0ad5cf12431"
+    },
+    "frozen/model/package/unpack_outputs.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/unpack_outputs.py",
+      "sha256": "2ffc6b9b169b0e8a2e7b62129a5a36eb6285fd0b28ecfdc032b2c3b67671d306"
+    },
+    "frozen/model/package/verify_manifest.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/verify_manifest.py",
+      "sha256": "8b641de230f27e22d67610f989c03621e5468821b9639bd1d0cb790af7b58a10"
+    },
+    "frozen/model/package/config/approximations.provisional.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/config/approximations.provisional.json",
+      "sha256": "74ae65f46d9f28f5a0b6188241ce4d73e4b7215d933ca7ac2aa117b48de72d12"
+    },
+    "frozen/model/package/config/compiler-config.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/config/compiler-config.json",
+      "sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110"
+    },
+    "frozen/model/package/config/model.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/config/model.json",
+      "sha256": "dbdaf26d46a2639479308ec0d9fc1648697f5a42059350f68c0e04a6711d5359"
+    },
+    "frozen/model/package/config/operator-spec.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/config/operator-spec.json",
+      "sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b"
+    },
+    "frozen/model/package/config/weight_schema.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/config/weight_schema.json",
+      "sha256": "862292a9eaea7c69c0324287323c117545e1a281070cdb005c9313897f5a8023"
+    },
+    "frozen/model/package/qwen24/reference.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/reference.py",
+      "sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6"
+    },
+    "frozen/model/package/qwen24/runtime.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/runtime.py",
+      "sha256": "603f23646b1b1d44f3bc6e6749e286e54f6679c1318520b94354b2f63001e820"
+    },
+    "frozen/model/package/qwen24/spec.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/spec.py",
+      "sha256": "629aa6f8fb88cff9fa64e7efa0bbb7e0c8a67fc1f82f2a78704880f81024a78b"
+    },
+    "frozen/model/package/qwen24/weights.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/weights.py",
+      "sha256": "d6b873646af1dcdacba200ed518ad0fb74f7daf2e463fc768ddb88b3aed46c53"
+    },
+    "frozen/model/package/qwen24/__init__.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/__init__.py",
+      "sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9"
+    },
+    "frozen/model/package/qwen24/kernels/degree_rms_candidate.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/degree_rms_candidate.py",
+      "sha256": "b09333dabd4a0dcd9c5d6cd9a0443d003fb6c6c930505733459645e787287c03"
+    },
+    "frozen/model/package/qwen24/kernels/expr.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/expr.py",
+      "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff"
+    },
+    "frozen/model/package/qwen24/kernels/joint_qkv.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/joint_qkv.py",
+      "sha256": "3b5b716173f4511573512e4238fadf8a6b923404de2e7a64c9c3c488cc55250e"
+    },
+    "frozen/model/package/qwen24/kernels/ops.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/ops.py",
+      "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+    },
+    "frozen/model/package/qwen24/kernels/packed_linear.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/packed_linear.py",
+      "sha256": "e0df32d9226c7f2223e6cc5aacca377a42e68f327981bd224ab65cd44e3d7504"
+    },
+    "frozen/model/package/qwen24/kernels/packed_lm_head.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/packed_lm_head.py",
+      "sha256": "4e7023943e643e8acdf8d8691c9ec3113254fc1548eeda65fb82d6c2791f42e7"
+    },
+    "frozen/model/package/qwen24/kernels/packed_mlp_pair.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/packed_mlp_pair.py",
+      "sha256": "e6293764639389b0e65e90e2f25ee10942ed44b1afb2fdd7f7aa0d5c543ab54d"
+    },
+    "frozen/model/package/qwen24/kernels/packed_rms_batch.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/packed_rms_batch.py",
+      "sha256": "3cfdb16d683e775c4a1afd5317346413a73c12c1b4d3873f62c6d37fce2c0496"
+    },
+    "frozen/model/package/qwen24/kernels/prefill_rms_adapter.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/prefill_rms_adapter.py",
+      "sha256": "4e3679a82240cc19bc16579b6e2d2060d57053cc65ca65f2d89464c3a88e4e3b"
+    },
+    "frozen/model/package/qwen24/kernels/prefix_fusion.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/prefix_fusion.py",
+      "sha256": "4aafc31de914381aecd4e759dee7203f3a3b125469134a0bfc3a448d10d11f46"
+    },
+    "frozen/model/package/qwen24/kernels/qwen_layers.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/qwen_layers.py",
+      "sha256": "1c550d3aea13fc524e932004ec4675578ddd39858c44620cc129fcddb703fbeb"
+    },
+    "frozen/model/package/qwen24/kernels/qwen_model.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/qwen_model.py",
+      "sha256": "58872039ff0e2f1d5168b6ad5f186c01a57ed794932205c57a4ed866d2e00737"
+    },
+    "frozen/model/package/qwen24/kernels/qwen_nonlinear.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/qwen_nonlinear.py",
+      "sha256": "83b996cccd3cc263a2c9df6ed23c663c8f410064a9c0d38c858efeb968ca648e"
+    },
+    "frozen/model/package/qwen24/kernels/rms_affine_candidate.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/rms_affine_candidate.py",
+      "sha256": "589a7506df51d4388bb1d07976992862bdc444a131b9695f0ec22757dc16d53b"
+    },
+    "frozen/model/package/qwen24/kernels/rms_power_polynomial.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/rms_power_polynomial.py",
+      "sha256": "d22ae4b078d1077524e97d44754a953c71591820acd03043c515fef162a5267d"
+    },
+    "frozen/model/package/qwen24/kernels/silu_parity_candidate.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/silu_parity_candidate.py",
+      "sha256": "306b9400c72507a6747ec32a812278124b6e93d39b8157def30d6335c9e5958b"
+    },
+    "frozen/model/package/qwen24/kernels/tiled_down.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/tiled_down.py",
+      "sha256": "00a6928abddfbdb01b430909d0e45f565275976ac30f22896de5c0974be4fd24"
+    },
+    "frozen/model/package/qwen24/kernels/zero_tail_contract.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/zero_tail_contract.py",
+      "sha256": "1f669f4152276487c3305e653953192ccd35d507da9cd338d23c84b2ba454f96"
+    },
+    "frozen/model/package/qwen24/kernels/__init__.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/qwen24/kernels/__init__.py",
+      "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+    },
+    "frozen/model/package/verification/small-numpy-validation.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/verification/small-numpy-validation.json",
+      "sha256": "99fc3ce170f388a3389ea1621e69fdd74c7cfc58454b17fd50f781663f3f8431"
+    },
+    "frozen/model/package/verification/smoke_config.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/verification/smoke_config.json",
+      "sha256": "10b68ee94323bcc828f82ca0822f5f216bbfb6afd178394263680cb35ad92bc3"
+    },
+    "frozen/model/package/verification/source-check.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/verification/source-check.json",
+      "sha256": "58697391f64ce2c32d1de8515c6145c721b1eb5c3b8200884ea4ed3671833cdc"
+    },
+    "frozen/model/package/verification/validate_numpy.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/model/package/verification/validate_numpy.py",
+      "sha256": "4076e2f6b8c64cb841f56285597de21ea01c8cab2e7a9ad95d5add3f5a00df72"
+    },
+    "frozen/tools/elide_terminal_refresh.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/elide_terminal_refresh.py",
+      "sha256": "ed6c6828f82cb88cb7959045aa7dd61398241a2184761f1b2858704939797b0b"
+    },
+    "frozen/tools/release_ready_schedule.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/release_ready_schedule.py",
+      "sha256": "177d1f9b96ff7ffb3f9b015b032837dfc935de205d62353d92cb29f44c769008"
+    },
+    "frozen/tools/reorder_runtime_plan.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/reorder_runtime_plan.py",
+      "sha256": "4b2f83d44bd50b8ab225d59a51c890a36b31eb65786f286726c0b5bcbe9c1d9e"
+    },
+    "frozen/tools/native_probe.cpp": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/native_probe.cpp",
+      "sha256": "7f77cfebd87f056e6e955627153964467fe2b59bf39c6a2be1a1cc0bb5fd8fe1"
+    },
+    "frozen/tools/mock_probe.cpp": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/mock_probe.cpp",
+      "sha256": "836b24c12305deddbb190cec3fad780cd7ad0accceaf4c6687f85efe396ed3fe"
+    },
+    "frozen/tools/key_payload_stats.hpp": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/key_payload_stats.hpp",
+      "sha256": "44f1ac4bfa3866ff9658d9e200fc5f66ee7c54a36db88a4f2fd3793c11ad3558"
+    },
+    "compiler_reference/patch_boot_window.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/patch_boot_window.py",
+      "sha256": "91e93999213dc3ce25b8204155fc2b0fef1af134a8f53998bafc761156bff3bc"
+    },
+    "compiler_reference/compiler-source-manifest.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/compiler-source-manifest.json",
+      "sha256": "0864c2223af644174f5ebaba809fd333108e1d1bf10079b4a789af1fa5db3bb2"
+    },
+    "compiler_reference/compiler_window_regression.py": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/compiler_window_regression.py",
+      "sha256": "e86a0a943a22ac6033c3a8ab3c9daa7d8a13a63186e7fc48f339dff23825df03"
+    },
+    "evidence/result.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/result.json",
+      "sha256": "8b847bc0fbb6dea73f006bcdaab0162b61b13314b2657c73df9844145ce2ce54"
+    },
+    "evidence/completion-verification.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/completion-verification.json",
+      "sha256": "66eca35e176213f4dd0c0e7ee99b7e2a90cf4288a39f67fc42febbb3e9f35231"
+    },
+    "evidence/two-layer-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/two-layer-audit.json",
+      "sha256": "0f8b9d6f7c3d1f310f17ef731fc545a81450ec7ab2f1cf9cc1fda43a61af7625"
+    },
+    "evidence/source-bindings.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/source-bindings.json",
+      "sha256": "04aa1a0ed3f36a4bc05661dc67567745e1353ff6ebc9d6bae65eeee268580827"
+    },
+    "evidence/source-hashes.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/source-hashes.json",
+      "sha256": "0505fe09bb13df69f865a2c55716c1cb48de310bc576dbbb81245e8c12c4ce6a"
+    },
+    "evidence/mock-result.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/mock-result.json",
+      "sha256": "ba4340aacc84b5abf095c21d91301ea68273612bd23b215d7028dead6d74424c"
+    },
+    "evidence/FINAL_ANALYSIS.md": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/FINAL_ANALYSIS.md",
+      "sha256": "f3531d6e708f756f7c770f65f616345509421dda0c96996c7e36e6ae359d00b9"
+    },
+    "evidence/BATCH_SELECTION.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/BATCH_SELECTION.json",
+      "sha256": "0a2bad927e7f23d4d762e583203c362b4064407d62c894d5a66c658a47c7ac6e"
+    },
+    "evidence/BATCH_SELECTION.md": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/BATCH_SELECTION.md",
+      "sha256": "f931469bda3a8e58090b2274ff51c5e2365db0ee27009298492bf4fe99cfea5c"
+    },
+    "evidence/MEMORY_LEVEL_COMPARISON.md": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/MEMORY_LEVEL_COMPARISON.md",
+      "sha256": "8fb776859472f1f4bb9757310a9cc4be179cbd205ff77a139a2436ace99e1c75"
+    },
+    "evidence/full-batch-comparison.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/reports/full-batch-comparison.json",
+      "sha256": "ecd10a39ead36d816ffc74c7b6ae746b839bde122d23cc9d0fbcfb001d7bb3bb"
+    },
+    "evidence/full-source-manifest.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/source-manifest.json",
+      "sha256": "dfb543e416e84969f219caca3aa8b7597e1a2e6aa518770635b5347f98ac8a6b"
+    },
+    "evidence/model-selection.json": {
+      "source": "Qwen_Optimization_Rounds/round_121_paper_batch4_full_ckks/validation/model-selection.json",
+      "sha256": "14e27c3231a80c81bdbd25f7c920f194dc9326427469e0ad07626748a419f7bc"
+    },
+    "evidence/selected-short-config.json": {
+      "source": "Qwen_Optimization_Rounds/round_120_down256_short/validation/paper-loop-config.json",
+      "sha256": "48881b49344302fc5b15ec95e6398e06f0ec9acd0773aa12e84a6606f62ad9eb"
+    },
+    "evidence/selected-short-paper-loop-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_120_down256_short/reports/paper-loop-audit.json",
+      "sha256": "3dc88343b7e59bb8cfcc4799e2102d1dcbeb5d5a98141c36b0c0e1f0dcb32c04"
+    },
+    "evidence/selected-short-compiler-candidate-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_120_down256_short/reports/compiler-candidate-audit.json",
+      "sha256": "3e26573e56bba34023feb705ab6015c5e0a124d49797372b3e158fec676734b6"
+    },
+    "evidence/selected-short-compiler-window-regression.json": {
+      "source": "Qwen_Optimization_Rounds/round_120_down256_short/reports/compiler-window-regression.json",
+      "sha256": "e980786f927171f49e7a8711d303e3136dad3a3ab5cedf8112716c4cf3f43f53"
+    },
+    "evidence/selected-short-completion-verification.json": {
+      "source": "Qwen_Optimization_Rounds/round_120_down256_short/reports/completion-verification.json",
+      "sha256": "2ebe29086a5eae4b1141fc20723c6549d456466648a78b62a337fdb93318506b"
+    },
+    "evidence/selected-short-paper-stage-timings.json": {
+      "source": "Qwen_Optimization_Rounds/round_120_down256_short/reports/paper-stage-timings.json",
+      "sha256": "ddf66e0021e3e3fca6427611b021223c471437f82aed6b34c9c69ac7469e2b72"
+    },
+    "evidence/baseline-071-full-verification.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/completion-verification.json",
+      "sha256": "422f5c0a0a64b5507e307a6e5f0aa57828df43de94fb379430d1ab93ef543695"
+    },
+    "evidence/baseline-112-full-verification.json": {
+      "source": "Qwen_Optimization_Rounds/round_112_paper_batch3_full_ckks/reports/completion-verification.json",
+      "sha256": "fd9d92420330b200690882bf2a67f3b5a93c48831f3a80be95cbf9c10f1b07b2"
+    },
+    "evidence/baseline-071-plan-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_071_latest_parallel_full_ckks/reports/two-layer-audit.json",
+      "sha256": "80e76e7e0fa912c33a6be481b7206d844fe8a496666aa72522b0454e1f1f12b1"
+    },
+    "evidence/baseline-112-plan-audit.json": {
+      "source": "Qwen_Optimization_Rounds/round_112_paper_batch3_full_ckks/reports/two-layer-audit.json",
+      "sha256": "f40a4aa02ddd938c5eb8f7190872ab7eb6da0c477647de1cc664d9976a762a4a"
+    }
+  }
+}

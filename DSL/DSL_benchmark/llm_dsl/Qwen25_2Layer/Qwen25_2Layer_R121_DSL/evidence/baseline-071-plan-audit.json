@@ -1,0 +1,2477 @@
+{
+  "full_ckks_completed": true,
+  "execution": {
+    "release_peak_coefficient_bytes": 213385216,
+    "plaintext_peak_coefficient_bytes": 67108864,
+    "ciphertext_peak_coefficient_bytes": 211812352,
+    "eager_initialization_encode_bytes": 0,
+    "total_encoded_coefficient_bytes": 14823718912,
+    "counts": {
+      "mod_switch": 221,
+      "encode": 6711,
+      "mul_cp": 9565,
+      "release": 83853,
+      "rescale": 9703,
+      "mul_cc": 138,
+      "relinearize": 138,
+      "rotate": 26070,
+      "add_cc": 31064,
+      "add_cp": 90,
+      "boot": 154,
+      "negate": 4
+    },
+    "by_level": {
+      "ciphertext:L5:c2": {
+        "count": 307,
+        "coefficient_bytes": 1931476992
+      },
+      "plaintext:L4:c1": {
+        "count": 1277,
+        "coefficient_bytes": 3347578880
+      },
+      "plaintext:L1:c1": {
+        "count": 24,
+        "coefficient_bytes": 25165824
+      },
+      "ciphertext:L4:c2": {
+        "count": 4774,
+        "coefficient_bytes": 25029509120
+      },
+      "ciphertext:L3:c2": {
+        "count": 40584,
+        "coefficient_bytes": 170221633536
+      },
+      "ciphertext:L3:c3": {
+        "count": 45,
+        "coefficient_bytes": 283115520
+      },
+      "ciphertext:L2:c2": {
+        "count": 26525,
+        "coefficient_bytes": 83440435200
+      },
+      "plaintext:L2:c1": {
+        "count": 83,
+        "coefficient_bytes": 130547712
+      },
+      "ciphertext:L1:c2": {
+        "count": 4821,
+        "coefficient_bytes": 10110369792
+      },
+      "ciphertext:L4:c3": {
+        "count": 27,
+        "coefficient_bytes": 212336640
+      },
+      "plaintext:L3:c1": {
+        "count": 5185,
+        "coefficient_bytes": 10873733120
+      },
+      "plaintext:L5:c1": {
+        "count": 142,
+        "coefficient_bytes": 446693376
+      },
+      "ciphertext:L2:c3": {
+        "count": 61,
+        "coefficient_bytes": 287834112
+      },
+      "ciphertext:L5:c3": {
+        "count": 5,
+        "coefficient_bytes": 47185920
+      }
+    },
+    "input_levels": [
+      5,
+      5
+    ],
+    "output_levels": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "coefficients_only": true,
+    "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+    "plan_sha256": "f671cbd15f88ace2d0f97745fcfe8bb533d3fb3eccda2c1ab09d401cd986a4cf",
+    "boot_count": 154,
+    "boot_transitions": [
+      {
+        "input_id": "85",
+        "output_id": "89",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "166",
+        "output_id": "189",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "169",
+        "output_id": "190",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "172",
+        "output_id": "191",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "175",
+        "output_id": "192",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "254",
+        "output_id": "269",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "88",
+        "output_id": "90",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "179",
+        "output_id": "193",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "182",
+        "output_id": "194",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "185",
+        "output_id": "195",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "188",
+        "output_id": "196",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "268",
+        "output_id": "270",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2032",
+        "output_id": "2038",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2154",
+        "output_id": "2210",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2001",
+        "output_id": "2035",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2193",
+        "output_id": "2213",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1884",
+        "output_id": "2033",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2016",
+        "output_id": "2036",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2190",
+        "output_id": "2212",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3331",
+        "output_id": "3333",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3391",
+        "output_id": "3393",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3471",
+        "output_id": "3480",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1900",
+        "output_id": "2034",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2031",
+        "output_id": "2037",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2199",
+        "output_id": "2214",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3530",
+        "output_id": "3532",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3592",
+        "output_id": "4194",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3617",
+        "output_id": "4195",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3642",
+        "output_id": "4196",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3667",
+        "output_id": "4197",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3692",
+        "output_id": "4198",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3717",
+        "output_id": "4199",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3742",
+        "output_id": "4200",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3767",
+        "output_id": "4201",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3792",
+        "output_id": "4202",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3817",
+        "output_id": "4203",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3842",
+        "output_id": "4204",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3867",
+        "output_id": "4205",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3892",
+        "output_id": "4206",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3917",
+        "output_id": "4207",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3942",
+        "output_id": "4208",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3967",
+        "output_id": "4209",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3992",
+        "output_id": "4210",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4017",
+        "output_id": "4211",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4042",
+        "output_id": "4212",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4067",
+        "output_id": "4213",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4092",
+        "output_id": "4214",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4117",
+        "output_id": "4215",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4142",
+        "output_id": "4216",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4167",
+        "output_id": "4217",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4192",
+        "output_id": "4218",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16396",
+        "output_id": "16397",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16395",
+        "output_id": "16400",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16454",
+        "output_id": "16477",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16457",
+        "output_id": "16478",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16462",
+        "output_id": "16479",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16465",
+        "output_id": "16480",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16474",
+        "output_id": "16475",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16468",
+        "output_id": "16481",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16471",
+        "output_id": "16482",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16552",
+        "output_id": "16560",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16555",
+        "output_id": "16561",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16612",
+        "output_id": "16614",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34639",
+        "output_id": "34642",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34692",
+        "output_id": "34694",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34766",
+        "output_id": "34779",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34770",
+        "output_id": "34780",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34774",
+        "output_id": "34781",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34034",
+        "output_id": "34640",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34826",
+        "output_id": "34828",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41459",
+        "output_id": "41468",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2186",
+        "output_id": "2211",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3315",
+        "output_id": "3332",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3387",
+        "output_id": "3392",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3461",
+        "output_id": "3477",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3464",
+        "output_id": "3478",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3435",
+        "output_id": "3474",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3467",
+        "output_id": "3479",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3440",
+        "output_id": "3475",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3445",
+        "output_id": "3476",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3472",
+        "output_id": "3473",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3527",
+        "output_id": "3531",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3567",
+        "output_id": "4193",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15850",
+        "output_id": "16398",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16451",
+        "output_id": "16476",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16542",
+        "output_id": "16559",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16512",
+        "output_id": "16556",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16517",
+        "output_id": "16557",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16522",
+        "output_id": "16558",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16472",
+        "output_id": "16473",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16598",
+        "output_id": "16613",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16392",
+        "output_id": "16399",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34636",
+        "output_id": "34641",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34689",
+        "output_id": "34693",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34754",
+        "output_id": "34775",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34757",
+        "output_id": "34776",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34760",
+        "output_id": "34777",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34763",
+        "output_id": "34778",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34816",
+        "output_id": "34827",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40817",
+        "output_id": "41464",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40831",
+        "output_id": "41465",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40845",
+        "output_id": "41466",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40859",
+        "output_id": "41467",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41569",
+        "output_id": "41572",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41614",
+        "output_id": "41624",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41617",
+        "output_id": "41625",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41620",
+        "output_id": "41626",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41623",
+        "output_id": "41627",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41663",
+        "output_id": "41664",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43086",
+        "output_id": "43090",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43149",
+        "output_id": "43185",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43052",
+        "output_id": "43087",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43172",
+        "output_id": "43187",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40760",
+        "output_id": "41460",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40774",
+        "output_id": "41461",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40788",
+        "output_id": "41462",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40803",
+        "output_id": "41463",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41566",
+        "output_id": "41571",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43068",
+        "output_id": "43088",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43170",
+        "output_id": "43186",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43229",
+        "output_id": "43230",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43255",
+        "output_id": "43267",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43252",
+        "output_id": "43266",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43260",
+        "output_id": "43268",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43265",
+        "output_id": "43269",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43293",
+        "output_id": "43294",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43084",
+        "output_id": "43089",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43178",
+        "output_id": "43188",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43318",
+        "output_id": "43319",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44395",
+        "output_id": "44396",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44436",
+        "output_id": "44437",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44473",
+        "output_id": "44483",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44476",
+        "output_id": "44484",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44479",
+        "output_id": "44485",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44482",
+        "output_id": "44486",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44522",
+        "output_id": "44523",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "55674",
+        "output_id": "56217",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56229",
+        "output_id": "56232",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56253",
+        "output_id": "56261",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56256",
+        "output_id": "56262",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56260",
+        "output_id": "56263",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56230",
+        "output_id": "56231",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56216",
+        "output_id": "56218",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56285",
+        "output_id": "56286",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62737",
+        "output_id": "62738",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62778",
+        "output_id": "62779",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62815",
+        "output_id": "62825",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62818",
+        "output_id": "62826",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62821",
+        "output_id": "62827",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62824",
+        "output_id": "62828",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62850",
+        "output_id": "62851",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2209",
+        "output_id": "2215",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41562",
+        "output_id": "41570",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43184",
+        "output_id": "43189",
+        "input_level": 1,
+        "output_level": 5
+      }
+    ],
+    "all_values_coefficient_bytes": 306387615744,
+    "values": 83860,
+    "inputs": 2,
+    "outputs": 7,
+    "num_layers": 2,
+    "tokens": 2
+  },
+  "eager": {
+    "release_peak_coefficient_bytes": 14740357120,
+    "plaintext_peak_coefficient_bytes": 13985906688,
+    "ciphertext_peak_coefficient_bytes": 1961885696,
+    "eager_initialization_encode_bytes": 13985906688,
+    "total_encoded_coefficient_bytes": 13985906688,
+    "counts": {
+      "encode": 6380,
+      "mod_switch": 221,
+      "mul_cp": 9565,
+      "release": 83522,
+      "rescale": 9703,
+      "mul_cc": 138,
+      "relinearize": 138,
+      "rotate": 26070,
+      "add_cc": 31064,
+      "add_cp": 90,
+      "boot": 154,
+      "negate": 4
+    },
+    "by_level": {
+      "ciphertext:L5:c2": {
+        "count": 307,
+        "coefficient_bytes": 1931476992
+      },
+      "plaintext:L4:c1": {
+        "count": 984,
+        "coefficient_bytes": 2579496960
+      },
+      "plaintext:L1:c1": {
+        "count": 20,
+        "coefficient_bytes": 20971520
+      },
+      "ciphertext:L4:c2": {
+        "count": 4774,
+        "coefficient_bytes": 25029509120
+      },
+      "ciphertext:L3:c2": {
+        "count": 40584,
+        "coefficient_bytes": 170221633536
+      },
+      "ciphertext:L3:c3": {
+        "count": 45,
+        "coefficient_bytes": 283115520
+      },
+      "ciphertext:L2:c2": {
+        "count": 26525,
+        "coefficient_bytes": 83440435200
+      },
+      "plaintext:L2:c1": {
+        "count": 68,
+        "coefficient_bytes": 106954752
+      },
+      "ciphertext:L1:c2": {
+        "count": 4821,
+        "coefficient_bytes": 10110369792
+      },
+      "ciphertext:L4:c3": {
+        "count": 27,
+        "coefficient_bytes": 212336640
+      },
+      "plaintext:L3:c1": {
+        "count": 5168,
+        "coefficient_bytes": 10838081536
+      },
+      "plaintext:L5:c1": {
+        "count": 140,
+        "coefficient_bytes": 440401920
+      },
+      "ciphertext:L2:c3": {
+        "count": 61,
+        "coefficient_bytes": 287834112
+      },
+      "ciphertext:L5:c3": {
+        "count": 5,
+        "coefficient_bytes": 47185920
+      }
+    },
+    "input_levels": [
+      5,
+      5
+    ],
+    "output_levels": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "coefficients_only": true,
+    "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+    "plan_sha256": "f914b86fe3c25b2fdfa773842d96bf584911bb88111615229f3261b41c661ace",
+    "boot_count": 154,
+    "boot_transitions": [
+      {
+        "input_id": "85",
+        "output_id": "89",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "88",
+        "output_id": "90",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "166",
+        "output_id": "189",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "169",
+        "output_id": "190",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "172",
+        "output_id": "191",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "175",
+        "output_id": "192",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "179",
+        "output_id": "193",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "182",
+        "output_id": "194",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "185",
+        "output_id": "195",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "188",
+        "output_id": "196",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "254",
+        "output_id": "269",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "268",
+        "output_id": "270",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1884",
+        "output_id": "2033",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1900",
+        "output_id": "2034",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2001",
+        "output_id": "2035",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2016",
+        "output_id": "2036",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2031",
+        "output_id": "2037",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2032",
+        "output_id": "2038",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2154",
+        "output_id": "2210",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2186",
+        "output_id": "2211",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2190",
+        "output_id": "2212",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2193",
+        "output_id": "2213",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2199",
+        "output_id": "2214",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2209",
+        "output_id": "2215",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3315",
+        "output_id": "3332",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3331",
+        "output_id": "3333",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3387",
+        "output_id": "3392",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3391",
+        "output_id": "3393",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3472",
+        "output_id": "3473",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3435",
+        "output_id": "3474",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3440",
+        "output_id": "3475",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3445",
+        "output_id": "3476",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3461",
+        "output_id": "3477",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3464",
+        "output_id": "3478",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3467",
+        "output_id": "3479",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3471",
+        "output_id": "3480",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3527",
+        "output_id": "3531",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3530",
+        "output_id": "3532",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3567",
+        "output_id": "4193",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3592",
+        "output_id": "4194",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3617",
+        "output_id": "4195",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3642",
+        "output_id": "4196",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3667",
+        "output_id": "4197",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3692",
+        "output_id": "4198",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3717",
+        "output_id": "4199",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3742",
+        "output_id": "4200",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3767",
+        "output_id": "4201",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3792",
+        "output_id": "4202",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3817",
+        "output_id": "4203",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3842",
+        "output_id": "4204",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3867",
+        "output_id": "4205",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3892",
+        "output_id": "4206",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3917",
+        "output_id": "4207",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3942",
+        "output_id": "4208",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3967",
+        "output_id": "4209",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3992",
+        "output_id": "4210",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4017",
+        "output_id": "4211",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4042",
+        "output_id": "4212",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4067",
+        "output_id": "4213",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4092",
+        "output_id": "4214",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4117",
+        "output_id": "4215",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4142",
+        "output_id": "4216",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4167",
+        "output_id": "4217",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4192",
+        "output_id": "4218",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16396",
+        "output_id": "16397",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15850",
+        "output_id": "16398",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16392",
+        "output_id": "16399",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16395",
+        "output_id": "16400",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16472",
+        "output_id": "16473",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16474",
+        "output_id": "16475",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16451",
+        "output_id": "16476",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16454",
+        "output_id": "16477",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16457",
+        "output_id": "16478",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16462",
+        "output_id": "16479",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16465",
+        "output_id": "16480",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16468",
+        "output_id": "16481",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16471",
+        "output_id": "16482",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16512",
+        "output_id": "16556",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16517",
+        "output_id": "16557",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16522",
+        "output_id": "16558",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16542",
+        "output_id": "16559",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16552",
+        "output_id": "16560",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16555",
+        "output_id": "16561",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16598",
+        "output_id": "16613",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "16612",
+        "output_id": "16614",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34034",
+        "output_id": "34640",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34636",
+        "output_id": "34641",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34639",
+        "output_id": "34642",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34689",
+        "output_id": "34693",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34692",
+        "output_id": "34694",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34754",
+        "output_id": "34775",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34757",
+        "output_id": "34776",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34760",
+        "output_id": "34777",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34763",
+        "output_id": "34778",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34766",
+        "output_id": "34779",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34770",
+        "output_id": "34780",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34774",
+        "output_id": "34781",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34816",
+        "output_id": "34827",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34826",
+        "output_id": "34828",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40760",
+        "output_id": "41460",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40774",
+        "output_id": "41461",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40788",
+        "output_id": "41462",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40803",
+        "output_id": "41463",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40817",
+        "output_id": "41464",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40831",
+        "output_id": "41465",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40845",
+        "output_id": "41466",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "40859",
+        "output_id": "41467",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41459",
+        "output_id": "41468",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41562",
+        "output_id": "41570",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41566",
+        "output_id": "41571",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41569",
+        "output_id": "41572",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41614",
+        "output_id": "41624",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41617",
+        "output_id": "41625",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41620",
+        "output_id": "41626",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41623",
+        "output_id": "41627",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "41663",
+        "output_id": "41664",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43052",
+        "output_id": "43087",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43068",
+        "output_id": "43088",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43084",
+        "output_id": "43089",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43086",
+        "output_id": "43090",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43149",
+        "output_id": "43185",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43170",
+        "output_id": "43186",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43172",
+        "output_id": "43187",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43178",
+        "output_id": "43188",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43184",
+        "output_id": "43189",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43229",
+        "output_id": "43230",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43252",
+        "output_id": "43266",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43255",
+        "output_id": "43267",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43260",
+        "output_id": "43268",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43265",
+        "output_id": "43269",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43293",
+        "output_id": "43294",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "43318",
+        "output_id": "43319",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44395",
+        "output_id": "44396",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44436",
+        "output_id": "44437",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44473",
+        "output_id": "44483",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44476",
+        "output_id": "44484",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44479",
+        "output_id": "44485",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44482",
+        "output_id": "44486",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "44522",
+        "output_id": "44523",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "55674",
+        "output_id": "56217",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56216",
+        "output_id": "56218",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56230",
+        "output_id": "56231",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56229",
+        "output_id": "56232",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56253",
+        "output_id": "56261",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56256",
+        "output_id": "56262",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56260",
+        "output_id": "56263",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "56285",
+        "output_id": "56286",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62737",
+        "output_id": "62738",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62778",
+        "output_id": "62779",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62815",
+        "output_id": "62825",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62818",
+        "output_id": "62826",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62821",
+        "output_id": "62827",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62824",
+        "output_id": "62828",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "62850",
+        "output_id": "62851",
+        "input_level": 1,
+        "output_level": 5
+      }
+    ],
+    "all_values_coefficient_bytes": 305549803520,
+    "values": 83529,
+    "inputs": 2,
+    "outputs": 7,
+    "num_layers": 2,
+    "tokens": 2
+  },
+  "schedule": {
+    "passed": true,
+    "arithmetic_graph_sha256": "ae008edaf1b23872af3a1964b739dd4bde56c8108943de9fc573a89b5426d585",
+    "all_arithmetic_nodes_identical": true,
+    "operand_order_preserved": true,
+    "values_levels_scales_identical": true,
+    "encode_payloads_identical": true,
+    "same_released_values": true,
+    "changed_compute_schedule": true,
+    "no_recomputation": true,
+    "baseline": {
+      "release_peak_coefficient_bytes": 14740357120,
+      "plaintext_peak_coefficient_bytes": 13985906688,
+      "ciphertext_peak_coefficient_bytes": 1961885696,
+      "eager_initialization_encode_bytes": 13985906688,
+      "total_encoded_coefficient_bytes": 13985906688,
+      "counts": {
+        "encode": 6380,
+        "mod_switch": 221,
+        "mul_cp": 9565,
+        "release": 83522,
+        "rescale": 9703,
+        "mul_cc": 138,
+        "relinearize": 138,
+        "rotate": 26070,
+        "add_cc": 31064,
+        "add_cp": 90,
+        "boot": 154,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 307,
+          "coefficient_bytes": 1931476992
+        },
+        "plaintext:L4:c1": {
+          "count": 984,
+          "coefficient_bytes": 2579496960
+        },
+        "plaintext:L1:c1": {
+          "count": 20,
+          "coefficient_bytes": 20971520
+        },
+        "ciphertext:L4:c2": {
+          "count": 4774,
+          "coefficient_bytes": 25029509120
+        },
+        "ciphertext:L3:c2": {
+          "count": 40584,
+          "coefficient_bytes": 170221633536
+        },
+        "ciphertext:L3:c3": {
+          "count": 45,
+          "coefficient_bytes": 283115520
+        },
+        "ciphertext:L2:c2": {
+          "count": 26525,
+          "coefficient_bytes": 83440435200
+        },
+        "plaintext:L2:c1": {
+          "count": 68,
+          "coefficient_bytes": 106954752
+        },
+        "ciphertext:L1:c2": {
+          "count": 4821,
+          "coefficient_bytes": 10110369792
+        },
+        "ciphertext:L4:c3": {
+          "count": 27,
+          "coefficient_bytes": 212336640
+        },
+        "plaintext:L3:c1": {
+          "count": 5168,
+          "coefficient_bytes": 10838081536
+        },
+        "plaintext:L5:c1": {
+          "count": 140,
+          "coefficient_bytes": 440401920
+        },
+        "ciphertext:L2:c3": {
+          "count": 61,
+          "coefficient_bytes": 287834112
+        },
+        "ciphertext:L5:c3": {
+          "count": 5,
+          "coefficient_bytes": 47185920
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "candidate": {
+      "release_peak_coefficient_bytes": 14051442688,
+      "plaintext_peak_coefficient_bytes": 13985906688,
+      "ciphertext_peak_coefficient_bytes": 211812352,
+      "eager_initialization_encode_bytes": 13985906688,
+      "total_encoded_coefficient_bytes": 13985906688,
+      "counts": {
+        "encode": 6380,
+        "mod_switch": 221,
+        "mul_cp": 9565,
+        "release": 83522,
+        "rescale": 9703,
+        "mul_cc": 138,
+        "relinearize": 138,
+        "rotate": 26070,
+        "add_cc": 31064,
+        "add_cp": 90,
+        "boot": 154,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 307,
+          "coefficient_bytes": 1931476992
+        },
+        "plaintext:L4:c1": {
+          "count": 984,
+          "coefficient_bytes": 2579496960
+        },
+        "plaintext:L1:c1": {
+          "count": 20,
+          "coefficient_bytes": 20971520
+        },
+        "ciphertext:L4:c2": {
+          "count": 4774,
+          "coefficient_bytes": 25029509120
+        },
+        "ciphertext:L3:c2": {
+          "count": 40584,
+          "coefficient_bytes": 170221633536
+        },
+        "ciphertext:L3:c3": {
+          "count": 45,
+          "coefficient_bytes": 283115520
+        },
+        "ciphertext:L2:c2": {
+          "count": 26525,
+          "coefficient_bytes": 83440435200
+        },
+        "plaintext:L2:c1": {
+          "count": 68,
+          "coefficient_bytes": 106954752
+        },
+        "ciphertext:L1:c2": {
+          "count": 4821,
+          "coefficient_bytes": 10110369792
+        },
+        "ciphertext:L4:c3": {
+          "count": 27,
+          "coefficient_bytes": 212336640
+        },
+        "plaintext:L3:c1": {
+          "count": 5168,
+          "coefficient_bytes": 10838081536
+        },
+        "plaintext:L5:c1": {
+          "count": 140,
+          "coefficient_bytes": 440401920
+        },
+        "ciphertext:L2:c3": {
+          "count": 61,
+          "coefficient_bytes": 287834112
+        },
+        "ciphertext:L5:c3": {
+          "count": 5,
+          "coefficient_bytes": 47185920
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "note": "Experimental host-only schedule post-pass; not an official compiler change and not CKKS precision proof"
+  },
+  "cache": {
+    "passed": true,
+    "scope": "CPU V3 bounded immutable Encode-root cache",
+    "budget_bytes": 67108864,
+    "eviction_policy": "farthest_next_use_with_size_tiebreak",
+    "encoded_cache_peak_bytes": 67108864,
+    "reencodes": 331,
+    "evictions": 331,
+    "extra_value_ids": 331,
+    "original_encode_count": 6380,
+    "candidate_encode_count": 6711,
+    "payload_counts": {
+      "bundle": 6690,
+      "inline": 21
+    },
+    "compute_semantic_sha256": "3879d5ea7b1d927c480c71830e435d43c2dc251836ae28ac3efe1a0147728c31",
+    "normalized_compute_hash_matches": true,
+    "all_constant_payloads_identical": true,
+    "ciphertext_lifetimes_unchanged": true,
+    "all_original_value_metadata_unchanged": true,
+    "boot_count_unchanged": true,
+    "deferred_baseline": {
+      "release_peak_coefficient_bytes": 944242688,
+      "plaintext_peak_coefficient_bytes": 871890944,
+      "ciphertext_peak_coefficient_bytes": 211812352,
+      "eager_initialization_encode_bytes": 0,
+      "total_encoded_coefficient_bytes": 13985906688,
+      "counts": {
+        "mod_switch": 221,
+        "encode": 6380,
+        "mul_cp": 9565,
+        "release": 83522,
+        "rescale": 9703,
+        "mul_cc": 138,
+        "relinearize": 138,
+        "rotate": 26070,
+        "add_cc": 31064,
+        "add_cp": 90,
+        "boot": 154,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 307,
+          "coefficient_bytes": 1931476992
+        },
+        "plaintext:L4:c1": {
+          "count": 984,
+          "coefficient_bytes": 2579496960
+        },
+        "plaintext:L1:c1": {
+          "count": 20,
+          "coefficient_bytes": 20971520
+        },
+        "ciphertext:L4:c2": {
+          "count": 4774,
+          "coefficient_bytes": 25029509120
+        },
+        "ciphertext:L3:c2": {
+          "count": 40584,
+          "coefficient_bytes": 170221633536
+        },
+        "ciphertext:L3:c3": {
+          "count": 45,
+          "coefficient_bytes": 283115520
+        },
+        "ciphertext:L2:c2": {
+          "count": 26525,
+          "coefficient_bytes": 83440435200
+        },
+        "plaintext:L2:c1": {
+          "count": 68,
+          "coefficient_bytes": 106954752
+        },
+        "ciphertext:L1:c2": {
+          "count": 4821,
+          "coefficient_bytes": 10110369792
+        },
+        "ciphertext:L4:c3": {
+          "count": 27,
+          "coefficient_bytes": 212336640
+        },
+        "plaintext:L3:c1": {
+          "count": 5168,
+          "coefficient_bytes": 10838081536
+        },
+        "plaintext:L5:c1": {
+          "count": 140,
+          "coefficient_bytes": 440401920
+        },
+        "ciphertext:L2:c3": {
+          "count": 61,
+          "coefficient_bytes": 287834112
+        },
+        "ciphertext:L5:c3": {
+          "count": 5,
+          "coefficient_bytes": 47185920
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "candidate": {
+      "release_peak_coefficient_bytes": 213385216,
+      "plaintext_peak_coefficient_bytes": 67108864,
+      "ciphertext_peak_coefficient_bytes": 211812352,
+      "eager_initialization_encode_bytes": 0,
+      "total_encoded_coefficient_bytes": 14823718912,
+      "counts": {
+        "mod_switch": 221,
+        "encode": 6711,
+        "mul_cp": 9565,
+        "release": 83853,
+        "rescale": 9703,
+        "mul_cc": 138,
+        "relinearize": 138,
+        "rotate": 26070,
+        "add_cc": 31064,
+        "add_cp": 90,
+        "boot": 154,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 307,
+          "coefficient_bytes": 1931476992
+        },
+        "plaintext:L4:c1": {
+          "count": 1277,
+          "coefficient_bytes": 3347578880
+        },
+        "plaintext:L1:c1": {
+          "count": 24,
+          "coefficient_bytes": 25165824
+        },
+        "ciphertext:L4:c2": {
+          "count": 4774,
+          "coefficient_bytes": 25029509120
+        },
+        "ciphertext:L3:c2": {
+          "count": 40584,
+          "coefficient_bytes": 170221633536
+        },
+        "ciphertext:L3:c3": {
+          "count": 45,
+          "coefficient_bytes": 283115520
+        },
+        "ciphertext:L2:c2": {
+          "count": 26525,
+          "coefficient_bytes": 83440435200
+        },
+        "plaintext:L2:c1": {
+          "count": 83,
+          "coefficient_bytes": 130547712
+        },
+        "ciphertext:L1:c2": {
+          "count": 4821,
+          "coefficient_bytes": 10110369792
+        },
+        "ciphertext:L4:c3": {
+          "count": 27,
+          "coefficient_bytes": 212336640
+        },
+        "plaintext:L3:c1": {
+          "count": 5185,
+          "coefficient_bytes": 10873733120
+        },
+        "plaintext:L5:c1": {
+          "count": 142,
+          "coefficient_bytes": 446693376
+        },
+        "ciphertext:L2:c3": {
+          "count": 61,
+          "coefficient_bytes": 287834112
+        },
+        "ciphertext:L5:c3": {
+          "count": 5,
+          "coefficient_bytes": 47185920
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "note": "Budget covers Encode roots only; report counts derived plaintext separately through full live-set audit. Not measured RSS."
+  },
+  "selected": "degree10p2_pair13_silu_canonical_fold2",
+  "backend_job": "/home/gy/qwen-ckks/experiments/qwen_round_070_1792074789450659900",
+  "threads": 32,
+  "source_round": "/home/gy/qwen-ckks/experiments/qwen_round_060_1792066029772055400",
+  "num_layers": 2,
+  "tokens": 2,
+  "selected_cache_budget_mib": 64
+}

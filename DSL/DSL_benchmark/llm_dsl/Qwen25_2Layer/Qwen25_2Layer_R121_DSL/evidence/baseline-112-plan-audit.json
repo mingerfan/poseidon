@@ -1,0 +1,1531 @@
+{
+  "full_ckks_completed": true,
+  "execution": {
+    "release_peak_coefficient_bytes": 301989888,
+    "plaintext_peak_coefficient_bytes": 67108864,
+    "ciphertext_peak_coefficient_bytes": 263192576,
+    "eager_initialization_encode_bytes": 0,
+    "total_encoded_coefficient_bytes": 17871405056,
+    "counts": {
+      "mod_switch": 123,
+      "release": 54926,
+      "encode": 9932,
+      "mul_cp": 10682,
+      "rescale": 10760,
+      "rotate": 7067,
+      "add_cc": 16079,
+      "boot": 74,
+      "mul_cc": 78,
+      "relinearize": 78,
+      "add_cp": 54,
+      "negate": 4
+    },
+    "by_level": {
+      "ciphertext:L5:c2": {
+        "count": 1313,
+        "coefficient_bytes": 8260681728
+      },
+      "plaintext:L2:c1": {
+        "count": 8252,
+        "coefficient_bytes": 12979273728
+      },
+      "plaintext:L1:c1": {
+        "count": 23,
+        "coefficient_bytes": 24117248
+      },
+      "plaintext:L4:c1": {
+        "count": 571,
+        "coefficient_bytes": 1496842240
+      },
+      "ciphertext:L2:c2": {
+        "count": 12175,
+        "coefficient_bytes": 38299238400
+      },
+      "ciphertext:L1:c2": {
+        "count": 17938,
+        "coefficient_bytes": 37618712576
+      },
+      "plaintext:L5:c1": {
+        "count": 1043,
+        "coefficient_bytes": 3280994304
+      },
+      "ciphertext:L4:c2": {
+        "count": 4258,
+        "coefficient_bytes": 22324183040
+      },
+      "ciphertext:L4:c3": {
+        "count": 22,
+        "coefficient_bytes": 173015040
+      },
+      "ciphertext:L3:c2": {
+        "count": 9239,
+        "coefficient_bytes": 38751174656
+      },
+      "plaintext:L3:c1": {
+        "count": 43,
+        "coefficient_bytes": 90177536
+      },
+      "ciphertext:L5:c3": {
+        "count": 10,
+        "coefficient_bytes": 94371840
+      },
+      "ciphertext:L3:c3": {
+        "count": 20,
+        "coefficient_bytes": 125829120
+      },
+      "ciphertext:L2:c3": {
+        "count": 26,
+        "coefficient_bytes": 122683392
+      }
+    },
+    "input_levels": [
+      5,
+      5
+    ],
+    "output_levels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2
+    ],
+    "coefficients_only": true,
+    "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+    "plan_sha256": "17aa94ba46f05be63d2b8278009ea438b96bbc71bcfd1d3aac3139abd41d2466",
+    "boot_count": 74,
+    "boot_transitions": [
+      {
+        "input_id": "21",
+        "output_id": "27",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "24",
+        "output_id": "28",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "26",
+        "output_id": "29",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "71",
+        "output_id": "72",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "136",
+        "output_id": "137",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "165",
+        "output_id": "166",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1807",
+        "output_id": "1954",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1922",
+        "output_id": "1956",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1937",
+        "output_id": "1957",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1822",
+        "output_id": "1955",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1952",
+        "output_id": "1958",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1953",
+        "output_id": "1959",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2051",
+        "output_id": "3223",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2104",
+        "output_id": "3224",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2736",
+        "output_id": "3225",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3119",
+        "output_id": "3226",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3222",
+        "output_id": "3228",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3277",
+        "output_id": "3278",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3264",
+        "output_id": "3279",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3268",
+        "output_id": "3280",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3272",
+        "output_id": "3281",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3276",
+        "output_id": "3282",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3219",
+        "output_id": "3227",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3311",
+        "output_id": "3312",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4377",
+        "output_id": "4381",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4380",
+        "output_id": "4382",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4421",
+        "output_id": "4422",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4475",
+        "output_id": "4476",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4520",
+        "output_id": "4521",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12868",
+        "output_id": "12876",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12877",
+        "output_id": "12878",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12875",
+        "output_id": "12879",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12908",
+        "output_id": "12917",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12912",
+        "output_id": "12918",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12916",
+        "output_id": "12919",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12937",
+        "output_id": "12938",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15737",
+        "output_id": "15740",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15739",
+        "output_id": "15741",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15780",
+        "output_id": "15781",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15834",
+        "output_id": "15835",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15862",
+        "output_id": "15863",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17499",
+        "output_id": "17645",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17613",
+        "output_id": "17647",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17628",
+        "output_id": "17648",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17514",
+        "output_id": "17646",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17643",
+        "output_id": "17649",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17644",
+        "output_id": "17650",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17710",
+        "output_id": "17789",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17747",
+        "output_id": "17790",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17753",
+        "output_id": "17791",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17786",
+        "output_id": "17792",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17788",
+        "output_id": "17793",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17838",
+        "output_id": "17839",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17828",
+        "output_id": "17840",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17831",
+        "output_id": "17841",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17834",
+        "output_id": "17842",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17837",
+        "output_id": "17843",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17871",
+        "output_id": "17872",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "18961",
+        "output_id": "18962",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "19004",
+        "output_id": "19005",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "19063",
+        "output_id": "19067",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "19066",
+        "output_id": "19068",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "23262",
+        "output_id": "27421",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27420",
+        "output_id": "27422",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27445",
+        "output_id": "27446",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27434",
+        "output_id": "27447",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27437",
+        "output_id": "27448",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27441",
+        "output_id": "27449",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27444",
+        "output_id": "27450",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27478",
+        "output_id": "27479",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "33942",
+        "output_id": "33943",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "33983",
+        "output_id": "33984",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34039",
+        "output_id": "34043",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34042",
+        "output_id": "34044",
+        "input_level": 1,
+        "output_level": 5
+      }
+    ],
+    "all_values_coefficient_bytes": 163641294848,
+    "values": 54933,
+    "inputs": 2,
+    "outputs": 7,
+    "num_layers": 2,
+    "tokens": 2
+  },
+  "eager": {
+    "release_peak_coefficient_bytes": 17506500608,
+    "plaintext_peak_coefficient_bytes": 17384341504,
+    "ciphertext_peak_coefficient_bytes": 678428672,
+    "eager_initialization_encode_bytes": 17384341504,
+    "total_encoded_coefficient_bytes": 17384341504,
+    "counts": {
+      "encode": 9727,
+      "mod_switch": 123,
+      "release": 54721,
+      "mul_cp": 10682,
+      "rescale": 10760,
+      "rotate": 7067,
+      "add_cc": 16079,
+      "boot": 74,
+      "mul_cc": 78,
+      "relinearize": 78,
+      "add_cp": 54,
+      "negate": 4
+    },
+    "by_level": {
+      "ciphertext:L5:c2": {
+        "count": 1313,
+        "coefficient_bytes": 8260681728
+      },
+      "plaintext:L2:c1": {
+        "count": 8223,
+        "coefficient_bytes": 12933660672
+      },
+      "plaintext:L1:c1": {
+        "count": 14,
+        "coefficient_bytes": 14680064
+      },
+      "plaintext:L4:c1": {
+        "count": 429,
+        "coefficient_bytes": 1124597760
+      },
+      "ciphertext:L2:c2": {
+        "count": 12175,
+        "coefficient_bytes": 38299238400
+      },
+      "ciphertext:L1:c2": {
+        "count": 17938,
+        "coefficient_bytes": 37618712576
+      },
+      "plaintext:L5:c1": {
+        "count": 1036,
+        "coefficient_bytes": 3258974208
+      },
+      "ciphertext:L4:c2": {
+        "count": 4258,
+        "coefficient_bytes": 22324183040
+      },
+      "ciphertext:L4:c3": {
+        "count": 22,
+        "coefficient_bytes": 173015040
+      },
+      "ciphertext:L3:c2": {
+        "count": 9239,
+        "coefficient_bytes": 38751174656
+      },
+      "plaintext:L3:c1": {
+        "count": 25,
+        "coefficient_bytes": 52428800
+      },
+      "ciphertext:L5:c3": {
+        "count": 10,
+        "coefficient_bytes": 94371840
+      },
+      "ciphertext:L3:c3": {
+        "count": 20,
+        "coefficient_bytes": 125829120
+      },
+      "ciphertext:L2:c3": {
+        "count": 26,
+        "coefficient_bytes": 122683392
+      }
+    },
+    "input_levels": [
+      5,
+      5
+    ],
+    "output_levels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2
+    ],
+    "coefficients_only": true,
+    "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects",
+    "plan_sha256": "2c746c855dafff55bff131b910e3c903bcefccb0f48fcd23cbfecf2f08614254",
+    "boot_count": 74,
+    "boot_transitions": [
+      {
+        "input_id": "21",
+        "output_id": "27",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "24",
+        "output_id": "28",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "26",
+        "output_id": "29",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "71",
+        "output_id": "72",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "136",
+        "output_id": "137",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "165",
+        "output_id": "166",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1807",
+        "output_id": "1954",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1822",
+        "output_id": "1955",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1922",
+        "output_id": "1956",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1937",
+        "output_id": "1957",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1952",
+        "output_id": "1958",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "1953",
+        "output_id": "1959",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2051",
+        "output_id": "3223",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2104",
+        "output_id": "3224",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "2736",
+        "output_id": "3225",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3119",
+        "output_id": "3226",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3219",
+        "output_id": "3227",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3222",
+        "output_id": "3228",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3277",
+        "output_id": "3278",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3264",
+        "output_id": "3279",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3268",
+        "output_id": "3280",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3272",
+        "output_id": "3281",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3276",
+        "output_id": "3282",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "3311",
+        "output_id": "3312",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4377",
+        "output_id": "4381",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4380",
+        "output_id": "4382",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4421",
+        "output_id": "4422",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4475",
+        "output_id": "4476",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "4520",
+        "output_id": "4521",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12868",
+        "output_id": "12876",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12877",
+        "output_id": "12878",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12875",
+        "output_id": "12879",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12908",
+        "output_id": "12917",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12912",
+        "output_id": "12918",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12916",
+        "output_id": "12919",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "12937",
+        "output_id": "12938",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15737",
+        "output_id": "15740",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15739",
+        "output_id": "15741",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15780",
+        "output_id": "15781",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15834",
+        "output_id": "15835",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "15862",
+        "output_id": "15863",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17499",
+        "output_id": "17645",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17514",
+        "output_id": "17646",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17613",
+        "output_id": "17647",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17628",
+        "output_id": "17648",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17643",
+        "output_id": "17649",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17644",
+        "output_id": "17650",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17710",
+        "output_id": "17789",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17747",
+        "output_id": "17790",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17753",
+        "output_id": "17791",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17786",
+        "output_id": "17792",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17788",
+        "output_id": "17793",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17838",
+        "output_id": "17839",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17828",
+        "output_id": "17840",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17831",
+        "output_id": "17841",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17834",
+        "output_id": "17842",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17837",
+        "output_id": "17843",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "17871",
+        "output_id": "17872",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "18961",
+        "output_id": "18962",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "19004",
+        "output_id": "19005",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "19063",
+        "output_id": "19067",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "19066",
+        "output_id": "19068",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "23262",
+        "output_id": "27421",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27420",
+        "output_id": "27422",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27445",
+        "output_id": "27446",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27434",
+        "output_id": "27447",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27437",
+        "output_id": "27448",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27441",
+        "output_id": "27449",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27444",
+        "output_id": "27450",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "27478",
+        "output_id": "27479",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "33942",
+        "output_id": "33943",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "33983",
+        "output_id": "33984",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34039",
+        "output_id": "34043",
+        "input_level": 1,
+        "output_level": 5
+      },
+      {
+        "input_id": "34042",
+        "output_id": "34044",
+        "input_level": 1,
+        "output_level": 5
+      }
+    ],
+    "all_values_coefficient_bytes": 163154231296,
+    "values": 54728,
+    "inputs": 2,
+    "outputs": 7,
+    "num_layers": 2,
+    "tokens": 2
+  },
+  "schedule": {
+    "passed": true,
+    "policy": "release_ready",
+    "all_arithmetic_nodes_identical": true,
+    "operand_order_preserved": true,
+    "values_levels_scales_identical": true,
+    "encode_payloads_identical": true,
+    "same_released_values": true,
+    "no_recomputation": true,
+    "arithmetic_graph_sha256": "b83f8ebb2b62528f5851018c873b6cdc8d0be441413dc80d5a935176c5e565db",
+    "baseline": {
+      "release_peak_coefficient_bytes": 17434148864,
+      "plaintext_peak_coefficient_bytes": 17384341504,
+      "ciphertext_peak_coefficient_bytes": 256901120,
+      "eager_initialization_encode_bytes": 17384341504,
+      "total_encoded_coefficient_bytes": 17384341504,
+      "counts": {
+        "encode": 9727,
+        "mod_switch": 123,
+        "release": 54721,
+        "mul_cp": 10682,
+        "rescale": 10760,
+        "boot": 74,
+        "rotate": 7067,
+        "add_cc": 16079,
+        "mul_cc": 78,
+        "relinearize": 78,
+        "add_cp": 54,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 1313,
+          "coefficient_bytes": 8260681728
+        },
+        "plaintext:L2:c1": {
+          "count": 8223,
+          "coefficient_bytes": 12933660672
+        },
+        "plaintext:L1:c1": {
+          "count": 14,
+          "coefficient_bytes": 14680064
+        },
+        "plaintext:L4:c1": {
+          "count": 429,
+          "coefficient_bytes": 1124597760
+        },
+        "ciphertext:L2:c2": {
+          "count": 12175,
+          "coefficient_bytes": 38299238400
+        },
+        "ciphertext:L1:c2": {
+          "count": 17938,
+          "coefficient_bytes": 37618712576
+        },
+        "plaintext:L5:c1": {
+          "count": 1036,
+          "coefficient_bytes": 3258974208
+        },
+        "ciphertext:L4:c2": {
+          "count": 4258,
+          "coefficient_bytes": 22324183040
+        },
+        "ciphertext:L4:c3": {
+          "count": 22,
+          "coefficient_bytes": 173015040
+        },
+        "ciphertext:L3:c2": {
+          "count": 9239,
+          "coefficient_bytes": 38751174656
+        },
+        "plaintext:L3:c1": {
+          "count": 25,
+          "coefficient_bytes": 52428800
+        },
+        "ciphertext:L5:c3": {
+          "count": 10,
+          "coefficient_bytes": 94371840
+        },
+        "ciphertext:L3:c3": {
+          "count": 20,
+          "coefficient_bytes": 125829120
+        },
+        "ciphertext:L2:c3": {
+          "count": 26,
+          "coefficient_bytes": 122683392
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "candidate": {
+      "release_peak_coefficient_bytes": 17432051712,
+      "plaintext_peak_coefficient_bytes": 17384341504,
+      "ciphertext_peak_coefficient_bytes": 263192576,
+      "eager_initialization_encode_bytes": 17384341504,
+      "total_encoded_coefficient_bytes": 17384341504,
+      "counts": {
+        "encode": 9727,
+        "mod_switch": 123,
+        "release": 54721,
+        "mul_cp": 10682,
+        "rescale": 10760,
+        "rotate": 7067,
+        "add_cc": 16079,
+        "boot": 74,
+        "mul_cc": 78,
+        "relinearize": 78,
+        "add_cp": 54,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 1313,
+          "coefficient_bytes": 8260681728
+        },
+        "plaintext:L2:c1": {
+          "count": 8223,
+          "coefficient_bytes": 12933660672
+        },
+        "plaintext:L1:c1": {
+          "count": 14,
+          "coefficient_bytes": 14680064
+        },
+        "plaintext:L4:c1": {
+          "count": 429,
+          "coefficient_bytes": 1124597760
+        },
+        "ciphertext:L2:c2": {
+          "count": 12175,
+          "coefficient_bytes": 38299238400
+        },
+        "ciphertext:L1:c2": {
+          "count": 17938,
+          "coefficient_bytes": 37618712576
+        },
+        "plaintext:L5:c1": {
+          "count": 1036,
+          "coefficient_bytes": 3258974208
+        },
+        "ciphertext:L4:c2": {
+          "count": 4258,
+          "coefficient_bytes": 22324183040
+        },
+        "ciphertext:L4:c3": {
+          "count": 22,
+          "coefficient_bytes": 173015040
+        },
+        "ciphertext:L3:c2": {
+          "count": 9239,
+          "coefficient_bytes": 38751174656
+        },
+        "plaintext:L3:c1": {
+          "count": 25,
+          "coefficient_bytes": 52428800
+        },
+        "ciphertext:L5:c3": {
+          "count": 10,
+          "coefficient_bytes": 94371840
+        },
+        "ciphertext:L3:c3": {
+          "count": 20,
+          "coefficient_bytes": 125829120
+        },
+        "ciphertext:L2:c3": {
+          "count": 26,
+          "coefficient_bytes": 122683392
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "note": "Draft host schedule; requires cache-aware measurement, native verifier, Mock and CKKS",
+    "exact_parent_dfs_plan_reproduced": true,
+    "parent_dfs_plan_sha256": "a7a69f3500d3e7c5e06c1b47fc03ac2a6e662f9b026c348761e95fe21100e7b7",
+    "schedule_source_sha256": "177d1f9b96ff7ffb3f9b015b032837dfc935de205d62353d92cb29f44c769008"
+  },
+  "cache": {
+    "passed": true,
+    "scope": "CPU V3 bounded immutable Encode-root cache",
+    "budget_bytes": 67108864,
+    "eviction_policy": "farthest_next_use_with_size_tiebreak",
+    "encoded_cache_peak_bytes": 67108864,
+    "reencodes": 205,
+    "evictions": 205,
+    "extra_value_ids": 205,
+    "original_encode_count": 9727,
+    "candidate_encode_count": 9932,
+    "payload_counts": {
+      "bundle": 9915,
+      "inline": 17
+    },
+    "compute_semantic_sha256": "b9c434ae5062dd894b4955bd6a709533ef8ed74e00a6aa51b4bc892451ab19d8",
+    "normalized_compute_hash_matches": true,
+    "all_constant_payloads_identical": true,
+    "ciphertext_lifetimes_unchanged": true,
+    "all_original_value_metadata_unchanged": true,
+    "boot_count_unchanged": true,
+    "deferred_baseline": {
+      "release_peak_coefficient_bytes": 563085312,
+      "plaintext_peak_coefficient_bytes": 514850816,
+      "ciphertext_peak_coefficient_bytes": 263192576,
+      "eager_initialization_encode_bytes": 0,
+      "total_encoded_coefficient_bytes": 17384341504,
+      "counts": {
+        "mod_switch": 123,
+        "release": 54721,
+        "encode": 9727,
+        "mul_cp": 10682,
+        "rescale": 10760,
+        "rotate": 7067,
+        "add_cc": 16079,
+        "boot": 74,
+        "mul_cc": 78,
+        "relinearize": 78,
+        "add_cp": 54,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 1313,
+          "coefficient_bytes": 8260681728
+        },
+        "plaintext:L2:c1": {
+          "count": 8223,
+          "coefficient_bytes": 12933660672
+        },
+        "plaintext:L1:c1": {
+          "count": 14,
+          "coefficient_bytes": 14680064
+        },
+        "plaintext:L4:c1": {
+          "count": 429,
+          "coefficient_bytes": 1124597760
+        },
+        "ciphertext:L2:c2": {
+          "count": 12175,
+          "coefficient_bytes": 38299238400
+        },
+        "ciphertext:L1:c2": {
+          "count": 17938,
+          "coefficient_bytes": 37618712576
+        },
+        "plaintext:L5:c1": {
+          "count": 1036,
+          "coefficient_bytes": 3258974208
+        },
+        "ciphertext:L4:c2": {
+          "count": 4258,
+          "coefficient_bytes": 22324183040
+        },
+        "ciphertext:L4:c3": {
+          "count": 22,
+          "coefficient_bytes": 173015040
+        },
+        "ciphertext:L3:c2": {
+          "count": 9239,
+          "coefficient_bytes": 38751174656
+        },
+        "plaintext:L3:c1": {
+          "count": 25,
+          "coefficient_bytes": 52428800
+        },
+        "ciphertext:L5:c3": {
+          "count": 10,
+          "coefficient_bytes": 94371840
+        },
+        "ciphertext:L3:c3": {
+          "count": 20,
+          "coefficient_bytes": 125829120
+        },
+        "ciphertext:L2:c3": {
+          "count": 26,
+          "coefficient_bytes": 122683392
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "candidate": {
+      "release_peak_coefficient_bytes": 301989888,
+      "plaintext_peak_coefficient_bytes": 67108864,
+      "ciphertext_peak_coefficient_bytes": 263192576,
+      "eager_initialization_encode_bytes": 0,
+      "total_encoded_coefficient_bytes": 17871405056,
+      "counts": {
+        "mod_switch": 123,
+        "release": 54926,
+        "encode": 9932,
+        "mul_cp": 10682,
+        "rescale": 10760,
+        "rotate": 7067,
+        "add_cc": 16079,
+        "boot": 74,
+        "mul_cc": 78,
+        "relinearize": 78,
+        "add_cp": 54,
+        "negate": 4
+      },
+      "by_level": {
+        "ciphertext:L5:c2": {
+          "count": 1313,
+          "coefficient_bytes": 8260681728
+        },
+        "plaintext:L2:c1": {
+          "count": 8252,
+          "coefficient_bytes": 12979273728
+        },
+        "plaintext:L1:c1": {
+          "count": 23,
+          "coefficient_bytes": 24117248
+        },
+        "plaintext:L4:c1": {
+          "count": 571,
+          "coefficient_bytes": 1496842240
+        },
+        "ciphertext:L2:c2": {
+          "count": 12175,
+          "coefficient_bytes": 38299238400
+        },
+        "ciphertext:L1:c2": {
+          "count": 17938,
+          "coefficient_bytes": 37618712576
+        },
+        "plaintext:L5:c1": {
+          "count": 1043,
+          "coefficient_bytes": 3280994304
+        },
+        "ciphertext:L4:c2": {
+          "count": 4258,
+          "coefficient_bytes": 22324183040
+        },
+        "ciphertext:L4:c3": {
+          "count": 22,
+          "coefficient_bytes": 173015040
+        },
+        "ciphertext:L3:c2": {
+          "count": 9239,
+          "coefficient_bytes": 38751174656
+        },
+        "plaintext:L3:c1": {
+          "count": 43,
+          "coefficient_bytes": 90177536
+        },
+        "ciphertext:L5:c3": {
+          "count": 10,
+          "coefficient_bytes": 94371840
+        },
+        "ciphertext:L3:c3": {
+          "count": 20,
+          "coefficient_bytes": 125829120
+        },
+        "ciphertext:L2:c3": {
+          "count": 26,
+          "coefficient_bytes": 122683392
+        }
+      },
+      "input_levels": [
+        5,
+        5
+      ],
+      "output_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "coefficients_only": true,
+      "excludes": "keys, bootstrap/encoder workspace, allocator, plan and raw bundle objects"
+    },
+    "note": "Budget covers Encode roots only; report counts derived plaintext separately through full live-set audit. Not measured RSS."
+  },
+  "selected": "wide_baby16",
+  "backend_job": "/home/gy/qwen-ckks/experiments/qwen_round_078_1792126042361155300",
+  "threads": 32,
+  "source_round": "/home/gy/qwen-ckks/experiments/qwen_round_111_1792574853638120200",
+  "num_layers": 2,
+  "tokens": 2,
+  "selected_cache_budget_mib": 64,
+  "rotation_api": "native_naf",
+  "reclaim_policy": "selective",
+  "no_followup_iteration": true,
+  "compiler_candidate": {
+    "experimental_compiler": true,
+    "candidate_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+    "baseline_sha256": "6af174b19ef6594ac759f5d4bdfaf0d2366f4e6277499c470c531be58fefdbdc",
+    "source_sha256": "82421975745fa36c63db1695c9364aa7ea72a10bb520362b69f7b76a63e2e81f",
+    "paired_regressions": 12,
+    "original_sources_unchanged": true
+  }
+}

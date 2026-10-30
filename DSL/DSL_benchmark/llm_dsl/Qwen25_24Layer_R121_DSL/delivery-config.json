@@ -1,0 +1,23 @@
+{
+  "compiler_sha256": "12705f29938821d48ae3db3def7767af7a2af6507d40fb0c7e9bfdb98918de68",
+  "trace_options": {
+    "rms_degree_strategy": "degree10p2_pair13_silu_canonical_fold2",
+    "linear_budget_mode": "wide_baby16",
+    "layout_fusion": true,
+    "pair_batch": "both_except_last",
+    "rms_batch_strategy": "tiled16",
+    "lm_head_baby": 32,
+    "early_input_mask": true,
+    "clean_kv_output": true,
+    "mlp_pair": true
+  },
+  "package": "Qwen25_24Layer_R121_DSL",
+  "parent_package": "Qwen25_2Layer_R121_DSL",
+  "num_layers": 24,
+  "tokens": 2,
+  "native_compiled": true,
+  "full_model_ckks_validated": false,
+  "gpu_validated": false,
+  "compiled_mode": "decode-pair",
+  "full_mock_passed": true
+}

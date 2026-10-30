@@ -1,0 +1,662 @@
+{
+  "config": {
+    "num_layers": 2,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "query_heads": 14,
+    "kv_heads": 2,
+    "head_dim": 64,
+    "vocab_size": 151936,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "positions": [
+    0,
+    1
+  ],
+  "slots": 32768,
+  "mode": "decode-pair",
+  "scope": "full",
+  "inputs": [
+    {
+      "name": "embedding.0",
+      "prefix_size": 896
+    },
+    {
+      "name": "embedding.1",
+      "prefix_size": 896
+    }
+  ],
+  "outputs": [
+    {
+      "name": "logits.0",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.1024",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.2048",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.3072",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.4096",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.5120",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.6144",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.7168",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.8192",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.9216",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.10240",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.11264",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.12288",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.13312",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.14336",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.15360",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.16384",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.17408",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.18432",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.19456",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.20480",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.21504",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.22528",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.23552",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.24576",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.25600",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.26624",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.27648",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.28672",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.29696",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.30720",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.31744",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.32768",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.33792",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.34816",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.35840",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.36864",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.37888",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.38912",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.39936",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.40960",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.41984",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.43008",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.44032",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.45056",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.46080",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.47104",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.48128",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.49152",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.50176",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.51200",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.52224",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.53248",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.54272",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.55296",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.56320",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.57344",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.58368",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.59392",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.60416",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.61440",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.62464",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.63488",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.64512",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.65536",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.66560",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.67584",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.68608",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.69632",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.70656",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.71680",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.72704",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.73728",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.74752",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.75776",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.76800",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.77824",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.78848",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.79872",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.80896",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.81920",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.82944",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.83968",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.84992",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.86016",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.87040",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.88064",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.89088",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.90112",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.91136",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.92160",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.93184",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.94208",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.95232",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.96256",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.97280",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.98304",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.99328",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.100352",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.101376",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.102400",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.103424",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.104448",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.105472",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.106496",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.107520",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.108544",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.109568",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.110592",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.111616",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.112640",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.113664",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.114688",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.115712",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.116736",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.117760",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.118784",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.119808",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.120832",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.121856",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.122880",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.123904",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.124928",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.125952",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.126976",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.128000",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.129024",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.130048",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.131072",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.132096",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.133120",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.134144",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.135168",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.136192",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.137216",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.138240",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.139264",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.140288",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.141312",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.142336",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.143360",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.144384",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.145408",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.146432",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.147456",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.148480",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.149504",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.150528",
+      "prefix_size": 1024
+    },
+    {
+      "name": "logits.151552",
+      "prefix_size": 384
+    },
+    {
+      "name": "layer0.key.0",
+      "prefix_size": 128
+    },
+    {
+      "name": "layer0.key.1",
+      "prefix_size": 128
+    },
+    {
+      "name": "layer0.value.0",
+      "prefix_size": 128
+    },
+    {
+      "name": "layer0.value.1",
+      "prefix_size": 128
+    },
+    {
+      "name": "layer1.key.0",
+      "prefix_size": 128
+    },
+    {
+      "name": "layer1.key.1",
+      "prefix_size": 128
+    },
+    {
+      "name": "layer1.value.0",
+      "prefix_size": 128
+    },
+    {
+      "name": "layer1.value.1",
+      "prefix_size": 128
+    }
+  ],
+  "note": "Two independent Decoder Blocks. Full scope adds final RMSNorm and all 151936 logits. Synthetic weights."
+}

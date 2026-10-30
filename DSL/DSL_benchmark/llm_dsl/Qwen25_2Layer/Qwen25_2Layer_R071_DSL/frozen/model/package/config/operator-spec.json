@@ -1,0 +1,128 @@
+{
+  "spec_format_version": 1,
+  "spec_id": "cpu-qwen-bootstrap48-compiler-contract",
+  "version": 1,
+  "status": "placeholder",
+  "target_id": "poseidon-ckks-cpu",
+  "rescale_mode": "eager",
+  "context": {
+    "context_id": "qwen-bootstrap48",
+    "poly_degree": 65536,
+    "rns_moduli_log2": [
+      52,
+      43,
+      43,
+      43,
+      43,
+      43,
+      43,
+      43,
+      43,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      60,
+      60,
+      60
+    ],
+    "max_modulus_log2": 60,
+    "default_scale_log2": 43
+  },
+  "levels": {
+    "lower_bound": 0,
+    "upper_bound": 29
+  },
+  "operators": {
+    "add_cc": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "add_cp": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "sub_cc": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "sub_cp": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "mul_cc": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "mul_cp": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "negate": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "rotate": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "mod_switch": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "relinearize": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null
+    },
+    "rescale": {
+      "supported": true,
+      "latency_us_by_level": null,
+      "noise_by_level": null,
+      "max_levels_per_op": 1
+    },
+    "boot": {
+      "supported": true
+    }
+  },
+  "boot_profiles": [
+    {
+      "profile_id": "cpu-bootstrap48-level1-to5",
+      "implementation": "native",
+      "input_level_min": 1,
+      "input_level_max": 1,
+      "input_components": 2,
+      "output_level": 5,
+      "output_scale_log2": 43,
+      "output_components": 2,
+      "latency_us": 0,
+      "host_requirements": {
+        "needs_secret_key": false,
+        "needs_host_compute": false
+      }
+    }
+  ]
+}

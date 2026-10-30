@@ -1,0 +1,127 @@
+{
+  "source/Qwen25_2Layer_Decode_Test/model_entry.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_2Layer_Decode_Test/model_entry.py",
+    "sha256": "5bb07c967976953ec1ccace21857753205fc3297f925d8dfd48c1b6b8cd2c6e6",
+    "bytes": 4032
+  },
+  "source/Qwen25_2Layer_Decode_Test/prepare_and_check.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_2Layer_Decode_Test/prepare_and_check.py",
+    "sha256": "a95da01d1635ba4e2b754258a2737f2c53d3a09463fc6091c569c94d2fb381e5",
+    "bytes": 4317
+  },
+  "source/Qwen_DSL_Memory_Study/packed_linear.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen_DSL_Memory_Study/packed_linear.py",
+    "sha256": "368a8e264910ae1ea734b543090a49f6d60a736feeaef2cd776ece0572e5658d",
+    "bytes": 3147
+  },
+  "source/Qwen_DSL_Memory_Study/packed_lm_head.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen_DSL_Memory_Study/packed_lm_head.py",
+    "sha256": "0581432e3c44f11c80dc21cf3165d3880baa09dce4d7709fc64f492be10a3c75",
+    "bytes": 2531
+  },
+  "source/Qwen25_24Layer_DSL/prepare_fixture.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/prepare_fixture.py",
+    "sha256": "53948fe482524b82c898bbc4edaf38665cfb82499fad9deb4324f75ce0bd28b0",
+    "bytes": 3689
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/__init__.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/__init__.py",
+    "sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9",
+    "bytes": 49
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/kernels/__init__.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/kernels/__init__.py",
+    "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1",
+    "bytes": 69
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/kernels/expr.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/kernels/expr.py",
+    "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff",
+    "bytes": 95
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/kernels/ops.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/kernels/ops.py",
+    "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+    "bytes": 5772
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/kernels/qwen_layers.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/kernels/qwen_layers.py",
+    "sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+    "bytes": 21564
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/kernels/qwen_model.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/kernels/qwen_model.py",
+    "sha256": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+    "bytes": 13502
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/kernels/qwen_nonlinear.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/kernels/qwen_nonlinear.py",
+    "sha256": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760",
+    "bytes": 9650
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/reference.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/reference.py",
+    "sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6",
+    "bytes": 3631
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/runtime.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/runtime.py",
+    "sha256": "53c85b23efa37b1273ae0021e630079e190318497100e7fa2e936494afa9ec75",
+    "bytes": 3362
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/spec.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/spec.py",
+    "sha256": "a012f4db2c1d10b51755596bedc180535e7859ecfd8b50ea77e3fd233477474a",
+    "bytes": 5126
+  },
+  "source/Qwen25_24Layer_DSL/qwen24/weights.py": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/qwen24/weights.py",
+    "sha256": "6f003998a7d684b85dca2588dfca56d2c402fcc176e8ee20233b08eef9d1dcb8",
+    "bytes": 1957
+  },
+  "source/Qwen25_24Layer_DSL/config/approximations.provisional.json": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/config/approximations.provisional.json",
+    "sha256": "d3c8e3915697d4fde6536f86faf386a1534cbb6aa4a522a6b0fbcb0cb72f5342",
+    "bytes": 55601
+  },
+  "source/Qwen25_24Layer_DSL/config/model.json": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/config/model.json",
+    "sha256": "75a88ca552e366dfc81a17fc6e92009475920bce91843ce3422e5d20d868d1a9",
+    "bytes": 236
+  },
+  "source/Qwen25_24Layer_DSL/config/weight_schema.json": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/delivery/Qwen25_24Layer_DSL/config/weight_schema.json",
+    "sha256": "82afdc3e3ea365e44cf482fb5b2b1dbc10703e1bb23c7ab57f0a5bae81474bc3",
+    "bytes": 20569
+  },
+  "config/compiler-config.json": {
+    "source": "/home/gy/qwen-ckks/experiments/locked_toolchain_1791806679823388000/compiler-config.json",
+    "sha256": "7ecca373ecbf8be7413eedf86f0dd9fe3830ee978f7ffbf50d12cf969e88b110",
+    "bytes": 2098
+  },
+  "config/operator-spec.json": {
+    "source": "/home/gy/qwen-ckks/experiments/locked_toolchain_1791806679823388000/operator-spec.json",
+    "sha256": "2ed50c6fddd27da354d9f65157097e515773afb8e530efc9e3b33fd8ab165e4b",
+    "bytes": 2488
+  },
+  "evidence/model-change.json": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/model-change.json",
+    "sha256": "6ba732003391a9add531217f7535cc01fd59db5a54bfab549842636d9f16dc87",
+    "bytes": 396
+  },
+  "evidence/full-audit.json": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/full-audit.json",
+    "sha256": "5a3dbbdfe28fb764f8d3570d7d3527c6fd4384824115aa475dd1f9eb5408aaa8",
+    "bytes": 729
+  },
+  "evidence/compile-full-timing.json": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/compile-full-timing.json",
+    "sha256": "2c087fac65e7a2ce84e1cbe5e41a20ed48901e9fd625681d20916a8d510c631c",
+    "bytes": 1191
+  },
+  "evidence/values-result.json": {
+    "source": "/home/gy/qwen-ckks/experiments/packed_head_1791808551103588700/values-result.json",
+    "sha256": "25ba30e440b58e2ea949a4f53c4dec4a53556f545b3520fc3c4e5339de3c7abb",
+    "bytes": 18526
+  }
+}

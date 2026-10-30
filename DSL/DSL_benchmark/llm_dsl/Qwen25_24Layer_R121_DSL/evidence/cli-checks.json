@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "public_modes": 4,
+  "legacy_interface_checked": true,
+  "compiler_command_checked": true,
+  "actual_compiler_executed": false,
+  "placeholder_paths_used_only_for_dry_run": true
+}

@@ -1,0 +1,16 @@
+{
+  "inherited_parent_evidence": true,
+  "parent_round": "round_018_zero_tail_masks",
+  "applies_to_current_two_layer_test": false,
+  "original": {
+    "scope": "24 independent decoder blocks, 2-token decode-pair by default, full logits and KV",
+    "compiler_revision": "39c1fb255adddbfb9d7180f9d1b8535a31241bff",
+    "runtime_revision": "f7e9115eaec22e44c8e12ff9f53528e421691688",
+    "server_experiment": "/home/gy/qwen-ckks/experiments/qwen24_autoboot_1791946915070543600",
+    "two_layer_ckks_passed": true,
+    "full_24layer_ckks_passed": false,
+    "git_published": false,
+    "release_experiment": "/home/gy/qwen-ckks/experiments/qwen24_final_only_1791949387094950900",
+    "default_retention": "FinalOnly with compiler-emitted Release"
+  }
+}

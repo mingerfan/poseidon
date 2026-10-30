@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "selected_threads": 32,
+  "serial_mean_seconds": 149.443813731,
+  "speedups": {
+    "8": 3.3570045558344925,
+    "16": 4.093181290803457,
+    "32": 4.532209452383594
+  },
+  "new_library": "/data/Workspace/gy/qwen-ckks-artifacts/qwen_round_070_1792074789450659900/parallel-build/poseidon/libposeidon_shared.so",
+  "old_library_unchanged": true,
+  "omp_environment": {
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_WAIT_POLICY": "PASSIVE",
+    "OMP_PROC_BIND": "close",
+    "OMP_PLACES": "{32},{33},{34},{35},{36},{37},{38},{39},{40},{41},{42},{43},{44},{45},{46},{47},{48},{49},{50},{51},{52},{53},{54},{55},{56},{57},{58},{59},{60},{61},{62},{63}"
+  },
+  "scope": "Only native bootstrap backend comparison; latest full model still requires separate execution"
+}

@@ -1,0 +1,805 @@
+{
+  "boot_ranges": [
+    {
+      "input_id": 19,
+      "max": 3.53627872467041,
+      "max_abs": 3.53627872467041,
+      "min": -3.3229153156280518,
+      "output_id": 25,
+      "prefix_1792_max_abs": 3.53627872467041,
+      "slots_abs_gt_one": 260,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 22,
+      "max": 3.1487538814544678,
+      "max_abs": 3.1487538814544678,
+      "min": -2.930522918701172,
+      "output_id": 26,
+      "prefix_1792_max_abs": 3.1487538814544678,
+      "slots_abs_gt_one": 285,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 24,
+      "max": 3.53627872467041,
+      "max_abs": 3.53627872467041,
+      "min": -3.3229153156280518,
+      "output_id": 27,
+      "prefix_1792_max_abs": 3.53627872467041,
+      "slots_abs_gt_one": 545,
+      "tail_max_abs": 2.5928242206573486
+    },
+    {
+      "input_id": 69,
+      "max": -0.3333319958371914,
+      "max_abs": 0.3333333333333335,
+      "min": -0.3333333333333335,
+      "output_id": 70,
+      "prefix_1792_max_abs": 0.3333333333333335,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.3333333333333335
+    },
+    {
+      "input_id": 134,
+      "max": 0.9999994559730263,
+      "max_abs": 0.9999994559730263,
+      "min": 0.999998954442755,
+      "output_id": 135,
+      "prefix_1792_max_abs": 0.9999994559730263,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.9999994559730263
+    },
+    {
+      "input_id": 166,
+      "max": 3.48743008008614,
+      "max_abs": 3.48743008008614,
+      "min": -3.3649090876345755,
+      "output_id": 170,
+      "prefix_1792_max_abs": 3.48743008008614,
+      "slots_abs_gt_one": 259,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 169,
+      "max": 3.1792043274760373,
+      "max_abs": 3.1792043274760373,
+      "min": -2.882564021993912,
+      "output_id": 171,
+      "prefix_1792_max_abs": 3.1792043274760373,
+      "slots_abs_gt_one": 285,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 789,
+      "max": 0.15302240400108383,
+      "max_abs": 0.15302240400108383,
+      "min": -0.13926024015753985,
+      "output_id": 828,
+      "prefix_1792_max_abs": 0.15302240400108383,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 790,
+      "max": 0.15302240400108383,
+      "max_abs": 0.15302240400108383,
+      "min": -0.13926024015753985,
+      "output_id": 829,
+      "prefix_1792_max_abs": 0.15302240400108383,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.13926024015753985
+    },
+    {
+      "input_id": 825,
+      "max": 0.16880184849655377,
+      "max_abs": 0.19642243408339108,
+      "min": -0.19642243408339108,
+      "output_id": 830,
+      "prefix_1792_max_abs": 0.19642243408339108,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 826,
+      "max": 0.16880184849655377,
+      "max_abs": 0.19642243408339108,
+      "min": -0.19642243408339108,
+      "output_id": 831,
+      "prefix_1792_max_abs": 0.19642243408339108,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.18283325805803913
+    },
+    {
+      "input_id": 827,
+      "max": 0.2254744578219004,
+      "max_abs": 0.23139965568171583,
+      "min": -0.23139965568171583,
+      "output_id": 832,
+      "prefix_1792_max_abs": 0.23139965568171583,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.19893541689637625
+    },
+    {
+      "input_id": 931,
+      "max": 0.2254744578219004,
+      "max_abs": 0.23139965568171583,
+      "min": -0.23139965568171583,
+      "output_id": 2106,
+      "prefix_1792_max_abs": 0.23139965568171583,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 978,
+      "max": 0.16480333242824785,
+      "max_abs": 0.19524608056446727,
+      "min": -0.19524608056446727,
+      "output_id": 2107,
+      "prefix_1792_max_abs": 0.19524608056446727,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 1615,
+      "max": 0.010506308881255597,
+      "max_abs": 0.011709574432042751,
+      "min": -0.011709574432042751,
+      "output_id": 2108,
+      "prefix_1792_max_abs": 0.011709574432042751,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 2000,
+      "max": 0.2217515886807216,
+      "max_abs": 0.2217515886807216,
+      "min": -0.19389366876118658,
+      "output_id": 2109,
+      "prefix_1792_max_abs": 0.2217515886807216,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 2105,
+      "max": 0.15302240400108383,
+      "max_abs": 0.19642243408339108,
+      "min": -0.19642243408339108,
+      "output_id": 2111,
+      "prefix_1792_max_abs": 0.19642243408339108,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 2160,
+      "max": 0.0038053327872487183,
+      "max_abs": 0.0038053327872487183,
+      "min": -0.0022123137212193026,
+      "output_id": 2161,
+      "prefix_1792_max_abs": 0.0038053327872487183,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 2147,
+      "max": 2.0968654903566642e-10,
+      "max_abs": 2.0968654903566642e-10,
+      "min": 0.0,
+      "output_id": 2162,
+      "prefix_1792_max_abs": 2.0968654903566642e-10,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 2151,
+      "max": 1.0,
+      "max_abs": 1.0,
+      "min": 0.9999951731474594,
+      "output_id": 2163,
+      "prefix_1792_max_abs": 1.0,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 1.0
+    },
+    {
+      "input_id": 2155,
+      "max": 0.13333333333333333,
+      "max_abs": 0.13333333333333333,
+      "min": 0.133332551842922,
+      "output_id": 2164,
+      "prefix_1792_max_abs": 0.13333333333333333,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.13333333333333333
+    },
+    {
+      "input_id": 2159,
+      "max": 0.021866732804232805,
+      "max_abs": 0.021866732804232805,
+      "min": 0.02186660448321995,
+      "output_id": 2165,
+      "prefix_1792_max_abs": 0.021866732804232805,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.021866732804232805
+    },
+    {
+      "input_id": 2102,
+      "max": 3.5342713499471676,
+      "max_abs": 3.5342713499471676,
+      "min": -3.32290444812773,
+      "output_id": 2110,
+      "prefix_1792_max_abs": 3.5342713499471676,
+      "slots_abs_gt_one": 260,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 2194,
+      "max": 0.22578105333723156,
+      "max_abs": 0.2315432432538615,
+      "min": -0.2315432432538615,
+      "output_id": 2195,
+      "prefix_1792_max_abs": 0.2315432432538615,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 3260,
+      "max": 3.1490626190518807,
+      "max_abs": 3.1490626190518807,
+      "min": -2.933956720494755,
+      "output_id": 3264,
+      "prefix_1792_max_abs": 3.1490626190518807,
+      "slots_abs_gt_one": 285,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 3263,
+      "max": 3.5342713499471676,
+      "max_abs": 3.5342713499471676,
+      "min": -3.32290444812773,
+      "output_id": 3265,
+      "prefix_1792_max_abs": 3.5342713499471676,
+      "slots_abs_gt_one": 545,
+      "tail_max_abs": 2.59309298799339
+    },
+    {
+      "input_id": 3304,
+      "max": -0.3333333333333335,
+      "max_abs": 0.3336240475833119,
+      "min": -0.3336240475833119,
+      "output_id": 3305,
+      "prefix_1792_max_abs": 0.3336240475833119,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.3333333333333335
+    },
+    {
+      "input_id": 3358,
+      "max": 1.000108485040749,
+      "max_abs": 1.000108485040749,
+      "min": 0.9999994559730263,
+      "output_id": 3359,
+      "prefix_1792_max_abs": 1.000108485040749,
+      "slots_abs_gt_one": 32,
+      "tail_max_abs": 0.9999994559730263
+    },
+    {
+      "input_id": 3402,
+      "max": 3.5491204809658545,
+      "max_abs": 3.5491204809658545,
+      "min": -3.3650705855710785,
+      "output_id": 3403,
+      "prefix_1792_max_abs": 3.5491204809658545,
+      "slots_abs_gt_one": 8672,
+      "tail_max_abs": 3.5491204809658545
+    },
+    {
+      "input_id": 11750,
+      "max": 0.19729532835779312,
+      "max_abs": 0.19729532835779312,
+      "min": -0.18973260561556587,
+      "output_id": 11758,
+      "prefix_1792_max_abs": 0.1797907521195473,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.19729532835779312
+    },
+    {
+      "input_id": 11759,
+      "max": 0.0870815613234688,
+      "max_abs": 0.09707368479273919,
+      "min": -0.09707368479273919,
+      "output_id": 11760,
+      "prefix_1792_max_abs": 0.0870815613234688,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.09707368479273919
+    },
+    {
+      "input_id": 11757,
+      "max": 0.009423300279240083,
+      "max_abs": 0.009423300279240083,
+      "min": 0.0,
+      "output_id": 11761,
+      "prefix_1792_max_abs": 0.007583198322533056,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.009423300279240083
+    },
+    {
+      "input_id": 11790,
+      "max": 1.0,
+      "max_abs": 1.0,
+      "min": 0.8562244799391404,
+      "output_id": 11799,
+      "prefix_1792_max_abs": 0.9999999985017771,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 1.0
+    },
+    {
+      "input_id": 11794,
+      "max": -0.0002066806317723574,
+      "max_abs": 0.00020744464712342856,
+      "min": -0.00020744464712342856,
+      "output_id": 11800,
+      "prefix_1792_max_abs": 0.00020744464711581727,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.00020744464712342856
+    },
+    {
+      "input_id": 11798,
+      "max": 0.009541035768415616,
+      "max_abs": 0.009541035768415616,
+      "min": 0.00020744464712360577,
+      "output_id": 11801,
+      "prefix_1792_max_abs": 0.007722585982923448,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.009541035768415616
+    },
+    {
+      "input_id": 11819,
+      "max": 0.009255730873068569,
+      "max_abs": 0.009255730873068569,
+      "min": -0.009185886163030137,
+      "output_id": 11820,
+      "prefix_1792_max_abs": 0.007952864413382124,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.009255730873068569
+    },
+    {
+      "input_id": 13887,
+      "max": 3.1489729353711855,
+      "max_abs": 3.1489729353711855,
+      "min": -2.9340113193968023,
+      "output_id": 13890,
+      "prefix_1792_max_abs": 3.1489729353711855,
+      "slots_abs_gt_one": 285,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 13889,
+      "max": 3.5341313653687423,
+      "max_abs": 3.5341313653687423,
+      "min": -3.322932132189616,
+      "output_id": 13891,
+      "prefix_1792_max_abs": 3.5341313653687423,
+      "slots_abs_gt_one": 545,
+      "tail_max_abs": 2.5931812118084103
+    },
+    {
+      "input_id": 13930,
+      "max": -0.3333333333333335,
+      "max_abs": 0.33363272917643805,
+      "min": -0.33363272917643805,
+      "output_id": 13931,
+      "prefix_1792_max_abs": 0.33363272917643805,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.3333333333333335
+    },
+    {
+      "input_id": 13984,
+      "max": 1.0001117415218945,
+      "max_abs": 1.0001117415218945,
+      "min": 0.9999994559730263,
+      "output_id": 13985,
+      "prefix_1792_max_abs": 1.0001117415218945,
+      "slots_abs_gt_one": 32,
+      "tail_max_abs": 0.9999994559730263
+    },
+    {
+      "input_id": 14015,
+      "max": 3.4944851413542697,
+      "max_abs": 3.4944851413542697,
+      "min": -3.2915257823361075,
+      "output_id": 14019,
+      "prefix_1792_max_abs": 3.4944851413542697,
+      "slots_abs_gt_one": 260,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14018,
+      "max": 3.2097001353443972,
+      "max_abs": 3.2097001353443972,
+      "min": -2.927299085669607,
+      "output_id": 14020,
+      "prefix_1792_max_abs": 3.2097001353443972,
+      "slots_abs_gt_one": 281,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14633,
+      "max": 0.15225356838669757,
+      "max_abs": 0.15225356838669757,
+      "min": -0.12929735449189503,
+      "output_id": 14672,
+      "prefix_1792_max_abs": 0.15225356838669757,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14634,
+      "max": 0.15225356838669757,
+      "max_abs": 0.15225356838669757,
+      "min": -0.12929735449189503,
+      "output_id": 14673,
+      "prefix_1792_max_abs": 0.12929735449189503,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.15225356838669757
+    },
+    {
+      "input_id": 14669,
+      "max": 0.1620483631150323,
+      "max_abs": 0.18608480464737656,
+      "min": -0.18608480464737656,
+      "output_id": 14674,
+      "prefix_1792_max_abs": 0.18608480464737656,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14670,
+      "max": 0.1620483631150323,
+      "max_abs": 0.18608480464737656,
+      "min": -0.18608480464737656,
+      "output_id": 14675,
+      "prefix_1792_max_abs": 0.17375171442785348,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.18608480464737656
+    },
+    {
+      "input_id": 14671,
+      "max": 0.17849070907413786,
+      "max_abs": 0.21041129791851948,
+      "min": -0.21041129791851948,
+      "output_id": 14676,
+      "prefix_1792_max_abs": 0.21041129791851948,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.19897644319964708
+    },
+    {
+      "input_id": 14743,
+      "max": 0.15520969664693318,
+      "max_abs": 0.21041129791851948,
+      "min": -0.21041129791851948,
+      "output_id": 14821,
+      "prefix_1792_max_abs": 0.21041129791851948,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14775,
+      "max": 0.15017300193744354,
+      "max_abs": 0.16680370271692663,
+      "min": -0.16680370271692663,
+      "output_id": 14822,
+      "prefix_1792_max_abs": 0.16680370271692663,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14785,
+      "max": 0.008944154233425271,
+      "max_abs": 0.00998298690922081,
+      "min": -0.00998298690922081,
+      "output_id": 14823,
+      "prefix_1792_max_abs": 0.00998298690922081,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14818,
+      "max": 0.2746109493856622,
+      "max_abs": 0.2746109493856622,
+      "min": -0.19056859112086422,
+      "output_id": 14824,
+      "prefix_1792_max_abs": 0.2746109493856622,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14820,
+      "max": 0.16239554785537993,
+      "max_abs": 0.18649411148993303,
+      "min": -0.18649411148993303,
+      "output_id": 14825,
+      "prefix_1792_max_abs": 0.18649411148993303,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14870,
+      "max": 0.0007504503017990327,
+      "max_abs": 0.0034783969201579294,
+      "min": -0.0034783969201579294,
+      "output_id": 14871,
+      "prefix_1792_max_abs": 0.0034783969201579294,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14860,
+      "max": 1.463917328165953e-10,
+      "max_abs": 1.463917328165953e-10,
+      "min": 0.0,
+      "output_id": 14872,
+      "prefix_1792_max_abs": 1.463917328165953e-10,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 14863,
+      "max": 1.0,
+      "max_abs": 1.0,
+      "min": 0.9999959669182886,
+      "output_id": 14873,
+      "prefix_1792_max_abs": 1.0,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 1.0
+    },
+    {
+      "input_id": 14866,
+      "max": 0.13333333333333333,
+      "max_abs": 0.13333333333333333,
+      "min": 0.13333268035819912,
+      "output_id": 14874,
+      "prefix_1792_max_abs": 0.13333333333333333,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.13333333333333333
+    },
+    {
+      "input_id": 14869,
+      "max": 0.021866732804232805,
+      "max_abs": 0.021866732804232805,
+      "min": 0.0218666255854757,
+      "output_id": 14875,
+      "prefix_1792_max_abs": 0.021866732804232805,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.021866732804232805
+    },
+    {
+      "input_id": 14903,
+      "max": 0.15544592743936658,
+      "max_abs": 0.21088815684133982,
+      "min": -0.21088815684133982,
+      "output_id": 14904,
+      "prefix_1792_max_abs": 0.21088815684133982,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 15993,
+      "max": 3.147636761268038,
+      "max_abs": 3.147636761268038,
+      "min": -2.934776316929101,
+      "output_id": 15994,
+      "prefix_1792_max_abs": 3.147636761268038,
+      "slots_abs_gt_one": 285,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 16036,
+      "max": -0.3335943493504252,
+      "max_abs": 0.33359434935042565,
+      "min": -0.33359434935042565,
+      "output_id": 16037,
+      "prefix_1792_max_abs": 0.33359434935042565,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.33359434935042565
+    },
+    {
+      "input_id": 16095,
+      "max": 1.000097293471881,
+      "max_abs": 1.000097293471881,
+      "min": 1.000097293471881,
+      "output_id": 16099,
+      "prefix_1792_max_abs": 1.000097293471881,
+      "slots_abs_gt_one": 32768,
+      "tail_max_abs": 1.000097293471881
+    },
+    {
+      "input_id": 16098,
+      "max": 1.7068165940143326e-05,
+      "max_abs": 1.7068165940143326e-05,
+      "min": 1.7068165940143096e-05,
+      "output_id": 16100,
+      "prefix_1792_max_abs": 1.7068165940143326e-05,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 1.7068165940143326e-05
+    },
+    {
+      "input_id": 20294,
+      "max": 0.16176451712351467,
+      "max_abs": 0.1812058610162658,
+      "min": -0.1812058610162658,
+      "output_id": 24453,
+      "prefix_1792_max_abs": 0.1812058610162658,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.17958259672407703
+    },
+    {
+      "input_id": 24452,
+      "max": 0.1747585819828365,
+      "max_abs": 0.20909707145693224,
+      "min": -0.20909707145693224,
+      "output_id": 24454,
+      "prefix_1792_max_abs": 0.18368581714135204,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.20909707145693224
+    },
+    {
+      "input_id": 24477,
+      "max": 0.08088225856175733,
+      "max_abs": 0.0906029305081329,
+      "min": -0.0906029305081329,
+      "output_id": 24478,
+      "prefix_1792_max_abs": 0.0906029305081329,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.08979129836203852
+    },
+    {
+      "input_id": 24466,
+      "max": 1.0,
+      "max_abs": 1.0,
+      "min": 0.9674339795002475,
+      "output_id": 24479,
+      "prefix_1792_max_abs": 0.9999999989415191,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 1.0
+    },
+    {
+      "input_id": 24469,
+      "max": -0.00020422376126197887,
+      "max_abs": 0.00020471151942565906,
+      "min": -0.00020471151942565906,
+      "output_id": 24480,
+      "prefix_1792_max_abs": 0.00020471151940993577,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.00020471151942565906
+    },
+    {
+      "input_id": 24473,
+      "max": -0.02890040391392329,
+      "max_abs": 0.028967793422579963,
+      "min": -0.028967793422579963,
+      "output_id": 24481,
+      "prefix_1792_max_abs": 0.028967793420407607,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.028967793422579963
+    },
+    {
+      "input_id": 24476,
+      "max": 0.0353592026104233,
+      "max_abs": 0.0353592026104233,
+      "min": 0.02917523806970357,
+      "output_id": 24482,
+      "prefix_1792_max_abs": 0.0353592026104233,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.0352489054377475
+    },
+    {
+      "input_id": 24510,
+      "max": 0.08740995047837481,
+      "max_abs": 0.08740995047837481,
+      "min": -0.08241645106074225,
+      "output_id": 24511,
+      "prefix_1792_max_abs": 0.08740995047837481,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.08477841123884283
+    },
+    {
+      "input_id": 30974,
+      "max": 3.14752577302519,
+      "max_abs": 3.14752577302519,
+      "min": -2.934757297942121,
+      "output_id": 30975,
+      "prefix_1792_max_abs": 3.14752577302519,
+      "slots_abs_gt_one": 285,
+      "tail_max_abs": 0.0
+    },
+    {
+      "input_id": 31015,
+      "max": -0.333598281448765,
+      "max_abs": 0.33359828144876547,
+      "min": -0.33359828144876547,
+      "output_id": 31016,
+      "prefix_1792_max_abs": 0.33359828144876547,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 0.33359828144876547
+    },
+    {
+      "input_id": 31071,
+      "max": 1.0000987683496556,
+      "max_abs": 1.0000987683496556,
+      "min": 1.0000987683496554,
+      "output_id": 31075,
+      "prefix_1792_max_abs": 1.0000987683496556,
+      "slots_abs_gt_one": 32768,
+      "tail_max_abs": 1.0000987683496556
+    },
+    {
+      "input_id": 31074,
+      "max": 1.707017788270264e-05,
+      "max_abs": 1.707017788270264e-05,
+      "min": 1.7070177882702408e-05,
+      "output_id": 31076,
+      "prefix_1792_max_abs": 1.707017788270264e-05,
+      "slots_abs_gt_one": 0,
+      "tail_max_abs": 1.707017788270264e-05
+    }
+  ],
+  "ckks_executed": false,
+  "max_abs_error": 1.3126689116238488e-07,
+  "max_abs_tail": 0.0,
+  "mode": "plaintext_mock_runtime",
+  "outputs": [
+    {
+      "max_abs_error": 1.2055435605340392e-07,
+      "max_abs_tail": 0.0,
+      "name": "logits.0:32768"
+    },
+    {
+      "max_abs_error": 1.3092975362227754e-07,
+      "max_abs_tail": 0.0,
+      "name": "logits.32768:65536"
+    },
+    {
+      "max_abs_error": 1.2625525894205403e-07,
+      "max_abs_tail": 0.0,
+      "name": "logits.65536:98304"
+    },
+    {
+      "max_abs_error": 1.3126689116238488e-07,
+      "max_abs_tail": 0.0,
+      "name": "logits.98304:131072"
+    },
+    {
+      "max_abs_error": 1.1200078478545983e-07,
+      "max_abs_tail": 0.0,
+      "name": "logits.131072:151936"
+    },
+    {
+      "max_abs_error": 1.0508652492635662e-07,
+      "max_abs_tail": 0.0,
+      "name": "layer_0.kv_cache"
+    },
+    {
+      "max_abs_error": 1.0226917859790241e-07,
+      "max_abs_tail": 0.0,
+      "name": "layer_1.kv_cache"
+    }
+  ],
+  "passed": true,
+  "peak_rss_bytes": 69640192,
+  "retained_values": 7,
+  "retention": "FinalOnly",
+  "runtime_seconds": 16.205712271,
+  "runtime_timing": {
+    "boot_calls": 74,
+    "bundle_read_bytes": 2589063168,
+    "bundle_read_calls": 9894,
+    "bundle_read_nanoseconds": 14537797518,
+    "bundle_resident_bytes": 0,
+    "encode_calls": 9911,
+    "encode_nanoseconds": 79528930,
+    "initialization_nanoseconds": 276,
+    "online_execution_nanoseconds": 16167473708,
+    "raw_peak_bytes": 524288
+  },
+  "status": "passed",
+  "tail_threshold": 1e-10,
+  "threshold": 1e-05
+}

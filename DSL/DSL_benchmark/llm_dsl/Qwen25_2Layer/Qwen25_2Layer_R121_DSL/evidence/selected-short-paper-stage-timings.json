@@ -1,0 +1,142 @@
+{
+  "compiler-window-regression-timing.json": {
+    "seconds": 0.6161444539902732,
+    "peak_rss_bytes": 55734272,
+    "returncode": 0
+  },
+  "compile-short-timing.json": {
+    "seconds": 7.527388416987378,
+    "peak_rss_bytes": 1263964160,
+    "returncode": 0
+  },
+  "verify-eager-short-timing.json": {
+    "seconds": 0.16853004199219868,
+    "peak_rss_bytes": 11485184,
+    "returncode": 0
+  },
+  "small-model-timing.json": {
+    "seconds": 0.41618257100344636,
+    "peak_rss_bytes": 39530496,
+    "returncode": 0
+  },
+  "build-candidate-compiler-timing.json": {
+    "seconds": 46.721950014005415,
+    "peak_rss_bytes": 2449629184,
+    "returncode": 0
+  },
+  "trace-short-timing.json": {
+    "seconds": 8.979476736014476,
+    "peak_rss_bytes": 2246729728,
+    "returncode": 0
+  },
+  "joint-qkv-small-timing.json": {
+    "seconds": 10.077489343995694,
+    "peak_rss_bytes": 34947072,
+    "returncode": 0
+  },
+  "pair-model-reference-timing.json": {
+    "seconds": 0.11578907701186836,
+    "peak_rss_bytes": 31301632,
+    "returncode": 0
+  },
+  "build-mock-timing.json": {
+    "seconds": 13.231526985997334,
+    "peak_rss_bytes": 504528896,
+    "returncode": 0
+  },
+  "pair-mlp-certified-small-timing.json": {
+    "seconds": 1.1667580929934047,
+    "peak_rss_bytes": 34344960,
+    "returncode": 0
+  },
+  "configure-candidate-compiler-timing.json": {
+    "seconds": 2.418121306982357,
+    "peak_rss_bytes": 173195264,
+    "returncode": 0
+  },
+  "pair-mlp-small-timing.json": {
+    "seconds": 1.1668689380167052,
+    "peak_rss_bytes": 34287616,
+    "returncode": 0
+  },
+  "joint-qkv-attention-small-timing.json": {
+    "seconds": 5.6724675160076,
+    "peak_rss_bytes": 33943552,
+    "returncode": 0
+  },
+  "compile-full-timing.json": {
+    "seconds": 31.00271162900026,
+    "peak_rss_bytes": 5210402816,
+    "returncode": 0
+  },
+  "verify-final-full-timing.json": {
+    "seconds": 0.6268262579978909,
+    "peak_rss_bytes": 32456704,
+    "returncode": 0
+  },
+  "candidate-compiler-ctest-timing.json": {
+    "seconds": 4.42070491600316,
+    "peak_rss_bytes": 112013312,
+    "returncode": 0
+  },
+  "degree-model-bound-timing.json": {
+    "seconds": 1.5676366869884077,
+    "peak_rss_bytes": 1237856256,
+    "returncode": 0
+  },
+  "mock-full-timing.json": {
+    "seconds": 16.746567144000437,
+    "peak_rss_bytes": 69267456,
+    "returncode": 0
+  },
+  "silu-parity-bound-timing.json": {
+    "seconds": 0.21558708298834972,
+    "peak_rss_bytes": 46227456,
+    "returncode": 0
+  },
+  "tiled-down-small-timing.json": {
+    "seconds": 2.268009366001934,
+    "peak_rss_bytes": 34578432,
+    "returncode": 0
+  },
+  "verify-final-short-timing.json": {
+    "seconds": 0.22021404499537311,
+    "peak_rss_bytes": 11210752,
+    "returncode": 0
+  },
+  "mock-short-timing.json": {
+    "seconds": 4.225196737010265,
+    "peak_rss_bytes": 38588416,
+    "returncode": 0
+  },
+  "verify-terminal-full-timing.json": {
+    "seconds": 0.625732740998501,
+    "peak_rss_bytes": 34693120,
+    "returncode": 0
+  },
+  "build-ckks-timing.json": {
+    "seconds": 15.437866747990483,
+    "peak_rss_bytes": 720650240,
+    "returncode": 0
+  },
+  "verify-terminal-short-timing.json": {
+    "seconds": 0.16910785099025816,
+    "peak_rss_bytes": 11481088,
+    "returncode": 0
+  },
+  "verify-eager-full-timing.json": {
+    "seconds": 0.618274343025405,
+    "peak_rss_bytes": 34709504,
+    "returncode": 0
+  },
+  "short-ckks-timing.json": {
+    "seconds": 1325.3724235199916,
+    "peak_rss_bytes": 28933652480,
+    "returncode": 0
+  },
+  "trace-full-timing.json": {
+    "seconds": 34.00615357799688,
+    "peak_rss_bytes": 5133377536,
+    "returncode": 0
+  }
+}
