@@ -1,20 +1,21 @@
 # PT-Agent 后端对接清单
 
-2026-10-28 初版，2026-10-30 更新。依据当天 `git fetch` 后 mingerfan/poseidon、ckks-runtime、dacapo-modified 各分支的代码与记录；来源见第 6 节。在线版本：https://claude.ai/artifact/JrRJHfMBeJWoA3fDF3u3w9
+2026-10-28 初版，2026-10-30 更新（含 R121 编译器修正）。依据当天 `git fetch` 后 mingerfan/poseidon、ckks-runtime、dacapo-modified 各分支的代码与记录；来源见第 6 节。在线版本：https://claude.ai/artifact/JrRJHfMBeJWoA3fDF3u3w9
 
 ## 结论
 
 - PT-Agent 已能为 CNN 和 Transformer 生成可编译、模拟精度达标的程序，但还没有任何程序在真实 CKKS 上运行过。流程目前止于 RuntimePlan。
-- 我们的 RuntimePlan 现在不能直接在 GPU 上跑。我们用旧编译器（DaCapo `39c1fb2` + 13 文件补丁）和 qwen48 约定；后端 GPU 用 dacapo-modified `8928817`、OperatorSpec V2 和手动 Q50/P25 自举约定。
+- 我们的 RuntimePlan 现在不能直接在 GPU 上跑。我们用旧编译器（DaCapo `39c1fb2` + 13 文件补丁 + R121 自举段修正）和 qwen48 约定；后端 GPU 用 dacapo-modified `8928817`、OperatorSpec V2 和手动 Q50/P25 自举约定。
+- 我们已按 Qwen25 R121 的编译器修正（自举后不再多留一层）对齐默认编译器，自举少 20%–40%；这项修正是否进正式编译器见 Q5。
 - 自举数主要由“每次自举后可用几层”决定。我们现在只有 4 层。按成本模型测算，可用 6 层时 R1 从 36512 次降到 12256 次，可用 9 层时各程序都在 5000–7000 次。
 - 层数和安全性互相制约。N=65536、128 位安全时，模数总位数上限约 1772；我们现在 Q 已用 1620 位，最多再多约 2 层。后端 25 Q 的配置层数够，但安全级别为 none。
-- 请后端回答第 2 节的 10 条问题，最关键的是 Q1–Q3（参数、安全级别、自举配置）。
+- 请后端回答第 2 节的 11 条问题，最关键的是 Q1–Q3（参数、安全级别、自举配置）。
 
 ## 1. 两边现状对照
 
 | 项目 | PT-Agent 现在 | 后端最新 | 状态 |
 |---|---|---|---|
-| 编译器 | DaCapo `39c1fb2` + `dacapo-local-13file.patch` | dacapo-modified `8928817`（native-scale-planning）/ `1d40e76`（framework）；我们的版本是它的祖先 | 版本不同 |
+| 编译器 | DaCapo `39c1fb2` + 13 文件补丁 + R121 自举段修正（`DSL/DSL_agent/validation/dacapo-r121-boot-window.patch`） | dacapo-modified `8928817`（native-scale-planning）/ `1d40e76`（framework）；我们的版本是它的祖先 | 版本不同 |
 | OperatorSpec | v1，context `qwen-bootstrap48` | V2（placement 要求 V2） | 要升级 |
 | CKKS 参数 | N=2^16；Q 为 30 个素数共 1620 位（52 / 43×8 / 58×18 / 60×3）；scale 2^43；P 未知 | 手动 Q50/P25、N=2^16、素数 ≤32 位、scale 40；Qwen3 GPU 测试另用 N=2^14、Q50/P8 | 需拍板 |
 | 每次自举后可用层数 | 4（第 1 层进、第 5 层出；自举本身用掉 24 层） | 25 个 Q（Q6/s40 进、Q31/s40 出） | 需拍板 |
@@ -38,6 +39,8 @@
 | 9 | 6336 | 6336 | 6624 | 7008 |
 | 11 | 6816 | 5216 | 7232 | 6592 |
 
+上表按旧编译器规则计算。我们的默认编译器已按 R121 修正后，可用 4 层时：R0 38849、R1 22721、Agent 冻结程序 20929（§6.19 精调后），自举少约 30%–40%，不需要改参数。
+
 “6 层上限”的前提是 P 为 1 个 60 位素数。若 P 为 2 个 60 位素数，N=2^16 下已无余量；P 更大时现有参数已超出 128 位标准。
 
 ## 2. 请后端回答的问题
@@ -48,24 +51,25 @@
 - **Q2 安全级别**：是否要求 128 位安全？要求的话，N=2^16 下每次自举后最多约 6 层；不要求的话，论文需写明所用级别。
 - **Q3 自举配置**：输入层、输出层、输入与输出 scale、分量数各是多少？用哪个自举实现（手动 S2C-first degree59/DA2，还是生产 degree-22）？
 - **Q4 编译器版本**：固定 `8928817` 还是 `1d40e76`？之后升级是否通知？
-- **Q5 OperatorSpec**：请提供 V2 正式文件。Transformer 能否和 ResNet20 用同一份？
+- **Q5 R121 自举段修正**：Qwen25 R121 用的实验编译器改了一处：scale 等于 waterline 时，自举后的段不再预留一层，每段可用层数从 3 变成 4。我们已按它对齐，三方核对一致，自举少 20%–40%。这项修正会进正式编译器吗？最新主线 `8928817` 重写了放置算法，从代码看包含等价逻辑，请确认。
+- **Q6 OperatorSpec**：请提供 V2 正式文件。Transformer 能否和 ResNet20 用同一份？
 
 ### 精度（决定真实 CKKS 能否算对）
 
-- **Q6 自举输入范围**：输入上界 B 是多少？|x| ≤ B 时自举的最大误差是多少？
-- **Q7 自举误差**：能否提供带 arcsine 修正的自举？不能的话，请给出自举实际映射的精确公式，我们在 Mock 中照着模拟。
+- **Q7 自举输入范围**：输入上界 B 是多少？|x| ≤ B 时自举的最大误差是多少？
+- **Q8 自举误差**：能否提供带 arcsine 修正的自举？不能的话，请给出自举实际映射的精确公式，我们在 Mock 中照着模拟。
 
 ### 运行（决定能否端到端验证）
 
-- **Q8 GPU 运行器**：需要支持多输入多输出、按 RuntimePlan 生成密钥、中途不解密。由谁实现，什么时候能用？
-- **Q9 机器和显存**：哪台机器、哪张卡、多少显存给 PT-Agent 用？
-- **Q10 延迟表**：能否按 Q1 的参数实测每一层的 add、mul、rotate、rescale、modswitch、boot 延迟？
+- **Q9 GPU 运行器**：需要支持多输入多输出、按 RuntimePlan 生成密钥、中途不解密。由谁实现，什么时候能用？
+- **Q10 机器和显存**：哪台机器、哪张卡、多少显存给 PT-Agent 用？
+- **Q11 延迟表**：能否按 Q1 的参数实测每一层的 add、mul、rotate、rescale、modswitch、boot 延迟？
 
 ## 3. 我们拿到答案后做的事
 
-- **Q1–Q5**：把 13 文件补丁合并到固定的编译器提交并重建；改成本模型（rescale 规则、自举约定、层数）和 DSL 槽数，重算 R0、R1 和 Agent 程序的自举数，恢复“预测 / compiler / managed”三方一致检查。
-- **Q6–Q7**：把自举输入上界作为 Agent 和精调的硬约束；Mock 按真实自举映射模拟。CKKS 容差 1e-5 + 1e-4·|ref| 不放宽。
-- **Q8–Q10**：换上实测延迟表重跑优化；先用 ResNet20 做第一次 GPU 真实运行，再做 BERT，最后 Qwen。
+- **Q1–Q6**：把 13 文件补丁合并到固定的编译器提交并重建；改成本模型（rescale 规则、自举约定、层数）和 DSL 槽数，重算 R0、R1 和 Agent 程序的自举数，恢复“预测 / compiler / managed”三方一致检查。
+- **Q7–Q8**：把自举输入上界作为 Agent 和精调的硬约束；Mock 按真实自举映射模拟。CKKS 容差 1e-5 + 1e-4·|ref| 不放宽。
+- **Q9–Q11**：换上实测延迟表重跑优化；先用 ResNet20 做第一次 GPU 真实运行，再做 BERT，最后 Qwen。
 
 ## 4. 逐项细节
 
@@ -136,6 +140,7 @@
 | 新旧编译器自举数对比、Qwen GPU 回归失败 | poseidon `framework` `590bbc29` | `test-results/model-regression-20261021/results.zh-CN.txt` |
 | Qwen3 整模型路径（Host 解密再加密、sec none） | poseidon `integration/runtime-gpu` | `scripts/qwen3_dsl/README.md` |
 | 手写 ResNet20 原生自举整网 GPU（HEVM） | poseidon `hsb-resnet20-bootstrap-expansion` | `Benchmark/dsl/resnet20_no_hoist/README.md` |
+| R121 自举段修正（编译器补丁与三方核对） | poseidon `lhy-agent-dsl` `fb03206d` | `DSL/DSL_agent/validation/dacapo-r121-boot-window.patch`、`DSL/DSL_agent/docs/pt_agent/STATUS.md` |
 | CPU qwen-bootstrap48 参数（Q 链 1620 位、自举 L1→L5） | poseidon `lhy-agent-dsl` | `DSL/DSL_benchmark/llm_dsl/Qwen25_2Layer_Decode_Autoboot_DSL/config/operator-spec.json` |
 | Poseidon 安全参数表（只到 N=32768） | poseidon `lhy-agent-dsl` | `src/poseidon/basics/util/hestdparms.h` |
 | 可用层数对自举数的测算 | 本地运行 2026-10-30 | `pt_agent_results/A1-qwen-explore-relaxed-20261030/levels/LEVELS.json` |
