@@ -20,10 +20,26 @@ class PlacementError(Exception):
     pass
 
 
+def boot_normalization_levels(rule: str, rescaling_factor: int, waterline: int) -> int:
+    """Levels a post-bootstrap segment reserves for normalization under a compiler rule.
+
+    "dacapo-39c1fb2" always reserves one; "r121" (the Qwen25 R121 GreedyBootstrapPlacement
+    change) reserves it only when the rescaling factor differs from the waterline.
+    """
+    if rule not in ("dacapo-39c1fb2", "r121"):
+        raise PlacementError(f"Unknown bootstrap window rule: {rule}")
+    return 0 if rule == "r121" and rescaling_factor == waterline else 1
+
+
 def depth_dp(dag: DagBackend, *, last_boot_level: int, boot_in_level: int, boot_out_level: int,
-             latency_table: dict) -> Placement:
+             latency_table: dict, boot_normalization_levels: int = 1) -> Placement:
+    """GreedyBootstrapPlacement depth-dp. A segment that starts after a bootstrap spans
+    last_boot_level - boot_normalization_levels multiplicative depths (1 for DaCapo 39c1fb2,
+    0 under the R121 rule when the rescaling factor equals the waterline)."""
     if 'boot' in dag.kind:
         raise PlacementError('depth-dp model requires a program without explicit refresh')
+    if boot_normalization_levels not in (0, 1) or last_boot_level-boot_normalization_levels < 1:
+        raise PlacementError('bootstrap segment budget must leave at least one level')
     n = len(dag.kind)
     ret = n
     users = [[] for _ in range(n)]
@@ -50,13 +66,14 @@ def depth_dp(dag: DagBackend, *, last_boot_level: int, boot_in_level: int, boot_
     for index in range(1, maxd+1):
         crossing[index] += crossing[index-1]
     budget = last_boot_level
+    segment = budget-boot_normalization_levels
     cost = [float('inf')]*(maxd+1)
     cost[0] = 0
     prev = [-1]*(maxd+1)
     for end in range(1, maxd+1):
         if end <= budget:
             cost[end] = 0
-        for start in range(end-1, max(0, end-(budget-1))-1, -1):
+        for start in range(end-1, max(0, end-segment)-1, -1):
             candidate = cost[start]+crossing[start]
             if candidate < cost[end]:
                 cost[end], prev[end] = candidate, start

@@ -7147,3 +7147,100 @@ codex 额度用完后，由 Claude 按原调用方式（`--part log-step`，每�
 冻结程序验收（[目录](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/qwen/acceptance-session-04)）：report100 tensor／Mock 均 100/100，logit_rel_err 0.00791999，校准 u 0.7922、解析 u 0.9954，feasible=true；预测／compiler／managed 自举 56800/56800/56800，切点 159，深度 448，预测延迟 14622482227 µs；managed IR 994541502 字节（stdin），完整 RuntimePlan（1107637 步、1892 常量）相同，已 prune。
 
 Qwen 基线成本（Count，[目录](/home/lhohy/pt_agent_results/A1-transformers-s618-20261029T112723-87ab/qwen/baselines)）：R0 54848 自举／14120002955 µs／深度 392；R1 36512 自举／9412982371 µs／深度 344。冻结程序比 R0 多 3.6%、比 R1 多 55.6%。Qwen R0/R1 的 report100 与 compiler/managed 尚未执行。
+
+### R121 自举段预算修正对齐（方案 A，Claude 于 2026-10-30 执行，用户批准）
+
+**编译器。** 复制 DaCapo `39c1fb2` 加已批准 13 文件补丁的源码到 `poseidon-work/platforms/aarch64-linux/results/agent-dacapo-bootwindow-20261030/src`，只改 `GreedyBootstrapPlacement.cpp` 两处，和 R121 的 `patch_boot_window.py` 逐字一致：rescalingFactor 等于 waterline 时，自举后的段不再预留一层。用原来的 poseidon-cpu Nix shell 离线构建到同目录的 `build/`（约 1 分钟），目录中放 `pt-boot-window.json`（rule=r121）作为标记。原有源码、原构建 `agent-current-dacapo-build-r1712` 和子模块都未改动。
+
+**pt_agent。**
+- `placement.depth_dp` 增加 `boot_normalization_levels`，默认 1，即原规则；新增 `placement.boot_normalization_levels(rule, factor, waterline)`。
+- `toolchain.boot_window_rule()` 读取所配置 `hecate-opt` 构建的标记，`management_profile()` 记录 `boot_window`；成本模型（`PROFILES['qwen48']`）、managed 模式（`greedy.manage`）和 preflight（`u4_cse_diagnosis.placement`）都按同一规则计算。
+- 使用方式：`PT_HECATE_BUILD=<上述 build 目录>`。不设置时，行为与历史完全相同。
+- 新增 `tests/test_r121w_boot_window.py`（8 项）。
+
+**三方核对（新编译器，`A1-r121window-20261030`，不读新的 report 数据，不调用 API）。**
+
+| 程序 | 原规则 | 新规则：预测 / compiler / managed | RuntimePlan |
+|---|---:|---|---|
+| BERT 冻结程序 | 8933 | 7260 / 7260 / 7260 | 完全相同 |
+| Qwen 冻结程序（§6.18） | 56800 | 40193 / 40193 / 40193 | 完全相同 |
+| Qwen R1（只算成本） | 36512 | 22721 | — |
+| ResNet20 r6b-127 / r6b-63（测试快照） | 383 / 288 | 344 / 230 | — |
+
+compiler 步骤的前置检查要求同一程序已有完整的 report100 评测，这里复制了 §6.18 的评测文件，没有重新读 report 数据。Qwen R1 没有 report100，只核对成本。
+
+**测试。**
+- 默认编译器：相关 54 项中 53 项通过。`test_p2_export.test_self_contained_and_relocated` 失败，原因是 U4 加入的 `greedy.py` 中有 `/proc/self/status`，与本次改动无关，未修复。
+- 新编译器：另有 3 项按设计不一致，旧断言未改：`test_r8c_placement` 的 383/288 快照，`test_s1_manage.test_cuts_use_the_single_depth_dp` 中直接按旧规则调用 `depth_dp`。
+
+**中途失败（目录保留）。** `*-frozen`、`*-frozen-native`、`*-frozen-native3` 失败依次因为：缺 report 前置、导出包缺 `toolchain` 导入、preflight 使用固定参数。修正后在 `*-native2`（compiler）和 `*-native4`（preflight、managed）完成。
+
+**未做。** 默认编译器仍是原构建；Agent 的精调和冻结没有在新规则下重跑；尚未提交。
+
+### R121 规则设为默认，并在新规则下重放精调与冻结（Claude 于 2026-10-30 执行，用户批准）
+
+**默认编译器。** `paths.HECATE_BUILD` 的默认值改为 `agent-dacapo-bootwindow-20261030/build`（R121 规则）。若要复现此前结果，设置 `PT_HECATE_BUILD=…/agent-current-dacapo-build-r1712/build`。因此在默认配置下，`test_r8c_placement` 的 383/288 快照和 `test_s1_manage.test_cuts_use_the_single_depth_dp` 会按设计不一致，旧断言未改。
+
+**成本重算。** 保存的反馈里，成本块是按旧规则算的，会影响 new_llm_best、精调触发和 confirm 排序。`A1-r121window-20261030/regrade_cost.py` 用与 `agent_tools.evaluate` 相同的估算和字段重算了成本块（BERT 4 个、Qwen 17 个候选）；exact、validation 和可行性沿用原值。新的重评文件在 `regrade/<model>/REEVALUATION.json`。
+
+**重放。** 按 §6.18 的方式和 v8-6.17，从空状态逐会话重放。Qwen 按"冻结即停"处理。不调用 API。
+
+| 模型 | 会话 | 精调（起 → 止） | confirm | 结果 |
+|---|---|---|---|---|
+| BERT | 01（第 35–38 次） | 第 35 次 8606→7250（收敛）；第 37 次 7058→7058 | 第 37 次原文 7058 通过（20/20） | 冻结第 37 次原文 |
+| Qwen | 01 | 第 2 次 39425→23137；第 4 次 23969→20513 | 6 个候选均 u=0.944（第 32 行 rsqrt） | 未冻结 |
+| Qwen | 02 | 第 14 次 29249→20129 | 精调程序 u=0.944，误差 0.0137；其余 u≈0.944 | 未冻结 |
+| Qwen | 03 | 第 21 次 30081→20641 | u=0.944 | 未冻结 |
+| Qwen | 04 | 第 30 次 40193→21697；第 32 次 24449→20577 | 精调程序 u=0.944；第 30 次原文 u=0.792 通过 | 冻结第 30 次原文 |
+
+**验收。**
+- BERT 冻结程序（第 37 次原文，7058）：
+  - report100：tensor 和 Mock 均为 98/100，低于 BERT 门限 99.5%，**不通过**；logit_rel_err 0.119，校准 u 0.820，解析 u 0.991；
+  - 预测 / compiler / managed 均为 7058，完整 RuntimePlan 相同。
+- Qwen 冻结程序与 §6.18 是同一程序：
+  - report100 沿用 100/100；
+  - 新编译器下的三方核对已在 `qwen-frozen-native2/native4` 完成，均为 40193。
+
+**新规则下的对照（自举数）。**
+
+| | R0 | R1 | 冻结程序 | 精调程序中最低（未过 confirm） |
+|---|---:|---:|---:|---:|
+| BERT | 12081 | 9095 | 7058（report 98/100） | — |
+| Qwen | 38849 | 22721 | 40193 | 20129 |
+
+**结论。**
+- Qwen 的瓶颈仍是 confirm 集上第 32 行 rsqrt 的位置余量（u=0.944）。精调程序在 heldout 上可行，并比 R1 低约 10%，但都被拒。
+- BERT 在新成本排序下选中了更便宜的第 37 次原文。20 句 confirm 只检查一致率，没有发现这个问题，report 上一致率掉到 98%。
+- 两个问题都属于 §6.19 的余量问题，与编译器规则无关。
+
+### A1 §6.19 实现与在 R121 规则下的重放（Claude 于 2026-10-30 执行，用户批准）
+
+**实现。**
+- `planners/transformer_tuner.py` 新增 `MARGIN_TUNE_RULE='v8-6.19'`：
+  - 对准取 `margin_domain` = M ∪ T。T 使校准数据落在 u ≤ 0.80；r8-v10 下 inv/rsqrt 按对数刻度，其他按线性刻度；
+  - 接受上限为 `0.5·min(1e-2, 任务 logit_rel_err)`，分类任务同样计算 logit 误差。
+- r8-v10 的默认规则仍为 v8-6.17。`a1_v10_replay.replay_step` 和 `--tune-rule` 支持选择 v8-6.19。
+- 新增 `tests/test_r619_margin.py`（7 项），与相关精调和 boot-window 测试一起共 43 项通过。
+- §6.19② 要求的"单独对准诊断"没有单独跑，改为从重放的精调记录中读取。
+
+**重放（`A1-r619-r121-20261030`，R121 规则为默认编译器，成本用 `A1-r121window-20261030/regrade`，不调用 API）。**
+
+| 模型 | 会话 | 精调（起 → 止，heldout 校准 u） | confirm | 结果 |
+|---|---|---|---|---|
+| BERT | 01 | 第 35 次 8606→7254（u 0.815，收敛）；第 37 次 7058→7058 | 第 37 次原文 7058 通过 | 冻结第 37 次原文，与上一轮相同（report 98/100，不通过） |
+| Qwen | 01 | 第 2 次 39425→22657；第 4 次 23969→20769（u 0.838） | 精调程序 u=0.871 通过，但误差 0.0166/0.0174 超过 0.01；原文程序 u=0.944 | 未冻结 |
+| Qwen | 02 | 第 14 次 29249→20929（u 0.838） | 精调程序误差 0.0018、u 0.871，通过 | **冻结精调后的第 14 次** |
+
+**Qwen 冻结程序验收（`qwen/acceptance-session-02`）。**
+- report100：tensor 和 Mock 均为 100/100，logit_rel_err 0.00666。
+  - 校准 u = **1.026**：第 25 行 `mul_10::rsqrt`，声明域 [217.6, 5065.4] = M，report 最小值 208.9；
+  - 解析 u 0.999；按 u 判据，report 的 `feasible=false`。
+- 预测 / compiler / preflight / managed 均为 20929，完整 RuntimePlan 相同。
+
+**对照（R121 规则，自举数）。** Qwen：R0 38849、R1 22721、冻结 20929（比 R1 少 8%，比 R0 少 46%）。BERT：R0 12081、R1 9095、冻结 7058（report 98/100）。
+
+**判断。**
+- §6.19 的定义域余量解决了第 32 行 rsqrt 在 confirm 上的问题（0.944→0.871）。
+- 精度余量 0.5 倍只在部分精调程序上够用：会话 01 的精调程序从 heldout ≤0.005 涨到 confirm 0.017。
+- 第 25 行 rsqrt 的校准跨度只有 10 倍，T 比 M 窄，域即 M。report 数据低到校准最小值的 0.64 倍，超出 1.5 倍余量。这是校准覆盖问题，§6.19 不处理。
+- BERT 冻结的是未精调的原文，§6.19 不影响它。

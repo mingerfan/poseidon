@@ -179,7 +179,7 @@ def replay_step(args):
     directory.mkdir(parents=True,exist_ok=True)
     checkpoint = directory/'SESSION.json'
     state = load_state(checkpoint) if checkpoint.exists() else new_agent_state(ctx,max_iters=len(cases),
-        engine_profile='tensor',tune_rule='v8-6.17')
+        engine_profile='tensor',tune_rule=getattr(args,'tune_rule',None) or 'v8-6.17')
     state.update(retrospective=True,label=LABEL,original_session=str(original))
     state['model_call_offset'] = cases[0]['call']-1
     phase = state['phase']
@@ -211,7 +211,7 @@ def replay_step(args):
     return dict(complete=True,label=LABEL,llm_calls=0,report_images=0,step=phase,
                 next_step=state['phase'],iteration=state['iteration'],replayed_calls=state['calls'],
                 original_session=str(original),state=str(checkpoint),agent=record,
-                tune_rule='v8-6.17',retrospective=True)
+                tune_rule=state['tune_rule'],retrospective=True)
 
 
 def baseline_reuse(args):

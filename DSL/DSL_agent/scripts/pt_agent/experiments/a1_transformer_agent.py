@@ -735,7 +735,7 @@ def main():
     parser.add_argument('--prompt-version',choices=('r8-v7','r8-v8','r8-v9','r8-v10'),default='r8-v7')
     parser.add_argument('--legacy-sessions',type=Path,nargs='+',default=())
     parser.add_argument('--step',choices=('recover','evaluate','tune','confirm','migrate'))
-    parser.add_argument('--tune-rule',choices=('v8-pre-6.11','v8-6.11','v8-6.14','v8-6.17'))
+    parser.add_argument('--tune-rule',choices=('v8-pre-6.11','v8-6.11','v8-6.14','v8-6.17','v8-6.19'))
     parser.add_argument('--max-sweeps',type=int,choices=(1,8),default=1)
     for key in ('model_dir','r0_program','program','frozen','budget_path','call_dir','root','resume_session','response_file','mock_report'):
         parser.add_argument('--'+key.replace('_','-'),type=Path)

@@ -17,6 +17,17 @@ PROFILES = {"qwen48": dict(input_level=5, boot_in_level=1, boot_out_level=5,
                            limits=dict(const_bytes=4*2**30, rot_keys=None),
                            boot_input_bound=None, boot_abs_error=None)}
 
+
+def _boot_normalization(boot: str) -> int:
+    """Post-bootstrap normalization levels of the configured compiler for this boot profile."""
+    from .placement import boot_normalization_levels
+    from .toolchain import management_profile
+    config = management_profile('dacapo-depth-dp', boot)
+    return boot_normalization_levels(config['boot_window'], config['rescalingFactor'], config['waterline'])
+
+
+PROFILES['qwen48']['boot_normalization_levels'] = _boot_normalization('qwen48')
+
 _estimate_backends = WeakSet()
 
 
@@ -65,7 +76,8 @@ def estimate(program, weights, *, profile: str = "qwen48", placement_model=None,
             backend.finalize()
         placement = depth_dp(backend, last_boot_level=config['boot_out_level']-config['boot_in_level'],
                              boot_in_level=config['boot_in_level'], boot_out_level=config['boot_out_level'],
-                             latency_table=table)
+                             latency_table=table,
+                             boot_normalization_levels=config.get('boot_normalization_levels', 1))
         stats = backend.stats()
         counts = stats['counts']
         counts['boot'] = placement.boots

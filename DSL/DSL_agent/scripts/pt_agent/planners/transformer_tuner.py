@@ -18,27 +18,58 @@ DEFAULT_TUNE_RULE = 'v8-6.11'
 PRE_TUNE_RULE = 'v8-pre-6.11'
 CONVERGENT_TUNE_RULE = 'v8-6.14'
 ACCURACY_TUNE_RULE = 'v8-6.17'
+MARGIN_TUNE_RULE = 'v8-6.19'
+MARGIN_TARGET_U = 0.80
+MARGIN_ACCURACY_FACTOR = 0.5
 _tune_rule = ContextVar('a1_tune_rule', default=DEFAULT_TUNE_RULE)
 
 
 def convergent_rule(rule):
-    return rule in (CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE)
+    return rule in (CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE, MARGIN_TUNE_RULE)
+
+
+def accuracy_rule(rule):
+    return rule in (ACCURACY_TUNE_RULE, MARGIN_TUNE_RULE)
+
+
+def move_logit_limit(ctx, rule):
+    """Tuner acceptance limit on heldout logit_rel_err; §6.19 keeps half of the task limit."""
+    limit = min(1e-2, ctx.model_info.threshold.get('logit_rel_err', 1e-2))
+    return MARGIN_ACCURACY_FACTOR*limit if rule == MARGIN_TUNE_RULE else limit
 
 
 def move_accuracy_ok(result, ctx, rule):
-    if rule != ACCURACY_TUNE_RULE:
+    if not accuracy_rule(rule):
         return True
     import math
-    limit = min(1e-2, ctx.model_info.threshold.get('logit_rel_err', 1e-2))
     error = result.get('logit_rel_err')
-    return error is not None and math.isfinite(error) and error <= limit
+    return error is not None and math.isfinite(error) and error <= move_logit_limit(ctx, rule)
+
+
+def margin_domain(lo, hi, *, log_scale, target=MARGIN_TARGET_U):
+    """§6.19: hull of M and the interval that places calibration data at u <= target.
+
+    The scale is the one the u criterion uses for the point: logarithmic for r8-v10
+    calibrated inv/rsqrt points with lo > 0, linear otherwise.
+    """
+    import math
+    from ..margin import minimum_domain
+    m = minimum_domain(lo, hi)
+    if log_scale and lo > 0:
+        a, b = math.log(lo), math.log(hi)
+        mid, half = (a+b)/2, (b-a)/2/target
+        t = (math.exp(mid-half), math.exp(mid+half))
+    else:
+        center, half = (lo+hi)/2, (hi-lo)/2/target
+        t = (center-half, center+half)
+    return (min(m[0], t[0]), max(m[1], t[1]))
 
 
 def validate_tune_rule(prompt_version, rule):
     if rule is None:
         rule = (ACCURACY_TUNE_RULE if prompt_version == 'r8-v10' else
                 CONVERGENT_TUNE_RULE if prompt_version in ('r8-v8','r8-v9') else DEFAULT_TUNE_RULE)
-    if rule not in (DEFAULT_TUNE_RULE, PRE_TUNE_RULE, CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE):
+    if rule not in (DEFAULT_TUNE_RULE, PRE_TUNE_RULE, CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE, MARGIN_TUNE_RULE):
         raise ValueError('Unknown tune_rule: '+str(rule))
     if prompt_version not in ('r8-v8','r8-v9','r8-v10') and rule != DEFAULT_TUNE_RULE:
         raise ValueError('Nondefault tune_rule requires r8-v8')
@@ -152,7 +183,7 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
     def measure(p, *args, **kwargs):
         # Only the new classification tuning rule needs an extra statistic.
         # Validation's original feasibility and outward Agent feedback stay intact.
-        if rule != ACCURACY_TUNE_RULE or ctx.model_info.task != 'classification':
+        if not accuracy_rule(rule) or ctx.model_info.task != 'classification':
             return validate(p, ctx, *args, **kwargs)
         import numpy as np
         from ..metrics import _relative
@@ -206,7 +237,10 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
         measured=ctx.calibration[names[index]]
         lo,hi=measured['min'],measured['max']
         if lo is None or hi is None:continue
-        if getattr(ctx, 'prompt_version', None) in ('r8-v9','r8-v10'):
+        if rule == MARGIN_TUNE_RULE:
+            domain = margin_domain(lo, hi, log_scale=getattr(ctx, 'prompt_version', None) == 'r8-v10'
+                                   and point.attrs['fn'] in ('inv', 'rsqrt'))
+        elif getattr(ctx, 'prompt_version', None) in ('r8-v9','r8-v10'):
             from ..margin import minimum_domain
             domain = minimum_domain(lo, hi)
         elif point.attrs['method'] in ('minimax_comp','composite'):

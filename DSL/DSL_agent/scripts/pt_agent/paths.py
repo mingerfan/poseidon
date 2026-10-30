@@ -41,7 +41,10 @@ PLATFORM_DIR = WORK_ROOT / "platforms" / PLATFORM
 WORK_RESULTS = PLATFORM_DIR / "results"
 
 # Compiler toolchain (see DSL/DSL_agent/scripts/pt_agent/README.md for how to build it).
-HECATE_BUILD = _env_path("PT_HECATE_BUILD", WORK_RESULTS / "agent-current-dacapo-build-r1712/build")
+# Default since 2026-10-30: the same source with the Qwen25 R121 bootstrap-window change
+# (STATUS "R121 自举段预算修正对齐"). Set PT_HECATE_BUILD to
+# WORK_RESULTS/agent-current-dacapo-build-r1712/build to reproduce earlier results.
+HECATE_BUILD = _env_path("PT_HECATE_BUILD", WORK_RESULTS / "agent-dacapo-bootwindow-20261030/build")
 DACAPO_ROOT = _env_path("PT_DACAPO_ROOT", REPO / "third_party/ckks-runtime/third_party/dacapo")
 DACAPO_UPSTREAM = _env_path("PT_DACAPO_UPSTREAM", REPO / "third_party/dacapo")
 PROFILES_DIR = Path(__file__).resolve().parent / "compiler_profiles"

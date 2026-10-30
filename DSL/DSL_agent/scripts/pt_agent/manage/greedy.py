@@ -20,7 +20,7 @@ from types import SimpleNamespace
 import numpy as np
 
 from ..backends.base import Backend, _Cipher, _Plain
-from ..placement import depth_dp
+from ..placement import boot_normalization_levels, depth_dp
 from .ir import Function, Node, Type, shared_type
 
 
@@ -313,7 +313,9 @@ def manage(recorded, profile, *, name='golden', stage_callback=None):
     with timed_stage("depth_dp", nodes=len(nodes)) as timing:
         placement = depth_dp(placement_view(nodes, inputs, outputs), last_boot_level=last,
                              boot_in_level=profile['bootstrapLevelLowerBound'],
-                             boot_out_level=profile['bootstrapLevelUpperBound'], latency_table=table)
+                             boot_out_level=profile['bootstrapLevelUpperBound'], latency_table=table,
+                             boot_normalization_levels=boot_normalization_levels(
+                                 profile.get('boot_window', 'dacapo-39c1fb2'), factor, waterline))
         timing.update(boots=placement.boots, boundaries=len(placement.cuts))
     cuts = placement.cuts
     types = {-i-1: t for i, t in enumerate(inputs)}

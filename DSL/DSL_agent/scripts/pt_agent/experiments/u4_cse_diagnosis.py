@@ -137,10 +137,11 @@ def native(args, result):
 
 
 def placement(dag):
-    from ..cost import load_latency
+    from ..cost import PROFILES, load_latency
     from ..placement import depth_dp
     return depth_dp(dag,last_boot_level=4,boot_in_level=1,boot_out_level=5,
-                    latency_table=load_latency('qwen48'))
+                    latency_table=load_latency('qwen48'),
+                    boot_normalization_levels=PROFILES['qwen48']['boot_normalization_levels'])
 
 
 def dag_summary(dag, program):

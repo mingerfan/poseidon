@@ -61,6 +61,33 @@ def server_env_exports() -> str:
     return "".join(f"export {name}={shlex.quote(value)}\n" for name, value in values.items())
 
 
+BOOT_WINDOW_MARKER = "pt-boot-window.json"
+BOOT_WINDOW_RULES = ("dacapo-39c1fb2", "r121")
+
+
+def boot_window_rule() -> str:
+    """The bootstrap segment rule of the configured hecate-opt build.
+
+    A build without a marker file uses the DaCapo 39c1fb2 rule: every segment after a bootstrap
+    reserves one level for normalization. A marker naming "r121" identifies a build of the same
+    source with the Qwen25 R121 GreedyBootstrapPlacement change, which reserves that level only
+    when the rescaling factor differs from the waterline.
+    """
+    path = HECATE_BUILD / BOOT_WINDOW_MARKER
+    if not path.exists():
+        return BOOT_WINDOW_RULES[0]
+    rule = json.loads(path.read_text())["rule"]
+    if rule not in BOOT_WINDOW_RULES:
+        raise ValueError(f"Unknown bootstrap window rule in {path}: {rule}")
+    return rule
+
+
+def boot_normalization_levels(rescaling_factor: int, waterline: int) -> int:
+    """Levels a post-bootstrap segment reserves for normalization under the configured compiler."""
+    from .placement import boot_normalization_levels as levels
+    return levels(boot_window_rule(), rescaling_factor, waterline)
+
+
 def host_paths() -> dict:
     """Host toolchain locations from pt_agent.paths and the shipped profiles."""
     return dict(hecate_opt=HECATE_BUILD / "bin/hecate-opt", hecate_build=HECATE_BUILD, hecate=HECATE_BUILD.parent,
@@ -293,6 +320,8 @@ def management_profile(mode='dacapo-depth-dp', boot='qwen48') -> dict:
     result['rms_accumulation'] = 'fma'
     for name in ('waterline', 'output-val'):
         result[name.replace('-', '_')] = int(next(a.split('=', 1)[1] for a in argv if a.startswith('--'+name+'=')))
+    # The configured hecate-opt build decides the post-bootstrap segment rule; packages record it here.
+    result['boot_window'] = boot_window_rule()
     return result
 
 
