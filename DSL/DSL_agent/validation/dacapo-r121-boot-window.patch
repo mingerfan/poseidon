@@ -1,0 +1,40 @@
+Qwen25 R121 bootstrap-window change for GreedyBootstrapPlacement (2 regions).
+
+Base: DaCapo 39c1fb2 (mingerfan/dacapo-modified), with or without dacapo-13file.patch
+(that patch does not touch this file). The change is textually identical to
+DSL/DSL_benchmark/llm_dsl/Qwen25_24Layer_R121_DSL/compiler_reference/patch_boot_window.py:
+a segment after a bootstrap reserves no normalization level when rescalingFactor
+equals the waterline.
+
+pt_agent's default build (poseidon-work/platforms/aarch64-linux/results/
+agent-dacapo-bootwindow-20261030/build) is this patch applied to a copy of the
+39c1fb2 + 13-file source, built with the pinned poseidon-cpu Nix shell, plus a
+build/pt-boot-window.json file containing {"rule": "r121"}. Apply from the DaCapo root:
+
+    git apply DSL/DSL_agent/validation/dacapo-r121-boot-window.patch
+
+--- a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
++++ b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+@@ -133,8 +133,11 @@
+       SmallVector<uint64_t> cost(maxDepth + 1,
+                                  std::numeric_limits<uint64_t>::max());
+       SmallVector<int64_t> previous(maxDepth + 1, -1);
+-      // A bootstrap normalized back to the waterline already consumes one
+-      // level. Fresh inputs have the full initial budget.
++      // Bootstrap defaults to logical level zero and preserves factor.
++      // normalize() inserts Rescale only when factor differs from waterline.
++      // The remaining scale/level verifier and native contract stay unchanged.
++      const int64_t normalizationCost = factor == waterline ? 0 : 1;
++      const int64_t segmentBudget = lastBootLevel - normalizationCost;
+       int64_t initialBudget = lastBootLevel;
+       for (auto arg : func.getArguments())
+         initialBudget = std::min(initialBudget,
+@@ -144,7 +147,7 @@
+         if (end <= initialBudget)
+           cost[end] = 0;
+         for (int64_t start = end - 1;
+-             start >= std::max<int64_t>(0, end - (lastBootLevel - 1));
++             start >= std::max<int64_t>(0, end - segmentBudget);
+              --start) {
+           uint64_t candidate = cost[start] + crossing[start];
+           if (candidate < cost[end]) {
