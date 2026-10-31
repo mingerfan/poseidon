@@ -1,0 +1,16 @@
+[
+  "/home/xuming/poseidon-local-scale-step3-20261031/why-boots/hecate-opt.audit-wrapper",
+  "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/one-relu-tagged.mlir",
+  "--ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/profile/compiler.json",
+  "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/why-boots/diagnostic-spec.json",
+  "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+  "--native-scale-policy=threshold",
+  "--mlir-disable-threading",
+  "--mlir-print-debuginfo",
+  "--mlir-elide-elementsattrs-if-larger=1",
+  "--pass-pipeline=builtin.module(func.func(remove-bootstrap,optimize-polynomial-arithmetic,canonicalize,proactive-rescaling{waterline=40 bootstrap-scale=40}))",
+  "-o",
+  "/home/xuming/poseidon-local-scale-step3-20261031/why-boots/threshold.mlir",
+  "--audit-native-spec=/home/xuming/poseidon-local-scale-step3-20261031/profile/operator-spec.json",
+  "--audit-relax-lower-bound"
+]

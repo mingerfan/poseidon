@@ -1,0 +1,39 @@
+{
+  "variant": "before_step1",
+  "returncode": 0,
+  "seconds": 198.59672343195416,
+  "compiler_sha256": "8d793dc5ce709e88bd7a738c00a32c6c95b6a923ddfa943f69ca0f474658225b",
+  "plan_sha256": "2bec28dcf97fda53b23af30e1f08dfe5c26379bd91df5c51337d67d0cab706d4",
+  "plan_stats": {
+    "counts": {
+      "add_cc": 3677,
+      "add_cp": 229,
+      "boot": 27,
+      "comm": 3223,
+      "encode": 3222,
+      "mod_switch": 733,
+      "mul_cc": 513,
+      "mul_cp": 3599,
+      "negate": 76,
+      "release": 21657,
+      "relinearize": 513,
+      "rescale": 4397,
+      "rotate": 1709
+    },
+    "output_q": 10,
+    "output_q_sum_by_op": {
+      "add_cc": 69408,
+      "add_cp": 5057,
+      "boot": 837,
+      "mod_switch": 14663,
+      "mul_cc": 11961,
+      "mul_cp": 73332,
+      "negate": 1768,
+      "relinearize": 11961,
+      "rescale": 86738,
+      "rotate": 31893
+    },
+    "output_scale": 66.9485344932141,
+    "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/full-before_step1/resnet20._hecate_ResNet20.runtime-plan.bin"
+  }
+}

@@ -1,0 +1,10 @@
+uniform30 optimized actual-prime export passed
+uniform30 greedy actual-prime export passed
+uniform30 depth-dp actual-prime export passed
+mixed30-31-32 optimized actual-prime export passed
+mixed30-31-32 greedy actual-prime export passed
+mixed30-31-32 depth-dp actual-prime export passed
+manual-q50 optimized actual-prime export passed
+manual-q50 greedy actual-prime export passed
+manual-q50 depth-dp actual-prime export passed
+18 native artifact checks passed

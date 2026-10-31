@@ -1,0 +1,37 @@
+{
+  "job": 1,
+  "passed": false,
+  "plan": "/home/xuming/poseidon-local-scale-step3-20261031/local-waterline/resnet20._hecate_ResNet20.runtime-plan.bin",
+  "plan_identity": "sha256:bac0b2b92dd1b16a3738a67ef3c5a6ea17635977996c8f76f1a7459a0c2178ac",
+  "prepare_backend": "gpu",
+  "reference": "full-slot arithmetic with manual Boot sine map; deterministic packed input, not CIFAR accuracy",
+  "reference_max_abs": 12.067905352652145,
+  "runs": [
+    {
+      "boot_calls": 28,
+      "initialization_ms": 22.802793,
+      "max_abs_error": 0.001329530121264355,
+      "max_imaginary": 4.931060007423951e-06,
+      "online_ms": 50997.027757,
+      "total_runtime_ms": 51099.007487
+    },
+    {
+      "boot_calls": 28,
+      "initialization_ms": 22.365538,
+      "max_abs_error": 0.001329530121264355,
+      "max_imaginary": 4.931060007423951e-06,
+      "online_ms": 53213.799337,
+      "total_runtime_ms": 53331.313118
+    },
+    {
+      "boot_calls": 28,
+      "initialization_ms": 25.248377,
+      "max_abs_error": 0.001329530121264355,
+      "max_imaginary": 4.931060007423951e-06,
+      "online_ms": 55277.772403,
+      "total_runtime_ms": 55409.202334
+    }
+  ],
+  "stage": "complete",
+  "timing_scope": "synchronized runtime.run including preparation; excludes context, keys, Boot setup, encryption, reference and decryption"
+}

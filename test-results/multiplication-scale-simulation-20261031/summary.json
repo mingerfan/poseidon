@@ -1,0 +1,212 @@
+{
+  "host": "188Server",
+  "production_source": "Step3 fully reversed; steps1+2 retained; no new scale implementation.",
+  "input": {
+    "q": 31,
+    "s": 40
+  },
+  "modulus_chain": "Actual manual Q50 chain; first 31 primes used, containing both approximately30-bit and32-bit primes.",
+  "baseline": {
+    "stages": [
+      {
+        "q": 25,
+        "s": 60.06920315884757,
+        "nominal": 61
+      },
+      {
+        "q": 17,
+        "s": 41.758471659419214,
+        "nominal": 42
+      },
+      {
+        "q": 8,
+        "s": 68.82600159449052,
+        "nominal": 69
+      },
+      {
+        "q": 6,
+        "s": 44.84557203829722,
+        "nominal": 45
+      }
+    ],
+    "consumed_q": 25,
+    "new_before_mul_adjustments": [],
+    "precision_scope": "Keeps legacy Add alignment, including its low-scale units; diagnostic only."
+  },
+  "before_mul_only_diagnostic": {
+    "stages": [
+      {
+        "q": 25,
+        "s": 60.06920315884757,
+        "nominal": 61
+      },
+      {
+        "q": 17,
+        "s": 50.59247875115767,
+        "nominal": 51
+      },
+      {
+        "q": 8,
+        "s": 61.874150800515224,
+        "nominal": 62
+      },
+      {
+        "q": 7,
+        "s": 69.88378087723672,
+        "nominal": 70
+      }
+    ],
+    "consumed_q": 24,
+    "new_before_mul_adjustments": [
+      {
+        "node": "112",
+        "input_q": [
+          25,
+          23
+        ],
+        "adjusted_q": [
+          23,
+          23
+        ],
+        "output": {
+          "q": 21,
+          "s": 40.20930055140886,
+          "nominal": 41
+        }
+      },
+      {
+        "node": "187",
+        "input_q": [
+          19,
+          21
+        ],
+        "adjusted_q": [
+          19,
+          19
+        ],
+        "output": {
+          "q": 18,
+          "s": 50.28462417892088,
+          "nominal": 51
+        }
+      },
+      {
+        "node": "219",
+        "input_q": [
+          17,
+          15
+        ],
+        "adjusted_q": [
+          15,
+          15
+        ],
+        "output": {
+          "q": 14,
+          "s": 51.27716188327511,
+          "nominal": 52
+        }
+      },
+      {
+        "node": "237",
+        "input_q": [
+          17,
+          14
+        ],
+        "adjusted_q": [
+          15,
+          14
+        ],
+        "output": {
+          "q": 13,
+          "s": 62.55486460818337,
+          "nominal": 63
+        }
+      }
+    ],
+    "precision_scope": "Keeps legacy Add alignment, including its low-scale units; diagnostic only."
+  },
+  "backward_planning": {
+    "consumed_q": 22,
+    "output": {
+      "q": 9,
+      "s": 40.00000000086069,
+      "nominal": 41
+    },
+    "stages": [
+      {
+        "stage": "P1(d15)",
+        "q": 25,
+        "s": 40.10000001071934,
+        "consumed_q": 6
+      },
+      {
+        "stage": "P2(d15)",
+        "q": 19,
+        "s": 50.00000001023217,
+        "consumed_q": 12
+      },
+      {
+        "stage": "P3",
+        "q": 13,
+        "s": 119.832572083,
+        "consumed_q": 18
+      },
+      {
+        "stage": "tail",
+        "q": 9,
+        "s": 40.00000000086069,
+        "consumed_q": 22
+      }
+    ],
+    "coefficient_encoding_range": [
+      40.03079685187235,
+      79.63336323789439
+    ],
+    "ordinary_add_unit_muls": 0,
+    "ordinary_add_rescales": 0,
+    "basis_correction_unit_muls": 5,
+    "same_core_multiplications": {
+      "cc": 27,
+      "coefficient_cp": 30
+    },
+    "fixed_scale_boot_input_compatible": true,
+    "uses_manual_schedule_as_input": false
+  },
+  "next_convolution": {
+    "actual_dag_nodes": 257,
+    "serial_cp_depth": 2,
+    "planned": {
+      "source": {
+        "q": 9,
+        "s": 40.00000000086069,
+        "nominal": 41
+      },
+      "output_q": 6,
+      "output_s": 39.999999999999986,
+      "consumed_q": 3,
+      "first_plain": 40,
+      "second_plain": 55.97115401447098,
+      "serial_cp_depth": 2,
+      "ordinary_add_unit_muls": 0,
+      "rescale_placement": "Common RS after final reduction, before the fixed-scale consumer.",
+      "dag_nodes": 257
+    },
+    "combined_q": 25,
+    "combined_fixed_boot_input_compatible": true,
+    "baseline_with_same_conv_exit_planning_q": 28
+  },
+  "simulation_seconds": 45.409331016940996,
+  "coarse_grid_q": 23,
+  "fine_grid_step": 0.1,
+  "replay_verified": true,
+  "ciphertext_accuracy_verified": false,
+  "full_network_boot_count_verified": false,
+  "million_instruction_search_complexity_verified": false,
+  "limitations": [
+    "Coarse interfaces 40..70 step1 yielded23Q; finer step0.1 yielded22Q. Offline experiment uses millions of memoized requests, not a scalable production algorithm.",
+    "Before-mul-only diagnostic inherits legacy low-precision Add alignment and has an unfixed output scale; its24Q is not the fixed-scale22Q result.",
+    "Baseline+conv28Q is a no-Boot diagnostic outside the25Q working budget, not an executable no-Boot production plan.",
+    "Only scale/level equations, encoding floors and modulus capacity were checked; no global error bound, GPU latency, or ciphertext test."
+  ],
+  "subsequent_implementation": "../regional-scale-20261031/summary.json"
+}

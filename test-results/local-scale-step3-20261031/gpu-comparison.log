@@ -1,0 +1,42 @@
+GPU_SETUP begin
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=29360128000 maximum_bytes=29360128000
+GPU_SETUP complete
+REFERENCE job=0
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=11865125856 retained_workspace_bound=375390208 native_workspace_capacity=4294967296 reserve_required=16602592224 reserve_configured=21474836480
+waterline physical GPU0 pool_reserved=29360128000 pool_cap=29360128000 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=12757535776
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=11539578880 plain_peak=638844928 remaining_front=5242880 remaining_plain=0
+waterline shared host_peak=111411200 pinned_peak=39583744 raw_peak=1572864
+{"boot_calls":27,"initialization_ms":23.92644,"max_abs_error":7.260433343203064e+77,"max_imaginary":8.372946677052629e+77,"online_ms":26426.604157,"total_runtime_ms":28900.445059}
+waterline fixed GPU0 persistent_bytes=11865125856 retained_workspace_bound=375390208 native_workspace_capacity=4294967296 reserve_required=16602592224 reserve_configured=21474836480
+waterline physical GPU0 pool_reserved=29360128000 pool_cap=29360128000 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=12757535776
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=11539578880 plain_peak=633864192 remaining_front=5242880 remaining_plain=0
+waterline shared host_peak=111411200 pinned_peak=39583744 raw_peak=1572864
+{"boot_calls":27,"initialization_ms":22.595717,"max_abs_error":7.260433343203064e+77,"max_imaginary":8.372946677052629e+77,"online_ms":30006.40741,"total_runtime_ms":30126.084491}
+waterline fixed GPU0 persistent_bytes=11865125856 retained_workspace_bound=375390208 native_workspace_capacity=4294967296 reserve_required=16602592224 reserve_configured=21474836480
+waterline physical GPU0 pool_reserved=29360128000 pool_cap=29360128000 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=12757535776
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=11539578880 plain_peak=633864192 remaining_front=5242880 remaining_plain=0
+waterline shared host_peak=111411200 pinned_peak=39583744 raw_peak=1572864
+{"boot_calls":27,"initialization_ms":24.362084,"max_abs_error":7.260433343203064e+77,"max_imaginary":8.372946677052629e+77,"online_ms":43779.576987,"total_runtime_ms":43929.181628}
+REFERENCE job=1
+waterline fixed GPU0 persistent_bytes=11865125856 retained_workspace_bound=375390208 native_workspace_capacity=4294967296 reserve_required=16602592224 reserve_configured=21474836480
+waterline physical GPU0 pool_reserved=29360128000 pool_cap=29360128000 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=12757535776
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=11518607360 plain_peak=596377600 remaining_front=4194304 remaining_plain=0
+waterline shared host_peak=111411200 pinned_peak=39583744 raw_peak=1572864
+{"boot_calls":28,"initialization_ms":22.802793,"max_abs_error":0.001329530121264355,"max_imaginary":4.931060007423951e-06,"online_ms":50997.027757,"total_runtime_ms":51099.007487}
+waterline fixed GPU0 persistent_bytes=11865125856 retained_workspace_bound=375390208 native_workspace_capacity=4294967296 reserve_required=16602592224 reserve_configured=21474836480
+waterline physical GPU0 pool_reserved=29360128000 pool_cap=29360128000 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=12757535776
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=11518607360 plain_peak=600571904 remaining_front=4194304 remaining_plain=0
+waterline shared host_peak=111411200 pinned_peak=39583744 raw_peak=1572864
+{"boot_calls":28,"initialization_ms":22.365538,"max_abs_error":0.001329530121264355,"max_imaginary":4.931060007423951e-06,"online_ms":53213.799337,"total_runtime_ms":53331.313118}
+waterline fixed GPU0 persistent_bytes=11865125856 retained_workspace_bound=375390208 native_workspace_capacity=4294967296 reserve_required=16602592224 reserve_configured=21474836480
+waterline physical GPU0 pool_reserved=29360128000 pool_cap=29360128000 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=12757535776
+waterline rescale workspace plan_max_drop=1 capability_max_drop=50
+waterline GPU0 front_peak=11518607360 plain_peak=600047616 remaining_front=4194304 remaining_plain=0
+waterline shared host_peak=111411200 pinned_peak=39583744 raw_peak=1572864
+{"boot_calls":28,"initialization_ms":25.248377,"max_abs_error":0.001329530121264355,"max_imaginary":4.931060007423951e-06,"online_ms":55277.772403,"total_runtime_ms":55409.202334}

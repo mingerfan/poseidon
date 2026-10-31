@@ -1,0 +1,369 @@
+diff --git a/src/poseidon/runtime_api/CMakeLists.txt b/src/poseidon/runtime_api/CMakeLists.txt
+index 2e9d7da8..a356acc7 100644
+--- a/src/poseidon/runtime_api/CMakeLists.txt
++++ b/src/poseidon/runtime_api/CMakeLists.txt
+@@ -214,6 +214,13 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
+             ckks_runtime::plan_json
+     )
+ 
++    add_executable(poseidon_runtime_gpu_resnet20_bench
++        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_resnet20_bench.cpp
++    )
++    target_link_libraries(poseidon_runtime_gpu_resnet20_bench
++        PRIVATE poseidon_runtime_gpu_api ckks_runtime::plan_json
++    )
++
+     add_executable(poseidon_runtime_gpu_qwen_e2e
+         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp
+     )
+--- /dev/null
++++ b/src/poseidon/tests/runtime_api/poseidon_gpu_resnet20_bench.cpp
+@@ -0,0 +1,348 @@
++#include "manual_bootstrap_reference.h"
++#include "poseidon/ckks_encoder.h"
++#include "poseidon/decryptor.h"
++#include "poseidon/encryptor.h"
++#include "poseidon/gpu/gpu_bootstrap_profile.h"
++#include "poseidon/keygenerator.h"
++#include "poseidon/parameters_literal.h"
++#include "poseidon/runtime_api/poseidon_gpu_api.h"
++#include "poseidon/runtime_api/rotation_key_basis.h"
++#include "runtime/operator_spec_reader.hpp"
++#include "runtime/plaintext_bundle.hpp"
++#include "runtime/plan_reader.hpp"
++#include "runtime/runtime.hpp"
++
++#include <algorithm>
++#include <chrono>
++#include <complex>
++#include <cuda_runtime_api.h>
++#include <fstream>
++#include <iostream>
++#include <nlohmann/json.hpp>
++#include <set>
++#include <unordered_map>
++
++namespace {
++using namespace fhegpu;
++using Json = nlohmann::json;
++using Clock = std::chrono::steady_clock;
++using poseidon::runtime_api::PoseidonGpuApi;
++using poseidon::runtime_api::PoseidonGpuValue;
++using Slots = std::vector<double>;
++double ms(Clock::time_point start) {
++  return std::chrono::duration<double, std::milli>(Clock::now() - start)
++      .count();
++}
++void synchronize_gpu() {
++  auto status = cudaDeviceSynchronize();
++  if (status != cudaSuccess)
++    throw std::runtime_error(cudaGetErrorString(status));
++}
++
++// Independent slot arithmetic, including rotations and external weights. This
++// models the documented manual Boot sine map; it is not a CIFAR accuracy test.
++Slots reference(const RuntimePlan &plan,
++                const poseidon::PoseidonContext &context,
++                const std::filesystem::path &directory, const Slots &input) {
++  std::vector<std::string> contents;
++  std::unordered_map<ValueId, unsigned> uses;
++  auto visit = [&](auto fn) {
++    for (const auto *phase :
++         {&plan.initialization, &plan.execution, &plan.finalization})
++      for (const auto &instruction : *phase)
++        fn(instruction.body);
++  };
++  visit([&](const auto &body) {
++    const EncodePayload *payload = nullptr;
++    if (auto op = std::get_if<EncodeOp>(&body))
++      payload = &op->payload;
++    if (auto op = std::get_if<PreparePlaintextOp>(&body))
++      payload = &op->payload;
++    if (payload)
++      if (auto p = std::get_if<BundleEncodePayload>(payload))
++        contents.push_back(p->content);
++    if (auto op = std::get_if<ComputeOp>(&body))
++      for (auto id : op->inputs)
++        ++uses[id];
++    if (auto op = std::get_if<CommAction>(&body))
++      for (auto id : op->inputs)
++        ++uses[id];
++  });
++  ++uses[plan.final_outputs.at(0)];
++  auto bundle = PlaintextBundleLoader::open(
++      directory, plan.plaintext_bundle.value(), contents, input.size(), false);
++  std::unordered_map<ValueId, Slots> values{
++      {plan.external_inputs.at(0), input}};
++  auto consume = [&](ValueId id) {
++    if (--uses.at(id) == 0)
++      values.erase(id);
++  };
++  auto encode = [&](const auto &op) {
++    Slots payload;
++    if (auto p = std::get_if<InlineEncodePayload>(&op.payload))
++      payload = p->values;
++    else
++      payload = bundle.read(std::get<BundleEncodePayload>(op.payload).content);
++    if (payload.size() == 1)
++      payload.resize(input.size(), payload.front());
++    else
++      payload.resize(input.size(), 0.0);
++    values.emplace(op.output, std::move(payload));
++  };
++  visit([&](const auto &body) {
++    if (auto op = std::get_if<EncodeOp>(&body))
++      encode(*op);
++    else if (auto op = std::get_if<PreparePlaintextOp>(&body))
++      encode(*op);
++    else if (auto op = std::get_if<CommAction>(&body)) {
++      if (op->inputs.size() != 1)
++        throw std::runtime_error(
++            "reference requires single-source communication");
++      for (auto id : op->outputs)
++        values[id] = values.at(op->inputs.front());
++      consume(op->inputs.front());
++    } else if (auto op = std::get_if<ComputeOp>(&body)) {
++      Slots result = values.at(op->inputs.at(0));
++      const Slots *rhs =
++          op->inputs.size() == 2 ? &values.at(op->inputs.at(1)) : nullptr;
++      if (op->kind == ComputeKind::Rotate) {
++        auto size = static_cast<int>(result.size());
++        int shift =
++            (std::get<RotateAttrs>(op->attrs).steps % size + size) % size;
++        std::rotate(result.begin(), result.begin() + shift, result.end());
++      } else
++        for (std::size_t i = 0; i < result.size(); ++i) {
++          switch (op->kind) {
++          case ComputeKind::AddCC:
++          case ComputeKind::AddCP:
++            result[i] += rhs->at(i);
++            break;
++          case ComputeKind::SubCC:
++          case ComputeKind::SubCP:
++            result[i] -= rhs->at(i);
++            break;
++          case ComputeKind::MulCC:
++          case ComputeKind::MulCP:
++            result[i] *= rhs->at(i);
++            break;
++          case ComputeKind::Negate:
++            result[i] = -result[i];
++            break;
++          case ComputeKind::Boot:
++            result[i] =
++                poseidon::test::manual_bootstrap_reference(context, result[i]);
++            break;
++          case ComputeKind::Rescale:
++          case ComputeKind::ModSwitch:
++          case ComputeKind::Relinearize:
++            break;
++          default:
++            throw std::runtime_error("unsupported reference operation");
++          }
++        }
++      values[op->output] = std::move(result);
++      for (auto id : op->inputs)
++        consume(id);
++    }
++  });
++  return values.at(plan.final_outputs.at(0));
++}
++} // namespace
++
++int main(int argc, char **argv) {
++  if (argc != 7 && argc != 10) {
++    std::cerr
++        << "usage: poseidon_gpu_resnet20_bench PLAN SPEC QP_FIXTURE "
++           "BUNDLE REPORT REPEATS [SECOND_PLAN SECOND_BUNDLE SECOND_REPORT]\n";
++    return 2;
++  }
++  Json report{{"passed", false}};
++  std::string stage = "load";
++  int job = 0;
++  bool allPassed = true;
++  try {
++    const int repeats = std::stoi(argv[6]);
++    if (repeats < 1)
++      throw std::runtime_error("repeats must be positive");
++    std::vector<LoadedRuntimePlan> plans;
++    plans.push_back(RuntimePlanReader::read_file(argv[1]));
++    if (argc == 10)
++      plans.push_back(RuntimePlanReader::read_file(argv[7]));
++    const char *backend = std::getenv("POSEIDON_RESNET20_PREPARE_BACKEND");
++    if (backend)
++      for (auto &candidate : plans) {
++        if (!candidate.plan.waterline)
++          throw std::runtime_error("prepare backend requires a Waterline plan");
++        const std::string selected(backend);
++        if (selected == "gpu")
++          candidate.plan.waterline->backend = PrepareBackend::Gpu;
++        else if (selected == "cpu")
++          candidate.plan.waterline->backend = PrepareBackend::Cpu;
++        else
++          throw std::runtime_error("prepare backend must be cpu or gpu");
++      }
++    auto spec = OperatorSpecReader::read_file(argv[2]);
++    const auto &plan = plans.front().plan;
++    if (plan.external_inputs.size() != 1 || plan.final_outputs.size() != 1 ||
++        plan.target.device_counts != std::vector<int>{1})
++      throw std::runtime_error("expected one-GPU, one-input, one-output plan");
++    std::ifstream fixture_stream(argv[3]);
++    const auto fixture = Json::parse(fixture_stream);
++    if (spec.spec.poly_degree != 65536 || spec.spec.default_scale_log2 != 40 ||
++        spec.spec.rns_moduli !=
++            fixture.at("rns_moduli").get<std::vector<uint64_t>>())
++      throw std::runtime_error("Q fixture mismatch");
++    std::vector<poseidon::Modulus> q, p;
++    for (auto value : spec.spec.rns_moduli)
++      q.emplace_back(value);
++    for (const auto &value : fixture.at("p_moduli"))
++      p.emplace_back(value.get<uint64_t>());
++    poseidon::ParametersLiteral parameters(CKKS, 16, 15, 40, 192, 1,
++                                           poseidon::Modulus(0), q, p,
++                                           poseidon::sec_level_type::none);
++    poseidon::PoseidonContext context(parameters);
++    stage = "keys";
++    poseidon::KeyGenerator keys(context);
++    auto public_key = std::make_shared<poseidon::PublicKey>();
++    keys.create_public_key(*public_key);
++    auto relin = std::make_shared<poseidon::RelinKeys>();
++    keys.create_relin_keys(*relin);
++    auto galois = std::make_shared<poseidon::GaloisKeys>();
++    std::set<int> steps;
++    for (const auto &candidate : plans)
++      for (const auto &instruction : candidate.plan.execution)
++        if (auto op = std::get_if<ComputeOp>(&instruction.body);
++            op && op->kind == ComputeKind::Rotate)
++          steps.insert(std::get<RotateAttrs>(op->attrs).steps);
++    const auto basis =
++        poseidon::runtime_api::binary_rotation_key_basis(steps, 32768);
++    keys.create_galois_keys(std::vector<int>(basis.begin(), basis.end()),
++                            *galois);
++    poseidon::CKKSEncoder encoder(context);
++    poseidon::Encryptor encryptor(context, *public_key);
++    poseidon::Decryptor decryptor(context, keys.secret_key());
++    stage = "gpu_setup";
++    std::cout << "GPU_SETUP begin" << std::endl;
++    PoseidonGpuApi api(spec.spec.context_id, context, std::vector<int>{0},
++                       relin, galois);
++    auto profile =
++        poseidon::gpu::GpuBootstrapProfileBuilder::build_resnet20_manual(
++            context, keys, 0);
++    api.configure_native_bootstrap(0, std::move(profile));
++    std::cout << "GPU_SETUP complete" << std::endl;
++    SequentialRuntime<PoseidonGpuApi> runtime(
++        0, 1, 1, api, DeviceExecutionMode::PerDeviceWorkers, 1);
++    for (job = 0; job < static_cast<int>(plans.size()); ++job) {
++      auto &loaded = plans[job];
++      const auto &plan = loaded.plan;
++      const char *bundlePath = job ? argv[8] : argv[4];
++      const char *reportPath = job ? argv[9] : argv[5];
++      report = Json{
++          {"passed", false}, {"job", job}, {"plan", job ? argv[7] : argv[1]}};
++      report["prepare_backend"] =
++          plan.waterline
++              ? (plan.waterline->backend == PrepareBackend::Gpu ? "gpu" : "cpu")
++              : "eager";
++      std::cout << "REFERENCE job=" << job << std::endl;
++      std::unordered_map<ValueId, const ValueDesc *> desc;
++      for (const auto &value : plan.values)
++        desc.emplace(value.id, &value);
++      Slots input(32768);
++      // Match pack_resnet20_input: four copies of a 4096-slot block,
++      // with 3072 image values at 1/32 scale; unused CKKS slots stay zero.
++      for (std::size_t block = 0; block < 4; ++block)
++        for (std::size_t i = 0; i < 3072; ++i)
++          input[block * 4096 + i] =
++              double((i * 15485863ULL + 17) % 1009) / (1009 * 32.0);
++      stage = "clear_reference";
++      auto expected = reference(plan, context, bundlePath, input);
++      report["reference_max_abs"] = *std::max_element(
++          expected.begin(), expected.end(),
++          [](double a, double b) { return std::abs(a) < std::abs(b); });
++      report["reference"] = "full-slot arithmetic with manual Boot sine map; "
++                            "deterministic packed input, not CIFAR accuracy";
++      for (auto value : expected)
++        if (!std::isfinite(value))
++          throw std::runtime_error("nonfinite clear reference");
++      const auto input_id = plan.external_inputs.front();
++      const auto &input_desc = *desc.at(input_id);
++      poseidon::Plaintext plain;
++      encoder.encode(input,
++                     context.crt_context()->parms_id_map().at(input_desc.level),
++                     std::exp2(input_desc.scale_log2), plain);
++      poseidon::Ciphertext cipher;
++      encryptor.encrypt(plain, cipher);
++      std::unordered_map<ValueId, PoseidonGpuValue> inputs{
++          {input_id,
++           PoseidonGpuValue::from_host_ciphertext(std::move(cipher))}};
++      RuntimeResources resources{spec, std::filesystem::path(bundlePath),
++                                 false};
++      report["runs"] = Json::array();
++      stage = "run";
++      for (int run = 0; run < repeats; ++run) {
++        synchronize_gpu();
++        auto start = Clock::now();
++        auto artifact = runtime.run(loaded, resources, inputs);
++        synchronize_gpu();
++        const double total_ms = ms(start);
++        const auto id = plan.final_outputs.front();
++        auto value = artifact.values.at(id).value;
++        const auto &source = *desc.at(id);
++        if (source.place.kind == PlaceKind::Device) {
++          CommAction action;
++          action.inputs = {id};
++          action.outputs = {id};
++          action.sources = {source.place};
++          action.destinations = {{PlaceKind::Host, 0, 0}};
++          action.output_types = {ValueKind::Ciphertext};
++          auto destination = source;
++          destination.place = action.destinations.front();
++          auto handle = api.communicate_async(action, {value}, {destination});
++          value = std::move(*api.wait(handle).at(0));
++        }
++        poseidon::Plaintext decrypted;
++        decryptor.decrypt(value.host_ciphertext(), decrypted);
++        std::vector<std::complex<double>> decoded;
++        encoder.decode(decrypted, decoded);
++        double error = 0, imaginary = 0;
++        for (std::size_t i = 0; i < expected.size(); ++i) {
++          if (!std::isfinite(decoded.at(i).real()) ||
++              !std::isfinite(decoded.at(i).imag()))
++            throw std::runtime_error("nonfinite CKKS output");
++          error = std::max(error, std::abs(decoded[i].real() - expected[i]));
++          imaginary = std::max(imaginary, std::abs(decoded[i].imag()));
++        }
++        const auto &t = artifact.timing;
++        report["runs"].push_back(
++            {{"total_runtime_ms", total_ms},
++             {"initialization_ms", t.initialization_nanoseconds / 1e6},
++             {"online_ms", t.online_execution_nanoseconds / 1e6},
++             {"boot_calls", t.boot_calls},
++             {"max_abs_error", error},
++             {"max_imaginary", imaginary}});
++        std::cout << report["runs"].back().dump() << std::endl;
++      }
++      report["plan_identity"] = loaded.preflight_identity;
++      report["passed"] = std::all_of(
++          report["runs"].begin(), report["runs"].end(), [](const auto &r) {
++            return r.at("max_abs_error").template get<double>() <= 1e-3 &&
++                   r.at("max_imaginary").template get<double>() <= 1e-3;
++          });
++      report["timing_scope"] =
++          "synchronized runtime.run including preparation; excludes context, "
++          "keys, Boot setup, encryption, reference and decryption";
++      report["stage"] = "complete";
++      allPassed = allPassed && report.at("passed").get<bool>();
++      std::ofstream output(reportPath);
++      output << report.dump(2) << '\n';
++    }
++    return allPassed ? 0 : 1;
++  } catch (const std::exception &e) {
++    report["stage"] = stage;
++    report["error"] = e.what();
++    std::cerr << e.what() << std::endl;
++  }
++  std::ofstream output(job && argc == 10 ? argv[9] : argv[5]);
++  output << report.dump(2) << '\n';
++  return report.at("passed").get<bool>() ? 0 : 1;
++}

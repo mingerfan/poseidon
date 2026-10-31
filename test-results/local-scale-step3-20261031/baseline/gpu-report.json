@@ -1,0 +1,7 @@
+{
+  "error": "fatal runtime error: reason=std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded plan_id=0 plan_source_sha256= local_rank=0 api=PoseidonGpuApi op_ordinal=3918 op=Transfer transfer_id=1306",
+  "passed": false,
+  "reference": "full-slot arithmetic with manual Boot sine map; deterministic packed input, not CIFAR accuracy",
+  "runs": [],
+  "stage": "run"
+}

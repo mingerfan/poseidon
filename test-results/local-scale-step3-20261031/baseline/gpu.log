@@ -1,0 +1,4 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=18431174144 maximum_bytes=18431174144
+GPU_ALLOCATION_FAILURE cuda_device=0 active_cuda_device=0 requested_bytes=3407872 stream=0x2 allocated_live=18428687328 allocated_peak=18428687328 pool_reserved=18431174144 pool_cap=18431174144 driver_free=2019950592 driver_total=34079899648 driver_query_status=0 device_query_status=0
+fatal runtime error: reason=std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded plan_id=0 plan_source_sha256= local_rank=0 api=PoseidonGpuApi op_ordinal=3918 op=Transfer transfer_id=1306
+fatal runtime error: reason=std::bad_alloc: out_of_memory: RMM failure at:/home/xuming/deps/rmm-v24.12.01/include/rmm/mr/device/pool_memory_resource.hpp:276: Maximum pool size exceeded plan_id=0 plan_source_sha256= local_rank=0 api=PoseidonGpuApi op_ordinal=3918 op=Transfer transfer_id=1306

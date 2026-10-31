@@ -1,0 +1,2 @@
+index, name, uuid, memory.used [MiB], memory.total [MiB], utilization.gpu [%], clocks.current.sm [MHz], temperature.gpu
+2, Tesla V100-SXM2-32GB, GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6, 28310 MiB, 32768 MiB, 0 %, 1290 MHz, 57

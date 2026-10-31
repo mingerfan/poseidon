@@ -1,0 +1,149 @@
+[
+  {
+    "variant": "before_step1",
+    "returncode": 0,
+    "command": [
+      "/home/xuming/poseidon-scale-state-step1-20261031/baseline/hecate-opt",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/one-relu-tagged.mlir",
+      "--dacapo-precompile",
+      "--boot-placement=greedy",
+      "--ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/profile/compiler.json",
+      "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/no-boot-diagnostic-spec.json",
+      "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+      "--waterline=40",
+      "--bootstrap-scale=40",
+      "--mlir-disable-threading",
+      "--mlir-print-debuginfo",
+      "--mlir-elide-elementsattrs-if-larger=1",
+      "-o",
+      "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/before_step1.mlir"
+    ],
+    "seconds": 0.04288284294307232,
+    "compiler_sha256": "8d793dc5ce709e88bd7a738c00a32c6c95b6a923ddfa943f69ca0f474658225b",
+    "boot_count": 0,
+    "stages": {
+      "178": {
+        "level": 24,
+        "q": 25,
+        "nominal_scale": 61,
+        "text": "    %89 = \"ckks.addcc\"(%88, %87) : (tensor<1x!ckks.poly<2 * 61 * 24>>, tensor<1x!ckks.poly<2 * 61 * 24>>) -> tensor<1x!ckks.poly<2 * 61 * 24>> loc(#loc44)"
+      },
+      "223": {
+        "level": 16,
+        "q": 17,
+        "nominal_scale": 42,
+        "text": "    %181 = \"ckks.addcc\"(%151, %180) : (tensor<1x!ckks.poly<2 * 42 * 16>>, tensor<1x!ckks.poly<2 * 42 * 16>>) -> tensor<1x!ckks.poly<2 * 42 * 16>> loc(#loc86)"
+      },
+      "297": {
+        "level": 7,
+        "q": 8,
+        "nominal_scale": 69,
+        "text": "    %332 = \"ckks.addcc\"(%331, %329) : (tensor<1x!ckks.poly<2 * 69 * 7>>, tensor<1x!ckks.poly<2 * 69 * 7>>) -> tensor<1x!ckks.poly<2 * 69 * 7>> loc(#loc155)"
+      },
+      "300": {
+        "level": 5,
+        "q": 6,
+        "nominal_scale": 45,
+        "text": "    %339 = \"ckks.rescalec\"(%338) : (tensor<1x!ckks.poly<2 * 77 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 5>> loc(#loc158)"
+      }
+    }
+  },
+  {
+    "variant": "step1",
+    "returncode": 0,
+    "command": [
+      "/home/xuming/poseidon-scale-state-step1-20261031/bin/hecate-opt",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/one-relu-tagged.mlir",
+      "--dacapo-precompile",
+      "--boot-placement=greedy",
+      "--ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/profile/compiler.json",
+      "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/no-boot-diagnostic-spec.json",
+      "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+      "--waterline=40",
+      "--bootstrap-scale=40",
+      "--mlir-disable-threading",
+      "--mlir-print-debuginfo",
+      "--mlir-elide-elementsattrs-if-larger=1",
+      "-o",
+      "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/step1.mlir"
+    ],
+    "seconds": 0.04239567299373448,
+    "compiler_sha256": "4e880febe0ad994bf092122ab67125bcfd1ac70e00dd836ec003c2b581a80f9a",
+    "boot_count": 0,
+    "stages": {
+      "178": {
+        "level": 24,
+        "q": 25,
+        "nominal_scale": 61,
+        "text": "    %89 = \"ckks.addcc\"(%88, %87) : (tensor<1x!ckks.poly<2 * 61 * 24>>, tensor<1x!ckks.poly<2 * 61 * 24>>) -> tensor<1x!ckks.poly<2 * 61 * 24>> loc(#loc44)"
+      },
+      "223": {
+        "level": 16,
+        "q": 17,
+        "nominal_scale": 42,
+        "text": "    %181 = \"ckks.addcc\"(%151, %180) : (tensor<1x!ckks.poly<2 * 42 * 16>>, tensor<1x!ckks.poly<2 * 42 * 16>>) -> tensor<1x!ckks.poly<2 * 42 * 16>> loc(#loc86)"
+      },
+      "297": {
+        "level": 7,
+        "q": 8,
+        "nominal_scale": 69,
+        "text": "    %332 = \"ckks.addcc\"(%331, %329) : (tensor<1x!ckks.poly<2 * 69 * 7>>, tensor<1x!ckks.poly<2 * 69 * 7>>) -> tensor<1x!ckks.poly<2 * 69 * 7>> loc(#loc155)"
+      },
+      "300": {
+        "level": 5,
+        "q": 6,
+        "nominal_scale": 45,
+        "text": "    %339 = \"ckks.rescalec\"(%338) : (tensor<1x!ckks.poly<2 * 77 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 5>> loc(#loc158)"
+      }
+    }
+  },
+  {
+    "variant": "steps12",
+    "returncode": 0,
+    "command": [
+      "/home/xuming/poseidon-reduction-rs-step2-20261031/bin/hecate-opt",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/one-relu-tagged.mlir",
+      "--dacapo-precompile",
+      "--boot-placement=greedy",
+      "--ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/profile/compiler.json",
+      "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/no-boot-diagnostic-spec.json",
+      "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+      "--waterline=40",
+      "--bootstrap-scale=40",
+      "--mlir-disable-threading",
+      "--mlir-print-debuginfo",
+      "--mlir-elide-elementsattrs-if-larger=1",
+      "-o",
+      "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/steps12.mlir"
+    ],
+    "seconds": 0.04010814696084708,
+    "compiler_sha256": "a71c75b324937a34af3d34afc636b3f80d4e6f867a5d9bdfc2a53bdf31117b21",
+    "boot_count": 0,
+    "stages": {
+      "178": {
+        "level": 24,
+        "q": 25,
+        "nominal_scale": 61,
+        "text": "    %89 = \"ckks.addcc\"(%88, %87) : (tensor<1x!ckks.poly<2 * 61 * 24>>, tensor<1x!ckks.poly<2 * 61 * 24>>) -> tensor<1x!ckks.poly<2 * 61 * 24>> loc(#loc44)"
+      },
+      "223": {
+        "level": 16,
+        "q": 17,
+        "nominal_scale": 42,
+        "text": "    %181 = \"ckks.addcc\"(%151, %180) : (tensor<1x!ckks.poly<2 * 42 * 16>>, tensor<1x!ckks.poly<2 * 42 * 16>>) -> tensor<1x!ckks.poly<2 * 42 * 16>> loc(#loc86)"
+      },
+      "297": {
+        "level": 7,
+        "q": 8,
+        "nominal_scale": 69,
+        "text": "    %332 = \"ckks.addcc\"(%331, %329) : (tensor<1x!ckks.poly<2 * 69 * 7>>, tensor<1x!ckks.poly<2 * 69 * 7>>) -> tensor<1x!ckks.poly<2 * 69 * 7>> loc(#loc155)"
+      },
+      "300": {
+        "level": 5,
+        "q": 6,
+        "nominal_scale": 45,
+        "text": "    %339 = \"ckks.rescalec\"(%338) : (tensor<1x!ckks.poly<2 * 77 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 5>> loc(#loc158)"
+      }
+    }
+  }
+]

@@ -1,0 +1,68 @@
+--- a/integrations/dacapo/README.md
++++ b/integrations/dacapo/README.md
+@@ -143,3 +143,36 @@
+ `generate_mlp_e2e_fixture.py`、`generate_mlp_gpu_e2e_profiles.py` 和 ResNet-20 对应脚本生成联调输入与 profile；查看各脚本 `--help` 选择参数和输出目录。`poseidon-8192`、`poseidon-65536` preset 含有实测、插值或代理代价，不能当作全部 level 都已实测。检查生成文件中的来源和支持范围。
+ 
+ 历史跑分、某台机器的验收过程和当时的计划编号不作为当前使用说明维护；复现时查询对应提交及其产物记录。
++
++Native scale 还可通过 `--native-scale-policy=local` 开启局部规划，默认仍是
++`threshold`，便于保留原策略作比较。该选项同时适用于 `generate_model_artifacts.py`
++和直接调用 `hecate-opt`，要求 OperatorSpec 使用 `rescale_mode=native` 并提供真实 Q。
++
++局部规划只比较常数个候选：系数保持 waterline 编码，或选择能使乘积接近
++waterline、waterline+10、waterline+20 的编码；加法比较原来的向上对齐、在当前
++汇合 Q 降低 scale、再用一个 Q 降低 scale、以及能达到 waterline 的对齐。
++候选使用真实 log₂(q)，向后最多估计三次乘法。优先保留合法的固定 scale Boot
++入口，然后比较预估 Q 消耗和简单操作权重（RS=4，乘编码 1=3，ModSwitch=1）。
++这些权重是启发式，不是 GPU 实测时间，也不保证全局最优。编码下限约束也不
++构成全图误差上界，完整程序仍需单独做数值校验。
++
++降低 scale 时，可以修改至多八个私有节点内的系数编码，或插入乘编码 1 和 RS。
++算术系数、普通对齐用的编码 1 均至少使用 waterline 位；Boot 入口继续使用公共
++对齐器的 30 位下限。共享值、`sm_fixed` 和可能跨越 DaCapo 候选切分点的值是
++修改屏障。系数数值保持原样，实际编码 scale 可以是小数，整数 IR 注解不作为
++物理 scale 使用。旧的整数 upscale/系数吸收重写在此模式关闭。
++
++Scale 规划不选择 Boot 位置；greedy、depth-dp、optimized 仍独立选择 Boot。
++它们与最终生成代码共用状态转移。固定模数链长 L 时，局部 scale 管理和提示分析
++随图大小增长；一般复杂度为 O((V+E) log L + 实际插入 RS 数)，额外状态为 O(V+L)。
++这不意味着原有 optimized Boot 搜索也有线性复杂度。模数链本身不在此选项搜索。
++
++完整手动 Q50 ResNet20 可用 `poseidon_runtime_gpu_resnet20_bench` 比较延迟：
++`PLAN SPEC QP_FIXTURE BUNDLE REPORT REPEATS [SECOND_PLAN SECOND_BUNDLE SECOND_REPORT]`。
++比较两个计划时共用上下文、密钥和 Boot 资源，分别执行各次测量。
++`POSEIDON_RESNET20_PREPARE_BACKEND=cpu|gpu` 可统一覆盖两个 Waterline 计划的
++明文准备后端，报告会保存实际选择。它检查全部槽位，明文参考包含
++手动 Boot 的 sine map；输入为确定性的打包数据，用于执行正确性与延迟比较，
++不表示 CIFAR 分类准确率。报告同时保存含准备的同步运行时间和 runtime 内部
++online 时间，均排除建上下文、生成密钥、Boot 资源初始化和解密。应在同一块空闲
++GPU、相同准备策略下比较，并先确认数值检查通过。
+--- a/integrations/dacapo/generate_model_artifacts.py
++++ b/integrations/dacapo/generate_model_artifacts.py
+@@ -174,6 +174,7 @@
+         str(args.hecate_opt),
+         "--dacapo",
+         f"--boot-placement={args.boot_placement}",
++        f"--native-scale-policy={args.native_scale_policy}",
+         f"--ckks-config={compiler_profile}",
+         f"--waterline={args.waterline}",
+         f"--bootstrap-scale={boot['output_scale_log2']}",
+@@ -261,6 +262,9 @@
+     parser.add_argument("--boot-placement", choices=("optimized", "greedy", "depth-dp"),
+                         default="optimized",
+                         help="Use greedy for lazy refresh or depth-dp for fast depth-boundary planning")
++    parser.add_argument("--native-scale-policy", choices=("threshold", "local"),
++                        default="threshold",
++                        help="Native scale management: threshold or bounded local planning")
+     parser.add_argument("--plan-format", choices=("binary", "json"), default="binary",
+                         help="binary for execution; json for readable instructions")
+     parser.add_argument("--plan-id", type=int, default=1)
+@@ -341,6 +345,8 @@
+             args.input_level < boot["output_level"] or
+             args.input_level > spec["levels"]["upper_bound"]):
+         parser.error("input-level must be native, cover the Boot output, and fit the Q chain")
++    if args.native_scale_policy == "local" and spec["rescale_mode"] != "native":
++        parser.error("local scale planning requires a native OperatorSpec")
+     if spec["rescale_mode"] == "native":
+         context = spec["context"]
+         moduli = context.get("rns_moduli")

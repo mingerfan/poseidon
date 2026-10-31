@@ -1,0 +1,17 @@
+[
+  {
+    "policy": "threshold",
+    "returncode": 0,
+    "diagnostic": ""
+  },
+  {
+    "policy": "local",
+    "returncode": 1,
+    "diagnostic": "<unknown>:0: error: loc(\"raw-272\"): operation exceeds the Boot Q budget after threshold Rescale\n<unknown>:0: note: loc(\"raw-272\"): see current operation: %280 = \"earth.mul\"(%273, %279) {earth.actual_scale = 88.470795477945956 : f64, earth.local_scale_editable, earth.local_scale_forecast = array<i64: -1, -1, -1>} : (tensor<1x!earth.ci<41 * 25>>, tensor<1x!earth.ci<49 * 25>>) -> tensor<1x!earth.ci<90 * 25>> loc(\"raw-272\")\n"
+  },
+  {
+    "policy": "local-cut-barriers",
+    "returncode": 1,
+    "diagnostic": "<unknown>:0: error: loc(\"raw-297\"): operation exceeds the Boot Q budget after threshold Rescale\n<unknown>:0: note: loc(\"raw-297\"): see current operation: %348 = \"earth.add\"(%344, %347) {earth.actual_scale = 63.155557644137012 : f64, earth.local_scale_flex = array<f64: 1.000000e+00, 0.000000e+00, 0.000000e+00>, earth.local_scale_forecast = array<i64: -1, -1, -1>, opid0 = 154 : i64, smu0 = 153 : i64} : (tensor<1x!earth.ci<64 * 26>>, tensor<1x!earth.ci<64 * 26>>) -> tensor<1x!earth.ci<64 * 26>> loc(\"raw-297\")\n"
+  }
+]

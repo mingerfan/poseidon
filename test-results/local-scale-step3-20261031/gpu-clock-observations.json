@@ -1,0 +1,26 @@
+{
+  "source": "nvidia-smi observations returned during this task; exact timestamps not recorded",
+  "setup": {
+    "sm_mhz": 1290,
+    "temperature_c": 57
+  },
+  "during_inference": [
+    {
+      "sm_mhz": 495,
+      "temperature_c": 82
+    },
+    {
+      "sm_mhz": 615,
+      "temperature_c": 82,
+      "power_w": 126.61
+    },
+    {
+      "sm_mhz": 712,
+      "temperature_c": 82,
+      "power_w": 130.56,
+      "active_clock_reasons": "0x20",
+      "hw_thermal_slowdown": "Not Active"
+    }
+  ],
+  "post_exit_csv": "gpu-throttle.csv"
+}

@@ -1,0 +1,2 @@
+index, temperature.gpu, clocks.current.sm [MHz], clocks_event_reasons.sw_thermal_slowdown, clocks_event_reasons.hw_thermal_slowdown, power.draw [W]
+2, 78, 135 MHz, Not Active, Not Active, 96.04 W

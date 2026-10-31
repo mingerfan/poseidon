@@ -1,0 +1,33 @@
+{
+  "scope": "Reversed only isolated step3 compiler/integration/benchmark patches. Preserved stages1+2 and all preexisting modifications.",
+  "baseline_files_equal": {
+    "third_party/ckks-runtime/integrations/dacapo/generate_model_artifacts.py": true,
+    "third_party/ckks-runtime/integrations/dacapo/README.md": true,
+    "third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt": true,
+    "third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/Transforms/Common.h": true,
+    "third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.h": true,
+    "third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/CKKS/IR/CKKSOps.td": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/IR/CKKSDialect.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/CMakeLists.txt": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/BypassDetection.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/Common.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Conversion/CKKSToCKKS/UpscaleToMulcp.cpp": true,
+    "third_party/ckks-runtime/third_party/dacapo/lib/Conversion/EarthToCKKS/EarthToCKKS.cpp": true
+  },
+  "patch_sha256": {
+    "compiler-step3.patch": "104b16b429bbfc8eecd31ec583ace5cfa2f3de9782a24c2510b27bd3cdaf4630",
+    "integration-step3.patch": "84d1adc703b3215b461046f0c3e32a3a97853abba8c3348027f4ed8b1b8a9cd8"
+  },
+  "rebuilt_compiler_sha256": "a71c75b324937a34af3d34afc636b3f80d4e6f867a5d9bdfc2a53bdf31117b21",
+  "matches_frozen_steps12_binary": true,
+  "local_ctest_passed": 19,
+  "remote_ctest_equivalent_passed": 19,
+  "ctest_excluded": [
+    "DacapoFrontendBytecode"
+  ]
+}

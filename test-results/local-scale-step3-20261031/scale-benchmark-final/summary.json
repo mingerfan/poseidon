@@ -1,0 +1,30 @@
+[
+  {
+    "products": 2500,
+    "raw_instructions": 5000,
+    "wall_seconds": 0.16600321792066097,
+    "pass_seconds": 0.0206,
+    "max_rss_kib": 50228
+  },
+  {
+    "products": 25000,
+    "raw_instructions": 50000,
+    "wall_seconds": 0.9675643590744585,
+    "pass_seconds": 0.1798,
+    "max_rss_kib": 89164
+  },
+  {
+    "products": 250000,
+    "raw_instructions": 500000,
+    "wall_seconds": 9.545956610003486,
+    "pass_seconds": 2.003,
+    "max_rss_kib": 460032
+  },
+  {
+    "products": 500000,
+    "raw_instructions": 1000000,
+    "wall_seconds": 20.43184741504956,
+    "pass_seconds": 4.2972,
+    "max_rss_kib": 902140
+  }
+]

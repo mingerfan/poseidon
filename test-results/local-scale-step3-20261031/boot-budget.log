@@ -1,0 +1,12 @@
+all-25-q passed
+one-q-alignment passed
+two-q-alignment passed
+no-q-scale41 passed
+one-q-scale71 passed
+two-q-scale179 passed
+initial-q34 passed
+shifted-anchor-25-q passed
+shifted greedy passed
+shifted depth-dp passed
+shifted optimized passed
+15 native budget and removed-target option checks passed

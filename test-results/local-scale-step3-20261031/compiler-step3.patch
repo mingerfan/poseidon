@@ -1,0 +1,1481 @@
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -2,6 +2,14 @@
+ 
+ add_executable(DacapoModulusChainTest Support/ModulusChainTest.cpp)
+ add_test(NAME DacapoModulusChain COMMAND DacapoModulusChainTest)
++
++add_executable(DacapoLocalScalePlanningTest Support/LocalScalePlanningTest.cpp)
++add_test(NAME DacapoLocalScalePlanning COMMAND DacapoLocalScalePlanningTest)
++add_test(NAME DacapoLocalScaleGraphs
++  COMMAND ${Python3_EXECUTABLE}
++          ${CMAKE_CURRENT_SOURCE_DIR}/runtime-plan/check-local-scale.py
++          --hecate-opt $<TARGET_FILE:hecate-opt>
++          --source-dir ${PROJECT_SOURCE_DIR})
+ 
+ add_test(NAME DacapoReductionRescales
+   COMMAND ${Python3_EXECUTABLE}
+--- a/include/hecate/Dialect/Earth/IR/EarthOps.h
++++ b/include/hecate/Dialect/Earth/IR/EarthOps.h
+@@ -35,6 +35,7 @@
+ ::hecate::earth::HEScaleTypeInterface getScaleType(mlir::Value v);
+ ::mlir::RankedTensorType getTensorType(mlir::Value v);
+ double actualScale(mlir::Value value);
++bool usesLocalScalePlanning();
+ } // namespace earth
+ } // namespace hecate
+ #endif
+--- a/include/hecate/Dialect/CKKS/IR/CKKSOps.td
++++ b/include/hecate/Dialect/CKKS/IR/CKKSOps.td
+@@ -85,7 +85,7 @@
+   let hasVerifier = 1;
+ }
+ 
+-def AddCCOp : CKKS_Op<"addcc", [Commutative, SameOperandsAndResultType]> {
++def AddCCOp : CKKS_Op<"addcc", [Commutative, SameOperandsAndResultShape]> {
+   let arguments = (ins PolyTensor:$lhs, PolyTensor:$rhs);
+   let hasVerifier = 1;
+ }
+--- a/lib/Dialect/CKKS/IR/CKKSDialect.cpp
++++ b/lib/Dialect/CKKS/IR/CKKSDialect.cpp
+@@ -192,7 +192,16 @@
+ }
+ 
+ ::mlir::LogicalResult hecate::ckks::AddCCOp::verify() {
+-  if (ckks::getPolyType(getLhs()).getComponents() < 2)
++  auto lhs = ckks::getPolyType(getLhs()), rhs = ckks::getPolyType(getRhs());
++  auto result = ckks::getPolyType(getResult());
++  auto func = (*this)->getParentOfType<func::FuncOp>();
++  // Local native plans keep actual floating scales separately. Integer scale
++  // sums/ceilings can differ by one; physical replay verifies actual alignment.
++  bool actualScales = func && func->hasAttr("earth.local_scale_policy");
++  if (lhs.getComponents() < 2 || lhs.getComponents() != rhs.getComponents() ||
++      result.getComponents() != lhs.getComponents() || lhs.getLevel() != rhs.getLevel() ||
++      result.getLevel() != lhs.getLevel() ||
++      (!actualScales && (getLhs().getType() != getRhs().getType() || getResult().getType() != getLhs().getType())))
+     return emitOpError("operands and result must be ciphertext");
+   return ::mlir::success();
+ }
+--- a/lib/Dialect/Earth/Transforms/CMakeLists.txt
++++ b/lib/Dialect/Earth/Transforms/CMakeLists.txt
+@@ -6,6 +6,7 @@
+  GreedyBootstrapPlacement.cpp
+  CodeSegmentation.cpp
+  Common.cpp
++ LocalScalePlanning.cpp
+  OptimizePolynomialArithmetic.cpp
+  UpscaleBubbling.cpp
+  EarlyModswitch.cpp
+--- a/lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp
++++ b/lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp
+@@ -73,7 +73,7 @@
+   }
+   void runOnOperation() override {
+     auto func = getOperation();
+-    if (!func->hasAttr("absorb_coefficient_scale"))
++    if (usesLocalScalePlanning() || !func->hasAttr("absorb_coefficient_scale"))
+       return;
+     IRRewriter rewriter(func.getContext());
+     func.walk([&](UpscaleOp upscale) {
+--- a/lib/Dialect/Earth/Transforms/BypassDetection.cpp
++++ b/lib/Dialect/Earth/Transforms/BypassDetection.cpp
+@@ -1,5 +1,6 @@
+ #include "hecate/Dialect/Earth/Analysis/CandidateAnalysis.h"
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
++#include "hecate/Dialect/Earth/Transforms/LocalScalePlanning.h"
+ #include "hecate/Dialect/Earth/Transforms/Passes.h"
+ #include "hecate/Support/Support.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+@@ -56,7 +57,30 @@
+         op.emitError("unsupported operation in DaCapo Boot analysis");
+         return signalPassFailure();
+       }
++    hecate::earth::prepareLocalScalePlanning(func);
+     auto &ca = getAnalysis<hecate::CandidateAnalysis>();
++    if (hecate::earth::usesLocalScalePlanning()) {
++      // Segment arguments cannot retune coefficients in a previous segment.
++      // Use the same barriers in trials and final emission, even for cuts that
++      // are subsequently not selected. No additional Boot states are searched.
++      auto cuts = ca.getEdges();
++      // CandidateAnalysis numbers both definitions and cuts in program order.
++      // Advance one cursor instead of searching all cuts for each definition.
++      size_t nextCut = 0;
++      for (auto &op : func.front()) {
++        if (op.getNumResults() != 1) continue;
++        Value value = op.getResult(0);
++        if (!op.hasAttr("earth.local_scale_editable")) continue;
++        int64_t id = hecate::getIntegerAttr("opid", value), last = id;
++        for (Operation *user : value.getUsers())
++          last = std::max(last, user->getNumResults()
++              ? hecate::getIntegerAttr("opid", user->getResult(0)) : ca.getRetOpid());
++        while (nextCut < cuts.size() && cuts[nextCut] < id)
++          ++nextCut;
++        if (nextCut < cuts.size() && cuts[nextCut] < last)
++          op.removeAttr("earth.local_scale_editable");
++      }
++    }
+     std::atomic<bool> failedAny{false};
+     std::vector<std::thread> threads;
+     auto maxThreads = func.getContext()->isMultithreadingEnabled()
+--- a/lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp
++++ b/lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp
+@@ -7,6 +7,7 @@
+ 
+ #include "hecate/Dialect/Earth/Analysis/ScaleManagementUnit.h"
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
++#include "hecate/Dialect/Earth/Transforms/LocalScalePlanning.h"
+ 
+ namespace hecate {
+ namespace earth {
+@@ -33,6 +34,7 @@
+   void runOnOperation() override {
+ 
+     auto func = getOperation();
++    hecate::earth::prepareLocalScalePlanning(func);
+ 
+     markAnalysesPreserved<hecate::ScaleManagementUnit>();
+ 
+--- a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
++++ b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+@@ -1,6 +1,7 @@
+ #include "hecate/Dialect/Earth/IR/EarthOps.h"
+ #include "hecate/Dialect/Earth/IR/HEParameterInterface.h"
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
++#include "hecate/Dialect/Earth/Transforms/LocalScalePlanning.h"
+ #include "hecate/Dialect/Earth/Transforms/Passes.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Interfaces/InferTypeOpInterface.h"
+@@ -57,6 +58,7 @@
+     for (auto &op : llvm::make_early_inc_range(llvm::reverse(func.front())))
+       if (isOpTriviallyDead(&op))
+         op.erase();
++    prepareLocalScalePlanning(func);
+ 
+     // Keep the original use counts: the management operations inserted below
+     // must not extend the lifetime of a logical value in this scan.
+@@ -152,7 +154,7 @@
+       llvm::stable_sort(operations, [&](Operation *a, Operation *b) {
+         return depths.lookup(a) < depths.lookup(b);
+       });
+-      struct State { int64_t level; double scale; int64_t nominal; };
++      using State = hecate::LocalScaleValue;
+       SmallVector<uint64_t> cost(maxDepth + 1,
+                                  std::numeric_limits<uint64_t>::max());
+       SmallVector<int64_t> previous(maxDepth + 1, -1);
+@@ -186,6 +188,15 @@
+           while (next < operations.size() && depths.lookup(operations[next]) <= end) {
+             auto *op = operations[next++];
+             if (isa<ConstantOp, func::ReturnOp>(op)) continue;
++            if (usesLocalScalePlanning()) {
++              SmallVector<hecate::LocalScaleValue> inputs;
++              for (Value input : op->getOperands())
++                if (getScaleType(input).isCipher()) inputs.push_back(stateOf(input));
++              auto choice = planLocalScale(op, inputs, waterline);
++              if (!choice || choice->result.level > lastBootLevel) { valid = false; break; }
++              for (Value output : op->getResults()) states[output] = choice->result;
++              continue;
++            }
+             State result{0, 0, 0};
+             bool first = true;
+             SmallVector<State> operands;
+@@ -294,6 +305,15 @@
+       }
+       if (isa<MulOp, AddOp, NegateOp, RotateOp>(op)) {
+         auto requiredState = [&]() {
++          if (usesLocalScalePlanning()) {
++            SmallVector<hecate::LocalScaleValue> inputs;
++            for (Value logical : logicalOperands)
++              if (getScaleType(resolve(logical)).isCipher())
++                inputs.push_back(localScaleValue(resolve(logical), waterline));
++            auto choice = planLocalScale(op, inputs, waterline);
++            return choice ? ScaleState{choice->result.level, choice->result.scale}
++                          : ScaleState{EarthDialect::nativeLevelAnchor + 1, 0};
++          }
+           int64_t level = 0;
+           double scale = 0;
+           int64_t nominal = 0;
+@@ -341,6 +361,14 @@
+         op->setOperand(index, value);
+       }
+       if (auto forward = dyn_cast<ForwardMgmtInterface>(op)) {
++        if (usesLocalScalePlanning() && !isa<ConstantOp>(op)) {
++          auto result = applyLocalScale(forward, waterline, false);
++          if (failed(result)) {
++            op->emitError("local scale planning could not materialize the predicted state");
++            return signalPassFailure();
++          }
++          current[op->getResult(0)] = *result;
++        } else {
+         prepareThresholdOperands(forward, waterline);
+         auto inference = cast<InferTypeOpInterface>(op);
+         SmallVector<Type> types;
+@@ -360,6 +388,7 @@
+             return signalPassFailure();
+           }
+         }
++        }
+       }
+       for (auto logical : logicalOperands) {
+         if (--remainingUses[logical] == 0) {
+--- a/lib/Dialect/Earth/Transforms/Common.cpp
++++ b/lib/Dialect/Earth/Transforms/Common.cpp
+@@ -1,4 +1,5 @@
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
++#include "hecate/Dialect/Earth/Transforms/LocalScalePlanning.h"
+ #include "hecate/Dialect/Earth/IR/EarthOps.h"
+ #include "hecate/Support/Support.h"
+ #include "hecate/Support/BootstrapInputAlignment.h"
+@@ -93,6 +94,8 @@
+                                                     bool checkBootInput) {
+   if (waterline <= 0 || EarthDialect::rescalingFactor <= 0)
+     return failure();
++  if (usesLocalScalePlanning() && !isa<BootstrapOp, ConstantOp>(op.getOperation()))
++    return applyLocalScale(op, waterline);
+   OpBuilder builder(op);
+   if (auto boot = dyn_cast<BootstrapOp>(op.getOperation())) {
+     if (checkBootInput && !canBootstrap(
+@@ -138,6 +141,10 @@
+   auto result = cast<func::ReturnOp>(func.front().getTerminator());
+   if (usesNativeScalePlanning()) {
+     clearActualScales(func);
++    // Populate in program order: a million-node addition chain must not be
++    // evaluated recursively from its return value.
++    for (auto &op : func.front())
++      for (Value value : op.getResults()) actualScale(value);
+     SmallVector<double> scales;
+     for (Value value : result.getOperands()) scales.push_back(actualScale(value));
+     func->setAttr("earth.result_scales", builder.getDenseF64ArrayAttr(scales));
+@@ -156,6 +163,7 @@
+     outputScales.push_back(getScaleType(value).getScale());
+   func->setAttr("arg_scale", builder.getDenseI64ArrayAttr(inputScales));
+   func->setAttr("res_scale", builder.getDenseI64ArrayAttr(outputScales));
++  if (usesLocalScalePlanning()) clearLocalScaleAttributes(func);
+ }
+ 
+ void hecate::earth::refineLevel(mlir::OpBuilder builder, mlir::Operation *op,
+--- a/lib/Dialect/Earth/IR/EarthDialect.cpp
++++ b/lib/Dialect/Earth/IR/EarthDialect.cpp
+@@ -17,10 +17,20 @@
+ using namespace mlir;
+ 
+ namespace {
++enum class NativeScalePolicy { Threshold, Local };
++llvm::cl::opt<NativeScalePolicy> nativeScalePolicy(
++    "native-scale-policy", llvm::cl::desc("Native scale management policy"),
++    llvm::cl::values(clEnumValN(NativeScalePolicy::Threshold, "threshold", "Immediate threshold Rescale"),
++                     clEnumValN(NativeScalePolicy::Local, "local", "Bounded coefficient and branch scale planning")),
++    llvm::cl::init(NativeScalePolicy::Threshold));
+ llvm::cl::opt<int64_t> nativeInputLevel(
+     "native-input-level",
+     llvm::cl::desc("Initial ciphertext level; defaults to the Boot output level"),
+     llvm::cl::init(-1));
++}
++
++bool hecate::earth::usesLocalScalePlanning() {
++  return !EarthDialect::nativeModuli.empty() && nativeScalePolicy == NativeScalePolicy::Local;
+ }
+ 
+ #define GET_TYPEDEF_CLASSES
+@@ -141,12 +151,14 @@
+   nativeBootInputScale = 0;
+   if (nativeInputLevel < -1) fail("native input level must be nonnegative");
+   if (specPath.empty()) {
++    if (nativeScalePolicy == NativeScalePolicy::Local) fail("local scale planning requires a native OperatorSpec");
+     if (nativeInputLevel >= 0) fail("native input level requires an actual native Q chain");
+     return;
+   }
+   std::ifstream input(specPath.str());
+   auto spec = nlohmann::json::parse(input);
+   if (spec.at("rescale_mode") != "native") {
++    if (nativeScalePolicy == NativeScalePolicy::Local) fail("local scale planning requires rescale_mode=native");
+     if (nativeInputLevel >= 0) fail("native input level requires an actual native Q chain");
+     return;
+   }
+@@ -193,8 +205,11 @@
+     return type.getScale();
+   }
+   auto *op = value.getDefiningOp();
+-  if (isa<ConstantOp>(op))
++  if (isa<ConstantOp>(op)) {
++    if (auto encoding = op->getAttrOfType<FloatAttr>("earth.encoding_scale"))
++      return encoding.getValueAsDouble();
+     return type.getScale();
++  }
+   if (auto cached = op->getAttrOfType<FloatAttr>("earth.actual_scale"))
+     return cached.getValueAsDouble();
+   double scale;
+@@ -208,7 +223,8 @@
+       // AddCP is encoded at the ciphertext scale. Native AddCC aligns the
+       // lower actual scale to the higher one during physical lowering.
+       if (getScaleType(add.getLhs()).isCipher() && getScaleType(add.getRhs()).isCipher())
+-        scale = std::max(scale, actualScale(add.getRhs()));
++        scale = usesLocalScalePlanning() && std::abs(scale - actualScale(add.getRhs())) <= 1e-10
++                    ? scale : std::max(scale, actualScale(add.getRhs()));
+       else if (!getScaleType(add.getLhs()).isCipher())
+         scale = actualScale(add.getRhs());
+     } else if (auto rescale = dyn_cast<RescaleOp>(op)) {
+@@ -216,7 +232,8 @@
+       scale = EarthDialect::nativeScaleChain.rescale(
+           scale, EarthDialect::nativeLevelAnchor - consumed);
+     } else if (auto upscale = dyn_cast<UpscaleOp>(op)) {
+-      scale += upscale.getUpFactor();
++      auto delta = op->getAttrOfType<FloatAttr>("earth.scale_delta");
++      scale += delta ? delta.getValueAsDouble() : upscale.getUpFactor();
+     }
+   }
+   op->setAttr("earth.actual_scale", FloatAttr::get(Float64Type::get(op->getContext()), scale));
+@@ -361,6 +378,7 @@
+ 
+ void hecate::earth::UpscaleOp::getCanonicalizationPatterns(
+     RewritePatternSet &patterns, MLIRContext *context) {
++  if (usesLocalScalePlanning()) return;
+   patterns
+       .add<UpscaleUpscalePattern, UpscaleConstantPattern,
+            UpscaleMulConstantPattern, ZeroUpscalePattern>(
+@@ -423,6 +441,12 @@
+   auto lTensor = earth::getTensorType(op.getLhs());
+   auto rScale = earth::getScaleType(op.getRhs());
+   auto rTensor = earth::getTensorType(op.getRhs());
++  if (usesLocalScalePlanning() && lScale.isCipher() && rScale.isCipher() &&
++      lScale.getLevel() == rScale.getLevel() && lTensor.getShape() == rTensor.getShape() &&
++      std::abs(actualScale(op.getLhs()) - actualScale(op.getRhs())) <= 1e-10) {
++    inferredReturnTypes.push_back(lScale.switchScale(std::max(lScale.getScale(), rScale.getScale())));
++    return success();
++  }
+   if (lScale.getLevel() == rScale.getLevel() &&
+       lScale.getScale() == rScale.getScale() &&
+       lTensor.getShape()[0] == rTensor.getShape()[0]) {
+--- a/lib/Conversion/CKKSToCKKS/UpscaleToMulcp.cpp
++++ b/lib/Conversion/CKKSToCKKS/UpscaleToMulcp.cpp
+@@ -67,6 +67,8 @@
+ 
+   auto rhs =
+       rewriter.create<ckks::EncodeOp>(op.getLoc(), plainTensorType, payload);
++  if (auto delta = op->getAttrOfType<FloatAttr>("runtime.scale_delta"))
++    rhs->setAttr("runtime.scale_log2", delta);
+ 
+   rewriter.replaceOpWithNewOp<ckks::MulCPOp>(op, op.getType(), adaptor.getSrc(),
+                                              rhs);
+--- a/lib/Conversion/EarthToCKKS/EarthToCKKS.cpp
++++ b/lib/Conversion/EarthToCKKS/EarthToCKKS.cpp
+@@ -140,8 +140,10 @@
+ ConstantOpLowering::matchAndRewrite(hecate::earth::ConstantOp op,
+                                     OpAdaptor adaptor,
+                                     ConversionPatternRewriter &rewriter) const {
+-  rewriter.replaceOpWithNewOp<ckks::EncodeOp>(
++  auto encoding = op->getAttrOfType<FloatAttr>("earth.encoding_scale");
++  auto replacement = rewriter.replaceOpWithNewOp<ckks::EncodeOp>(
+       op, getTypeConverter()->convertType(op.getType()), adaptor.getValue());
++  if (encoding) replacement->setAttr("runtime.scale_log2", encoding);
+   return success();
+ }
+ 
+@@ -235,9 +237,11 @@
+ UpscaleOpLowering::matchAndRewrite(hecate::earth::UpscaleOp op,
+                                    OpAdaptor adaptor,
+                                    ConversionPatternRewriter &rewriter) const {
+-  rewriter.replaceOpWithNewOp<ckks::UpscaleCOp>(
++  auto delta = op->getAttrOfType<FloatAttr>("earth.scale_delta");
++  auto replacement = rewriter.replaceOpWithNewOp<ckks::UpscaleCOp>(
+       op, getTypeConverter()->convertType(op.getType()), adaptor.getValue(),
+       adaptor.getUpFactor());
++  if (delta) replacement->setAttr("runtime.scale_delta", delta);
+   return success();
+ }
+ 
+--- /dev/null
++++ b/include/hecate/Support/LocalScalePlanning.h
+@@ -0,0 +1,375 @@
++#ifndef HECATE_SUPPORT_LOCALSCALEPLANNING_H
++#define HECATE_SUPPORT_LOCALSCALEPLANNING_H
++
++#include "hecate/Support/BootstrapInputAlignment.h"
++#include <algorithm>
++#include <array>
++#include <cmath>
++#include <cstdint>
++#include <optional>
++#include <tuple>
++
++namespace hecate {
++
++// Levels count Q consumed from anchor. Flex describes a private arithmetic
++// tree whose coefficient encoding can shift its scale without changing values.
++struct LocalScaleValue {
++  int64_t level = 0;
++  double scale = 0;
++  int64_t nominal = 0;
++  double minShift = 1, maxShift = 0;
++  unsigned edits = 0;
++  bool flexible() const { return edits && minShift <= maxShift; }
++};
++
++enum class LocalScaleKind { MulCP, MulCC, AddCC, AddCP, Unary };
++struct LocalScaleAction {
++  double shift = 0;
++  unsigned modswitch = 0, rescales = 0;
++  bool retune = false, unit = false;
++};
++struct LocalScalePlan {
++  LocalScaleValue result;
++  std::array<LocalScaleAction, 2> inputs;
++  double encodingScale = 0;
++  unsigned resultRescales = 0;
++  int flexOperand = -1;
++  unsigned work = 0;
++};
++
++class LocalScalePlanning {
++public:
++  static constexpr unsigned maxEdits = 8;
++  static constexpr double equalScale = 1e-10;
++  LocalScalePlanning(const ModulusChain &chain, int64_t anchor,
++                     double waterline, int64_t budget, unsigned bootLevel,
++                     double bootScale)
++      : chain(chain), anchor(anchor), waterline(waterline), budget(budget),
++        bootLevel(bootLevel), bootScale(bootScale) {}
++
++  std::optional<LocalScalePlan>
++  choose(LocalScaleKind kind, LocalScaleValue a, LocalScaleValue b,
++         bool editable, bool optimize,
++         const std::array<int64_t, 3> &forecast) const {
++    if (!valid(a) ||
++        ((kind == LocalScaleKind::AddCC || kind == LocalScaleKind::MulCC) &&
++         !valid(b)))
++      return std::nullopt;
++    std::optional<LocalScalePlan> best;
++    auto consider = [&](std::optional<LocalScalePlan> candidate) {
++      if (candidate &&
++          (!best || rank(*candidate, forecast) < rank(*best, forecast)))
++        best = candidate;
++    };
++    if (kind == LocalScaleKind::MulCP) {
++      consider(coefficient(a, waterline, editable));
++      if (optimize) {
++        for (double target :
++             {waterline + 1e-11, waterline + 10, waterline + 20}) {
++          unsigned low = 0, high = anchor - a.level;
++          auto plain = [&](unsigned r) {
++            return target - a.scale + removed(a.level, a.level + r);
++          };
++          if (plain(high) < waterline)
++            continue;
++          while (low < high) {
++            unsigned mid = low + (high - low) / 2;
++            if (plain(mid) >= waterline)
++              high = mid;
++            else
++              low = mid + 1;
++          }
++          consider(coefficient(a, plain(low), editable, low));
++        }
++      }
++      return best;
++    }
++    if (kind == LocalScaleKind::AddCC) {
++      int64_t base = std::max(a.level, b.level);
++      double natural = std::max(a.scale, b.scale);
++      auto baseline = join(a, b, natural, base, editable);
++      if (!baseline) {
++        int64_t level =
++            std::max(minimumLevel(a, natural), minimumLevel(b, natural));
++        baseline = join(a, b, natural, level, editable);
++      }
++      consider(baseline);
++      if (optimize) {
++        for (int64_t level : {base, base + 1}) {
++          if (level > anchor)
++            continue;
++          double target = std::max({waterline + 1e-11, minimumScale(a, level),
++                                    minimumScale(b, level)});
++          consider(join(a, b, target, level, editable));
++        }
++        double target = waterline + 1e-11;
++        int64_t level =
++            std::max(minimumLevel(a, target), minimumLevel(b, target));
++        consider(join(a, b, target, level, editable));
++      }
++      return best;
++    }
++    LocalScalePlan result;
++    result.result = a;
++    if (kind == LocalScaleKind::MulCC) {
++      auto level = std::max(a.level, b.level);
++      result.inputs[0].modswitch = level - a.level;
++      result.inputs[1].modswitch = level - b.level;
++      result.work = (level != a.level) + (level != b.level);
++      result.result = {level, a.scale + b.scale, a.nominal + b.nominal};
++      if (editable) {
++        int side =
++            a.flexible() && (!b.flexible() || a.edits <= b.edits) ? 0 : 1;
++        const auto &operand = side ? b : a;
++        if (operand.flexible() && operand.edits + 1 <= maxEdits) {
++          result.result.minShift = operand.minShift;
++          result.result.maxShift =
++              std::min(operand.maxShift, margin(result.result));
++          result.result.edits =
++              operand.edits + 1 + (result.inputs[side].modswitch != 0);
++          if (result.result.edits > maxEdits)
++            clearFlex(result.result);
++          result.flexOperand = side;
++        }
++      }
++      normalize(result);
++    } else {
++      if (editable && a.flexible() && a.edits + 1 <= maxEdits)
++        ++result.result.edits;
++      else
++        clearFlex(result.result);
++      result.flexOperand = 0;
++    }
++    if (valid(result.result))
++      consider(result);
++    return best;
++  }
++
++private:
++  const ModulusChain &chain;
++  int64_t anchor;
++  double waterline;
++  int64_t budget;
++  unsigned bootLevel;
++  double bootScale;
++
++  static void clearFlex(LocalScaleValue &value) {
++    value.edits = 0;
++    value.minShift = 1;
++    value.maxShift = 0;
++  }
++  double capacity(int64_t level) const {
++    return chain.capacity(anchor - level);
++  }
++  double margin(LocalScaleValue value) const {
++    return capacity(value.level) - value.scale - 1;
++  }
++  bool valid(LocalScaleValue value) const {
++    return value.level >= 0 && value.level <= anchor &&
++           std::isfinite(value.scale) && value.scale >= 0 &&
++           value.scale <= 1023 && value.scale < capacity(value.level);
++  }
++  double removed(int64_t begin, int64_t end) const {
++    return chain.removedLog2(anchor - begin, end - begin);
++  }
++  void normalize(LocalScalePlan &plan) const {
++    if (plan.result.level > anchor)
++      return;
++    auto normalized = chain.normalize(plan.result.scale,
++                                      anchor - plan.result.level, waterline);
++    plan.result.level += normalized.drops;
++    plan.result.scale = normalized.scale;
++    plan.resultRescales = normalized.drops;
++    plan.work += 4 * normalized.drops;
++    if (normalized.drops)
++      plan.result.nominal = std::ceil(normalized.scale);
++    if (plan.result.flexible()) {
++      plan.result.edits += normalized.drops;
++      if (plan.result.edits > maxEdits)
++        clearFlex(plan.result);
++    }
++  }
++  std::optional<LocalScalePlan>
++  coefficient(LocalScaleValue input, double plain, bool editable,
++              std::optional<unsigned> drops = {}) const {
++    if (plain < waterline || plain > 1023)
++      return std::nullopt;
++    LocalScalePlan plan;
++    plan.encodingScale = plain;
++    plan.result = {input.level, input.scale + plain,
++                   input.nominal + static_cast<int64_t>(std::ceil(plain))};
++    if (!valid(plan.result))
++      return std::nullopt;
++    if (editable) {
++      plan.result.minShift = waterline - plain;
++      plan.result.maxShift = margin(plan.result);
++      plan.result.edits = 1;
++    }
++    if (drops) {
++      for (unsigned i = 0; i < *drops; ++i) {
++        plan.result.scale =
++            chain.rescale(plan.result.scale, anchor - plan.result.level);
++        ++plan.result.level;
++      }
++      plan.resultRescales = *drops;
++      plan.work = 4 * *drops;
++      if (*drops)
++        plan.result.nominal = std::ceil(plan.result.scale);
++      plan.result.edits += editable ? *drops : 0;
++      if (plan.result.edits > maxEdits)
++        clearFlex(plan.result);
++    } else
++      normalize(plan);
++    if (!valid(plan.result) || plan.result.scale < waterline)
++      return std::nullopt;
++    return plan;
++  }
++
++  std::optional<std::pair<LocalScaleAction, LocalScaleValue>>
++  align(LocalScaleValue value, double target, int64_t level) const {
++    if (level < value.level || level > anchor || target >= capacity(level))
++      return std::nullopt;
++    unsigned available = level - value.level;
++    std::optional<std::pair<LocalScaleAction, LocalScaleValue>> best;
++    auto attempt = [&](bool retune) {
++      double minimum = retune ? value.minShift : waterline;
++      double maximum = retune ? value.maxShift : 1023;
++      unsigned low = 0, high = available;
++      auto shift = [&](unsigned r) {
++        return target - value.scale + removed(level - r, level);
++      };
++      if (shift(high) < minimum)
++        return;
++      while (low < high) {
++        unsigned mid = low + (high - low) / 2;
++        if (shift(mid) >= minimum)
++          high = mid;
++        else
++          low = mid + 1;
++      }
++      double delta = shift(low);
++      if (delta > maximum)
++        return;
++      LocalScaleAction action{delta, available - low, low, retune, !retune};
++      LocalScaleValue out = value;
++      out.scale += delta;
++      out.level = level - low;
++      if (!valid(out))
++        return;
++      if (retune) {
++        out.minShift -= delta;
++        out.maxShift -= delta;
++      } else {
++        out.minShift = waterline - delta;
++        out.maxShift = margin(out);
++        out.edits = 1;
++      }
++      out.edits += low + (retune && action.modswitch != 0);
++      if (out.edits > maxEdits)
++        clearFlex(out);
++      for (unsigned r = 0; r < low; ++r) {
++        out.scale = chain.rescale(out.scale, anchor - out.level);
++        ++out.level;
++      }
++      out.nominal = std::ceil(out.scale);
++      if (!valid(out) || out.scale < waterline)
++        return;
++      auto work = [](const LocalScaleAction &a) {
++        return 4 * a.rescales + 3 * a.unit + (a.modswitch != 0);
++      };
++      if (!best || work(action) < work(best->first))
++        best = std::make_pair(action, out);
++    };
++    if (std::abs(target - value.scale) <= equalScale) {
++      LocalScaleAction action;
++      action.modswitch = available;
++      auto out = value;
++      out.level = level;
++      if (out.flexible() && available) {
++        ++out.edits;
++        out.maxShift = std::min(out.maxShift, margin(out));
++        if (out.edits > maxEdits)
++          clearFlex(out);
++      }
++      if (valid(out))
++        best = std::make_pair(action, out);
++    }
++    if (value.flexible())
++      attempt(true);
++    attempt(false);
++    return best;
++  }
++  std::optional<LocalScalePlan> join(LocalScaleValue a, LocalScaleValue b,
++                                     double target, int64_t level,
++                                     bool editable) const {
++    auto left = align(a, target, level), right = align(b, target, level);
++    if (!left || !right)
++      return std::nullopt;
++    LocalScalePlan result;
++    result.inputs = {left->first, right->first};
++    a = left->second;
++    b = right->second;
++    result.result = {level, a.scale, std::max(a.nominal, b.nominal)};
++    for (const auto &action : result.inputs)
++      result.work +=
++          4 * action.rescales + 3 * action.unit + (action.modswitch != 0);
++    if (editable && a.flexible() && b.flexible() &&
++        a.edits + b.edits + 1 <= maxEdits) {
++      result.result.minShift = std::max(a.minShift, b.minShift);
++      result.result.maxShift =
++          std::min({a.maxShift, b.maxShift, margin(result.result) - 1});
++      result.result.edits = a.edits + b.edits + 1;
++    }
++    return result;
++  }
++  double minimumScale(LocalScaleValue value, int64_t level) const {
++    double bits = removed(value.level, level);
++    double minimum = std::min(value.scale, value.scale + waterline - bits);
++    if (value.flexible())
++      minimum = std::min(minimum, value.scale + value.minShift - bits);
++    return std::max(waterline + 1e-11, minimum);
++  }
++  int64_t minimumLevel(LocalScaleValue value, double target) const {
++    if (std::abs(target - value.scale) <= equalScale)
++      return value.level;
++    int64_t low = value.level, high = anchor;
++    if (target - value.scale + removed(value.level, high) < waterline)
++      return anchor + 1;
++    while (low < high) {
++      int64_t mid = low + (high - low) / 2;
++      if (target - value.scale + removed(value.level, mid) >= waterline)
++        high = mid;
++      else
++        low = mid + 1;
++    }
++    return low;
++  }
++  bool refreshable(LocalScaleValue value) const {
++    if (!valid(value) || value.level > budget)
++      return false;
++    return !bootScale ||
++           planBootstrapInputAlignment(chain, anchor - value.level, value.scale,
++                                       bootLevel, bootScale)
++               .has_value();
++  }
++  std::tuple<bool, int64_t, unsigned, double, double>
++  rank(const LocalScalePlan &plan,
++       const std::array<int64_t, 3> &forecast) const {
++    auto value = plan.result;
++    unsigned work = plan.work;
++    for (auto kind : forecast) {
++      if (kind < 0 || value.level > anchor)
++        break;
++      LocalScalePlan next;
++      next.result = value;
++      next.result.scale = kind == 0 ? value.scale + waterline : value.scale * 2;
++      normalize(next);
++      value = next.result;
++      work += next.work;
++    }
++    return std::make_tuple(!refreshable(plan.result), value.level, work,
++                           value.scale, plan.result.scale);
++  }
++};
++} // namespace hecate
++#endif
+--- /dev/null
++++ b/include/hecate/Dialect/Earth/Transforms/LocalScalePlanning.h
+@@ -0,0 +1,18 @@
++#ifndef HECATE_EARTH_TRANSFORMS_LOCALSCALEPLANNING_H
++#define HECATE_EARTH_TRANSFORMS_LOCALSCALEPLANNING_H
++
++#include "hecate/Dialect/Earth/Transforms/Common.h"
++#include "hecate/Support/LocalScalePlanning.h"
++
++namespace hecate::earth {
++void prepareLocalScalePlanning(mlir::func::FuncOp func);
++LocalScaleValue localScaleValue(mlir::Value value, double waterline);
++std::optional<LocalScalePlan>
++planLocalScale(mlir::Operation *op, llvm::ArrayRef<LocalScaleValue> operands,
++               double waterline);
++mlir::FailureOr<mlir::Value> applyLocalScale(ForwardMgmtInterface op,
++                                             int64_t waterline,
++                                             bool replaceUses = true);
++void clearLocalScaleAttributes(mlir::func::FuncOp func);
++} // namespace hecate::earth
++#endif
+--- /dev/null
++++ b/lib/Dialect/Earth/Transforms/LocalScalePlanning.cpp
+@@ -0,0 +1,363 @@
++#include "hecate/Dialect/Earth/Transforms/LocalScalePlanning.h"
++#include "mlir/IR/PatternMatch.h"
++#include "llvm/ADT/DenseMap.h"
++#include <functional>
++
++using namespace mlir;
++using namespace hecate;
++using namespace hecate::earth;
++
++namespace {
++constexpr StringLiteral editableAttr = "earth.local_scale_editable";
++constexpr StringLiteral flexAttr = "earth.local_scale_flex";
++constexpr StringLiteral forecastAttr = "earth.local_scale_forecast";
++constexpr StringLiteral managedAttr = "earth.local_scale_managed";
++
++LocalScalePlanning policy(double waterline) {
++  return {EarthDialect::nativeScaleChain,
++          EarthDialect::nativeLevelAnchor,
++          waterline,
++          bootstrapQBudget(),
++          static_cast<unsigned>(EarthDialect::nativeBootInputLevel),
++          EarthDialect::nativeBootInputScale};
++}
++
++bool editable(Operation *op) {
++  return !op->hasAttr("sm_fixed") &&
++         (op->hasAttr(editableAttr) || op->hasAttr(managedAttr));
++}
++
++void cacheFlex(Value value, LocalScaleValue state, OpBuilder &builder) {
++  if (auto *op = value.getDefiningOp())
++    op->setAttr(flexAttr, builder.getDenseF64ArrayAttr(
++                              {state.minShift, state.maxShift,
++                               static_cast<double>(state.edits)}));
++}
++
++LocalScaleKind kindOf(Operation *op) {
++  if (auto mul = dyn_cast<MulOp>(op))
++    return mul.isSingle() ? LocalScaleKind::MulCP : LocalScaleKind::MulCC;
++  if (auto add = dyn_cast<AddOp>(op))
++    return add.isSingle() ? LocalScaleKind::AddCP : LocalScaleKind::AddCC;
++  return LocalScaleKind::Unary;
++}
++
++// Retune only the bounded private tree described by the same flex state used
++// in simulation. Constants are cloned; shared ciphertext producers are
++// barriers.
++LogicalResult retune(Value value, double delta, double waterline,
++                     OpBuilder &builder, unsigned &edits) {
++  if (delta == 0)
++    return success();
++  auto *op = value.getDefiningOp();
++  if (!op || !editable(op) || ++edits > LocalScalePlanning::maxEdits)
++    return failure();
++  auto infer = [&]() -> LogicalResult {
++    op->removeAttr("earth.actual_scale");
++    op->removeAttr(flexAttr);
++    SmallVector<Type> types;
++    auto inference = cast<InferTypeOpInterface>(op);
++    if (failed(inference.inferReturnTypes(
++            op->getContext(), op->getLoc(), op->getOperands(),
++            op->getAttrDictionary(), op->getPropertiesStorage(),
++            op->getRegions(), types)))
++      return failure();
++    op->getResult(0).setType(types.front());
++    actualScale(value);
++    return success();
++  };
++  if (auto mul = dyn_cast<MulOp>(op)) {
++    if (mul.isSingle()) {
++      unsigned index = getScaleType(mul.getLhs()).isCipher() ? 1 : 0;
++      auto constant = mul->getOperand(index).getDefiningOp<ConstantOp>();
++      if (!constant)
++        return failure();
++      double scale = actualScale(constant.getResult()) + delta;
++      if (scale < waterline)
++        return failure();
++      OpBuilder::InsertionGuard guard(builder);
++      builder.setInsertionPoint(mul);
++      auto copy = cast<ConstantOp>(builder.clone(*constant));
++      copy->getResult(0).setType(
++          getScaleType(copy.getResult()).switchScale(std::ceil(scale)));
++      copy->setAttr("earth.encoding_scale", builder.getF64FloatAttr(scale));
++      mul->setOperand(index, copy.getResult());
++    } else {
++      auto a = localScaleValue(mul.getLhs(), waterline);
++      auto b = localScaleValue(mul.getRhs(), waterline);
++      unsigned side =
++          a.flexible() && (!b.flexible() || a.edits <= b.edits) ? 0 : 1;
++      if (failed(
++              retune(mul->getOperand(side), delta, waterline, builder, edits)))
++        return failure();
++    }
++  } else if (auto add = dyn_cast<AddOp>(op)) {
++    for (Value operand : add->getOperands())
++      if (getScaleType(operand).isCipher() &&
++          failed(retune(operand, delta, waterline, builder, edits)))
++        return failure();
++    if (add.isSingle()) {
++      unsigned plain = getScaleType(add.getLhs()).isCipher() ? 1 : 0;
++      auto constant = add->getOperand(plain).getDefiningOp<ConstantOp>();
++      if (!constant)
++        return failure();
++      OpBuilder::InsertionGuard guard(builder);
++      builder.setInsertionPoint(add);
++      auto copy = cast<ConstantOp>(builder.clone(*constant));
++      copy->getResult(0).setType(
++          getScaleType(add->getOperand(1 - plain)).toPlain());
++      add->setOperand(plain, copy.getResult());
++    }
++  } else if (auto up = dyn_cast<UpscaleOp>(op)) {
++    auto current = up->getAttrOfType<FloatAttr>("earth.scale_delta");
++    double scale =
++        (current ? current.getValueAsDouble() : up.getUpFactor()) + delta;
++    if (scale < waterline)
++      return failure();
++    up.setUpFactor(std::ceil(scale));
++    up->setAttr("earth.scale_delta", builder.getF64FloatAttr(scale));
++  } else if (isa<RescaleOp, ModswitchOp, RotateOp, NegateOp>(op)) {
++    if (failed(retune(op->getOperand(0), delta, waterline, builder, edits)))
++      return failure();
++  } else
++    return failure();
++  return infer();
++}
++} // namespace
++
++void hecate::earth::prepareLocalScalePlanning(func::FuncOp func) {
++  if (!usesLocalScalePlanning() || func->hasAttr("earth.local_scale_hints"))
++    return;
++  OpBuilder builder(func);
++  func->setAttr("earth.local_scale_hints", builder.getUnitAttr());
++  func->setAttr("earth.local_scale_policy", builder.getUnitAttr());
++  // Only 15 possible three-step forecasts are interned, rather than storing
++  // a separate list of future instruction IDs on every node.
++  for (auto &op : llvm::reverse(func.front())) {
++    if (op.getNumResults() != 1 || isa<ConstantOp>(op))
++      continue;
++    Value value = op.getResult(0);
++    if (value.hasOneUse() && !op.hasAttr("sm_fixed"))
++      op.setAttr(editableAttr, builder.getUnitAttr());
++    std::array<int64_t, 3> best{-1, -1, -1};
++    auto score = [](const auto &a) {
++      return std::make_pair(
++          std::count(a.begin(), a.end(), int64_t{1}),
++          std::count_if(a.begin(), a.end(), [](int64_t x) { return x >= 0; }));
++    };
++    for (Operation *user : value.getUsers()) {
++      std::array<int64_t, 3> next{-1, -1, -1};
++      if (auto forecast = user->getAttrOfType<DenseI64ArrayAttr>(forecastAttr))
++        std::copy(forecast.asArrayRef().begin(), forecast.asArrayRef().end(),
++                  next.begin());
++      if (auto mul = dyn_cast<MulOp>(user)) {
++        if (!mul.isSingle() && mul.getLhs() != mul.getRhs())
++          continue;
++        next = {mul.isSingle() ? 0 : 1, next[0], next[1]};
++      } else if (!isa<AddOp, RotateOp, NegateOp>(user))
++        continue;
++      // Crossing an Add estimates its scale pressure; legality always uses
++      // the actual two operand states when that Add is reached.
++      if (score(next) > score(best))
++        best = next;
++    }
++    op.setAttr(forecastAttr, builder.getDenseI64ArrayAttr(best));
++  }
++}
++
++LocalScaleValue hecate::earth::localScaleValue(Value value, double waterline) {
++  auto type = getScaleType(value);
++  LocalScaleValue state{static_cast<int64_t>(type.getLevel()),
++                        actualScale(value),
++                        static_cast<int64_t>(type.getScale())};
++  auto *op = value.getDefiningOp();
++  if (!op || !editable(op))
++    return state;
++  if (auto cached = op->getAttrOfType<DenseF64ArrayAttr>(flexAttr)) {
++    auto data = cached.asArrayRef();
++    state.minShift = data[0];
++    state.maxShift = data[1];
++    state.edits = data[2];
++    return state;
++  }
++  if (auto mul = dyn_cast<MulOp>(op); mul && mul.isSingle()) {
++    Value plain =
++        getScaleType(mul.getLhs()).isCipher() ? mul.getRhs() : mul.getLhs();
++    if (!plain.getDefiningOp<ConstantOp>())
++      return state;
++    state.minShift = waterline - actualScale(plain);
++    state.maxShift = EarthDialect::nativeScaleChain.capacity(
++                         EarthDialect::nativeLevelAnchor - state.level) -
++                     state.scale - 1;
++    state.edits = 1;
++  } else if (isa<RescaleOp, ModswitchOp>(op)) {
++    auto source = localScaleValue(op->getOperand(0), waterline);
++    if (source.flexible() && source.edits + 1 <= LocalScalePlanning::maxEdits) {
++      state.minShift = source.minShift;
++      state.maxShift = std::min(
++          source.maxShift, EarthDialect::nativeScaleChain.capacity(
++                               EarthDialect::nativeLevelAnchor - state.level) -
++                               state.scale - 1);
++      state.edits = source.edits + 1;
++    }
++  } else if (auto up = dyn_cast<UpscaleOp>(op)) {
++    auto delta = up->getAttrOfType<FloatAttr>("earth.scale_delta");
++    double plain = delta ? delta.getValueAsDouble() : up.getUpFactor();
++    state.minShift = waterline - plain;
++    state.maxShift = EarthDialect::nativeScaleChain.capacity(
++                         EarthDialect::nativeLevelAnchor - state.level) -
++                     state.scale - 1;
++    state.edits = 1;
++  } else if (isa<MulOp, AddOp, RotateOp, NegateOp>(op)) {
++    SmallVector<LocalScaleValue> operands;
++    for (Value input : op->getOperands())
++      if (getScaleType(input).isCipher())
++        operands.push_back(localScaleValue(input, waterline));
++    if (operands.size() == 2 && isa<AddOp>(op) && operands[0].flexible() &&
++        operands[1].flexible()) {
++      state.minShift = std::max(operands[0].minShift, operands[1].minShift);
++      state.maxShift = std::min(operands[0].maxShift, operands[1].maxShift);
++      state.edits = operands[0].edits + operands[1].edits + 1;
++    } else if (!operands.empty()) {
++      unsigned side = 0;
++      if (operands.size() == 2 && isa<MulOp>(op))
++        side =
++            operands[0].flexible() && (!operands[1].flexible() ||
++                                       operands[0].edits <= operands[1].edits)
++                ? 0
++                : 1;
++      if (operands[side].flexible() &&
++          (operands.size() == 1 || isa<MulOp>(op))) {
++        state.minShift = operands[side].minShift;
++        state.maxShift = operands[side].maxShift;
++        state.edits = operands[side].edits + 1;
++      }
++    }
++    state.maxShift = std::min(
++        state.maxShift, EarthDialect::nativeScaleChain.capacity(
++                            EarthDialect::nativeLevelAnchor - state.level) -
++                            state.scale - 1 - isa<AddOp>(op));
++    if (state.edits > LocalScalePlanning::maxEdits)
++      state.edits = 0;
++  }
++  OpBuilder builder(op);
++  cacheFlex(value, state, builder);
++  return state;
++}
++
++std::optional<LocalScalePlan>
++hecate::earth::planLocalScale(Operation *op, ArrayRef<LocalScaleValue> operands,
++                              double waterline) {
++  std::array<int64_t, 3> forecast{-1, -1, -1};
++  if (auto data = op->getAttrOfType<DenseI64ArrayAttr>(forecastAttr))
++    std::copy(data.asArrayRef().begin(), data.asArrayRef().end(),
++              forecast.begin());
++  if (operands.empty())
++    return std::nullopt;
++  return policy(waterline).choose(
++      kindOf(op), operands[0],
++      operands.size() == 2 ? operands[1] : LocalScaleValue{}, editable(op),
++      !op->hasAttr("sm_fixed"), forecast);
++}
++
++FailureOr<Value> hecate::earth::applyLocalScale(ForwardMgmtInterface forward,
++                                                int64_t waterline,
++                                                bool replaceUses) {
++  Operation *op = forward.getOperation();
++  OpBuilder builder(op);
++  SmallVector<LocalScaleValue> operands;
++  SmallVector<unsigned> cipherIndices;
++  for (auto [index, value] : llvm::enumerate(op->getOperands())) {
++    if (getScaleType(value).isCipher()) {
++      operands.push_back(localScaleValue(value, waterline));
++      cipherIndices.push_back(index);
++    } else if (auto constant = value.getDefiningOp<ConstantOp>()) {
++      if (!value.hasOneUse())
++        op->setOperand(index, builder.clone(*constant)->getResult(0));
++    }
++  }
++  auto plan = planLocalScale(op, operands, waterline);
++  if (!plan)
++    return failure();
++  auto kind = kindOf(op);
++  if (kind == LocalScaleKind::MulCP) {
++    unsigned plain = 1 - cipherIndices.front();
++    auto constant = op->getOperand(plain).getDefiningOp<ConstantOp>();
++    if (!constant)
++      return op->emitError(
++                 "local scale planning requires locally encoded coefficients"),
++             failure();
++    constant->getResult(0).setType(
++        getScaleType(op->getOperand(cipherIndices.front()))
++            .toPlain()
++            .switchScale(std::ceil(plan->encodingScale)));
++    constant->setAttr("earth.encoding_scale",
++                      builder.getF64FloatAttr(plan->encodingScale));
++  }
++  for (auto [i, index] : llvm::enumerate(cipherIndices)) {
++    Value value = op->getOperand(index);
++    const auto &action = plan->inputs[i];
++    if (action.retune && action.shift != 0) {
++      unsigned edits = 0;
++      if (failed(retune(value, action.shift, waterline, builder, edits)))
++        return op->emitError(
++                   "local coefficient retuning disagrees with its state plan"),
++               failure();
++    }
++    if (action.modswitch) {
++      value =
++          builder.create<ModswitchOp>(op->getLoc(), value, action.modswitch);
++      value.getDefiningOp()->setAttr(managedAttr, builder.getUnitAttr());
++    }
++    if (action.unit) {
++      auto up = builder.create<UpscaleOp>(
++          op->getLoc(), value, static_cast<int64_t>(std::ceil(action.shift)));
++      up->setAttr("earth.scale_delta", builder.getF64FloatAttr(action.shift));
++      up->setAttr(managedAttr, builder.getUnitAttr());
++      value = up;
++    }
++    for (unsigned r = 0; r < action.rescales; ++r) {
++      value = builder.create<RescaleOp>(op->getLoc(), value);
++      value.getDefiningOp()->setAttr(managedAttr, builder.getUnitAttr());
++    }
++    op->setOperand(index, value);
++  }
++  if (kind == LocalScaleKind::AddCP) {
++    unsigned plain = 1 - cipherIndices.front();
++    op->getOperand(plain).setType(
++        getScaleType(op->getOperand(cipherIndices.front())).toPlain());
++  }
++  op->removeAttr("earth.actual_scale");
++  op->removeAttr(flexAttr);
++  SmallVector<Type> types;
++  auto inference = cast<InferTypeOpInterface>(op);
++  if (failed(inference.inferReturnTypes(
++          op->getContext(), op->getLoc(), op->getOperands(),
++          op->getAttrDictionary(), op->getPropertiesStorage(), op->getRegions(),
++          types)))
++    return failure();
++  op->getResult(0).setType(types.front());
++  builder.setInsertionPointAfter(op);
++  Value value = op->getResult(0);
++  IRRewriter rewriter(builder);
++  for (unsigned r = 0; r < plan->resultRescales; ++r) {
++    auto rs = builder.create<RescaleOp>(op->getLoc(), value);
++    rs->setAttr(managedAttr, builder.getUnitAttr());
++    if (replaceUses)
++      rewriter.replaceAllUsesExcept(value, rs, rs);
++    value = rs;
++  }
++  cacheFlex(value, plan->result, builder);
++  actualScale(value);
++  return value;
++}
++
++void hecate::earth::clearLocalScaleAttributes(func::FuncOp func) {
++  func.walk([](Operation *op) {
++    op->removeAttr(editableAttr);
++    op->removeAttr(flexAttr);
++    op->removeAttr(forecastAttr);
++    op->removeAttr(managedAttr);
++  });
++  func->removeAttr("earth.local_scale_hints");
++}
+--- /dev/null
++++ b/test/Support/LocalScalePlanningTest.cpp
+@@ -0,0 +1,103 @@
++#include "hecate/Support/LocalScalePlanning.h"
++#include <cstdlib>
++#include <iostream>
++
++using namespace hecate;
++void check(bool value, const char *message) {
++  if (!value) {
++    std::cerr << message << '\n';
++    std::exit(1);
++  }
++}
++
++int main() {
++  ModulusChain chain;
++  chain.reset(std::vector<uint64_t>(24, 1ULL << 30));
++  LocalScalePlanning policy(chain, 23, 40, 18, 3, 40);
++  std::array<int64_t, 3> square{1, -1, -1};
++  // A private coefficient tree can spend the already lost branch Q to lower
++  // the join scale. Equal Q counts alone do not imply equal future Q cost.
++  LocalScaleValue high{1, 60, 60, 0, 100, 1}, low{3, 40, 40};
++  auto joined =
++      policy.choose(LocalScaleKind::AddCC, high, low, false, true, square);
++  check(joined && joined->result.level == 3 && joined->result.scale < 40.001,
++        "missed lower-scale alignment at the existing join Q");
++  check(joined->inputs[0].rescales == 1 && joined->inputs[0].retune,
++        "expected safe coefficient retuning and one RS on the higher-Q path");
++  auto upward =
++      policy.choose(LocalScaleKind::AddCC, high, low, false, false, square);
++  check(upward && upward->result.level > joined->result.level,
++        "the branch regression must actually save Q against upward alignment");
++  // A ten-bit encoded one is not assumed to be an accurate free operation.
++  auto conservative = policy.choose(LocalScaleKind::AddCC, {1, 40, 40},
++                                    {3, 60, 60}, false, true, square);
++  check(conservative && conservative->result.level == 3,
++        "do not spend extra Q merely to obtain a lower scale");
++  auto lowerBeforeSquare =
++      policy.choose(LocalScaleKind::AddCC, {1, 40, 40}, {3, 60, 60, 0, 100, 1},
++                    false, true, square);
++  check(lowerBeforeSquare && lowerBeforeSquare->result.level == 4 &&
++            lowerBeforeSquare->result.scale < 40.001 &&
++            lowerBeforeSquare->inputs[1].retune,
++        "missed pre-square lowering through safe coefficient encoding");
++  // Coefficient encoding is a real number, not an integer annotation.
++  auto coefficient =
++      policy.choose(LocalScaleKind::MulCP, {0, 40, 40}, {}, true, true, square);
++  check(coefficient && coefficient->encodingScale >= 40 &&
++            coefficient->result.scale >= 40,
++        "failed to preserve coefficient precision while planning the next "
++        "square");
++  // Mixed actual primes exercise transition replay, independent of the planner.
++  std::vector<uint64_t> primes;
++  for (unsigned i = 0; i < 24; ++i)
++    primes.push_back((1ULL << (30 + i % 3)) - (i + 1) * 65536 + 1);
++  chain.reset(primes);
++  unsigned plans = 0;
++  for (int la = 0; la < 8; ++la)
++    for (int lb = 0; lb < 8; ++lb)
++      for (double sa : {40., 50.3, 60.7})
++        for (double sb : {40., 49.9, 65.1})
++          for (bool flexible : {false, true}) {
++            LocalScaleValue a{la, sa, static_cast<int64_t>(std::ceil(sa))};
++            LocalScaleValue b{lb, sb, static_cast<int64_t>(std::ceil(sb))};
++            if (flexible) {
++              a.minShift = -10;
++              a.maxShift = 100;
++              a.edits = 2;
++            }
++            auto plan =
++                policy.choose(LocalScaleKind::AddCC, a, b, true, true, square);
++            check(plan.has_value(),
++                  "ordinary alignment should remain feasible");
++            for (unsigned side = 0; side < 2; ++side) {
++              auto state = side ? b : a;
++              const auto &action = plan->inputs[side];
++              if (action.unit)
++                check(action.shift >= 40,
++                      "unit encoding below precision floor");
++              if (action.retune)
++                check(state.flexible() && action.shift >= state.minShift &&
++                          action.shift <= state.maxShift,
++                      "retuning outside private coefficient margin");
++              if (action.unit || action.retune)
++                state.scale += action.shift;
++              state.level += action.modswitch;
++              for (unsigned r = 0; r < action.rescales; ++r) {
++                state.scale -=
++                    std::log2(static_cast<double>(primes.at(23 - state.level)));
++                ++state.level;
++              }
++              check(state.level == plan->result.level &&
++                        std::abs(state.scale - plan->result.scale) <= 1e-10,
++                    "join plan differs from sequential actual-prime replay");
++            }
++            ++plans;
++          }
++  check(!policy.choose(LocalScaleKind::MulCP, {24, 40, 40}, {}, false, true,
++                       square),
++        "out-of-chain source must be rejected");
++  check(!policy.choose(LocalScaleKind::AddCC, {0, 40, 40}, {24, 40, 40}, false,
++                       true, square),
++        "an exhausted second branch must be rejected before modulus queries");
++  std::cout << plans << " mixed-chain joins and future-square checks passed\n";
++}
+--- /dev/null
++++ b/test/runtime-plan/check-local-scale.py
+@@ -0,0 +1,129 @@
++#!/usr/bin/env python3
++"""Replay local scale plans through physical lowering and all Boot schedulers."""
++import argparse
++import hashlib
++import json
++import math
++import runpy
++import subprocess
++import tempfile
++from pathlib import Path
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--hecate-opt', type=Path, required=True)
++    parser.add_argument('--source-dir', type=Path, required=True)
++    args = parser.parse_args()
++    fixtures = args.source_dir / 'test/runtime-plan'
++    graphs = runpy.run_path(str(fixtures / 'check-greedy.py'))
++    cases = [('chain', graphs['source'](40), .25 * 1.01 ** 40 + .25),
++             ('fanout', graphs['fanout_source'](8),
++              .25 + .25 * 1.01 ** 3 * sum(1.02 + i / 100 for i in range(8))),
++             ('reduction', graphs['reduction_source'](8),
++              (.25 + .25 * 1.01 ** 2 * sum(1.02 + i / 100 for i in range(8))) * 1.01)]
++    for seed in range(5):
++        text, expected = graphs['mixed_source'](seed)
++        cases.append((f'mixed{seed}', text, expected))
++    ct, pt = 'tensor<1x!earth.ci<0 * 0>>', 'tensor<1x!earth.pl<0 * 0>>'
++    text = f"""module {{ func.func @chain(%x: {ct}) -> {ct} {{
++%p = "earth.constant"() {{value = dense<0.125> : tensor<1xf64>, rms_var = 1.0 : f64}} : () -> {pt}
++%q = "earth.constant"() {{value = dense<0.25> : tensor<1xf64>, rms_var = 1.0 : f64}} : () -> {pt}
++%bias = "earth.constant"() {{value = dense<0.03> : tensor<1xf64>, rms_var = 1.0 : f64}} : () -> {pt}
++%square = "earth.mul"(%x, %x) : ({ct}, {ct}) -> {ct}
++%a = "earth.mul"(%x, %p) : ({ct}, {pt}) -> {ct}
++%b = "earth.mul"(%q, %square) : ({pt}, {ct}) -> {ct}
++%sum = "earth.add"(%a, %b) : ({ct}, {ct}) -> {ct}
++%biased = "earth.add"(%bias, %sum) : ({pt}, {ct}) -> {ct}
++%y = "earth.mul"(%biased, %biased) : ({ct}, {ct}) -> {ct}
++%out = "earth.add"(%y, %x) : ({ct}, {ct}) -> {ct}
++return %out : {ct}
++}}}}"""
++    cases.append(('biased_square', text, (.125 * .25 + .25 * .25 ** 2 + .03) ** 2 + .25))
++    checks = 0
++    with tempfile.TemporaryDirectory(prefix='local-scale-') as directory:
++        temp = Path(directory)
++        config = json.loads((args.source_dir / 'config.json').read_text())
++        config.update(polynomialDegree=64, rescalingFactor=30,
++                      bootstrapLevelLowerBound=1, bootstrapLevelUpperBound=24,
++                      levelLowerBound=1, levelUpperBound=24)
++        (temp / 'config.json').write_text(json.dumps(config))
++        spec = json.loads((fixtures / 'lazy-physical-level-operator-spec.json').read_text())
++        for entry in spec['operators'].values():
++            entry['supported'] = True
++            entry['latency_us_by_level'] = [10] * 50
++        moduli = [(1 << (30 + i % 3)) - (i + 1) * 32768 + 1 for i in range(50)]
++        spec.update(rescale_mode='native')
++        spec['context'].update(poly_degree=64, default_scale_log2=40, rns_moduli=moduli,
++                               rns_moduli_log2=[q.bit_length() for q in moduli], max_modulus_log2=32)
++        spec['levels'] = dict(lower_bound=4, upper_bound=49)
++        spec['boot_profiles'] = [dict(profile_id='local40', implementation='native',
++            input_level_min=5, input_level_max=5, input_scale_log2=40, input_components=2,
++            output_level=30, output_scale_log2=40, output_components=2,
++            latency_us_by_input_level=[85000] * 50, noise_by_input_level=None,
++            host_requirements=dict(needs_secret_key=False, needs_host_compute=False))]
++        spec_path = temp / 'spec.json'
++        spec_path.write_text(json.dumps(spec))
++        for strategy in ('greedy', 'depth-dp', 'optimized'):
++            for name, text, expected in cases:
++                traced, output = temp / 'input.mlir', temp / 'result.mlir'
++                traced.write_text(text)
++                command = [str(args.hecate_opt), '--dacapo', '--native-scale-policy=local',
++                    f'--boot-placement={strategy}', f'--ckks-config={temp / "config.json"}',
++                    '--waterline=40', '--bootstrap-scale=40', '--mlir-disable-threading',
++                    '--runtime-plan-format=json', '--runtime-plan-boot-profile=local40',
++                    '--runtime-plan-boot-implementation=native',
++                    f'--runtime-plan-physical-level-operator-spec-path={spec_path}',
++                    '--runtime-plan-levels-per-logical-level=1', '--runtime-plan-device-counts=1',
++                    '--runtime-plan-device-count=1', f'--runtime-plan-operator-spec-path={spec_path}',
++                    '--runtime-plan-target-id=lazy-physical-level-test',
++                    '--runtime-plan-context-id=lazy-physical-level-test',
++                    '--runtime-plan-operator-spec-id=lazy-physical-level-test-v1',
++                    '--runtime-plan-operator-spec-version=1',
++                    '--runtime-plan-operator-spec-sha256=sha256:' + hashlib.sha256(spec_path.read_bytes()).hexdigest(),
++                    str(traced), '-o', str(output)]
++                result = subprocess.run(command, capture_output=True, text=True)
++                assert result.returncode == 0, (strategy, name, result.stdout, result.stderr)
++                plan = json.loads((temp / 'result.chain.runtime-plan.json').read_text())
++                desc = {v['id']: v for v in plan['values']}
++                values = {plan['external_inputs'][0]: .25}
++                for phase in ('initialization', 'execution', 'finalization'):
++                    for step in plan[phase]:
++                        op = step.get('op', step['kind'])
++                        if op == 'encode':
++                            values[step['output']] = step['payload']['values'][0]
++                        elif op in ('transfer', 'replicate'):
++                            for target in step['outputs']:
++                                values[target] = values[step['inputs'][0]]
++                        elif 'output' in step:
++                            inputs = step['inputs']
++                            a = values[inputs[0]]
++                            b = values[inputs[1]] if len(inputs) == 2 else None
++                            if op in ('add_cc', 'add_cp'):
++                                value = a + b
++                            elif op in ('mul_cc', 'mul_cp'):
++                                value = a * b
++                            elif op == 'negate':
++                                value = -a
++                            else:
++                                value = a
++                            values[step['output']] = value
++                            if op == 'add_cc':
++                                assert abs(desc[inputs[0]]['scale_log2'] - desc[inputs[1]]['scale_log2']) <= 1e-10
++                            if op == 'rescale':
++                                source, target = desc[inputs[0]], desc[step['output']]
++                                assert target['level'] == source['level'] - 1
++                                assert abs(source['scale_log2'] - math.log2(moduli[source['level']]) - target['scale_log2']) < 1e-10
++                            if op == 'boot':
++                                assert abs(desc[inputs[0]]['scale_log2'] - 40) <= 1e-8
++                                assert desc[inputs[0]]['level'] == 5
++                assert math.isclose(values[plan['final_outputs'][0]], expected, rel_tol=1e-10, abs_tol=1e-10)
++                checks += 1
++        invalid = [arg for arg in command if not arg.startswith('--runtime-plan-physical-level-operator-spec-path=')]
++        result = subprocess.run(invalid, capture_output=True, text=True)
++        assert result.returncode != 0 and 'local scale planning requires a native OperatorSpec' in result.stderr
++    print(f'{checks} local scale graphs preserve arithmetic, actual-prime RS and fixed Boot inputs')
++
++
++if __name__ == '__main__':
++    main()
+--- /dev/null
++++ b/test/runtime-plan/benchmark-local-scale.py
+@@ -0,0 +1,90 @@
++#!/usr/bin/env python3
++"""Measure native local management through the real greedy compilation path."""
++import argparse
++import json
++import re
++import subprocess
++import time
++from pathlib import Path
++
++
++def main():
++    p = argparse.ArgumentParser()
++    p.add_argument('--hecate-opt', type=Path, required=True)
++    p.add_argument('--source-dir', type=Path, required=True)
++    p.add_argument('--output-dir', type=Path, required=True)
++    p.add_argument('--widths', type=int, nargs='+', default=[2500, 25000, 250000, 500000])
++    args = p.parse_args()
++    out = args.output_dir.resolve()
++    out.mkdir(parents=True, exist_ok=True)
++    config = json.loads((args.source_dir / 'config.json').read_text())
++    config.update(polynomialDegree=16, rescalingFactor=30,
++                  levelLowerBound=1, levelUpperBound=24,
++                  bootstrapLevelLowerBound=1, bootstrapLevelUpperBound=24)
++    (out / 'config.json').write_text(json.dumps(config))
++    spec = json.loads((args.source_dir / 'test/runtime-plan/lazy-physical-level-operator-spec.json').read_text())
++    spec['rescale_mode'] = 'native'
++    q = [(1 << (30 + i % 3)) - (i + 1) * 32768 + 1 for i in range(50)]
++    spec['context'].update(rns_moduli=q, rns_moduli_log2=[v.bit_length() for v in q],
++                           max_modulus_log2=32, default_scale_log2=40)
++    spec['levels'] = dict(lower_bound=4, upper_bound=49)
++    spec['boot_profiles'] = [dict(profile_id='local40', implementation='native',
++        input_level_min=5, input_level_max=5, input_scale_log2=40, input_components=2,
++        output_level=30, output_scale_log2=40, output_components=2,
++        latency_us_by_input_level=[85000] * 50, noise_by_input_level=None,
++        host_requirements=dict(needs_secret_key=False, needs_host_compute=False))]
++    (out / 'spec.json').write_text(json.dumps(spec))
++    # Native parameters are initialized by the DaCapo driver. Calling only
++    # proactive-rescaling would silently measure the legacy policy instead.
++    common = [str(args.hecate_opt.resolve()),
++              f'--ckks-config={out / "config.json"}',
++              f'--runtime-plan-physical-level-operator-spec-path={out / "spec.json"}',
++              '--runtime-plan-boot-profile=local40', '--native-scale-policy=local',
++              '--dacapo-precompile', '--boot-placement=greedy',
++              '--waterline=40', '--bootstrap-scale=40', '--mlir-disable-threading']
++    probe = out / 'mode-probe.mlir'
++    probe.write_text('''module { func.func @probe(%x: tensor<1x!earth.ci<0 * 0>>) -> tensor<1x!earth.ci<0 * 0>> {
++%p = "earth.constant"() {value = dense<0.125> : tensor<1xf64>, rms_var = 0.125 : f64} : () -> tensor<1x!earth.pl<0 * 0>>
++%y = "earth.mul"(%x, %p) : (tensor<1x!earth.ci<0 * 0>>, tensor<1x!earth.pl<0 * 0>>) -> tensor<1x!earth.ci<0 * 0>>
++return %y : tensor<1x!earth.ci<0 * 0>>
++}}''')
++    managed = out / 'mode-probe.managed.mlir'
++    result = subprocess.run([*common, str(probe), '-o', str(managed)],
++                            capture_output=True, text=True)
++    assert result.returncode == 0, result.stderr
++    text = managed.read_text()
++    assert 'earth.local_scale_policy' in text and 'earth.native_scale_moduli' in text, text
++    rows = []
++    ct, pt = 'tensor<1x!earth.ci<0 * 0>>', 'tensor<1x!earth.pl<0 * 0>>'
++    for width in args.widths:
++        src = out / f'{width}.input.mlir'
++        with src.open('w') as f:
++            f.write(f'module {{ func.func @reduce(%x: {ct}) -> {ct} {{\n')
++            f.write(f'%p = "earth.constant"() {{value = dense<0.125> : tensor<1xf64>, rms_var = 0.125 : f64}} : () -> {pt}\n')
++            for i in range(width):
++                f.write(f'%m{i} = "earth.mul"(%x, %p) : ({ct}, {pt}) -> {ct}\n')
++                if i:
++                    prev = f'%a{i-1}' if i > 1 else '%m0'
++                    f.write(f'%a{i} = "earth.add"({prev}, %m{i}) : ({ct}, {ct}) -> {ct}\n')
++            f.write(f'return %a{width-1} : {ct}\n}}}}\n')
++        cmd = ['/usr/bin/time', '-v', '-o', str(out / f'{width}.time.log'),
++               *common, str(src), '--mlir-timing', '-o', '/dev/null']
++        start = time.monotonic()
++        with (out / f'{width}.pass.log').open('w') as log:
++            result = subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, timeout=600)
++        log = (out / f'{width}.pass.log').read_text()
++        assert result.returncode == 0, log[-5000:]
++        timing = re.search(r'(?m)^\s*([\d.]+)\s+\([^)]*\)\s+GreedyBootstrapPlacement\s*$', log)
++        assert timing, log
++        rss = re.search(r'Maximum resident set size \(kbytes\): (\d+)', (out / f'{width}.time.log').read_text())
++        rows.append(dict(products=width, raw_instructions=2 * width,
++                         native_local_policy_verified=True,
++                         pass_scope='GreedyBootstrapPlacement: local management and greedy liveness/Boot bookkeeping',
++                         wall_seconds=time.monotonic()-start, pass_seconds=float(timing[1]),
++                         max_rss_kib=int(rss[1])))
++        (out / 'summary.json').write_text(json.dumps(rows, indent=2)+'\n')
++        print(json.dumps(rows[-1]), flush=True)
++
++
++if __name__ == '__main__':
++    main()

@@ -1,0 +1,237 @@
+{
+  "same_core_multiplications": {
+    "cc": 27,
+    "coefficient_cp": 30
+  },
+  "coefficient_values_unchanged": true,
+  "ordinary_polynomial_add_unit_muls": 0,
+  "ordinary_polynomial_add_rescales": 0,
+  "actual_prime_replay_passed": true,
+  "counts": {
+    "add_cc": 43,
+    "basis_unit_muls": 5,
+    "rs_prime_divisions": 74,
+    "mul_cc": 27,
+    "add_cp": 11,
+    "negate": 4,
+    "mul_cp": 30
+  },
+  "stages": [
+    {
+      "stage": "P1(d15)",
+      "q": 25,
+      "s": 40.10000001071934,
+      "consumed_q": 6
+    },
+    {
+      "stage": "P2(d15)",
+      "q": 19,
+      "s": 50.00000001023217,
+      "consumed_q": 12
+    },
+    {
+      "stage": "P3",
+      "q": 13,
+      "s": 119.832572083,
+      "consumed_q": 18
+    },
+    {
+      "stage": "tail",
+      "q": 9,
+      "s": 40.00000000086069,
+      "consumed_q": 22
+    }
+  ],
+  "coefficient_scales": [
+    {
+      "node": "19",
+      "scalar": -4.027020120063623,
+      "encoding_s": 40.03079685187235
+    },
+    {
+      "node": "26",
+      "scalar": 2.243187978526648,
+      "encoding_s": 60.031501375731644
+    },
+    {
+      "node": "45",
+      "scalar": 1.1583708205212988,
+      "encoding_s": 40.046312328356365
+    },
+    {
+      "node": "48",
+      "scalar": -0.24378614014677616,
+      "encoding_s": 50.03890685196036
+    },
+    {
+      "node": "69",
+      "scalar": 0.3887889417813593,
+      "encoding_s": 50.061485721
+    },
+    {
+      "node": "72",
+      "scalar": -0.3410318227220213,
+      "encoding_s": 60.054080244603995
+    },
+    {
+      "node": "84",
+      "scalar": 1.3110156470890746,
+      "encoding_s": 60.07665911453509
+    },
+    {
+      "node": "87",
+      "scalar": -0.4655444582206114,
+      "encoding_s": 40.0733098690267
+    },
+    {
+      "node": "122",
+      "scalar": -4.114425161403915,
+      "encoding_s": 48.15568622589384
+    },
+    {
+      "node": "130",
+      "scalar": 0.9368078518022722,
+      "encoding_s": 68.38506965017285
+    },
+    {
+      "node": "149",
+      "scalar": 0.13312678038183748,
+      "encoding_s": 48.87998641006156
+    },
+    {
+      "node": "153",
+      "scalar": -0.45988074662238737,
+      "encoding_s": 58.632528030128256
+    },
+    {
+      "node": "175",
+      "scalar": -0.058402193560527074,
+      "encoding_s": 59.365572387280665
+    },
+    {
+      "node": "179",
+      "scalar": -0.5604853121853565,
+      "encoding_s": 69.11811400734736
+    },
+    {
+      "node": "192",
+      "scalar": 0.776581119170959,
+      "encoding_s": 69.85115836569636
+    },
+    {
+      "node": "196",
+      "scalar": -0.6818409776001578,
+      "encoding_s": 49.62124110427562
+    },
+    {
+      "node": "258",
+      "scalar": -0.017732734281918773,
+      "encoding_s": 68.69602559703262
+    },
+    {
+      "node": "261",
+      "scalar": -0.009084094344113463,
+      "encoding_s": 58.61370764385118
+    },
+    {
+      "node": "279",
+      "scalar": -0.19732584204806608,
+      "encoding_s": 49.094443266415624
+    },
+    {
+      "node": "282",
+      "scalar": -0.1411166195583439,
+      "encoding_s": 68.97863076651507
+    },
+    {
+      "node": "286",
+      "scalar": -0.05267573691161687,
+      "encoding_s": 58.89523443154218
+    },
+    {
+      "node": "290",
+      "scalar": -0.026312988130283786,
+      "encoding_s": 48.812916478360734
+    },
+    {
+      "node": "321",
+      "scalar": -0.7891229650354679,
+      "encoding_s": 59.463507669767836
+    },
+    {
+      "node": "324",
+      "scalar": -0.7274113735381116,
+      "encoding_s": 49.38118971658639
+    },
+    {
+      "node": "328",
+      "scalar": -0.32554529142034655,
+      "encoding_s": 69.26429883489439
+    },
+    {
+      "node": "332",
+      "scalar": -0.18601751738208003,
+      "encoding_s": 59.181980881712946
+    },
+    {
+      "node": "352",
+      "scalar": -0.04285789400849802,
+      "encoding_s": 69.83257207276783
+    },
+    {
+      "node": "355",
+      "scalar": -0.7747926099066248,
+      "encoding_s": 59.75025411958639
+    },
+    {
+      "node": "359",
+      "scalar": -0.18128174370012556,
+      "encoding_s": 79.63336323789439
+    },
+    {
+      "node": "363",
+      "scalar": -0.2454684691347467,
+      "encoding_s": 69.55104528471294
+    }
+  ],
+  "encoding_min_s": 40.03079685187235,
+  "encoding_max_s": 79.63336323789439,
+  "baseline_next_conv": {
+    "source": {
+      "q": 6,
+      "s": 44.84557203829722,
+      "nominal": 45
+    },
+    "output_q": 3,
+    "output_s": 40.0,
+    "consumed_q": 3,
+    "first_plain": 40,
+    "second_plain": 51.1212359777373,
+    "serial_cp_depth": 2,
+    "ordinary_add_unit_muls": 0,
+    "rescale_placement": "Common RS after final reduction, before the fixed-scale consumer.",
+    "dag_nodes": 257
+  },
+  "planned_next_conv": {
+    "source": {
+      "q": 9,
+      "s": 40.00000000086069,
+      "nominal": 41
+    },
+    "output_q": 6,
+    "output_s": 39.999999999999986,
+    "consumed_q": 3,
+    "first_plain": 40,
+    "second_plain": 55.97115401447098,
+    "serial_cp_depth": 2,
+    "ordinary_add_unit_muls": 0,
+    "rescale_placement": "Common RS after final reduction, before the fixed-scale consumer.",
+    "dag_nodes": 257
+  },
+  "baseline_relu_boot_compatible": false,
+  "planned_relu_boot_compatible": true,
+  "planned_relu_then_conv_boot_compatible": true,
+  "baseline_relu_then_conv_total_q": 28,
+  "planned_relu_then_conv_total_q": 25,
+  "scope": "Scale/level feasibility only. No ciphertext accuracy, full-network Boot count, latency, or million-node complexity claim."
+}

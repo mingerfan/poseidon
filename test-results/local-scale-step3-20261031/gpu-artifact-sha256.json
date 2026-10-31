@@ -1,0 +1,30 @@
+{
+  "raw_resnet20": {
+    "path": "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+    "sha256": "d29b1693f705976e75aa02b146251040811418ded92ed2dfe3ce2e6e21350816"
+  },
+  "compiler": {
+    "path": "/home/xuming/poseidon-local-scale-step3-20261031/hecate-opt.real",
+    "sha256": "8e4e9116a0fb60f95833b04acf84e67c5c451378780ec897277bdbbfc1b35233"
+  },
+  "runner": {
+    "path": "/home/xuming/poseidon-local-scale-step3-20261031/bin/resnet20-bench",
+    "sha256": "e4bac526c6963e4040569cab2862026b951538b637ba75f6d24d6ce306e7d54d"
+  },
+  "operator_spec": {
+    "path": "/home/xuming/poseidon-local-scale-step3-20261031/profile/operator-spec.json",
+    "sha256": "f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2"
+  },
+  "public_qp_fixture": {
+    "path": "/home/xuming/poseidon-local-scale-step3-20261031/runtime/tests/fixtures/resnet20-manual-q50.json",
+    "sha256": "f49c67c217af7a684b1e978a683bff12272a8b840241280da06825d20fdd4788"
+  },
+  "baseline_plan": {
+    "path": "/home/xuming/poseidon-local-scale-step3-20261031/baseline-waterline/resnet20._hecate_ResNet20.runtime-plan.bin",
+    "sha256": "002f9df36fb8b0cdcc96a35666d6afdf86ff4ade214cf2bbb55ddfd1a0db405e"
+  },
+  "local_plan": {
+    "path": "/home/xuming/poseidon-local-scale-step3-20261031/local-waterline/resnet20._hecate_ResNet20.runtime-plan.bin",
+    "sha256": "0dc614f29600e36ca1c66d62c60ddc7efde2cdf4deec6a4f13c395c16ff406aa"
+  }
+}

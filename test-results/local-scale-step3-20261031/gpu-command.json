@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/home/xuming/poseidon-local-scale-step3-20261031/bin/resnet20-bench",
+    "/home/xuming/poseidon-local-scale-step3-20261031/baseline-waterline/resnet20._hecate_ResNet20.runtime-plan.bin",
+    "/home/xuming/poseidon-local-scale-step3-20261031/profile/operator-spec.json",
+    "/home/xuming/poseidon-local-scale-step3-20261031/runtime/tests/fixtures/resnet20-manual-q50.json",
+    "/home/xuming/poseidon-local-scale-step3-20261031/baseline-waterline/resnet20._hecate_ResNet20.bundle",
+    "/home/xuming/poseidon-local-scale-step3-20261031/baseline-waterline/gpu-report.json",
+    "3",
+    "/home/xuming/poseidon-local-scale-step3-20261031/local-waterline/resnet20._hecate_ResNet20.runtime-plan.bin",
+    "/home/xuming/poseidon-local-scale-step3-20261031/local-waterline/resnet20._hecate_ResNet20.bundle",
+    "/home/xuming/poseidon-local-scale-step3-20261031/local-waterline/gpu-report.json"
+  ],
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "2",
+    "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB": "28000",
+    "OMP_NUM_THREADS": "4",
+    "POSEIDON_RESNET20_PREPARE_BACKEND": "gpu"
+  }
+}

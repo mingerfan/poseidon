@@ -1,0 +1,560 @@
+{
+  "host": "188Server",
+  "scope": "Frozen compilers before step1, step1 and steps1+2; third-step local policy excluded. Same original ReLU/ResNet20 and actual manual Q50 chain. Input Q31/s40.",
+  "single_relu": {
+    "cumulative_q": [
+      6,
+      14,
+      23,
+      25
+    ],
+    "stages": [
+      "178",
+      "223",
+      "297",
+      "300"
+    ],
+    "physical_results": [
+      {
+        "variant": "before_step1",
+        "returncode": 0,
+        "stages": {
+          "178": {
+            "value": "%245",
+            "q": 25,
+            "consumed_q": 6,
+            "scale": 60.06920315884753
+          },
+          "223": {
+            "value": "%333",
+            "q": 17,
+            "consumed_q": 14,
+            "scale": 41.758471659418916
+          },
+          "297": {
+            "value": "%471",
+            "q": 8,
+            "consumed_q": 23,
+            "scale": 68.82600159449024
+          },
+          "300": {
+            "value": "%477",
+            "q": 6,
+            "consumed_q": 25,
+            "scale": 44.845572038296936
+          }
+        },
+        "plan_stats": {
+          "counts": {
+            "add_cc": 43,
+            "add_cp": 11,
+            "comm": 83,
+            "encode": 82,
+            "mod_switch": 35,
+            "mul_cc": 27,
+            "mul_cp": 72,
+            "negate": 4,
+            "release": 467,
+            "relinearize": 27,
+            "rescale": 94
+          },
+          "output_q": 6,
+          "output_q_sum_by_op": {
+            "add_cc": 765,
+            "add_cp": 210,
+            "mod_switch": 599,
+            "mul_cc": 552,
+            "mul_cp": 1331,
+            "negate": 78,
+            "relinearize": 552,
+            "rescale": 1785
+          },
+          "output_scale": 44.845572038296936,
+          "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/physical-before_step1/one.one_relu.runtime-plan.bin"
+        }
+      },
+      {
+        "variant": "step1",
+        "returncode": 0,
+        "stages": {
+          "178": {
+            "value": "%245",
+            "q": 25,
+            "consumed_q": 6,
+            "scale": 60.06920315884753
+          },
+          "223": {
+            "value": "%333",
+            "q": 17,
+            "consumed_q": 14,
+            "scale": 41.758471659418916
+          },
+          "297": {
+            "value": "%471",
+            "q": 8,
+            "consumed_q": 23,
+            "scale": 68.82600159449024
+          },
+          "300": {
+            "value": "%477",
+            "q": 6,
+            "consumed_q": 25,
+            "scale": 44.845572038296936
+          }
+        },
+        "plan_stats": {
+          "counts": {
+            "add_cc": 43,
+            "add_cp": 11,
+            "comm": 83,
+            "encode": 82,
+            "mod_switch": 35,
+            "mul_cc": 27,
+            "mul_cp": 72,
+            "negate": 4,
+            "release": 467,
+            "relinearize": 27,
+            "rescale": 94
+          },
+          "output_q": 6,
+          "output_q_sum_by_op": {
+            "add_cc": 765,
+            "add_cp": 210,
+            "mod_switch": 599,
+            "mul_cc": 552,
+            "mul_cp": 1331,
+            "negate": 78,
+            "relinearize": 552,
+            "rescale": 1785
+          },
+          "output_scale": 44.845572038296936,
+          "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/physical-step1/one.one_relu.runtime-plan.bin"
+        }
+      },
+      {
+        "variant": "steps12",
+        "returncode": 0,
+        "stages": {
+          "178": {
+            "value": "%245",
+            "q": 25,
+            "consumed_q": 6,
+            "scale": 60.06920315884753
+          },
+          "223": {
+            "value": "%333",
+            "q": 17,
+            "consumed_q": 14,
+            "scale": 41.758471659418916
+          },
+          "297": {
+            "value": "%471",
+            "q": 8,
+            "consumed_q": 23,
+            "scale": 68.82600159449024
+          },
+          "300": {
+            "value": "%477",
+            "q": 6,
+            "consumed_q": 25,
+            "scale": 44.845572038296936
+          }
+        },
+        "plan_stats": {
+          "counts": {
+            "add_cc": 43,
+            "add_cp": 11,
+            "comm": 83,
+            "encode": 82,
+            "mod_switch": 35,
+            "mul_cc": 27,
+            "mul_cp": 72,
+            "negate": 4,
+            "release": 467,
+            "relinearize": 27,
+            "rescale": 94
+          },
+          "output_q": 6,
+          "output_q_sum_by_op": {
+            "add_cc": 765,
+            "add_cp": 210,
+            "mod_switch": 599,
+            "mul_cc": 552,
+            "mul_cp": 1331,
+            "negate": 78,
+            "relinearize": 552,
+            "rescale": 1785
+          },
+          "output_scale": 44.845572038296936,
+          "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/physical-steps12/one.one_relu.runtime-plan.bin"
+        }
+      }
+    ],
+    "frozen_compilers": [
+      {
+        "variant": "before_step1",
+        "returncode": 0,
+        "command": [
+          "/home/xuming/poseidon-scale-state-step1-20261031/baseline/hecate-opt",
+          "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/one-relu-tagged.mlir",
+          "--dacapo-precompile",
+          "--boot-placement=greedy",
+          "--ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/profile/compiler.json",
+          "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/no-boot-diagnostic-spec.json",
+          "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+          "--waterline=40",
+          "--bootstrap-scale=40",
+          "--mlir-disable-threading",
+          "--mlir-print-debuginfo",
+          "--mlir-elide-elementsattrs-if-larger=1",
+          "-o",
+          "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/before_step1.mlir"
+        ],
+        "seconds": 0.04288284294307232,
+        "compiler_sha256": "8d793dc5ce709e88bd7a738c00a32c6c95b6a923ddfa943f69ca0f474658225b",
+        "boot_count": 0,
+        "stages": {
+          "178": {
+            "level": 24,
+            "q": 25,
+            "nominal_scale": 61,
+            "text": "    %89 = \"ckks.addcc\"(%88, %87) : (tensor<1x!ckks.poly<2 * 61 * 24>>, tensor<1x!ckks.poly<2 * 61 * 24>>) -> tensor<1x!ckks.poly<2 * 61 * 24>> loc(#loc44)"
+          },
+          "223": {
+            "level": 16,
+            "q": 17,
+            "nominal_scale": 42,
+            "text": "    %181 = \"ckks.addcc\"(%151, %180) : (tensor<1x!ckks.poly<2 * 42 * 16>>, tensor<1x!ckks.poly<2 * 42 * 16>>) -> tensor<1x!ckks.poly<2 * 42 * 16>> loc(#loc86)"
+          },
+          "297": {
+            "level": 7,
+            "q": 8,
+            "nominal_scale": 69,
+            "text": "    %332 = \"ckks.addcc\"(%331, %329) : (tensor<1x!ckks.poly<2 * 69 * 7>>, tensor<1x!ckks.poly<2 * 69 * 7>>) -> tensor<1x!ckks.poly<2 * 69 * 7>> loc(#loc155)"
+          },
+          "300": {
+            "level": 5,
+            "q": 6,
+            "nominal_scale": 45,
+            "text": "    %339 = \"ckks.rescalec\"(%338) : (tensor<1x!ckks.poly<2 * 77 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 5>> loc(#loc158)"
+          }
+        }
+      },
+      {
+        "variant": "step1",
+        "returncode": 0,
+        "command": [
+          "/home/xuming/poseidon-scale-state-step1-20261031/bin/hecate-opt",
+          "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/one-relu-tagged.mlir",
+          "--dacapo-precompile",
+          "--boot-placement=greedy",
+          "--ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/profile/compiler.json",
+          "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/no-boot-diagnostic-spec.json",
+          "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+          "--waterline=40",
+          "--bootstrap-scale=40",
+          "--mlir-disable-threading",
+          "--mlir-print-debuginfo",
+          "--mlir-elide-elementsattrs-if-larger=1",
+          "-o",
+          "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/step1.mlir"
+        ],
+        "seconds": 0.04239567299373448,
+        "compiler_sha256": "4e880febe0ad994bf092122ab67125bcfd1ac70e00dd836ec003c2b581a80f9a",
+        "boot_count": 0,
+        "stages": {
+          "178": {
+            "level": 24,
+            "q": 25,
+            "nominal_scale": 61,
+            "text": "    %89 = \"ckks.addcc\"(%88, %87) : (tensor<1x!ckks.poly<2 * 61 * 24>>, tensor<1x!ckks.poly<2 * 61 * 24>>) -> tensor<1x!ckks.poly<2 * 61 * 24>> loc(#loc44)"
+          },
+          "223": {
+            "level": 16,
+            "q": 17,
+            "nominal_scale": 42,
+            "text": "    %181 = \"ckks.addcc\"(%151, %180) : (tensor<1x!ckks.poly<2 * 42 * 16>>, tensor<1x!ckks.poly<2 * 42 * 16>>) -> tensor<1x!ckks.poly<2 * 42 * 16>> loc(#loc86)"
+          },
+          "297": {
+            "level": 7,
+            "q": 8,
+            "nominal_scale": 69,
+            "text": "    %332 = \"ckks.addcc\"(%331, %329) : (tensor<1x!ckks.poly<2 * 69 * 7>>, tensor<1x!ckks.poly<2 * 69 * 7>>) -> tensor<1x!ckks.poly<2 * 69 * 7>> loc(#loc155)"
+          },
+          "300": {
+            "level": 5,
+            "q": 6,
+            "nominal_scale": 45,
+            "text": "    %339 = \"ckks.rescalec\"(%338) : (tensor<1x!ckks.poly<2 * 77 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 5>> loc(#loc158)"
+          }
+        }
+      },
+      {
+        "variant": "steps12",
+        "returncode": 0,
+        "command": [
+          "/home/xuming/poseidon-reduction-rs-step2-20261031/bin/hecate-opt",
+          "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/one-relu-tagged.mlir",
+          "--dacapo-precompile",
+          "--boot-placement=greedy",
+          "--ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/profile/compiler.json",
+          "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/no-boot-diagnostic-spec.json",
+          "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+          "--waterline=40",
+          "--bootstrap-scale=40",
+          "--mlir-disable-threading",
+          "--mlir-print-debuginfo",
+          "--mlir-elide-elementsattrs-if-larger=1",
+          "-o",
+          "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/steps12.mlir"
+        ],
+        "seconds": 0.04010814696084708,
+        "compiler_sha256": "a71c75b324937a34af3d34afc636b3f80d4e6f867a5d9bdfc2a53bdf31117b21",
+        "boot_count": 0,
+        "stages": {
+          "178": {
+            "level": 24,
+            "q": 25,
+            "nominal_scale": 61,
+            "text": "    %89 = \"ckks.addcc\"(%88, %87) : (tensor<1x!ckks.poly<2 * 61 * 24>>, tensor<1x!ckks.poly<2 * 61 * 24>>) -> tensor<1x!ckks.poly<2 * 61 * 24>> loc(#loc44)"
+          },
+          "223": {
+            "level": 16,
+            "q": 17,
+            "nominal_scale": 42,
+            "text": "    %181 = \"ckks.addcc\"(%151, %180) : (tensor<1x!ckks.poly<2 * 42 * 16>>, tensor<1x!ckks.poly<2 * 42 * 16>>) -> tensor<1x!ckks.poly<2 * 42 * 16>> loc(#loc86)"
+          },
+          "297": {
+            "level": 7,
+            "q": 8,
+            "nominal_scale": 69,
+            "text": "    %332 = \"ckks.addcc\"(%331, %329) : (tensor<1x!ckks.poly<2 * 69 * 7>>, tensor<1x!ckks.poly<2 * 69 * 7>>) -> tensor<1x!ckks.poly<2 * 69 * 7>> loc(#loc155)"
+          },
+          "300": {
+            "level": 5,
+            "q": 6,
+            "nominal_scale": 45,
+            "text": "    %339 = \"ckks.rescalec\"(%338) : (tensor<1x!ckks.poly<2 * 77 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 5>> loc(#loc158)"
+          }
+        }
+      }
+    ]
+  },
+  "full_resnet20": [
+    {
+      "variant": "before_step1",
+      "returncode": 0,
+      "seconds": 198.59672343195416,
+      "compiler_sha256": "8d793dc5ce709e88bd7a738c00a32c6c95b6a923ddfa943f69ca0f474658225b",
+      "plan_sha256": "2bec28dcf97fda53b23af30e1f08dfe5c26379bd91df5c51337d67d0cab706d4",
+      "plan_stats": {
+        "counts": {
+          "add_cc": 3677,
+          "add_cp": 229,
+          "boot": 27,
+          "comm": 3223,
+          "encode": 3222,
+          "mod_switch": 733,
+          "mul_cc": 513,
+          "mul_cp": 3599,
+          "negate": 76,
+          "release": 21657,
+          "relinearize": 513,
+          "rescale": 4397,
+          "rotate": 1709
+        },
+        "output_q": 10,
+        "output_q_sum_by_op": {
+          "add_cc": 69408,
+          "add_cp": 5057,
+          "boot": 837,
+          "mod_switch": 14663,
+          "mul_cc": 11961,
+          "mul_cp": 73332,
+          "negate": 1768,
+          "relinearize": 11961,
+          "rescale": 86738,
+          "rotate": 31893
+        },
+        "output_scale": 66.9485344932141,
+        "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/full-before_step1/resnet20._hecate_ResNet20.runtime-plan.bin"
+      }
+    },
+    {
+      "variant": "steps12",
+      "returncode": 0,
+      "seconds": 196.1482888329774,
+      "compiler_sha256": "a71c75b324937a34af3d34afc636b3f80d4e6f867a5d9bdfc2a53bdf31117b21",
+      "plan_sha256": "6b24ede94c054917ee9c61f3a8bed3d9e85ea9c3c141adaa8cfeae4a9e985bee",
+      "plan_stats": {
+        "counts": {
+          "add_cc": 3677,
+          "add_cp": 229,
+          "boot": 27,
+          "comm": 3223,
+          "encode": 3222,
+          "mod_switch": 733,
+          "mul_cc": 513,
+          "mul_cp": 3599,
+          "negate": 76,
+          "release": 19398,
+          "relinearize": 513,
+          "rescale": 2138,
+          "rotate": 1709
+        },
+        "output_q": 10,
+        "output_q_sum_by_op": {
+          "add_cc": 71667,
+          "add_cp": 5057,
+          "boot": 837,
+          "mod_switch": 14663,
+          "mul_cc": 11961,
+          "mul_cp": 73332,
+          "negate": 1768,
+          "relinearize": 11961,
+          "rescale": 45224,
+          "rotate": 31893
+        },
+        "output_scale": 66.9485344932141,
+        "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/full-steps12/resnet20._hecate_ResNet20.runtime-plan.bin"
+      }
+    }
+  ],
+  "local_policy_cause": {
+    "first_extra_node": "raw-159 in P1",
+    "incoming_a": {
+      "q": 27,
+      "s": 50.02293113169129
+    },
+    "incoming_b": {
+      "q": 27,
+      "s": 40.01482113103983
+    },
+    "target_scale": 50.02293113169129,
+    "one_rs_unit_encoding": 39.99697217478894,
+    "required_unit_encoding_floor": 40,
+    "two_rs_unit_encoding": 69.9847691051865,
+    "result": {
+      "q": 25,
+      "s": 50.02293113169129
+    },
+    "explanation": "One-RS unit encoding 39.996972 is excluded by the newly imposed 40-bit floor. Retuning is blocked by candidate cuts; two RS are emitted and the other branch loses the same two Q through ModSwitch.",
+    "ablations": [
+      {
+        "name": "unit40-cp-adaptive",
+        "unit_encoding_floor": 40,
+        "initial_cp_candidates": "adaptive",
+        "returncode": 0,
+        "stages": {
+          "159": {
+            "consumed_q": 6,
+            "scale": 50.02293113169129
+          },
+          "178": {
+            "consumed_q": 8,
+            "scale": 40.07577950336464
+          },
+          "223": {
+            "consumed_q": 15,
+            "scale": 41.5718720223753
+          },
+          "297": {
+            "consumed_q": 26,
+            "scale": 63.15555764413701
+          },
+          "300": {
+            "consumed_q": 27,
+            "scale": 71.16678421129131
+          }
+        },
+        "matches_production_local_control": true
+      },
+      {
+        "name": "unit40-cp-natural",
+        "unit_encoding_floor": 40,
+        "initial_cp_candidates": "natural_only",
+        "returncode": 0,
+        "stages": {
+          "159": {
+            "consumed_q": 6,
+            "scale": 50.02293113169129
+          },
+          "178": {
+            "consumed_q": 8,
+            "scale": 40.07577950336464
+          },
+          "223": {
+            "consumed_q": 15,
+            "scale": 41.5718720223753
+          },
+          "297": {
+            "consumed_q": 26,
+            "scale": 63.15555764413701
+          },
+          "300": {
+            "consumed_q": 27,
+            "scale": 71.16678421129131
+          }
+        }
+      },
+      {
+        "name": "unit30-cp-adaptive",
+        "unit_encoding_floor": 30,
+        "initial_cp_candidates": "adaptive",
+        "returncode": 0,
+        "stages": {
+          "159": {
+            "consumed_q": 5,
+            "scale": 50.02293113169129
+          },
+          "178": {
+            "consumed_q": 7,
+            "scale": 40.07275703437179
+          },
+          "223": {
+            "consumed_q": 14,
+            "scale": 41.4781578227291
+          },
+          "297": {
+            "consumed_q": 25,
+            "scale": 40.00000000001002
+          },
+          "300": {
+            "consumed_q": 26,
+            "scale": 48.01029506639092
+          }
+        }
+      },
+      {
+        "name": "unit30-cp-natural",
+        "unit_encoding_floor": 30,
+        "initial_cp_candidates": "natural_only",
+        "returncode": 0,
+        "stages": {
+          "159": {
+            "consumed_q": 5,
+            "scale": 50.02293113169129
+          },
+          "178": {
+            "consumed_q": 7,
+            "scale": 40.07275703437179
+          },
+          "223": {
+            "consumed_q": 14,
+            "scale": 41.4781578227291
+          },
+          "297": {
+            "consumed_q": 25,
+            "scale": 40.00000000001002
+          },
+          "300": {
+            "consumed_q": 26,
+            "scale": 48.01029506639092
+          }
+        }
+      }
+    ],
+    "ablation_scope": "Unit-floor and initial-CP-candidate changes are confined to a diagnostic driver; not production changes and not GPU accuracy validation."
+  },
+  "conclusion": "Stages1+2 do not increase measured region depth or whole-network Boot count. Stage2 removes 2259 RS operations while retaining output Q/scale. Local stage3 regression includes tighter unit-encoding constraints and limited/blocked planning; lowering unit floor alone changes 27Q to 26Q and does not recover baseline25Q."
+}

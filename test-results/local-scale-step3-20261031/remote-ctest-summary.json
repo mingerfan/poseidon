@@ -1,0 +1,86 @@
+[
+  {
+    "name": "DacapoModulusChain",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoLocalScalePlanning",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoLocalScaleGraphs",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoReductionRescales",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoNativePlanning",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoPolynomialArithmetic",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoThresholdGraphs",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoNativeScale40",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoNativeScale45",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoRuntimePlanBinary",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoRuntimePlanIO",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoUnitPlaintext",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoRuntimeScale",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoFrontendLocations",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoGreedyBootstrap",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoManualPrecompile",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoRuntimePlanPipeline",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoRuntimeMemory",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoPlaintextWaterline",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoOptimizedNativeScale45",
+    "returncode": 0
+  },
+  {
+    "name": "DacapoOptimizedSchedule",
+    "returncode": 0
+  }
+]

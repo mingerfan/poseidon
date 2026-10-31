@@ -1,0 +1,23 @@
+	Command being timed: "/home/xuming/poseidon-local-scale-step3-20261031/bin/hecate-opt --ckks-config=/home/xuming/poseidon-local-scale-step3-20261031/why-boots/real-local-benchmark/config.json --runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-local-scale-step3-20261031/why-boots/real-local-benchmark/spec.json --runtime-plan-boot-profile=local40 --native-scale-policy=local --dacapo-precompile --boot-placement=greedy --waterline=40 --bootstrap-scale=40 --mlir-disable-threading /home/xuming/poseidon-local-scale-step3-20261031/why-boots/real-local-benchmark/250000.input.mlir --mlir-timing -o /dev/null"
+	User time (seconds): 20.00
+	System time (seconds): 0.35
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:20.36
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 480556
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 204042
+	Voluntary context switches: 1
+	Involuntary context switches: 62
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

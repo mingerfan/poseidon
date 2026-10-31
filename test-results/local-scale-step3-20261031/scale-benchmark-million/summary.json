@@ -1,0 +1,9 @@
+[
+  {
+    "products": 500000,
+    "raw_instructions": 1000000,
+    "wall_seconds": 20.431595714064315,
+    "pass_seconds": 4.2198,
+    "max_rss_kib": 902000
+  }
+]

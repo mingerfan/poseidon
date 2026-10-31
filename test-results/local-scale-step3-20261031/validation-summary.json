@@ -1,0 +1,260 @@
+{
+  "stage": 3,
+  "host": "188Server (HPU-001)",
+  "remote_directory": "/home/xuming/poseidon-local-scale-step3-20261031",
+  "scale_policy": "local (opt-in)",
+  "boot_placement": "optimized (unchanged)",
+  "modulus_chain": "same manual Q50/P25 actual-prime fixture",
+  "compiler_latency_tables": "placeholders; compiler estimated latency is not measured GPU latency",
+  "native_artifact_checks_passed": 18,
+  "manual_boot_checks_passed": 9,
+  "native_budget_checks_passed": 15,
+  "local_graphs_passed": 27,
+  "mixed_chain_state_replays_passed": 1152,
+  "ctest_excluded": [
+    "DacapoFrontendBytecode"
+  ],
+  "benchmark_scope": "Real native DaCapo greedy path. Pass timing includes local scale management and greedy liveness/Boot bookkeeping; wall timing includes parsing, lowering, CSE/canonicalization and output. Mode activation explicitly verified by a probe.",
+  "benchmark": [
+    {
+      "products": 2500,
+      "raw_instructions": 5000,
+      "native_local_policy_verified": true,
+      "pass_scope": "GreedyBootstrapPlacement: local management and greedy liveness/Boot bookkeeping",
+      "wall_seconds": 0.2158882529474795,
+      "pass_seconds": 0.0703,
+      "max_rss_kib": 51444
+    },
+    {
+      "products": 25000,
+      "raw_instructions": 50000,
+      "native_local_policy_verified": true,
+      "pass_scope": "GreedyBootstrapPlacement: local management and greedy liveness/Boot bookkeeping",
+      "wall_seconds": 1.7696308749727905,
+      "pass_seconds": 0.5863,
+      "max_rss_kib": 91128
+    },
+    {
+      "products": 250000,
+      "raw_instructions": 500000,
+      "native_local_policy_verified": true,
+      "pass_scope": "GreedyBootstrapPlacement: local management and greedy liveness/Boot bookkeeping",
+      "wall_seconds": 20.37195735401474,
+      "pass_seconds": 6.3408,
+      "max_rss_kib": 480556
+    },
+    {
+      "products": 500000,
+      "raw_instructions": 1000000,
+      "native_local_policy_verified": true,
+      "pass_scope": "GreedyBootstrapPlacement: local management and greedy liveness/Boot bookkeeping",
+      "wall_seconds": 40.92764389899094,
+      "pass_seconds": 12.7519,
+      "max_rss_kib": 900624
+    }
+  ],
+  "plans": [
+    {
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 27,
+        "comm": 3223,
+        "encode": 3222,
+        "mod_switch": 733,
+        "mul_cc": 513,
+        "mul_cp": 3599,
+        "negate": 76,
+        "release": 19398,
+        "relinearize": 513,
+        "rescale": 2138,
+        "rotate": 1709
+      },
+      "output_q": 10,
+      "output_q_sum_by_op": {
+        "add_cc": 71667,
+        "add_cp": 5057,
+        "boot": 837,
+        "mod_switch": 14663,
+        "mul_cc": 11961,
+        "mul_cp": 73332,
+        "negate": 1768,
+        "relinearize": 11961,
+        "rescale": 45224,
+        "rotate": 31893
+      },
+      "output_scale": 66.9485344932141,
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/baseline/resnet20._hecate_ResNet20.runtime-plan.bin"
+    },
+    {
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 28,
+        "comm": 2612,
+        "encode": 2611,
+        "mod_switch": 761,
+        "mul_cc": 513,
+        "mul_cp": 3420,
+        "negate": 76,
+        "release": 18909,
+        "relinearize": 513,
+        "rescale": 3021,
+        "rotate": 1709
+      },
+      "output_q": 8,
+      "output_q_sum_by_op": {
+        "add_cc": 62347,
+        "add_cp": 4820,
+        "boot": 868,
+        "mod_switch": 16148,
+        "mul_cc": 11672,
+        "mul_cp": 63816,
+        "negate": 1874,
+        "relinearize": 11672,
+        "rescale": 62478,
+        "rotate": 26258
+      },
+      "output_scale": 70.75934469421497,
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/local/resnet20._hecate_ResNet20.runtime-plan.bin"
+    }
+  ],
+  "gpu_status": "complete; no validated speedup claim",
+  "remote_regressions": {
+    "passed": 21,
+    "failed": 0
+  },
+  "final_compiler_sha256": "8e4e9116a0fb60f95833b04acf84e67c5c451378780ec897277bdbbfc1b35233",
+  "gpu_physical_device": 2,
+  "gpu_conditions": "Same process/context/keys/manual native Boot, GPU preparation via Waterline, correct 4x4096-slot packing, three sequential runs per plan; initialization excluded",
+  "benchmark_compiler_sha256": "8e4e9116a0fb60f95833b04acf84e67c5c451378780ec897277bdbbfc1b35233",
+  "final_plan_reexport": {
+    "returncode": 0,
+    "seconds": 236.01142204995267,
+    "same_plan_as_gpu_comparison": true
+  },
+  "implementation_complete": true,
+  "full_network_validation_passed": false,
+  "gpu_precision_gate": {
+    "max_absolute_error": 0.001,
+    "max_imaginary": 0.001,
+    "defined_by": "benchmark harness; not a user-supplied requirement"
+  },
+  "gpu_reference": "full-slot real arithmetic plus manual Boot sine map; deterministic packed input, not CIFAR classification accuracy",
+  "gpu_measurements": [
+    {
+      "variant": "baseline-waterline",
+      "passed": false,
+      "online_seconds": [
+        26.426604157,
+        30.00640741,
+        43.779576987
+      ],
+      "online_median_seconds": 30.00640741,
+      "total_runtime_median_seconds": 30.126084491,
+      "max_absolute_error": 7.260433343203064e+77,
+      "max_imaginary": 8.372946677052629e+77,
+      "reference_max_abs": 12.030521749247866,
+      "boot_calls": [
+        27,
+        27,
+        27
+      ]
+    },
+    {
+      "variant": "local-waterline",
+      "passed": false,
+      "online_seconds": [
+        50.997027757000005,
+        53.213799337,
+        55.277772403
+      ],
+      "online_median_seconds": 53.213799337,
+      "total_runtime_median_seconds": 53.331313118,
+      "max_absolute_error": 0.001329530121264355,
+      "max_imaginary": 4.931060007423951e-06,
+      "reference_max_abs": 12.067905352652145,
+      "boot_calls": [
+        28,
+        28,
+        28
+      ]
+    }
+  ],
+  "gpu_interpretation": "Both fail the harness absolute-error gate. Observed GPU clock drift (setup ~1290 MHz; inference 495/615/712 MHz at ~82 C) prevents a fair latency comparison. No speedup percentage is asserted.",
+  "plaintext_contents": {
+    "same_plaintext_contents": true,
+    "baseline_contents": 2258,
+    "local_contents": 2258,
+    "content_set_sha256": "9997f9c219ff49f9b8be397866f09c192b86363b309c251fe2e2ddbb9364249b"
+  },
+  "artifact_sha256": {
+    "raw_resnet20": {
+      "path": "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+      "sha256": "d29b1693f705976e75aa02b146251040811418ded92ed2dfe3ce2e6e21350816"
+    },
+    "compiler": {
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/hecate-opt.real",
+      "sha256": "8e4e9116a0fb60f95833b04acf84e67c5c451378780ec897277bdbbfc1b35233"
+    },
+    "runner": {
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/bin/resnet20-bench",
+      "sha256": "e4bac526c6963e4040569cab2862026b951538b637ba75f6d24d6ce306e7d54d"
+    },
+    "operator_spec": {
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/profile/operator-spec.json",
+      "sha256": "f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2"
+    },
+    "public_qp_fixture": {
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/runtime/tests/fixtures/resnet20-manual-q50.json",
+      "sha256": "f49c67c217af7a684b1e978a683bff12272a8b840241280da06825d20fdd4788"
+    },
+    "baseline_plan": {
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/baseline-waterline/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "sha256": "002f9df36fb8b0cdcc96a35666d6afdf86ff4ade214cf2bbb55ddfd1a0db405e"
+    },
+    "local_plan": {
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/local-waterline/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "sha256": "0dc614f29600e36ca1c66d62c60ddc7efde2cdf4deec6a4f13c395c16ff406aa"
+    }
+  },
+  "withdrawn_benchmark": {
+    "reason": "The custom proactive-rescaling pipeline did not initialize native parameters, so the local policy was not active. Previous 4.30s claim withdrawn.",
+    "rows": [
+      {
+        "products": 2500,
+        "raw_instructions": 5000,
+        "wall_seconds": 0.16600321792066097,
+        "pass_seconds": 0.0206,
+        "max_rss_kib": 50228
+      },
+      {
+        "products": 25000,
+        "raw_instructions": 50000,
+        "wall_seconds": 0.9675643590744585,
+        "pass_seconds": 0.1798,
+        "max_rss_kib": 89164
+      },
+      {
+        "products": 250000,
+        "raw_instructions": 500000,
+        "wall_seconds": 9.545956610003486,
+        "pass_seconds": 2.003,
+        "max_rss_kib": 460032
+      },
+      {
+        "products": 500000,
+        "raw_instructions": 1000000,
+        "wall_seconds": 20.43184741504956,
+        "pass_seconds": 4.2972,
+        "max_rss_kib": 902140
+      }
+    ]
+  },
+  "level_optimization_accepted": false,
+  "level_diagnostic": "why-boots/summary.json",
+  "stages12_ablation": "ablate-stages12/summary.json",
+  "stages12_level_regression_detected": false,
+  "current_source_status": "Step3 source and benchmark rolled back at user request; historical measurements retained.",
+  "rollback_and_new_simulation": "../multiplication-scale-simulation-20261031/summary.json"
+}

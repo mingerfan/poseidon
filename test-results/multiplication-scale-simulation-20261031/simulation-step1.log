@@ -1,0 +1,3 @@
+{"stage": "P1(d15)", "exit_states": 31, "best_q": 25, "requests": 1933}
+{"stage": "P2(d15)", "exit_states": 31, "best_q": 19, "requests": 74942}
+{"baseline_q": 25, "before_mul_only_q": 24, "backward_q": 23, "output": {"q": 8, "s": 39.99999999953289, "nominal": 40}, "seconds": 0.7972073879791424}

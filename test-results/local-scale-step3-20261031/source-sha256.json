@@ -1,0 +1,21 @@
+{
+  "test/CMakeLists.txt": "ba24db2acbe5b6757b61e55ef3cac65e46f4f52513d4fd2c057259a68ac0e7bb",
+  "include/hecate/Dialect/Earth/IR/EarthOps.h": "780f449dd82d649da51addf3dced9c7c511990dfdc0b040a11b9cf322235b729",
+  "include/hecate/Dialect/CKKS/IR/CKKSOps.td": "07d6bdeb88c5d6d7becc84c37c335ef237ab5ed10aa9b40a034419d466bc1be1",
+  "lib/Dialect/CKKS/IR/CKKSDialect.cpp": "0ddd00f778600cc14e497be0fb4911aef626fd5cde897e6878764e8200b13fb8",
+  "lib/Dialect/Earth/Transforms/CMakeLists.txt": "390a9511daf32d3b5b50d3e0d47f9b52418bad90b5dcf40262e07fa118f04636",
+  "lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp": "71e33050ecf66d31ee1ce4958ebb0e45f860acb34f4cccd157288bc77cbefe94",
+  "lib/Dialect/Earth/Transforms/BypassDetection.cpp": "75b9cc67b69491b705bb9d705dde741df164e83acb078919c9621b3cfe027da2",
+  "lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp": "35428ea51e97855fc0e5657969f4db86d2beda4be72d34de05df45751db05cf9",
+  "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "97b29b842d2db17083e43a778ee05277c6717e068b277e596a6a0b5c03b57abd",
+  "lib/Dialect/Earth/Transforms/Common.cpp": "a6006baa90271a964ecfa01cd5a6402bff46e47506d482ab6dc2e6fc7564d256",
+  "lib/Dialect/Earth/IR/EarthDialect.cpp": "62ea18e9569c3b048fabe6f086f8df1a65b498bda28f13af6fa6cc0242fe99f6",
+  "lib/Conversion/CKKSToCKKS/UpscaleToMulcp.cpp": "96b71a8cb353255eb5622ed2fb2fce2507941cd63ef39ee31f9fbeec047ab79f",
+  "lib/Conversion/EarthToCKKS/EarthToCKKS.cpp": "30aa223621ec2af451daf6fe439946f34c9031a9207858e3134b2eca397e2fdb",
+  "include/hecate/Support/LocalScalePlanning.h": "30247c199f7c47e61fea6f8057b7cb990df7adfda04901ecadba4bb5c00783d4",
+  "include/hecate/Dialect/Earth/Transforms/LocalScalePlanning.h": "1b2f3a01042d3ef873fd53cd83a39a5dfd7eb125376baef31e275e6c821a3e14",
+  "lib/Dialect/Earth/Transforms/LocalScalePlanning.cpp": "896b10c18b07a2f6641213d212564634beaf9a5450915df8124ac1f463839dd1",
+  "test/Support/LocalScalePlanningTest.cpp": "3fba28e7b559eb7c3246c1fbaf1e54f7a22675ce926c2b7512beefeff2888179",
+  "test/runtime-plan/check-local-scale.py": "3ae21cd5fa02753dc44401b6a237abea9d4618117ab024ddaf30adbece226322",
+  "test/runtime-plan/benchmark-local-scale.py": "3242ec71e5837656ddfdf34abcf701cff731161bee570dae565fbdb0a5491271"
+}

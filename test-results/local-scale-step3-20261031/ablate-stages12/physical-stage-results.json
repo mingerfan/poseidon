@@ -1,0 +1,176 @@
+[
+  {
+    "variant": "before_step1",
+    "returncode": 0,
+    "stages": {
+      "178": {
+        "value": "%245",
+        "q": 25,
+        "consumed_q": 6,
+        "scale": 60.06920315884753
+      },
+      "223": {
+        "value": "%333",
+        "q": 17,
+        "consumed_q": 14,
+        "scale": 41.758471659418916
+      },
+      "297": {
+        "value": "%471",
+        "q": 8,
+        "consumed_q": 23,
+        "scale": 68.82600159449024
+      },
+      "300": {
+        "value": "%477",
+        "q": 6,
+        "consumed_q": 25,
+        "scale": 44.845572038296936
+      }
+    },
+    "plan_stats": {
+      "counts": {
+        "add_cc": 43,
+        "add_cp": 11,
+        "comm": 83,
+        "encode": 82,
+        "mod_switch": 35,
+        "mul_cc": 27,
+        "mul_cp": 72,
+        "negate": 4,
+        "release": 467,
+        "relinearize": 27,
+        "rescale": 94
+      },
+      "output_q": 6,
+      "output_q_sum_by_op": {
+        "add_cc": 765,
+        "add_cp": 210,
+        "mod_switch": 599,
+        "mul_cc": 552,
+        "mul_cp": 1331,
+        "negate": 78,
+        "relinearize": 552,
+        "rescale": 1785
+      },
+      "output_scale": 44.845572038296936,
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/physical-before_step1/one.one_relu.runtime-plan.bin"
+    }
+  },
+  {
+    "variant": "step1",
+    "returncode": 0,
+    "stages": {
+      "178": {
+        "value": "%245",
+        "q": 25,
+        "consumed_q": 6,
+        "scale": 60.06920315884753
+      },
+      "223": {
+        "value": "%333",
+        "q": 17,
+        "consumed_q": 14,
+        "scale": 41.758471659418916
+      },
+      "297": {
+        "value": "%471",
+        "q": 8,
+        "consumed_q": 23,
+        "scale": 68.82600159449024
+      },
+      "300": {
+        "value": "%477",
+        "q": 6,
+        "consumed_q": 25,
+        "scale": 44.845572038296936
+      }
+    },
+    "plan_stats": {
+      "counts": {
+        "add_cc": 43,
+        "add_cp": 11,
+        "comm": 83,
+        "encode": 82,
+        "mod_switch": 35,
+        "mul_cc": 27,
+        "mul_cp": 72,
+        "negate": 4,
+        "release": 467,
+        "relinearize": 27,
+        "rescale": 94
+      },
+      "output_q": 6,
+      "output_q_sum_by_op": {
+        "add_cc": 765,
+        "add_cp": 210,
+        "mod_switch": 599,
+        "mul_cc": 552,
+        "mul_cp": 1331,
+        "negate": 78,
+        "relinearize": 552,
+        "rescale": 1785
+      },
+      "output_scale": 44.845572038296936,
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/physical-step1/one.one_relu.runtime-plan.bin"
+    }
+  },
+  {
+    "variant": "steps12",
+    "returncode": 0,
+    "stages": {
+      "178": {
+        "value": "%245",
+        "q": 25,
+        "consumed_q": 6,
+        "scale": 60.06920315884753
+      },
+      "223": {
+        "value": "%333",
+        "q": 17,
+        "consumed_q": 14,
+        "scale": 41.758471659418916
+      },
+      "297": {
+        "value": "%471",
+        "q": 8,
+        "consumed_q": 23,
+        "scale": 68.82600159449024
+      },
+      "300": {
+        "value": "%477",
+        "q": 6,
+        "consumed_q": 25,
+        "scale": 44.845572038296936
+      }
+    },
+    "plan_stats": {
+      "counts": {
+        "add_cc": 43,
+        "add_cp": 11,
+        "comm": 83,
+        "encode": 82,
+        "mod_switch": 35,
+        "mul_cc": 27,
+        "mul_cp": 72,
+        "negate": 4,
+        "release": 467,
+        "relinearize": 27,
+        "rescale": 94
+      },
+      "output_q": 6,
+      "output_q_sum_by_op": {
+        "add_cc": 765,
+        "add_cp": 210,
+        "mod_switch": 599,
+        "mul_cc": 552,
+        "mul_cp": 1331,
+        "negate": 78,
+        "relinearize": 552,
+        "rescale": 1785
+      },
+      "output_scale": 44.845572038296936,
+      "path": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/physical-steps12/one.one_relu.runtime-plan.bin"
+    }
+  }
+]

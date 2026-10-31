@@ -1,0 +1,115 @@
+[
+  {
+    "name": "unit40-cp-adaptive",
+    "unit_encoding_floor": 40,
+    "initial_cp_candidates": "adaptive",
+    "returncode": 0,
+    "stages": {
+      "159": {
+        "consumed_q": 6,
+        "scale": 50.02293113169129
+      },
+      "178": {
+        "consumed_q": 8,
+        "scale": 40.07577950336464
+      },
+      "223": {
+        "consumed_q": 15,
+        "scale": 41.5718720223753
+      },
+      "297": {
+        "consumed_q": 26,
+        "scale": 63.15555764413701
+      },
+      "300": {
+        "consumed_q": 27,
+        "scale": 71.16678421129131
+      }
+    },
+    "matches_production_local_control": true
+  },
+  {
+    "name": "unit40-cp-natural",
+    "unit_encoding_floor": 40,
+    "initial_cp_candidates": "natural_only",
+    "returncode": 0,
+    "stages": {
+      "159": {
+        "consumed_q": 6,
+        "scale": 50.02293113169129
+      },
+      "178": {
+        "consumed_q": 8,
+        "scale": 40.07577950336464
+      },
+      "223": {
+        "consumed_q": 15,
+        "scale": 41.5718720223753
+      },
+      "297": {
+        "consumed_q": 26,
+        "scale": 63.15555764413701
+      },
+      "300": {
+        "consumed_q": 27,
+        "scale": 71.16678421129131
+      }
+    }
+  },
+  {
+    "name": "unit30-cp-adaptive",
+    "unit_encoding_floor": 30,
+    "initial_cp_candidates": "adaptive",
+    "returncode": 0,
+    "stages": {
+      "159": {
+        "consumed_q": 5,
+        "scale": 50.02293113169129
+      },
+      "178": {
+        "consumed_q": 7,
+        "scale": 40.07275703437179
+      },
+      "223": {
+        "consumed_q": 14,
+        "scale": 41.4781578227291
+      },
+      "297": {
+        "consumed_q": 25,
+        "scale": 40.00000000001002
+      },
+      "300": {
+        "consumed_q": 26,
+        "scale": 48.01029506639092
+      }
+    }
+  },
+  {
+    "name": "unit30-cp-natural",
+    "unit_encoding_floor": 30,
+    "initial_cp_candidates": "natural_only",
+    "returncode": 0,
+    "stages": {
+      "159": {
+        "consumed_q": 5,
+        "scale": 50.02293113169129
+      },
+      "178": {
+        "consumed_q": 7,
+        "scale": 40.07275703437179
+      },
+      "223": {
+        "consumed_q": 14,
+        "scale": 41.4781578227291
+      },
+      "297": {
+        "consumed_q": 25,
+        "scale": 40.00000000001002
+      },
+      "300": {
+        "consumed_q": 26,
+        "scale": 48.01029506639092
+      }
+    }
+  }
+]

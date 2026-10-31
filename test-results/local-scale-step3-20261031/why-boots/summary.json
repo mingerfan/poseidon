@@ -1,0 +1,149 @@
+{
+  "input": {
+    "q": 31,
+    "scale_log2": 40
+  },
+  "modulus_chain": "Unchanged manual Q50/P25 actual Q array",
+  "scope": "No internal Boot; isolated ReLU. Diagnostic driver only initializes native parameters and relaxes the arithmetic stopping lower bound to measure the full depth. These over-budget traces are not deployable plans.",
+  "manual_reference": {
+    "source": "test-results/resnet20-scale-trace-20261027/comparison.md (archived manual trace)",
+    "cumulative_q": [
+      6,
+      12,
+      19,
+      22
+    ],
+    "scales": [
+      40.1,
+      44.0,
+      89.871122,
+      40.0
+    ]
+  },
+  "variants": [
+    {
+      "policy": "threshold",
+      "returncode": 0,
+      "native_policy_activated": true,
+      "stages": {
+        "178": {
+          "tag": "178",
+          "scale": 60.06920315884753,
+          "consumed_q": 6,
+          "q": 25,
+          "text": "    %80 = \"earth.add\"(%78, %79) {earth.actual_scale = 60.069203158847529 : f64} : (tensor<1x!earth.ci<61 * 6>>, tensor<1x!earth.ci<61 * 6>>) -> tensor<1x!earth.ci<61 * 6>> loc(#loc44)"
+        },
+        "223": {
+          "tag": "223",
+          "scale": 41.758471659418916,
+          "consumed_q": 14,
+          "q": 17,
+          "text": "    %163 = \"earth.add\"(%135, %162) {earth.actual_scale = 41.758471659418916 : f64} : (tensor<1x!earth.ci<42 * 14>>, tensor<1x!earth.ci<42 * 14>>) -> tensor<1x!earth.ci<42 * 14>> loc(#loc86)"
+        },
+        "297": {
+          "tag": "297",
+          "scale": 68.82600159449024,
+          "consumed_q": 23,
+          "q": 8,
+          "text": "    %302 = \"earth.add\"(%300, %301) {earth.actual_scale = 68.826001594490236 : f64} : (tensor<1x!earth.ci<69 * 23>>, tensor<1x!earth.ci<69 * 23>>) -> tensor<1x!earth.ci<69 * 23>> loc(#loc155)"
+        },
+        "300": {
+          "tag": "300",
+          "scale": 44.845572038296936,
+          "consumed_q": 25,
+          "q": 6,
+          "text": "    %308 = \"earth.rescale\"(%307) {earth.actual_scale = 44.845572038296936 : f64} : (tensor<1x!earth.ci<77 * 24>>) -> tensor<1x!earth.ci<45 * 25>> loc(#loc158)"
+        }
+      }
+    },
+    {
+      "policy": "local",
+      "returncode": 0,
+      "native_policy_activated": true,
+      "stages": {
+        "178": {
+          "tag": "178",
+          "scale": 50.06179768245141,
+          "consumed_q": 7,
+          "q": 24,
+          "text": "    %86 = \"earth.add\"(%82, %85) {earth.actual_scale = 50.061797682451413 : f64} : (tensor<1x!earth.ci<51 * 7>>, tensor<1x!earth.ci<51 * 7>>) -> tensor<1x!earth.ci<51 * 7>> loc(#loc44)"
+        },
+        "223": {
+          "tag": "223",
+          "scale": 61.212894543943634,
+          "consumed_q": 15,
+          "q": 16,
+          "text": "    %178 = \"earth.add\"(%175, %177) {earth.actual_scale = 61.212894543943634 : f64} : (tensor<1x!earth.ci<62 * 15>>, tensor<1x!earth.ci<62 * 15>>) -> tensor<1x!earth.ci<62 * 15>> loc(#loc86)"
+        },
+        "297": {
+          "tag": "297",
+          "scale": 56.481090544326854,
+          "consumed_q": 27,
+          "q": 4,
+          "text": "    %351 = \"earth.add\"(%348, %350) {earth.actual_scale = 56.481090544326854 : f64} : (tensor<1x!earth.ci<57 * 27>>, tensor<1x!earth.ci<57 * 27>>) -> tensor<1x!earth.ci<57 * 27>> loc(#loc155)"
+        },
+        "300": {
+          "tag": "300",
+          "scale": 64.49276089475714,
+          "consumed_q": 28,
+          "q": 3,
+          "text": "    %356 = \"earth.rescale\"(%355) {earth.actual_scale = 64.49276089475714 : f64} : (tensor<1x!earth.ci<97 * 27>>) -> tensor<1x!earth.ci<65 * 28>> loc(#loc158)"
+        }
+      }
+    },
+    {
+      "policy": "local-cut-barriers",
+      "returncode": 0,
+      "native_policy_activated": true,
+      "stages": {
+        "178": {
+          "tag": "178",
+          "scale": 40.07577950336464,
+          "consumed_q": 8,
+          "q": 23,
+          "text": "    %94 = \"earth.add\"(%59, %93) {earth.actual_scale = 40.075779503364643 : f64, opid0 = 43 : i64, smu0 = 42 : i64} : (tensor<1x!earth.ci<41 * 8>>, tensor<1x!earth.ci<41 * 8>>) -> tensor<1x!earth.ci<41 * 8>> loc(#loc44)"
+        },
+        "223": {
+          "tag": "223",
+          "scale": 41.5718720223753,
+          "consumed_q": 15,
+          "q": 16,
+          "text": "    %187 = \"earth.add\"(%153, %186) {earth.actual_scale = 41.571872022375302 : f64, opid0 = 85 : i64, smu0 = 84 : i64} : (tensor<1x!earth.ci<42 * 15>>, tensor<1x!earth.ci<42 * 15>>) -> tensor<1x!earth.ci<42 * 15>> loc(#loc86)"
+        },
+        "297": {
+          "tag": "297",
+          "scale": 63.15555764413701,
+          "consumed_q": 26,
+          "q": 5,
+          "text": "    %348 = \"earth.add\"(%344, %347) {earth.actual_scale = 63.155557644137012 : f64, opid0 = 154 : i64, smu0 = 153 : i64} : (tensor<1x!earth.ci<64 * 26>>, tensor<1x!earth.ci<64 * 26>>) -> tensor<1x!earth.ci<64 * 26>> loc(#loc155)"
+        },
+        "300": {
+          "tag": "300",
+          "scale": 71.16678421129131,
+          "consumed_q": 27,
+          "q": 4,
+          "text": "    %353 = \"earth.rescale\"(%352) {earth.actual_scale = 71.166784211291315 : f64} : (tensor<1x!earth.ci<104 * 26>>) -> tensor<1x!earth.ci<72 * 27>> loc(#loc158)"
+        }
+      }
+    }
+  ],
+  "real_25q_budget_checks": [
+    {
+      "policy": "threshold",
+      "returncode": 0,
+      "diagnostic": ""
+    },
+    {
+      "policy": "local",
+      "returncode": 1,
+      "diagnostic": "<unknown>:0: error: loc(\"raw-272\"): operation exceeds the Boot Q budget after threshold Rescale\n<unknown>:0: note: loc(\"raw-272\"): see current operation: %280 = \"earth.mul\"(%273, %279) {earth.actual_scale = 88.470795477945956 : f64, earth.local_scale_editable, earth.local_scale_forecast = array<i64: -1, -1, -1>} : (tensor<1x!earth.ci<41 * 25>>, tensor<1x!earth.ci<49 * 25>>) -> tensor<1x!earth.ci<90 * 25>> loc(\"raw-272\")\n"
+    },
+    {
+      "policy": "local-cut-barriers",
+      "returncode": 1,
+      "diagnostic": "<unknown>:0: error: loc(\"raw-297\"): operation exceeds the Boot Q budget after threshold Rescale\n<unknown>:0: note: loc(\"raw-297\"): see current operation: %348 = \"earth.add\"(%344, %347) {earth.actual_scale = 63.155557644137012 : f64, earth.local_scale_flex = array<f64: 1.000000e+00, 0.000000e+00, 0.000000e+00>, earth.local_scale_forecast = array<i64: -1, -1, -1>, opid0 = 154 : i64, smu0 = 153 : i64} : (tensor<1x!earth.ci<64 * 26>>, tensor<1x!earth.ci<64 * 26>>) -> tensor<1x!earth.ci<64 * 26>> loc(\"raw-297\")\n"
+    }
+  ],
+  "conclusion": "Local policy does not reduce this region depth: threshold 25 Q, local 28 Q, local with candidate-cut barriers 27 Q, manual reference 22 Q. Both local variants fail the real 25 Q budget before finishing P3.",
+  "whole_network_control_note": "Archived 18-Boot plan starts at Q34; stage3 28-Boot plan starts at Q31. Whole-network exact-count comparisons must unify this input; isolated ReLU input Q31 is already unified."
+}
