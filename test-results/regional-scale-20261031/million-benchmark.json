@@ -1,0 +1,13 @@
+{
+  "host": "188Server",
+  "compiler_sha256": "6e311bf5606716e520f22fbb4d6c7351944e473635539765ec549ee5ce314804",
+  "raw_instructions": 1000000,
+  "cipher_arithmetic_nodes_in_linear_region": 999999,
+  "mode_verified_by_trace": true,
+  "scale_and_greedy_pass_seconds": 12.8459,
+  "whole_precompile_wall_seconds": 35.11,
+  "peak_rss_kib": 1338444,
+  "peak_rss_gib": 1.2764396667480469,
+  "modulus_chain": "Synthetic mixed30/31/32-bit state benchmark; no ciphertext execution.",
+  "scope": "Single large reduction DAG; includes rebuilding IR and greedy bookkeeping. Not a general bound for arbitrary million-node DAGs."
+}

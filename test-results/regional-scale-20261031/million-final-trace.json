@@ -1,0 +1,11 @@
+[
+  {
+    "cp_depth": 1,
+    "input_q": 31,
+    "linear_nodes": 999999,
+    "location": "loc(\"/home/xuming/poseidon-local-scale-step3-20261031/why-boots/real-local-benchmark/500000.input.mlir\":1000001:12)",
+    "node": 999999,
+    "q": 31,
+    "s": 80.0
+  }
+]

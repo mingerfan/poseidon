@@ -1,0 +1,40 @@
+{
+  "compiler": [
+    {
+      "commit": "a6db793b36e217ad8df86517198d3076493683ce",
+      "subject": "Remove the experimental target scale planner"
+    },
+    {
+      "commit": "e783662ce8a388d6ceaca878665d2438ddecaa2e",
+      "subject": "Centralize actual-modulus scale and Boot alignment calculations"
+    },
+    {
+      "commit": "dd5e543ad2f6223bcf16149d6cb5a11ef91a1adc",
+      "subject": "Coalesce native Rescales across compatible reductions"
+    },
+    {
+      "commit": "19d5a09edfff6369c895d594a14df763d32d6ff8",
+      "subject": "Add bounded regional scale planning with greedy refresh"
+    },
+    {
+      "commit": "880dabee538de332d27485f11b47769856653e9f",
+      "subject": "Separate regional arithmetic and Boot input level floors"
+    }
+  ],
+  "compiler_head": "880dabee538de332d27485f11b47769856653e9f",
+  "runtime": [
+    {
+      "commit": "0efeeeb61771aa4a81cb0232dbadda480ef466f2",
+      "subject": "Remove target-scale integration and pin native Q optimizations"
+    },
+    {
+      "commit": "8523121d133ba9fd7b82c1f29c60376fba454427",
+      "subject": "Expose regional scale policy in model artifact generation"
+    },
+    {
+      "commit": "3b9b49c9f43fae7470ab3064a72332774a48a02c",
+      "subject": "Document regional arithmetic bounds and planner coupling"
+    }
+  ],
+  "runtime_head": "3b9b49c9f43fae7470ab3064a72332774a48a02c"
+}

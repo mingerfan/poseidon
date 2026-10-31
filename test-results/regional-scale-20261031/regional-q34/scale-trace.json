@@ -1,0 +1,2852 @@
+[
+  {
+    "cp_depth": 2,
+    "input_q": 34,
+    "linear_nodes": 99,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 99,
+    "q": 31,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 100,
+    "q": 31,
+    "s": 39.99999999999999
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 102,
+    "q": 30,
+    "s": 50.00035226212768
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 105,
+    "q": 29,
+    "s": 60.00334924550846
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 112,
+    "q": 28,
+    "s": 40.007757738523786
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 120,
+    "q": 27,
+    "s": 50.02293113169123
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 130,
+    "q": 25,
+    "s": 40.1
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 131,
+    "q": 25,
+    "s": 40.10000000000011
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 133,
+    "q": 24,
+    "s": 50.214691701387
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 136,
+    "q": 23,
+    "s": 60.32991723998239
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 143,
+    "q": 22,
+    "s": 40.46215005988188
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 151,
+    "q": 21,
+    "s": 50.94773599498281
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 161,
+    "q": 19,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 162,
+    "q": 19,
+    "s": 50.00000000000004
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 164,
+    "q": 17,
+    "s": 40.05350220649255
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 166,
+    "q": 19,
+    "s": 50.00000000000004
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 167,
+    "q": 16,
+    "s": 60.0823179327172
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 170,
+    "q": 16,
+    "s": 50.13582013920971
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 175,
+    "q": 14,
+    "s": 40.199208793944905
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 176,
+    "q": 14,
+    "s": 50.281526726662065
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 182,
+    "q": 14,
+    "s": 40.335028933154575
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 194,
+    "q": 13,
+    "s": 50.70409325466138
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 214,
+    "q": 9,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 214,
+        "q": 9,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 257,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 471,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 472,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 474,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 477,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 484,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 492,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 502,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 503,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 505,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 508,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 515,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 523,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 533,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 534,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 536,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 538,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 539,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 542,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 547,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 548,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 554,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 566,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 586,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 586,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 258,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 844,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 845,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 847,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 850,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 857,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 865,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 875,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 876,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 878,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 881,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 888,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 896,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 906,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 907,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 909,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 911,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 912,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 915,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 920,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 921,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 927,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 939,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 959,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 959,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 257,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 1216,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1217,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1219,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1222,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1229,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1237,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 1247,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1248,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1250,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1253,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1260,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1268,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 1278,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1279,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1281,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1283,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1284,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1287,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1292,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1293,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1299,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1311,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 1331,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 1331,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 258,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 1589,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1590,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1592,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1595,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1602,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1610,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 1620,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1621,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1623,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1626,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1633,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1641,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 1651,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1652,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1654,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1656,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1657,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1660,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1665,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1666,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1672,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1684,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 1704,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 1704,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 257,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 1961,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1962,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1964,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1967,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1974,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1982,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 1992,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 1993,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 1995,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 1998,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2005,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2013,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 2023,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 2024,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2026,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2028,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2029,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2032,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2037,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2038,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2044,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2056,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 2076,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 2076,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 258,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 2334,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 2335,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2337,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2340,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2347,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2355,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 2365,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 2366,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2368,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2371,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2378,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2386,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 2396,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 2397,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2399,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2401,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2402,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2405,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2410,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 2411,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2417,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 2429,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 2449,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 2449,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 507,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 3007,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3008,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3010,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3013,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3020,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3028,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 3038,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3039,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3041,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3044,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3051,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3059,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 3069,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3070,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3072,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3074,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3075,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3078,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3083,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3084,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3090,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3102,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 3122,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 3122,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 375,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 3446,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3447,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3449,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3452,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3459,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3467,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 3477,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3478,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3480,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3483,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3490,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3498,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 3508,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3509,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3511,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3513,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3514,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3517,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3522,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3523,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3529,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3541,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 3561,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 3561,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 323,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 3884,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3885,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3887,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3890,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3897,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3905,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 3915,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3916,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3918,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3921,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3928,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3936,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 3946,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 3947,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3949,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3951,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3952,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3955,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3960,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 3961,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3967,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 3979,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 3999,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 3999,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 324,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 4323,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 4324,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4326,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4329,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4336,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4344,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 4354,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 4355,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4357,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4360,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4367,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4375,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 4385,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 4386,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4388,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4390,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4391,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4394,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4399,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4400,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4406,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4418,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 4438,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 4438,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 323,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 4761,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 4762,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4764,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4767,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4774,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4782,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 4792,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 4793,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4795,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4798,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4805,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4813,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 4823,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 4824,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4826,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4828,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4829,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4832,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4837,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 4838,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4844,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 4856,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 4876,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 4876,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 324,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 5200,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 5201,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5203,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 5206,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5213,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5221,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 5231,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 5232,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5234,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 5237,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5244,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5252,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 5262,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 5263,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5265,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 5267,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 5268,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5271,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 5276,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 5277,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5283,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 5295,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 5315,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 5315,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 637,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 6005,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 6006,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6008,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6011,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6018,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6026,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 6036,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 6037,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6039,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6042,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6049,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6057,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 6067,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 6068,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6070,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6072,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6073,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6076,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6081,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6082,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6088,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6100,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 6120,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 6120,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 491,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 6558,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 6559,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6561,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6564,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6571,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6579,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 6589,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 6590,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6592,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6595,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6602,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6610,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 6620,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 6621,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6623,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6625,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6626,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6629,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6634,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 6635,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6641,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 6653,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 6673,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 6673,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 437,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 7110,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 7111,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7113,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7116,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7123,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7131,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 7141,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 7142,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7144,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7147,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7154,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7162,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 7172,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 7173,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7175,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7177,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7178,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7181,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7186,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7187,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7193,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7205,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 7225,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 7225,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 438,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 7663,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 7664,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7666,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7669,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7676,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7684,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 7694,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 7695,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7697,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7700,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7707,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7715,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 7725,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 7726,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7728,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7730,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7731,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7734,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7739,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 7740,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7746,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 7758,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 7778,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 7778,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 437,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":552:0)",
+    "node": 8215,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 8216,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8218,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8221,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8228,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8236,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 8246,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 8247,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8249,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8252,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8259,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8267,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 8277,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 8278,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8280,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8282,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8283,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8286,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8291,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8292,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8298,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8310,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 8330,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "boot": [
+      {
+        "node": 8330,
+        "q": 6,
+        "s": 40.0
+      }
+    ]
+  },
+  {
+    "cp_depth": 2,
+    "input_q": 31,
+    "linear_nodes": 438,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":135:0)",
+    "node": 8768,
+    "q": 28,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 8769,
+    "q": 28,
+    "s": 40.00000000000012
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8771,
+    "q": 27,
+    "s": 50.0074156546439
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8774,
+    "q": 26,
+    "s": 60.01855348050654
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8781,
+    "q": 25,
+    "s": 40.038172204752755
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8789,
+    "q": 24,
+    "s": 50.09103611089229
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 8799,
+    "q": 22,
+    "s": 40.3
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 8800,
+    "q": 22,
+    "s": 40.300000000000125
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8802,
+    "q": 21,
+    "s": 50.6234358752193
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8805,
+    "q": 20,
+    "s": 60.94722978370487
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8812,
+    "q": 19,
+    "s": 41.29571338402285
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8820,
+    "q": 18,
+    "s": 52.61790876197347
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":96:0)",
+    "node": 8830,
+    "q": 16,
+    "s": 50.0
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":84:0)",
+    "node": 8831,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8833,
+    "q": 14,
+    "s": 40.06338865473509
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8835,
+    "q": 16,
+    "s": 49.99999999999997
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8836,
+    "q": 13,
+    "s": 60.097424043087294
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8839,
+    "q": 13,
+    "s": 50.160812697822415
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8844,
+    "q": 11,
+    "s": 40.24062905351866
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":85:0)",
+    "node": 8845,
+    "q": 11,
+    "s": 50.338053096605975
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8851,
+    "q": 11,
+    "s": 40.401441751341096
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":79:0)",
+    "node": 8863,
+    "q": 10,
+    "s": 50.84560004570979
+  },
+  {
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+    "node": 8883,
+    "q": 6,
+    "s": 40.0
+  },
+  {
+    "cp_depth": 3,
+    "input_q": 6,
+    "linear_nodes": 96,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":597:0)",
+    "node": 8979,
+    "q": 6,
+    "s": 160.0
+  }
+]

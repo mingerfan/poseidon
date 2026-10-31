@@ -1,0 +1,729 @@
+{
+  "implementation": "regional scale planning plus separate greedy frontier refresh; default threshold/optimized unchanged",
+  "host": "188Server",
+  "compiler_sha256": "6e311bf5606716e520f22fbb4d6c7351944e473635539765ec549ee5ce314804",
+  "source_input_sha256": "d29b1693f705976e75aa02b146251040811418ded92ed2dfe3ce2e6e21350816",
+  "operator_spec_sha256": "f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+  "cli": [
+    "--native-scale-policy=regional",
+    "--boot-placement=greedy"
+  ],
+  "scale_candidates": 18,
+  "scale_beam_width": 32,
+  "private_region_max_nodes": 64,
+  "private_region_max_mul_depth": 6,
+  "joint_boot_scale_search": false,
+  "resnet20": {
+    "input": {
+      "q": 31,
+      "s": 40
+    },
+    "baseline": {
+      "boots": [
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.0,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.0,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.0,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.0,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.0,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.0,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 40.000000000000014,
+          "output_q": 31,
+          "output_s": 40.0
+        }
+      ],
+      "content_count": 2258,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 27,
+        "mod_switch": 733,
+        "mul_cc": 513,
+        "mul_cp": 3599,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 2138,
+        "rotate": 1709
+      },
+      "inputs": [
+        {
+          "q": 31,
+          "s": 40.0
+        }
+      ],
+      "output_q": 10,
+      "output_s": 66.9485344932141,
+      "plan": "/home/xuming/poseidon-local-scale-step3-20261031/ablate-stages12/full-steps12/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "values": 19660,
+      "verifier_passed": true
+    },
+    "regional": {
+      "boots": [
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        }
+      ],
+      "content_count": 2258,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 18,
+        "mod_switch": 456,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1387,
+        "rotate": 1709
+      },
+      "inputs": [
+        {
+          "q": 31,
+          "s": 40.0
+        }
+      ],
+      "output_q": 6,
+      "output_s": 159.9999999999982,
+      "plan": "/home/xuming/poseidon-regional-scale-20261031/regional/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "same_payload_contents_as_first_plan": true,
+      "values": 16397,
+      "verifier_passed": true
+    },
+    "regional_fixed_final_s40": {
+      "boots": [
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        }
+      ],
+      "content_count": 2258,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 19,
+        "mod_switch": 456,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1392,
+        "rotate": 1709
+      },
+      "inputs": [
+        {
+          "q": 31,
+          "s": 40.0
+        }
+      ],
+      "output_q": 26,
+      "output_s": 40.0000000000001,
+      "plan": "/home/xuming/poseidon-regional-scale-20261031/regional-fixed40/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "same_payload_contents_as_first_plan": true,
+      "values": 16403,
+      "verifier_passed": true
+    },
+    "regional_input_q34": {
+      "boots": [
+        {
+          "input_q": 6,
+          "input_s": 39.999999999999936,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        }
+      ],
+      "content_count": 2258,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 18,
+        "mod_switch": 458,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1387,
+        "rotate": 1709
+      },
+      "inputs": [
+        {
+          "q": 34,
+          "s": 40.0
+        }
+      ],
+      "output_q": 6,
+      "output_s": 159.9999999999982,
+      "plan": "/home/xuming/poseidon-regional-scale-20261031/regional-q34/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "same_payload_contents_as_first_plan": true,
+      "values": 16469,
+      "verifier_passed": true
+    },
+    "boot_reduction_count": 9,
+    "boot_reduction_percent": 33.333333333333336,
+    "final_output_scale_constraint": null,
+    "fixed_boot_input": {
+      "q": 6,
+      "s": 40
+    },
+    "same_payload_contents": true,
+    "payload_count": 2258,
+    "all_plans_runtime_verifier_passed": true,
+    "interpretation": "18 Boot with unconstrained legal final scale; 19 if final output must also be s40. This is a full compiler RuntimePlan count, not a GPU latency or accuracy result."
+  },
+  "single_relu": [
+    {
+      "boots": [],
+      "content_count": 33,
+      "content_set_sha256": "39a3d6367d9fe5ff84d529bb7705c9142ab97edbb84d869a305969517843910b",
+      "counts": {
+        "add_cc": 43,
+        "add_cp": 11,
+        "mod_switch": 25,
+        "mul_cc": 27,
+        "mul_cp": 35,
+        "negate": 4,
+        "relinearize": 27,
+        "rescale": 70
+      },
+      "inputs": [
+        {
+          "q": 31,
+          "s": 40.0
+        }
+      ],
+      "output_q": 9,
+      "output_s": 39.999999999999936,
+      "plan": "/home/xuming/poseidon-regional-scale-20261031/single-q31/relu.one_relu.runtime-plan.bin",
+      "values": 336,
+      "verifier_passed": true
+    },
+    {
+      "boots": [],
+      "content_count": 33,
+      "content_set_sha256": "39a3d6367d9fe5ff84d529bb7705c9142ab97edbb84d869a305969517843910b",
+      "counts": {
+        "add_cc": 43,
+        "add_cp": 11,
+        "mod_switch": 24,
+        "mul_cc": 27,
+        "mul_cp": 35,
+        "negate": 4,
+        "relinearize": 27,
+        "rescale": 72
+      },
+      "inputs": [
+        {
+          "q": 28,
+          "s": 40.0
+        }
+      ],
+      "output_q": 6,
+      "output_s": 39.999999999998195,
+      "plan": "/home/xuming/poseidon-regional-scale-20261031/single-q28/relu.one_relu.runtime-plan.bin",
+      "values": 337,
+      "verifier_passed": true
+    }
+  ],
+  "checks": {
+    "local_ctest_groups_passed": 20,
+    "remote_ctest_equivalent_groups_passed": 20,
+    "regional_plan_replays_included": 21,
+    "excluded": [
+      "DacapoFrontendBytecode (frontend target not built)"
+    ],
+    "whole_network_ciphertext_accuracy_tested": false,
+    "whole_network_gpu_latency_tested": false,
+    "million_benchmark": {
+      "host": "188Server",
+      "compiler_sha256": "6e311bf5606716e520f22fbb4d6c7351944e473635539765ec549ee5ce314804",
+      "raw_instructions": 1000000,
+      "cipher_arithmetic_nodes_in_linear_region": 999999,
+      "mode_verified_by_trace": true,
+      "scale_and_greedy_pass_seconds": 12.8459,
+      "whole_precompile_wall_seconds": 35.11,
+      "peak_rss_kib": 1338444,
+      "peak_rss_gib": 1.2764396667480469,
+      "modulus_chain": "Synthetic mixed30/31/32-bit state benchmark; no ciphertext execution.",
+      "scope": "Single large reduction DAG; includes rebuilding IR and greedy bookkeeping. Not a general bound for arbitrary million-node DAGs."
+    },
+    "source_manifest_verified": true
+  },
+  "limitations": [
+    "Regional mode currently uses a region-frontier greedy scheduler; optimized and depth-dp continue to use the threshold policy.",
+    "Candidate scales, fixed region bounds and finite frontier beam are heuristics; no global optimum guarantee.",
+    "Final output Q6/s160 is legal in the state/capacity model; full ciphertext precision and GPU memory/performance still need separate validation.",
+    "Saved scale trace shows selected targets; exact produced Boot states are independently checked by the Runtime PlanVerifier audit."
+  ],
+  "compiler_latency_tables": "Profile latency entries are placeholders; no inference speedup asserted."
+}

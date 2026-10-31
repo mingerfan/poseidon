@@ -1,0 +1,73 @@
+{
+  "comparison": "Same full raw ResNet20, initial Q34/s40, same actual manual Q50 chain. Manual means the historical manual-stage-scale-constrained compiler plan, not a new handwritten GPU run.",
+  "manual_result": {
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/resnet20-scale-trace-20261027/budget25/automatic/manual34/result.json",
+    "boot_count": 18,
+    "input_q": 34,
+    "output_q": 5,
+    "output_s": 40.00000000099491,
+    "plan_sha256": "77b399e32e9288a5c96f3812b3529de72b02ec257363bc6fe1cdbecfa7e18a28"
+  },
+  "automatic_trace": {
+    "source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/regional-scale-20261031/regional-q34/scale-trace.json",
+    "first_relu_exit": {
+      "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+      "node": 214,
+      "q": 9,
+      "s": 40.0
+    },
+    "last_relu_exit": {
+      "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py\":111:0)",
+      "node": 8883,
+      "q": 6,
+      "s": 40.0
+    },
+    "last_region": {
+      "cp_depth": 3,
+      "input_q": 6,
+      "linear_nodes": 96,
+      "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":597:0)",
+      "node": 8979,
+      "q": 6,
+      "s": 160.0
+    }
+  },
+  "automatic_physical_first_boot": {
+    "immediate_modswitch": {
+      "after_q": 6,
+      "after_s": 39.999999999999936,
+      "before_q": 9,
+      "before_s": 39.999999999999936,
+      "discarded_q": 3
+    },
+    "input_q": 6,
+    "input_s": 39.999999999999936,
+    "output_q": 31,
+    "output_s": 40.0
+  },
+  "level_inventory": {
+    "stem_q": 3,
+    "relu_count": 19,
+    "q_per_relu": 22,
+    "between_relu_convolution_count": 18,
+    "q_per_convolution": 3,
+    "manual_before_terminal": 475,
+    "automatic_before_terminal_including_first_modswitch": 478,
+    "manual_terminal_q": 4,
+    "automatic_free_scale_terminal_q": 0,
+    "automatic_fixed_s40_terminal_q_after_extra_boot": 5
+  },
+  "actual_removed_log2": {
+    "q9_four_rs": 127.9608589489508,
+    "q31_four_rs": 119.98517886896022,
+    "q31_five_rs": 149.9740410430977,
+    "q6_to_q5": 31.9897049336191
+  },
+  "planner_behavior_source": "RegionalScalePlanning.cpp: refreshCount, save checkpoint, and loop refreshing all nonfresh values in the selected live frontier.",
+  "causal_scope": "Arithmetic ReLU Q consumption is equal. Current whole-frontier refresh policy favors early shared-input Boot; manual placement can refresh a main branch while retaining a low-Q shortcut. Fixing selective refresh has not been implemented or rerun here.",
+  "validation": "Existing full-plan verifications and local current-plan inspection. 188Server SSH still unreachable during this comparison; historical manual plan was verified there.",
+  "figures": [
+    "boot-position.svg",
+    "terminal-scale.svg"
+  ]
+}

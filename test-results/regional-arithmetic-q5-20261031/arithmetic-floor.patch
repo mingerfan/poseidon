@@ -1,0 +1,47 @@
+--- a/include/hecate/Dialect/Earth/IR/EarthOps.td
++++ b/include/hecate/Dialect/Earth/IR/EarthOps.td
+@@ -28,6 +28,7 @@
+     static int64_t nativeOutputLevel;
+     static int64_t nativeLevelAnchor;
+     static int64_t nativeLowerLevel;
++    static int64_t nativeArithmeticLowerLevel;
+     static int64_t nativeBootInputLevel;
+     static double nativeBootInputScale;
+     static const std::map<std::string, llvm::SmallVector<int64_t>> &getLatencyTable();
+--- a/lib/Dialect/Earth/IR/EarthDialect.cpp
++++ b/lib/Dialect/Earth/IR/EarthDialect.cpp
+@@ -134,6 +134,7 @@
+ int64_t hecate::earth::EarthDialect::nativeOutputLevel = -1;
+ int64_t hecate::earth::EarthDialect::nativeLevelAnchor = -1;
+ int64_t hecate::earth::EarthDialect::nativeLowerLevel = -1;
++int64_t hecate::earth::EarthDialect::nativeArithmeticLowerLevel = -1;
+ int64_t hecate::earth::EarthDialect::nativeBootInputLevel = -1;
+ double hecate::earth::EarthDialect::nativeBootInputScale = 0;
+ 
+@@ -146,6 +147,7 @@
+   nativeModuli.clear();
+   nativeScaleChain = {};
+   nativeOutputLevel = nativeLowerLevel = nativeLevelAnchor = -1;
++  nativeArithmeticLowerLevel = -1;
+   nativeBootInputLevel = -1;
+   nativeBootInputScale = 0;
+   if (nativeInputLevel < -1) fail("native input level must be nonnegative");
+@@ -161,6 +163,7 @@
+   }
+   nativeModuli = spec.at("context").at("rns_moduli").get<std::vector<int64_t>>();
+   nativeLowerLevel = spec.at("levels").at("lower_bound").get<int64_t>();
++  nativeArithmeticLowerLevel = nativeLowerLevel;
+   for (const auto &profile : spec.at("boot_profiles"))
+     if (profile.at("profile_id") == bootProfile.str()) {
+       if (nativeOutputLevel >= 0)
+--- a/lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp
++++ b/lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp
+@@ -70,7 +70,7 @@
+       : func(func), floor(floor), bootScale(bootScale),
+         chain(EarthDialect::nativeScaleChain),
+         anchor(EarthDialect::nativeLevelAnchor),
+-        minimumQ(EarthDialect::nativeLowerLevel + 1) {}
++        minimumQ(EarthDialect::nativeArithmeticLowerLevel + 1) {}
+ 
+   LogicalResult run(bool insertBoots) {
+     if (failed(build()))

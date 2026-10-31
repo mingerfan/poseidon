@@ -1,0 +1,120 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "_hecate_ResNet20",
+  "memory_planned": false,
+  "places": [
+    {
+      "distinct_allocation_bytes": 38579732480,
+      "peak": {
+        "ciphertext_bytes": 32505856,
+        "instruction_ordinal": 4939,
+        "largest_objects": [
+          {
+            "bytes": 32505856,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          },
+          {
+            "bytes": 16252928,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "9"
+          },
+          {
+            "bytes": 16252928,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "11"
+          },
+          {
+            "bytes": 16252928,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "14"
+          },
+          {
+            "bytes": 16252928,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "17"
+          }
+        ],
+        "operation": "ckks.encode",
+        "phase": "initialization",
+        "plaintext_bytes": 38547226624
+      },
+      "peak_bytes": 38579732480,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 38579732480
+    },
+    {
+      "distinct_allocation_bytes": 176021045248,
+      "peak": {
+        "ciphertext_bytes": 156747431936,
+        "instruction_ordinal": 16401,
+        "largest_objects": [
+          {
+            "bytes": 22020096,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "139"
+          },
+          {
+            "bytes": 22020096,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "776"
+          },
+          {
+            "bytes": 22020096,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1381"
+          },
+          {
+            "bytes": 22020096,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "1983"
+          },
+          {
+            "bytes": 22020096,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "2587"
+          }
+        ],
+        "operation": "ckks.rescalec",
+        "phase": "execution",
+        "plaintext_bytes": 19273613312
+      },
+      "peak_bytes": 176021045248,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 176021045248
+    }
+  ],
+  "poly_degree": 65536,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

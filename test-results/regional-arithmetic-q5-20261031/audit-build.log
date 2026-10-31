@@ -1,0 +1,12 @@
+[ 40%] Building CXX object CMakeFiles/ckks_runtime_core.dir/runtime/verifier.cpp.o
+[ 40%] Building CXX object CMakeFiles/ckks_runtime_core.dir/runtime/thread_trace.cpp.o
+[ 40%] Building CXX object CMakeFiles/ckks_runtime_core.dir/runtime/plan.cpp.o
+[ 40%] Building CXX object CMakeFiles/ckks_runtime_core.dir/runtime/plaintext_bundle.cpp.o
+[ 50%] Building CXX object CMakeFiles/ckks_runtime_core.dir/runtime/utils/sha256.cpp.o
+[ 60%] Linking CXX static library libruntime_core.a
+[ 60%] Built target ckks_runtime_core
+[ 90%] Building CXX object CMakeFiles/ckks_runtime_plan_json.dir/runtime/operator_spec_reader.cpp.o
+[ 90%] Building CXX object CMakeFiles/ckks_runtime_plan_json.dir/runtime/json_plan_reader.cpp.o
+[ 90%] Building CXX object CMakeFiles/ckks_runtime_plan_json.dir/runtime/plan_reader.cpp.o
+[100%] Linking CXX static library libruntime_plan_json.a
+[100%] Built target ckks_runtime_plan_json

@@ -1,0 +1,7 @@
+{
+  "variant": "threshold-greedy",
+  "returncode": 0,
+  "seconds": 10.881558366003446,
+  "compiler_sha256": "a71c75b324937a34af3d34afc636b3f80d4e6f867a5d9bdfc2a53bdf31117b21",
+  "compiler_sha256_note": "Corrected metadata to the frozen executable named by command.json"
+}

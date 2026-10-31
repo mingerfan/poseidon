@@ -1,0 +1,9 @@
+{
+  "returncode": -6,
+  "seconds": 3.0193766450029216,
+  "input_q": 34,
+  "required_output_s": 40,
+  "result": "unsupported combination: regional scale with optimized Boot placement",
+  "boot_count": null,
+  "host": "local; 188Server SSH unreachable"
+}

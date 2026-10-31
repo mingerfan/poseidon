@@ -1,0 +1,6 @@
+{
+  "include/hecate/Dialect/Earth/IR/EarthOps.td": "5df589f377c55b4c5b2db1573f3c75ff02555d5e448b4c3b62d02ca609285120",
+  "lib/Dialect/Earth/IR/EarthDialect.cpp": "99260b73218f706dc5d12b8320fb34f47e30aa6e5a7ae6908af10fa2311cc947",
+  "lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp": "2f9bdde30564cb9a26890cab543ee34fbf3cc12d9dbb20e936e477fd4f3923f5",
+  "test/runtime-plan/check-regional-scale.py": "98659178332d1bb81067aa56b9e5a1c82a7fbf7207b7a2642658c2afd811be5d"
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-regional-scale.py", line 155, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-regional-scale.py", line 139, in main
+    assert boots == 0
+           ^^^^^^^^^^
+AssertionError

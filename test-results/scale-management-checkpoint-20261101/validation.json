@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-01",
+  "host": "local",
+  "compiler_commit": "880dabee538de332d27485f11b47769856653e9f",
+  "compiler_sha256": "d98472b70853a4361b4afec0a24df11fc00edb0e86f483eccc96e617ae933148",
+  "ctest": {
+    "passed": 20,
+    "failed": 0,
+    "excluded": [
+      "DacapoFrontendBytecode: frontend target not built"
+    ]
+  },
+  "native_budget_checks": 15,
+  "native_artifact_checks": 18,
+  "manual_boot_checks": 9,
+  "regional_replays_in_ctest": 22,
+  "ruff": "passed for modified compiler/runtime Python source and tests",
+  "remote_recheck": "188Server unreachable via configured SSH proxy; see ssh-188Server.log. Prior regional validation on that host is retained in ../regional-scale-20261031/.",
+  "scope": "Checkpoint validation, no new full encrypted ResNet20 execution or GPU timing."
+}

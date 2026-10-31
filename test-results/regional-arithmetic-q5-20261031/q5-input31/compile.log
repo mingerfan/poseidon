@@ -1,0 +1,5 @@
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=3.679250e+04 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=1.678668e+05 MiB
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=4.650000e+01 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=1.852025e+04 MiB
+Number of Bootstrapping: 19

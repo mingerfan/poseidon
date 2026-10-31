@@ -1,0 +1,468 @@
+{
+  "change": "Regional arithmetic uses levels.lower_bound (Q5), fixed Boot input remains Q6/s40. Search structure unchanged.",
+  "validation_host": "local; repeated SSH attempts to 188Server failed with SOCKSv5 Host unreachable; direct connection closed during SSH key exchange",
+  "input_sha256": "d29b1693f705976e75aa02b146251040811418ded92ed2dfe3ce2e6e21350816",
+  "operator_spec_sha256": "f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+  "compiler_sha256": "d98472b70853a4361b4afec0a24df11fc00edb0e86f483eccc96e617ae933148",
+  "plans": [
+    {
+      "boots": [
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        }
+      ],
+      "content_count": 2258,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 19,
+        "mod_switch": 456,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1392,
+        "rotate": 1709
+      },
+      "inputs": [
+        {
+          "q": 31,
+          "s": 40.0
+        }
+      ],
+      "output_q": 26,
+      "output_s": 40.0000000000001,
+      "plan": "test-results/regional-arithmetic-q5-20261031/q5-input31/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "values": 16403,
+      "verifier_passed": true
+    },
+    {
+      "boots": [
+        {
+          "input_q": 6,
+          "input_s": 39.999999999999936,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        }
+      ],
+      "content_count": 2258,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 19,
+        "mod_switch": 458,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1392,
+        "rotate": 1709
+      },
+      "inputs": [
+        {
+          "q": 34,
+          "s": 40.0
+        }
+      ],
+      "output_q": 26,
+      "output_s": 40.0000000000001,
+      "plan": "test-results/regional-arithmetic-q5-20261031/q5-input34/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "same_payload_contents_as_first_plan": true,
+      "values": 16475,
+      "verifier_passed": true
+    },
+    {
+      "boots": [
+        {
+          "input_q": 6,
+          "input_s": 39.999999999999936,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        },
+        {
+          "input_q": 6,
+          "input_s": 39.999999999998224,
+          "output_q": 31,
+          "output_s": 40.0
+        }
+      ],
+      "content_count": 2258,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 19,
+        "mod_switch": 458,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1392,
+        "rotate": 1709
+      },
+      "inputs": [
+        {
+          "q": 34,
+          "s": 40.0
+        }
+      ],
+      "output_q": 26,
+      "output_s": 40.0000000000001,
+      "plan": "test-results/regional-arithmetic-q5-20261031/q6-input34/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "same_payload_contents_as_first_plan": true,
+      "values": 16475,
+      "verifier_passed": true
+    }
+  ],
+  "checks": {
+    "ctest_groups_passed": 20,
+    "regional_replays_passed": 22,
+    "new_q7_to_q5_s40_case": "zero Boot; frozen compiler fails the zero-Boot assertion",
+    "same_selected_trace_before_after_q5": {
+      "input31": true,
+      "input34": true
+    }
+  },
+  "final_region": {
+    "input_q": 6,
+    "input_s": 40,
+    "serial_cp_depth": 3,
+    "minimum_coefficient_scale": 40,
+    "free_output_s": 160,
+    "fixed_output_s": 40,
+    "minimum_scale_growth": 120,
+    "single_extra_drop_log2": 31.9897049336191,
+    "minimum_total_drops_to_remove_120bits_from_q6": 4,
+    "resulting_q": 2,
+    "arithmetic_minimum_q": 5
+  },
+  "conclusion": "Relaxing the arithmetic floor to Q5 alone leaves 19 Boot for fixed output s40, with both initial Q31 and Q34. This is not a proof that an 18-Boot plan is impossible.",
+  "limits": [
+    "No remote rerun completed because 188Server was unreachable.",
+    "No whole-network encrypted execution or GPU latency measurement.",
+    "Historical manual-goal 18-Boot Q34 -> Q5/s40 uses different scale and Boot placements."
+  ]
+}

@@ -1,0 +1,45 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix
+      Start  1: DacapoModulusChain
+ 1/20 Test  #1: DacapoModulusChain ...............   Passed    0.00 sec
+      Start  2: DacapoRegionalScale
+ 2/20 Test  #2: DacapoRegionalScale ..............   Passed    0.60 sec
+      Start  3: DacapoReductionRescales
+ 3/20 Test  #3: DacapoReductionRescales ..........   Passed    0.80 sec
+      Start  4: DacapoNativePlanning
+ 4/20 Test  #4: DacapoNativePlanning .............   Passed    0.37 sec
+      Start  5: DacapoPolynomialArithmetic
+ 5/20 Test  #5: DacapoPolynomialArithmetic .......   Passed    1.36 sec
+      Start  6: DacapoThresholdGraphs
+ 6/20 Test  #6: DacapoThresholdGraphs ............   Passed    7.88 sec
+      Start  7: DacapoNativeScale40
+ 7/20 Test  #7: DacapoNativeScale40 ..............   Passed    0.12 sec
+      Start  8: DacapoNativeScale45
+ 8/20 Test  #8: DacapoNativeScale45 ..............   Passed    0.13 sec
+      Start  9: DacapoRuntimePlanBinary
+ 9/20 Test  #9: DacapoRuntimePlanBinary ..........   Passed    0.07 sec
+      Start 10: DacapoRuntimePlanIO
+10/20 Test #10: DacapoRuntimePlanIO ..............   Passed    0.17 sec
+      Start 11: DacapoUnitPlaintext
+11/20 Test #11: DacapoUnitPlaintext ..............   Passed    0.36 sec
+      Start 12: DacapoRuntimeScale
+12/20 Test #12: DacapoRuntimeScale ...............   Passed    0.79 sec
+      Start 13: DacapoFrontendLocations
+13/20 Test #13: DacapoFrontendLocations ..........   Passed    0.04 sec
+      Start 14: DacapoGreedyBootstrap
+14/20 Test #14: DacapoGreedyBootstrap ............   Passed    0.54 sec
+      Start 15: DacapoManualPrecompile
+15/20 Test #15: DacapoManualPrecompile ...........   Passed    0.48 sec
+      Start 16: DacapoRuntimePlanPipeline
+16/20 Test #16: DacapoRuntimePlanPipeline ........   Passed    0.34 sec
+      Start 17: DacapoRuntimeMemory
+17/20 Test #17: DacapoRuntimeMemory ..............   Passed    0.18 sec
+      Start 18: DacapoPlaintextWaterline
+18/20 Test #18: DacapoPlaintextWaterline .........   Passed    0.20 sec
+      Start 19: DacapoOptimizedNativeScale45
+19/20 Test #19: DacapoOptimizedNativeScale45 .....   Passed    0.44 sec
+      Start 20: DacapoOptimizedSchedule
+20/20 Test #20: DacapoOptimizedSchedule ..........   Passed    0.11 sec
+
+100% tests passed out of 20
+
+Total Test time (real) =  14.99 sec

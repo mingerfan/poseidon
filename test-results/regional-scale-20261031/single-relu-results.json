@@ -1,0 +1,54 @@
+[
+  {
+    "boots": [],
+    "content_count": 33,
+    "content_set_sha256": "39a3d6367d9fe5ff84d529bb7705c9142ab97edbb84d869a305969517843910b",
+    "counts": {
+      "add_cc": 43,
+      "add_cp": 11,
+      "mod_switch": 25,
+      "mul_cc": 27,
+      "mul_cp": 35,
+      "negate": 4,
+      "relinearize": 27,
+      "rescale": 70
+    },
+    "inputs": [
+      {
+        "q": 31,
+        "s": 40.0
+      }
+    ],
+    "output_q": 9,
+    "output_s": 39.999999999999936,
+    "plan": "/home/xuming/poseidon-regional-scale-20261031/single-q31/relu.one_relu.runtime-plan.bin",
+    "values": 336,
+    "verifier_passed": true
+  },
+  {
+    "boots": [],
+    "content_count": 33,
+    "content_set_sha256": "39a3d6367d9fe5ff84d529bb7705c9142ab97edbb84d869a305969517843910b",
+    "counts": {
+      "add_cc": 43,
+      "add_cp": 11,
+      "mod_switch": 24,
+      "mul_cc": 27,
+      "mul_cp": 35,
+      "negate": 4,
+      "relinearize": 27,
+      "rescale": 72
+    },
+    "inputs": [
+      {
+        "q": 28,
+        "s": 40.0
+      }
+    ],
+    "output_q": 6,
+    "output_s": 39.999999999998195,
+    "plan": "/home/xuming/poseidon-regional-scale-20261031/single-q28/relu.one_relu.runtime-plan.bin",
+    "values": 337,
+    "verifier_passed": true
+  }
+]

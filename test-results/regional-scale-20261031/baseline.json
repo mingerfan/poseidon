@@ -1,0 +1,19 @@
+{
+  "compiler_sha256": "a71c75b324937a34af3d34afc636b3f80d4e6f867a5d9bdfc2a53bdf31117b21",
+  "file_sha256": {
+    "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "8b15cceb5ee49fdb6d980728ce031b649f853762d980be3109bb205bfe2b4996",
+    "lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp": "56e720552b28d9ac531c8916411d7eaa06aaed62acd64e9b939e69ff47c1170a",
+    "lib/Dialect/Earth/Transforms/Common.cpp": "e63714b61d5d21cf3052f116d17fcd05a7ce211cac82105f3fb1644ad1e271ef",
+    "lib/Dialect/Earth/Transforms/EarlyModswitch.cpp": "1026338eeab0a55a5b940b5441d5a6be0f6cd33fd330f6415ba3082f89256942",
+    "lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp": "80629c957eb92dcc7565050ce928412d3a40e0593a897351e9f14e74bbe08ba5",
+    "lib/Dialect/Earth/Transforms/CMakeLists.txt": "792d702511338e762fd4c2bda50ec433600c7c95d58fa34ad058406e4fad9084",
+    "include/hecate/Dialect/Earth/IR/EarthOps.h": "cb2e69950567e29d13eef500985699e366ed280ff4ff7af9d3aff02743742c8b",
+    "lib/Dialect/Earth/IR/EarthDialect.cpp": "1a0fa4e1f29d151c0f8b8f1306bb0fde96064e0d657305697b3010e31aca9c26",
+    "include/hecate/Dialect/CKKS/IR/CKKSOps.td": "9091d4e6553ec076c0ad38537e20fe28fe16447f0d9f1061d080b8ddd1ef5ae9",
+    "lib/Dialect/CKKS/IR/CKKSDialect.cpp": "e5813c6a74f7ae5326e8b12f4483cacf39363919742c3f14c76f2fee846a5808",
+    "lib/Conversion/EarthToCKKS/EarthToCKKS.cpp": "da7fc7e08cf6acdc828c374943388eb9fb5910a9af0e052831c38b724dfa5c0e",
+    "lib/Dialect/CKKS/Transforms/MaterializePhysicalLevels.cpp": "5a72cea0245e94c5a6f83a63e398782362758c2d92164c1b1a501e84acb4092f",
+    "tools/optimizer.cpp": "cbe61dfc7dd799a5bfaa65f5edfd1e2d9d1c91b100aef958c39068a67e37cda6",
+    "test/CMakeLists.txt": "172ee3999d0cf456eb8912f5fe084b4f85c402a0463940d3610583e53d115023"
+  }
+}

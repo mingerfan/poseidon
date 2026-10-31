@@ -16,3 +16,4 @@ test-results/regional-scale-20261031/** -text -whitespace
 test-results/regional-arithmetic-q5-20261031/** -text -whitespace
 test-results/regional-level-comparison-20261031/** -text -whitespace
 test-results/regional-optimized-check-20261031/** -text -whitespace
+test-results/scale-management-checkpoint-20261101/*.log -text -whitespace

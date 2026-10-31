@@ -1,0 +1,71 @@
+{
+  "scope": "Generated local artifacts excluded from Git; regenerate using each variant command.json and rebuild audit-plan from ../regional-scale-20261031/audit-plan.cpp.",
+  "total_bytes": 3535072872,
+  "files": [
+    {
+      "path": "audit-plan",
+      "bytes": 586712,
+      "sha256": "98f7e058fbca8b8ce202e5ea5e7697daf0ade6977b4bfcd4f40aef5c060e05d9"
+    },
+    {
+      "path": "q5-input31/resnet20._hecate_ResNet20.bundle/data.bin",
+      "bytes": 591921152,
+      "sha256": "9c941cb5b616d9c1f192f1198cf4c8c45d3974c69ded060c66aac3f25034ebd1"
+    },
+    {
+      "path": "q5-input31/resnet20._hecate_ResNet20.bundle/manifest.bin",
+      "bytes": 108544,
+      "sha256": "9696f33e468fb7e762e84b35064353c9f1f2554e57a336f028b63d6ccb1da7d7"
+    },
+    {
+      "path": "q5-input31/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "bytes": 1972632,
+      "sha256": "f42ddcb262b8b1e79718de49d0ff53a0ac77e0a3e571f6cbe2eded9d067b156c"
+    },
+    {
+      "path": "q5-input31/resnet20.mlirbc",
+      "bytes": 584147360,
+      "sha256": "efd90cd0015da0a3925e5df876906bbd2ee6dbf98053be87b5b591c758394fb4"
+    },
+    {
+      "path": "q5-input34/resnet20._hecate_ResNet20.bundle/data.bin",
+      "bytes": 591921152,
+      "sha256": "9c941cb5b616d9c1f192f1198cf4c8c45d3974c69ded060c66aac3f25034ebd1"
+    },
+    {
+      "path": "q5-input34/resnet20._hecate_ResNet20.bundle/manifest.bin",
+      "bytes": 108544,
+      "sha256": "9696f33e468fb7e762e84b35064353c9f1f2554e57a336f028b63d6ccb1da7d7"
+    },
+    {
+      "path": "q5-input34/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "bytes": 1980822,
+      "sha256": "4ee5790bba42d165f558702301d54b9655fad7bb25f3e7c1892e55548d20418f"
+    },
+    {
+      "path": "q5-input34/resnet20.mlirbc",
+      "bytes": 584157718,
+      "sha256": "06e26940738507863bc4f12542cb6effec37367a5784ae3f428b48d7e04d5103"
+    },
+    {
+      "path": "q6-input34/resnet20._hecate_ResNet20.bundle/data.bin",
+      "bytes": 591921152,
+      "sha256": "9c941cb5b616d9c1f192f1198cf4c8c45d3974c69ded060c66aac3f25034ebd1"
+    },
+    {
+      "path": "q6-input34/resnet20._hecate_ResNet20.bundle/manifest.bin",
+      "bytes": 108544,
+      "sha256": "9696f33e468fb7e762e84b35064353c9f1f2554e57a336f028b63d6ccb1da7d7"
+    },
+    {
+      "path": "q6-input34/resnet20._hecate_ResNet20.runtime-plan.bin",
+      "bytes": 1980822,
+      "sha256": "4ee5790bba42d165f558702301d54b9655fad7bb25f3e7c1892e55548d20418f"
+    },
+    {
+      "path": "q6-input34/resnet20.mlirbc",
+      "bytes": 584157718,
+      "sha256": "42e0d855ddebd6afb041b11ba8d6183b43a605ee8d7cde0e3d1e22bf1eaeeef7"
+    }
+  ]
+}

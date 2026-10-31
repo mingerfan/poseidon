@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="880" viewBox="0 0 1440 880">
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#738096"/></marker></defs>
+<style>text{font-family:'Noto Sans CJK SC',sans-serif;fill:#17283e}.title{font-size:34px;font-weight:700}.sub{font-size:21px;fill:#59677c}.label{font-size:24px;font-weight:700}.state{font-size:27px;font-weight:700}.note{font-size:21px;fill:#45556d}.small{font-size:18px;fill:#637189}</style>
+<rect width="1440" height="880" fill="#f8fafc"/>
+<text x="42" y="56" class="title">② 为什么自动18次Boot时输出s160，而手动18次能输出s40？</text>
+<text x="42" y="96" class="sub">都看第18次Boot附近。手动的末次卷积已在Boot之前完成；自动还要在Boot之后做。</text>
+<text x="44" y="148" text-anchor="start" class="label" style="fill:#20805b">手动：最后一个ReLU从Q31开始，尾部拿到Q9</text>
+<rect x="44" y="170" width="244" height="106" rx="14" fill="#f2effc" stroke="#7556b4" stroke-width="2"/>
+<text x="166.0" y="206" text-anchor="middle" class="note">第18次Boot出口</text>
+<text x="166.0" y="248" text-anchor="middle" class="state" style="fill:#7556b4">Q31 / s40</text>
+<rect x="413" y="170" width="244" height="106" rx="14" fill="#edf8f2" stroke="#20805b" stroke-width="2"/>
+<text x="535.0" y="206" text-anchor="middle" class="note">末次ReLU：22Q</text>
+<text x="535.0" y="248" text-anchor="middle" class="state" style="fill:#20805b">Q9 / s40</text>
+<rect x="782" y="170" width="244" height="106" rx="14" fill="#edf8f2" stroke="#20805b" stroke-width="2"/>
+<text x="904.0" y="206" text-anchor="middle" class="note">池化/分类尾部：4Q</text>
+<text x="904.0" y="248" text-anchor="middle" class="state" style="fill:#20805b">Q5 / s40</text>
+<rect x="1152" y="170" width="244" height="106" rx="14" fill="#edf8f2" stroke="#20805b" stroke-width="2"/>
+<text x="1274.0" y="206" text-anchor="middle" class="note">直接输出</text>
+<text x="1274.0" y="248" text-anchor="middle" class="state" style="fill:#20805b">18次Boot / s40</text>
+<path d="M294,223 H404" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M663,223 H773" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1032,223 H1143" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="44" y="328" text-anchor="start" class="label" style="fill:#3266b5">自动，允许高scale输出：尾部保留乘积scale，省掉末端RS</text>
+<rect x="44" y="350" width="244" height="106" rx="14" fill="#f2effc" stroke="#7556b4" stroke-width="2"/>
+<text x="166.0" y="386" text-anchor="middle" class="note">第18次Boot出口</text>
+<text x="166.0" y="428" text-anchor="middle" class="state" style="fill:#7556b4">Q31 / s40</text>
+<rect x="321" y="350" width="244" height="106" rx="14" fill="#edf4ff" stroke="#3266b5" stroke-width="2"/>
+<text x="443.0" y="386" text-anchor="middle" class="note">末次卷积：3Q</text>
+<text x="443.0" y="428" text-anchor="middle" class="state" style="fill:#3266b5">Q28 / s40</text>
+<rect x="598" y="350" width="244" height="106" rx="14" fill="#edf4ff" stroke="#3266b5" stroke-width="2"/>
+<text x="720.0" y="386" text-anchor="middle" class="note">末次ReLU：22Q</text>
+<text x="720.0" y="428" text-anchor="middle" class="state" style="fill:#3266b5">Q6 / s40</text>
+<rect x="875" y="350" width="244" height="106" rx="14" fill="#edf4ff" stroke="#3266b5" stroke-width="2"/>
+<text x="997.0" y="386" text-anchor="middle" class="note">尾部三层CP，无RS</text>
+<text x="997.0" y="428" text-anchor="middle" class="state" style="fill:#3266b5">Q6 / s160</text>
+<rect x="1152" y="350" width="244" height="106" rx="14" fill="#edf4ff" stroke="#3266b5" stroke-width="2"/>
+<text x="1274.0" y="386" text-anchor="middle" class="note">直接输出</text>
+<text x="1274.0" y="428" text-anchor="middle" class="state" style="fill:#3266b5">18次Boot / s160</text>
+<path d="M294,403 H312" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M571,403 H589" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M848,403 H866" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1125,403 H1143" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="44" y="509" text-anchor="start" class="label" style="fill:#bd4b38">自动，要求最终s40：Q6不足以完成尾部归一化，于是多一次Boot</text>
+<rect x="44" y="531" width="244" height="106" rx="14" fill="#fff0ed" stroke="#bd4b38" stroke-width="2"/>
+<text x="166.0" y="567" text-anchor="middle" class="note">末次ReLU出口</text>
+<text x="166.0" y="609" text-anchor="middle" class="state" style="fill:#bd4b38">Q6 / s40</text>
+<rect x="413" y="531" width="244" height="106" rx="14" fill="#f2effc" stroke="#7556b4" stroke-width="2"/>
+<text x="535.0" y="567" text-anchor="middle" class="note">补第19次Boot</text>
+<text x="535.0" y="609" text-anchor="middle" class="state" style="fill:#7556b4">Q31 / s40</text>
+<rect x="782" y="531" width="244" height="106" rx="14" fill="#fff0ed" stroke="#bd4b38" stroke-width="2"/>
+<text x="904.0" y="567" text-anchor="middle" class="note">同一尾部：5Q</text>
+<text x="904.0" y="609" text-anchor="middle" class="state" style="fill:#bd4b38">Q26 / s40</text>
+<rect x="1152" y="531" width="244" height="106" rx="14" fill="#fff0ed" stroke="#bd4b38" stroke-width="2"/>
+<text x="1274.0" y="567" text-anchor="middle" class="note">最终输出</text>
+<text x="1274.0" y="609" text-anchor="middle" class="state" style="fill:#bd4b38">19次Boot / s40</text>
+<path d="M294,584 H404" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M663,584 H773" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1032,584 H1143" fill="none" stroke="#738096" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="42" y="681" width="1356" height="144" rx="14" fill="white" stroke="#d9e0e9"/>
+<text x="64" y="718" text-anchor="start" class="label">s160的来源：40 + 40 + 40 + 40 = 160；三个明文编码scale均至少40。</text>
+<text x="64" y="753" text-anchor="start" class="note">要回到s40，至少要消掉120位；Q6→Q5只消掉31.99位，因此放宽到Q5仍不够。</text>
+<text x="64" y="788" text-anchor="start" class="small">真实链也影响尾部成本：Q9移除4个模数共127.96位；Q31移除4个仅119.985位，需要第5个。</text>
+<text x="44" y="855" text-anchor="start" class="small">“18次/s160”是放开最终scale后的自然结果；图示为计划与状态校验结果，不是整网GPU延迟或密态精度测量。</text>
+</svg>

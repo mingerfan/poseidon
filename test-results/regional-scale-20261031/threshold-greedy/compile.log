@@ -1,0 +1,6 @@
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=4.088750e+04 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=1.823732e+05 MiB
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=4.650000e+01 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=2.056775e+04 MiB
+Greedy bootstrap boundaries: 110
+Number of Bootstrapping: 182

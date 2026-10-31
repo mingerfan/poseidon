@@ -1,0 +1,19 @@
+{
+  "test/CMakeLists.txt": "0914b78b34cf76a7148c1a4d828e243e2ed876888c9de35fb5dc18ba98933d2a",
+  "tools/optimizer.cpp": "47eb1694534e7f34550cfb394b8fe963f268c793c212ed356b4429374ccdd9c7",
+  "lib/Dialect/Earth/IR/EarthDialect.cpp": "497e3ede6a49f07d1f24dc7d5a3776bf3207d2c4b69d95772e64e8994a392951",
+  "lib/Dialect/Earth/Transforms/CMakeLists.txt": "f55cc28a40fb8a26072bade5f21fd6b38b9718c5cd00823814e4e9be61b2fe1d",
+  "lib/Dialect/Earth/Transforms/OptimizePolynomialArithmetic.cpp": "a0c6644d246682205dfe41ca9b75a0b2606db7c5cb657d88f0858fe03e6c4203",
+  "lib/Dialect/Earth/Transforms/EarlyModswitch.cpp": "8b69a737039f82dd3f2fc827a0376ce23e87057f69c87f34274a04511ec1447b",
+  "lib/Dialect/Earth/Transforms/Common.cpp": "1e98798d0d4bb57e8bb47e23643dc1a054f6d0f06300b98c64b62d2450ef330f",
+  "lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp": "193cbde3cbf3f12959697935fe1da2b21d4912bc148d467c5fb16f9d09f3f6b6",
+  "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "de16c32931430045db497971b688de98c24fca286a6d02bbb0a9b4d5812b2da7",
+  "lib/Dialect/CKKS/Transforms/MaterializePhysicalLevels.cpp": "a190c22fe7a5246f0a67ea853c9f3b73260bd4817e1db0d3d2cb3d7b7e2a97ab",
+  "lib/Dialect/CKKS/IR/CKKSDialect.cpp": "820c69f888c7637d9804af64b4968e554402b1669dd6f75162aae3d3b3757dcd",
+  "lib/Conversion/EarthToCKKS/EarthToCKKS.cpp": "55bd703daad50b242a8715e58d594916c203a6d3fd80d5bfa8edbf7edc65a281",
+  "include/hecate/Dialect/Earth/IR/EarthOps.h": "40664aa4fc0ea79c8659d27cb67bfd7bb4d39ba326bac732d67e44f0e5bf6920",
+  "include/hecate/Dialect/CKKS/IR/CKKSOps.td": "07d6bdeb88c5d6d7becc84c37c335ef237ab5ed10aa9b40a034419d466bc1be1",
+  "include/hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h": "66bfb32adb587d85ef45e6e318fd63617627e5a12d4e8498d60b63db7c888f6b",
+  "lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp": "9e39e0ebe1b81c551ff233775b4844a1baf8588b4ec8c79ddc8983ecb835be1d",
+  "test/runtime-plan/check-regional-scale.py": "0f6e850509b7d75625a3d3c6563564decffa400ac53ee114ddb22f4e2b01cd45"
+}
